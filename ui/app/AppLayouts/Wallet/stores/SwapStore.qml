@@ -32,19 +32,19 @@ QtObject {
     }
 
     function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amountIn, amountOut, tokenFrom, tokenTo,
-        disabledFromChainIDs, disabledToChainIDs, sendType) {
+        disabledFromChainIDs, disabledToChainIDs, sendType, slippagePercentage) {
         const valueIn = AmountsArithmetic.fromNumber(amountIn)
         const valueOut = AmountsArithmetic.fromNumber(amountOut)
         root.walletSectionSendInst.fetchSuggestedRoutesWithParameters(uuid, accountFrom, accountTo, valueIn.toFixed(), valueOut.toFixed(),
-            tokenFrom, tokenTo, disabledFromChainIDs, disabledToChainIDs, sendType)
+            tokenFrom, tokenTo, disabledFromChainIDs, disabledToChainIDs, sendType, slippagePercentage)
     }
 
     function stopUpdatesForSuggestedRoute() {
         root.walletSectionSendInst.stopUpdatesForSuggestedRoute()
     }
 
-    function authenticateAndTransfer(uuid, slippagePercentage) {
-        root.walletSectionSendInst.authenticateAndTransfer(uuid, slippagePercentage)
+    function authenticateAndTransfer(uuid) {
+        root.walletSectionSendInst.authenticateAndTransfer(uuid)
     }
 
     function getWei2Eth(wei, decimals) {

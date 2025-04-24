@@ -32,6 +32,7 @@ QtObject {
     onFromTokenAmountChanged: root.formValuesChanged()
     onToTokenKeyChanged: root.formValuesChanged()
     onToTokenAmountChanged: root.formValuesChanged()
+    onSelectedSlippageChanged: root.formValuesChanged()
 
     function resetFormData() {
         selectedAccountAddress = ""

@@ -171,13 +171,8 @@ QtObject:
       parsedChainIds.add(chainId.parseInt())
     return parsedChainIds
 
-  proc authenticateAndTransfer*(self: View, uuid: string, slippagePercentageString: string) {.slot.} =
-    var slippagePercentage: float
-    try:
-      slippagePercentage = slippagePercentageString.parseFloat()
-    except:
-      error "parsing slippage failed", slippage=slippagePercentageString
-    self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, uuid, slippagePercentage)
+  proc authenticateAndTransfer*(self: View, uuid: string) {.slot.} =
+    self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, uuid)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant, errCode: string, errDescription: string) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes, errCode: string, errDescription: string) =
@@ -186,7 +181,7 @@ QtObject:
     self.errDescription = errDescription
     self.suggestedRoutesReady(newQVariant(self.transactionRoutes), errCode, errDescription)
 
-  proc suggestedRoutes*(self: View, uuid: string, amountIn: string, amountOut: string, extraParamsJson: string) {.slot.} =
+  proc suggestedRoutes*(self: View, uuid: string, amountIn: string, amountOut: string, slippagePercentageString: string, extraParamsJson: string) {.slot.} =
     var extraParamsTable: Table[string, string]
     try:
       if extraParamsJson.len > 0:
@@ -200,6 +195,12 @@ QtObject:
     except Exception as e:
       error "Error parsing extraParamsJson: ", msg=e.msg
 
+    var slippagePercentage: float
+    try:
+      slippagePercentage = slippagePercentageString.parseFloat()
+    except:
+      error "parsing slippage failed", slippage=slippagePercentageString
+
     self.delegate.suggestedRoutes(
       uuid,
       self.sendType,
@@ -212,6 +213,7 @@ QtObject:
       amountOut,
       self.fromNetworksRouteModel.getRouteDisabledNetworkChainIds(),
       self.toNetworksRouteModel.getRouteDisabledNetworkChainIds(),
+      slippagePercentage,
       extraParamsTable
     )
 
@@ -259,20 +261,28 @@ QtObject:
     toToken: string,
     disabledFromChainIDs: string,
     disabledToChainIDs: string,
-    sendType: int) {.slot.} =
-      self.delegate.suggestedRoutes(
-        uuid,
-        SendType(sendType),
-        accountFrom,
-        accountTo,
-        token,
-        self.selectedTokenIsOwnerToken,
-        amountIn,
-        toToken,
-        amountOut,
-        parseChainIds(disabledFromChainIDs),
-        parseChainIds(disabledToChainIDs)
-      )
+    sendType: int,
+    slippagePercentageString: string) {.slot.} =
+    var slippagePercentage: float
+    try:
+      slippagePercentage = slippagePercentageString.parseFloat()
+    except:
+      error "parsing slippage failed", slippage=slippagePercentageString
+
+    self.delegate.suggestedRoutes(
+      uuid,
+      SendType(sendType),
+      accountFrom,
+      accountTo,
+      token,
+      self.selectedTokenIsOwnerToken,
+      amountIn,
+      toToken,
+      amountOut,
+      parseChainIds(disabledFromChainIDs),
+      parseChainIds(disabledToChainIDs),
+      slippagePercentage
+    )
 
   proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}
   proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, status: string) =

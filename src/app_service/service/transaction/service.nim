@@ -374,6 +374,7 @@ QtObject:
     amountOut: string = "",
     disabledFromChainIDs: seq[int] = @[],
     disabledToChainIDs: seq[int] = @[],
+    slippagePercentage: float = 0.0,
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
 
     self.lastRequestForSuggestedRoutes = (uuid, sendType)
@@ -386,7 +387,7 @@ QtObject:
 
     try:
       let err = wallet.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
-        tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, extraParamsTable)
+        tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, slippagePercentage, extraParamsTable)
       if err.len > 0:
         raise newException(CatchableError, "err fetching the best route: " & err)
     except CatchableError as e:
@@ -505,9 +506,9 @@ proc signMessage*(self: Service, address: string, hashedPassword: string, hashed
   result.res = signMsgRes.getStr
   return
 
-proc buildTransactionsFromRoute*(self: Service, uuid: string, slippagePercentage: float): string =
+proc buildTransactionsFromRoute*(self: Service, uuid: string): string =
   var response: JsonNode
-  let err = transactions.buildTransactionsFromRoute(response, uuid, slippagePercentage)
+  let err = transactions.buildTransactionsFromRoute(response, uuid)
   if err.len > 0:
     error "status-go - transfer failed", err=err
     return err

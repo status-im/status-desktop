@@ -171,7 +171,11 @@ StatusDialog {
 
         property var debounceRecalculateRoutesAndFees: Backpressure.debounce(popup, 1000, function() {
             if(d.areInputParametersValid()) {
-                popup.store.suggestedRoutes(d.uuid, d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
+                popup.store.suggestedRoutes(d.uuid,
+                                            d.isCollectiblesTransfer ? "1" : amountToSend.amount,
+                                            /* amountOut */ "0",
+                                            /* slippagePercentage */ "",
+                                            d.extraParamsJson)
             }
         })
 

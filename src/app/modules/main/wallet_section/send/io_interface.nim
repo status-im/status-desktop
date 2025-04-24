@@ -34,6 +34,7 @@ method suggestedRoutes*(self: AccessInterface,
   amountOut: string = "",
   disabledFromChainIDs: seq[int] = @[],
   disabledToChainIDs: seq[int] = @[],
+  slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) {.base.} =
     raise newException(ValueError, "No implementation available")
 
@@ -43,7 +44,7 @@ method stopUpdatesForSuggestedRoute*(self: AccessInterface) {.base.} =
 method suggestedRoutesReady*(self: AccessInterface, uuid: string, suggestedRoutes: SuggestedRoutesDto, errCode: string, errDescription: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateAndTransfer*(self: AccessInterface, fromAddr: string, uuid: string, slippagePercentage: float) {.base.} =
+method authenticateAndTransfer*(self: AccessInterface, fromAddr: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =

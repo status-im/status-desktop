@@ -222,7 +222,7 @@ QObject {
 
             root.swapStore.fetchSuggestedRoutes(d.uuid, accountAddress, accountAddress,
                                                 cryptoValueInRaw, "0", root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
-                                                disabledChainIds, disabledChainIds, Constants.SendType.Swap)
+                                                disabledChainIds, disabledChainIds, Constants.SendType.Swap, root.swapFormData.selectedSlippage)
         } else {
             root.swapProposalLoading = false
             root.swapOutputData.reset()
@@ -235,10 +235,10 @@ QObject {
 
     function sendApproveTx() {
         root.approvalPending = true
-        root.swapStore.authenticateAndTransfer(d.uuid, "")
+        root.swapStore.authenticateAndTransfer(d.uuid)
     }
 
     function sendSwapTx() {
-        root.swapStore.authenticateAndTransfer(d.uuid, root.swapFormData.selectedSlippage)
+        root.swapStore.authenticateAndTransfer(d.uuid)
     }
 }
