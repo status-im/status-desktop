@@ -29,13 +29,14 @@ method suggestedRoutes*(self: AccessInterface,
   amountIn: string,
   toToken: string = "",
   amountOut: string = "",
+  slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) {.base.} =
     raise newException(ValueError, "No implementation available")
 
 method stopUpdatesForSuggestedRoute*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateAndTransfer*(self: AccessInterface, fromAddr: string, uuid: string, slippagePercentage: float) {.base.} =
+method authenticateAndTransfer*(self: AccessInterface, fromAddr: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =

@@ -67,12 +67,9 @@ proc `%`*(self: MultiTransactionCommandDto): JsonNode {.inline.} =
   result["toAmount"] = %(self.toAmount)
   result["type"] = %int(self.multiTxType)
 
-proc buildTransactionsFromRoute*(resultOut: var JsonNode, uuid: string, slippagePercentage: float): string =
+proc buildTransactionsFromRoute*(resultOut: var JsonNode, uuid: string): string =
   try:
-    let payload = %* [{
-      "uuid": uuid,
-      "slippagePercentage": slippagePercentage
-    }]
+    let payload = %* [uuid]
     let response = core.callPrivateRPC("wallet_buildTransactionsFromRoute", payload)
     return prepareResponse(resultOut, response)
   except Exception as e:

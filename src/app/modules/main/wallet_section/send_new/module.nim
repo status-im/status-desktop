@@ -34,7 +34,6 @@ type TmpSendTransactionDetails = object
   password: string
   txHashBeingProcessed: string
   resolvedSignatures: TransactionsSignatures
-  slippagePercentage: float
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -159,14 +158,13 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     )
 
 proc buildTransactionsFromRoute(self: Module) =
-  let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid, self.tmpSendTransactionDetails.slippagePercentage)
+  let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid)
   if err.len > 0:
     self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = err)
     self.clearTmpData()
 
-method authenticateAndTransfer*(self: Module, uuid: string, fromAddr: string, slippagePercentage: float) =
+method authenticateAndTransfer*(self: Module, uuid: string, fromAddr: string) =
   self.tmpSendTransactionDetails.uuid = uuid
-  self.tmpSendTransactionDetails.slippagePercentage = slippagePercentage
   self.tmpSendTransactionDetails.resolvedSignatures.clear()
 
   if self.tmpKeepPinPass:
@@ -302,6 +300,7 @@ method suggestedRoutes*(self: Module,
   amountIn: string,
   toToken: string = "",
   amountOut: string = "",
+  slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
   # maybe not needed
   # self.tmpSendTransactionDetails.sendType = sendType
@@ -319,6 +318,7 @@ method suggestedRoutes*(self: Module,
     amountOut,
     disabledNetworks,
     disabledNetworks,
+    slippagePercentage,
     extraParamsTable
   )
 

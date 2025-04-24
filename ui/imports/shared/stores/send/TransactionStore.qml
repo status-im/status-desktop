@@ -58,14 +58,14 @@ QtObject {
         return networksModule.getBlockExplorerTxURL(chainID)
     }
 
-    function authenticateAndTransfer(uuid, slippagePercentage = "") {
-        walletSectionSendInst.authenticateAndTransfer(uuid, slippagePercentage)
+    function authenticateAndTransfer(uuid) {
+        walletSectionSendInst.authenticateAndTransfer(uuid)
     }
 
-    function suggestedRoutes(uuid, amountIn, amountOut = "0", extraParamsJson = "") {
+    function suggestedRoutes(uuid, amountIn, amountOut = "0", slippagePercentage = "", extraParamsJson = "") {
         const valueIn = AmountsArithmetic.fromNumber(amountIn)
         const valueOut = AmountsArithmetic.fromNumber(amountOut)
-        walletSectionSendInst.suggestedRoutes(uuid, valueIn.toFixed(), valueOut.toFixed(), extraParamsJson)
+        walletSectionSendInst.suggestedRoutes(uuid, valueIn.toFixed(), valueOut.toFixed(), slippagePercentage, extraParamsJson)
     }
 
     function stopUpdatesForSuggestedRoute() {

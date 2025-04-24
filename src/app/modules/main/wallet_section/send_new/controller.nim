@@ -99,9 +99,10 @@ proc suggestedRoutes*(self: Controller,
     amountOut: string = "",
     disabledFromChainIDs: seq[int] = @[],
     disabledToChainIDs: seq[int] = @[],
+    slippagePercentage: float = 0.0,
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
   self.transactionService.suggestedRoutes(uuid, sendType, accountFrom, accountTo, token, tokenIsOwnerToken, amountIn, toToken, amountOut,
-    disabledFromChainIDs, disabledToChainIDs, extraParamsTable)
+    disabledFromChainIDs, disabledToChainIDs, slippagePercentage, extraParamsTable)
 
 proc stopSuggestedRoutesAsyncCalculation*(self: Controller) =
   self.transactionService.stopSuggestedRoutesAsyncCalculation()
@@ -121,8 +122,8 @@ proc getEstimatedTime*(self: Controller, chainId: int, maxFeesPerGas: string, pr
 proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
 
-proc buildTransactionsFromRoute*(self: Controller, uuid: string, slippagePercentage: float): string =
-  return self.transactionService.buildTransactionsFromRoute(uuid, slippagePercentage)
+proc buildTransactionsFromRoute*(self: Controller, uuid: string): string =
+  return self.transactionService.buildTransactionsFromRoute(uuid)
 
 proc signMessage*(self: Controller, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
   return self.transactionService.signMessage(address, hashedPassword, hashedMessage)

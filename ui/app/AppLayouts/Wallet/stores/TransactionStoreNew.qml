@@ -9,17 +9,18 @@ QtObject {
     signal transactionSent(string uuid, int chainId, bool approvalTx, string txHash, string error)
     signal successfullyAuthenticated(string uuid)
 
-    function authenticateAndTransfer(uuid, fromAddr, slippagePercentage = "") {
-        _walletSectionSendInst.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
+    function authenticateAndTransfer(uuid, fromAddr) {
+        _walletSectionSendInst.authenticateAndTransfer(uuid, fromAddr)
     }
 
     function fetchSuggestedRoutes(uuid, sendType, chainId, accountFrom,
                                   accountTo, amountIn, token,
                                   amountOut = "0", toToken = "",
+                                  slippagePercentage = "",
                                   extraParamsJson = "") {
         _walletSectionSendInst.fetchSuggestedRoutes(uuid, sendType, chainId, accountFrom,
                                                     accountTo, amountIn, token,
-                                                    amountOut, toToken, extraParamsJson)
+                                                    amountOut, toToken, slippagePercentage, extraParamsJson)
     }
 
     function stopUpdatesForSuggestedRoute() {

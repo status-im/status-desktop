@@ -268,6 +268,7 @@ type
     approvalGasFees*: float
     approvalAmountRequired*: UInt256
     approvalContractAddress*: string
+    slippagePercentage*: float
 
 proc `$`*(self: TransactionPathDto): string =
   return fmt"""TransactionPath(
@@ -291,6 +292,7 @@ proc `$`*(self: TransactionPathDto): string =
     approvalGasFees:{self.approvalGasFees},
     approvalAmountRequired:{self.approvalAmountRequired},
     approvalContractAddress:{self.approvalContractAddress},
+    slippagePercentage:{self.slippagePercentage},
     gasFees:{$self.gasFees}
   )"""
 
@@ -315,6 +317,7 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.approvalAmountRequired = stint.u256(jsonObj{"approvalAmountRequired"}.getStr)
   discard jsonObj.getProp("approvalGasFees", result.approvalGasFees)
   discard jsonObj.getProp("approvalContractAddress", result.approvalContractAddress)
+  discard jsonObj.getProp("slippagePercentage", result.slippagePercentage)
 
 type
   FeesDto* = ref object

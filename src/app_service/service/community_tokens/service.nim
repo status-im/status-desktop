@@ -1266,7 +1266,7 @@ QtObject:
     self.transactionService.stopSuggestedRoutesAsyncCalculation()
 
   proc buildTransactionsFromRoute*(self: Service, uuid: string): string =
-    return self.transactionService.buildTransactionsFromRoute(uuid, slippagePercentage = 0.0)
+    return self.transactionService.buildTransactionsFromRoute(uuid)
 
   proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatures: TransactionsSignatures): string =
     return self.transactionService.sendRouterTransactionsWithSignatures(uuid, signatures)
