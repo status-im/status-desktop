@@ -33,7 +33,6 @@ type TmpSendTransactionDetails = object
   password: string
   txHashBeingProcessed: string
   resolvedSignatures: TransactionsSignatures
-  slippagePercentage: float
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -142,7 +141,8 @@ proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: Transacti
     approvalRequired = path.approvalRequired,
     approvalGasFees = path.approvalGasFees,
     approvalAmountRequired = $path.approvalAmountRequired,
-    approvalContractAddress = path.approvalContractAddress
+    approvalContractAddress = path.approvalContractAddress,
+    slippagePercentage = path.slippagePercentage
     )
 
 proc refreshNetworks*(self: Module) =
@@ -179,14 +179,13 @@ method getNetworkItem*(self: Module, chainId: int): network_service_item.Network
   return networks[0]
 
 proc buildTransactionsFromRoute(self: Module) =
-  let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid, self.tmpSendTransactionDetails.slippagePercentage)
+  let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid)
   if err.len > 0:
     self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = err)
     self.clearTmpData()
 
-method authenticateAndTransfer*(self: Module, fromAddr: string, uuid: string,  slippagePercentage: float) =
+method authenticateAndTransfer*(self: Module, fromAddr: string, uuid: string) =
   self.tmpSendTransactionDetails.uuid = uuid
-  self.tmpSendTransactionDetails.slippagePercentage = slippagePercentage
   self.tmpSendTransactionDetails.resolvedSignatures.clear()
 
   if self.tmpKeepPinPass:
@@ -335,6 +334,7 @@ method suggestedRoutes*(self: Module,
   amountOut: string = "",
   disabledFromChainIDs: seq[int] = @[],
   disabledToChainIDs: seq[int] = @[],
+  slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
   self.tmpSendTransactionDetails.sendType = sendType
   self.controller.suggestedRoutes(
@@ -349,6 +349,7 @@ method suggestedRoutes*(self: Module,
     amountOut,
     disabledFromChainIDs,
     disabledToChainIDs,
+    slippagePercentage,
     extraParamsTable
   )
 

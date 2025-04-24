@@ -520,6 +520,7 @@ QtObject {
                                                                   tokenKey,
                                                                   /*amountOut = */ "0",
                                                                   /*toToken =*/ "",
+                                                                  /*slippagePercentage*/ "",
                                                                   handler.extraParamsJson)
                 }
             }

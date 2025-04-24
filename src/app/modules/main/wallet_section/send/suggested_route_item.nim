@@ -22,7 +22,7 @@ QtObject:
     approvalGasFees: float
     approvalAmountRequired: string
     approvalContractAddress: string
-
+    slippagePercentage: float
   proc setup*(self: SuggestedRouteItem,
     bridgeName: string,
     fromNetwork: int,
@@ -42,6 +42,7 @@ QtObject:
     approvalGasFees: float,
     approvalAmountRequired: string,
     approvalContractAddress: string,
+    slippagePercentage: float
   ) =
     self.QObject.setup
     self.bridgeName = bridgeName
@@ -62,6 +63,7 @@ QtObject:
     self.approvalGasFees = approvalGasFees
     self.approvalAmountRequired = approvalAmountRequired
     self.approvalContractAddress = approvalContractAddress
+    self.slippagePercentage = slippagePercentage
 
   proc delete*(self: SuggestedRouteItem) =
       self.QObject.delete
@@ -84,12 +86,13 @@ QtObject:
     approvalRequired: bool = false,
     approvalGasFees: float = 0,
     approvalAmountRequired: string = "",
-    approvalContractAddress: string = ""
+    approvalContractAddress: string = "",
+    slippagePercentage: float = 0.0
     ): SuggestedRouteItem =
       new(result, delete)
       result.setup(bridgeName, fromNetwork, toNetwork, maxAmountIn, amountIn, amountOut, gasAmount, gasFees, tokenFees,
         cost, estimatedTime, amountInLocked, isFirstSimpleTx, isFirstBridgeTx, approvalRequired, approvalGasFees,
-        approvalAmountRequired, approvalContractAddress)
+        approvalAmountRequired, approvalContractAddress, slippagePercentage)
 
   proc `$`*(self: SuggestedRouteItem): string =
     result = "SuggestedRouteItem("
@@ -111,6 +114,7 @@ QtObject:
     result = result & "\napprovalGasFees: " & $self.approvalGasFees
     result = result & "\napprovalAmountRequired: " & $self.approvalAmountRequired
     result = result & "\napprovalContractAddress: " & $self.approvalContractAddress
+    result = result & "\nslippagePercentage: " & $self.slippagePercentage
     result = result & ")"
 
   proc bridgeNameChanged*(self: SuggestedRouteItem) {.signal.}
@@ -238,3 +242,10 @@ QtObject:
   QtProperty[string] approvalContractAddress:
     read = getApprovalContractAddress
     notify = approvalContractAddressChanged
+
+  proc slippagePercentageChanged*(self: SuggestedRouteItem) {.signal.}
+  proc getSlippagePercentage*(self: SuggestedRouteItem): float {.slot.} =
+    return self.slippagePercentage
+  QtProperty[float] slippagePercentage:
+    read = getSlippagePercentage
+    notify = slippagePercentageChanged

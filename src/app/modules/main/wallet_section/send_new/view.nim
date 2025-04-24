@@ -39,6 +39,7 @@ QtObject:
     token: string,
     amountOut: string,
     toToken: string,
+    slippagePercentageString: string,
     extraParamsJson: string) {.slot.} =
     var extraParamsTable: Table[string, string]
     self.pathModel.setItems(@[])
@@ -54,6 +55,12 @@ QtObject:
     except Exception as e:
       error "Error parsing extraParamsJson: ", msg=e.msg
 
+    var slippagePercentage: float
+    try:
+      slippagePercentage = slippagePercentageString.parseFloat()
+    except:
+      error "parsing slippage failed", slippage=slippagePercentageString
+
     self.delegate.suggestedRoutes(
         uuid,
         SendType(sendType),
@@ -65,19 +72,14 @@ QtObject:
         amountIn,
         toToken,
         amountOut,
+        slippagePercentage,
         extraParamsTable)
 
   proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
     self.delegate.stopUpdatesForSuggestedRoute()
 
-  proc authenticateAndTransfer*(self: View, uuid: string, fromAddr: string, slippagePercentageString: string) {.slot.} =
-    var slippagePercentage: float
-    try:
-      if slippagePercentageString.len > 0:
-        slippagePercentage = slippagePercentageString.parseFloat()
-    except:
-      error "parsing slippage failed", slippage=slippagePercentageString
-    self.delegate.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
+  proc authenticateAndTransfer*(self: View, uuid: string, fromAddr: string) {.slot.} =
+    self.delegate.authenticateAndTransfer(uuid, fromAddr)
 
   proc suggestedRoutesReady(self: View, uuid: string, pathModel: QVariant, errCode: string, errDescription: string) {.signal.}
   proc sendSuggestedRoutesReadySignal*(self: View, uuid: string, errCode: string, errDescription: string) =
