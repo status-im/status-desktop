@@ -62,7 +62,7 @@ OnboardingStackView {
     signal finished(int flow)
 
     function restart() {
-        replace(null, initialComponent)
+        replace(null, loginAccountsModel.ModelCount.empty ? welcomePage : loginScreenComponent)
     }
 
     function setBiometricResponse(secret: string, error = "") {
@@ -77,6 +77,12 @@ OnboardingStackView {
 
         property int flow
         property LoginScreen loginScreen: null
+
+        readonly property int loginAccountsModelCount: loginAccountsModel.ModelCount.count
+        onLoginAccountsModelCountChanged: {
+            // NB: have to delay showing the LoginScreen as the model is populated in an async way; therefore can't use `StackView::initialItem`
+            root.restart()
+        }
 
         function pushOrSkipBiometricsPage() {
             if (root.biometricsAvailable) {
@@ -126,17 +132,6 @@ OnboardingStackView {
 
         function onAddKeyPairStateChanged() {
             d.handleKeycardProgressFailedState(addKeyPairState)
-        }
-    }
-
-    initialItem: initialComponent
-
-    Component {
-        id: initialComponent
-
-        Loader {
-            sourceComponent: loginAccountsModel.ModelCount.empty ? welcomePage
-                                                                 : loginScreenComponent
         }
     }
 
