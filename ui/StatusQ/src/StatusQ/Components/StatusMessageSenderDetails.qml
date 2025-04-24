@@ -8,6 +8,7 @@ QtObject {
     property string id: ""
     property string compressedPubKey: ""
     property string displayName: ""
+    property bool usesDefaultName: false
     property string secondaryName: ""
 
     property bool isEnsVerified: false

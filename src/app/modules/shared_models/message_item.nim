@@ -20,6 +20,7 @@ type
     senderId: string
     senderDisplayName: string
     senderOptionalName: string
+    senderUsesDefaultName: bool
     amISender: bool
     senderIsAdded: bool
     senderIcon: string
@@ -83,7 +84,8 @@ proc initMessageItem*(
     responseToMessageWithId,
     senderId,
     senderDisplayName,
-    senderOptionalName,
+    senderOptionalName: string,
+    senderUsesDefaultName: bool,
     senderIcon: string,
     senderColorHash: string,
     amISender: bool,
@@ -140,6 +142,7 @@ proc initMessageItem*(
   result.senderId = senderId
   result.senderDisplayName = senderDisplayName
   result.senderOptionalName = senderOptionalName
+  result.senderUsesDefaultName = senderUsesDefaultName
   result.amISender = amISender
   result.senderIsAdded = senderIsAdded
   result.senderIcon = senderIcon
@@ -245,6 +248,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     senderId = "",
     senderDisplayName = "",
     senderOptionalName = "",
+    senderUsesDefaultName = false,
     senderIcon = "",
     senderColorHash = "",
     amISender = false,
@@ -303,6 +307,7 @@ proc `$`*(self: Item): string =
     senderId: {self.senderId},
     senderDisplayName: {$self.senderDisplayName},
     senderOptionalName: {self.senderOptionalName},
+    senderUsesDefaultName: {self.senderUsesDefaultName},
     amISender: {$self.amISender},
     senderIsAdded: {$self.senderIsAdded},
     seen: {$self.seen},
@@ -356,6 +361,12 @@ proc senderOptionalName*(self: Item): string {.inline.} =
 
 proc `senderOptionalName=`*(self: Item, value: string) {.inline.} =
   self.senderOptionalName = value
+
+proc senderUsesDefaultName*(self: Item): bool {.inline.} =
+  self.senderUsesDefaultName
+
+proc `senderUsesDefaultName=`*(self: Item, value: bool) {.inline.} =
+  self.senderUsesDefaultName = value
 
 proc senderIcon*(self: Item): string {.inline.} =
   self.senderIcon
@@ -543,6 +554,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "senderId": self.senderId,
     "senderDisplayName": self.senderDisplayName,
     "senderOptionalName": self.senderOptionalName,
+    "senderUsesDefaultName": self.senderUsesDefaultName,
     "amISender": self.amISender,
     "senderIsAdded": self.senderIsAdded,
     "senderIcon": self.senderIcon,
