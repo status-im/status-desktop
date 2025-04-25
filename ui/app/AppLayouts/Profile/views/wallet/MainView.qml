@@ -204,35 +204,36 @@ Column {
         width: parent.width
     }
 
-    Rectangle {
-        visible: root.walletStore.walletModule.hasPairedDevices &&
-                 !d.allNonProfileKeypairsMigratedToAKeycard
-        height: 102
-        width: parent.width
-        color: Theme.palette.transparent
-        radius: 8
-        border.width: 1
-        border.color: Theme.palette.baseColor5
+    // TODO uncomment when mobile has implemented the QR code import
+    // Rectangle {
+    //     visible: root.walletStore.walletModule.hasPairedDevices &&
+    //              !d.allNonProfileKeypairsMigratedToAKeycard
+    //     height: 102
+    //     width: parent.width
+    //     color: Theme.palette.transparent
+    //     radius: 8
+    //     border.width: 1
+    //     border.color: Theme.palette.baseColor5
 
-        Column {
-            anchors.fill: parent
-            padding: 16
-            spacing: 8
+    //     Column {
+    //         anchors.fill: parent
+    //         padding: 16
+    //         spacing: 8
 
-            StatusBaseText {
-                text: qsTr("Import key pairs from this device to your other synced devices")
-                font.pixelSize: 15
-            }
+    //         StatusBaseText {
+    //             text: qsTr("Import key pairs from this device to your other synced devices")
+    //             font.pixelSize: 15
+    //         }
 
-            StatusButton {
-                text: qsTr("Show encrypted QR of key pairs on device")
-                icon.name: "qr"
-                onClicked: {
-                    root.walletStore.runKeypairImportPopup("", Constants.keypairImportPopup.mode.exportKeypairQr)
-                }
-            }
-        }
-    }
+    //         StatusButton {
+    //             text: qsTr("Show encrypted QR of key pairs on device")
+    //             icon.name: "qr"
+    //             onClicked: {
+    //                 root.walletStore.runKeypairImportPopup("", Constants.keypairImportPopup.mode.exportKeypairQr)
+    //             }
+    //         }
+    //     }
+    // }
 
     Rectangle {
         visible: root.walletStore.walletModule.hasPairedDevices &&
