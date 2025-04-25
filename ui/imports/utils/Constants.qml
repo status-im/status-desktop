@@ -1535,37 +1535,37 @@ QtObject {
 
     readonly property int maxActiveNetworks: 5
 
-    /*  
-        Hacky workaround functions to deal with token collision workaround https://github.com/status-im/status-go/pull/6538 
+    /*
+        Hacky workaround functions to deal with token collision workaround https://github.com/status-im/status-go/pull/6538
         We use unique symbols with the form "symbol(decimals)" to avoid bundling tokens with different decimals.
         Remove these functions when the status-go PR is reverted.
     */
     function tokenSymbolToUniqueSymbol(symbol, chainId) {
         if (symbol === "USDT" || symbol === "USDC") {
             if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
-                return symbol + "(18)"
+                return symbol + " (BSC)"
             }
-            return symbol + "(6)"
+            return symbol + " (EVM)"
         } else if (symbol === "SWFTC") {
             if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
-                return symbol + "(18)"
+                return symbol + " (BSC)"
             }
-            return symbol + "(8)"
+            return symbol + " (EVM)"
         } else if (symbol === "FLUX") {
-            return symbol + "(18)"
+            return symbol + " (EVM)"
         }
 
         return symbol
     }
 
     function uniqueSymbolToTokenSymbol(uniqueSymbol) {
-        if (uniqueSymbol === "USDT(6)" || uniqueSymbol === "USDT(18)") {
+        if (uniqueSymbol === "USDT (EVM)" || uniqueSymbol === "USDT (BSC)") {
             return "USDT"
-        } else if (uniqueSymbol === "USDC(6)" || uniqueSymbol === "USDC(18)") {
+        } else if (uniqueSymbol === "USDC (EVM)" || uniqueSymbol === "USDC (BSC)") {
             return "USDC"
-        } else if (uniqueSymbol === "SWFTC(8)" || uniqueSymbol === "SWFTC(18)") {
+        } else if (uniqueSymbol === "SWFTC (EVM)" || uniqueSymbol === "SWFTC (BSC)") {
             return "SWFTC"
-        } else if (uniqueSymbol === "FLUX(18)") {
+        } else if (uniqueSymbol === "FLUX (EVM)") {
             return "FLUX"
         }
         return uniqueSymbol
