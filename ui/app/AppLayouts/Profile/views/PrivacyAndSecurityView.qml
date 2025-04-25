@@ -26,7 +26,7 @@ SettingsContentBase {
         StatusListItem {
             Layout.preferredWidth: root.contentWidth
             title: qsTr("Receive Status News via RSS")
-            subTitle: qsTr("Fetches news from external sites which may expose your IP")
+            subTitle: qsTr("Your IP address will be exposed to https://status.app")
             components: [
                 StatusSwitch {
                     id: statusNewsSwitch
