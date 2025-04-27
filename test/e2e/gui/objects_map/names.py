@@ -602,6 +602,7 @@ checkmark_circle_icon_StatusIcon = {"container": statusDesktop_mainWindow_overla
 o_ActivityNotificationContactRequest = {"container": statusDesktop_mainWindow_overlay, "type": "ActivityNotificationContactRequest", "unnamed": 1, "visible": True}
 activityCenterTopBar_ActivityCenterPopupTopBarPanel = {"container": statusDesktop_mainWindow_overlay, "id": "activityCenterTopBar", "type": "ActivityCenterPopupTopBarPanel", "unnamed": 1, "visible": True}
 statusListView = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListView", "unnamed": 1, "visible": True}
+activityCenterContactRequest = {"container": statusDesktop_mainWindow_overlay, "type": "ActivityNotificationContactRequest", "unnamed": 1, "visible": True}
 
 # Rename keypair popup
 save_changes_rename_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "saveRenameKeypairChangesButton", "type": "StatusButton", "visible": True}

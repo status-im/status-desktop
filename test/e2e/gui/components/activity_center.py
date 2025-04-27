@@ -54,24 +54,24 @@ class ActivityCenter(BasePopup):
 
     def __init__(self):
         super(ActivityCenter, self).__init__()
-        self._activity_center_button = Scroll(names.activityCenterStatusFlatButton)
-        self._notification_contact_request = QObject(names.o_ActivityNotificationContactRequest)
-        self._activity_center_panel = QObject(names.activityCenterTopBar_ActivityCenterPopupTopBarPanel)
-        self._contact_request_list = List(names.statusListView)
+        self.activity_center_button = Scroll(names.activityCenterStatusFlatButton)
+        self.notification_contact_request = QObject(names.o_ActivityNotificationContactRequest)
+        self.activity_center_panel = QObject(names.activityCenterTopBar_ActivityCenterPopupTopBarPanel)
+        self.activity_center_contact_request = QObject(names.activityCenterContactRequest)
 
     @property
     @allure.step('Get contact items')
     def contact_items(self) -> typing.List[ContactRequest]:
-        return [ContactRequest(item) for item in self._contact_request_list.items]
+        return [ContactRequest(item) for item in driver.findAllObjects(self.activity_center_contact_request.real_name)]
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._activity_center_panel.wait_until_appears(timeout_msec)
+        self.activity_center_panel.wait_until_appears(timeout_msec)
         return self
 
     @allure.step('Click activity center button')
     def click_activity_center_button(self, text: str):
-        for button in driver.findAllObjects(self._activity_center_button.real_name):
+        for button in driver.findAllObjects(self.activity_center_button.real_name):
             if str(getattr(button, 'text', '')) == str(text):
                 driver.mouseClick(button)
                 break
