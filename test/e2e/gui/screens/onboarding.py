@@ -29,39 +29,6 @@ from scripts.utils.system_path import SystemPath
 LOG = logging.getLogger(__name__)
 
 
-class AllowNotificationsView(QObject):
-
-    def __init__(self):
-        super(AllowNotificationsView, self).__init__(onboarding_names.mainWindow_AllowNotificationsView)
-        self._start_using_status_button = Button(onboarding_names.mainWindow_Start_using_Status_StatusButton)
-
-    @allure.step("Start using Status")
-    def start_using_status(self):
-        # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._start_using_status_button.click()
-        self.wait_until_hidden()
-
-
-class WelcomeToStatusView(QObject):
-    def __init__(self):
-        super(WelcomeToStatusView, self).__init__(onboarding_names.mainWindow_WelcomeView)
-        self._i_am_new_to_status_button = Button(onboarding_names.mainWindow_I_am_new_to_Status_StatusBaseText)
-        self._i_already_use_status_button = Button(onboarding_names.mainWindow_I_already_use_Status_StatusFlatButton)
-
-    @allure.step('Open Keys view')
-    def get_keys(self) -> 'KeysView':
-        self._i_am_new_to_status_button.click()
-        time.sleep(1)
-        ShareUsageDataPopup().not_now_button.click()
-        return KeysView().wait_until_appears()
-
-    def sync_existing_user(self) -> 'SignInBySyncingView':
-        self._i_already_use_status_button.click()
-        time.sleep(1)
-        ShareUsageDataPopup().not_now_button.click()
-        return SignInBySyncingView().wait_until_appears()
-
-
 class OnboardingWelcomeToStatusView(QObject):
 
     def __init__(self):
@@ -112,85 +79,14 @@ class OnboardingLogIn(OnboardingWelcomeToStatusView):
 class OnboardingView(QObject):
 
     def __init__(self, object_name):
-        super(OnboardingView, self).__init__(object_name)
-        self._back_button = Button(onboarding_names.mainWindow_onboardingBackButton_StatusRoundButton)
-
-
-class KeysView(OnboardingView):
-
-    def __init__(self):
-        super(KeysView, self).__init__(onboarding_names.mainWindow_KeysMainView)
-        self._generate_key_button = Button(onboarding_names.mainWindow_Generate_new_keys_StatusButton)
-        self._generate_key_for_new_keycard_button = Button(
-            onboarding_names.mainWindow_Generate_keys_for_new_Keycard_StatusBaseText)
-        self._import_seed_phrase_button = Button(onboarding_names.mainWindow_Import_seed_phrase)
-
-    @allure.step('Open Profile view')
-    def generate_new_keys(self) -> 'YourProfileView':
-        self._generate_key_button.click()
-        return YourProfileView().verify_profile_view_present()
-
-    @allure.step('Open Keycard Init view')
-    def generate_key_for_new_keycard(self) -> 'KeycardInitView':
-        self._generate_key_for_new_keycard_button.click()
-        return KeycardInitView().wait_until_appears()
-
-    @allure.step('Open Import Seed Phrase view')
-    def open_import_seed_phrase_view(self) -> 'ImportSeedPhraseView':
-        self._import_seed_phrase_button.click()
-        return ImportSeedPhraseView().wait_until_appears()
-
-    @allure.step('Open Enter Seed Phrase view')
-    def open_enter_seed_phrase_view(self) -> 'ImportSeedPhraseView':
-        self._import_seed_phrase_button.click()
-        return SeedPhraseInputView().wait_until_appears()
-
-    @allure.step('Go back')
-    def back(self) -> OnboardingWelcomeToStatusView:
-        self._back_button.click()
-        return OnboardingWelcomeToStatusView().wait_until_appears()
-
-
-class ImportSeedPhraseView(OnboardingView):
-
-    def __init__(self):
-        super(ImportSeedPhraseView, self).__init__(onboarding_names.mainWindow_KeysMainView)
-        self._import_seed_phrase_button = Button(onboarding_names.keysMainView_PrimaryAction_Button)
-
-    @allure.step('Open seed phrase input view')
-    def open_seed_phrase_input_view(self):
-        time.sleep(0.5)
-        self._import_seed_phrase_button.click()
-        return SeedPhraseInputView().wait_until_appears()
-
-    @allure.step('Go back')
-    def back(self) -> KeysView:
-        self._back_button.click()
-        return KeysView().wait_until_appears()
-
-
-class SignInBySyncingView(QObject):
-    def __init__(self):
-        super().__init__(onboarding_names.onboardingBasePage)
-        self._scan_or_enter_sync_code_button = Button(onboarding_names.keysMainView_PrimaryAction_Button)
-        self._i_dont_have_other_device_button = Button(
-            onboarding_names.mainWindow_iDontHaveOtherDeviceButton_StatusBaseText)
-
-    @allure.step('Open sync code view')
-    def open_sync_code_view(self):
-        self._scan_or_enter_sync_code_button.click()
-        return OnboardingSyncCodeView().wait_until_appears()
-
-    @allure.step('Open keys view')
-    def open_keys_view(self):
-        self._i_dont_have_other_device_button.click()
-        return KeysView().wait_until_appears()
+        super().__init__(object_name)
+        self.back_button = Button(onboarding_names.mainWindow_onboardingBackButton_StatusRoundButton)
 
 
 class OnboardingSyncCodeView(QObject):
 
     def __init__(self):
-        super(OnboardingSyncCodeView, self).__init__(onboarding_names.logInBySyncingView)
+        super().__init__(onboarding_names.logInBySyncingView)
         self.enter_sync_code_button = Button(onboarding_names.switchTabBar_Enter_sync_code_StatusSwitchTabButton)
         self.paste_sync_code_button = Button(onboarding_names.mainWindow_Paste_StatusButton)
         self.syncing_enter_code_item = QObject(onboarding_names.mainWindow_syncingEnterCode_SyncingEnterCode)
@@ -237,16 +133,10 @@ class SyncCodeView(OnboardingView):
 
 class OnboardingProfileSyncedView(QObject):
     def __init__(self):
-        super().__init__()
+        super().__init__(onboarding_names.profileSyncedView)
         self.profile_synced_view = QObject(onboarding_names.profileSyncedView)
         self.log_in_button = Button(onboarding_names.startupLoginButton)
         self.profile_synced_view_header = QObject(onboarding_names.profileSyncedViewHeader)
-
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        assert driver.waitFor(lambda: self.profile_synced_view.is_visible,
-                              timeout_msec), f'Object {self} is not visible'
-        LOG.info('%s: is visible', self)
-        return self
 
 
 class SyncDeviceFoundView(OnboardingView):
@@ -389,16 +279,12 @@ class SeedPhraseInputView(OnboardingView):
 class KeycardInitView(OnboardingView):
 
     def __init__(self):
-        super(KeycardInitView, self).__init__(onboarding_names.mainWindow_KeycardInitView)
+        super().__init__(onboarding_names.mainWindow_KeycardInitView)
         self._message = TextLabel(onboarding_names.mainWindow_Plug_in_Keycard_reader_StatusBaseText)
 
     @property
     def message(self) -> str:
         return self._message.text
-
-    def back(self) -> KeysView:
-        self._back_button.click()
-        return KeysView().wait_until_appears()
 
 
 class YourProfileView(OnboardingView):
@@ -480,11 +366,6 @@ class YourProfileView(OnboardingView):
             else:
                 raise err
 
-    @allure.step('Go back')
-    def back(self):
-        self._back_button.click()
-        return KeysView().wait_until_appears()
-
 
 class YourEmojihashAndIdenticonRingView(OnboardingView):
 
@@ -532,17 +413,9 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
     def get_emoji_hash(self) -> str:
         return str(getattr(self._emoji_hash.object, 'publicKey'))
 
-    @allure.step('Click next in your emojihash and identicon ring view')
-    def next(self):
-        # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._next_button.click()
-        time.sleep(1)
-        if configs.system.get_platform() == "Darwin":
-            return AllowNotificationsView().wait_until_appears()
-
     @allure.step('Go back')
     def back(self):
-        self._back_button.click()
+        self.back_button.click()
         return YourProfileView().wait_until_appears()
 
     @allure.step
@@ -648,7 +521,7 @@ class CreatePasswordView(OnboardingView):
 
     @allure.step('Go back')
     def back(self):
-        self._back_button.click()
+        self.back_button.click()
         return YourEmojihashAndIdenticonRingView().wait_until_appears()
 
 
@@ -750,7 +623,7 @@ class ConfirmPasswordView(OnboardingView):
 
     @allure.step('Go back')
     def back(self):
-        self._back_button.click()
+        self.back_button.click()
         return OnboardingCreatePasswordView().wait_until_appears()
 
     @allure.step('Get password content from confirmation again field')

@@ -270,65 +270,59 @@ class SavedAddressesWalletSettings(WalletSettingsView):
 class NetworkWalletSettings(WalletSettingsView):
 
     def __init__(self):
-        super(NetworkWalletSettings, self).__init__()
-        self._testnet_text_item = QObject(settings_names.settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText)
-        self._testnet_mode_toggle = Button(settings_names.settings_Wallet_NetworksView_TestNet_Toggle)
-        self._testnet_mode_title = TextLabel(settings_names.settings_Wallet_NetworksView_TestNet_Toggle_Title)
-        self._back_button = Button(settings_names.main_toolBar_back_button)
-        self._mainnet_network_item = QObject(settings_names.networkSettingsNetworks_Mainnet)
-        self._mainnet_goerli_network_item = QObject(settings_names.networkSettingsNetworks_Mainnet_Goerli)
-        self._mainnet_goerli_network_item_test_label = TextLabel(settings_names.networkSettingsNetowrks_Mainnet_Testlabel)
-        self._optimism_network_item = QObject(settings_names.networkSettingsNetworks_Optimism)
-        self._optimism_goerli_network_item = QObject(settings_names.networkSettingsNetworks_Optimism_Goerli)
-        self._arbitrum_network_item = QObject(settings_names.networkSettingsNetworks_Arbitrum)
-        self._arbitrum__goerli_network_item = QObject(settings_names.networkSettingsNetworks_Arbitrum_Goerli)
-        self._wallet_network_item_template = QObject(settings_names.settingsContentBaseScrollView_WalletNetworkDelegate_template)
-        self._wallet_network_item_goerli_sensor = QObject(settings_names.networkSettingsNetworks_Mainnet_Goerli_sensor)
-        self._wallet_network_item_goerli_testlabel = TextLabel(settings_names.networkSettingsNetowrks_Mainnet_Testlabel)
+        super().__init__()
+        self.testnet_text_item = QObject(settings_names.settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText)
+        self.testnet_mode_toggle = Button(settings_names.settings_Wallet_NetworksView_TestNet_Toggle)
+        self.testnet_mode_title = TextLabel(settings_names.settings_Wallet_NetworksView_TestNet_Toggle_Title)
+        self.back_button = Button(settings_names.main_toolBar_back_button)
+        self.mainnet_network_item = QObject(settings_names.networkSettingsNetworks_Mainnet)
+        self.optimism_network_item = QObject(settings_names.networkSettingsNetworks_Optimism)
+        self.arbitrum_network_item = QObject(settings_names.networkSettingsNetworks_Arbitrum)
+        self.wallet_network_item_template = QObject(settings_names.settingsContentBaseScrollView_WalletNetworkDelegate_template)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self):
-        self._testnet_mode_toggle.wait_until_appears(10000)
+        self.testnet_mode_toggle.wait_until_appears(configs.timeouts.FEES_TIMEOUT_MSEC)
         return self
 
     @allure.step('Check networks item title')
     def get_network_item_attribute_by_id_and_attr_name(self, attribute_name, network_id):
-        self._wallet_network_item_template.real_name['objectName'] = RegularExpression(
+        self.wallet_network_item_template.real_name['objectName'] = RegularExpression(
             f'walletNetworkDelegate_.*_{network_id}')
-        return str(getattr(self._wallet_network_item_template.object, attribute_name))
+        return str(getattr(self.wallet_network_item_template.object, attribute_name))
 
     @allure.step('Open network to check the details')
     def click_network_item_to_open_edit_view(self, network_id):
-        self._wallet_network_item_template.real_name['objectName'] \
+        self.wallet_network_item_template.real_name['objectName'] \
             = RegularExpression(f'walletNetworkDelegate_.*_{network_id}')
-        self._wallet_network_item_template.click()
+        self.wallet_network_item_template.click()
         return EditNetworkSettings().wait_until_appears()
 
     @allure.step('Verify Testnet toggle subtitle')
     def get_testnet_toggle_subtitle(self):
-        return self._testnet_mode_title.text
+        return self.testnet_mode_title.text
 
     @allure.step('Verify back to Wallet settings button')
     def is_back_to_wallet_settings_button_present(self):
-        return self._back_button.is_visible
+        return self.back_button.is_visible
 
     @property
     @allure.step('Get amount of testnet active items')
     def testnet_items_amount(self) -> int:
         items_amount = 0
-        for item in driver.findAllObjects(self._testnet_text_item.real_name):
+        for item in driver.findAllObjects(self.testnet_text_item.real_name):
             if item.text == 'Goerli testnet active':
                 items_amount += 1
         return items_amount
 
     @allure.step('Switch testnet mode toggle')
     def switch_testnet_mode_toggle(self) -> TestnetModePopup:
-        self._testnet_mode_toggle.click()
+        self.testnet_mode_toggle.click()
         return TestnetModePopup().wait_until_appears()
 
     @allure.step('Get testnet mode toggle status')
     def is_testnet_mode_toggle_checked(self) -> bool:
-        return self._testnet_mode_toggle.is_checked
+        return self.testnet_mode_toggle.is_checked
 
 
 class EditNetworkSettings(WalletSettingsView):

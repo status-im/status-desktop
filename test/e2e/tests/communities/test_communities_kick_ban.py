@@ -7,7 +7,7 @@ from allure_commons._allure import step
 import driver
 from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community import ToastMessages
-from gui.screens.community import Members
+from gui.screens.community import MembersListPanel
 from scripts.utils.generators import random_text_message
 import configs.testpath
 from gui.main_window import MainWindow
@@ -156,7 +156,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_two.name}, kick {user_one.name} from the community'):
             aut_two.attach()
             main_screen.prepare()
-            Members().click_all_members_button()
+            MembersListPanel().click_all_members_button()
             members.kick_member(user_one.name)
 
         with step('Check toast message about kicked member'):
