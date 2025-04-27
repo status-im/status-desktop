@@ -49,6 +49,7 @@ mainWindow_ContactsView = {"container": statusDesktop_mainWindow, "type": "Conta
 mainWindow_Send_contact_request_to_chat_key_StatusButton = {"checkable": False, "container": mainWindow_ContactsView, "objectName": "ContactsView_ContactRequest_Button", "type": "StatusButton", "visible": True}
 contactsTabBar_Pending_Requests_StatusTabButton = {"container": mainWindow_ContactsView, "objectName": "ContactsView_PendingRequest_Button", "type": "StatusTabButton", "visible": True}
 settingsContentBaseScrollView_ContactListPanel = {"container": settingsContentBase_ScrollView, "objectName": "ContactListPanel_ListView", "type": "ContactsListPanel", "visible": True}
+contactRequestItemSettings = {"checkable": False, "container": settingsContentBaseScrollView_ContactListPanel, "type": "ContactPanel", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_Item = {"container": mainWindow_ContactsView, "type": "Item", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_sentRequests_ContactsListPanel = {"container": mainWindow_ContactsView, "objectName": "ContactListPanel", "type": "ContactsListPanel", "visible": True}
 settingsContentBaseScrollView_ContactListPanel_Header = {"container": settingsContentBase_ScrollView, "type": "SectionComponent", "unnamed": 1, "visible": True}

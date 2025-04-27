@@ -100,8 +100,7 @@ class ContactsSettingsView(QObject):
         self._pending_request_tab = Button(settings_names.contactsTabBar_Pending_Requests_StatusTabButton)
         self._contacts_tab = Button(settings_names.contactsTabBar_Contacts_StatusTabButton)
         self._blocked_tab = Button(settings_names.contactsTabBar_Blocked_StatusTabButton)
-        self._contact_item = QObject(settings_names.settingsContentBaseScrollView_Item)
-        self._contacts_items_list = List(settings_names.settingsContentBaseScrollView_ContactListPanel)
+        self.contact_item = QObject(settings_names.contactRequestItemSettings)
         self._pending_request_sent_panel = QObject(
             settings_names.settingsContentBaseScrollView_sentRequests_ContactsListPanel)
         self.section_header = QObject(settings_names.settingsContentBaseScrollView_ContactListPanel_Header)
@@ -125,7 +124,7 @@ class ContactsSettingsView(QObject):
         try:
             contact_items = []
             for i in range(2):
-                contact_items = [ContactItem(item) for item in self._contacts_items_list.items]
+                contact_items = [ContactItem(item) for item in driver.findAllObjects(self.contact_item.real_name)]
             if len(contact_items) != 0:
                 return contact_items
         except LookupError as err:
