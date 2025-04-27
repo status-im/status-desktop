@@ -32,6 +32,7 @@ makeSureYouAreLoggedOption = {"checkable": True, "container": statusDesktop_main
 disableTheFirewallOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack3", "type": "StatusCheckBox", "visible": True}
 cancelButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusFlatButton", "unnamed": 1, "visible": True}
 continueButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "btnContinue", "type": "StatusButton", "visible": True}
+
 # ProfileSyncingView
 profileSyncedView = {"container": onboardingLayout, "type": "SyncProgressPage", "unnamed": 1, "visible": True}
 profileSyncedViewHeader = {"container": profileSyncedView, "type": "StatusBaseText", "unnamed": 1, "visible": True}

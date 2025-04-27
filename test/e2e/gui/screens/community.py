@@ -29,10 +29,10 @@ class CommunityScreen(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_communityLoader_Loader)
-        self.left_panel = LeftPanel()
-        self.tool_bar = ToolBar()
-        self.chat = Chat()
-        self.right_panel = Members()
+        self.left_panel = CommunityLeftPanel()
+        self.tool_bar = CommunityToolBar()
+        self.chat = ChatView()
+        self.right_panel = MembersListPanel()
 
     @allure.step('Create channel')
     def create_channel(self, name: str, description: str, emoji: str = None):
@@ -104,7 +104,7 @@ class BannedCommunityScreen(QObject):
                 return remove_tags(str(child.text))
 
 
-class ToolBar(QObject):
+class CommunityToolBar(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_statusToolBar_StatusToolBar)
@@ -161,7 +161,7 @@ class ToolBar(QObject):
         raise LookupError(f'Could not open context menu for a channel')
 
 
-class CategoryItem:
+class CategoryItem():
 
     def __init__(self, obj):
         self.object = obj
@@ -197,7 +197,7 @@ class CategoryItem:
         return self._arrow_icon.object.rotation
 
 
-class LeftPanel(QObject):
+class CommunityLeftPanel(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_communityColumnView_CommunityColumnView)
@@ -372,7 +372,7 @@ class LeftPanel(QObject):
 
     @allure.step('Right click on left panel')
     def right_click_on_panel(self):
-        super(LeftPanel, self).right_click()
+        super(CommunityLeftPanel, self).right_click()
 
     @allure.step('Open add members popup')
     def open_add_members_popup(self):
@@ -380,7 +380,7 @@ class LeftPanel(QObject):
         return InviteContactsPopup().wait_until_appears()
 
 
-class Chat(QObject):
+class ChatView(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_ChatColumnView)
@@ -412,7 +412,7 @@ class Chat(QObject):
         return self._channel_welcome_label.text
 
 
-class Members(QObject):
+class MembersListPanel(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_userListPanel_StatusListView)
