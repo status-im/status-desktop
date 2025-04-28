@@ -14,22 +14,30 @@ class AdvancedSettingsView(QObject):
         self.scroll = Scroll(settings_names.settingsContentBase_ScrollView)
         self.manage_community_on_testnet_button = Button(
             settings_names.manageCommunitiesOnTestnetButton_StatusSettingsLineButton)
-        self._light_mode_button = Button(settings_names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
-        self._relay_mode_button = Button(settings_names.settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton)
+        self.light_mode_button = Button(settings_names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
+        self.relay_mode_button = Button(settings_names.settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton)
 
     @allure.step('Switch manage community on testnet option')
-    def switch_manage_on_community(self):
+    def enable_manage_communities_on_testnet_toggle(self):
         self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
-        self.manage_community_on_testnet_button.click()
+        if not self.manage_community_on_testnet_button.object.switchChecked:
+            for _ in range(2):
+                try:
+                    self.manage_community_on_testnet_button.click()
+                    assert self.manage_community_on_testnet_button.object.switchChecked
+                    return
+                except AssertionError:
+                    pass  # Retry one more time
+            raise RuntimeError(f'Could not enable Manage communities on testnet toggle')
 
     @allure.step('Switch waku mode')
     def switch_waku_mode(self, mode):
         if not self.manage_community_on_testnet_button.is_visible:
             self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
         if mode == 'light':
-            self._light_mode_button.click()
+            self.light_mode_button.click()
         elif mode == 'relay':
-            self._relay_mode_button.click()
+            self.relay_mode_button.click()
         return SwitchWakuModePopup().wait_until_appears()
 
     @allure.step('Verify waku mode enabled states')
@@ -37,6 +45,6 @@ class AdvancedSettingsView(QObject):
         if not self.manage_community_on_testnet_button.is_visible:
             self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
         if mode == 'light':
-            return self._light_mode_button.is_checked
+            return self.light_mode_button.is_checked
         elif mode == 'relay':
-            return self._relay_mode_button.is_checked
+            return self.relay_mode_button.is_checked
