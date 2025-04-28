@@ -515,9 +515,9 @@ Rectangle {
                         id: channelPermsSubPanel
 
                         readonly property int permissionType: modelData
-                        readonly property alias tokenCriteriaMet: overallPermissionRow2.tokenCriteriaMet
+                        readonly property bool tokenCriteriaMet: overallPermissionRow2.tokenCriteriaMet
                         readonly property bool permissionLost: d.initialChannelPermissions[channelPermsPanel.channelKey][index] && !tokenCriteriaMet
-                        readonly property alias channelPermissionsModel: permissionsRepeater2.model
+                        readonly property var channelPermissionsModel: permissionsRepeater2.model
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: grid2.implicitHeight + grid2.anchors.margins*2
