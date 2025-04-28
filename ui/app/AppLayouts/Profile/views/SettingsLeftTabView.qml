@@ -41,7 +41,7 @@ Item {
         rightMargin: Theme.padding
         bottomMargin: Theme.bigPadding
 
-        onClicked: {
+        onClicked: function(subsection) {
             if (subsection === Constants.settingsSubsection.backUpSeed) {
                 Global.openBackUpSeedPopup()
                 return
@@ -67,6 +67,6 @@ Item {
         headerSettings.title: qsTr("Sign out")
         confirmationText: qsTr("Make sure you have your account password and recovery phrase stored. Without them you can lock yourself out of your account and lose funds.")
         confirmButtonLabel: qsTr("Sign out & Quit")
-        onConfirmButtonClicked: Qt.quit()
+        onConfirmButtonClicked: Qt.exit(0)
     }
 }
