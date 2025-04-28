@@ -356,7 +356,7 @@ ColumnLayout {
                     onClicked: {
                         close()
                         d.save()
-                        Qt.quit()
+                        Qt.exit(0)
                     }
                 }
             ]

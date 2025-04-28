@@ -165,7 +165,7 @@ StatusWindow {
     Action {
         shortcut: StandardKey.Quit
         onTriggered: {
-            Qt.quit()
+            Qt.exit(0)
         }
     }
 
@@ -299,7 +299,6 @@ StatusWindow {
     StatusTrayIcon {
         id: systemTray
         objectName: "systemTray"
-        isProduction: production
         showRedDot: typeof mainModule !== "undefined" ? mainModule.notificationAvailable : false
         onActivateApp: {
             applicationWindow.makeStatusAppActive()

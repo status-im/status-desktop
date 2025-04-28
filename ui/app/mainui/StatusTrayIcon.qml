@@ -7,13 +7,11 @@ import utils 1.0
 SystemTrayIcon {
     id: root
 
-    property bool isProduction: true
     property bool showRedDot: false
 
     signal activateApp()
 
     visible: true
-
 
     icon.source: {
         if (Qt.platform.os === Constants.windows) {
@@ -42,7 +40,7 @@ SystemTrayIcon {
 
         MenuItem {
             text: qsTr("Quit")
-            onTriggered: Qt.quit()
+            onTriggered: Qt.exit(0)
         }
     }
 
