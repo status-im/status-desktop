@@ -354,7 +354,7 @@ class ChatMessagesView(QObject):
     @property
     @allure.step('Get group welcome message')
     def group_welcome_message(self) -> str:
-        for delegate in walk_children(self._group_chat_message_item.object):
+        for delegate in walk_children(self._group_chat_message_item.wait_until_appears().object):
             if getattr(delegate, 'id', '') == 'msgDelegate':
                 for item in walk_children(delegate):
                     if getattr(item, 'id', '') == 'descText':

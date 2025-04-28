@@ -62,7 +62,7 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Start minting'):
-        start_minting = edit_owner_token_view.click_mint()
+        start_minting = edit_owner_token_view.mint()
 
     with step('Verify fee text and sign transaction'):
         assert start_minting.get_fee_title == 'Mint ' + community.name + MintOwnerTokensElements.SIGN_TRANSACTION_MINT_TITLE.value + network_name
