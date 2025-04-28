@@ -1307,7 +1307,7 @@ Rectangle {
                         padding: 0
                         contentWidth: availableWidth
 
-                        TextArea {
+                        StatusQ.StatusTextArea {
                             id: messageInputField
 
                             objectName: "messageInputField"
@@ -1319,17 +1319,13 @@ Rectangle {
                             width: inputScrollView.availableWidth
 
                             textFormat: Text.RichText
-                            font.pixelSize: 15
-                            font.family: Theme.baseFont.name
-                            wrapMode: TextArea.Wrap
                             placeholderText: control.chatInputPlaceholder
-                            placeholderTextColor: Theme.palette.secondaryText
-                            selectByMouse: true
                             color: isEdit ? Theme.palette.directColor1 : Theme.palette.textColor
                             topPadding: 9
                             bottomPadding: 9
                             leftPadding: 0
-                            padding: 0
+                            rightPadding: 0
+                            background: null
                             // This is needed to make sure the text area is disabled when the input is disabled
                             Binding on enabled {
                                 value: control.enabled
@@ -1354,8 +1350,6 @@ Rectangle {
                             }
                             Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
                             Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
-                            selectionColor: Theme.palette.primaryColor2
-                            persistentSelection: true
                             property var keyEvent
 
                             Component.onDestruction: {
@@ -1430,10 +1424,6 @@ Rectangle {
                                     clear()
                                     control.hideExtendedArea()
                                 }
-                            }
-
-                            cursorDelegate: StatusCursorDelegate {
-                                cursorVisible: messageInputField.cursorVisible
                             }
 
                             StatusSyntaxHighlighter {
