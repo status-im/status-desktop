@@ -317,8 +317,13 @@ class NetworkWalletSettings(WalletSettingsView):
 
     @allure.step('Switch testnet mode toggle')
     def switch_testnet_mode_toggle(self) -> TestnetModePopup:
-        self.testnet_mode_toggle.click()
-        return TestnetModePopup().wait_until_appears()
+        for _ in range(2):
+            self.testnet_mode_toggle.click()
+            try:
+                return TestnetModePopup().wait_until_appears()
+            except Exception:
+                pass  # Retry one more time
+        raise LookupError(f'Could not open testnet mode popup')
 
     @allure.step('Get testnet mode toggle status')
     def is_testnet_mode_toggle_checked(self) -> bool:

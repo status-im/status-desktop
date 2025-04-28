@@ -136,12 +136,16 @@ class TokensOwnerTokenSettingsView(QObject):
             master_token_text_labels.append(item)
         return sorted(master_token_text_labels, key=lambda item: item.y)
 
-    @allure.step('Click next button')
+    @allure.step('Click next button and open Edit owner token view')
     def click_next(self):
-        if not self._next_button.is_visible:
-            self._scroll.vertical_scroll_down(self._next_button)
-        self._next_button.click()
-        return EditOwnerTokenView().wait_until_appears()
+        for _ in range(2):
+            try:
+                self._scroll.vertical_scroll_down(self._next_button)
+                self._next_button.click()
+                return EditOwnerTokenView().wait_until_appears()
+            except Exception:
+                    pass
+        raise RuntimeError("Can't open Edit owner token view")
 
 
 class EditOwnerTokenView(QObject):
@@ -273,11 +277,18 @@ class EditOwnerTokenView(QObject):
         return self
 
     @allure.step('Click mint button')
-    def click_mint(self):
-        if not self._mint_button.is_visible:
-            self._scroll.vertical_scroll_down(self._mint_button)
-        self._mint_button.click()
-        return SignTransactionPopup().wait_until_appears()
+    def mint(self):
+        for _ in range(2):
+            try:
+                self._scroll.vertical_scroll_down(self._mint_button)
+                self._mint_button.click()
+                return SignTransactionPopup().wait_until_appears()
+            except Exception:
+                pass  # Retry one more time
+        raise RuntimeError(f'Could not open Sign transaction popup')
+
+
+
 
 
 class MintedTokensView(QObject):
