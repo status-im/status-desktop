@@ -6,7 +6,6 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QProcess>
-#include <QQuickItem>
 #include <QSaveFile>
 
 SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
@@ -39,7 +38,7 @@ void SystemUtilsInternal::downloadImageByUrl(
     if (targetDir.isEmpty())
         targetDir = QDir::homePath();
 
-    QObject::connect(reply, &QNetworkReply::finished, [reply, targetDir] {
+    QObject::connect(reply, &QNetworkReply::finished, this, [reply, targetDir] {
         if(reply->error() != QNetworkReply::NoError) {
             qWarning() << "SystemUtilsInternal::downloadImageByUrl: Downloading image"
                        << reply->request().url() << "failed!";
