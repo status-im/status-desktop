@@ -7,8 +7,12 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1
 
-Button {
+AbstractButton {
     id: root
+
+    // NB: compat with Button
+    property bool flat
+    property bool highlighted
 
     enum Size {
         XSmall,
