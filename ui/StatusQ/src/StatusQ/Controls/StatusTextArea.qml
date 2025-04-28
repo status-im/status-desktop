@@ -67,7 +67,7 @@ TextArea {
 
     font {
         family: Theme.baseFont.name
-        pixelSize: 15
+        pixelSize: Theme.primaryTextFontSize
     }
 
     selectByMouse: true
