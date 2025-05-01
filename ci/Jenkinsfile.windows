@@ -92,11 +92,7 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
-    stage('Set Up Software Trust Manager') {
-      steps {
-        SoftwareTrustManagerSetup()
-      }
-    }
+
     stage('Deps') {
       steps {
         sh 'make update'

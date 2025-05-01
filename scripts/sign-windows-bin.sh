@@ -14,10 +14,8 @@ function must_get_env() {
     fi
 }
 
-# The signing client certificate, keypair alias, password, and timestamp server is required.
-must_get_env WINDOWS_DIGICERT_KEYPAIR_ALIAS
-must_get_env WINDOWS_DIGICERT_CLIENT_PASSWORD
-must_get_env WINDOWS_DIGICERT_CLIENT_CERT
+# The signing certificate fingerprint and timestamp server is required.
+must_get_env WINDOWS_DIGICERT_CERT_FINGERPRINT
 must_get_env WINDOWS_CODESIGN_TIMESTAMP_URL
 
 # Signing Tool usually comes with the Windows Kits.
@@ -41,10 +39,8 @@ for FILE in ${FOUND_FILES}; do
 done
 
 # Sign all the non-signed binaries. Add -debug if need be.
-"${SIGNTOOL}" sign -csp "DigiCert Signing Manager KSP" -v -debug -fd SHA256 \
-    -kc "${WINDOWS_DIGICERT_KEYPAIR_ALIAS}" \
-    -p "${WINDOWS_DIGICERT_CLIENT_PASSWORD}" \
-    -f "${WINDOWS_DIGICERT_CLIENT_CERT}" \
+"${SIGNTOOL}" sign -debug -td SHA256 -fd SHA256 \
+    -sha1 "${WINDOWS_DIGICERT_CERT_FINGERPRINT}" \
     -tr "${WINDOWS_CODESIGN_TIMESTAMP_URL}" \
     "${FILES_TO_SIGN[@]}"
 
