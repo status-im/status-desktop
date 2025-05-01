@@ -35,6 +35,8 @@ TabButton {
     font.weight: Font.Medium
     font.pixelSize: Theme.primaryTextFontSize
 
+    hoverEnabled: enabled
+
     opacity: enabled ? 1 : Theme.disabledOpacity
 
     spacing: Theme.smallPadding
