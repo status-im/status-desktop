@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.18'
+library 'status-jenkins-lib@digicert_keylocker'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -11,7 +11,7 @@ pipeline {
     booleanParam(
       name: 'RELEASE',
       description: 'Decides whether release credentials are used.',
-      defaultValue: params.RELEASE ?: false
+      defaultValue: false
     )
     booleanParam(
       name: 'INCLUDE_DEBUG_SYMBOLS',
@@ -83,12 +83,18 @@ pipeline {
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+    RELEASE = false
   }
 
   stages {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+      }
+    }
+    stage('Set Up Software Trust Manager') {
+      steps {
+        SoftwareTrustManagerSetup()
       }
     }
     stage('Deps') {

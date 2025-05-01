@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-library 'status-jenkins-lib@v1.9.18'
+library 'status-jenkins-lib@digicert_keylocker'
 
 /* Object to store public URLs for description. */
 urls = [:]
@@ -27,7 +27,7 @@ pipeline {
     booleanParam(
       name: 'PUBLISH',
       description: 'Trigger publishing of build results to GitHub.',
-      defaultValue: getPublishDefault(params.PUBLISH),
+      defaultValue: false,
     )
   }
 
@@ -89,30 +89,30 @@ pipeline {
         } } }
       }
     }
-    stage('Publish') {
-      when { expression { params.PUBLISH } }
-      steps { script {
-        github.publishReleaseFiles(repo: 'status-desktop');
-      } }
-    }
+    // stage('Publish') {
+    //   when { expression { params.PUBLISH } }
+    //   steps { script {
+    //     github.publishReleaseFiles(repo: 'status-desktop');
+    //   } }
+    // }
   }
   post {
-    always { script {
-      dir('pkg') {
-        /* Generate sha256 checksums for all artifacts. */
-        sha = "./${utils.pkgFilename(ext: 'sha256')}"
-        sh "sha256sum * | tee ./${sha}"
-        urls['SHA'] = s5cmd.upload(sha)
-        jenkins.setBuildDesc(urls)
-      }
-      archiveArtifacts('pkg/*')
-    } }
-    failure { script {
-      discord.send(
-        header: 'CI Desktop build Failure!',
-        cred: 'discord-status-desktop-webhook',
-      )
-    } }
+    // always { script {
+    //   dir('pkg') {
+    //     /* Generate sha256 checksums for all artifacts. */
+    //     sha = "./${utils.pkgFilename(ext: 'sha256')}"
+    //     sh "sha256sum * | tee ./${sha}"
+    //     urls['SHA'] = s5cmd.upload(sha)
+    //     jenkins.setBuildDesc(urls)
+    //   }
+    //   archiveArtifacts('pkg/*')
+    // } }
+    // failure { script {
+    //   discord.send(
+    //     header: 'CI Desktop build Failure!',
+    //     cred: 'discord-status-desktop-webhook',
+    //   )
+    // } }
     cleanup { cleanWs() }
   }
 }
