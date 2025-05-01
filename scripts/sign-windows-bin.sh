@@ -16,10 +16,6 @@ function must_get_env() {
 
 # The timestamp server is always required.
 must_get_env WINDOWS_CODESIGN_TIMESTAMP_URL
-must_get_env SM_API_KEY
-must_get_env SM_CLIENT_CERT_PASSWORD
-must_get_env SM_CLIENT_CERT_FILE
-must_get_env SM_HOST
 
 # Signing Tool usually comes with the Windows Kits.
 WINDOWS_KITS='/c/Program Files (x86)/Windows Kits'
