@@ -29,6 +29,11 @@ Item {
             tooltip.text: "With icon"
         }
         StatusNavBarTabButton {
+            icon.name: "help"
+            tooltip.text: "Disabled with icon"
+            enabled: false
+        }
+        StatusNavBarTabButton {
             icon.source: ModelsData.icons.socks
             tooltip.text: "With image"
         }

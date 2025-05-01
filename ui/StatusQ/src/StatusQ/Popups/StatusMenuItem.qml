@@ -13,7 +13,9 @@ MenuItem {
     objectName: action ? action.objectName : "StatusMenuItemDelegate"
 
     spacing: 4
-    horizontalPadding: 8
+    horizontalPadding: Theme.halfPadding
+
+    hoverEnabled: enabled
 
     property bool visibleOnDisabled: d.isStatusAction ? action.visibleOnDisabled : false
 
@@ -94,7 +96,7 @@ MenuItem {
         }
 
         readonly property StatusFontSettings defaultFontSettings: StatusFontSettings {
-            pixelSize: 13
+            pixelSize: Theme.additionalTextSize
             bold: false
             italic: false
         }
@@ -178,10 +180,8 @@ MenuItem {
         }
     }
 
-    StatusMouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.NoButton
-        hoverEnabled: root.enabled
+    HoverHandler {
+        cursorShape: hovered ? Qt.PointingHandCursor : undefined
+        enabled: root.enabled
     }
 }

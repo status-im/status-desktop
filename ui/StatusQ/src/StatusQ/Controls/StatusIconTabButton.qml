@@ -20,6 +20,8 @@ TabButton {
     icon.width: 24
     icon.color: Theme.palette.baseColor1
 
+    hoverEnabled: enabled
+
     contentItem: Item {
         anchors.fill: parent
         StatusSmartIdenticon {

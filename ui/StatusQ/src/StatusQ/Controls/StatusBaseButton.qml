@@ -34,6 +34,8 @@ Button {
         color: d.textColor
     }
 
+    hoverEnabled: enabled
+
     property alias tooltip: tooltip
 
     property bool loading
