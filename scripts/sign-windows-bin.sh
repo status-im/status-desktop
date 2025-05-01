@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -eof pipefail
 
+echo "====== DEBUG INFO ======"
+echo "RELEASE parameter raw value: [${RELEASE}]"
+echo "RELEASE parameter type: $(bash -c 'echo ${RELEASE@A}' 2>/dev/null || echo "Cannot determine type")"
+echo "Evaluating conditional: if [[ \"${RELEASE}\" == \"true\" ]]"
+if [[ "${RELEASE}" == "true" ]]; then
+    echo "Condition evaluated to TRUE"
+else
+    echo "Condition evaluated to FALSE"
+fi
+echo "========================"
+
 if [[ $# -ne 1 ]]; then
     echo "No path to search for EXE and DLL files provided!" >&2
     exit 1
