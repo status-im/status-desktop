@@ -36,3 +36,4 @@ TokenItem 1.0 TokenItem.qml
 TokenPanel 1.0 TokenPanel.qml
 singleton PermissionTypes 1.0 PermissionTypes.qml
 singleton TokenCategories 1.0 TokenCategories.qml
+CommunityInfoPanel 1.0 CommunityInfoPanel.qml
