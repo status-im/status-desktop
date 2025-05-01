@@ -17,6 +17,10 @@ function must_get_env() {
 # The signing certificate fingerprint and timestamp server is required.
 must_get_env WINDOWS_DIGICERT_CERT_FINGERPRINT
 must_get_env WINDOWS_CODESIGN_TIMESTAMP_URL
+must_get_env SM_API_KEY
+must_get_env SM_CLIENT_CERT_PASSWORD
+must_get_env SM_CLIENT_CERT_FILE
+must_get_env SM_HOST
 
 # Signing Tool usually comes with the Windows Kits.
 WINDOWS_KITS='/c/Program Files (x86)/Windows Kits'
@@ -39,7 +43,7 @@ for FILE in ${FOUND_FILES}; do
 done
 
 # Sign all the non-signed binaries. Add -debug if need be.
-"${SIGNTOOL}" sign -debug -td SHA256 -fd SHA256 \
+"${SIGNTOOL}" sign -v -debug -td SHA256 -fd SHA256 \
     -sha1 "${WINDOWS_DIGICERT_CERT_FINGERPRINT}" \
     -tr "${WINDOWS_CODESIGN_TIMESTAMP_URL}" \
     "${FILES_TO_SIGN[@]}"
