@@ -96,6 +96,8 @@ settingsContentBaseScrollView_StatusBaseText = {"container": settingsContentBase
 mainWindow_StatusToolBar = {"container": statusDesktop_mainWindow, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}
 main_toolBar_back_button = {"container": mainWindow_StatusToolBar, "objectName": "toolBarBackButton", "type": "StatusFlatButton", "visible": True}
 settingsContentBaseScrollView_WalletNetworkDelegate_template = {"container": settingsContentBase_ScrollView, "objectName": "walletNetworkDelegate_Mainnet_1", "type": "WalletNetworkDelegate", "visible": True}
+networkItemEditTemplate = { "container": settingsContentBase_ScrollView, "objectName": RegularExpression("editNetwork_*"), "type": "StatusFlatButton", "visible": True}
+
 networkSettingsNetworks_Mainnet = {"container": settingsContentBase_ScrollView, "objectName": "walletNetworkDelegate_Mainnet_1", "type": "WalletNetworkDelegate", "visible": True}
 networkSettingsNetworks_Mainnet_Goerli = {"container": settingsContentBase_ScrollView, "objectName": "walletNetworkDelegate_Mainnet_5", "type": "WalletNetworkDelegate", "visible": True}
 networkSettingsNetworks_Optimism = {"container": settingsContentBase_ScrollView, "objectName": "walletNetworkDelegate_Optimism_10", "type": "WalletNetworkDelegate", "visible": True}

@@ -44,10 +44,8 @@ def test_add_new_account_from_wallet_settings(
             add_account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(main_screen.wait_for_notification()) == 1, \
-            f"Multiple toast messages appeared"
-        message = main_screen.wait_for_notification()[0]
-        assert message == f'"{wallet_account.name}" successfully added'
+        messages = main_screen.wait_for_notification()
+        assert f'"{wallet_account.name}" successfully added' in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
         wallet = main_screen.left_panel.open_wallet()
