@@ -70,8 +70,8 @@ Menu {
 
     dim: false
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
-    topPadding: Theme.halfPadding
-    bottomPadding: Theme.halfPadding
+    verticalPadding: Theme.halfPadding
+    horizontalPadding: 0
     margins: Theme.padding
 
     onOpened: {
