@@ -13,8 +13,8 @@ def close_exists(element):
     return _wrapper
 
 
-def handle_settings_opening(view_class, menu_item):
-    def open_settings_decorator(func):
+def retry_settings(view_class, menu_item):
+    def open_popup_decorator(func):
         @wraps(func)
         def wrapper(self, click_attempts=2):
             self._open_settings(menu_item)
@@ -28,4 +28,4 @@ def handle_settings_opening(view_class, menu_item):
 
         return wrapper
 
-    return open_settings_decorator
+    return open_popup_decorator

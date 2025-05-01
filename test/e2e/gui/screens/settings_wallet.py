@@ -31,60 +31,58 @@ class WalletSettingsView(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_WalletView)
-        self._scroll = Scroll(settings_names.settingsContentBase_ScrollView)
-        self._wallet_settings_add_new_account_button = Button(settings_names.settings_Wallet_MainView_AddNewAccountButton)
-        self._wallet_network_button = Button(settings_names.settings_Wallet_MainView_Networks)
-        self._wallet_manage_tokens_button = Button(settings_names.settings_Wallet_MainView_Manage_Tokens)
-        self._account_order_button = Button(settings_names.settingsContentBaseScrollView_accountOrderItem_StatusListItem)
-        self._saved_addresses_button = Button(settings_names.settingsContentBaseScrollView_savedAddressesItem_StatusListItem)
-        self._status_account_in_keypair = QObject(settings_names.settingsWalletAccountDelegate_Status_account)
-        self._wallet_account_from_keypair = QObject(settings_names.settingsWalletAccountDelegate)
-        self._wallet_settings_keypair_item = QObject(settings_names.settingsWalletKeyPairDelegate)
-        self._wallet_settings_total_balance_item = QObject(settings_names.settingsWalletAccountTotalBalance)
-        self._wallet_settings_total_balance_toggle = CheckBox(settings_names.settingsWalletAccountTotalBalanceToggle)
-        self._rename_keypair_menu_item = QObject(settings_names.rename_keypair_StatusMenuItem)
-
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._wallet_settings_add_new_account_button.wait_until_appears(timeout_msec)
-        return self
+        self.scroll = Scroll(settings_names.settingsContentBase_ScrollView)
+        self.wallet_settings_add_new_account_button = Button(
+            settings_names.settings_Wallet_MainView_AddNewAccountButton)
+        self.wallet_network_button = Button(settings_names.settings_Wallet_MainView_Networks)
+        self.wallet_manage_tokens_button = Button(settings_names.settings_Wallet_MainView_Manage_Tokens)
+        self.account_order_button = Button(
+            settings_names.settingsContentBaseScrollView_accountOrderItem_StatusListItem)
+        self.saved_addresses_button = Button(
+            settings_names.settingsContentBaseScrollView_savedAddressesItem_StatusListItem)
+        self.status_account_in_keypair = QObject(settings_names.settingsWalletAccountDelegate_Status_account)
+        self.wallet_account_from_keypair = QObject(settings_names.settingsWalletAccountDelegate)
+        self.wallet_settings_keypair_item = QObject(settings_names.settingsWalletKeyPairDelegate)
+        self.wallet_settings_total_balance_item = QObject(settings_names.settingsWalletAccountTotalBalance)
+        self.wallet_settings_total_balance_toggle = CheckBox(settings_names.settingsWalletAccountTotalBalanceToggle)
+        self.rename_keypair_menu_item = QObject(settings_names.rename_keypair_StatusMenuItem)
 
     @allure.step('Open add account pop up in wallet settings')
     def open_add_account_pop_up(self, attempts: int = 2) -> 'AccountPopup':
-        self._wallet_settings_add_new_account_button.click()
-        try:
-            return AccountPopup().verify_add_account_popup_present()
-        except Exception as ex:
-            if attempts:
-                return self.open_add_account_pop_up(attempts - 1)
-            else:
-                raise ex
+        for _ in range(attempts):
+            self.wallet_settings_add_new_account_button.click()
+            time.sleep(0.2)
+            try:
+                return AccountPopup().verify_add_account_popup_present()
+            except Exception:
+                pass # retry one more time
+        raise LookupError(f"Failed to open add account popup in settings")
 
     @allure.step('Open saved addresses in wallet settings')
     def open_saved_addresses(self, attempts: int = 2) -> 'SavedAddressesWalletSettings':
-        self._saved_addresses_button.click()
-        try:
-            return SavedAddressesWalletSettings()
-        except Exception as ex:
-            if attempts:
-                return self.open_saved_addresses(attempts - 1)
-            else:
-                raise ex
+        for _ in range(attempts):
+            self.saved_addresses_button.click()
+            time.sleep(0.2)
+            try:
+                return SavedAddressesWalletSettings().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f"Failed to open saved addresses popup in settings")
 
     @allure.step('Open networks in wallet settings')
     def open_networks(self, attempts: int = 2) -> 'NetworkWalletSettings':
-        self._wallet_network_button.click()
-        try:
-            return NetworkWalletSettings().wait_until_appears()
-        except Exception as err:
-            if attempts:
-                return self.open_networks(attempts - 1)
-            else:
-                raise err
+        for _ in range(attempts):
+            self.wallet_network_button.click()
+            time.sleep(0.2)
+            try:
+                return NetworkWalletSettings().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f"Failed to open saved addresses popup in settings")
 
     @allure.step('Open manage tokens in wallet settings')
     def open_manage_tokens(self, attempts: int = 2) -> 'ManageTokensSettingsView':
-        self._wallet_manage_tokens_button.click()
+        self.wallet_manage_tokens_button.click()
         try:
             return ManageTokensSettingsView().wait_until_appears()
         except Exception as err:
@@ -95,7 +93,7 @@ class WalletSettingsView(QObject):
 
     @allure.step('Open account order in wallet settings')
     def open_account_order(self, attempts: int = 2):
-        self._account_order_button.click()
+        self.account_order_button.click()
         try:
             return EditAccountOrderSettings().wait_until_appears()
         except Exception as err:
@@ -107,7 +105,7 @@ class WalletSettingsView(QObject):
     @allure.step('Get keypair settings_names')
     def get_keypairs_names(self):
         keypair_names = []
-        for item in driver.findAllObjects(self._wallet_settings_keypair_item.real_name):
+        for item in driver.findAllObjects(self.wallet_settings_keypair_item.real_name):
             keypair_names.append(str(getattr(item, 'title', '')))
         if len(keypair_names) == 0:
             raise LookupError(
@@ -117,37 +115,29 @@ class WalletSettingsView(QObject):
 
     @allure.step('Open account view in wallet settings by name')
     def open_account_in_settings(self, name: str, index: int):
-        self._wallet_account_from_keypair.real_name['objectName'] = name
-        self._wallet_account_from_keypair.real_name['index'] = index
-        self._wallet_account_from_keypair.click()
+        self.wallet_account_from_keypair.real_name['objectName'] = name
+        self.wallet_account_from_keypair.real_name['index'] = index
+        self.wallet_account_from_keypair.click()
         return AccountDetailsView().wait_until_appears()
-
-    @allure.step('Check Include in total balance item is visible')
-    def is_include_in_total_balance_visible(self):
-        return self._wallet_settings_total_balance_item.is_visible
 
     @allure.step('Interact with the total balance toggle')
     def toggle_total_balance(self, value: bool):
-        self._wallet_settings_total_balance_toggle.set(value)
+        self.wallet_settings_total_balance_toggle.set(value)
 
     @allure.step('Click open menu button')
     def click_open_menu_button(self, title: str):
-        for item in driver.findAllObjects(self._wallet_settings_keypair_item.real_name):
+        for item in driver.findAllObjects(self.wallet_settings_keypair_item.real_name):
             if str(getattr(item, 'title', '')) == title:
                 for child in walk_children(item):
                     if getattr(child, 'objectName', '') == 'more-icon':
                         more_button = QObject(real_name=driver.objectMap.realName(child))
-                        self._scroll.vertical_scroll_down(more_button)
+                        self.scroll.vertical_scroll_down(more_button)
                         more_button.click()
                         break
 
-    @allure.step('Get visibility of rename keypair menu item')
-    def is_rename_keypair_menu_item_visible(self):
-        return self._rename_keypair_menu_item.is_visible
-
     @allure.step('Choose rename keypair option')
     def click_rename_keypair(self):
-        self._rename_keypair_menu_item.click()
+        self.rename_keypair_menu_item.click()
         return RenameKeypairPopup().wait_until_appears()
 
 
@@ -271,14 +261,17 @@ class NetworkWalletSettings(WalletSettingsView):
 
     def __init__(self):
         super().__init__()
-        self.testnet_text_item = QObject(settings_names.settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText)
+        self.testnet_text_item = QObject(
+            settings_names.settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText)
         self.testnet_mode_toggle = Button(settings_names.settings_Wallet_NetworksView_TestNet_Toggle)
         self.testnet_mode_title = TextLabel(settings_names.settings_Wallet_NetworksView_TestNet_Toggle_Title)
         self.back_button = Button(settings_names.main_toolBar_back_button)
         self.mainnet_network_item = QObject(settings_names.networkSettingsNetworks_Mainnet)
         self.optimism_network_item = QObject(settings_names.networkSettingsNetworks_Optimism)
         self.arbitrum_network_item = QObject(settings_names.networkSettingsNetworks_Arbitrum)
-        self.wallet_network_item_template = QObject(settings_names.settingsContentBaseScrollView_WalletNetworkDelegate_template)
+        self.wallet_network_item_template = QObject(
+            settings_names.settingsContentBaseScrollView_WalletNetworkDelegate_template)
+        self.wallet_network_edit_button_template = QObject(settings_names.networkItemEditTemplate)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self):
@@ -296,6 +289,13 @@ class NetworkWalletSettings(WalletSettingsView):
         self.wallet_network_item_template.real_name['objectName'] \
             = RegularExpression(f'walletNetworkDelegate_.*_{network_id}')
         self.wallet_network_item_template.click()
+        return EditNetworkSettings().wait_until_appears()
+
+    @allure.step('Edit network')
+    def edit_network(self, network_name):
+        self.wallet_network_edit_button_template.real_name['objectName'] \
+            = RegularExpression(f'editNetwork_{network_name}')
+        self.wallet_network_edit_button_template.click()
         return EditNetworkSettings().wait_until_appears()
 
     @allure.step('Verify Testnet toggle subtitle')
@@ -355,11 +355,6 @@ class EditNetworkSettings(WalletSettingsView):
         self._network_edit_view_back_button.click()
         return NetworkWalletSettings().wait_until_appears()
 
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._live_network_tab.wait_until_appears(timeout_msec)
-        return self
-
     @allure.step('Select Live Network tab')
     def click_live_network_tab(self):
         self._live_network_tab.click()
@@ -370,7 +365,8 @@ class EditNetworkSettings(WalletSettingsView):
 
     @allure.step('Check revert button state')
     def check_revert_button_state(self):
-        return driver.waitForObjectExists(self._network_revert_to_default, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+        return driver.waitForObjectExists(self._network_revert_to_default,
+                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
     @allure.step('Click Revert to default button and redirect to Networks screen')
     def click_revert_to_default_and_go_to_networks_main_screen(self, attempts: int = 2):
@@ -540,7 +536,8 @@ class EditAccountOrderSettings(WalletSettingsView):
 
     def __init__(self):
         super(EditAccountOrderSettings, self).__init__()
-        self._account_item = QObject(settings_names.settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem)
+        self._account_item = QObject(
+            settings_names.settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem)
         self._accounts_list = QObject(settings_names.statusDesktop_mainWindow)
         self._text_item = QObject(settings_names.settingsContentBaseScrollView_StatusBaseText)
         self._back_button = Button(settings_names.main_toolBar_back_button)

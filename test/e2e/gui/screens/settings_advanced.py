@@ -19,16 +19,16 @@ class AdvancedSettingsView(QObject):
 
     @allure.step('Switch manage community on testnet option')
     def enable_manage_communities_on_testnet_toggle(self):
-        self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
-        if not self.manage_community_on_testnet_button.object.switchChecked:
-            for _ in range(2):
+        for _ in range(2):
+            self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
+            if not self.manage_community_on_testnet_button.object.switchChecked:
                 try:
                     self.manage_community_on_testnet_button.click()
                     assert self.manage_community_on_testnet_button.object.switchChecked
                     return
                 except AssertionError:
                     pass  # Retry one more time
-            raise RuntimeError(f'Could not enable Manage communities on testnet toggle')
+        raise RuntimeError(f'Could not enable Manage communities on testnet toggle')
 
     @allure.step('Switch waku mode')
     def switch_waku_mode(self, mode):

@@ -28,7 +28,7 @@ pytestmark = marks
     pytest.param('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 'AssetsCollectibles', 'Dai Stablecoin', 'Wrapped Ether',
                  'Status Test Token', 'Ether')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/15995")
+@pytest.mark.skip(reason="move me to QML")
 def test_wallet_sort_assets(main_screen: MainWindow, address, name, dai, wrappedeth, stt, eth):
     with step('Turn on Testnet mode'):
         networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
