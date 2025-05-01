@@ -13,57 +13,60 @@ import Models 1.0
 SplitView {
     Logs { id: logs }
 
-    SplitView {
-        orientation: Qt.Vertical
+    Component.onCompleted: contextMenu.open()
+
+    Pane {
         SplitView.fillWidth: true
+        SplitView.fillHeight: true
 
-        Item {
-            SplitView.fillWidth: true
-            SplitView.fillHeight: true
+        Button {
+            anchors.centerIn: parent
+            text: "Open menu"
+            onClicked: contextMenu.open()
+        }
 
-            ProfileContextMenu {
-                anchors.centerIn: parent
-                visible: true
-                closePolicy: Popup.NoAutoClose
-                userIcon: useIconCheckBox.checked ? ModelsData.icons.cryptPunks : ""
+        ProfileContextMenu {
+            id: contextMenu
+            anchors.centerIn: parent
+            closePolicy: Popup.NoAutoClose
+            userIcon: useIconCheckBox.checked ? ModelsData.icons.cryptPunks : ""
 
-                compressedPubKey: "zQ3shQBu4PRDX17veeYYhSczbTjgi44iTXxcMNvQLeyQsBDF4"
-                displayName: displayNameTextField.text
-                hideDisabledItems: hideDisabledCheckBox.checked
-                profileType: profileTypeSelector.currentValue
-                trustStatus: trustStatusSelector.currentValue
-                contactType: contactTypeSelector.currentValue
-                ensVerified: ensVerifiedCheckBox.checked
-                onlineStatus: onlineStatusSelector.currentValue
-                hasLocalNickname: hasLocalNicknameCheckBox.checked
-                chatType: chatTypeSelector.currentValue
-                isAdmin: isAdminCheckBox.checked
+            compressedPubKey: "zQ3shQBu4PRDX17veeYYhSczbTjgi44iTXxcMNvQLeyQsBDF4"
+            displayName: displayNameTextField.text
+            hideDisabledItems: hideDisabledCheckBox.checked
+            profileType: profileTypeSelector.currentValue
+            trustStatus: trustStatusSelector.currentValue
+            contactType: contactTypeSelector.currentValue
+            ensVerified: ensVerifiedCheckBox.checked
+            onlineStatus: onlineStatusSelector.currentValue
+            hasLocalNickname: hasLocalNicknameCheckBox.checked
+            chatType: chatTypeSelector.currentValue
+            isAdmin: isAdminCheckBox.checked
 
-                colorHash: [
-                    { segmentLength: 3, colorId: 11 },
-                    { segmentLength: 5, colorId: 9  },
-                    { segmentLength: 1, colorId: 26 },
-                    { segmentLength: 2, colorId: 19 },
-                    { segmentLength: 5, colorId: 17 }
-                ]
+            colorHash: [
+                { segmentLength: 3, colorId: 11 },
+                { segmentLength: 5, colorId: 9  },
+                { segmentLength: 1, colorId: 26 },
+                { segmentLength: 2, colorId: 19 },
+                { segmentLength: 5, colorId: 17 }
+            ]
 
-                colorId: colorIdSpinBox.value
+            colorId: colorIdSpinBox.value
 
-                onOpenProfileClicked: logs.logEvent("Open profile clicked")
-                onCreateOneToOneChat: logs.logEvent("Create one-to-one chat clicked")
-                onReviewContactRequest: logs.logEvent("Review contact request")
-                onSendContactRequest: logs.logEvent("Send contact request")
-                onEditNickname: logs.logEvent("Edit nickname")
-                onRemoveNickname: logs.logEvent("Remove nickname")
-                onUnblockContact: logs.logEvent("Unblock contact")
-                onMarkAsUntrusted: logs.logEvent("Mark as untrusted")
-                onRemoveTrustStatus: logs.logEvent("Remove trust status")
-                onRemoveContact: logs.logEvent("Remove contact")
-                onBlockContact: logs.logEvent("Block contact")
-                onRemoveFromGroup: logs.logEvent("Remove from group")
+            onOpenProfileClicked: logs.logEvent("Open profile clicked")
+            onCreateOneToOneChat: logs.logEvent("Create one-to-one chat clicked")
+            onReviewContactRequest: logs.logEvent("Review contact request")
+            onSendContactRequest: logs.logEvent("Send contact request")
+            onEditNickname: logs.logEvent("Edit nickname")
+            onRemoveNickname: logs.logEvent("Remove nickname")
+            onUnblockContact: logs.logEvent("Unblock contact")
+            onMarkAsUntrusted: logs.logEvent("Mark as untrusted")
+            onRemoveTrustStatus: logs.logEvent("Remove trust status")
+            onRemoveContact: logs.logEvent("Remove contact")
+            onBlockContact: logs.logEvent("Block contact")
+            onRemoveFromGroup: logs.logEvent("Remove from group")
 
-                onClosed: open()
-            }
+            onClosed: open()
         }
     }
 
