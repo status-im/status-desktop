@@ -5,6 +5,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.helpers 1.0
 
@@ -44,7 +45,12 @@ StatusScrollView {
                         Only the hodler of the Owner token can airdrop TokenMaster tokens. TokenMaster tokens are soulbound (meaning they can’t be transferred), and you (the hodler of the Owner token) can remotely destruct a TokenMaster token at any time, to revoke TokenMaster permissions from any individual.")
         }
 
-        InfoPanel {
+        CommunityInfoPanel {
+            Layout.fillWidth:  true
+
+            communityLogo: root.communityLogo
+            communityColor: root.communityColor
+            communityName: root.communityName
             isOwner: true
             checkersModel: [
                 qsTr("Only 1 will ever exist"),
@@ -54,8 +60,12 @@ StatusScrollView {
             ]
         }
 
-        InfoPanel {
-            isOwner: false
+        CommunityInfoPanel {
+            Layout.fillWidth:  true
+
+            communityLogo: root.communityLogo
+            communityColor: root.communityColor
+            communityName: root.communityName
             showTag: true
             checkersModel: [
                 qsTr("Unlimited supply"),
@@ -64,115 +74,6 @@ StatusScrollView {
                 qsTr("Non-transferrable"),
                 qsTr("Remotely destructible by the Owner token hodler")
             ]
-        }
-
-        component InfoPanel : Rectangle {
-            id: panel
-
-            property bool isOwner
-            property bool showTag
-            property alias checkersModel: checkersItems.model
-            readonly property int margins: Theme.bigPadding
-
-            Layout.fillWidth:  true
-            Layout.preferredHeight: panelRow.implicitHeight
-
-            color: "transparent"
-            radius: 8
-            border.color: Theme.palette.baseColor2
-
-            RowLayout {
-                id: panelRow
-
-                width: parent.width
-                spacing: panel.margins
-
-                PrivilegedTokenArtworkPanel {
-                    Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: panel.margins
-                    Layout.leftMargin: Layout.topMargin
-
-                    isOwner: panel.isOwner
-                    artwork: root.communityLogo
-                    color: root.communityColor
-                    showTag: panel.showTag
-                }
-
-                ColumnLayout {
-                    id: col
-
-                    Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: panel.margins
-                    Layout.bottomMargin: panel.margins
-                    Layout.fillWidth: true
-
-                    Item {
-                        id: panelTextHeader
-
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: headerRow.implicitHeight
-                        Layout.rightMargin: panel.margins
-
-                        RowLayout {
-                            id: headerRow
-
-                            spacing: Theme.halfPadding
-
-                            StatusBaseText {
-                                Layout.alignment: Qt.AlignBottom
-                                Layout.maximumWidth: panelTextHeader.width - symbol.width
-
-                                text: panel.isOwner ? qsTr("%1 Owner token").arg(root.communityName) :
-                                                      qsTr("%1 TokenMaster token").arg(root.communityName)
-                                font.bold: true
-                                font.pixelSize: 17
-                                elide: Text.ElideMiddle
-                            }
-
-                            StatusBaseText {
-                                id: symbol
-
-                                Layout.alignment: Qt.AlignBottom
-
-                                text: PermissionsHelpers.communityNameToSymbol(panel.isOwner, root.communityName)
-                                font.pixelSize: Theme.primaryTextFontSize
-                                color: Theme.palette.baseColor1
-                            }
-                        }
-                    }
-
-                    ColumnLayout {
-                        id: checkersColumn
-
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignTop
-                        Layout.topMargin: 6
-
-                        Repeater {
-                            id: checkersItems
-
-                            RowLayout {
-                                StatusIcon {
-                                    icon: "tiny/checkmark"
-                                    color: Theme.palette.successColor1
-                                    width: 20
-                                    height: width
-                                }
-
-                                StatusBaseText {
-                                    Layout.fillWidth: true
-                                    Layout.rightMargin: panel.margins
-
-                                    text: modelData
-                                    lineHeight: 1.2
-                                    font.pixelSize: Theme.additionalTextSize
-                                    wrapMode: Text.WordWrap
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         StatusButton {
