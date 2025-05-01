@@ -54,7 +54,7 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
 
     with step('Click 3 dots menu on Status keypair and check that there is no option to rename keypair'):
         settings.click_open_menu_button(profile_display_name)
-        assert not settings.is_rename_keypair_menu_item_visible()
+        assert not settings.rename_keypair_menu_item.is_visible
         settings.click()  # to close the menu
 
     with step('Click 3 dots menu on private key account, open rename keypair popup and verify it was renamed'):

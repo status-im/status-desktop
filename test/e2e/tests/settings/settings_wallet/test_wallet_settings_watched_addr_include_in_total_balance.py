@@ -67,7 +67,7 @@ def test_settings_include_in_total_balance(main_screen: MainWindow, name, watche
         assert acc_view.is_account_storage_visible() is False, \
             f"Watched address should not have storage value"
 
-        assert acc_view.is_include_in_total_balance_visible(), \
+        assert acc_view.wallet_settings_total_balance_item.is_visible, \
             f"Include in total balance option must be present for watched addresses"
 
     with step('Enable the "Include in total balance" toggle in account view'):

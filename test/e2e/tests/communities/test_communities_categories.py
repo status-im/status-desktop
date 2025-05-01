@@ -18,7 +18,6 @@ from gui.main_window import MainWindow
 @pytest.mark.communities
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'member'])
 @pytest.mark.parametrize('user_account', [constants.user.community_member])
-@pytest.mark.skip(reason='tests with user data are not working')
 def test_member_role_cannot_add_edit_or_delete_category(main_screen, user_data, user_account):
 
     with step('Choose community user is not owner of'):

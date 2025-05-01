@@ -16,7 +16,7 @@ from gui.screens.settings_wallet import WalletSettingsView
 from gui.screens.settings_password import ChangePasswordView
 from gui.components.settings.sign_out_popup import SignOutPopup
 
-from scripts.utils.decorators import handle_settings_opening
+from scripts.utils.decorators import retry_settings
 
 
 class LeftPanel(QObject):
@@ -36,57 +36,57 @@ class LeftPanel(QObject):
         self._settings_section_template.click()
 
     @allure.step('Choose back up seed phrase in settings')
-    @handle_settings_opening(BackUpYourSeedPhrasePopUp, '18-MenuItem')
+    @retry_settings(BackUpYourSeedPhrasePopUp, '18-MenuItem')
     def open_back_up_seed_phrase(self, click_attempts: int = 2) -> 'BackUpYourSeedPhrasePopUp':
         return BackUpYourSeedPhrasePopUp().wait_until_appears()
 
     @allure.step('Open wallet settings')
-    @handle_settings_opening(WalletSettingsView, '5-MenuItem')
+    @retry_settings(WalletSettingsView, '5-MenuItem')
     def open_wallet_settings(self, click_attempts: int = 2) -> 'WalletSettingsView':
         return WalletSettingsView().wait_until_appears()
 
     @allure.step('Open messaging settings')
-    @handle_settings_opening(MessagingSettingsView, '4-MenuItem')
+    @retry_settings(MessagingSettingsView, '4-MenuItem')
     def open_messaging_settings(self, click_attempts: int = 2) -> 'MessagingSettingsView':
         return MessagingSettingsView().wait_until_appears()
 
     @allure.step('Open communities settings')
-    @handle_settings_opening(CommunitiesSettingsView, '12-MenuItem')
+    @retry_settings(CommunitiesSettingsView, '12-MenuItem')
     def open_communities_settings(self, attempts: int = 2) -> 'CommunitiesSettingsView':
         return CommunitiesSettingsView().wait_until_appears()
 
     @allure.step('Open profile settings')
-    @handle_settings_opening(ProfileSettingsView, '0-MenuItem')
+    @retry_settings(ProfileSettingsView, '0-MenuItem')
     def open_profile_settings(self, click_attempts: int = 2) -> 'ProfileSettingsView':
         return ProfileSettingsView().wait_until_appears()
 
     @allure.step('Open password settings')
-    @handle_settings_opening(ChangePasswordView, '1-MenuItem')
+    @retry_settings(ChangePasswordView, '1-MenuItem')
     def open_password_settings(self, click_attempts: int = 2) -> 'ChangePasswordView':
         return ChangePasswordView().wait_until_appears()
 
     @allure.step('Open syncing settings')
-    @handle_settings_opening(SyncingSettingsView, '9-MenuItem')
+    @retry_settings(SyncingSettingsView, '9-MenuItem')
     def open_syncing_settings(self, click_attempts: int = 2) -> 'SyncingSettingsView':
         return SyncingSettingsView().wait_until_appears()
 
     @allure.step('Choose sign out and quit in settings')
-    @handle_settings_opening(SignOutPopup, '17-MenuItem')
+    @retry_settings(SignOutPopup, '17-MenuItem')
     def open_sign_out_and_quit(self, click_attempts: int = 2) -> 'SignOutPopup':
         return SignOutPopup().wait_until_appears()
 
     @allure.step('Open keycard settings')
-    @handle_settings_opening(KeycardSettingsView, '13-MenuItem')
+    @retry_settings(KeycardSettingsView, '13-MenuItem')
     def open_keycard_settings(self, click_attempts: int = 2) -> 'KeycardSettingsView':
         return KeycardSettingsView().wait_until_appears()
 
     @allure.step('Open ENS usernames settings')
-    @handle_settings_opening(ENSSettingsView, '3-MenuItem')
+    @retry_settings(ENSSettingsView, '3-MenuItem')
     def open_ens_usernames_settings(self, click_attempts: int = 2) -> 'ENSSettingsView':
         return ENSSettingsView().wait_until_appears()
 
     @allure.step('Open advanced settings')
-    @handle_settings_opening(AdvancedSettingsView, '10-MenuItem')
+    @retry_settings(AdvancedSettingsView, '10-MenuItem')
     def open_advanced_settings(self, click_attempts: int = 2) -> 'AdvancedSettingsView':
         return AdvancedSettingsView().wait_until_appears()
 

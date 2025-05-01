@@ -16,21 +16,26 @@ from gui.main_window import MainWindow
     pytest.param(WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value),
     pytest.param(WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value)
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/16613")
+@pytest.mark.skip(reason='fix me')
 def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, network_tab: str):
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 
     with step('Check network items titles'):
-        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
-                                                                       WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER1_ETHEREUM.value
-        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
-                                                                       WalletNetworkNaming.OPTIMISM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_OPTIMISIM.value
-        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
-                                                                       WalletNetworkNaming.ARBITRUM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_ARBITRUM.value
+        assert \
+            networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                    WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER1_ETHEREUM.value
+        assert \
+            networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                    WalletNetworkNaming.OPTIMISM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_OPTIMISIM.value
+        assert \
+            networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                    WalletNetworkNaming.ARBITRUM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_ARBITRUM.value
+        assert \
+            networks.get_network_item_attribute_by_id_and_attr_name('title', WalletNetworkNaming.BASE_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_BASE.value
 
     with step('Open Ethereum Mainnet network item to edit'):
-        edit_network_form = networks.click_network_item_to_open_edit_view(
-            WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value)
+        edit_network_form = networks.edit_network(
+            WalletNetworkNaming.LAYER1_ETHEREUM.value)
 
     with step('Check the elements on the form'):
         edit_network_form.wait_until_appears().check_available_elements_on_edit_view(network_tab)
