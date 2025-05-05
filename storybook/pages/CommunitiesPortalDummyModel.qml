@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import Models 1.0
 
@@ -6,14 +6,16 @@ ListModel {
 
     readonly property var emptyModel: ListModel {}
 
-    Component.onCompleted: append([
+    Component.onCompleted: append(entries)
+
+    readonly property var entries: [
         {
             featured: false,
             id: "id1",
             loaded: true,
             icon: ModelsData.icons.status,
             banner: ModelsData.banners.status,
-            color: "blue",
+            color: "mediumblue",
             name: "Status.app",
             description: "Your portal to Web3. Secure wallet. Private messaging. Requires secret tokens to join",
             members: 130,
@@ -43,7 +45,9 @@ ListModel {
                 },
             ]),
             permissionsModel: PermissionsModel.privatePermissionsMemberNotMetModel,
-            allTokenRequirementsMet: false
+            allTokenRequirementsMet: false,
+            hasNotification: true,
+            notificationsCount: 3
         },
         {
             featured: true,
@@ -73,7 +77,9 @@ ListModel {
                 },
             ]),
             permissionsModel: PermissionsModel.twoShortPermissionsModel,
-            allTokenRequirementsMet: false
+            allTokenRequirementsMet: false,
+            hasNotification: true,
+            notificationsCount: 0
         },
         {
             featured: true,
@@ -108,7 +114,7 @@ ListModel {
             icon: ModelsData.icons.dragonereum,
             banner: ModelsData.banners.dragonereum,
             color: "black",
-            name: "Dragonereum",
+            name: "Dragonereum lorem ipsum dolor sit amet",
             description: "A community of cat lovers, meow!",
             members: 34,
             activeMembers: 20,
@@ -138,7 +144,9 @@ ListModel {
             available: true,
             tags: JSON.stringify([]),
             permissionsModel: PermissionsModel.channelsOnlyPermissionsModelNotMet,
-            allTokenRequirementsMet: false
+            allTokenRequirementsMet: false,
+            hasNotification: true,
+            notificationsCount: 33
         },
         {
             featured: false,
@@ -168,7 +176,9 @@ ListModel {
                 },
             ]),
             permissionsModel: PermissionsModel.threeShortPermissionsModel,
-            allTokenRequirementsMet: false
+            allTokenRequirementsMet: false,
+            hasNotification: false,
+            notificationsCount: 33
         },
         {
             featured: false,
@@ -219,7 +229,9 @@ ListModel {
                 },
             ]),
             permissionsModel: PermissionsModel.twoLongPermissionsModel,
-            allTokenRequirementsMet: true
+            allTokenRequirementsMet: true,
+            hasNotification: true,
+            notificationsCount: 0
         },
         {
             featured: false,
@@ -236,7 +248,9 @@ ListModel {
             available: true,
             tags: JSON.stringify([]),
             permissionsModel: emptyModel,
-            allTokenRequirementsMet: false
+            allTokenRequirementsMet: false,
+            hasNotification: true,
+            notificationsCount: 100
         }
-        ])
+    ]
 }

@@ -121,6 +121,8 @@ Loader {
             charactersLen: root.asset.charactersLen
             useAcronymForLetterIdenticon: root.asset.useAcronymForLetterIdenticon
             backgroundWithAlpha: root.asset.letterIdenticonBgWithAlpha
+            border.width: root.asset.bgBorderWidth
+            border.color: root.asset.bgBorderColor
         }
     }
 
