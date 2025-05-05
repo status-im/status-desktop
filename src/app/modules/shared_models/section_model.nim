@@ -309,7 +309,6 @@ QtObject:
     updateRoleWithValue(joined, Joined, item.joined)
     updateRoleWithValue(spectated, Spectated, item.spectated)
     updateRoleWithValue(isMember, IsMember, item.isMember)
-    updateRoleWithValue(isMember, IsMember, item.isMember)
     updateRoleWithValue(canManageUsers, CanManageUsers, item.canManageUsers)
     updateRoleWithValue(canRequestAccess, CanRequestAccess, item.canRequestAccess)
     updateRoleWithValue(access, Access, item.access)
