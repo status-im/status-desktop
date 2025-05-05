@@ -134,7 +134,7 @@ Item {
                 return
             }
 
-            rightPanelStackView.currentItem.resetView()
+            d.resetRightPanelStackView()
             rightPanelStackView.currentItem.currentTabIndex = rightPanelSelection
 
             let savedAddress = data.savedAddress?? ""

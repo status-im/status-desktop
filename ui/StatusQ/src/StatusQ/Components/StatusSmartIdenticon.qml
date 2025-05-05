@@ -18,6 +18,8 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
+        bgWidth: root.width
+        bgHeight: root.height
         bgRadius: bgWidth / 2
     }
 
@@ -100,6 +102,7 @@ Loader {
                 id: mouseArea
 
                 anchors.fill: parent
+                enabled: hoverEnabled
                 hoverEnabled: root.hoverEnabled
                 cursorShape: !loading && root.hoverEnabled ? Qt.PointingHandCursor : undefined
                 onClicked: root.clicked(mouse)
@@ -113,6 +116,7 @@ Loader {
             objectName: "statusSmartIdenticonLetter"
             width: root.asset.width
             height: root.asset.height
+            radius: asset.bgRadius || width/2
             letterIdenticonColor: root.asset.color
             name: root.name
             emoji: root.asset.emoji
@@ -121,6 +125,8 @@ Loader {
             charactersLen: root.asset.charactersLen
             useAcronymForLetterIdenticon: root.asset.useAcronymForLetterIdenticon
             backgroundWithAlpha: root.asset.letterIdenticonBgWithAlpha
+            border.width: root.asset.bgBorderWidth
+            border.color: root.asset.bgBorderColor
         }
     }
 

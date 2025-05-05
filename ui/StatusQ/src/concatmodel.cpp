@@ -148,7 +148,7 @@ QQmlListProperty<SourceModel> ConcatModel::sources()
     listProperty.removeLast = nullptr;
 
     listProperty.append = [](auto listProperty, auto element) {
-        ConcatModel* model = qobject_cast<ConcatModel*>(listProperty->object);
+        auto model = qobject_cast<ConcatModel*>(listProperty->object);
 
         if (model->m_initialized) {
             qWarning() << "Adding sources dynamically is not supported.";
@@ -226,9 +226,9 @@ void ConcatModel::setPropagateResets(bool propagateResets)
 }
 
 /*!
-    \qmlproperty list<string> StatusQ::ConcatModel::propagateResets
+    \qmlproperty bool StatusQ::ConcatModel::propagateResets
 
-    When set to true, model resets on source models result with model reset of
+    When set to true, model resets on source models result in model reset of
     the ConcatModel. Otherwise model resets of sources are handled as removals
     and insertions. Default is false.
 */
@@ -291,10 +291,11 @@ int ConcatModel::rowCount(const QModelIndex& parent) const
 
 QVariant ConcatModel::data(const QModelIndex &index, int role) const
 {
-    if (!checkIndex(index, CheckIndexOption::IndexIsValid))
+    auto row = index.row();
+
+    if (row < 0 || row >= rowCount())
         return {};
 
-    auto row = index.row();
     int rowCount = 0;
 
     for (int i = 0; i < m_sources.size(); i++) {
@@ -328,10 +329,10 @@ QVariant ConcatModel::data(const QModelIndex &index, int role) const
 
 bool ConcatModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!checkIndex(index, CheckIndexOption::IndexIsValid))
-        return false;
-
     const auto row = index.row();
+
+    if (row < 0 || row >= rowCount())
+        return false;
     
     const auto source = sourceForIndex(row);
     if (source.first == nullptr)

@@ -21,6 +21,7 @@ const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED  = true
 const DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED = true
 const DEFAULT_FLAG_SIMPLE_SEND_ENABLED = true
 const DEFAULT_FLAG_MARKET_ENABLED = true
+const DEFAULT_FLAG_SHELL_ENABLED = false
 
 # Compile time feature flags
 const DEFAULT_FLAG_DAPPS_ENABLED  = true
@@ -35,6 +36,7 @@ featureFlag("SEND_VIA_PERSONAL_CHAT_ENABLED", DEFAULT_FLAG_SEND_VIA_PERSONAL_CHA
 featureFlag("PAYMENT_REQUEST_ENABLED",        DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED)
 featureFlag("SIMPLE_SEND_ENABLED",            DEFAULT_FLAG_SIMPLE_SEND_ENABLED)
 featureFlag("MARKET_ENABLED",                 DEFAULT_FLAG_MARKET_ENABLED)
+featureFlag("SHELL_ENABLED",                  DEFAULT_FLAG_SHELL_ENABLED)
 
 featureFlag("DAPPS_ENABLED",                  DEFAULT_FLAG_DAPPS_ENABLED, true)
 featureFlag("CONNECTOR_ENABLED",              DEFAULT_FLAG_CONNECTOR_ENABLED, true)
@@ -81,6 +83,7 @@ QtObject:
     simpleSendEnabled: bool
     keycardEnabled: bool
     marketEnabled: bool
+    shellEnabled: bool
 
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
@@ -92,6 +95,7 @@ QtObject:
     self.simpleSendEnabled = SIMPLE_SEND_ENABLED
     self.keycardEnabled = KEYCARD_ENABLED
     self.marketEnabled = MARKET_ENABLED
+    self.shellEnabled = SHELL_ENABLED
 
   proc delete*(self: FeatureFlags) =
     self.QObject.delete()
@@ -147,3 +151,9 @@ QtObject:
 
   proc getMarketEnabled*(self: FeatureFlags): bool {.slot.} =
     return self.marketEnabled
+
+  QtProperty[bool] shellEnabled:
+    read = getShellEnabled
+
+  proc getShellEnabled*(self: FeatureFlags): bool {.slot.} =
+    return self.shellEnabled

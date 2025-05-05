@@ -1,0 +1,5 @@
+ShellGridCommunityItem 1.0 ShellGridCommunityItem.qml
+ShellGridChatItem 1.0 ShellGridChatItem.qml
+ShellGridDAppItem 1.0 ShellGridDAppItem.qml
+ShellGridSettingsItem 1.0 ShellGridSettingsItem.qml
+ShellGridWalletItem 1.0 ShellGridWalletItem.qml
