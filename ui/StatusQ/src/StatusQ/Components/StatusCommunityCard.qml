@@ -129,11 +129,6 @@ Rectangle {
        If not provided, default value in Light Theme is "#4360DF" and in Dark Theme is "#88B0FF".
     */
     property color communityColor: Theme.palette.primaryColor1
-    /*!
-       \qmlproperty url StatusCommunityCard::tokenLogo
-       This property holds the image of the token needed if the community is private.
-    */
-    property url tokenLogo: ""
 
     /*!
        \qmlproperty Component StatusCommunityCard::rigthHeaderComponent
@@ -147,7 +142,7 @@ Rectangle {
        This property holds an extra info bottom row component that will be displayed on bottom left of the card.
        Example: Community token permissions row.
     */
-    property alias bottomRowComponent: bottomRowLoader.sourceComponent
+    property var bottomRowComponent
     /*!
        \qmlproperty color StatusCommunityCard::descriptionFontColor
        This property holds the description font color.
@@ -393,8 +388,14 @@ Rectangle {
                 Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredHeight: 24
-                active: ((root.categories.count > 0) || !!root.bottomRowComponent)
-                sourceComponent: tagsListComponent
+                visible: active
+                active: root.categories.count > 0 || !!root.bottomRowComponent
+                sourceComponent: {
+                    if (!!root.bottomRowComponent)
+                        return root.bottomRowComponent
+                    if (root.categories.count > 0)
+                        return tagsListComponent
+                }
             }
 
             Component {
