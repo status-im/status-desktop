@@ -14,6 +14,15 @@ SplitView {
 
     Logs { id: logs }
 
+    ListModel {
+        id: categoriesModel
+        ListElement { name: "gaming"; emoji: "🎮"; selected: false }
+        ListElement { name: "art"; emoji: "🖼️️"; selected: false }
+        ListElement { name: "crypto"; emoji: "💸"; selected: true }
+        ListElement { name: "nsfw"; emoji: "🍆"; selected: false }
+        ListElement { name: "markets"; emoji: "💎"; selected: false }
+    }
+
     Item {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
@@ -33,12 +42,9 @@ SplitView {
             communityColor: infoEditor.color
             loaded: !ctrlLoading.checked
 
-            categories: ListModel {
-                ListElement { name: "gaming"; emoji: "🎮"; selected: false }
-                ListElement { name: "art"; emoji: "🖼️️"; selected: false }
-                ListElement { name: "crypto"; emoji: "💸"; selected: true }
-                ListElement { name: "nsfw"; emoji: "🍆"; selected: false }
-                ListElement { name: "markets"; emoji: "💎"; selected: false }
+            Binding on categories {
+                value: categoriesModel
+                when: ctrlCategories.checked
             }
 
             onClicked: logs.logEvent("StatusCommunityCard::onClicked", ["communityId"], arguments)
@@ -59,6 +65,12 @@ SplitView {
             Switch {
                 id: ctrlSize
                 text: "Big card"
+                checked: true
+            }
+
+            Switch {
+                id: ctrlCategories
+                text: "Categories/tags"
                 checked: true
             }
 
