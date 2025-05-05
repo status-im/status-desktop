@@ -74,7 +74,6 @@ Rectangle {
     }
 
     Loader {
-        id: itemSelector
         anchors.centerIn: parent
         active: showLoadingIndicator && !isError && isLoading
         sourceComponent: StatusLoadingIndicator {

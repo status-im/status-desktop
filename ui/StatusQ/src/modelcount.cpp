@@ -22,7 +22,7 @@ ModelCount::ModelCount(QObject* parent) : QObject(parent)
         emit this->countChanged();
 
         if (wasEmpty != (count == 0))
-            this->emptyChanged();
+            emit this->emptyChanged();
     };
 
     connect(model, &QAbstractItemModel::rowsInserted, this, update);

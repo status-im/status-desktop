@@ -32,7 +32,7 @@ class WritableProxyModel : public QAbstractProxyModel
 
 public:
     explicit WritableProxyModel(QObject* parent = nullptr);
-    ~WritableProxyModel();
+    ~WritableProxyModel() override;
 
     Q_INVOKABLE QVariantMap toVariantMap() const;
 

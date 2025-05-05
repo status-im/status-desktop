@@ -155,6 +155,7 @@ QtObject {
     property int radius: 8
 
     readonly property real disabledOpacity: 0.3
+    readonly property real pressedOpacity: 0.7
 
     function updateFontSize(fontSize:int) {
         switch (fontSize) {

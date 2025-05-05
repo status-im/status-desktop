@@ -23,7 +23,7 @@ int SnapshotModel::rowCount(const QModelIndex& parent) const
 {
     if(parent.isValid()) return 0;
 
-    return m_data.size() ? m_data.begin()->size() : 0;
+    return !m_data.isEmpty() ? m_data.begin()->size() : 0;
 }
 
 QHash<int, QByteArray> SnapshotModel::roleNames() const
@@ -48,7 +48,7 @@ void SnapshotModel::grabSnapshot(const QAbstractItemModel& model, bool recursive
 
     m_roles = model.roleNames();
 
-    auto roles = m_roles.keys();
+    const auto roles = m_roles.keys();
     auto count = model.rowCount();
 
     for(auto role : roles)
@@ -81,7 +81,7 @@ void SnapshotModel::grabSnapshot(const QAbstractItemModel& model, bool recursive
 
 void SnapshotModel::clearSnapshot()
 {
-    for (auto& data : m_data.values())
+    for (auto& data : m_data)
     {
         for (auto& item : data)
         {

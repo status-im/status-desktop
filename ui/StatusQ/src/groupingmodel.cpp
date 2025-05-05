@@ -292,7 +292,7 @@ void GroupingModel::initSubmodelRole()
 {
     auto groupingRole = m_roleNames.keys(m_groupingRoleName.toUtf8());
 
-    if (groupingRole.size())
+    if (!groupingRole.isEmpty())
         m_groupingRole = groupingRole.first();
     else
         m_groupingRole.reset();
@@ -621,7 +621,7 @@ void GroupingModel::connectSignals(QAbstractItemModel* model)
 
     connect(model, &QAbstractItemModel::dataChanged, this, [this, model] (
             const QModelIndex& topLeft, const QModelIndex& bottomRight,
-            const QVector<int>& roles) {
+            const auto& roles) {
 
         if (!topLeft.isValid() || !bottomRight.isValid())
             return;

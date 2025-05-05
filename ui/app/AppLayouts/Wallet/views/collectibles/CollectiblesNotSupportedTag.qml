@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtQml 2.15
 import QtQuick.Controls 2.15
 
@@ -34,6 +35,7 @@ InformationTag {
     tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
     tagPrimaryLabel.text: qsTr("Displaying collectibles on %1 is not currently supported by Status.")
         .arg(d.formattedUnsupportedNetworks)
+
     // NB: regular binding won't work as `tagPrimaryLabel` is an alias
     Binding {
         target: tagPrimaryLabel

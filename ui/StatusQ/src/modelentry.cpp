@@ -111,7 +111,7 @@ void ModelEntry::setSourceModel(QAbstractItemModel* sourceModel)
     connect(m_sourceModel,
             &QAbstractItemModel::dataChanged,
             this,
-            [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
+            [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const auto& roles) {
 
                 auto keysForRole = m_sourceModel->roleNames().keys(m_key.toUtf8());
 
@@ -328,7 +328,7 @@ void ModelEntry::notifyItemChanges(const QStringList& roles)
         return;
     }
 
-    for(auto role : roles)
+    for(const auto& role : roles)
     {
         auto value = m_item->value(role);
         emit m_item->valueChanged(role, value);

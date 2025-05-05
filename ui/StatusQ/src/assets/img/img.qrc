@@ -427,5 +427,16 @@
         <file>icons/transaction/finished.svg</file>
         <file>icons/transaction/pending.svg</file>
         <file>icons/market.svg</file>
+        <file>icons/shell/browser.svg</file>
+        <file>icons/shell/communities.svg</file>
+        <file>icons/shell/discover.svg</file>
+        <file>icons/shell/feed.svg</file>
+        <file>icons/shell/chat.svg</file>
+        <file>icons/shell/market.svg</file>
+        <file>icons/shell/node.svg</file>
+        <file>icons/shell/settings.svg</file>
+        <file>icons/shell/shell.svg</file>
+        <file>icons/shell/swap.svg</file>
+        <file>icons/shell/wallet.svg</file>
     </qresource>
 </RCC>

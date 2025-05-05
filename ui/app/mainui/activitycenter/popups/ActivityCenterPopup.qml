@@ -64,7 +64,7 @@ Popup {
                        event.accept()
                        root.close()
                    }
-        onWheel: (event) => event.accept()
+        onWheel: (event) => event.accepted = true
     }
 
     background: Rectangle {
