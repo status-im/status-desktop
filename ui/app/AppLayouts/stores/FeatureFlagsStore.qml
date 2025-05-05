@@ -9,4 +9,5 @@ QtObject {
     property bool simpleSendEnabled
     property bool keycardEnabled
     property bool marketEnabled
+    property bool shellEnabled
 }

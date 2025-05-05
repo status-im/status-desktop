@@ -469,6 +469,7 @@ QVariantList WritableProxyModel::getInsertedItems() const
         return {};
 
     QVariantList result;
+    const auto rNames = roleNames();
 
     for (auto iter = d->insertedRows.begin(); iter != d->insertedRows.end(); ++iter)
     {
@@ -479,7 +480,7 @@ QVariantList WritableProxyModel::getInsertedItems() const
         auto data = iter.value();
         QVariantMap rowMap;
         for (auto it = data.begin(); it != data.end(); ++it)
-            rowMap[roleNames()[it.key()]] = it.value();
+            rowMap[rNames[it.key()]] = it.value();
         result.append(rowMap);
     }
 
@@ -492,6 +493,7 @@ QVariantList WritableProxyModel::getEditedItems() const
         return {};
     
     QVariantList result;
+    const auto rNames = roleNames();
 
     for (auto iter = d->cache.begin(); iter != d->cache.end(); ++iter)
     {
@@ -502,7 +504,7 @@ QVariantList WritableProxyModel::getEditedItems() const
         auto data = itemData(index);
         QVariantMap rowMap;
         for (auto it = data.begin(); it != data.end(); ++it)
-            rowMap[roleNames()[it.key()]] = it.value();
+            rowMap[rNames[it.key()]] = it.value();
         result.append(rowMap);
     }
 

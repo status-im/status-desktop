@@ -137,6 +137,7 @@ SplitView {
                     font.weight: Font.Medium
                 }
                 TextField {
+                    Layout.preferredWidth: 200
                     readonly property string searchText: text.toLowerCase()
                     id: searchField
                 }
@@ -280,3 +281,4 @@ SplitView {
 }
 
 // category: Core
+// status: good

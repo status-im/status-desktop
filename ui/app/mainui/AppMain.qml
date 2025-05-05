@@ -16,6 +16,7 @@ import AppLayouts.Communities 1.0
 import AppLayouts.Market 1.0
 import AppLayouts.Market.stores 1.0
 import AppLayouts.Wallet.services.dapps 1.0
+import AppLayouts.Shell 1.0
 
 import utils 1.0
 import shared 1.0
@@ -58,8 +59,6 @@ import SortFilterProxyModel 0.2
 
 Item {
     id: appMain
-
-    property alias appLayout: appLayout
 
     readonly property SharedStores.RootStore sharedRootStore: SharedStores.RootStore {
         currencyStore: appMain.currencyStore
@@ -818,6 +817,15 @@ Item {
             }
         }
 
+        function openShell() {
+            shellLoader.active = true
+            shellLoader.item.focusSearch()
+        }
+
+        function closeShell() {
+            shellLoader.active = false
+        }
+
         function maybeDisplayIntroduceYourselfPopup() {
             if (!appMainLocalSettings.introduceYourselfPopupSeen && allContacsAdaptor.selfDisplayName === "")
                 introduceYourselfPopupComponent.createObject(appMain).open()
@@ -953,12 +961,22 @@ Item {
 
             appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
 
+            console.info("!!! onAppSectionBySectionTypeChanged:", sectionType, subsection, subSubsection, data.address ?? "noaddr")
+
             if (sectionType === Constants.appSection.profile) {
-                profileLoader.settingsSubsection = subsection
-                profileLoader.settingsSubSubsection = subSubsection;
+                profileLoader.settingsSubsection = subsection || Constants.settingsSubsection.profile
+                profileLoader.settingsSubSubsection = subSubsection
             } else if (sectionType === Constants.appSection.wallet) {
                 appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(subsection, subSubsection, data)
+            } else if (sectionType === Constants.appSection.swap) {
+                d.launchSwap()
+            } else if (sectionType === Constants.appSection.chat) {
+                appMain.rootStore.setActiveSectionChat(appMain.profileStore.pubkey, subsection)
+            } else if (sectionType === Constants.appSection.community && subsection !== "") {
+                appMain.communitiesStore.setActiveCommunity(subsection)
             }
+
+            d.closeShell()
         }
 
         function onSwitchToCommunity(communityId: string) {
@@ -1041,6 +1059,7 @@ Item {
     }
 
     function changeAppSectionBySectionId(sectionId) {
+        d.closeShell()
         appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
     }
 
@@ -1095,6 +1114,8 @@ Item {
         asynchronous: true
 
         function openSearchPopup() {
+            if (shellLoader.active)
+                return
             if (!active)
                 active = true
             item.openSearchPopup()
@@ -1135,11 +1156,31 @@ Item {
     }
 
     StatusMainLayout {
-        id: appLayout
-
         anchors.fill: parent
 
+        Component.onCompleted: {
+            if (appMain.featureFlagsStore.shellEnabled)
+                appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(Constants.appSection.chat) // force the chat section to finish loading
+        }
+
+        Component {
+            id: shellButtonComp
+            StatusNavBarTabButton {
+                objectName: "ShellNavBarButton"
+                anchors.horizontalCenter: parent.horizontalCenter
+                icon.name: "shell/shell"
+                tooltip.text: "%1 (%2)".arg(Utils.translatedSectionName(Constants.appSection.shell)).arg(shellShortcut.nativeText)
+
+                onClicked: {
+                    d.openShell()
+                    checked = false // section is never "active"
+                }
+            }
+        }
+
         leftPanel: StatusAppNavBar {
+            shellItem: appMain.featureFlagsStore.shellEnabled ? shellButtonComp : undefined
+
             topSectionModel: SortFilterProxyModel {
                 sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
                 filters: [
@@ -1414,8 +1455,7 @@ Item {
                     onClicked: {
                         if(model.sectionType === Constants.appSection.swap) {
                             popupRequestsHandler.swapModalHandler.launchSwap()
-                        }
-                        else {
+                        } else {
                             changeAppSectionBySectionId(model.id)
                         }
                     }
@@ -1833,7 +1873,6 @@ Item {
                     // Constants.appViewStackIndex accordingly
 
                     Loader {
-                        id: personalChatLayoutLoader
                         asynchronous: true
                         active: false
                         sourceComponent: {
@@ -1952,7 +1991,6 @@ Item {
                     }
 
                     Loader {
-                        id: walletLoader
                         active: appView.currentIndex === Constants.appViewStackIndex.wallet
                         asynchronous: true
                         sourceComponent: WalletLayout {
@@ -2051,7 +2089,6 @@ Item {
                     }
 
                     Loader {
-                        id: marketLoader
                         active: appView.currentIndex === Constants.appViewStackIndex.market
                         asynchronous: true
                         sourceComponent: MarketLayout {
@@ -2097,8 +2134,6 @@ Item {
                         }
 
                         delegate: Loader {
-                            id: communityLoader
-
                             readonly property string sectionId: model.id
 
                             Layout.fillWidth: true
@@ -2129,10 +2164,6 @@ Item {
                                             return
                                         chatLayoutComponent.currentIndex = 1 // Settings
                                     }
-                                }
-
-                                Connections {
-                                    target: Global
                                     function onSwitchToCommunityChannelsView(communityId: string) {
                                         if (communityId !== model.id)
                                             return
@@ -2311,6 +2342,8 @@ Item {
         Action {
             shortcut: "Ctrl+K"
             onTriggered: {
+                if (shellLoader.active)
+                    return
                 // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
                 if (!channelPickerLoader.active)
                     channelPickerLoader.active = true
@@ -2350,6 +2383,88 @@ Item {
                 }
             }
         }
+    }
+
+    Loader {
+        id: shellLoader
+        anchors.fill: parent
+        asynchronous: true
+        focus: active
+        active: appMain.featureFlagsStore.shellEnabled
+
+        sourceComponent: ShellContainer {
+            id: shell
+            shellAdaptor: ShellAdaptor {
+                readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
+
+                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
+                chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model // FIXME model null initially or with empty images
+                                               : null
+                walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
+                dappsBaseModel: dAppsServiceLoader.active && dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+
+                showEnabledSectionsOnly: true
+                marketEnabled: appMain.featureFlagsStore.marketEnabled
+
+                syncingBadgeCount: appMain.rootStore.profileSectionStore.devicesStore.devicesModel.count -
+                                   appMain.rootStore.profileSectionStore.devicesStore.devicesModel.pairedCount
+                messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
+                showBackUpSeed: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner &&
+                                !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
+
+                searchPhrase: shell.searchPhrase
+
+                profileId: appMain.profileStore.pubkey
+            }
+
+            profileStore: appMain.profileStore
+
+            getEmojiHashFn: appMain.utilsStore.getEmojiHash
+            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+
+            useNewDockIcons: true
+            hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
+            aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
+
+            onItemActivated: function(sectionType, itemId) {
+                console.info("!!! SHELL ITEM ACTIVATED; sectionType:", sectionType, "; itemId:", itemId)
+
+                if (sectionType === Constants.appSection.profile) {
+                    if (itemId == Constants.settingsSubsection.backUpSeed) {
+                        return Global.openBackUpSeedPopup()
+                    } else if (itemId == Constants.settingsSubsection.signout) {
+                        return Qt.exit(0) // TODO confirm dialog?
+                    }
+                }
+
+                let subsection = itemId
+                let subSubsection = -1
+                let data = {}
+
+                if (sectionType === Constants.appSection.wallet && !!itemId) {
+                    subsection = WalletLayout.LeftPanelSelection.Address
+                    subSubsection = WalletLayout.RightPanelSelection.Assets
+                    data = { address: itemId }
+                }
+
+                globalConns.onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
+            }
+            onDappDisconnectRequested: function(dappUrl) {
+                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+            }
+
+            onNotificationButtonClicked: d.openActivityCenterPopup()
+            onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
+        }
+    }
+
+    Shortcut {
+        id: shellShortcut
+        context: Qt.ApplicationShortcut
+        sequence: "Ctrl+J"
+        onActivated: d.openShell()
+        enabled: appMain.featureFlagsStore.shellEnabled
     }
 
     StatusListView {
@@ -2810,7 +2925,7 @@ Item {
             walletConnectFeatureEnabled: featureFlagsStore.dappsEnabled
 
             onDisplayToastMessage: (message, type) => {
-                const icon = type === Constants.ephemeralNotificationType.danger ? "warning" : 
+                const icon = type === Constants.ephemeralNotificationType.danger ? "warning" :
                             type === Constants.ephemeralNotificationType.success ? "checkmark-circle" : "info"
                 Global.displayToastMessage(message, "", icon, false, type, "")
             }
