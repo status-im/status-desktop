@@ -18,6 +18,7 @@ ToolTip {
     property int orientation: StatusToolTip.Orientation.Top
     property int offset: 0
     property alias arrow: arrow
+    property color color: Theme.palette.black
 
     implicitWidth: Math.min(maxWidth, implicitContentWidth + 16)
     padding: 8
@@ -27,7 +28,7 @@ ToolTip {
         id: statusToolTipBackground
         Rectangle {
             id: statusToolTipContentBackground
-            color: Theme.palette.black
+            color: statusToolTip.color
             radius: 8
             anchors.fill: parent
             anchors.bottomMargin: 8
