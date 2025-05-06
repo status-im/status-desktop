@@ -1,3 +1,5 @@
+import random
+
 import allure
 import pytest
 from allure_commons._allure import step
@@ -36,6 +38,10 @@ def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, 
     with step('Open wallet send popup'):
         send_popup = open_send_modal_for_account(
             main_window, account_name=WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value)
+
+    with step('Select network'):
+        network_name = random.choice(['Arbitrum Sepolia', 'Optimism Sepolia', 'Base Sepolia', 'Status Network Sepolia'])
+        send_popup.select_network(network_name)
 
     with step('Sign and send transaction to blockchain'):
         send_popup.sign_and_send(receiver_account_address, amount, asset)
