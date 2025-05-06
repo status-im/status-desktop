@@ -24,10 +24,13 @@ class SendPopup(BasePopup):
         self.send_modal_header = QObject(names.sendModalHeader)
         self.send_modal_recipient_panel = QObject(names.sendModalRecipientPanel)
         self.send_modal_token_selector = Button(names.sendModalTokenSelector)
+        self.send_modal_network_filter = QObject(names.sendModalNetworkFilter)
+        self.send_modal_network_item = QObject(names.sendModalNetworkSelectorItem)
         self.send_modal_amount_field = TextEdit(names.sendModalAmountField)
         self.send_modal_recipient_field = TextEdit(names.sendModalRecipientField)
         self.send_modal_sign_txn_fees = QObject(names.sendModalSendTransactionFees)
         self.send_modal_review_send_button = Button(names.sendModalReviewSendButton)
+
 
         # old send modal
         self._tokens_list = QObject(names.statusListView)
@@ -96,10 +99,24 @@ class SendPopup(BasePopup):
                 assets_or_collectibles_list.append(asset)
         return assets_or_collectibles_list
 
+    @allure.step('Open token selector')
     def open_token_selector(self):
         self.send_modal_token_selector.click()
         return TokenSelectorPopup().wait_until_appears()
 
+    @allure.step('Select network in network selector')
+    def select_network(self, network_name):
+        self.send_modal_network_filter.click()
+        network_options = driver.findAllObjects(self.send_modal_network_item.real_name)
+        assert network_options, f'Network options are not displayed'
+        for item in network_options:
+            if str(getattr(item, 'objectName', '')).endswith(network_name):
+                QObject(item).click()
+                time.sleep(0.2)  # allow network selector component to hide
+                break
+        return self
+
+    @allure.step('Open sign and send modal')
     def open_sign_send_modal(self):
         self.send_modal_review_send_button.click()
         return SignSendModalPopup().wait_until_appears()

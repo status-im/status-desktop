@@ -32,34 +32,30 @@ class WalletScreen(QObject):
 
     def __init__(self):
         super().__init__(wallet_names.mainWindow_WalletLayout)
-        self.left_panel: LeftPanel = LeftPanel()
+        self.left_panel: WalletLeftPanel = WalletLeftPanel()
 
 
-class LeftPanel(QObject):
+class WalletLeftPanel(QObject):
 
     def __init__(self):
-        super(LeftPanel, self).__init__(wallet_names.mainWallet_LeftTab)
-        self._saved_addresses_button = Button(wallet_names.mainWallet_Saved_Addresses_Button)
-        self._wallet_account_item = QObject(wallet_names.walletAccount_StatusListItem)
-        self._add_account_button = Button(wallet_names.mainWallet_Add_Account_Button)
-        self._all_accounts_button = Button(wallet_names.mainWallet_All_Accounts_Button)
-        self._all_accounts_balance = TextLabel(wallet_names.mainWallet_All_Accounts_Balance)
-
-    @allure.step('Get total balance visibility state')
-    def is_total_balance_visible(self) -> bool:
-        return self._all_accounts_balance.is_visible
+        super(WalletLeftPanel, self).__init__(wallet_names.mainWallet_LeftTab)
+        self.saved_addresses_button = Button(wallet_names.mainWallet_Saved_Addresses_Button)
+        self.wallet_account_item = QObject(wallet_names.walletAccount_StatusListItem)
+        self.add_account_button = Button(wallet_names.mainWallet_Add_Account_Button)
+        self.all_accounts_button = Button(wallet_names.mainWallet_All_Accounts_Button)
+        self.all_accounts_balance = TextLabel(wallet_names.mainWallet_All_Accounts_Balance)
 
     @property
     @allure.step('Build and return list of wallet accounts on wallet main screen')
     def accounts(self, timeout_sec: int = 10) -> typing.List[WalletAccount]:
-        if 'title' in self._wallet_account_item.real_name.keys():
-            del self._wallet_account_item.real_name['title']
+        if 'title' in self.wallet_account_item.real_name.keys():
+            del self.wallet_account_item.real_name['title']
 
         start_time = time.monotonic()
         accounts = []
         while time.monotonic() - start_time < timeout_sec:
             try:
-                raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
+                raw_data = driver.findAllObjects(self.wallet_account_item.real_name)
                 for account_item in raw_data:
                     name = str(account_item.title)
                     color = str(account_item.asset.color.name).lower()
@@ -78,11 +74,11 @@ class LeftPanel(QObject):
 
     @allure.step('Get total balance value from All accounts')
     def get_total_balance_value(self):
-        return self._all_accounts_balance.text
+        return self.all_accounts_balance.text
 
     @allure.step('Choose saved addresses on left wallet panel')
     def open_saved_addresses(self) -> 'SavedAddressesView':
-        self._saved_addresses_button.click()
+        self.saved_addresses_button.click()
         return SavedAddressesView().wait_until_appears()
 
     @allure.step('Select account from list')
@@ -90,9 +86,9 @@ class LeftPanel(QObject):
         account_items = self.accounts
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
-            self._wallet_account_item.real_name['title'] = account_name
+            self.wallet_account_item.real_name['title'] = account_name
             for _ in range(2):
-                self._wallet_account_item.click()
+                self.wallet_account_item.click()
                 try:
                     return WalletAccountView().wait_until_appears()
                 except Exception:
@@ -102,7 +98,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open context menu from left wallet panel')
     def _open_context_menu(self) -> ContextMenu:
-        super(LeftPanel, self).right_click()
+        super(WalletLeftPanel, self).right_click()
         return ContextMenu().wait_until_appears()
 
     @allure.step('Open context menu for specific account')
@@ -110,9 +106,9 @@ class LeftPanel(QObject):
         account_items = self.accounts
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
-            self._wallet_account_item.real_name['title'] = account_name
+            self.wallet_account_item.real_name['title'] = account_name
             for _ in range(2):
-                self._wallet_account_item.right_click()
+                self.wallet_account_item.right_click()
                 try:
                     return ContextMenu().wait_until_appears()
                 except Exception:
@@ -132,7 +128,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open account popup')
     def open_add_account_popup(self, attempt: int = 2):
-        self._add_account_button.click()
+        self.add_account_button.click()
         try:
             return AccountPopup().wait_until_appears()
         except AssertionError as err:

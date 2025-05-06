@@ -529,10 +529,14 @@ search_TextEdit = {"container": o_SearchBoxWithRightIcon, "id": "edit", "type": 
 sendModalHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "sendModalHeader", "type": "SendModalHeader", "visible": True}
 sendModalRecipientPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "recipientsPanel", "type": "RecipientSelectorPanel", "visible": True}
 sendModalTokenSelector = {"container": sendModalHeader, "objectName": "tokenSelectorButton", "type": "TokenSelectorButton", "visible": True}
+sendModalNetworkFilter = {"container": sendModalHeader, "objectName": "networkFilter", "type": "NetworkFilter", "visible": True}
 sendModalAmountField = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountToSend_textField", "type": "StatusTextField", "visible": True}
 sendModalRecipientField = {"container": statusDesktop_mainWindow_overlay, "type": "TextEdit", "unnamed": 1, "visible": True}
 sendModalSendTransactionFees = {"container": statusDesktop_mainWindow_overlay, "objectName": "signTransactionFees", "type": "SimpleTransactionsFees", "visible": True}
 sendModalReviewSendButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "transactionModalFooterButton", "type": "StatusButton", "visible": True}
+
+# Network selector
+sendModalNetworkSelectorItem = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("networkSelectorDelegate_*"), "type": "NetworkSelectItemDelegate", "visible": True}
 
 # Sign Send modal
 signSendModalDialogHeader = {"container": statusDesktop_mainWindow_overlay, "type": "StatusDialogHeader", "unnamed": 1, "visible": True}
