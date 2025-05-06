@@ -50,9 +50,8 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
 
     with step('Select network'):
         # no Sepolia because of prices
-        # no Base Sepolia because of no funds (temp)
         # no Status network because no contract
-        network_name = random.choice(['Arbitrum Sepolia', 'Optimism Sepolia'])
+        network_name = random.choice(['Arbitrum Sepolia', 'Optimism Sepolia', 'Base Sepolia'])
         edit_owner_token_view.select_network(network_name)
 
     with step('Verify fees title and gas fees exist'):

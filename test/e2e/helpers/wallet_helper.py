@@ -13,8 +13,7 @@ def authenticate_with_password(user_account):
 
 def open_send_modal_for_account(main_window, account_name):
     wallet = main_window.left_panel.open_wallet()
-    assert \
-        driver.waitFor(lambda: wallet.left_panel.is_total_balance_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC), \
+    assert wallet.left_panel.all_accounts_balance.wait_until_appears().is_visible, \
         f"Total balance is not visible"
     wallet_account = wallet.left_panel.select_account(account_name)
     send_popup = wallet_account.open_send_popup()
