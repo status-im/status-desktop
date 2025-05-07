@@ -99,7 +99,7 @@ Item {
                     secondaryText: (model.tokenBalance.amount === 0 && root.amountToSend > 0) ?
                                     qsTr("No Balance") : !model.hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, d.selectedSymbol, {"minDecimals": root.minSendCryptoDecimals})
                     tertiaryText: advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: %1").arg(root.currencyStore.formatCurrencyAmount(model.tokenBalance.amount, d.selectedSymbol))
-                    preCalculatedAdvancedText: LocaleUtils.numberToLocaleString(root.weiToEth(model.amountIn), -1, LocaleUtils.userInputLocale)
+                    preCalculatedAdvancedText: LocaleUtils.numberToLocaleString(root.fnRawToDecimal(model.amountIn), -1, LocaleUtils.userInputLocale)
                     maxAdvancedValue: tokenBalance.amount
                     state: (model.tokenBalance.amount === 0 && root.amountToSend > 0) || !model.hasGas ? "unavailable" :
                            !advancedInput.valid && advancedInputCurrencyAmount > 0 ? "error" : "default"
