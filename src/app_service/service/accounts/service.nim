@@ -213,6 +213,7 @@ QtObject:
         wakuV2EnableMissingMessageVerification: true,
         wakuV2EnableStoreConfirmationForMessagesSent: true,
         previewPrivacy: true,
+        autoRefreshTokensEnabled: true,
         torrentConfigEnabled: some(false),
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,

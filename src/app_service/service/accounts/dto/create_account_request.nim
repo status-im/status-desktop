@@ -31,6 +31,7 @@ type
     logEnabled*: bool
 
     previewPrivacy*: bool
+    autoRefreshTokensEnabled*: bool
 
     verifyTransactionURL*: Option[string]
     verifyENSURL*: Option[string]
@@ -64,6 +65,7 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "logFilePath": self.logFilePath,
     "logEnabled": self.logEnabled,
     "previewPrivacy": self.previewPrivacy,
+    "autoRefreshTokensEnabled": self.autoRefreshTokensEnabled,
     "upstreamConfig": self.upstreamConfig,
     "keycardInstanceUID": self.keycardInstanceUID,
     "keycardPairingDataFile": self.keycardPairingDataFile,
