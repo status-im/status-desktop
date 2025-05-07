@@ -96,7 +96,7 @@ SplitView {
         property bool areTestNetworksEnabled: true
 
         function setRouteDisabledChains(chainId, disabled) {}
-        function stopUpdatesForSuggestedRoute() {}
+        function resetData() {}
 
         walletAssetStore: root.walletAssetStore
         tokensStore.showCommunityAssetsInSend: showCommunityAssetsCheckBox.checked

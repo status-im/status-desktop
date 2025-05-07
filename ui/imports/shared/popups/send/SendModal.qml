@@ -329,8 +329,7 @@ StatusDialog {
     }
 
     onClosed: {
-        popup.store.stopUpdatesForSuggestedRoute()
-        popup.store.resetStoredProperties()
+        popup.store.resetData()
         d.addMetricsEvent("popup closed")
     }
 

@@ -40,7 +40,7 @@ Item {
         }
         function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
                                          tokenTo, sendType, tokenName, tokenIsOwnerToken, paths) {}
-        function stopUpdatesForSuggestedRoute() {}
+        function resetData() {}
         // local signals for testing function calls
         signal fetchSuggestedRoutesCalled()
     }
