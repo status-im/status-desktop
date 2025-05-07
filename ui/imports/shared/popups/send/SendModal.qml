@@ -486,10 +486,10 @@ StatusDialog {
                         id: maxButton
 
                         readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(
-                                                                   d.maxInputBalance, d.inputSymbol, Constants.networkChainId.mainnet) // Hardcoding mainnet to consider ETH as native token
+                                                                   d.maxInputBalance, d.inputSymbol, Constants.chains.mainnet) // Hardcoding mainnet to consider ETH as native token
 
                         readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(
-                                                                         d.maxCryptoBalance, d.tokenSymbol, Constants.networkChainId.mainnet)
+                                                                         d.maxCryptoBalance, d.tokenSymbol, Constants.chains.mainnet)
 
                         formattedValue: d.currencyStore.formatCurrencyAmount(
                                             maxSafeValue, d.inputSymbol,
@@ -796,8 +796,8 @@ StatusDialog {
             popup.bestRoutes =  txRoutes.suggestedRoutes
 
             // We take the chain from the first route, assuming the native token is the same for all routes
-            let firstRoute = ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
-            let firstRouteFromNetwork = ModelUtils.get(firstRoute, "fromNetwork")
+            let firstRoute = SQUtils.ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
+            let firstRouteFromNetwork = firstRoute.fromNetwork
             let gasSymbol = Utils.getNativeTokenSymbol(firstRouteFromNetwork)
 
             d.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
