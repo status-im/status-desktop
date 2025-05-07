@@ -26,9 +26,9 @@ SplitView {
         sourceModel: joinModel
 
         proxyRoles:  [
-            ExpressionRole {
+            ConstantRole {
                 name: "explorerUrl"
-                expression: { return  "https://status.im/" }
+                value: "https://status.im/"
             }
         ]
     }
@@ -65,6 +65,7 @@ SplitView {
                     required property string source
                     required property string version
                     required property int tokensCount
+                    required property double updatedAt
 
                     readonly property TokenListPopup popup: TokenListPopup {
                         parent: root
@@ -77,6 +78,7 @@ SplitView {
                         sourceImage: delegate.image
                         sourceUrl: delegate.source
                         sourceVersion: delegate.version
+                        updatedAt: delegate.updatedAt
                         tokensCount: delegate.tokensCount
 
                         tokensListModel: SortFilterProxyModel {
@@ -91,8 +93,8 @@ SplitView {
 
                         onLinkClicked: logs.logEvent("TokenListPopup::onLinkClicked --> " + link)
                         onClosed: keyFilter.value = ""
-                        Component.onCompleted: open()
                     }
+                    Component.onCompleted: popup.open()
                 }
             }
         }
@@ -125,7 +127,7 @@ SplitView {
                 text: "Uniswap"
                 checked: true
 
-                onCheckedChanged: keyFilter.value = "uniswap"
+                onToggled: keyFilter.value = "uniswap"
             }
 
             RadioButton {
@@ -133,11 +135,12 @@ SplitView {
 
                 text: "Status"
 
-                onCheckedChanged: keyFilter.value = "status"
+                onToggled: keyFilter.value = "status"
             }
         }
     }
 }
 
 // category: Popups
+// status: good
 // https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=18057%3A239798&mode=design&t=Vnm5GS8EZFLpeRAY-1
