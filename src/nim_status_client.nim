@@ -171,6 +171,9 @@ proc mainProc() =
   enableHDPI(uiScaleFilePath)
   tryEnableThreadedRenderer()
 
+  # set the default/fallback Qt Quick style (should be StatusQ in the future)
+  putEnv("QT_QUICK_CONTROLS_STYLE", "Universal")
+
   let imageCert = imageServerTLSCert()
   installSelfSignedCertificate(imageCert)
 
