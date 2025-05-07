@@ -732,7 +732,8 @@ QtObject {
             id: importCommunitiesPopupComponent
             ImportCommunityPopup {
                 store: root.communitiesStore
-                onJoinCommunityRequested: {
+                utilsStore: root.utilsStore
+                onJoinCommunityRequested: function(communityId, communityDetails) {
                     close()
                     communitiesStore.spectateCommunity(communityId)
                     openCommunityIntroPopup(communityId,
