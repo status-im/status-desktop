@@ -33,7 +33,7 @@ method suggestedRoutes*(self: AccessInterface,
   extraParamsTable: Table[string, string] = initTable[string, string]()) {.base.} =
     raise newException(ValueError, "No implementation available")
 
-method stopUpdatesForSuggestedRoute*(self: AccessInterface) {.base.} =
+method resetData*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransfer*(self: AccessInterface, fromAddr: string, uuid: string) {.base.} =

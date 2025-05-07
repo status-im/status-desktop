@@ -217,9 +217,6 @@ QtObject:
       extraParamsTable
     )
 
-  proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
-    self.delegate.stopUpdatesForSuggestedRoute()
-
   proc updateRoutePreferredChains*(self: View, chainIds: string) {.slot.} =
     self.toNetworksRouteModel.updateRoutePreferredChains(chainIds)
 
@@ -231,7 +228,8 @@ QtObject:
       self.fromNetworksRouteModel.updateFromNetworks(path, not chainsWithNoGas.hasKey(fromChainId))
       self.toNetworksRouteModel.updateToNetworks(path)
 
-  proc resetStoredProperties*(self: View) {.slot.} =
+  proc resetData*(self: View) {.slot.} =
+    self.delegate.resetData()
     self.sendType = transaction_dto.SendType.Transfer
     self.selectedRecipient = ""
     self.fromNetworksRouteModel.reset()

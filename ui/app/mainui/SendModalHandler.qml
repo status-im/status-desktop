@@ -487,7 +487,7 @@ QtObject {
             onClosed: {
                 handler.sendMetricsEvent("popup closed", "")
                 destroy()
-                root.transactionStoreNew.stopUpdatesForSuggestedRoute()
+                root.transactionStoreNew.resetData()
             }
 
             onFormChanged: {
@@ -786,7 +786,7 @@ QtObject {
                 }
 
                 function resetRouterValues() {
-                    root.transactionStoreNew.stopUpdatesForSuggestedRoute()
+                    root.transactionStoreNew.resetData()
                     handler.uuid = ""
                     handler.fetchedPathModel = null
                     handler.indexOfTxPathUnderReview = -1
