@@ -228,10 +228,6 @@ QObject {
         }
     }
 
-    function stopUpdatesForSuggestedRoute() {
-        root.swapStore.stopUpdatesForSuggestedRoute()
-    }
-
     function sendApproveTx() {
         root.approvalPending = true
         root.swapStore.authenticateAndTransfer(d.uuid)
@@ -239,5 +235,9 @@ QObject {
 
     function sendSwapTx() {
         root.swapStore.authenticateAndTransfer(d.uuid)
+    }
+
+    function resetData() {
+        root.swapStore.resetData()
     }
 }

@@ -68,8 +68,8 @@ QtObject {
         walletSectionSendInst.suggestedRoutes(uuid, valueIn.toFixed(), valueOut.toFixed(), slippagePercentage, extraParamsJson)
     }
 
-    function stopUpdatesForSuggestedRoute() {
-        walletSectionSendInst.stopUpdatesForSuggestedRoute()
+    function resetData() {
+        walletSectionSendInst.resetData()
     }
 
     function resolveENS(value) {
@@ -144,10 +144,6 @@ QtObject {
 
     function lockCard(chainId, amount, lock) {
         walletSectionSendInst.fromNetworksRouteModel.lockCard(chainId, amount, lock)
-    }
-
-    function resetStoredProperties() {
-        walletSectionSendInst.resetStoredProperties()
     }
 
     function splitAndFormatAddressPrefix(text, updateInStore) {

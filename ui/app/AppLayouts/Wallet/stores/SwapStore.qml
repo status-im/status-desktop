@@ -39,8 +39,8 @@ QtObject {
             tokenFrom, tokenTo, disabledFromChainIDs, disabledToChainIDs, sendType, slippagePercentage)
     }
 
-    function stopUpdatesForSuggestedRoute() {
-        root.walletSectionSendInst.stopUpdatesForSuggestedRoute()
+    function resetData() {
+        root.walletSectionSendInst.resetData()
     }
 
     function authenticateAndTransfer(uuid) {

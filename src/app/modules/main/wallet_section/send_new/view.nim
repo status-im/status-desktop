@@ -75,8 +75,8 @@ QtObject:
         slippagePercentage,
         extraParamsTable)
 
-  proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
-    self.delegate.stopUpdatesForSuggestedRoute()
+  proc resetData*(self: View) {.slot.} =
+    self.delegate.resetData()
 
   proc authenticateAndTransfer*(self: View, uuid: string, fromAddr: string) {.slot.} =
     self.delegate.authenticateAndTransfer(uuid, fromAddr)
