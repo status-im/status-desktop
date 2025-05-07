@@ -23,8 +23,8 @@ QtObject {
                                                     amountOut, toToken, slippagePercentage, extraParamsJson)
     }
 
-    function stopUpdatesForSuggestedRoute() {
-        _walletSectionSendInst.stopUpdatesForSuggestedRoute()
+    function resetData() {
+        _walletSectionSendInst.resetData()
     }
 
     function setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId) {
