@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -28,11 +29,8 @@ StatusListView {
         height: ProfileUtils.defaultDelegateHeight
         width: ListView.view.width
         title: model.name
-        sensor.enabled: false
-        //TODO will be re-implemented post-MVP
-//        subTitle: qsTr("%n token(s) · Last updated %1 @%2",
-//                       "",
-//                       model.tokensCount).arg(LocaleUtils.formatDate(model.updatedAt * 1000)).arg(LocaleUtils.formatTime(model.updatedAt, Locale.ShortFormat))
+        forceDefaultCursor: true
+        subTitle: qsTr("%n token(s) · Last updated %1", "", model.tokensCount).arg(LocaleUtils.getTimeDifference(new Date(model.updatedAt * 1000), new Date()))
         statusListItemSubTitle.font.pixelSize: Theme.additionalTextSize
         asset.name: model.image
         asset.isImage: true
@@ -47,23 +45,6 @@ StatusListView {
                 onClicked: keyFilter.value = model.key
             }
         ]
-    }
-
-    footer: Item {
-        width: parent.width
-        height: root.count > 0 ? shapeRect.implicitHeight + root.spacing : shapeRect.implicitHeight
-
-        ShapeRectangle {
-            id: shapeRect
-
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - 2 // The rectangular path is rendered outside
-            height: ProfileUtils.defaultDelegateHeight
-
-            icon: "add"
-            text: qsTr("Add a Token List (coming soon)")
-        }
     }
 
     Instantiator {
@@ -111,8 +92,8 @@ StatusListView {
 
                 onLinkClicked: (link) => Global.openLink(link)
                 onClosed: keyFilter.value = ""
-                Component.onCompleted: open()
             }
+            Component.onCompleted: popup.open()
         }
     }
 }

@@ -6,8 +6,6 @@ import Storybook 1.0
 import Models 1.0
 import SortFilterProxyModel 0.2
 
-import StatusQ.Core.Theme 0.1
-
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Profile.stores 1.0
 
@@ -28,9 +26,9 @@ SplitView {
         sourceModel: joinModel
 
         proxyRoles:  [
-            ExpressionRole {
+            ConstantRole {
                 name: "explorerUrl"
-                expression: { return  "https://status.im/" }
+                value: "https://status.im/"
             }
         ]
     }
@@ -64,4 +62,5 @@ SplitView {
 }
 
 // category: Panels
+// status: good
 // https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=18057%3A239410&mode=design&t=zSZ650alzNvE28GO-1

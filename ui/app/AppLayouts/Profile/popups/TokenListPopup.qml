@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQml.Models 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
@@ -85,17 +84,8 @@ StatusDialog {
         }
     }
 
-    footer: StatusDialogFooter {
-        spacing: Theme.padding
-        rightButtons: ObjectModel {
-            StatusButton {
-                text: qsTr("Done")
-                type: StatusBaseButton.Type.Normal
-
-                onClicked: close()
-            }
-        }
-    }
+    standardButtons: Dialog.Ok
+    okButtonText: qsTr("Done")
 
     component CustomTextBlock: ColumnLayout {
         id: textBlock
@@ -202,8 +192,8 @@ StatusDialog {
         id: customDelegate
         implicitWidth: 156
         height: 64
-        color: (sensor.containsMouse || externalLinkBtn.hovered) ? Theme.palette.baseColor2 : "transparent"
-        radius: 8
+        color: (sensor.hovered || externalLinkBtn.hovered) ? Theme.palette.baseColor2 : "transparent"
+        radius: Theme.radius
 
         property string name
         property string image
@@ -213,11 +203,8 @@ StatusDialog {
         property string explorerUrl
         property bool isTest
 
-        StatusMouseArea {
+        HoverHandler {
             id: sensor
-
-            anchors.fill: parent
-            hoverEnabled: true
         }
 
         RowLayout {
@@ -230,9 +217,8 @@ StatusDialog {
                 Layout.leftMargin: Theme.padding
                 spacing: Theme.padding
 
-                StatusSmartIdenticon {
-                    asset.isImage: true
-                    asset.name: customDelegate.image
+                StatusRoundedImage {
+                    image.source: customDelegate.image || Constants.tokenIcon(customDelegate.symbol)
                 }
 
                 ColumnLayout {
@@ -264,6 +250,7 @@ StatusDialog {
                 Layout.alignment: Qt.AlignLeft
 
                 text: customDelegate.symbol
+                elide: Text.ElideMiddle
             }
 
             StatusBaseText {
