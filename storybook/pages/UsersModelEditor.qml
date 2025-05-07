@@ -64,7 +64,7 @@ Item {
                     TextField {
                         width: delegate.width / 2
                         text: model.displayName
-                        onTextChanged: model.displayName = text
+                        onTextEdited: model.displayName = text
                     }
                 }
                 Row {
@@ -76,7 +76,7 @@ Item {
                     TextField {
                         width: delegate.width / 2
                         text: model.localNickname
-                        onTextChanged: model.localNickname = text
+                        onTextEdited: model.localNickname = text
                     }
                 }
                 Row {
@@ -88,7 +88,7 @@ Item {
                     Switch {
                         width: delegate.width / 2
                         checked: model.isVerified
-                        onCheckedChanged: model.isVerified = checked
+                        onToggled: model.isVerified = checked
                     }
                 }
                 Row {
@@ -100,7 +100,7 @@ Item {
                     Switch {
                         width: delegate.width / 2
                         checked: model.isUntrustworthy
-                        onCheckedChanged: model.isUntrustworthy = checked
+                        onToggled: model.isUntrustworthy = checked
                     }
                 }
                 Row {
@@ -114,7 +114,7 @@ Item {
                         from: 0
                         to: 1
                         value: model.onlineStatus
-                        onValueChanged: model.onlineStatus = value
+                        onValueModified: model.onlineStatus = value
                     }
                 }
                 Button {
