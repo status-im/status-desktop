@@ -44,10 +44,8 @@ STATUS_GO_SCRIPT := $(SCRIPTS_PATH)/buildStatusGo.sh
 DOTHERSIDE_FILES := $(shell find $(DOTHERSIDE) -type f \( -iname '*.cpp' -o -iname '*.h' \))
 OPENSSL_FILES := $(shell find $(OPENSSL)/OpenSSL-for-iOS -type f)
 QRCODEGEN_FILES := $(shell find $(QRCODEGEN) -type f \( -iname '*.c' -o -iname '*.h' \))
-PCRE_FILES := $(eval $(call findFiles,$(PCRE)))
-WRAPPER_APP_FILES := $(eval $(call findFiles,$(WRAPPER_APP)))
-COMPAT_QRC_FILE := $(WRAPPER_APP)/compat_resources.qrc
-DUMMY_QML_FILE := $(WRAPPER_APP)/DummyCompatImports.qml
+PCRE_FILES := $(shell find $(PCRE) -type f)
+WRAPPER_APP_FILES := $(shell find $(WRAPPER_APP) -type f)
 
 # script files
 STATUS_Q_SCRIPT := $(SCRIPTS_PATH)/buildStatusQ.sh
@@ -139,7 +137,7 @@ $(NIM_STATUS_CLIENT_LIB): $(STATUS_DESKTOP_NIM_FILES) $(NIM_STATUS_CLIENT_SCRIPT
 	@echo "Status Desktop Lib built $(NIM_STATUS_CLIENT_LIB)"
 
 # non-phony targets
-$(TARGET): $(APP_SCRIPT) $(STATUS_GO_LIB) $(STATUS_Q_LIB) $(DOTHERSIDE_LIB) $(OPENSSL_LIB) $(QRCODEGEN_LIB) $(PCRE_LIB) $(NIM_STATUS_CLIENT_LIB) $(STATUS_DESKTOP_RCC) $(COMPAT_QRC_FILE) $(DUMMY_QML_FILE)
+$(TARGET): $(APP_SCRIPT) $(STATUS_GO_LIB) $(STATUS_Q_LIB) $(DOTHERSIDE_LIB) $(OPENSSL_LIB) $(QRCODEGEN_LIB) $(PCRE_LIB) $(NIM_STATUS_CLIENT_LIB) $(STATUS_DESKTOP_RCC) $(WRAPPER_APP_FILES)
 	@echo "Building app"
 	@BIN_DIR=$(BIN_PATH) BUILD_DIR=$(BUILD_PATH) QT_VERSION=$(QT_VERSION) $(APP_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "Built $(TARGET)"
