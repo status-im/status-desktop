@@ -47,6 +47,8 @@ Rectangle {
 
     required property var fnGetPriceInCurrencyForFee
     required property var fnGetEstimatedTime
+    required property var fnRawToGas
+    required property var fnGasToRaw
 
     signal confirmClicked()
     signal cancelClicked()
@@ -89,8 +91,8 @@ Rectangle {
                 customBaseFeeInput.bottomLabelMessageRightCmp.text = ""
                 return
             }
-            const weiValue = Utils.gweiToWei(customBaseFeeInput.text).toFixed()
-            customBaseFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInCurrencyForFee(weiValue)
+            const rawValue = root.fnGasToRaw(customBaseFeeInput.text).toFixed()
+            customBaseFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInCurrencyForFee(rawValue)
         }
 
         function recalculateCustomPriorityFeePrice() {
@@ -98,8 +100,8 @@ Rectangle {
                 customPriorityFeeInput.bottomLabelMessageRightCmp.text = ""
                 return
             }
-            const weiValue = Utils.gweiToWei(customPriorityFeeInput.text).toFixed()
-            customPriorityFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInCurrencyForFee(weiValue)
+            const rawValue = root.fnGasToRaw(customPriorityFeeInput.text).toFixed()
+            customPriorityFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInCurrencyForFee(rawValue)
         }
 
         function recalculateCustomPrice() {
@@ -107,12 +109,12 @@ Rectangle {
                 optionCustom.subText = ""
                 return
             }
-            const baseFeeWei = Utils.gweiToWei(customBaseFeeInput.text)
-            const priorityFeeWei = Utils.gweiToWei(customPriorityFeeInput.text)
-            const totalFee = SQUtils.AmountsArithmetic.sum(baseFeeWei, priorityFeeWei)
-            const feeInWei = SQUtils.AmountsArithmetic.times(totalFee, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
-            const estimatedTime = root.fnGetEstimatedTime(totalFee.toFixed(), priorityFeeWei.toFixed())
-            optionCustom.subText = root.fnGetPriceInCurrencyForFee(feeInWei)
+            const rawBaseFee = root.fnGasToRaw(customBaseFeeInput.text)
+            const rawPriorityFee = root.fnGasToRaw(customPriorityFeeInput.text)
+            const rawTotalFee = SQUtils.AmountsArithmetic.sum(rawBaseFee, rawPriorityFee)
+            const rawFee = SQUtils.AmountsArithmetic.times(rawTotalFee, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
+            const estimatedTime = root.fnGetEstimatedTime(rawTotalFee.toFixed(), rawPriorityFee.toFixed())
+            optionCustom.subText = root.fnGetPriceInCurrencyForFee(rawFee)
             optionCustom.additionalText = WalletUtils.formatEstimatedTime(estimatedTime)
         }
     }
@@ -254,20 +256,20 @@ Rectangle {
                             if (!customBaseFeeInput.text) {
                                 return false
                             }
-                            const weiCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
-                            const decreasedCurrentValue = SQUtils.AmountsArithmetic.times(weiCurrentValue, SQUtils.AmountsArithmetic.fromString("0.9")) // up to -10% is acceptable
-                            const weiEnteredValue = Utils.gweiToWei(customBaseFeeInput.text)
-                            return decreasedCurrentValue.cmp(weiEnteredValue) === 1
+                            const rawCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
+                            const decreasedCurrentValue = SQUtils.AmountsArithmetic.times(rawCurrentValue, SQUtils.AmountsArithmetic.fromString("0.9")) // up to -10% is acceptable
+                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeInput.text)
+                            return decreasedCurrentValue.cmp(rawEnteredValue) === 1
                         }
 
                         readonly property bool displayHighBaseFeeWarning: {
                             if (!customBaseFeeInput.text) {
                                 return false
                             }
-                            const weiCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
-                            const increasedCurrentValue = SQUtils.AmountsArithmetic.times(weiCurrentValue, SQUtils.AmountsArithmetic.fromString("1.2")) // up to 20% higher value is acceptable
-                            const weiEnteredValue = Utils.gweiToWei(customBaseFeeInput.text)
-                            return weiEnteredValue.cmp(increasedCurrentValue) === 1
+                            const rawCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
+                            const increasedCurrentValue = SQUtils.AmountsArithmetic.times(rawCurrentValue, SQUtils.AmountsArithmetic.fromString("1.2")) // up to 20% higher value is acceptable
+                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeInput.text)
+                            return rawEnteredValue.cmp(increasedCurrentValue) === 1
                         }
 
                         Layout.preferredWidth: parent.width
@@ -281,10 +283,10 @@ Rectangle {
                                                              Theme.palette.miscColor6
                                                            : Theme.palette.baseColor1
                         bottomLabelMessageLeftCmp.text: customBaseFeeInput.displayLowBaseFeeWarning?
-                                                            qsTr("Lower than necessary (current %1)").arg(Utils.weiToGWei(root.currentBaseFee))
+                                                            qsTr("Lower than necessary (current %1)").arg(Utils.nativeTokenRawToGas(root.currentBaseFee))
                                                           : customBaseFeeInput.displayHighBaseFeeWarning?
-                                                                qsTr("Higher than necessary (current %1)").arg(Utils.weiToGWei(root.currentBaseFee))
-                                                              : qsTr("Current: %1 GWEI").arg(Utils.weiToGWei(root.currentBaseFee))
+                                                                qsTr("Higher than necessary (current %1)").arg(Utils.nativeTokenRawToGas(root.currentBaseFee))
+                                                              : qsTr("Current: %1 GWEI").arg(Utils.nativeTokenRawToGas(root.currentBaseFee))
                         rightPadding: leftPadding
                         input.rightComponent: StatusBaseText {
                             text: "GWEI"
@@ -319,18 +321,18 @@ Rectangle {
                             if (!customPriorityFeeInput.text) {
                                 return false
                             }
-                            const weiCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentSuggestedMaxPriorityFee)
-                            const weiEnteredValue = Utils.gweiToWei(customPriorityFeeInput.text)
-                            return weiEnteredValue.cmp(weiCurrentValue) === 1
+                            const rawCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentSuggestedMaxPriorityFee)
+                            const rawEnteredValue = root.fnGasToRaw(customPriorityFeeInput.text)
+                            return rawEnteredValue.cmp(rawCurrentValue) === 1
                         }
 
                         readonly property bool displayHigherThanBaseFeeWarning: {
                             if (!customPriorityFeeInput.text || !customBaseFeeInput.text) {
                                 return false
                             }
-                            const weiBaseFeeValue = Utils.gweiToWei(customBaseFeeInput.text)
-                            const weiEnteredValue = Utils.gweiToWei(customPriorityFeeInput.text)
-                            return weiEnteredValue.cmp(weiBaseFeeValue) === 1
+                            const rawBaseFeeValue = root.fnGasToRaw(customBaseFeeInput.text)
+                            const rawEnteredValue = root.fnGasToRaw(customPriorityFeeInput.text)
+                            return rawEnteredValue.cmp(rawBaseFeeValue) === 1
                         }
 
                         Layout.preferredWidth: parent.width
@@ -345,8 +347,8 @@ Rectangle {
                         bottomLabelMessageLeftCmp.text: customPriorityFeeInput.displayHigherThanBaseFeeWarning?
                                                             qsTr("Higher than max base fee: %1 GWEI").arg(customBaseFeeInput.text)
                                                           : customPriorityFeeInput.displayHigherPriorityFeeWarning?
-                                                                qsTr("Higher than necessary (current %1 - %2)").arg(Utils.weiToGWei(root.currentSuggestedMinPriorityFee)).arg(Utils.weiToGWei(root.currentSuggestedMaxPriorityFee))
-                                                              : qsTr("Current: %1 - %2 GWEI").arg(Utils.weiToGWei(root.currentSuggestedMinPriorityFee)).arg(Utils.weiToGWei(root.currentSuggestedMaxPriorityFee))
+                                                                qsTr("Higher than necessary (current %1 - %2)").arg(root.fnRawToGas(root.currentSuggestedMinPriorityFee)).arg(root.fnRawToGas(root.currentSuggestedMaxPriorityFee))
+                                                              : qsTr("Current: %1 - %2 GWEI").arg(root.fnRawToGas(root.currentSuggestedMinPriorityFee)).arg(root.fnRawToGas(root.currentSuggestedMaxPriorityFee))
                         rightPadding: leftPadding
                         input.rightComponent: StatusBaseText {
                             text: "GWEI"

@@ -44,8 +44,6 @@ export community_token_owner
 
 include async_tasks
 
-const ethSymbol = "ETH"
-
 logScope:
   topics = "community-tokens-service"
 
@@ -991,16 +989,6 @@ QtObject:
         )
       )
 
-  proc create0CurrencyAmounts(self: Service): (CurrencyAmount, CurrencyAmount) =
-    let ethCurrency = newCurrencyAmount(0.0, ethSymbol, 1, false)
-    let fiatCurrency = newCurrencyAmount(0.0, self.settingsService.getCurrency(), 1, false)
-    return (ethCurrency, fiatCurrency)
-
-  proc createCurrencyAmounts(self: Service, ethValue: float64, fiatValue: float64): (CurrencyAmount, CurrencyAmount) =
-    let ethCurrency = newCurrencyAmount(ethValue, ethSymbol, 4, false)
-    let fiatCurrency = newCurrencyAmount(fiatValue, self.settingsService.getCurrency(), 2, false)
-    return (ethCurrency, fiatCurrency)
-
   proc getErrorCodeFromMessage(self: Service, errorMessage: string): ComputeFeeErrorCode =
     var errorCode = ComputeFeeErrorCode.Other
     if errorMessage.contains("403 Forbidden") or errorMessage.contains("exceed"):
@@ -1045,18 +1033,6 @@ QtObject:
           errDescription: e.msg
         )
       )
-
-  proc getWalletBalanceForChain(self:Service, walletAddress: string, chainId: int): float =
-    var balance = 0.0
-    let tokens = self.walletAccountService.getGroupedAccountsAssetsList()
-    for token in tokens:
-      if token.symbol == ethSymbol:
-        let balances = token.balancesPerAccount.filter(
-          balanceItem => balanceItem.account == walletAddress.toLower() and
-          balanceItem.chainId == chainId).map(b => b.balance)
-        for b in balances:
-          balance += self.currencyService.parseCurrencyValueByTokensKey(token.tokensKey, b)
-    return balance
 
   # convert json returned from async task into gas table
   proc toGasTable(json: JsonNode): Table[ContractTuple, int] =

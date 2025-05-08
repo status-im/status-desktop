@@ -492,7 +492,7 @@ method onOwnerTokenOwnerAddress*(self: Module, chainId: int, contractAddress: st
   }
   self.view.setOwnerTokenDetails($jsonObj)
 
-method suggestedRoutesReady*(self: Module, uuid: string, sendType: SendType, ethCurrency: CurrencyAmount,
+method suggestedRoutesReady*(self: Module, uuid: string, sendType: SendType, nativeCryptoCurrency: CurrencyAmount,
   fiatCurrency: CurrencyAmount, costPerPath: seq[CostPerPath], errCode: string, errDescription: string) =
   if sendType != SendType.CommunityBurn and
     sendType != SendType.CommunityDeployAssets and
@@ -502,7 +502,7 @@ method suggestedRoutesReady*(self: Module, uuid: string, sendType: SendType, eth
     sendType != SendType.CommunityRemoteBurn and
     sendType != SendType.CommunitySetSignerPubKey:
       return
-  self.view.emitSuggestedRoutesReadySignal(uuid, ethCurrency, fiatCurrency, %costPerPath, errCode, errDescription)
+  self.view.emitSuggestedRoutesReadySignal(uuid, nativeCryptoCurrency, fiatCurrency, %costPerPath, errCode, errDescription)
 
 method stopUpdatesForSuggestedRoute*(self: Module) =
   self.controller.stopSuggestedRoutesAsyncCalculation()

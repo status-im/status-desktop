@@ -23,9 +23,11 @@ QtObject {
         readonly property int arbitrumSepoliaChainId: 421614
         readonly property int baseChainId: 8453
         readonly property int baseSepoliaChainId: 84532
+        readonly property int binanceSmartChainMainnetChainId: 56
+        readonly property int binanceSmartChainTestnetChainId: 97
 
         // Used for new chain advertisment
-        readonly property var newChains: [baseChainId]
+        readonly property var newChains: [binanceSmartChainMainnetChainId, binanceSmartChainTestnetChainId]
     }
 
     readonly property QtObject startupFlow: QtObject {
@@ -899,9 +901,16 @@ QtObject {
     readonly property string networkRopsten: "Ropsten"
 
     readonly property string ethToken: "ETH"
-
-    readonly property int ethTokenWeiDecimals: 18
-    readonly property int ethTokenGWeiDecimals: 9
+    readonly property string bnbToken: "BNB"
+    readonly property string usdcToken: "USDC"
+    readonly property var rawDecimals: {
+        "ETH": 18,
+        "BNB": 18,
+    }
+    readonly property var gasTokenDecimals: {
+        "ETH": 9,
+        "BNB": 9,
+    }
 
     readonly property string minGasForTx: "21000"
     readonly property string maxGasForTx: "30000000"
@@ -912,6 +921,22 @@ QtObject {
         readonly property string optimism: "oeth"
         readonly property string base: "base"
         readonly property string status: "status"
+        readonly property string binanceSmartChain: "bsc"
+    }
+
+    readonly property QtObject networkNames: QtObject {
+        readonly property string mainnet: "Mainnet"
+        readonly property string sepolia: "Sepolia"
+        readonly property string arbitrum: "Arbitrum"
+        readonly property string sepoliaArbitrum: "Arbitrum Sepolia"
+        readonly property string optimism: "Optimism"
+        readonly property string sepoliaOptimism: "Optimism Sepolia"
+        readonly property string base: "Base"
+        readonly property string sepoliaBase: "Base Sepolia"
+        readonly property string status: "Status Network"
+        readonly property string sepoliaStatus: "Status Network Sepolia"
+        readonly property string binanceSmartChain: "BNB Smart Chain"
+        readonly property string testnetBinanceSmartChain: "BNB Smart Chain Testnet"
     }
 
     readonly property QtObject networkExplorerLinks: QtObject {
@@ -919,13 +944,13 @@ QtObject {
         readonly property string arbiscan: "https://arbiscan.io"
         readonly property string optimism: "https://optimistic.etherscan.io"
         readonly property string base: "https://basescan.org"
-
+        readonly property string binanceSmartChain: "https://bscscan.com"
         readonly property string sepoliaEtherscan: "https://sepolia.etherscan.io/"
         readonly property string sepoliaArbiscan: "https://sepolia.arbiscan.io/"
         readonly property string sepoliaOptimism: "https://sepolia-optimism.etherscan.io/"
         readonly property string sepoliaBase: "https://sepolia.basescan.org/"
         readonly property string sepoliaStatus: "https://sepoliascan.status.network/"
-
+        readonly property string testnetBinanceSmartChain: "https://testnet.bscscan.com/"
         readonly property string addressPath: "address"
         readonly property string txPath: "tx"
     }
@@ -938,7 +963,7 @@ QtObject {
         readonly property string arbitrum: "arbitrum"
         readonly property string optimism: "optimism"
         readonly property string base: "base"
-
+        readonly property string binanceSmartChain: "binance-smart-chain"
         readonly property string sepoliaEthereum: "sepolia"
         readonly property string sepoliaArbitrum: "arbitrum-sepolia"
         readonly property string sepoliaOptimism: "optimism-sepolia"
@@ -1294,8 +1319,10 @@ QtObject {
     ]
 
     function tokenIcon(symbol, useDefault=true) {
-        if (!!symbol && knownTokenPNGs.indexOf(symbol) !== -1)
-            return Theme.png("tokens/" + symbol)
+        const tmpSymbol = uniqueSymbolToTokenSymbol(symbol)
+
+        if (!!tmpSymbol && knownTokenPNGs.indexOf(tmpSymbol) !== -1)
+            return Theme.png("tokens/" + tmpSymbol)
 
         if (useDefault)
             return Theme.png("tokens/DEFAULT-TOKEN")
@@ -1450,10 +1477,6 @@ QtObject {
     }
 
     readonly property QtObject swap: QtObject {
-        /* We should be very careful here, this is the token key for USDT and WETH respectively,
-        but in case the logic for keys changes in the backend, it should be updated here as well */
-        readonly property string usdcTokenKey: "USDC"
-        readonly property string ethTokenKey: "ETH"
         /* TODO: https://github.com/status-im/status-desktop/issues/15329
         This is only added temporarily until we have an api from the backend in order to get
         this list dynamically */
@@ -1509,4 +1532,40 @@ QtObject {
     }
 
     readonly property int maxActiveNetworks: 5
+
+    /*
+        Hacky workaround functions to deal with token collision workaround https://github.com/status-im/status-go/pull/6538
+        We use unique symbols with the form "symbol(decimals)" to avoid bundling tokens with different decimals.
+        Remove these functions when the status-go PR is reverted.
+    */
+    function tokenSymbolToUniqueSymbol(symbol, chainId) {
+        if (symbol === "USDT" || symbol === "USDC") {
+            if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
+                return symbol + " (BSC)"
+            }
+            return symbol + " (EVM)"
+        } else if (symbol === "SWFTC") {
+            if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
+                return symbol + " (BSC)"
+            }
+            return symbol + " (EVM)"
+        } else if (symbol === "FLUX") {
+            return symbol + " (EVM)"
+        }
+
+        return symbol
+    }
+
+    function uniqueSymbolToTokenSymbol(uniqueSymbol) {
+        if (uniqueSymbol === "USDT (EVM)" || uniqueSymbol === "USDT (BSC)") {
+            return "USDT"
+        } else if (uniqueSymbol === "USDC (EVM)" || uniqueSymbol === "USDC (BSC)") {
+            return "USDC"
+        } else if (uniqueSymbol === "SWFTC (EVM)" || uniqueSymbol === "SWFTC (BSC)") {
+            return "SWFTC"
+        } else if (uniqueSymbol === "FLUX (EVM)") {
+            return "FLUX"
+        }
+        return uniqueSymbol
+    }
 }

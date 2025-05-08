@@ -26,7 +26,7 @@ Item {
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
     property bool interactive: true
-    property var weiToEth: function(wei) {}
+    property var fnRawToDecimal: function(rawValue) {}
     property var reCalculateSuggestedRoute: function() {}
     property var fromNetworksList
     property var toNetworksList
@@ -99,7 +99,7 @@ Item {
                     secondaryText: (model.tokenBalance.amount === 0 && root.amountToSend > 0) ?
                                     qsTr("No Balance") : !model.hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, d.selectedSymbol, {"minDecimals": root.minSendCryptoDecimals})
                     tertiaryText: advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: %1").arg(root.currencyStore.formatCurrencyAmount(model.tokenBalance.amount, d.selectedSymbol))
-                    preCalculatedAdvancedText: LocaleUtils.numberToLocaleString(root.weiToEth(model.amountIn), -1, LocaleUtils.userInputLocale)
+                    preCalculatedAdvancedText: LocaleUtils.numberToLocaleString(root.fnRawToDecimal(model.amountIn), -1, LocaleUtils.userInputLocale)
                     maxAdvancedValue: tokenBalance.amount
                     state: (model.tokenBalance.amount === 0 && root.amountToSend > 0) || !model.hasGas ? "unavailable" :
                            !advancedInput.valid && advancedInputCurrencyAmount > 0 ? "error" : "default"
@@ -161,7 +161,7 @@ Item {
                     property int bentLine: 0
                     property int routeOnNetwork: 0
                     primaryText: model.chainName
-                    secondaryText: root.currencyStore.formatCurrencyAmount(root.weiToEth(model.amountOut), d.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
+                    secondaryText: root.currencyStore.formatCurrencyAmount(root.fnRawToDecimal(model.amountOut), d.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
                     tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
                     state: !preferred ? "unpreferred" : "default"
                     opacity: preferred || store.showUnPreferredChains ? 1 : 0

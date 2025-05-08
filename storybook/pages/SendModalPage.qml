@@ -96,7 +96,7 @@ SplitView {
         property bool areTestNetworksEnabled: true
 
         function setRouteDisabledChains(chainId, disabled) {}
-        function stopUpdatesForSuggestedRoute() {}
+        function resetData() {}
 
         walletAssetStore: root.walletAssetStore
         tokensStore.showCommunityAssetsInSend: showCommunityAssetsCheckBox.checked
@@ -251,7 +251,7 @@ SplitView {
                         let txRoutes = {
                             suggestedRoutes: dummyEventData.suggestesRoutes,
                             gasTimeEstimate:{
-                                totalFeesInEth:0.0005032000000000001,
+                                totalFeesInNativeCrypto:0.0005032000000000001,
                                 totalTokenFees:-0.004508663259772343,
                                 totalTime:2
                             },

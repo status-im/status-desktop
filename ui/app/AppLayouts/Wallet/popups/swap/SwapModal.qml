@@ -78,6 +78,8 @@ StatusDialog {
         }
 
         readonly property var selectedAccount: selectedAccountEntry.item
+
+        readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.swapInputParamsForm.selectedNetworkChainId)
     }
 
     ModelEntry {
@@ -93,14 +95,8 @@ StatusDialog {
             d.fetchSuggestedRoutes()
         }
 
-        // FIXME drop after SwapInputPanel uses ModelEntry to track the currently selected token
-        // refresh the selected asset in payPanel when account/network changes
-        function onSelectedAccountAddressChanged() {
-            payPanel.reevaluateSelectedId()
-        }
         function onSelectedNetworkChainIdChanged() {
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
-            payPanel.reevaluateSelectedId()
         }
     }
 
@@ -120,7 +116,7 @@ StatusDialog {
         root.addMetricsEvent("popup opened")
     }
     onClosed: {
-        root.swapAdaptor.stopUpdatesForSuggestedRoute()
+        root.swapAdaptor.resetData()
         root.addMetricsEvent("popup closed")
     }
 
@@ -231,11 +227,15 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
+                    defaultTokenKey: root.swapInputParamsForm.defaultFromTokenKey
 
                     cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
 
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
+
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                    onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: receivePanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Pay
@@ -274,9 +274,13 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.toTokenKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
-
+                    defaultTokenKey: root.swapInputParamsForm.defaultToTokenKey
+                    
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
+                    
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                    onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: payPanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Receive
@@ -411,7 +415,7 @@ StatusDialog {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Theme.smallPadding
                 text: root.swapAdaptor.errorMessage
-                buttonText: root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Add assets") : qsTr("Add ETH")
+                buttonText: root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Add assets") : qsTr("Add %1").arg(d.nativeTokenSymbol)
                 buttonVisible: visible && (root.swapAdaptor.isTokenBalanceInsufficient || root.swapAdaptor.isEthBalanceInsufficient)
                 onButtonClicked: {
                     // value dont update correctly if not done from here
@@ -419,7 +423,7 @@ StatusDialog {
                     d.buyFormData.selectedNetworkChainId = root.swapInputParamsForm.selectedNetworkChainId
                     d.buyFormData.selectedTokenKey = root.swapAdaptor.isTokenBalanceInsufficient ?
                                 root.swapInputParamsForm.fromTokensKey :
-                                Constants.ethToken
+                                d.nativeTokenSymbol
                     Global.openBuyCryptoModalRequested(d.buyFormData)
                 }
             }
@@ -582,12 +586,13 @@ StatusDialog {
             networkName: networkFilter.singleSelectionItemData.chainName
             networkIconPath: Theme.svg(networkFilter.singleSelectionItemData.iconUrl)
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
+            networkChainId: networkFilter.singleSelectionItemData.chainId
 
             fiatFees: {
-                const feesInFloat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
+                const feesInFloat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, d.nativeTokenSymbol)
                 return root.swapAdaptor.currencyStore.formatCurrencyAmount(feesInFloat, root.swapAdaptor.currencyStore.currentCurrency)
             }
-            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(parseFloat(root.swapAdaptor.swapOutputData.approvalGasFees), Constants.ethToken)
+            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(parseFloat(root.swapAdaptor.swapOutputData.approvalGasFees), d.nativeTokenSymbol)
             estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
@@ -639,12 +644,13 @@ StatusDialog {
             networkName: networkFilter.singleSelectionItemData.chainName
             networkIconPath: Theme.svg(networkFilter.singleSelectionItemData.iconUrl)
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
+            networkChainId: root.swapInputParamsForm.selectedNetworkChainId
 
             fiatFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.totalFees,
                                                                           root.swapAdaptor.currencyStore.currentCurrency)
             cryptoFees: {
-                const cryptoValue = root.swapAdaptor.currencyStore.getCryptoValue(root.swapAdaptor.swapOutputData.totalFees, Constants.ethToken)
-                return root.swapAdaptor.currencyStore.formatCurrencyAmount(cryptoValue, Constants.ethToken)
+                const cryptoValue = root.swapAdaptor.currencyStore.getCryptoValue(root.swapAdaptor.swapOutputData.totalFees, d.nativeTokenSymbol)
+                return root.swapAdaptor.currencyStore.formatCurrencyAmount(cryptoValue, d.nativeTokenSymbol)
             }
             slippage: root.swapInputParamsForm.selectedSlippage
 

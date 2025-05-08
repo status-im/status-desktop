@@ -29,7 +29,6 @@ const authenticationCanceled* = "authenticationCanceled"
 type TmpSendTransactionDetails = object
   fromAddrPath: string
   uuid: string
-  sendType: SendType
   pin: string
   password: string
   txHashBeingProcessed: string
@@ -44,7 +43,7 @@ type
     controller: controller.Controller
     moduleLoaded: bool
     tmpSendTransactionDetails: TmpSendTransactionDetails
-    tmpKeepPinPass: bool
+    tmpClearLocalDataLater: bool
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -72,7 +71,7 @@ method delete*(self: Module) =
 proc clearTmpData(self: Module, keepPinPass = false) =
   if keepPinPass:
     self.tmpSendTransactionDetails = TmpSendTransactionDetails(
-      sendType: self.tmpSendTransactionDetails.sendType,
+      uuid: self.tmpSendTransactionDetails.uuid,
       pin: self.tmpSendTransactionDetails.pin,
       password: self.tmpSendTransactionDetails.password
     )
@@ -166,9 +165,10 @@ proc buildTransactionsFromRoute(self: Module) =
 method authenticateAndTransfer*(self: Module, uuid: string, fromAddr: string) =
   self.tmpSendTransactionDetails.uuid = uuid
   self.tmpSendTransactionDetails.resolvedSignatures.clear()
+  self.tmpClearLocalDataLater = true # means there are still some tx to be sent
 
-  if self.tmpKeepPinPass:
-    # no need to authenticate again, just send a swap tx
+  let authenticate = self.tmpSendTransactionDetails.password == "" and self.tmpSendTransactionDetails.pin == ""
+  if not authenticate:
     self.buildTransactionsFromRoute()
     return
 
@@ -276,9 +276,9 @@ method onTransactionSigned*(self: Module, keycardFlowType: string, keycardEvent:
   self.signOnKeycard()
 
 method transactionWasSent*(self: Module, uuid: string, chainId: int = 0, approvalTx: bool = false, txHash: string = "", error: string = "") =
-  self.tmpKeepPinPass = approvalTx # need to automate the swap flow with approval
+  self.tmpClearLocalDataLater = false
   defer:
-    self.clearTmpData(self.tmpKeepPinPass)
+    self.clearTmpData(approvalTx)
   if txHash.len == 0:
     self.view.sendTransactionSentSignal(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error)
     return
@@ -302,8 +302,7 @@ method suggestedRoutes*(self: Module,
   amountOut: string = "",
   slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
-  # maybe not needed
-  # self.tmpSendTransactionDetails.sendType = sendType
+  self.clearTmpData()
   let networks = self.controller.getCurrentNetworks()
   let disabledNetworks = networks.filter(x => x.chainId != chainId).map(x => x.chainId)
   self.controller.suggestedRoutes(
@@ -322,8 +321,9 @@ method suggestedRoutes*(self: Module,
     extraParamsTable
   )
 
-method stopUpdatesForSuggestedRoute*(self: Module) =
+method resetData*(self: Module) =
   self.controller.stopSuggestedRoutesAsyncCalculation()
+  self.clearTmpData(keepPinPass = self.tmpClearLocalDataLater)
 
 method transactionSendingComplete*(self: Module, txHash: string, status: string) =
   self.view.sendtransactionSendingCompleteSignal(txHash, status)
