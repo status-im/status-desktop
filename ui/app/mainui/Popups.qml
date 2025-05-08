@@ -1345,7 +1345,7 @@ QtObject {
 
             NewsMessagePopup {
                 activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
-                onLinkClicked: Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+                onLinkClicked: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
             }
         }
     ]
