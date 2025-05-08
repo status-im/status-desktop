@@ -71,7 +71,7 @@ else
     must_get_env WINDOWS_CODESIGN_PFX_PATH
 
     # Sign with development self-signed certificate
-    "${SIGNTOOL}" sign -v -debug -fd SHA256 \
+    "${SIGNTOOL}" sign -v -debug -td SHA256 -fd SHA256 \
         -p "${WINDOWS_CODESIGN_PASSWORD}" \
         -f "${WINDOWS_CODESIGN_PFX_PATH}" \
         -tr "${WINDOWS_CODESIGN_TIMESTAMP_URL}" \

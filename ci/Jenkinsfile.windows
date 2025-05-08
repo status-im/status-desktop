@@ -11,7 +11,7 @@ pipeline {
     booleanParam(
       name: 'RELEASE',
       description: 'Decides whether release credentials are used.',
-      defaultValue: false
+      defaultValue: params.RELEASE ?: false
     )
     booleanParam(
       name: 'INCLUDE_DEBUG_SYMBOLS',
@@ -83,7 +83,6 @@ pipeline {
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
-    RELEASE = false
   }
 
   stages {
