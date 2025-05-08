@@ -14,6 +14,7 @@ import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
 import AppLayouts.Communities 1.0
 import AppLayouts.Market 1.0
+import AppLayouts.Market.stores 1.0
 import AppLayouts.Wallet.services.dapps 1.0
 
 import utils 1.0
@@ -109,6 +110,9 @@ Item {
     required property AppStores.FeatureFlagsStore featureFlagsStore
     // TODO: Only until the  old send modal transaction store can be replaced with this one
     readonly property WalletStores.TransactionStoreNew transactionStoreNew: WalletStores.TransactionStoreNew {}
+
+    readonly property MarketStore marketStore: MarketStore {}
+
     required property Keychain keychain
 
     required property bool isCentralizedMetricsEnabled
@@ -2119,17 +2123,14 @@ Item {
                         asynchronous: true
                         sourceComponent: MarketLayout {
                             objectName: "marketLayout"
-                            /** TODO: This is only temporary till the backend code for tokens list is ready
-                            Infact all the below values are only temporarily filled until the backend code is prepared **/
-                            tokensModel: SortFilterProxyModel {
-                                sourceModel: appMain.tokensStore.plainTokensBySymbolModel
-                                filters: IndexFilter {
-                                    minimumIndex: startIndex
-                                    maximumIndex: endIndex
-                                }
-                            }
-                            totalTokensCount: appMain.tokensStore.plainTokensBySymbolModel.ModelCount.count
-                            loading: false
+
+                            notificationCount: appMain.activityCenterStore.unreadNotificationsCount
+                            hasUnseenNotifications:  appMain.activityCenterStore.hasUnseenNotifications
+                            onNotificationButtonClicked: Global.openActivityCenterPopup()
+
+                            tokensModel: appMain.marketStore.marketLeaderboardModel
+                            totalTokensCount: appMain.marketStore.totalLeaderboardCount
+                            loading: appMain.marketStore.marketLeaderboardLoading
                             currencySymbol: {
                                 const symbol = SQUtils.ModelUtils.getByKey(
                                                 appMain.currencyStore.currenciesModel,
@@ -2138,12 +2139,19 @@ Item {
                                                 "symbol")
                                 return !!symbol ? symbol: ""
                             }
+                            fnFormatCurrencyAmount: function(amount, options) {
+                                return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
+                            }
+                            currentPage: appMain.marketStore.currentPage
                             onRequestLaunchSwap: d.launchSwap()
-                            /**onFetchMarketTokens: marketStore.fetchMarketTokens(pageSize, pageNumber)**/
+                            onFetchMarketTokens: appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
                         }
-                        onLoaded: {
-                            item.resetView()
+                        onActiveChanged: {
+                            if(!active) {
+                               appMain.marketStore.unsubscribeFromUpdates()
+                            }
                         }
+                        onLoaded: item.resetView()
                     }
 
                     Repeater {

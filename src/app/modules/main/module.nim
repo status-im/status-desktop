@@ -26,6 +26,7 @@ import communities/tokens/models/token_item
 import communities/tokens/models/token_model
 import network_connection/module as network_connection_module
 import shared_urls/module as shared_urls_module
+import market_section/module as market_module
 
 import app_service/service/contacts/dto/contacts
 import app_service/service/community_tokens/community_collectible_owner
@@ -68,6 +69,7 @@ import app_service/service/visual_identity/service as procs_from_visual_identity
 import app_service/common/types
 import app_service/common/utils as common_utils
 import app_service/service/network/network_item
+import app_service/service/market/service as market_service
 
 import app/core/notifications/details
 import app/core/eventemitter
@@ -117,6 +119,7 @@ type
     keycardSharedModule: keycard_shared_module.AccessInterface
     networkConnectionModule: network_connection_module.AccessInterface
     sharedUrlsModule: shared_urls_module.AccessInterface
+    marketModule: market_module.AccessInterface
     moduleLoaded: bool
     chatsLoaded: bool
     communityDataLoaded: bool
@@ -170,6 +173,7 @@ proc newModule*[T](
   keycardService: keycard_service.Service,
   networkConnectionService: network_connection_service.Service,
   sharedUrlsService: urls_service.Service,
+  marketService: market_service.Service,
   threadpool: ThreadPool
 ): Module[T] =
   result = Module[T]()
@@ -241,6 +245,7 @@ proc newModule*[T](
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
   result.networkConnectionModule = network_connection_module.newModule(result, events, networkConnectionService)
   result.sharedUrlsModule = shared_urls_module.newModule(result, events, sharedUrlsService)
+  result.marketModule = market_module.newModule(result, events, marketService)
 
 method delete*[T](self: Module[T]) =
   self.controller.delete
@@ -837,6 +842,7 @@ method load*[T](
   self.walletSectionModule.load()
   self.networkConnectionModule.load()
   self.sharedUrlsModule.load()
+  self.marketModule.load()
 
   # Set active section on app start
   # If section is empty or profile wait until chats are loaded

@@ -10,6 +10,9 @@ import StatusQ.Components 0.1
 Control {
     id: root
 
+    /** Input property holding if token should be min window size mode **/
+    property bool isSmallWindow
+
     QtObject {
         id: d
         // Split into 4 different equal width columns
@@ -61,7 +64,7 @@ Control {
             StatusBaseText {
                 id: tokenNameText
 
-                Layout.preferredWidth: 384
+                Layout.preferredWidth: root.isSmallWindow ? 234: 384
                 Layout.leftMargin: Theme.padding
 
                 text: qsTr("Token")
