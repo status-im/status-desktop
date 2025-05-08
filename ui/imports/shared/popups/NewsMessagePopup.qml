@@ -87,6 +87,8 @@ StatusDialog {
         }
     }
     footer: StatusDialogFooter {
+        visible: !!notification.newsLink
+
         rightButtons: ObjectModel {
             StatusButton {
                 text: !!notification.newsLinkLabel ? notification.newsLinkLabel : qsTr("Visit the website")
