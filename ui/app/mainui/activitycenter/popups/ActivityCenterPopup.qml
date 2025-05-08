@@ -398,6 +398,7 @@ Popup {
             activityCenterStore: root.activityCenterStore
             onReadMoreClicked: {
                 root.close()
+                root.activityCenterStore.markActivityCenterNotificationRead(parent.notification)
                 Global.openNewsMessagePopupRequested(parent.notification, parent.notification.id)
                 // TODO figure out if we want the link
                 Global.addCentralizedMetricIfEnabled("news-info-opened", {"news-link": parent.notification.link})
