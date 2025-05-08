@@ -102,7 +102,7 @@ Popup {
     StatusListView {
         id: listView
 
-        visible: !statusNewsNotificationPlaceholder.visible
+        visible: !statusNewsNotificationDisabledLoader.active
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: activityCenterTopBar.bottom
@@ -174,13 +174,23 @@ Popup {
         }
     }
 
-    // Placeholders for the status news when their settings are disbled
+    // Placeholder for the status news when their settings are disbled
     Loader {
-        id: statusNewsNotificationPlaceholder
-        visible: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
+        id: statusNewsNotificationDisabledLoader
+        active: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
                  (!d.isStatusNewsViaRSSEnabled || d.notificationsSettings.notifSettingStatusNews === Constants.settingsSection.notifications.turnOffValue)
         anchors.centerIn: parent
-        sourceComponent: newsPlaceholderPanel
+        sourceComponent: newsDisabledPanel
+    }
+
+    // Placeholder for the status news when they are all seen or there are no notifications
+    Loader {
+        id: statusNewsNotificationEmptyState
+        active: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
+                 !statusNewsNotificationDisabledLoader.active &&
+                 listView.count === 0
+        anchors.centerIn: parent
+        sourceComponent: newsEmptyPanel
     }
 
     Component {
@@ -550,7 +560,7 @@ Popup {
     }
 
     Component {
-        id: newsPlaceholderPanel
+        id: newsDisabledPanel
         
         ColumnLayout {
             id: newsPanelLayout
@@ -603,6 +613,26 @@ Popup {
                         d.notificationsSettings.notifSettingStatusNews = Constants.settingsSection.notifications.sendAlertsValue
                     }
                 }
+            }
+        }
+    }
+
+    Component {
+        id: newsEmptyPanel
+
+        Item {
+            anchors.fill: parent
+
+            StatusBaseText {
+                anchors.centerIn: parent
+
+                // If the mode is unread only, it means the user has seen all notifications
+                // If the mode is all, it means the user doesn't have any notifications
+                text: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread ?
+                    qsTr("You're all caught up") :
+                    qsTr("Your notifications will appear here")
+                horizontalAlignment: Text.AlignHCenter
+                color: Theme.palette.baseColor1
             }
         }
     }
