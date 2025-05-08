@@ -29,16 +29,27 @@ ActivityNotificationBase {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
 
-            StatusMessageHeader {
-                Layout.fillWidth: true
-                displayNameLabel.text: root.notification ? root.notification.newsTitle : ""
-                timestamp: root.notification ? root.notification.timestamp : 0
-            }
+            RowLayout {
+                Layout.maximumWidth: parent.width
 
+                StatusBaseText {
+                    text: root.notification ? root.notification.newsTitle : ""
+                    color: Theme.palette.baseColor1
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                    font.weight: Font.Medium
+                }
+
+                StatusTimeStampLabel {
+                    id: timestampLabel
+                    verticalAlignment: Text.AlignVCenter
+                    timestamp: root.notification ? root.notification.timestamp : 0
+                }
+            }
+            
             StatusBaseText {
                 Layout.fillWidth: true
                 text: root.notification ? root.notification.newsDescription : ""
-                font.italic: true
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1
                 Layout.maximumHeight: 44
