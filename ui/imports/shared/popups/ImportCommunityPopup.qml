@@ -56,11 +56,18 @@ StatusDialog {
                 }
                 return linkData.communityId
             }
-            if (!root.utilsStore.isCommunityPublicKey(inputKey))
+            let updatedKey = inputKey
+            if (inputKey.indexOf("#") !== -1) {
+                // It's likely <encoded_data>#<community_chat_key> and we only want the community key
+                updatedKey = inputKey.split("#")[1]
+            }
+            if (!root.utilsStore.isCommunityPublicKey(updatedKey)) {
                 return ""
-            if (!root.utilsStore.isCompressedPubKey(inputKey))
-                return inputKey
-            return root.utilsStore.changeCommunityKeyCompression(inputKey)
+            }
+            if (!root.utilsStore.isCompressedPubKey(updatedKey)) {
+                return updatedKey
+            }
+            return root.utilsStore.changeCommunityKeyCompression(updatedKey)
         }
         readonly property bool isInputValid: publicKey !== ""
 
@@ -158,7 +165,7 @@ StatusDialog {
                 StatusTextArea {
                     id: keyInput
                     anchors.fill: parent
-                    placeholderText: "0x0..."
+                    placeholderText: "zQ3..."
                     wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
                     onTextChanged: d.importErrorMessage = ""
                 }

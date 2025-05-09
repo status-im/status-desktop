@@ -895,11 +895,7 @@ QtObject {
         return getCommunityChannelShareLink(communityId, channelId)
     }
 
-    function getCommunityDataFromSharedLink(link) {
-        const index = link.lastIndexOf("/c/")
-        if (index === -1)
-            return null
-
+    function getCommunityDataFromSharedLink(link: string) {
         const communityDataString = sharedUrlsModuleInst.parseCommunitySharedUrl(link)
         try {
             return JSON.parse(communityDataString)
