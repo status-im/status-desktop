@@ -115,6 +115,8 @@ StatusScrollView {
             IntroPanel {
                 Layout.fillWidth: true
 
+                objectName: "introPanel"
+
                 image: Theme.png("community/mint2_1")
                 title: qsTr("Community tokens")
                 subtitle: qsTr("You can mint custom tokens and import tokens for your community")
@@ -126,6 +128,8 @@ StatusScrollView {
             }
 
             StatusInfoBoxPanel {
+
+                objectName: "infoBoxPanel"
 
                 readonly property bool isAdminOnly: root.isAdmin && !root.isOwner
 
