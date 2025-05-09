@@ -12,6 +12,7 @@ class AdvancedSettingsView(QObject):
     def __init__(self):
         super().__init__(settings_names.mainWindow_AdvancedView)
         self.scroll = Scroll(settings_names.settingsContentBase_ScrollView)
+        self.new_scroll_bar = Scroll(settings_names.advancedScrollBar)
         self.manage_community_on_testnet_button = Button(
             settings_names.manageCommunitiesOnTestnetButton_StatusSettingsLineButton)
         self.light_mode_button = Button(settings_names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
@@ -20,7 +21,8 @@ class AdvancedSettingsView(QObject):
     @allure.step('Switch manage community on testnet option')
     def enable_manage_communities_on_testnet_toggle(self):
         for _ in range(2):
-            self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
+            if not self.manage_community_on_testnet_button.is_visible:
+                self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
             if not self.manage_community_on_testnet_button.object.switchChecked:
                 try:
                     self.manage_community_on_testnet_button.click()
