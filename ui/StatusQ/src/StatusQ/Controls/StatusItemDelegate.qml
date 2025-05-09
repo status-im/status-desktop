@@ -56,6 +56,7 @@ ItemDelegate {
     }
 
     HoverHandler {
+        enabled: cursorShape !== Qt.ArrowCursor
         cursorShape: root.cursorShape
     }
 }
