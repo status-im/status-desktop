@@ -28,8 +28,8 @@ StatusInput {
                                                 qsTr("community description"))
         },
         StatusRegularExpressionValidator {
-            regularExpression: Constants.regularExpressions.alphanumericalExpanded
-            errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
+            regularExpression: Constants.regularExpressions.alphanumericalExpanded3
+            errorMessage: Constants.errorMessages.alphanumericalExpanded3RegExp
         }
     ]
 }
