@@ -9,6 +9,7 @@ type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     Name
+    UsesDefaultName
     MemberRole
     Icon
     Color
@@ -109,6 +110,7 @@ QtObject:
     {
       ModelRole.Id.int:"itemId",
       ModelRole.Name.int:"name",
+      ModelRole.UsesDefaultName.int:"usesDefaultName",
       ModelRole.MemberRole.int:"memberRole",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
@@ -158,6 +160,8 @@ QtObject:
       result = newQVariant(item.id)
     of ModelRole.Name:
       result = newQVariant(item.name)
+    of ModelRole.UsesDefaultName:
+      result = newQVariant(item.usesDefaultName)
     of ModelRole.MemberRole:
       result = newQVariant(item.memberRole.int)
     of ModelRole.Icon:
@@ -456,6 +460,7 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Blocked.int])
 
+  # TODO fix those functions to use the model property macro
   proc updateItemDetailsById*(self: Model, id, name, icon: string, trustStatus: TrustStatus) =
     let index = self.getItemIdxById(id)
     if index == -1:
@@ -468,6 +473,7 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
+      ModelRole.UsesDefaultName.int,
       ModelRole.Icon.int,
       ModelRole.TrustStatus.int,
     ])
@@ -485,6 +491,7 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
+      ModelRole.UsesDefaultName.int,
       ModelRole.Description.int,
       ModelRole.Emoji.int,
       ModelRole.Color.int,
@@ -505,6 +512,7 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
+      ModelRole.UsesDefaultName.int,
       ModelRole.Color.int,
       ModelRole.Icon.int,
     ])
@@ -524,6 +532,7 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
+      ModelRole.UsesDefaultName.int,
       ModelRole.CategoryPosition.int,
     ])
 
@@ -610,7 +619,7 @@ QtObject:
     self.items[index].name = name
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int])
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int, ModelRole.UsesDefaultName.int])
 
   proc updateItemOnlineStatusById*(self: Model, id: string, onlineStatus: OnlineStatus) =
     let index = self.getItemIdxById(id)

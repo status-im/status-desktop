@@ -102,6 +102,13 @@ QtObject:
     read = getDisplayName
     notify = nameChanged
 
+  proc usesDefaultName*(self: UserProfile): bool {.slot.} =
+    return self.displayName == "" and self.preferredName == ""
+
+  QtProperty[bool] usesDefaultName:
+    read = usesDefaultName
+    notify = nameChanged
+
   proc getName*(self: UserProfile): string {.slot.} =
     if(self.preferredName.len > 0):
       return self.getPreferredName()

@@ -114,7 +114,7 @@ ItemDelegate {
             status: root.contactDetails.onlineStatus
             icon.name: root.contactDetails.thumbnailImage
             icon.color: Utils.colorForPubkey(root.contactId)
-            ringSettings.ringSpecModel: Utils.getColorHashAsJson(root.contactId)
+            colorHash: Utils.getColorHashAsJson(root.contactId)
         }
     }
 

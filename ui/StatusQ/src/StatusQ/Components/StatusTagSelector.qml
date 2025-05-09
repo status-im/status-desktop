@@ -418,7 +418,7 @@ Item {
                 icon.name: model.icon
                 icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.pubKey)]
                 status: model.onlineStatus
-                ringSettings.ringSpecModel: root.ringSpecModelGetter(model.pubKey)
+                colorHash: model.colorHash
                 color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
                 onClicked: {
                     root.insertTag(model.displayName, model.pubKey, model.isAdmin, model.isAdmin ? "crown" : "");
