@@ -1228,9 +1228,6 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
     chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
 
-method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
-  self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
-
 method removeMemberFromGroupChat*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
