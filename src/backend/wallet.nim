@@ -268,3 +268,24 @@ proc setCustomTxDetails*(nonce: int, gasAmount: int, maxFeesPerGas: string, prio
   let rpcResponse = core.callPrivateRPC("wallet_setCustomTxDetails", payload)
   if isErrorResponse(rpcResponse):
     return rpcResponse.error.message
+
+
+## Reevaluates reevaluates the tx-fields from the router path that matches the provided pathTxIdentity and sends signal.SuggestedRoutes.
+## `uuid` is the uuid of the router input params
+## `routerInputParamsUuid` is the uuid of the router input params
+## `pathName` is the name of the path
+## `chainId` is the chain id of the network
+## `isApprovalTx` is a flag that indicates if the tx is an approval tx - optional
+proc reevaluateRouterPath*(routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool = false): string {.raises: [RpcException].} =
+  var pathTxIdentity = %* {
+      "routerInputParamsUuid": routerInputParamsUuid,
+      "pathName": pathName,
+      "chainID": chainId,
+    }
+  if isApprovalTx:
+    pathTxIdentity["isApprovalTx"] = %* true
+
+  let payload = %* [pathTxIdentity]
+  let rpcResponse = core.callPrivateRPC("wallet_reevaluateRouterPath", payload)
+  if isErrorResponse(rpcResponse):
+    return rpcResponse.error.message
