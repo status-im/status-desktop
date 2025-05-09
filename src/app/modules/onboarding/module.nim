@@ -297,7 +297,6 @@ proc syncAppAndKeycardState[T](self: Module[T]) =
   self.controller.addKeycardOrAccounts(kcDto, accountsComingFromKeycard = true)
 
 proc finishAppLoading2[T](self: Module[T]) =
-  self.delegate.appReady()
 
   let isOnboarding = self.loginFlow == LoginMethod.Unknown
   let eventType = if isOnboarding: "onboarding-completed" else: "user-logged-in"
@@ -309,6 +308,7 @@ proc finishAppLoading2[T](self: Module[T]) =
   self.controller.stopKeycardService()
 
   self.delegate.finishAppLoading()
+  self.delegate.appReady()
 
 method onAccountLoginError*[T](self: Module[T], error: string) =
   # SQLITE_NOTADB: "file is not a database"
