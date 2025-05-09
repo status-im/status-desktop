@@ -341,6 +341,7 @@ QtObject:
 
     let suggestedDto = SuggestedRoutesDto(
       best: addFirstSimpleBridgeTxFlag(oldRoute),
+      bestRoute: route,
       rawBest: routeRaw,
       gasTimeEstimate: getFeesTotal(oldRoute),
       amountToReceive: getTotalAmountToReceive(oldRoute),
@@ -531,3 +532,12 @@ proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatur
     error "unexpected sending transactions response"
     return "unexpected sending transactions response"
   return ""
+
+proc reevaluateRouterPath*(self: Service, uuid: string, pathName: string, chainId: int, isApprovalTx: bool): string =
+  try:
+    let err = wallet.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
+    if err.len > 0:
+      raise newException(CatchableError, err)
+  except CatchableError as e:
+    error "reevaluateRouterPath", exception=e.msg
+    return e.msg

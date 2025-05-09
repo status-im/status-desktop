@@ -50,4 +50,8 @@ QtObject {
     function getWei2Eth(wei, decimals) {
         return globalUtils.wei2Eth(wei, decimals)
     }
+
+    function reevaluateSwap(routerInputParamsUuid, chainId, isApprovalTx) {
+        root.walletSectionSendInst.reevaluateSwap(routerInputParamsUuid, chainId, isApprovalTx)
+    }
 }
