@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.18'
+library 'status-jenkins-lib@digicert_keylocker'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -91,6 +91,7 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
+
     stage('Deps') {
       steps {
         sh 'make update'
