@@ -109,12 +109,12 @@ method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string
 
 method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDataSource =
   return (
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] = self.controller.getSourcesOfTokensList()
+    getSourcesOfTokensList: proc(): seq[SupportedSourcesItem] = self.controller.getSourcesOfTokensList()
   )
 
 method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
   return (
-    getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
+    getFlatTokensList: proc(): seq[TokenItem] = self.controller.getFlatTokensList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
     getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
@@ -124,7 +124,7 @@ method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
 
 method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSource =
   return (
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
+    getTokenBySymbolList: proc(): seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
     getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string = self.controller.getCommunityTokenDescription(addressPerChain),
