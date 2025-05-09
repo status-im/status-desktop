@@ -486,9 +486,11 @@ StatusDialog {
                             }
 
                             if(root.swapAdaptor.validSwapProposalReceived) {
-                                return root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                                            root.swapAdaptor.swapOutputData.totalFees,
-                                            root.swapAdaptor.currencyStore.currentCurrency)
+                                let fees = root.swapAdaptor.swapOutputData.txFeesInFiat
+                                if(root.swapAdaptor.swapOutputData.approvalNeeded && !root.swapAdaptor.approvalSuccessful) {
+                                    fees = root.swapAdaptor.swapOutputData.approvalTxFeesFiat
+                                }
+                                return root.swapAdaptor.currencyStore.formatCurrencyAmount(fees, root.swapAdaptor.currencyStore.currentCurrency)
                             }
 
                             return "--"
@@ -594,11 +596,13 @@ StatusDialog {
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
             networkChainId: networkFilter.singleSelectionItemData.chainId
 
-            fiatFees: {
-                const feesInFloat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, d.nativeTokenSymbol)
-                return root.swapAdaptor.currencyStore.formatCurrencyAmount(feesInFloat, root.swapAdaptor.currencyStore.currentCurrency)
+            fiatFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.approvalTxFeesFiat, root.swapAdaptor.currencyStore.currentCurrency)
+
+            cryptoFees: {
+                const cryptoValue = Utils.nativeTokenRawToDecimal(root.swapInputParamsForm.selectedNetworkChainId, root.swapAdaptor.swapOutputData.approvalTxFeesWei).toString()
+                return root.swapAdaptor.currencyStore.formatCurrencyAmount(cryptoValue, d.nativeTokenSymbol)
             }
-            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(parseFloat(root.swapAdaptor.swapOutputData.approvalGasFees), d.nativeTokenSymbol)
+
             estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
@@ -652,12 +656,22 @@ StatusDialog {
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
             networkChainId: root.swapInputParamsForm.selectedNetworkChainId
 
-            fiatFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.totalFees,
-                                                                          root.swapAdaptor.currencyStore.currentCurrency)
+            fiatFees: {
+                let fees = root.swapAdaptor.swapOutputData.txFeesInFiat
+                if(root.swapAdaptor.swapOutputData.approvalNeeded && !root.swapAdaptor.approvalSuccessful) {
+                    fees = root.swapAdaptor.swapOutputData.approvalTxFeesFiat
+                }
+                return root.swapAdaptor.currencyStore.formatCurrencyAmount(fees, root.swapAdaptor.currencyStore.currentCurrency)
+            }
+
             cryptoFees: {
-                const cryptoValue = root.swapAdaptor.currencyStore.getCryptoValue(root.swapAdaptor.swapOutputData.totalFees, d.nativeTokenSymbol)
+                let cryptoValue = Utils.nativeTokenRawToDecimal(root.swapInputParamsForm.selectedNetworkChainId, root.swapAdaptor.swapOutputData.txFeesWei)
+                if(root.swapAdaptor.swapOutputData.approvalNeeded && !root.swapAdaptor.approvalSuccessful) {
+                    cryptoValue = Utils.nativeTokenRawToDecimal(root.swapInputParamsForm.selectedNetworkChainId, root.swapAdaptor.swapOutputData.approvalTxFeesWei).toString()
+                }
                 return root.swapAdaptor.currencyStore.formatCurrencyAmount(cryptoValue, d.nativeTokenSymbol)
             }
+
             slippage: root.swapInputParamsForm.selectedSlippage
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName

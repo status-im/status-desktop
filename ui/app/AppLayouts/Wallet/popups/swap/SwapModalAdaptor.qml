@@ -141,6 +141,14 @@ QObject {
                 root.swapOutputData.totalFees = root.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, d.nativeTokenSymbol) + totalTokenFeesInFiat
                 let bestPath = ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
 
+                root.swapOutputData.txFeesWei = AmountsArithmetic.sum(AmountsArithmetic.fromString(bestPath.txFeeInWei), AmountsArithmetic.fromString(bestPath.txL1FeeInWei)).toString()
+                const txFeesNative = Utils.nativeTokenRawToDecimal(root.swapFormData.selectedNetworkChainId, root.swapOutputData.txFeesWei)
+                root.swapOutputData.txFeesInFiat = root.currencyStore.getFiatValue(txFeesNative, d.nativeTokenSymbol)
+
+                root.swapOutputData.approvalTxFeesWei = AmountsArithmetic.sum(AmountsArithmetic.fromString(bestPath.approvalFeeInWei), AmountsArithmetic.fromString(bestPath.approvalL1FeeInWei)).toString()
+                const txApprovalFeesNative = Utils.nativeTokenRawToDecimal(root.swapFormData.selectedNetworkChainId, root.swapOutputData.approvalTxFeesWei)
+                root.swapOutputData.approvalTxFeesFiat = root.currencyStore.getFiatValue(txApprovalFeesNative, d.nativeTokenSymbol)
+
                 const totalMaxFeesInGasUnit = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
                 root.swapOutputData.maxFeesToReserveRaw = Utils.nativeTokenGasToRaw(root.swapFormData.selectedNetworkChainId, totalMaxFeesInGasUnit).toString()
 
@@ -174,6 +182,8 @@ QObject {
                 root.approvalPending = false
                 root.approvalSuccessful = status == "Success" // TODO: make a all tx statuses Constants (success, pending, failed)
                 d.txHash = ""
+
+                root.swapStore.reevaluateSwap(d.uuid, root.swapFormData.selectedNetworkChainId, true)
             }
         }
     }

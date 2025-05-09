@@ -13,7 +13,7 @@ import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/keycard/constants as keycard_constants
-import app_service/service/transaction/dto
+import app_service/service/transaction/[dto, dtoV2]
 import app/modules/shared_models/currency_amount
 import app_service/service/network/network_item as network_service_item
 
@@ -121,28 +121,32 @@ proc convertFeesDtoToGasEstimateItem(self: Module, fees: FeesDto): GasEstimateIt
     totalTime = fees.totalTime
     )
 
-proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: TransactionPathDto): SuggestedRouteItem =
+proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, pathOld: TransactionPathDto, pathNew: TransactionPathDtoV2): SuggestedRouteItem =
   result = newSuggestedRouteItem(
-    bridgeName = path.bridgeName,
-    fromNetwork = path.fromNetwork.chainId,
-    toNetwork = path.toNetwork.chainId,
-    maxAmountIn = $path.maxAmountIn,
-    amountIn = $path.amountIn,
-    amountOut = $path.amountOut,
-    gasAmount = $path.gasAmount,
-    gasFees = self.convertSuggestedFeesDtoToGasFeesItem(path.gasFees),
-    tokenFees = path.tokenFees,
-    cost = path.cost,
-    estimatedTime = path.estimatedTime,
-    amountInLocked = path.amountInLocked,
-    isFirstSimpleTx = path.isFirstSimpleTx,
-    isFirstBridgeTx = path.isFirstBridgeTx,
-    approvalRequired = path.approvalRequired,
-    approvalGasFees = path.approvalGasFees,
-    approvalAmountRequired = $path.approvalAmountRequired,
-    approvalContractAddress = path.approvalContractAddress,
-    slippagePercentage = path.slippagePercentage
-    )
+    bridgeName = pathOld.bridgeName,
+    fromNetwork = pathOld.fromNetwork.chainId,
+    toNetwork = pathOld.toNetwork.chainId,
+    maxAmountIn = $pathOld.maxAmountIn,
+    amountIn = $pathOld.amountIn,
+    amountOut = $pathOld.amountOut,
+    gasAmount = $pathOld.gasAmount,
+    gasFees = self.convertSuggestedFeesDtoToGasFeesItem(pathOld.gasFees),
+    tokenFees = pathOld.tokenFees,
+    cost = pathOld.cost,
+    estimatedTime = pathOld.estimatedTime,
+    amountInLocked = pathOld.amountInLocked,
+    isFirstSimpleTx = pathOld.isFirstSimpleTx,
+    isFirstBridgeTx = pathOld.isFirstBridgeTx,
+    approvalRequired = pathOld.approvalRequired,
+    approvalGasFees = pathOld.approvalGasFees,
+    approvalAmountRequired = $pathOld.approvalAmountRequired,
+    approvalContractAddress = pathOld.approvalContractAddress,
+    slippagePercentage = pathOld.slippagePercentage,
+    txFeeInWei = pathNew.txFee.toString(),
+    txL1FeeInWei = pathNew.txL1Fee.toString(),
+    approvalFeeInWei = pathNew.approvalFee.toString(),
+    approvalL1FeeInWei = pathNew.approvalL1Fee.toString(),
+  )
 
 proc refreshNetworks*(self: Module) =
   let networks = self.controller.getCurrentNetworks()
@@ -305,7 +309,14 @@ method transactionWasSent*(self: Module, uuid: string, chainId: int = 0, approva
   self.view.sendTransactionSentSignal(uuid, chainId, approvalTx, txHash, error)
 
 method suggestedRoutesReady*(self: Module, uuid: string, suggestedRoutes: SuggestedRoutesDto, errCode: string, errDescription: string) =
-  let paths = suggestedRoutes.best.map(x => self.convertTransactionPathDtoToSuggestedRouteItem(x))
+  if suggestedRoutes.best.len != suggestedRoutes.bestRoute.len:
+    error "suggestedRoutes.best and suggestedRoutes.bestRoute have different lengths"
+    return
+  var paths: seq[SuggestedRouteItem]
+  for i in 0..<suggestedRoutes.best.len:
+    let p = self.convertTransactionPathDtoToSuggestedRouteItem(suggestedRoutes.best[i], suggestedRoutes.bestRoute[i])
+    paths.add(p)
+
   let suggestedRouteModel = newSuggestedRouteModel()
   suggestedRouteModel.setItems(paths)
   let gasTimeEstimate = self.convertFeesDtoToGasEstimateItem(suggestedRoutes.gasTimeEstimate)
@@ -410,3 +421,9 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
 
 method transactionSendingComplete*(self: Module, txHash: string, status: string) =
   self.view.sendtransactionSendingCompleteSignal(txHash, status)
+
+method reevaluateSwap*(self: Module, uuid: string, chainId: int, isApprovalTx: bool) =
+  const pathName = "Paraswap"
+  let err = self.controller.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
+  if err.len > 0:
+    error "reevaluateRouterPath failed: ", err=err
