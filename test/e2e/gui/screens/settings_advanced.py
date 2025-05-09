@@ -12,6 +12,7 @@ class AdvancedSettingsView(QObject):
     def __init__(self):
         super().__init__(settings_names.mainWindow_AdvancedView)
         self.scroll = Scroll(settings_names.settingsContentBase_ScrollView)
+        self.new_scroll_bar = Scroll(settings_names.advancedScrollBar)
         self.manage_community_on_testnet_button = Button(
             settings_names.manageCommunitiesOnTestnetButton_StatusSettingsLineButton)
         self.light_mode_button = Button(settings_names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
