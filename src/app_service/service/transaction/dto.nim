@@ -4,6 +4,7 @@ import Tables, sequtils
 import
   web3/ethtypes
 
+import dtoV2
 import backend/network_types
 import backend/transactions
 import app_service/common/conversion as service_conversion
@@ -363,6 +364,7 @@ proc convertSendToNetwork*(jsonObj: JsonNode): SendToNetwork =
 type
   SuggestedRoutesDto* = ref object
     best*: seq[TransactionPathDto]
+    bestRoute*: seq[TransactionPathDtoV2]
     rawBest*: string # serialized seq[TransactionPathDtoV2]
     gasTimeEstimate*: FeesDto
     amountToReceive*: UInt256

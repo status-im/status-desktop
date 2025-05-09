@@ -187,3 +187,6 @@ proc runSignFlow*(self: Controller, pin, bip44Path, txHash: string) =
 
 proc getChainsWithNoGasFromError*(self: Controller, errCode: string, errDescription: string): Table[int, string] =
   return self.walletAccountService.getChainsWithNoGasFromError(errCode, errDescription)
+
+proc reevaluateRouterPath*(self: Controller, uuid: string, pathName: string, chainId: int, isApprovalTx: bool): string =
+  return self.transactionService.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
