@@ -88,3 +88,6 @@ method getNetworkItem*(self: AccessInterface, chainId: int): NetworkItem {.base.
 
 method getNetworkChainId*(self: AccessInterface, shortName: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method reevaluateRouterPath*(self: AccessInterface, uuid: string, pathName: string, chainId: int, isApprovalTx: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -3,7 +3,7 @@ import NimQml
 import ./gas_fees_item
 
 QtObject:
-  type SuggestedRouteItem* = ref object of QObject
+  type  SuggestedRouteItem* = ref object of QObject
     bridgeName: string
     fromNetwork: int
     toNetwork: int
@@ -23,6 +23,12 @@ QtObject:
     approvalAmountRequired: string
     approvalContractAddress: string
     slippagePercentage: float
+
+    txFeeInWei: string
+    txL1FeeInWei: string
+    approvalFeeInWei: string
+    approvalL1FeeInWei: string
+
   proc setup*(self: SuggestedRouteItem,
     bridgeName: string,
     fromNetwork: int,
@@ -42,7 +48,11 @@ QtObject:
     approvalGasFees: float,
     approvalAmountRequired: string,
     approvalContractAddress: string,
-    slippagePercentage: float
+    slippagePercentage: float,
+    txFeeInWei: string,
+    txL1FeeInWei: string,
+    approvalFeeInWei: string,
+    approvalL1FeeInWei: string
   ) =
     self.QObject.setup
     self.bridgeName = bridgeName
@@ -64,6 +74,10 @@ QtObject:
     self.approvalAmountRequired = approvalAmountRequired
     self.approvalContractAddress = approvalContractAddress
     self.slippagePercentage = slippagePercentage
+    self.txFeeInWei = txFeeInWei
+    self.txL1FeeInWei = txL1FeeInWei
+    self.approvalFeeInWei = approvalFeeInWei
+    self.approvalL1FeeInWei = approvalL1FeeInWei
 
   proc delete*(self: SuggestedRouteItem) =
       self.QObject.delete
@@ -87,12 +101,17 @@ QtObject:
     approvalGasFees: float = 0,
     approvalAmountRequired: string = "",
     approvalContractAddress: string = "",
-    slippagePercentage: float = 0.0
+    slippagePercentage: float = 0.0,
+    txFeeInWei: string = "",
+    txL1FeeInWei: string = "",
+    approvalFeeInWei: string = "",
+    approvalL1FeeInWei: string = ""
     ): SuggestedRouteItem =
       new(result, delete)
       result.setup(bridgeName, fromNetwork, toNetwork, maxAmountIn, amountIn, amountOut, gasAmount, gasFees, tokenFees,
         cost, estimatedTime, amountInLocked, isFirstSimpleTx, isFirstBridgeTx, approvalRequired, approvalGasFees,
-        approvalAmountRequired, approvalContractAddress, slippagePercentage)
+        approvalAmountRequired, approvalContractAddress, slippagePercentage, txFeeInWei, txL1FeeInWei, approvalFeeInWei,
+        approvalL1FeeInWei)
 
   proc `$`*(self: SuggestedRouteItem): string =
     result = "SuggestedRouteItem("
@@ -115,6 +134,10 @@ QtObject:
     result = result & "\napprovalAmountRequired: " & $self.approvalAmountRequired
     result = result & "\napprovalContractAddress: " & $self.approvalContractAddress
     result = result & "\nslippagePercentage: " & $self.slippagePercentage
+    result = result & "\ntxFeeInWei: " & $self.txFeeInWei
+    result = result & "\ntxL1FeeInWei: " & $self.txL1FeeInWei
+    result = result & "\napprovalFeeInWei: " & $self.approvalFeeInWei
+    result = result & "\napprovalL1FeeInWei: " & $self.approvalL1FeeInWei
     result = result & ")"
 
   proc bridgeNameChanged*(self: SuggestedRouteItem) {.signal.}
@@ -249,3 +272,31 @@ QtObject:
   QtProperty[float] slippagePercentage:
     read = getSlippagePercentage
     notify = slippagePercentageChanged
+
+  proc txFeeInWeiChanged*(self: SuggestedRouteItem) {.signal.}
+  proc getTxFeeInWei*(self: SuggestedRouteItem): string {.slot.} =
+    return self.txFeeInWei
+  QtProperty[string] txFeeInWei:
+    read = getTxFeeInWei
+    notify = txFeeInWeiChanged
+
+  proc txL1FeeInWeiChanged*(self: SuggestedRouteItem) {.signal.}
+  proc getTxL1FeeInWei*(self: SuggestedRouteItem): string {.slot.} =
+    return self.txL1FeeInWei
+  QtProperty[string] txL1FeeInWei:
+    read = getTxL1FeeInWei
+    notify = txL1FeeInWeiChanged
+
+  proc approvalFeeInWeiChanged*(self: SuggestedRouteItem) {.signal.}
+  proc getApprovalFeeInWei*(self: SuggestedRouteItem): string {.slot.} =
+    return self.approvalFeeInWei
+  QtProperty[string] approvalFeeInWei:
+    read = getApprovalFeeInWei
+    notify = approvalFeeInWeiChanged
+
+  proc approvalL1FeeInWeiChanged*(self: SuggestedRouteItem) {.signal.}
+  proc getApprovalL1FeeInWei*(self: SuggestedRouteItem): string {.slot.} =
+    return self.approvalL1FeeInWei
+  QtProperty[string] approvalL1FeeInWei:
+    read = getApprovalL1FeeInWei
+    notify = approvalL1FeeInWeiChanged

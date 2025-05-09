@@ -11,6 +11,12 @@ QtObject {
     property string toTokenAmount: ""
     // TODO: this should be string but backend gas_estimate_item.nim passes this as float
     property real totalFees: 0
+
+    property string txFeesWei: "0"
+    property real txFeesInFiat: 0
+    property string approvalTxFeesWei: "0"
+    property real approvalTxFeesFiat: 0
+
     property string maxFeesToReserveRaw: ""
     property bool hasError
     property string errCode
@@ -42,6 +48,10 @@ QtObject {
         root.approvalGasFees = ""
         root.approvalAmountRequired = ""
         root.approvalContractAddress = ""
+        root.txFeesWei = "0"
+        root.txFeesInFiat = 0
+        root.approvalTxFeesWei = "0"
+        root.approvalTxFeesFiat = 0
         resetPathInfoAndError()
     }
 }

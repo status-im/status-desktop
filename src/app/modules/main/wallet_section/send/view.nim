@@ -174,6 +174,9 @@ QtObject:
   proc authenticateAndTransfer*(self: View, uuid: string) {.slot.} =
     self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, uuid)
 
+  proc reevaluateRouterPath*(self: View, uuid: string, pathName: string, chainId: int, isApprovalTx: bool) {.slot.} =
+    self.delegate.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
+
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant, errCode: string, errDescription: string) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes, errCode: string, errDescription: string) =
     self.transactionRoutes = routes
