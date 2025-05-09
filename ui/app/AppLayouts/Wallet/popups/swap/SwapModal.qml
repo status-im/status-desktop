@@ -7,6 +7,7 @@ import utils 1.0
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
@@ -78,6 +79,8 @@ StatusDialog {
         }
 
         readonly property var selectedAccount: selectedAccountEntry.item
+
+        readonly property int loadingFeesWidth: 60
     }
 
     ModelEntry {
@@ -472,12 +475,12 @@ StatusDialog {
                         color: Theme.palette.directColor5
                         font.weight: Font.Medium
                     }
-                    StatusTextWithLoadingState {
+                    StatusBaseText {
                         id: fees
                         objectName: "maxFeesValue"
                         text: {
-                            if(fees.loading) {
-                                return Constants.dummyText
+                            if(root.swapAdaptor.swapProposalLoading) {
+                                return ""
                             }
 
                             if(root.swapAdaptor.validSwapProposalReceived) {
@@ -490,20 +493,25 @@ StatusDialog {
                         }
 
                         onTextChanged: {
-                            if (text === "" || text === "--" || text === Constants.dummyText) {
+                            if (text === "" || text === "--") {
                                 animation.stop()
                                 return
                             }
                             animation.restart()
                         }
 
-                        customColor: Theme.palette.directColor4
+                        color: Theme.palette.directColor4
                         font.weight: Font.Medium
-                        loading: root.swapAdaptor.swapProposalLoading
 
                         StatusColorAnimation {
                             id: animation
                             target: fees
+                        }
+
+                        LoadingComponent {
+                            width: d.loadingFeesWidth
+                            height: parent.font.pixelSize
+                            visible: root.swapAdaptor.swapProposalLoading
                         }
                     }
                 }
