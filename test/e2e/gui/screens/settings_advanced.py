@@ -20,7 +20,8 @@ class AdvancedSettingsView(QObject):
     @allure.step('Switch manage community on testnet option')
     def enable_manage_communities_on_testnet_toggle(self):
         for _ in range(2):
-            self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
+            if not self.manage_community_on_testnet_button.is_visible:
+                self.scroll.vertical_scroll_down(self.manage_community_on_testnet_button)
             if not self.manage_community_on_testnet_button.object.switchChecked:
                 try:
                     self.manage_community_on_testnet_button.click()
