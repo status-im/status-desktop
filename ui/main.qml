@@ -5,7 +5,6 @@ import Qt.labs.platform 1.1
 import Qt.labs.settings 1.1
 import QtQuick.Window 2.15
 import QtQml 2.15
-import QtQuick.Controls.Universal 2.15
 
 import utils 1.0
 import shared 1.0
@@ -46,8 +45,6 @@ StatusWindow {
 
     property MetricsStore metricsStore: MetricsStore {}
     property UtilsStore utilsStore: UtilsStore {}
-
-    Universal.theme: Universal.System
 
     objectName: "mainWindow"
     minimumWidth: 1200
@@ -261,14 +258,14 @@ StatusWindow {
     }
 
     function changeThemeFromOutside() {
-        Theme.changeTheme(startupOnboardingLoader.item.visible ? Universal.System : localAppSettings.theme,
+        Theme.changeTheme(startupOnboardingLoader.item.visible ? Theme.Style.System : localAppSettings.theme,
                           systemPalette.isCurrentSystemThemeDark())
     }
 
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
-        Theme.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
+        Theme.changeTheme(Theme.Style.System, systemPalette.isCurrentSystemThemeDark());
 
         restoreAppState();
 

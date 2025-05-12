@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationName(QStringLiteral("Status Desktop Storybook"));
     QGuiApplication::setApplicationDisplayName(QStringLiteral("%1 [Qt %2]").arg(QGuiApplication::applicationName(), qVersion()));
 
-    QQuickStyle::setStyle(QStringLiteral("Universal")); // StatusQ uses this as the default
+    QQuickStyle::setStyle(QStringLiteral("Universal")); // only used as a basic style for SB itself
 
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();

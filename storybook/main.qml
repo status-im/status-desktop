@@ -22,7 +22,8 @@ ApplicationWindow {
 
     font.pixelSize: 13
 
-    Universal.theme: darkModeCheckBox.checked ? Universal.Dark : Universal.Light
+    // cf. Universal theme kept here as the basic light/dark theme for the app itself
+    Universal.theme: darkModeCheckBox.checked ? Theme.Style.Dark : Theme.Style.Light
 
     onCurrentPageChanged: {
         testsReRunTimer.restart()
@@ -158,7 +159,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
 
                         text: "Dark mode"
-                        onCheckedChanged: Theme.changeTheme(checked ? Universal.Dark : Universal.Light, !checked)
+                        onCheckedChanged: Theme.changeTheme(checked ? Theme.Style.Dark : Theme.Style.Light, !checked)
                     }
 
                     HotReloaderControls {

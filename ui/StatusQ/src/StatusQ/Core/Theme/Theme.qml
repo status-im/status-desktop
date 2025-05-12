@@ -1,7 +1,6 @@
 pragma Singleton
 
 import QtQuick 2.15
-import QtQuick.Controls.Universal 2.15
 
 QtObject {
     enum FontSize {
@@ -13,6 +12,12 @@ QtObject {
         FontSizeXXL
     }
 
+    enum Style {
+        Light,
+        Dark,
+        System
+    }
+
     property ThemePalette palette: StatusLightTheme {}
 
     readonly property ThemePalette statusQLightTheme: StatusLightTheme {}
@@ -22,13 +27,13 @@ QtObject {
 
     function changeTheme(theme:int, isCurrentSystemThemeDark:bool) {
         switch (theme) {
-        case Universal.Light:
+        case Theme.Style.Light:
             Theme.palette = statusQLightTheme
             break
-        case Universal.Dark:
+        case Theme.Style.Dark:
             Theme.palette = statusQDarkTheme
             break
-        case Universal.System:
+        case Theme.Style.System:
             Theme.palette = isCurrentSystemThemeDark ? statusQDarkTheme : statusQLightTheme
             break
         default:
