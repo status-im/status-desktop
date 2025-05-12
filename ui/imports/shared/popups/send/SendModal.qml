@@ -206,15 +206,53 @@ StatusDialog {
         }
     }
 
+    SortFilterProxyModel {
+        id: filteredFromNetworksModel
+        sourceModel: popup.store.fromNetworksRouteModel
+        filters: [
+            ValueFilter {
+                roleName: "chainId"
+                value: Constants.chains.binanceSmartChainMainnetChainId
+                inverted: true
+                enabled: !popup.networksStore.areTestNetworksEnabled
+            },
+            ValueFilter {
+                roleName: "chainId"
+                value: Constants.chains.binanceSmartChainTestnetChainId
+                inverted: true
+                enabled: popup.networksStore.areTestNetworksEnabled
+            }
+        ]
+    }
+
+    SortFilterProxyModel {
+        id: filteredToNetworksModel
+        sourceModel: popup.store.toNetworksRouteModel
+        filters: [
+            ValueFilter {
+                roleName: "chainId"
+                value: Constants.chains.binanceSmartChainMainnetChainId
+                inverted: true
+                enabled: !popup.networksStore.areTestNetworksEnabled
+            },
+            ValueFilter {
+                roleName: "chainId"
+                value: Constants.chains.binanceSmartChainTestnetChainId
+                inverted: true
+                enabled: popup.networksStore.areTestNetworksEnabled
+            }
+        ]
+    }
+
     LeftJoinModel {
         id: fromNetworksRouteModel
-        leftModel: popup.store.fromNetworksRouteModel
+        leftModel: filteredFromNetworksModel
         rightModel: popup.networksStore.allNetworks
         joinRole: "chainId"
     }
     LeftJoinModel {
         id: toNetworksRouteModel
-        leftModel: popup.store.toNetworksRouteModel
+        leftModel: filteredToNetworksModel
         rightModel: popup.networksStore.allNetworks
         joinRole: "chainId"
     }
