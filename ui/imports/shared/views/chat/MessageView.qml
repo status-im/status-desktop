@@ -28,7 +28,6 @@ Loader {
     property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
-    property ChatStores.MessageStore messageStore
     property ChatStores.UsersStore usersStore
     property ProfileStores.ContactsStore contactsStore
     property var chatContentModule
@@ -39,6 +38,33 @@ Loader {
     property var chatLogView
     property var emojiPopup
     property var stickersPopup
+
+    // *** START: MessageStore API used:
+    property bool amIChatAdmin
+    property bool isPinMessageAllowedForMembers
+    property int chatType
+    property int pinnedMessages
+    property color chatColor
+    property string chatIcon
+    property bool isChatActive
+    property int newMessageCout
+
+    signal fillGaps(var messageId)
+    signal requestMoreMessages(var messageId)
+    signal interpretMessage(string message)
+    signal setEditMode(var messageId, bool switchOn)
+    signal editMessage(var messageId, string interpretedMessage)
+    signal jumpToMessage(var messageId)
+    signal toogleReaction(var messageId, var emojiId)
+    signal resendMessage(var messageId)
+
+    signal forceLinkPreviewsLocalData(var messageId)
+    signal pinMessage(var messageId, bool pin)
+    signal markMessageAsUnread(var messageId)
+    signal warnAndDeleteMessage(var messageId)
+
+    function getMessageByIdAsJson(responseToMessageWithId) {}
+    // *** END OF: MessageStore definition
 
     // Once we redo qml we will know all section/chat related details in each message form the parent components
     // without an explicit need to fetch those details via message store/module.
@@ -56,7 +82,6 @@ Loader {
     //TODO: provide the sender color hash from nim model in case of ContactVerificationRequest, OngoingContactVerificationRequest or PinnedMessagesPopup
     property var senderColorHash:  senderId != "" ? Utils.getColorHashAsJson(senderId, senderIsEnsVerified) : ""
     property bool amISender: false
-    property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin
     property bool senderIsAdded: false
     property int senderTrustStatus: Constants.trustStatus.unknown
     property string messageText: ""
@@ -203,15 +228,15 @@ Loader {
         const params = {
             myPublicKey: userProfile.pubKey,
             amIChatAdmin: root.amIChatAdmin,
-            pinMessageAllowedForMembers: messageStore.isPinMessageAllowedForMembers,
-            chatType: messageStore.chatType,
+            pinMessageAllowedForMembers: root.isPinMessageAllowedForMembers,
+            chatType: root.chatType,
 
             messageId: root.messageId,
             unparsedText: root.unparsedText,
             messageSenderId: root.senderId,
             messageContentType: root.messageContentType,
             pinnedMessage: root.pinnedMessage,
-            canPin: !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins,
+            canPin: root.pinnedMessages < Constants.maxNumberOfPins,
             editRestricted: root.editRestricted,
         }
 
@@ -436,7 +461,7 @@ Loader {
             gapFrom: root.gapFrom
             gapTo: root.gapTo
             onClicked: {
-                messageStore.fillGaps(messageId)
+                root.fillGaps(messageId)
                 root.visible = false;
                 root.height = 0;
             }
@@ -449,7 +474,7 @@ Loader {
             nextMessageIndex: root.nextMessageIndex
             nextMsgTimestamp: root.nextMessageTimestamp
             onTimerTriggered: {
-                messageStore.requestMoreMessages();
+                root.requestMoreMessages();
             }
         }
     }
@@ -458,15 +483,15 @@ Loader {
         id: channelIdentifierComponent
         ChannelIdentifierView {
             chatName: root.senderDisplayName
-            chatId: root.messageStore.getChatId()
-            chatType: root.messageStore.chatType
-            chatColor: root.messageStore.chatColor
+            chatId: root.chatId
+            chatType: root.chatType
+            chatColor: root.chatColor
             chatEmoji: root.channelEmoji
             amIChatAdmin: root.amIChatAdmin
             chatIcon: {
-                if (root.messageStore.chatType === Constants.chatType.privateGroupChat &&
-                        root.messageStore.chatIcon !== "") {
-                    return root.messageStore.chatIcon
+                if (root.chatType === Constants.chatType.privateGroupChat &&
+                        root.chatIcon !== "") {
+                    return root.chatIcon
                 }
                 return root.senderIcon
             }
@@ -672,7 +697,7 @@ Loader {
                 }
 
                 function editCancelledHandler() {
-                    root.messageStore.setEditModeOff(root.messageId)
+                    root.setEditMode(root.messageId, false)
                 }
 
                 function editCompletedHandler(newMessageText) {
@@ -689,12 +714,9 @@ Loader {
 
                     root.unparsedText = message
 
-                    const interpretedMessage = root.messageStore.interpretMessage(message)
-                    root.messageStore.setEditModeOff(root.messageId)
-                    root.messageStore.editMessage(
-                        root.messageId,
-                        interpretedMessage
-                    )
+                    const interpretedMessage = root.interpretMessage(message)
+                    root.setEditMode(root.messageId, false)
+                    root.editMessage(root.messageId, interpretedMessage)
                 }
 
                 pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
@@ -792,19 +814,14 @@ Loader {
 
                 onProfilePictureClicked: (sender, mouse) => root.openProfileContextMenu(sender)
                 onReplyProfileClicked: (sender, mouse) => root.openProfileContextMenu(sender, true)
-                onReplyMessageClicked: (mouse) => root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
+                onReplyMessageClicked: (mouse) => root.jumpToMessage(root.responseToMessageWithId)
                 onSenderNameClicked: (sender) => root.openProfileContextMenu(sender)
 
                 onToggleReactionClicked: {
                     if (root.isChatBlocked)
                         return
 
-                    if (!root.messageStore) {
-                        console.error("Reaction can not be toggled, message store is not valid")
-                        return
-                    }
-
-                    root.messageStore.toggleReaction(root.messageId, emojiId)
+                    root.toggleReaction(root.messageId, emojiId)
                 }
 
                 onAddReactionClicked: (sender, mouse) => {
@@ -816,7 +833,7 @@ Loader {
                 }
 
                 onResendClicked: {
-                    root.messageStore.resendMessage(root.messageId)
+                    root.resendMessage(root.messageId)
                 }
 
                 mouseArea {
@@ -877,7 +894,7 @@ Loader {
 
                 replyDetails: StatusMessageDetails {
                     readonly property var responseMessage: contentType === StatusMessage.ContentType.Sticker || contentType === StatusMessage.ContentType.Image
-                                                           ? root.messageStore.getMessageByIdAsJson(responseToMessageWithId)
+                                                           ? root.getMessageByIdAsJson(responseToMessageWithId)
                                                            : null
                     onResponseMessageChanged: {
                         if (!responseMessage)
@@ -950,7 +967,7 @@ Loader {
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
 
-                        chatType: root.messageStore.chatType
+                        chatType: root.chatType
                         isEdit: true
 
                         onSendMessage: delegate.editCompletedHandler(editTextInput.getTextWithPublicKeys())
@@ -974,7 +991,7 @@ Loader {
                         senderThumbnailImage: root.senderIcon || ""
                         senderColorId: Utils.colorIdForPubkey(root.senderId)
                         paymentRequestModel: root.paymentRequestModel
-                        playAnimations: root.Window.active && root.messageStore.isChatActive
+                        playAnimations: root.Window.active && root.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
                         areTestNetworksEnabled: root.areTestNetworksEnabled
@@ -995,7 +1012,7 @@ Loader {
                         }
 
                         Component.onCompleted: {
-                            root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)
+                            root.forceLinkPreviewsLocalData(root.messageId)
                         }
                     }
                 }
@@ -1054,7 +1071,7 @@ Loader {
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Edit")
                             onClicked: {
-                                root.messageStore.setEditModeOn(root.messageId)
+                                root.setEditMode(root.messageId, true)
                             }
                         }
                     },
@@ -1062,9 +1079,6 @@ Loader {
                         active: {
                             if(!delegate.hovered)
                                 return false;
-
-                            if (!root.messageStore)
-                                return false
 
                             if(delegate.hideQuickActions)
                                 return false;
@@ -1076,8 +1090,8 @@ Loader {
                                 return false
                             }
 
-                            const chatType = root.messageStore.chatType;
-                            const pinMessageAllowedForMembers = root.messageStore.isPinMessageAllowedForMembers
+                            const chatType = root.chatType;
+                            const pinMessageAllowedForMembers = root.isPinMessageAllowedForMembers
 
                             return chatType === Constants.chatType.oneToOne ||
                                     chatType === Constants.chatType.privateGroupChat && root.amIChatAdmin ||
@@ -1094,12 +1108,12 @@ Loader {
                             tooltip.text: root.pinnedMessage ? qsTr("Unpin") : qsTr("Pin")
                             onClicked: {
                                 if (root.pinnedMessage) {
-                                    messageStore.unpinMessage(root.messageId)
+                                    root.pinMessage(root.messageId, false)
                                     return;
                                 }
 
-                                if (!!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins) {
-                                    messageStore.pinMessage(root.messageId)
+                                if (root.pinnedMessages < Constants.maxNumberOfPins) {
+                                    root.pinMessage(root.messageId, true)
                                     return;
                                 }
 
@@ -1108,8 +1122,8 @@ Loader {
                                     return;
                                 }
 
-                                const chatId = root.messageStore.chatType === Constants.chatType.oneToOne ? chatContentModule.getMyChatId() : ""
-                                Global.openPinnedMessagesPopupRequested(root.rootStore, messageStore, chatContentModule.pinnedMessagesModel, root.messageId, chatId)
+                                const chatId = root.chatType === Constants.chatType.oneToOne ? chatContentModule.getMyChatId() : ""
+                                Global.openPinnedMessagesPopupRequested(root.rootStore, null, chatContentModule.pinnedMessagesModel, root.messageId, chatId)
                             }
                         }
                     },
@@ -1124,7 +1138,7 @@ Loader {
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Mark as unread")
                             onClicked: {
-                                root.messageStore.markMessageAsUnread(root.messageId)
+                                root.markMessageAsUnread(root.messageId)
                             }
                         }
                     },
@@ -1133,8 +1147,6 @@ Loader {
                             if(!delegate.hovered)
                                 return false;
                             if (root.isInPinnedPopup)
-                                return false;
-                            if (!root.messageStore)
                                 return false;
                             if (delegate.hideQuickActions)
                                 return false;
@@ -1157,7 +1169,7 @@ Loader {
                             tooltip.text: qsTr("Delete")
                             onClicked: root.isViewMemberMessagesePopup
                                        ? root.chatCommunitySectionModule.deleteCommunityMemberMessages(root.senderId, root.messageId, root.chatId)
-                                       : messageStore.warnAndDeleteMessage(root.messageId)
+                                       : root.warnAndDeleteMessage(root.messageId)
                         }
                     }
                 ]
@@ -1169,7 +1181,7 @@ Loader {
         id: newMessagesMarkerComponent
 
         NewMessagesMarker {
-            count: root.messageStore.newMessagesCount
+            count: root.newMessagesCount
             timestamp: root.messageTimestamp
         }
     }
@@ -1181,7 +1193,7 @@ Loader {
             reactionsModel: root.emojiReactionsModel
 
             onToggleReaction: (emojiId) => {
-                root.messageStore.toggleReaction(root.messageId, emojiId)
+                root.toggleReaction(root.messageId, emojiId)
             }
             onOpened: {
                 root.setMessageActive(root.messageId, true)
@@ -1245,25 +1257,25 @@ Loader {
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
             forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
             isDebugEnabled: root.rootStore && root.rootStore.isDebugEnabled
-            onPinMessage: root.messageStore.pinMessage(messageContextMenuView.messageId)
-            onUnpinMessage: root.messageStore.unpinMessage(messageContextMenuView.messageId)
+            onPinMessage: root.pinMessage(messageContextMenuView.messageId, true)
+            onUnpinMessage: root.pinMessage(messageContextMenuView.messageId, false)
             onPinnedMessagesLimitReached: () => {
                 if (!root.chatContentModule) {
                     console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                     return
                 }
                 Global.openPinnedMessagesPopupRequested(root.rootStore,
-                                                        root.messageStore,
+                                                        null,
                                                         root.chatContentModule.pinnedMessagesModel,
                                                         messageContextMenuView.messageId,
                                                         root.chatId)
             }
-            onMarkMessageAsUnread: root.messageStore.markMessageAsUnread(messageContextMenuView.messageId)
+            onMarkMessageAsUnread: root.markMessageAsUnread(messageContextMenuView.messageId)
             onToggleReaction: (emojiId) => {
-                root.messageStore.toggleReaction(messageContextMenuView.messageId, emojiId)
+                root.toggleReaction(messageContextMenuView.messageId, emojiId)
             }
-            onDeleteMessage: root.messageStore.warnAndDeleteMessage(messageContextMenuView.messageId)
-            onEditClicked: root.messageStore.setEditModeOn(messageContextMenuView.messageId)
+            onDeleteMessage: root.warnAndDeleteMessage(messageContextMenuView.messageId)
+            onEditClicked: root.setEditMode(messageContextMenuView.messageId, true)
             onShowReplyArea: (senderId) => {
                 root.showReplyArea(messageContextMenuView.messageId, senderId)
             }

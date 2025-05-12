@@ -288,9 +288,9 @@ Item {
             sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
             rootStore: root.rootStore
-            messageStore: root.messageStore
             usersStore: root.usersStore
             contactsStore: root.contactsStore
+
             channelEmoji: root.channelEmoji
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
@@ -375,6 +375,31 @@ Item {
             prevMessageDeleted: model.prevMsgDeleted
             nextMessageIndex: model.nextMsgIndex
             nextMessageTimestamp: model.nextMsgTimestamp
+
+            // ** Message management related data:
+            amIChatAdmin: root.amIChatAdmin
+            isPinMessageAllowedForMembers: root.isPinMessageAllowedForMembers
+            chatType: root.chatType
+            pinnedMessages: root.pinnedMessages
+            chatColor: root.chatColor
+            chatIcon: root.chatIcon
+            isChatActive: root.isChatActive
+            newMessageCout: root.newMessageCount
+
+            onFillGaps: root.fillGaps(messageId)
+            onRequestMoreMessages: root.requestMoreMessages(messageId)
+            onSetEditMode: root.setEditMode(messageId, switchOn)
+            onEditMessage: root.editMessage()
+            onJumpToMessage: root.jumpToMessage(messageId)
+            onToogleReaction: root.toogleReaction(messageId, emojiId)
+            onResendMessage: root.resendMessage(messageId)
+            onForceLinkPreviewsLocalData: root.forceLinkPreviewsLocalData(messageId)
+            onPinMessage: root.pinMessage(messageId, pin)
+            onMarkMessageAsUnread: root.markMessageAsUnread(messageId)
+            onWarnAndDeleteMessage: root.warnAndDeleteMessage(messageId)
+
+            function getMessageByIdAsJson(responseToMessageWithId) {}
+            // ** End of: Message management related data
 
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
