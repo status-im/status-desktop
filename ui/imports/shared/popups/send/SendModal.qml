@@ -204,19 +204,40 @@ StatusDialog {
             default: return qsTr("Send")
             }
         }
+
+        function isBSC(chainId) {
+            return chainId === Constants.chains.binanceSmartChainMainnetChainId ||
+                    chainId === Constants.chains.binanceSmartChainTestnetChainId
+        }
     }
 
-    LeftJoinModel {
+    SortFilterProxyModel {
         id: fromNetworksRouteModel
-        leftModel: popup.store.fromNetworksRouteModel
-        rightModel: popup.networksStore.allNetworks
-        joinRole: "chainId"
+        sourceModel: LeftJoinModel {
+            leftModel: popup.store.fromNetworksRouteModel
+            rightModel: popup.networksStore.allNetworks
+            joinRole: "chainId"
+        }
+        filters: [
+            FastExpressionFilter {
+                expression: !d.isBridgeTx || !d.isBSC(model.chainId)
+                expectedRoles: ["chainId"]
+            }
+        ]
     }
-    LeftJoinModel {
+    SortFilterProxyModel {
         id: toNetworksRouteModel
-        leftModel: popup.store.toNetworksRouteModel
-        rightModel: popup.networksStore.allNetworks
-        joinRole: "chainId"
+        sourceModel: LeftJoinModel {
+            leftModel: popup.store.toNetworksRouteModel
+            rightModel: popup.networksStore.allNetworks
+            joinRole: "chainId"
+        }
+        filters: [
+            FastExpressionFilter {
+                expression: !d.isBridgeTx || !d.isBSC(model.chainId)
+                expectedRoles: ["chainId"]
+            }
+        ]
     }
 
     ModelEntry {
@@ -794,9 +815,12 @@ StatusDialog {
             popup.bestRoutes =  txRoutes.suggestedRoutes
 
             // We take the chain from the first route, assuming the native token is the same for all routes
+            let gasSymbol = Constants.ethToken
             let firstRoute = SQUtils.ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
-            let firstRouteFromNetwork = firstRoute.fromNetwork
-            let gasSymbol = Utils.getNativeTokenSymbol(firstRouteFromNetwork)
+            if (!!firstRoute) {
+                let firstRouteFromNetwork = firstRoute.fromNetwork
+                gasSymbol = Utils.getNativeTokenSymbol(firstRouteFromNetwork)
+            }
 
             d.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
             d.routerErrorDetails = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
