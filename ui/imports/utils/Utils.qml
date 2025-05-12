@@ -744,6 +744,7 @@ QtObject {
             case Constants.chains.arbitrumChainId:
             case Constants.chains.optimismChainId:
             case Constants.chains.baseChainId:
+            case Constants.chains.binanceSmartChainMainnetChainId:
                 return false
         }
         return true
