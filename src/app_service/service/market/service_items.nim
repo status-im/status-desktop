@@ -44,8 +44,8 @@ proc `$`*(self: LeaderboardPage): string =
 # PriceData represents price data update
 type PriceData* = ref object of RootObj
   id*                 {.serializedFieldName("id").}: string
-  price*              {.serializedFieldName("price").}: float64
-  percentChange24h*   {.serializedFieldName("percent_change_24h").}: float64
+  price*              {.serializedFieldName("current_price").}: float64
+  percentChange24h*   {.serializedFieldName("price_change_percentage_24h").}: float64
 
 proc `$`*(self: PriceData): string =
   result = fmt"""PriceData[
