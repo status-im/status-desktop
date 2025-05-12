@@ -190,6 +190,7 @@ mainWindow_EnsRegisteredView = {"container": statusDesktop_mainWindow, "type": "
 mainWindow_AdvancedView = {"container": statusDesktop_mainWindow, "type": "AdvancedView", "unnamed": 1, "visible": True}
 mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 manageCommunitiesOnTestnetButton_StatusSettingsLineButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "manageCommunitiesOnTestnetButton", "type": "StatusSettingsLineButton", "visible": True}
+rpcStatisticsButton = {"container": settingsContentBase_ScrollView, "id": "rpcStatsButton", "type": "StatusSettingsLineButton", "unnamed": 1, "visible": True}
 enableCreateCommunityButton_StatusSettingsLineButton = {"container": settingsContentBase_ScrollView, "objectName": "enableCreateCommunityButton", "type": "StatusSettingsLineButton", "visible": True}
 settingsContentBaseScrollViewLightWakuModeBloomSelectorButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "lightWakuModeButton", "type": "BloomSelectorButton", "visible": True}
 settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "objectName": "relayWakuModeButton", "type": "BloomSelectorButton", "visible": True}
