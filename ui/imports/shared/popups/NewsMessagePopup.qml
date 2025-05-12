@@ -8,6 +8,7 @@ import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as CoreUtils
 
 import mainui.activitycenter.helpers 1.0
 
@@ -43,9 +44,13 @@ StatusDialog {
         headline.title: notification.newsTitle
         headline.subtitle: dateGroupLabel.text
         actions.closeButton.onClicked: root.close()
-        leftComponent: StatusSmartIdenticon {
-            asset.name: Theme.png("status-logo-icon")
-            asset.isImage: true
+        leftComponent: Item {
+            width: 40
+            height: 40
+            StatusImage {
+                source: Theme.png("status")
+                anchors.fill: parent
+            }
         }
     }
 
@@ -66,16 +71,19 @@ StatusDialog {
         Loader {
             active: !!notification.newsImageUrl
 
-            Layout.bottomMargin: active ? Theme.bigPadding : 0
+            Layout.bottomMargin: active ? Theme.padding : 0
             Layout.fillWidth: true
-            Layout.preferredHeight: active ? 300 : 0
+            Layout.maximumHeight: active ? 300 : 0
 
             sourceComponent: StatusRoundedImage {
+                implicitWidth: parent.width
+                implicitHeight: image.implicitHeight
                 image.source: notification.newsImageUrl
+                image.fillMode: Image.PreserveAspectCrop
                 color: "transparent"
                 border.color: root.backgroundColor
                 border.width: 1
-                radius: 16
+                radius: 8
             }
         }
 

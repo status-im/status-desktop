@@ -31,7 +31,9 @@ SplitView {
             property string newsContent: "Status Desktop's next release brings the app up-to-speed with Status Mobile. That means: SWAPS! Now you can trade Ethereum, Arbitrum and Optimism tokens directly in-app. Status leverages Paraswap so you always benefit from the best prices and fastest settlements!"
             property string newsLink: "https://status.app/"
             property string newsLinkLabel: linkLabelInput.text
-            property string newsImageUrl: hasImage.checked ? "https://picsum.photos/438/300" : ""
+
+            // The max height of the image is 300, but we handle it
+            property string newsImageUrl: hasImage.checked ? "https://picsum.photos/438/400" : ""
             property double timestamp: Date.now()
             property double previousTimestamp: 0
             property bool read: false
