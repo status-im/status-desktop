@@ -40,7 +40,7 @@ for FILE in ${FOUND_FILES}; do
 done
 
 # Sign all the non-signed binaries. Add -debug if need be.
-"${SIGNTOOL}" sign -v -debug -fd SHA256 \
+"${SIGNTOOL}" sign -v -debug -td SHA256 -fd SHA256 \
     -p "${WINDOWS_CODESIGN_PASSWORD}" \
     -f "${WINDOWS_CODESIGN_PFX_PATH}" \
     -tr "${WINDOWS_CODESIGN_TIMESTAMP_URL}" \
