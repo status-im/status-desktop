@@ -246,6 +246,14 @@ QtObject {
         return text.replace(/<[^>]*>?/gm, '')
     }
 
+    function stripHtmlPreserveBreaks(text) {
+        return text
+            .split(/<\/p>/i)
+            .map(part => part.replace(/<[^>]+>/g, '').trim())
+            .filter((part, index, arr) => part || index < arr.length - 1)
+            .join('<br><br>');
+    }
+
     function elideText(text, leftCharsCount, rightCharsCount = leftCharsCount) {
         return text.substr(0, leftCharsCount) + "…" + text.substr(text.length - rightCharsCount)
     }
