@@ -182,7 +182,7 @@ Item {
 
     Rectangle {
         width: parent.width
-        implicitHeight: visible ? childrenRect.height + 2*Theme.padding: 0
+        implicitHeight: visible ? errorText.height + 2*Theme.padding: 0
         anchors.top: errorTag.bottom
         anchors.topMargin: Theme.padding
         visible: errorTag.visible && errorTag.showDetails
@@ -192,6 +192,7 @@ Item {
         border.color: Theme.palette.dangerColor2
 
         StatusBaseText {
+            id: errorText
             anchors.centerIn: parent
             width: parent.width - 2*Theme.bigPadding
             text: root.routerErrorDetails

@@ -38,7 +38,7 @@ Control {
     contentItem: ColumnLayout {
         id: mainLayout
         spacing: 4
-        readonly property bool isOverflowing:  parent.width - tokenNameAndIcon.width - communityAndBalances.width < 24
+        readonly property bool isOverflowing:  root.width < tokenNameAndIcon.width + communityAndBalances.width + fiatBalanceLayout.width
 
         RowLayout {
             id: tokenNameAndIcon
@@ -71,6 +71,7 @@ Control {
             flow: mainLayout.isOverflowing ? GridLayout.TopToBottom: GridLayout.LeftToRight
 
             RowLayout {
+                id: fiatBalanceLayout
                 Layout.fillWidth: true
                 spacing: Theme.halfPadding
                 StatusTextWithLoadingState {
