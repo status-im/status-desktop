@@ -226,6 +226,7 @@ StatusDialog {
         value: popup.store.selectedSenderAccountAddress
     }
 
+    topMargin: margins + accountSelector.height + Theme.padding
     padding: Theme.xlPadding
     background: StatusDialogBackground {
         implicitHeight: 846

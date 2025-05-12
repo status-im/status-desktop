@@ -131,8 +131,9 @@ ItemDelegate {
                 }
 
                 // let the root handle the click
-                TapHandler {
-                    onTapped: root.clicked()
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.clicked()
                 }
             }
         }
