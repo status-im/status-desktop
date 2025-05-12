@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-import QtQuick.Controls.Universal 2.15
 
 import utils 1.0
 import shared 1.0
@@ -140,10 +139,10 @@ SettingsContentBase {
                 Layout.preferredHeight: implicitHeight
                 image.source: Theme.png("appearance-light")
                 control.text: qsTr("Light")
-                control.checked: localAppSettings.theme === Universal.Light
+                control.checked: localAppSettings.theme === Theme.Style.Light
                 onRadioCheckedChanged: {
                     if (checked) {
-                        appearanceView.updateTheme(Universal.Light)
+                        appearanceView.updateTheme(Theme.Style.Light)
                     }
                 }
             }
@@ -152,10 +151,10 @@ SettingsContentBase {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Theme.png("appearance-dark")
                 control.text: qsTr("Dark")
-                control.checked: localAppSettings.theme === Universal.Dark
+                control.checked: localAppSettings.theme === Theme.Style.Dark
                 onRadioCheckedChanged: {
                     if (checked) {
-                        appearanceView.updateTheme(Universal.Dark)
+                        appearanceView.updateTheme(Theme.Style.Dark)
                     }
                 }
             }
@@ -164,10 +163,10 @@ SettingsContentBase {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Theme.png("appearance-system")
                 control.text: qsTr("System")
-                control.checked: localAppSettings.theme === Universal.System
+                control.checked: localAppSettings.theme === Theme.Style.System
                 onRadioCheckedChanged: {
                     if (checked) {
-                        appearanceView.updateTheme(Universal.System)
+                        appearanceView.updateTheme(Theme.Style.System)
                     }
                 }
             }
