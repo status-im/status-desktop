@@ -105,7 +105,20 @@ QtObject {
 
     // This is hard coded for now, and should be updated whenever Hop add new tokens for support
     // This should be dynamically fetched somehow in the future
-    readonly property var tokensSupportedByHopBridge: ["USDC", "USDC.e", "USDT", "DAI", "HOP", "SNX", "sUSD", "rETH", "MAGIC", "ETH"]
+    readonly property var tokensSupportedByHopBridge: [
+        Constants.uniqueSymbols.usdcEvm,
+        Constants.uniqueSymbols.usdcBsc,
+        "USDC.e",
+        Constants.uniqueSymbols.usdtEvm,
+        Constants.uniqueSymbols.usdtBsc,
+        "DAI",
+        "HOP",
+        "SNX",
+        "sUSD",
+        "rETH",
+        "MAGIC",
+        "ETH"
+    ]
 
     readonly property SortFilterProxyModel bridgeableGroupedAccountAssetsModel: SortFilterProxyModel {
         objectName: "bridgeableGroupedAccountAssetsModel"
@@ -113,8 +126,12 @@ QtObject {
 
         filters: [
             FastExpressionFilter {
-                expression: root.tokensSupportedByHopBridge.includes(model.symbol)
-                expectedRoles: ["symbol"]
+                function isBSC(chainId) {
+                    return chainId === Constants.chains.binanceSmartChainMainnetChainId ||
+                            chainId === Constants.chains.binanceSmartChainTestnetChainId
+                }
+                expression: !isBSC(model.chainId) && root.tokensSupportedByHopBridge.includes(model.symbol)
+                expectedRoles: ["chainId", "symbol"]
             }
         ]
     }

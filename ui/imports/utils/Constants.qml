@@ -1558,14 +1558,24 @@ QtObject {
         return symbol
     }
 
+    readonly property QtObject uniqueSymbols: QtObject {
+        readonly property string usdtEvm: "USDT (EVM)"
+        readonly property string usdtBsc: "USDT (BSC)"
+        readonly property string usdcEvm: "USDC (EVM)"
+        readonly property string usdcBsc: "USDC (BSC)"
+        readonly property string swftcEvm: "SWFTC (EVM)"
+        readonly property string swftcBsc: "SWFTC (BSC)"
+        readonly property string fluxEvm: "FLUX (EVM)"
+    }
+
     function uniqueSymbolToTokenSymbol(uniqueSymbol) {
-        if (uniqueSymbol === "USDT (EVM)" || uniqueSymbol === "USDT (BSC)") {
+        if (uniqueSymbol === uniqueSymbols.usdtEvm || uniqueSymbol === uniqueSymbols.usdtBsc) {
             return "USDT"
-        } else if (uniqueSymbol === "USDC (EVM)" || uniqueSymbol === "USDC (BSC)") {
+        } else if (uniqueSymbol === uniqueSymbols.usdcEvm || uniqueSymbol === uniqueSymbols.usdcBsc) {
             return "USDC"
-        } else if (uniqueSymbol === "SWFTC (EVM)" || uniqueSymbol === "SWFTC (BSC)") {
+        } else if (uniqueSymbol === uniqueSymbols.swftcEvm || uniqueSymbol === uniqueSymbols.swftcBsc) {
             return "SWFTC"
-        } else if (uniqueSymbol === "FLUX (EVM)") {
+        } else if (uniqueSymbol === uniqueSymbols.fluxEvm) {
             return "FLUX"
         }
         return uniqueSymbol
