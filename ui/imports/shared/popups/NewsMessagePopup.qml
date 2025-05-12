@@ -80,7 +80,9 @@ StatusDialog {
         }
 
         StatusBaseText {
-            text: notification.newsDescription || notification.newsContent
+            // Temporary fix to the HTML being present in the content
+            // TODO remove when it's handled on the Web side
+            text: CoreUtils.Utils.stripHtmlPreserveBreaks(notification.newsContent)
             Layout.fillWidth: true
             Layout.fillHeight: true
             wrapMode: Text.WordWrap
