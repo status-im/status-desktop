@@ -46,9 +46,6 @@ proc `$`*(self: TokenDto): string =
     image: {self.image}
     ]"""
 
-proc key*(self: TokenDto): string =
-  result = self.address
-
 type TokenSourceDto* = ref object of RootObj
     name* {.serializedFieldName("name").}: string
     tokens* {.serializedFieldName("tokens").}: seq[TokenDto]
