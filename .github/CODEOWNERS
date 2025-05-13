@@ -9,9 +9,9 @@ Makefile    @status-im/devops @status-im/desktop
 /nix/       @status-im/devops
 /scripts/   @status-im/devops
 # Default qml/js code reviewers
-*.qml       @micieslak @caybro @alexjba
-*.js        @micieslak @caybro @alexjba
-/storybook/ @micieslak @caybro @alexjba
+*.qml       @micieslak @caybro @alexjba @noeliaSD
+*.js        @micieslak @caybro @alexjba @noeliaSD
+/storybook/ @micieslak @caybro @alexjba @noeliaSD
 # Default squish tests owners
 /test/e2e/  @status-im/desktop-qa
 
@@ -26,3 +26,13 @@ Makefile    @status-im/devops @status-im/desktop
 
 # Wallet - qml
 /ui/app/AppLayouts/Wallet/                      @status-im/desktop-wallet @micieslak
+
+# Messenger - nim
+/src/app/modules/main/chat_section/             @status-im/desktop-core
+/src/app/modules/main/communities/              @status-im/desktop-core
+/src/app_service/service/activity_center/       @status-im/desktop-core
+/src/app_service/service/chat/                  @status-im/desktop-core
+/src/app_service/service/community/             @status-im/desktop-core
+/src/app_service/service/community_tokens/      @status-im/desktop-core
+/src/app_service/service/contacts/              @status-im/desktop-core
+/src/app_service/service/message/               @status-im/desktop-core
