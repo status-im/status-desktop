@@ -37,8 +37,6 @@ Control {
 
     property string tokenKey
     onTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
-    property string defaultTokenKey
-    onDefaultTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
 
     property string tokenAmount
     onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
@@ -53,7 +51,7 @@ Control {
 
     // FIXME drop after using ModelEntry, shouldn't be needed
     function reevaluateSelectedId() {
-        const symbol = root.tokenKey !== "" ? Constants.uniqueSymbolToTokenSymbol(root.tokenKey) : Constants.uniqueSymbolToTokenSymbol(root.defaultTokenKey)
+        const symbol = root.tokenKey !== "" ? Constants.uniqueSymbolToTokenSymbol(root.tokenKey) : ""
         const uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(symbol, root.selectedNetworkChainId)
         const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", uniqueSymbol)
 
