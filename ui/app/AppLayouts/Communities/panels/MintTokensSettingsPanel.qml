@@ -213,6 +213,8 @@ StackView {
         SettingsPage {
             id: ownerTokenPage
 
+            objectName: "ownerTokenPage"
+
             title: qsTr("Mint Owner token")
 
             contentItem: OwnerTokenWelcomeView {

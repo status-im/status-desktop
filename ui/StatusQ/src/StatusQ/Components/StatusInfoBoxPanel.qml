@@ -104,6 +104,8 @@ Control {
         StatusButton {
             id: button
 
+            objectName: "statusInfoBoxPanelButton"
+            
             Layout.alignment: Qt.AlignHCenter
 
             visible: root.buttonVisible
