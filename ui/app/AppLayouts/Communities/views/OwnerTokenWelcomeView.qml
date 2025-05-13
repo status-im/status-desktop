@@ -29,11 +29,15 @@ StatusScrollView {
     ColumnLayout {
         id: mainLayout
 
+        objectName: "welcomeView"
+
         width: root.viewWidth
         spacing: 20
 
         StatusBaseText {
             id: introPanel
+
+            objectName: "introPanelText"
 
             Layout.fillWidth: true
 
@@ -46,6 +50,9 @@ StatusScrollView {
         }
 
         CommunityInfoPanel {
+            
+            objectName: "infoPanel_owner"
+
             Layout.fillWidth:  true
 
             communityLogo: root.communityLogo
@@ -61,6 +68,9 @@ StatusScrollView {
         }
 
         CommunityInfoPanel {
+
+            objectName: "infoPanel_master"
+
             Layout.fillWidth:  true
 
             communityLogo: root.communityLogo
@@ -77,6 +87,8 @@ StatusScrollView {
         }
 
         StatusButton {
+
+            objectName: "welcomeViewNextButton"
             Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: Theme.bigPadding
 

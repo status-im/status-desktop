@@ -97,6 +97,8 @@ Control {
                 Repeater {
                     id: checkersItems
 
+                    objectName: "Checklist"
+
                     RowLayout {
                         StatusIcon {
                             icon: "tiny/checkmark"
