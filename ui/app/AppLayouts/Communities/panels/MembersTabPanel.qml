@@ -267,30 +267,27 @@ Item {
             icon.width: 40
             icon.height: 40
 
-            onClicked: {
-                if (mouse.button === Qt.RightButton) {
-                    const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
-                    const contactType = Utils.getContactType(model.contactRequest, model.isContact)
+            onClicked: Global.openProfilePopup(model.pubKey)
+            onRightClicked: {
+                const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
+                const contactType = Utils.getContactType(model.contactRequest, model.isContact)
 
-                    const params = {
-                        profileType, contactType,
-                        pubKey: model.pubKey,
-                        compressedPubKey: model.compressedPubKey,
-                        emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
-                        colorHash: model.colorHash,
-                        colorId: model.colorId,
-                        displayName: memberItem.title || model.displayName,
-                        userIcon: model.icon,
-                        trustStatus: model.trustStatus,
-                        onlineStatus: model.onlineStatus,
-                        ensVerified: model.isEnsVerified,
-                        hasLocalNickname: !!model.localNickname
-                    }
-
-                    memberContextMenuComponent.createObject(root, params).popup(this)
-                } else if (mouse.button === Qt.LeftButton) {
-                    Global.openProfilePopup(model.pubKey)
+                const params = {
+                    profileType, contactType,
+                    pubKey: model.pubKey,
+                    compressedPubKey: model.compressedPubKey,
+                    emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
+                    colorHash: model.colorHash,
+                    colorId: model.colorId,
+                    displayName: memberItem.title || model.displayName,
+                    userIcon: model.icon,
+                    trustStatus: model.trustStatus,
+                    onlineStatus: model.onlineStatus,
+                    ensVerified: model.isEnsVerified,
+                    hasLocalNickname: !!model.localNickname
                 }
+
+                memberContextMenuComponent.createObject(root, params).popup(this)
             }
         }
 
