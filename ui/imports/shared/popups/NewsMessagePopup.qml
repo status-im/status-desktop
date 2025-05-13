@@ -56,6 +56,7 @@ StatusDialog {
 
     ColumnLayout {
         width: parent.width
+        height: parent.height
         spacing: 0
 
         Loader {
@@ -88,12 +89,11 @@ StatusDialog {
         }
 
         StatusBaseText {
-            // Temporary fix to the HTML being present in the content
-            // TODO remove when it's handled on the Web side
-            text: CoreUtils.Utils.stripHtmlPreserveBreaks(notification.newsContent)
+            text: notification.newsContent
             Layout.fillWidth: true
             Layout.fillHeight: true
             wrapMode: Text.WordWrap
+            elide: Text.ElideRight
         }
     }
     footer: StatusDialogFooter {
