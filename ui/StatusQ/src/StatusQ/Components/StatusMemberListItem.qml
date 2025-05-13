@@ -173,13 +173,12 @@ ItemDelegate {
         radius: Theme.radius
     }
 
-    HoverHandler {
-       cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
-    }
-
-    TapHandler {
+    MouseArea {
+        anchors.fill: parent
         acceptedButtons: Qt.RightButton
-        onTapped: root.rightClicked()
+        hoverEnabled: root.enabled
+        cursorShape: containsMouse ? Qt.PointingHandCursor : undefined
+        onClicked: root.rightClicked()
     }
 
     contentItem: RowLayout {
