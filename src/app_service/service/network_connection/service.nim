@@ -4,6 +4,7 @@ import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
 
+import app_service/common/wallet_constants
 import app_service/service/wallet_account/service as wallet_service
 import app_service/service/network/service as network_service
 import app_service/service/node/service as node_service
@@ -38,6 +39,11 @@ const BLOCKCHAINS* = "blockchains"
 const MARKET* = "market"
 const COLLECTIBLES* = "collectibles"
 
+const UNSUPPORTED_MULTICHAIN_FEATURES: Table[string, seq[int]] = {
+  COLLECTIBLES: @[CHAINID_BSC_MAINNET, CHAINID_BSC_TESTNET, CHAINID_STATUS_NETWORK_SEPOLIA]
+}.toTable
+
+
 include  ../../common/json_utils
 
 proc newConnectionStatus(): ConnectionStatus =
@@ -60,7 +66,7 @@ QtObject:
   # Forward declaration
   proc updateSimpleStatus(self: Service, website: string, isDown: bool, at: int)
   proc updateMultichainStatus(self: Service, website: string, completelyDown: bool, chaindIdsDown: seq[int], at: int)
-  proc getChainIdsDown(self: Service, chainStatusTable: ConnectionStatusNotification): (bool, bool, seq[int], int)
+  proc getChainIdsDown(self: Service, chainStatusTable: ConnectionStatusNotification, inhibitChainIds: seq[int]): (bool, bool, seq[int], int)
   proc getIsDown(message: string): bool
   proc getChainStatusTable(message: string): ConnectionStatusNotification
 
@@ -91,18 +97,20 @@ QtObject:
       case data.eventType:
         of "wallet-blockchain-status-changed":
           if self.nodeService.isConnected():
+            let website = BLOCKCHAINS
             let chainStateTable = getChainStatusTable(data.message)
-            let (allKnown, allDown, chainsDown, at) =  self.getChainIdsDown(chainStateTable)
-            self.updateMultichainStatus(BLOCKCHAINS, allDown, chainsDown, data.at)
+            let (allKnown, allDown, chainsDown, at) =  self.getChainIdsDown(chainStateTable, UNSUPPORTED_MULTICHAIN_FEATURES.getOrDefault(website))
+            self.updateMultichainStatus(website, allDown, chainsDown, data.at)
         of "wallet-market-status-changed":
           if self.nodeService.isConnected():
             self.updateSimpleStatus(MARKET, getIsDown(data.message), data.at)
         of "wallet-collectible-status-changed":
           if self.nodeService.isConnected():
+            let website = COLLECTIBLES
             let chainStateTable = fromJson(parseJson(data.message), ConnectionStatusNotification)
-            let (allKnown, allDown, chainsDown, at) = self.getChainIdsDown(chainStateTable)
+            let (allKnown, allDown, chainsDown, at) = self.getChainIdsDown(chainStateTable, UNSUPPORTED_MULTICHAIN_FEATURES.getOrDefault(website))
             if allKnown:
-              self.updateMultichainStatus(COLLECTIBLES, allDown, chainsDown, at)
+              self.updateMultichainStatus(website, allDown, chainsDown, at)
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
       if self.connectionStatus.hasKey(MARKET):
@@ -134,7 +142,7 @@ QtObject:
           value = getStateValue(v.getStr)
         )
 
-  proc getChainIdsDown(self: Service, chainStatusTable: ConnectionStatusNotification): (bool, bool, seq[int], int) =
+  proc getChainIdsDown(self: Service, chainStatusTable: ConnectionStatusNotification, inhibitChainIds: seq[int]): (bool, bool, seq[int], int) =
     var allKnown: bool = true
     var allDown: bool = true
     var chaindIdsDown: seq[int] = @[]
@@ -142,6 +150,8 @@ QtObject:
 
     let allChainIds = self.networkService.getCurrentNetworksChainIds()
     for id in allChainIds:
+      if id in inhibitChainIds:
+        continue
       if chainStatusTable.hasKey($id) and chainStatusTable[$id].value != connection_status_backend.StateValue.Unknown:
         if chainStatusTable[$id].value == connection_status_backend.StateValue.Connected:
           allDown = false
