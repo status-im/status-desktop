@@ -227,7 +227,6 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
-                    defaultTokenKey: root.swapInputParamsForm.defaultFromTokenKey
 
                     cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
 
@@ -274,7 +273,6 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.toTokenKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
-                    defaultTokenKey: root.swapInputParamsForm.defaultToTokenKey
                     
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
                     onSelectedNetworkChainIdChanged: reevaluateSelectedId()
