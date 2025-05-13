@@ -59,7 +59,12 @@ proc init*(self: Controller) =
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED) do(e: Args):
     let args = ActivityCenterNotificationsArgs(e)
-    self.delegate.addActivityCenterNotifications(args.activityCenterNotifications)
+    self.delegate.addActivityCenterNotifications(args.activityCenterNotifications, initialLoad = true)
+    self.updateActivityGroupCounters()
+
+  self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED) do(e: Args):
+    let args = ActivityCenterNotificationsArgs(e)
+    self.delegate.addActivityCenterNotifications(args.activityCenterNotifications, initialLoad = false)
     self.updateActivityGroupCounters()
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ) do(e: Args):

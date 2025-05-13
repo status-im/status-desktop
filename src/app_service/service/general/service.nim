@@ -6,7 +6,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../constants as app_constants
 
-from app_service/service/activity_center/service import SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED, ActivityCenterNotificationsArgs
+from app_service/service/activity_center/service import SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED, ActivityCenterNotificationsArgs
 from app_service/service/activity_center/dto/notification import parseActivityCenterNotifications
 
 import ../accounts/dto/accounts
@@ -46,7 +46,7 @@ QtObject:
     if response.result.contains("activityCenterNotifications"):
       let notifications = JsonNode(%{"notifications": response.result["activityCenterNotifications"]})
       let activityCenterNotificationsTuple = parseActivityCenterNotifications(notifications)
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED,
         ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
 
   proc logout*(self: Service) =
@@ -115,7 +115,7 @@ QtObject:
       if rpcResponseObj["response"]["result"].contains("activityCenterNotifications"):
         let notifications = JsonNode(%{"notifications": rpcResponseObj["response"]["result"]["activityCenterNotifications"]})
         let activityCenterNotificationsTuple = parseActivityCenterNotifications(notifications)
-        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED,
           ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
     except Exception as e:
       error "error:", procName="asyncFetchWakuBackupMessages", errName = e.name, errDesription = e.msg

@@ -81,7 +81,7 @@ method acceptActivityCenterNotificationDone*(self: AccessInterface, notification
 method dismissActivityCenterNotificationDone*(self: AccessInterface, notificationId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
+method addActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto], initialLoad: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method resetActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =

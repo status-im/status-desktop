@@ -210,14 +210,15 @@ method markActivityCenterNotificationReadDone*(self: Module, notificationIds: se
 method markAsSeenActivityCenterNotifications*(self: Module) =
   self.controller.markAsSeenActivityCenterNotifications()
 
-method addActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-  for notif in activityCenterNotifications:
-    if notif.notificationType == ActivityCenterNotificationTypeNews:
-      # Show an AC or OS notification for News Feed notifications
-      singletonInstance.globalEvents.showNewsMessageNotification(
-        notif.id,
-        notif.newsTitle,
-      )
+method addActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto], initialLoad: bool) =
+  if not initialLoad:
+    for notif in activityCenterNotifications:
+      if notif.notificationType == ActivityCenterNotificationTypeNews:
+        # Show an AC or OS notification for News Feed notifications
+        singletonInstance.globalEvents.showNewsMessageNotification(
+          notif.id,
+          notif.newsTitle,
+        )
   self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
   self.view.hasUnseenActivityCenterNotificationsChanged()
 
