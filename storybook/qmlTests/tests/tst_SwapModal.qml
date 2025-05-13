@@ -1608,7 +1608,7 @@ Item {
             compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                        root.swapAdaptor.swapOutputData.totalFees,
+                        root.swapAdaptor.swapOutputData.approvalTxFeesFiat,
                         root.swapAdaptor.currencyStore.currentCurrency))
 
             // simulate user click on approve button and approval failed
@@ -1622,7 +1622,7 @@ Item {
             compare(signButton.text, qsTr("Approving %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                        root.swapAdaptor.swapOutputData.totalFees,
+                        root.swapAdaptor.swapOutputData.approvalTxFeesFiat,
                         root.swapAdaptor.currencyStore.currentCurrency))
 
             // simulate approval tx was unsuccessful
@@ -1636,7 +1636,7 @@ Item {
             compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                        root.swapAdaptor.swapOutputData.totalFees,
+                        root.swapAdaptor.swapOutputData.approvalTxFeesFiat,
                         root.swapAdaptor.currencyStore.currentCurrency))
 
             // simulate user click on approve button and successful approval tx made
@@ -1651,7 +1651,7 @@ Item {
             compare(signButton.text, qsTr("Approving %1").arg(root.swapAdaptor.fromToken.symbol))
             // TODO: note that there is a loss of precision as the approvalGasFees is currently passes as float from the backend and not string.
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                        root.swapAdaptor.swapOutputData.totalFees,
+                        root.swapAdaptor.swapOutputData.approvalTxFeesFiat,
                         root.swapAdaptor.currencyStore.currentCurrency))
 
             root.swapStore.transactionSendingComplete("0x877ffe47fc29340312611d4e833ab189fe4f4152b01cc9a05bb4125b81b2a89a", "Success")
@@ -1668,7 +1668,7 @@ Item {
             verify(!signButton.loadingWithText)
             compare(signButton.text, qsTr("Swap"))
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                        root.swapAdaptor.swapOutputData.totalFees,
+                        root.swapAdaptor.swapOutputData.txFeesInFiat,
                         root.swapAdaptor.currencyStore.currentCurrency))
 
             let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
@@ -1682,7 +1682,7 @@ Item {
             verify(!signButton.loadingWithText)
             compare(signButton.text, qsTr("Swap"))
             compare(maxFeesValue.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(
-                        root.swapAdaptor.swapOutputData.totalFees,
+                        root.swapAdaptor.swapOutputData.approvalTxFeesFiat,
                         root.swapAdaptor.currencyStore.currentCurrency))
             closeAndVerfyModal()
         }
