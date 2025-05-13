@@ -133,9 +133,9 @@ ListModel {
             marketDetailsLoading: false
         },
         {
-            key: "USDC",
-            name: "USDC",
-            symbol: "USDC",
+            key: "USDC (EVM)",
+            name: "USDC Coin",
+            symbol: "USDC (EVM)",
             image: "",
             communityId: "",
             sources: ";" + uniswap + ";" + status + ";",
