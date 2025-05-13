@@ -46,14 +46,13 @@ import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
 import AppLayouts.Wallet.popups.dapps 1.0 as DAppsPopups
-import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.stores 1.0 as AppStores
-import AppLayouts.Wallet.popups.swap 1.0
 
 import mainui.adaptors 1.0
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
+import mainui.Handlers 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -154,7 +153,7 @@ Item {
         communityTokensStore: appMain.communityTokensStore
         profileStore: appMain.profileStore
 
-        onSendRequested: sendModalHandler.openSend()
+        onSendRequested: popupRequestsHandler.sendModalHandler.openSend()
     }
 
     Connections {
@@ -830,22 +829,6 @@ Item {
             }
             return username
         }
-
-        // TODO: Remove this and adapt new mechanism to launch BuyModal as done for SendModal
-        property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {}
-
-        property SwapInputParamsForm swapFormData: SwapInputParamsForm {}
-
-        function launchSwap() {
-            swapFormData.selectedAccountAddress =
-                    SQUtils.ModelUtils.get(WalletStores.RootStore.nonWatchAccounts, 0, "address")
-            swapFormData.selectedNetworkChainId =
-                    SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "layer", 1, "chainId")
-            Global.openSwapModalRequested(swapFormData, (popup) => {
-                                              popup.Component.destruction.connect(() => {
-                                                                                      d.swapFormData.resetFormData()
-                                                                                  })})
-        }
     }
 
     Settings {
@@ -887,91 +870,28 @@ Item {
                 appMainLocalSettings.whitelistedUnfurledDomains = whitelistedHostnames
             }
         }
-        onTransferOwnershipRequested: sendModalHandler.transferOwnership(tokenId, senderAddress)
+        onTransferOwnershipRequested: popupRequestsHandler.sendModalHandler.transferOwnership(tokenId, senderAddress)
     }
 
-    SwapModalHandler {
-        id: swapModalHandler
+    HandlersManager {
+        id: popupRequestsHandler
 
         popupParent: appMain
-        walletAssetsStore: appMain.walletAssetsStore
+
+        // Stores:
+        rootStore: appMain.rootStore
+        featureFlagsStore: appMain.featureFlagsStore
         currencyStore: appMain.currencyStore
         networksStore: appMain.networksStore
-        rootStore: appMain.rootStore
-    }
-
-    SendModalHandler {
-        id: sendModalHandler
-
-        popupParent: appMain
-        loginType: appMain.rootStore.loginType
+        walletRootStore: WalletStores.RootStore
+        walletAssetsStore: appMain.walletAssetsStore
         transactionStore: appMain.transactionStore
         walletCollectiblesStore: appMain.walletCollectiblesStore
         transactionStoreNew: appMain.transactionStoreNew
-        networksStore: appMain.networksStore
-
-        // for ens flows
-        ensRegisteredAddress: appMain.rootStore.profileSectionStore.ensUsernamesStore.getEnsRegisteredAddress()
-        myPublicKey: appMain.rootStore.contactStore.myPublicKey
-        getStatusTokenKey: function() {
-            return appMain.rootStore.profileSectionStore.ensUsernamesStore.getStatusTokenKey()
-        }
-
-        // for sticker flows
-        stickersMarketAddress: appMain.rootChatStore.stickersStore.getStickersMarketAddress()
-        stickersNetworkId: appMain.rootChatStore.appNetworkId
-
-        simpleSendEnabled: appMain.featureFlagsStore.simpleSendEnabled
-
-        // for simple send
-        walletAccountsModel: WalletStores.RootStore.accounts
-        filteredFlatNetworksModel: appMain.networksStore.activeNetworks
-        flatNetworksModel: appMain.networksStore.allNetworks
-        areTestNetworksEnabled: appMain.networksStore.areTestNetworksEnabled
-        groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
-        plainTokensBySymbolModel: appMain.tokensStore.plainTokensBySymbolModel
-        showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
-        collectiblesBySymbolModel: WalletStores.RootStore.collectiblesStore.jointCollectiblesBySymbolModel
-        savedAddressesModel: WalletStores.RootStore.savedAddresses
-        recentRecipientsModel: appMain.transactionStore.tempActivityController1Model
-
-        isDetailedCollectibleLoading: appMain.walletCollectiblesStore.isDetailedCollectibleLoading
-        detailedCollectible: appMain.walletCollectiblesStore.detailedCollectible
-
-        currentCurrency: appMain.currencyStore.currentCurrency
-        fnFormatCurrencyAmount: appMain.currencyStore.formatCurrencyAmount
-        fnFormatCurrencyAmountFromBigInt: appMain.currencyStore.formatCurrencyAmountFromBigInt
-
-        fnResolveENS: function(ensName, uuid) {
-            appMain.rootStore.resolveENS(ensName, uuid)
-        }
-
-        fnGetDetailedCollectible: function(chainId, contractAddress, tokenId) {
-            appMain.walletCollectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-        }
-
-        fnResetDetailedCollectible: function() {
-            appMain.walletCollectiblesStore.resetDetailedCollectible()
-        }
-
-        fnGetOpenSeaUrl: function(networkShortName) {
-            return WalletStores.RootStore.getOpenSeaUrl(networkShortName)
-        }
-
-        onLaunchBuyFlowRequested: {
-            d.buyFormData.selectedWalletAddress = accountAddress
-            d.buyFormData.selectedNetworkChainId = chainId
-            d.buyFormData.selectedTokenKey = tokenKey
-            Global.openBuyCryptoModalRequested(d.buyFormData)
-        }
-
-        Component.onCompleted: {
-            // It's requested from many nested places, so as a workaround we use
-            // Global to shorten the path via global signal.
-            Global.sendToRecipientRequested.connect(sendToRecipient)
-            appMain.rootStore.ensNameResolved.connect(ensNameResolved)
-        }
+        tokensStore: appMain.tokensStore
+        rootChatStore: appMain.rootChatStore
     }
+
 
     Connections {
         id: globalConns
@@ -1210,7 +1130,7 @@ Item {
         sourceComponent: StatusStickersPopup {
             store: appMain.rootChatStore
             isWalletEnabled: appMain.profileStore.isWalletEnabled
-            onBuyClicked: sendModalHandler.buyStickerPack(packId, price)
+            onBuyClicked: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
         }
     }
 
@@ -1493,7 +1413,7 @@ Item {
 
                     onClicked: {
                         if(model.sectionType === Constants.appSection.swap) {
-                            d.launchSwap()
+                            popupRequestsHandler.swapModalHandler.launchSwap()
                         }
                         else {
                             changeAppSectionBySectionId(model.id)
@@ -2003,8 +1923,8 @@ Item {
                                     appSearch.openSearchPopup()
                                 }
 
-                                onBuyStickerPackRequested: sendModalHandler.buyStickerPack(packId, price)
-                                onTokenPaymentRequested: sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+                                onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
+                                onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
                             }
                         }
                     }
@@ -2053,10 +1973,10 @@ Item {
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
                             onSendTokenRequested: (senderAddress, tokenId, tokenType) => {
-                                                      sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                                                      popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
                                                   }
                             onBridgeTokenRequested: (tokenId, tokenType) => {
-                                                        sendModalHandler.bridgeToken(tokenId, tokenType)
+                                                        popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
                                                     }
                         }
                         onLoaded: {
@@ -2105,9 +2025,9 @@ Item {
 
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
 
-                            onConnectUsernameRequested: sendModalHandler.connectUsername(ensName)
-                            onRegisterUsernameRequested: sendModalHandler.registerUsername(ensName)
-                            onReleaseUsernameRequested: sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
+                            onConnectUsernameRequested: popupRequestsHandler.sendModalHandler.connectUsername(ensName)
+                            onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
+                            onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
                         }
                         onLoaded: {
                             item.settingsSubsection = profileLoader.settingsSubsection
@@ -2147,7 +2067,7 @@ Item {
                                 return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
                             }
                             currentPage: appMain.marketStore.currentPage
-                            onRequestLaunchSwap: d.launchSwap()
+                            onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
                             onFetchMarketTokens: appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
                         }
                         onActiveChanged: {
@@ -2248,8 +2168,8 @@ Item {
                                     appSearch.openSearchPopup()
                                 }
 
-                                onBuyStickerPackRequested: sendModalHandler.buyStickerPack(packId, price)
-                                onTokenPaymentRequested: sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+                                onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
+                                onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
                             }
                         }
                     }

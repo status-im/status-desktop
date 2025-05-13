@@ -59,6 +59,7 @@ QtObject {
     }
 
     readonly property Component swapModalComponent: Component {
+        // TODO: Update the API to be explicit and avoid direct store access
         SwapModal {
             swapAdaptor: SwapModalAdaptor {
                 swapStore: d.swapStore
