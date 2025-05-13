@@ -3,5 +3,3 @@ SplashScreen 1.0 SplashScreen.qml
 Popups 1.0 Popups.qml
 StatusTrayIcon 1.0 StatusTrayIcon.qml
 DropAreaPanel 1.0 panels/DropAreaPanel.qml
-SendModalHandler 1.0 SendModalHandler.qml
-SwapModalHandler 1.0 SwapModalHandler.qml
