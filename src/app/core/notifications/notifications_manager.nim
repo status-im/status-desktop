@@ -12,7 +12,6 @@ logScope:
   topics = "notifications-manager"
 
 # Signals which may be emitted by this class:
-const SIGNAL_ADD_NOTIFICATION_TO_ACTIVITY_CENTER* = "addNotificationToActivityCenter"
 const SIGNAL_DISPLAY_APP_NOTIFICATION* = "displayAppNotification"
 const SIGNAL_DISPLAY_WINDOWS_OS_NOTIFICATION* = "displayWindowsOsNotification"
 const SIGNAL_OS_NOTIFICATION_CLICKED* = "osNotificationClicked"
@@ -81,7 +80,6 @@ QtObject:
     signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)", 2)
-
     signalConnect(singletonInstance.globalEvents, "showCommunityMemberKickedNotification(QString, QString, QString)", self, "onShowCommunityMemberKickedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityMemberBannedNotification(QString, QString, QString)", self, "onShowCommunityMemberBannedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityMemberUnbannedNotification(QString, QString, QString)", self, "onShowCommunityMemberUnbannedNotification(QString, QString, QString)", 2)
@@ -226,10 +224,6 @@ QtObject:
   proc notificationCheck(self: NotificationsManager, title: string, message: string, details: NotificationDetails,
       notificationWay: string) =
     var data = NotificationArgs(title: title, message: message, details: details)
-    # All but the NewMessage notifications go to Activity Center
-    if details.notificationType != NotificationType.NewMessage:
-      debug "Add AC notification", notificationType=details.notificationType
-      self.events.emit(SIGNAL_ADD_NOTIFICATION_TO_ACTIVITY_CENTER, data)
 
     # An exemption from the diagrams, at least for now, is that we don't need to implement the "Badge Check" block here,
     # cause that's already handled in appropriate modules.
