@@ -403,6 +403,8 @@ QtObject {
     }
 
     readonly property Component sendModalComponent: Component {
+
+        // TODO: Update the API to be explicit and avoid direct store access
         SendModal {
             loginType: root.loginType
 
@@ -415,6 +417,8 @@ QtObject {
     }
 
     readonly property Component simpleSendModalComponent: Component {
+
+        // TODO: Update the API to be explicit and avoid direct store access
         SimpleSendModal {
             id: simpleSendModal
 
@@ -814,6 +818,8 @@ QtObject {
 
             Component {
                 id: sendSignModalCmp
+
+                // TODO: Update the API to be explicit and avoid direct store access
                 SendSignModal {
                     closePolicy: Popup.CloseOnEscape
                     destroyOnClose: true

@@ -286,6 +286,65 @@ not result in changes in the store layer.
   required property TransactionStore store // OK
   required property var store              // Bad
   ```
+  
+- **Low-level UI components** should remain decoupled from application stores. Instead of directly accessing stores or dispatching actions, these components should emit intent-based events for actions they cannot or should not handle internally—such as opening dialogs, triggering navigation, or requesting data that is outside their scope of concern.
+
+  This pattern **avoids coupling UI components** to specific data sources and keeps their APIs clean and focused on rendering and user interaction. Introducing store dependencies would require exposing unrelated data through the component’s public API, violating the principle of separation of concerns.
+
+  Event emissions from low-level components should be handled by intermediate or upper layers in the component hierarchy, which are responsible for interpreting these events and coordinating with stores or services as needed. While this may lead to centralized handling of certain actions (e.g., modal management), the primary goal is modularity, reusability, and maintainability—not centralization for its own sake.
+
+### Popup Instantiation and Store Access
+
+To ensure loose coupling, it is recommended to request the popup to be opened externally rather than instantiating it directly within the UI component that triggers it. This approach is particularly important when the popup requires additional data not available in the triggering component. Instantiating the popup internally would necessitate passing all required data through the component, potentially leading to an unnecessarily expanded API.
+
+The popup instantiation can be managed by dedicated handler component. It can handle requests from different parts of the application. For this reason, they should be high in the component hierarchy, like `appMain.popupRequestsHandler`.
+
+#### Benefits
+- No deep store injection into QML.
+- UI logic stays at the application level.
+- Easier testing and debugging of popup workflows.
+
+---
+#### 🚫 What to Avoid
+
+Avoid instantiating popups like this within QML components:
+
+```qml
+// Bad practice: store passed deeply into the UI tree
+PopupComponent {
+    store: myStore
+}
+```
+
+This approach leads to tightly coupled code and requires propagating stores deep into the UI hierarchy, which makes maintenance and testing harder.
+
+---
+
+#### ✅ Recommended Approach
+
+Use the **popups handlers mechanism**. This is a centralized way designed to handle UI actions such as displaying popups in a clean, controller-like layer of the app.
+
+Popups should be instantiated in response to signals or actions routed through handlers, not embedded directly in the component tree.
+
+---
+
+#### How It Works
+
+- `HandlersManager` acts as a plain aggregator that holds and organizes various domain-specific popup handlers.
+- All popup logic (creation, configuration, and display) is handled inside these dedicated popup handlers.
+- The main application (`appMain`) exposes the `popupRequestsHandler`, which is the entry point for triggering popup actions.
+
+#### Example Usage: Triggering a popup from the AppMain.qml logic
+
+```qml 
+onTransferOwnershipRequested: popupRequestsHandler.sendModalHandler.transferOwnership(tokenId, senderAddress)
+```
+
+Or
+
+```qml
+onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
+```
 
 ## Adaptors
 
