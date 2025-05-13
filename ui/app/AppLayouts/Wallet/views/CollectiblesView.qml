@@ -29,6 +29,7 @@ ColumnLayout {
 
     required property var ownedAccountsModel
     required property var controller
+    required property var activeNetworks
     required property string addressFilters
     required property string networkFilters
     property bool sendEnabled: true
@@ -221,6 +222,14 @@ ColumnLayout {
                     return accountAddress
             }
             return ""
+        }
+
+        readonly property int networksCount: root.activeNetworks.ModelCount.count
+
+        function getUnsupportedChainIds() {
+            let activeChainIds = ModelUtils.modelToFlatArray(root.activeNetworks, "chainId")
+            let unsupportedChainIds = Constants.unsupportedMultichainFeatures[Constants.walletConnections.collectibles]
+            return unsupportedChainIds.filter(chainId => activeChainIds.includes(chainId))
         }
 
         property FunctionAggregator hasAllTimestampsAggregator: FunctionAggregator {
@@ -435,6 +444,16 @@ ColumnLayout {
         StatusDialogDivider {
             Layout.fillWidth: true
         }
+    }
+
+    CollectiblesNotSupportedTag {
+        id: collectiblesNotSupportedTag
+
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+        visible: unsupportedChainIds.length > 0
+
+        unsupportedChainIds: d.networksCount, d.getUnsupportedChainIds()
     }
 
     Loader {

@@ -698,7 +698,8 @@ QtObject {
             case Constants.chains.baseChainId:
             case Constants.chains.baseSepoliaChainId:
                 return Constants.networkShortChainNames.base
-            case Constants.chains.statusSepoliaChainId:
+            case Constants.chains.statusNetworkChainId:
+            case Constants.chains.statusNetworkSepoliaChainId:
                 return Constants.networkShortChainNames.status
             case Constants.chains.binanceSmartChainMainnetChainId:
             case Constants.chains.binanceSmartChainTestnetChainId:
@@ -717,19 +718,19 @@ QtObject {
             case Constants.chains.arbitrumChainId:
                 return Constants.networkNames.arbitrum
             case Constants.chains.arbitrumSepoliaChainId:
-                return Constants.networkNames.arbitrumSepolia
+                return Constants.networkNames.sepoliaArbitrum
             case Constants.chains.optimismChainId:
                 return Constants.networkNames.optimism
             case Constants.chains.optimismSepoliaChainId:
-                return Constants.networkNames.optimismSepolia
+                return Constants.networkNames.sepoliaOptimism
             case Constants.chains.baseChainId:
                 return Constants.networkNames.base
             case Constants.chains.baseSepoliaChainId:
-                return Constants.networkNames.baseSepolia
-            case Constants.chains.statusChainId:
+                return Constants.networkNames.sepoliaBase
+            case Constants.chains.statusNetworkChainId:
                 return Constants.networkNames.status
-            case Constants.chains.statusSepoliaChainId:
-                return Constants.networkNames.statusSepolia
+            case Constants.chains.statusNetworkSepoliaChainId:
+                return Constants.networkNames.sepoliaStatus
             case Constants.chains.binanceSmartChainMainnetChainId:
                 return Constants.networkNames.binanceSmartChain
             case Constants.chains.binanceSmartChainTestnetChainId:
@@ -1110,5 +1111,19 @@ QtObject {
             return typeName.substring(0, bracketIndex)
 
         return typeName
+    }
+
+    function getEnumerationString(list, finalSeparator) {
+        let result = ""
+        for (let i = 0; i < list.length; i++) {
+            if (i == 0) {
+                result += list[i]
+            } else if (i == list.length - 1) {
+                result += " %1 %2".arg(finalSeparator).arg(list[i])
+            } else {
+                result += ", %1".arg(list[i])
+            }
+        }
+        return result
     }
 }

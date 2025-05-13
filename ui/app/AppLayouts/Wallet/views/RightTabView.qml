@@ -400,6 +400,7 @@ RightTabBaseView {
 
                         ownedAccountsModel: RootStore.nonWatchAccounts
                         controller: RootStore.collectiblesStore.collectiblesController
+                        activeNetworks: root.networksStore.activeNetworks
                         networkFilters: root.networksStore.networkFilters
                         addressFilters: RootStore.addressFilters
                         sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
