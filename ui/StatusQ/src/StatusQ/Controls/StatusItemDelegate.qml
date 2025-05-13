@@ -55,7 +55,10 @@ ItemDelegate {
         radius: root.radius
     }
 
-    HoverHandler {
+    MouseArea {
+        // NOTE The hover handler would break control's hover in some corner cases, hence mouse area is used
+        hoverEnabled: true
         cursorShape: root.cursorShape
+        propagateComposedEvents: true
     }
 }
