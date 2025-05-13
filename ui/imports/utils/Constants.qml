@@ -23,6 +23,7 @@ QtObject {
         readonly property int arbitrumSepoliaChainId: 421614
         readonly property int baseChainId: 8453
         readonly property int baseSepoliaChainId: 84532
+        readonly property int statusNetworkSepoliaChainId: 1660990954
         readonly property int binanceSmartChainMainnetChainId: 56
         readonly property int binanceSmartChainTestnetChainId: 97
 
@@ -858,6 +859,15 @@ QtObject {
         readonly property string collectibles: "collectibles"
         readonly property string blockchains: "blockchains"
         readonly property string market: "market"
+    }
+
+    // Replicates src/app_service/service/network_connection/service.nim table UNSUPPORTED_MULTICHAIN_FEATURES
+    readonly property var unsupportedMultichainFeatures: {
+        "collectibles": [
+            chains.statusNetworkSepoliaChainId,
+            chains.binanceSmartChainMainnetChainId,
+            chains.binanceSmartChainTestnetChainId
+        ]
     }
 
     readonly property QtObject walletConstants: QtObject {

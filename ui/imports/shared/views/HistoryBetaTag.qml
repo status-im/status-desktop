@@ -28,17 +28,7 @@ InformationTag {
             SQUtils.ModelUtils.forEach(model, function(network) {
                 links.push(Utils.getStyledLink(Utils.getChainExplorerName(network["shortName"]), network["blockExplorerURL"], hoveredLink))
             })
-            let explorerLinks = ""
-            for (let i = 0; i < links.length; i++) {
-                if (i == 0) {
-                    explorerLinks += links[i]
-                } else if (i == links.length - 1) {
-                    explorerLinks += " %1 %2".arg(qsTr("or")).arg(links[i])
-                } else {
-                    explorerLinks += ", %1".arg(links[i])
-                }
-            }
-            return explorerLinks
+            return Utils.getEnumerationString(links, qsTr("or"))
         }
     }
 
@@ -53,6 +43,12 @@ InformationTag {
     tagPrimaryLabel.text: d.networksCount, qsTr("Activity is in beta. If transactions are missing, check %1.")
         .arg(d.getExplorerLinks(root.flatNetworks, tagPrimaryLabel.hoveredLink))
     tagPrimaryLabel.onLinkActivated: root.linkActivated(link)
+    // NB: regular binding won't work as `tagPrimaryLabel` is an alias
+    Binding {
+        target: tagPrimaryLabel
+        property: "Layout.fillWidth"
+        value: true
+    }
     asset {
         name: "warning"
         width: 20

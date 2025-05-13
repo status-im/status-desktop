@@ -119,6 +119,7 @@ SplitView {
                                             false, Constants.ephemeralNotificationType.success, "")
         }
         ownedAccountsModel: WalletAccountsModel {}
+        activeNetworks: NetworksModel.flatNetworks
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked
