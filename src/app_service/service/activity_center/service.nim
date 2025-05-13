@@ -37,6 +37,7 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED* = "activityCenterNotificationsLoaded"
+const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED* = "activityCenterNotificationsReceived"
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED* = "activityCenterNotificationsCountMayChanged"
 const SIGNAL_ACTIVITY_CENTER_UNSEEN_UPDATED* = "activityCenterNotificationsHasUnseenUpdated"
 const SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ* = "activityCenterMarkNotificationsAsRead"
@@ -99,7 +100,7 @@ QtObject:
 
     if (filteredNotifications.len > 0):
       self.events.emit(
-        SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+        SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED,
         ActivityCenterNotificationsArgs(activityCenterNotifications: filteredNotifications)
       )
 
