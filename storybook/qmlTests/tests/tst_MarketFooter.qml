@@ -19,6 +19,8 @@ Item {
             width: parent.width
             pageSize: 20
             totalCount: 1230
+            currentPage: 1
+            onSwitchPage: currentPage = pageNumber
         }
     }
 
@@ -79,21 +81,25 @@ Item {
             mouseClick(nextButton)
             tryCompare(switchPageSpy, "count", 1)
             compare(switchPageSpy.signalArguments[0][0], 2)
+            compare(controlUnderTest.currentPage, 2)
 
             switchPageSpy.clear()
             mouseClick(nextButton)
             tryCompare(switchPageSpy, "count", 1)
             compare(switchPageSpy.signalArguments[0][0], 3)
+            compare(controlUnderTest.currentPage, 3)
 
             switchPageSpy.clear()
             mouseClick(previousButton)
             tryCompare(switchPageSpy, "count", 1)
             compare(switchPageSpy.signalArguments[0][0], 2)
+            compare(controlUnderTest.currentPage, 2)
 
             switchPageSpy.clear()
             mouseClick(fifthButton)
             tryCompare(switchPageSpy, "count", 1)
             compare(switchPageSpy.signalArguments[0][0], 5)
+            compare(controlUnderTest.currentPage, 5)
         }
     }
 }

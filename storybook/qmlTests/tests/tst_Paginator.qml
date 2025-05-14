@@ -16,16 +16,25 @@ Item {
         Paginator {
             pageSize: 20
             totalCount: 1230
+            currentPage: 1
+            onRequestPage: currentPage = pageNumber
         }
     }
 
     property Paginator controlUnderTest: null
+
+    SignalSpy {
+        id: requestPageSpy
+        target: controlUnderTest
+        signalName: "requestPage"
+    }
 
     TestCase {
         name: "Paginator"
         when: windowShown
 
         function init() {
+            requestPageSpy.clear()
             controlUnderTest = createTemporaryObject(paginatorCmp, root)
         }
 
@@ -56,13 +65,16 @@ Item {
             const nextButton = findChild(controlUnderTest, "nextButton")
             verify(!!nextButton)
 
-            for (let i = 1; i< totalPages; i++) {
+            for (let i = 1; i< totalPages-1; i++) {
                 if(i == totalPages) {
                     verify(!nextButton.enabled, "nextButton should be disabled")
                 }
                 else {
                     verify(nextButton.enabled, "nextButton should be enabled")
                     mouseClick(nextButton)
+                    tryCompare(requestPageSpy, "count", 1)
+                    compare(requestPageSpy.signalArguments[0][0], i+1 , "After next page, current page should be index + 1")
+                    requestPageSpy.clear()
                     compare(controlUnderTest.currentPage, i+1, "After next page, current page should be page + 1")
                 }
             }
@@ -79,11 +91,17 @@ Item {
             verify(!!nextButton)
             mouseClick(nextButton)
 
+            tryCompare(requestPageSpy, "count", 1)
+            compare(requestPageSpy.signalArguments[0][0], 2 , "After next page, current page should be 2")
             compare(controlUnderTest.currentPage, 2)
-            verify(previousButton.enabled, "previousButton should be enabled    ")
+            verify(previousButton.enabled, "previousButton should be enabled")
+            requestPageSpy.clear()
 
             // click previous button
             mouseClick(previousButton)
+
+            tryCompare(requestPageSpy, "count", 1)
+            compare(requestPageSpy.signalArguments[0][0], 1 , "After previous page, current page should be 1")
             compare(controlUnderTest.currentPage, 1)
         }
 

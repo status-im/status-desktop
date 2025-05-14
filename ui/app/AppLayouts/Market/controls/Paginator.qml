@@ -12,13 +12,13 @@ Control {
     required property int pageSize
     /** required input property representing total count of items **/
     required property int totalCount
+    /** required property representing current page set from outside **/
+    required property int currentPage
 
-    /** output property representing current page set in Paginator **/
-    readonly property int currentPage: d.currentPage
+    signal requestPage(int pageNumber)
 
     QtObject {
         id: d
-        property int currentPage: 1
         readonly property int totalPages: Math.ceil(root.totalCount/root.pageSize)
 
         function getPagesModel() {
@@ -26,12 +26,12 @@ Control {
             if (totalPages <= 5) {
                 for (let i = 1; i <= totalPages; i++) pages.push(i);
             } else {
-                if (currentPage <= 3) {
+                if (root.currentPage <= 3) {
                     pages = [1, 2, 3, 4, 5, "...", totalPages];
-                } else if (currentPage >= totalPages - 2) {
+                } else if (root.currentPage >= totalPages - 2) {
                     pages = [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
                 } else {
-                    pages = [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+                    pages = [1, "...", root.currentPage - 1, root.currentPage, root.currentPage + 1, "...", totalPages];
                 }
             }
             return pages;
@@ -49,10 +49,10 @@ Control {
             disabledColor: Theme.palette.transparent
 
             icon.name: "previous"
-            enabled: d.currentPage > 1
+            enabled: root.currentPage > 1
             onClicked: {
-                if (d.currentPage > 1) {
-                    d.currentPage--;
+                if (root.currentPage > 1) {
+                    root.requestPage(root.currentPage - 1)
                 }
             }
         }
@@ -71,10 +71,10 @@ Control {
 
                 text: modelData
                 enabled: modelData !== "..."
-                highlighted: modelData === d.currentPage
+                highlighted: modelData === root.currentPage
                 onClicked: {
                     if (modelData !== "...") {
-                        d.currentPage = modelData;
+                        root.requestPage(modelData)
                     }
                 }
             }
@@ -89,10 +89,10 @@ Control {
             disabledColor: Theme.palette.transparent
 
             icon.name: "next"
-            enabled: d.currentPage < d.totalPages
+            enabled: root.currentPage < d.totalPages
             onClicked: {
-                if (d.currentPage < d.totalPages) {
-                    d.currentPage++;
+                if (root.currentPage < d.totalPages) {
+                    root.requestPage(root.currentPage + 1)
                 }
             }
         }
