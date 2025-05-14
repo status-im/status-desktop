@@ -291,18 +291,18 @@ SignTransactionModalBase {
 
             if (!customBaseFeeDirty) {
                 if (selectedFeeMode === root.selectedFeeMode) {
-                    customBaseFee = !!root.customBaseFee? root.fnRawToGas(root.networkChainId, root.customBaseFee).toFixed() : "0"
+                    customBaseFee = !!root.customBaseFee? fnRawToGas(root.customBaseFee).toFixed() : "0"
                 } else {
-                    customBaseFee = root.fnRawToGas(root.networkChainId, root.normalBaseFee).toFixed()
+                    customBaseFee = fnRawToGas(root.normalBaseFee).toFixed()
                 }
                 customBaseFeeDirty = false
             }
 
             if (!customPriorityFeeDirty) {
                 if (selectedFeeMode === root.selectedFeeMode) {
-                    customPriorityFee = !!root.customPriorityFee? root.fnRawToGas(root.networkChainId, root.customPriorityFee).toFixed() : "0"
+                    customPriorityFee = !!root.customPriorityFee? fnRawToGas(root.customPriorityFee).toFixed() : "0"
                 } else {
-                    customPriorityFee = root.fnRawToGas(root.networkChainId, root.normalPriorityFee).toFixed()
+                    customPriorityFee = fnRawToGas(root.normalPriorityFee).toFixed()
                 }
                 customPriorityFeeDirty = false
             }
