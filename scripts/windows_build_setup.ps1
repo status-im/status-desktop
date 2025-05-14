@@ -36,10 +36,11 @@ function Install-Dependencies {
     scoop install --global go@1.22.10
     scoop install --global protobuf@3.20.0
     scoop install --global vcredist2022
+    scoop install --global cmake@3.31.6
     scoop install --global `
         7zip git dos2unix findutils `
         wget rcedit inno-setup `
-        make cmake gcc
+        make gcc
 }
 
 function Install-Qt-SDK {
