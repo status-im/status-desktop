@@ -175,9 +175,17 @@ Control {
 
         selectedChainId: root.selectedChainId
 
-        onCollectibleSelected: root.collectibleSelected(key)
-        onCollectionSelected: root.collectionSelected(key)
-        onAssetSelected: root.assetSelected(key)
-        onNetworkSelected: root.networkSelected(chainId)
+        onCollectibleSelected: (key) => {
+                                   root.collectibleSelected(key)
+                               }
+        onCollectionSelected: (key) => {
+                                  root.collectibleSelected(key)
+                              }
+        onAssetSelected: (key) => {
+                             root.assetSelected(key)
+                         }
+        onNetworkSelected: (chainId) => {
+                               root.networkSelected(chainId)
+                           }
     }
 }
