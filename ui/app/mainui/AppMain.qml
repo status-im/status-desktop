@@ -2052,8 +2052,12 @@ Item {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
-			                onSendTokenRequested: sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
-                            onBridgeTokenRequested: sendModalHandler.bridgeToken(tokenId, tokenType)
+                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => {
+                                                      sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                                                  }
+                            onBridgeTokenRequested: (tokenId, tokenType) => {
+                                                        sendModalHandler.bridgeToken(tokenId, tokenType)
+                                                    }
                         }
                         onLoaded: {
                             item.resetView()
