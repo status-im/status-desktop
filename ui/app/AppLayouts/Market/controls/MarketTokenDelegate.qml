@@ -32,6 +32,10 @@ StatusItemDelegate {
     property bool loading
     /** Input property representing index of token list **/
     property string indexString
+    /** Input property holding if token should be min window size mode **/
+    property bool isSmallWindow
+    /** Input property holding if token is last item in the list **/
+    property bool isLastItem
 
     QtObject {
         id: d
@@ -104,10 +108,12 @@ StatusItemDelegate {
                 spacing: 0
 
                 StatusTextWithLoadingState {
+                    id: tokenNameText
+
                     objectName: "tokenNameText"
 
                     // width by design
-                    Layout.preferredWidth: 340
+                    Layout.preferredWidth: root.isSmallWindow ? 150: 340
 
                     text: root.tokenName
                     font.weight: Font.Medium
@@ -115,12 +121,12 @@ StatusItemDelegate {
                     lineHeightMode: Text.FixedHeight
                     leftPadding: 0
                     loading: root.loading
+                    elide: Text.ElideRight
                 }
                 StatusTextWithLoadingState {
                     objectName: "tokenSymbolText"
 
-                    // width by design
-                    Layout.preferredWidth: 340
+                    Layout.preferredWidth: tokenNameText.width
 
                     text: root.tokenSymbol
                     customColor: Theme.palette.baseColor1
@@ -193,6 +199,14 @@ StatusItemDelegate {
                 rightPadding: Theme.padding
                 loading: root.loading
             }
+        }
+
+        // Divider at the bottom
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: Theme.palette.baseColor2
+            visible: root.isLastItem
         }
     }
 }
