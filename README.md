@@ -7,7 +7,7 @@
 
 # Status Desktop
 
-[**Status**](https://status.app/) Desktop is a privacy-first, decentralized messenger built with [Nim](https://nim-lang.org/) and [Qt/QML](https://doc.qt.io/qt-5/qmlapplications.html). It offers end-to-end encrypted messaging, community chats, and Ethereum wallet integration — all without requiring a phone number or email.
+[**Status**](https://status.app/) Desktop is a privacy-first, decentralised messenger built with [Nim](https://nim-lang.org/) and [Qt/QML](https://doc.qt.io/qt-5/qmlapplications.html). It offers end-to-end encrypted messaging, community chats, and Ethereum wallet integration — all without requiring a phone number or email.
 
 ![Status Desktop Screenshot](screenshot.png)
 
@@ -18,10 +18,9 @@
   - [macOS](#macos)
   - [Windows](#windows)
   - [Linux](#linux)
-- [🛠️ Build from Source](#-build-from-source)
+- [🛠️ Build from Source](#%EF%B8%8F-build-from-source)
 - [🤝 Contributing](#-contributing)
-- [📚 Documentation](#documentation)
-
+- [📚 Documentation](#-documentation)
 
 ## 🚀 Download & Install
 
