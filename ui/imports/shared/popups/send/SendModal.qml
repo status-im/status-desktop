@@ -434,7 +434,7 @@ StatusDialog {
                         property bool onlyAssets: false
 
                         assetsModel: assetsAdaptor.outputAssetsModel
-                        collectiblesModel: collectiblesAdaptorLoader.active
+                        collectiblesModel: collectiblesAdaptorLoader.active && !!collectiblesAdaptorLoader.item
                                            ? collectiblesAdaptorLoader.item.model : null
                         Layout.fillWidth: true
                         Layout.maximumWidth: implicitWidth
