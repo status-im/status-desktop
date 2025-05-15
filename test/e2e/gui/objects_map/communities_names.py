@@ -89,10 +89,10 @@ mainWindow_Edit_Community_StatusButton = {"container": statusDesktop_mainWindow,
 # Members Settings View
 mainWindow_MembersSettingsPanel = {"container": mainWindow_communityLoader_Loader, "type": "MembersSettingsPanel", "unnamed": 1, "visible": True}
 membersListViews_ListView = {"container": statusDesktop_mainWindow, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "StatusListView", "visible": True}
-memberItem_StatusMemberListItem = {"container": membersListViews_ListView, "id": "memberItem", "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+memberItem_StatusMemberListItem = {"container": membersListViews_ListView, "id": "memberItem", "type": "ContactListItemDelegate", "unnamed": 1, "visible": True}
 communitySettings_MembersTab_Member_Kick_Button = {"container": membersListViews_ListView, "objectName": "MemberListItem_KickButton", "type": "StatusButton", "visible": True}
 memberItem_Ban_StatusButton = {"container": membersListViews_ListView, "objectName": "MemberListItem_BanButton", "type": "StatusButton", "visible": True}
-memberItem_Unban_StatusButton = {"checkable": False, "container": membersListViews_ListView, "objectName": "MemberListItem_UnbanButton", "type": "StatusButton", "visible": True}
+memberItem_Unban_StatusButton = {"container": membersListViews_ListView, "objectName": "MemberListItem_UnbanButton", "type": "StatusButton", "visible": True}
 
 # Tokens View
 mainWindow_mintPanel_MintTokensSettingsPanel = {"container": mainWindow_StatusWindow, "id": "mintPanel", "type": "MintTokensSettingsPanel", "unnamed": 1, "visible": True}

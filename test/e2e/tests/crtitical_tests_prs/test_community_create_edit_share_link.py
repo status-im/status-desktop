@@ -85,7 +85,7 @@ def test_create_edit_community(main_screen: MainWindow):
         assert community_info.description == new_description
         assert '1' in community_info.members
 
-    assert new_name in main_screen.left_panel.communities, \
+    assert new_name in main_screen.left_panel.communities(), \
         f'Community {new_name} should be present in the list of communities but it is not'
     context_menu = main_screen.left_panel.open_community_context_menu(new_name)
     assert not context_menu.leave_community_option.is_visible, f'Leave option should not be present'

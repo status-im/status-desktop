@@ -65,7 +65,6 @@ class MainLeftPanel(QObject):
     def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
         return self._open_screen_from_left_nav(self.profile_button, OnlineIdentifier, attempts)
 
-    @property
     @allure.step('Get communities names')
     def communities(self) -> typing.List[str]:
         community_names = []
@@ -176,7 +175,7 @@ class MainWindow(Window):
             return self.create_profile(user_account)
 
     @allure.step('Wait for notification and get text')
-    def wait_for_notification(self, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> list[str]:
+    def wait_for_notification(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC) -> list[str]:
         start_time = time.monotonic()
 
         while time.monotonic() - start_time < timeout_sec:
@@ -186,4 +185,4 @@ class MainWindow(Window):
                 LOG.info(f"Notification not found: {err}")
                 time.sleep(0.1)  # Small delay to prevent CPU overuse
 
-        raise LookupError("Notifications were not found within the timeout period.")
+        raise LookupError(f"Notifications were not found within the {timeout_sec} period.")

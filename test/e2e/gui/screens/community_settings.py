@@ -266,20 +266,20 @@ class MembersView(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_MembersSettingsPanel)
-        self._member_list_item = QObject(communities_names.memberItem_StatusMemberListItem)
-        self._kick_member_button = Button(communities_names.communitySettings_MembersTab_Member_Kick_Button)
-        self._ban_member_button = Button(communities_names.memberItem_Ban_StatusButton)
-        self._unban_member_button = Button(communities_names.memberItem_Unban_StatusButton)
+        self.member_list_item = QObject(communities_names.memberItem_StatusMemberListItem)
+        self.kick_member_button = Button(communities_names.communitySettings_MembersTab_Member_Kick_Button)
+        self.ban_member_button = Button(communities_names.memberItem_Ban_StatusButton)
+        self.unban_member_button = Button(communities_names.memberItem_Unban_StatusButton)
 
     @property
     @allure.step('Get community members names')
     def members_names(self) -> typing.List[str]:
-        return [str(member.userName) for member in driver.findAllObjects(self._member_list_item.real_name)]
+        return [str(member.userName) for member in driver.findAllObjects(self.member_list_item.real_name)]
 
     @allure.step('Get community member objects')
     def get_member_objects(self) -> typing.List:
         member_objects = []
-        for item in driver.findAllObjects(self._member_list_item.real_name):
+        for item in driver.findAllObjects(self.member_list_item.real_name):
             member_objects.append(item)
         return member_objects
 
@@ -300,9 +300,9 @@ class MembersView(QObject):
     def kick_member(self, member_name: str):
         member = self.get_member_object(member_name)
         QObject(real_name=driver.objectMap.realName(member)).hover()
-        self._kick_member_button.hover()
+        self.kick_member_button.hover()
         time.sleep(1)
-        self._kick_member_button.native_mouse_click()
+        self.kick_member_button.native_mouse_click()
         kick_member_popup = KickMemberPopup()
         kick_member_popup.confirm_kicking()
 
@@ -310,18 +310,18 @@ class MembersView(QObject):
     def ban_member(self, member_name: str):
         member = self.get_member_object(member_name)
         QObject(real_name=driver.objectMap.realName(member)).hover()
-        self._ban_member_button.hover()
+        self.ban_member_button.hover()
         time.sleep(1)
-        self._ban_member_button.native_mouse_click()
+        self.ban_member_button.native_mouse_click()
         return BanMemberPopup().wait_until_appears()
 
     @allure.step('Unban community member')
     def unban_member(self, member_name: str):
         member = self.get_member_object(member_name)
         QObject(real_name=driver.objectMap.realName(member)).hover()
-        self._unban_member_button.hover()
+        self.unban_member_button.hover()
         time.sleep(1)
-        self._unban_member_button.native_mouse_click()
+        self.unban_member_button.native_mouse_click()
         return self
 
 

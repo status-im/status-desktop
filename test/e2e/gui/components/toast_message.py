@@ -16,9 +16,13 @@ class ToastMessage(QObject):
     @allure.step('Get toast messages')
     def get_toast_messages(self) -> typing.List[str]:
         messages = []
-        for child in walk_children(self.object):
-            if getattr(child, 'id', '') == 'title':
-                messages.append(str(child.text))
-        if len(messages) == 0:
-            raise LookupError('Toast message not found')
+        try:
+            for child in walk_children(self.object):
+                if getattr(child, 'id', '') == 'title':
+                    messages.append(str(child.text))
+        except Exception as e:
+            raise LookupError(f"Failed to get toast messages: {e}")
+
+        if not messages:
+            raise LookupError('Toast messages are not found')
         return messages
