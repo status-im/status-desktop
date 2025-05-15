@@ -115,7 +115,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert banned_community_screen.community_banned_member_panel.is_visible
             assert banned_community_screen.banned_title() == f"You've been banned from {community.name}"
             main_screen.left_panel.open_community_context_menu(community.name).leave_community()
-            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities, timeout)
+            assert not main_screen.left_panel.communities()
             main_screen.hide()
 
         with step(f'User {user_two.name}, unban {user_one.name} in banned members list'):
