@@ -173,10 +173,15 @@ ItemDelegate {
         radius: Theme.radius
     }
 
+    // handles the hover & cursor for the item except the extra buttons
+    HoverHandler {
+       cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
+    }
+
+    // handles the right click & cursor for the extra buttons
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
-        hoverEnabled: root.enabled
         cursorShape: containsMouse ? Qt.PointingHandCursor : undefined
         onClicked: root.rightClicked()
     }
