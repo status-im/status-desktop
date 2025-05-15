@@ -15,6 +15,8 @@ flowchart LR
     dotherside --> nimqml{{"NimQML"}}
     nimqml --> nim["Middleware (Nim)"]
     nim --> statusgo{{"Backend (status-go)"}}
+    nim --> nimstatusgo{{"nim-status-go"}}
+    nimstatusgo --> statusgo
     statusgo --> waku{{"Waku"}}
     statusgo --> providers[["Wallet providers"]]
     statusgo --> db[(Local Databases)]
@@ -32,5 +34,6 @@ flowchart LR
     click nim "https://github.com/status-im/status-desktop/tree/master/src" "Link to the Nim code"
     click statusgo "https://github.com/status-im/status-go" "Link to the Status-Go repo"
     click waku "https://github.com/waku-org" "Link to the Waku org"
+    click nimstatusgo "https://github.com/status-im/nim-status-go" "Link to nim-status-go repo"
 ```
 
