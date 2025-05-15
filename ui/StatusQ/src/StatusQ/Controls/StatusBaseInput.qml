@@ -368,7 +368,6 @@ Item {
                         property string previousText: text
                         property var keyEvent
                         width: flick.width
-                        height: flick.height
                         verticalAlignment: TextEdit.AlignVCenter
                         selectByMouse: true
                         selectionColor: Theme.palette.primaryColor2
