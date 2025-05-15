@@ -777,7 +777,7 @@ StatusStackModal {
                             errorMessage: Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
                         },
                         StatusRegularExpressionValidator {
-                            regularExpression: Constants.regularExpressions.alphanumericalExpanded
+                            regularExpression: Constants.regularExpressions.alphanumericalExpanded3
                             errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
                         }
                     ]
