@@ -37,9 +37,9 @@ This project supports both Qt5 and Qt6. The build system automatically detects y
 ```
   pip3 install -U pip
   pip3 install aqtinstall
-  aqt install-qt mac ios 5.15.2 -O ${QT_INSTALL_DIR}
+  aqt install-qt mac ios 6.8.3 -O ${QT_INSTALL_DIR} --autodesktop
   ### OR if it fails for arm64
-  arch -x86_64 aqt install-qt mac ios 5.15.2 -O ${QT_INSTALL_DIR}/5.15.2/ios
+  arch -x86_64 aqt install-qt mac ios 6.8.3 -O ${QT_INSTALL_DIR}/5.15.2/ios --autodesktop
 
   export QTDIR=${QT_INSTALL_DIR}/5.15.2/ios
 ```
