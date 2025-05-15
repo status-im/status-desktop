@@ -612,20 +612,15 @@ QtObject {
                 title: qsTr("Profile Picture")
                 acceptButtonText: qsTr("Make this my Profile Pic")
                 onImageCropped: {
-                    if (callback) {
-                        callback(image,
-                                 cropRect.x.toFixed(),
-                                 cropRect.y.toFixed(),
-                                 (cropRect.x + cropRect.width).toFixed(),
-                                 (cropRect.y + cropRect.height).toFixed())
+                    if (!callback) {
+                        console.error("ImageCropWorkflow: no callback provided")
                         return
                     }
-
-                    rootStore.profileSectionStore.profileStore.uploadImage(image,
-                                                  cropRect.x.toFixed(),
-                                                  cropRect.y.toFixed(),
-                                                  (cropRect.x + cropRect.width).toFixed(),
-                                                  (cropRect.y + cropRect.height).toFixed());
+                    callback(image,
+                            cropRect.x.toFixed(),
+                            cropRect.y.toFixed(),
+                            (cropRect.x + cropRect.width).toFixed(),
+                            (cropRect.y + cropRect.height).toFixed())
                 }
                 onDone: destroy()
             }

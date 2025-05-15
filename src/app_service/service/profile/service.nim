@@ -42,7 +42,21 @@ QtObject:
     result.events = events
     result.settingsService = settingsService
 
+  proc updateProfileIdentityImages*(images: seq[Image])  =
+    for imageDto in images:
+      if(imageDto.imgType == "large"):
+        singletonInstance.userProfile.setLargeImage(imageDto.uri)
+      elif(imageDto.imgType == "thumbnail"):
+        singletonInstance.userProfile.setThumbnailImage(imageDto.uri)
+
   proc init*(self: Service) =
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var receivedData = MessageSignal(e)
+
+      # Handling account image changes
+      if (receivedData.identityImages.len > 0):
+        updateProfileIdentityImages(receivedData.identityImages)
+
     self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
       let args = SettingsTextValueArgs(e)
       singletonInstance.userProfile.setDisplayName(args.value)
@@ -63,11 +77,8 @@ QtObject:
       for img in response.result:
         let imageDto = toImage(img)
         result.add(imageDto)
-        if(imageDto.imgType == "large"):
-          singletonInstance.userProfile.setLargeImage(imageDto.uri)
-        elif(imageDto.imgType == "thumbnail"):
-          singletonInstance.userProfile.setThumbnailImage(imageDto.uri)
 
+      updateProfileIdentityImages(result)
     except Exception as e:
       error "error: ", procName="storeIdentityImage", errName = e.name, errDesription = e.msg
 

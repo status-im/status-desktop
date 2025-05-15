@@ -11,6 +11,7 @@ import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/dto as saved_address_dto
 import ../../../../app_service/service/wallet_account/dto/[keypair_dto]
+import ../../../../app_service/service/accounts/dto/[accounts]
 
 type MessageSignal* = ref object of Signal
   messages*: seq[MessageDto]
@@ -29,6 +30,7 @@ type MessageSignal* = ref object of Signal
   removedChats*: seq[string]
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
+  identityImages*: seq[Image]
   clearedHistories*: seq[ClearedHistoryDto]
   savedAddresses*: seq[SavedAddressDto]
   keypairs*: seq[KeypairDto]
@@ -133,6 +135,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if e.contains("settings"):
     for jsonSettingsField in e["settings"]:
       signal.settings.add(jsonSettingsField.toSettingsFieldDto())
+
+  if e.contains("identityImages"):
+    for jsonSettingsField in e["identityImages"]:
+      signal.identityImages.add(jsonSettingsField.toImage())
 
   if e.contains("savedAddresses"):
     for jsonSavedAddress in e["savedAddresses"]:
