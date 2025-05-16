@@ -160,6 +160,9 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
 
+proc getDisabledChainIds*(self: Controller): seq[int] =
+  return self.networkService.getDisabledChainIds()
+
 proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
   return self.walletAccountService.getKeypairByAccountAddress(address)
 
