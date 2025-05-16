@@ -612,7 +612,6 @@ StatusDialog {
                     AmountToReceive {
                         id: amountToReceive
 
-                        Layout.preferredWidth: implicitWidth
                         Layout.alignment: Qt.AlignRight
                         visible: !popup.isLoading && !!popup.bestRoutes && popup.bestRoutes !== undefined &&
                                  popup.bestRoutes.count > 0 && amountToSend.ready
