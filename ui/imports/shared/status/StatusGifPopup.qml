@@ -232,12 +232,15 @@ Popup {
 
                     gifList.model: root.gifStore.gifColumnA
                     gifWidth: (root.width / 3) - Theme.padding
-                    gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
+                    }
+                    onGifSelected: {
+                        root.gifSelected(event, url)
+                        close()
                     }
                 }
 
@@ -246,12 +249,15 @@ Popup {
 
                     gifList.model: root.gifStore.gifColumnB
                     gifWidth: (root.width / 3) - Theme.padding
-                    gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
+                    }
+                    onGifSelected: {
+                        root.gifSelected(event, url)
+                        close()
                     }
                 }
 
@@ -260,12 +266,15 @@ Popup {
 
                     gifList.model: root.gifStore.gifColumnC
                     gifWidth: (root.width / 3) - Theme.padding
-                    gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
+                    }
+                    onGifSelected: {
+                        root.gifSelected(event, url)
+                        close()
                     }
                 }
             }
