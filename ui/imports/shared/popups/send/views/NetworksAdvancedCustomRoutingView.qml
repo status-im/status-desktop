@@ -87,7 +87,6 @@ ColumnLayout {
             Loader {
                 id: networksLoader
                 Layout.fillWidth: true
-                Layout.preferredHeight: item.height
                 Layout.topMargin: Theme.padding
                 visible: active
                 sourceComponent: NetworkCardsComponent {

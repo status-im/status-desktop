@@ -46,7 +46,7 @@ StatusDialogFooter {
                 text: root.totalTimeEstimate
 
                 onTextChanged: {
-                    if (text === "" || text === d.emptyValue) {
+                    if (estimatedTime.text === "" || estimatedTime.text === d.emptyValue) {
                         return
                     }
                     estimatedTimeAnimation.restart()
@@ -74,7 +74,7 @@ StatusDialogFooter {
                     wrapMode: Text.WordWrap
 
                     onTextChanged: {
-                        if (text === "" || text === d.emptyValue) {
+                        if (fees.text === "" || fees.text === d.emptyValue) {
                             return
                         }
                         feesAnimation.restart()

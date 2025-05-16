@@ -63,7 +63,7 @@ Item {
         d.draw()
     }
 
-    height: visible ? networkCardsLayout.height : 0
+    implicitHeight: visible ? networkCardsLayout.height : 0
 
     RowLayout {
         id: networkCardsLayout
