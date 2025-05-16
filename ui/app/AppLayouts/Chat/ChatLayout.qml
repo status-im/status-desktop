@@ -25,7 +25,6 @@ import SortFilterProxyModel 0.2
 StackLayout {
     id: root
 
-    property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
@@ -62,6 +61,10 @@ StackLayout {
     property var emojiPopup
     property var stickersPopup
 
+    // Unfurling related data:
+    property bool gifUnfurlingEnabled
+    property bool neverAskAboutUnfurlingAgain
+
     signal profileButtonClicked()
     signal openAppSearch()
     signal buyStickerPackRequested(string packId, int price)
@@ -69,6 +72,11 @@ StackLayout {
 
     // Community transfer ownership related props/signals:
     property bool isPendingOwnershipRequest: sectionItemModel.isPendingOwnershipRequest
+
+    // Unfurling related requests:
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
 
     onIsPrivilegedUserChanged: if (root.currentIndex === 1) root.currentIndex = 0
 
@@ -160,7 +168,6 @@ StackLayout {
             objectName: "chatViewComponent"
 
             contactsStore: root.contactsStore
-            sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
@@ -230,6 +237,10 @@ StackLayout {
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
+            // Unfurling related data:
+            gifUnfurlingEnabled: root.gifUnfurlingEnabled
+            neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)
             onCommunityInfoButtonClicked: root.currentIndex = 1
             onCommunityManageButtonClicked: root.currentIndex = 1
@@ -251,6 +262,11 @@ StackLayout {
 
             onBuyStickerPackRequested: root.buyStickerPackRequested(packId, price)
             onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
+
+            // Unfurling related requests:
+            onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+            onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
         }
     }
 

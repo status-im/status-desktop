@@ -11,12 +11,35 @@ import shared.status 1.0
 import shared.stores 1.0 as SharedStores
 
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Controls 0.1
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
 SplitView {
     id: root
+
+    function openGifTestPopup(params, cbOnGifSelected, cbOnClose)
+    {
+        _d.cbOnGifSelected = cbOnGifSelected
+        _d.cbOnClose = cbOnClose
+        _d.popupParent = params.popupParent
+        _d.parentXPosition = _d.popupParent.x + _d.popupParent.width
+        _d.parentYPosition = _d.popupParent.y
+        _d.closeAfterSelection = params.closeAfterSelection
+
+        let gifPopupInst = gifPopupComponent.createObject(_d.popupParent)
+        gifPopupInst.open()
+    }
+
+    property QtObject _d: QtObject {
+        property var cbOnGifSelected: function () {} // It stores callback for gifSelected
+        property var cbOnClose: function () {} // It stores callback for popup closed
+        property var popupParent: null // Parent button object type
+        property var parentXPosition: null // Parent rigth
+        property var parentYPosition: null // Parent bottom
+        property bool closeAfterSelection: true
+    }
 
     Logs { id: logs }
 
@@ -94,14 +117,6 @@ SplitView {
                 }
                 usersModel: fakeUsersModel
 
-                sharedStore: SharedStores.RootStore {
-                    property bool gifUnfurlingEnabled: true
-
-                    property var gifStore: SharedStores.GifStore {
-                        property var gifColumnA: ListModel {}
-                    }
-                }
-
                 paymentRequestFeatureEnabled: true
                 areTestNetworksEnabled: testnetEnabledCheckBox.checked
 
@@ -133,6 +148,10 @@ SplitView {
                 onRemovePaymentRequestPreview: (index) => {
                     d.paymentRequestModel.remove(index)
                 }
+                onOpenGifPopupRequest: (params, cbOnGifSelected, cbOnClose) => {
+                                           logs.logEvent("StatusChatInput:openGifPopupRequest --> Open GIF Popup Request!")
+                                           root.openGifTestPopup(params, cbOnGifSelected, cbOnClose)
+                                       }
             }
         }
 
@@ -312,6 +331,42 @@ SplitView {
                 text: "Attachments"
                 Layout.fillWidth: true
             }
+        }
+    }
+
+    Component {
+        id: gifPopupComponent
+
+        Popup {
+            id: testPopup
+
+            x: _d.parentXPosition - width - 8
+            y: _d.parentYPosition - height
+
+            ColumnLayout {
+                StatusButton {
+                    text: "Send GIF 1"
+                    onClicked: {
+
+                        _d.cbOnGifSelected("GIF 1", "URL GIF 1")
+                        testPopup.close()
+                    }
+                }
+                StatusButton {
+                    text: "Send GIF 2"
+                    onClicked: {
+
+                        _d.cbOnGifSelected("GIF 2", "URL GIF 2")
+                        testPopup.close()
+                    }
+                }
+
+            }
+            onClosed: {
+                _d.cbOnClose()
+                destroy()
+            }
+
         }
     }
 }

@@ -19,7 +19,6 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 Page {
     id: root
 
-    property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
@@ -168,7 +167,6 @@ Page {
                 stickersPopup: root.stickersPopup
                 closeGifPopupAfterSelection: true
                 usersModel: membersSelector.model
-                sharedStore: root.sharedRootStore
                 paymentRequestFeatureEnabled: false
                 onStickerSelected: {
                     root.createChatPropertiesStore.createChatStickerHashId = hashId;

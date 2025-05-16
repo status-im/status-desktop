@@ -41,7 +41,6 @@ StatusSectionLayout {
     id: root
 
     property ContactsStore contactsStore
-    property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
@@ -108,6 +107,10 @@ StatusSectionLayout {
         return false
     }
 
+    // Unfurling related data:
+    property bool gifUnfurlingEnabled
+    property bool neverAskAboutUnfurlingAgain
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -122,6 +125,11 @@ StatusSectionLayout {
 
     signal buyStickerPackRequested(string packId, int price)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+
+    // Unfurling related requests:
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -278,7 +286,6 @@ StatusSectionLayout {
 
         ChatColumnView {
             parentModule: root.rootStore.chatCommunitySectionModule
-            sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
             rootStore: root.rootStore
             areTestNetworksEnabled: root.areTestNetworksEnabled
@@ -293,10 +300,20 @@ StatusSectionLayout {
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
+
+            // Unfurling related data:
+            gifUnfurlingEnabled: root.gifUnfurlingEnabled
+            neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
             }
             onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
+
+            // Unfurling related requests:
+            onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+            onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
         }
     }
 

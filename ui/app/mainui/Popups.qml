@@ -646,9 +646,16 @@ QtObject {
             id: pinnedMessagesPopup
 
             PinnedMessagesPopup {
-                sharedStore: root.sharedRootStore
                 utilsStore: root.utilsStore
+
+                // Unfurling related data:
+                gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
+                neverAskAboutUnfurlingAgain: root.sharedRootStore.neverAskAboutUnfurlingAgain
+
                 onClosed: destroy()
+
+                // Unfurling related requests:
+                onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
             }
         },
 

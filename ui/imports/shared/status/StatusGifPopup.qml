@@ -22,7 +22,6 @@ Popup {
     property GifStore gifStore
     property bool gifUnfurlingEnabled
 
-    property var gifSelected: function () {}
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
         root.gifStore.searchGifs(query)
     })
@@ -45,6 +44,8 @@ Popup {
     property int currentCategory: GifPopupDefinitions.Category.Trending
     property int previousCategory: GifPopupDefinitions.Category.Trending
     property bool loading: root.gifStore.gifLoading
+
+    signal gifSelected(var event, var url)
 
     modal: false
     width: 360
@@ -232,13 +233,13 @@ Popup {
 
                     gifList.model: root.gifStore.gifColumnA
                     gifWidth: (root.width / 3) - Theme.padding
-                    gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
+                    onGifSelected: root.gifSelected(event, url)
                 }
 
                 StatusGifColumn {
@@ -246,13 +247,13 @@ Popup {
 
                     gifList.model: root.gifStore.gifColumnB
                     gifWidth: (root.width / 3) - Theme.padding
-                    gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
+                    onGifSelected: root.gifSelected(event, url)
                 }
 
                 StatusGifColumn {
@@ -260,13 +261,13 @@ Popup {
 
                     gifList.model: root.gifStore.gifColumnC
                     gifWidth: (root.width / 3) - Theme.padding
-                    gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
                     }
+                    onGifSelected: root.gifSelected(event, url)
                 }
             }
         }

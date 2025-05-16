@@ -31,7 +31,6 @@ ColumnLayout {
     // Important: each chat/channel has its own ChatContentModule
     property var chatContentModule
     property var chatSectionModule
-    property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
 
     property RootStore rootStore
@@ -67,6 +66,14 @@ ColumnLayout {
     signal showReplyArea(messageId: string)
     signal forceInputFocus()
 
+    // Unfurling related data:
+    property bool gifUnfurlingEnabled
+    property bool neverAskAboutUnfurlingAgain
+
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
+
     objectName: "chatContentViewColumn"
     spacing: 0
 
@@ -93,7 +100,6 @@ ColumnLayout {
         sourceComponent: ChatMessagesView {
             chatContentModule: root.chatContentModule
 
-            sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
             rootStore: root.rootStore
             contactsStore: root.contactsStore
@@ -111,6 +117,11 @@ ColumnLayout {
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             areTestNetworksEnabled: root.areTestNetworksEnabled
+
+            // Unfurling related data:
+            gifUnfurlingEnabled: root.gifUnfurlingEnabled
+            neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)
             }
@@ -122,6 +133,11 @@ ColumnLayout {
                 if (!editModeOn)
                     root.forceInputFocus()
             }
+
+            // Unfurling related requests:
+            onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+            onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
         }
     }
 }
