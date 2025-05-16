@@ -105,7 +105,7 @@ SplitView {
     }
 
     NetworksStore {
-        id: networksStore
+        id: networkStore
     }
 
     QtObject {
@@ -207,7 +207,7 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
                 onlyAssets: loader.onlyAssets
                 store: txStore
-                networksStore: networksStore
+                networksStore: networkStore
                 preSelectedAccountAddress: loader.preSelectedAccount.address
                 preDefinedAmountToSend: loader.preDefinedAmountToSend
                 preSelectedRecipient: loader.preSelectedRecipient
