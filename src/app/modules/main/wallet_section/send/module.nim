@@ -175,12 +175,6 @@ method viewDidLoad*(self: Module) =
 method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount =
   return self.controller.getTokenBalance(address, chainId, tokensKey)
 
-method getNetworkItem*(self: Module, chainId: int): network_service_item.NetworkItem =
-  let networks = self.controller.getCurrentNetworks().filter(x => x.chainId == chainId)
-  if networks.len == 0:
-    return nil
-  return networks[0]
-
 proc buildTransactionsFromRoute(self: Module) =
   let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid)
   if err.len > 0:
@@ -427,3 +421,6 @@ method reevaluateSwap*(self: Module, uuid: string, chainId: int, isApprovalTx: b
   let err = self.controller.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
   if err.len > 0:
     error "reevaluateRouterPath failed: ", err=err
+
+method getDisabledChainIds*(self: Module): seq[int] =
+  return self.controller.getDisabledChainIds()

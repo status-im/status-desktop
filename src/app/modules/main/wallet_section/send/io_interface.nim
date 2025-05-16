@@ -2,7 +2,6 @@ import Tables
 import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
 import app_service/service/transaction/router_transactions_dto
-import app_service/service/network/network_item
 import app/modules/shared_models/collectibles_model as collectibles
 from app_service/service/keycard/service import KeycardEvent
 
@@ -83,11 +82,11 @@ method hasGas*(self: AccessInterface, accountAddress: string, chainId: int, nati
 method transactionSendingComplete*(self: AccessInterface, txHash: string, status: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getNetworkItem*(self: AccessInterface, chainId: int): NetworkItem {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getNetworkChainId*(self: AccessInterface, shortName: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method reevaluateSwap*(self: AccessInterface, uuid: string, chainId: int, isApprovalTx: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getDisabledChainIds*(self: AccessInterface): seq[int] {.base.} =
   raise newException(ValueError, "No implementation available")
