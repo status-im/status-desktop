@@ -24,6 +24,7 @@ QtObject:
     relatedChainId*: int
     isActive*: bool
     isDeactivatable*: bool
+    eip1559Enabled*: bool
 
   proc setup*(self: NetworkItem,
     chainId: int,
@@ -41,7 +42,8 @@ QtObject:
     isEnabled: bool,
     relatedChainId: int,
     isActive: bool,
-    isDeactivatable: bool
+    isDeactivatable: bool,
+    eip1559Enabled: bool
     ) =
       self.QObject.setup
       self.chainId = chainId
@@ -60,7 +62,7 @@ QtObject:
       self.relatedChainId = relatedChainId
       self.isActive = isActive
       self.isDeactivatable = isDeactivatable
-
+      self.eip1559Enabled = eip1559Enabled
   proc delete*(self: NetworkItem) =
       self.QObject.delete
 
@@ -70,7 +72,7 @@ QtObject:
     result.setup(network.chainId, network.layer, network.chainName, network.iconUrl, network.shortName,
       network.chainColor, rpcProviders,
       network.blockExplorerURL, network.nativeCurrencyName, network.nativeCurrencySymbol, network.nativeCurrencyDecimals,
-      network.isTest, network.isEnabled, network.relatedChainId, network.isActive, network.isDeactivatable)
+      network.isTest, network.isEnabled, network.relatedChainId, network.isActive, network.isDeactivatable, network.eip1559Enabled)
 
   proc networkItemToDto*(network: NetworkItem): NetworkDto =
     result = NetworkDto(
@@ -89,7 +91,8 @@ QtObject:
       shortName: network.shortName,
       relatedChainId: network.relatedChainId,
       isActive: network.isActive,
-      isDeactivatable: network.isDeactivatable
+      isDeactivatable: network.isDeactivatable,
+      eip1559Enabled: network.eip1559Enabled
     )
 
   proc `$`*(self: NetworkItem): string =
@@ -109,7 +112,8 @@ QtObject:
       isEnabled: {self.isEnabled},
       relatedChainId: {self.relatedChainId},
       isActive: {self.isActive},
-      isDeactivatable: {self.isDeactivatable}
+      isDeactivatable: {self.isDeactivatable},
+      eip1559Enabled: {self.eip1559Enabled}
       ]"""
 
   proc chainId*(self: NetworkItem): int {.slot.} =

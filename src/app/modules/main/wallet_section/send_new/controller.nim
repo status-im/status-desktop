@@ -111,13 +111,13 @@ proc setFeeMode*(self: Controller, feeMode: int, routerInputParamsUuid: string, 
   isApprovalTx: bool, communityId: string): string =
     return self.transactionService.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
 
-proc setCustomTxDetails*(self: Controller, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+proc setCustomTxDetails*(self: Controller, nonce: int, gasAmount: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string,
   routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string): string =
-    return self.transactionService.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid,
+    return self.transactionService.setCustomTxDetails(nonce, gasAmount, gasPrice, maxFeesPerGas, priorityFee, routerInputParamsUuid,
     pathName, chainId, isApprovalTx, communityId)
 
-proc getEstimatedTime*(self: Controller, chainId: int, maxFeesPerGas: string, priorityFee: string): int =
-    self.transactionService.getEstimatedTimeV2(chainId, maxFeesPerGas, priorityFee)
+proc getEstimatedTime*(self: Controller, chainId: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string): int =
+    self.transactionService.getEstimatedTimeV2(chainId, gasPrice, maxFeesPerGas, priorityFee)
 
 proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()

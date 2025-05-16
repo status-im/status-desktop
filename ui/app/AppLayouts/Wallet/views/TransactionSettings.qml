@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -19,6 +20,10 @@ import AppLayouts.Wallet 1.0
 Rectangle {
     id: root
 
+    required property bool fromChainEIP1559Compliant
+    required property string nativeTokenSymbol
+
+    required property string currentGasPrice
     required property string currentBaseFee
     required property string currentSuggestedMinPriorityFee
     required property string currentSuggestedMaxPriorityFee
@@ -34,18 +39,22 @@ Rectangle {
     property alias urgentPrice: optionUrgent.subText
     property alias urgentTime: optionUrgent.additionalText
 
-    property alias customBaseFee: customBaseFeeInput.text
-    property alias customBaseFeeDirty: customBaseFeeInput.input.dirty
+    property alias customBaseFeeOrGasPrice: customBaseFeeOrGasPriceInput.text
+    property alias customBaseFeeOrGasPriceDirty: customBaseFeeOrGasPriceInput.input.dirty
+
     property alias customPriorityFee: customPriorityFeeInput.text
     property alias customPriorityFeeDirty: customPriorityFeeInput.input.dirty
+
     property alias customGasAmount: customGasAmountInput.text
     property alias customGasAmountDirty: customGasAmountInput.input.dirty
+
     property alias customNonce: customNonceInput.text
     property alias customNonceDirty: customNonceInput.input.dirty
 
     required property int selectedFeeMode
 
     required property var fnGetPriceInCurrencyForFee
+    required property var fnGetPriceInNativeTokenForFee
     required property var fnGetEstimatedTime
     required property var fnRawToGas
     required property var fnGasToRaw
@@ -86,34 +95,49 @@ Rectangle {
             infoBox.active = true
         }
 
-        function recalculateCustomBaseFeePrice() {
-            if (!customBaseFeeInput.text) {
-                customBaseFeeInput.bottomLabelMessageRightCmp.text = ""
+        function recalculatecustomBaseFeeOrGasPricePrice() {
+            if (!customBaseFeeOrGasPriceInput.text) {
+                customBaseFeeOrGasPriceInput.bottomLabelMessageRightCmp.text = ""
                 return
             }
-            const rawValue = root.fnGasToRaw(customBaseFeeInput.text).toFixed()
-            customBaseFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInCurrencyForFee(rawValue)
+            const rawValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
+            const rawFee = SQUtils.AmountsArithmetic.times(rawValue, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
+            customBaseFeeOrGasPriceInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInNativeTokenForFee(rawFee)
         }
 
         function recalculateCustomPriorityFeePrice() {
+            if (!root.fromChainEIP1559Compliant) {
+                return
+            }
             if (!customPriorityFeeInput.text) {
                 customPriorityFeeInput.bottomLabelMessageRightCmp.text = ""
                 return
             }
-            const rawValue = root.fnGasToRaw(customPriorityFeeInput.text).toFixed()
-            customPriorityFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInCurrencyForFee(rawValue)
+            const rawValue = root.fnGasToRaw(customPriorityFeeInput.text)
+            const rawFee = SQUtils.AmountsArithmetic.times(rawValue, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
+            customPriorityFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInNativeTokenForFee(rawFee)
         }
 
         function recalculateCustomPrice() {
-            if (!customBaseFeeInput.text || !customPriorityFeeInput.text || !customGasAmountInput.text) {
+            if (!customBaseFeeOrGasPriceInput.text || root.fromChainEIP1559Compliant && !customPriorityFeeInput.text || !customGasAmountInput.text) {
                 optionCustom.subText = ""
                 return
             }
-            const rawBaseFee = root.fnGasToRaw(customBaseFeeInput.text)
-            const rawPriorityFee = root.fnGasToRaw(customPriorityFeeInput.text)
-            const rawTotalFee = SQUtils.AmountsArithmetic.sum(rawBaseFee, rawPriorityFee)
+
+            let estimatedTime = 0
+            let rawTotalFee = ""
+            if (!root.fromChainEIP1559Compliant) {
+                rawTotalFee = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
+                estimatedTime = root.fnGetEstimatedTime(rawTotalFee.toFixed(),  "", "")
+            } else {
+                const rawBaseFee = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
+                const rawPriorityFee = root.fnGasToRaw(customPriorityFeeInput.text)
+                rawTotalFee = SQUtils.AmountsArithmetic.sum(rawBaseFee, rawPriorityFee)
+                estimatedTime = root.fnGetEstimatedTime("", rawTotalFee.toFixed(), rawPriorityFee.toFixed())
+            }
+
             const rawFee = SQUtils.AmountsArithmetic.times(rawTotalFee, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
-            const estimatedTime = root.fnGetEstimatedTime(rawTotalFee.toFixed(), rawPriorityFee.toFixed())
+
             optionCustom.subText = root.fnGetPriceInCurrencyForFee(rawFee)
             optionCustom.additionalText = WalletUtils.formatEstimatedTime(estimatedTime)
         }
@@ -193,23 +217,43 @@ Rectangle {
                 StatusFeeOption {
                     id: optionFast
                     type: Constants.FeePriorityModeType.Fast
+                    enabled: root.fromChainEIP1559Compliant
                     mainText: WalletUtils.getFeeTextForFeeMode(type)
                     icon: WalletUtils.getIconForFeeMode(type)
                     selected: root.selectedFeeMode === Constants.FeePriorityModeType.Fast
                     showSubText: true
                     showAdditionalText: true
 
+                    GaussianBlur {
+                        anchors.fill: parent
+                        visible: !root.fromChainEIP1559Compliant
+                        source: parent
+                        radius: 4
+                        samples: 4
+                        transparentBorder: true
+                    }
+
                     onClicked: root.selectedFeeMode = Constants.FeePriorityModeType.Fast
                 }
 
                 StatusFeeOption {
                     id: optionUrgent
+                    enabled: root.fromChainEIP1559Compliant
                     type: Constants.FeePriorityModeType.Urgent
                     mainText: WalletUtils.getFeeTextForFeeMode(type)
                     icon: WalletUtils.getIconForFeeMode(type)
                     selected: root.selectedFeeMode === Constants.FeePriorityModeType.Urgent
                     showSubText: true
                     showAdditionalText: true
+
+                    GaussianBlur {
+                        anchors.fill: parent
+                        visible: !root.fromChainEIP1559Compliant
+                        source: parent
+                        radius: 4
+                        samples: 4
+                        transparentBorder: true
+                    }
 
                     onClicked: root.selectedFeeMode = Constants.FeePriorityModeType.Urgent
                 }
@@ -231,7 +275,23 @@ Rectangle {
             StatusBaseText {
                 Layout.preferredWidth: parent.width
                 visible: !d.customMode
-                text: qsTr("Increased base and priority fee, incentivising miners to confirm more quickly")
+                text: {
+                    if (!root.fromChainEIP1559Compliant) {
+                        if (optionCustom.hovered || optionCustom.selected) {
+                            return qsTr("Set your own base fee, priority fee, gas amount and nonce")
+                        }
+                        return qsTr("Regular cost option using suggested gas price")
+                    }
+
+                    if (optionFast.hovered || optionFast.selected) {
+                        return qsTr("Increased gas price, incentivising miners to confirm more quickly")
+                    } if (optionUrgent.hovered || optionUrgent.selected) {
+                        return qsTr("Highest base and priority fee, ensuring the fastest possible confirmation")
+                    } if (optionCustom.hovered || optionCustom.selected) {
+                        return qsTr("Set your own base fee, priority fee, gas amount and nonce")
+                    }
+                    return qsTr("Low cost option using current network base fee and a low priority fee")
+                }
                 color: Theme.palette.baseColor1
                 font.pixelSize: Theme.tertiaryTextFontSize
                 elide: Text.ElideMiddle
@@ -250,43 +310,53 @@ Rectangle {
                     spacing: 16
 
                     StatusInput {
-                        id: customBaseFeeInput
+                        id: customBaseFeeOrGasPriceInput
 
-                        readonly property bool displayLowBaseFeeWarning: {
-                            if (!customBaseFeeInput.text) {
+                        readonly property bool displayLowBaseFeeOrGasPriceWarning: {
+                            if (!customBaseFeeOrGasPriceInput.text) {
                                 return false
                             }
-                            const rawCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
+                            const rawCurrentValue = !root.fromChainEIP1559Compliant?
+                                                      SQUtils.AmountsArithmetic.fromString(root.currentGasPrice)
+                                                    : SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
                             const decreasedCurrentValue = SQUtils.AmountsArithmetic.times(rawCurrentValue, SQUtils.AmountsArithmetic.fromString("0.9")) // up to -10% is acceptable
-                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeInput.text)
+                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
                             return decreasedCurrentValue.cmp(rawEnteredValue) === 1
                         }
 
-                        readonly property bool displayHighBaseFeeWarning: {
-                            if (!customBaseFeeInput.text) {
+                        readonly property bool displayHighBaseFeeOrGasPriceWarning: {
+                            if (!customBaseFeeOrGasPriceInput.text) {
                                 return false
                             }
-                            const rawCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
+                            const rawCurrentValue = !root.fromChainEIP1559Compliant?
+                                                      SQUtils.AmountsArithmetic.fromString(root.currentGasPrice)
+                                                    : SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
                             const increasedCurrentValue = SQUtils.AmountsArithmetic.times(rawCurrentValue, SQUtils.AmountsArithmetic.fromString("1.2")) // up to 20% higher value is acceptable
-                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeInput.text)
+                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
                             return rawEnteredValue.cmp(increasedCurrentValue) === 1
                         }
 
                         Layout.preferredWidth: parent.width
                         Layout.topMargin: 20
-                        label: qsTr("Max base fee")
+                        label: !root.fromChainEIP1559Compliant? qsTr("Gas price") : qsTr("Max base fee")
                         labelIcon: "info"
                         labelIconColor: Theme.palette.baseColor1
                         labelIconClickable: true
-                        bottomLabelMessageLeftCmp.color: customBaseFeeInput.displayLowBaseFeeWarning
-                                                         || customBaseFeeInput.displayHighBaseFeeWarning?
+                        bottomLabelMessageLeftCmp.color: customBaseFeeOrGasPriceInput.displayLowBaseFeeOrGasPriceWarning
+                                                         || customBaseFeeOrGasPriceInput.displayHighBaseFeeOrGasPriceWarning?
                                                              Theme.palette.miscColor6
                                                            : Theme.palette.baseColor1
-                        bottomLabelMessageLeftCmp.text: customBaseFeeInput.displayLowBaseFeeWarning?
-                                                            qsTr("Lower than necessary (current %1)").arg(Utils.nativeTokenRawToGas(root.currentBaseFee))
-                                                          : customBaseFeeInput.displayHighBaseFeeWarning?
-                                                                qsTr("Higher than necessary (current %1)").arg(Utils.nativeTokenRawToGas(root.currentBaseFee))
-                                                              : qsTr("Current: %1 GWEI").arg(Utils.nativeTokenRawToGas(root.currentBaseFee))
+                        bottomLabelMessageLeftCmp.text: {
+                            const baseFeeOrGasPrice = !root.fromChainEIP1559Compliant?
+                                                        root.currentGasPrice
+                                                      : root.currentBaseFee
+
+                            return customBaseFeeOrGasPriceInput.displayLowBaseFeeOrGasPriceWarning?
+                                        qsTr("Lower than necessary (current %1)").arg(root.fnRawToGas(baseFeeOrGasPrice).toFixed())
+                                      : customBaseFeeOrGasPriceInput.displayHighBaseFeeOrGasPriceWarning?
+                                            qsTr("Higher than necessary (current %1)").arg(root.fnRawToGas(baseFeeOrGasPrice).toFixed())
+                                          : qsTr("Current: %1 GWEI").arg(root.fnRawToGas(baseFeeOrGasPrice).toFixed())
+                        }
                         rightPadding: leftPadding
                         input.rightComponent: StatusBaseText {
                             text: "GWEI"
@@ -301,17 +371,24 @@ Rectangle {
                         ]
 
                         onTextChanged: Qt.callLater(() => {
-                                                        if (!customBaseFeeInput.valid) {
+                                                        if (!customBaseFeeOrGasPriceInput.valid) {
                                                             return
                                                         }
-                                                        d.recalculateCustomBaseFeePrice()
+                                                        d.recalculatecustomBaseFeeOrGasPricePrice()
                                                         d.recalculateCustomPrice()
                                                     })
 
-                        onLabelIconClicked: d.showAlert(label,
-                                                        qsTr("When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded.\n"),
-                                                        qsTr("Note: the ETH amount shown for this value is calculated:\nMax base fee (in GWEI) * Max gas amount"),
-                                                        "")
+                        onLabelIconClicked: {
+                            const warning = !root.fromChainEIP1559Compliant?
+                                              qsTr("The gas price you set is the exact amount you’ll pay per unit of gas used. If you set a gas price higher than what’s required for inclusion, the difference will not be refunded. Choose your gas price carefully to avoid overpaying.\n")
+                                            : qsTr("When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded.\n")
+
+                            const note = !root.fromChainEIP1559Compliant?
+                                           qsTr("Note: the %1 amount shown for this value is calculated:\nGas price (in GWEI) * gas amount").arg(root.nativeTokenSymbol)
+                                         : qsTr("Note: the %1 amount shown for this value is calculated:\nMax base fee (in GWEI) * Max gas amount").arg(root.nativeTokenSymbol)
+
+                            d.showAlert(label, warning, note, "")
+                        }
                     }
 
                     StatusInput {
@@ -327,15 +404,16 @@ Rectangle {
                         }
 
                         readonly property bool displayHigherThanBaseFeeWarning: {
-                            if (!customPriorityFeeInput.text || !customBaseFeeInput.text) {
+                            if (!customPriorityFeeInput.text || !customBaseFeeOrGasPriceInput.text) {
                                 return false
                             }
-                            const rawBaseFeeValue = root.fnGasToRaw(customBaseFeeInput.text)
+                            const rawBaseFeeValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
                             const rawEnteredValue = root.fnGasToRaw(customPriorityFeeInput.text)
                             return rawEnteredValue.cmp(rawBaseFeeValue) === 1
                         }
 
                         Layout.preferredWidth: parent.width
+                        visible: root.fromChainEIP1559Compliant
                         label: qsTr("Priority fee")
                         labelIcon: "info"
                         labelIconColor: Theme.palette.baseColor1
@@ -345,7 +423,7 @@ Rectangle {
                                                              Theme.palette.miscColor6
                                                            : Theme.palette.baseColor1
                         bottomLabelMessageLeftCmp.text: customPriorityFeeInput.displayHigherThanBaseFeeWarning?
-                                                            qsTr("Higher than max base fee: %1 GWEI").arg(customBaseFeeInput.text)
+                                                            qsTr("Higher than max base fee: %1 GWEI").arg(customBaseFeeOrGasPriceInput.text)
                                                           : customPriorityFeeInput.displayHigherPriorityFeeWarning?
                                                                 qsTr("Higher than necessary (current %1 - %2)").arg(root.fnRawToGas(root.currentSuggestedMinPriorityFee)).arg(root.fnRawToGas(root.currentSuggestedMaxPriorityFee))
                                                               : qsTr("Current: %1 - %2 GWEI").arg(root.fnRawToGas(root.currentSuggestedMinPriorityFee)).arg(root.fnRawToGas(root.currentSuggestedMaxPriorityFee))
@@ -372,7 +450,7 @@ Rectangle {
 
                         onLabelIconClicked: d.showAlert(label,
                                                         qsTr("AKA miner tip. A voluntary fee you can add to incentivise miners or validators to prioritise your transaction.\n\nThe higher the tip, the faster your transaction is likely to be processed, especially curing periods of higher network congestion.\n"),
-                                                        qsTr("Note: the ETH amount shown for this value is calculated: Priority fee (in GWEI) * Max gas amount"),
+                                                        qsTr("Note: the %1 amount shown for this value is calculated: Priority fee (in GWEI) * Max gas amount").arg(root.nativeTokenSymbol),
                                                         "")
                     }
 
@@ -428,6 +506,8 @@ Rectangle {
                                                         if (!customGasAmountInput.valid) {
                                                             return
                                                         }
+                                                        d.recalculatecustomBaseFeeOrGasPricePrice()
+                                                        d.recalculateCustomPriorityFeePrice()
                                                         d.recalculateCustomPrice()
                                                     })
 
@@ -494,8 +574,8 @@ Rectangle {
             StatusButton {
                 Layout.preferredWidth: parent.width
                 enabled: !d.customMode
-                         || (!customBaseFeeInput.input.dirty || customBaseFeeInput.valid) &&
-                         (!customPriorityFeeInput.input.dirty || customPriorityFeeInput.valid) &&
+                         || (!customBaseFeeOrGasPriceInput.input.dirty || customBaseFeeOrGasPriceInput.valid) &&
+                         (!root.fromChainEIP1559Compliant || !customPriorityFeeInput.input.dirty || customPriorityFeeInput.valid) &&
                          (!customGasAmountInput.input.dirty || customGasAmountInput.valid) &&
                          (!customNonceInput.input.dirty || customNonceInput.valid) &&
                          !customGasAmountInput.displayTooHighAmountWarning &&

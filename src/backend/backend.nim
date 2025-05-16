@@ -110,6 +110,7 @@ rpc(getTransactionEstimatedTime, "wallet"):
 
 rpc(getTransactionEstimatedTimeV2, "wallet"):
   chainId: int
+  gasPrice: string
   maxFeePerGas: string
   maxPriorityFeePerGas: string
 
