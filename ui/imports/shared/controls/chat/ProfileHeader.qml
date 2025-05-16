@@ -151,10 +151,10 @@ Item {
                     if (!!root.icon)
                         Global.openMenu(editImageMenuComponent, this)
                     else
-                        Global.openChangeProfilePicPopup(tempIcon);
+                        Global.openChangeProfilePicPopup(setTempIcon);
                 }
 
-                function tempIcon(image, aX, aY, bX, bY) {
+                function setTempIcon(image, aX, aY, bX, bY) {
                     root.icon = image
                     root.cropRect = Qt.rect(aX, aY, bX - aX, bY - aY)
 
@@ -271,13 +271,13 @@ Item {
             StatusAction {
                 text: !!root.icon ? qsTr("Select different image") : qsTr("Select image")
                 assetSettings.name: "image"
-                onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
+                onTriggered: Global.openChangeProfilePicPopup(editButton.setTempIcon)
             }
 
             StatusAction {
                 text: qsTr("Use a collectible")
                 assetSettings.name: "nft-profile"
-                onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
+                onTriggered: Global.openChangeProfilePicPopup(editButton.setTempIcon)
                 enabled: false // TODO enable this with the profile showcase (#13418)
             }
 

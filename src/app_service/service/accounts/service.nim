@@ -102,11 +102,6 @@ QtObject:
   proc getKeyStoreDir*(self: Service): string =
     return self.keyStoreDir
 
-  proc connectToFetchingFromWakuEvents*(self: Service) =
-    self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
-      var receivedData = WakuBackedUpProfileSignal(e)
-      self.updateLoggedInAccount(receivedData.backedUpProfile.displayName, receivedData.backedUpProfile.images)
-
   proc init*(self: Service) =
     discard
 
