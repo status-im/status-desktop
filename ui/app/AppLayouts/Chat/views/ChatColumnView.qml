@@ -40,7 +40,6 @@ Item {
     // don't follow struct we have on the backend.
     property var parentModule
 
-    property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
@@ -60,8 +59,17 @@ Item {
     property string disabledTooltipText
     property bool paymentRequestFeatureEnabled
 
+    // Unfurling related data:
+    property bool gifUnfurlingEnabled
+    property bool neverAskAboutUnfurlingAgain
+
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+
+    // Unfurling related requests:
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
 
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
@@ -247,7 +255,6 @@ Item {
                         chatId: model.itemId
                         chatType: model.type
                         chatMessagesLoader.active: model.loaderActive
-                        sharedRootStore: root.sharedRootStore
                         utilsStore: root.utilsStore
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
@@ -259,6 +266,11 @@ Item {
                         sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
                         disabledTooltipText: root.disabledTooltipText
                         areTestNetworksEnabled: root.areTestNetworksEnabled
+
+                        // Unfurling related data:
+                        gifUnfurlingEnabled: root.gifUnfurlingEnabled
+                        neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
@@ -269,6 +281,11 @@ Item {
                         onForceInputFocus: {
                             chatInput.forceInputActiveFocus()
                         }
+
+                        // Unfurling related requests:
+                        onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+                        onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
 
                         Component.onCompleted: {
                             chatContentModule = d.getChatContentModule(model.itemId)
@@ -308,8 +325,6 @@ Item {
                     }
 
                     usersModel: d.activeUsersStore.usersModel
-                    sharedStore: root.sharedRootStore
-
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     paymentRequestModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.paymentRequestModel : null
                     formatBalance: d.formatBalance
@@ -415,6 +430,8 @@ Item {
                     onDismissLinkPreview: (index) => d.activeChatContentModule.inputAreaModule.removeLinkPreviewData(index)
                     onOpenPaymentRequestModal: () => Global.openPaymentRequestModalRequested(d.activeChatContentModule.inputAreaModule.addPaymentRequest)
                     onRemovePaymentRequestPreview: (index) => d.activeChatContentModule.inputAreaModule.removePaymentRequestPreviewData(index)
+
+                    onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
                 }
 
                 ChatPermissionQualificationPanel {

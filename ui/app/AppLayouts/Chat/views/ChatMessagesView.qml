@@ -31,7 +31,6 @@ Item {
 
     property var chatContentModule
 
-    property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
 
     property RootStore rootStore
@@ -55,10 +54,19 @@ Item {
     property bool sendViaPersonalChatEnabled
     property string disabledTooltipText
 
+    // Unfurling related data:
+    property bool gifUnfurlingEnabled
+    property bool neverAskAboutUnfurlingAgain
+
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
     signal showReplyArea(string messageId, string author)
     signal editModeChanged(bool editModeOn)
+
+    // Unfurling related requests:
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
 
     QtObject {
         id: d
@@ -285,7 +293,6 @@ Item {
 
             objectName: "chatMessageViewDelegate"
 
-            sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
             rootStore: root.rootStore
             messageStore: root.messageStore
@@ -376,6 +383,10 @@ Item {
             nextMessageIndex: model.nextMsgIndex
             nextMessageTimestamp: model.nextMsgTimestamp
 
+            // Unfurling related data:
+            gifUnfurlingEnabled: root.gifUnfurlingEnabled
+            neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
@@ -396,6 +407,11 @@ Item {
                 if(!visible && model.editMode)
                     messageStore.setEditModeOff(model.id)
             }
+
+            // Unfurling related requests:
+            onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+            onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
         }
         header: {
             if (!root.isContactBlocked && root.isOneToOne && root.rootStore.oneToOneChatContact) {
