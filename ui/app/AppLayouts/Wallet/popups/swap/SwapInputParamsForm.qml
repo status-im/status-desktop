@@ -20,9 +20,22 @@ QtObject {
     property double selectedSlippage: 0.5
 
     // default to token key
-    property string defaultToTokenKey: Utils.getNativeTokenSymbol(root.selectedNetworkChainId)
+    property string defaultToTokenKey: {
+        const defaultKey = Utils.getNativeTokenSymbol(root.selectedNetworkChainId)
+        if (defaultKey === root.fromTokensKey) {
+            return ""
+        }
+        return defaultKey
+    }
+    
     // default from token key
-    property string defaultFromTokenKey: Constants.tokenSymbolToUniqueSymbol(Constants.usdcToken, root.selectedNetworkChainId)
+    property string defaultFromTokenKey: {
+        const defaultKey = Constants.tokenSymbolToUniqueSymbol(Constants.usdcToken, root.selectedNetworkChainId)
+        if (defaultKey === root.toTokenKey) {
+            return ""
+        }
+        return defaultKey
+    }
     // 15 seconds
     property int autoRefreshTime: 15000
 

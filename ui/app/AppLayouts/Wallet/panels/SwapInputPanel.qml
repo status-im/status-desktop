@@ -7,6 +7,7 @@ import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 
@@ -36,7 +37,8 @@ Control {
     property string nonInteractiveTokensKey
 
     property string tokenKey
-    onTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
+    readonly property string tokenSymbol: Constants.uniqueSymbolToTokenSymbol(tokenKey)
+    onTokenSymbolChanged: reevaluateSelectedId()
 
     property string tokenAmount
     onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
@@ -50,19 +52,13 @@ Control {
     property bool interactive: true
 
     // FIXME drop after using ModelEntry, shouldn't be needed
-    function reevaluateSelectedId() {
-        const symbol = root.tokenKey !== "" ? Constants.uniqueSymbolToTokenSymbol(root.tokenKey) : ""
-        const uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(symbol, root.selectedNetworkChainId)
-        const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", uniqueSymbol)
+    // FIXME Workaround to ensure holdingSelector.model is updated before reevaluating
+    // Proper fix requires a bigger refactor, but we're not even sure if we're going to stick with
+    // cross-chain token aggregation and what this logic will look like if we don't.
+    readonly property var reevaluateSelectedId: Backpressure.debounce(root, 10, () => {
+        d.reevaluateSelectedId()
+    })
 
-        if (entry) {
-            holdingSelector.currentTokensKey = uniqueSymbol
-            holdingSelector.setSelection(entry.symbol, entry.iconSource, uniqueSymbol)
-        } else {
-            holdingSelector.currentTokensKey = ""
-            holdingSelector.reset()
-        }
-    }
 
     // output API
     readonly property string selectedHoldingId: holdingSelector.currentTokensKey
@@ -99,6 +95,19 @@ Control {
 
     QtObject {
         id: d
+
+        function reevaluateSelectedId() {
+            const uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(root.tokenSymbol, root.selectedNetworkChainId)
+            const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", uniqueSymbol)
+
+            if (entry) {
+                holdingSelector.currentTokensKey = uniqueSymbol
+                holdingSelector.setSelection(entry.symbol, entry.iconSource, uniqueSymbol)
+            } else {
+                holdingSelector.currentTokensKey = ""
+                holdingSelector.reset()
+            }
+        }
 
         readonly property var selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model

@@ -100,6 +100,13 @@ StatusDialog {
 
         function onSelectedNetworkChainIdChanged() {
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
+
+            // Network change needs to be handled manually due to change in available tokens and
+            // relation between pay/from input panels, to ensure consistent results.
+            payPanel.selectedNetworkChainId = root.swapInputParamsForm.selectedNetworkChainId
+            receivePanel.selectedNetworkChainId = root.swapInputParamsForm.selectedNetworkChainId
+            payPanel.reevaluateSelectedId()
+            receivePanel.reevaluateSelectedId()
         }
     }
 
@@ -232,10 +239,6 @@ StatusDialog {
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
 
                     cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
-
-                    selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
-
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
                     onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: receivePanel.selectedHoldingId
@@ -245,7 +248,13 @@ StatusDialog {
 
                     bottomTextLoading: root.swapAdaptor.swapProposalLoading
 
-                    onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
+                    onSelectedHoldingIdChanged: {
+                        if (selectedHoldingId === "" || selectedHoldingId === root.swapInputParamsForm.toTokenKey) {
+                            root.swapInputParamsForm.resetFromTokenValues(true)
+                        } else {
+                            root.swapInputParamsForm.fromTokensKey = selectedHoldingId
+                        }
+                    }
 
                     onRawValueChanged: {
                         if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
@@ -276,10 +285,6 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.toTokenKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
-                    
-                    selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
-                    
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
                     onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: payPanel.selectedHoldingId
@@ -290,7 +295,13 @@ StatusDialog {
                     mainInputLoading: root.swapAdaptor.swapProposalLoading
                     bottomTextLoading: root.swapAdaptor.swapProposalLoading
 
-                    onSelectedHoldingIdChanged: root.swapInputParamsForm.toTokenKey = selectedHoldingId
+                    onSelectedHoldingIdChanged: {
+                        if (selectedHoldingId === "" || selectedHoldingId === root.swapInputParamsForm.fromTokensKey) {
+                            root.swapInputParamsForm.resetToTokenValues(true)
+                        } else {
+                            root.swapInputParamsForm.toTokenKey = selectedHoldingId
+                        }
+                    }
 
                     /* TODO: keep this input as disabled until the work for adding a param to handle to
                     and from tokens inputed is supported by backend under
