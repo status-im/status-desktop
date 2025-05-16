@@ -31,12 +31,12 @@ QtObject {
         _walletSectionSendInst.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
     }
 
-    function setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId) {
-        _walletSectionSendInst.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+    function setCustomTxDetails(nonce, gasAmount, gasPrice, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId) {
+        _walletSectionSendInst.setCustomTxDetails(nonce, gasAmount, gasPrice, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
     }
 
-    function getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei) {
-        return _walletSectionSendInst.getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei)
+    function getEstimatedTime(chainId, gasPrice, baseFeeInWei, priorityFeeInWei) {
+        return _walletSectionSendInst.getEstimatedTime(chainId, gasPrice, baseFeeInWei, priorityFeeInWei)
     }
 
     Component.onCompleted: {

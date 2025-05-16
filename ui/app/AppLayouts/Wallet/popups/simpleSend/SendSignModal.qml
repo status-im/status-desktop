@@ -89,6 +89,9 @@ SignTransactionModalBase {
     /** Transaction settings related parameters **/
     required property int selectedFeeMode
 
+    required property bool fromChainEIP1559Compliant
+
+    required property string currentGasPrice
     required property string currentBaseFee
     required property string currentSuggestedMinPriorityFee
     required property string currentSuggestedMaxPriorityFee
@@ -96,6 +99,7 @@ SignTransactionModalBase {
     required property int currentNonce
 
     required property string normalPrice
+    required property string normalGasPrice
     required property string normalBaseFee
     required property string normalPriorityFee
     required property int normalTime
@@ -110,18 +114,21 @@ SignTransactionModalBase {
     required property string urgentBaseFee
     required property string urgentPriorityFee
 
+    required property string customGasPrice
     required property string customBaseFee
     required property string customPriorityFee
     required property string customGasAmount
     required property int customNonce
 
-    /** required function which receives fee in wei and recalculate it currency selected currency and format to locale string **/
+    /** required function which receives fee in wei and recalculate it to selected currency and format to locale string **/
     required property var fnGetPriceInCurrencyForFee
+    /** required function which receives fee in wei and recalculate it to native token and format to locale string **/
+    required property var fnGetPriceInNativeTokenForFee
     /** required function which receives base fee and priority fee in wei and returns estimated time in seconds **/
     required property var fnGetEstimatedTime
 
     /** Signal to updated tx settings **/
-    signal updateTxSettings(int selectedFeeMode, string customNonce, string customGasAmount, string maxFeesPerGas, string priorityFee)
+    signal updateTxSettings(int selectedFeeMode, string customNonce, string customGasAmount, string gasPrice, string maxFeesPerGas, string priorityFee)
 
     /** Recalculates all values currently displayed in the transaction settings panel **/
     function refreshTxSettings() {
@@ -256,6 +263,7 @@ SignTransactionModalBase {
     property Component internalPopup: TransactionSettings {
 
         fnGetPriceInCurrencyForFee: root.fnGetPriceInCurrencyForFee
+        fnGetPriceInNativeTokenForFee: root.fnGetPriceInNativeTokenForFee
         fnGetEstimatedTime: root.fnGetEstimatedTime
         fnRawToGas: function(rawValue) {
             return Utils.nativeTokenRawToGas(root.networkChainId, rawValue)
@@ -266,6 +274,10 @@ SignTransactionModalBase {
 
         selectedFeeMode: root.selectedFeeMode
 
+        fromChainEIP1559Compliant: root.fromChainEIP1559Compliant
+        nativeTokenSymbol: Utils.getNativeTokenSymbol(root.networkChainId)
+
+        currentGasPrice: root.currentGasPrice
         currentBaseFee: root.currentBaseFee
         currentSuggestedMinPriorityFee: root.currentSuggestedMinPriorityFee
         currentSuggestedMaxPriorityFee: root.currentSuggestedMaxPriorityFee
@@ -282,23 +294,36 @@ SignTransactionModalBase {
         function updateCustomFields() {
             // by default custom follows normal fee option
             if (selectedFeeMode !== Constants.FeePriorityModeType.Custom) {
-                customBaseFee = ""
+                customBaseFeeOrGasPrice = ""
                 customPriorityFee = ""
                 customGasAmount = ""
                 customNonce = ""
+
+                customBaseFeeOrGasPriceDirty = false
+                customPriorityFeeDirty = false
+                customGasAmountDirty = false
+                customNonceDirty = false
                 return
             }
 
-            if (!customBaseFeeDirty) {
+            if (!customBaseFeeOrGasPriceDirty) {
                 if (selectedFeeMode === root.selectedFeeMode) {
-                    customBaseFee = !!root.customBaseFee? fnRawToGas(root.customBaseFee).toFixed() : "0"
+                    if (!root.fromChainEIP1559Compliant) {
+                        customBaseFeeOrGasPrice = !!root.customGasPrice? fnRawToGas(root.customGasPrice).toFixed() : "0"
+                    } else {
+                        customBaseFeeOrGasPrice = !!root.customBaseFee? fnRawToGas(root.customBaseFee).toFixed() : "0"
+                    }
                 } else {
-                    customBaseFee = fnRawToGas(root.normalBaseFee).toFixed()
+                    if (!root.fromChainEIP1559Compliant) {
+                        customBaseFeeOrGasPrice = fnRawToGas(root.normalGasPrice).toFixed()
+                    } else {
+                        customBaseFeeOrGasPrice = fnRawToGas(root.normalBaseFee).toFixed()
+                    }
                 }
-                customBaseFeeDirty = false
+                customBaseFeeOrGasPriceDirty = false
             }
 
-            if (!customPriorityFeeDirty) {
+            if (root.fromChainEIP1559Compliant && !customPriorityFeeDirty) {
                 if (selectedFeeMode === root.selectedFeeMode) {
                     customPriorityFee = !!root.customPriorityFee? fnRawToGas(root.customPriorityFee).toFixed() : "0"
                 } else {
@@ -343,11 +368,16 @@ SignTransactionModalBase {
         }
 
         onConfirmClicked: {
+            let gasPrice = ""
             let priorityFee = ""
             let maxFeesPerGas = ""
             if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
-                if (!!customPriorityFee && !!customBaseFee) {
-                    const rawBaseFee = Utils.nativeTokenGasToRaw(root.networkChainId, customBaseFee)
+                if (!root.fromChainEIP1559Compliant) {
+                    if (!!customBaseFeeOrGasPrice) {
+                        gasPrice = Utils.nativeTokenGasToRaw(root.networkChainId, customBaseFeeOrGasPrice).toFixed()
+                    }
+                } else if (!!customPriorityFee && !!customBaseFeeOrGasPrice) {
+                    const rawBaseFee = Utils.nativeTokenGasToRaw(root.networkChainId, customBaseFeeOrGasPrice)
                     const rawPriorityFee = Utils.nativeTokenGasToRaw(root.networkChainId, customPriorityFee)
 
                     priorityFee = rawPriorityFee.toFixed()
@@ -355,7 +385,7 @@ SignTransactionModalBase {
                 }
             }
 
-            root.updateTxSettings(selectedFeeMode, customNonce, customGasAmount, maxFeesPerGas, priorityFee)
+            root.updateTxSettings(selectedFeeMode, customNonce, customGasAmount, gasPrice, maxFeesPerGas, priorityFee)
 
             root.internalPopupActive = false
         }

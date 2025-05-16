@@ -28,6 +28,10 @@ SplitView {
                 id: txSettings
                 anchors.centerIn: parent
 
+                fromChainEIP1559Compliant: true
+                nativeTokenSymbol: "ETH"
+
+                currentGasPrice: "0.0"
                 currentBaseFee: "8.2"
                 currentSuggestedMinPriorityFee: "0.06"
                 currentSuggestedMaxPriorityFee: "5.1"
@@ -41,7 +45,7 @@ SplitView {
                 urgentPrice: "1.85 EUR"
                 urgentTime: "~15s"
 
-                customBaseFee: "6.6"
+                customBaseFeeOrGasPrice: "6.6"
                 customPriorityFee: "7.7"
                 customGasAmount: "35000"
                 customNonce: "22"
@@ -52,7 +56,11 @@ SplitView {
                     return "0.25 USD"
                 }
 
-                fnGetEstimatedTime: function(baseFeeInWei, priorityFeeInWei) {
+                fnGetPriceInNativeTokenForFee: function(feeInWei) {
+                    return "0.000123 ETH"
+                }
+
+                fnGetEstimatedTime: function(gasPrice, baseFeeInWei, priorityFeeInWei) {
                     return 0
                 }
 
@@ -68,7 +76,7 @@ SplitView {
                     logs.logEvent("confirm clicked...")
                     logs.logEvent(`selected fee mode: ${txSettings.selectedFeeMode}`)
                     if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
-                        logs.logEvent(`selected customBaseFee...${txSettings.customBaseFee}`)
+                        logs.logEvent(`selected customBaseFeeOrGasPrice...${txSettings.customBaseFeeOrGasPrice}`)
                         logs.logEvent(`selected customPriorityFee...${txSettings.customPriorityFee}`)
                         logs.logEvent(`selected customGasAmount...${txSettings.customGasAmount}`)
                         logs.logEvent(`selected customNonce...${txSettings.customNonce}`)
