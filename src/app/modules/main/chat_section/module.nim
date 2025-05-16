@@ -9,11 +9,7 @@ import ../../shared_models/message_item as member_msg_item
 import ../../shared_models/message_model as member_msg_model
 import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
-import ../../shared_models/token_permissions_model
-import ../../shared_models/token_permission_item
-import ../../shared_models/token_criteria_item
-import ../../shared_models/token_criteria_model
-import ../../shared_models/token_permission_chat_list_model
+import ../../shared_models/[token_permissions_model, token_permission_item, token_criteria_item, token_criteria_model, token_permission_chat_list_model, contacts_utils]
 
 import chat_content/module as chat_content_module
 import chat_content/users/module as users_module
@@ -221,9 +217,10 @@ proc removeSubmodule(self: Module, chatId: string) =
 
 proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): chat_item.Item =
   let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityId, category.id)
-  result = chat_item.initItem(
+  result = chat_item.initChatItem(
         id = category.id,
         category.name,
+        usesDefaultName = false,
         icon = "",
         color = "",
         emoji = "",
@@ -302,20 +299,10 @@ proc buildChatSectionUI(
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
 
-  return initUserItem(
-    pubKey = contactDetails.dto.id,
-    displayName = contactDetails.dto.displayName,
-    ensName = contactDetails.dto.name,
-    isEnsVerified = contactDetails.dto.ensVerified,
-    localNickname = contactDetails.dto.localNickname,
-    alias = contactDetails.dto.alias,
-    icon = contactDetails.icon,
-    colorId = contactDetails.colorId,
-    colorHash = if not contactDetails.dto.ensVerified: contactDetails.colorHash else: "",
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
-    isContact = contactDetails.dto.isContact(),
-    trustStatus = contactDetails.dto.trustStatus,
-    isBlocked = contactDetails.dto.isBlocked(),
+  return createItemFromDto(
+    contactDetails,
+    toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
+    contactRequest = ContactRequestState.None,
   )
 
 proc initContactRequestsModel(self: Module) =
@@ -608,6 +595,7 @@ proc getChatItemFromChatDto(
   var chatName = chatDto.name
   var chatImage = chatDto.icon
   var blocked = false
+  var usesDefaultName = false
   var colorHash: ColorHashDto = @[]
   var colorId: int = 0
   var onlineStatus = OnlineStatus.Inactive
@@ -616,6 +604,11 @@ proc getChatItemFromChatDto(
   if chatDto.chatType == ChatType.OneToOne:
     let contactDetails = self.controller.getContactDetails(chatDto.id)
     chatName = contactDetails.defaultDisplayName
+    usesDefaultName = resolveUsesDefaultName(
+      contactDetails.dto.localNickname,
+      contactDetails.dto.name,
+      contactDetails.dto.displayName,
+    )
     chatImage = contactDetails.icon
     blocked = contactDetails.dto.isBlocked()
     if not contactDetails.dto.ensVerified:
@@ -678,9 +671,10 @@ proc getChatItemFromChatDto(
       viewersCanPostReactions = chatDto.viewersCanPostReactions
       missingEncryptionKey = chatDto.missingEncryptionKey
 
-  result = chat_item.initItem(
+  result = chat_item.initChatItem(
     chatDto.id,
     chatName,
+    usesDefaultName,
     chatImage,
     chatDto.color,
     chatDto.emoji,
@@ -1327,9 +1321,10 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let chats = self.controller.getChats(communityId, categoryId="")
   for chat in chats:
     let c = self.controller.getChatDetails(chat.id)
-    let chatItem = chat_item.initItem(
+    let chatItem = chat_item.initChatItem(
       c.id,
       c.name,
+      usesDefaultName = false,
       icon="",
       c.color,
       c.emoji,
@@ -1351,9 +1346,10 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let catChats = self.controller.getChats(communityId, categoryId)
   for chat in catChats:
     let c = self.controller.getChatDetails(chat.id)
-    let chatItem = chat_item.initItem(
+    let chatItem = chat_item.initChatItem(
       c.id,
       c.name,
+      usesDefaultName = false,
       icon="",
       c.color,
       c.emoji,

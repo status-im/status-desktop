@@ -48,10 +48,13 @@ ItemDelegate {
 
         Component {
             id: userImage
-            UserImage {
-                name: root.label
+            StatusUserImage {
+                name:  root.label
+                // TODO we should be checking if the user set a custom name
+                // but it requires changing the DB which is probably not worth it
+                usesDefaultName: !root.image
                 image: root.image
-                colorId: root.colorId
+                userColor: Utils.colorForColorId(root.colorId)
                 colorHash: root.colorHash
                 imageHeight: Constants.onboarding.userImageHeight
                 imageWidth: Constants.onboarding.userImageWidth
