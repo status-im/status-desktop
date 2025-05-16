@@ -469,6 +469,17 @@ SettingsContentBase {
                 text: qsTr("RPC statistics")
                 onClicked: rpcStatsModal.open()
             }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Enable RLN Rate Limit")
+                isSwitch: true
+                switchChecked: root.advancedStore.isRlnRateLimitEnabled
+                onClicked: {
+                    root.advancedStore.toggleRlnRateLimit()
+                }
+            }
         }
 
         FleetsModal {
