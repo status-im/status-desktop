@@ -337,6 +337,8 @@ QtObject {
         readonly property int loadingSection: 6
         readonly property int swap: 7
         readonly property int market: 8
+
+        readonly property int dApp: 999
     }
 
     readonly property QtObject appViewStackIndex: QtObject {

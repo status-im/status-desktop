@@ -74,6 +74,7 @@ SplitView {
                     itemId: "id3"
                     categoryId: "id2"
                     name: "Channel Y_1"
+                    emoji: "💩"
                     active: false
                     notificationsCount: 0
                     hasUnreadMessages: true
@@ -91,7 +92,7 @@ SplitView {
                     active: false
                     notificationsCount: 0
                     hasUnreadMessages: false
-                    color: ""
+                    color: "red"
                     colorId: 3
                     icon: ""
                     muted: false

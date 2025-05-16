@@ -427,6 +427,10 @@ QtObject {
             return qsTr("Swap")
         case Constants.appSection.market:
             return qsTr("Market")
+        case Constants.appSection.community:
+            return qsTr("Community")
+        case Constants.appSection.dApp:
+            return qsTr("dApp")
         default:
             return fallback
         }

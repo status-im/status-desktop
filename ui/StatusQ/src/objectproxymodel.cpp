@@ -61,7 +61,7 @@ void ObjectProxyModel::setSourceModel(QAbstractItemModel* model)
 
     connect(model, &QAbstractItemModel::dataChanged, this,
             [this, model](const QModelIndex& topLeft,
-                const QModelIndex& bottomRight, const QVector<int>& roles)
+                const QModelIndex& bottomRight, const auto& roles)
     {
         if (!topLeft.isValid() || !bottomRight.isValid())
             return;
@@ -95,8 +95,7 @@ void ObjectProxyModel::setSourceModel(QAbstractItemModel* model)
 
 QHash<int, QByteArray> ObjectProxyModel::roleNames() const
 {
-    return m_roleNames.isEmpty() && sourceModel()
-            ? sourceModel()->roleNames() : m_roleNames;;
+    return m_roleNames.isEmpty() && sourceModel() ? sourceModel()->roleNames() : m_roleNames;
 }
 
 QQmlComponent* ObjectProxyModel::delegate() const
