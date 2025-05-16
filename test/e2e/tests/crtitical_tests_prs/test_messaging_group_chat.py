@@ -107,7 +107,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                     group_chat_name = user_two.name + '&' + user_three.name
                     assert messages_screen.group_chat.wait_until_appears().group_name == group_chat_name, f'Group chat name is not correct'
                 with step('Welcome group message is correct'):
-                    actual_welcome_message = messages_screen.group_chat.group_welcome_message
+                    actual_welcome_message = messages_screen.group_chat.group_welcome_message()
                     assert actual_welcome_message.startswith(Messaging.WELCOME_GROUP_MESSAGE.value)
                     assert actual_welcome_message.endswith(' group!')
                     assert group_chat_name in actual_welcome_message

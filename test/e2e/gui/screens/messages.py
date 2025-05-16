@@ -351,7 +351,6 @@ class ChatMessagesView(QObject):
     def group_name(self) -> str:
         return self._group_name_label.text
 
-    @property
     @allure.step('Get group welcome message')
     def group_welcome_message(self) -> str:
         for delegate in walk_children(self._group_chat_message_item.wait_until_appears().object):
