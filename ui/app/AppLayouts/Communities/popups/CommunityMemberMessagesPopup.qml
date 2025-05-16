@@ -64,7 +64,7 @@ StatusDialog {
 
                     width: parent.width
 
-                    sharedRootStore: root.sharedRootStore
+                    //sharedRootStore: root.sharedRootStore
                     utilsStore: root.utilsStore
                     rootStore: root.rootStore
                     chatCommunitySectionModule: root.chatCommunitySectionModule

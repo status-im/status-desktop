@@ -651,7 +651,7 @@ QtObject {
             id: pinnedMessagesPopup
 
             PinnedMessagesPopup {
-                sharedStore: root.sharedRootStore
+                //sharedStore: root.sharedRootStore
                 utilsStore: root.utilsStore
                 onClosed: destroy()
             }

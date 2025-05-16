@@ -19,7 +19,6 @@ import AppLayouts.Chat.stores 1.0
 StatusDialog {
     id: root
 
-    property SharedStores.RootStore sharedStore
     property SharedStores.UtilsStore utilsStore
     property RootStore store
     property MessageStore messageStore
@@ -80,7 +79,6 @@ StatusDialog {
 
                     width: parent.width
 
-                    sharedRootStore: root.sharedStore
                     utilsStore: root.utilsStore
                     rootStore: root.store
                     messageStore: root.messageStore
