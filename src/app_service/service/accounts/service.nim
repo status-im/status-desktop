@@ -209,6 +209,7 @@ QtObject:
         kdfIterations: KDF_ITERATIONS,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
         logLevel: some(main_constants.getStatusGoLogLevel()),
+        wakuV2Fleet: main_constants.WAKU_FLEET,
         wakuV2LightClient: false,
         wakuV2EnableMissingMessageVerification: true,
         wakuV2EnableStoreConfirmationForMessagesSent: true,
