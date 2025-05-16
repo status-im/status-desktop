@@ -23,6 +23,7 @@ QtObject {
     required property AppStores.RootStore rootStore
     required property AppStores.FeatureFlagsStore featureFlagsStore
 
+    required property SharedStores.RootStore sharedRootStore
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
     required property SharedSendStores.TransactionStore transactionStore
@@ -132,5 +133,10 @@ QtObject {
             Global.sendToRecipientRequested.connect(sendToRecipient)
             root.rootStore.ensNameResolved.connect(ensNameResolved)
         }
+    }
+
+    readonly property StatusGifPopupHandler statusGifPopupHandler: StatusGifPopupHandler {
+        gifStore: sharedRootStore.gifStore
+        gifUnfurlingEnabled: sharedRootStore.gifUnfurlingEnabled
     }
 }

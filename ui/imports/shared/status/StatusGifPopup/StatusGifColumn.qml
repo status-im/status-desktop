@@ -18,10 +18,10 @@ Column {
 
     property alias gifList: repeater
     property int gifWidth: 0
-    property var gifSelected: function () {}
     property var toggleFavorite: function () {}
     property string lastHoveredId
     signal gifHovered(string id)
+    signal gifSelected(var event, var url)
 
     Repeater {
         id: repeater

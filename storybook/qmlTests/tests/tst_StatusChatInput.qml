@@ -7,7 +7,6 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 import shared.status 1.0
-import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
@@ -25,14 +24,6 @@ Item {
             height: implicitHeight
             anchors.bottom: parent.bottom
             usersModel: ListModel {}
-
-            sharedStore: SharedStores.RootStore {
-                property bool gifUnfurlingEnabled: true
-
-                property var gifStore: SharedStores.GifStore {
-                    property var gifColumnA: ListModel {}
-                }
-            }
         }
     }
 

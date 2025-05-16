@@ -25,7 +25,6 @@ import AppLayouts.Profile.stores 1.0 as ProfileStores
 Loader {
     id: root
 
-    property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
@@ -39,6 +38,10 @@ Loader {
     property var chatLogView
     property var emojiPopup
     property var stickersPopup
+
+    // Unfurling related data:
+    property bool gifUnfurlingEnabled
+    property bool neverAskAboutUnfurlingAgain
 
     // Once we redo qml we will know all section/chat related details in each message form the parent components
     // without an explicit need to fetch those details via message store/module.
@@ -247,6 +250,11 @@ Loader {
     signal openStickerPackPopup(string stickerPackId)
     signal sendViaPersonalChatRequested(string recipientAddress)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+
+    // Unfurling related requests:
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
 
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
@@ -946,7 +954,6 @@ Loader {
                         }
 
                         usersModel: root.usersStore.usersModel
-                        sharedStore: root.sharedRootStore
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
 
@@ -954,6 +961,7 @@ Loader {
                         isEdit: true
 
                         onSendMessage: delegate.editCompletedHandler(editTextInput.getTextWithPublicKeys())
+                        onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
 
                         Component.onCompleted: {
                             parseMessage(root.messageText);
@@ -986,9 +994,9 @@ Loader {
                             Global.openMenu(imageContextMenuComponent, item, { url: url, domain: domain, requireConfirmationOnOpen: true })
                         }
                         onHoveredLinkChanged: delegate.highlightedLink = linksMessageView.hoveredLink
-                        gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
-                        canAskToUnfurlGifs: !root.sharedRootStore.neverAskAboutUnfurlingAgain
-                        onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+                        gifUnfurlingEnabled: root.gifUnfurlingEnabled
+                        canAskToUnfurlGifs: !root.neverAskAboutUnfurlingAgain
+                        onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
                         onPaymentRequestClicked: (index) => {
                             const request = StatusQUtils.ModelUtils.get(paymentRequestModel, index)
                             root.tokenPaymentRequested(request.receiver, request.symbol, request.amount, request.chainId)

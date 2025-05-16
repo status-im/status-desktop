@@ -881,6 +881,7 @@ Item {
         // Stores:
         rootStore: appMain.rootStore
         featureFlagsStore: appMain.featureFlagsStore
+        sharedRootStore: appMain.sharedRootStore
         currencyStore: appMain.currencyStore
         networksStore: appMain.networksStore
         walletRootStore: WalletStores.RootStore
@@ -891,7 +892,6 @@ Item {
         tokensStore: appMain.tokensStore
         rootChatStore: appMain.rootChatStore
     }
-
 
     Connections {
         id: globalConns
@@ -1889,7 +1889,6 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
-                                sharedRootStore: appMain.sharedRootStore
                                 utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
@@ -1915,6 +1914,10 @@ Item {
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts
 
+                                // Unfurling related data:
+                                gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
+                                neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -1925,6 +1928,11 @@ Item {
 
                                 onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
                                 onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+
+                                // Unfurling related requests:
+                                onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+                                onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
                             }
                         }
                     }
@@ -2138,7 +2146,6 @@ Item {
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.networksStore.areTestNetworksEnabled)
-                                sharedRootStore: appMain.sharedRootStore
                                 utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
@@ -2160,6 +2167,10 @@ Item {
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts
 
+                                // Unfurling related data:
+                                gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
+                                neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -2170,6 +2181,11 @@ Item {
 
                                 onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
                                 onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+
+                                // Unfurling related requests:
+                                onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+                                onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
                             }
                         }
                     }
@@ -2192,7 +2208,6 @@ Item {
                             anchors.rightMargin - anchors.leftMargin : 0
 
                     sourceComponent: CreateChatView {
-                        sharedRootStore: appMain.sharedRootStore
                         utilsStore: appMain.utilsStore
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore
