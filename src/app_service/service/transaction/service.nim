@@ -450,16 +450,18 @@ QtObject:
       error "setFeeMode", exception=e.msg
       return e.msg
 
-  proc setCustomTxDetails*(self: Service, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+  proc setCustomTxDetails*(self: Service, nonce: int, gasAmount: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string,
     routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string): string =
     try:
       let
+        bigGasPrice = common_utils.stringToUint256(gasPrice)
         bigMaxFeesPerGas = common_utils.stringToUint256(maxFeesPerGas)
         bigPriorityFee = common_utils.stringToUint256(priorityFee)
+        gasPriceHex = "0x" & eth_utils.stripLeadingZeros(bigGasPrice.toHex)
         maxFeesPerGasHex = "0x" & eth_utils.stripLeadingZeros(bigMaxFeesPerGas.toHex)
         priorityFeeHex = "0x" & eth_utils.stripLeadingZeros(bigPriorityFee.toHex)
 
-      let err = wallet.setCustomTxDetails(nonce, gasAmount, maxFeesPerGasHex, priorityFeeHex, routerInputParamsUuid, pathName,
+      let err = wallet.setCustomTxDetails(nonce, gasAmount, gasPriceHex, maxFeesPerGasHex, priorityFeeHex, routerInputParamsUuid, pathName,
         chainId, isApprovalTx, communityId)
       if err.len > 0:
         raise newException(CatchableError, err)
@@ -475,14 +477,16 @@ QtObject:
       error "Error estimating transaction time", message = e.msg
       return EstimatedTime.Unknown
 
-  proc getEstimatedTimeV2*(self: Service, chainId: int, maxFeePerGas: string, priorityFee: string): int =
+  proc getEstimatedTimeV2*(self: Service, chainId: int, gasPrice: string, maxFeePerGas: string, priorityFee: string): int =
     try:
       let
+        bigGasPrice = common_utils.stringToUint256(gasPrice)
         bigMaxFeePerGas = common_utils.stringToUint256(maxFeePerGas)
         bigPriorityFee = common_utils.stringToUint256(priorityFee)
+        gasPriceHex = "0x" & eth_utils.stripLeadingZeros(bigGasPrice.toHex)
         maxFeePerGasHex = "0x" & eth_utils.stripLeadingZeros(bigMaxFeePerGas.toHex)
         priorityFeeHex = "0x" & eth_utils.stripLeadingZeros(bigPriorityFee.toHex)
-      return backend.getTransactionEstimatedTimeV2(chainId, maxFeePerGasHex, priorityFeeHex).result.getInt
+      return backend.getTransactionEstimatedTimeV2(chainId, gasPriceHex, maxFeePerGasHex, priorityFeeHex).result.getInt
     except Exception as e:
       error "Error estimating transaction time", message = e.msg
       return 0

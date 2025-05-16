@@ -6,12 +6,15 @@ QtObject:
   type PathItem* = ref object of QObject
     processorName: string
     fromChain: int
+    fromChainEIP1559Compliant: bool
     toChain: int
     fromToken: string
     toToken: string
     amountIn: string
     amountInLocked: bool
     amountOut: string
+    suggestedNonEIP1559GasPrice: string
+    suggestedNonEIP1559EstimatedTime: int
     suggestedMaxFeesPerGasLowLevel: string
     suggestedPriorityFeePerGasLowLevel: string
     suggestedEstimatedTimeLowLevel: int
@@ -29,6 +32,7 @@ QtObject:
     suggestedApprovalTxNonce: string
     suggestedApprovalGasAmount: string
     txNonce: string
+    txGasPrice: string
     txGasFeeMode: int
     txMaxFeesPerGas: string
     txBaseFee: string
@@ -44,6 +48,7 @@ QtObject:
     approvalAmountRequired : string
     approvalContractAddress: string
     approvalTxNonce: string
+    approvalGasPrice: string
     approvalGasFeeMode: int
     approvalMaxFeesPerGas: string
     approvalBaseFee: string
@@ -56,12 +61,15 @@ QtObject:
   proc setup*(self: PathItem,
     processorName: string,
     fromChain: int,
+    fromChainEIP1559Compliant: bool,
     toChain: int,
     fromToken: string,
     toToken: string,
     amountIn: string,
     amountInLocked: bool,
     amountOut: string,
+    suggestedNonEIP1559GasPrice: string,
+    suggestedNonEIP1559EstimatedTime: int,
     suggestedMaxFeesPerGasLowLevel: string,
     suggestedPriorityFeePerGasLowLevel: string,
     suggestedEstimatedTimeLowLevel: int,
@@ -79,6 +87,7 @@ QtObject:
     suggestedApprovalTxNonce: string,
     suggestedApprovalGasAmount: string,
     txNonce: string,
+    txGasPrice: string,
     txGasFeeMode: int,
     txMaxFeesPerGas: string,
     txBaseFee: string,
@@ -94,6 +103,7 @@ QtObject:
     approvalAmountRequired: string,
     approvalContractAddress: string,
     approvalTxNonce: string,
+    approvalGasPrice: string,
     approvalGasFeeMode: int,
     approvalMaxFeesPerGas: string,
     approvalBaseFee: string,
@@ -106,12 +116,15 @@ QtObject:
     self.QObject.setup
     self.processorName = processorName
     self.fromChain = fromChain
+    self.fromChainEIP1559Compliant = fromChainEIP1559Compliant
     self.toChain = toChain
     self.fromToken = fromToken
     self.toToken = toToken
     self.amountIn = amountIn
     self.amountInLocked = amountInLocked
     self.amountOut = amountOut
+    self.suggestedNonEIP1559GasPrice = suggestedNonEIP1559GasPrice
+    self.suggestedNonEIP1559EstimatedTime = suggestedNonEIP1559EstimatedTime
     self.suggestedMaxFeesPerGasLowLevel = suggestedMaxFeesPerGasLowLevel
     self.suggestedPriorityFeePerGasLowLevel = suggestedPriorityFeePerGasLowLevel
     self.suggestedEstimatedTimeLowLevel = suggestedEstimatedTimeLowLevel
@@ -129,6 +142,7 @@ QtObject:
     self.suggestedApprovalTxNonce = suggestedApprovalTxNonce
     self.suggestedApprovalGasAmount = suggestedApprovalGasAmount
     self.txNonce = txNonce
+    self.txGasPrice = txGasPrice
     self.txGasFeeMode = txGasFeeMode
     self.txMaxFeesPerGas = txMaxFeesPerGas
     self.txBaseFee = txBaseFee
@@ -144,6 +158,7 @@ QtObject:
     self.approvalAmountRequired = approvalAmountRequired
     self.approvalContractAddress = approvalContractAddress
     self.approvalTxNonce = approvalTxNonce
+    self.approvalGasPrice = approvalGasPrice
     self.approvalGasFeeMode = approvalGasFeeMode
     self.approvalMaxFeesPerGas = approvalMaxFeesPerGas
     self.approvalBaseFee = approvalBaseFee
@@ -159,12 +174,15 @@ QtObject:
   proc newPathItem*(
     processorName: string,
     fromChain: int,
+    fromChainEIP1559Compliant: bool,
     toChain: int,
     fromToken: string,
     toToken: string,
     amountIn: string,
     amountInLocked: bool,
     amountOut: string,
+    suggestedNonEIP1559GasPrice: string,
+    suggestedNonEIP1559EstimatedTime: int,
     suggestedMaxFeesPerGasLowLevel: string,
     suggestedPriorityFeePerGasLowLevel: string,
     suggestedEstimatedTimeLowLevel: int,
@@ -182,6 +200,7 @@ QtObject:
     suggestedApprovalTxNonce: string,
     suggestedApprovalGasAmount: string,
     txNonce: string,
+    txGasPrice: string,
     txGasFeeMode: int,
     txMaxFeesPerGas: string,
     txBaseFee: string,
@@ -197,6 +216,7 @@ QtObject:
     approvalAmountRequired: string,
     approvalContractAddress: string,
     approvalTxNonce: string,
+    approvalGasPrice: string,
     approvalGasFeeMode: int,
     approvalMaxFeesPerGas: string,
     approvalBaseFee: string,
@@ -210,12 +230,15 @@ QtObject:
     result.setup(
       processorName,
       fromChain,
+      fromChainEIP1559Compliant,
       toChain,
       fromToken,
       toToken,
       amountIn,
       amountInLocked,
       amountOut,
+      suggestedNonEIP1559GasPrice,
+      suggestedNonEIP1559EstimatedTime,
       suggestedMaxFeesPerGasLowLevel,
       suggestedPriorityFeePerGasLowLevel,
       suggestedEstimatedTimeLowLevel,
@@ -233,6 +256,7 @@ QtObject:
       suggestedApprovalTxNonce,
       suggestedApprovalGasAmount,
       txNonce,
+      txGasPrice,
       txGasFeeMode,
       txMaxFeesPerGas,
       txBaseFee,
@@ -248,6 +272,7 @@ QtObject:
       approvalAmountRequired,
       approvalContractAddress,
       approvalTxNonce,
+      approvalGasPrice,
       approvalGasFeeMode,
       approvalMaxFeesPerGas,
       approvalBaseFee,
@@ -261,12 +286,15 @@ QtObject:
     result = "PathItem("
     result &= "\nprocessorName: " & $self.processorName
     result &= "\nfromChain: " & $self.fromChain
+    result &= "\nfromChainEIP1559Compliant: " & $self.fromChainEIP1559Compliant
     result &= "\ntoChain: " & $self.toChain
     result &= "\nfromToken: " & $self.fromToken
     result &= "\ntoToken: " & $self.toToken
     result &= "\namountIn: " & $self.amountIn
     result &= "\namountInLocked: " & $self.amountInLocked
     result &= "\namountOut: " & $self.amountOut
+    result &= "\nsuggestedNonEIP1559GasPrice: " & $self.suggestedNonEIP1559GasPrice
+    result &= "\nsuggestedNonEIP1559EstimatedTime: " & $self.suggestedNonEIP1559EstimatedTime
     result &= "\nsuggestedMaxFeesPerGasLowLevel: " & $self.suggestedMaxFeesPerGasLowLevel
     result &= "\nsuggestedPriorityFeePerGasLowLevel: " & $self.suggestedPriorityFeePerGasLowLevel
     result &= "\nsuggestedEstimatedTimeLowLevel: " & $self.suggestedEstimatedTimeLowLevel
@@ -284,6 +312,7 @@ QtObject:
     result &= "\nsuggestedApprovalTxNonce: " & $self.suggestedApprovalTxNonce
     result &= "\nsuggestedApprovalGasAmount: " & $self.suggestedApprovalGasAmount
     result &= "\ntxNonce: " & $self.txNonce
+    result &= "\ntxGasPrice: " & $self.txGasPrice
     result &= "\ntxGasFeeMode: " & $self.txGasFeeMode
     result &= "\ntxMaxFeesPerGas: " & $self.txMaxFeesPerGas
     result &= "\ntxBaseFee: " & $self.txBaseFee
@@ -299,6 +328,7 @@ QtObject:
     result &= "\napprovalAmountRequired: " & $self.approvalAmountRequired
     result &= "\napprovalContractAddress: " & $self.approvalContractAddress
     result &= "\napprovalTxNonce: " & $self.approvalTxNonce
+    result &= "\napprovalGasPrice: " & $self.approvalGasPrice
     result &= "\napprovalGasFeeMode: " & $self.approvalGasFeeMode
     result &= "\napprovalMaxFeesPerGas: " & $self.approvalMaxFeesPerGas
     result &= "\napprovalBaseFee: " & $self.approvalBaseFee
@@ -314,6 +344,9 @@ QtObject:
 
   proc fromChain*(self: PathItem): int =
     return self.fromChain
+
+  proc fromChainEIP1559Compliant*(self: PathItem): bool =
+    return self.fromChainEIP1559Compliant
 
   proc toChain*(self: PathItem): int =
     return self.toChain
@@ -332,6 +365,12 @@ QtObject:
 
   proc amountOut*(self: PathItem): string =
     return self.amountOut
+
+  proc suggestedNonEIP1559GasPrice*(self: PathItem): string =
+    return self.suggestedNonEIP1559GasPrice
+
+  proc suggestedNonEIP1559EstimatedTime*(self: PathItem): int =
+    return self.suggestedNonEIP1559EstimatedTime
 
   proc suggestedMaxFeesPerGasLowLevel*(self: PathItem): string =
     return self.suggestedMaxFeesPerGasLowLevel
@@ -384,6 +423,9 @@ QtObject:
   proc txNonce*(self: PathItem): string =
     return self.txNonce
 
+  proc txGasPrice*(self: PathItem): string =
+    return self.txGasPrice
+
   proc txGasFeeMode*(self: PathItem): int =
     return self.txGasFeeMode
 
@@ -428,6 +470,9 @@ QtObject:
 
   proc approvalTxNonce*(self: PathItem): string =
     return self.approvalTxNonce
+
+  proc approvalGasPrice*(self: PathItem): string =
+    return self.approvalGasPrice
 
   proc approvalGasFeeMode*(self: PathItem): int =
     return self.approvalGasFeeMode

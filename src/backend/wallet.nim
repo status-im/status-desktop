@@ -242,7 +242,7 @@ proc setFeeMode*(feeMode: int, routerInputParamsUuid: string, pathName: string, 
 ## `isApprovalTx` is a flag that indicates if the tx is an approval tx - optional
 ## `communityId` is the id of the community - optional
 ## returns the error message if any, or an empty string
-proc setCustomTxDetails*(nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+proc setCustomTxDetails*(nonce: int, gasAmount: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string,
   routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool = false,
   communityId: string = ""): string {.raises: [RpcException].} =
 
@@ -250,6 +250,7 @@ proc setCustomTxDetails*(nonce: int, gasAmount: int, maxFeesPerGas: string, prio
     "gasFeeMode": GasFeeCustom,
     "nonce": nonce,
     "gasAmount": gasAmount,
+    "gasPrice": gasPrice,
     "maxFeesPerGas": maxFeesPerGas,
     "priorityFee": priorityFee,
   }
