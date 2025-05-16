@@ -9,12 +9,15 @@ type
     Index = UserRole + 1,
     ProcessorName,
     FromChain,
+    FromChainEIP1559Compliant,
     ToChain,
     FromToken,
     ToToken,
     AmountIn,
     AmountInLocked,
     AmountOut,
+    SuggestedNonEIP1559GasPrice,
+    SuggestedNonEIP1559EstimatedTime,
     SuggestedMaxFeesPerGasLowLevel,
     SuggestedPriorityFeePerGasLowLevel,
     SuggestedEstimatedTimeLowLevel,
@@ -32,6 +35,7 @@ type
     SuggestedApprovalTxNonce,
     SuggestedApprovalGasAmount,
     TxNonce,
+    TxGasPrice,
     TxGasFeeMode,
     TxMaxFeesPerGas,
     TxBaseFee,
@@ -47,6 +51,7 @@ type
     ApprovalAmountRequired,
     ApprovalContractAddress,
     ApprovalTxNonce,
+    ApprovalGasPrice,
     ApprovalGasFeeMode,
     ApprovalMaxFeesPerGas,
     ApprovalBaseFee,
@@ -84,12 +89,15 @@ QtObject:
       ModelRole.Index.int: "index",
       ModelRole.ProcessorName.int: "processorName",
       ModelRole.FromChain.int: "fromChain",
+      ModelRole.FromChainEIP1559Compliant.int: "fromChainEIP1559Compliant",
       ModelRole.ToChain.int: "toChain",
       ModelRole.FromToken.int: "fromToken",
       ModelRole.ToToken.int: "toToken",
       ModelRole.AmountIn.int: "amountIn",
       ModelRole.AmountInLocked.int: "amountInLocked",
       ModelRole.AmountOut.int: "amountOut",
+      ModelRole.SuggestedNonEIP1559GasPrice.int: "suggestedNonEIP1559GasPrice",
+      ModelRole.SuggestedNonEIP1559EstimatedTime.int: "suggestedNonEIP1559EstimatedTime",
       ModelRole.SuggestedMaxFeesPerGasLowLevel.int: "suggestedMaxFeesPerGasLowLevel",
       ModelRole.SuggestedPriorityFeePerGasLowLevel.int: "suggestedPriorityFeePerGasLowLevel",
       ModelRole.SuggestedEstimatedTimeLowLevel.int: "suggestedEstimatedTimeLowLevel",
@@ -107,6 +115,7 @@ QtObject:
       ModelRole.SuggestedApprovalTxNonce.int: "suggestedApprovalTxNonce",
       ModelRole.SuggestedApprovalGasAmount.int: "suggestedApprovalGasAmount",
       ModelRole.TxNonce.int: "txNonce",
+      ModelRole.TxGasPrice.int: "txGasPrice",
       ModelRole.TxGasFeeMode.int: "txGasFeeMode",
       ModelRole.TxMaxFeesPerGas.int: "txMaxFeesPerGas",
       ModelRole.TxBaseFee.int: "txBaseFee",
@@ -122,6 +131,7 @@ QtObject:
       ModelRole.ApprovalAmountRequired.int: "approvalAmountRequired",
       ModelRole.ApprovalContractAddress.int: "approvalContractAddress",
       ModelRole.ApprovalTxNonce.int: "approvalTxNonce",
+      ModelRole.ApprovalGasPrice.int: "approvalGasPrice",
       ModelRole.ApprovalGasFeeMode.int: "approvalGasFeeMode",
       ModelRole.ApprovalMaxFeesPerGas.int: "approvalMaxFeesPerGas",
       ModelRole.ApprovalBaseFee.int: "approvalBaseFee",
@@ -155,6 +165,8 @@ QtObject:
       result = newQVariant(item.processorName)
     of ModelRole.FromChain:
       result = newQVariant(item.fromChain)
+    of ModelRole.FromChainEIP1559Compliant:
+      result = newQVariant(item.fromChainEIP1559Compliant)
     of ModelRole.ToChain:
       result = newQVariant(item.toChain)
     of ModelRole.FromToken:
@@ -167,6 +179,10 @@ QtObject:
       result = newQVariant(item.amountInLocked)
     of ModelRole.AmountOut:
       result = newQVariant(item.amountOut)
+    of ModelRole.SuggestedNonEIP1559GasPrice:
+      result = newQVariant(item.suggestedNonEIP1559GasPrice)
+    of ModelRole.SuggestedNonEIP1559EstimatedTime:
+      result = newQVariant(item.suggestedNonEIP1559EstimatedTime)
     of ModelRole.SuggestedMaxFeesPerGasLowLevel:
       result = newQVariant(item.suggestedMaxFeesPerGasLowLevel)
     of ModelRole.SuggestedPriorityFeePerGasLowLevel:
@@ -201,6 +217,8 @@ QtObject:
       result = newQVariant(item.suggestedApprovalGasAmount)
     of ModelRole.TxNonce:
       result = newQVariant(item.txNonce)
+    of ModelRole.TxGasPrice:
+      result = newQVariant(item.txGasPrice)
     of ModelRole.TxGasFeeMode:
       result = newQVariant(item.txGasFeeMode)
     of ModelRole.TxMaxFeesPerGas:
@@ -231,6 +249,8 @@ QtObject:
       result = newQVariant(item.approvalContractAddress)
     of ModelRole.ApprovalTxNonce:
       result = newQVariant(item.approvalTxNonce)
+    of ModelRole.ApprovalGasPrice:
+      result = newQVariant(item.approvalGasPrice)
     of ModelRole.ApprovalGasFeeMode:
       result = newQVariant(item.approvalGasFeeMode)
     of ModelRole.ApprovalMaxFeesPerGas:

@@ -853,6 +853,9 @@ QtObject {
                         return Constants.FeePriorityModeType.Normal
                     }
 
+                    fromChainEIP1559Compliant: !!txPathUnderReviewEntry.item && txPathUnderReviewEntry.item.fromChainEIP1559Compliant
+
+                    currentGasPrice: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedNonEIP1559GasPrice : ""
                     currentBaseFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.currentBaseFee : ""
                     currentSuggestedMinPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedMinPriorityFee : ""
                     currentSuggestedMaxPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedMaxPriorityFee : ""
@@ -886,26 +889,50 @@ QtObject {
                         return root.fnFormatCurrencyAmount(feeTokenPrice*decimalFee, root.currentCurrency).toString()
                     }
 
-                    fnGetEstimatedTime: function(rawBaseFee, rawPriorityFee) {
+                    fnGetPriceInNativeTokenForFee: function(rawFee) {
+                        if (!rawFee) {
+                            return ""
+                        }
+                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                        const decimalFee = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawFee)
+                        return root.fnFormatCurrencyAmount(decimalFee, feeSymbol).toString()
+                    }
+
+                    fnGetEstimatedTime: function(gasPrice, rawBaseFee, rawPriorityFee) {
                         if (!txPathUnderReviewEntry.item) {
                             return ""
                         }
                         const chainId = txPathUnderReviewEntry.item.fromChain
-                        return root.transactionStoreNew.getEstimatedTime(chainId, rawBaseFee, rawPriorityFee)
+                        return root.transactionStoreNew.getEstimatedTime(chainId, gasPrice, rawBaseFee, rawPriorityFee)
                     }
 
                     normalPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
+                                const fee = !txPathUnderReviewEntry.item.fromChainEIP1559Compliant?
+                                              SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasPrice)
+                                            : SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel)
                                 const rawFee = SQUtils.AmountsArithmetic.times(
-                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
-                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
+                                                 fee,
+                                                 SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
                                 return fnGetPriceInCurrencyForFee(rawFee)
                             }
+                            const fee = !txPathUnderReviewEntry.item.fromChainEIP1559Compliant?
+                                          SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasPrice)
+                                        : SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel)
                             const rawFee = SQUtils.AmountsArithmetic.times(
-                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
-                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
+                                             fee,
+                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
                             return fnGetPriceInCurrencyForFee(rawFee)
+                        }
+                        return ""
+                    }
+                    normalGasPrice: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasPrice).toFixed()
+                            }
+                            return SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasPrice).toFixed()
                         }
                         return ""
                     }
@@ -914,7 +941,15 @@ QtObject {
                                                                      SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel)).toFixed()
                                      : ""
                     normalPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel : ""
-                    normalTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeLowLevel : ""
+                    normalTime: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (!txPathUnderReviewEntry.item.fromChainEIP1559Compliant) {
+                                return txPathUnderReviewEntry.item.suggestedNonEIP1559EstimatedTime
+                            }
+                            return txPathUnderReviewEntry.item.suggestedEstimatedTimeLowLevel
+                        }
+                        return 0
+                    }
 
                     fastPrice: {
                         if (!!txPathUnderReviewEntry.item) {
@@ -936,7 +971,7 @@ QtObject {
                                                                      SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel)).toFixed()
                                      : ""
                     fastPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel : ""
-                    fastTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeMediumLevel : ""
+                    fastTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeMediumLevel : 0
 
                     urgentPrice: {
                         if (!!txPathUnderReviewEntry.item) {
@@ -958,8 +993,17 @@ QtObject {
                                                                      SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel)).toFixed()
                                      : ""
                     urgentPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel : ""
-                    urgentTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeHighLevel : ""
+                    urgentTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeHighLevel : 0
 
+                    customGasPrice: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return txPathUnderReviewEntry.item.approvalGasPrice
+                            }
+                            return txPathUnderReviewEntry.item.txGasPrice
+                        }
+                        return ""
+                    }
                     customBaseFee: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
@@ -1070,6 +1114,7 @@ QtObject {
                         if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                             root.transactionStoreNew.setCustomTxDetails(customNonce,
                                                                         customGasAmount,
+                                                                        gasPrice,
                                                                         maxFeesPerGas,
                                                                         priorityFee,
                                                                         handler.uuid,

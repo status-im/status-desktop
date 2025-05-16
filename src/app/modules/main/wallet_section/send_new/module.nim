@@ -108,12 +108,15 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
   result = newPathItem(
     processorName = txPath.processorName,
     fromChain = fromChainId,
+    fromChainEIP1559Compliant = txPath.fromChain.eip1559Enabled,
     toChain = toChainId,
     fromToken = fromTokenSymbol,
     toToken = toTokenSymbol,
     amountIn = $txPath.amountIn,
     amountInLocked = txPath.amountInLocked,
     amountOut = $txPath.amountOut,
+    suggestedNonEIP1559GasPrice = $txPath.suggestedNonEIP1559Fees.gasPrice,
+    suggestedNonEIP1559EstimatedTime = txPath.suggestedNonEIP1559Fees.estimatedTime,
     suggestedMaxFeesPerGasLowLevel = $txPath.suggestedLevelsForMaxFeesPerGas.low,
     suggestedPriorityFeePerGasLowLevel = $txPath.suggestedLevelsForMaxFeesPerGas.lowPriority,
     suggestedEstimatedTimeLowLevel = txPath.suggestedLevelsForMaxFeesPerGas.lowEstimatedTime,
@@ -131,6 +134,7 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     suggestedApprovalTxNonce = $txPath.suggestedApprovalTxNonce,
     suggestedApprovalGasAmount = $txPath.suggestedApprovalGasAmount,
     txNonce = $txPath.txNonce,
+    txGasPrice = $txPath.txGasPrice,
     txGasFeeMode = txPath.txGasFeeMode,
     txMaxFeesPerGas = $txPath.txMaxFeesPerGas,
     txBaseFee = $txPath.txBaseFee,
@@ -145,6 +149,7 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     approvalAmountRequired = $txPath.approvalAmountRequired,
     approvalContractAddress = txPath.approvalContractAddress,
     approvalTxNonce = $txPath.approvalTxNonce,
+    approvalGasPrice = $txPath.approvalGasPrice,
     approvalGasFeeMode = txPath.approvalGasFeeMode,
     approvalMaxFeesPerGas = $txPath.approvalMaxFeesPerGas,
     approvalBaseFee = $txPath.approvalBaseFee,
@@ -336,14 +341,14 @@ method setFeeMode*(self: Module, feeMode: int, routerInputParamsUuid: string, pa
     var data = NotificationArgs(title: "Setting fee mode", message: err)
     self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
 
-method setCustomTxDetails*(self: Module, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+method setCustomTxDetails*(self: Module, nonce: int, gasAmount: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string,
   routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string) =
-  let err = self.controller.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName,
+  let err = self.controller.setCustomTxDetails(nonce, gasAmount, gasPrice, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName,
     chainId, isApprovalTx, communityId)
   if err.len > 0:
     # TODO: translate this, or find a better way to display error at this step (maybe within the popup)
     var data = NotificationArgs(title: "Setting custom fee", message: err)
     self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
 
-method getEstimatedTime*(self: Module, chainId: int, maxFeesPerGas: string, priorityFee: string): int =
-  return self.controller.getEstimatedTime(chainId, maxFeesPerGas, priorityFee)
+method getEstimatedTime*(self: Module, chainId: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string): int =
+  return self.controller.getEstimatedTime(chainId, gasPrice, maxFeesPerGas, priorityFee)

@@ -101,10 +101,10 @@ QtObject:
     isApprovalTx: bool, communityId: string) {.slot.} =
       self.delegate.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
 
-  proc setCustomTxDetails*(self: View, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+  proc setCustomTxDetails*(self: View, nonce: int, gasAmount: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string,
     routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string) {.slot.} =
-      self.delegate.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName,
+      self.delegate.setCustomTxDetails(nonce, gasAmount, gasPrice, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName,
         chainId, isApprovalTx, communityId)
 
-  proc getEstimatedTime*(self: View, chainId: int, maxFeesPerGas: string, priorityFee: string): int {.slot.} =
-    return self.delegate.getEstimatedTime(chainId, maxFeesPerGas, priorityFee)
+  proc getEstimatedTime*(self: View, chainId: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string): int {.slot.} =
+    return self.delegate.getEstimatedTime(chainId, gasPrice, maxFeesPerGas, priorityFee)

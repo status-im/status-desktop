@@ -149,6 +149,9 @@ SplitView {
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
                     networkChainId: priv.selectedNetwork.chainId
 
+                    fromChainEIP1559Compliant: true
+
+                    currentGasPrice: "0"
                     currentBaseFee: "8.2"
                     currentSuggestedMinPriorityFee: "0.06"
                     currentSuggestedMaxPriorityFee: "5.1"
@@ -156,6 +159,7 @@ SplitView {
                     currentNonce: 21
 
                     normalPrice: "1.45 EUR"
+                    normalGasPrice: "0"
                     normalBaseFee: "10000"
                     normalPriorityFee: "1000"
                     normalTime: 60
@@ -168,6 +172,7 @@ SplitView {
                     urgentPriorityFee: "100000"
                     urgentTime: 15
 
+                    customGasPrice: "0"
                     customBaseFee: "10000"
                     customPriorityFee: "1000"
                     customGasAmount: "35000"
@@ -179,7 +184,11 @@ SplitView {
                         return "0.25 USD"
                     }
 
-                    fnGetEstimatedTime: function(baseFeeInWei, priorityFeeInWei) {
+                    fnGetPriceInNativeTokenForFee: function(feeInWei) {
+                        return "0.000123 ETH"
+                    }
+
+                    fnGetEstimatedTime: function(gasPrice, baseFeeInWei, priorityFeeInWei) {
                         return 0
                     }
 
