@@ -204,6 +204,12 @@ QtObject:
     except:
       error "parsing slippage failed", slippage=slippagePercentageString
 
+    # need to append the disabled chains from global settings, otherwise a route
+    # with a network that is not enabled is returned by the router
+    let disabledChainIds = self.delegate.getDisabledChainIds()
+    let disabledFromNetworks = disabledChainIds & self.fromNetworksRouteModel.getRouteDisabledNetworkChainIds()
+    let disabledToNetworks = disabledChainIds & self.toNetworksRouteModel.getRouteDisabledNetworkChainIds()
+
     self.delegate.suggestedRoutes(
       uuid,
       self.sendType,
@@ -214,8 +220,8 @@ QtObject:
       amountIn,
       self.selectedToAssetKey,
       amountOut,
-      self.fromNetworksRouteModel.getRouteDisabledNetworkChainIds(),
-      self.toNetworksRouteModel.getRouteDisabledNetworkChainIds(),
+      disabledFromNetworks,
+      disabledToNetworks,
       slippagePercentage,
       extraParamsTable
     )
