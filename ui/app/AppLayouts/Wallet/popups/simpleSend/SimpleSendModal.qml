@@ -509,10 +509,18 @@ StatusDialog {
 
                 selectedChainId: root.selectedChainId
 
-                onCollectibleSelected: d.setSelectedCollectible(key)
-                onCollectionSelected: d.setSelectedCollectible(key)
-                onAssetSelected: d.setSelectedAsset(key)
-                onNetworkSelected: root.selectedChainId = chainId
+                onCollectibleSelected: (key) => {
+                                           d.setSelectedCollectible(key)
+                                       }
+                onCollectionSelected: (key) => {
+                                          d.setSelectedCollectible(key)
+                                      }
+                onAssetSelected: (key) => {
+                                     d.setSelectedAsset(key)
+                                 }
+                onNetworkSelected: (chainId) => {
+                                       root.selectedChainId = chainId
+                                   }
             }
         }
 
@@ -559,10 +567,18 @@ StatusDialog {
 
                     selectedChainId: root.selectedChainId
 
-                    onCollectibleSelected: d.setSelectedCollectible(key)
-                    onCollectionSelected: d.setSelectedCollectible(key)
-                    onAssetSelected: d.setSelectedAsset(key)
-                    onNetworkSelected: root.selectedChainId = chainId
+                    onCollectibleSelected: (key) => {
+                                               d.setSelectedCollectible(key)
+                                           }
+                    onCollectionSelected: (key) => {
+                                              d.setSelectedCollectible(key)
+                                          }
+                    onAssetSelected: (key) => {
+                                         d.setSelectedAsset(key)
+                                     }
+                    onNetworkSelected: (chainId) => {
+                                           root.selectedChainId = chainId
+                                       }
                 }
 
                 // Amount to send entry

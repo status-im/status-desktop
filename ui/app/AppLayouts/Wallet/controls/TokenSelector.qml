@@ -35,7 +35,7 @@ Control {
 
     function setSelection(name: string, icon: url, key: string) {
         // reset token selector in case of empty call
-        if (!key && !name && !icon) {
+        if (!key && !name && !icon.toString()) {
             tokenSelectorButton.selected = false
         } else {
             tokenSelectorButton.selected = true

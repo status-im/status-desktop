@@ -163,7 +163,7 @@ QObject {
                 proxyRoles: [
                     FastExpressionRole {
                         name: "balanceAsDouble"
-                        function balanceToDouble(balance: string, decimals: int) {
+                        function balanceToDouble(balance: string, decimals: int): double {
                             if (typeof balance !== 'string')
                                 return 0
                             let bigIntBalance = AmountsArithmetic.fromString(balance)
@@ -174,7 +174,7 @@ QObject {
                     },
                     FastExpressionRole {
                         name: "balanceAsString"
-                        function convert(amount: double) {
+                        function convert(amount: double): string {
                             return LocaleUtils.currencyAmountToLocaleString({amount, displayDecimals: 2}, {noSymbol: true})
                         }
 
