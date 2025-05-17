@@ -37,3 +37,48 @@ flowchart LR
     click nimstatusgo "https://github.com/status-im/nim-status-go" "Link to nim-status-go repo"
 ```
 
+## Standard Nim module
+
+This is the way how most of our Nim modules are assembled.
+
+```mermaid
+flowchart LR
+    ui(("UI")) --> view
+    subgraph modulegroup ["Module"]
+    view -->|"talks to the module through the interface"| interface
+    interface --> module
+    module["Module"] --> view["View"]
+    module --> controller["Controller"]
+    controller -->|"same as view"| interface
+    end
+    controller --> services(["Services"])
+    services --> statusgo(("statusgo"))
+```
+
+## Nim Middleware architecture
+
+Shows how the Nim modules are connected. The Nim modules are more often than not associated with the UI view they represent.
+
+```mermaid
+classDiagram
+  Main "1"*--"*" ChatSection
+  Main "1"*--"1" CommunitiesModule
+  Main "1"*--"1" ActivityCenterModule
+  Main "1"*--"1" ProfileSection
+  Main "1"*--"n" OtherSections
+  Main "1"*--"1" WalletSection
+  ChatSection "1"*--"*" ChatContent
+  ChatContent "1"*--"1" InputArea
+  ChatContent "1"*--"1" MessagesModule
+  ChatContent "1"*--"1" UsersModule
+  WalletSection *-- Accounts
+  WalletSection *-- Activity
+  WalletSection *-- Collectibles
+  WalletSection *-- Tokens
+  WalletSection *-- Assets
+  WalletSection *-- BuySellCrypto
+  WalletSection *-- Networks
+  WalletSection *-- Overview
+  WalletSection *-- SavedAddresses
+  WalletSection *-- SendModule
+```
