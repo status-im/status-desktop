@@ -177,7 +177,7 @@ proc suggestedRoutesAsync*(uuid: string, sendType: int, accountFrom: string, acc
     return rpcResponse.error.message
 
 proc suggestedRoutesAsyncForCommunities*(uuid: string, sendType: int, accountFrom: string, disabledFromChainIDs,
-  disabledToChainIDs: seq[int], communityId: string, signerPubKey: string = "0x0", tokenIds: seq[string] = @[],
+  disabledToChainIDs: seq[int], communityId: string, feeToken: string, signerPubKey: string = "0x0", tokenIds: seq[string] = @[],
   walletAddresses: seq[string] = @[], tokenDeploymentSignature: string = "", ownerTokenParameters: JsonNode = JsonNode(),
   masterTokenParameters: JsonNode = JsonNode(), deploymentParameters: JsonNode = JsonNode(),
   transferDetails: seq[JsonNode] = @[]): string {.raises: [RpcException].} =
@@ -194,7 +194,7 @@ proc suggestedRoutesAsyncForCommunities*(uuid: string, sendType: int, accountFro
     "transferDetails": transferDetails,
   }
 
-  let payload = prepareDataForSuggestedRoutes(uuid, sendType, accountFrom, accountTo=ZERO_ADDRESS, amountIn="0x0", amountOut="0x0", token="ETH",
+  let payload = prepareDataForSuggestedRoutes(uuid, sendType, accountFrom, accountTo=ZERO_ADDRESS, amountIn="0x0", amountOut="0x0", token=feeToken,
     tokenIsOwnerToken=false, toToken="", disabledFromChainIDs, disabledToChainIDs, slippagePercentage=0.0, extraParamsTable=initTable[string, string](),
     communityRouteInputParameters=data)
   let rpcResponse = core.callPrivateRPC("wallet_getSuggestedRoutesAsync", payload)
