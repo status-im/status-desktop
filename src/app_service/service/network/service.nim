@@ -129,7 +129,7 @@ proc getAppNetwork*(self: Service): NetworkItem =
     quit() # quit the app
   return network
 
-proc updateNetworkEndPointValues*(self: Service, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string) =
+proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
   let network = self.getNetworkByChainId(chainId)
 
   if not network.isNil:

@@ -72,8 +72,8 @@ method setNetworkActive*(self: Module, chainId: int, active: bool) =
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
 
-method updateNetworkEndPointValues*(self: Module, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string) =
-  self.controller.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
+method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
+  self.controller.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
 
 method fetchChainIdForUrl*(self: Module, url: string, isMainUrl: bool) =
   self.controller.fetchChainIdForUrl(url, isMainUrl)
