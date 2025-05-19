@@ -21,6 +21,11 @@ mainWindow_createChatOrCommunity_Loader = {"container": mainWindow_communityColu
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_communityColumnView_CommunityColumnView, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
 
+# Welcome banner
+welcomeBannerPanel = {"container": mainWindow_scrollView_StatusScrollView, "type": "WelcomeBannerPanel", "unnamed": 1, "visible": True}
+welcomeBannerAddMembersButton = {"container": welcomeBannerPanel, "objectName": "CommunityWelcomeBannerPanel_AddMembersButton", "type": "StatusButton", "visible": True}
+welcomeBannerManageCommunityButton = {"container": welcomeBannerPanel, "objectName": "CommunityWelcomeBannerPanel_ManageCommunity", "type": "StatusFlatButton", "visible": True}
+
 # Channels and categories
 communityChatListAndCategories = {"container": scrollView_Flickable, "id": "communityChatListAndCategories", "type": "StatusChatListAndCategories", "unnamed": 1, "visible": True}
 channelAndCategoriesListItems = {"container": communityChatListAndCategories, "objectName": "statusChatListAndCategoriesChatList", "type": "StatusChatList"}
