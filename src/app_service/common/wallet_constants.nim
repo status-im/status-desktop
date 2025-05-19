@@ -29,3 +29,10 @@ const
   CHAINID_BSC_MAINNET* = 56
   CHAINID_BSC_TESTNET* = 97
   CHAINID_STATUS_NETWORK_SEPOLIA* = 1660990954
+
+proc nativeCurrencySymbol*(chainId: int): string =
+  case chainId:
+    of CHAINID_BSC_MAINNET, CHAINID_BSC_TESTNET:
+      return BNB_SYMBOL
+    else:
+      return ETH_SYMBOL

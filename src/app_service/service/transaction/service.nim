@@ -14,6 +14,7 @@ import app/global/app_signals
 
 import app_service/common/utils as common_utils
 import app_service/common/types as common_types
+import app_service/common/wallet_constants as wallet_constants
 import app_service/service/currency/service as currency_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
@@ -408,6 +409,7 @@ QtObject:
       let
         disabledFromChainIDs = self.networkService.getDisabledChainIdsForEnabledChainIds(@[chainId])
         disabledToChainIDs = disabledFromChainIDs
+        feeToken = wallet_constants.nativeCurrencySymbol(chainId)
 
       let err = wallet.suggestedRoutesAsyncForCommunities(
         uuid,
@@ -416,6 +418,7 @@ QtObject:
         disabledFromChainIDs,
         disabledToChainIDs,
         communityId,
+        feeToken,
         signerPubKey,
         tokenIds,
         walletAddresses,
