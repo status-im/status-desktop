@@ -64,8 +64,8 @@ QtObject {
         return networksModuleInst.fetchChainIdForUrl(url, isMainUrl)
     }
 
-    function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl) {
-        networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
+    function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl) {
+        networksModuleInst.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
     }
 
     function setNetworkActive(chainId, active) {

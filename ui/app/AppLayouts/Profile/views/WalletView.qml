@@ -293,7 +293,7 @@ SettingsContentBase {
             areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
             onEvaluateRpcEndPoint: root.networksStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {
-                root.networksStore.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
+                root.networksStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
             }
         }
 
