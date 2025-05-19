@@ -229,7 +229,10 @@ class CommunityLeftPanel(QObject):
             communities_names.scrollView_addButton_StatusChatListCategoryItemButton)
         self._more_button = Button(communities_names.scrollView_menuButton_StatusChatListCategoryItemButton)
         self._arrow_button = Button(communities_names.scrollView_toggleButton_StatusChatListCategoryItemButton)
-        self._add_members_button = Button(names.scrollView_Add_members_StatusButton)
+
+        # communities welcome banner panel
+        self.add_members_button = Button(communities_names.welcomeBannerAddMembersButton)
+        self.manage_community_button = Button(communities_names.welcomeBannerManageCommunityButton)
 
     @property
     @allure.step('Get community logo')
@@ -375,9 +378,14 @@ class CommunityLeftPanel(QObject):
         super(CommunityLeftPanel, self).right_click()
 
     @allure.step('Open add members popup')
-    def open_add_members_popup(self):
-        self._add_members_button.click()
-        return InviteContactsPopup().wait_until_appears()
+    def open_add_members_popup(self, attempts: int = 2):
+        for _ in range(attempts):
+            self.add_members_button.click()
+            try:
+                return InviteContactsPopup().wait_until_appears()
+            except Exception:
+                pass  # Retry if attempts remain
+        raise Exception(f"Failed to open Communities Portal after {attempts} attempts")
 
 
 class ChatView(QObject):

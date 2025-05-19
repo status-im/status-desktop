@@ -38,7 +38,7 @@ onlineIdentifierButton = {"container": mainWindow_LeftPanelNavBar, "objectName":
 
 mainWindow_statusCommunityMainNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusCommunityMainNavBarListView", "type": "ListView", "visible": True}
 statusCommunityMainNavBarListView_CommunityNavBarButton = {"checkable": True, "container": mainWindow_statusCommunityMainNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton", "visible": True}
-scrollView_Add_members_StatusButton = {"checkable": False, "container": mainWindow_scrollView_StatusScrollView, "objectName": "CommunityWelcomeBannerPanel_AddMembersButton", "type": "StatusButton", "visible": True}
+scrollView_Add_members_StatusButton = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "CommunityWelcomeBannerPanel_AddMembersButton", "type": "StatusButton", "visible": True}
 
 # Banners
 secureYourSeedPhraseBanner_ModuleWarning = {"container": statusDesktop_mainWindow, "objectName": "secureYourSeedPhraseBanner", "type": "ModuleWarning", "visible": True}
