@@ -74,6 +74,15 @@ SplitView {
                     return Utils.nativeTokenGasToRaw(Constants.chains.mainnetChainId, gasValue)
                 }
 
+                fnToLocaleStr: function(value) {
+                    let amount = Utils.stripTrailingZeros(value)
+                    return amount.replace(".", Qt.locale().decimalPoint)
+                }
+
+                fnFromLocaleStr: function (value) {
+                    return value.replace(Qt.locale().decimalPoint, ".")
+                }
+
                 onConfirmClicked: {
                     logs.logEvent("confirm clicked...")
                     logs.logEvent(`selected fee mode: ${txSettings.selectedFeeMode}`)

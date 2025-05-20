@@ -60,6 +60,8 @@ Rectangle {
     required property var fnGetEstimatedTime
     required property var fnRawToGas
     required property var fnGasToRaw
+    required property var fnToLocaleStr
+    required property var fnFromLocaleStr
 
     signal confirmClicked()
     signal cancelClicked()
@@ -105,9 +107,11 @@ Rectangle {
                 customBaseFeeOrGasPriceInput.bottomLabelMessageRightCmp.text = ""
                 return
             }
-            const rawValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
-            const rawFee = SQUtils.AmountsArithmetic.times(rawValue, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
-            customBaseFeeOrGasPriceInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInNativeTokenForFee(rawFee)
+
+            const gp = root.fnFromLocaleStr(customBaseFeeOrGasPriceInput.text)
+            const rawValue = root.fnGasToRaw(gp)
+            const rawFee = SQUtils.AmountsArithmetic.times(rawValue, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toString()
+            customBaseFeeOrGasPriceInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInNativeTokenForFee(rawFee).toUpperCase()
         }
 
         function recalculateCustomPriorityFeePrice() {
@@ -118,9 +122,11 @@ Rectangle {
                 customPriorityFeeInput.bottomLabelMessageRightCmp.text = ""
                 return
             }
-            const rawValue = root.fnGasToRaw(customPriorityFeeInput.text)
-            const rawFee = SQUtils.AmountsArithmetic.times(rawValue, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
-            customPriorityFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInNativeTokenForFee(rawFee)
+
+            const pf = root.fnFromLocaleStr(customPriorityFeeInput.text)
+            const rawValue = root.fnGasToRaw(pf)
+            const rawFee = SQUtils.AmountsArithmetic.times(rawValue, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toString()
+            customPriorityFeeInput.bottomLabelMessageRightCmp.text = root.fnGetPriceInNativeTokenForFee(rawFee).toUpperCase()
         }
 
         function recalculateCustomPrice() {
@@ -129,14 +135,17 @@ Rectangle {
                 return
             }
 
+            const gp = root.fnFromLocaleStr(customBaseFeeOrGasPriceInput.text)
+
             let estimatedTime = 0
             let rawTotalFee = ""
             if (!root.fromChainEIP1559Compliant) {
-                rawTotalFee = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
+                rawTotalFee = root.fnGasToRaw(gp)
                 estimatedTime = root.fnGetEstimatedTime(rawTotalFee.toFixed(),  "", "")
             } else {
-                const rawBaseFee = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
-                const rawPriorityFee = root.fnGasToRaw(customPriorityFeeInput.text)
+                const pf = root.fnFromLocaleStr(customPriorityFeeInput.text)
+                const rawBaseFee = root.fnGasToRaw(gp)
+                const rawPriorityFee = root.fnGasToRaw(pf)
                 rawTotalFee = SQUtils.AmountsArithmetic.sum(rawBaseFee, rawPriorityFee)
                 estimatedTime = root.fnGetEstimatedTime("", rawTotalFee.toFixed(), rawPriorityFee.toFixed())
             }
@@ -328,7 +337,8 @@ Rectangle {
                                                       SQUtils.AmountsArithmetic.fromString(root.currentGasPrice)
                                                     : SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
                             const decreasedCurrentValue = SQUtils.AmountsArithmetic.times(rawCurrentValue, SQUtils.AmountsArithmetic.fromString("0.9")) // up to -10% is acceptable
-                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
+                            const gp = root.fnFromLocaleStr(customBaseFeeOrGasPriceInput.text)
+                            const rawEnteredValue = root.fnGasToRaw(gp)
                             return decreasedCurrentValue.cmp(rawEnteredValue) === 1
                         }
 
@@ -343,7 +353,8 @@ Rectangle {
                                                       SQUtils.AmountsArithmetic.fromString(root.currentGasPrice)
                                                     : SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
                             const increasedCurrentValue = SQUtils.AmountsArithmetic.times(rawCurrentValue, SQUtils.AmountsArithmetic.fromString("1.2")) // up to 20% higher value is acceptable
-                            const rawEnteredValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
+                            const gp = root.fnFromLocaleStr(customBaseFeeOrGasPriceInput.text)
+                            const rawEnteredValue = root.fnGasToRaw(gp)
                             return rawEnteredValue.cmp(increasedCurrentValue) === 1
                         }
 
@@ -364,10 +375,10 @@ Rectangle {
                                                       : root.currentBaseFee
 
                             return customBaseFeeOrGasPriceInput.displayLowBaseFeeOrGasPriceWarning?
-                                        qsTr("Lower than necessary (current %1)").arg(root.fnRawToGas(baseFeeOrGasPrice).toFixed())
+                                        qsTr("Lower than necessary (current %1)").arg(root.fnGetPriceInNativeTokenForFee(baseFeeOrGasPrice).toUpperCase())
                                       : customBaseFeeOrGasPriceInput.displayHighBaseFeeOrGasPriceWarning?
-                                            qsTr("Higher than necessary (current %1)").arg(root.fnRawToGas(baseFeeOrGasPrice).toFixed())
-                                          : qsTr("Current: %1 GWEI").arg(root.fnRawToGas(baseFeeOrGasPrice).toFixed())
+                                            qsTr("Higher than necessary (current %1)").arg(root.fnGetPriceInNativeTokenForFee(baseFeeOrGasPrice).toUpperCase())
+                                          : qsTr("Current: %1").arg(root.fnGetPriceInNativeTokenForFee(baseFeeOrGasPrice).toUpperCase())
                         }
                         rightPadding: leftPadding
                         input.rightComponent: StatusBaseText {
@@ -414,7 +425,8 @@ Rectangle {
                                 return false
                             }
                             const rawCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentSuggestedMaxPriorityFee)
-                            const rawEnteredValue = root.fnGasToRaw(customPriorityFeeInput.text)
+                            const pf = root.fnFromLocaleStr(customPriorityFeeInput.text)
+                            const rawEnteredValue = root.fnGasToRaw(pf)
                             return rawEnteredValue.cmp(rawCurrentValue) === 1
                         }
 
@@ -425,8 +437,10 @@ Rectangle {
                             if (!customPriorityFeeInput.text || !customBaseFeeOrGasPriceInput.text) {
                                 return false
                             }
-                            const rawBaseFeeValue = root.fnGasToRaw(customBaseFeeOrGasPriceInput.text)
-                            const rawEnteredValue = root.fnGasToRaw(customPriorityFeeInput.text)
+                            const gp = root.fnFromLocaleStr(customBaseFeeOrGasPriceInput.text)
+                            const rawBaseFeeValue = root.fnGasToRaw(gp)
+                            const pf = root.fnFromLocaleStr(customPriorityFeeInput.text)
+                            const rawEnteredValue = root.fnGasToRaw(pf)
                             return rawEnteredValue.cmp(rawBaseFeeValue) === 1
                         }
 
@@ -442,10 +456,10 @@ Rectangle {
                                                              Theme.palette.miscColor6
                                                            : Theme.palette.baseColor1
                         bottomLabelMessageLeftCmp.text: customPriorityFeeInput.displayHigherThanBaseFeeWarning?
-                                                            qsTr("Higher than max base fee: %1 GWEI").arg(customBaseFeeOrGasPriceInput.text)
+                                                            qsTr("Higher than max base fee: %1").arg(customBaseFeeOrGasPriceInput.text)
                                                           : customPriorityFeeInput.displayHigherPriorityFeeWarning?
-                                                                qsTr("Higher than necessary (current %1 - %2)").arg(root.fnRawToGas(root.currentSuggestedMinPriorityFee)).arg(root.fnRawToGas(root.currentSuggestedMaxPriorityFee))
-                                                              : qsTr("Current: %1 - %2 GWEI").arg(root.fnRawToGas(root.currentSuggestedMinPriorityFee)).arg(root.fnRawToGas(root.currentSuggestedMaxPriorityFee))
+                                                                qsTr("Higher than necessary (current %1 - %2)").arg(root.fnGetPriceInNativeTokenForFee(root.currentSuggestedMinPriorityFee).toUpperCase()).arg(root.fnGetPriceInNativeTokenForFee(root.currentSuggestedMaxPriorityFee).toUpperCase())
+                                                              : qsTr("Current: %1 - %2").arg(root.fnGetPriceInNativeTokenForFee(root.currentSuggestedMinPriorityFee).toUpperCase()).arg(root.fnGetPriceInNativeTokenForFee(root.currentSuggestedMaxPriorityFee).toUpperCase())
                         rightPadding: leftPadding
                         input.rightComponent: StatusBaseText {
                             text: "GWEI"

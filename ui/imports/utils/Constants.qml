@@ -919,6 +919,7 @@ QtObject {
     readonly property string ethToken: "ETH"
     readonly property string bnbToken: "BNB"
     readonly property string usdcToken: "USDC"
+    readonly property string gweiToken: "Gwei" // special "fake" token, added here to facilitate fee representation in locale
     readonly property var rawDecimals: {
         "ETH": 18,
         "BNB": 18,

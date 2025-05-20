@@ -762,6 +762,12 @@ QtObject {
         }
     }
 
+    // Returns gas token (that facilitates fee representation in locale) for chain.
+    function getNativeGasTokenSymbol(chainID) {
+        // Gas for all supported native tokens (currently ETH and BNB) are calculated in GWEI.
+        return Constants.gweiToken
+    }
+
     function getNativeTokenDecimals(chainID) {
         let decimals = Constants.rawDecimals[getNativeTokenSymbol(chainID)]
         if (!decimals) {
