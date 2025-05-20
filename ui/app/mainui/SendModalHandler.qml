@@ -895,9 +895,8 @@ QtObject {
                         if (!rawFee) {
                             return ""
                         }
-                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                        const decimalFee = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawFee)
-                        return root.fnFormatCurrencyAmount(decimalFee, feeSymbol).toString()
+                        const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
+                        return root.fnFormatCurrencyAmount(rawFee, feeSymbol).toString()
                     }
 
                     fnGetEstimatedTime: function(gasPrice, rawBaseFee, rawPriorityFee) {
@@ -914,33 +913,31 @@ QtObject {
                                 const fee = !txPathUnderReviewEntry.item.fromChainEIP1559Compliant?
                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasPrice)
                                             : SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel)
-                                const rawFee = SQUtils.AmountsArithmetic.times(
+                                return SQUtils.AmountsArithmetic.times(
                                                  fee,
-                                                 SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
-                                return fnGetPriceInCurrencyForFee(rawFee)
+                                                 SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toString()
                             }
                             const fee = !txPathUnderReviewEntry.item.fromChainEIP1559Compliant?
                                           SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasPrice)
                                         : SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel)
-                            const rawFee = SQUtils.AmountsArithmetic.times(
+                            return SQUtils.AmountsArithmetic.times(
                                              fee,
-                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
-                            return fnGetPriceInCurrencyForFee(rawFee)
+                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toString()
                         }
                         return ""
                     }
                     normalGasPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                return SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasPrice).toFixed()
+                                return SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasPrice).toString()
                             }
-                            return SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasPrice).toFixed()
+                            return SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasPrice).toString()
                         }
                         return ""
                     }
                     normalBaseFee: !!txPathUnderReviewEntry.item?
                                        SQUtils.AmountsArithmetic.sub(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
-                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel)).toFixed()
+                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel)).toString()
                                      : ""
                     normalPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel : ""
                     normalTime: {
@@ -956,21 +953,19 @@ QtObject {
                     fastPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                const rawFee = SQUtils.AmountsArithmetic.times(
+                                return SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
-                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
-                                return fnGetPriceInCurrencyForFee(rawFee)
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toString()
                             }
-                            const rawFee = SQUtils.AmountsArithmetic.times(
+                            return SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
-                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
-                            return fnGetPriceInCurrencyForFee(rawFee)
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toString()
                         }
                         return ""
                     }
                     fastBaseFee: !!txPathUnderReviewEntry.item?
                                        SQUtils.AmountsArithmetic.sub(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
-                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel)).toFixed()
+                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel)).toString()
                                      : ""
                     fastPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel : ""
                     fastTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeMediumLevel : 0
@@ -978,21 +973,19 @@ QtObject {
                     urgentPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                const rawFee = SQUtils.AmountsArithmetic.times(
+                                return SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
-                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
-                                return fnGetPriceInCurrencyForFee(rawFee)
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toString()
                             }
-                            const rawFee = SQUtils.AmountsArithmetic.times(
+                            return SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
-                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
-                            return fnGetPriceInCurrencyForFee(rawFee)
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toString()
                         }
                         return ""
                     }
                     urgentBaseFee: !!txPathUnderReviewEntry.item?
                                        SQUtils.AmountsArithmetic.sub(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
-                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel)).toFixed()
+                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel)).toString()
                                      : ""
                     urgentPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel : ""
                     urgentTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeHighLevel : 0
@@ -1048,10 +1041,10 @@ QtObject {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
                                 rawTotalFee = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalFee),
-                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalL1Fee)).toFixed()
+                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalL1Fee)).toString()
                             } else {
                                 rawTotalFee = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txFee),
-                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txL1Fee)).toFixed()
+                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txL1Fee)).toString()
                             }
                         }
                         return Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawTotalFee)

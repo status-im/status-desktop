@@ -274,6 +274,15 @@ SignTransactionModalBase {
             return Utils.nativeTokenGasToRaw(root.networkChainId, gasValue)
         }
 
+        fnToLocaleStr: function(value) {
+            let amount = Utils.stripTrailingZeros(value)
+            return amount.replace(".", Qt.locale().decimalPoint)
+        }
+
+        fnFromLocaleStr: function (value) {
+            return value.replace(Qt.locale().decimalPoint, ".")
+        }
+
         selectedFeeMode: root.selectedFeeMode
 
         fromChainEIP1559Compliant: root.fromChainEIP1559Compliant
@@ -288,11 +297,11 @@ SignTransactionModalBase {
         currentGasAmount: root.currentGasAmount
         currentNonce: root.currentNonce
 
-        normalPrice: root.normalPrice
+        normalPrice: root.fnGetPriceInCurrencyForFee(root.normalPrice)
         normalTime: WalletUtils.formatEstimatedTime(root.normalTime)
-        fastPrice: root.fastPrice
+        fastPrice: root.fnGetPriceInCurrencyForFee(root.fastPrice)
         fastTime: WalletUtils.formatEstimatedTime(root.fastTime)
-        urgentPrice: root.urgentPrice
+        urgentPrice: root.fnGetPriceInCurrencyForFee(root.urgentPrice)
         urgentTime: WalletUtils.formatEstimatedTime(root.urgentTime)
 
         function updateCustomFields() {
@@ -311,28 +320,28 @@ SignTransactionModalBase {
             }
 
             if (!customBaseFeeOrGasPriceDirty) {
+                let baseFeeOrGasPrice = !root.fromChainEIP1559Compliant? root.normalGasPrice : root.normalBaseFee
                 if (selectedFeeMode === root.selectedFeeMode) {
                     if (!root.fromChainEIP1559Compliant) {
-                        customBaseFeeOrGasPrice = !!root.customGasPrice? fnRawToGas(root.customGasPrice).toFixed() : "0"
+                        baseFeeOrGasPrice = root.customGasPrice
                     } else {
-                        customBaseFeeOrGasPrice = !!root.customBaseFee? fnRawToGas(root.customBaseFee).toFixed() : "0"
-                    }
-                } else {
-                    if (!root.fromChainEIP1559Compliant) {
-                        customBaseFeeOrGasPrice = fnRawToGas(root.normalGasPrice).toFixed()
-                    } else {
-                        customBaseFeeOrGasPrice = fnRawToGas(root.normalBaseFee).toFixed()
+                        baseFeeOrGasPrice = root.customBaseFee
                     }
                 }
+
+                const gp = !!baseFeeOrGasPrice? fnRawToGas(baseFeeOrGasPrice) : 0
+                customBaseFeeOrGasPrice = fnToLocaleStr(gp.toString())
                 customBaseFeeOrGasPriceDirty = false
             }
 
             if (root.fromChainEIP1559Compliant && !customPriorityFeeDirty) {
+                let priorityFee = root.normalPriorityFee
                 if (selectedFeeMode === root.selectedFeeMode) {
-                    customPriorityFee = !!root.customPriorityFee? fnRawToGas(root.customPriorityFee).toFixed() : "0"
-                } else {
-                    customPriorityFee = fnRawToGas(root.normalPriorityFee).toFixed()
+                    priorityFee = root.customPriorityFee
                 }
+
+                const pf = !!priorityFee? fnRawToGas(priorityFee) : 0
+                customPriorityFee = fnToLocaleStr(pf.toString())
                 customPriorityFeeDirty = false
             }
 
@@ -378,14 +387,17 @@ SignTransactionModalBase {
             if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                 if (!root.fromChainEIP1559Compliant) {
                     if (!!customBaseFeeOrGasPrice) {
-                        gasPrice = Utils.nativeTokenGasToRaw(root.networkChainId, customBaseFeeOrGasPrice).toFixed()
+                        const gp = fnFromLocaleStr(customBaseFeeOrGasPrice)
+                        gasPrice = Utils.nativeTokenGasToRaw(root.networkChainId, gp).toString()
                     }
                 } else if (!!customPriorityFee && !!customBaseFeeOrGasPrice) {
-                    const rawBaseFee = Utils.nativeTokenGasToRaw(root.networkChainId, customBaseFeeOrGasPrice)
-                    const rawPriorityFee = Utils.nativeTokenGasToRaw(root.networkChainId, customPriorityFee)
+                    const bf = fnFromLocaleStr(customBaseFeeOrGasPrice)
+                    const pf = fnFromLocaleStr(customPriorityFee)
+                    const rawBaseFee = Utils.nativeTokenGasToRaw(root.networkChainId, bf)
+                    const rawPriorityFee = Utils.nativeTokenGasToRaw(root.networkChainId, pf)
 
-                    priorityFee = rawPriorityFee.toFixed()
-                    maxFeesPerGas = SQUtils.AmountsArithmetic.sum(rawBaseFee, rawPriorityFee).toFixed()
+                    priorityFee = rawPriorityFee.toString()
+                    maxFeesPerGas = SQUtils.AmountsArithmetic.sum(rawBaseFee, rawPriorityFee).toString()
                 }
             }
 
