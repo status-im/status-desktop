@@ -77,7 +77,7 @@ proc isPathOutOfTheDefaultStatusDerivationTree*(path: string): bool =
   return false
 
 proc contractUniqueKey*(chainId: int, contractAddress: string): string =
-  return $chainId & "_" & contractAddress
+  return $chainId & "_" & contractAddress.toLower()
 
 proc intersectSeqs*[T](seq1, seq2: seq[T]): seq[T] =
   for item in seq1:

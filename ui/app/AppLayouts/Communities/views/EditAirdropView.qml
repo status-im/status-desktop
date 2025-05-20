@@ -75,7 +75,7 @@ StatusScrollView {
             feesModel.append({
                 contractUniqueKey: entry.contractUniqueKey,
                 title: qsTr("Airdrop %1 on %2")
-                                    .arg(ModelUtils.getByKey(root.selectedHoldingsModel, "contractUniqueKey", entry.contractUniqueKey, "symbol"))
+                                    .arg(ModelUtils.getByKey(root.selectedHoldingsModel, "contractUniqueKey", entry.contractUniqueKey, "key"))
                                     .arg(ModelUtils.getByKey(root.selectedHoldingsModel, "contractUniqueKey", entry.contractUniqueKey, "networkText")),
                 feeText: entry.feeText ?? ""
             })
