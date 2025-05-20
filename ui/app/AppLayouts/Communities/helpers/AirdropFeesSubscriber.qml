@@ -50,11 +50,11 @@ QtObject {
             return "-"
         }
 
-        if (!root.airdropFeesResponse || !Object.values(root.airdropFeesResponse.nativeCryptoCurrencyCurrency).length || !Object.values(root.airdropFeesResponse.fiatCurrency).length) {
+        if (!root.airdropFeesResponse || !Object.values(root.airdropFeesResponse.nativeCryptoCurrency).length || !Object.values(root.airdropFeesResponse.fiatCurrency).length) {
             return ""
         }
 
-        return LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.nativeCryptoCurrencyCurrency)
+        return LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.nativeCryptoCurrency)
                 + " (" + LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.fiatCurrency) + ")"
     }
 
