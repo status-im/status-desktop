@@ -30,6 +30,14 @@ Get the latest release for your platform:
 - **Linux**: [Download Tarball](https://github.com/status-im/status-desktop/releases/latest)
 - **macOS**: [Download DMG](https://github.com/status-im/status-desktop/releases/latest)
 
+### Supported Versions
+
+|Windows|Linux|macOS|
+| --- | --- | --- |
+| Intel chip (no native Windows ARM build yet) | Continuous effort to support the lowest Ubuntu LTS version. | Intel chip |
+| Windows 11 is used for testing | Actively tested on Ubuntu 22.04 | ARM chip |
+| | Should run on most of Linux flavours using glibc 2.31 or newer  | MacOS latest version |
+
 ### Windows
 
 1. [Download](https://github.com/status-im/status-desktop/releases/latest) the `.exe` file.
