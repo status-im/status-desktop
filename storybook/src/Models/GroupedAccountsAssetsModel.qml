@@ -36,6 +36,17 @@ ListModel {
             ]
         },
         {
+            tokensKey: "USDC (EVM)",
+            balances: [
+                { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 1, balance: "45123456789123456789" },
+                { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 11155420, balance: "999999999998998500000000000016777216" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 10, balance: "1077000000000000000000" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 11155420, balance: "122082928968121891" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 421614, balance: "222000000000000000" },
+                { account: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", chainId: 11155111, balance: "559133758939097000" }
+            ]
+        },
+        {
             tokensKey: "aave",
             balances: [
                 { account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", chainId: 10, balance: "559133758939097000" },

@@ -141,6 +141,7 @@ ListModel {
             sources: ";" + uniswap + ";" + status + ";",
             addressPerChain: [
                 { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                { chainId: 11155420, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
             ],
             decimals: 18,
             type: 1,
