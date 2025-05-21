@@ -64,7 +64,6 @@ StatusDialog {
 
                     width: parent.width
 
-                    utilsStore: root.utilsStore
                     rootStore: root.rootStore
                     chatCommunitySectionModule: root.chatCommunitySectionModule
                     messageStore: root.rootStore.messageStore
@@ -110,6 +109,9 @@ StatusDialog {
                     // Unfurling related data:
                     gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
                     neverAskAboutUnfurlingAgain: root.sharedRootStore.neverAskAboutUnfurlingAgain
+
+                    cbGetCompressedPk: root.utilsStore.getCompressedPk
+                    cbGetEmojiHash: root.utilsStore.getEmojiHash
 
                     // Unfurling related requests:
                     onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)

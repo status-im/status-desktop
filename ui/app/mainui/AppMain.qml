@@ -1889,7 +1889,6 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
-                                utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
@@ -1917,6 +1916,9 @@ Item {
                                 // Unfurling related data:
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
+
+                                cbGetCompressedPk: appMain.utilsStore.getCompressedPk
+                                cbGetEmojiHash: appMain.utilsStore.getEmojiHash
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -2147,7 +2149,6 @@ Item {
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.networksStore.areTestNetworksEnabled)
-                                utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
@@ -2171,6 +2172,9 @@ Item {
                                 // Unfurling related data:
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
+
+                                cbGetCompressedPk: appMain.utilsStore.getCompressedPk
+                                cbGetEmojiHash: appMain.utilsStore.getEmojiHash
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);

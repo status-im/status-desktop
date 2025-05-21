@@ -36,7 +36,6 @@ StatusSectionLayout {
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
     property ChatStores.RootStore rootStore
-    property UtilsStore utilsStore
     property var chatCommunitySectionModule
     required property TokensStore tokensStore
     required property var community
@@ -56,6 +55,8 @@ StatusSectionLayout {
     readonly property bool isAdmin: community.memberRole === Constants.memberRole.admin
     readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: community.isControlNode
+
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
@@ -293,7 +294,6 @@ StatusSectionLayout {
 
             sourceComponent: MembersSettingsPanel {
                 rootStore: root.rootStore
-                utilsStore: root.utilsStore
 
                 membersModel: root.joinedMembers
                 bannedMembersModel: root.bannedMembers
@@ -303,6 +303,7 @@ StatusSectionLayout {
                 editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
                 memberRole: root.community.memberRole
                 communityName: root.community.name
+                cbGetEmojiHash: root.cbGetEmojiHash
 
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id, deleteAllMessages)

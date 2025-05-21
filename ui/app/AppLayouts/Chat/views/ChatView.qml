@@ -41,7 +41,6 @@ StatusSectionLayout {
     id: root
 
     property ContactsStore contactsStore
-    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property CommunitiesStores.CommunitiesStore communitiesStore
@@ -110,6 +109,10 @@ StatusSectionLayout {
     // Unfurling related data:
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
+
+    // Utils store data
+    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
@@ -211,7 +214,7 @@ StatusSectionLayout {
 
                 proxyRoles: FastExpressionRole {
                     name: "emojiHash"
-                    expression: root.utilsStore.getEmojiHash(model.pubKey)
+                    expression: root.cbGetEmojiHash(model.pubKey)
                     expectedRoles: ["pubKey"]
                 }
             }
@@ -286,7 +289,6 @@ StatusSectionLayout {
 
         ChatColumnView {
             parentModule: root.rootStore.chatCommunitySectionModule
-            utilsStore: root.utilsStore
             rootStore: root.rootStore
             areTestNetworksEnabled: root.areTestNetworksEnabled
             createChatPropertiesStore: root.createChatPropertiesStore
@@ -304,6 +306,9 @@ StatusSectionLayout {
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+            cbGetCompressedPk: root.cbGetCompressedPk
+            cbGetEmojiHash: root.cbGetEmojiHash
 
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
