@@ -29,14 +29,22 @@ Control {
     required property CurrenciesStore currencyStore
     required property var flatNetworksModel
     required property var processedAssetsModel
-    property var plainTokensBySymbolModel // optional all tokens model, no balances
+    property var plainTokensBySymbolModel
 
     property int selectedNetworkChainId: -1
+    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
     property string selectedAccountAddress
+    onSelectedAccountAddressChanged: reevaluateSelectedId()
     property string nonInteractiveTokensKey
 
     property string tokenKey
-    onTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
+    onTokenKeyChanged: {
+        d.selectedHoldingId = tokenKey
+        reevaluateSelectedId()
+    }
+
+    property string defaultTokenKey
+    property string oppositeSideTokenKey
 
     property string tokenAmount
     onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
@@ -49,23 +57,13 @@ Control {
     property bool bottomTextLoading
     property bool interactive: true
 
-    // FIXME drop after using ModelEntry, shouldn't be needed
     function reevaluateSelectedId() {
-        const symbol = root.tokenKey !== "" ? Constants.uniqueSymbolToTokenSymbol(root.tokenKey) : ""
-        const uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(symbol, root.selectedNetworkChainId)
-        const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", uniqueSymbol)
-
-        if (entry) {
-            holdingSelector.currentTokensKey = uniqueSymbol
-            holdingSelector.setSelection(entry.symbol, entry.iconSource, uniqueSymbol)
-        } else {
-            holdingSelector.currentTokensKey = ""
-            holdingSelector.reset()
-        }
+        // Ensure calculation after all bindings are evaluated
+        Qt.callLater(d.reevaluateSelectedId)
     }
 
     // output API
-    readonly property string selectedHoldingId: holdingSelector.currentTokensKey
+    readonly property string selectedHoldingId: d.selectedHoldingId
     readonly property double value: amountToSendInput.asNumber
     readonly property string rawValue: {
         if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
@@ -100,11 +98,44 @@ Control {
     QtObject {
         id: d
 
+        property string selectedHoldingId: root.tokenKey
+
+        function reevaluateSelectedId() {
+            const tokenSymbol = Constants.uniqueSymbolToTokenSymbol(d.selectedHoldingId)
+            let uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(tokenSymbol, root.selectedNetworkChainId)
+            if (uniqueSymbol === "" || uniqueSymbol === root.oppositeSideTokenKey) {
+                if (root.defaultTokenKey !== root.oppositeSideTokenKey) {
+                    uniqueSymbol = root.defaultTokenKey
+                } else {
+                    uniqueSymbol = ""
+                }
+            }
+
+            const entry = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", uniqueSymbol)
+            if (entry && SQUtils.ModelUtils.contains(entry.addressPerChain, "chainId", root.selectedNetworkChainId)) {
+                d.selectedHoldingId = uniqueSymbol
+            } else {
+                // Token doesn't exist in destination chain
+                d.selectedHoldingId = root.defaultTokenKey
+            }
+        }
+
         readonly property var selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
             key: "tokensKey"
-            value: holdingSelector.currentTokensKey
+            value: d.selectedHoldingId
+            onValueChanged: d.setHoldingToSelector()
+            onAvailableChanged: d.setHoldingToSelector()
         }
+
+        function setHoldingToSelector() {
+            if (selectedHolding.available && !!selectedHolding.item) {
+                holdingSelector.setSelection(selectedHolding.item.symbol, selectedHolding.item.iconSource, selectedHolding.item.tokensKey)
+            } else {
+                holdingSelector.reset()
+            }
+        }
+        
         readonly property bool isSelectedHoldingValidAsset: selectedHolding.available && !!selectedHolding.item
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset && !!selectedHolding.item.currencyBalance ? selectedHolding.item.currencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset && !!selectedHolding.item.currentBalance ? selectedHolding.item.currentBalance : 0
@@ -262,14 +293,19 @@ Control {
 
                 objectName: "holdingSelector"
 
-                property string currentTokensKey
-
                 Layout.alignment: Qt.AlignRight
 
                 model: d.adaptor.outputAssetsModel
                 nonInteractiveKey: root.nonInteractiveTokensKey
 
-                onSelected: currentTokensKey = key
+                onSelected: {
+                    // Token existance checked with plainTokensBySymbolModel
+                    // This check prevents resetting selection when chain is changed until
+                    // processedAssetsModel is updated
+                    if (key !== "") {
+                        d.selectedHoldingId = key
+                    }
+                }
             }
 
             Item { Layout.fillHeight: !maxSendButton.visible }

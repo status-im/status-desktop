@@ -153,7 +153,9 @@ Item {
 
             const holdingSelector = findChild(controlUnderTest, "holdingSelector")
             verify(!!holdingSelector)
-            tryCompare(holdingSelector, "currentTokensKey", tokenSymbol)
+            const tokenSelectorButton = findChild(holdingSelector, "tokenSelectorButton")
+            verify(!!tokenSelectorButton)
+            tryCompare(tokenSelectorButton, "name", tokenSymbol)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
