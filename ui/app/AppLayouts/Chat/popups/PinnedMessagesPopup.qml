@@ -87,7 +87,6 @@ StatusDialog {
 
                     width: parent.width
 
-                    utilsStore: root.utilsStore
                     rootStore: root.store
                     messageStore: root.messageStore
 
@@ -140,6 +139,9 @@ StatusDialog {
                     // Unfurling related data:
                     gifUnfurlingEnabled: root.gifUnfurlingEnabled
                     neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+                    cbGetCompressedPk: root.utilsStore.getCompressedPk
+                    cbGetEmojiHash: root.utilsStore.getEmojiHash
 
                     // Unfurling related requests:
                     onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)

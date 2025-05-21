@@ -25,7 +25,6 @@ import AppLayouts.Profile.stores 1.0 as ProfileStores
 Loader {
     id: root
 
-    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
     property ChatStores.UsersStore usersStore
@@ -159,6 +158,10 @@ Loader {
     property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage || isBridgeMessage
     property bool isMessage: isEmoji || isImage || isSticker || isText
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
+
+    // Utils store data
+    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
@@ -865,7 +868,7 @@ Loader {
                     albumCount: root.albumCount
 
                     amISender: root.amISender
-                    sender.id: root.senderIsEnsVerified ? "" :  root.utilsStore.getCompressedPk(root.senderId)
+                    sender.id: root.senderIsEnsVerified ? "" : root.cbGetCompressedPk(root.senderId)
                     sender.displayName: root.senderDisplayName
                     sender.secondaryName: root.senderOptionalName
                     sender.isEnsVerified: root.isBridgeMessage ? false : root.senderIsEnsVerified
@@ -974,8 +977,6 @@ Loader {
                     LinksMessageView {
                         id: linksMessageView
 
-                        utilsStore: root.utilsStore
-
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
                         senderName: root.senderDisplayName
@@ -987,6 +988,7 @@ Loader {
                         highlightLink: delegate.hoveredLink
                         areTestNetworksEnabled: root.areTestNetworksEnabled
                         formatBalance: root.formatBalance
+                        cbGetEmojiHash: root.cbGetEmojiHash
                         onImageClicked: (image, mouse, imageSource, url) => {
                             d.onImageClicked(image, mouse, imageSource, url)
                         }

@@ -28,13 +28,14 @@ Item {
 
     property string searchString
     property RootStore rootStore
-    property SharedStores.UtilsStore utilsStore
 
     property int panelType: MembersTabPanel.TabType.AllMembers
     property int memberRole: Constants.memberRole.none
 
     readonly property bool isOwner: memberRole === Constants.memberRole.owner
     readonly property bool isTokenMaster: memberRole === Constants.memberRole.tokenMaster
+
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal kickUserClicked(string id, string name)
     signal banUserClicked(string id, string name)
@@ -276,7 +277,7 @@ Item {
                     profileType, contactType,
                     pubKey: model.pubKey,
                     compressedPubKey: model.compressedPubKey,
-                    emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
+                    emojiHash: root.cbGetEmojiHash(model.pubKey),
                     colorHash: model.colorHash,
                     colorId: model.colorId,
                     displayName: memberItem.title || model.displayName,

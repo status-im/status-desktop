@@ -31,8 +31,6 @@ Item {
 
     property var chatContentModule
 
-    property SharedStores.UtilsStore utilsStore
-
     property RootStore rootStore
     property MessageStore messageStore
     property UsersStore usersStore
@@ -57,6 +55,10 @@ Item {
     // Unfurling related data:
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
+
+    // Utils store data
+    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
@@ -293,7 +295,6 @@ Item {
 
             objectName: "chatMessageViewDelegate"
 
-            utilsStore: root.utilsStore
             rootStore: root.rootStore
             messageStore: root.messageStore
             usersStore: root.usersStore
@@ -386,6 +387,9 @@ Item {
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+            cbGetCompressedPk: root.cbGetCompressedPk
+            cbGetEmojiHash: root.cbGetEmojiHash
 
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
