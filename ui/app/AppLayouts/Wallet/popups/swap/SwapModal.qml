@@ -101,6 +101,14 @@ StatusDialog {
         function onSelectedNetworkChainIdChanged() {
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
         }
+
+        function onFromTokensKeyChanged() {
+            payPanel.tokenKey = root.swapInputParamsForm.fromTokensKey
+        }
+
+        function onToTokenKeyChanged() {
+            receivePanel.tokenKey = root.swapInputParamsForm.toTokenKey
+        }
     }
 
     // needed as the first time the value not loaded correctly without this Binding
@@ -181,27 +189,7 @@ StatusDialog {
                         flatNetworks: root.swapAdaptor.networksStore.activeNetworks
                         selection: [root.swapInputParamsForm.selectedNetworkChainId]
                         onSelectionChanged: {
-                            if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
-                                root.swapInputParamsForm.selectedNetworkChainId = selection[0]
-                                if(!!root.swapAdaptor.fromToken && !!root.swapAdaptor.fromToken.addressPerChain) {
-                                    let fromTokenAddressOnSelectedChain = SQUtils.ModelUtils.getByKey(
-                                            root.swapAdaptor.fromToken.addressPerChain, "chainId",
-                                            root.swapInputParamsForm.selectedNetworkChainId, "address")
-                                    if(!fromTokenAddressOnSelectedChain) {
-                                        // reset from token as it doesnt exist on selected network
-                                        root.swapInputParamsForm.resetFromTokenValues(false)
-                                    }
-                                }
-                                if(!!root.swapAdaptor.toToken && !!root.swapAdaptor.toToken.addressPerChain) {
-                                    let toTokenAddressOnSelectedChain = SQUtils.ModelUtils.getByKey(
-                                            root.swapAdaptor.toToken.addressPerChain, "chainId",
-                                            root.swapInputParamsForm.selectedNetworkChainId, "address")
-                                    if(!toTokenAddressOnSelectedChain) {
-                                        // reset to token as it doesnt exist on selected network
-                                        root.swapInputParamsForm.resetToTokenValues(false)
-                                    }
-                                }
-                            }
+                            root.swapInputParamsForm.selectedNetworkChainId = selection[0]
                             payPanel.forceActiveFocus()
                         }
                     }
@@ -229,15 +217,15 @@ StatusDialog {
                     plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
+                    defaultTokenKey: root.swapInputParamsForm.defaultFromTokenKey
+                    oppositeSideTokenKey: root.swapInputParamsForm.toTokenKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
 
                     cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
 
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
 
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
-                    onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: receivePanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Pay
@@ -275,13 +263,13 @@ StatusDialog {
                     plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
                     tokenKey: root.swapInputParamsForm.toTokenKey
+                    defaultTokenKey: root.swapInputParamsForm.defaultToTokenKey
+                    oppositeSideTokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
-                    
+
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
                     
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
-                    onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: payPanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Receive

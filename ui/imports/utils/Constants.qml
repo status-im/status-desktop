@@ -1557,12 +1557,12 @@ QtObject {
     */
     function tokenSymbolToUniqueSymbol(symbol, chainId) {
         if (symbol === "USDT" || symbol === "USDC") {
-            if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
+            if (chainId === Constants.chains.binanceSmartChainMainnetChainId || chainId === Constants.chains.binanceSmartChainTestnetChainId) {
                 return symbol + " (BSC)"
             }
             return symbol + " (EVM)"
         } else if (symbol === "SWFTC") {
-            if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
+            if (chainId === Constants.chains.binanceSmartChainMainnetChainId || chainId === Constants.chains.binanceSmartChainTestnetChainId) {
                 return symbol + " (BSC)"
             }
             return symbol + " (EVM)"
