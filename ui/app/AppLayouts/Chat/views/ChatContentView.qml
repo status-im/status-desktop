@@ -31,7 +31,6 @@ ColumnLayout {
     // Important: each chat/channel has its own ChatContentModule
     property var chatContentModule
     property var chatSectionModule
-    property SharedStores.UtilsStore utilsStore
 
     property RootStore rootStore
     property ContactsStore contactsStore
@@ -70,6 +69,10 @@ ColumnLayout {
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
 
+    // Utils store data
+    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
+
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
@@ -100,7 +103,6 @@ ColumnLayout {
         sourceComponent: ChatMessagesView {
             chatContentModule: root.chatContentModule
 
-            utilsStore: root.utilsStore
             rootStore: root.rootStore
             contactsStore: root.contactsStore
             messageStore: root.messageStore
@@ -121,6 +123,9 @@ ColumnLayout {
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+            cbGetCompressedPk: root.cbGetCompressedPk
+            cbGetEmojiHash: root.cbGetEmojiHash
 
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)

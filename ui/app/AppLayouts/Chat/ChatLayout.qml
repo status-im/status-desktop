@@ -25,7 +25,6 @@ import SortFilterProxyModel 0.2
 StackLayout {
     id: root
 
-    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     readonly property ProfileStores.ContactsStore contactsStore: rootStore.contactsStore
@@ -65,6 +64,10 @@ StackLayout {
     // Unfurling related data:
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
+
+    // Utils store data
+    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal profileButtonClicked()
     signal openAppSearch()
@@ -169,7 +172,6 @@ StackLayout {
             objectName: "chatViewComponent"
 
             contactsStore: root.contactsStore
-            utilsStore: root.utilsStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
             communitiesStore: root.communitiesStore
@@ -242,6 +244,9 @@ StackLayout {
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
+            cbGetCompressedPk: root.cbGetCompressedPk
+            cbGetEmojiHash: root.cbGetEmojiHash
+
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)
             onCommunityInfoButtonClicked: root.currentIndex = 1
             onCommunityManageButtonClicked: root.currentIndex = 1
@@ -282,7 +287,6 @@ StackLayout {
             id: communitySettingsView
 
             rootStore: root.rootStore
-            utilsStore: root.utilsStore
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
             enabledChainIds: root.networksStore.networkFilters
             onEnableNetwork: root.networksStore.enableNetwork(chainId)
@@ -300,6 +304,8 @@ StackLayout {
             pendingMembers: membersModelAdaptor.pendingMembers
             declinedMembers: membersModelAdaptor.declinedMembers
             communitySettingsDisabled: root.communitySettingsDisabled
+            cbGetEmojiHash: root.cbGetEmojiHash
+
             onCommunitySettingsDisabledChanged: if (communitySettingsDisabled) goTo(Constants.CommunitySettingsSections.Overview)
 
             onBackToCommunityClicked: root.currentIndex = 0
