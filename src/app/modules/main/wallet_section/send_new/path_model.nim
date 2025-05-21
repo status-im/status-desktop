@@ -10,6 +10,8 @@ type
     ProcessorName,
     FromChain,
     FromChainEIP1559Compliant,
+    FromChainNoBaseFee,
+    FromChainNoPriorityFee,
     ToChain,
     FromToken,
     ToToken,
@@ -90,6 +92,8 @@ QtObject:
       ModelRole.ProcessorName.int: "processorName",
       ModelRole.FromChain.int: "fromChain",
       ModelRole.FromChainEIP1559Compliant.int: "fromChainEIP1559Compliant",
+      ModelRole.FromChainNoBaseFee.int: "fromChainNoBaseFee",
+      ModelRole.FromChainNoPriorityFee.int: "fromChainNoPriorityFee",
       ModelRole.ToChain.int: "toChain",
       ModelRole.FromToken.int: "fromToken",
       ModelRole.ToToken.int: "toToken",
@@ -167,6 +171,10 @@ QtObject:
       result = newQVariant(item.fromChain)
     of ModelRole.FromChainEIP1559Compliant:
       result = newQVariant(item.fromChainEIP1559Compliant)
+    of ModelRole.FromChainNoBaseFee:
+      result = newQVariant(item.fromChainNoBaseFee)
+    of ModelRole.FromChainNoPriorityFee:
+      result = newQVariant(item.fromChainNoPriorityFee)
     of ModelRole.ToChain:
       result = newQVariant(item.toChain)
     of ModelRole.FromToken:

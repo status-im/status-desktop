@@ -7,6 +7,8 @@ QtObject:
     processorName: string
     fromChain: int
     fromChainEIP1559Compliant: bool
+    fromChainNoBaseFee: bool
+    fromChainNoPriorityFee: bool
     toChain: int
     fromToken: string
     toToken: string
@@ -62,6 +64,8 @@ QtObject:
     processorName: string,
     fromChain: int,
     fromChainEIP1559Compliant: bool,
+    fromChainNoBaseFee: bool,
+    fromChainNoPriorityFee: bool,
     toChain: int,
     fromToken: string,
     toToken: string,
@@ -117,6 +121,8 @@ QtObject:
     self.processorName = processorName
     self.fromChain = fromChain
     self.fromChainEIP1559Compliant = fromChainEIP1559Compliant
+    self.fromChainNoBaseFee = fromChainNoBaseFee
+    self.fromChainNoPriorityFee = fromChainNoPriorityFee
     self.toChain = toChain
     self.fromToken = fromToken
     self.toToken = toToken
@@ -175,6 +181,8 @@ QtObject:
     processorName: string,
     fromChain: int,
     fromChainEIP1559Compliant: bool,
+    fromChainNoBaseFee: bool,
+    fromChainNoPriorityFee: bool,
     toChain: int,
     fromToken: string,
     toToken: string,
@@ -231,6 +239,8 @@ QtObject:
       processorName,
       fromChain,
       fromChainEIP1559Compliant,
+      fromChainNoBaseFee,
+      fromChainNoPriorityFee,
       toChain,
       fromToken,
       toToken,
@@ -287,6 +297,8 @@ QtObject:
     result &= "\nprocessorName: " & $self.processorName
     result &= "\nfromChain: " & $self.fromChain
     result &= "\nfromChainEIP1559Compliant: " & $self.fromChainEIP1559Compliant
+    result &= "\nfromChainNoBaseFee: " & $self.fromChainNoBaseFee
+    result &= "\nfromChainNoPriorityFee: " & $self.fromChainNoPriorityFee
     result &= "\ntoChain: " & $self.toChain
     result &= "\nfromToken: " & $self.fromToken
     result &= "\ntoToken: " & $self.toToken
@@ -347,6 +359,12 @@ QtObject:
 
   proc fromChainEIP1559Compliant*(self: PathItem): bool =
     return self.fromChainEIP1559Compliant
+
+  proc fromChainNoBaseFee*(self: PathItem): bool =
+    return self.fromChainNoBaseFee
+
+  proc fromChainNoPriorityFee*(self: PathItem): bool =
+    return self.fromChainNoPriorityFee
 
   proc toChain*(self: PathItem): int =
     return self.toChain

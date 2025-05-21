@@ -25,6 +25,8 @@ QtObject:
     isActive*: bool
     isDeactivatable*: bool
     eip1559Enabled*: bool
+    noBaseFee*: bool
+    noPriorityFee*: bool
 
   proc setup*(self: NetworkItem,
     chainId: int,
@@ -43,7 +45,9 @@ QtObject:
     relatedChainId: int,
     isActive: bool,
     isDeactivatable: bool,
-    eip1559Enabled: bool
+    eip1559Enabled: bool,
+    noBaseFee: bool,
+    noPriorityFee: bool
     ) =
       self.QObject.setup
       self.chainId = chainId
@@ -63,6 +67,9 @@ QtObject:
       self.isActive = isActive
       self.isDeactivatable = isDeactivatable
       self.eip1559Enabled = eip1559Enabled
+      self.noBaseFee = noBaseFee
+      self.noPriorityFee = noPriorityFee
+
   proc delete*(self: NetworkItem) =
       self.QObject.delete
 
@@ -72,7 +79,8 @@ QtObject:
     result.setup(network.chainId, network.layer, network.chainName, network.iconUrl, network.shortName,
       network.chainColor, rpcProviders,
       network.blockExplorerURL, network.nativeCurrencyName, network.nativeCurrencySymbol, network.nativeCurrencyDecimals,
-      network.isTest, network.isEnabled, network.relatedChainId, network.isActive, network.isDeactivatable, network.eip1559Enabled)
+      network.isTest, network.isEnabled, network.relatedChainId, network.isActive, network.isDeactivatable,
+      network.eip1559Enabled, network.noBaseFee, network.noPriorityFee)
 
   proc networkItemToDto*(network: NetworkItem): NetworkDto =
     result = NetworkDto(
@@ -92,7 +100,9 @@ QtObject:
       relatedChainId: network.relatedChainId,
       isActive: network.isActive,
       isDeactivatable: network.isDeactivatable,
-      eip1559Enabled: network.eip1559Enabled
+      eip1559Enabled: network.eip1559Enabled,
+      noBaseFee: network.noBaseFee,
+      noPriorityFee: network.noPriorityFee
     )
 
   proc `$`*(self: NetworkItem): string =
@@ -113,7 +123,9 @@ QtObject:
       relatedChainId: {self.relatedChainId},
       isActive: {self.isActive},
       isDeactivatable: {self.isDeactivatable},
-      eip1559Enabled: {self.eip1559Enabled}
+      eip1559Enabled: {self.eip1559Enabled},
+      noBaseFee: {self.noBaseFee},
+      noPriorityFee: {self.noPriorityFee}
       ]"""
 
   proc chainId*(self: NetworkItem): int {.slot.} =
@@ -183,7 +195,7 @@ QtObject:
     return self.relatedChainId
   QtProperty[int] relatedChainId:
     read = relatedChainId
-  
+
   proc isActive*(self: NetworkItem): bool {.slot.} =
     return self.isActive
   QtProperty[bool] isActive:

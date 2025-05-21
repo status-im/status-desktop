@@ -60,6 +60,8 @@ type NetworkDto* = ref object of RootObj
   isActive* {.serializedFieldName("isActive").}: bool
   isDeactivatable* {.serializedFieldName("isDeactivatable").}: bool
   eip1559Enabled* {.serializedFieldName("eip1559Enabled").}: bool
+  noBaseFee* {.serializedFieldName("noBaseFee").}: bool
+  noPriorityFee* {.serializedFieldName("noPriorityFee").}: bool
 
 proc `$`*(self: NetworkDto): string =
   return fmt"""NetworkDto(
@@ -80,7 +82,9 @@ proc `$`*(self: NetworkDto): string =
     relatedChainId:{self.relatedChainId},
     isActive:{self.isActive},
     isDeactivatable:{self.isDeactivatable},
-    eip1559Enabled:{self.eip1559Enabled}
+    eip1559Enabled:{self.eip1559Enabled},
+    noBaseFee:{self.noBaseFee},
+    noPriorityFee:{self.noPriorityFee}
   )"""
 
 proc `%`*(t: NetworkDto): JsonNode {.inline.} =
