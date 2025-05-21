@@ -854,6 +854,8 @@ QtObject {
                     }
 
                     fromChainEIP1559Compliant: !!txPathUnderReviewEntry.item && txPathUnderReviewEntry.item.fromChainEIP1559Compliant
+                    fromChainNoBaseFee: !!txPathUnderReviewEntry.item && txPathUnderReviewEntry.item.fromChainNoBaseFee
+                    fromChainNoPriorityFee: !!txPathUnderReviewEntry.item && txPathUnderReviewEntry.item.fromChainNoPriorityFee
 
                     currentGasPrice: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedNonEIP1559GasPrice : ""
                     currentBaseFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.currentBaseFee : ""

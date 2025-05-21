@@ -21,6 +21,8 @@ Rectangle {
     id: root
 
     required property bool fromChainEIP1559Compliant
+    required property bool fromChainNoBaseFee
+    required property bool fromChainNoPriorityFee
     required property string nativeTokenSymbol
 
     required property string currentGasPrice
@@ -96,6 +98,9 @@ Rectangle {
         }
 
         function recalculatecustomBaseFeeOrGasPricePrice() {
+            if (root.fromChainEIP1559Compliant && root.fromChainNoBaseFee) {
+                return
+            }
             if (!customBaseFeeOrGasPriceInput.text) {
                 customBaseFeeOrGasPriceInput.bottomLabelMessageRightCmp.text = ""
                 return
@@ -106,7 +111,7 @@ Rectangle {
         }
 
         function recalculateCustomPriorityFeePrice() {
-            if (!root.fromChainEIP1559Compliant) {
+            if (!root.fromChainEIP1559Compliant || root.fromChainNoPriorityFee) {
                 return
             }
             if (!customPriorityFeeInput.text) {
@@ -313,6 +318,9 @@ Rectangle {
                         id: customBaseFeeOrGasPriceInput
 
                         readonly property bool displayLowBaseFeeOrGasPriceWarning: {
+                            if (root.fromChainEIP1559Compliant && root.fromChainNoBaseFee) {
+                                return false
+                            }
                             if (!customBaseFeeOrGasPriceInput.text) {
                                 return false
                             }
@@ -325,6 +333,9 @@ Rectangle {
                         }
 
                         readonly property bool displayHighBaseFeeOrGasPriceWarning: {
+                            if (root.fromChainEIP1559Compliant && root.fromChainNoBaseFee) {
+                                return false
+                            }
                             if (!customBaseFeeOrGasPriceInput.text) {
                                 return false
                             }
@@ -338,6 +349,7 @@ Rectangle {
 
                         Layout.preferredWidth: parent.width
                         Layout.topMargin: 20
+                        enabled: !(root.fromChainEIP1559Compliant && root.fromChainNoBaseFee)
                         label: !root.fromChainEIP1559Compliant? qsTr("Gas price") : qsTr("Max base fee")
                         labelIcon: "info"
                         labelIconColor: Theme.palette.baseColor1
@@ -395,6 +407,9 @@ Rectangle {
                         id: customPriorityFeeInput
 
                         readonly property bool displayHigherPriorityFeeWarning: {
+                            if (root.fromChainEIP1559Compliant && root.fromChainNoPriorityFee) {
+                                return false
+                            }
                             if (!customPriorityFeeInput.text) {
                                 return false
                             }
@@ -404,6 +419,9 @@ Rectangle {
                         }
 
                         readonly property bool displayHigherThanBaseFeeWarning: {
+                            if (root.fromChainEIP1559Compliant && root.fromChainNoBaseFee) {
+                                return false
+                            }
                             if (!customPriorityFeeInput.text || !customBaseFeeOrGasPriceInput.text) {
                                 return false
                             }
@@ -414,6 +432,7 @@ Rectangle {
 
                         Layout.preferredWidth: parent.width
                         visible: root.fromChainEIP1559Compliant
+                        enabled: !(root.fromChainEIP1559Compliant && root.fromChainNoPriorityFee)
                         label: qsTr("Priority fee")
                         labelIcon: "info"
                         labelIconColor: Theme.palette.baseColor1

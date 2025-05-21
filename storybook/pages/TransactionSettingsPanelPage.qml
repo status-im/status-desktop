@@ -29,6 +29,8 @@ SplitView {
                 anchors.centerIn: parent
 
                 fromChainEIP1559Compliant: true
+                fromChainNoBaseFee: false
+                fromChainNoPriorityFee: false
                 nativeTokenSymbol: "ETH"
 
                 currentGasPrice: "0.0"

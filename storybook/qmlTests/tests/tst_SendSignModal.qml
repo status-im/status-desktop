@@ -48,6 +48,8 @@ Item {
             networkChainId: 1
 
             fromChainEIP1559Compliant: true
+            fromChainNoBaseFee: false
+            fromChainNoPriorityFee: false
 
             currentGasPrice: "0"
             currentBaseFee: "8.2"

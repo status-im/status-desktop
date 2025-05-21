@@ -90,6 +90,8 @@ SignTransactionModalBase {
     required property int selectedFeeMode
 
     required property bool fromChainEIP1559Compliant
+    required property bool fromChainNoBaseFee
+    required property bool fromChainNoPriorityFee
 
     required property string currentGasPrice
     required property string currentBaseFee
@@ -275,6 +277,8 @@ SignTransactionModalBase {
         selectedFeeMode: root.selectedFeeMode
 
         fromChainEIP1559Compliant: root.fromChainEIP1559Compliant
+        fromChainNoBaseFee: root.fromChainNoBaseFee
+        fromChainNoPriorityFee: root.fromChainNoPriorityFee
         nativeTokenSymbol: Utils.getNativeTokenSymbol(root.networkChainId)
 
         currentGasPrice: root.currentGasPrice

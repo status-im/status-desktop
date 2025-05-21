@@ -109,6 +109,8 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     processorName = txPath.processorName,
     fromChain = fromChainId,
     fromChainEIP1559Compliant = txPath.fromChain.eip1559Enabled,
+    fromChainNoBaseFee = txPath.fromChain.noBaseFee,
+    fromChainNoPriorityFee = txPath.fromChain.noPriorityFee,
     toChain = toChainId,
     fromToken = fromTokenSymbol,
     toToken = toTokenSymbol,
