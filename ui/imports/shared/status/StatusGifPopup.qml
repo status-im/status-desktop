@@ -19,31 +19,43 @@ import "./StatusGifPopup"
 Popup {
     id: root
 
-    property GifStore gifStore
     property bool gifUnfurlingEnabled
 
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
-        root.gifStore.searchGifs(query)
+        root.searchGifsRequest(query)
     })
     property var toggleCategory: function(newCategory) {
         previousCategory = currentCategory
         currentCategory = newCategory
         searchBox.text = ""
         if (currentCategory === GifPopupDefinitions.Category.Trending) {
-            root.gifStore.getTrendingsGifs()
+            root.getTrendingsGifs()
         } else if(currentCategory === GifPopupDefinitions.Category.Favorite) {
-            root.gifStore.getFavoritesGifs()
+            root.getFavoritesGifs()
         } else if(currentCategory === GifPopupDefinitions.Category.Recent) {
-            root.gifStore.getRecentsGifs()
+            root.getRecentsGifs()
         }
     }
     property var toggleFavorite: function(item) {
-        root.gifStore.toggleFavoriteGif(item.id, currentCategory === GifPopupDefinitions.Category.Favorite)
+        root.toggleFavoriteGif(item.id, currentCategory === GifPopupDefinitions.Category.Favorite)
     }
     property alias searchString: searchBox.text
     property int currentCategory: GifPopupDefinitions.Category.Trending
     property int previousCategory: GifPopupDefinitions.Category.Trending
-    property bool loading: root.gifStore.gifLoading
+
+    property bool loading: false
+    property var gifColumnA: null
+    property var gifColumnB: null
+    property var gifColumnC: null
+
+    property var isFavorite: function () {}
+    property var addToRecentsGif: function () {}
+    property var searchGifsRequest: function () {}
+    property var getTrendingsGifs: function () {}
+    property var getFavoritesGifs: function () {}
+    property var getRecentsGifs: function () {}
+    property var toggleFavoriteGif: function () {}
+    property var setGifUnfurlingEnabled: function () {}
 
     signal gifSelected(var event, var url)
 
@@ -68,7 +80,7 @@ Popup {
         searchBox.text = ""
         searchBox.input.edit.forceActiveFocus()
         if (root.gifUnfurlingEnabled) {
-            root.gifStore.getTrendingsGifs()
+            root.getTrendingsGifs()
         }
     }
 
@@ -149,7 +161,7 @@ Popup {
                     const headerTextHeight = searchBox.text === "" ? headerText.height : 0
                     return 400 - gifHeader.height - headerTextHeight
                 }
-                sourceComponent: root.gifStore.gifColumnA.rowCount() === 0 ? emptyPlaceholderComponent : gifItemsComponent
+                sourceComponent: root.gifColumnA.rowCount() === 0 ? emptyPlaceholderComponent : gifItemsComponent
             }
 
             Row {
@@ -207,8 +219,8 @@ Popup {
             visible: true
 
             onEnableGifsRequested: {
-                root.gifStore.setGifUnfurlingEnabled(true)
-                root.gifStore.getTrendingsGifs()
+                root.setGifUnfurlingEnabled(true)
+                root.getTrendingsGifs()
             }
         }
         active: !root.gifUnfurlingEnabled
@@ -229,12 +241,13 @@ Popup {
                 property string lastHoveredId
 
                 StatusGifColumn {
-                    gifStore: root.gifStore
-
-                    gifList.model: root.gifStore.gifColumnA
+                    gifList.model: root.gifColumnA
                     gifWidth: (root.width / 3) - Theme.padding
-                    toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
+
+                    toggleFavorite: root.toggleFavorite
+                    isFavorite: root.isFavorite
+                    addToRecentsGif: root.addToRecentsGif
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
@@ -243,12 +256,13 @@ Popup {
                 }
 
                 StatusGifColumn {
-                    gifStore: root.gifStore
-
-                    gifList.model: root.gifStore.gifColumnB
+                    gifList.model: root.gifColumnB
                     gifWidth: (root.width / 3) - Theme.padding
-                    toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
+
+                    toggleFavorite: root.toggleFavorite
+                    isFavorite: root.isFavorite
+                    addToRecentsGif: root.addToRecentsGif
 
                     onGifHovered: {
                         gifs.lastHoveredId = id
@@ -257,16 +271,15 @@ Popup {
                 }
 
                 StatusGifColumn {
-                    gifStore: root.gifStore
-
-                    gifList.model: root.gifStore.gifColumnC
+                    gifList.model: root.gifColumnC
                     gifWidth: (root.width / 3) - Theme.padding
-                    toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
 
-                    onGifHovered: {
-                        gifs.lastHoveredId = id
-                    }
+                    toggleFavorite: root.toggleFavorite
+                    isFavorite: root.isFavorite
+                    addToRecentsGif: root.addToRecentsGif
+
+                    onGifHovered: º
                     onGifSelected: root.gifSelected(event, url)
                 }
             }
@@ -281,7 +294,7 @@ Popup {
             currentCategory: root.currentCategory
             loading: root.loading
             onDoRetry: searchBox.text === ""
-                        ? root.gifStore.getTrendingsGifs()
+                        ? root.getTrendingsGifs()
                         : searchGif(searchBox.text)
         }
     }
