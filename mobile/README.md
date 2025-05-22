@@ -31,7 +31,10 @@ This section is for users who want to get up and running quickly with minimal te
 
    ```bash
    # macOS
-   brew install docker act android-platform-tools android-commandlinetools
+   brew install docker --cask
+   # Start docker
+   open -a Docker
+   brew install act android-platform-tools android-commandlinetools
    ```
 
    ```bash

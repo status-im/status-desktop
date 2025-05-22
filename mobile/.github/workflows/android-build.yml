@@ -30,7 +30,7 @@ jobs:
           apt-get update
           apt-get install -yq curl
 
-          curl https://nim-lang.org/choosenim/init.sh -sSf | sh
+          curl https://nim-lang.org/choosenim/init.sh -sSf | sh -s -- -y
           $HOME/.nimble/bin/choosenim 2.0.12
           echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
 
