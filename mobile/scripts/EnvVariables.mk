@@ -5,6 +5,7 @@ HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
 ARCH?=$(shell uname -m)
 # Detect Qt version from qmake
 QT_VERSION?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
+QT_DIR?=$(shell qmake -query QT_INSTALL_PREFIX)
 
 ifeq ($(OS), ios)
 # iOS
@@ -49,6 +50,7 @@ export ARCH
 export OS
 export HOST_OS
 export QT_VERSION
+export QT_DIR
 
 ifeq ($(OS), ios)
 	export SDK=$(IPHONE_SDK)
@@ -91,7 +93,7 @@ ifeq ($(QMAKE),)
 endif
 $(info QMAKE: $(QMAKE))
 
-RCC := $(shell which rcc)
+RCC := $(shell qmake -query QT_HOST_LIBEXECS)/rcc
 ifeq ($(RCC),)
   $(error rcc not found)
 endif
