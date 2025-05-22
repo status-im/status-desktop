@@ -394,8 +394,8 @@ proc updateBurnState*(self: SectionItem, chainId: int, contractAddress: string, 
 proc updateRemoteDestructedAddresses*(self: SectionItem, chainId: int, contractAddress: string, addresess: seq[string]) {.inline.} =
   self.communityTokensModel.updateRemoteDestructedAddresses(chainId, contractAddress, addresess)
 
-proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) {.inline.} =
-  self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
+proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner], isOwner: bool) {.inline.} =
+  self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners, isOwner)
 
 proc setCommunityTokenHoldersLoading*(self: SectionItem, chainId: int, contractAddress: string, value: bool) {.inline.} =
   self.communityTokensModel.setCommunityTokenHoldersLoading(chainId, contractAddress, value)
