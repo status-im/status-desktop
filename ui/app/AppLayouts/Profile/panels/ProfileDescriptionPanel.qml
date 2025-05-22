@@ -58,7 +58,7 @@ Item {
                 StatusValidator {
                     name: "maxLengthValidator"
                     validate: function (t) { return t.length <= bioInput.charLimit}
-                    errorMessage: qsTr("Bio can't be longer than %n character(s)", "", bioInput.charLimit)
+                    errorMessage: qsTr("Bio can’t be longer than %n character(s)", "", bioInput.charLimit)
                 },
                 StatusRegularExpressionValidator {
                     regularExpression: Constants.regularExpressions.asciiWithEmoji
