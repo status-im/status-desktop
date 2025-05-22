@@ -154,12 +154,18 @@ StatusListView {
 
         remotelyDestructInProgress: model.remotelyDestructState === Constants.ContractTransactionStatus.InProgress
 
-        contactId: model.contactId
-        name: model.name
+        pubKey: model.pubKey
         walletAddress: model.walletAddress
-        imageSource: model.imageSource
         numberOfMessages: model.numberOfMessages
         amount: LocaleUtils.numberToLocaleString(StatusQUtils.AmountsArithmetic.toNumber(model.amount, root.multiplierIndex))
+        nickName: model.localNickname
+        userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
+        compressedPubKey: model.compressedPubKey
+        isContact: model.isContact
+        trustStatus: model.trustStatus
+        memberRole: model.memberRole
+        onlineStatus: model.onlineStatus
+        iconName: model.icon
 
         showSeparator: isFirstRowAddress && root.sortBy === TokenHoldersProxyModel.SortBy.Username
         isFirstRowAddress: {

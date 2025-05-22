@@ -15,7 +15,10 @@ import shared.controls 1.0
 Control {
     id: root
 
-    // Expected roles: name, walletAddress, imageSource, NumberOfMessages, amount
+    // Join of MembersModel and TokenHoldersModel
+    // Expected roles: name, walletAddress, imageSource, NumberOfMessages, amount, pubkey,
+    // isContact, isVerified, isEnsVerified, trustStatus, nickName, userName, compressedPubKey,
+    // memberRole, iconName, isUntrustworthy, onlineStatus
     property var model
 
     property string tokenName
@@ -26,7 +29,7 @@ Control {
     readonly property alias sortBy: holdersList.sortBy
     readonly property alias sorting: holdersList.sortOrder
 
-    readonly property bool empty: countCheckHelper.count === 0
+    readonly property bool empty: !root.model || !root.model.ModelCount || root.model.ModelCount.empty
 
     signal viewProfileRequested(string contactId)
     signal viewMessagesRequested(string contactId)
@@ -36,13 +39,6 @@ Control {
     signal banRequested(string name, string contactId, string address)
 
     signal generalAirdropRequested
-
-    Instantiator {
-        id: countCheckHelper
-
-        model: root.model
-        delegate: QtObject {}
-    }
 
     TokenHoldersProxyModel {
         id: proxyModel
@@ -136,7 +132,7 @@ Control {
 
                 const entry = SQUtils.ModelUtils.get(proxyModel, index)
 
-                menu.contactId = entry.contactId
+                menu.contactId = entry.pubKey
                 menu.name = entry.name
                 menu.currentAddress = entry.walletAddress
                 menu.popup(parent, mouse.x, mouse.y)
