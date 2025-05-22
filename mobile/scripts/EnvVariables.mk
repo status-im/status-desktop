@@ -7,6 +7,12 @@ ARCH?=$(shell uname -m)
 QT_VERSION?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
 QT_DIR?=$(shell qmake -query QT_INSTALL_PREFIX)
 
+$(info "environment variables")
+$(info $(shell env))
+$(info "========================== end of environment variables")
+$(info "Configuring build system for $(OS) $(ARCH) with QT $(QT_VERSION)")
+$(info "Qmake query: $(shell qmake -query)")
+
 ifeq ($(OS), ios)
 # iOS
 #SDKs: iphonesimulator, iphoneos
