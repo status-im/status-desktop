@@ -14,8 +14,6 @@ import shared.panels 1.0
 import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Communities.panels 1.0
 
-import SortFilterProxyModel 0.2
-
 StatusScrollView {
     id: root
 
@@ -108,8 +106,8 @@ StatusScrollView {
         }
 
         readonly property LeftJoinModel joinModel: LeftJoinModel {
-            leftModel: root.membersModel
-            rightModel: d.renamedTokenOwnersModel
+            leftModel: d.renamedTokenOwnersModel
+            rightModel: root.membersModel
 
             joinRole: "pubKey"
         }
@@ -228,7 +226,7 @@ StatusScrollView {
             id: tokenHolderLoader
 
             visible: !root.preview && root.deploymentCompleted
-            sourceComponent: isOwnerTokenItem ? tokenHolderContact : (token.tokenHoldersLoading ? tokenHoldersLoadingComponent : sortableTokenHolderPanel)
+            sourceComponent: token.tokenHoldersLoading ? tokenHoldersLoadingComponent : sortableTokenHolderPanel
         }
 
         Component {
@@ -243,7 +241,7 @@ StatusScrollView {
             id: sortableTokenHolderPanel
 
             SortableTokenHoldersPanel {
-                model: root.tokenOwnersModel
+                model: d.joinModel
                 tokenName: root.name
                 showRemotelyDestructMenuItem: !root.isAssetView && root.remotelyDestruct
                 isAirdropEnabled: root.deploymentCompleted &&
@@ -261,71 +259,6 @@ StatusScrollView {
 
                 onKickRequested: root.kickRequested(name, contactId, address)
                 onBanRequested: root.banRequested(name, contactId, address)
-            }
-        }
-
-        Component {
-            id: tokenHolderContact
-
-            ColumnLayout {
-                Layout.topMargin: Theme.padding
-                Layout.fillWidth: true
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-
-                    wrapMode: Text.Wrap
-                    font.pixelSize: Theme.primaryTextFontSize
-                    color: Theme.palette.baseColor1
-
-                    text: qsTr("%1 token hodler").arg(root.name)
-                }
-
-                StatusInfoBoxPanel {
-                    id: infoBoxPanel
-
-                    Layout.fillWidth: true
-                    Layout.topMargin: Theme.padding
-
-                    enabled: root.deploymentCompleted && (token.infiniteSupply || token.remainingTokens > 0)
-                    visible: d.joinModel.rowCount() === 0
-                    title: qsTr("No hodlers just yet")
-                    text: qsTr("You can Airdrop tokens to deserving Community members or to give individuals token-based permissions.")
-                    buttonText: qsTr("Airdrop")
-
-                    onClicked: root.generalAirdropRequested()
-                }
-
-                StatusListView {
-                    id: tokenOwnerList
-                    objectName: "tokenOwnerList"
-
-                    clip: false
-
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    anchors.bottomMargin: Theme.bigPadding
-                    displayMarginEnd: anchors.bottomMargin
-
-                    model: d.joinModel
-                    delegate: StatusMemberListItem {
-                        color: "transparent"
-                        leftPadding: 0
-                        rightPadding: 0
-                        hoverEnabled: false
-
-                        nickName: model.localNickname
-                        userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-                        pubKey: model.isEnsVerified ? "" : model.compressedPubKey
-                        isContact: model.isContact
-                        isVerified: model.trustStatus === Constants.trustStatus.trusted
-                        isUntrustworthy: model.trustStatus === Constants.trustStatus.untrustworthy
-                        status: model.onlineStatus
-                        icon.name: model.icon
-                        icon.color: Utils.colorForPubkey(model.pubKey)
-                        ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
-                    }
-                }
             }
         }
     }
