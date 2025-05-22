@@ -1536,7 +1536,7 @@ method errorLoadingTokenHolders*[T](self: Module[T], communityId: string, chainI
 method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
-    item.setCommunityTokenOwners(chainId, contractAddress, owners)
+    item.setCommunityTokenOwners(chainId, contractAddress, owners, item.memberRole == MemberRole.Owner)
 
 method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, deployState: DeployState) =
   let item = self.view.model().getItemById(communityId)
