@@ -3,9 +3,6 @@ HOST_ENV=$(shell printenv)
 OS?=android
 QT_VERSION?=6
 
-$(info ROOT_DIR: $(ROOT_DIR))
-$(info PWD: $(shell pwd))
-
 # verbosity level
 V := 0
 ifeq ($(V), 0)

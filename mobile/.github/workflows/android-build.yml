@@ -58,7 +58,5 @@ jobs:
       - name: Build Android APK
         shell: bash
         run: |
-          which qmake
-          env
           make V=3
 
