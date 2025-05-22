@@ -38,14 +38,26 @@ QtObject {
         StatusGifPopup {
             id: popup
 
-            gifStore: root.gifStore
-            gifUnfurlingEnabled: root.gifUnfurlingEnabled
-
             width: 360
             height: 440
             x: _d.parentXPosition - width - Theme.halfPadding
             y: _d.parentYPosition - height
             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+            gifUnfurlingEnabled: root.gifUnfurlingEnabled
+            loading: root.gifStore.gifLoading
+            gifColumnA: root.gifStore.gifColumnA
+            gifColumnB: root.gifStore.gifColumnB
+            gifColumnC: root.gifStore.gifColumnC
+
+            isFavorite: root.gifStore.isFavorite
+            addToRecentsGif: root.gifStore.addToRecentsGif
+            searchGifsRequest: root.gifStore.searchGifs
+            getTrendingsGifs: root.gifStore.getTrendingsGifs
+            getFavoritesGifs: root.gifStore.getFavoritesGifs
+            getRecentsGifs: root.gifStore.getRecentsGifs
+            toggleFavoriteGif: root.gifStore.toggleFavoriteGif
+            setGifUnfurlingEnabled: root.gifStore.setGifUnfurlingEnabled
 
             onGifSelected: {
                 _d.cbOnGifSelected(event, url)
