@@ -99,6 +99,8 @@ StatusDialog {
                 Layout.preferredHeight: 44
                 leftPadding: Theme.padding
                 rightPadding: Theme.halfPadding
+                topPadding: 0
+                bottomPadding: 0
                 placeholder.rightPadding: Theme.halfPadding
                 placeholder.elide: Text.ElideMiddle
                 placeholderText: root.linkToProfile
@@ -127,6 +129,8 @@ StatusDialog {
                 Layout.preferredHeight: 44
                 leftPadding: Theme.padding
                 rightPadding: Theme.halfPadding
+                topPadding: 0
+                bottomPadding: 0
                 edit.readOnly: true
                 background.color: "transparent"
                 background.border.color: Theme.palette.baseColor2
