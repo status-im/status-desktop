@@ -45,10 +45,17 @@ QtObject {
                     SQUtils.ModelUtils.get(root.walletRootStore.nonWatchAccounts, 0, "address")
             swapFormData.selectedNetworkChainId =
                     SQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
-            Global.openSwapModalRequested(swapFormData, (popup) => {
-                                              popup.Component.destruction.connect(() => {
-                                                                                      swapFormData.resetFormData()
-                                                                                  })})
+            openSendModal(swapFormData, (popup) => {
+                              popup.Component.destruction.connect(() => {
+                                                                      swapFormData.resetFormData()
+                                                                  })})
+        }
+
+        function launchSwapSpecific(data) {
+            openSendModal(data, (popup) => {
+                              popup.Component.destruction.connect(() => {
+                                                                      data.resetFormData()
+                                                                  })})
         }
 
         popupParent: root.popupParent
