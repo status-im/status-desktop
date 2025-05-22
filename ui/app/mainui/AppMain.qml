@@ -1986,6 +1986,7 @@ Item {
                             onBridgeTokenRequested: (tokenId, tokenType) => {
                                                         popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
                                                     }
+                            onOpenSwapModalRequested: popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                         }
                         onLoaded: {
                             item.resetView()

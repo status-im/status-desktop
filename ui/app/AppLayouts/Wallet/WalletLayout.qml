@@ -57,6 +57,8 @@ Item {
     signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
     signal bridgeTokenRequested(string tokenId, int tokenType)
 
+    signal openSwapModalRequested(var swapFormData)
+
     onAppMainVisibleChanged: {
         resetView()
     }
@@ -258,11 +260,7 @@ Item {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
-                Global.openSwapModalRequested(d.swapFormData, (popup) => {
-                    popup.Component.destruction.connect(() => {
-                        d.swapFormData.resetFormData()
-                    })
-                })
+                root.openSwapModalRequested(d.swapFormData)
             }
             onDappListRequested: root.dappListRequested()
             onDappConnectRequested: root.dappConnectRequested()
@@ -391,11 +389,7 @@ Item {
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }
-                Global.openSwapModalRequested(d.swapFormData, (popup) => {
-                    popup.Component.destruction.connect(() => {
-                        d.swapFormData.resetFormData()
-                    })
-                })
+                root.openSwapModalRequested(d.swapFormData)
             }
             onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
 
