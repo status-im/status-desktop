@@ -19,7 +19,7 @@ jobs:
       QT_PATH: /opt/qt/6.8.3
       QT_HOST_PATH: /opt/qt/6.8.3/gcc_64
       QT_ANDROID_PATH: /opt/qt/6.8.3/android_arm64_v8a
-      # PATH: /opt/qt/6.8.3/android_arm64_v8a/bin:/opt/qt/6.8.3/gcc_64/bin:/opt/qt/6.8.3/gcc_64/libexec:/opt/qt/6.8.3/android_arm64_v8a/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin
+      PATH: /opt/qt/6.8.3/android_arm64_v8a/bin:/opt/qt/6.8.3/gcc_64/bin:/opt/qt/6.8.3/gcc_64/libexec:/opt/qt/6.8.3/android_arm64_v8a/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin
       PKG_CONFIG_PATH: /opt/qt/6.8.3/android_arm64_v8a/lib/pkgconfig
       ANDROID_ABI: arm64-v8a
       USE_SYSTEM_NIM: 1
@@ -55,5 +55,15 @@ jobs:
         run: |
           which qmake
           env
+          ls -l /opt
+          ls -l /opt/qt
+          ls -l /opt/qt/6.8.3
+          ls -l /opt/qt/6.8.3/android_arm64_v8a
+          /opt/qt/6.8.3/android_arm64_v8a/bin/qmake --version
+
+
+
+
+
           # make V=3
 
