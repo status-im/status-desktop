@@ -33,6 +33,7 @@ jobs:
           curl https://nim-lang.org/choosenim/init.sh -sSf | sh -s -- -y
           $HOME/.nimble/bin/choosenim 2.0.12
           echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
+          echo ${{env.PATH}} >> "$GITHUB_PATH"
 
       - name: Setup Go 1.22
         uses: actions/setup-go@v5
@@ -55,10 +56,5 @@ jobs:
         run: |
           which qmake
           env
-          ls -l /opt
-          ls -l /opt/qt
-          ls -l /opt/qt/6.8.3
-          ls -l /opt/qt/6.8.3/android_arm64_v8a
-          /opt/qt/6.8.3/android_arm64_v8a/bin/qmake --version
           make V=3
 
