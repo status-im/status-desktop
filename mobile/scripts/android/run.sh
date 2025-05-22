@@ -2,17 +2,66 @@
 
 CWD=$(realpath `dirname $0`)
 APP=${APP:="$CWD/../bin/$OS/Status-tablet.apk"}
+ARCH=${ARCH:="arm64-v8a"}
 ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:=""}
 EMULATOR=${EMULATOR:="$ANDROID_SDK_ROOT/emulator/emulator"}
 ADB=${ADB:="$ANDROID_SDK_ROOT/platform-tools/adb"}
-ANDROID_SERIAL=${ANDROID_SERIAL:=""}
+# Optional params:
+ANDROID_SERIAL=${ANDROID_SERIAL:=""} # Serial number of the device to use to avoid interactive selection
 
-if [ "$ANDROID_SDK_ROOT" = "" ]; then
-    echo "ANDROID_SDK_ROOT is not set. Please set ANDROID_SDK_ROOT to the path of your Android SDK."
+# It's only used if no device is connected and no emulator is defined
+# to create a new emulator
+AVDMANAGER=${AVDMANAGER:="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager"}
+SDKMANAGER=${SDKMANAGER:="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"}
+
+
+if [ "$ADB" = "" ]; then
+    echo "ADB is not set. Please set ADB to the path of your Android SDK."
     exit 1
 fi
 
+if [ "$EMULATOR" = "" ]; then
+    echo "EMULATOR is not set. Please set EMULATOR to the path of your Android SDK."
+    exit 1
+fi
+
+create_emulator() {
+    # Detect host architecture
+    ARCH=$(uname -m)
+    if [[ "$ARCH" == "arm64" || "$ARCH" == "aarch64" ]]; then
+        ABI="arm64-v8a"
+    else
+        ABI="x86_64"
+    fi
+
+    API_LEVEL="30"
+    PACKAGE_NAME="system-images;android-${API_LEVEL};google_apis;${ABI}"
+    AVD_NAME="status-default-avd"
+
+    $SDKMANAGER --install "$PACKAGE_NAME" >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Failed to install system image for API level $API_LEVEL and ABI $ABI."
+        exit 1
+    fi
+
+    # Create AVD if not exists
+    if ! $AVDMANAGER list avd | grep -q "$AVD_NAME"; then
+    echo "no" | avdmanager create avd \
+        --name "$AVD_NAME" \
+        --package "$PACKAGE_NAME" \
+        --device "Nexus 10"
+    fi
+}
+
 select_device_or_emulator() {
+
+    # if no device is connected and no emulator defined, create a new emulator
+    if [ -z "$($ADB devices | grep -E 'device$')" ] && [ -z "$($EMULATOR -list-avds)" ]; then
+        echo "No device connected. We're creating a new emulator for you."
+        # Create a new emulator with the default AVD name
+        create_emulator
+    fi
+
     # print all available devices and emulators and let the user select one
     echo "Running devices:"
     device_list=$($ADB devices | awk 'NR>1 && /^[a-zA-Z0-9\-]/ {print NR-1 ": " $1}')
@@ -60,12 +109,20 @@ select_device_or_emulator() {
     fi
 }
 
+# Run on the connected device or emulator
 if [ -z "$ANDROID_SERIAL" ]; then
     select_device_or_emulator
 fi
 
 echo "Installing app"
+$ADB -s $ANDROID_SERIAL uninstall im.status.tablet
 $ADB -s $ANDROID_SERIAL install -r $APP
+if [ $? -ne 0 ]; then
+    echo "App installation failed."
+    exit 1
+else
+    echo "App installed successfully."
+fi
 
 echo "App installed. Starting app"
 if [ "$QT_VERSION" = "6" ]; then

@@ -25,12 +25,12 @@ fi
 echo "Building status-go for $ARCH using compiler: $CC"
 
 cd $STATUS_GO
-make generate
+make generate V=3 SHELL=/bin/sh
 
 mkdir -p build/bin/statusgo-lib
 go run cmd/library/*.go > build/bin/statusgo-lib/main.go
 
-CGO_ENABLED=1 GOOS=$OS GOARCH=$GOARCH \
+GOFLAGS="" CGO_ENABLED=1 GOOS=$OS GOARCH=$GOARCH \
 	go build \
 		-buildmode=$BUILD_MODE \
 		-tags 'gowaku_no_rln nowatchdog disable_torrent' \

@@ -1,10 +1,24 @@
 #!/bin/sh
+set -o xtrace
 set -ef pipefail
 
 CWD=$(realpath `dirname $0`)
 APPID=${APPID:=com.statusim.Status}
 APP=${APP:="$CWD/../../bin/Applications/Status-tablet.app"}
-SIMULATOR_INFO=$(xcrun simctl list devices "iPad Pro" | grep -m 1 "iPad Pro")
+echo "APP: $APP"
+SIMULATOR_INFO=$(xcrun simctl list devices "iPad Pro" | grep -m 1 "iPad Pro" || true)
+
+echo "Simulator info: $SIMULATOR_INFO"
+if [ -z "$SIMULATOR_INFO" ]; then
+    echo "No matching simulator found. Creating a new one..."
+    xcrun simctl create "iPad Pro" com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M4-16GB
+    SIMULATOR_INFO=$(xcrun simctl list devices | grep -m 1 "iPad Pro")
+    if [ -z "$SIMULATOR_INFO" ]; then
+        echo "Failed to create or find the simulator. Exiting."
+        exit 1
+    fi
+fi
+
 SIMULATOR_DEVICE_ID=$(echo $SIMULATOR_INFO | grep -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})")
 SIMULATOR_DEVICE_STATE=$(echo $SIMULATOR_INFO | grep -E -o -i "\((Booted|Shutdown|Shutting Down|Creating|Deleting)\)" | tr -d '()')
 

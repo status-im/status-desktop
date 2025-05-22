@@ -1,6 +1,6 @@
 #!/bin/sh
 ARCH=${ARCH:="x86_64"}
-QTDIR=${QTDIR:="/usr/local/opt/qt"}
+QTDIR=${QTDIR:=$(qmake -query QT_INSTALL_PREFIX)}
 OS=${OS:=ios}
 ANDROID_NDK_HOME=${ANDROID_NDK_HOME:=""}
 

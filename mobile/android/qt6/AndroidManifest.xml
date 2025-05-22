@@ -41,12 +41,14 @@
         android:windowContentOverlay="@null"
         android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
+        android:hasFragileUserData="true"
         android:fullBackupOnly="false">
         <activity
             android:name="org.qtproject.qt.android.bindings.QtActivity"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
             android:launchMode="singleTop"
             android:screenOrientation="landscape"
+            android:resizeableActivity="false"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
