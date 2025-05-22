@@ -11,8 +11,8 @@ OS=${OS:="android"}
 HOST_ENV=${HOST_ENV}
 USE_SYSTEM_NIM=${USE_SYSTEM_NIM:="0"}
 
-DESKTOP_VERSION=$(eval cd $STATUS_DESKTOP && ./scripts/version.sh)
-STATUSGO_VERSION=$(eval cd $STATUS_DESKTOP/vendor/status-go && make version --no-print-directory)
+DESKTOP_VERSION=$(eval cd $STATUS_DESKTOP && git describe --tags --dirty="-dirty" --always)
+STATUSGO_VERSION=$(eval cd $STATUS_DESKTOP/vendor/status-go && git describe --tags --dirty="-dirty" --always)
 
 if [ "$ARCH" = "x86_64" ]; then
     CARCH="amd64"
