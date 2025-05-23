@@ -30,6 +30,7 @@ QtObject {
     }
 
     function getEmojiHash(publicKey) {
+        console.log("\n\n++++++++++++++++++getEmojiHash")
         if (publicKey === "" || !isChatKey(publicKey))
             return []
 
@@ -41,6 +42,7 @@ QtObject {
     }
 
     function getCompressedPk(publicKey) {
+        console.log("\n\n++++++++++++++++++getCompressedPk")
         if (publicKey === "") {
             return ""
         }
