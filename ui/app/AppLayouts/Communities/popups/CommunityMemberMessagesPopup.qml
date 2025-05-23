@@ -64,7 +64,6 @@ StatusDialog {
 
                     width: parent.width
 
-                    sharedRootStore: root.sharedRootStore
                     utilsStore: root.utilsStore
                     rootStore: root.rootStore
                     chatCommunitySectionModule: root.chatCommunitySectionModule
@@ -107,6 +106,13 @@ StatusDialog {
                     bridgeName: model.bridgeName
                     isViewMemberMessagesePopup: true
                     shouldRepeatHeader: true
+
+                    // Unfurling related data:
+                    gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
+                    neverAskAboutUnfurlingAgain: root.sharedRootStore.neverAskAboutUnfurlingAgain
+
+                    // Unfurling related requests:
+                    onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
                 }
 
                 StatusMouseArea {

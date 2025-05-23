@@ -19,7 +19,6 @@ import AppLayouts.Chat.stores 1.0
 StatusDialog {
     id: root
 
-    property SharedStores.RootStore sharedStore
     property SharedStores.UtilsStore utilsStore
     property RootStore store
     property MessageStore messageStore
@@ -30,6 +29,14 @@ StatusDialog {
 
     readonly property var contactDetails: store ? store.oneToOneChatContact : null
     readonly property bool isPinActionAvaliable: contactDetails ? contactDetails.isContact : true
+
+    // Unfurling related data:
+    property bool gifUnfurlingEnabled
+    property bool neverAskAboutUnfurlingAgain
+
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
 
     width: 800
     height: 428
@@ -80,7 +87,6 @@ StatusDialog {
 
                     width: parent.width
 
-                    sharedRootStore: root.sharedStore
                     utilsStore: root.utilsStore
                     rootStore: root.store
                     messageStore: root.messageStore
@@ -130,6 +136,15 @@ StatusDialog {
                     // Additional params
                     isInPinnedPopup: true
                     shouldRepeatHeader: true
+
+                    // Unfurling related data:
+                    gifUnfurlingEnabled: root.gifUnfurlingEnabled
+                    neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+                    // Unfurling related requests:
+                    onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+                    onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
                 }
 
                 StatusMouseArea {

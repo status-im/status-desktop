@@ -18,11 +18,6 @@ QtObject {
     required property WalletStores.WalletAssetsStore walletAssetsStore
     required property NetworksStore networksStore
 
-    Component.onCompleted: {
-        // TODO update opening logic to be similar to send
-        Global.openSwapModalRequested.connect(openSendModal)
-    }
-
     function openSendModal(params = {}, callback = null) {
         d.swapInputParams = params
         let swapModalInst = swapModalComponent.createObject(popupParent)
@@ -59,6 +54,7 @@ QtObject {
     }
 
     readonly property Component swapModalComponent: Component {
+        // TODO: Update the API to be explicit and avoid direct store access
         SwapModal {
             swapAdaptor: SwapModalAdaptor {
                 swapStore: d.swapStore

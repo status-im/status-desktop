@@ -1,0 +1,4 @@
+HandlersManager 1.0 HandlersManager.qml
+SendModalHandler 1.0 SendModalHandler.qml
+StatusGifPopupHandler 1.0 StatusGifPopupHandler.qml
+SwapModalHandler 1.0 SwapModalHandler.qml

@@ -41,9 +41,9 @@ Rectangle {
     signal dismissLinkPreview(int index)
     signal openPaymentRequestModal()
     signal removePaymentRequestPreview(int index)
+    signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
     
     property var usersModel
-    property SharedStores.RootStore sharedStore
 
     property var emojiPopup: null
     property var stickersPopup: null
@@ -1075,36 +1075,6 @@ Rectangle {
         }
     }
 
-    Component {
-        id: gifPopupComponent
-
-        StatusGifPopup {
-            readonly property point relativePosition: d.getCommonPopupRelativePosition(this, parent)
-
-            gifStore: control.sharedStore.gifStore
-            gifUnfurlingEnabled: control.sharedStore.gifUnfurlingEnabled
-
-            width: 360
-            height: 440
-            x: relativePosition.x
-            y: relativePosition.y
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-            gifSelected: function (event, url) {
-                messageInputField.text += "\n" + url
-                control.sendMessage(event)
-                control.isReply = false
-                messageInputField.forceActiveFocus()
-                if (control.closeGifPopupAfterSelection)
-                    close()
-            }
-            onClosed: {
-                gifBtn.popup = null
-                destroy()
-            }
-        }
-    }
-
     RowLayout {
         id: layout
         anchors.fill: parent
@@ -1539,8 +1509,6 @@ Rectangle {
                             StatusQ.StatusFlatRoundButton {
                                 id: gifBtn
 
-                                property Popup popup
-
                                 objectName: "gifPopupButton"
                                 implicitHeight: 32
                                 implicitWidth: 32
@@ -1550,14 +1518,23 @@ Rectangle {
                                                                      : Theme.palette.baseColor1
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                                 color: "transparent"
-                                highlighted: popup && popup.opened
                                 onClicked: {
-                                    if (popup) {
-                                        popup.close()
-                                        return
-                                    }
-                                    popup = gifPopupComponent.createObject(gifBtn)
-                                    popup.open()
+                                    highlighted = true
+                                    control.openGifPopupRequest({// Properties needed for relative position and close
+                                                                    popupParent: gifBtn,
+                                                                    closeAfterSelection: control.closeGifPopupAfterSelection
+                                                                },
+                                                                // Gif selected callback
+                                                                (event, url) => {
+                                                                    messageInputField.text += "\n" + url
+                                                                    control.sendMessage(event)
+                                                                    control.isReply = false
+                                                                    messageInputField.forceActiveFocus()
+                                                                },
+                                                                // Close callback
+                                                                () => {
+                                                                    highlighted = false
+                                                                })
                                 }
                             }
 
