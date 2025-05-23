@@ -167,7 +167,7 @@ StatusScrollView {
             label: qsTr("Description")
             text: root.token.description
             charLimit: 280
-            placeholderText: root.isAssetView ? qsTr("Describe your asset (will be shown in hodler’s wallets)") : qsTr("Describe your collectible (will be shown in hodler’s wallets)")
+            placeholderText: root.isAssetView ? qsTr("Describe your asset (will be shown in hodler's wallets)") : qsTr("Describe your collectible (will be shown in hodler's wallets)")
             input.multiline: true
             input.verticalAlignment: Qt.AlignTop
             input.placeholder.verticalAlignment: Qt.AlignTop

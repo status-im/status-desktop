@@ -249,7 +249,7 @@ SettingsContentBase {
     Component {
         id: sendContactRequestComponent
 
-        SendContactRequestModal {
+        SendContactRequestToChatKeyModal {
             contactsStore: root.contactsStore
             onClosed: destroy()
         }
