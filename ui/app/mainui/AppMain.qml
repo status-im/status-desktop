@@ -130,6 +130,7 @@ Item {
         selfName: appMain.profileStore.name
         selfPreferredDisplayName: appMain.profileStore.preferredName
         selfAlias: appMain.profileStore.username
+        selfUsesDefaultName: appMain.profileStore.usesDefaultName
         selfIcon: appMain.profileStore.icon
         selfColorId: appMain.profileStore.colorId
         selfColorHash: appMain.profileStore.colorHash
@@ -1411,12 +1412,26 @@ Item {
                 icon.source: appMain.profileStore.icon
                 implicitWidth: 32
                 implicitHeight: 32
-                identicon.asset.width: width
-                identicon.asset.height: height
+                icon.width: width
+                icon.height: height
+                identicon.asset.name: {
+                    if (identicon.asset.isImage) {
+                        return icon.source
+                    }
+                    if (appMain.profileStore.usesDefaultName) {
+                        return "contact"
+                    }
+                    return icon.name
+                }
+                identicon.asset.width: identicon.asset.isImage ? 28 : (appMain.profileStore.usesDefaultName ? Math.floor(width * 0.9) : width)
+                identicon.asset.height: identicon.asset.isImage ? 28 : (appMain.profileStore.usesDefaultName ? Math.floor(height * 0.9) : height)
+                identicon.asset.bgWidth: appMain.profileStore.usesDefaultName ? width : 0
+                identicon.asset.bgHeight: appMain.profileStore.usesDefaultName ? height : 0
+                identicon.asset.color: appMain.profileStore.usesDefaultName ? Theme.palette.indirectColor2 : Theme.palette.userCustomizationColors[appMain.profileStore.colorId]
+                identicon.asset.isLetterIdenticon: appMain.profileStore.usesDefaultName ? false : icon.name !== "" && !identicon.asset.isImage
+                identicon.asset.bgColor: appMain.profileStore.usesDefaultName ? Theme.palette.userCustomizationColors[appMain.profileStore.colorId] : "transparent"
                 identicon.asset.useAcronymForLetterIdenticon: true
-                identicon.asset.color: Utils.colorForPubkey(appMain.profileStore.pubkey)
-                identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.profileStore.pubkey,
-                                                                               appMain.profileStore.preferredName)
+                identicon.ringSettings.ringSpecModel: appMain.profileStore.colorHash
 
                 badge.visible: true
                 badge.anchors {
@@ -1457,6 +1472,7 @@ Item {
                     name: appMain.profileStore.name
                     headerIcon: appMain.profileStore.icon
                     isEnsVerified: !!appMain.profileStore.preferredName
+                    usesDefaultName: appMain.profileStore.usesDefaultName
 
                     currentUserStatus: appMain.profileStore.currentUserStatus
 

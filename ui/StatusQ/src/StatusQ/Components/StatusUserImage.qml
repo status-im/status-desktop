@@ -1,10 +1,5 @@
 import QtQuick 2.15
 
-import shared 1.0
-import shared.panels 1.0
-
-import utils 1.0
-
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -16,6 +11,7 @@ Loader {
     property int imageWidth: 44
 
     property string name
+    property bool usesDefaultName: false
     property string image
     property bool showRing: !ensVerified && !root.isBridgedAccount
     property bool interactive: true
@@ -23,9 +19,10 @@ Loader {
     property bool ensVerified: false
     property bool loading: false
     property bool isBridgedAccount: false
-    property int onlineStatus: Constants.onlineStatus.unknown
+    // TODO replace this with booleans since we do not have access to Constants
+    property int onlineStatus: -1
 
-    property int colorId
+    property color userColor
     property var colorHash: []
 
     signal clicked()
@@ -33,24 +30,37 @@ Loader {
     sourceComponent: StatusSmartIdenticon {
         name: root.name
         asset {
+            readonly property bool isContactIcon: !root.image && root.usesDefaultName
+
             width: root.imageWidth
             height: root.imageHeight
-            color: Utils.colorForColorId(root.colorId)
-            name: root.image
-            isImage: true
+            color: isContactIcon ? Theme.palette.indirectColor2 : root.userColor
+            name: {
+                if (root.image) {
+                    return root.image
+                }
+                if (isContactIcon) {
+                    return "contact"
+                }
+                return ""
+            }
+            bgWidth: isContactIcon ? root.imageWidth : 0
+            bgHeight: isContactIcon ? root.imageHeight : 0
+            bgColor: isContactIcon ? root.userColor : "transparent"
+            isImage: !!root.image
         }
         ringSettings {
             ringSpecModel: root.showRing ? root.colorHash : undefined
         }
         loading: root.loading
 
-        badge.visible: root.onlineStatus !== Constants.onlineStatus.unknown && !root.isBridgedAccount
+        badge.visible: root.onlineStatus !== -1 && !root.isBridgedAccount
         badge.width: root.imageWidth/4
         badge.height: root.imageWidth/4
         badge.border.width: 0.05 * root.imageWidth
         badge.border.color: Theme.palette.statusBadge.foregroundColor
         badge.color: {
-            if (root.onlineStatus === Constants.onlineStatus.online)
+            if (root.onlineStatus === 1)
                 return Theme.palette.successColor1
             return Theme.palette.baseColor1
         }

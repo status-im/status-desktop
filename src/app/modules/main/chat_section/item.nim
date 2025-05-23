@@ -11,6 +11,7 @@ type
   Item* = ref object
     id: string
     name: string
+    usesDefaultName: bool
     `type`: int
     memberRole: MemberRole
     icon: string
@@ -42,9 +43,10 @@ type
     hideIfPermissionsNotMet: bool
     missingEncryptionKey: bool
 
-proc initItem*(
+proc initChatItem*(
     id,
-    name,
+    name: string,
+    usesDefaultName: bool,
     icon,
     color,
     emoji,
@@ -79,6 +81,7 @@ proc initItem*(
   result = Item()
   result.id = id
   result.name = name
+  result.usesDefaultName = usesDefaultName
   result.memberRole = memberRole
   result.icon = icon
   result.color = color
@@ -115,6 +118,7 @@ proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
     id: {self.id},
     name: {$self.name},
+    usesDefaultName: {$self.usesDefaultName},
     memberRole: {$self.memberRole},
     icon: {$self.icon},
     color: {$self.color},
@@ -149,6 +153,7 @@ proc toJsonNode*(self: Item): JsonNode =
   result = %* {
     "itemId": self.id,
     "name": self.name,
+    "usesDefaultName": self.usesDefaultName,
     "memberRole": self.memberRole,
     "icon": self.icon,
     "color": self.color,
@@ -190,6 +195,12 @@ proc name*(self: Item): string =
 
 proc `name=`*(self: var Item, value: string) =
   self.name = value
+
+proc usesDefaultName*(self: Item): bool =
+  self.usesDefaultName
+
+proc `usesDefaultName=`*(self: var Item, value: bool) =
+  self.usesDefaultName = value
 
 proc memberRole*(self: Item): MemberRole =
   self.memberRole

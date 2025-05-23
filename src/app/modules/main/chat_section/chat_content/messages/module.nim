@@ -2,7 +2,7 @@ import NimQml, chronicles, sequtils, uuids, sets, times, tables, system
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
-import ../../../../shared_models/[message_model, message_item]
+import ../../../../shared_models/[message_model, message_item, contacts_utils]
 import ../../../../shared_models/message_reaction_item
 import ../../../../shared_models/link_preview_model
 import ../../../../../global/global_singleton
@@ -436,6 +436,7 @@ method updateContactDetails*(self: Module, contactId: string) =
   for item in self.view.model().modelContactUpdateIterator(contactId):
     if item.senderId == contactId:
       item.senderDisplayName = updatedContact.defaultDisplayName
+      item.senderUsesDefaultName = resolveUsesDefaultName(updatedContact.dto.localNickname, updatedContact.dto.name, updatedContact.dto.displayName)
       item.senderOptionalName = updatedContact.optionalName
       item.senderIcon = updatedContact.icon
       item.senderColorHash = updatedContact.colorHash

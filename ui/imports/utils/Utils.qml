@@ -949,6 +949,7 @@ QtObject {
             isBlocked: false,
             isContactRequestReceived: false,
             isContactRequestSent: false,
+            usesDefaultName: false,
             removed: false,
             trustStatus: Constants.trustStatus.unknown,
             contactRequestState: Constants.ContactRequestState.None,
