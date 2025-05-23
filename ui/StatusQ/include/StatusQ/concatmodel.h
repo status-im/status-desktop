@@ -14,7 +14,7 @@ class SourceModel : public QObject
     Q_PROPERTY(QAbstractItemModel* model READ model
                WRITE setModel NOTIFY modelChanged)
 
-    Q_PROPERTY(QString markerRoleValue READ markerRoleValue
+    Q_PROPERTY(QVariant markerRoleValue READ markerRoleValue
                WRITE setMarkerRoleValue NOTIFY markerRoleValueChanged)
 
 public:
@@ -23,8 +23,8 @@ public:
     void setModel(QAbstractItemModel* model);
     QAbstractItemModel* model() const;
 
-    void setMarkerRoleValue(const QString& markerRoleValue);
-    const QString& markerRoleValue() const;
+    void setMarkerRoleValue(const QVariant& markerRoleValue);
+    const QVariant& markerRoleValue() const;
 
 signals:
     void modelAboutToBeChanged();
@@ -33,7 +33,7 @@ signals:
 
 private:
     QPointer<QAbstractItemModel> m_model;
-    QString m_markerRoleValue;
+    QVariant m_markerRoleValue;
 };
 
 class ConcatModel : public QAbstractListModel, public QQmlParserStatus

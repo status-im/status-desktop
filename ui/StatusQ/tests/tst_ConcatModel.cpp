@@ -131,13 +131,13 @@ private slots:
         QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "color")), "blue");
         QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "color")), "pink");
 
-        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "whichModel")), {});
 
         // out of bounds
         QCOMPARE(model.index(-1, 0).isValid(), false);
@@ -354,13 +354,13 @@ private slots:
         QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "color")), "orange");
         QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "color")), "pink");
 
-        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "whichModel")), {});
     }
 
     void dataChangeOnNotTrackedRoleTest()
@@ -473,7 +473,7 @@ private slots:
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "balance")), 300);
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "name")), "n200");
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "color")), {});
-            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), {});
         }
         {
             QSignalSpy rowsInsertedSpy(&model, &ConcatModel::rowsInserted);
@@ -491,7 +491,7 @@ private slots:
             QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "balance")), 301);
             QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "name")), "n201");
             QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "color")), {});
-            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), {});
         }
 
         // inserting into second, empty model
@@ -511,7 +511,7 @@ private slots:
             QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "balance")), 302);
             QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "name")), "n202");
             QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "color")), {});
-            QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), {});
         }
 
         // inserting into third
@@ -533,7 +533,7 @@ private slots:
             QCOMPARE(model.data(model.index(8, 0), roleForName(roles, "balance")), 303);
             QCOMPARE(model.data(model.index(8, 0), roleForName(roles, "name")), "n203");
             QCOMPARE(model.data(model.index(8, 0), roleForName(roles, "color")), "brown");
-            QCOMPARE(model.data(model.index(8, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(8, 0), roleForName(roles, "whichModel")), {});
         }
 
         // inserting into forth, empty model
@@ -555,7 +555,7 @@ private slots:
             QCOMPARE(model.data(model.index(11, 0), roleForName(roles, "balance")), 304);
             QCOMPARE(model.data(model.index(11, 0), roleForName(roles, "name")), "n204");
             QCOMPARE(model.data(model.index(11, 0), roleForName(roles, "color")), "black");
-            QCOMPARE(model.data(model.index(11, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(11, 0), roleForName(roles, "whichModel")), {});
         }
 
         // inserting multiple items (first model)
@@ -578,13 +578,13 @@ private slots:
             QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "balance")), 305);
             QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "name")), "n205");
             QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "color")), {});
-            QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), {});
 
             QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "key")), 206);
             QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "balance")), 306);
             QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "name")), "n206");
             QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "color")), {});
-            QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(6, 0), roleForName(roles, "whichModel")), {});
         }
     }
 
@@ -636,12 +636,12 @@ private slots:
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "balance")), 11);
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "name")), "n1");
-            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), {});
 
             QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
             QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "balance")), 12);
             QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "name")), "n2");
-            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), {});
         }
         {
             QSignalSpy rowsInsertedSpy(&model, &ConcatModel::rowsInserted);
@@ -664,22 +664,22 @@ private slots:
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "balance")), 11);
             QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "name")), "n1");
-            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), {});
 
             QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
             QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "balance")), 12);
             QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "name")), "n2");
-            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), {});
 
             QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "key")), 3);
             QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "balance")), {});
             QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "name")), {});
-            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), {});
 
             QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "key")), 4);
             QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "balance")), {});
             QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "name")), {});
-            QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), "");
+            QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), {});
         }
     }
 
@@ -1303,12 +1303,12 @@ private slots:
         QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "key")), 5);
         QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "key")), 6);
 
-        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), "");
-        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), {});
+        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), {});
     }
 
     void removalTest()

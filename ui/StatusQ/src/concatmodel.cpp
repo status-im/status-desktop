@@ -105,7 +105,7 @@ QAbstractItemModel* SourceModel::model() const
     return m_model;
 }
 
-void SourceModel::setMarkerRoleValue(const QString& markerRoleValue)
+void SourceModel::setMarkerRoleValue(const QVariant& markerRoleValue)
 {
     if (m_markerRoleValue == markerRoleValue)
         return;
@@ -115,13 +115,13 @@ void SourceModel::setMarkerRoleValue(const QString& markerRoleValue)
 }
 
 /*!
-    \qmlproperty string StatusQ::SourceModel::markerRoleValue
+    \qmlproperty var StatusQ::SourceModel::markerRoleValue
 
     The value that will be exposed from the ConcatModel through the role named
     according to \l {ConcatModel::markerRoleName} for the entries coming from
     the model defined in SourceModel::model.
 */
-const QString& SourceModel::markerRoleValue() const
+const QVariant& SourceModel::markerRoleValue() const
 {
     return m_markerRoleValue;
 }
