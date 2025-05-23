@@ -27,26 +27,94 @@ ItemDelegate {
     property bool showSeparator: false
     property bool isFirstRowAddress: false
 
-    property string name
-    property string contactId
+    /*!
+       \qmlproperty string TokenHolderListItem::pubKey
+       This property holds the chat public key of the member represented.
+    */
+    property string pubKey
+    /*!
+       \qmlproperty string TokenHolderListItem::walletAddress
+       This property holds the wallet address of the member represented.
+    */
     property string walletAddress
-    property string imageSource
+    /*!
+       \qmlproperty int TokenHolderListItem::numberOfMessages
+        This property holds the number of messages sent by the member represented.
+    */
     property int numberOfMessages: 0
+    /*!
+       \qmlproperty string TokenHolderListItem::amount
+       This property holds the amount of tokens held by the member represented.
+    */
     property string amount: "0"
 
-    property var contactDetails: null
+    /*!
+       \qmlproperty string TokenHolderListItem::nickName
+       This property holds the nick name of the member represented.
+    */
+    property string nickName: ""
+    /*!
+       \qmlproperty string TokenHolderListItem::userName
+       This property holds the user name of the member represented.
+    */
+    property string userName: ""
+    /*!
+       \qmlproperty string TokenHolderListItem::compressedPublicKey
+       This property holds the compressed public key of the member represented.
+    */
+    property string compressedPubKey: ""
+    /*!
+       \qmlproperty bool TokenHolderListItem::isContact
+       This property holds if the member represented is contact.
+    */
+    property bool isContact: false
+    /*!
+       \qmlproperty bool TokenHolderListItem::isVerified
+       This property holds if the member represented is verified contact.
+    */
+    property bool isVerified: false
+    /*!
+       \qmlproperty bool TokenHolderListItem::isEnsVerified
+       This property holds if the member's ENS name was verified.
+    */
+    property bool isEnsVerified: false
+    /*!
+       \qmlproperty int TokenHolderListItem::trustStatus
+     This property holds the trust status of the member represented.
+    */
+    property int trustStatus: 0
+    /*!
+       \qmlproperty int TokenHolderListItem::memberRole
+        This property holds the member role (admin, owner, etc.) of the member represented.
+    */
+    property int memberRole: 0
+    /*!
+       \qmlproperty string TokenHolderListItem::iconName
+        This property holds the icon name of the member represented.
+    */
+    property string iconName
+    /*!
+       \qmlproperty bool TokenHolderListItem::isUntrustworthy
+       This property holds if the member represented is untrustworthy.
+    */
+    property bool isUntrustworthy: false
+
+    /*!
+       \qmlproperty int TokenHolderListItem::status
+       This property holds the connectivity status of the member represented.
+
+    int unknown: -1
+    int inactive: 0
+    int online: 1
+
+    */
+    // FIXME: move Constants.onlineStatus from status-desktop
+    property int onlineStatus: 0
 
     readonly property string addressElided:
         StatusQUtils.Utils.elideAndFormatWalletAddress(root.walletAddress)
 
     signal clicked(var mouse)
-
-    function updateContactDetails() {
-        contactDetails = contactId !== "" ? Utils.getContactDetailsAsJson(contactId, false) : null
-    }
-
-    Component.onCompleted: root.updateContactDetails()
-    onContactIdChanged: root.updateContactDetails()
 
     onRemotelyDestructInProgressChanged: {
         if (!remotelyDestructInProgress)
@@ -104,17 +172,17 @@ ItemDelegate {
             leftPadding: 0
             rightPadding: 0
             hoverEnabled: false
-            nickName: root.contactDetails.localNickname
-            userName: ProfileUtils.displayName("", root.contactDetails.ensName, root.contactDetails.displayName, root.contactDetails.alias)
-            pubKey: root.contactDetails.isEnsVerified ? "" : root.contactDetails.compressedPublicKey
-            isContact: root.contactDetails.isContact
-            isVerified: root.contactDetails.trustStatus === Constants.trustStatus.trusted
-            isUntrustworthy: root.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
-            isAdmin: root.contactDetails.memberRole === Constants.memberRole.owner
-            status: root.contactDetails.onlineStatus
-            icon.name: root.contactDetails.thumbnailImage
-            icon.color: Utils.colorForPubkey(root.contactId)
-            ringSettings.ringSpecModel: Utils.getColorHashAsJson(root.contactId)
+            nickName: root.nickName
+            userName: root.userName
+            pubKey: root.isEnsVerified ? "" : root.compressedPublicKey
+            isContact: root.isContact
+            isVerified: root.trustStatus === Constants.trustStatus.trusted
+            isUntrustworthy: root.trustStatus === Constants.trustStatus.untrustworthy
+            isAdmin: root.memberRole === Constants.memberRole.owner
+            status: root.onlineStatus
+            icon.name: root.iconName
+            icon.color: Utils.colorForPubkey(root.pubKey)
+            ringSettings.ringSpecModel: Utils.getColorHashAsJson(root.pubKey)
         }
     }
 
@@ -131,9 +199,6 @@ ItemDelegate {
             statusListItemSubTitle.font.pixelSize: Theme.asideTextFontSize
             statusListItemSubTitle.lineHeightMode: Text.FixedHeight
             statusListItemSubTitle.lineHeight: 14
-            asset.name: root.imageSource
-            asset.isImage: true
-            asset.isLetterIdenticon: true
             asset.color: Theme.palette.userCustomizationColors[d.red2Color]
         }
     }
@@ -149,13 +214,13 @@ ItemDelegate {
 
             Loader {
                 Layout.preferredWidth: root.usernameHeaderWidth
-                sourceComponent: contactDetails ? communityMemberContentItem : bareAddressContentItem
+                sourceComponent: !!root.pubKey  ? communityMemberContentItem : bareAddressContentItem
             }
 
             TokenHolderNumberCell {
                 Layout.preferredWidth: root.noOfMessagesHeaderWidth
 
-                text: root.name
+                text: root.pubKey
                         ? LocaleUtils.numberToLocaleString(root.numberOfMessages)
                         : "-"
             }

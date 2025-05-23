@@ -7,6 +7,7 @@ import ../../../../../../app_service/service/community_tokens/dto/community_toke
 import ../../../../../../app_service/service/community_tokens/community_collectible_owner
 import ../../../../../../app_service/common/utils
 import ../../../../../../app_service/common/types
+import app/global/global_singleton
 
 type
   ModelRole {.pure.} = enum
@@ -126,15 +127,23 @@ QtObject:
       return false
     return self.items[itemIdx].tokenOwnersModel.count > 0
 
-  proc setCommunityTokenOwners*(self: TokenModel, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) =
+  proc setCommunityTokenOwners*(self: TokenModel, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner], isOwner: bool) =
     let itemIdx = self.getItemIndex(chainId, contractAddress)
     if itemIdx == -1:
       return
 
     self.items[itemIdx].tokenHoldersLoading = false
+    let isMyOwnerToken = isOwner and self.items[itemIdx].tokenDto.privilegesLevel == PrivilegesLevel.Owner
     self.items[itemIdx].tokenOwnersModel.setItems(owners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
+      var contactId = owner.contactId
+      var name = owner.name
+      if isMyOwnerToken:
+        # This is the Owner token and we are the Owner. We can hardcode the pubkey
+        # The DB doesn't store our own address in the RevealedAddresses list so we patch it here
+        contactId = singletonInstance.userProfile.getPubKey()
+        name = singletonInstance.userProfile.getName()
       # TODO: provide number of messages here
-      result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, self.items[itemIdx].remoteDestructedAddresses)
+      result = initTokenOwnersItem(contactId, name, owner.imageSource, 0, owner.collectibleOwner, self.items[itemIdx].remoteDestructedAddresses)
     ))
     let index = self.createIndex(itemIdx, 0, nil)
     defer: index.delete
