@@ -60,3 +60,9 @@ jobs:
         run: |
           make V=3
 
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Status-tablet
+          path: bin/android/qt6/Status-tablet.apk
+
