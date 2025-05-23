@@ -1,3 +1,4 @@
+SHELL:=/bin/bash
 ROOT_DIR := $(shell git rev-parse --show-toplevel)
 HOST_ENV=$(shell printenv)
 OS?=android
@@ -29,7 +30,8 @@ PCRE?=$(ROOT_DIR)/vendors/pcre-8.45
 project_name := Status-tablet
 
 # compile macros
-TARGET_NAME := Status-tablet.$(shell if [ $(OS) = "ios" ]; then echo "app"; else echo "apk"; fi )
+TARGET_PREFIX := Status-tablet
+TARGET_NAME := $(TARGET_PREFIX).$(shell if [ $(OS) = "ios" ]; then echo "app"; else echo "apk"; fi )
 
 TARGET := $(BIN_PATH)/$(TARGET_NAME)
 
@@ -38,7 +40,7 @@ STATUS_DESKTOP_NIM_FILES := $(shell find $(STATUS_DESKTOP)/src -type f \( -iname
 STATUS_DESKTOP_UI_FILES := $(shell find $(STATUS_DESKTOP)/ui -type f \( -iname 'qmldir' -o -iname '*.qml' -o -iname '*.qrc' \) -not -iname 'resources.qrc' -not -path '$(STATUS_DESKTOP)/ui/StatusQ/*')
 STATUS_Q_FILES := $(shell find $(STATUSQ) -type f \( -iname '*.cpp' -o -iname '*.h' \) -not -iname '*.qrc' -not -iname '*.qml')
 STATUS_Q_UI_FILES := $(shell find $(STATUSQ) -type f \( -iname '*.qml' -o -iname '*.qrc' \))
-STATUS_GO_FILES := $(shell find $(STATUS_GO) -type f)
+STATUS_GO_FILES := $(shell find $(STATUS_GO) -type f \( -iname '*.go' \))
 STATUS_GO_SCRIPT := $(SCRIPTS_PATH)/buildStatusGo.sh
 DOTHERSIDE_FILES := $(shell find $(DOTHERSIDE) -type f \( -iname '*.cpp' -o -iname '*.h' \))
 OPENSSL_FILES := $(shell find $(OPENSSL)/OpenSSL-for-iOS -type f)
