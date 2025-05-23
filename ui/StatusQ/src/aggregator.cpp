@@ -71,7 +71,7 @@ void Aggregator:: connectToModel()
     });
 
     connect(m_model, &QAbstractItemModel::dataChanged, this,
-          [this](auto&, auto&, const QVector<int>& roles) {
+          [this](auto&, auto&, const auto& roles) {
       if (this->acceptRoles(roles))
           this->recalculate();
     });

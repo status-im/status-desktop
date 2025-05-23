@@ -39,6 +39,9 @@ SortFilterProxyModel {
     // Badge count for the messaging section
     property int messagingBadgeCount: 0
 
+    // Whether to show subpages, like Contacts
+    property bool showSubSubSections
+
     readonly property string appsGroupTitle: qsTr("Apps")
     readonly property string preferencesGroupTitle: qsTr("Preferences")
     readonly property string aboutAndHelpGroupTitle: qsTr("About & Help")
@@ -47,22 +50,26 @@ SortFilterProxyModel {
         {
             subsection: Constants.settingsSubsection.backUpSeed,
             text: qsTr("Back up recovery phrase"),
-            icon: "seed-phrase"
+            icon: "seed-phrase",
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.profile,
             text: qsTr("Profile"),
-            icon: "profile"
+            icon: "profile",
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.password,
             text: qsTr("Password"),
-            icon: "password"
+            icon: "password",
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.keycard,
             text: qsTr("Keycard"),
-            icon: "keycard"
+            icon: "keycard",
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.ensUsernames,
@@ -82,61 +89,77 @@ SortFilterProxyModel {
             subsection: Constants.settingsSubsection.messaging,
             text: qsTr("Messaging"),
             icon: "chat",
-            group: root.appsGroupTitle
+            group: root.appsGroupTitle,
+            isExperimental: false
+        },
+        {
+            subsection: Constants.settingsSubsection.contacts,
+            text: qsTr("Contacts"),
+            icon: "contact",
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.wallet,
             text: qsTr("Wallet"),
             icon: "wallet",
-            group: root.appsGroupTitle
+            group: root.appsGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.communitiesSettings,
             text: qsTr("Communities"),
             icon: "communities",
-            group: root.appsGroupTitle
+            group: root.appsGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.privacyAndSecurity,
             text: qsTr("Privacy and security"),
             icon: "security",
-            group: root.preferencesGroupTitle
+            group: root.preferencesGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.appearance,
             text: qsTr("Appearance"),
             icon: "appearance",
-            group: root.preferencesGroupTitle
+            group: root.preferencesGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.notifications,
             text: qsTr("Notifications & Sounds"),
             icon: "notification",
-            group: root.preferencesGroupTitle
+            group: root.preferencesGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.language,
             text: qsTr("Language & Currency"),
             icon: "language",
-            group: root.preferencesGroupTitle
+            group: root.preferencesGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.advanced,
             text: qsTr("Advanced"),
-            icon: "settings",
-            group: root.preferencesGroupTitle
+            icon: "settings-advanced",
+            group: root.preferencesGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.about,
             text: qsTr("About"),
             icon: "info",
-            group: root.aboutAndHelpGroupTitle
+            group: root.aboutAndHelpGroupTitle,
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.signout,
             text: qsTr("Sign out & Quit"),
             icon: "logout",
-            group: root.aboutAndHelpGroupTitle
+            group: root.aboutAndHelpGroupTitle,
+            isExperimental: false
         }
     ]
 
@@ -175,6 +198,8 @@ SortFilterProxyModel {
                         return root.showBackUpSeed
                     case Constants.settingsSubsection.keycard:
                         return root.isKeycardEnabled
+                    case Constants.settingsSubsection.contacts:
+                        return root.showSubSubSections
 
                     default: return true
                 }

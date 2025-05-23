@@ -20,6 +20,7 @@
 #include "StatusQ/movablemodel.h"
 #include "StatusQ/networkchecker.h"
 #include "StatusQ/objectproxymodel.h"
+#include "StatusQ/shellproxymodel.h"
 #include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rolesrenamingmodel.h"
 #include "StatusQ/rxvalidator.h"
@@ -71,6 +72,7 @@ void registerStatusQTypes() {
     qmlRegisterType<ConstantRole>("StatusQ", 0, 1, "ConstantRole");
 
     qmlRegisterType<ObjectProxyModel>("StatusQ", 0, 1, "ObjectProxyModel");
+    qmlRegisterType<ShellProxyModel>("StatusQ", 0, 1, "ShellProxyModel");
     qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
     qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
     qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
