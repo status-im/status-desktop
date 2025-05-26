@@ -19,7 +19,6 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool preview: false
-    property bool isOwnerTokenItem: false
 
     // https://bugreports.qt.io/browse/QTBUG-84269
     /* required */ property TokenObject token

@@ -26,7 +26,7 @@ ActivityNotificationBase {
         messageText: notification && notification.message ? notification.message.messageText : ""
         amISender: false
         sender.id: contactId
-        sender.compressedPubKey: contactDetails ? contactDetails.compressedPublicKey : ""
+        sender.compressedPubKey: contactDetails ? contactDetails.compressedPubKey : ""
         sender.displayName: contactName
         sender.secondaryName: contactDetails && contactDetails.localNickname ?
                                   ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias) : ""

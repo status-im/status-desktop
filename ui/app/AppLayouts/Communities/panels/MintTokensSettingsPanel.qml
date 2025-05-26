@@ -602,7 +602,6 @@ StackView {
             token: tokenViewPage.token
             membersModel: tokenViewPage.membersModel
             tokenOwnersModel: tokenViewPage.tokenOwnersModel
-            isOwnerTokenItem: tokenViewPage.isOwnerTokenItem
 
             onStartTokenHoldersManagement: root.startTokenHoldersManagement(chainId, address)
             onStopTokenHoldersManagement: root.stopTokenHoldersManagement()

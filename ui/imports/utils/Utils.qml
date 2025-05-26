@@ -936,7 +936,7 @@ QtObject {
             colorHash: [],
             displayName: "",
             publicKey: publicKey,
-            compressedPublicKey: "",
+            compressedPubKey: "",
             name: "",
             ensVerified: false,
             alias: "",

@@ -59,7 +59,7 @@ ItemDelegate {
     */
     property string userName: ""
     /*!
-       \qmlproperty string TokenHolderListItem::compressedPublicKey
+       \qmlproperty string TokenHolderListItem::compressedPubKey
        This property holds the compressed public key of the member represented.
     */
     property string compressedPubKey: ""
@@ -174,11 +174,11 @@ ItemDelegate {
             hoverEnabled: false
             nickName: root.nickName
             userName: root.userName
-            pubKey: root.isEnsVerified ? "" : root.compressedPublicKey
+            pubKey: root.isEnsVerified ? "" : root.compressedPubKey
             isContact: root.isContact
             isVerified: root.trustStatus === Constants.trustStatus.trusted
             isUntrustworthy: root.trustStatus === Constants.trustStatus.untrustworthy
-            isAdmin: root.memberRole === Constants.memberRole.owner
+            isOwner: root.memberRole === Constants.memberRole.owner
             status: root.onlineStatus
             icon.name: root.iconName
             icon.color: Utils.colorForPubkey(root.pubKey)

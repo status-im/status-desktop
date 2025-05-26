@@ -5,7 +5,7 @@ import utils 1.0
 ListModel {
     readonly property var data: [
         {
-            pubKey: "0x043a7ed0e8d1012cf04",
+            pubKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
             compressedPubKey: "zQ3shQBu4PRDX17vewYyvSczbTj344viTXxcMNvQLeyQsBDF4",
             onlineStatus: Constants.onlineStatus.online,
             isContact: true,
@@ -32,7 +32,7 @@ ListModel {
             trustStatus: Constants.trustStatus.unknown
         },
         {
-            pubKey: "0x04df12f12f12f12f1234",
+            pubKey: "0x043a8ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
             compressedPubKey: "zQ3shQBAAPRDX17vewYyvSczbTj344viTXxcMNvQLeyQsBDF4",
             onlineStatus: Constants.onlineStatus.inactive,
             isContact: false,
@@ -58,7 +58,7 @@ ListModel {
             trustStatus: Constants.trustStatus.unknown
         },
         {
-            pubKey: "0x04d1b7cc0ef3f470f1238",
+            pubKey: "0x043a7ed0e9752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
             compressedPubKey: "zQ3shQ7u3PRDX17vewYyvSczbTj344viTXxcMNvQLeyQsCDF4",
             onlineStatus: Constants.onlineStatus.inactive,
             isContact: false,

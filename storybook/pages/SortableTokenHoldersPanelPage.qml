@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import AppLayouts.Communities.panels 1.0
 
+import StatusQ 0.1
 import Storybook 1.0
 import Models 1.0
 
@@ -33,15 +34,15 @@ SplitView {
             width: 568
             tokenName: "Aniversary"
 
-            TokenHoldersModel {
-                id: tokenHoldersModel
+            TokenHoldersJoinModel {
+                id: joinModel
             }
 
             ListModel {
                 id: emptyModel
             }
 
-            model: emptyCheckBox.checked ? emptyModel : tokenHoldersModel
+            model: emptyCheckBox.checked ? emptyModel : joinModel
             showRemotelyDestructMenuItem: remotelyDestructCheckBox.checked
             isAirdropEnabled: airdropCheckBox.checked
 
