@@ -14,6 +14,7 @@ ManageCollectiblesModel 1.0 ManageCollectiblesModel.qml
 RecipientModel 1.0 RecipientModel.qml
 SourceOfTokensModel 1.0 SourceOfTokensModel.qml
 TokenHoldersModel 1.0 TokenHoldersModel.qml
+TokenHoldersJoinModel 1.0 TokenHoldersJoinModel.qml
 UsersModel 1.0 UsersModel.qml
 WalletSendAccountsModel 1.0 WalletSendAccountsModel.qml
 WalletAccountsModel 1.0 WalletAccountsModel.qml

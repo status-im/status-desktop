@@ -61,7 +61,6 @@ ListModel {
             numberOfMessages: 0,
             remotelyDestructState: Constants.ContractTransactionStatus.None
         }
-
     ]
 
     Component.onCompleted: append(data)

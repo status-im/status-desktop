@@ -131,7 +131,7 @@ Item {
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
                 isBlocked: model.isBlocked
-                isAdmin: model.memberRole === Constants.memberRole.owner
+                isOwner: model.memberRole === Constants.memberRole.owner
                 icon.name: model.icon
                 icon.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus

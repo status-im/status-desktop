@@ -1,5 +1,7 @@
 import SortFilterProxyModel 0.2
 
+import StatusQ.Core.Utils 0.1
+
 SortFilterProxyModel {
     id: root
 
@@ -13,15 +15,26 @@ SortFilterProxyModel {
         None, Username, NumberOfMessages, Holding
     }
 
-    filters: ExpressionFilter {
-        expression: {
-            root.searchTextLowerCase
-
-            const nameLowerCase = model.name.toLowerCase()
-            const addressLowerCase = model.walletAddress.toLowerCase()
-
-            return nameLowerCase.includes(searchTextLowerCase) ||
-                    addressLowerCase.includes(searchTextLowerCase)
+    filters: AnyOf {
+        SearchFilter {
+            roleName: "name"
+            searchPhrase: searchText
+        }
+        SearchFilter {
+            roleName: "displayName"
+            searchPhrase: searchText
+        }
+        SearchFilter {
+            roleName: "ensName"
+            searchPhrase: searchText
+        }
+        SearchFilter {
+            roleName: "localNickname"
+            searchPhrase: searchText
+        }
+        SearchFilter {
+            roleName: "walletAddress"
+            searchPhrase: searchText
         }
     }
 
@@ -35,21 +48,49 @@ SortFilterProxyModel {
                 inverted: true
             }
 
-            priority: 3
+            priority: 5
+        },
+
+        RoleSorter {
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
+            roleName: "localNickname"
+            sortOrder: root.sortOrder
+            priority: 1
         },
 
         RoleSorter {
             enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
             roleName: "name"
             sortOrder: root.sortOrder
+            priority: 1
+        },
+
+        RoleSorter {
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
+            roleName: "ensName"
+            sortOrder: root.sortOrder
             priority: 2
+        },
+
+        RoleSorter {
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
+            roleName: "displayName"
+            sortOrder: root.sortOrder
+            priority: 3
+        },
+
+        RoleSorter {
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
+            roleName: "alias"
+            sortOrder: root.sortOrder
+            priority: 4
         },
 
         RoleSorter {
             enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
             roleName: "walletAddress"
             sortOrder: root.sortOrder
-            priority: 1
+            priority: 5
         },
 
         RoleSorter {

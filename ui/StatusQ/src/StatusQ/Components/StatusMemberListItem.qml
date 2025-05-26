@@ -89,10 +89,10 @@ ItemDelegate {
     // FIXME: move Constants.onlineStatus from status-desktop
     property int status: 0
     /*!
-       \qmlproperty bool StatusMemberListItem::isAdmin
-       This property holds the admin status of the member represented.
+       \qmlproperty bool StatusMemberListItem::isOwner
+       This property holds the owner status of the member represented.
     */
-    property bool isAdmin: false
+    property bool isOwner: false
 
     /*!
        \qmlproperty bool StatusMemberListItem::isAwaitingAddress
@@ -272,7 +272,7 @@ ItemDelegate {
 
         Loader {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-            active: root.isAdmin
+            active: root.isOwner
             sourceComponent: StatusIcon {
                 anchors.verticalCenter: parent.verticalCenter
                 icon: "crown"

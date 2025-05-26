@@ -185,7 +185,7 @@ Loader {
 
         const params = {
             pubKey, profileType, contactType, chatType, isAdmin,
-            compressedPubKey: contactDetails.compressedPublicKey,
+            compressedPubKey: contactDetails.compressedPubKey,
             displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
             colorHash: isReply ? quotedMessageAuthorDetailsColorHash : root.senderColorHash,

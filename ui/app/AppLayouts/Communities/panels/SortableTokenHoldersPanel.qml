@@ -29,7 +29,7 @@ Control {
     readonly property alias sortBy: holdersList.sortBy
     readonly property alias sorting: holdersList.sortOrder
 
-    readonly property bool empty: !root.model || !root.model.ModelCount || root.model.ModelCount.empty
+    readonly property bool empty: countCheckHelper.count === 0
 
     signal viewProfileRequested(string contactId)
     signal viewMessagesRequested(string contactId)
@@ -39,6 +39,13 @@ Control {
     signal banRequested(string name, string contactId, string address)
 
     signal generalAirdropRequested
+
+    Instantiator {
+        id: countCheckHelper
+
+        model: root.model
+        delegate: QtObject {}
+    }
 
     TokenHoldersProxyModel {
         id: proxyModel

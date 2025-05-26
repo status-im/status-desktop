@@ -1422,7 +1422,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     # contact dto props
     "displayName": contactDetails.dto.displayName,
     "publicKey": contactDetails.dto.id,
-    "compressedPublicKey": accounts_utils.compressPk(contactDetails.dto.id),
+    "compressedPubKey": accounts_utils.compressPk(contactDetails.dto.id),
     "name": contactDetails.dto.name,
     "ensVerified": contactDetails.dto.ensVerified,
     "alias": contactDetails.dto.alias,

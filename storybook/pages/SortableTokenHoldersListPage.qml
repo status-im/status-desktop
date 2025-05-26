@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import AppLayouts.Communities.panels 1.0
 
+import StatusQ 0.1
 import Storybook 1.0
 import Models 1.0
 
@@ -16,13 +17,15 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    TokenHoldersModel {
-        id: tokenHoldersModel
+    TokenHoldersJoinModel {
+        id: joinModel
     }
 
     Item {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
+
+
 
         SortableTokenHoldersList {
             id: holdersList
@@ -31,7 +34,7 @@ SplitView {
             anchors.margins: 50
 
             model: TokenHoldersProxyModel {
-                sourceModel: tokenHoldersModel
+                sourceModel: joinModel
 
                 sortBy: holdersList.sortBy
                 sortOrder: holdersList.sortOrder ? Qt.DescendingOrder : Qt.AscendingOrder
@@ -48,32 +51,6 @@ SplitView {
         SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
-
-        RowLayout {
-            Button {
-                text: "Set all remotely burn to completed"
-
-                onClicked: {
-                    for (let i = 0; i < tokenHoldersModel.count; i++) {
-                        tokenHoldersModel.setProperty(
-                                    i, "remotelyDestructState",
-                                    Constants.ContractTransactionStatus.Completed)
-                    }
-                }
-            }
-
-            Button {
-                text: "Set all remotely burn to in progress"
-
-                onClicked: {
-                    for (let i = 0; i < tokenHoldersModel.count; i++) {
-                        tokenHoldersModel.setProperty(
-                                    i, "remotelyDestructState",
-                                    Constants.ContractTransactionStatus.InProgress)
-                    }
-                }
-            }
-        }
     }
 }
 
