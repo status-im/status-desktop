@@ -55,6 +55,7 @@ QtObject:
     let userItem = initMemberItem(
       pubKey = pubKey,
       displayName = displayName,
+      usesDefaultName = false,
       ensName = "",
       isEnsVerified = false,
       localNickname = "",

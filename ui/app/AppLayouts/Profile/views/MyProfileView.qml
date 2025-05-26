@@ -282,6 +282,7 @@ SettingsContentBase {
                 Layout.rightMargin: Theme.padding
 
                 displayName: profileStore.name
+                usesDefaultName: profileStore.usesDefaultName
                 icon: profileStore.profileLargeImage
                 imageSize: ProfileHeader.ImageSize.Big
 

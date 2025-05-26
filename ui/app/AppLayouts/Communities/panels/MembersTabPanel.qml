@@ -284,7 +284,8 @@ Item {
                     trustStatus: model.trustStatus,
                     onlineStatus: model.onlineStatus,
                     ensVerified: model.isEnsVerified,
-                    hasLocalNickname: !!model.localNickname
+                    hasLocalNickname: !!model.localNickname,
+                    usesDefaultName: model.usesDefaultName
                 }
 
                 memberContextMenuComponent.createObject(root, params).popup(this)

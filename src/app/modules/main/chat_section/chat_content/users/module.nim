@@ -139,24 +139,15 @@ proc processChatMember(self: Module,  member: ChatMember, reset: bool = false): 
     status = toOnlineStatus(statusUpdateDto.statusType)
 
   result.doAdd = true
-  result.memberItem = initMemberItem(
-    pubKey = member.id,
-    displayName = contactDetails.dto.displayName,
-    ensName = contactDetails.dto.name,
-    isEnsVerified = contactDetails.dto.ensVerified,
-    localNickname = contactDetails.dto.localNickname,
-    alias = contactDetails.dto.alias,
-    icon = contactDetails.icon,
-    colorId = contactDetails.colorId,
-    colorHash = contactDetails.colorHash,
-    onlineStatus = status,
-    isContact = contactDetails.dto.isContact,
-    isBlocked = contactDetails.dto.isBlocked,
-    isCurrentUser = isMe,
-    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
-    memberRole = member.role,
+
+  result.memberItem = createMemberItemFromDtos(
+    contactDetails,
+    status,
+    state = MembershipRequestState.None,
+    requestId = "",
+    role = member.role,
+    airdropAddress = "",
     joined = member.joined,
-    trustStatus = contactDetails.dto.trustStatus,
   )
 
 method onChatMembersAdded*(self: Module, ids: seq[string]) =
