@@ -41,7 +41,6 @@ import app_service/service/currency/service as currency_service
 import app_service/service/ramp/service as ramp_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/provider/service as provider_service
 import app_service/service/profile/service as profile_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/accounts/utils as accounts_utils
@@ -157,7 +156,6 @@ proc newModule*[T](
   aboutService: about_service.Service,
   languageService: language_service.Service,
   privacyService: privacy_service.Service,
-  providerService: provider_service.Service,
   stickersService: stickers_service.Service,
   activityCenterService: activity_center_service.Service,
   savedAddressService: saved_address_service.Service,

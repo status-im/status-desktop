@@ -153,9 +153,6 @@ type
   MailserversConfig* = object
     Enabled*: bool
 
-  Web3ProviderConfig* = object
-    Enabled*: bool
-
   EnsConfig* = object
     Enabled*: bool
 
@@ -226,7 +223,6 @@ type
     BrowsersConfig*: BrowsersConfig
     PermissionsConfig*: PermissionsConfig
     MailserversConfig*: MailserversConfig
-    Web3ProviderConfig*: Web3ProviderConfig
     EnsConfig*: EnsConfig
     SwarmConfig*: SwarmConfig
     RegisterTopics*: seq[string]
@@ -423,9 +419,6 @@ proc toPermissionsConfig*(jsonObj: JsonNode): PermissionsConfig =
 proc toMailserversConfig*(jsonObj: JsonNode): MailserversConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
 
-proc toWeb3ProviderConfig*(jsonObj: JsonNode): Web3ProviderConfig =
-  discard jsonObj.getProp("Enabled", result.Enabled)
-
 proc toEnsConfig*(jsonObj: JsonNode): EnsConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
 
@@ -552,10 +545,6 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
   var mailserversConfigObj: JsonNode
   if(jsonObj.getProp("MailserversConfig", mailserversConfigObj)):
     result.MailserversConfig = toMailserversConfig(mailserversConfigObj)
-
-  var web3ProviderConfig: JsonNode
-  if(jsonObj.getProp("Web3ProviderConfig", web3ProviderConfig)):
-    result.Web3ProviderConfig = toWeb3ProviderConfig(web3ProviderConfig)
 
   var ensConfig: JsonNode
   if(jsonObj.getProp("EnsConfig", ensConfig)):
