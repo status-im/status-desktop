@@ -163,8 +163,8 @@ This section is for developers who want full control over the build environment.
    export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
 
 
-   # Add Qt to PATH. Qt6 needs both ios bin and host libexec
-   # export PATH=[**yourQtPreferredFolder**]/6.8.3/[**yourPreferredAndroidTarget**]/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/libexec:${PATH}
+   # Add Qt to PATH. Qt6 needs both ios bin and host libexec and host bin (in this order!)
+   # export PATH=[**yourQtPreferredFolder**]/6.8.3/[**yourPreferredAndroidTarget**]/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/libexec:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/bin:${PATH}
 
    ```
 3. **Create Android Virtual Device (optional - one will be created by default):**
