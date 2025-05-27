@@ -98,29 +98,21 @@ This section is for developers who want full control over the build environment.
 
 #### Setup Steps
 
-1. **Install Qt for iOS:**
+1. **Install Qt for iOS (skip if you have it already):**
    ```bash
-   # Set your Qt installation directory
-   export QT_INSTALL_DIR=/path/to/qt
-   export QT_VERSION=6.8.3
 
    # Install Qt 5.15.2 (or 6.8.3 for Qt6)
-   aqt install-qt mac ios ${QT_VERSION} -O ${QT_INSTALL_DIR} -m all --autodesktop
+   aqt install-qt mac ios 6.8.3 -O [**yourQtPreferredFolder**] -m all --autodesktop
 
    # If the above fails on arm64, try:
-   arch -x86_64 aqt install-qt mac ios ${QT_VERSION} -O ${QT_INSTALL_DIR} -m all --autodesktop
-
-   # Add Qt to PATH. Qt6 needs both ios bin and host libexec
-   export QTDIR_BIN=${QT_INSTALL_DIR}/{QT_VERSION}/ios/bin
-   export QT_HOST_LIBEXEC=${QT_INSTALL_DIR}/[**hostTarget**]/libexec
-   export PATH=${QTDIR_BIN}:${QT_HOST_LIBEXEC}:${PATH}
+   arch -x86_64 aqt install-qt mac ios 6.8.3 -O [**yourQtPreferredFolder**] -m all --autodesktop
    ```
 
-2. **Set environment variables (optional):**
+2. **Set environment variables:**
+   
    ```bash
-   export ARCH=arm64  # For device build; Defaults to x86_64 - simulator
-   export IPHONE_SDK=iphoneos  # or iphonesimulator; Defaults to iphonesimulator
-   export IOS_TARGET=16  # Defaults to min qt support
+   # Add Qt to PATH. Qt6 needs both ios bin and host libexec
+   # export PATH=[**yourQtPreferredFolder**]/6.8.3/ios/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/libexec:${PATH}
    ```
 
 3. **Build and run:**
@@ -139,7 +131,25 @@ This section is for developers who want full control over the build environment.
 
 #### Setup Steps
 
-1. **Set environment variables:**
+1. **Install Qt for Android (skip if you have it already):**
+
+
+   Note: It's best to install the qt architecture matching the system architecture
+
+   ```bash
+   # Install Qt 5.15.2
+   aqt install-qt mac android 5.15.2 -O [**yourQtPreferredFolder**]
+
+   # For Qt6 (includes desktop tools)
+   # arm host
+   aqt install-qt mac android 6.8.3 android_arm64_v8a -O [**yourQtPreferredFolder**] -m all --autodesktop
+   # x64 host
+   aqt install-qt mac android 6.8.3 android_x86_64 -O [**yourQtPreferredFolder**] -m all --autodesktop
+   # optional
+   aqt install-qt mac android 6.8.3 android_x86 -O [**yourQtPreferredFolder**] -m all
+   aqt install-qt mac android 6.8.3 android_armv7 -O [**yourQtPreferredFolder**] -m all
+   ```
+2. **Set environment variables:**
    ```bash
    # Set Java home
    export JAVA_HOME=/path/to/jdk
@@ -151,33 +161,12 @@ This section is for developers who want full control over the build environment.
 
    # Add Android tools to PATH
    export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
-   ```
 
-2. **Install Qt for Android:**
-   Note: It's best to install the qt architecture matching the system architecture
-
-   ```bash
-   # Set your Qt installation directory
-   export QT_INSTALL_DIR=/path/to/qt
-
-   # Install Qt 5.15.2
-   aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}
-
-   # For Qt6 (includes desktop tools)
-   # arm host
-   aqt install-qt mac android 6.8.3 android_arm64_v8a -O ${QT_INSTALL_DIR} -m all --autodesktop
-   # x64 host
-   aqt install-qt mac android 6.8.3 android_x86_64 -O ${QT_INSTALL_DIR}  -m all --autodesktop
-   # optional
-   aqt install-qt mac android 6.8.3 android_x86 -O ${QT_INSTALL_DIR}  -m all
-   aqt install-qt mac android 6.8.3 android_armv7 -O ${QT_INSTALL_DIR} -m all
 
    # Add Qt to PATH. Qt6 needs both ios bin and host libexec
-   export QTDIR_BIN=${QT_INSTALL_DIR}/{QT_VERSION}/[**yourPreferredAndroidTarget]/bin
-   export QT_HOST_LIBEXEC=${QT_INSTALL_DIR}/[**hostTarget**]/libexec
-   export PATH=${QTDIR_BIN}:${QT_HOST_LIBEXEC}:${PATH}
-   ```
+   # export PATH=[**yourQtPreferredFolder**]/6.8.3/[**yourPreferredAndroidTarget**]/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/libexec:${PATH}
 
+   ```
 3. **Create Android Virtual Device (optional - one will be created by default):**
    ```bash
    # It's best to choose the host arch
