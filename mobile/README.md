@@ -173,7 +173,7 @@ This section is for developers who want full control over the build environment.
    aqt install-qt mac android 6.8.3 android_armv7 -O ${QT_INSTALL_DIR} -m all
 
    # Add Qt to PATH. Qt6 needs both ios bin and host libexec
-   export QTDIR_BIN=${QT_INSTALL_DIR}/{QT_VERSION}/ios/bin
+   export QTDIR_BIN=${QT_INSTALL_DIR}/{QT_VERSION}/[**yourPreferredAndroidTarget]/bin
    export QT_HOST_LIBEXEC=${QT_INSTALL_DIR}/[**hostTarget**]/libexec
    export PATH=${QTDIR_BIN}:${QT_HOST_LIBEXEC}:${PATH}
    ```
