@@ -156,7 +156,7 @@ This section is for developers who want full control over the build environment.
 
    # Set Android SDK and NDK paths
    export ANDROID_HOME=/path/to/android-sdk
-   export ANDROID_NDK_HOME=/path/to/android-ndk
+   export ANDROID_NDK_HOME=/path/to/android-ndk/26.1.10909125
    export SDK_PATH="$ANDROID_HOME"
 
    # Add Android tools to PATH
