@@ -2236,6 +2236,7 @@ Item {
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
                                 networksStore: appMain.networksStore
+                                advancedStore: appMain.profileSectionStore.advancedStore
                                 paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts
