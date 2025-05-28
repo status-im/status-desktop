@@ -36,6 +36,7 @@ StackLayout {
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
+    required property ProfileStores.AdvancedStore advancedStore
     property bool paymentRequestFeatureEnabled
 
     property var mutualContactsModel
@@ -288,6 +289,7 @@ StackLayout {
             activeNetworks: root.networksStore.activeNetworks
             tokensStore: root.tokensStore
             transactionStore: root.transactionStore
+            advancedStore: root.advancedStore
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
