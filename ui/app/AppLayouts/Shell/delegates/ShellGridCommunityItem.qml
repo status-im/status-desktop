@@ -55,7 +55,7 @@ ShellGridItem {
     }
 
     component CustomInfoTag: InformationTag {
-        height: 24
+        height: Theme.bigPadding
         spacing: 4
         horizontalPadding: Theme.halfPadding
         verticalPadding: 4
@@ -85,7 +85,7 @@ ShellGridItem {
     Component {
         id: bannedTagComponent
         ErrorTag {
-            height: 24
+            height: Theme.bigPadding
             spacing: 4
             horizontalPadding: Theme.halfPadding
             verticalPadding: 4

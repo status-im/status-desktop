@@ -103,7 +103,6 @@ Control {
             icon.color: model.color ?? Theme.palette.white
             icon.width: 24
             icon.height: 24
-            badgeColor: model.color ?? Theme.palette.primaryColor1
             tooltipText: "%1 (%2)".arg(text).arg(Utils.translatedSectionName(sectionType))
 
             chatType: model.chatType ?? Constants.chatType.unknown
