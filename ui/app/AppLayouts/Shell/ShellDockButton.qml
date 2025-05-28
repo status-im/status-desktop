@@ -54,7 +54,6 @@ ToolButton {
             anchors.topMargin: root.notificationsCount ? -2 : 0
             visible: root.hasNotification
             value: root.notificationsCount
-            radius: root.notificationsCount ? 6 : height/2
         }
     }
 
