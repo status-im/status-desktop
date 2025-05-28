@@ -53,12 +53,13 @@ StatusGridView {
         Connections {
             target: item ?? null
             function onClicked() {
-                model.timestamp = new Date().valueOf()
                 root.itemActivated(item.sectionType, item.itemId)
+                model.timestamp = new Date().valueOf()
             }
             function onPinRequested() {
                 model.pinned = !model.pinned
-                model.timestamp = new Date().valueOf()
+                if (model.pinned)
+                    model.timestamp = new Date().valueOf()
                 root.itemPinRequested(model.key, model.pinned)
             }
         }

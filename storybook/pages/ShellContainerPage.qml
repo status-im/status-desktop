@@ -298,8 +298,8 @@ SplitView {
                 }
             }
             Button {
-                text: "Clear pinned items"
-                onClicked: shellAdaptor.clearPinnedItems()
+                text: "Reset"
+                onClicked: shellAdaptor.clear()
             }
         }
     }

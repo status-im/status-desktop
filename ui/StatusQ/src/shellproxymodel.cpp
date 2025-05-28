@@ -1,7 +1,8 @@
 #include "StatusQ/shellproxymodel.h"
 
-#include <QDateTime>
 #include <QDebug>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QSettings>
 
 namespace {
@@ -11,14 +12,23 @@ constexpr auto kTimestampRoleName = "timestamp";
 constexpr auto kPinnedRoleName = "pinned";
 
 constexpr auto kSettingsGroupPrefix = "Shell";
-constexpr auto kSettingsEntry = "pinnedEntries";
+constexpr auto kSettingsEntry = "entries";
 };
 
 struct ShellItemData {
-    ShellItemData(): timestamp(QDateTime::currentMSecsSinceEpoch()), pinned(false) {}
-    ShellItemData(bool pin): pinned(pin), timestamp(QDateTime::currentMSecsSinceEpoch()) {}
-    qlonglong timestamp;
-    bool pinned;
+    ShellItemData(): timestamp(0), pinned(false) {}
+    explicit ShellItemData(bool pin): pinned(pin), timestamp(0) {}
+
+    qlonglong timestamp{0}; // serialized as a string in JSON
+    bool pinned{false};
+
+    QJsonObject toJson() const {
+        return {{kTimestampRoleName, QString::number(timestamp)}, {kPinnedRoleName, pinned}};
+    }
+    void fromJson(const QJsonObject& obj) {
+        timestamp = obj.value(kTimestampRoleName).toString(QStringLiteral("0")).toLongLong();
+        pinned = obj.value(kPinnedRoleName).toBool(false);
+    }
 };
 
 ShellProxyModel::ShellProxyModel(QObject *parent)
@@ -28,10 +38,10 @@ ShellProxyModel::ShellProxyModel(QObject *parent)
 
 ShellProxyModel::~ShellProxyModel()
 {
-    savePinnedEntries();
+    save();
 }
 
-void ShellProxyModel::clearPinnedItems() {
+void ShellProxyModel::clear() {
     beginResetModel();
 
     m_data.clear();
@@ -45,19 +55,19 @@ void ShellProxyModel::clearPinnedItems() {
     endResetModel();
 }
 
-void ShellProxyModel::savePinnedEntries()
+void ShellProxyModel::save()
 {
     if (m_data.isEmpty())
         return;
 
-    QStringList result;
+    QJsonArray result;
 
     QHashIterator i(m_data);
     while (i.hasNext()) {
         i.next();
-        if (i.value().pinned) {
-            result.append(i.key());
-        }
+        auto entry = i.value().toJson();
+        entry.insert(kKeyName, i.key());
+        result.append(entry);
     }
 
     QSettings settings;
@@ -67,18 +77,25 @@ void ShellProxyModel::savePinnedEntries()
     settings.sync();
 }
 
-void ShellProxyModel::loadPinnedEntries()
+void ShellProxyModel::load()
 {
     QSettings settings;
     settings.beginGroup(settingsGroup());
-    const auto pinnedEntries = settings.value(kSettingsEntry).toStringList();
+    const auto savedEntries = settings.value(kSettingsEntry).toJsonArray();
     settings.endGroup();
 
-    if (!pinnedEntries.isEmpty()) {
+    if (!savedEntries.isEmpty()) {
         beginResetModel();
         m_data.clear();
-        for (const auto &pinnedEntry : pinnedEntries) {
-            m_data.insert(pinnedEntry, ShellItemData(true));
+        for (const auto &savedEntry : savedEntries) {
+            if (!savedEntry.isObject())
+                continue;
+            const auto savedObj = savedEntry.toObject();
+
+            ShellItemData item;
+            item.fromJson(savedObj);
+
+            m_data.insert(savedObj.value(kKeyName).toString(), item);
         }
         endResetModel();
     }
@@ -159,6 +176,14 @@ QHash<int, QByteArray> ShellProxyModel::roleNames() const
     return m_roleNames;
 }
 
+void ShellProxyModel::classBegin() {
+    // empty on purpose
+}
+
+void ShellProxyModel::componentComplete() {
+     load();
+}
+
 void ShellProxyModel::resetInternalData()
 {
     // underlying model roles
@@ -202,8 +227,6 @@ void ShellProxyModel::setProfileId(const QString &newProfileId)
         return;
     m_profileId = newProfileId;
     emit profileIdChanged();
-
-    loadPinnedEntries();
 }
 
 QString ShellProxyModel::settingsGroup() const {

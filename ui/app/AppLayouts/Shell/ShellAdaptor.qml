@@ -102,8 +102,8 @@ QObject {
         ]
     }
 
-    function clearPinnedItems() {
-        shellProxyModel.clearPinnedItems()
+    function clear() {
+        shellProxyModel.clear()
     }
 
     ObjectProxyModel {
@@ -284,13 +284,9 @@ QObject {
             }
         ]
         sorters: [
-            FastExpressionSorter {
-                expression: {
-                    if (modelLeft.hasNotification && modelRight.hasNotification)
-                        return modelRight.notificationsCount - modelLeft.notificationsCount
-                    return modelRight.hasNotification - modelLeft.hasNotification
-                }
-                expectedRoles: ["hasNotification", "notificationsCount"]
+            RoleSorter {
+                roleName: "timestamp"
+                sortOrder: Qt.DescendingOrder
             },
             RoleSorter {
                 roleName: "name"
