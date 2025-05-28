@@ -287,6 +287,7 @@ QtObject:
       var tokenBySymbolList: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
       var tokenSymbols: seq[string] = @[]
 
+      self.sourcesOfTokensList = @[]
       for s in tokenList.data:
         let newSource = SupportedSourcesItem(
           name: s.name,
@@ -378,7 +379,7 @@ QtObject:
           self.rebuildMarketData()
     # update and populate internal list and then emit signal when new custom token detected?
     self.events.on(SignalType.WalletTokensListsUpdated.event) do(e:Args):
-      self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
+      self.getSupportedTokensList()
 
   proc getCurrency*(self: Service): string =
     return self.settingsService.getCurrency()

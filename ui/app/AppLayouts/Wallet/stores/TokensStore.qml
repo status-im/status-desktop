@@ -33,19 +33,17 @@ QtObject {
             expression: sourceImage(model.name)
             expectedRoles: ["name"]
         }
-        filters: AnyOf {
-            ValueFilter {
-                roleName: "name"
-                value: Constants.supportedTokenSources.uniswap
+        filters: FastExpressionFilter {
+            function shouldDisplayList(listName, tokensCount) {
+                return listName !== Constants.supportedTokenSources.nativeList &&
+                        listName !== Constants.supportedTokenSources.custom &&
+                        tokensCount > 0
             }
-            ValueFilter {
-                roleName: "name"
-                value: Constants.supportedTokenSources.aave
+
+            expression: {
+                return shouldDisplayList(model.name, model.tokensCount)
             }
-            ValueFilter {
-                roleName: "name"
-                value: Constants.supportedTokenSources.status
-            }
+            expectedRoles: ["name", "tokensCount"]
         }
     }
 
