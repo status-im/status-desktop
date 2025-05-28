@@ -114,7 +114,10 @@ Control {
                 root.itemPinRequested(key, pin)
             }
             onDappDisconnectRequested: (dappUrl) => root.dappDisconnectRequested(dappUrl)
-            onClicked: root.itemActivated(sectionType, model.id)
+            onClicked: {
+                root.itemActivated(sectionType, model.id)
+                model.timestamp = new Date().valueOf()
+            }
         }
     }
 }

@@ -1,12 +1,14 @@
 #pragma once
 
 #include <QIdentityProxyModel>
+#include <QQmlParserStatus>
 
 struct ShellItemData;
 
-class ShellProxyModel : public QIdentityProxyModel
+class ShellProxyModel : public QIdentityProxyModel, public QQmlParserStatus
 {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
 
     Q_PROPERTY(QString profileId READ profileId WRITE setProfileId NOTIFY profileIdChanged REQUIRED FINAL)
 
@@ -20,7 +22,7 @@ public:
     explicit ShellProxyModel(QObject* parent = nullptr);
     ~ShellProxyModel() override;
 
-    Q_INVOKABLE void clearPinnedItems();
+    Q_INVOKABLE void clear();
 
     QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
@@ -32,6 +34,10 @@ public:
 signals:
     void profileIdChanged();
 
+protected:
+    void classBegin() override;
+    void componentComplete() override;
+
 protected slots:
     void resetInternalData();
 
@@ -39,8 +45,8 @@ private:
     void initRoles();
     void updateRoleNames();
 
-    void savePinnedEntries();
-    void loadPinnedEntries();
+    void save();
+    void load();
 
     QHash<int, QByteArray> m_roleNames;
     int m_keyRoleValue{-1};
