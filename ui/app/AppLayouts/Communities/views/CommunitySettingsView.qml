@@ -26,6 +26,7 @@ import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0
 
 StatusSectionLayout {
@@ -39,6 +40,7 @@ StatusSectionLayout {
     property UtilsStore utilsStore
     property var chatCommunitySectionModule
     required property TokensStore tokensStore
+    required property ProfileStores.AdvancedStore advancedStore
     required property var community
     required property var joinedMembers
     required property var bannedMembers
@@ -236,6 +238,7 @@ StatusSectionLayout {
                 }
 
                 onEdited: {
+                    // Step 1: Proceed with community creation
                     const error = root.chatCommunitySectionModule.editCommunity(
                                     StatusQUtils.Utils.filterXSS(item.name),
                                     StatusQUtils.Utils.filterXSS(item.description),
@@ -254,6 +257,12 @@ StatusSectionLayout {
                         errorDialog.text = error.error
                         errorDialog.open()
                     }
+                    // Step 2: Automatically set the archive protocol global property if it's been checked as
+                    // an option during community creation process. It's a more user friendly process
+                    else if(item.options.archiveSupportEnabled) {
+                        root.advancedStore.enableArchiveProtocolProperty()
+                    }
+                    
                 }
 
                 onAirdropTokensClicked: root.goTo(Constants.CommunitySettingsSections.Airdrops)
