@@ -146,16 +146,15 @@ AbstractButton {
 
             // extra bottom contents
             RowLayout {
+                Layout.minimumHeight: Theme.bigPadding
                 Loader {
                     id: bottomRowLoader
                 }
                 Item { Layout.fillWidth: true }
                 StatusBadge {
-                    id: badge
                     visible: root.hasNotification
                     value: root.notificationsCount
-                    color: Qt.darker(root.color, 1.33)
-                    radius: root.notificationsCount ? 6 : height/2
+                    color: Theme.palette.primaryColor1
                 }
             }
         }
