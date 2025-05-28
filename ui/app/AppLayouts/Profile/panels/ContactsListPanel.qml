@@ -33,7 +33,7 @@ StatusListView {
         showRejectContactRequestButton:
             model.contactRequest === Constants.ContactRequestState.Received
         showAcceptContactRequestButton: showRejectContactRequestButton
-        showRemoveRejectionButton: model.contactRequest === Constants.ContactRequestState.Dismissed
+        showRemoveRejectionButton: !model.isBlocked && model.contactRequest === Constants.ContactRequestState.Dismissed
 
         contactText: model.contactRequest === Constants.ContactRequestState.Sent
                      ? qsTr("Contact Request Sent") : ""
