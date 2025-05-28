@@ -95,7 +95,7 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
             assert driver.waitFor(lambda: 'Become member' in permissions_settings.get_is_allowed_tags_titles(),
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         else:
-            assert driver.waitFor(lambda: permissions_intro_view.is_hide_icon_visible,
+            assert driver.waitFor(lambda: permissions_intro_view.hide_icon.is_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Check toast message for edited permission'):
