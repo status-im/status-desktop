@@ -18,77 +18,67 @@ from gui.objects_map import communities_names
 class TokensView(QObject):
     def __init__(self):
         super(TokensView, self).__init__(communities_names.mainWindow_mintPanel_MintTokensSettingsPanel)
-        self._mint_token_button = Button(communities_names.mainWindow_Mint_token_StatusButton)
-        self._welcome_image = QObject(communities_names.welcomeSettingsTokens_Image)
-        self._welcome_title = TextLabel(communities_names.welcomeSettingsTokens_Title)
-        self._welcome_subtitle = TextLabel(communities_names.welcomeSettingsTokensSubtitle)
-        self._welcome_checklist_1 = TextLabel(communities_names.checkListText_0_Tokens)
-        self._welcome_checklist_2 = TextLabel(communities_names.checkListText_1_Tokens)
-        self._welcome_checklist_3 = TextLabel(communities_names.checkListText_2_Tokens)
-        self._get_started_infobox = QObject(communities_names.mint_Owner_Tokens_InfoBoxPanel)
-        self._mint_owner_token_button = Button(communities_names.mint_Owner_Tokens_StatusButton)
-
-    @property
-    @allure.step('Get mint token button visibility state')
-    def is_mint_token_button_present(self) -> bool:
-        return self._mint_token_button.exists
+        self.mint_token_button = Button(communities_names.mainWindow_Mint_token_StatusButton)
+        self.welcome_image = QObject(communities_names.welcomeSettingsTokens_Image)
+        self.welcome_title = TextLabel(communities_names.welcomeSettingsTokens_Title)
+        self.welcome_subtitle = TextLabel(communities_names.welcomeSettingsTokensSubtitle)
+        self.welcome_checklist_1 = TextLabel(communities_names.checkListText_0_Tokens)
+        self.welcome_checklist_2 = TextLabel(communities_names.checkListText_1_Tokens)
+        self.welcome_checklist_3 = TextLabel(communities_names.checkListText_2_Tokens)
+        self.get_started_infobox = QObject(communities_names.mint_Owner_Tokens_InfoBoxPanel)
+        self.mint_owner_token_button = Button(communities_names.mint_Owner_Tokens_StatusButton)
 
     @property
     @allure.step('Get mint token button enable state')
     def is_mint_token_button_enabled(self) -> bool:
-        return driver.waitForObjectExists(self._mint_token_button.real_name,
+        return driver.waitForObjectExists(self.mint_token_button.real_name,
                                           configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
     @property
     @allure.step('Get tokens welcome image path')
     def tokens_welcome_image_path(self) -> str:
-        return self._welcome_image.object.source.path
+        return self.welcome_image.object.source.path
 
     @property
     @allure.step('Get tokens welcome title')
     def tokens_welcome_title(self) -> str:
-        return self._welcome_title.text
+        return self.welcome_title.text
 
     @property
     @allure.step('Get tokens welcome subtitle')
     def tokens_welcome_subtitle(self) -> str:
-        return self._welcome_subtitle.text
+        return self.welcome_subtitle.text
 
     @property
     @allure.step('Get tokens checklist')
     def tokens_checklist(self) -> typing.List[str]:
-        tokens_checklist = [str(self._welcome_checklist_1.object.text), str(self._welcome_checklist_2.object.text),
-                            str(self._welcome_checklist_3.object.text)]
+        tokens_checklist = [str(self.welcome_checklist_1.object.text), str(self.welcome_checklist_2.object.text),
+                            str(self.welcome_checklist_3.object.text)]
         return tokens_checklist
 
     @property
     @allure.step('Get tokens info box title')
     def tokens_infobox_title(self) -> str:
-        return str(self._get_started_infobox.object.title)
+        return str(self.get_started_infobox.object.title)
 
     @property
     @allure.step('Get tokens info box text')
     def tokens_infobox_text(self) -> str:
-        return str(self._get_started_infobox.object.text)
-
-    @property
-    @allure.step('Get tokens mint owner token button visibility state')
-    def is_tokens_owner_token_button_visible(self) -> bool:
-        return self._mint_owner_token_button.is_visible
+        return str(self.get_started_infobox.object.text)
 
     @allure.step('Click mint owner button')
     def click_mint_owner_button(self):
-        self._mint_owner_token_button.click()
+        self.mint_owner_token_button.click()
         return TokensOwnerTokenSettingsView().wait_until_appears()
 
 
 class TokensOwnerTokenSettingsView(QObject):
     def __init__(self):
-        super(TokensOwnerTokenSettingsView, self).__init__(communities_names.mainWindow_ownerTokenPage_SettingsPage)
+        super(TokensOwnerTokenSettingsView, self).__init__(communities_names.mintTokenSettingsPanel)
         self._scroll = Scroll(communities_names.mainWindow_OwnerTokenWelcomeView)
         self._owner_token_section = QObject(communities_names.ownerToken_InfoPanel)
         self._token_master_token_section = QObject(communities_names.tokenMasterToken_InfoPanel)
-        self._next_button = Button(communities_names.next_StatusButton)
+        self._next_button = Button(communities_names.mintOwnerTokenViewNextButton)
         self._owner_token_text_object = TextLabel(communities_names.owner_token_StatusBaseText)
         self._token_master_text_object = TextLabel(communities_names.token_master_StatusBaseText)
 
@@ -144,7 +134,7 @@ class TokensOwnerTokenSettingsView(QObject):
                 self._next_button.click()
                 return EditOwnerTokenView().wait_until_appears()
             except Exception:
-                    pass
+                pass
         raise RuntimeError("Can't open Edit owner token view")
 
 
@@ -185,11 +175,6 @@ class EditOwnerTokenView(QObject):
     @allure.step('Get crown symbol')
     def get_crown_symbol(self) -> bool:
         return self._crown_icon.exists
-
-    @property
-    @allure.step('Get coin symbol')
-    def get_coin_symbol(self) -> bool:
-        return self._coin_icon.exists
 
     @allure.step('Get text labels')
     def get_all_text_labels(self) -> list:
@@ -288,15 +273,10 @@ class EditOwnerTokenView(QObject):
         raise RuntimeError(f'Could not open Sign transaction popup')
 
 
-
-
-
 class MintedTokensView(QObject):
     def __init__(self):
         super().__init__(communities_names.mainWindow_MintedTokensView)
         self.minted_tokens_view = QObject(communities_names.mainWindow_MintedTokensView)
-        self._coin_symbol = QObject(communities_names.token_sale_icon_StatusIcon)
-        self._crown_symbol = QObject(communities_names.crown_icon_StatusIcon)
         self.collectible = QObject(communities_names.collectibleView_control)
 
     def check_community_collectibles_statuses(self):

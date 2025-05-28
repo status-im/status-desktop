@@ -328,57 +328,47 @@ class MembersView(QObject):
 class AirdropsView(QObject):
     def __init__(self):
         super(AirdropsView, self).__init__(communities_names.mainWindow_airdropPanel_AirdropsSettingsPanel)
-        self._new_airdrop_button = Button(communities_names.mainWindow_New_Airdrop_StatusButton)
-        self._welcome_image = QObject(communities_names.welcomeSettingsAirdrops_Image)
-        self._welcome_title = TextLabel(communities_names.welcomeSettingsAirdrops_Title)
-        self._welcome_subtitle = TextLabel(communities_names.welcomeSettingsAirdrops_Subtitle)
-        self._welcome_checklist_1 = TextLabel(communities_names.checkListText_0_Airdrops)
-        self._welcome_checklist_2 = TextLabel(communities_names.checkListText_1_Airdrops)
-        self._welcome_checklist_3 = TextLabel(communities_names.checkListText_2_Airdrops)
-        self._get_started_infobox = QObject(communities_names.infoBox_StatusInfoBoxPanel)
-        self._mint_owner_token_button = Button(communities_names.mint_Owner_token_Airdrops_StatusButton)
-
-    @property
-    @allure.step('Get new airdrop button enable state')
-    def is_new_airdrop_button_present(self) -> bool:
-        return self._new_airdrop_button.exists
+        self.new_airdrop_button = Button(communities_names.mainWindow_New_Airdrop_StatusButton)
+        self.welcome_image = QObject(communities_names.welcomeSettingsAirdrops_Image)
+        self.welcome_title = TextLabel(communities_names.welcomeSettingsAirdrops_Title)
+        self.welcome_subtitle = TextLabel(communities_names.welcomeSettingsAirdrops_Subtitle)
+        self.welcome_checklist_1 = TextLabel(communities_names.checkListText_0_Airdrops)
+        self.welcome_checklist_2 = TextLabel(communities_names.checkListText_1_Airdrops)
+        self.welcome_checklist_3 = TextLabel(communities_names.checkListText_2_Airdrops)
+        self.get_started_infobox = QObject(communities_names.infoBox_StatusInfoBoxPanel)
+        self.mint_owner_token_button = Button(communities_names.mint_Owner_token_Airdrops_StatusButton)
 
     @property
     @allure.step('Get airdrops welcome image path')
     def airdrops_welcome_image_path(self) -> str:
-        return self._welcome_image.object.source.path
+        return self.welcome_image.object.source.path
 
     @property
     @allure.step('Get airdrops welcome title')
     def airdrops_welcome_title(self) -> str:
-        return self._welcome_title.text
+        return self.welcome_title.text
 
     @property
     @allure.step('Get airdrops welcome subtitle')
     def airdrops_welcome_subtitle(self) -> str:
-        return self._welcome_subtitle.text
+        return self.welcome_subtitle.text
 
     @property
     @allure.step('Get airdrops checklist')
     def airdrops_checklist(self) -> typing.List[str]:
-        airdrops_checklist = [str(self._welcome_checklist_1.object.text), str(self._welcome_checklist_2.object.text),
-                              str(self._welcome_checklist_3.object.text)]
+        airdrops_checklist = [str(self.welcome_checklist_1.object.text), str(self.welcome_checklist_2.object.text),
+                              str(self.welcome_checklist_3.object.text)]
         return airdrops_checklist
 
     @property
     @allure.step('Get airdrops info box title')
     def airdrops_infobox_title(self) -> str:
-        return self._get_started_infobox.object.title
+        return self.get_started_infobox.object.title
 
     @property
     @allure.step('Get airdrops info box text')
     def airdrops_infobox_text(self) -> str:
-        return self._get_started_infobox.object.text
-
-    @property
-    @allure.step('Get airdrops mint owner token button visibility state')
-    def is_airdrops_owner_token_button_visible(self) -> bool:
-        return self._mint_owner_token_button.is_visible
+        return self.get_started_infobox.object.text
 
 
 class PermissionsIntroView(QObject):
@@ -395,11 +385,6 @@ class PermissionsIntroView(QObject):
         self._delete_permission_button = QObject(communities_names.delete_icon_StatusIcon)
         self._hide_icon = QObject(communities_names.hide_icon_StatusIcon)
         self._duplicate_icon = QObject(communities_names.copy_icon_StatusIcon)
-
-    @property
-    @allure.step('Get hide icon visibility')
-    def is_hide_icon_visible(self) -> bool:
-        return self._hide_icon.is_visible
 
     @property
     @allure.step('Get permission welcome image path')
@@ -426,25 +411,20 @@ class PermissionsIntroView(QObject):
     @allure.step('Click add new permission button')
     def add_new_permission(self) -> 'PermissionsSettingsView':
         self._add_new_permission_button.click()
-        return PermissionsSettingsView()
-
-    @property
-    @allure.step('Is add new permission button visible')
-    def is_add_new_permission_button_present(self) -> bool:
-        return self._add_new_permission_button.exists
+        return PermissionsSettingsView().wait_until_appears()
 
     @allure.step('Open edit permission view')
-    def open_edit_permission_view(self):
+    def open_edit_permission_view(self) -> 'PermissionsSettingsView':
         self._edit_permission_button.click()
         return PermissionsSettingsView().wait_until_appears()
 
     @allure.step('Click delete permission button')
-    def click_delete_permission(self):
+    def click_delete_permission(self) -> 'DeletePermissionPopup':
         self._delete_permission_button.click()
         return DeletePermissionPopup().wait_until_appears()
 
     @allure.step('Click duplicate permission button')
-    def click_duplicate_permission(self):
+    def click_duplicate_permission(self) -> 'PermissionsSettingsView':
         self._duplicate_icon.click()
         return PermissionsSettingsView().wait_until_appears()
 
