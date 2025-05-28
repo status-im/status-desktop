@@ -19,32 +19,39 @@ import "private"
 MembersSelectorBase {
     id: root
 
-    property UsersStore usersStore
+    property var usersModel
+    property var temporaryUsersModel
+
+    signal updateGroupMembers()
+    signal resetTemporaryModel()
+    signal appendTemporaryModel(string pubKey, string displayName)
+    signal removeFromTemporaryModel(string pubKey)
+
 
     onConfirmed: {
-        usersStore.updateGroupMembers()
-        usersStore.resetTemporaryModel()
+        root.updateGroupMembers()
+        root.resetTemporaryModel()
     }
 
     onRejected: {
-        usersStore.resetTemporaryModel()
+        root.resetTemporaryModel()
     }
 
     onEntryAccepted: if (suggestionsDelegate) {
         if (!root.limitReached) {
-            usersStore.appendTemporaryModel(suggestionsDelegate._pubKey, suggestionsDelegate.userName)
+            root.appendTemporaryModel(suggestionsDelegate._pubKey, suggestionsDelegate.userName)
             root.edit.clear()
         }
     }
 
     onEntryRemoved: if (delegate) {
         if (!delegate.isReadonly) {
-            usersStore.removeFromTemporaryModel(delegate._pubKey)
+            root.removeFromTemporaryModel(delegate._pubKey)
         }
     }
 
     model: SortFilterProxyModel {
-        sourceModel: root.usersStore.temporaryModel
+        sourceModel: root.temporaryUsersModel
         sorters: RoleSorter {
             roleName: "memberRole"
             sortOrder: Qt.DescendingOrder
@@ -60,7 +67,7 @@ MembersSelectorBase {
         isReadonly: {
             if (model.memberRole === Constants.memberRole.owner) return true
             if (root.rootStore.amIChatAdmin()) return false
-            return index < root.usersStore.usersModel.count
+            return index < root.usersModel.count
         }
         icon: model.memberRole === Constants.memberRole.owner ? "crown" : ""
 
@@ -68,6 +75,6 @@ MembersSelectorBase {
     }
 
     Component.onCompleted: {
-        usersStore.resetTemporaryModel()
+        root.resetTemporaryModel()
     }
 }

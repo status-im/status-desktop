@@ -30,7 +30,7 @@ ColumnLayout {
 
     // Important: each chat/channel has its own ChatContentModule
     property var chatContentModule
-    property var chatSectionModule
+    property var chatSectionModule /// Not used???
 
     property RootStore rootStore
     property ContactsStore contactsStore
@@ -44,7 +44,7 @@ ColumnLayout {
     property var emojiPopup
     property var stickersPopup
     property UsersStore usersStore: UsersStore {
-        chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
+        //chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
     }
 
     signal openStickerPackPopup(string stickerPackId)
@@ -81,6 +81,7 @@ ColumnLayout {
     spacing: 0
 
     onChatContentModuleChanged: if (!!chatContentModule) {
+
         root.usersStore.chatDetails = root.chatContentModule.chatDetails
         root.usersStore.usersModule = root.chatContentModule.usersModule
     }
@@ -109,7 +110,6 @@ ColumnLayout {
             formatBalance: root.formatBalance
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
-            usersStore: root.usersStore
             stickersLoaded: root.stickersLoaded
             chatId: root.chatId
             isOneToOne: root.chatType === Constants.chatType.oneToOne
@@ -119,6 +119,7 @@ ColumnLayout {
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             areTestNetworksEnabled: root.areTestNetworksEnabled
+            usersModel: root.usersStore.usersModel
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled

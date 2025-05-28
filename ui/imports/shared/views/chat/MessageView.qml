@@ -27,7 +27,6 @@ Loader {
 
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
-    property ChatStores.UsersStore usersStore
     property ProfileStores.ContactsStore contactsStore
     property var chatContentModule
     property var chatCommunitySectionModule
@@ -162,6 +161,8 @@ Loader {
     // Utils store data
     property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
     property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
+
+    property var usersModel
 
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
@@ -956,7 +957,7 @@ Loader {
                             suggestionsOpened = false
                         }
 
-                        usersModel: root.usersStore.usersModel
+                        usersModel: root.usersModel
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
 

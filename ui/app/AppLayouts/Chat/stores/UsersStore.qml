@@ -3,33 +3,43 @@ import QtQuick 2.15
 QtObject {
     id: root
 
-    property var chatCommunitySectionModule
-    property var chatDetails
-    property var usersModule
+    // Required from outside:
+    /*required*/property var chatDetails
+    /*required*/property var usersModule
+    /*required*/property var membersModel // It will contain all the community members
 
-    readonly property var usersModel: {
-        if (!chatDetails && !chatCommunitySectionModule) {
-            return null
-        }
-        let isFullCommunityList = !chatDetails.requiresPermissions
-        if (chatDetails.belongsToCommunity && isFullCommunityList && !!chatCommunitySectionModule) {
-            // Community channel with no permisisons. We can use the section's membersModel
-            return chatCommunitySectionModule.membersModel
-        }
-        return usersModule ? usersModule.model : null
+    // PRIVATE API assigned from outsite:
+    property QtObject _d: QtObject {
+        property bool contentRequiresPermissions: root.chatDetails.requiresPermissions
+        property bool contentBelongsToCommunity: root.chatDetails.belongsToCommunity
     }
-    readonly property var temporaryModel: usersModule ? usersModule.temporaryModel : null
+    // End of PRIVATE API
+
+    // PUBLIC API:
+    // TODO: This is a workaround to get users list depending on specific cases and should be done on the backend,
+    // the UI just wants a list of users specific for the case it's displaying data
+    readonly property var usersModel: {
+        if (_d.contentBelongsToCommunity && !_d.contentRequiresPermissions) {
+            // It contains all members of the community. Useful for public chats or private ones with no permisisons
+            return root.membersModel
+        }
+        // It contains just the specific members of a chat / channel
+        return !!root.usersModule ? root.usersModule.model : null
+    }
+
+    // Used when editting
+    readonly property var temporaryModel: root.usersModule ? root.usersModule.temporaryModel : null
 
     function appendTemporaryModel(pubKey, displayName) {
-        usersModule.appendTemporaryModel(pubKey, displayName)
+        root.usersModule.appendTemporaryModel(pubKey, displayName)
     }
     function removeFromTemporaryModel(pubKey) {
-        usersModule.removeFromTemporaryModel(pubKey)
+        root.usersModule.removeFromTemporaryModel(pubKey)
     }
     function resetTemporaryModel() {
-        usersModule.resetTemporaryModel()
+        root.usersModule.resetTemporaryModel()
     }
     function updateGroupMembers() {
-        usersModule.updateGroupMembers()
+        root.usersModule.updateGroupMembers()
     }
 }

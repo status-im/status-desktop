@@ -1890,6 +1890,9 @@ Item {
                                 id: chatLayoutContainer
 
                                 rootStore: ChatStores.RootStore {
+                                    //**
+                                    messagingSectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                    //**
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore
@@ -2150,6 +2153,12 @@ Item {
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.networksStore.areTestNetworksEnabled)
                                 rootStore: ChatStores.RootStore {
+                                    //**
+                                    messagingSectionModule: {
+                                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
+                                        return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
+                                    }
+                                    //**
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore

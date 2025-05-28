@@ -29,6 +29,14 @@ Item {
     property var emojiPopup
     property int padding: Theme.halfPadding
 
+    property var usersModel
+    property var temporaryUsersModel
+
+    signal updateGroupMembers()
+    signal resetTemporaryModel()
+    signal appendTemporaryModel(string pubKey, string displayName)
+    signal removeFromTemporaryModel(string pubKey)
+
     signal searchButtonClicked()
     signal displayEditChannelPopup(string chatId,
                                    string chatName,
@@ -346,15 +354,17 @@ Item {
 
         MembersEditSelectorView {
             rootStore: root.rootStore
-            usersStore: UsersStore {
-                chatDetails: chatContentModule.chatDetails
-                chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-                usersModule: root.chatContentModule.usersModule
-            }
             contactsModel: root.mutualContactsModel
+            usersModel: root.usersModel
+            temporaryUsersModel: root.temporaryUsersModel
 
             onConfirmed: root.state = d.stateInfoButtonContent
             onRejected: root.state = d.stateInfoButtonContent
+
+            onUpdateGroupMembers: root.updateGroupMembers()
+            onResetTemporaryModel: root.resetTemporaryModel()
+            onAppendTemporaryModel: root.appendTemporaryModel(pubKey, displayName)
+            onRemoveFromTemporaryModel: root.removeFromTemporaryModel(pubKey)
         }
     }
 }

@@ -16,6 +16,43 @@ import utils 1.0
 QtObject {
     id: root
 
+    //////// NEW - Decoupling UI components works:
+
+    // mainModule --> messagingSectionModule per section ID / chat section ID in case of chat   //chatCommunitySectionModule
+    // messagingSectionModule --> messagingContentModule per chat ID                            //chatContentModule (via prepare/getChatContentModule)
+
+    // root.usersStore.chatDetails = root.chatContentModule.chatDetails
+    // root.usersStore.usersModule = root.chatContentModule.usersModule
+
+    // Important:
+    // Each `ChatLayout` has its own messagingSectionModule
+    // (on the backend chat and community sections share the same module since they are actually the same)
+    property var messagingSectionModule // Backend / UI entry point
+
+    readonly property var messagingContentModule: root.currentMessagingContentModule()
+
+    readonly property UsersStore usersStore: UsersStore {
+
+        chatDetails: !!root.messagingContentModule ? root.messagingSectionModule.chatDetails : null
+        usersModule: !!root.messagingContentModule ? root.messagingSectionModule.usersModule : null
+
+        membersModel: !!root.messagingSectionModule ? root.messagingSectionModule.membersModel : null
+    }
+
+    // Since qml component doesn't follow encaptulation from the backend side, we're introducing
+    // a method which will return appropriate messaging content module for selected chat/channel
+    function currentMessagingContentModule() {
+        if(!root.messagingSectionModule)
+            return null
+
+        // When we decide to have the same struct as it's on the backend we will remove this function.
+        // So far this is a way to deal with refactored backend from the current qml structure.
+        root.messagingSectionModule.prepareChatContentModuleForChatId(root.messagingSectionModule.activeItem.id)
+        return root.messagingSectionModule.getChatContentModule()
+    }
+
+    ////////
+
     property ContactsStore contactsStore
     property CommunityTokensStore communityTokensStore
     property WalletStore.RootStore walletStore
@@ -33,7 +70,7 @@ QtObject {
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)
-    property var chatCommunitySectionModule
+    property var chatCommunitySectionModule /*****/
     readonly property var sectionDetails: d.sectionDetailsInstantiator.count ? d.sectionDetailsInstantiator.objectAt(0) : null
 
     property var communityItemsModel: chatCommunitySectionModule.model
@@ -156,7 +193,7 @@ QtObject {
     readonly property var oneToOneChatContact: d.oneToOneChatContact
     // Since qml component doesn't follow encaptulation from the backend side, we're introducing
     // a method which will return appropriate chat content module for selected chat/channel
-    function currentChatContentModule() {
+    function currentChatContentModule() /**********/{
         // When we decide to have the same struct as it's on the backend we will remove this function.
         // So far this is a way to deal with refactored backend from the current qml structure.
         chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
@@ -240,7 +277,7 @@ QtObject {
         return interpretMessage(text)
     }
 
-    function sendMessage(chatId, event, text, replyMessageId, fileUrlsAndSources) {
+    function sendMessage(chatId, event, text, replyMessageId, fileUrlsAndSources) /********/{
         chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
         const chatContentModule = chatCommunitySectionModule.getChatContentModule()
         var result = false

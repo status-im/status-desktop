@@ -57,10 +57,31 @@ StatusSectionLayout {
     property var stickersPopup
     property bool stickersLoaded: false
 
-    readonly property var chatContentModule: rootStore.currentChatContentModule() || null
-    readonly property bool canView: chatContentModule.chatDetails.canView
-    readonly property bool canPost: chatContentModule.chatDetails.canPost
-    readonly property bool missingEncryptionKey: chatContentModule.chatDetails.missingEncryptionKey
+    //** Messaging section module API:
+    required property var messagingSectionModule // ** TODO: Can we get rid of it?
+    required property bool isCommunity
+    signal createOneToOneChat(string communityId, string pubKey, string ensName)
+
+    //** Messaging content module API:
+    required property bool isMessagingContentReady
+    required property bool amIChatAdmin
+    required property bool permissionsCheckOngoing
+    required property string name
+    required property string description
+    required property int type
+    required property var color
+    required property bool canView
+    required property bool canPost
+    required property bool missingEncryptionKey
+    required property bool isUsersListAvailable
+
+    //** Users API:
+    required property var usersModel
+    property var temporaryUsersModel
+    signal updateGroupMembers()
+    signal resetTemporaryModel()
+    signal appendTemporaryModel(string pubKey, string displayName)
+    signal removeFromTemporaryModel(string pubKey)
 
     property bool hasViewOnlyPermissions: false
     property bool hasUnrestrictedViewOnlyPermission: false
@@ -82,7 +103,7 @@ StatusSectionLayout {
     property bool paymentRequestFeatureEnabled
 
     readonly property bool contentLocked: {
-        if (!rootStore.chatCommunitySectionModule.isCommunity()) {
+        if (!root.isCommunity) {
             return false
         }
         if (!amIMember) {
@@ -143,7 +164,7 @@ StatusSectionLayout {
     }
 
     Connections {
-        target: root.rootStore.chatCommunitySectionModule
+        target: root.messagingSectionModule
         ignoreUnknownSignals: true
 
         function onActiveItemChanged() {
@@ -163,9 +184,7 @@ StatusSectionLayout {
 
     leftPanel: Loader {
         id: contactColumnLoader
-        sourceComponent: root.rootStore.chatCommunitySectionModule.isCommunity()?
-                             communtiyColumnComponent :
-                             contactsColumnComponent
+        sourceComponent: root.isCommunity ? communtiyColumnComponent : contactsColumnComponent
     }
 
     centerPanel: Loader {
@@ -185,32 +204,23 @@ StatusSectionLayout {
             return false
         }
 
-        if (!root.chatContentModule) {
-            return false
-        }
         // Check if user list is available as an option for particular chat content module
-        return root.chatContentModule.chatDetails.isUsersListAvailable
+        return root.isUsersListAvailable
     }
 
     rightPanel: Component {
         id: userListComponent
         UserListPanel {
-            readonly property var usersStore: ChatStores.UsersStore {
-                usersModule: !!root.chatContentModule ? root.chatContentModule.usersModule : null
-                chatDetails: !!root.chatContentModule ? root.chatContentModule.chatDetails : null
-                chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-            }
-
             anchors.fill: parent
 
-            chatType: root.chatContentModule.chatDetails.type
-            isAdmin: root.chatContentModule.amIChatAdmin()
+            chatType: root.type
+            isAdmin: root.amIChatAdmin
 
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
 
             usersModel: SortFilterProxyModel {
-                sourceModel: usersStore.usersModel
+                sourceModel: root.usersModel
 
                 proxyRoles: FastExpressionRole {
                     name: "emojiHash"
@@ -235,7 +245,7 @@ StatusSectionLayout {
 
             onCreateOneToOneChatRequested: {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
+                root.createOneToOneChat("", pubKey, "")
             }
 
             onRemoveTrustStatusRequested: root.contactsStore.removeTrustStatus(pubKey)
@@ -249,11 +259,14 @@ StatusSectionLayout {
     Component {
         id: chatHeaderContentViewComponent
         ChatHeaderContentView {
-            visible: !!root.rootStore.currentChatContentModule()
+            visible: !!root.isMessagingContentReady
 
             rootStore: root.rootStore
             mutualContactsModel: root.mutualContactsModel
             emojiPopup: root.emojiPopup
+
+            usersModel: root.usersModel
+            temporaryUsersModel: root.temporaryUsersModel
 
             onSearchButtonClicked: root.openAppSearch()
             onDisplayEditChannelPopup: {
@@ -270,17 +283,21 @@ StatusSectionLayout {
                     hideIfPermissionsNotMet: hideIfPermissionsNotMet
                 });
             }
+
+            onUpdateGroupMembers: root.updateGroupMembers()
+            onResetTemporaryModel: root.resetTemporaryModel()
+            onAppendTemporaryModel: root.appendTemporaryModel(pubKey, displayName)
+            onRemoveFromTemporaryModel: root.removeFromTemporaryModel(pubKey)
         }
     }
 
     Component {
         id: joinCommunityHeaderPanelComponent
         JoinCommunityHeaderPanel {
-            readonly property var chatContentModule: root.rootStore.currentChatContentModule() || null
             joinCommunity: false
-            color: chatContentModule.chatDetails.color
-            channelName: chatContentModule.chatDetails.name
-            channelDesc: chatContentModule.chatDetails.description
+            color: root.color
+            channelName: root.name
+            channelDesc: root.description
         }
     }
 
@@ -288,7 +305,7 @@ StatusSectionLayout {
         id: chatColumnViewComponent
 
         ChatColumnView {
-            parentModule: root.rootStore.chatCommunitySectionModule
+            parentModule: root.messagingSectionModule
             rootStore: root.rootStore
             areTestNetworksEnabled: root.areTestNetworksEnabled
             createChatPropertiesStore: root.createChatPropertiesStore
@@ -297,7 +314,7 @@ StatusSectionLayout {
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
-            canPost: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.canPost
+            canPost: !root.isCommunity || root.canPost
             amISectionAdmin: root.amISectionAdmin
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
@@ -329,7 +346,7 @@ StatusSectionLayout {
             joinCommunity: false
             allChannelsAreHiddenBecauseNotPermitted: root.allChannelsAreHiddenBecauseNotPermitted
             name: sectionItemModel.name
-            channelName: root.chatContentModule.chatDetails.name
+            channelName: root.name
             viewOnlyHoldingsModel: root.viewOnlyPermissionsModel
             viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
             assetsModel: root.assetsModel
@@ -339,7 +356,7 @@ StatusSectionLayout {
             requirementsMet: root.missingEncryptionKey ||
                              (root.canView && viewOnlyPermissionsModel.count > 0) ||
                              (root.canPost && viewAndPostPermissionsModel.count > 0)
-            requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
+            requirementsCheckPending: root.permissionsCheckOngoing
             missingEncryptionKey: root.missingEncryptionKey
             onRequestToJoinClicked: root.requestToJoinClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
@@ -349,7 +366,7 @@ StatusSectionLayout {
     Component {
         id: contactsColumnComponent
         ContactsColumnView {
-            chatSectionModule: root.rootStore.chatCommunitySectionModule
+            chatSectionModule: root.messagingSectionModule
             store: root.rootStore
             contactsStore: root.contactsStore
             emojiPopup: root.emojiPopup
@@ -371,7 +388,7 @@ StatusSectionLayout {
     Component {
         id: communtiyColumnComponent
         CommunityColumnView {
-            communitySectionModule: root.rootStore.chatCommunitySectionModule
+            communitySectionModule: root.messagingSectionModule
             communityData: root.sectionItemModel
             joinedMembersCount: root.joinedMembersCount
             store: root.rootStore

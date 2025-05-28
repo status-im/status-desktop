@@ -50,7 +50,7 @@ StackLayout {
     readonly property bool isTokenMasterOwner: sectionItemModel.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: sectionItemModel.isControlNode
     readonly property bool isPrivilegedUser: isControlNode || isOwner || isAdmin || isTokenMasterOwner
-    readonly property int isInvitationPending: root.rootStore.chatCommunitySectionModule.requestToJoinState !== Constants.RequestToJoinState.None
+    readonly property int isInvitationPending: root.rootStore.messagingSectionModule.requestToJoinState !== Constants.RequestToJoinState.None
 
     property bool communitySettingsDisabled
 
@@ -89,7 +89,7 @@ StackLayout {
 
     Loader {
         id: mainViewLoader
-        readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
+        readonly property var sectionItem: root.rootStore.messagingSectionModule
         readonly property int accessType: sectionItem.requiresTokenPermissionToJoin ? Constants.communityChatOnRequestAccess
                                                                                     : Constants.communityChatPublicAccess
 
@@ -142,7 +142,7 @@ StackLayout {
             viewAndPostHoldingsModel: root.permissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
-            requestToJoinState: root.rootStore.chatCommunitySectionModule.requestToJoinState
+            requestToJoinState: root.rootStore.messagingSectionModule.requestToJoinState
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             openCreateChat: rootStore.openCreateChat
@@ -165,7 +165,7 @@ StackLayout {
         ChatView {
             id: chatView
 
-            readonly property var sectionItem: root.rootStore.chatCommunitySectionModule
+            readonly property var sectionItem: root.rootStore.messagingSectionModule
             readonly property string communityId: root.sectionItemModel.id
 
             objectName: "chatViewComponent"
@@ -178,6 +178,39 @@ StackLayout {
             currencyStore: root.currencyStore
 
             mutualContactsModel: root.mutualContactsModel
+
+            // Messaging section module details:
+            messagingSectionModule: root.rootStore.messagingSectionModule
+            isCommunity: root.rootStore.messagingSectionModule.isCommunity()
+            onCreateOneToOneChat: {
+                root.rootStore.messagingSectionModule.createOneToOneChat(communityId,
+                                                                         pubKey,
+                                                                         ensName)
+            }
+
+            // Messaging module details:
+            readonly property var chatDetails: root.rootStore.messagingContentModule.chatDetails
+
+            isMessagingContentReady: !!root.rootStore.messagingContentModule
+            amIChatAdmin: root.rootStore.messagingContentModule.amIChatAdmin()
+            permissionsCheckOngoing: root.rootStore.messagingContentModule.permissionsCheckOngoing
+            name: chatDetails.name
+            description: chatDetails.description
+            type: chatDetails.type
+            color: chatDetails.color
+            canView: chatDetails.canView
+            canPost: chatDetails.canPost
+            missingEncryptionKey: chatDetails.missingEncryptionKey
+            isUsersListAvailable: chatDetails.isUsersListAvailable
+
+            // Users properties:
+            readonly property var usersStore: root.rootStore.usersStore
+            usersModel: usersStore.usersModel
+            temporaryUsersModel: usersStore.temporaryModel
+            onUpdateGroupMembers: usersStore.updateGroupMembers()
+            onResetTemporaryModel: usersStore.resetTemporaryModel()
+            onAppendTemporaryModel: usersStore.appendTemporaryModel(pubKey, displayName)
+            onRemoveFromTemporaryModel: usersStore.removeFromTemporaryModel(pubKey)
 
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
@@ -277,7 +310,7 @@ StackLayout {
 
     Loader {
         id: communitySettingsLoader
-        active: root.rootStore.chatCommunitySectionModule.isCommunity() &&
+        active: root.rootStore.messagingSectionModule.isCommunity() &&
                 root.isPrivilegedUser &&
                 (root.currentIndex === 1 || !!communitySettingsLoader.item) // lazy load and preserve state after loading
         asynchronous: false // It's false on purpose. We want to load the component synchronously
@@ -295,7 +328,7 @@ StackLayout {
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
-            chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
+            chatCommunitySectionModule: root.rootStore.messagingSectionModule
             community: root.sectionItemModel
             joinedMembers: membersModelAdaptor.joinedMembers
             bannedMembers: membersModelAdaptor.bannedMembers
