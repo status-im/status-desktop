@@ -35,11 +35,15 @@ Rectangle {
     required property bool isCommunityOwnershipTransfer
     property string communityName: ""
 
+    property real widthBreakpoint: 600 // Width at which the buttons will be displayed in a single row
+
     signal launchShareAddressModal()
     signal launchSendModal(string fromAddress)
     signal launchBridgeModal()
     signal launchSwapModal()
     signal launchBuyCryptoModal()
+
+    implicitHeight: 61
 
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
@@ -107,6 +111,7 @@ Rectangle {
 
     RowLayout {
         id: layout
+        readonly property bool showText: root.width >= root.widthBreakpoint
         anchors.centerIn: parent
         height: parent.height
         width: Math.min(root.width, implicitWidth)
@@ -126,6 +131,7 @@ Rectangle {
             }
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be sent to another wallet") : networkConnectionStore.sendBuyBridgeToolTipText
             visible: d.sendActionAvailable
+            display: layout.showText ? StatusFlatButton.TextBesideIcon : StatusFlatButton.IconOnly
         }
 
         StatusFlatButton {
@@ -137,6 +143,7 @@ Rectangle {
                 root.transactionStore.setReceiverAccount(root.walletStore.selectedAddress)
                 launchShareAddressModal()
             }
+            display: layout.showText ? StatusFlatButton.TextBesideIcon : StatusFlatButton.IconOnly
         }
 
         StatusFlatButton {
@@ -147,6 +154,7 @@ Rectangle {
             onClicked: root.launchBridgeModal()
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be bridged to another wallet") :  networkConnectionStore.sendBuyBridgeToolTipText
             visible: d.bridgeActionAvailable
+            display: layout.showText ? StatusFlatButton.TextBesideIcon : StatusFlatButton.IconOnly
         }
 
         StatusFlatButton {
@@ -157,6 +165,7 @@ Rectangle {
             icon.name: "token"
             text: qsTr("Buy")
             onClicked: root.launchBuyCryptoModal()
+            display: layout.showText ? StatusFlatButton.TextBesideIcon : StatusFlatButton.IconOnly
         }
 
         StatusFlatButton {
@@ -169,6 +178,7 @@ Rectangle {
             icon.name: "swap"
             text: qsTr("Swap")
             onClicked: root.launchSwapModal()
+            display: layout.showText ? StatusFlatButton.TextBesideIcon : StatusFlatButton.IconOnly
         }
     }
 }
