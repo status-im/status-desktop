@@ -40,6 +40,7 @@ Item {
     signal openProfileClicked()
     signal openAppSearch()
     signal addRemoveGroupMemberClicked()
+    signal chatItemClicked(string id)
 
     // main layout
     ColumnLayout {
@@ -136,6 +137,9 @@ Item {
                 onChatItemSelected: {
                     Global.closeCreateChatView()
                     root.chatSectionModule.setActiveItem(id, "")
+                }
+                onChatItemClicked: (id) => {
+                    root.chatItemClicked(id)
                 }
                 onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
 
