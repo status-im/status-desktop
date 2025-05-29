@@ -1363,68 +1363,14 @@ Item {
 
             delegateHeight: 40
 
-            profileComponent: StatusNavBarTabButton {
+            profileComponent: ProfileButton {
                 id: profileButton
                 objectName: "statusProfileNavBarTabButton"
-                property bool opened: false
-
-                name: appMain.profileStore.name
-                icon.source: appMain.profileStore.icon
-                implicitWidth: 32
-                implicitHeight: 32
-                identicon.asset.width: width
-                identicon.asset.height: height
-                identicon.asset.useAcronymForLetterIdenticon: true
-                identicon.asset.color: Utils.colorForPubkey(appMain.profileStore.pubkey)
-                identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.profileStore.pubkey,
-                                                                               appMain.profileStore.preferredName)
-
-                badge.visible: true
-                badge.anchors {
-                    left: undefined
-                    top: undefined
-                    right: profileButton.right
-                    bottom: profileButton.bottom
-                    margins: 0
-                    rightMargin: -badge.border.width
-                    bottomMargin: -badge.border.width
-                }
-                badge.implicitHeight: 12
-                badge.implicitWidth: 12
-                badge.color: {
-                    switch(appMain.profileStore.currentUserStatus){
-                        case Constants.currentUserStatus.automatic:
-                        case Constants.currentUserStatus.alwaysOnline:
-                            return Theme.palette.successColor1
-                        default:
-                            return Theme.palette.baseColor1
-                    }
-                }
-
-                onClicked: userStatusContextMenu.opened ? userStatusContextMenu.close() : userStatusContextMenu.open()
-
-                UserStatusContextMenu {
-                    id: userStatusContextMenu
-
-                    readonly property string pubKey: appMain.profileStore.pubkey
-
-                    y: profileButton.y - userStatusContextMenu.height + profileButton.height
-                    x: profileButton.x + profileButton.width + 5
-
-                    compressedPubKey: appMain.profileStore.compressedPubKey
-                    emojiHash: appMain.utilsStore.getEmojiHash(pubKey)
-                    colorHash: appMain.profileStore.colorHash
-                    colorId: appMain.profileStore.colorId
-                    name: appMain.profileStore.name
-                    headerIcon: appMain.profileStore.icon
-                    isEnsVerified: !!appMain.profileStore.preferredName
-
-                    currentUserStatus: appMain.profileStore.currentUserStatus
-
-                    onViewProfileRequested: Global.openProfilePopup(pubKey)
-                    onCopyLinkRequested: ClipboardUtils.setText(appMain.rootStore.contactStore.getLinkToProfile(pubKey))
-                    onSetCurrentUserStatusRequested: appMain.rootStore.setCurrentUserStatus(status)
-                }
+                profileStore: appMain.profileStore
+                getEmojiHashFn: appMain.utilsStore.getEmojiHash
+                getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+                onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
+                onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
             }
 
             Component {
@@ -2458,6 +2404,7 @@ Item {
 
             onNotificationButtonClicked: d.openActivityCenterPopup()
             onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
+            onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
         }
     }
 
