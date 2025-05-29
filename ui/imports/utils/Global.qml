@@ -83,6 +83,8 @@ QtObject {
     signal playNotificationSound()
     signal playErrorSound()
 
+    signal quitAppRequested()
+
     signal openTestnetPopup()
 
     signal privacyPolicyRequested()

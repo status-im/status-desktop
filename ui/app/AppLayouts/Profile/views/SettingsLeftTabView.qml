@@ -55,18 +55,9 @@ Item {
                 return
 
             if (subsection === Constants.settingsSubsection.signout)
-                return confirmDialog.open()
+                return Global.quitAppRequested()
 
             root.settingsSubsection = subsection
         }
-    }
-
-    ConfirmationDialog {
-        id: confirmDialog
-        confirmButtonObjectName: "signOutConfirmation"
-        headerSettings.title: qsTr("Sign out")
-        confirmationText: qsTr("Make sure you have your account password and recovery phrase stored. Without them you can lock yourself out of your account and lose funds.")
-        confirmButtonLabel: qsTr("Sign out & Quit")
-        onConfirmButtonClicked: Qt.exit(0)
     }
 }

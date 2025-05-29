@@ -114,6 +114,7 @@ QtObject {
         Global.openPaymentRequestModalRequested.connect(openPaymentRequestModal)
         Global.termsOfUseRequested.connect(() => openPopup(termsOfUsePopupComponent))
         Global.openNewsMessagePopupRequested.connect(openNewsMessagePopup)
+        Global.quitAppRequested.connect(() => openPopup(quitConfirmPopupComponent))
     }
 
     property var currentPopup
@@ -1348,6 +1349,18 @@ QtObject {
             NewsMessagePopup {
                 activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
                 onLinkClicked: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
+            }
+        },
+        Component {
+            id: quitConfirmPopupComponent
+
+            ConfirmationDialog {
+                id: confirmDialog
+                confirmButtonObjectName: "signOutConfirmation"
+                headerSettings.title: qsTr("Sign out")
+                confirmationText: qsTr("Make sure you have your account password and recovery phrase stored. Without them you can lock yourself out of your account and lose funds.")
+                confirmButtonLabel: qsTr("Sign out & Quit")
+                onConfirmButtonClicked: Qt.exit(0)
             }
         }
     ]
