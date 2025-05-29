@@ -1,23 +1,23 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 /*!
-     \qmltype StatusSectionLayout
+     \qmltype StatusSectionLayoutLandscape
      \inherits SplitView
      \inqmlmodule StatusQ.Layout
      \since StatusQ.Layout 0.1
      \brief Displays a three column layout with a header in the central panel.
      Inherits \l{https://doc.qt.io/qt-6/qml-qtquick-controls2-splitview.html}{SplitView}.
 
-     The \c StatusSectionLayout displays a three column layout with a header in the central panel to be used as the base layout of all application
+     The \c StatusSectionLayoutLandscape displays a three column layout with a header in the central panel to be used as the base layout of all application
      sections.
      For example:
 
      \qml
-    StatusSectionLayout {
+    StatusSectionLayoutLandscape {
         id: root
 
         notificationCount: 1
@@ -62,10 +62,10 @@ SplitView {
     */
     property Item centerPanel
     /*!
-        \qmlproperty Component StatusSectionLayout::rightPanel
+        \qmlproperty Item StatusSectionLayout::rightPanel
         This property holds the right panel of the component.
     */
-    property Component rightPanel
+    property Item rightPanel
     /*!
         \qmlproperty Item StatusSectionLayout::navBar
         This property holds the navigation bar of the component. Usually displayed next to the leftPanel.
@@ -149,31 +149,6 @@ SplitView {
         is pressed.
     */
     signal notificationButtonClicked()
-    /*!
-        \qmlmethod StatusSectionLayout::goToNextPanel()
-        This method is used to focus the panel that needs to be active.
-    */
-    function goToNextPanel() {
-        // Placeholder to align with qt6 StatusSectionLayout
-    }
-
-    onCenterPanelChanged: {
-        if (!!centerPanel) {
-            centerPanel.parent = centerPanelSlot;
-        }
-    }
-
-    onFooterChanged: {
-        if (!!footer) {
-            footer.parent = footerSlot
-        }
-    }
-
-    onHeaderBackgroundChanged:  {
-        if (!!headerBackground) {
-            headerBackground.parent = headerBackgroundSlot
-        }
-    }
 
     Control {
         id: navBarControl
@@ -182,12 +157,8 @@ SplitView {
         background: Rectangle {
             color: Theme.palette.baseColor4
         }
-        contentItem: root.navBar
-        Binding {
-            when: (!!navBar) && root.visible
+        contentItem: LayoutItemProxy {
             target: root.navBar
-            property: "parent"
-            value: navBarControl
         }
     }
 
@@ -198,7 +169,9 @@ SplitView {
         background: Rectangle {
             color: Theme.palette.baseColor4
         }
-        contentItem: (!!leftPanel) ? leftPanel : null
+        contentItem: LayoutItemProxy {
+            target: root.leftPanel
+        }
     }
 
     Control {
@@ -230,12 +203,13 @@ SplitView {
                     root.notificationButtonClicked();
                 }
             }
-            Item {
-                id: centerPanelSlot
+            LayoutItemProxy {
+                id: centerPanelProxy
                 width: parent.width
                 anchors.top: statusToolBar.bottom
                 anchors.bottom: footerSlot.top
                 anchors.bottomMargin: footerSlot.visible ? 8 : 0
+                target: root.centerPanel
             }
             Item {
                 id: footerSlot
@@ -255,8 +229,8 @@ SplitView {
         background: Rectangle {
             color: Theme.palette.baseColor4
         }
-        contentItem: Loader {
-            sourceComponent: (!!rightPanel) ? rightPanel : null
+        contentItem: LayoutItemProxy {
+            target: root.rightPanel
         }
     }
 }

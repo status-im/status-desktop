@@ -59,6 +59,7 @@ SplitView {
         SplitView.preferredWidth: 78
         SplitView.fillHeight: true
         background: null
+        visible: (!!leftPanel)
         contentItem: (!!leftPanel) ? leftPanel : null
     }
 
