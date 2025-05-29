@@ -59,7 +59,7 @@ SplitView {
             readonly property string name: "John Roe"
             readonly property string icon: ModelsData.icons.rarible
             readonly property int colorId: 7
-            readonly property var colorHash: [{colorId: 0, segmentLength: 1}, {colorId: 4, segmentLength: 2}]
+            readonly property var colorHash: [{colorId: 7, segmentLength: 1}, {colorId: 6, segmentLength: 2}]
             property int currentUserStatus: Constants.currentUserStatus.automatic
         }
 
@@ -67,9 +67,7 @@ SplitView {
             if (pubKey === "")
                 return ""
 
-            return JSON.stringify(
-                        ["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻",
-                         "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
+            return["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"]
         }
         getLinkToProfileFn: function(pubKey) { // <- root.rootStore.contactStore.getLinkToProfile(pubKey)
             return Constants.userLinkPrefix + pubKey
@@ -93,11 +91,14 @@ SplitView {
         }
 
         onNotificationButtonClicked: {
-            logs.logEvent("onNotificationButtonClicked")
+            logs.logEvent("onNotificationButtonClicked") // <- openActivityCenterPopup()
         }
         onSetCurrentUserStatusRequested: function (status) {
             profileStore.currentUserStatus = status
             logs.logEvent("onSetCurrentUserStatusRequested", ["status"], arguments) // <- root.rootStore.setCurrentUserStatus(status)
+        }
+        onViewProfileRequested: function(pubKey) {
+            logs.logEvent("onViewProfileRequested", ["pubKey"], arguments) // <- Global.openProfilePopup(pubKey)
         }
     }
 
