@@ -16,7 +16,11 @@ QString StringUtilsInternal::escapeHtml(const QString& unsafe) const
 
 QString StringUtilsInternal::readTextFile(const QString& filePath) const
 {
-    auto maybeFileUrl = QUrl::fromUserInput(filePath);
+    QString adjustedFilePath = filePath;
+    if (adjustedFilePath.startsWith(QLatin1String("qrc:/")))
+        adjustedFilePath.remove(0, qstrlen("qrc"));
+
+    auto maybeFileUrl = QUrl::fromUserInput(adjustedFilePath);
     if (!maybeFileUrl.isLocalFile()) {
         qWarning() << Q_FUNC_INFO << "Error, opening remote files is not supported" << maybeFileUrl;
         return {};
