@@ -142,6 +142,7 @@ StatusSectionLayout {
                 event.accepted = true;
                 profileContainer.currentItem.notifyDirty();
             }
+            root.goToNextPanel();
         }
     }
 

@@ -25,6 +25,7 @@ Item {
     property alias popupMenu: popupMenuSlot.sourceComponent
 
     signal chatItemSelected(string categoryId, string id)
+    signal chatItemClicked(string id)
     signal chatItemUnmuted(string id)
     signal chatItemReordered(string categoryId, string chatId, int to)
     signal chatListCategoryReordered(string categoryId, int to)
@@ -48,6 +49,7 @@ Item {
             width: parent.width
             visible: statusChatList.model.count > 0
             onChatItemSelected: root.chatItemSelected(categoryId, id)
+            onChatItemClicked: root.chatItemClicked(id)
             onChatItemUnmuted: root.chatItemUnmuted(id)
             onChatItemReordered: root.chatItemReordered(categoryId, chatId, to)
             onCategoryReordered: root.chatListCategoryReordered(categoryId, to)
