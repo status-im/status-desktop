@@ -178,10 +178,7 @@ OnboardingPage {
     contentItem: Item {
         ColumnLayout {
             width: Math.min(340, parent.width)
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 200
-            anchors.bottom: parent.bottom
+            anchors.centerIn: parent
             spacing: Theme.padding
 
             StatusImage {
