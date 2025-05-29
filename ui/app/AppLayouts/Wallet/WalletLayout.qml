@@ -28,6 +28,8 @@ import "popups/buy"
 Item {
     id: root
 
+    property Item navBar
+
     property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
     property ProfileStores.ContactsStore contactsStore
@@ -274,6 +276,8 @@ Item {
     }
 
     StatusSectionLayout {
+        id: walletSectionLayout
+        navBar: root.navBar
         anchors.top: seedPhraseWarning.bottom
         height: root.height - seedPhraseWarning.height
         width: root.width
@@ -294,9 +298,11 @@ Item {
             isKeycardEnabled: root.isKeycardEnabled
 
             changeSelectedAccount: function(address) {
+                walletSectionLayout.goToNextPanel()
                 d.displayAddress(address)
             }
             selectAllAccounts: function() {
+                walletSectionLayout.goToNextPanel()
                 d.displayAllAddresses()
             }
             selectSavedAddresses: function() {

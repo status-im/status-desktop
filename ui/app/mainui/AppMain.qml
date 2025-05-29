@@ -1153,10 +1153,8 @@ Item {
             onBuyClicked: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
         }
     }
-
-    StatusMainLayout {
-        anchors.fill: parent
-
+    
+    property Item navBar: StatusAppNavBar {
         Component {
             id: shellButtonComp
             StatusNavBarTabButton {
@@ -1172,245 +1170,247 @@ Item {
             }
         }
 
-        leftPanel: StatusAppNavBar {
-            shellItem: appMain.featureFlagsStore.shellEnabled ? shellButtonComp : undefined
+        shellItem: appMain.featureFlagsStore.shellEnabled ? shellButtonComp : undefined
 
-            topSectionModel: SortFilterProxyModel {
-                sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
-                filters: [
-                    AnyOf {
-                        ValueFilter {
-                            roleName: "sectionType"
-                            value: Constants.appSection.wallet
-                        }
-                        ValueFilter {
-                            roleName: "sectionType"
-                            value: Constants.appSection.swap
-                            enabled: !appMain.featureFlagsStore.marketEnabled
-                        }
-                        ValueFilter {
-                            roleName: "sectionType"
-                            value: Constants.appSection.market
-                            enabled: appMain.featureFlagsStore.marketEnabled
-                        }
-                        ValueFilter {
-                            roleName: "sectionType"
-                            value: Constants.appSection.chat
-                        }
-                    },
-                    ValueFilter {
-                        roleName: "enabled"
-                        value: true
-                    }
-                ]
-            }
-            topSectionDelegate: navbarButton
-
-            communityItemsModel: SortFilterProxyModel {
-                sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
-                filters: [
+        topSectionModel: SortFilterProxyModel {
+            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            filters: [
+                AnyOf {
                     ValueFilter {
                         roleName: "sectionType"
-                        value: Constants.appSection.community
-                    },
+                        value: Constants.appSection.wallet
+                    }
                     ValueFilter {
-                        roleName: "enabled"
-                        value: true
-                    }
-                ]
-            }
-            communityItemDelegate: StatusNavBarTabButton {
-                objectName: "CommunityNavBarButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                name: model.icon.length > 0? "" : model.name
-                icon.name: model.icon
-                icon.source: model.image
-                identicon.asset.color: (hovered || identicon.highlighted || checked) ? model.color : icon.color
-                tooltip.text: model.name
-                checked: model.active
-                badge.value: model.notificationsCount
-                badge.visible: model.hasNotification
-
-                stateIcon.color: Theme.palette.dangerColor1
-                stateIcon.border.color: Theme.palette.baseColor2
-                stateIcon.border.width: 2
-                stateIcon.visible: model.amIBanned
-                stateIcon.asset.name: "cancel"
-                stateIcon.asset.color: Theme.palette.baseColor2
-                stateIcon.asset.width: 14
-
-                onClicked: {
-                    changeAppSectionBySectionId(model.id)
-                }
-
-                popupMenu: Component {
-                    StatusMenu {
-                        id: communityContextMenu
-                        property var chatCommunitySectionModule
-
-                        readonly property bool isSpectator: model.spectated && !model.joined
-
-                        openHandler: function () {
-                            // we cannot return QVariant if we pass another parameter in a function call
-                            // that's why we're using it this way
-                            appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
-                            communityContextMenu.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
-                        }
-
-                        StatusAction {
-                            text: qsTr("Invite People")
-                            icon.name: "share-ios"
-                            objectName: "invitePeople"
-                            onTriggered: {
-                                popups.openInviteFriendsToCommunityPopup(model,
-                                                                         communityContextMenu.chatCommunitySectionModule,
-                                                                         null)
-                            }
-                        }
-
-                        StatusAction {
-                            text: qsTr("Community Info")
-                            icon.name: "info"
-                            onTriggered: popups.openCommunityProfilePopup(appMain.rootStore, model, communityContextMenu.chatCommunitySectionModule)
-                        }
-
-                        StatusAction {
-                            text: qsTr("Community Rules")
-                            icon.name: "text"
-                            onTriggered: popups.openCommunityRulesPopup(model.name, model.introMessage, model.image, model.color)
-                        }
-
-                        StatusMenuSeparator {}
-
-                        MuteChatMenuItem {
-                            enabled: !model.muted
-                            title: qsTr("Mute Community")
-                            onMuteTriggered: {
-                                communityContextMenu.chatCommunitySectionModule.setCommunityMuted(interval)
-                                communityContextMenu.close()
-                            }
-                        }
-
-                        StatusAction {
-                            enabled: model.muted
-                            text: qsTr("Unmute Community")
-                            icon.name: "notification"
-                            onTriggered: communityContextMenu.chatCommunitySectionModule.setCommunityMuted(Constants.MutingVariations.Unmuted)
-                        }
-
-                        StatusAction {
-                            text: qsTr("Mark as read")
-                            icon.name: "check-circle"
-                            onTriggered: communityContextMenu.chatCommunitySectionModule.markAllReadInCommunity()
-                        }
-
-                        StatusAction {
-                            text: qsTr("Edit Shared Addresses")
-                            icon.name: "wallet"
-                            enabled: {
-                                if (model.memberRole === Constants.memberRole.owner || communityContextMenu.isSpectator)
-                                    return false
-                                return true
-                            }
-                            onTriggered: {
-                                communityContextMenu.close()
-                                Global.openEditSharedAddressesFlow(model.id)
-                            }
-                        }
-
-                        StatusMenuSeparator { visible: leaveCommunityMenuItem.enabled }
-
-                        StatusAction {
-                            id: leaveCommunityMenuItem
-                            objectName: "leaveCommunityMenuItem"
-                            // allow to leave community for the owner in non-production builds
-                            enabled: model.memberRole !== Constants.memberRole.owner || !production
-                            text: {
-                                if (communityContextMenu.isSpectator)
-                                    return qsTr("Close Community")
-                                return qsTr("Leave Community")
-                            }
-                            icon.name: communityContextMenu.isSpectator ? "close-circle" : "arrow-left"
-                            type: StatusAction.Type.Danger
-                            onTriggered: communityContextMenu.isSpectator ? communityContextMenu.chatCommunitySectionModule.leaveCommunity()
-                                                                          : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
-                        }
-                    }
-                }
-            }
-
-            regularItemsModel: SortFilterProxyModel {
-                sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
-                filters: [
-                    RangeFilter {
                         roleName: "sectionType"
-                        minimumValue: Constants.appSection.profile
-                        maximumValue: Constants.appSection.loadingSection
-                    },
+                        value: Constants.appSection.swap
+                        enabled: !appMain.featureFlagsStore.marketEnabled
+                    }
                     ValueFilter {
-                        roleName: "enabled"
-                        value: true
+                        roleName: "sectionType"
+                        value: Constants.appSection.market
+                        enabled: appMain.featureFlagsStore.marketEnabled
                     }
-                ]
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.chat
+                    }
+                },
+                ValueFilter {
+                    roleName: "enabled"
+                    value: true
+                }
+            ]
+        }
+        topSectionDelegate: navbarButton
+
+        communityItemsModel: SortFilterProxyModel {
+            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            filters: [
+                ValueFilter {
+                    roleName: "sectionType"
+                    value: Constants.appSection.community
+                },
+                ValueFilter {
+                    roleName: "enabled"
+                    value: true
+                }
+            ]
+        }
+        communityItemDelegate: StatusNavBarTabButton {
+            objectName: "CommunityNavBarButton"
+            anchors.horizontalCenter: parent.horizontalCenter
+            name: model.icon.length > 0? "" : model.name
+            icon.name: model.icon
+            icon.source: model.image
+            identicon.asset.color: (hovered || identicon.highlighted || checked) ? model.color : icon.color
+            tooltip.text: model.name
+            checked: model.active
+            badge.value: model.notificationsCount
+            badge.visible: model.hasNotification
+
+            stateIcon.color: Theme.palette.dangerColor1
+            stateIcon.border.color: Theme.palette.baseColor2
+            stateIcon.border.width: 2
+            stateIcon.visible: model.amIBanned
+            stateIcon.asset.name: "cancel"
+            stateIcon.asset.color: Theme.palette.baseColor2
+            stateIcon.asset.width: 14
+
+            onClicked: {
+                changeAppSectionBySectionId(model.id)
             }
-            regularItemDelegate: navbarButton
 
-            delegateHeight: 40
+            popupMenu: Component {
+                StatusMenu {
+                    id: communityContextMenu
+                    property var chatCommunitySectionModule
 
-            profileComponent: ProfileButton {
-                objectName: "statusProfileNavBarTabButton"
+                    readonly property bool isSpectator: model.spectated && !model.joined
 
-                name: appMain.profileStore.name
-                usesDefaultName: appMain.profileStore.usesDefaultName
-                pubKey: appMain.profileStore.pubkey
-                compressedPubKey: appMain.profileStore.compressedPubKey
-                isEnsVerified: !!appMain.profileStore.preferredName
-                iconSource: appMain.profileStore.icon
-                colorId: appMain.profileStore.colorId
-                colorHash: appMain.profileStore.colorHash
-                currentUserStatus: appMain.profileStore.currentUserStatus
-
-                getEmojiHashFn: appMain.utilsStore.getEmojiHash
-                getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
-                onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
-                onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
-            }
-
-            Component {
-                id: navbarButton
-                StatusNavBarTabButton {
-                    id: navbar
-                    objectName: model.name + "-navbar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    name: model.icon.length > 0? "" : model.name
-                    icon.name: model.icon
-                    icon.source: model.image
-                    tooltip.text: Utils.translatedSectionName(model.sectionType, model.name)
-                    checked: model.active
-
-                    readonly property bool displayCreateCommunityBadge: model.sectionType === Constants.appSection.communitiesPortal && !appMain.communitiesStore.createCommunityPopupSeen
-                    badge.value: model.notificationsCount
-                    badge.visible: {
-                        if (model.sectionType === Constants.appSection.profile && contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) // pending contact request
-                            return true
-                        if (displayCreateCommunityBadge) // create new community badge
-                            return true
-                        return model.hasNotification // Otherwise, use the value coming from the model
+                    openHandler: function () {
+                        // we cannot return QVariant if we pass another parameter in a function call
+                        // that's why we're using it this way
+                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
+                        communityContextMenu.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
                     }
 
-                    StatusNewItemGradient { id: newGradient }
-                    badge.gradient: displayCreateCommunityBadge ? newGradient : undefined // gradient has precedence over a simple color
-
-                    onClicked: {
-                        if(model.sectionType === Constants.appSection.swap) {
-                            popupRequestsHandler.swapModalHandler.launchSwap()
-                        } else {
-                            changeAppSectionBySectionId(model.id)
+                    StatusAction {
+                        text: qsTr("Invite People")
+                        icon.name: "share-ios"
+                        objectName: "invitePeople"
+                        onTriggered: {
+                            popups.openInviteFriendsToCommunityPopup(model,
+                                                                        communityContextMenu.chatCommunitySectionModule,
+                                                                        null)
                         }
+                    }
+
+                    StatusAction {
+                        text: qsTr("Community Info")
+                        icon.name: "info"
+                        onTriggered: popups.openCommunityProfilePopup(appMain.rootStore, model, communityContextMenu.chatCommunitySectionModule)
+                    }
+
+                    StatusAction {
+                        text: qsTr("Community Rules")
+                        icon.name: "text"
+                        onTriggered: popups.openCommunityRulesPopup(model.name, model.introMessage, model.image, model.color)
+                    }
+
+                    StatusMenuSeparator {}
+
+                    MuteChatMenuItem {
+                        enabled: !model.muted
+                        title: qsTr("Mute Community")
+                        onMuteTriggered: {
+                            communityContextMenu.chatCommunitySectionModule.setCommunityMuted(interval)
+                            communityContextMenu.close()
+                        }
+                    }
+
+                    StatusAction {
+                        enabled: model.muted
+                        text: qsTr("Unmute Community")
+                        icon.name: "notification"
+                        onTriggered: communityContextMenu.chatCommunitySectionModule.setCommunityMuted(Constants.MutingVariations.Unmuted)
+                    }
+
+                    StatusAction {
+                        text: qsTr("Mark as read")
+                        icon.name: "check-circle"
+                        onTriggered: communityContextMenu.chatCommunitySectionModule.markAllReadInCommunity()
+                    }
+
+                    StatusAction {
+                        text: qsTr("Edit Shared Addresses")
+                        icon.name: "wallet"
+                        enabled: {
+                            if (model.memberRole === Constants.memberRole.owner || communityContextMenu.isSpectator)
+                                return false
+                            return true
+                        }
+                        onTriggered: {
+                            communityContextMenu.close()
+                            Global.openEditSharedAddressesFlow(model.id)
+                        }
+                    }
+
+                    StatusMenuSeparator { visible: leaveCommunityMenuItem.enabled }
+
+                    StatusAction {
+                        id: leaveCommunityMenuItem
+                        objectName: "leaveCommunityMenuItem"
+                        // allow to leave community for the owner in non-production builds
+                        enabled: model.memberRole !== Constants.memberRole.owner || !production
+                        text: {
+                            if (communityContextMenu.isSpectator)
+                                return qsTr("Close Community")
+                            return qsTr("Leave Community")
+                        }
+                        icon.name: communityContextMenu.isSpectator ? "close-circle" : "arrow-left"
+                        type: StatusAction.Type.Danger
+                        onTriggered: communityContextMenu.isSpectator ? communityContextMenu.chatCommunitySectionModule.leaveCommunity()
+                                                                        : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
                     }
                 }
             }
         }
+
+        regularItemsModel: SortFilterProxyModel {
+            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            filters: [
+                RangeFilter {
+                    roleName: "sectionType"
+                    minimumValue: Constants.appSection.profile
+                    maximumValue: Constants.appSection.loadingSection
+                },
+                ValueFilter {
+                    roleName: "enabled"
+                    value: true
+                }
+            ]
+        }
+        regularItemDelegate: navbarButton
+
+        delegateHeight: 40
+
+        profileComponent: ProfileButton {
+            objectName: "statusProfileNavBarTabButton"
+
+            name: appMain.profileStore.name
+            usesDefaultName: appMain.profileStore.usesDefaultName
+            pubKey: appMain.profileStore.pubkey
+            compressedPubKey: appMain.profileStore.compressedPubKey
+            isEnsVerified: !!appMain.profileStore.preferredName
+            iconSource: appMain.profileStore.icon
+            colorId: appMain.profileStore.colorId
+            colorHash: appMain.profileStore.colorHash
+            currentUserStatus: appMain.profileStore.currentUserStatus
+
+            getEmojiHashFn: appMain.utilsStore.getEmojiHash
+            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+            onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
+            onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
+        }
+
+        Component {
+            id: navbarButton
+            StatusNavBarTabButton {
+                id: navbar
+                objectName: model.name + "-navbar"
+                anchors.horizontalCenter: parent.horizontalCenter
+                name: model.icon.length > 0? "" : model.name
+                icon.name: model.icon
+                icon.source: model.image
+                tooltip.text: Utils.translatedSectionName(model.sectionType, model.name)
+                checked: model.active
+
+                readonly property bool displayCreateCommunityBadge: model.sectionType === Constants.appSection.communitiesPortal && !appMain.communitiesStore.createCommunityPopupSeen
+                badge.value: model.notificationsCount
+                badge.visible: {
+                    if (model.sectionType === Constants.appSection.profile && contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) // pending contact request
+                        return true
+                    if (displayCreateCommunityBadge) // create new community badge
+                        return true
+                    return model.hasNotification // Otherwise, use the value coming from the model
+                }
+
+                StatusNewItemGradient { id: newGradient }
+                badge.gradient: displayCreateCommunityBadge ? newGradient : undefined // gradient has precedence over a simple color
+
+                onClicked: {
+                    if(model.sectionType === Constants.appSection.swap) {
+                        popupRequestsHandler.swapModalHandler.launchSwap()
+                    } else {
+                        changeAppSectionBySectionId(model.id)
+                    }
+                }
+            }
+        }
+    }
+
+    StatusMainLayout {
+        anchors.fill: parent
 
         rightPanel: ColumnLayout {
             spacing: 0
@@ -1877,6 +1877,7 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
+                                navBar: appMain.navBar
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
@@ -1930,6 +1931,7 @@ Item {
                         asynchronous: true
                         CommunitiesPortalLayout {
                             anchors.fill: parent
+                            navBar: appMain.navBar
                             communitiesStore: appMain.communitiesStore
                             assetsModel: appMain.rootStore.globalAssetsModel
                             collectiblesModel: appMain.rootStore.globalCollectiblesModel
@@ -1944,6 +1946,7 @@ Item {
                         asynchronous: true
                         sourceComponent: WalletLayout {
                             objectName: "walletLayoutReal"
+                            navBar: appMain.navBar
                             sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
@@ -1996,6 +1999,7 @@ Item {
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
                         sourceComponent: ProfileLayout {
+                            navBar: appMain.navBar
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
                             store: appMain.rootStore.profileSectionStore
@@ -2034,7 +2038,9 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.node
                         asynchronous: true
-                        sourceComponent: NodeLayout {}
+                        sourceComponent: NodeLayout {
+                            navBar: appMain.navBar
+                        }
                     }
 
                     Loader {
@@ -2042,6 +2048,7 @@ Item {
                         asynchronous: true
                         sourceComponent: MarketLayout {
                             objectName: "marketLayout"
+                            navBar: appMain.navBar
 
                             notificationCount: appMain.activityCenterStore.unreadNotificationsCount
                             hasUnseenNotifications:  appMain.activityCenterStore.hasUnseenNotifications
@@ -2119,7 +2126,8 @@ Item {
                                         chatLayoutComponent.currentIndex = 0
                                     }
                                 }
-
+                                
+                                navBar: appMain.navBar
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
