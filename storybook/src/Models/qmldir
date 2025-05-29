@@ -3,7 +3,9 @@ AssetsCollectiblesIconsModel 1.0 AssetsCollectiblesIconsModel.qml
 AssetsModel 1.0 AssetsModel.qml
 BannerModel 1.0 BannerModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
+ChatsModel 1.0 ChatsModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
+DappsModel 1.0 DappsModel.qml
 FeesModel 1.0 FeesModel.qml
 FlatTokensModel 1.0 FlatTokensModel.qml
 IconModel 1.0 IconModel.qml
