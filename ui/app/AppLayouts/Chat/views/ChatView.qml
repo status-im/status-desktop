@@ -195,44 +195,41 @@ StatusSectionLayout {
         return root.chatContentModule.chatDetails.isUsersListAvailable
     }
 
-    rightPanel: Component {
-        id: userListComponent
-        UserListPanel {
-            anchors.fill: parent
+    rightPanel: UserListPanel {
+        anchors.fill: parent
 
-            chatType: root.chatContentModule.chatDetails.type
-            isAdmin: root.chatContentModule.amIChatAdmin()
+        chatType: root.chatContentModule.chatDetails.type
+        isAdmin: root.chatContentModule.amIChatAdmin()
 
-            label: qsTr("Members")
-            communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
+        label: qsTr("Members")
+        communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
 
-            usersModel: root.usersModel
+        usersModel: root.usersModel
 
-            onOpenProfileRequested: Global.openProfilePopup(pubKey, null)
-            onReviewContactRequestRequested: Global.openReviewContactRequestPopup(pubKey, null)
-            onSendContactRequestRequested: Global.openContactRequestPopup(pubKey, null)
-            onEditNicknameRequested: Global.openNicknamePopupRequested(pubKey, null)
-            onBlockContactRequested: Global.blockContactRequested(pubKey)
-            onUnblockContactRequested: Global.unblockContactRequested(pubKey)
-            onMarkAsUntrustedRequested: Global.markAsUntrustedRequested(pubKey)
-            onRemoveContactRequested: Global.removeContactRequested(pubKey)
+        onOpenProfileRequested: Global.openProfilePopup(pubKey, null)
+        onReviewContactRequestRequested: Global.openReviewContactRequestPopup(pubKey, null)
+        onSendContactRequestRequested: Global.openContactRequestPopup(pubKey, null)
+        onEditNicknameRequested: Global.openNicknamePopupRequested(pubKey, null)
+        onBlockContactRequested: Global.blockContactRequested(pubKey)
+        onUnblockContactRequested: Global.unblockContactRequested(pubKey)
+        onMarkAsUntrustedRequested: Global.markAsUntrustedRequested(pubKey)
+        onRemoveContactRequested: Global.removeContactRequested(pubKey)
 
-            onRemoveNicknameRequested: {
-                const oldName = ModelUtils.getByKey(usersModel, "pubKey", pubKey, "localNickname")
-                root.contactsStore.changeContactNickname(pubKey, "", oldName, true)
-            }
-
-            onCreateOneToOneChatRequested: {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
-            }
-
-            onRemoveTrustStatusRequested: root.contactsStore.removeTrustStatus(pubKey)
-            onRemoveContactFromGroupRequested: root.rootStore.removeMemberFromGroupChat(pubKey)
-
-            onMarkAsTrustedRequested: Global.openMarkAsIDVerifiedPopup(pubKey, null)
-            onRemoveTrustedMarkRequested: Global.openRemoveIDVerificationDialog(pubKey, null)
+        onRemoveNicknameRequested: {
+            const oldName = ModelUtils.getByKey(usersModel, "pubKey", pubKey, "localNickname")
+            root.contactsStore.changeContactNickname(pubKey, "", oldName, true)
         }
+
+        onCreateOneToOneChatRequested: {
+            Global.changeAppSectionBySectionType(Constants.appSection.chat)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
+        }
+
+        onRemoveTrustStatusRequested: root.contactsStore.removeTrustStatus(pubKey)
+        onRemoveContactFromGroupRequested: root.rootStore.removeMemberFromGroupChat(pubKey)
+
+        onMarkAsTrustedRequested: Global.openMarkAsIDVerifiedPopup(pubKey, null)
+        onRemoveTrustedMarkRequested: Global.openRemoveIDVerificationDialog(pubKey, null)
     }
 
     Component {
@@ -359,6 +356,7 @@ StatusSectionLayout {
                     headerContentLoader.item.addRemoveGroupMember()
                 }
             }
+            onChatItemClicked: (id) => root.goToNextPanel()
         }
     }
 
@@ -377,6 +375,7 @@ StatusSectionLayout {
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
             onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
+            onChatItemClicked: (id) => root.goToNextPanel()
         }
     }
 

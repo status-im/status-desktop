@@ -1,23 +1,23 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 /*!
-     \qmltype StatusSectionLayout
-     \inherits SplitView
+     \qmltype StatusSectionLayoutPortrait
+     \inherits SwipeView
      \inqmlmodule StatusQ.Layout
      \since StatusQ.Layout 0.1
-     \brief Displays a three column layout with a header in the central panel.
+     \brief Displays a three views swipe layout with a header in the central panel.
      Inherits \l{https://doc.qt.io/qt-6/qml-qtquick-controls2-splitview.html}{SplitView}.
 
-     The \c StatusSectionLayout displays a three column layout with a header in the central panel to be used as the base layout of all application
+     The \c StatusSectionLayoutPortrait displays a three views swipe layout with a header in the central panel to be used as the base layout of all application
      sections.
      For example:
 
      \qml
-    StatusSectionLayout {
+    StatusSectionLayoutPortrait {
         id: root
 
         notificationCount: 1
@@ -44,43 +44,38 @@ import StatusQ.Core.Theme 0.1
      For a list of components available see StatusQ.
 */
 
-SplitView {
+SwipeView {
     id: root
     implicitWidth: 822
     implicitHeight: 600
 
-    handle: Item { }
-
+    // handle: Item { }
+    property Item navBar: null
     /*!
         \qmlproperty Item StatusSectionLayout::leftPanel
         This property holds the left panel of the component.
     */
-    property Item leftPanel
+    property alias leftPanel: leftPanelProxy.target
     /*!
         \qmlproperty Item StatusSectionLayout::centerPanel
         This property holds the center panel of the component.
     */
-    property Item centerPanel
+    property alias centerPanel: centerPanelProxy.target
     /*!
         \qmlproperty Component StatusSectionLayout::rightPanel
         This property holds the right panel of the component.
     */
-    property Component rightPanel
-    /*!
-        \qmlproperty Item StatusSectionLayout::navBar
-        This property holds the navigation bar of the component. Usually displayed next to the leftPanel.
-    */
-    property Item navBar
+    property alias rightPanel: rightPanelProxy.target
     /*!
         \qmlproperty Item StatusSectionLayout::footer
         This property holds the footer of the component.
     */
-    property Item footer
+    property alias footer: footerProxy.target
     /*!
         \qmlproperty Component StatusAppLayout::headerBackground
         This property holds the headerBackground of the component.
     */
-    property Item headerBackground
+    property alias headerBackground: headerBackgroundProxy.target
     /*!
         \qmlproperty bool StatusSectionLayout::showRightPanel
         This property sets the right panel component's visibility to true/false.
@@ -140,7 +135,6 @@ SplitView {
         This signal is emitted when the back button of the header component
         is pressed.
     */
-
     signal backButtonClicked()
 
     /*!
@@ -149,79 +143,71 @@ SplitView {
         is pressed.
     */
     signal notificationButtonClicked()
-    /*!
-        \qmlmethod StatusSectionLayout::goToNextPanel()
-        This method is used to focus the panel that needs to be active.
-    */
-    function goToNextPanel() {
-        // Placeholder to align with qt6 StatusSectionLayout
+
+    QtObject {
+        id: d
+        // Cache wrapper items removed from the swipe view
+        property list<Item> items: []
     }
 
-    onCenterPanelChanged: {
-        if (!!centerPanel) {
-            centerPanel.parent = centerPanelSlot;
-        }
-    }
+    component BaseProxyPanel : Control {
+        id: baseProxyPanel
+        readonly property int index: SwipeView.index !== undefined ? SwipeView.index : -1
 
-    onFooterChanged: {
-        if (!!footer) {
-            footer.parent = footerSlot
-        }
-    }
+        property color backgroundColor
+        property Item target: null
+        property int implicitIndex
+        property bool inView: true
 
-    onHeaderBackgroundChanged:  {
-        if (!!headerBackground) {
-            headerBackground.parent = headerBackgroundSlot
-        }
-    }
-
-    Control {
-        id: navBarControl
-        SplitView.preferredWidth: (!!navBar) ? navBar.implicitWidth : 0
-        SplitView.fillHeight: (!!navBar)
         background: Rectangle {
-            color: Theme.palette.baseColor4
+            color: backgroundColor || Theme.palette.statusAppLayout.rightPanelBackgroundColor
         }
-        contentItem: root.navBar
-        Binding {
-            when: (!!navBar) && root.visible
-            target: root.navBar
-            property: "parent"
-            value: navBarControl
+        onInViewChanged: {
+            if (!inView && !!parent) {
+                d.items.push(root.takeItem(baseProxyPanel.implicitIndex));
+            } else if (inView && !parent) {
+                root.insertItem(implicitIndex, baseProxyPanel)
+                d.items.splice(d.items.indexOf(this), 1);
+            }
+        }
+        contentItem: RowLayout {
+            spacing: 0
+            LayoutItemProxy {
+                Layout.fillHeight: true
+                target: root.navBar
+                visible: baseProxyPanel.index === 0
+            }
+            LayoutItemProxy {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                target: baseProxyPanel.target
+            }
         }
     }
 
-    Control {
-        SplitView.minimumWidth: (!!leftPanel) ? 304 : 0
-        SplitView.preferredWidth: (!!leftPanel) ? 304 : 0
-        SplitView.fillHeight: (!!leftPanel)
-        background: Rectangle {
-            color: Theme.palette.baseColor4
-        }
-        contentItem: (!!leftPanel) ? leftPanel : null
+    BaseProxyPanel {
+        id: leftPanelProxy
+        backgroundColor: Theme.palette.baseColor4
+        implicitIndex: 0
+        inView: !!root.leftPanel
     }
 
-    Control {
-        SplitView.minimumWidth: (!!centerPanel) ? 300 : 0
-        SplitView.fillWidth: (!!centerPanel)
-        SplitView.fillHeight: (!!centerPanel)
-        background: Rectangle {
-            color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
-        }
-        contentItem: Item {
-            Item {
-                id: headerBackgroundSlot
-                anchors.top: parent.top
-                // Needed cause I see a gap otherwise
-                anchors.topMargin: -3
-                width: visible ? parent.width : 0
-                height: visible ? childrenRect.height : 0
-                visible: (!!headerBackground)
+    BaseProxyPanel {
+        id: centerPanelBase
+        backgroundColor: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+        implicitIndex: 1
+        inView: !!root.centerPanel
+        target: ColumnLayout {
+            objectName: "centerPanelLayout"
+            anchors.fill: parent
+            spacing: 0
+            LayoutItemProxy {
+                id: headerBackgroundProxy
+                Layout.fillWidth: true
             }
             StatusToolBar {
                 id: statusToolBar
-                anchors.top: parent.top
-                width: visible ? parent.width : 0
+                Layout.fillWidth: true
                 visible: root.showHeader
                 onBackButtonClicked: {
                     root.backButtonClicked();
@@ -230,33 +216,24 @@ SplitView {
                     root.notificationButtonClicked();
                 }
             }
-            Item {
-                id: centerPanelSlot
-                width: parent.width
-                anchors.top: statusToolBar.bottom
-                anchors.bottom: footerSlot.top
-                anchors.bottomMargin: footerSlot.visible ? 8 : 0
+            LayoutItemProxy {
+                id: centerPanelProxy
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                implicitHeight: centerPanel ? centerPanel.implicitHeight : 0
+                implicitWidth: centerPanel ? centerPanel.implicitWidth : 0
             }
-            Item {
-                id: footerSlot
-                width: parent.width
-                height: visible ? childrenRect.height : 0
-                anchors.bottom: parent.bottom
-                visible: (!!footer)
+            LayoutItemProxy {
+                id: footerProxy
+                Layout.fillWidth: true
             }
         }
     }
 
-    Control {
-        SplitView.preferredWidth: root.showRightPanel ? root.rightPanelWidth : 0
-        SplitView.minimumWidth: root.showRightPanel ? 58 : 0
-        opacity: root.showRightPanel ? 1.0 : 0.0
-        visible: (opacity > 0.1)
-        background: Rectangle {
-            color: Theme.palette.baseColor4
-        }
-        contentItem: Loader {
-            sourceComponent: (!!rightPanel) ? rightPanel : null
-        }
+    BaseProxyPanel {
+        id: rightPanelProxy
+        backgroundColor: Theme.palette.baseColor4
+        implicitIndex: 2
+        inView: !!root.rightPanel && root.showRightPanel
     }
 }

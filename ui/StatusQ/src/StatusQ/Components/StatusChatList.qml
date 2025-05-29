@@ -27,6 +27,7 @@ Item {
     property var isEnsVerified: function(pubKey) { return false }
 
     signal chatItemSelected(string categoryId, string id)
+    signal chatItemClicked(string id)
     signal chatItemUnmuted(string id)
     signal categoryReordered(string categoryId, int to)
     signal chatItemReordered(string categoryId, string chatId, int to)
@@ -249,6 +250,7 @@ Item {
                             if (!statusChatListItem.selected) {
                                 root.chatItemSelected(statusChatListItem.categoryId, statusChatListItem.chatId)
                             }
+                            root.chatItemClicked(statusChatListItem.chatId)
                         }
 
                         onUnmute: root.chatItemUnmuted(statusChatListItem.chatId)
