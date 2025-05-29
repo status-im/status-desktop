@@ -961,8 +961,6 @@ Item {
 
             appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
 
-            console.info("!!! onAppSectionBySectionTypeChanged:", sectionType, subsection, subSubsection, data.address ?? "noaddr")
-
             if (sectionType === Constants.appSection.profile) {
                 profileLoader.settingsSubsection = subsection || Constants.settingsSubsection.profile
                 profileLoader.settingsSubSubsection = subSubsection
@@ -2373,13 +2371,11 @@ Item {
             aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
 
             onItemActivated: function(sectionType, itemId) {
-                console.info("!!! SHELL ITEM ACTIVATED; sectionType:", sectionType, "; itemId:", itemId)
-
                 if (sectionType === Constants.appSection.profile) {
                     if (itemId == Constants.settingsSubsection.backUpSeed) {
                         return Global.openBackUpSeedPopup()
                     } else if (itemId == Constants.settingsSubsection.signout) {
-                        return Qt.exit(0) // TODO confirm dialog?
+                        return Global.quitAppRequested()
                     }
                 }
 
