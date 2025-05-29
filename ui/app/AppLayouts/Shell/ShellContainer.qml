@@ -9,8 +9,10 @@ import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 
-import utils 1.0
 import shared.popups 1.0
+import shared.controls 1.0
+
+import utils 1.0
 
 Control {
     id: root
@@ -34,6 +36,7 @@ Control {
 
     signal notificationButtonClicked()
     signal setCurrentUserStatusRequested(int status)
+    signal viewProfileRequested(string pubKey)
 
     topPadding: Theme.bigPadding * 2
     bottomPadding: Theme.smallPadding * 2
@@ -84,8 +87,6 @@ Control {
         }
 
         ShellGrid {
-            id: shellGrid
-
             Layout.fillWidth: !d.isNarrowView
             Layout.preferredWidth: d.isNarrowView ? (3*cellSize) + (3*cellPadding) : implicitWidth
             Layout.alignment: Qt.AlignHCenter
@@ -112,7 +113,6 @@ Control {
             Layout.fillWidth: d.isNarrowView && root.availableWidth < implicitWidth
             Layout.maximumWidth: parent.width
 
-            id: shellDock
             useNewDockIcons: root.useNewDockIcons
             sectionsModel: root.shellAdaptor.sectionsModel
             pinnedModel: root.shellAdaptor.pinnedModel
@@ -151,64 +151,15 @@ Control {
             onClicked: root.notificationButtonClicked()
         }
 
-        // TODO make a separate/shared component
-        StatusNavBarTabButton {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            id: profileButton
+        ProfileButton {
+            profileStore: root.profileStore
+            getEmojiHashFn: root.getEmojiHashFn
+            getLinkToProfileFn: root.getLinkToProfileFn
 
-            name: root.profileStore.name
-            icon.source: root.profileStore.icon
-            identicon.asset.width: width
-            identicon.asset.height: height
-            identicon.asset.useAcronymForLetterIdenticon: true
-            identicon.asset.color: Utils.colorForColorId(root.profileStore.colorId)
-            identicon.ringSettings.ringSpecModel: root.profileStore.colorHash
-
-            badge.visible: true
-            badge.anchors {
-                left: undefined
-                top: undefined
-                right: profileButton.right
-                bottom: profileButton.bottom
-                margins: 0
-                rightMargin: -badge.border.width
-                bottomMargin: -badge.border.width
-            }
-            badge.implicitHeight: 12
-            badge.implicitWidth: 12
-            badge.color: {
-                switch(root.profileStore.currentUserStatus) {
-                case Constants.currentUserStatus.automatic:
-                case Constants.currentUserStatus.alwaysOnline:
-                    return Theme.palette.successColor1
-                default:
-                    return Theme.palette.baseColor1
-                }
-            }
             badge.border.color: hovered ? "#222833" : "#161c27"
 
-            onClicked: userStatusContextMenu.popup()
-
-            UserStatusContextMenu {
-                id: userStatusContextMenu
-
-                readonly property string pubKey: root.profileStore.pubkey
-
-                compressedPubKey: root.profileStore.compressedPubKey
-                emojiHash: root.getEmojiHashFn(pubKey)
-                colorHash: root.profileStore.colorHash
-                colorId: root.profileStore.colorId
-                name: root.profileStore.name
-                headerIcon: root.profileStore.icon
-                isEnsVerified: !!root.profileStore.preferredName
-
-                currentUserStatus: root.profileStore.currentUserStatus
-
-                onViewProfileRequested: Global.openProfilePopup(pubKey)
-                onCopyLinkRequested: ClipboardUtils.setText(root.getLinkToProfileFn(pubKey))
-                onSetCurrentUserStatusRequested: (status) => root.setCurrentUserStatusRequested(status)
-            }
+            onSetCurrentUserStatusRequested: (status) => root.setCurrentUserStatusRequested(status)
+            onViewProfileRequested: (pubKey) => root.viewProfileRequested(pubKey)
         }
     }
 }
