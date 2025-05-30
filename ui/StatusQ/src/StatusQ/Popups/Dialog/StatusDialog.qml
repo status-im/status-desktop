@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick.Controls.Universal 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
@@ -35,26 +35,28 @@ Dialog {
     */
     property string okButtonText: qsTr("OK")
 
-    anchors.centerIn: Overlay.overlay
+    readonly property bool bottomSheet: root.contentItem.Window.height > root.contentItem.Window.width &&
+                                       root.contentItem.Window.width <= 1200
 
-    padding: Theme.padding
-    // by design
-    margins: root.contentItem.Window.height <= 780 ? 28 : 64
-    modal: true
+    readonly property real desiredY: root.bottomSheet ? root.Overlay.overlay.height - root.height : ((root.Overlay.overlay.height - root.height) / 2)
 
-    // workaround for https://bugreports.qt.io/browse/QTBUG-87804
-    Binding on margins {
-        id: workaroundBinding
+    enter: Transition {
+        id: enterTransition
+        NumberAnimation { property: "y"; from: root.contentItem.Window.height; to: root.desiredY; duration: 50 }
+    }
 
-        when: false
+    Binding on width {
+        when: root.bottomSheet
         restoreMode: Binding.RestoreBindingOrValue
+        value: root.contentItem.Window.width
+    }
+    Binding on y {
+        when: root.bottomSheet && !enterTransition.running
+        restoreMode: Binding.RestoreBindingOrValue
+        value: root.desiredY
     }
 
-    onImplicitContentHeightChanged: {
-        workaroundBinding.value = root.margins + 1
-        workaroundBinding.when = true
-        workaroundBinding.when = false
-    }
+    modal: true
 
     standardButtons: Dialog.Cancel | Dialog.Ok
 
