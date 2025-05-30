@@ -6,7 +6,7 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label 'linux && x86_64 && qt-5.15.2'
+    label 'linux && x86_64 && qt-6.9.0'
   }
 
   parameters {

@@ -12,7 +12,8 @@ mkdir -p \
   "${APP_DIR}/usr/plugins/platforminputcontexts" \
   "${APP_DIR}/etc/reader.conf.d" \
   "${APP_DIR}/usr/lib/pcsc/drivers" \
-  "${APP_DIR}/usr/bin"
+  "${APP_DIR}/usr/bin" \
+  "${APP_DIR}/usr/libexec"
 
 cp bin/nim_status_client "${APP_DIR}/usr/bin"
 cp bin/StatusQ/* "${APP_DIR}/usr/lib"
@@ -33,11 +34,9 @@ if [[ -z "${IN_NIX_SHELL}" ]]; then
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 "${APP_DIR}/usr/lib/"
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 "${APP_DIR}/usr/lib/"
 
-	echo "Bundling OpenSSL 3.x..."
-	cp -L /usr/local/openssl3/lib64/libssl.so.3 "${APP_DIR}/usr/lib/"
-	cp -L /usr/local/openssl3/lib64/libcrypto.so.3 "${APP_DIR}/usr/lib/"
-	chmod 755 "${APP_DIR}/usr/lib/libssl.so.3"
-	chmod 755 "${APP_DIR}/usr/lib/libcrypto.so.3"
+	# fix for missing QtWebEngineProcess since QT6
+  cp /opt/qt/6.9.0/gcc_64/libexec/QtWebEngineProcess "${APP_DIR}/usr/libexec/"
+  chmod +x "${APP_DIR}/usr/libexec/QtWebEngineProcess"
 
 	echo "Bundling pcsc-lite 2.2.3..."
 	cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite.so* "${APP_DIR}/usr/lib/"

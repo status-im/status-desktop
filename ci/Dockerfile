@@ -1,9 +1,9 @@
-ARG QT_VERSION=5.15.2
+ARG QT_VERSION=6.9.0
 
 # QT Installation Image --------------------------------------------------------
-FROM ubuntu:20.04 AS qt-install
-
+FROM ubuntu:22.04 AS qt-install
 ARG QT_VERSION
+ARG QT_MODULES="qtwebchannel qtwebview qtwebsockets qt5compat qtmultimedia qtwebengine qtpositioning qtserialport qtshadertools qtimageformats qtscxml"
 
 RUN apt update && apt full-upgrade -y \
  && apt install -y --no-install-recommends sudo python3 python3-pip python3-dev build-essential \
@@ -15,13 +15,12 @@ RUN chmod -R 777 /opt
 RUN python3 -m pip install setuptools \
  && python3 -m pip install -U pip \
  && python3 -m pip install aqtinstall \
- && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m qtwebengine
+ && python3 -m aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 -m ${QT_MODULES} -O /opt/qt --timeout 3000
 
 # Build Image ------------------------------------------------------------------
-FROM ubuntu:20.04
-
-ARG LINUXDEPLOYQT_VERSION=20230423-8428c59
+FROM ubuntu:22.04
 ARG QT_VERSION
+ARG LINUXDEPLOYQT_VERSION=20250615-0393b84
 ARG PCSCLITE_VERSION=2.2.3
 
 # Adapted from a12e/docker-qt by Aurélien Brooke
@@ -32,8 +31,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     QT_PLATFORM=gcc_64 \
     QT_VERSION=$QT_VERSION
 
-ENV PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:$PATH \
-    QTDIR=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}
+ENV QTDIR=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}
+# Since QT6 rcc is in libexec folder.
+ENV PATH=${QTDIR}/bin:${QTDIR}/libexec:$PATH
 
 ENV LD_LIBRARY_PATH=${QTDIR}/lib:${LD_LIBRARY_PATH}
 
@@ -43,7 +43,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
  && apt update -yq && apt full-upgrade -yq && apt install -yq --no-install-recommends --fix-missing  \
     gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s3cmd file unzip llvm tk-dev xz-utils \
-    git make build-essential pkg-config extra-cmake-modules gcc-9 g++-9 \
+    git make build-essential pkg-config extra-cmake-modules \
     libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
     zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev unixodbc-dev libpq-dev \
     libncurses5-dev libncursesw5-dev libpcre3-dev libnss3 \
@@ -53,33 +53,14 @@ RUN apt update -yq && apt install -yq software-properties-common \
     libxext6 libxrender1 libxkbcommon-dev libxkbcommon-x11-dev libxcomposite1 libxtst6 \
     libxrandr2 libxcursor1 libxi6 libxcb-randr0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
     libxcb-render-util0 libxcb-shape0 libxcb-render0 libxcb-xinerama0 \
-    autoconf automake libtool gcc \
- &&  update-alternatives \
-    --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 \
-    --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
+    autoconf automake libtool gcc-11 g++-11 \
+    libxslt1.1 libxslt1-dev libxkbfile1 libxkbfile-dev \
+    libxcb-cursor0 libxcb-cursor-dev \
+    libatk1.0-0 libatk1.0-dev \
+    libcups2 libcups2-dev \
+    libgtk-3-0 libgtk-3-dev \
+    libgdk-pixbuf-2.0-0 libgdk-pixbuf2.0-dev \
  && apt-get -qq clean
-
-# FIXME: remove when ubuntu is upgraded to 22.04
-# Install OpenSSL 3.x
-RUN cd /tmp \
- && wget https://www.openssl.org/source/openssl-3.0.15.tar.gz \
- && tar -xzf openssl-3.0.15.tar.gz \
- && cd openssl-3.0.15 \
- && ./Configure --prefix=/usr/local/openssl3 --openssldir=/usr/local/openssl3 \
- && make -j$(nproc) \
- && make install \
- && echo "/usr/local/openssl3/lib64" > /etc/ld.so.conf.d/openssl3.conf \
- && ldconfig \
- && cd / \
- && rm -rf /tmp/openssl-3.0.15*
-
-ENV PKG_CONFIG_PATH="/usr/local/openssl3/lib64/pkgconfig:$PKG_CONFIG_PATH" \
-    LD_LIBRARY_PATH="/usr/local/openssl3/lib64:${LD_LIBRARY_PATH}"
-
-# Symlink missing libssl.so.3 and libcrypto.so.3 for linker
-RUN ln -sf /usr/local/openssl3/lib64/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.3 \
- && ln -sf /usr/local/openssl3/lib64/libcrypto.so.3 /usr/lib/x86_64-linux-gnu/libcrypto.so.3 \
- && ldconfig
 
 # To fix: https://github.com/status-im/status-desktop/issues/16768
 # https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
@@ -92,7 +73,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && cd pcsc-lite-${PCSCLITE_VERSION} \
  && meson setup builddir \
   -Dpolkit=false \
-  -Dsystemd=false \
+  -Dlibsystemd=false \
   -Dserial=false \
   -Dipcdir=/tmp/pcscd/run \
  && cd builddir \
@@ -104,12 +85,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && apt-get -qq clean
 
 # Install linuxdeployqt
+# built from https://github.com/probonopd/linuxdeployqt/commit/0393b84
 RUN mkdir -p /usr/local/bin \
  && curl -Lo/usr/local/bin/linuxdeployqt "https://status-misc.ams3.digitaloceanspaces.com/desktop/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage" \
  && chmod a+x /usr/local/bin/linuxdeployqt
 
 # Reconfigure locale
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
 # Copy QT toolchain
 RUN chmod -R 777 /opt && mkdir -p /opt/qt/$QT_VERSION
@@ -130,7 +115,7 @@ ENV PATH="/opt/cmake/bin:${PATH}"
 # Installing Golang
 RUN GOLANG_SHA256="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252092" \
  && GOLANG_TARBALL="go1.22.10.linux-amd64.tar.gz" \
- && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
+ && wget -q -L "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
  && rm "${GOLANG_TARBALL}" \
@@ -139,7 +124,7 @@ RUN GOLANG_SHA256="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252
 # Install Protoc
 RUN PROTOC_SHA256="75d8a9d7a2c42566e46411750d589c51276242d8b6247a5724bac0f9283e05a8" \
  && PROTOC_TARBALL="protoc-3.20.0-linux-x86_64.zip" \
- && wget -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/${PROTOC_TARBALL}" \
+ && wget -q -L  "https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/${PROTOC_TARBALL}" \
  && echo "${PROTOC_SHA256} ${PROTOC_TARBALL}" | sha256sum -c \
  && sudo unzip -d /usr/local "${PROTOC_TARBALL}" \
  && rm "${PROTOC_TARBALL}"
@@ -147,7 +132,7 @@ RUN PROTOC_SHA256="75d8a9d7a2c42566e46411750d589c51276242d8b6247a5724bac0f9283e0
 # Install Protoc-deg-go
 RUN PROTOC_GEN_SHA256="0b2c257938a8cd9ba3506bbdbbaad45e51245b6f9e0743035ade7acf746c6be7" \
  && PROTOC_GEN_TARBALL="protoc-gen-go.v1.34.1.linux.amd64.tar.gz" \
- && wget -q "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.34.1/${PROTOC_GEN_TARBALL}" \
+ && wget -q -L "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.34.1/${PROTOC_GEN_TARBALL}" \
  && echo "${PROTOC_GEN_SHA256} ${PROTOC_GEN_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local/bin -xzf "${PROTOC_GEN_TARBALL}" \
  && rm "${PROTOC_GEN_TARBALL}"
