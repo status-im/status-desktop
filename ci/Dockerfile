@@ -1,7 +1,7 @@
 ARG QT_VERSION=6.9.0
 
 # QT Installation Image --------------------------------------------------------
-FROM ubuntu:20.04 AS qt-install
+FROM ubuntu:22.04 AS qt-install
 
 ARG QT_VERSION
 
@@ -15,10 +15,10 @@ RUN chmod -R 777 /opt
 RUN python3 -m pip install setuptools \
  && python3 -m pip install -U pip \
  && python3 -m pip install aqtinstall \
- && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m all
+ && python3 -m aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 -m all -O /opt/qt --timeout 3000
 
 # Build Image ------------------------------------------------------------------
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ARG LINUXDEPLOYQT_VERSION=20230423-8428c59
 ARG QT_VERSION
@@ -70,7 +70,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && cd pcsc-lite-${PCSCLITE_VERSION} \
  && meson setup builddir \
   -Dpolkit=false \
-  -Dsystemd=false \
+  -Dlibsystemd=false \
   -Dserial=false \
   -Dipcdir=/tmp/pcscd/run \
  && cd builddir \
