@@ -52,6 +52,7 @@ QML_IMPORT_PATH = $$PWD/imports \
 QML_DESIGNER_IMPORT_PATH = $$PWD/imports
 
 RESOURCES += resources.qrc \
+            StatusQ/src/assets/compat_resources.qrc \
             StatusQ/src/assets/fonts/fonts.qrc \
             StatusQ/src/assets/img/img.qrc \
             StatusQ/src/assets/png/png.qrc \
