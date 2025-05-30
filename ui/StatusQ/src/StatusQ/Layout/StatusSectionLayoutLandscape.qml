@@ -211,12 +211,12 @@ SplitView {
                 anchors.bottomMargin: footerSlot.visible ? 8 : 0
                 target: root.centerPanel
             }
-            Item {
+            LayoutItemProxy {
                 id: footerSlot
                 width: parent.width
-                height: visible ? childrenRect.height : 0
+                height: root.footer ? root.footer.height : 0
                 anchors.bottom: parent.bottom
-                visible: (!!footer)
+                target: root.footer
             }
         }
     }

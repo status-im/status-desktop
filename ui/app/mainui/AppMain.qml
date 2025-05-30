@@ -2213,8 +2213,7 @@ Item {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     width: active ?
-                            parent.width - Constants.chatSectionLeftColumnWidth -
-                            anchors.rightMargin - anchors.leftMargin : 0
+                            appMain.width : 0
 
                     sourceComponent: CreateChatView {
                         utilsStore: appMain.utilsStore
