@@ -1,4 +1,4 @@
-ARG QT_VERSION=5.15.2
+ARG QT_VERSION=6.9.0
 
 # QT Installation Image --------------------------------------------------------
 FROM ubuntu:20.04 AS qt-install
@@ -15,7 +15,7 @@ RUN chmod -R 777 /opt
 RUN python3 -m pip install setuptools \
  && python3 -m pip install -U pip \
  && python3 -m pip install aqtinstall \
- && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m qtwebengine
+ && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m all
 
 # Build Image ------------------------------------------------------------------
 FROM ubuntu:20.04
