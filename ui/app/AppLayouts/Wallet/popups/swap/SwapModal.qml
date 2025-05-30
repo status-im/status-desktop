@@ -37,7 +37,7 @@ StatusDialog {
     objectName: "swapModal"
 
     implicitWidth: 556
-    topPadding: Theme.xlPadding
+    // topPadding: Theme.xlPadding
     backgroundColor: Theme.palette.baseColor3
 
     QtObject {
@@ -118,9 +118,9 @@ StatusDialog {
         value: payPanel.amountEnteredGreaterThanBalance
     }
 
-    Behavior on implicitHeight {
-        NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
-    }
+    // Behavior on implicitHeight {
+    //     NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
+    // }
 
     onOpened: {
         payPanel.forceActiveFocus()
@@ -484,7 +484,7 @@ StatusDialog {
                             return "--"
                         }
 
-                        onTextChanged: {
+                        onTextChanged: function(text) {
                             if (text === "" || text === "--") {
                                 animation.stop()
                                 return
