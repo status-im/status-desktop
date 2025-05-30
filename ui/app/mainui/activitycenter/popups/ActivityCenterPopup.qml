@@ -40,7 +40,7 @@ Popup {
         Qt.callLater(activityCenterStore.markAsSeenActivityCenterNotifications)
     }
 
-    width: 560
+    implicitWidth: 560
     padding: 0
     modal: true
     parent: Overlay.overlay

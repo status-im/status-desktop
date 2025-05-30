@@ -50,7 +50,8 @@ SplitView {
 
             store: WalletStores.RootStore
 
-            onUpdateSelectedAddress: {
+            onUpdateSelectedAddress: function(address) {
+                // Update the selected account based on the new address
                dialog.selectedAccount = ModelUtils.getByKey(dialog.accounts, "address", address)
             }
         }
