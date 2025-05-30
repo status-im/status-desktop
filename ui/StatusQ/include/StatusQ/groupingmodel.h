@@ -18,7 +18,7 @@ class GroupingModel : public QAbstractProxyModel
 
 public:
     explicit GroupingModel(QObject* parent = nullptr);
-    ~GroupingModel();
+    ~GroupingModel() override;
 
     void setSourceModel(QAbstractItemModel* sourceModel) override;
 

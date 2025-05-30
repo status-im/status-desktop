@@ -29,6 +29,7 @@ MockedKeycardReaderStateSelector 1.0 MockedKeycardReaderStateSelector.qml
 MockedKeycardStateSelector 1.0 MockedKeycardStateSelector.qml
 Padding 1.0 Padding.qml
 ProfilePerspectiveSelector 1.0 ProfilePerspectiveSelector.qml
+ProfileButton 1.0 ProfileButton.qml
 RadioButtonSelector 1.0 RadioButtonSelector.qml
 SearchBox 1.0 SearchBox.qml
 SeedPhraseTextArea 1.0 SeedPhraseTextArea.qml

@@ -3,7 +3,9 @@ AssetsCollectiblesIconsModel 1.0 AssetsCollectiblesIconsModel.qml
 AssetsModel 1.0 AssetsModel.qml
 BannerModel 1.0 BannerModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
+ChatsModel 1.0 ChatsModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
+DappsModel 1.0 DappsModel.qml
 FeesModel 1.0 FeesModel.qml
 FlatTokensModel 1.0 FlatTokensModel.qml
 IconModel 1.0 IconModel.qml
@@ -27,6 +29,7 @@ OnRampProvidersModel 1.0 OnRampProvidersModel.qml
 SwapTransactionRoutes 1.0 SwapTransactionRoutes.qml
 PaymentRequestModel 1.0 PaymentRequestModel.qml
 MarketTokensModel 1.0 MarketTokensModel.qml
+SectionsModel 1.0 SectionsModel.qml
 
 singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml
