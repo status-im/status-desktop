@@ -17,7 +17,6 @@ SettingsPage {
     id: root
 
     property RootStore rootStore
-    property SharedStores.UtilsStore utilsStore
 
     property var membersModel
     property var bannedMembersModel
@@ -27,6 +26,8 @@ SettingsPage {
 
     property int memberRole
     property bool editable: true
+
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal kickUserClicked(string id)
     signal banUserClicked(string id, bool deleteAllMessages)
@@ -148,8 +149,8 @@ SettingsPage {
 
             searchString: memberSearch.text
             rootStore: root.rootStore
-            utilsStore: root.utilsStore
             memberRole: root.memberRole
+            cbGetEmojiHash: root.cbGetEmojiHash
 
             onKickUserClicked: {
                 kickBanPopup.mode = KickBanPopup.Mode.Kick

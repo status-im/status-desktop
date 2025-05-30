@@ -46,16 +46,11 @@ SplitView {
         LinkPreviewCard {
             id: previewCard
 
-            utilsStore: UtilsStore {
-                function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
-
-                function isCompressedPubKey(publicKey) { return true }
-
-                function getEmojiHash(publicKey) {
-                    return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
-                }
+            function getEmojiHash(publicKey) {
+                return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
             }
 
+            cbGetEmojiHash: getEmojiHash
             type: 1
             linkData {
                 title: titleInput.text

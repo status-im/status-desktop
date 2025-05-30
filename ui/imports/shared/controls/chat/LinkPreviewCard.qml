@@ -16,12 +16,12 @@ import "./private"
 CalloutCard {
     id: root
 
-    property UtilsStore utilsStore
-
     readonly property LinkData linkData: LinkData { }
     readonly property UserData userData: UserData { }
     readonly property CommunityData communityData: CommunityData { }
     readonly property ChannelData channelData: ChannelData { }
+
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     property int type: Constants.LinkPreviewType.NoPreview
 
@@ -118,7 +118,7 @@ CalloutCard {
                 Layout.topMargin: 4
                 Layout.bottomMargin: 6
                 visible: root.type === Constants.LinkPreviewType.StatusContact
-                emojiHash: root.utilsStore.getEmojiHash(root.userData.publicKey)
+                emojiHash: root.cbGetEmojiHash(root.userData.publicKey)
                 oneRow: true
                 objectName: "linkPreviewEmojiHash"
             }

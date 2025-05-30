@@ -41,6 +41,7 @@ Flow {
 
     readonly property alias hoveredLink: linksRepeater.hoveredUrl
     property string highlightLink: ""
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal imageClicked(var image, var mouse, string imageSource, string url)
     signal openContextMenu(var item, string url, string domain)
@@ -113,8 +114,7 @@ Flow {
         delegate: LinkPreviewCardDelegate {
             id: delegate
 
-            utilsStore: root.utilsStore
-
+            cbGetEmojiHash: root.cbGetEmojiHash
             highlight: url === root.highlightLink
             onHoveredChanged: {
                 linksRepeater.hoveredUrl = hovered ? url : ""

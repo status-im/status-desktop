@@ -40,7 +40,6 @@ Item {
     // don't follow struct we have on the backend.
     property var parentModule
 
-    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property ProfileStores.ContactsStore contactsStore
@@ -62,6 +61,10 @@ Item {
     // Unfurling related data:
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
+
+    // Utils store data
+    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
+    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
@@ -255,7 +258,6 @@ Item {
                         chatId: model.itemId
                         chatType: model.type
                         chatMessagesLoader.active: model.loaderActive
-                        utilsStore: root.utilsStore
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         formatBalance: d.formatBalance
@@ -270,6 +272,9 @@ Item {
                         // Unfurling related data:
                         gifUnfurlingEnabled: root.gifUnfurlingEnabled
                         neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+                        cbGetCompressedPk: root.cbGetCompressedPk
+                        cbGetEmojiHash: root.cbGetEmojiHash
 
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
