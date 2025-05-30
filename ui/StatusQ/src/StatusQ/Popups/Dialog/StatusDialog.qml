@@ -35,26 +35,51 @@ Dialog {
     */
     property string okButtonText: qsTr("OK")
 
-    anchors.centerIn: Overlay.overlay
+    readonly property bool bottomSheet: root.contentItem.Window.height > root.contentItem.Window.width &&
+                                       root.contentItem.Window.width <= 1200 // The max width of a phone in portrait mode
 
-    padding: Theme.padding
-    // by design
-    margins: root.contentItem.Window.height <= 780 ? 28 : 64
-    modal: true
+    readonly property real desiredY: root.bottomSheet ? root.contentItem.Window.height - root.height : ((root.Overlay.overlay.height - root.height) / 2)
 
-    // workaround for https://bugreports.qt.io/browse/QTBUG-87804
-    Binding on margins {
-        id: workaroundBinding
+    enter: Transition {
+        id: enterTransition
+        ParallelAnimation {
+            NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 150 }
+            NumberAnimation { property: "y"; from: root.parent.height; to: root.desiredY; duration: 150; easing.type: Easing.OutCubic }
+        }
+    }
 
-        when: false
+    Binding on width {
+        when: root.bottomSheet
         restoreMode: Binding.RestoreBindingOrValue
+        value: root.contentItem.Window.width
+    }
+    Binding on y {
+        when: root.bottomSheet && !enterTransition.running
+        restoreMode: Binding.RestoreBindingOrValue
+        value: root.desiredY
     }
 
-    onImplicitContentHeightChanged: {
-        workaroundBinding.value = root.margins + 1
-        workaroundBinding.when = true
-        workaroundBinding.when = false
+    Binding on y {
+        when: !root.bottomSheet && !enterTransition.running
+        restoreMode: Binding.RestoreBindingOrValue
+        value: (root.contentItem.Window.height - root.height) / 2
     }
+
+    Binding on x {
+        when: !root.bottomSheet
+        restoreMode: Binding.RestoreBindingOrValue
+        value: (root.contentItem.Window.width - root.width) / 2
+    }
+
+    Binding on x {
+        when: root.bottomSheet
+        restoreMode: Binding.RestoreBindingOrValue
+        value: 0
+    }
+
+    parent: Overlay.overlay
+
+    modal: true
 
     standardButtons: Dialog.Cancel | Dialog.Ok
 

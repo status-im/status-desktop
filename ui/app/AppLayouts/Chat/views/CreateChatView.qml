@@ -44,6 +44,7 @@ Page {
     }
 
     padding: 0
+    implicitWidth: 896
 
     Behavior on opacity { NumberAnimation {}}
     Behavior on anchors.bottomMargin { NumberAnimation { duration: 30 }}

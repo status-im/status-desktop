@@ -2271,6 +2271,8 @@ Item {
                     id: createChatView
 
                     property bool opened: false
+                    readonly property real defaultWidth: parent.width - Constants.chatSectionLeftColumnWidth -
+                             anchors.rightMargin - anchors.leftMargin
                     active: appMain.rootStore.mainModuleInst.sectionsLoaded && opened
 
                     asynchronous: true
@@ -2279,11 +2281,9 @@ Item {
                     anchors.rightMargin: 8
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
-                    width: active ?
-                            parent.width - Constants.chatSectionLeftColumnWidth -
-                            anchors.rightMargin - anchors.leftMargin : 0
 
                     sourceComponent: CreateChatView {
+                        width: Math.min(Math.max(implicitWidth, createChatView.defaultWidth), createChatView.parent.width)
                         utilsStore: appMain.utilsStore
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore

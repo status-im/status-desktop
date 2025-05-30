@@ -164,10 +164,10 @@ Rectangle {
             } // Indicator
         } // Loader
 
-        onClicked: statusFlatRoundButton.clicked(mouse)
-        onPressed: statusFlatRoundButton.pressed(mouse)
-        onReleased: statusFlatRoundButton.released(mouse)
-        onPressAndHold: statusFlatRoundButton.pressAndHold(mouse)
+        onClicked: (mouse) => statusFlatRoundButton.clicked(mouse)
+        onPressed: (mouse) => statusFlatRoundButton.pressed(mouse)
+        onReleased: (mouse) => statusFlatRoundButton.released(mouse)
+        onPressAndHold: (mouse) => statusFlatRoundButton.pressAndHold(mouse)
     } // Sensor
 
     StatusToolTip {

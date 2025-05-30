@@ -102,8 +102,8 @@ StatusSectionLayout {
     QtObject {
         id: d
 
-        readonly property int contentWidth: 560
-        readonly property int rightPanelWidth: 768
+        readonly property int contentWidth: Math.min(root.centerPanel.width, 560)
+        readonly property int rightPanelWidth: Math.min(root.centerPanel.height, 768)
 
         readonly property bool isProfilePanelActive: profileContainer.currentIndex === Constants.settingsSubsection.profile
         readonly property bool sideBySidePreviewAvailable: root.Window.width >= 1840 // design
@@ -153,6 +153,7 @@ StatusSectionLayout {
 
         anchors.fill: parent
         anchors.leftMargin: Constants.settingsSection.leftMargin
+        anchors.rightMargin: Constants.settingsSection.rightMargin
 
         currentIndex: leftPanel.settingsSubsection
         onCurrentIndexChanged: {

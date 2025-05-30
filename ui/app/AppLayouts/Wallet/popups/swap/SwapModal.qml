@@ -118,10 +118,6 @@ StatusDialog {
         value: payPanel.amountEnteredGreaterThanBalance
     }
 
-    Behavior on implicitHeight {
-        NumberAnimation { duration: 1000; easing.type: Easing.OutExpo; alwaysRunToEnd: true}
-    }
-
     onOpened: {
         payPanel.forceActiveFocus()
         root.addMetricsEvent("popup opened")
@@ -484,7 +480,7 @@ StatusDialog {
                             return "--"
                         }
 
-                        onTextChanged: {
+                        onTextChanged: function(text) {
                             if (text === "" || text === "--") {
                                 animation.stop()
                                 return

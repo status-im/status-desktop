@@ -566,16 +566,16 @@ QtObject {
         readonly property int itemSpacing: 10
         readonly property int radius: 8
         readonly property int mainHeaderFontSize: 28
-        readonly property int subHeaderFontSize: 15
+        readonly property int subHeaderFontSize: Theme.primaryTextFontSize
         readonly property int importantInfoFontSize: 18
-        readonly property int infoFontSize: 15
+        readonly property int infoFontSize: Theme.primaryTextFontSize
         readonly property int infoLineHeight: 22
         readonly property int infoSpacing: 5
         readonly property int itemHeight: 64
-        readonly property int leftMargin: 64
-        readonly property int rightMargin: 64
-        readonly property int topMargin: 64
-        readonly property int bottomMargin: 64
+        readonly property int leftMargin: Theme.xlPadding * 2
+        readonly property int rightMargin: Theme.xlPadding * 2
+        readonly property int topMargin: Theme.xlPadding * 2
+        readonly property int bottomMargin: Theme.xlPadding * 2
 
         readonly property QtObject notificationsBubble: QtObject {
             readonly property int previewAnonymous: 0

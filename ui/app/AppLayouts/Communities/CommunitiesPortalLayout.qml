@@ -46,11 +46,11 @@ StatusSectionLayout {
         id: d
 
         // values from the design
-        readonly property int layoutTopMargin: 10
+        readonly property int layoutTopMargin: Theme.smallPadding
         readonly property int layoutBottomMargin: Theme.xlPadding*2
         readonly property int titlePixelSize: 28
-        readonly property int preventShadowClipMargin: 40
-
+        readonly property int preventShadowClipMargin: Theme.padding
+ 
         readonly property bool searchMode: searcher.text.length > 0
     }
 
@@ -115,7 +115,8 @@ StatusSectionLayout {
 
                 SearchBox {
                     id: searcher
-                    Layout.preferredWidth: 327
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: 327
                     Layout.preferredHeight: 38
                     Layout.alignment: Qt.AlignVCenter
                     topPadding: 0
@@ -126,6 +127,7 @@ StatusSectionLayout {
                 Item { Layout.fillWidth: true }
 
                 StatusButton {
+                    Layout.fillWidth: true
                     Layout.preferredHeight: 38
                     text: qsTr("Join Community")
                     verticalPadding: 0
@@ -172,6 +174,7 @@ StatusSectionLayout {
                     anchors.fill: parent
                     anchors.rightMargin: d.preventShadowClipMargin
                     anchors.leftMargin: d.preventShadowClipMargin
+                    contentWidth: availableWidth
 
                     padding: 0
                     bottomPadding: d.layoutBottomMargin

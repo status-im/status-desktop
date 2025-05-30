@@ -50,8 +50,8 @@ StatusSectionLayout {
 
     centerPanel: ColumnLayout {
         anchors.fill: parent
-        anchors.rightMargin: 64
-        anchors.leftMargin: 64
+        anchors.rightMargin: Theme.xlPadding * 2
+        anchors.leftMargin: Theme.xlPadding * 2
         spacing: 18
 
         // Header

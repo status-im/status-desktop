@@ -37,10 +37,6 @@ SplitView {
         StatusDialog {
             id: dialog
 
-            anchors.centerIn: parent
-            width: 556
-            visible: true
-            modal: false
             closePolicy: Popup.NoAutoClose
 
             title: ctrlTitle.text

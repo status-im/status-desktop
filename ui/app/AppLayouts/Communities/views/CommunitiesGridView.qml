@@ -35,7 +35,9 @@ StatusScrollView {
         // values from the design
         readonly property int scrollViewTopMargin: 20
         readonly property int subtitlePixelSize: 17
-        readonly property int promotionalCardPosition: gridLayout.columns - 1
+        readonly property int promotionalCardPosition: Math.max(gridLayout.delegateCountPerRow - 1, 1)
+    
+        readonly property int delegateWidth: 335
 
         // URLs:
         readonly property string learnAboutCommunitiesVoteLink: Constants.statusHelpLinkPrefix + "communities/vote-to-feature-a-status-community#step-2-initiate-a-round-of-vote"
@@ -102,6 +104,7 @@ StatusScrollView {
                 json: tags
             }
 
+            width: d.delegateWidth
             communityId: model.id
             loaded: model.available
             asset.source: model.icon
@@ -141,6 +144,9 @@ StatusScrollView {
 
     ColumnLayout {
         id: contentColumn
+        anchors.fill: parent
+        anchors.leftMargin: root.anchors.leftMargin
+        anchors.rightMargin: root.anchors.rightMargin
 
         StatusBaseText {
             id: featuredLabel
@@ -153,19 +159,28 @@ StatusScrollView {
             color: Theme.palette.directColor1
         }
 
-        GridLayout {
+        Flow {
+            readonly property int delegateCountPerRow: Math.trunc(parent.width / (d.delegateWidth + spacing))
+            Layout.preferredWidth: (delegateCountPerRow * d.delegateWidth) + (spacing * (delegateCountPerRow - 1))
+            Layout.alignment: Qt.AlignHCenter
+
             Layout.topMargin: root.searchLayout
                               ? featuredLabel.height + contentColumn.spacing + featuredLabel.Layout.topMargin
                               : 0
-            columns: 3
-            columnSpacing: Theme.padding
-            rowSpacing: Theme.padding
+
+            spacing: Theme.padding
             visible: featuredRepeater.count
 
             Repeater {
                 id: featuredRepeater
                 model: root.searchLayout ? root.model : featuredModel
                 delegate: communityCardDelegate
+            }
+            move: Transition {
+                NumberAnimation { properties: "x,y"; }
+            }
+            add: Transition {
+                NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
             }
         }
 
@@ -179,13 +194,16 @@ StatusScrollView {
             color: Theme.palette.directColor1
         }
 
-        GridLayout {
+        Flow {
             id: gridLayout
 
+            readonly property int delegateCountPerRow: Math.trunc(parent.width / (d.delegateWidth + spacing))
+            Layout.preferredWidth: (delegateCountPerRow * d.delegateWidth) + (spacing * (delegateCountPerRow - 1))
+            Layout.alignment: Qt.AlignHCenter
+
             visible: !root.searchLayout
-            columns: 3
-            columnSpacing: Theme.padding
-            rowSpacing: Theme.padding
+            
+            spacing: Theme.padding
 
             Repeater {
                 id: firstPopularElementsRepeater
@@ -204,6 +222,12 @@ StatusScrollView {
                 id: restOfPopularElementsRepeater
                 model: sfpmRestOfPopularElementsModel
                 delegate: communityCardDelegate
+            }
+            move: Transition {
+                NumberAnimation { properties: "x,y"; }
+            }
+            add: Transition {
+                NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
             }
         }
     }
