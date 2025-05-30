@@ -7,6 +7,7 @@ import ../../../../../constants
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
+import ../../../../../app_service/service/kvstore/service as kvstore_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
 
 export io_interface
@@ -25,12 +26,13 @@ type
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service,
   stickersService: stickers_service.Service,
-  nodeConfigurationService: node_configuration_service.Service): Module =
+  nodeConfigurationService: node_configuration_service.Service,
+  kvstoreService: kvstore_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, stickersService, nodeConfigurationService)
+  result.controller = controller.newController(result, events, settingsService, stickersService, nodeConfigurationService, kvstoreService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -102,6 +104,12 @@ method isDebugEnabled*(self: Module): bool =
 method toggleDebug*(self: Module) =
   self.controller.toggleDebug()
 
+method isRlnRateLimitEnabled*(self: Module): bool =
+  self.controller.isRlnRateLimitEnabled()
+
+method toggleRlnRateLimit*(self: Module) =
+  self.controller.toggleRlnRateLimit()
+
 method onDebugToggled*(self: Module) =
   self.view.isDebugEnabledChanged()
 
@@ -113,6 +121,9 @@ method toggleNimbusProxy*(self: Module) =
 
 method onNimbusProxyToggled*(self: Module) =
   self.view.isNimbusProxyEnabledChanged()
+
+method onRlnRateLimitToggled*(self: Module) =
+  self.view.isRlnRateLimitEnabledChanged()
 
 method isRuntimeLogLevelSet*(self: Module): bool =
   return constants.runtimeLogLevelSet()

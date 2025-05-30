@@ -33,6 +33,9 @@ method onDebugToggled*(self: AccessInterface) {.base.} =
 method onNimbusProxyToggled*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onRlnRateLimitToggled*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -79,6 +82,12 @@ method disableCommunityHistoryArchiveSupport*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleDebug*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isRlnRateLimitEnabled*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleRlnRateLimit*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isNimbusProxyEnabled*(self: AccessInterface): bool {.base.} =
