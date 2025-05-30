@@ -695,7 +695,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 		-no-copy-copyright-files \
 		-qmldir=ui -qmlimport=$(QT_QMLDIR) \
 		-bundle-non-qt-libs \
-		-exclude-libs=libgmodule-2.0.so.0,libgthread-2.0.so.0 \
+		-exclude-libs=libgmodule-2.0.so.0,libgthread-2.0.so.0,libqsqlmimer,libqsqlmysql \
 		-verbose=1 \
 		-executable=$(APP_DIR)/usr/bin/pcscd \
 		-executable=$(APP_DIR)/usr/libexec/QtWebEngineProcess
@@ -753,10 +753,12 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp bin/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 
 	echo -e $(BUILD_MSG) "app"
+	MAC_QTQMLDIR=$(shell $(QMAKE) -query QT_INSTALL_QML) && \
 	macdeployqt \
 		$(MACOS_OUTER_BUNDLE) \
 		-executable=$(MACOS_OUTER_BUNDLE)/Contents/MacOS/nim_status_client \
-		-qmldir=ui
+		-qmldir=ui \
+		-qmlimport=$$MAC_QTQMLDIR \
 	macdeployqt \
 		$(MACOS_INNER_BUNDLE) \
 		-executable=$(MACOS_INNER_BUNDLE)/Contents/MacOS/QtWebEngineProcess
