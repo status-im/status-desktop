@@ -68,6 +68,19 @@ StackLayout {
     property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
     property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
+    // Users related data:
+    readonly property bool amIChatAdmin: root.rootStore.amIChatAdmin()
+    property var usersModel
+
+    // Users related but just for group chats:
+    property var temporaryUsersModel
+
+    // Users related signals
+    signal updateGroupMembers()
+    signal resetTemporaryUsersModel()
+    signal appendTemporaryUsersModel(string pubKey, string displayName)
+    signal removeFromTemporaryUsersModel(string pubKey)
+
     signal profileButtonClicked()
     signal openAppSearch()
     signal buyStickerPackRequested(string packId, int price)
@@ -184,6 +197,7 @@ StackLayout {
             sectionItemModel: root.sectionItemModel
             joinedMembersCount: membersModelAdaptor.joinedMembers.ModelCount.count
             areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
+            amIChatAdmin: root.rootStore.amIChatAdmin()
             amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
@@ -245,6 +259,15 @@ StackLayout {
 
             cbGetCompressedPk: root.cbGetCompressedPk
             cbGetEmojiHash: root.cbGetEmojiHash
+
+            // Users related data:
+            usersModel: root.usersModel
+            temporaryUsersModel: root.temporaryUsersModel
+
+            onUpdateGroupMembers: root.updateGroupMembers()
+            onResetTemporaryUsersModel: root.resetTemporaryUsersModel()
+            onAppendTemporaryUsersModel: root.appendTemporaryUsersModel(pubKey, displayName)
+            onRemoveFromTemporaryUsersModel: root.removeFromTemporaryUsersModel(pubKey)
 
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)
             onCommunityInfoButtonClicked: root.currentIndex = 1

@@ -43,9 +43,9 @@ ColumnLayout {
 
     property var emojiPopup
     property var stickersPopup
-    property UsersStore usersStore: UsersStore {
-        chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-    }
+
+    // Users related data:
+    property var usersModel
 
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
@@ -80,11 +80,6 @@ ColumnLayout {
     objectName: "chatContentViewColumn"
     spacing: 0
 
-    onChatContentModuleChanged: if (!!chatContentModule) {
-        root.usersStore.chatDetails = root.chatContentModule.chatDetails
-        root.usersStore.usersModule = root.chatContentModule.usersModule
-    }
-
     Loader {
         Layout.fillWidth: true
         active: root.isBlocked
@@ -109,7 +104,6 @@ ColumnLayout {
             formatBalance: root.formatBalance
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
-            usersStore: root.usersStore
             stickersLoaded: root.stickersLoaded
             chatId: root.chatId
             isOneToOne: root.chatType === Constants.chatType.oneToOne
@@ -119,6 +113,7 @@ ColumnLayout {
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             areTestNetworksEnabled: root.areTestNetworksEnabled
+            usersModel: root.usersModel
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
