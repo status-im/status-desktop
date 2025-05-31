@@ -32,7 +32,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     QT_PLATFORM=gcc_64 \
     QT_VERSION=$QT_VERSION
 
-ENV PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:$PATH \
+# to fix : bash: line 1: rcc: command not found
+# since QT6 rcc lives at /opt/qt/6.9.0/gcc_64/libexec/rcc
+ENV PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/libexec:$PATH \
     QTDIR=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}
 
 ENV LD_LIBRARY_PATH=${QTDIR}/lib:${LD_LIBRARY_PATH}
@@ -88,6 +90,9 @@ RUN mkdir -p /usr/local/bin \
 
 # Reconfigure locale
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
 # Copy QT toolchain
 RUN chmod -R 777 /opt && mkdir -p /opt/qt/$QT_VERSION
