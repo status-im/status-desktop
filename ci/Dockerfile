@@ -83,6 +83,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /tmp/pcsc-lite* \
  && apt-get -qq clean
 
+# OpenSSL 1.1 is absent from Ubuntu 22.04
+RUN ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.1.1 \
+ && ln -sf /usr/lib/x86_64-linux-gnu/libcrypto.so.3 /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 \
+ && ldconfig
+
 # Install linuxdeployqt
 RUN mkdir -p /usr/local/bin \
  && curl -Lo/usr/local/bin/linuxdeployqt "https://status-misc.ams3.digitaloceanspaces.com/desktop/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage" \
