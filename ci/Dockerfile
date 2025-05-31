@@ -1,7 +1,7 @@
-ARG QT_VERSION=5.15.2
+ARG QT_VERSION=6.9.0
 
 # QT Installation Image --------------------------------------------------------
-FROM ubuntu:20.04 AS qt-install
+FROM ubuntu:22.04 AS qt-install
 
 ARG QT_VERSION
 
@@ -15,10 +15,10 @@ RUN chmod -R 777 /opt
 RUN python3 -m pip install setuptools \
  && python3 -m pip install -U pip \
  && python3 -m pip install aqtinstall \
- && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m qtwebengine
+ && python3 -m aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 -m all -O /opt/qt --timeout 3000
 
 # Build Image ------------------------------------------------------------------
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ARG LINUXDEPLOYQT_VERSION=20230423-8428c59
 ARG QT_VERSION
@@ -32,7 +32,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     QT_PLATFORM=gcc_64 \
     QT_VERSION=$QT_VERSION
 
-ENV PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:$PATH \
+# to fix : bash: line 1: rcc: command not found
+# since QT6 rcc lives at /opt/qt/6.9.0/gcc_64/libexec/rcc
+ENV PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/libexec:$PATH \
     QTDIR=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}
 
 ENV LD_LIBRARY_PATH=${QTDIR}/lib:${LD_LIBRARY_PATH}
@@ -70,7 +72,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && cd pcsc-lite-${PCSCLITE_VERSION} \
  && meson setup builddir \
   -Dpolkit=false \
-  -Dsystemd=false \
+  -Dlibsystemd=false \
   -Dserial=false \
   -Dipcdir=/tmp/pcscd/run \
  && cd builddir \
@@ -81,6 +83,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /tmp/pcsc-lite* \
  && apt-get -qq clean
 
+# OpenSSL 1.1 is absent from Ubuntu 22.04
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb \
+ && wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_amd64.deb \
+ && dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb || true \
+ && apt-get install -f -y \
+ && dpkg -i libssl-dev_1.1.1f-1ubuntu2_amd64.deb || true \
+ && apt-get install -f -y \
+ && rm *.deb \
+ && ldconfig
+
 # Install linuxdeployqt
 RUN mkdir -p /usr/local/bin \
  && curl -Lo/usr/local/bin/linuxdeployqt "https://status-misc.ams3.digitaloceanspaces.com/desktop/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage" \
@@ -88,6 +100,9 @@ RUN mkdir -p /usr/local/bin \
 
 # Reconfigure locale
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
 # Copy QT toolchain
 RUN chmod -R 777 /opt && mkdir -p /opt/qt/$QT_VERSION
@@ -108,7 +123,7 @@ ENV PATH="/opt/cmake/bin:${PATH}"
 # Installing Golang
 RUN GOLANG_SHA256="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252092" \
  && GOLANG_TARBALL="go1.22.10.linux-amd64.tar.gz" \
- && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
+ && wget -q -L "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
  && rm "${GOLANG_TARBALL}" \
@@ -117,7 +132,7 @@ RUN GOLANG_SHA256="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252
 # Install Protoc
 RUN PROTOC_SHA256="75d8a9d7a2c42566e46411750d589c51276242d8b6247a5724bac0f9283e05a8" \
  && PROTOC_TARBALL="protoc-3.20.0-linux-x86_64.zip" \
- && wget -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/${PROTOC_TARBALL}" \
+ && wget -q -L  "https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/${PROTOC_TARBALL}" \
  && echo "${PROTOC_SHA256} ${PROTOC_TARBALL}" | sha256sum -c \
  && sudo unzip -d /usr/local "${PROTOC_TARBALL}" \
  && rm "${PROTOC_TARBALL}"
@@ -125,7 +140,7 @@ RUN PROTOC_SHA256="75d8a9d7a2c42566e46411750d589c51276242d8b6247a5724bac0f9283e0
 # Install Protoc-deg-go
 RUN PROTOC_GEN_SHA256="0b2c257938a8cd9ba3506bbdbbaad45e51245b6f9e0743035ade7acf746c6be7" \
  && PROTOC_GEN_TARBALL="protoc-gen-go.v1.34.1.linux.amd64.tar.gz" \
- && wget -q "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.34.1/${PROTOC_GEN_TARBALL}" \
+ && wget -q -L "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.34.1/${PROTOC_GEN_TARBALL}" \
  && echo "${PROTOC_GEN_SHA256} ${PROTOC_GEN_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local/bin -xzf "${PROTOC_GEN_TARBALL}" \
  && rm "${PROTOC_GEN_TARBALL}"
