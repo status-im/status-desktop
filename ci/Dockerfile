@@ -84,8 +84,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && apt-get -qq clean
 
 # OpenSSL 1.1 is absent from Ubuntu 22.04
-RUN ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.1.1 \
- && ln -sf /usr/lib/x86_64-linux-gnu/libcrypto.so.3 /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 \
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb \
+ && wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_amd64.deb \
+ && dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb || true \
+ && apt-get install -f -y \
+ && dpkg -i libssl-dev_1.1.1f-1ubuntu2_amd64.deb || true \
+ && apt-get install -f -y \
+ && rm *.deb \
  && ldconfig
 
 # Install linuxdeployqt
@@ -118,7 +123,7 @@ ENV PATH="/opt/cmake/bin:${PATH}"
 # Installing Golang
 RUN GOLANG_SHA256="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252092" \
  && GOLANG_TARBALL="go1.22.10.linux-amd64.tar.gz" \
- && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
+ && wget -q -L "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
  && rm "${GOLANG_TARBALL}" \
@@ -127,7 +132,7 @@ RUN GOLANG_SHA256="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252
 # Install Protoc
 RUN PROTOC_SHA256="75d8a9d7a2c42566e46411750d589c51276242d8b6247a5724bac0f9283e05a8" \
  && PROTOC_TARBALL="protoc-3.20.0-linux-x86_64.zip" \
- && wget -q "https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/${PROTOC_TARBALL}" \
+ && wget -q -L  "https://github.com/protocolbuffers/protobuf/releases/download/v3.20.0/${PROTOC_TARBALL}" \
  && echo "${PROTOC_SHA256} ${PROTOC_TARBALL}" | sha256sum -c \
  && sudo unzip -d /usr/local "${PROTOC_TARBALL}" \
  && rm "${PROTOC_TARBALL}"
@@ -135,7 +140,7 @@ RUN PROTOC_SHA256="75d8a9d7a2c42566e46411750d589c51276242d8b6247a5724bac0f9283e0
 # Install Protoc-deg-go
 RUN PROTOC_GEN_SHA256="0b2c257938a8cd9ba3506bbdbbaad45e51245b6f9e0743035ade7acf746c6be7" \
  && PROTOC_GEN_TARBALL="protoc-gen-go.v1.34.1.linux.amd64.tar.gz" \
- && wget -q "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.34.1/${PROTOC_GEN_TARBALL}" \
+ && wget -q -L "https://github.com/protocolbuffers/protobuf-go/releases/download/v1.34.1/${PROTOC_GEN_TARBALL}" \
  && echo "${PROTOC_GEN_SHA256} ${PROTOC_GEN_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local/bin -xzf "${PROTOC_GEN_TARBALL}" \
  && rm "${PROTOC_GEN_TARBALL}"
