@@ -343,6 +343,33 @@ StatusDialog {
             return 0
         }
 
+        readonly property bool allowTryingToSendEnteredAmount: {
+            if (!selectedCollectibleEntryValid && !d.selectedAssetEntryValid) {
+                return true // if no asset selected
+            }
+
+            const nativeTokenSymbol = Utils.getNativeTokenSymbol(root.selectedChainId)
+            const allowSend = SQUtils.AmountsArithmetic.fromNumber(d.maxSafeCryptoValue, amountToSend.multiplierIndex).cmp(amountToSend.amount) >= 0
+
+            // Special handling if the user is trying to send more than the max estimated safe amount is for a native token on L2 chain
+            if (d.selectedAssetEntryValid && !Utils.isL1Chain(root.selectedChainId) && d.selectedCryptoTokenSymbol === nativeTokenSymbol && !allowSend) {
+                let balanceOnChain = SQUtils.ModelUtils.getByKey(d.selectedAssetEntry.item.balances, "chainId", root.selectedChainId)
+                if (!balanceOnChain) {
+                    return allowSend
+                }
+
+                const bigIntBalance = SQUtils.AmountsArithmetic.fromString(balanceOnChain.balance)
+                const oneGwei = SQUtils.AmountsArithmetic.fromString("1000000000") // 1 GWei
+                if(SQUtils.AmountsArithmetic.cmp(oneGwei, bigIntBalance) >= 0) {
+                    // if the balance is less than or equal 1GWei, let the user enter any amount, this way for L2 chains the app allows sending
+                    // regardless of the max estimated safe amount, if not enough the router will raise an error.
+                    return true
+                }
+            }
+
+            return allowSend
+        }
+
         // handle multiple property changes from single changed signal
         property var combinedPropertyChangedHandler: [
             root.selectedAccountAddress,
@@ -596,7 +623,7 @@ StatusDialog {
 
                     /** TODO: connect to max safe value for eth.
                         For now simply checking balance in case of both eth and other ERC20's **/
-                    markAsInvalid: SQUtils.AmountsArithmetic.fromNumber(d.maxSafeCryptoValue, multiplierIndex).cmp(amount) === -1
+                    markAsInvalid: !d.allowTryingToSendEnteredAmount
 
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:

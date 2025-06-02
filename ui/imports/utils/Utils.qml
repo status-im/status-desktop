@@ -751,6 +751,17 @@ QtObject {
         return true
     }
 
+    function isL1Chain(chainID) {
+        switch (chainID) {
+            case Constants.chains.mainnetChainId:
+            case Constants.chains.sepoliaChainId:
+            case Constants.chains.binanceSmartChainMainnetChainId:
+            case Constants.chains.binanceSmartChainTestnetChainId:
+                return true
+        }
+        return false
+    }
+
     // Get NativeTokenSymbol for ChainID
     function getNativeTokenSymbol(chainID) {
         switch (chainID) {
