@@ -90,7 +90,7 @@ method addOrUpdateChat(self: Module,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
     isSectionBuild: bool = false,
-  ): chat_item.Item
+  ): ChatItem
 proc updateParentBadgeNotifications(self: Module)
 
 proc newModule*(
@@ -219,9 +219,9 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 
-proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): chat_item.Item =
+proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): ChatItem =
   let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityId, category.id)
-  result = chat_item.initItem(
+  result = chat_item.initChatItem(
         id = category.id,
         category.name,
         icon = "",
@@ -263,7 +263,7 @@ proc buildChatSectionUI(
   var selectedItemId = ""
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
-  var items: seq[chat_item.Item] = @[]
+  var items: seq[ChatItem] = @[]
   for categoryDto in community.categories:
     # Add items for the categories. We use a special type to identify categories
     items.add(self.addCategoryItem(categoryDto, community.memberRole, community.id))
@@ -603,7 +603,7 @@ proc getChatItemFromChatDto(
     chatDto: ChatDto,
     community: CommunityDto,
     setChatAsActive: bool = true,
-    ): chat_item.Item =
+    ): ChatItem =
 
   let hasNotification = chatDto.unviewedMessagesCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
@@ -681,7 +681,7 @@ proc getChatItemFromChatDto(
       viewersCanPostReactions = chatDto.viewersCanPostReactions
       missingEncryptionKey = chatDto.missingEncryptionKey
 
-  result = chat_item.initItem(
+  result = chat_item.initChatItem(
     chatDto.id,
     chatName,
     chatImage,
@@ -717,7 +717,7 @@ proc getChatItemFromChatDto(
 
 proc addNewChat(
     self: Module,
-    chatItem: chat_item.Item,
+    chatItem: ChatItem,
     chatDto: ChatDto,
     belongsToCommunity: bool,
     events: EventEmitter,
@@ -857,7 +857,7 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
   self.changeCanPostValues(chat.id, chat.canPost, chat.canView, chat.canPostReactions, chat.viewersCanPostReactions)
-  self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color, chat.hideIfPermissionsNotMet)
+  discard self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color, chat.hideIfPermissionsNotMet)
   self.refreshHiddenBecauseNotPermittedState()
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
@@ -910,7 +910,7 @@ method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
   self.updateParentBadgeNotifications()
 
 proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
-  self.view.chatsModel().changeCanPostValues(chatId, canPost, canView, canPostReactions, viewersCanPostReactions)
+  discard self.view.chatsModel().changeCanPostValues(chatId, canPost, canView, canPostReactions, viewersCanPostReactions)
 
 proc updateChatsRequiredPermissions(self: Module, communityChats: seq[ChatDto]) =
   for communityChat in communityChats:
@@ -1330,7 +1330,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let chats = self.controller.getChats(communityId, categoryId="")
   for chat in chats:
     let c = self.controller.getChatDetails(chat.id)
-    let chatItem = chat_item.initItem(
+    let chatItem = chat_item.initChatItem(
       c.id,
       c.name,
       icon="",
@@ -1354,7 +1354,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let catChats = self.controller.getChats(communityId, categoryId)
   for chat in catChats:
     let c = self.controller.getChatDetails(chat.id)
-    let chatItem = chat_item.initItem(
+    let chatItem = chat_item.initChatItem(
       c.id,
       c.name,
       icon="",
@@ -1407,7 +1407,7 @@ method addOrUpdateChat(self: Module,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
     isSectionBuild: bool = false,
-  ): chat_item.Item =
+  ): ChatItem =
   let sectionId = self.controller.getMySectionId()
   if belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():

@@ -407,7 +407,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     if not finalMembers.contains(memberItem.pubKey):
       finalMembers[memberItem.pubKey] = memberItem
 
-  result = initItem(
+  result = initSectionItem(
     communityDetails.id,
     sectionType = SectionType.Community,
     communityDetails.name,
@@ -705,7 +705,7 @@ method load*[T](
     activeSectionId = WALLET_SECTION_ID
 
   # Communities Portal Section
-  let communitiesPortalSectionItem = initItem(
+  let communitiesPortalSectionItem = initSectionItem(
     COMMUNITIESPORTAL_SECTION_ID,
     SectionType.CommunitiesPortal,
     COMMUNITIESPORTAL_SECTION_NAME,
@@ -724,7 +724,7 @@ method load*[T](
     activeSection = communitiesPortalSectionItem
 
   # Wallet Section
-  let walletSectionItem = initItem(
+  let walletSectionItem = initSectionItem(
     WALLET_SECTION_ID,
     SectionType.Wallet,
     WALLET_SECTION_NAME,
@@ -745,7 +745,7 @@ method load*[T](
     activeSection = walletSectionItem
 
   # Node Management Section
-  let nodeManagementSectionItem = initItem(
+  let nodeManagementSectionItem = initSectionItem(
     NODEMANAGEMENT_SECTION_ID,
     SectionType.NodeManagement,
     NODEMANAGEMENT_SECTION_NAME,
@@ -766,7 +766,7 @@ method load*[T](
     activeSection = nodeManagementSectionItem
 
   # Profile Section
-  let profileSettingsSectionItem = initItem(
+  let profileSettingsSectionItem = initSectionItem(
     SETTINGS_SECTION_ID,
     SectionType.ProfileSettings,
     SETTINGS_SECTION_NAME,
@@ -788,7 +788,7 @@ method load*[T](
 
   if singletonInstance.featureFlags().getMarketEnabled():
     # Market Section
-    let marketItem = initItem(
+    let marketItem = initSectionItem(
       MARKET_SECTION_ID,
       SectionType.Market,
       MARKET_SECTION_NAME,
@@ -809,7 +809,7 @@ method load*[T](
       activeSection = marketItem
   else:
     # Swap Section
-    let swapSectionItem = initItem(
+    let swapSectionItem = initSectionItem(
       SWAP_SECTION_ID,
       SectionType.Swap,
       SWAP_SECTION_NAME,
@@ -898,7 +898,7 @@ method onChatsLoaded*[T](
   )
   var items: seq[SectionItem] = @[]
 
-  let personalChatSectionItem = initItem(
+  let personalChatSectionItem = initSectionItem(
     myPubKey,
     sectionType = SectionType.Chat,
     name = CHAT_SECTION_NAME,

@@ -88,7 +88,7 @@ method addOrUpdateChat*(self: AccessInterface,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
     isSectionBuild: bool = false,
-  ): Item {.base.} =
+  ): ChatItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onNewMessagesReceived*(self: AccessInterface, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,

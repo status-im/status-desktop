@@ -122,7 +122,7 @@ QtObject:
     read = getActiveItem
     notify = activeItemChanged
 
-  proc activeItemSet*(self: View, item: Item) =
+  proc activeItemSet*(self: View, item: ChatItem) =
     self.activeItem.setActiveItemData(item)
     self.activeItemChanged()
 

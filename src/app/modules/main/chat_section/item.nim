@@ -8,7 +8,7 @@ import ../../shared_models/[color_hash_item, color_hash_model]
 const CATEGORY_TYPE* = -1
 
 type
-  Item* = ref object
+  ChatItem* = ref object
     id: string
     name: string
     `type`: int
@@ -42,7 +42,7 @@ type
     hideIfPermissionsNotMet: bool
     missingEncryptionKey: bool
 
-proc initItem*(
+proc initChatItem*(
     id,
     name,
     icon,
@@ -73,10 +73,10 @@ proc initItem*(
     canView = true,
     canPostReactions = true,
     viewersCanPostReactions = true,
-    hideIfPermissionsNotMet: bool,
-    missingEncryptionKey: bool
-    ): Item =
-  result = Item()
+    hideIfPermissionsNotMet: bool = false,
+    missingEncryptionKey: bool = false,
+    ): ChatItem =
+  result = ChatItem()
   result.id = id
   result.name = name
   result.memberRole = memberRole
@@ -111,8 +111,8 @@ proc initItem*(
   result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
   result.missingEncryptionKey = missingEncryptionKey
 
-proc `$`*(self: Item): string =
-  result = fmt"""chat_section/Item(
+proc `$`*(self: ChatItem): string =
+  result = fmt"""chat_section/ChatItem(
     id: {self.id},
     name: {$self.name},
     memberRole: {$self.memberRole},
@@ -145,7 +145,7 @@ proc `$`*(self: Item): string =
     hideIfPermissionsNotMet: {$self.hideIfPermissionsNotMet},
     ]"""
 
-proc toJsonNode*(self: Item): JsonNode =
+proc toJsonNode*(self: ChatItem): JsonNode =
   result = %* {
     "itemId": self.id,
     "name": self.name,
@@ -179,191 +179,191 @@ proc toJsonNode*(self: Item): JsonNode =
     "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
   }
 
-proc delete*(self: Item) =
+proc delete*(self: ChatItem) =
   discard
 
-proc id*(self: Item): string =
+proc id*(self: ChatItem): string =
   self.id
 
-proc name*(self: Item): string =
+proc name*(self: ChatItem): string =
   self.name
 
-proc `name=`*(self: var Item, value: string) =
+proc `name=`*(self: var ChatItem, value: string) =
   self.name = value
 
-proc memberRole*(self: Item): MemberRole =
+proc memberRole*(self: ChatItem): MemberRole =
   self.memberRole
 
-proc icon*(self: Item): string =
+proc icon*(self: ChatItem): string =
   self.icon
 
-proc `icon=`*(self: var Item, value: string) =
+proc `icon=`*(self: var ChatItem, value: string) =
   self.icon = value
 
-proc color*(self: Item): string =
+proc color*(self: ChatItem): string =
   self.color
 
-proc `color=`*(self: var Item, value: string) =
+proc `color=`*(self: var ChatItem, value: string) =
   self.color = value
 
-proc colorId*(self: Item): int =
+proc colorId*(self: ChatItem): int =
   self.colorId
 
-proc emoji*(self: Item): string =
+proc emoji*(self: ChatItem): string =
   self.emoji
 
-proc `emoji=`*(self: var Item, value: string) =
+proc `emoji=`*(self: var ChatItem, value: string) =
   self.emoji = value
 
-proc colorHash*(self: Item): color_hash_model.Model =
+proc colorHash*(self: ChatItem): color_hash_model.Model =
   self.colorHash
 
-proc description*(self: Item): string =
+proc description*(self: ChatItem): string =
   self.description
 
-proc `description=`*(self: var Item, value: string) =
+proc `description=`*(self: var ChatItem, value: string) =
   self.description = value
 
-proc type*(self: Item): int =
+proc type*(self: ChatItem): int =
   self.`type`
 
-proc hasUnreadMessages*(self: Item): bool =
+proc hasUnreadMessages*(self: ChatItem): bool =
   self.hasUnreadMessages
 
-proc `hasUnreadMessages=`*(self: var Item, value: bool) =
+proc `hasUnreadMessages=`*(self: var ChatItem, value: bool) =
   self.hasUnreadMessages = value
 
-proc lastMessageTimestamp*(self: Item): int =
+proc lastMessageTimestamp*(self: ChatItem): int =
   self.lastMessageTimestamp
 
-proc `lastMessageTimestamp=`*(self: var Item, value: int) =
+proc `lastMessageTimestamp=`*(self: var ChatItem, value: int) =
   self.lastMessageTimestamp = value
 
-proc notificationsCount*(self: Item): int =
+proc notificationsCount*(self: ChatItem): int =
   self.notificationsCount
 
-proc `notificationsCount=`*(self: var Item, value: int) =
+proc `notificationsCount=`*(self: var ChatItem, value: int) =
   self.notificationsCount = value
 
-proc muted*(self: Item): bool =
+proc muted*(self: ChatItem): bool =
   self.muted
 
-proc `muted=`*(self: Item, value: bool) =
+proc `muted=`*(self: ChatItem, value: bool) =
   self.muted = value
 
-proc blocked*(self: Item): bool =
+proc blocked*(self: ChatItem): bool =
   self.blocked
 
-proc `blocked=`*(self: var Item, value: bool) =
+proc `blocked=`*(self: var ChatItem, value: bool) =
   self.blocked = value
 
-proc active*(self: Item): bool =
+proc active*(self: ChatItem): bool =
   self.active
 
-proc `active=`*(self: var Item, value: bool) =
+proc `active=`*(self: var ChatItem, value: bool) =
   self.active = value
 
-proc position*(self: Item): int =
+proc position*(self: ChatItem): int =
   self.position
 
-proc `position=`*(self: var Item, value: int) =
+proc `position=`*(self: var ChatItem, value: int) =
   self.position = value
 
-proc categoryId*(self: Item): string =
+proc categoryId*(self: ChatItem): string =
   self.categoryId
 
-proc `categoryId=`*(self: var Item, value: string) =
+proc `categoryId=`*(self: var ChatItem, value: string) =
   self.categoryId = value
 
-proc hideIfPermissionsNotMet*(self: Item): bool =
+proc hideIfPermissionsNotMet*(self: ChatItem): bool =
   self.hideIfPermissionsNotMet
 
-proc `hideIfPermissionsNotMet=`*(self: var Item, value: bool) =
+proc `hideIfPermissionsNotMet=`*(self: var ChatItem, value: bool) =
   self.hideIfPermissionsNotMet = value
 
-proc categoryPosition*(self: Item): int =
+proc categoryPosition*(self: ChatItem): int =
   self.categoryPosition
 
-proc `categoryPosition=`*(self: var Item, value: int) =
+proc `categoryPosition=`*(self: var ChatItem, value: int) =
   self.categoryPosition = value
 
-proc highlight*(self: Item): bool =
+proc highlight*(self: ChatItem): bool =
   self.highlight
 
-proc `highlight=`*(self: var Item, value: bool) =
+proc `highlight=`*(self: var ChatItem, value: bool) =
   self.highlight = value
 
-proc categoryOpened*(self: Item): bool =
+proc categoryOpened*(self: ChatItem): bool =
   self.categoryOpened
 
-proc `categoryOpened=`*(self: var Item, value: bool) =
+proc `categoryOpened=`*(self: var ChatItem, value: bool) =
   self.categoryOpened = value
 
-proc trustStatus*(self: Item): TrustStatus =
+proc trustStatus*(self: ChatItem): TrustStatus =
   self.trustStatus
 
-proc `trustStatus=`*(self: var Item, value: TrustStatus) =
+proc `trustStatus=`*(self: var ChatItem, value: TrustStatus) =
   self.trustStatus = value
 
-proc onlineStatus*(self: Item): OnlineStatus =
+proc onlineStatus*(self: ChatItem): OnlineStatus =
   self.onlineStatus
 
-proc `onlineStatus=`*(self: var Item, value: OnlineStatus) =
+proc `onlineStatus=`*(self: var ChatItem, value: OnlineStatus) =
   self.onlineStatus = value
 
-proc setHasUnreadMessages*(self: Item, value: bool) =
+proc setHasUnreadMessages*(self: ChatItem, value: bool) =
   self.hasUnreadMessages = value
 
-proc loaderActive*(self: Item): bool =
+proc loaderActive*(self: ChatItem): bool =
   self.loaderActive
 
-proc `loaderActive=`*(self: var Item, value: bool) =
+proc `loaderActive=`*(self: var ChatItem, value: bool) =
   self.loaderActive = value
 
-proc isCategory*(self: Item): bool =
+proc isCategory*(self: ChatItem): bool =
   self.`type` == CATEGORY_TYPE
 
-proc locked*(self: Item): bool =
+proc locked*(self: ChatItem): bool =
   self.locked
 
-proc `locked=`*(self: Item, value: bool) =
+proc `locked=`*(self: ChatItem, value: bool) =
   self.locked = value
 
-proc requiresPermissions*(self: Item): bool =
+proc requiresPermissions*(self: ChatItem): bool =
   self.requiresPermissions
 
-proc `requiresPermissions=`*(self: Item, value: bool) =
+proc `requiresPermissions=`*(self: ChatItem, value: bool) =
   self.requiresPermissions = value
 
-proc canPost*(self: Item): bool =
+proc canPost*(self: ChatItem): bool =
   self.canPost
 
-proc `canPost=`*(self: Item, value: bool) =
+proc `canPost=`*(self: ChatItem, value: bool) =
   self.canPost = value
 
-proc canView*(self: Item): bool =
+proc canView*(self: ChatItem): bool =
   self.canView
 
-proc `canView=`*(self: Item, value: bool) =
+proc `canView=`*(self: ChatItem, value: bool) =
   self.canView = value
 
-proc canPostReactions*(self: Item): bool =
+proc canPostReactions*(self: ChatItem): bool =
   self.canPostReactions
 
-proc `canPostReactions=`*(self: Item, value: bool) =
+proc `canPostReactions=`*(self: ChatItem, value: bool) =
   self.canPostReactions = value
 
-proc viewersCanPostReactions*(self: Item): bool =
+proc viewersCanPostReactions*(self: ChatItem): bool =
   self.viewersCanPostReactions
 
-proc `viewersCanPostReactions=`*(self: Item, value: bool) =
+proc `viewersCanPostReactions=`*(self: ChatItem, value: bool) =
   self.viewersCanPostReactions = value
 
-proc hideBecausePermissionsAreNotMet*(self: Item): bool =
+proc hideBecausePermissionsAreNotMet*(self: ChatItem): bool =
   self.hideIfPermissionsNotMet and not self.canPost and not self.canView
 
-proc missingEncryptionKey*(self: Item): bool =
+proc missingEncryptionKey*(self: ChatItem): bool =
   self.missingEncryptionKey
 
-proc `missingEncryptionKey=`*(self: var Item, value: bool) =
+proc `missingEncryptionKey=`*(self: var ChatItem, value: bool) =
   self.missingEncryptionKey = value
