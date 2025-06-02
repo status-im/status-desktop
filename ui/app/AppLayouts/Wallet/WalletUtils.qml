@@ -51,7 +51,14 @@ QtObject {
             return value
         }
 
-        let estFee = Math.max(0.0001, Math.min(0.01, value * 0.1))
+        let feeLowerLimit = 0.01
+        let feeUpperLimit = 0.0001
+        if(!Utils.isL1Chain(chainId)) {
+            feeLowerLimit = 0.00001
+            feeUpperLimit = 0.000000001 // 1GWei
+        }
+
+        let estFee = Math.max(feeUpperLimit, Math.min(feeLowerLimit, value * 0.1))
         if(!!cryptoFeesToReserve) {
             estFee = Utils.nativeTokenRawToDecimal(chainId, cryptoFeesToReserve)
         }
