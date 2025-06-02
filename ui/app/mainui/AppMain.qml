@@ -1156,11 +1156,6 @@ Item {
     StatusMainLayout {
         anchors.fill: parent
 
-        Component.onCompleted: {
-            if (appMain.featureFlagsStore.shellEnabled)
-                appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(Constants.appSection.chat) // force the chat section to finish loading
-        }
-
         Component {
             id: shellButtonComp
             StatusNavBarTabButton {
@@ -2353,7 +2348,7 @@ Item {
                 readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
 
                 sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
-                chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model // FIXME model null initially or with empty images
+                chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model
                                                : null
                 walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
                 dappsBaseModel: dAppsServiceLoader.active && dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
