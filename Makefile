@@ -83,13 +83,13 @@ endif
 QMAKE ?= $(shell which qmake)
 
 ifeq ($(detected_OS),Darwin)
- CFLAGS := -mmacosx-version-min=12.0
+ CFLAGS := -mmacosx-version-min=13.0
  export CFLAGS
- CGO_CFLAGS := -mmacosx-version-min=12.0
+ CGO_CFLAGS := -mmacosx-version-min=13.0
  export CGO_CFLAGS
  LIBSTATUS_EXT := dylib
   # keep in sync with BOTTLE_MACOS_VERSION
- MACOSX_DEPLOYMENT_TARGET := 12.0
+ MACOSX_DEPLOYMENT_TARGET := 13.0
  export MACOSX_DEPLOYMENT_TARGET
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos
@@ -129,12 +129,12 @@ endif
 
 ifeq ($(detected_OS),Darwin)
 BOTTLES_DIR := $(shell pwd)/bottles
-BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@1.1 pcre)
+BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@3 pcre)
 ifeq ($(QT_ARCH),arm64)
 # keep in sync with MACOSX_DEPLOYMENT_TARGET
-	BOTTLE_MACOS_VERSION := 'arm64_monterey'
+	BOTTLE_MACOS_VERSION := 'arm64_ventura'
 else
-	BOTTLE_MACOS_VERSION := 'monterey'
+	BOTTLE_MACOS_VERSION := 'ventura'
 endif
 $(BOTTLES):
 	echo -e "\033[92mFetching:\033[39m $(notdir $@) bottle arch $(QT_ARCH) $(BOTTLE_MACOS_VERSION)"

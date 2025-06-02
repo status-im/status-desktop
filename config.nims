@@ -6,6 +6,8 @@ else:
 --threads:on
 --opt:speed # -O3
 --define:ssl # needed by the stdlib to enable SSL procedures
+--define:useOpenSSL3
+--parallelBuild:0  # 0 == auto nr. of cores
 
 if hostOS == "macosx":
   echo "Building for macOS"
@@ -20,13 +22,13 @@ if hostOS == "macosx":
   switch("passL", "-rpath" & " " & getEnv("STATUSKEYCARDGO_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSQ_INSTALL_PATH") & "/StatusQ")
   # statically link these libs
-  switch("passL", "bottles/openssl@1.1/lib/libcrypto.a")
-  switch("passL", "bottles/openssl@1.1/lib/libssl.a")
+  switch("passL", "bottles/openssl@3/lib/libcrypto.a")
+  switch("passL", "bottles/openssl@3/lib/libssl.a")
   switch("passL", "bottles/pcre/lib/libpcre.a")
   # https://code.videolan.org/videolan/VLCKit/-/issues/232
   switch("passL", "-Wl,-no_compact_unwind")
-  # set the minimum supported macOS version to 12.0
-  switch("passC", "-mmacosx-version-min=12.0")
+  # set the minimum supported macOS version to 13.0
+  switch("passC", "-mmacosx-version-min=13.0")
 elif hostOS == "windows":
   echo "Building for Windows"
   --app:gui
@@ -36,11 +38,11 @@ elif hostOS == "windows":
 elif hostOS == "linux":
   echo "Building for Linux"
   --dynlibOverrideAll # don't use dlopen()
-    # don't link libraries we're not actually using
+  # don't link libraries we're not actually using
   switch("passL", "-Wl,-as-needed")
   # dynamically link these libs, since we're opting out of dlopen()
-  switch("passL", "-l:libcrypto.so.1.1")
-  switch("passL", "-l:libssl.so.1.1")
+  switch("passL", "-l:libcrypto.so.3")
+  switch("passL", "-l:libssl.so.3")
   --debugger:native # passes "-g" to the C compiler
 else:
   echo "Building for OS: " & hostOS
