@@ -359,8 +359,11 @@ proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
 proc showPermissionUpdateNotification(self: Module, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto): bool =
   return tokenPermission.state == TokenPermissionState.Approved and (community.isControlNode or not tokenPermission.isPrivate) and community.isMember
 
-method load*(self: Module) =
+method load*(self: Module, buildChats: bool = false) =
   self.controller.init()
+  if buildChats:
+    self.controller.getChatsAndBuildUI()
+
   self.view.load()
 
 method onChatsLoaded*(

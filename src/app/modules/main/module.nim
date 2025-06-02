@@ -917,7 +917,8 @@ method onChatsLoaded*[T](
   if activeSectionId == personalChatSectionItem.id:
     activeSection = personalChatSectionItem
 
-  self.chatSectionModules[myPubKey].load()
+  # For the personal chat section we load the chats immediately
+  self.chatSectionModules[myPubKey].load(buildChats = true)
 
   let communities = self.controller.getJoinedAndSpectatedCommunities()
   # Create Community sections
