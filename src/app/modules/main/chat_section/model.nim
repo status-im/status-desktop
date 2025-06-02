@@ -1,9 +1,8 @@
-import NimQml, Tables, strutils, stew/shims/strformat, json, sequtils, system
+import NimQml, Tables, stew/shims/strformat, json, sequtils, system
 import ../../../../app_service/common/types
 import ../../../../app_service/service/chat/dto/chat
 import item
-import ../../../global/utils as utils
-import ../../../global/global_singleton
+import ../../shared_models/model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -46,7 +45,7 @@ type
 QtObject:
   type
     Model* = ref object of QAbstractListModel
-      items: seq[Item]
+      items: seq[ChatItem]
 
   proc delete*(self: Model) =
     self.QAbstractListModel.delete
@@ -73,10 +72,10 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
-  proc items*(self: Model): seq[Item] =
+  proc items*(self: Model): seq[ChatItem] =
     return self.items
 
   proc categoryShouldBeHiddenBecauseNotPermitted(self: Model, categoryId: string): bool =
@@ -90,7 +89,7 @@ QtObject:
       return false
     return true
 
-  proc itemShouldBeHiddenBecauseNotPermitted*(self: Model, item: Item): bool =
+  proc itemShouldBeHiddenBecauseNotPermitted*(self: Model, item: ChatItem): bool =
     let isRegularUser = item.memberRole != MemberRole.Owner and item.memberRole != MemberRole.Admin and item.memberRole != MemberRole.TokenMaster
     if not isRegularUser:
       return false
@@ -223,7 +222,7 @@ QtObject:
     of ModelRole.MissingEncryptionKey:
       return newQVariant(item.missingEncryptionKey)
 
-  proc getItemIdxById(items: seq[Item], id: string): int =
+  proc getItemIdxById(items: seq[ChatItem], id: string): int =
     var idx = 0
     for it in items:
       if(it.id == id):
@@ -234,7 +233,7 @@ QtObject:
   proc getItemIdxById*(self: Model, id: string): int =
     return getItemIdxById(self.items, id)
 
-  proc setData*(self: Model, items: seq[Item]) =
+  proc setData*(self: Model, items: seq[ChatItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
@@ -242,7 +241,7 @@ QtObject:
     self.countChanged()
 
   # IMPORTANT: if you call this function for a chat with a category, make sure the category is appended first
-  proc appendItem*(self: Model, item: Item, ignoreCategory: bool = false) =
+  proc appendItem*(self: Model, item: ChatItem, ignoreCategory: bool = false) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -309,7 +308,7 @@ QtObject:
     if idx != -1:
       self.removeItemByIndex(idx)
 
-  proc getItemAtIndex*(self: Model, index: int): Item =
+  proc getItemAtIndex*(self: Model, index: int): ChatItem =
     if(index < 0 or index >= self.items.len):
       return
 
@@ -321,7 +320,7 @@ QtObject:
         return true
     return false
 
-  proc getItemById*(self: Model, id: string): Item =
+  proc getItemById*(self: Model, id: string): ChatItem =
     for it in self.items:
       if(it.id == id):
         return it
@@ -351,7 +350,7 @@ QtObject:
         else:
           self.dataChanged(index, index, @[ModelRole.Active.int])
 
-  proc activeItem*(self: Model): Item =
+  proc activeItem*(self: Model): ChatItem =
     for i in 0 ..< self.items.len:
       if self.items[i].active:
         return self.items[i]
@@ -400,36 +399,27 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Muted.int])
 
-  proc changeCanPostValues*(self: Model, id: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
+  proc changeCanPostValues*(self: Model, id: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool): seq[int] =
+    let ind = self.getItemIdxById(id)
+    if ind == -1:
       return
-    var changedRoles: seq[int] = @[]
 
-    if self.items[index].canView != canView:
-      self.items[index].canView = canView
-      changedRoles.add(ModelRole.CanView.int)
+    var roles: seq[int] = @[]
 
-    if self.items[index].canPost != canPost:
-      self.items[index].canPost = canPost
-      changedRoles.add(ModelRole.CanPost.int)
+    updateRole(canView, CanView)
+    updateRole(canPost, CanPost)
+    updateRole(canPostReactions, CanPostReactions)
+    updateRole(viewersCanPostReactions, ViewersCanPostReactions)
 
-    if self.items[index].canPostReactions != canPostReactions:
-      self.items[index].canPostReactions = canPostReactions
-      changedRoles.add(ModelRole.CanPostReactions.int)
-
-    if self.items[index].viewersCanPostReactions != viewersCanPostReactions:
-      self.items[index].viewersCanPostReactions = viewersCanPostReactions
-      changedRoles.add(ModelRole.ViewersCanPostReactions.int)
-
-    if changedRoles.len == 0:
+    if roles.len == 0:
       return
     
-    let modelIndex = self.createIndex(index, 0, nil)
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    changedRoles.add(ModelRole.HideIfPermissionsNotMet.int) # depends on canPost, canView
-    changedRoles.add(ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int) # depends on hideIfPermissionsNotMet
-    self.dataChanged(modelIndex, modelIndex, changedRoles)
+    roles.add(ModelRole.HideIfPermissionsNotMet.int) # depends on canPost, canView
+    roles.add(ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int) # depends on hideIfPermissionsNotMet
+    self.dataChanged(modelIndex, modelIndex, roles)
+    return roles # return roles so that we can use it in tests
 
   proc changeMutedOnItemByCategoryId*(self: Model, categoryId: string, muted: bool) =
     for i in 0 ..< self.items.len:
@@ -457,75 +447,86 @@ QtObject:
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Blocked.int])
 
   proc updateItemDetailsById*(self: Model, id, name, icon: string, trustStatus: TrustStatus) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
+    let ind = self.getItemIdxById(id)
+    if ind == -1:
       return
-    self.items[index].name = name
 
-    self.items[index].icon = icon
-    self.items[index].trustStatus = trustStatus
-    let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[
-      ModelRole.Name.int,
-      ModelRole.Icon.int,
-      ModelRole.TrustStatus.int,
-    ])
+    var roles: seq[int] = @[]
 
-  proc updateItemDetailsById*(self: Model, id, name, description, emoji, color: string, hideIfPermissionsNotMet: bool) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
+    updateRole(name, Name)
+    updateRole(icon, Icon)
+    updateRole(trustStatus, TrustStatus)
+
+    if roles.len == 0:
       return
-    self.items[index].name = name
-    self.items[index].description = description
-    self.items[index].emoji = emoji
-    self.items[index].color = color
-    self.items[index].hideIfPermissionsNotMet = hideIfPermissionsNotMet
-    let modelIndex = self.createIndex(index, 0, nil)
+
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[
-      ModelRole.Name.int,
-      ModelRole.Description.int,
-      ModelRole.Emoji.int,
-      ModelRole.Color.int,
-      ModelRole.HideIfPermissionsNotMet.int,
-      # refresh also ShouldBeHiddenBecausePermissionsAreNotMet because it depends on HideIfPermissionsNotMet
-      ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int
-    ])
-    self.updateHiddenFlagForCategory(self.items[index].categoryId)
+    self.dataChanged(modelIndex, modelIndex, roles)
+
+  proc updateItemDetailsById*(self: Model, id, name, description, emoji, color: string, hideIfPermissionsNotMet: bool): seq[int] =
+    let ind = self.getItemIdxById(id)
+    if ind == -1:
+      return
+
+    var roles: seq[int] = @[]
+
+    updateRole(name, Name)
+    updateRole(description, Description)
+    updateRole(emoji, Emoji)
+    updateRole(color, Color)
+    if self.items[ind].hideIfPermissionsNotMet != hideIfPermissionsNotMet:
+      roles.add(ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int)
+    updateRole(hideIfPermissionsNotMet, HideIfPermissionsNotMet)
+
+    if roles.len == 0:
+      return
+
+    let modelIndex = self.createIndex(ind, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, roles)
+    self.updateHiddenFlagForCategory(self.items[ind].categoryId)
+    return roles # return roles so that we can use it in tests
 
   proc updateNameColorIconOnItemById*(self: Model, id, name, color, icon: string) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
+    let ind = self.getItemIdxById(id)
+    if ind == -1:
       return
-    self.items[index].name = name
-    self.items[index].color = color
-    self.items[index].icon = icon
-    let modelIndex = self.createIndex(index, 0, nil)
+
+    var roles: seq[int] = @[]
+
+    updateRole(name, Name)
+    updateRole(color, Color)
+    updateRole(icon, Icon)
+
+    if roles.len == 0:
+      return
+
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[
-      ModelRole.Name.int,
-      ModelRole.Color.int,
-      ModelRole.Icon.int,
-    ])
+    self.dataChanged(modelIndex, modelIndex, roles)
 
   proc updateCategoryDetailsById*(
       self: Model,
       categoryId,
-      newCategoryName: string,
-      newCategoryPosition: int,
+      name: string,
+      categoryPosition: int,
     ) =
-    let categoryIndex = self.getItemIdxById(categoryId)
-    if categoryIndex == -1:
+    let ind = self.getItemIdxById(categoryId)
+    if ind == -1:
       return
-    self.items[categoryIndex].name = newCategoryName
-    self.items[categoryIndex].categoryPosition = newCategoryPosition
-    let modelIndex = self.createIndex(categoryIndex, 0, nil)
+
+    var roles: seq[int] = @[]
+
+    updateRole(name, Name)
+    updateRole(categoryPosition, CategoryPosition)
+
+    if roles.len == 0:
+      return
+
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[
-      ModelRole.Name.int,
-      ModelRole.CategoryPosition.int,
-    ])
+    self.dataChanged(modelIndex, modelIndex, roles)
 
   proc updateItemsWithCategoryDetailsById*(
       self: Model,
