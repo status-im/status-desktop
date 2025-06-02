@@ -199,7 +199,7 @@ method getCommunityItem(self: Module, community: CommunityDto): SectionItem =
 
   memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
 
-  return initItem(
+  return initSectionItem(
       community.id,
       SectionType.Community,
       community.name,
