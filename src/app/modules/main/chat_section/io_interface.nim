@@ -22,7 +22,7 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface) {.base.} =
+method load*(self: AccessInterface, buildChats: bool = false) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatsLoaded*(self: AccessInterface,
