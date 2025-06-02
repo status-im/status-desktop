@@ -1,9 +1,0 @@
-[submodule "vendors/OpenSSL-for-iPhone"]
-	path = vendors/OpenSSL-for-iPhone
-	url = https://github.com/x2on/OpenSSL-for-iPhone.git
-[submodule "vendors/status-desktop"]
-	path = vendors/status-desktop
-	url = https://github.com/status-im/status-desktop.git
-[submodule "vendors/android_openssl"]
-	path = vendors/android_openssl
-	url = https://github.com/KDAB/android_openssl.git
