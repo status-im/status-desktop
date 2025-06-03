@@ -59,6 +59,28 @@ RUN apt update -yq && apt install -yq software-properties-common \
     --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
  && apt-get -qq clean
 
+# FIXME: remove when ubuntu is upgraded to 22.04
+# Install OpenSSL 3.x
+RUN cd /tmp \
+ && wget https://www.openssl.org/source/openssl-3.0.15.tar.gz \
+ && tar -xzf openssl-3.0.15.tar.gz \
+ && cd openssl-3.0.15 \
+ && ./Configure --prefix=/usr/local/openssl3 --openssldir=/usr/local/openssl3 \
+ && make -j$(nproc) \
+ && make install \
+ && echo "/usr/local/openssl3/lib64" > /etc/ld.so.conf.d/openssl3.conf \
+ && ldconfig \
+ && cd / \
+ && rm -rf /tmp/openssl-3.0.15*
+
+ENV PKG_CONFIG_PATH="/usr/local/openssl3/lib64/pkgconfig:$PKG_CONFIG_PATH" \
+    LD_LIBRARY_PATH="/usr/local/openssl3/lib64:${LD_LIBRARY_PATH}"
+
+# Symlink missing libssl.so.3 and libcrypto.so.3 for linker
+RUN ln -sf /usr/local/openssl3/lib64/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl.so.3 \
+ && ln -sf /usr/local/openssl3/lib64/libcrypto.so.3 /usr/lib/x86_64-linux-gnu/libcrypto.so.3 \
+ && ldconfig
+
 # To fix: https://github.com/status-im/status-desktop/issues/16768
 # https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
 RUN apt-get update && apt-get install -y --no-install-recommends \
