@@ -1,4 +1,5 @@
--include ./scripts/Common.mk
+MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+-include $(MAKEFILE_DIR)/scripts/Common.mk
 
 # Supported architectures
 # arm64: arm64-v8a
@@ -9,8 +10,9 @@ ARCH?=$(shell uname -m)
 
 $(TARGET): $(STATUS_DESKTOP_NIM_FILES) $(STATUS_DESKTOP_UI_FILES) $(STATUS_Q_FILES) $(STATUS_Q_UI_FILES) $(STATUS_GO_FILES) $(DOTHERSIDE_FILES) $(OPENSSL_FILES) $(QRCODEGEN_FILES) $(PCRE_FILES) $(WRAPPER_APP_FILES)
 	@echo "Building GitHub task $(TARGET)"
-	act -j android-build --container-architecture linux/amd64 --artifact-server-path $(BIN_PATH) --env-file $(ROOT_DIR)/.github/workflows/.env-android-$(ARCH) linux/amd64 -r
+	act -j android-build --container-architecture linux/amd64 --artifact-server-path $(BIN_PATH) --env-file $(STATUS_DESKTOP)/.github/workflows/.env-android-$(ARCH) linux/amd64 -r
 	@unzip -o $(BIN_PATH)/1/$(TARGET_PREFIX)/$(TARGET_PREFIX).zip -d $(BIN_PATH)
+	touch $(TARGET)
 
 run: $(TARGET)
 	@echo "Running GitHub task"

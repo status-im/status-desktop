@@ -72,17 +72,27 @@ nix-shell:
 # must be included after the default target
 -include $(BUILD_SYSTEM_DIR)/makefiles/targets.mk
 
-ifeq ($(OS),Windows_NT)     # is Windows_NT on XP, 2000, 7, Vista, 10...
- detected_OS := Windows
-else
- detected_OS := $(strip $(shell uname))
-endif
-
 # `qmake` path, either passed explicitely, or as found in PATH
 # (makes it possible to override with a custom Qt5/Qt6 install dir)
 QMAKE ?= $(shell which qmake)
+QSPEC:=$(shell $(QMAKE) -query QMAKE_XSPEC)
+ifeq ($(QSPEC),macx-ios-clang)
+mkspecs:=ios
+else ifeq ($(QSPEC),macx-clang)
+mkspecs:=macx
+else ifeq ($(QSPEC),win32-msvc)
+mkspecs:=win32
+else ifeq ($(QSPEC),linux-g++)
+mkspecs:=linux
+else ifeq ($(QSPEC),android-clang)
+mkspecs:=android
+endif
 
-ifeq ($(detected_OS),Darwin)
+ifeq ($(mkspecs),)
+	$(error Cannot find your Qt installation. Please make sure to export correct Qt installation binaries path to PATH env)
+endif
+
+ifeq ($(mkspecs),macx)
  CFLAGS := -mmacosx-version-min=13.0
  export CFLAGS
  CGO_CFLAGS := -mmacosx-version-min=13.0
@@ -94,7 +104,7 @@ ifeq ($(detected_OS),Darwin)
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos
  QT_ARCH ?= $(shell uname -m)
-else ifeq ($(detected_OS),Windows)
+else ifeq ($(mkspecs),win32)
  LIBSTATUS_EXT := dll
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
@@ -113,21 +123,21 @@ ifeq ($(shell $(QMAKE) -v 2>/dev/null),)
 endif
 
 check-pkg-target-linux:
-ifneq ($(detected_OS),Linux)
+ifneq ($(mkspecs),linux)
 	$(error The pkg-linux target must be run on Linux)
 endif
 
 check-pkg-target-macos:
-ifneq ($(detected_OS),Darwin)
+ifneq ($(mkspecs),macx)
 	$(error The pkg-macos target must be run on macOS)
 endif
 
 check-pkg-target-windows:
-ifneq ($(detected_OS),Windows)
+ifneq ($(mkspecs),win32)
 	$(error The pkg-windows target must be run on Windows)
 endif
 
-ifeq ($(detected_OS),Darwin)
+ifeq ($(mkspecs),macx)
 BOTTLES_DIR := $(shell pwd)/bottles
 BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@3 pcre)
 ifeq ($(QT_ARCH),arm64)
@@ -146,7 +156,7 @@ endif
 deps: | check-qt-dir deps-common status-go-deps bottles
 
 update: | check-qt-dir update-common
-ifeq ($(detected_OS),Darwin)
+ifeq ($(mkspecs),macx)
 	# Install or update package.json files
 	yarn install --check-files
 endif
@@ -178,7 +188,7 @@ COMMON_CMAKE_CONFIG_PARAMS := -DCMAKE_PREFIX_PATH=$(QT_INSTALL_PREFIX)
 # Qt dirs (we can't indent with tabs here)
  QT_MAJOR_VERSION := $(shell $(QMAKE) -query QT_VERSION | head -c 1 2>/dev/null)
 
-ifneq ($(detected_OS),Windows)
+ifneq ($(mkspecs),win32)
  export QT_LIBDIR := $(shell $(QMAKE) -query QT_INSTALL_LIBS 2>/dev/null)
  QT_QMLDIR := $(shell $(QMAKE) -query QT_INSTALL_QML 2>/dev/null)
  QT_INSTALL_PREFIX := $(shell $(QMAKE) -query QT_INSTALL_PREFIX 2>/dev/null)
@@ -189,7 +199,7 @@ ifneq ($(detected_OS),Windows)
   QT_PCFILEDIR := $(QT_LIBDIR)/pkgconfig
  endif
  # some manually installed Qt instances have wrong paths in their *.pc files, so we pass the right one to the linker here
- ifeq ($(detected_OS),Darwin)
+ ifeq ($(mkspecs),macx)
   NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
   # Fix for failures due to 'can't allocate code signature data for'
   NIM_PARAMS += --passL:"-headerpad_max_install_names"
@@ -205,7 +215,7 @@ else
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
 
-ifeq ($(detected_OS),Windows)
+ifeq ($(mkspecs),win32)
  ifeq ($(QT_MAJOR_VERSION),5)
  	COMMON_CMAKE_CONFIG_PARAMS += -T"v141" -A x64
  else
@@ -213,7 +223,7 @@ ifeq ($(detected_OS),Windows)
  endif
 endif
 
-ifeq ($(detected_OS),Darwin)
+ifeq ($(mkspecs),macx)
  ifeq ("$(shell sysctl -nq hw.optional.arm64)","1")
    ifneq ($(QT_ARCH),arm64)
 	STATUSGO_MAKE_PARAMS += GOBIN_SHARED_LIB_CFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
@@ -403,7 +413,7 @@ storybook-clean:
 ##	DOtherSide
 ##
 
-ifneq ($(detected_OS),Windows)
+ifneq ($(mkspecs),win32)
  DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
 #  NIM_PARAMS +=
 else
@@ -508,7 +518,7 @@ ifeq ($(REBUILD_UI),true)
  $(shell touch ui/main.qml)
 endif
 
-ifeq ($(detected_OS),Darwin)
+ifeq ($(host_os),darwin)
  UI_SOURCES := $(shell find -E ui -type f -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')
 else
  UI_SOURCES := $(shell find ui -type f -regextype egrep -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')
@@ -570,7 +580,7 @@ STATUS_RC_FILE := status.rc
 compile_windows_resources:
 	windres $(STATUS_RC_FILE) -o status.o
 
-ifeq ($(detected_OS),Windows)
+ifeq ($(mkspecs),win32)
  NIM_STATUS_CLIENT := bin/nim_status_client.exe
 else
  NIM_STATUS_CLIENT := bin/nim_status_client
@@ -609,7 +619,7 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSG
 		--passL:"-lm" \
 		--parallelBuild:0 \
 		$(NIM_EXTRA_PARAMS) src/nim_status_client.nim
-ifeq ($(detected_OS),Darwin)
+ifeq ($(mkspecs),macx)
 	install_name_tool -change \
 		libstatus.dylib \
 		@rpath/libstatus.dylib \
@@ -643,7 +653,7 @@ STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
 STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
 
-ifeq ($(detected_OS),Linux)
+ifeq ($(mkspecs),linux)
  export FCITX5_QT := vendor/fcitx5-qt/build/qt$(QT_MAJOR_VERSION)/platforminputcontext/libfcitx5platforminputcontextplugin.so
  FCITX5_QT_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY_PLUGIN=ON -DENABLE_QT4=OFF
 
@@ -908,5 +918,23 @@ nim-test-run/%: | dotherside $(STATUSGO) $(QRCODEGEN)
 	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
 
 tests-nim-linux: $(NIM_TESTS)
+
+mobile-run: deps-common
+	echo -e "\033[92mRunning:\033[39m mobile app"
+	PATH="$(shell $(QMAKE) -query QT_INSTALL_BINS):$(shell $(QMAKE) -query QT_HOST_BINS):$(shell $(QMAKE) -query QT_HOST_LIBEXECS):$(PATH)" \
+	QTDIR="$(shell $(QMAKE) -query QT_INSTALL_PREFIX)" \
+	$(MAKE) -C mobile run
+
+mobile-build: | deps-common
+	echo -e "\033[92mBuilding:\033[39m mobile app"
+	PATH="$(shell $(QMAKE) -query QT_INSTALL_BINS):$(shell $(QMAKE) -query QT_HOST_BINS):$(shell $(QMAKE) -query QT_HOST_LIBEXECS):$(PATH)" \
+	QTDIR="$(shell $(QMAKE) -query QT_INSTALL_PREFIX)" \
+	$(MAKE) -C mobile
+
+mobile-clean:
+	echo -e "\033[92mCleaning:\033[39m mobile app"
+	PATH="$(shell $(QMAKE) -query QT_INSTALL_BINS):$(shell $(QMAKE) -query QT_HOST_BINS):$(shell $(QMAKE) -query QT_HOST_LIBEXECS):$(PATH)" \
+	QTDIR="$(shell $(QMAKE) -query QT_INSTALL_PREFIX)" \
+	$(MAKE) -C mobile clean
 
 endif # "variables.mk" was not included

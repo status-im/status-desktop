@@ -8,8 +8,6 @@ ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
 LIB_DIR=${LIB_DIR}
 LIB_SUFFIX=${LIB_SUFFIX:-""}
 OS=${OS:-"android"}
-HOST_ENV=${HOST_ENV}
-USE_SYSTEM_NIM=${USE_SYSTEM_NIM:-"0"}
 
 DESKTOP_VERSION=$(eval cd "$STATUS_DESKTOP" && git describe --tags --dirty="-dirty" --always)
 STATUSGO_VERSION=$(eval cd "$STATUS_DESKTOP/vendor/status-go" && git describe --tags --dirty="-dirty" --always)
@@ -31,10 +29,6 @@ echo "Building status-client for $ARCH using compiler: $CC"
 
 cd "$STATUS_DESKTOP"
 # build nim compiler with host env
-
-# run make deps-common with system environment variables found in $HOST_ENV, not with the one from shell configured for android
-# build nim compiler with host env
-env -i HOME="$HOME" bash -l -c "make deps-common USE_SYSTEM_NIM=$USE_SYSTEM_NIM V=3 SHELL=/bin/bash"
 
 # setting compile time feature flags
 FEATURE_FLAGS="FLAG_DAPPS_ENABLED=0 FLAG_CONNECTOR_ENABLED=0 FLAG_KEYCARD_ENABLED=0 FLAG_SINGLE_STATUS_INSTANCE_ENABLED=0"

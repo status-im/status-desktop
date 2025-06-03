@@ -8,19 +8,19 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Android APK
     container:
-      image: carlonluca/qt-dev:6.8.3
+      image: carlonluca/qt-dev:6.9.0
 
     env:
       JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
       ANDROID_HOME: /opt/android-sdk
-      ANDROID_NDK_HOME: /opt/android-sdk/ndk/26.1.10909125
+      ANDROID_NDK_HOME: /opt/android-sdk/ndk/27.2.12479018
       SDK_PATH: /opt/android-sdk
       ARCH: arm64
-      QT_PATH: /opt/qt/6.8.3
-      QT_HOST_PATH: /opt/qt/6.8.3/gcc_64
-      QT_ANDROID_PATH: /opt/qt/6.8.3/android_arm64_v8a
-      PATH: /opt/qt/6.8.3/android_arm64_v8a/bin:/opt/qt/6.8.3/gcc_64/bin:/opt/qt/6.8.3/gcc_64/libexec:/opt/qt/6.8.3/android_arm64_v8a/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin
-      PKG_CONFIG_PATH: /opt/qt/6.8.3/android_arm64_v8a/lib/pkgconfig
+      QT_PATH: /opt/qt/6.9.0
+      QT_HOST_PATH: /opt/qt/6.9.0/gcc_64
+      QT_ANDROID_PATH: /opt/qt/6.9.0/android_arm64_v8a
+      PATH: /opt/qt/6.9.0/android_arm64_v8a/bin:/opt/qt/6.9.0/gcc_64/bin:/opt/qt/6.9.0/gcc_64/libexec:/opt/qt/6.9.0/android_arm64_v8a/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin
+      PKG_CONFIG_PATH: /opt/qt/6.9.0/android_arm64_v8a/lib/pkgconfig
       ANDROID_ABI: arm64-v8a
       USE_SYSTEM_NIM: 1
 
@@ -58,11 +58,11 @@ jobs:
       - name: Build Android APK
         shell: bash
         run: |
-          make V=3
+          make mobile-build V=3 USE_SYSTEM_NIM=1
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Status-tablet
-          path: bin/android/qt6/Status-tablet.apk
+          path: mobile/bin/android/qt6/Status-tablet.apk
 

@@ -71,7 +71,7 @@ This section is for developers who want full control over the build environment.
 ### Prerequisites
 - Git
 - Python 3.x
-- Qt (5.15.2 or 6.8.3)
+- Qt (5.15.2 or 6.9.0)
 - Platform-specific requirements (see below)
 
 ### Common Setup
@@ -94,25 +94,25 @@ This section is for developers who want full control over the build environment.
 #### Prerequisites
 - Xcode
 - iPad Pro simulator
-- Qt 5.15.2 or 6.8.3 for iOS
+- Qt 5.15.2 or 6.9.0 for iOS
 
 #### Setup Steps
 
 1. **Install Qt for iOS (skip if you have it already):**
    ```bash
 
-   # Install Qt 5.15.2 (or 6.8.3 for Qt6)
-   aqt install-qt mac ios 6.8.3 -O [**yourQtPreferredFolder**] -m all --autodesktop
+   # Install Qt 5.15.2 (or 6.9.0 for Qt6)
+   aqt install-qt mac ios 6.9.0 -O [**yourQtPreferredFolder**] -m all --autodesktop
 
    # If the above fails on arm64, try:
-   arch -x86_64 aqt install-qt mac ios 6.8.3 -O [**yourQtPreferredFolder**] -m all --autodesktop
+   arch -x86_64 aqt install-qt mac ios 6.9.0 -O [**yourQtPreferredFolder**] -m all --autodesktop
    ```
 
 2. **Set environment variables:**
    
    ```bash
    # Add Qt to PATH. Qt6 needs both ios bin and host libexec
-   # export PATH=[**yourQtPreferredFolder**]/6.8.3/ios/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/libexec:${PATH}
+   # export PATH=[**yourQtPreferredFolder**]/6.9.0/ios/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.9.0/[**yourQtHostTarget**]/libexec:${PATH}
    ```
 
 3. **Build and run:**
@@ -125,7 +125,7 @@ This section is for developers who want full control over the build environment.
 #### Prerequisites - can be installed using the Android Studio
 - JDK 17 (11 for Qt5)
 - Android SDK
-- Android NDK (21.3.6528147 for Qt5, 26.1.10909125 for Qt6)
+- Android NDK (21.3.6528147 for Qt5, 27.2.12479018 for Qt6)
 - Android emulator
 - Android command-line tools
 
@@ -142,12 +142,12 @@ This section is for developers who want full control over the build environment.
 
    # For Qt6 (includes desktop tools)
    # arm host
-   aqt install-qt mac android 6.8.3 android_arm64_v8a -O [**yourQtPreferredFolder**] -m all --autodesktop
+   aqt install-qt mac android 6.9.0 android_arm64_v8a -O [**yourQtPreferredFolder**] -m all --autodesktop
    # x64 host
-   aqt install-qt mac android 6.8.3 android_x86_64 -O [**yourQtPreferredFolder**] -m all --autodesktop
+   aqt install-qt mac android 6.9.0 android_x86_64 -O [**yourQtPreferredFolder**] -m all --autodesktop
    # optional
-   aqt install-qt mac android 6.8.3 android_x86 -O [**yourQtPreferredFolder**] -m all
-   aqt install-qt mac android 6.8.3 android_armv7 -O [**yourQtPreferredFolder**] -m all
+   aqt install-qt mac android 6.9.0 android_x86 -O [**yourQtPreferredFolder**] -m all
+   aqt install-qt mac android 6.9.0 android_armv7 -O [**yourQtPreferredFolder**] -m all
    ```
 2. **Set environment variables:**
    ```bash
@@ -156,7 +156,7 @@ This section is for developers who want full control over the build environment.
 
    # Set Android SDK and NDK paths
    export ANDROID_HOME=/path/to/android-sdk
-   export ANDROID_NDK_HOME=/path/to/android-ndk/26.1.10909125
+   export ANDROID_NDK_HOME=/path/to/android-ndk/27.2.12479018
    export SDK_PATH="$ANDROID_HOME"
 
    # Add Android tools to PATH
@@ -164,7 +164,7 @@ This section is for developers who want full control over the build environment.
 
 
    # Add Qt to PATH. Qt6 needs both ios bin and host libexec and host bin (in this order!)
-   # export PATH=[**yourQtPreferredFolder**]/6.8.3/[**yourPreferredAndroidTarget**]/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/libexec:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.8.3/[**yourQtHostTarget**]/bin:${PATH}
+   # export PATH=[**yourQtPreferredFolder**]/6.9.0/[**yourPreferredAndroidTarget**]/bin:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.9.0/[**yourQtHostTarget**]/libexec:[**yourQtPreferredFolder**]/[**yourQtPreferredFolder**]/6.9.0/[**yourQtHostTarget**]/bin:${PATH}
 
    ```
 3. **Create Android Virtual Device (optional - one will be created by default):**
@@ -219,7 +219,7 @@ The build system uses several environment variables to control the build process
 - iOS minimum deployment target: iOS 16
 - iOS simulator: iPad Pro
 - Android target: Android 35
-- Android NDK: 26.1.10909125
+- Android NDK: 27.2.12479018
 - Android API: 28
 - JDK: 17
 

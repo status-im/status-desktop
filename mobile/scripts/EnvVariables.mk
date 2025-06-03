@@ -1,11 +1,12 @@
 #OS: ios, android
-OS:=$(shell qmake -query QMAKE_XSPEC | rev | cut -d '-' -f 2 | rev)
+OS:=$(shell qmake -query QMAKE_XSPEC | grep -o -E '(macx|win32|linux|android|ios))
 HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
 #Architectures: arm64, arm, x86_64. x86_64 is default for simulator
 ARCH?=$(shell uname -m)
 # Detect Qt version from qmake
 QT_VERSION?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
 QT_DIR?=$(shell qmake -query QT_INSTALL_PREFIX)
+MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 ifeq ($(OS), ios)
 # iOS
@@ -40,8 +41,8 @@ $(error "OS=$(OS). OS not supported by build system. Please update qmake to a su
 endif
 
 # tool macros
-CC := $(PWD)/scripts/$(OS)/clangWrap.sh
-CXX := $(PWD)/scripts/$(OS)/clangWrap.sh
+CC := $(MAKEFILE_DIR)/$(OS)/clangWrap.sh
+CXX := $(MAKEFILE_DIR)/$(OS)/clangWrap.sh
 
 export COMPILER
 export CC
