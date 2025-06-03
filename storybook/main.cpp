@@ -28,6 +28,15 @@ void loadContextPropertiesMocks(const char* storybookRoot, QQmlApplicationEngine
 
 int main(int argc, char *argv[])
 {
+    bool hasExplicitStyleSet = false;
+    for (size_t i = 1; i < argc; i++)
+    {
+        if (qstrcmp(argv[i], "-style") == 0) { // Qt eats these standard/builtin args as soon as it sees them; so process before creating qApp instance
+            hasExplicitStyleSet = true;
+            break;
+        }
+    }
+
     // Required by the WalletConnectSDK view
     QtWebView::initialize();
 
@@ -42,14 +51,13 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationName(QStringLiteral("Status Desktop Storybook"));
     QGuiApplication::setApplicationDisplayName(QStringLiteral("%1 [Qt %2]").arg(QGuiApplication::applicationName(), qVersion()));
 
-    QQuickStyle::setStyle(QStringLiteral("Universal")); // only used as a basic style for SB itself
+    if (!hasExplicitStyleSet)
+        QQuickStyle::setStyle(QStringLiteral("Universal")); // only used as a basic style for SB itself
 
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();
     cmdParser.addPositionalArgument(QStringLiteral("page"), QStringLiteral("Open the given page on startup"));
-    if (!cmdParser.parse(app.arguments())) {
-        qWarning() << "Error (ignored) while parsing cmd line arguments:" << cmdParser.errorText();
-    }
+    cmdParser.process(app.arguments());
 
     qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", QByteArrayLiteral("1"));
     auto chromiumFlags = qgetenv("QTWEBENGINE_CHROMIUM_FLAGS");
