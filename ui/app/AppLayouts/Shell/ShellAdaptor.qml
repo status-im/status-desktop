@@ -236,6 +236,7 @@ QObject {
             readonly property string id: model.itemId
             readonly property string name: model.name
             readonly property string icon: model.icon || model.emoji
+            readonly property string lastMessageText: model.lastMessageText
             readonly property color color: model.color || Utils.colorForColorId(model.colorId)
             readonly property bool hasNotification: model.hasUnreadMessages || model.notificationsCount
             readonly property int notificationsCount: model.notificationsCount
@@ -244,8 +245,8 @@ QObject {
             readonly property int onlineStatus: model.onlineStatus // cf. Constants.onlineStatus.*
         }
 
-        expectedRoles: ["itemId", "type", "name", "emoji", "icon", "color", "colorId", "hasUnreadMessages", "notificationsCount", "onlineStatus"]
-        exposedRoles: ["key", "id", "chatType", "name", "icon", "color", "hasNotification", "notificationsCount", "onlineStatus"]
+        expectedRoles: ["itemId", "type", "name", "emoji", "icon", "color", "colorId", "hasUnreadMessages", "notificationsCount", "onlineStatus", "lastMessageText"]
+        exposedRoles: ["key", "id", "chatType", "name", "icon", "color", "hasNotification", "notificationsCount", "onlineStatus", "lastMessageText"]
     }
 
     ObjectProxyModel {
@@ -312,7 +313,7 @@ QObject {
 
         markerRoleName: "sectionType"
         expectedRoles: ["key", "id", "enabled", "name", "icon", "color", "hasNotification", "notificationsCount", // common props
-            "chatType", "onlineStatus", // chat
+            "chatType", "onlineStatus", "lastMessageText", // chat
             "banner", "members", "activeMembers", "pending", "banned", // community
             "isExperimental", // settings
             "walletType", "currencyBalance", // wallet

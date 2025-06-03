@@ -228,6 +228,7 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         `type` = chat_item.CATEGORY_TYPE,
         memberRole,
         lastMessageTimestamp = 0,
+        lastMessageText = "",
         hasUnreadMessages,
         notificationsCount = 0,
         muted = false,
@@ -345,6 +346,16 @@ proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
 
 proc showPermissionUpdateNotification(self: Module, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto): bool =
   return tokenPermission.state == TokenPermissionState.Approved and (community.isControlNode or not tokenPermission.isPrivate) and community.isMember
+
+# Parses the message and returns the plain text representation of it.
+# If the message is a sticker or an image with no text, it returns "🖼️".
+proc getMessagesParsedPlainText(self: Module, message: MessageDto, communityChats: seq[ChatDto]): string =
+  let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
+  result = singletonInstance.utils.plainText(renderedMessageText)
+  if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(result) == 0):
+    result = "🖼️"
+  if message.contentType == ContentType.BridgeMessage:
+    result = message.bridgeMessage.content
 
 method load*(self: Module, buildChats: bool = false) =
   self.controller.init()
@@ -549,8 +560,16 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
   if not skipParentBadge:
     self.updateParentBadgeNotifications()
 
-method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
-  self.view.chatsModel().updateLastMessageTimestampOnItemById(chatId, lastMessageTimestamp)
+method updateLastMessage*(self: Module, chatId: string, lastMessageTimestamp: int, lastMessage: MessageDto) =
+  var communityChats: seq[ChatDto] = @[]
+  if self.controller.isCommunity():
+    let community = self.controller.getMyCommunity()
+    communityChats = community.chats
+  self.view.chatsModel().updateLastMessageOnItemById(
+    chatId,
+    self.getMessagesParsedPlainText(lastMessage, communityChats),
+    lastMessageTimestamp,
+  )
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
@@ -685,6 +704,7 @@ proc getChatItemFromChatDto(
     chatDto.chatType.int,
     memberRole,
     chatDto.timestamp.int,
+    self.getMessagesParsedPlainText(chatDto.lastMessage, community.chats),
     hasNotification,
     notificationsCount,
     chatDto.muted,
@@ -1172,7 +1192,7 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
 method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,
     chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int,
     message: MessageDto) =
-  self.updateLastMessageTimestamp(chatIdMsgBelongsTo, lastMessageTimestamp)
+  self.updateLastMessage(chatIdMsgBelongsTo, lastMessageTimestamp, message)
 
   # Any type of message coming from ourselves should never be shown as notification
   # and no need in badge notification update
@@ -1197,15 +1217,13 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   elif(message.isGlobalMention()):
     notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
 
-  var senderDisplayName = self.controller.getContactDetails(message.`from`).defaultDisplayName
-  let communityChats = community.chats
-  let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
-  var plainText = singletonInstance.utils.plainText(renderedMessageText)
-  if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(plainText) == 0):
-    plainText = "🖼️"
-  if message.contentType == ContentType.BridgeMessage:
-    senderDisplayName = message.bridgeMessage.userName
-    plainText = message.bridgeMessage.content
+  var senderDisplayName: string =
+    if message.contentType == ContentType.BridgeMessage:
+      message.bridgeMessage.userName
+    else:
+      self.controller.getContactDetails(message.`from`).defaultDisplayName
+
+  let plainText = self.getMessagesParsedPlainText(message, community.chats)
 
   var notificationTitle = senderDisplayName
 
@@ -1328,49 +1346,51 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let communityId = self.controller.getMySectionId()
   let chats = self.controller.getChats(communityId, categoryId="")
   for chat in chats:
-    let c = self.controller.getChatDetails(chat.id)
+    let chatDto = self.controller.getChatDetails(chat.id)
     let chatItem = chat_item.initChatItem(
-      c.id,
-      c.name,
+      chatDto.id,
+      chatDto.name,
       usesDefaultName = false,
       icon="",
-      c.color,
-      c.emoji,
-      c.description,
-      c.chatType.int,
+      chatDto.color,
+      chatDto.emoji,
+      chatDto.description,
+      chatDto.chatType.int,
       memberRole=MemberRole.None,
       lastMessageTimestamp=(-1),
+      lastMessageText = "", # Last message text is not needed in edit category model
       hasUnreadMessages=false,
       notificationsCount=0,
-      c.muted,
+      chatDto.muted,
       blocked=false,
       active=false,
-      c.position,
-      categoryId="",
+      chatDto.position,
+      categoryId = "",
       hideIfPermissionsNotMet=false,
       missingEncryptionKey=false,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
   for chat in catChats:
-    let c = self.controller.getChatDetails(chat.id)
+    let chatDto = self.controller.getChatDetails(chat.id)
     let chatItem = chat_item.initChatItem(
-      c.id,
-      c.name,
+      chatDto.id,
+      chatDto.name,
       usesDefaultName = false,
       icon="",
-      c.color,
-      c.emoji,
-      c.description,
-      c.chatType.int,
+      chatDto.color,
+      chatDto.emoji,
+      chatDto.description,
+      chatDto.chatType.int,
       memberRole=MemberRole.None,
       lastMessageTimestamp=(-1),
+      lastMessageText = "", # Last message text is not needed in edit category model
       hasUnreadMessages=false,
       notificationsCount=0,
-      c.muted,
+      chatDto.muted,
       blocked=false,
       active=false,
-      c.position,
+      chatDto.position,
       categoryId,
       hideIfPermissionsNotMet=false,
       missingEncryptionKey=false,

@@ -1,6 +1,7 @@
 import NimQml, stew/shims/strformat, tables, sequtils, sets
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
+import ../../../app_service/service/message/utils/link_preview_utils
 import ../../../app_service/service/message/dto/standard_link_preview
 import ../../../app_service/service/message/dto/status_contact_link_preview
 import ../../../app_service/service/message/dto/status_community_link_preview

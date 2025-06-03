@@ -22,6 +22,7 @@ type
     description: string
     lastMessageTimestamp: int
     hasUnreadMessages: bool
+    lastMessageText: string
     notificationsCount: int
     muted: bool
     blocked: bool
@@ -54,6 +55,7 @@ proc initChatItem*(
     `type`: int,
     memberRole: MemberRole,
     lastMessageTimestamp: int,
+    lastMessageText: string,
     hasUnreadMessages: bool,
     notificationsCount: int,
     muted,
@@ -92,6 +94,7 @@ proc initChatItem*(
   result.description = description
   result.`type` = `type`
   result.lastMessageTimestamp = lastMessageTimestamp
+  result.lastMessageText = lastMessageText
   result.hasUnreadMessages = hasUnreadMessages
   result.notificationsCount = notificationsCount
   result.muted = muted
@@ -127,6 +130,7 @@ proc `$`*(self: ChatItem): string =
     description: {$self.description},
     type: {$self.`type`},
     lastMessageTimestamp: {$self.lastMessageTimestamp},
+    lastMessageText: {$self.lastMessageText},
     hasUnreadMessages: {$self.hasUnreadMessages},
     notificationsCount: {$self.notificationsCount},
     muted: {$self.muted},
@@ -249,6 +253,12 @@ proc lastMessageTimestamp*(self: ChatItem): int =
 
 proc `lastMessageTimestamp=`*(self: var ChatItem, value: int) =
   self.lastMessageTimestamp = value
+
+proc lastMessageText*(self: ChatItem): string =
+  self.lastMessageText
+
+proc `lastMessageText=`*(self: var ChatItem, value: string) =
+  self.lastMessageText = value
 
 proc notificationsCount*(self: ChatItem): int =
   self.notificationsCount

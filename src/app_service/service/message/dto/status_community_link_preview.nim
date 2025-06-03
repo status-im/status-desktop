@@ -1,21 +1,20 @@
 import json, stew/shims/strformat, NimQml, chronicles
 import link_preview_thumbnail
-import ../../community/dto/community
 
 include ../../../common/json_utils
 
 QtObject:
   type StatusCommunityLinkPreview* = ref object of QObject
-    communityId: string
-    displayName: string
-    description: string
-    membersCount: int
-    activeMembersCount: int
-    color: string
-    icon: LinkPreviewThumbnail
-    banner: LinkPreviewThumbnail
-    encrypted: bool
-    joined: bool
+    communityId*: string
+    displayName*: string
+    description*: string
+    membersCount*: int
+    activeMembersCount*: int
+    color*: string
+    icon*: LinkPreviewThumbnail
+    banner*: LinkPreviewThumbnail
+    encrypted*: bool
+    joined*: bool
 
   proc setup*(self: StatusCommunityLinkPreview) =
     self.QObject.setup()
@@ -144,42 +143,3 @@ QtObject:
 
   proc empty*(self: StatusCommunityLinkPreview): bool =
     return self.communityId.len == 0
-
-  proc setCommunityInfo*(self: StatusCommunityLinkPreview, community: CommunityDto): bool =
-    if self.communityId != community.id:
-      return false
-
-    debug "setCommunityInfo", communityId = self.communityId, communityName = community.name
-
-    if self.displayName != community.name:
-      self.displayName = community.name
-      self.displayNameChanged()
-
-    if self.description != community.description:
-      self.description = community.description
-      self.descriptionChanged()
-
-    if self.membersCount != community.members.len:
-      self.membersCount = community.members.len
-      self.membersCountChanged()
-
-    if self.activeMembersCount != community.activeMembersCount:
-      self.activeMembersCount = int(community.activeMembersCount)
-      self.activeMembersCountChanged()
-
-    if self.color != community.color:
-      self.color = community.color
-      self.colorChanged()
-
-    self.icon.update(0, 0, "", community.images.thumbnail)
-    self.banner.update(0, 0, "", community.images.banner)
-
-    if self.encrypted != community.encrypted:
-      self.encrypted = community.encrypted
-      self.encryptedChanged()
-
-    if self.joined != community.joined:
-      self.joined = community.joined
-      self.joinedChanged()
-
-    return true
