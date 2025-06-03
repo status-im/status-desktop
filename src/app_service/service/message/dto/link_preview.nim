@@ -2,7 +2,6 @@ import json, stew/shims/strformat, tables
 import ./status_link_preview, ./standard_link_preview
 import ./status_contact_link_preview, ./status_community_link_preview, ./status_community_channel_link_preview
 import ../../contacts/dto/contact_details
-import ../../community/dto/community
 include ../../../common/json_utils
 
 
@@ -134,11 +133,4 @@ proc getCommunityId*(self: LinkPreview): string =
 proc setContactInfo*(self: LinkPreview, contactDetails: ContactDetails): bool =
   if self.previewType == PreviewType.StatusContactPreview:
     return self.statusContactPreview.setContactInfo(contactDetails)
-  return false
-
-proc setCommunityInfo*(self: LinkPreview, community: CommunityDto): bool =
-  if self.previewType == PreviewType.StatusCommunityPreview:
-    return self.statusCommunityPreview.setCommunityInfo(community)
-  if self.previewType == PreviewType.StatusCommunityChannelPreview:
-    return self.statusCommunityChannelPreview.setCommunityInfo(community)
   return false

@@ -173,6 +173,7 @@ StatusGridView {
             hasNotification: model.hasNotification
             notificationsCount: model.notificationsCount
             pinned: model.pinned
+            lastMessageText: model.lastMessageText
 
             chatType: model.chatType
             onlineStatus: model.onlineStatus

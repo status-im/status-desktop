@@ -17,6 +17,7 @@ type
     Description
     Type
     LastMessageTimestamp
+    LastMessageText
     HasUnreadMessages
     NotificationsCount
     Muted
@@ -117,6 +118,7 @@ QtObject:
       ModelRole.Description.int:"description",
       ModelRole.Type.int:"type",
       ModelRole.LastMessageTimestamp.int:"lastMessageTimestamp",
+      ModelRole.LastMessageText.int:"lastMessageText",
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
@@ -175,6 +177,8 @@ QtObject:
       result = newQVariant(item.`type`)
     of ModelRole.LastMessageTimestamp:
       result = newQVariant(item.lastMessageTimestamp)
+    of ModelRole.LastMessageText:
+      result = newQVariant(item.lastMessageText)
     of ModelRole.HasUnreadMessages:
       result = newQVariant(item.hasUnreadMessages)
     of ModelRole.NotificationsCount:
@@ -635,16 +639,22 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
 
-  proc updateLastMessageTimestampOnItemById*(self: Model, id: string, lastMessageTimestamp: int) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
+  proc updateLastMessageOnItemById*(self: Model, id: string, lastMessageText: string, lastMessageTimestamp: int) =
+    let ind = self.getItemIdxById(id)
+    if ind == -1:
       return
-    if(self.items[index].lastMessageTimestamp == lastMessageTimestamp):
+
+    var roles: seq[int] = @[]
+
+    updateRole(lastMessageText, LastMessageText)
+    updateRole(lastMessageTimestamp, LastMessageTimestamp)
+
+    if roles.len == 0:
       return
-    self.items[index].lastMessageTimestamp = lastMessageTimestamp
-    let modelIndex = self.createIndex(index, 0, nil)
+
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.LastMessageTimestamp.int])
+    self.dataChanged(modelIndex, modelIndex, roles)
 
   proc reorderChats*(
       self: Model,

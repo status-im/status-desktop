@@ -31,6 +31,7 @@ ListModel {
         muted: false
         isCategory: false
         categoryOpened: true
+        lastMessageText: "https://status.app/c/iwuAChYKBGZld2YSA2ZldxgCIgcjODhCMEZGAw==#zQ3shk6ceLwoMYCZnV29hwkRfRMEiw6nFrpViCoLucaycPu9y"
     }
     ListElement {
         itemId: "id2"
@@ -62,6 +63,7 @@ ListModel {
         muted: false
         isCategory: false
         categoryOpened: true
+        lastMessageText: "Long message consectetur adipiscing elit. Nulla tincidunt purus risus, sit amet dapibus nisi aliquam nec. In tristique risus nec tempus tempus. Vivamus quis sapien vitae ex iaculis fringilla quis in ipsum. Aenean lorem urna, gravida eget dignissim et, viverra nec ante. Fusce mi mauris, viverra sit amet leo ullamcorper, pretium gravida libero."
     }
     ListElement {
         itemId: "id4"
@@ -76,6 +78,7 @@ ListModel {
         muted: false
         isCategory: false
         categoryOpened: true
+        lastMessageText: "bold break line italic"
     }
     ListElement {
         itemId: "id5"
@@ -92,5 +95,6 @@ ListModel {
         muted: false
         isCategory: false
         categoryOpened: true
+        lastMessageText: ""
     }
 }

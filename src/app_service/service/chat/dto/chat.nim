@@ -2,6 +2,7 @@
 
 import json, stew/shims/strformat, strutils, tables
 import ../../shared_urls/dto/url_data
+import app_service/service/message/dto/message
 
 include ../../../common/json_utils
 
@@ -71,9 +72,8 @@ type ChatDto* = object
   readMessagesAtClockValue*: int64
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
-  #lastMessage*: Message ???? It's a question why do we need it here within this context ????
+  lastMessage*: MessageDto
   members*: seq[ChatMember]
-  #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's always null and a question why do we need it here within this context ????
   alias*: string
   icon*: string
   muted*: bool
@@ -297,19 +297,23 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
     result.icon = chatImage
 
   var membersObj: JsonNode
-  if(jsonObj.getProp("members", membersObj)):
-    if(membersObj.kind == JArray):
+  if jsonObj.getProp("members", membersObj):
+    if membersObj.kind == JArray:
       # during group chat updates
       for memberObj in membersObj:
         result.members.add(toGroupChatMember(memberObj))
-    elif(membersObj.kind == JObject):
+    elif membersObj.kind == JObject:
       # on a startup, chat/channel creation
       for memberId, memberObj in membersObj:
         result.members.add(toChatMember(memberObj, memberId))
 
   # Add community ID if needed
-  if (result.communityId != "" and not result.id.contains(result.communityId)):
+  if result.communityId != "" and not result.id.contains(result.communityId):
     result.id = result.communityId & result.id
+
+  var lastMessageObj: JsonNode
+  if jsonObj.getProp("lastMessage", lastMessageObj):
+    result.lastMessage = lastMessageObj.toMessageDto()
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
 proc toChatDto*(jsonObj: JsonNode, communityId: string, communityMembers: seq[ChatMember]): ChatDto =
