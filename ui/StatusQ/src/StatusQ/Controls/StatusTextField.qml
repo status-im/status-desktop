@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Controls.Universal 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -15,7 +16,7 @@ TextField {
     selectionColor: Theme.palette.primaryColor2
     placeholderTextColor: Theme.palette.baseColor1
 
-    opacity: enabled ? 1 : 0.3
+    opacity: enabled ? 1 : Theme.disabledOpacity
 
     cursorDelegate: StatusCursorDelegate {
         cursorVisible: root.cursorVisible
