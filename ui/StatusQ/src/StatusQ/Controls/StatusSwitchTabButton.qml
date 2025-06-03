@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
@@ -11,39 +12,38 @@ TabButton {
 
     property bool showBetaTag: false
 
-    implicitHeight: 36
-    implicitWidth: 148
+    font.pixelSize: Theme.primaryTextFontSize
 
-    font.pixelSize: 15
+    contentItem: RowLayout {
+        spacing: Theme.smallPadding
 
-    contentItem: Item {
-        Row {
-            anchors.centerIn: parent
-            spacing: 8
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignCenter
+            horizontalAlignment: Text.AlignHCenter
+            text: root.text
+            color: root.checked ?
+                       Theme.palette.statusSwitchTab.selectedTextColor :
+                       Theme.palette.statusSwitchTab.textColor
+            font.weight: Font.Medium
+            font.pixelSize: root.font.pixelSize
+            elide: Text.ElideRight
+        }
 
-            StatusBaseText {
-                id: label
-                text: root.text
-                color: root.checked ?
-                           Theme.palette.statusSwitchTab.selectedTextColor :
-                           Theme.palette.statusSwitchTab.textColor
-                font.weight: Font.Medium
-                font.pixelSize: root.font.pixelSize
-            }
-
-            StatusBetaTag {
-                visible: root.showBetaTag
-                fgColor: root.checked ? Theme.palette.statusSwitchTab.selectedTextColor
-                                      : Theme.palette.baseColor1
-                cursorShape: hovered ? Qt.PointingHandCursor : undefined
-            }
+        StatusBetaTag {
+            visible: root.showBetaTag
+            fgColor: root.checked ? Theme.palette.statusSwitchTab.selectedTextColor
+                                  : Theme.palette.baseColor1
+            cursorShape: hovered ? Qt.PointingHandCursor : undefined
         }
     }
 
     background: Rectangle {
+        implicitWidth: 148
+        implicitHeight: 36
         color: root.checked ? Theme.palette.statusSwitchTab.buttonBackgroundColor
                             : "transparent"
-        radius: 8
+        radius: Theme.radius
         layer.enabled: true
         layer.effect: DropShadow {
             horizontalOffset: 0
