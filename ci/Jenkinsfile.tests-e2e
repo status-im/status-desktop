@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.9.16'
 pipeline {
 
   agent {
-    label "${params.AGENT} && x86_64 && qt-5.15.2"
+    label "linux && x86_64 && qt-5.15.2"
   }
 
   parameters {
@@ -44,12 +44,6 @@ pipeline {
       name: 'LOG_LEVEL',
       description: 'Log level for pytest.',
       choices: ['INFO', 'DEBUG', 'TRACE', 'WARNING', 'CRITICAL']
-    )
-    /* FIXME: This is temporary and should be removed. */
-    choice(
-      name: 'AGENT',
-      description: 'Agent name to run tests on it.',
-      choices: ['linux', 'linux-01', 'linux-02', 'linux-03']
     )
   }
 
