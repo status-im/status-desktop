@@ -61,6 +61,7 @@ Loader {
     property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin
     property bool senderIsAdded: false
     property int senderTrustStatus: Constants.trustStatus.unknown
+    property string compressedKey: ""
     property string messageText: ""
     property string unparsedText: ""
     property string messageImage: ""
@@ -160,7 +161,6 @@ Loader {
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
     // Utils store data
-    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
     property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     function openProfileContextMenu(sender, isReply = false) {
@@ -868,7 +868,7 @@ Loader {
                     albumCount: root.albumCount
 
                     amISender: root.amISender
-                    sender.id: root.senderIsEnsVerified ? "" : root.cbGetCompressedPk(root.senderId)
+                    sender.id: root.senderIsEnsVerified ? "" : root.compressedKey
                     sender.displayName: root.senderDisplayName
                     sender.secondaryName: root.senderOptionalName
                     sender.isEnsVerified: root.isBridgeMessage ? false : root.senderIsEnsVerified

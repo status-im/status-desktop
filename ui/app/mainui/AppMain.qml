@@ -1909,7 +1909,6 @@ Item {
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
 
-                                cbGetCompressedPk: appMain.utilsStore.getCompressedPk
                                 cbGetEmojiHash: appMain.utilsStore.getEmojiHash
 
                                 onProfileButtonClicked: {
@@ -2158,7 +2157,6 @@ Item {
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
 
-                                cbGetCompressedPk: appMain.utilsStore.getCompressedPk
                                 cbGetEmojiHash: appMain.utilsStore.getEmojiHash
 
                                 onProfileButtonClicked: {

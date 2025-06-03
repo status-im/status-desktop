@@ -110,7 +110,6 @@ StatusDialog {
                     gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
                     neverAskAboutUnfurlingAgain: root.sharedRootStore.neverAskAboutUnfurlingAgain
 
-                    cbGetCompressedPk: root.utilsStore.getCompressedPk
                     cbGetEmojiHash: root.utilsStore.getEmojiHash
 
                     // Unfurling related requests:

@@ -70,7 +70,6 @@ ColumnLayout {
     property bool neverAskAboutUnfurlingAgain
 
     // Utils store data
-    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
     property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
@@ -124,7 +123,6 @@ ColumnLayout {
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
-            cbGetCompressedPk: root.cbGetCompressedPk
             cbGetEmojiHash: root.cbGetEmojiHash
 
             onShowReplyArea: (messageId, senderId) => {
