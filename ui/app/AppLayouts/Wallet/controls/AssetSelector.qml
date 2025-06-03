@@ -68,7 +68,7 @@ Control {
                 dropdown.close()
             }
 
-            onSelected: {
+            onSelected: function(key) {
                 const entry = ModelUtils.getByKey(root.model, "tokensKey", key)
                 highlightedKey = key
 
