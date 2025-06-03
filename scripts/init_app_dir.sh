@@ -33,6 +33,12 @@ if [[ -z "${IN_NIX_SHELL}" ]]; then
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 "${APP_DIR}/usr/lib/"
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 "${APP_DIR}/usr/lib/"
 
+	echo "Bundling OpenSSL 3.x..."
+	cp -L /usr/local/openssl3/lib64/libssl.so.3 "${APP_DIR}/usr/lib/"
+	cp -L /usr/local/openssl3/lib64/libcrypto.so.3 "${APP_DIR}/usr/lib/"
+	chmod 755 "${APP_DIR}/usr/lib/libssl.so.3"
+	chmod 755 "${APP_DIR}/usr/lib/libcrypto.so.3"
+
 	echo "Bundling pcsc-lite 2.2.3..."
 	cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite.so* "${APP_DIR}/usr/lib/"
 	cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite_real.so* "${APP_DIR}/usr/lib/"
@@ -45,12 +51,6 @@ if [[ -z "${IN_NIX_SHELL}" ]]; then
 	echo "Bundling pcscd..."
 	cp -L "/usr/local/sbin/pcscd"* "${APP_DIR}/usr/bin/"
 	chmod 755 "${APP_DIR}/usr/bin/pcscd"*
-
-	echo "Bundling OpenSSL 3.x..."
-	cp -L /usr/local/openssl3/lib64/libssl.so.3 "${APP_DIR}/usr/lib/"
-	cp -L /usr/local/openssl3/lib64/libcrypto.so.3 "${APP_DIR}/usr/lib/"
-	chmod 755 "${APP_DIR}/usr/lib/libssl.so.3"
-	chmod 755 "${APP_DIR}/usr/lib/libcrypto.so.3"
 
 else
 	mkdir -p "${APP_DIR}"/usr/lib/{gstreamer1.0,gstreamer-1.0,nss}
