@@ -165,7 +165,7 @@ Page {
         }
 
         onLoadMnemonicRequested: d.loadMnemonic()
-        onAuthorizationRequested: d.authorize(pin)
+        onAuthorizationRequested: (pin) => d.authorize(pin)
         onShareUsageDataRequested: (enabled) => root.shareUsageDataRequested(enabled)
         onPerformKeycardFactoryResetRequested: root.onboardingStore.startKeycardFactoryReset()
         onSyncProceedWithConnectionString: (connectionString) =>
