@@ -89,3 +89,7 @@ proc intToEnum*[T](intVal: int, defaultVal: T): T =
 
 proc intToEnum*[T](intVal: int): T =
   result = if (intVal >= ord(low(T)) and intVal <= ord(high(T))): T(intVal) else: raise newException(ValueError, "Can't convert int to enum")
+
+proc startsWith0x*(value: string): bool =
+  result = value.startsWith("0x")
+

@@ -65,7 +65,6 @@ StackLayout {
     property bool neverAskAboutUnfurlingAgain
 
     // Utils store data
-    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
     property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal profileButtonClicked()
@@ -243,7 +242,6 @@ StackLayout {
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
-            cbGetCompressedPk: root.cbGetCompressedPk
             cbGetEmojiHash: root.cbGetEmojiHash
 
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)

@@ -1,4 +1,5 @@
 import json, stew/shims/strformat, strutils
+import app/global/global_singleton
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contact_details
 import ../../../app_service/service/message/dto/message
@@ -18,6 +19,7 @@ type
     chatId: string
     responseToMessageWithId: string
     senderId: string
+    compressedKey: string
     senderDisplayName: string
     senderOptionalName: string
     amISender: bool
@@ -236,6 +238,13 @@ proc initMessageItem*(
     result.senderIcon = bridgeMessage.userAvatar
     result.bridgeName = bridgeMessage.bridgeName
 
+  if senderId == "":
+    result.compressedKey = ""
+  elif not singletonInstance.utils.isChatKey(senderId):
+    result.compressedKey = senderId
+  else:
+    result.compressedKey = singletonInstance.utils.getCompressedPk(senderId)
+
 proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
   return initMessageItem(
     id = "",
@@ -301,6 +310,7 @@ proc `$`*(self: Item): string =
     chatId: {$self.chatId},
     responseToMessageWithId: {self.responseToMessageWithId},
     senderId: {self.senderId},
+    compressedKey: {self.compressedKey},
     senderDisplayName: {$self.senderDisplayName},
     senderOptionalName: {self.senderOptionalName},
     amISender: {$self.amISender},
@@ -344,6 +354,9 @@ proc responseToMessageWithId*(self: Item): string {.inline.} =
 
 proc senderId*(self: Item): string {.inline.} =
   self.senderId
+
+proc compressedKey*(self: Item): string {.inline.} =
+  self.compressedKey
 
 proc senderDisplayName*(self: Item): string {.inline.} =
   self.senderDisplayName

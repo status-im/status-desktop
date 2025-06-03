@@ -57,7 +57,6 @@ Item {
     property bool neverAskAboutUnfurlingAgain
 
     // Utils store data
-    property var cbGetCompressedPk: function (publicKey) { console.error("Implement me"); return ""}
     property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
 
     signal openStickerPackPopup(string stickerPackId)
@@ -324,6 +323,7 @@ Item {
             senderColorHash: model.senderColorHash
             senderIsAdded: model.senderIsAdded
             senderTrustStatus: model.senderTrustStatus
+            compressedKey: model.compressedKey
             amISender: model.amISender
             messageText: model.messageText
             unparsedText: model.unparsedText
@@ -388,7 +388,6 @@ Item {
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
-            cbGetCompressedPk: root.cbGetCompressedPk
             cbGetEmojiHash: root.cbGetEmojiHash
 
             onOpenStickerPackPopup: {
