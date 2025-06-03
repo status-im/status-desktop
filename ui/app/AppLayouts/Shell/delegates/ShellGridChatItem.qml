@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Components 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -11,6 +12,7 @@ ShellGridItem {
 
     property int chatType: Constants.chatType.unknown
     property int onlineStatus: Constants.onlineStatus.unknown
+    property string lastMessageText
 
     sectionType: Constants.appSection.chat
     subtitle: chatType === Constants.chatType.privateGroupChat ? qsTr("Group Chat")
@@ -42,5 +44,17 @@ ShellGridItem {
         }
     }
 
-    // TODO bottomRowComponent -> last message in this chat
+    bottomRowComponentFillsWidth: true
+    bottomRowComponent: Loader {
+        active: root.lastMessageText && root.lastMessageText.length > 0
+
+        sourceComponent: StatusBaseText {
+            text: root.lastMessageText
+            font.pixelSize: Theme.additionalTextSize
+            color: Theme.palette.white
+            maximumLineCount: 1
+            textFormat: Text.PlainText
+            elide: Text.ElideRight
+        }
+    }
 }

@@ -25,6 +25,7 @@ AbstractButton {
     property bool hasNotification
     property int notificationsCount
     property alias bottomRowComponent: bottomRowLoader.sourceComponent
+    property bool bottomRowComponentFillsWidth: false
     property alias iconLoaderComponent: iconLoader.sourceComponent
 
     property bool pinned
@@ -149,6 +150,7 @@ AbstractButton {
                 Layout.minimumHeight: Theme.bigPadding
                 Loader {
                     id: bottomRowLoader
+                    Layout.fillWidth: root.bottomRowComponentFillsWidth
                 }
                 Item { Layout.fillWidth: true }
                 StatusBadge {

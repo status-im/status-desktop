@@ -327,7 +327,7 @@ method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: 
 method downloadMessages*(self: AccessInterface, chatId: string, filePath: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateLastMessageTimestamp*(self: AccessInterface, chatId: string, lastMessageTimestamp: int) {.base.} =
+method updateLastMessage*(self: AccessInterface, chatId: string, lastMessageTimestamp: int, lastMessage: MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =
