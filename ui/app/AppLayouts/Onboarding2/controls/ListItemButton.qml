@@ -17,13 +17,11 @@ AbstractButton {
     icon.width: 32
     icon.height: 32
 
+    hoverEnabled: enabled
+    opacity: enabled ? 1.0 : Theme.disabledOpacity
+
     background: Rectangle {
-        color: {
-            if (root.disabled) {
-                return Theme.palette.baseColor2
-            }
-            return root.hovered ? Theme.palette.backgroundHover : "transparent"
-        }
+        color: root.hovered ? Theme.palette.backgroundHover : "transparent"
         HoverHandler {
             cursorShape: root.hovered ? Qt.PointingHandCursor : undefined
         }
@@ -46,7 +44,6 @@ AbstractButton {
                 text: root.text
                 font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
-                color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 18
             }
@@ -54,7 +51,6 @@ AbstractButton {
                 Layout.fillWidth: true
                 text: root.subTitle
                 font.pixelSize: Theme.additionalTextSize
-                color: root.enabled ? Theme.palette.baseColor1 : Theme.palette.baseColor2
                 visible: !!text
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 18
@@ -65,7 +61,6 @@ AbstractButton {
             Layout.preferredWidth: 16
             Layout.preferredHeight: 16
             icon: "tiny/chevron-right"
-            color: root.enabled ? Theme.palette.baseColor1 : Theme.palette.baseColor1
         }
     }
 }
