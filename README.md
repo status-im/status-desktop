@@ -19,6 +19,7 @@
   - [Windows](#windows)
   - [Linux](#linux)
 - [🛠️ Build from Source](#%EF%B8%8F-build-from-source)
+- [📱 Build for Mobile](mobile/README.md)
 - [🤝 Contributing](#-contributing)
 - [📚 Documentation](#-documentation)
 

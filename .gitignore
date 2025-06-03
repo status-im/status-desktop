@@ -111,3 +111,8 @@ nimbus-build-system.paths
 *.pyc
 
 test/ui-pytest/squish_server.ini
+
+# mobile
+mobile/bin/
+mobile/lib/
+mobile/build/

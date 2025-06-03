@@ -1,6 +1,5 @@
 SHELL:=/bin/bash
-ROOT_DIR := $(shell git rev-parse --show-toplevel)
-HOST_ENV=$(shell printenv)
+STATUS_DESKTOP := $(shell git rev-parse --show-toplevel)
 OS?=android
 QT_VERSION?=6
 
@@ -11,6 +10,7 @@ ifeq ($(V), 0)
 endif
 
 # path macros
+ROOT_DIR := $(STATUS_DESKTOP)/mobile
 BIN_PATH := $(ROOT_DIR)/bin/$(OS)/qt$(QT_VERSION)
 LIB_PATH := $(ROOT_DIR)/lib/$(OS)/qt$(QT_VERSION)
 BUILD_PATH := $(ROOT_DIR)/build/$(OS)/qt$(QT_VERSION)

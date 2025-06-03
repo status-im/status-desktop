@@ -14,11 +14,11 @@ SOURCES += \
 
 # Add all status-desktop qrc files
 RESOURCES += \
-    ../vendors/status-desktop/ui/resources.qrc
+    ../../ui/resources.qrc
 
-QML_IMPORT_PATH += $$PWD/../vendors/status-desktop/ui/imports \
-                   $$PWD/../vendors/status-desktop/ui/app \
-                   $$PWD/../vendors/status-desktop/ui/StatusQ/src
+QML_IMPORT_PATH += $$PWD/../../ui/imports \
+                   $$PWD/../../ui/app \
+                   $$PWD/../../ui/StatusQ/src
 
 QMLPATHS += $$QML_IMPORT_PATH
 LIB_PREFIX = qt$$QT_MAJOR_VERSION
