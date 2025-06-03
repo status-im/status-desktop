@@ -90,9 +90,9 @@ Item {
             verify(dappTooltip.height > 0)
             verify(dappTooltip.y > controlUnderTest.height)
 
-            mouseMove(root)
-            compare(background.active, false)
-            compare(dappTooltip.visible, false)
+            mouseMove(root, 0, 0)
+            verify(!background.active)
+            verify(!dappTooltip.visible)
         }
 
         function test_clickConnect() {

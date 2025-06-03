@@ -250,6 +250,7 @@ Item {
 
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
+            waitForRendering(page)
 
             const linksText = findChild(controlUnderTest, "approvalLinks")
             verify(!!linksText)
@@ -362,6 +363,7 @@ Item {
 
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
+            waitForRendering(page)
 
             const btnCreateProfile = findChild(controlUnderTest, "btnCreateProfile")
             verify(!!btnCreateProfile)
@@ -459,6 +461,8 @@ Item {
 
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
+            waitForRendering(page)
+
             const btnCreateProfile = findChild(controlUnderTest, "btnCreateProfile")
             verify(!!btnCreateProfile)
             mouseClick(btnCreateProfile)
@@ -605,6 +609,8 @@ Item {
 
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
+            waitForRendering(page)
+
             const btnCreateProfile = findChild(controlUnderTest, "btnCreateProfile")
             verify(!!btnCreateProfile)
             mouseClick(btnCreateProfile)
@@ -700,6 +706,8 @@ Item {
 
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
+            waitForRendering(page)
+
             const btnLogin = findChild(controlUnderTest, "btnLogin")
             verify(!!btnLogin)
             mouseClick(btnLogin)
@@ -793,6 +801,8 @@ Item {
 
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
+            waitForRendering(page)
+
             const btnLogin = findChild(controlUnderTest, "btnLogin")
             verify(!!btnLogin)
             mouseClick(btnLogin)
@@ -886,6 +896,8 @@ Item {
 
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
+            waitForRendering(page)
+
             const btnLogin = findChild(controlUnderTest, "btnLogin")
             verify(!!btnLogin)
             mouseClick(btnLogin)

@@ -73,7 +73,7 @@ Item {
             // input's text should be what we typed,
             compare(plainText, "0xdeadbeef")
             // ... and for each letter pressed the signal `validateInputRequested` should be emitted
-            compare(signalSpyValidateInputRequested.count, plainText.length)
+            tryCompare(signalSpyValidateInputRequested, "count", plainText.length)
         }
 
         function test_interactive() {
@@ -159,6 +159,8 @@ Item {
             compare(clearButton.visible, false)
 
             controlUnderTest.text = "0xdeadbeef"
+
+            waitForRendering(controlUnderTest)
 
             // clear button should be visible with some text
             verify(clearButton.visible)
