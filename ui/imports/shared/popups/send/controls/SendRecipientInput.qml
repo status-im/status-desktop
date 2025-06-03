@@ -79,6 +79,11 @@ StatusInput {
         }
     }
 
-    Keys.onTabPressed: event.accepted = true
-    Keys.onReleased: root.validateInputRequested()
+    Keys.onTabPressed: (event) => {
+                           event.accepted = true
+                       }
+    Keys.onReleased: (event) => {
+                         event.accepted = true
+                         root.validateInputRequested()
+                     }
 }

@@ -298,7 +298,7 @@ Control {
                 model: d.adaptor.outputAssetsModel
                 nonInteractiveKey: root.nonInteractiveTokensKey
 
-                onSelected: {
+                onSelected: function(key) {
                     // Token existance checked with plainTokensBySymbolModel
                     // This check prevents resetting selection when chain is changed until
                     // processedAssetsModel is updated
@@ -329,7 +329,7 @@ Control {
 
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay
 
-                onClicked: {
+                onClicked: function() {
                     if (maxSafeValue)
                         amountToSendInput.setValue(SQUtils.AmountsArithmetic.fromNumber(maxSafeValue).toString())
                     else

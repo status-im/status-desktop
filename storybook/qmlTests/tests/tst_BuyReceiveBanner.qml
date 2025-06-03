@@ -12,7 +12,11 @@ Item {
         id: buyReceiveComponent
         BuyReceiveBanner {
             id: banner
-            anchors.fill: parent
+
+            width: root.width
+            height: implicitHeight
+
+            anchors.centerIn: parent
 
             readonly property SignalSpy buyClickedSpy: SignalSpy { target: banner; signalName: "buyClicked" }
             readonly property SignalSpy receiveClickedSpy: SignalSpy { target: banner; signalName: "receiveClicked" }
@@ -23,6 +27,9 @@ Item {
 
     TestCase {
         id: buyReceiveBannerTest
+
+        name: "BuyReceiveBannerTest"
+
         when: windowShown
 
         property BuyReceiveBanner componentUnderTest
@@ -40,7 +47,7 @@ Item {
 
         function test_geometry() {
             compare(componentUnderTest.width, root.width)
-            compare(componentUnderTest.height, root.height)
+            compare(componentUnderTest.height, 70)
         }
 
         function test_buyGeometry() {
