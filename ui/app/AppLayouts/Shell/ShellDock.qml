@@ -120,6 +120,7 @@ Control {
 
     Component {
         id: regularDockButton
+
         ShellDockButton {
             sectionType: model.sectionType
             text: model.name
@@ -135,6 +136,7 @@ Control {
 
     Component {
         id: pinnedDockButton
+
         ShellDockButton {
             id: pinnedDelegate
             sectionType: model.sectionType
