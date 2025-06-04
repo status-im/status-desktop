@@ -1362,9 +1362,17 @@ Item {
             delegateHeight: 40
 
             profileComponent: ProfileButton {
-                id: profileButton
                 objectName: "statusProfileNavBarTabButton"
-                profileStore: appMain.profileStore
+
+                name: appMain.profileStore.name
+                pubKey: appMain.profileStore.pubkey
+                compressedPubKey: appMain.profileStore.compressedPubKey
+                isEnsVerified: !!appMain.profileStore.preferredName
+                iconSource: appMain.profileStore.icon
+                colorId: appMain.profileStore.colorId
+                colorHash: appMain.profileStore.colorHash
+                currentUserStatus: appMain.profileStore.currentUserStatus
+
                 getEmojiHashFn: appMain.utilsStore.getEmojiHash
                 getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
                 onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)

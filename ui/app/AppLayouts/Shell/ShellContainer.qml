@@ -158,7 +158,15 @@ Control {
         }
 
         ProfileButton {
-            profileStore: root.profileStore
+            name: root.profileStore.name
+            pubKey: root.profileStore.pubkey
+            compressedPubKey: root.profileStore.compressedPubKey
+            isEnsVerified: !!root.profileStore.preferredName
+            iconSource: root.profileStore.icon
+            colorId: root.profileStore.colorId
+            colorHash: root.profileStore.colorHash
+            currentUserStatus: root.profileStore.currentUserStatus
+
             getEmojiHashFn: root.getEmojiHashFn
             getLinkToProfileFn: root.getLinkToProfileFn
 
