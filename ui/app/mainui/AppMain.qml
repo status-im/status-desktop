@@ -2340,6 +2340,8 @@ Item {
 
         sourceComponent: ShellContainer {
             id: shell
+
+            objectName: "shellContainer"
             shellAdaptor: ShellAdaptor {
                 readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
 

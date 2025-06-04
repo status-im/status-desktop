@@ -58,8 +58,11 @@ Control {
         interactive: contentWidth > width
         delegate: Loader {
             id: delegateLoader
+            objectName: "shellDockButtonLoader"
+
             required property var model
             required property int index
+
             sourceComponent: model.pinnable ? pinnedDockButton : regularDockButton
 
             ListView.onRemove: SequentialAnimation {
