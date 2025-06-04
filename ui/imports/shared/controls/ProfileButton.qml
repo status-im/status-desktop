@@ -5,8 +5,6 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-
 import shared.popups 1.0
 
 import utils 1.0
@@ -14,25 +12,32 @@ import utils 1.0
 StatusNavBarTabButton {
     id: root
 
-    required property ProfileStores.ProfileStore profileStore
+    required property string name
+    required property string pubKey
+    required property string compressedPubKey
+    required property bool isEnsVerified
+    required property string iconSource
+    required property int colorId
+    required property var colorHash
+    required property int currentUserStatus
 
-    property var getLinkToProfileFn: function(pubkey) { console.error("IMPLEMENT ME"); return "" }
-    property var getEmojiHashFn: function(pubkey) { console.error("IMPLEMENT ME"); return "" }
+    property var getLinkToProfileFn: function(pubKey) { console.error("IMPLEMENT ME"); return "" }
+    property var getEmojiHashFn: function(pubKey) { console.error("IMPLEMENT ME"); return "" }
 
     property bool opened: false
 
     signal viewProfileRequested(string pubKey)
     signal setCurrentUserStatusRequested(int status)
 
-    name: root.profileStore.name
-    icon.source: root.profileStore.icon
+    name: root.name
+    icon.source: root.iconSource
     implicitWidth: 32
     implicitHeight: 32
     identicon.asset.width: width
     identicon.asset.height: height
     identicon.asset.useAcronymForLetterIdenticon: true
-    identicon.asset.color: Utils.colorForPubkey(root.profileStore.pubkey)
-    identicon.ringSettings.ringSpecModel: root.profileStore.colorHash
+    identicon.asset.color: Utils.colorForPubkey(root.pubKey)
+    identicon.ringSettings.ringSpecModel: root.colorHash
 
     badge.visible: true
     badge.anchors {
@@ -47,7 +52,7 @@ StatusNavBarTabButton {
     badge.implicitHeight: 12
     badge.implicitWidth: 12
     badge.color: {
-        switch(root.profileStore.currentUserStatus) {
+        switch(root.currentUserStatus) {
         case Constants.currentUserStatus.automatic:
         case Constants.currentUserStatus.alwaysOnline:
             return Theme.palette.successColor1
@@ -61,23 +66,21 @@ StatusNavBarTabButton {
     UserStatusContextMenu {
         id: userStatusContextMenu
 
-        readonly property string pubKey: root.profileStore.pubkey
-
         y: root.y - userStatusContextMenu.height + root.height
         x: root.x + root.width + 5
 
-        compressedPubKey: root.profileStore.compressedPubKey
-        emojiHash: root.getEmojiHashFn(pubKey)
-        colorHash: root.profileStore.colorHash
-        colorId: root.profileStore.colorId
-        name: root.profileStore.name
-        headerIcon: root.profileStore.icon
-        isEnsVerified: !!root.profileStore.preferredName
+        compressedPubKey: root.compressedPubKey
+        emojiHash: root.getEmojiHashFn(root.pubKey)
+        colorHash: root.colorHash
+        colorId: root.colorId
+        name: root.name
+        headerIcon: root.iconSource
+        isEnsVerified: root.isEnsVerified
 
-        currentUserStatus: root.profileStore.currentUserStatus
+        currentUserStatus: root.currentUserStatus
 
-        onViewProfileRequested: root.viewProfileRequested(pubKey)
-        onCopyLinkRequested: ClipboardUtils.setText(root.getLinkToProfileFn(pubKey))
+        onViewProfileRequested: root.viewProfileRequested(root.pubKey)
+        onCopyLinkRequested: ClipboardUtils.setText(root.getLinkToProfileFn(root.pubKey))
         onSetCurrentUserStatusRequested: (status) => root.setCurrentUserStatusRequested(status)
     }
 }
