@@ -15,6 +15,20 @@ import StatusQ.Core.Theme 0.1
 */
 
 TabBar {
+   id: root
+
     spacing: Theme.bigPadding
+
     background: null
+
+    contentItem: ListView {
+        model: root.contentModel
+        currentIndex: root.currentIndex
+        clip: true
+        spacing: root.spacing
+        orientation: ListView.Horizontal
+        boundsBehavior: Flickable.StopAtBounds
+        flickableDirection: Flickable.AutoFlickIfNeeded
+        snapMode: ListView.SnapToItem
+    }
 }
