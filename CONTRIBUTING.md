@@ -101,7 +101,7 @@ Before using your real Status profile for testing:
   * Create a **test profile**
   * **Put your app into Debug mode:** Settings >>> Advanced >>> Debug (toggle it on) so the App starts generating logs (in case you need to attach them when reporting bugs).
   * Try out the main features you regularly use
-  * If everything works as expected, **log out** and then **log in with your real Status profile** to continue testing.Please, remember to put your app into Debug mode: Settings >>> Advanced >>> Debug (toggle it on) so the App starts generating logs (in case you need to attach them when reporting bugs).
+  * If everything works as expected, **log out** and then **log in with your real Status profile** to continue testing.
 
 #### 5. Test Regular Usage Flows
 
