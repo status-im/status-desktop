@@ -9,7 +9,7 @@ JAVA_HOME=${JAVA_HOME:-}
 BIN_DIR=${BIN_DIR:-"$CWD/../bin/ios"}
 BUILD_DIR=${BUILD_DIR:-"$CWD/../build"}
 ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
-QT_VERSION=${QT_VERSION:-"5"}
+QT_MAJOR=${QT_MAJOR:-"5"}
 
 echo "Building wrapperApp for ${OS}, ${ANDROID_ABI}"
 
@@ -18,7 +18,7 @@ cd "${BUILD_DIR}"
 
 echo "Building wrapperApp"
 
-if [[ "${QT_VERSION}" == "6" ]]; then
+if [[ "${QT_MAJOR}" == "6" ]]; then
     COMPAT_RESOURCES=compat_resources.qrc
 fi
 
@@ -28,14 +28,14 @@ if [[ "${OS}" == "android" ]]; then
         exit 1
     fi
 
-    if [[ "${QT_VERSION}" == "5" ]]; then
+    if [[ "${QT_MAJOR}" == "5" ]]; then
         echo "Building for Android 31"
         ANDROID_PLATFORM=android-31
-    elif [[ "${QT_VERSION}" == "6" ]]; then
+    elif [[ "${QT_MAJOR}" == "6" ]]; then
         echo "Building for Android 35"
         ANDROID_PLATFORM=android-35
     else
-        echo "Invalid QT_VERSION. Please set QT_VERSION to 5 or 6."
+        echo "Invalid QT_MAJOR. Please set QT_MAJOR to 5 or 6."
         exit 1
     fi
 

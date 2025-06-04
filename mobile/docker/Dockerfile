@@ -1,8 +1,6 @@
 # QT Installation Image --------------------------------------------------------
 FROM carlonluca/qt-dev:6.9.0
 
-ENV ANDROID_NDK_HOME=${ANDROID_NDK_ROOT}
-ENV SDK_PATH=${ANDROID_SDK_ROOT}
 ENV PATH=/opt/qt/6.9.0/android_arm64_v8a/bin:${PATH}
 ENV ARCH=arm64
 

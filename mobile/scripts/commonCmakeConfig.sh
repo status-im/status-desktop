@@ -4,7 +4,7 @@ set -ef pipefail
 ARCH=${ARCH:-"x86_64"}
 QTDIR=${QTDIR:-$(qmake -query QT_INSTALL_PREFIX)}
 OS=${OS:-ios}
-ANDROID_NDK_HOME=${ANDROID_NDK_HOME:-""}
+ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT:-""}
 
 STATIC_LIB=ON
 CMAKE_TOOLCHAIN_FILE=""
@@ -30,7 +30,7 @@ elif [[ "$OS" == "android" ]]; then
     fi
     SYSTEM_NAME="Android"
     STATIC_LIB=OFF
-    CMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake"
+    CMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
     COMMON_CMAKE_CONFIG+=(
         -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN_FILE"
         -DANDROID_ABI:STRING="$ANDROID_ABI"
