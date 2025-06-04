@@ -42,7 +42,7 @@ Get the latest release candidate build (look for versions with “**<code>-rc"</
  👉[ https://github.com/status-im/status-desktop/releases](https://github.com/status-im/status-desktop/releases).
  
 Refer to the table below to see which file you should use for your operating system.
-* **Known issues:** users on **macOS with Intel chips** should **NOT **upgrade to version v2.33 or higher to test release candidate builds due to a critical bug causing app crashes in this release (more details: [#15730](https://github.com/status-im/status-desktop/issues/15730)). The team is actively working on a fix for upcoming releases.
+* **Known issues:** users on **macOS with Intel chips** should **NOT** upgrade to version v2.33 or higher to test release candidate builds due to a critical bug causing app crashes (more details: [#15730](https://github.com/status-im/status-desktop/issues/15730)).
 
 <table>
   <tr>
@@ -101,7 +101,7 @@ Before using your real Status profile for testing:
   * Create a **test profile**
   * **Put your app into Debug mode:** Settings >>> Advanced >>> Debug (toggle it on) so the App starts generating logs (in case you need to attach them when reporting bugs).
   * Try out the main features you regularly use
-  * If everything works as expected, **log out** and then **log in with your real Status profile** to continue testing.
+  * If everything works as expected, **log out** and then **log in with your real Status profile** to continue testing.Please, remember to put your app into Debug mode: Settings >>> Advanced >>> Debug (toggle it on) so the App starts generating logs (in case you need to attach them when reporting bugs).
 
 #### 5. Test Regular Usage Flows
 
