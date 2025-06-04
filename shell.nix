@@ -32,8 +32,6 @@ in pkgs.mkShell {
     go_1_22 go-bindata mockgen protobuf3_20 protoc-gen-go
     pcre nss pcsclite extra-cmake-modules
     xorg.libxcb xorg.libX11 libxkbcommon
-    # Uses OpenSSL 3 from pkgs.nix
-    openssl
   ] ++ (with gst_all_1; [
     gst-libav gstreamer
     gst-plugins-bad  gst-plugins-base
@@ -45,13 +43,6 @@ in pkgs.mkShell {
   LANG = "en_US.UTF-8";
   LANGUAGE = "en_US.UTF-8";
 
-  # OpenSSL 3 specific environment variables
-  OPENSSL3_LIB_DIR = "${pkgs.openssl_3.out}/lib";
-  OPENSSL3_INCLUDE_DIR = "${pkgs.openssl_3.dev}/include";
-  PKG_CONFIG_PATH = "${pkgs.openssl_3.dev}/lib/pkgconfig:${pkgs.openssl_3.out}/lib/pkgconfig";
-  LDFLAGS = "-L${pkgs.openssl_3.out}/lib";
-  CPPFLAGS = "-I${pkgs.openssl_3.dev}/include";
-
   QTDIR = qtCustom;
   # TODO: still needed?
   # https://github.com/NixOS/nixpkgs/pull/109649
@@ -60,11 +51,6 @@ in pkgs.mkShell {
   shellHook = ''
     export MAKEFLAGS="-j$NIX_BUILD_CORES"
     export PATH="${pkgs.lddWrapped}/bin:$PATH"
-
-    # to fix missing openssl3 during lld
-    export LD_LIBRARY_PATH="${pkgs.openssl_3.out}/lib:$LD_LIBRARY_PATH"
-    export LIBRARY_PATH="${pkgs.openssl_3.out}/lib:''${LIBRARY_PATH:-}"
-    export CMAKE_PREFIX_PATH="${pkgs.openssl_3.out}:''${CMAKE_PREFIX_PATH:-}"
   '';
 
   LIBKRB5_PATH = pkgs.libkrb5;
@@ -90,7 +76,6 @@ in pkgs.mkShell {
     libpulseaudio
     libxkbcommon
     openexr
-    # Uses OpenSSL 3 from pkgs.nix
     openssl
     p11-kit
     zlib
