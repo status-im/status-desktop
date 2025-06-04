@@ -81,6 +81,8 @@ Control {
             Layout.fillWidth: true
 
             id: searchField
+
+            objectName: "shellSearchField"
             leftPadding: d.isNarrowView ? 0 : root.width * .1
             rightPadding: d.isNarrowView ? 0 : root.width * .1
             placeholderText: qsTr("Jump to a community, chat, account or a dApp...")
@@ -91,6 +93,8 @@ Control {
             Layout.preferredWidth: d.isNarrowView ? (3*cellSize) + (3*cellPadding) : implicitWidth
             Layout.alignment: Qt.AlignHCenter
             Layout.fillHeight: true
+
+            objectName: "shellGrid"
 
             model: root.shellAdaptor.shellEntriesModel
 
@@ -112,6 +116,8 @@ Control {
             Layout.alignment: d.isNarrowView && root.availableWidth < implicitWidth ? 0 : Qt.AlignHCenter
             Layout.fillWidth: d.isNarrowView && root.availableWidth < implicitWidth
             Layout.maximumWidth: parent.width
+
+            objectName: "shellDock"
 
             useNewDockIcons: root.useNewDockIcons
             sectionsModel: root.shellAdaptor.sectionsModel
