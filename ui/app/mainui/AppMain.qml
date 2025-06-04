@@ -967,7 +967,7 @@ Item {
             } else if (sectionType === Constants.appSection.wallet) {
                 appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(subsection, subSubsection, data)
             } else if (sectionType === Constants.appSection.swap) {
-                d.launchSwap()
+                popupRequestsHandler.swapModalHandler.launchSwap()
             } else if (sectionType === Constants.appSection.chat) {
                 appMain.rootStore.setActiveSectionChat(appMain.profileStore.pubkey, subsection)
             } else if (sectionType === Constants.appSection.community && subsection !== "") {
