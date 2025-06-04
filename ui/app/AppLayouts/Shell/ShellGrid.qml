@@ -53,22 +53,22 @@ StatusGridView {
         pinned             [bool]   - whether the item is pinned in the UI
         timestamp          [int]    - timestamp of the last user interaction with the item
     **/
-    
+
     property int cellSize: 160
     property int cellPadding: Theme.padding
 
-    signal itemActivated(int sectionType, string itemId)
+    signal itemActivated(string key, int sectionType, string itemId)
     signal itemPinRequested(string key, bool pin)
     signal dappDisconnectRequested(string dappUrl)
-    
+
     cellWidth: cellSize + cellPadding
     cellHeight: cellWidth
-    
+
     ScrollBar.vertical: StatusScrollBar {
         policy: ScrollBar.AsNeeded
         visible: resolveVisibility(policy, root.height, root.contentHeight)
     }
-    
+
     delegate: Loader {
         required property int index
         required property var model
@@ -93,14 +93,10 @@ StatusGridView {
         Connections {
             target: item ?? null
             function onClicked() {
-                root.itemActivated(item.sectionType, item.itemId)
-                model.timestamp = new Date().valueOf()
+                root.itemActivated(model.key, item.sectionType, item.itemId)
             }
             function onPinRequested() {
-                model.pinned = !model.pinned
-                if (model.pinned)
-                    model.timestamp = new Date().valueOf()
-                root.itemPinRequested(model.key, model.pinned)
+                root.itemPinRequested(model.key, !model.pinned)
             }
         }
     }

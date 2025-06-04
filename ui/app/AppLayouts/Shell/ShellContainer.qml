@@ -30,7 +30,7 @@ Control {
 
     readonly property string searchPhrase: searchField.text
 
-    signal itemActivated(int sectionType, string itemId)
+    signal itemActivated(string key, int sectionType, string itemId)
     signal itemPinRequested(string key, bool pin)
     signal dappDisconnectRequested(string dappUrl)
 
@@ -101,8 +101,8 @@ Control {
             leftMargin: d.isNarrowView ? 0 : root.width * .1
             rightMargin: d.isNarrowView ? 0 : root.width * .1
 
-            onItemActivated: function(sectionType, itemId) {
-                root.itemActivated(sectionType, itemId)
+            onItemActivated: function(key, sectionType, itemId) {
+                root.itemActivated(key, sectionType, itemId)
             }
             onItemPinRequested: function(key, pin) {
                 root.itemPinRequested(key, pin)
@@ -123,8 +123,8 @@ Control {
             sectionsModel: root.shellAdaptor.sectionsModel
             pinnedModel: root.shellAdaptor.pinnedModel
 
-            onItemActivated: function(sectionType, itemId) {
-                root.itemActivated(sectionType, itemId)
+            onItemActivated: function(key, sectionType, itemId) {
+                root.itemActivated(key, sectionType, itemId)
             }
             onItemPinRequested: function(key, pin) {
                 root.itemPinRequested(key, pin)

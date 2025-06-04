@@ -55,7 +55,7 @@ Control {
 
     property bool useNewDockIcons: true
 
-    signal itemActivated(int sectionType, string itemId)
+    signal itemActivated(string key, int sectionType, string itemId)
     signal itemPinRequested(string key, bool pin)
     signal dappDisconnectRequested(string dappUrl)
 
@@ -130,7 +130,7 @@ Control {
             icon.color: Theme.palette.white
             icon.name: (root.useNewDockIcons ? "shell/" : "") + model.icon
             enabled: model.enabled
-            onClicked: root.itemActivated(sectionType, "") // not interested in item (section) id here
+            onClicked: root.itemActivated(model.key, sectionType, "") // not interested in item (section) id here
         }
     }
 
@@ -155,13 +155,11 @@ Control {
 
             pinned: true
             onItemPinRequested: function(key, pin) {
-                model.pinned = pin
                 root.itemPinRequested(key, pin)
             }
             onDappDisconnectRequested: (dappUrl) => root.dappDisconnectRequested(dappUrl)
             onClicked: {
-                root.itemActivated(sectionType, model.id)
-                model.timestamp = new Date().valueOf()
+                root.itemActivated(model.key, sectionType, model.id)
             }
         }
     }

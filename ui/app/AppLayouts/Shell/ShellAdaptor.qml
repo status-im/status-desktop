@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import Qt.labs.settings 1.1
+
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -79,7 +81,14 @@ QObject {
     **/
 
     readonly property var shellEntriesModel: d.shellEntriesModel
-    Component.onCompleted: Qt.callLater(() => d.shellEntriesModel = filteredCombinedModel) // FIXME bug in SFPM or OPM
+    Component.onCompleted: {
+        Qt.callLater(function() {
+            d.shellEntriesModel = filteredCombinedModel // FIXME bug in SFPM or OPM
+            load()
+        })
+    }
+
+    Component.onDestruction: save()
 
     QtObject {
         id: d
@@ -310,10 +319,63 @@ QObject {
         ]
     }
 
-    ShellProxyModel { // provides a writable overlay for "timestamp" and "pinned" roles
+    Settings {
+        id: shellSettings
+        category: "Shell_%1".arg(root.profileId)
+    }
+
+    ObjectProxyModel { // provides a writable overlay for "timestamp" and "pinned" roles
         id: shellProxyModel
+
         sourceModel: combinedModel
-        profileId: root.profileId
+        delegate: QtObject {
+            property real timestamp
+            property bool pinned
+        }
+
+        exposedRoles: ["timestamp", "pinned"]
+    }
+
+    function setPinned(key, pinned) {
+        const idx = ModelUtils.indexOf(shellProxyModel, "key", key)
+        if (idx > -1) {
+            shellProxyModel.proxyObject(idx).pinned = pinned
+        }
+    }
+
+    function setTimestamp(key, timestamp) {
+        const idx = ModelUtils.indexOf(shellProxyModel, "key", key)
+        if (idx > -1) {
+            shellProxyModel.proxyObject(idx).timestamp = timestamp
+        }
+    }
+
+    function save() {
+        const dataArray = ModelUtils.modelToArray(shellProxyModel, ["key", "timestamp", "pinned"])
+        const settingsData = JSON.stringify(dataArray)
+        shellSettings.setValue("ShellEntries", settingsData)
+        shellSettings.sync()
+    }
+
+    function load() {
+        var length = 0
+        const settingsData = shellSettings.value("ShellEntries")
+        var dataArray = []
+
+        try {
+            dataArray = JSON.parse(settingsData)
+            length = dataArray.length
+        } catch (e) {
+            return
+        }
+
+        dataArray.forEach(function(item) {
+            let idx = ModelUtils.indexOf(shellProxyModel, "key", item.key)
+            if (idx > -1) {
+                shellProxyModel.proxyObject(idx).pinned = item.pinned
+                shellProxyModel.proxyObject(idx).timestamp = item.timestamp
+            }
+        })
     }
 
     SortFilterProxyModel {

@@ -77,11 +77,15 @@ SplitView {
         hasUnseenACNotifications: ctrlHasNotifications.checked
         aCNotificationCount: ctrlNotificationsCount.value
 
-        onItemActivated: function(sectionType, itemId) {
-            logs.logEvent("onItemActivated", ["sectionType", "itemId"], arguments)
-            console.info("!!! ITEM ACTIVATED; sectionType:", sectionType, "; itemId:", itemId)
+        onItemActivated: function(key, sectionType, itemId) {
+            shellAdaptor.setTimestamp(key, new Date().valueOf())
+            logs.logEvent("onItemActivated", ["key", "sectionType", "itemId"], arguments)
+            console.info("!!! ITEM ACTIVATED; key:", key, "; sectionType:", sectionType, "; itemId:", itemId)
         }
         onItemPinRequested: function(key, pin) {
+            shellAdaptor.setPinned(key, pin)
+            if (pin)
+                shellAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
             logs.logEvent("onItemPinRequested", ["key", "pin"], arguments)
             console.info("!!! ITEM", key, "PINNED:", pin)
         }

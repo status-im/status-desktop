@@ -136,7 +136,6 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/movablemodel.h
         include/StatusQ/networkchecker.h
         include/StatusQ/objectproxymodel.h
-        include/StatusQ/shellproxymodel.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rolesrenamingmodel.h
         include/StatusQ/rxvalidator.h
@@ -174,7 +173,6 @@ add_library(StatusQ ${LIB_TYPE}
         src/movablemodel.cpp
         src/networkchecker.cpp
         src/objectproxymodel.cpp
-        src/shellproxymodel.cpp
         src/permissionutilsinternal.cpp
         src/rolesrenamingmodel.cpp
         src/rxvalidator.cpp
