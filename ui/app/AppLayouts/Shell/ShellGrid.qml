@@ -107,6 +107,7 @@ StatusGridView {
 
     Component {
         id: communityDelegate
+
         ShellGridCommunityItem {
             width: root.cellSize
             height: root.cellSize
@@ -129,6 +130,7 @@ StatusGridView {
 
     Component {
         id: settingsDelegate
+
         ShellGridSettingsItem {
             width: root.cellSize
             height: root.cellSize
@@ -145,6 +147,7 @@ StatusGridView {
 
     Component {
         id: walletDelegate
+
         ShellGridWalletItem {
             width: root.cellSize
             height: root.cellSize
@@ -163,6 +166,7 @@ StatusGridView {
 
     Component {
         id: chatDelegate
+
         ShellGridChatItem {
             width: root.cellSize
             height: root.cellSize
@@ -181,6 +185,7 @@ StatusGridView {
 
     Component {
         id: dappDelegate
+
         ShellGridDAppItem {
             width: root.cellSize
             height: root.cellSize
