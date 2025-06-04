@@ -279,7 +279,9 @@ Popup {
                     isFavorite: root.isFavorite
                     addToRecentsGif: root.addToRecentsGif
 
-                    onGifHovered: º
+                    onGifHovered: {
+                        gifs.lastHoveredId = id
+                    }
                     onGifSelected: root.gifSelected(event, url)
                 }
             }
