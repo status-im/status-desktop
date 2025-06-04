@@ -26,16 +26,11 @@ SplitView {
     MembersTabPanel {
         id: membersTabPanelPage
 
-        function getEmojiHash(publicKey) {
-            return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
-        }
-
         SplitView.fillWidth: true
         SplitView.fillHeight: true
         model: usersModelWithMembershipState
         panelType: viewStateSelector.currentValue
         searchString: ctrlSearch.text
-        cbGetEmojiHash: getEmojiHash
 
         rootStore: ChatStores.RootStore {
             contactsStore: ProfileStores.ContactsStore {

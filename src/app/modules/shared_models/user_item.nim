@@ -1,4 +1,5 @@
 import stew/shims/strformat
+import app/global/global_singleton
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
 
@@ -23,6 +24,7 @@ proc toContactStatus*(value: ContactRequestState): ContactRequest =
 type
   UserItem* = ref object of RootObj
     pubKey: string
+    emojiHash: string
     displayName: string
     ensName: string
     isEnsVerified: bool
@@ -97,6 +99,11 @@ proc setup*(self: UserItem,
   self.isRemoved = isRemoved
   self.trustStatus = trustStatus
 
+  # Setup emojiHash:
+  if pubKey == "" or not singletonInstance.utils.isChatKey(pubKey):
+    self.emojiHash = ""
+  self.emojiHash = singletonInstance.utils.getEmojiHashAsJson(pubKey)
+
 # FIXME: remove defaults
 # TODO: #14964
 proc initUserItem*(
@@ -154,6 +161,7 @@ proc initUserItem*(
 proc `$`*(self: UserItem): string =
   result = fmt"""User Item(
     pubKey: {self.pubkey},
+    emojiHash: {self.emojiHash},
     displayName: {self.displayName},
     ensName: {self.ensName},
     isEnsVerified: {self.isEnsVerified},
@@ -180,6 +188,12 @@ proc `$`*(self: UserItem): string =
 
 proc pubKey*(self: UserItem): string {.inline.} =
   self.pubKey
+
+proc emojiHash*(self: UserItem): string {.inline.} =
+  self.emojiHash
+
+proc `emojiHash=`*(self: UserItem, value: string) {.inline.} =
+  self.emojiHash = value
 
 proc displayName*(self: UserItem): string {.inline.} =
   self.displayName

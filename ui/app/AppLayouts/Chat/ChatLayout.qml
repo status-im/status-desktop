@@ -65,9 +65,6 @@ StackLayout {
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
 
-    // Utils store data
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     signal profileButtonClicked()
     signal openAppSearch()
     signal buyStickerPackRequested(string packId, int price)
@@ -243,8 +240,6 @@ StackLayout {
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
-            cbGetEmojiHash: root.cbGetEmojiHash
-
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)
             onCommunityInfoButtonClicked: root.currentIndex = 1
             onCommunityManageButtonClicked: root.currentIndex = 1
@@ -302,7 +297,6 @@ StackLayout {
             pendingMembers: membersModelAdaptor.pendingMembers
             declinedMembers: membersModelAdaptor.declinedMembers
             communitySettingsDisabled: root.communitySettingsDisabled
-            cbGetEmojiHash: root.cbGetEmojiHash
 
             onCommunitySettingsDisabledChanged: if (communitySettingsDisabled) goTo(Constants.CommunitySettingsSections.Overview)
 

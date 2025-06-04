@@ -35,8 +35,6 @@ Item {
     readonly property bool isOwner: memberRole === Constants.memberRole.owner
     readonly property bool isTokenMaster: memberRole === Constants.memberRole.tokenMaster
 
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     signal kickUserClicked(string id, string name)
     signal banUserClicked(string id, string name)
     signal unbanUserClicked(string id)
@@ -277,7 +275,7 @@ Item {
                     profileType, contactType,
                     pubKey: model.pubKey,
                     compressedPubKey: model.compressedPubKey,
-                    emojiHash: root.cbGetEmojiHash(model.pubKey),
+                    emojiHash: JSON.parse(model.emojiHash),
                     colorHash: model.colorHash,
                     colorId: model.colorId,
                     displayName: memberItem.title || model.displayName,

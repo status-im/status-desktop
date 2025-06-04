@@ -58,8 +58,6 @@ StatusSectionLayout {
     readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: community.isControlNode
 
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -312,7 +310,6 @@ StatusSectionLayout {
                 editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
                 memberRole: root.community.memberRole
                 communityName: root.community.name
-                cbGetEmojiHash: root.cbGetEmojiHash
 
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id, deleteAllMessages)

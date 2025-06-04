@@ -146,7 +146,7 @@ Item {
                         profileType, contactType,
                         pubKey: model.pubKey,
                         compressedPubKey: model.compressedPubKey,
-                        emojiHash: model.emojiHash,
+                        emojiHash: JSON.parse(model.emojiHash),
                         colorHash: model.colorHash,
                         colorId: model.colorId,
                         displayName: model.preferredDisplayName,

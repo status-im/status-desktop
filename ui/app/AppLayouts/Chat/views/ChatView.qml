@@ -110,9 +110,6 @@ StatusSectionLayout {
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
 
-    // Utils store data
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -208,15 +205,7 @@ StatusSectionLayout {
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
 
-            usersModel: SortFilterProxyModel {
-                sourceModel: usersStore.usersModel
-
-                proxyRoles: FastExpressionRole {
-                    name: "emojiHash"
-                    expression: root.cbGetEmojiHash(model.pubKey)
-                    expectedRoles: ["pubKey"]
-                }
-            }
+            usersModel: usersStore.usersModel
 
             onOpenProfileRequested: Global.openProfilePopup(pubKey, null)
             onReviewContactRequestRequested: Global.openReviewContactRequestPopup(pubKey, null)

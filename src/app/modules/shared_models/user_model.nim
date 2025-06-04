@@ -35,6 +35,7 @@ type
     IsContactRequestSent
     IsRemoved
     TrustStatus
+    EmojiHash
 
 QtObject:
   type
@@ -103,6 +104,7 @@ QtObject:
       ModelRole.IsContactRequestSent.int: "isContactRequestSent",
       ModelRole.IsRemoved.int: "isRemoved",
       ModelRole.TrustStatus.int: "trustStatus",
+      ModelRole.EmojiHash.int: "emojiHash"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -119,7 +121,7 @@ QtObject:
     of ModelRole.PubKey:
       result = newQVariant(item.pubKey)
     of ModelRole.CompressedPubKey:
-      result = newQVariant(compressPk(item.pubKey))
+      result = newQVariant(utils.compressPk(item.pubKey))
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
     of ModelRole.PreferredDisplayName:
@@ -171,6 +173,9 @@ QtObject:
       result = newQVariant(item.isRemoved)
     of ModelRole.TrustStatus:
       result = newQVariant(item.trustStatus.int)
+    of ModelRole.EmojiHash:
+      result = newQVariant(item.emojiHash)
+
     else:
       result = newQVariant()
 
