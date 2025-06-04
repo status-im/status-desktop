@@ -27,8 +27,6 @@ SettingsPage {
     property int memberRole
     property bool editable: true
 
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     signal kickUserClicked(string id)
     signal banUserClicked(string id, bool deleteAllMessages)
     signal unbanUserClicked(string id)
@@ -150,7 +148,6 @@ SettingsPage {
             searchString: memberSearch.text
             rootStore: root.rootStore
             memberRole: root.memberRole
-            cbGetEmojiHash: root.cbGetEmojiHash
 
             onKickUserClicked: {
                 kickBanPopup.mode = KickBanPopup.Mode.Kick

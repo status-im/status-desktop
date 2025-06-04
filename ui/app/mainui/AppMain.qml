@@ -1917,8 +1917,6 @@ Item {
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
 
-                                cbGetEmojiHash: appMain.utilsStore.getEmojiHash
-
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -2171,8 +2169,6 @@ Item {
                                 // Unfurling related data:
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
-
-                                cbGetEmojiHash: appMain.utilsStore.getEmojiHash
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);

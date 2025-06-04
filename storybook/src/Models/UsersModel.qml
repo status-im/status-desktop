@@ -7,6 +7,7 @@ ListModel {
         {
             pubKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
             compressedPubKey: "zQ3shQBu4PRDX17vewYyvSczbTj344viTXxcMNvQLeyQsBDF4",
+            emojiHash: JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"]),
             onlineStatus: Constants.onlineStatus.online,
             isContact: true,
             isBlocked: false,
@@ -33,6 +34,7 @@ ListModel {
         },
         {
             pubKey: "0x043a8ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
+            emojiHash: JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️","🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎"]),
             compressedPubKey: "zQ3shQBAAPRDX17vewYyvSczbTj344viTXxcMNvQLeyQsBDF4",
             onlineStatus: Constants.onlineStatus.inactive,
             isContact: false,
@@ -59,6 +61,7 @@ ListModel {
         },
         {
             pubKey: "0x043a7ed0e9752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
+            emojiHash: JSON.stringify(["🏮","🤷🏻‍♂️", "🤦🏻", "📣", "👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"]),
             compressedPubKey: "zQ3shQ7u3PRDX17vewYyvSczbTj344viTXxcMNvQLeyQsCDF4",
             onlineStatus: Constants.onlineStatus.inactive,
             isContact: false,
@@ -84,6 +87,7 @@ ListModel {
         },
         {
             pubKey: "0x04d1bed192343f470f1257",
+            emojiHash: JSON.stringify(["👨🏻‍🍼", "📣", "🤎", "👷🏽", "😺", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "🥞", "🔃", "🧝🏽‍♂️"]),
             compressedPubKey: "zQ3shQAL4PRDX17vewYyvSczbTj344viTXxcMNvQLeyQsBDF4",
             onlineStatus: Constants.onlineStatus.online,
             isContact: true,
@@ -109,6 +113,7 @@ ListModel {
         },
         {
             pubKey: "0x04d1bed192343f470f1255",
+            emojiHash: JSON.stringify(["🥞", "🔃", "🧝🏽‍♂️", "👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺"]),
             compressedPubKey: "zQ3shQBu4PGDX17vewYyvSczbTj344viTXxcMNvQLeyQsBD1A",
             onlineStatus: Constants.onlineStatus.online,
             isContact: false,
@@ -132,6 +137,7 @@ ListModel {
         },
         {
             pubKey: "0x04d1bed192343f470fabc",
+            emojiHash: JSON.stringify(["🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🥞", "🔃", "🧝🏽‍♂️"]),
             compressedPubKey: "zQ3shQBk4PRDX17vewYyvSczbTj344viTXxcMNvQLeyQsB994",
             onlineStatus: Constants.onlineStatus.inactive,
             isContact: true,

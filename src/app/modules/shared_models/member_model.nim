@@ -35,6 +35,7 @@ type
     RequestToJoinLoading
     AirdropAddress
     MembershipRequestState
+    EmojiHash
 
 QtObject:
   type
@@ -104,7 +105,8 @@ QtObject:
       ModelRole.RequestToJoinId.int: "requestToJoinId",
       ModelRole.RequestToJoinLoading.int: "requestToJoinLoading",
       ModelRole.AirdropAddress.int: "airdropAddress",
-      ModelRole.MembershipRequestState.int: "membershipRequestState"
+      ModelRole.MembershipRequestState.int: "membershipRequestState",
+      ModelRole.EmojiHash.int: "emojiHash"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -175,6 +177,8 @@ QtObject:
       result = newQVariant(item.airdropAddress)
     of ModelRole.MembershipRequestState:
       result = newQVariant(item.membershipRequestState.int)
+    of ModelRole.EmojiHash:
+      result = newQVariant(item.emojiHash)
 
   proc addItem*(self: Model, item: MemberItem) =
     let modelIndex = newQModelIndex()
