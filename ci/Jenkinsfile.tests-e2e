@@ -66,7 +66,7 @@ pipeline {
   }
 
   environment {
-    SQUISH_DIR = '/opt/squish-runner-7.2.1'
+    SQUISH_DIR = '/opt/squish-runner-9.0.1-qt-5.15'
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
 
