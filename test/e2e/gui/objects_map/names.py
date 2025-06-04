@@ -16,11 +16,8 @@ settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName"
 mainWindow_Save_changes_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "StatusButton", "visible": True}
 closeCrossPopupButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 
-# Main right panel
-mainWindow_RighPanel = {"container": statusDesktop_mainWindow, "type": "ColumnLayout", "objectName": "mainRightView", "visible": True}
-
 # Main left panel (Chat, wallet, swaps, communities portal and settings buttons container)
-mainWindow_scrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
+mainWindow_scrollView_StatusScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 mainWindow_LeftPanelNavBar = {"container": statusDesktop_mainWindow, "objectName": "statusAppNavBar", "type": "StatusAppNavBar", "visible": True}
 
 # First half of left main panel: chat button, wallet button, swap button
@@ -53,14 +50,6 @@ o_StatusListView = {"container": statusDesktop_mainWindow_overlay, "type": "Popu
 # COMPONENT NAMES
 
 """ Onboarding """
-# Before you get started Popup
-acknowledge_checkbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "acknowledgeCheckBox", "type": "StatusCheckBox", "visible": True}
-acknowledgeIndicator = {"container": acknowledge_checkbox, "objectName": "indicator", "type": "Item", "visible": True}
-termsOfUseCheckBox_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName":"termsOfUseCheckBox", "type": "StatusCheckBox", "visible": True}
-termsOfUseIndicator = {"container": termsOfUseCheckBox_StatusCheckBox, "objectName": "indicator", "type": "Item", "visible": True}
-getStartedStatusButton_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "getStartedStatusButton", "type": "StatusButton", "visible": True}
-termsOfUseLink_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "termsOfUseLink", "type": "StatusBaseText", "visible": True}
-privacyPolicyLink_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "privacyPolicyLink", "type": "StatusBaseText", "visible": True}
 
 # Back Up Your Seed Phrase Popup
 o_PopupItem = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
@@ -85,9 +74,6 @@ completeAndDeleteSeedPhraseButton = {"container": statusDesktop_mainWindow_overl
 contactRequest_ChatKey_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_ChatKey_Input", "type": "TextEdit"}
 contactRequest_SayWhoYouAre_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_SayWhoYouAre_Input", "type": "TextEdit"}
 contactRequest_Send_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_Send_Button", "type": "StatusButton"}
-
-# Change Language Popup
-close_the_app_now_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 
 # User Status Profile Menu
 onlineIdentifierProfileHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "onlineIdentifierProfileHeader", "type": "ProfileHeader", "visible": True}
@@ -125,16 +111,6 @@ o_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "profile
 o_copy_icon_CopyButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
 o_EmojiHash = {"container": statusDesktop_mainWindow_overlay, "type": "EmojiHash", "unnamed": 1, "visible": True}
 profileLinkInput_StatusBaseInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "profileLinkInput", "type": "StatusBaseInput", "visible": True}
-
-# Welcome Status Popup
-betaConsent_StatusModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaStatusModal", "type": "StatusModal", "visible": True}
-agreeToUse_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaAgreeCheckBox", "type": "StatusCheckBox", "visible": True}
-readyToUse_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaReadyCheckBox", "type": "StatusCheckBox", "visible": True}
-i_m_ready_to_use_Status_Desktop_Beta_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "objectName": "desktopBetaStatusButton", "visible": True}
-
-# Keys Exist Popup
-headline_StatusTitleSubtitle = {"container": statusDesktop_mainWindow_overlay, "id": "headline", "type": "StatusTitleSubtitle", "unnamed": 1, "visible": True}
-keys_exist_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
 # Share Usage Data Popup
 not_now_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "notShareMetricsButton", "type": "StatusFlatButton", "visible": True}
@@ -629,7 +605,7 @@ mainWindow_WalletLayout = {"container": statusDesktop_mainWindow, "type": "Walle
 
 # Left Wallet Panel
 mainWallet_LeftTab = {"container": statusDesktop_mainWindow, "objectName": "walletLeftTab", "type": "LeftTabView", "visible": True}
-mainWallet_Saved_Addresses_Button = {"container": mainWindow_RighPanel, "objectName": "savedAddressesBtn", "type": "StatusFlatButton"}
+mainWallet_Saved_Addresses_Button = {"container": statusDesktop_mainWindow, "objectName": "savedAddressesBtn", "type": "StatusFlatButton", "visible": True}
 walletAccounts_StatusListView = {"container": statusDesktop_mainWindow, "objectName": "walletAccountsListView", "type": "StatusListView", "visible": True}
 mainWallet_All_Accounts_Button = {"container": walletAccounts_StatusListView, "objectName": "allAccountsBtn", "type": "Button", "visible": True}
 mainWallet_Add_Account_Button = {"container": statusDesktop_mainWindow, "objectName": "addAccountButton", "type": "StatusRoundButton", "visible": True}

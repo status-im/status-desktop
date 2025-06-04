@@ -1,5 +1,5 @@
 from objectmaphelper import *
-from gui.objects_map.names import statusDesktop_mainWindow, mainWindow_RighPanel, statusDesktop_mainWindow_overlay
+from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
 
 mainWindow_WalletLayout = {"container": statusDesktop_mainWindow, "objectName": "walletLayoutReal", "type": "WalletLayout", "visible": True}
 
