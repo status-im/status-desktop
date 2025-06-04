@@ -229,7 +229,7 @@ void ObjectProxyModel::emitAllDataChanged()
     if (count == 0)
         return;
 
-    if (m_expectedRoles.isEmpty())
+    if (m_exposedRolesSet.isEmpty())
         return;
 
     QVector<int> roles(m_exposedRolesSet.cbegin(),
