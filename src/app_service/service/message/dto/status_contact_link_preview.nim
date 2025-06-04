@@ -1,4 +1,5 @@
 import json, stew/shims/strformat, NimQml, chronicles
+import app/global/global_singleton
 import link_preview_thumbnail
 import ../../contacts/dto/contact_details
 
@@ -10,6 +11,7 @@ QtObject:
     displayName: string
     description: string
     icon: LinkPreviewThumbnail
+    emojiHash: string
 
   proc setup*(self: StatusContactLinkPreview) =
     self.QObject.setup()
@@ -18,13 +20,14 @@ QtObject:
   proc delete*(self: StatusContactLinkPreview) =
     self.QObject.delete()
 
-  proc newStatusContactLinkPreview*(publicKey: var string, displayName: string, description: string, icon: LinkPreviewThumbnail): StatusContactLinkPreview =
+  proc newStatusContactLinkPreview*(publicKey: var string, displayName: string, description: string, icon: LinkPreviewThumbnail, emojiHash: string): StatusContactLinkPreview =
     new(result, delete)
     result.setup()
     result.publicKey = publicKey
     result.displayName = displayName
     result.description = description
     result.icon.copy(icon)
+    result.emojiHash = emojiHash
 
   proc publicKeyChanged*(self: StatusContactLinkPreview) {.signal.}
   proc getPublicKey*(self: StatusContactLinkPreview): string {.slot.} =
@@ -49,13 +52,20 @@ QtObject:
 
   proc getIcon*(self: StatusContactLinkPreview): LinkPreviewThumbnail =
     result = self.icon
-  
+
+  proc emojiHashChanged*(self: StatusContactLinkPreview) {.signal.}
+  proc getEmojiHash*(self: StatusContactLinkPreview): string {.slot.} =
+    result = self.emojiHash
+  QtProperty[string] emojiHash:
+    read = getEmojiHash
+    notify = emojiHashChanged
 
   proc toStatusContactLinkPreview*(jsonObj: JsonNode): StatusContactLinkPreview =
     var publicKey: string
     var displayName: string
     var description: string
     var icon: LinkPreviewThumbnail
+    var emojiHash: string
 
     discard jsonObj.getProp("publicKey", publicKey)
     discard jsonObj.getProp("displayName", displayName)
@@ -65,14 +75,17 @@ QtObject:
     if jsonObj.getProp("icon", iconJson):
       icon = toLinkPreviewThumbnail(iconJson)
 
-    result = newStatusContactLinkPreview(publicKey, displayName, description, icon)
+    discard jsonObj.getProp("emojiHash", emojiHash)
+
+    result = newStatusContactLinkPreview(publicKey, displayName, description, icon, emojiHash)
 
   proc `$`*(self: StatusContactLinkPreview): string =
     result = fmt"""StatusContactLinkPreview(
       publicKey: {self.publicKey},
       displayName: {self.displayName},
       description: {self.description},
-      icon: {self.icon}
+      icon: {self.icon},
+      emojiHash: {self.emojiHash}
     )"""
 
   proc `%`*(self: StatusContactLinkPreview): JsonNode =
@@ -80,11 +93,17 @@ QtObject:
       "publicKey": self.publicKey,
       "displayName": self.displayName,
       "description": self.description,
-      "icon": self.icon
+      "icon": self.icon,
+      "emojiHash": self.emojiHash
     }
 
   proc empty*(self: StatusContactLinkPreview): bool =
     return self.publicKey.len == 0
+
+  proc getEmojiHashAsJson*(self: StatusContactLinkPreview, publicKey: string): string =
+    if publicKey == "" or not singletonInstance.utils.isChatKey(publicKey):
+      return ""
+    return singletonInstance.utils.getEmojiHashAsJson(publicKey)
 
   proc setContactInfo*(self: StatusContactLinkPreview, contactDetails: ContactDetails): bool =
     if self.publicKey != contactDetails.dto.id:
@@ -101,5 +120,7 @@ QtObject:
       self.descriptionChanged()
     
     self.icon.update(0, 0, contactDetails.dto.image.thumbnail, "")
+
+    self.emojiHash = self.getEmojiHashAsJson(self.publicKey)
     
     return true

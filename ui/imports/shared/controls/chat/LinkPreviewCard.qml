@@ -21,8 +21,6 @@ CalloutCard {
     readonly property CommunityData communityData: CommunityData { }
     readonly property ChannelData channelData: ChannelData { }
 
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     property int type: Constants.LinkPreviewType.NoPreview
 
     property bool highlight: false
@@ -117,10 +115,10 @@ CalloutCard {
             EmojiHash {
                 Layout.topMargin: 4
                 Layout.bottomMargin: 6
-                visible: root.type === Constants.LinkPreviewType.StatusContact
-                emojiHash: root.cbGetEmojiHash(root.userData.publicKey)
-                oneRow: true
                 objectName: "linkPreviewEmojiHash"
+                visible: root.type === Constants.LinkPreviewType.StatusContact
+                emojiHash: JSON.parse(root.userData.emojiHash)
+                oneRow: true
             }
             StatusBaseText {
                 id: description

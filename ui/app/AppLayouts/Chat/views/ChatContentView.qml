@@ -69,9 +69,6 @@ ColumnLayout {
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
 
-    // Utils store data
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
@@ -122,8 +119,6 @@ ColumnLayout {
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
-
-            cbGetEmojiHash: root.cbGetEmojiHash
 
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)

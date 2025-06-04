@@ -160,9 +160,6 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    // Utils store data
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
             return false
@@ -988,7 +985,6 @@ Loader {
                         highlightLink: delegate.hoveredLink
                         areTestNetworksEnabled: root.areTestNetworksEnabled
                         formatBalance: root.formatBalance
-                        cbGetEmojiHash: root.cbGetEmojiHash
                         onImageClicked: (image, mouse, imageSource, url) => {
                             d.onImageClicked(image, mouse, imageSource, url)
                         }
