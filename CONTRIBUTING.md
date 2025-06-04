@@ -65,19 +65,19 @@ Refer to the table below to see which file you should use for your operating sys
    </td>
   </tr>
   <tr>
-   <td>StatusIm-Desktop-W.XX.Y-rc.Z-dirty-0d22be-aarch64.dmg
+   <td>StatusIm-Desktop-W.XX.Y-rc.Z-0d22be-aarch64.dmg
    </td>
    <td>macOS (Apple Silicon / arm)
    </td>
   </tr>
   <tr>
-   <td>StatusIm-Desktop-W.XX.Y-rc.Z-dirty-0d22be-x86_64.tar.gz
+   <td>StatusIm-Desktop-W.XX.Y-rc.Z-0d22be-x86_64.tar.gz
    </td>
    <td>Linux (general, tarball)
    </td>
   </tr>
   <tr>
-   <td>StatusIm-Desktop-W.XX.Y-rc.Z-dirty-0d22be-x86_64.tar.gz.asc
+   <td>StatusIm-Desktop-W.XX.Y-rc.Z-0d22be-x86_64.tar.gz.asc
    </td>
    <td>Linux (general, signature file)
    </td>
