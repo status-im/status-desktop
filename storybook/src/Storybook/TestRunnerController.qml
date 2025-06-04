@@ -47,7 +47,7 @@ QtObject {
         property bool aborted: false
         property bool running: false
 
-        function processFinishedHandler(exitCode, exitStatus) {
+        function processFinishedHandler(exitCode: int, exitStatus: int) {
             root.finished(exitCode, d.aborted, exitStatus !== 0)
 
             d.running = false
