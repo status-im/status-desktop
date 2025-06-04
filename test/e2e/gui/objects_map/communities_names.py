@@ -1,4 +1,4 @@
-from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay, mainWindow_StatusWindow
+from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
 from objectmaphelper import *
 
 # Map for communities screens, views locators
@@ -36,7 +36,7 @@ channel_identicon_StatusSmartIdenticon = {"container": None, "id": "identicon", 
 channel_name_StatusBaseText = {"container": None, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_createChannelOrCategoryBtn_StatusBaseText = {"container": mainWindow_communityColumnView_CommunityColumnView, "objectName": "createChannelOrCategoryBtn", "type": "StatusBaseText", "visible": True}
 create_channel_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "createCommunityChannelBtn", "type": "StatusMenuItem", "visible": True}
-mainWindow_Join_Community_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "type": "StatusButton", "unnamed": 1, "visible": True}
+mainWindow_Join_Community_StatusButton = {"container": statusDesktop_mainWindow, "type": "StatusButton", "unnamed": 1, "visible": True}
 
 # Banned Panel
 mainWindow_CommunityBannedMemberPanel = {"container": statusDesktop_mainWindow, "objectName": "communityBannedMemberPanel", "type": "CommunityBannedMemberCenterPanel", "visible": True}
@@ -57,7 +57,7 @@ mute_Community_StatusMenuItem = {"checkable": False, "container": statusDesktop_
 leave_Community_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "leaveCommunityMenuItem", "type": "StatusMenuItem", "visible": True}
 
 # Tool Bar
-mainWindow_statusToolBar_StatusToolBar = {"container": mainWindow_StatusWindow, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}
+mainWindow_statusToolBar_StatusToolBar = {"container": statusDesktop_mainWindow, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}
 statusToolBar_chatToolbarMoreOptionsButton = {"container": mainWindow_statusToolBar_StatusToolBar, "objectName": "chatToolbarMoreOptionsButton", "type": "StatusFlatRoundButton", "visible": True}
 delete_Channel_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "deleteOrLeaveMenuItem", "type": "StatusMenuItem", "visible": True}
 edit_Channel_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "editChannelMenuItem", "type": "StatusMenuItem", "visible": True}
@@ -68,12 +68,12 @@ statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton = {"checkable": False, "c
 statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip = {"container": mainWindow_statusToolBar_StatusToolBar, "objectName": "StatusChatInfo_pinText", "type": "TruncatedTextWithTooltip", "visible": True}
 
 # Chat
-mainWindow_ChatMessagesView = {"container": mainWindow_StatusWindow, "type": "ChatMessagesView", "unnamed": 1, "visible": True}
+mainWindow_ChatMessagesView = {"container": statusDesktop_mainWindow, "type": "ChatMessagesView", "unnamed": 1, "visible": True}
 mainWindow_ChatColumnView = {"container": mainWindow_communityLoader_Loader, "type": "ChatColumnView", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_channelIdentifierNameText_StyledText = {"container": mainWindow_ChatColumnView, "objectName": "channelIdentifierNameText", "type": "StyledText", "visible": True}
 chatMessageViewDelegate_Welcome = {"container": mainWindow_ChatColumnView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon = {"container": mainWindow_ChatMessagesView, "objectName": "channelIdentifierSmartIdenticon", "type": "StatusSmartIdenticon", "visible": True}
-mainWindow_chatLogView_StatusListView = {"container": mainWindow_StatusWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
+mainWindow_chatLogView_StatusListView = {"container": statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
 chatLogView_chatMessageViewDelegate_MessageView = {"container": mainWindow_chatLogView_StatusListView, "index": 0, "objectName": "chatMessageViewDelegate", "type": "MessageView", "visible": True}
 
 # Community Settings
@@ -100,9 +100,9 @@ memberItem_Ban_StatusButton = {"container": membersListViews_ListView, "objectNa
 memberItem_Unban_StatusButton = {"container": membersListViews_ListView, "objectName": "MemberListItem_UnbanButton", "type": "StatusButton", "visible": True}
 
 # Tokens View
-mainWindow_mintPanel_MintTokensSettingsPanel = {"container": mainWindow_StatusWindow, "id": "mintPanel", "type": "MintTokensSettingsPanel", "unnamed": 1, "visible": True}
-mainWindow_MintedTokensView = {"container": mainWindow_StatusWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
-mainWindow_Mint_token_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
+mainWindow_mintPanel_MintTokensSettingsPanel = {"container": statusDesktop_mainWindow, "id": "mintPanel", "type": "MintTokensSettingsPanel", "unnamed": 1, "visible": True}
+mainWindow_MintedTokensView = {"container": statusDesktop_mainWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
+mainWindow_Mint_token_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
 welcomeSettingsTokens_Image = {"container": mainWindow_MintedTokensView, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
 welcomeSettingsTokens_Title = {"container": mainWindow_MintedTokensView, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
 welcomeSettingsTokensSubtitle = {"container": mainWindow_MintedTokensView, "objectName": "welcomeSettingsSubtitle", "type": "StatusBaseText", "visible": True}
@@ -124,7 +124,7 @@ token_master_StatusBaseText = {"container": tokenMasterToken_InfoPanel, "type": 
 o_Flickable = {"container": mainWindow_OwnerTokenWelcomeView, "type": "Flickable", "unnamed": 1, "visible": True}
 
 # Edit owner token view
-mainWindow_editOwnerTokenView_EditOwnerTokenView = {"container": mainWindow_StatusWindow, "id": "editOwnerTokenView", "type": "EditOwnerTokenView", "unnamed": 1, "visible": True}
+mainWindow_editOwnerTokenView_EditOwnerTokenView = {"container": statusDesktop_mainWindow, "id": "editOwnerTokenView", "type": "EditOwnerTokenView", "unnamed": 1, "visible": True}
 editOwnerTokenView_Flickable = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "Flickable", "unnamed": 1, "visible": True}
 editOwnerTokenView_CustomComboItem = {"checkable": False, "container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "CustomComboItem", "unnamed": 1, "visible": True}
 editOwnerTokenView_netFilter_NetworkFilter = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "objectName": "netFilter", "type": "NetworkFilter", "visible": True}
@@ -152,7 +152,7 @@ editOwnerTokenView_token_sale_icon_StatusIcon = {"container": mainWindow_editOwn
 editOwnerTokenView_Fees_FeesBox = {"container": mainWindow_editOwnerTokenView_EditOwnerTokenView, "type": "FeesBox", "unnamed": 1, "visible": True}
 
 # Minted tokens view
-mainWindow_MintedTokensView = {"container": mainWindow_StatusWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
+mainWindow_MintedTokensView = {"container": statusDesktop_mainWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
 specialCollectible_PrivilegedTokenArtworkPanel = {"container": mainWindow_MintedTokensView, "id": "specialCollectible", "type": "PrivilegedTokenArtworkPanel", "unnamed": 1, "visible": True}
 specialCollectible_PrivilegedTokenArtworkPanel_2 = {"container": mainWindow_MintedTokensView, "id": "specialCollectible", "occurrence": 2, "type": "PrivilegedTokenArtworkPanel", "unnamed": 1, "visible": True}
 collectibleView_control = {"container": mainWindow_MintedTokensView, "objectName": "collectibleViewControl", "type": "CollectibleView", "visible": True}
@@ -160,10 +160,10 @@ token_sale_icon_StatusIcon = {"container": mainWindow_MintedTokensView, "objectN
 crown_icon_StatusIcon = {"container": mainWindow_MintedTokensView, "objectName": "crown-icon", "type": "StatusIcon", "visible": True}
 
 # Airdrops View
-mainWindow_airdropPanel_AirdropsSettingsPanel = {"container": mainWindow_StatusWindow, "id": "airdropPanel", "type": "AirdropsSettingsPanel", "unnamed": 1, "visible": True}
+mainWindow_airdropPanel_AirdropsSettingsPanel = {"container": statusDesktop_mainWindow, "id": "airdropPanel", "type": "AirdropsSettingsPanel", "unnamed": 1, "visible": True}
 mainWindow_WelcomeSettingsView = {"container": statusDesktop_mainWindow, "type": "WelcomeSettingsView", "unnamed": 1, "visible": True}
 mainLayout = {"container": mainWindow_WelcomeSettingsView, "id": "mainLayout", "type": "ColumnLayout", "unnamed": 1, "visible": True}
-mainWindow_New_Airdrop_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
+mainWindow_New_Airdrop_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
 welcomeSettingsAirdrops_Image = {"container": mainWindow_WelcomeSettingsView, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
 welcomeSettingsAirdrops_Title = {"container": mainWindow_WelcomeSettingsView, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
 welcomeSettingsAirdrops_Subtitle = {"container": mainWindow_WelcomeSettingsView, "objectName": "welcomeSettingsSubtitle", "type": "StatusBaseText", "visible": True}

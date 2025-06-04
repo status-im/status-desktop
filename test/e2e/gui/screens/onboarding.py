@@ -11,10 +11,9 @@ from constants.onboarding import OnboardingScreensHeaders
 import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
-from gui.components.onboarding.keys_already_exist_popup import KeysAlreadyExistPopup
 from gui.components.onboarding.login_by_syncing_checklist import LogInBySyncingChecklist
 from gui.components.onboarding.login_users_list_popup import OnboardingLoginUsersPopup
-from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup, HelpUsImproveStatusView
+from gui.components.onboarding.share_usage_data_popup import HelpUsImproveStatusView
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.components.splash_screen import SplashScreen
@@ -269,11 +268,6 @@ class SeedPhraseInputView(OnboardingView):
     def import_seed_phrase(self):
         self._import_button.click()
         return YourProfileView().wait_until_appears()
-
-    @allure.step('Click import button')
-    def click_import_seed_phrase_button(self):
-        self._import_button.click()
-        return KeysAlreadyExistPopup().wait_until_appears()
 
 
 class KeycardInitView(OnboardingView):
