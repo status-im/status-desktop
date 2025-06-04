@@ -22,10 +22,11 @@
 
 ## 🪲 Desktop Status App Community Testing
 
-> [!IMPORTANT]  
-> In addition to the Status Software Terms of Use and Status Software Privacy Policy, you agree to the following when you use this test build of Status Software (“Status Software Release Candidate Build”):
->
-> Status Software Release Candidate Build is provided to you for evaluation purposes only. By using this build, you acknowledge that, among other issues with test builds, it may contain bugs, incomplete or other test features or have unexpected behaviours. You use Status Software Release Candidate Build at your own risk. We are not responsible for any losses or damages you might incur or suffer from using Status Software Release Candidate Build. Please report any potential issues and feedback you might have to help us improve Status Software.
+### Disclaimer
+
+In addition to the Status Software Terms of Use and Status Software Privacy Policy, you agree to the following when you use this test build of Status Software (“Status Software Release Candidate Build”):
+
+Status Software Release Candidate Build is provided to you for evaluation purposes only. By using this build, you acknowledge that, among other issues with test builds, it may contain bugs, incomplete or other test features or have unexpected behaviours. You use Status Software Release Candidate Build at your own risk. We are not responsible for any losses or damages you might incur or suffer from using Status Software Release Candidate Build. Please report any potential issues and feedback you might have to help us improve Status Software.
 
 
 
