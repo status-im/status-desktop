@@ -18,7 +18,7 @@
 - Check our [Architecture Docs](docs/architecture.md).
 - Read our [QML Architecture Guidelines](guidelines/QML_ARCHITECTURE_GUIDE.md).
 - Check out [good first issues](https://github.com/status-im/status-desktop/contribute) to get involved.
-- Join the `#feedback-desktop` channel on [Status](hhttps://status.app/cc/G-EAAORobqgnsUPSVCLaSJr855iXTIdQiY1Q0ckBe8dWWEBpUAs9s8DTjWEpvsmpE83Izx1JWQuZrWWKUoxiXCwdtB-wPBzyvv_n9a0F61xTaPZE7BEJDC7Ly_WcmQ4tHRAKnPfXE_JUtEX_3NhnXQN0eh4ue0D77dWvaDpDrSi0U0CaGLZ-pqD_iV0z9RMFE2LKulDZdwL40etJ8lxjyTFoxS0lUhdWKinIOk8qBmJJpCmsqMrSklEU#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9).
+- Join the [#feedback-desktop](https://status.app/cc/G-EAAORobqgnsUPSVCLaSJr855iXTIdQiY1Q0ckBe8dWWEBpUAs9s8DTjWEpvsmpE83Izx1JWQuZrWWKUoxiXCwdtB-wPBzyvv_n9a0F61xTaPZE7BEJDC7Ly_WcmQ4tHRAKnPfXE_JUtEX_3NhnXQN0eh4ue0D77dWvaDpDrSi0U0CaGLZ-pqD_iV0z9RMFE2LKulDZdwL40etJ8lxjyTFoxS0lUhdWKinIOk8qBmJJpCmsqMrSklEU#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9) channel on Status.
 
 ## 🪲 Desktop Status App Community Testing
 
@@ -66,7 +66,7 @@ Refer to the table below to see which file you should use for your operating sys
   <tr>
    <td>StatusIm-Desktop-2.34.0-rc.4-dirty-0d22be-aarch64.dmg
    </td>
-   <td>macOS (Apple Silicon / M1/M2)
+   <td>macOS (Apple Silicon / arm)
    </td>
   </tr>
   <tr>
