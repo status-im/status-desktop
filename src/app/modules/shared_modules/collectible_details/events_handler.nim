@@ -42,8 +42,8 @@ QtObject:
       var responseJson: JsonNode
       responseJson = parseJson(data.message)
 
-      if responseJson.kind != JObject:
-        error "unexpected json type", kind = responseJson.kind
+      if responseJson.kind == JNull:
+        error "message is not json string", message=data.message
         return
       let callback = self.eventHandlers[data.eventType]
       callback(responseJson)

@@ -350,8 +350,11 @@ QtObject:
 
           if len(accounts) > 0:
             accountAddress = accounts[0]
-            let res = self.walletAccountService.getAccountByAddress(accountAddress)
-            accountName = res.name
+            let acc = self.walletAccountService.getAccountByAddress(accountAddress)
+            if acc.isNil:
+              error "getAccountByAddress result is nil", accountAddress=accountAddress
+              continue
+            accountName = acc.name
 
           if coll.isFirst.isSome():
             isFirst = coll.isFirst.get()
