@@ -2342,7 +2342,6 @@ Item {
     Loader {
         id: shellLoader
         anchors.fill: parent
-        asynchronous: true
         focus: active
         active: appMain.featureFlagsStore.shellEnabled
 
@@ -2382,7 +2381,9 @@ Item {
             hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
             aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
 
-            onItemActivated: function(sectionType, itemId) {
+            onItemActivated: function(key, sectionType, itemId) {
+                shellAdaptor.setTimestamp(key, new Date().valueOf())
+
                 if (sectionType === Constants.appSection.profile) {
                     if (itemId == Constants.settingsSubsection.backUpSeed) {
                         return Global.openBackUpSeedPopup()
@@ -2402,6 +2403,11 @@ Item {
                 }
 
                 globalConns.onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
+            }
+            onItemPinRequested: function(key, pin) {
+                shellAdaptor.setPinned(key, pin)
+                if (pin)
+                    shellAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
             }
             onDappDisconnectRequested: function(dappUrl) {
                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
