@@ -14,6 +14,7 @@ TabBar {
         clip: true
         spacing: root.spacing
         orientation: ListView.Horizontal
+        boundsBehavior: Flickable.StopAtBounds
         flickableDirection: Flickable.AutoFlickIfNeeded
         snapMode: ListView.SnapToItem
     }
