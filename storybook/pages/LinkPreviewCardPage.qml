@@ -46,11 +46,6 @@ SplitView {
         LinkPreviewCard {
             id: previewCard
 
-            function getEmojiHash(publicKey) {
-                return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
-            }
-
-            cbGetEmojiHash: getEmojiHash
             type: 1
             linkData {
                 title: titleInput.text
@@ -65,6 +60,7 @@ SplitView {
                 bio: bioInput.text
                 image: root.image
                 ensVerified: false
+                emojiHash: JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
             }
             communityData {
                 name: titleInput.text

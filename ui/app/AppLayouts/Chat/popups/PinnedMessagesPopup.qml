@@ -140,8 +140,6 @@ StatusDialog {
                     gifUnfurlingEnabled: root.gifUnfurlingEnabled
                     neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
-                    cbGetEmojiHash: root.utilsStore.getEmojiHash
-
                     // Unfurling related requests:
                     onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 

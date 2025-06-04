@@ -64,6 +64,7 @@ LinkPreviewCard {
         bio: statusContactPreview ? statusContactPreview.description : ""
         image: statusContactPreviewThumbnail ? (statusContactPreviewThumbnail.url || statusContactPreviewThumbnail.dataUri) || "" : ""
         ensVerified: false // not supported yet
+        emojiHash: statusContactPreview ? statusContactPreview.emojiHash : ""
     }
     communityData {
         name: statusCommunityPreview ? statusCommunityPreview.displayName : ""

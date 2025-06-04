@@ -56,9 +56,6 @@ Item {
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
 
-    // Utils store data
-    property var cbGetEmojiHash: function (publicKey) { console.error("Implement me"); return ""}
-
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
     signal showReplyArea(string messageId, string author)
@@ -387,8 +384,6 @@ Item {
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
-
-            cbGetEmojiHash: root.cbGetEmojiHash
 
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
