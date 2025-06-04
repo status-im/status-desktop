@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 STATUS_DESKTOP := $(shell git rev-parse --show-toplevel)
 OS?=android
-QT_VERSION?=6
+QT_MAJOR?=6
 
 # verbosity level
 V := 0
@@ -11,9 +11,9 @@ endif
 
 # path macros
 ROOT_DIR := $(STATUS_DESKTOP)/mobile
-BIN_PATH := $(ROOT_DIR)/bin/$(OS)/qt$(QT_VERSION)
-LIB_PATH := $(ROOT_DIR)/lib/$(OS)/qt$(QT_VERSION)
-BUILD_PATH := $(ROOT_DIR)/build/$(OS)/qt$(QT_VERSION)
+BIN_PATH := $(ROOT_DIR)/bin/$(OS)/qt$(QT_MAJOR)
+LIB_PATH := $(ROOT_DIR)/lib/$(OS)/qt$(QT_MAJOR)
+BUILD_PATH := $(ROOT_DIR)/build/$(OS)/qt$(QT_MAJOR)
 SCRIPTS_PATH := $(ROOT_DIR)/scripts
 
 export LIB_DIR=$(LIB_PATH)

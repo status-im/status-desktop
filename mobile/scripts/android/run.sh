@@ -125,7 +125,7 @@ else
 fi
 
 echo "App installed. Starting app"
-if [ "$QT_VERSION" = "6" ]; then
+if [ "$QT_MAJOR" = "6" ]; then
     # For Qt6, use the new package name
     DEFAULT_ACTIVITY_NAME="im.status.tablet/org.qtproject.qt.android.bindings.QtActivity"
 else

@@ -1,30 +1,51 @@
 name: Android Build APK
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      qt_version:
+        description: 'Qt version to use'
+        required: false
+        default: '6.9.0'
+        type: string
+      architecture:
+        description: 'Target architecture'
+        required: false
+        default: 'arm64'
+        type: choice
+        options:
+          - 'arm64'
+          - 'arm'
+          - 'x86_64'
+          - 'x86'
 
 jobs:
   android-build:
     runs-on: ubuntu-latest
     name: Build Android APK
     container:
-      image: carlonluca/qt-dev:6.9.0
-
-    env:
-      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-      ANDROID_HOME: /opt/android-sdk
-      ANDROID_NDK_HOME: /opt/android-sdk/ndk/27.2.12479018
-      SDK_PATH: /opt/android-sdk
-      ARCH: arm64
-      QT_PATH: /opt/qt/6.9.0
-      QT_HOST_PATH: /opt/qt/6.9.0/gcc_64
-      QT_ANDROID_PATH: /opt/qt/6.9.0/android_arm64_v8a
-      PATH: /opt/qt/6.9.0/android_arm64_v8a/bin:/opt/qt/6.9.0/gcc_64/bin:/opt/qt/6.9.0/gcc_64/libexec:/opt/qt/6.9.0/android_arm64_v8a/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin
-      PKG_CONFIG_PATH: /opt/qt/6.9.0/android_arm64_v8a/lib/pkgconfig
-      ANDROID_ABI: arm64-v8a
-      USE_SYSTEM_NIM: 1
+      image: carlonluca/qt-dev:${{ inputs.qt_version }}
 
     steps:
+      - name: Checkout repo with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Get Qt paths
+        id: qt-paths
+        uses: ./.github/actions/qt-android-arch
+        with:
+          architecture: ${{ inputs.architecture }}
+          qt-version: ${{ inputs.qt_version }}
+
+      - name: Set environment variables
+        run: |
+          echo "ARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=${{ steps.qt-paths.outputs.qt-android-path }}/lib/pkgconfig" >> $GITHUB_ENV
+          echo "USE_SYSTEM_NIM=1" >> $GITHUB_ENV
+          echo "${{ steps.qt-paths.outputs.qt-android-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/libexec:${{ steps.qt-paths.outputs.qt-android-path }}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin" >> $GITHUB_PATH
+
       - name: Install dependencies
         run: |
           apt-get update
@@ -33,7 +54,6 @@ jobs:
           curl https://nim-lang.org/choosenim/init.sh -sSf | sh -s -- -y
           $HOME/.nimble/bin/choosenim 2.0.12
           echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
-          echo ${{env.PATH}} >> "$GITHUB_PATH"
 
       - name: Setup Go 1.22
         uses: actions/setup-go@v5
@@ -46,11 +66,6 @@ jobs:
           go install github.com/go-bindata/go-bindata/v3/go-bindata@latest
           go install go.uber.org/mock/mockgen@v0.4.0
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1
-
-      - name: Checkout repo with submodules
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
   
       - name: Mark repository as safe
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -58,7 +73,8 @@ jobs:
       - name: Build Android APK
         shell: bash
         run: |
-          make mobile-build V=3 USE_SYSTEM_NIM=1
+          make mobile-clean
+          make mobile-build V=3 USE_SYSTEM_NIM=1 -j$(nproc)
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

@@ -1,10 +1,24 @@
 #OS: ios, android
-OS:=$(shell qmake -query QMAKE_XSPEC | grep -o -E '(macx|win32|linux|android|ios))
+QSPEC:=$(shell qmake -query QMAKE_XSPEC)
+ifeq ($(QSPEC),macx-ios-clang)
+OS:=ios
+else ifeq ($(QSPEC),macx-clang)
+OS:=macx
+else ifeq ($(QSPEC),win32-msvc)
+OS:=win32
+else ifeq ($(QSPEC),linux-g++)
+OS:=linux
+else ifeq ($(QSPEC),android-clang)
+OS:=android
+else
+OS:=$(QSPEC)
+endif
+
 HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
 #Architectures: arm64, arm, x86_64. x86_64 is default for simulator
 ARCH?=$(shell uname -m)
 # Detect Qt version from qmake
-QT_VERSION?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
+QT_MAJOR?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
 QT_DIR?=$(shell qmake -query QT_INSTALL_PREFIX)
 MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
@@ -12,37 +26,40 @@ ifeq ($(OS), ios)
 # iOS
 #SDKs: iphonesimulator, iphoneos
 IPHONE_SDK?=iphonesimulator
-ifeq ($(QT_VERSION),5)
+ifeq ($(QT_MAJOR),5)
 IOS_TARGET?=12
 else
 IOS_TARGET?=16
 endif
 
 ifeq ($(IPHONE_SDK), iphoneos)
-	ARCH=arm64
+ARCH=arm64
 else
-	ARCH=x86_64
+ARCH=x86_64
 endif
 else ifeq ($(OS), android)
 
 # Android
 ANDROID_API?=28
-SDK_PATH?=
-ANDROID_NDK_HOME?=
+ANDROID_SDK_ROOT?=
+ANDROID_NDK_ROOT?=
 
-ifeq ($(ANDROID_NDK_HOME),)
-$(error "ANDROID_NDK_HOME is not set. Please set ANDROID_NDK_HOME to the path of your Android NDK.")
+ifeq ($(ANDROID_SDK_ROOT),)
+$(error "ANDROID_SDK_ROOT is not set. Please set ANDROID_SDK_ROOT to the path of your Android SDK.")
 endif
-ifeq ($(SDK_PATH),)
-$(error "SDK_PATH is not set. Please set SDK_PATH to the path of your Android SDK.")
+
+ifeq ($(ANDROID_NDK_ROOT),)
+$(error "ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT to the path of your Android NDK.")
 endif
 else
 $(error "OS=$(OS). OS not supported by build system. Please update qmake to a supported version.")
 endif
 
 # tool macros
-CC := $(MAKEFILE_DIR)/$(OS)/clangWrap.sh
-CXX := $(MAKEFILE_DIR)/$(OS)/clangWrap.sh
+CC := $(abspath $(MAKEFILE_DIR)/$(OS)/clangWrap.sh)
+
+$(info Using CC=$(CC))
+CXX := $(CC)
 
 export COMPILER
 export CC
@@ -50,40 +67,34 @@ export CXX
 export ARCH
 export OS
 export HOST_OS
-export QT_VERSION
+export QT_MAJOR
 export QT_DIR
 
 ifeq ($(OS), ios)
-	export SDK=$(IPHONE_SDK)
-	export IOS_TARGET
-	export CPATH=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)/usr/include/
-	export SDKROOT=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)
-	export LIBRARY_PATH:=${SDKROOT}/usr/lib:${LIBRARY_PATH}
-	export LIB_EXT := .a
+export SDK=$(IPHONE_SDK)
+export IOS_TARGET
+export CPATH=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)/usr/include/
+export SDKROOT=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)
+export LIBRARY_PATH:=${SDKROOT}/usr/lib:${LIBRARY_PATH}
+export LIB_EXT := .a
 else
-	export SDK_PATH
-	export ANDROID_NDK_HOME
-	export ANDROID_NDK_ROOT=${ANDROID_NDK_HOME}
-	export ANDROID_API
-	export ANDROID_HOME=${SDK_PATH}
-	export ANDROID_SDK_ROOT=${SDK_PATH}
-	export ANDROID_SDK=${SDK_PATH}
-	export AR=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ar
-	export AS=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-as
-	export RANLIB=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ranlib
-	export PATH:=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin:${PATH}
+export ANDROID_API
+export AR=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ar
+export AS=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-as
+export RANLIB=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ranlib
+export PATH:=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin:${PATH}
 
-	ifeq ($(ARCH), arm64)
-		export ANDROID_ABI=arm64-v8a
-	else ifeq ($(ARCH), arm)
-		export ANDROID_ABI=armeabi-v7a
-	else
-		export ANDROID_ABI=x86_64
-	endif
-	ifeq ($(QT_VERSION),5)
-		export LIB_SUFFIX= _$(ANDROID_ABI)
-	endif
-	export LIB_EXT := .so
+ifeq ($(ARCH), arm64)
+export ANDROID_ABI=arm64-v8a
+else ifeq ($(ARCH), arm)
+export ANDROID_ABI=armeabi-v7a
+else
+export ANDROID_ABI=x86_64
+endif
+ifeq ($(QT_MAJOR),5)
+export LIB_SUFFIX= _$(ANDROID_ABI)
+endif
+export LIB_EXT := .so
 endif
 
 
@@ -107,10 +118,10 @@ ifeq ($(OS),android)
   endif
   $(info ANDROIDDEPLOYQT: $(ANDROIDDEPLOYQT))
   
-  ifeq ($(ANDROID_NDK_HOME),)
-    $(error ANDROID_NDK_HOME not set)
+  ifeq ($(ANDROID_NDK_ROOT),)
+    $(error ANDROID_NDK_ROOT not set)
   endif
-  $(info NDK: $(ANDROID_NDK_HOME))
+  $(info NDK: $(ANDROID_NDK_ROOT))
   
   ifeq ($(ANDROID_API),)
     $(error ANDROID_API not set)
