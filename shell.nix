@@ -60,6 +60,11 @@ in pkgs.mkShell {
   shellHook = ''
     export MAKEFLAGS="-j$NIX_BUILD_CORES"
     export PATH="${pkgs.lddWrapped}/bin:$PATH"
+
+    # to fix missing openssl3 during lld
+    export LD_LIBRARY_PATH="${pkgs.openssl_3.out}/lib:$LD_LIBRARY_PATH"
+    export LIBRARY_PATH="${pkgs.openssl_3.out}/lib:''${LIBRARY_PATH:-}"
+    export CMAKE_PREFIX_PATH="${pkgs.openssl_3.out}:''${CMAKE_PREFIX_PATH:-}"
   '';
 
   LIBKRB5_PATH = pkgs.libkrb5;
