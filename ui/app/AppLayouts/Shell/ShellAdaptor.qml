@@ -19,6 +19,7 @@ QObject {
     required property var chatsBaseModel
     required property var walletsBaseModel
     required property var dappsBaseModel
+
     required property string searchPhrase
 
     // for Settings
@@ -37,6 +38,46 @@ QObject {
     property bool showWallets: true
     property bool showDapps: true
 
+    /**
+      Provided models structure:
+
+      Common data:
+        key                 [string] - unique identifier of a section across all models, e.g "1;0x3234235"
+        id                  [string] - id of this section
+        sectionType         [int]    - type of this section (Constants.appSection.*)
+        name                [string] - section's name, e.g. "Chat" or "Wallet" or a community name
+        icon                [string] - section's icon (url like or blob)
+        color               [color]  - the section's color
+        banner              [string] - the section's banner image (url like or blob), mostly empty for non-communities
+        hasNotification     [bool]   - whether the section has any notification (w/o denoting the number)
+        notificationsCount  [int]    - number of notifications, if any
+        enabled             [bool]   - whether the section should show in the UI
+
+      Communities:
+        members             [int]   - number of members
+        activeMembers       [int]   - number of active members
+        pending             [bool]  - whether a request to join/spectate is in effect
+        banned              [bool]  - whether we are kicked/banned from this community
+
+      Chats:
+        chatType            [int]   - type of the chat (Constants.chatType.*)
+        onlineStatus        [int]   - online status of the contact (Constants.onlineStatus.*)
+
+      Wallets:
+        walletType          [string] - type of the wallet (Constants.*WalletType)
+        currencyBalance     [string] - user formatted balance of the wallet in fiat (e.g. "1 000,23 CZK")
+
+      Dapps:
+        connectorBadge      [string] - decoration image for the connector used
+
+      Settings:
+        isExperimental      [bool]   - whether the section is experimental (shows the Beta badge)
+
+      Writable layer:
+        pinned             [bool]   - whether the item is pinned in the UI
+        timestamp          [int]    - timestamp of the last user interaction with the item
+    **/
+
     readonly property var shellEntriesModel: d.shellEntriesModel
     Component.onCompleted: Qt.callLater(() => d.shellEntriesModel = filteredCombinedModel) // FIXME bug in SFPM or OPM
 
@@ -45,6 +86,7 @@ QObject {
         property var shellEntriesModel
     }
 
+    // Provides data for the Dock's left (fixed) part; w/o the writable layer
     readonly property var sectionsModel: SortFilterProxyModel {
         sourceModel: root.sectionsBaseModel
         filters: [
@@ -87,6 +129,7 @@ QObject {
         ]
     }
 
+    // Provides data for the Dock's right (variable/pinned) part
     readonly property var pinnedModel: SortFilterProxyModel {
         sourceModel: shellProxyModel
         filters: [
