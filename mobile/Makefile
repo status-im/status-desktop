@@ -1,6 +1,6 @@
 -include ./scripts/EnvVariables.mk
 -include ./scripts/Common.mk
-$(info Configuring build system for $(OS) $(ARCH) with QT $(QT_VERSION))
+$(info Configuring build system for $(OS) $(ARCH) with QT $(QT_MAJOR))
 
 # default rule
 default: makedir all
@@ -25,12 +25,12 @@ $(STATUS_GO_LIB): $(STATUS_GO_FILES) $(STATUS_GO_SCRIPT)
 
 $(STATUS_Q_LIB): $(STATUS_Q_FILES) $(STATUS_Q_SCRIPT) $(STATUS_Q_UI_FILES)
 	@echo "Building StatusQ"
-	@STATUSQ=$(STATUSQ) QT_VERSION=$(QT_VERSION) LIB_SUFFIX=$(LIB_SUFFIX) LIB_EXT=$(LIB_EXT) $(STATUS_Q_SCRIPT) $(HANDLE_OUTPUT)
+	@STATUSQ=$(STATUSQ) QT_MAJOR=$(QT_MAJOR) LIB_SUFFIX=$(LIB_SUFFIX) LIB_EXT=$(LIB_EXT) $(STATUS_Q_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "StatusQ built $(STATUS_Q_LIB)"
 
 $(DOTHERSIDE_LIB): $(DOTHERSIDE_FILES) $(DOTHERSIDE_SCRIPT)
 	@echo "Building DOtherSide"
-	@DOTHERSIDE=$(DOTHERSIDE) QT_VERSION=$(QT_VERSION) LIB_SUFFIX=$(LIB_SUFFIX) LIB_EXT=$(LIB_EXT) $(DOTHERSIDE_SCRIPT) $(HANDLE_OUTPUT)
+	@DOTHERSIDE=$(DOTHERSIDE) QT_MAJOR=$(QT_MAJOR) LIB_SUFFIX=$(LIB_SUFFIX) LIB_EXT=$(LIB_EXT) $(DOTHERSIDE_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "DOtherSide built $(DOTHERSIDE_LIB)"
 
 ifeq ($(OS), ios)
@@ -68,7 +68,7 @@ $(NIM_STATUS_CLIENT_LIB): $(STATUS_DESKTOP_NIM_FILES) $(NIM_STATUS_CLIENT_SCRIPT
 # non-phony targets
 $(TARGET): $(APP_SCRIPT) $(STATUS_GO_LIB) $(STATUS_Q_LIB) $(DOTHERSIDE_LIB) $(OPENSSL_LIB) $(QRCODEGEN_LIB) $(PCRE_LIB) $(NIM_STATUS_CLIENT_LIB) $(STATUS_DESKTOP_RCC) $(WRAPPER_APP_FILES)
 	@echo "Building app"
-	@BIN_DIR=$(BIN_PATH) BUILD_DIR=$(BUILD_PATH) QT_VERSION=$(QT_VERSION) $(APP_SCRIPT) $(HANDLE_OUTPUT)
+	@BIN_DIR=$(BIN_PATH) BUILD_DIR=$(BUILD_PATH) QT_MAJOR=$(QT_MAJOR) $(APP_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "Built $(TARGET)"
 
 # phony rules
@@ -88,7 +88,7 @@ clean: clean-status-go clean-statusq clean-dotherside clean-openssl clean-qrcode
 .PHONY: run
 run: makedir $(TARGET)
 	@echo "Running"
-	@APP=$(TARGET) QT_VERSION=$(QT_VERSION) $(RUN_SCRIPT)
+	@APP=$(TARGET) QT_MAJOR=$(QT_MAJOR) $(RUN_SCRIPT)
 
 .PHONY: clean-status-go
 clean-status-go:

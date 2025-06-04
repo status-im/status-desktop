@@ -155,12 +155,11 @@ This section is for developers who want full control over the build environment.
    export JAVA_HOME=/path/to/jdk
 
    # Set Android SDK and NDK paths
-   export ANDROID_HOME=/path/to/android-sdk
-   export ANDROID_NDK_HOME=/path/to/android-ndk/27.2.12479018
-   export SDK_PATH="$ANDROID_HOME"
+   export ANDROID_SDK_ROOT=/path/to/android-sdk
+   export ANDROID_NDK_ROOT=/path/to/android-ndk/27.2.12479018
 
    # Add Android tools to PATH
-   export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
+   export PATH="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
 
 
    # Add Qt to PATH. Qt6 needs both ios bin and host libexec and host bin (in this order!)
@@ -196,9 +195,8 @@ The build system uses several environment variables to control the build process
 
 #### Android-specific Variables
 - `ANDROID_API`: Android API level (default: 28)
-- `ANDROID_NDK_HOME`: Path to Android NDK
-- `ANDROID_HOME`: Path to Android SDK
-- `SDK_PATH`: Path to Android SDK (used by some build scripts)
+- `ANDROID_NDK_ROOT`: Path to Android NDK
+- `ANDROID_SDK_ROOT`: Path to Android SDK
 - `JAVA_HOME`: Path to JDK installation
 
 #### iOS-specific Variables

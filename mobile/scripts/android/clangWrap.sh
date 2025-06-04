@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-SDK_PATH=${SDK_PATH:-""}
-ANDROID_NDK_HOME=${ANDROID_NDK_HOME:-""}
+ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-""}
+ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT:-""}
 ANDROID_API=${ANDROID_API:-28}
 ARCH=${ARCH:-"arm64"}
 
 HOST_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-CLANG="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/clang"
-SYSROOT="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/sysroot"
+CLANG="${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/clang"
+SYSROOT="${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/sysroot"
 
 TARGET_SUFFIX=""
 
