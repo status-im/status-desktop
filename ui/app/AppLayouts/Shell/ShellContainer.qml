@@ -17,7 +17,13 @@ import utils 1.0
 Control {
     id: root
 
-    required property ShellAdaptor shellAdaptor
+    // grid (see ShellAdaptor for docu)
+    required property var shellEntriesModel
+
+    // dock (see ShellAdaptor for docu)
+    required property var sectionsModel
+    required property var pinnedModel
+
     required property ProfileStores.ProfileStore profileStore
 
     property bool useNewDockIcons: true
@@ -96,7 +102,7 @@ Control {
 
             objectName: "shellGrid"
 
-            model: root.shellAdaptor.shellEntriesModel
+            model: root.shellEntriesModel
 
             leftMargin: d.isNarrowView ? 0 : root.width * .1
             rightMargin: d.isNarrowView ? 0 : root.width * .1
@@ -120,8 +126,8 @@ Control {
             objectName: "shellDock"
 
             useNewDockIcons: root.useNewDockIcons
-            sectionsModel: root.shellAdaptor.sectionsModel
-            pinnedModel: root.shellAdaptor.pinnedModel
+            sectionsModel: root.sectionsModel
+            pinnedModel: root.pinnedModel
 
             onItemActivated: function(key, sectionType, itemId) {
                 root.itemActivated(key, sectionType, itemId)

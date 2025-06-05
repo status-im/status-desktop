@@ -2349,7 +2349,9 @@ Item {
             id: shell
 
             objectName: "shellContainer"
-            shellAdaptor: ShellAdaptor {
+
+            ShellAdaptor {
+                id: shellAdaptor
                 readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
 
                 sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
@@ -2371,6 +2373,10 @@ Item {
 
                 profileId: appMain.profileStore.pubkey
             }
+
+            shellEntriesModel: shellAdaptor.shellEntriesModel
+            sectionsModel: shellAdaptor.sectionsModel
+            pinnedModel: shellAdaptor.pinnedModel
 
             profileStore: appMain.profileStore
 
