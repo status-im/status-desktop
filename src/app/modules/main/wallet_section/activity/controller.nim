@@ -393,7 +393,7 @@ QtObject:
             assets.add(backend_activity.Token(
               tokenType: tokenType,
               chainId: backend_activity.ChainId(addrPerChain.chainId),
-              address: some(parseAddress(addrPerChain.address))
+              address: some(decodeHexAddress(addrPerChain.address))
             ))
 
     self.currentActivityFilter.assets = assets

@@ -16,7 +16,7 @@ proc isCompressedPubKey*(strPubKey: string): bool =
 proc isSystemMention*(mention: string) : bool =
   mention.startsWith("0x") and allCharsInSet(mention, SystemMentionChars)
 
-proc parseAddress*(strAddress: string): Address =
+proc decodeHexAddress*(strAddress: string): Address =
   var hexAddressValue: Address
   try:
     hexAddressValue = fromHex(Address, strAddress)
@@ -24,9 +24,9 @@ proc parseAddress*(strAddress: string): Address =
     error "Error parsing address", msg = e.msg
   return hexAddressValue
 
-proc isAddress*(strAddress: string): bool =
+proc isHexFormat*(strAddress: string): bool =
   try:
-    discard parseAddress(strAddress)
+    discard decodeHexAddress(strAddress)
   except:
     return false
   return true

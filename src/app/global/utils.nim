@@ -145,4 +145,4 @@ QtObject:
       return false
 
   proc isChatKey*(self: Utils, value: string): bool {.slot.} =
-      result = (conversion.startsWith0x(value) and conversion.isAddress(value) and len(value) == 132) or self.isCompressedPubKey(value)
+      result = (conversion.startsWith0x(value) and conversion.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
