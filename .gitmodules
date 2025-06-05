@@ -123,9 +123,6 @@
 	path = vendor/DOtherSide
 	url = https://github.com/status-im/dotherside.git
 
-[submodule "mobile/vendors/OpenSSL-for-iPhone"]
-	path = mobile/vendors/OpenSSL-for-iPhone
-	url = https://github.com/x2on/OpenSSL-for-iPhone.git
-[submodule "mobile/vendors/android_openssl"]
-	path = mobile/vendors/android_openssl
-	url = https://github.com/KDAB/android_openssl.git
+[submodule "mobile/vendors/openssl"]
+	path = mobile/vendors/openssl
+	url = https://github.com/openssl/openssl

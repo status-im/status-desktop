@@ -33,17 +33,9 @@ $(DOTHERSIDE_LIB): $(DOTHERSIDE_FILES) $(DOTHERSIDE_SCRIPT)
 	@DOTHERSIDE=$(DOTHERSIDE) QT_MAJOR=$(QT_MAJOR) LIB_SUFFIX=$(LIB_SUFFIX) LIB_EXT=$(LIB_EXT) $(DOTHERSIDE_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "DOtherSide built $(DOTHERSIDE_LIB)"
 
-ifeq ($(OS), ios)
 $(OPENSSL_LIB): $(OPENSSL_FILES)
 	@echo "Building OpenSSL"
-	@cd $(OPENSSL) && LIB_PATH=$(LIB_PATH) CC=clang CXX=clang++ $(OPENSSL_SCRIPT) $(HANDLE_OUTPUT)
-else
-$(OPENSSL_LIB):
-	@echo "Copy OpenSSL"
-	@cp $(ROOT_DIR)/vendors/android_openssl/ssl_1.1/$(ANDROID_ABI)/libcrypto_1_1.so $(LIB_PATH)/libcrypto_1_1.so
-	@cp $(ROOT_DIR)/vendors/android_openssl/ssl_1.1/$(ANDROID_ABI)/libssl_1_1.so $(LIB_PATH)/libssl_1_1.so
-	@echo "OpenSSL copied"
-endif
+	@LIB_PATH=$(LIB_PATH) LIB_EXT=$(LIB_EXT) OPENSSL=$(OPENSSL) BUILD_DIR=$(BUILD_PATH) $(OPENSSL_SCRIPT) $(HANDLE_OUTPUT)
 
 $(QRCODEGEN_LIB): $(QRCODEGEN_FILES)
 	@echo "Building QRCodeGen"
