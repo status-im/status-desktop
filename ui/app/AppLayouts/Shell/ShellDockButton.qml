@@ -106,7 +106,7 @@ ToolButton {
         text: root.tooltipText
     }
 
-    onPressAndHold: if (root.pinned) contextMenuComponent.createObject(root).popup()
+    onPressAndHold: if (root.pinned) contextMenuComponent.createObject(root).popup(root.pressX, root.pressY)
 
     MouseArea {
         anchors.fill: parent
