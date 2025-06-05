@@ -92,7 +92,7 @@ proc buildTransactionDataDto*(gasUnits: int, suggestedFees: SuggestedFeesDto, ad
     if suggestedFees == nil:
       error "Can't find suggested fees for chainId", chainId=chainId
       return
-    return buildTransaction(parseAddress(addressFrom), 0.u256, $gasUnits,
+    return buildTransaction(decodeHexAddress(addressFrom), 0.u256, $gasUnits,
       if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
       if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
       if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
