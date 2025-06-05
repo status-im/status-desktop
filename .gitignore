@@ -37,6 +37,7 @@ nim_status_client.log
 *.csv
 .flatpak-builder
 /ui/StatusQ/sandbox/android/.gradle/
+.qmake_previous
 
 # Squish test ================================================================
 
