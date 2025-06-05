@@ -31,4 +31,5 @@ fi
 echo "Installing app $APP on simulator $SIMULATOR_DEVICE_ID"
 open -a Simulator --args -CurrentDeviceUDID "$SIMULATOR_DEVICE_ID"
 xcrun simctl install "$SIMULATOR_DEVICE_ID" "$APP"
-xcrun simctl launch --console "$SIMULATOR_DEVICE_ID" im.status.Status-tablet
+# For some reason --console will freeze the app, so we need to use --console-pty
+xcrun simctl launch --console-pty "$SIMULATOR_DEVICE_ID" im.status.Status-tablet

@@ -29,7 +29,7 @@ STATUS_DESKTOP=$CWD/../vendors/status-desktop
 STATUSQ=$STATUS_DESKTOP/ui/StatusQ
 STATUS_GO=$STATUS_DESKTOP/vendor/status-go
 DOTHERSIDE=$STATUS_DESKTOP/vendor/DOtherSide
-OPENSSL=$CWD/../vendors/OpenSSL-for-iPhone
+OPENSSL=$CWD/../vendors/openssl
 QRCODEGEN=$STATUS_DESKTOP/vendor/QR-Code-generator/c
 PCRE=$CWD/../vendors/pcre-8.45
 
