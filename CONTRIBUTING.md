@@ -14,7 +14,7 @@
 
 ## 🛠️ Developing
 
-- [Building from Source](https://zealous-polka-dc7.notion.site/Building-ca1db4fb3baf4f15bab8da717832b743?pvs=74)
+- [Building from Source](BUILDING.md)
 - Check our [Architecture Docs](docs/architecture.md).
 - Read our [QML Architecture Guidelines](guidelines/QML_ARCHITECTURE_GUIDE.md).
 - Check out [good first issues](https://github.com/status-im/status-desktop/contribute) to get involved.
