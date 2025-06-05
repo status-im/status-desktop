@@ -73,7 +73,7 @@ AbstractButton {
         }
     }
 
-    onPressAndHold: contextMenuComponent.createObject(root).popup()
+    onPressAndHold: contextMenuComponent.createObject(root).popup(root.pressX, root.pressY)
 
     HoverHandler {
         cursorShape: hovered ? Qt.PointingHandCursor : undefined
