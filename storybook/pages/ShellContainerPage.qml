@@ -26,7 +26,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        shellAdaptor: ShellAdaptor {
+        ShellAdaptor {
             id: shellAdaptor
 
             sectionsBaseModel: SectionsModel {}
@@ -51,6 +51,10 @@ SplitView {
 
             profileId: profileStore.pubkey
         }
+
+        shellEntriesModel: shellAdaptor.shellEntriesModel
+        sectionsModel: shellAdaptor.sectionsModel
+        pinnedModel: shellAdaptor.pinnedModel
 
         profileStore: ProfileStores.ProfileStore {
             id: profileStore
