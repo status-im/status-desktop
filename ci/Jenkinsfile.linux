@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@add-option-for-develop'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -12,7 +12,7 @@ pipeline {
       label 'linux'
       image 'statusteam/nim-status-client-build:1.6.6-qt5.15.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
-      args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
+      args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse -v /etc/nix/nix.conf:/home/jenkins/.config/nix/nix.conf:ro'
     }
   }
 
@@ -42,6 +42,11 @@ pipeline {
       description: 'Decides whether the mocked status-keycard-go library is built.',
       defaultValue: false
     )
+    booleanParam(
+      name: 'USE_SYSTEM_NIM',
+      description: 'Decides whether to use system Nim or compile it with nimbus-build-system.',
+      defaultValue: true
+    )
   }
 
   options {
@@ -65,7 +70,7 @@ pipeline {
   environment {
     PLATFORM = "linux/${getArch()}"
     /* Improve make performance */
-    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j4 V=${params.VERBOSE} USE_SYSTEM_NIM=${params.USE_SYSTEM_NIM ? 1 : 0}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
@@ -85,20 +90,24 @@ pipeline {
     }
     stage('Deps') {
       steps {
-        sh 'make update'
-        sh 'make deps'
+        script {
+          nix.develop('make update', pure: false)
+          nix.develop('make deps', pure: false)
+        }
       }
     }
 
     stage('status-go') {
       steps {
-        sh 'make status-go'
+        script {
+          nix.develop('make status-go', pure: false)
+        }
       }
     }
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux')
+        linux.bundle('tgz-linux', 0, 1, false, true, false)
       } }
     }
 
