@@ -3,6 +3,7 @@
 #include <QDirIterator>
 #include <QQmlComponent>
 #include <QQmlEngine>
+#include <QStringList>
 
 #include <StatusQ/typesregistration.h>
 
@@ -21,6 +22,21 @@ int main(int argc, char *argv[]) {
 
     registerStatusQTypes();
 
+    // Parse excluded files list
+    QStringList excludedFiles;
+#ifdef STATUSQ_EXCLUDE_FILES
+    const QString excludedFilesStr{QStringLiteral(STATUSQ_EXCLUDE_FILES)};
+    excludedFiles = excludedFilesStr.split(",", Qt::SkipEmptyParts);
+    // Trim whitespace and normalize paths
+    for (QString& file : excludedFiles) {
+        file = file.trimmed();
+        if (file.startsWith("\"") && file.endsWith("\"")) {
+            file = file.mid(1, file.length() - 2);
+        }
+    }
+    qDebug() << "Excluding files from sanity check:" << excludedFiles;
+#endif
+
     bool errorsFound = false;
 
     for (QDirIterator it(iterationPath, QDirIterator::Subdirectories); it.hasNext(); it.next()) {
@@ -34,6 +50,23 @@ int main(int argc, char *argv[]) {
         if (info.path().contains("+qt6"))
             continue;
 #endif
+
+        // Check if this file should be excluded
+        bool shouldExclude = false;
+        const QString relativePath = QDir(iterationPath).relativeFilePath(it.filePath());
+
+        for (const QString& excludePattern : excludedFiles) {
+            if (relativePath.endsWith(excludePattern) ||
+                it.fileName() == excludePattern ||
+                relativePath == excludePattern) {
+                shouldExclude = true;
+                qDebug() << "Skipping excluded file:" << relativePath;
+                break;
+            }
+        }
+
+        if (shouldExclude)
+            continue;
 
         QFile file(it.filePath());
         file.open(QIODevice::ReadOnly);
