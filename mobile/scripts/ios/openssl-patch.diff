@@ -1,0 +1,10 @@
+--- Configurations/15-android.conf
++++ Configurations/15-android.conf
+@@ -193,6 +193,7 @@ my %targets = (
+         bin_lflags       => "-pie",
+         enable           => [ ],
+         shared_extension => ".so",
++        shlib_variant => "_3",
+     },
+     "android-arm" => {
+         ################################################################
