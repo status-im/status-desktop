@@ -5,6 +5,10 @@ const LOADING_SECTION_ID* = "loadingSection"
 const LOADING_SECTION_NAME* = "Chat section loading..."
 const LOADING_SECTION_ICON* = "loading"
 
+const SHELL_SECTION_ID* = "shell"
+const SHELL_SECTION_NAME* = "Shell"
+const SHELL_SECTION_ICON* = "shell/shell"
+
 const COMMUNITIESPORTAL_SECTION_ID* = "communitiesPortal"
 const COMMUNITIESPORTAL_SECTION_NAME* = "Communities Portal"
 const COMMUNITIESPORTAL_SECTION_ICON* = "communities"
