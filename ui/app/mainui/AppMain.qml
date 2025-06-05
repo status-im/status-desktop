@@ -819,12 +819,8 @@ Item {
         }
 
         function openShell() {
-            shellLoader.active = true
+            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(Constants.appSection.shell)
             shellLoader.item.focusSearch()
-        }
-
-        function closeShell() {
-            shellLoader.active = false
         }
 
         function maybeDisplayIntroduceYourselfPopup() {
@@ -974,8 +970,6 @@ Item {
             } else if (sectionType === Constants.appSection.community && subsection !== "") {
                 appMain.communitiesStore.setActiveCommunity(subsection)
             }
-
-            d.closeShell()
         }
 
         function onSwitchToCommunity(communityId: string) {
@@ -1058,7 +1052,6 @@ Item {
     }
 
     function changeAppSectionBySectionId(sectionId) {
-        d.closeShell()
         appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
     }
 
@@ -1157,28 +1150,18 @@ Item {
     StatusMainLayout {
         anchors.fill: parent
 
-        Component {
-            id: shellButtonComp
-            StatusNavBarTabButton {
-                objectName: "ShellNavBarButton"
-                anchors.horizontalCenter: parent.horizontalCenter
-                icon.name: "shell/shell"
-                tooltip.text: "%1 (%2)".arg(Utils.translatedSectionName(Constants.appSection.shell)).arg(shellShortcut.nativeText)
-
-                onClicked: {
-                    d.openShell()
-                    checked = false // section is never "active"
-                }
-            }
-        }
-
         leftPanel: StatusAppNavBar {
-            shellItem: appMain.featureFlagsStore.shellEnabled ? shellButtonComp : undefined
+            visible: !shellLoader.active
+            width: visible ? implicitWidth : 0
 
             topSectionModel: SortFilterProxyModel {
                 sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
                 filters: [
                     AnyOf {
+                        ValueFilter {
+                            roleName: "sectionType"
+                            value: Constants.appSection.shell
+                        }
                         ValueFilter {
                             roleName: "sectionType"
                             value: Constants.appSection.wallet
@@ -1385,7 +1368,12 @@ Item {
                     name: model.icon.length > 0? "" : model.name
                     icon.name: model.icon
                     icon.source: model.image
-                    tooltip.text: Utils.translatedSectionName(model.sectionType, model.name)
+                    tooltip.text: Utils.translatedSectionName(model.sectionType, model.name, (sectionType) => {
+                        if (sectionType === Constants.appSection.shell) {
+                            return shellShortcut.nativeText
+                        }
+                        return ""
+                    })
                     checked: model.active
 
                     readonly property bool displayCreateCommunityBadge: model.sectionType === Constants.appSection.communitiesPortal && !appMain.communitiesStore.createCommunityPopupSeen
@@ -1780,35 +1768,36 @@ Item {
 
                     currentIndex: {
                         const activeSectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
-
-                        if (activeSectionType === Constants.appSection.chat)
+                        switch (activeSectionType) {
+                        case Constants.appSection.shell:
+                            return Constants.appViewStackIndex.shell
+                        case Constants.appSection.chat:
                             return Constants.appViewStackIndex.chat
-                        if (activeSectionType === Constants.appSection.community) {
-                            for (let i = this.children.length - 1; i >=0; i--) {
+                        case Constants.appSection.community:
+                            for (let i = this.children.length - 1; i >= 0; i--) {
                                 var obj = this.children[i]
                                 if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.mainModuleInst.activeSection.id) {
                                     return i
                                 }
                             }
-
                             // Should never be here, correct index must be returned from the for loop above
                             console.error("Wrong section type:", appMain.rootStore.mainModuleInst.activeSection.sectionType,
                                           "or section id: ", appMain.rootStore.mainModuleInst.activeSection.id)
                             return Constants.appViewStackIndex.community
-                        }
-                        if (activeSectionType === Constants.appSection.communitiesPortal)
+                        case Constants.appSection.communitiesPortal:
                             return Constants.appViewStackIndex.communitiesPortal
-                        if (activeSectionType === Constants.appSection.wallet)
+                        case Constants.appSection.wallet:
                             return Constants.appViewStackIndex.wallet
-                        if (activeSectionType === Constants.appSection.profile)
+                        case Constants.appSection.profile:
                             return Constants.appViewStackIndex.profile
-                        if (activeSectionType === Constants.appSection.node)
+                        case Constants.appSection.node:
                             return Constants.appViewStackIndex.node
-                        if (activeSectionType === Constants.appSection.market)
+                        case Constants.appSection.market:
                             return Constants.appViewStackIndex.market
-
-                        // We should never end up here
-                        console.error("AppMain: Unknown section type")
+                        default:
+                            // We should never end up here
+                            console.error("AppMain: Unknown section type")
+                        }
                     }
                     onCurrentIndexChanged: {
                         const sectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
@@ -1820,6 +1809,93 @@ Item {
                     // NOTE:
                     // If we ever change stack layout component order we need to updade
                     // Constants.appViewStackIndex accordingly
+
+                    Loader {
+                        id: shellLoader
+                        anchors.fill: parent
+                        focus: active
+                        active: appMain.featureFlagsStore.shellEnabled && appView.currentIndex === Constants.appViewStackIndex.shell
+
+                        sourceComponent: ShellContainer {
+                            id: shell
+
+                            objectName: "shellContainer"
+
+                            ShellAdaptor {
+                                id: shellAdaptor
+                                readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
+
+                                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
+                                chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model
+                                                            : null
+                                walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
+                                dappsBaseModel: dAppsServiceLoader.active && dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+
+                                showEnabledSectionsOnly: true
+                                marketEnabled: appMain.featureFlagsStore.marketEnabled
+
+                                syncingBadgeCount: appMain.rootStore.profileSectionStore.devicesStore.devicesModel.count -
+                                                appMain.rootStore.profileSectionStore.devicesStore.devicesModel.pairedCount
+                                messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
+                                showBackUpSeed: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner &&
+                                                !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
+
+                                searchPhrase: shell.searchPhrase
+
+                                profileId: appMain.profileStore.pubkey
+                            }
+
+                            shellEntriesModel: shellAdaptor.shellEntriesModel
+                            sectionsModel: shellAdaptor.sectionsModel
+                            pinnedModel: shellAdaptor.pinnedModel
+
+                            profileStore: appMain.profileStore
+
+                            getEmojiHashFn: appMain.utilsStore.getEmojiHash
+                            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+
+                            useNewDockIcons: true
+                            hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
+                            aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
+
+                            onItemActivated: function(key, sectionType, itemId) {
+                                shellAdaptor.setTimestamp(key, new Date().valueOf())
+
+                                if (sectionType === Constants.appSection.profile) {
+                                    if (itemId == Constants.settingsSubsection.backUpSeed) {
+                                        return Global.openBackUpSeedPopup()
+                                    } else if (itemId == Constants.settingsSubsection.signout) {
+                                        return Global.quitAppRequested()
+                                    }
+                                }
+
+                                let subsection = itemId
+                                let subSubsection = -1
+                                let data = {}
+
+                                if (sectionType === Constants.appSection.wallet && !!itemId) {
+                                    subsection = WalletLayout.LeftPanelSelection.Address
+                                    subSubsection = WalletLayout.RightPanelSelection.Assets
+                                    data = { address: itemId }
+                                }
+
+                                globalConns.onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
+                            }
+                            onItemPinRequested: function(key, pin) {
+                                shellAdaptor.setPinned(key, pin)
+                                if (pin)
+                                    shellAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
+                            }
+                            onDappDisconnectRequested: function(dappUrl) {
+                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                            }
+
+                            onNotificationButtonClicked: d.openActivityCenterPopup()
+                            onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
+                            onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
+                        }
+                    }
 
                     Loader {
                         asynchronous: true
@@ -2331,93 +2407,6 @@ Item {
                     close()
                 }
             }
-        }
-    }
-
-    Loader {
-        id: shellLoader
-        anchors.fill: parent
-        focus: active
-        active: appMain.featureFlagsStore.shellEnabled
-
-        sourceComponent: ShellContainer {
-            id: shell
-
-            objectName: "shellContainer"
-
-            ShellAdaptor {
-                id: shellAdaptor
-                readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
-
-                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
-                chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model
-                                               : null
-                walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
-                dappsBaseModel: dAppsServiceLoader.active && dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-
-                showEnabledSectionsOnly: true
-                marketEnabled: appMain.featureFlagsStore.marketEnabled
-
-                syncingBadgeCount: appMain.rootStore.profileSectionStore.devicesStore.devicesModel.count -
-                                   appMain.rootStore.profileSectionStore.devicesStore.devicesModel.pairedCount
-                messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
-                showBackUpSeed: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner &&
-                                !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
-
-                searchPhrase: shell.searchPhrase
-
-                profileId: appMain.profileStore.pubkey
-            }
-
-            shellEntriesModel: shellAdaptor.shellEntriesModel
-            sectionsModel: shellAdaptor.sectionsModel
-            pinnedModel: shellAdaptor.pinnedModel
-
-            profileStore: appMain.profileStore
-
-            getEmojiHashFn: appMain.utilsStore.getEmojiHash
-            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
-
-            useNewDockIcons: true
-            hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
-            aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
-
-            onItemActivated: function(key, sectionType, itemId) {
-                shellAdaptor.setTimestamp(key, new Date().valueOf())
-
-                if (sectionType === Constants.appSection.profile) {
-                    if (itemId == Constants.settingsSubsection.backUpSeed) {
-                        return Global.openBackUpSeedPopup()
-                    } else if (itemId == Constants.settingsSubsection.signout) {
-                        return Global.quitAppRequested()
-                    }
-                }
-
-                let subsection = itemId
-                let subSubsection = -1
-                let data = {}
-
-                if (sectionType === Constants.appSection.wallet && !!itemId) {
-                    subsection = WalletLayout.LeftPanelSelection.Address
-                    subSubsection = WalletLayout.RightPanelSelection.Assets
-                    data = { address: itemId }
-                }
-
-                globalConns.onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
-            }
-            onItemPinRequested: function(key, pin) {
-                shellAdaptor.setPinned(key, pin)
-                if (pin)
-                    shellAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
-            }
-            onDappDisconnectRequested: function(dappUrl) {
-                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
-                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
-            }
-
-            onNotificationButtonClicked: d.openActivityCenterPopup()
-            onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
-            onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
         }
     }
 

@@ -328,28 +328,29 @@ QtObject {
     readonly property int chatSectionLeftColumnWidth: 304
 
     readonly property QtObject appSection: QtObject {
-        readonly property int chat: 1
-        readonly property int community: 2
-        readonly property int wallet: 0
-        readonly property int profile: 3
-        readonly property int node: 4
-        readonly property int communitiesPortal: 5
-        readonly property int loadingSection: 6
-        readonly property int swap: 7
-        readonly property int market: 8
+        readonly property int chat: 2
+        readonly property int community: 3
+        readonly property int wallet: 1
+        readonly property int profile: 4
+        readonly property int node: 5
+        readonly property int communitiesPortal: 6
+        readonly property int loadingSection: 7
+        readonly property int swap: 8
+        readonly property int market: 9
 
-        readonly property int shell: 666
+        readonly property int shell: 0
         readonly property int dApp: 999
     }
 
     readonly property QtObject appViewStackIndex: QtObject {
-        readonly property int chat: 0
-        readonly property int community: 7 // any stack layout children with the index 7 or higher is community
-        readonly property int communitiesPortal: 1
-        readonly property int wallet: 2
-        readonly property int profile: 3
-        readonly property int node: 4
-        readonly property int market: 5
+        readonly property int shell: 0
+        readonly property int chat: 1
+        readonly property int community: 8 // any stack layout children with the index 8 or higher is community
+        readonly property int communitiesPortal: 2
+        readonly property int wallet: 3
+        readonly property int profile: 4
+        readonly property int node: 5
+        readonly property int market: 6
     }
 
     readonly property QtObject settingsSubsection: QtObject {

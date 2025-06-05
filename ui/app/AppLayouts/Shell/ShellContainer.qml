@@ -51,7 +51,8 @@ Control {
     spacing: Theme.bigPadding
 
     function focusSearch() {
-        searchField.forceActiveFocus()
+        // Need to use Qt.callLater to ensure the focus is set after the component is fully loaded
+        Qt.callLater(() => searchField.forceActiveFocus())
     }
 
     Component.onCompleted: focusSearch()

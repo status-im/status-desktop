@@ -703,6 +703,27 @@ method load*[T](
   if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID:
     activeSectionId = WALLET_SECTION_ID
 
+  let shellEnabled = singletonInstance.featureFlags().getShellEnabled()
+  var shellSectionItem: SectionItem
+
+  # Shell Section
+  if shellEnabled:
+    shellSectionItem = initSectionItem(
+      SHELL_SECTION_ID,
+      SectionType.Shell,
+      SHELL_SECTION_NAME,
+      memberRole = MemberRole.Owner,
+      description = "",
+      image = "",
+      icon = SHELL_SECTION_ICON,
+      color = "",
+      hasNotification = false,
+      notificationsCount = 0,
+      active = true,
+      enabled = true,
+    )
+    self.view.model().addItem(shellSectionItem)
+
   # Communities Portal Section
   let communitiesPortalSectionItem = initSectionItem(
     COMMUNITIESPORTAL_SECTION_ID,
@@ -841,6 +862,10 @@ method load*[T](
   self.sharedUrlsModule.load()
   self.marketModule.load()
 
+  # If the shell is enabled, we default to it as the opening section
+  if shellEnabled:
+    activeSection = shellSectionItem
+
   # Set active section on app start
   # If section is empty or profile wait until chats are loaded
   if not activeSection.isEmpty() and activeSection.sectionType != SectionType.ProfileSettings:
@@ -953,8 +978,8 @@ method onChatsLoaded*[T](
 
   self.events.emit(SIGNAL_MAIN_LOADED, Args())
 
-  # Set active section if it is one of the channel sections
-  if not activeSection.isEmpty():
+  # Set active section if it is one of the channel sections and the shell is not enabled
+  if not singletonInstance.featureFlags().getShellEnabled() and not activeSection.isEmpty():
     self.setActiveSection(activeSection)
 
   self.view.sectionsLoaded()

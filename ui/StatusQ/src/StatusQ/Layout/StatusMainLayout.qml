@@ -55,8 +55,7 @@ SplitView {
     }
 
     Control {
-        SplitView.minimumWidth: 78
-        SplitView.preferredWidth: 78
+        SplitView.preferredWidth: !!leftPanel && leftPanel.visible ? leftPanel.width : 0
         SplitView.fillHeight: true
         background: null
         contentItem: (!!leftPanel) ? leftPanel : null
