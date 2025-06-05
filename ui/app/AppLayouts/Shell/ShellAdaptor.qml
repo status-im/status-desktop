@@ -358,19 +358,20 @@ QObject {
     }
 
     function load() {
-        var length = 0
+        let length = 0
         const settingsData = shellSettings.value("ShellEntries")
-        var dataArray = []
+        let dataArray = []
 
         try {
             dataArray = JSON.parse(settingsData)
             length = dataArray.length
         } catch (e) {
+            console.warn("Error parsing ShellEntries:", e.message)
             return
         }
 
         dataArray.forEach(function(item) {
-            let idx = ModelUtils.indexOf(shellProxyModel, "key", item.key)
+            const idx = ModelUtils.indexOf(shellProxyModel, "key", item.key)
             if (idx > -1) {
                 shellProxyModel.proxyObject(idx).pinned = item.pinned
                 shellProxyModel.proxyObject(idx).timestamp = item.timestamp
