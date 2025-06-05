@@ -7,6 +7,10 @@ option(STATUSQ_BUILD_SANITY_CHECKER "Enable to build StatusQ Sanity Checker appl
 option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
 option(STATUSQ_STATIC_LIB "Enable to build StatusQ as a static library" OFF)
 
+# Allow files to be excluded
+set(STATUSQ_SANITY_CHECKER_EXCLUDE_FILES "" CACHE STRING "Semicolon-separated list of files to exclude from sanity checker")
+
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
