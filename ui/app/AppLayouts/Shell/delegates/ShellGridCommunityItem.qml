@@ -19,7 +19,7 @@ ShellGridItem {
     sectionType: Constants.appSection.community
 
     function numberFormat(number) {
-        var res = number
+        let res = number
         const million = 1000000
         const ks = 1000
         if(number > million) {
