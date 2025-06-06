@@ -13,7 +13,7 @@ from gui.components.community.community_channel_popups import EditChannelPopup, 
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.context_menu import ContextMenu
-from gui.components.delete_popup import DeletePopup
+from gui.components.delete_popup import ConfirmationPopup
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.elements.button import Button
 from gui.elements.list import List
@@ -148,7 +148,7 @@ class CommunityToolBar(QObject):
     def open_delete_channel_popup(self):
         self.open_more_options_dropdown()
         self._delete_channel_context_item.click()
-        return DeletePopup().wait_until_appears()
+        return ConfirmationPopup().wait_until_appears()
 
     @allure.step('Open more options dropdown')
     def open_more_options_dropdown(self):

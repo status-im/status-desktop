@@ -2,13 +2,15 @@ import allure
 
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
+from gui.elements.object import QObject
 from gui.objects_map import settings_names
 
 
-class SignOutPopup(BasePopup):
+class SignOutPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(settings_names.signOutDialog)
+        self.sign_out_dialog = QObject(settings_names.signOutDialog)
         self._sign_out_and_quit_button = Button(settings_names.signOutConfirmationButton)
 
     @allure.step('Click sign out and quit button')

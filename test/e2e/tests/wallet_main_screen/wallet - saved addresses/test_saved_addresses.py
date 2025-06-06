@@ -2,13 +2,12 @@ import allure
 import pytest
 from allure import step
 
-from gui.screens.wallet import SavedAddressesView
-from scripts.utils.generators import random_wallet_acc_keypair_name
-from tests.wallet_main_screen import marks
-
 import configs
 import driver
 from gui.main_window import MainWindow
+from gui.screens.wallet import SavedAddressesView
+from scripts.utils.generators import random_wallet_acc_keypair_name
+from tests.wallet_main_screen import marks
 
 pytestmark = marks
 
@@ -35,7 +34,7 @@ def test_manage_saved_address(main_screen: MainWindow, address: str):
             f"Toast message about adding saved address is not correct or not present. Current list of messages: {messages}"
 
     with step('Edit saved address to new name'):
-        SavedAddressesView().open_edit_address_popup(name).edit_saved_address(new_name)
+        SavedAddressesView().right_click_edit_saved_address_popup(name).edit_saved_address(new_name)
 
     with step('Verify that saved address is in the list of saved addresses'):
         assert driver.waitFor(
