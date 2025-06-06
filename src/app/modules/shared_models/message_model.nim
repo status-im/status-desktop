@@ -1,6 +1,6 @@
 import NimQml, Tables, json, sets, algorithm, sequtils, strutils, stew/shims/strformat, sugar
 
-import message_item, message_reaction_item, message_transaction_parameters_item
+import message_item, message_reaction_item, message_transaction_parameters_item, contacts_utils
 
 import ../../../app_service/service/message/dto/message
 import ../../../app_service/service/contacts/dto/contact_details
@@ -20,6 +20,7 @@ type
     ResponseToMessageWithId
     SenderId
     SenderDisplayName
+    UsesDefaultName
     SenderOptionalName
     SenderIcon
     SenderColorHash
@@ -129,6 +130,7 @@ QtObject:
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
       ModelRole.SenderId.int:"senderId",
       ModelRole.SenderDisplayName.int:"senderDisplayName",
+      ModelRole.UsesDefaultName.int:"usesDefaultName",
       ModelRole.SenderOptionalName.int:"senderOptionalName",
       ModelRole.SenderIcon.int:"senderIcon",
       ModelRole.SenderColorHash.int:"senderColorHash",
@@ -244,6 +246,8 @@ QtObject:
       result = newQVariant(item.senderId)
     of ModelRole.SenderDisplayName:
       result = newQVariant(item.senderDisplayName)
+    of ModelRole.UsesDefaultName:
+      result = newQVariant(item.senderUsesDefaultName)
     of ModelRole.SenderTrustStatus:
       result = newQVariant(item.senderTrustStatus.int)
     of ModelRole.SenderOptionalName:
@@ -641,6 +645,7 @@ QtObject:
       if(self.items[i].senderId == contactId):
         roles = @[ModelRole.SenderDisplayName.int,
           ModelRole.SenderOptionalName.int,
+          ModelRole.UsesDefaultName.int,
           ModelRole.SenderIcon.int,
           ModelRole.SenderColorHash.int,
           ModelRole.SenderIsAdded.int,
@@ -900,6 +905,7 @@ QtObject:
       message.`from`,
       sender.defaultDisplayName,
       sender.optionalName,
+      senderUsesDefaultName = resolveUsesDefaultName(sender.dto.localNickname, sender.dto.name, sender.dto.displayName),
       sender.icon,
       sender.colorHash,
       (isCurrentUser and message.contentType != ContentType.DiscordMessage),

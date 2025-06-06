@@ -172,6 +172,7 @@ Control {
             colorId: root.profileStore.colorId
             colorHash: root.profileStore.colorHash
             currentUserStatus: root.profileStore.currentUserStatus
+            usesDefaultName: root.profileStore.usesDefaultName
 
             getEmojiHashFn: root.getEmojiHashFn
             getLinkToProfileFn: root.getLinkToProfileFn
