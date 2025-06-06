@@ -11,8 +11,6 @@ Rectangle {
     id: root
     objectName: "statusAppNavBar"
 
-    property alias shellItem: shellItemLoader.sourceComponent
-
     property alias topSectionModel: topSectionListview.model
     property alias topSectionDelegate: topSectionListview.delegate
 
@@ -51,13 +49,6 @@ Rectangle {
         }
 
         spacing: d.spacing
-
-        Loader {
-            id: shellItemLoader
-            Layout.alignment: Qt.AlignHCenter
-            active: !!sourceComponent
-            visible: active
-        }
 
         ListView {
             id: topSectionListview

@@ -167,7 +167,6 @@ QtObject:
 
   proc activeSectionSet*(self: View, item: SectionItem) =
     self.activeSection.setActiveSectionData(item)
-    self.activeSectionChanged()
 
   proc setNthEnabledSectionActive*(self: View, nth: int) {.slot.} =
     let item = self.model.getNthEnabledItem(nth)

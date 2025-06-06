@@ -101,6 +101,11 @@ QObject {
         filters: [
             ValueFilter {
                 roleName: "sectionType"
+                value: Constants.appSection.shell
+                inverted: true
+            },
+            ValueFilter {
+                roleName: "sectionType"
                 value: Constants.appSection.loadingSection
                 inverted: true
             },

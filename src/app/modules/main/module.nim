@@ -704,6 +704,25 @@ method load*[T](
   if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID:
     activeSectionId = WALLET_SECTION_ID
 
+  # Shell Section
+  let shellSectionItem = initSectionItem(
+    SHELL_SECTION_ID,
+    SectionType.Shell,
+    SHELL_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    image = "",
+    icon = SHELL_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = true,
+    enabled = true,
+  )
+  self.view.model().addItem(shellSectionItem)
+  # Default section, always active
+  activeSection = shellSectionItem
+
   # Communities Portal Section
   let communitiesPortalSectionItem = initSectionItem(
     COMMUNITIESPORTAL_SECTION_ID,
@@ -720,8 +739,6 @@ method load*[T](
     enabled = true,
   )
   self.view.model().addItem(communitiesPortalSectionItem)
-  if activeSectionId == communitiesPortalSectionItem.id:
-    activeSection = communitiesPortalSectionItem
 
   # Wallet Section
   let walletSectionItem = initSectionItem(
@@ -741,8 +758,6 @@ method load*[T](
     enabled = WALLET_ENABLED,
   )
   self.view.model().addItem(walletSectionItem)
-  if activeSectionId == walletSectionItem.id:
-    activeSection = walletSectionItem
 
   # Node Management Section
   let nodeManagementSectionItem = initSectionItem(
@@ -762,8 +777,6 @@ method load*[T](
     enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled(),
   )
   self.view.model().addItem(nodeManagementSectionItem)
-  if activeSectionId == nodeManagementSectionItem.id:
-    activeSection = nodeManagementSectionItem
 
   # Profile Section
   let profileSettingsSectionItem = initSectionItem(
@@ -783,8 +796,6 @@ method load*[T](
     enabled = true,
   )
   self.view.model().addItem(profileSettingsSectionItem)
-  if activeSectionId == profileSettingsSectionItem.id:
-    activeSection = profileSettingsSectionItem
 
   if singletonInstance.featureFlags().getMarketEnabled():
     # Market Section
@@ -805,8 +816,6 @@ method load*[T](
       enabled = WALLET_ENABLED,
     )
     self.view.model().addItem(marketItem)
-    if activeSectionId == marketItem.id:
-      activeSection = marketItem
   else:
     # Swap Section
     let swapSectionItem = initSectionItem(
@@ -826,8 +835,6 @@ method load*[T](
       enabled = WALLET_ENABLED,
     )
     self.view.model().addItem(swapSectionItem)
-    if activeSectionId == swapSectionItem.id:
-      activeSection = swapSectionItem
 
   self.profileSectionModule.load()
   self.stickersModule.load()
@@ -870,7 +877,6 @@ method onChatsLoaded*[T](
   if not self.isEverythingLoaded:
     return
   let myPubKey = singletonInstance.userProfile.getPubKey()
-  var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
 
   # Create personal chat section
@@ -914,8 +920,6 @@ method onChatsLoaded*[T](
     muted = false,
   )
   items.add(personalChatSectionItem)
-  if activeSectionId == personalChatSectionItem.id:
-    activeSection = personalChatSectionItem
 
   # For the personal chat section we load the chats immediately
   self.chatSectionModules[myPubKey].load(buildChats = true)
@@ -943,8 +947,6 @@ method onChatsLoaded*[T](
     )
     let communitySectionItem = self.createCommunitySectionItem(community)
     items.add(communitySectionItem)
-    if activeSectionId == communitySectionItem.id:
-      activeSection = communitySectionItem
 
     self.chatSectionModules[community.id].load()
 
@@ -953,10 +955,6 @@ method onChatsLoaded*[T](
   self.checkIfWeHaveNotifications()
 
   self.events.emit(SIGNAL_MAIN_LOADED, Args())
-
-  # Set active section if it is one of the channel sections
-  if not activeSection.isEmpty():
-    self.setActiveSection(activeSection)
 
   self.view.sectionsLoaded()
   if self.statusDeepLinkToActivate != "":
