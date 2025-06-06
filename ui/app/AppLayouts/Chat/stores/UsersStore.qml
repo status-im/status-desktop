@@ -3,33 +3,33 @@ import QtQuick 2.15
 QtObject {
     id: root
 
-    property var chatCommunitySectionModule
-    property var chatDetails
-    property var usersModule
+    // External properties:
+    required property var chatCommunitySectionModule
+    required property var usersModule
+    required property bool isFullCommunityMembers
 
+    // Public API:
     readonly property var usersModel: {
-        if (!chatDetails && !chatCommunitySectionModule) {
-            return null
-        }
-        let isFullCommunityList = !chatDetails.requiresPermissions
-        if (chatDetails.belongsToCommunity && isFullCommunityList && !!chatCommunitySectionModule) {
+        if (root.isFullCommunityMembers) {
             // Community channel with no permisisons. We can use the section's membersModel
-            return chatCommunitySectionModule.membersModel
+            return root.chatCommunitySectionModule ? root.chatCommunitySectionModule.membersModel : null
         }
-        return usersModule ? usersModule.model : null
+        return root.usersModule ? root.usersModule.model : null
     }
-    readonly property var temporaryModel: usersModule ? usersModule.temporaryModel : null
+
+    // Used for editing:
+    readonly property var temporaryModel: root.usersModule ? root.usersModule.temporaryModel : null
 
     function appendTemporaryModel(pubKey, displayName) {
-        usersModule.appendTemporaryModel(pubKey, displayName)
+        root.usersModule.appendTemporaryModel(pubKey, displayName)
     }
     function removeFromTemporaryModel(pubKey) {
-        usersModule.removeFromTemporaryModel(pubKey)
+        root.usersModule.removeFromTemporaryModel(pubKey)
     }
     function resetTemporaryModel() {
-        usersModule.resetTemporaryModel()
+        root.usersModule.resetTemporaryModel()
     }
     function updateGroupMembers() {
-        usersModule.updateGroupMembers()
+        root.usersModule.updateGroupMembers()
     }
 }

@@ -29,6 +29,15 @@ Item {
     property var emojiPopup
     property int padding: Theme.halfPadding
 
+    property var usersModel
+    property var temporaryUsersModel
+    property var amIChatAdmin
+
+    signal updateGroupMembers()
+    signal resetTemporaryUsersModel()
+    signal appendTemporaryUsersModel(string pubKey, string displayName)
+    signal removeFromTemporaryUsersModel(string pubKey)
+
     signal searchButtonClicked()
     signal displayEditChannelPopup(string chatId,
                                    string chatName,
@@ -345,16 +354,19 @@ Item {
         id: membersSelector
 
         MembersEditSelectorView {
-            rootStore: root.rootStore
-            usersStore: UsersStore {
-                chatDetails: chatContentModule.chatDetails
-                chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-                usersModule: root.chatContentModule.usersModule
-            }
             contactsModel: root.mutualContactsModel
+            usersModel: root.usersModel
+            temporaryUsersModel: root.temporaryUsersModel
+
+            amIChatAdmin: root.amIChatAdmin
 
             onConfirmed: root.state = d.stateInfoButtonContent
             onRejected: root.state = d.stateInfoButtonContent
+
+            onUpdateGroupMembers: root.updateGroupMembers()
+            onResetTemporaryUsersModel: root.resetTemporaryUsersModel()
+            onAppendTemporaryUsersModel: root.appendTemporaryUsersModel(pubKey, displayName)
+            onRemoveFromTemporaryUsersModel: root.removeFromTemporaryUsersModel(pubKey)
         }
     }
 }

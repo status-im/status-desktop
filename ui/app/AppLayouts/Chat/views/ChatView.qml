@@ -110,6 +110,17 @@ StatusSectionLayout {
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
 
+    // Users related data:
+    property var usersModel
+    property var temporaryUsersModel
+    property bool amIChatAdmin
+
+    // Users related signals
+    signal updateGroupMembers()
+    signal resetTemporaryUsersModel()
+    signal appendTemporaryUsersModel(string pubKey, string displayName)
+    signal removeFromTemporaryUsersModel(string pubKey)
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -191,12 +202,6 @@ StatusSectionLayout {
     rightPanel: Component {
         id: userListComponent
         UserListPanel {
-            readonly property var usersStore: ChatStores.UsersStore {
-                usersModule: !!root.chatContentModule ? root.chatContentModule.usersModule : null
-                chatDetails: !!root.chatContentModule ? root.chatContentModule.chatDetails : null
-                chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-            }
-
             anchors.fill: parent
 
             chatType: root.chatContentModule.chatDetails.type
@@ -205,7 +210,7 @@ StatusSectionLayout {
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
 
-            usersModel: usersStore.usersModel
+            usersModel: root.usersModel
 
             onOpenProfileRequested: Global.openProfilePopup(pubKey, null)
             onReviewContactRequestRequested: Global.openReviewContactRequestPopup(pubKey, null)
@@ -243,6 +248,10 @@ StatusSectionLayout {
             mutualContactsModel: root.mutualContactsModel
             emojiPopup: root.emojiPopup
 
+            usersModel: root.usersModel
+            temporaryUsersModel: root.temporaryUsersModel
+            amIChatAdmin: root.amIChatAdmin
+
             onSearchButtonClicked: root.openAppSearch()
             onDisplayEditChannelPopup: {
                 Global.openPopup(contactColumnLoader.item.createChannelPopup, {
@@ -258,6 +267,11 @@ StatusSectionLayout {
                     hideIfPermissionsNotMet: hideIfPermissionsNotMet
                 });
             }
+
+            onUpdateGroupMembers: root.updateGroupMembers()
+            onResetTemporaryUsersModel: root.resetTemporaryUsersModel()
+            onAppendTemporaryUsersModel: root.appendTemporaryUsersModel(pubKey, displayName)
+            onRemoveFromTemporaryUsersModel: root.removeFromTemporaryUsersModel(pubKey)
         }
     }
 
@@ -294,6 +308,9 @@ StatusSectionLayout {
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+            // Users related data:
+            usersModel: root.usersModel
 
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )

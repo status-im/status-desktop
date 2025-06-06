@@ -33,10 +33,12 @@ Item {
 
     property RootStore rootStore
     property MessageStore messageStore
-    property UsersStore usersStore
     property ContactsStore contactsStore
     property string channelEmoji
     property var formatBalance
+
+    // Users related data:
+    property var usersModel
 
     property var emojiPopup
     property var stickersPopup
@@ -293,7 +295,6 @@ Item {
 
             rootStore: root.rootStore
             messageStore: root.messageStore
-            usersStore: root.usersStore
             contactsStore: root.contactsStore
             channelEmoji: root.channelEmoji
             emojiPopup: root.emojiPopup
@@ -301,6 +302,7 @@ Item {
             chatLogView: ListView.view
             chatContentModule: root.chatContentModule
             formatBalance: root.formatBalance
+            usersModel: root.usersModel
 
             isChatBlocked: root.isChatBlocked
 

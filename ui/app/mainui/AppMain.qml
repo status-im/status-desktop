@@ -1886,8 +1886,9 @@ Item {
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
-                                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                                     networkConnectionStore: appMain.networkConnectionStore
+
+                                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                                 }
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 tokensStore: appMain.tokensStore
@@ -1909,6 +1910,11 @@ Item {
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
 
+                                // Users related data
+                                property var usersStore: rootStore.usersStore
+                                usersModel: usersStore.usersModel
+                                temporaryUsersModel: usersStore.temporaryModel
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -1924,6 +1930,12 @@ Item {
                                 onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
                                 onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
+
+                                // Edit group chat members signals:
+                                onUpdateGroupMembers: usersStore.updateGroupMembers()
+                                onResetTemporaryUsersModel: usersStore.resetTemporaryModel()
+                                onAppendTemporaryUsersModel: usersStore.appendTemporaryModel(pubKey, displayName)
+                                onRemoveFromTemporaryUsersModel: usersStore.removeFromTemporaryModel(pubKey)
                             }
                         }
                     }
@@ -2136,6 +2148,7 @@ Item {
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
+
                                     chatCommunitySectionModule: {
                                         appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
                                         return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
@@ -2154,6 +2167,8 @@ Item {
                                 // Unfurling related data:
                                 gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
+
+                                usersModel: rootStore.usersStore.usersModel
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);

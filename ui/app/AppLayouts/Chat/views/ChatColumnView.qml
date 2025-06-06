@@ -62,6 +62,9 @@ Item {
     property bool gifUnfurlingEnabled
     property bool neverAskAboutUnfurlingAgain
 
+    // Users related data:
+    property var usersModel
+
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
 
@@ -108,12 +111,6 @@ Item {
 
         readonly property ModelChangeTracker urlsModelChangeTracker: ModelChangeTracker {
             model: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.urlsModel : null
-        }
-
-        readonly property ChatStores.UsersStore activeUsersStore: ChatStores.UsersStore {
-            usersModule: !!d.activeChatContentModule ? d.activeChatContentModule.usersModule : null
-            chatDetails: !!d.activeChatContentModule ? d.activeChatContentModule.chatDetails : null
-            chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
         }
 
         readonly property ChatStores.MessageStore activeMessagesStore: ChatStores.MessageStore {
@@ -209,7 +206,7 @@ Item {
             preservedText = d.activeChatContentModule.inputAreaModule.preservedProperties.text
 
             d.activeChatContentModule.inputAreaModule.clearLinkPreviewCache()
-            // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
+            // Call later to make sure usersStore and activeMessagesStore bindings are updated
             Qt.callLater(d.restoreInputState, preservedText)
         }
 
@@ -232,6 +229,7 @@ Item {
     // The best would be if we made qml to follow the struct we have on the backend side.
 
     ColumnLayout {
+
         anchors.fill: parent
         spacing: 0
 
@@ -268,6 +266,8 @@ Item {
                         // Unfurling related data:
                         gifUnfurlingEnabled: root.gifUnfurlingEnabled
                         neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
+
+                        usersModel: root.usersModel
 
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
@@ -322,7 +322,7 @@ Item {
                                  && !d.sendingInProgress
                     }
 
-                    usersModel: d.activeUsersStore.usersModel
+                    usersModel: root.usersModel
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     paymentRequestModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.paymentRequestModel : null
                     formatBalance: d.formatBalance
