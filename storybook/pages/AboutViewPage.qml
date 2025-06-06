@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
-import StatusQ.Core 0.1
+import StatusQ.Core 0.1 as SQCore
 import AppLayouts.Profile.views 1.0
 
 import Storybook 1.0
@@ -44,7 +44,7 @@ SplitView {
                 }
 
                 function qtRuntimeVersion() {
-                    return SystemUtils.qtRuntimeVersion()
+                    return SQCore.SystemUtils.qtRuntimeVersion()
                 }
 
                 function getReleaseNotes() {

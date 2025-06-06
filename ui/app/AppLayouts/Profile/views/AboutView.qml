@@ -59,6 +59,7 @@ SettingsContentBase {
                 height: 80
                 source: root.store.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
+                mipmap: true
             }
 
             Item { width: 1; height: 8}
@@ -131,6 +132,12 @@ SettingsContentBase {
                 title: qsTr("Status Manifesto")
                 Layout.fillWidth: true
                 onClicked: root.store.openLink("https://status.app/manifesto")
+            }
+
+            LinkItem {
+                title: qsTr("Status Help")
+                Layout.fillWidth: true
+                onClicked: root.store.openLink(Constants.statusHelpLinkPrefix)
             }
 
             StatusDialogDivider {
