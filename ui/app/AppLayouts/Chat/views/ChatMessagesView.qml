@@ -314,6 +314,7 @@ Item {
             responseToMessageWithId: model.responseToMessageWithId
             senderId: model.senderId
             senderDisplayName: model.senderDisplayName
+            usesDefaultName: model.usesDefaultName
             senderOptionalName: model.senderOptionalName
             senderIsEnsVerified: model.senderEnsVerified
             senderIcon: model.senderIcon

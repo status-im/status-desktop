@@ -225,24 +225,22 @@ Control {
                 Layout.rightMargin: 16
                 spacing: 8
 
-                StatusSmartIdenticon {
+                StatusUserImage {
                     id: profileImage
                     Layout.alignment: Qt.AlignTop
                     active: root.showHeader
                     visible: active
                     name: root.messageDetails.sender.displayName
-                    asset: root.messageDetails.sender.profileImage.assetSettings
-                    ringSettings: root.messageDetails.sender.profileImage.ringSettings
-                    bridgeBadge.visible: root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage
-                    bridgeBadge.image.source: root.messageDetails.sender.badgeImage
-
-                    StatusMouseArea {
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                        anchors.fill: parent
-                        enabled: root.profileClickable
-                        onClicked: root.profilePictureClicked(this, mouse)
-                    }
+                    usesDefaultName: root.messageDetails.sender.usesDefaultName
+                    colorHash: root.messageDetails.sender.profileImage.colorHash
+                    userColor: root.messageDetails.sender.profileImage.assetSettings.color
+                    image: root.messageDetails.sender.profileImage.assetSettings.name
+                    interactive: true
+                    imageWidth: root.messageDetails.sender.profileImage.assetSettings.width
+                    imageHeight: root.messageDetails.sender.profileImage.assetSettings.height
+                    ensVerified: root.messageDetails.sender.isEnsVerified
+                    isBridgedAccount: root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage
+                    onClicked: root.profilePictureClicked(this, mouse)
                 }
 
                 ColumnLayout {

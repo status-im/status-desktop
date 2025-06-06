@@ -68,14 +68,14 @@ CalloutCard {
                 Layout.bottomMargin: 8
                 visible: active
                 active: root.type === Constants.LinkPreviewType.StatusContact
-                sourceComponent: UserImage {
+                sourceComponent: StatusUserImage {
                     interactive: false
                     imageWidth: 58
                     imageHeight: imageWidth
                     ensVerified: root.userData.ensVerified
                     name: root.userData.name
                     image: root.userData.image
-                    colorId: Utils.colorIdForPubkey(root.userData.publicKey)
+                    userColor: Utils.colorForPubkey(root.userData.publicKey)
                     colorHash: Utils.getColorHashAsJson(root.userData.publicKey)
                 }
             }

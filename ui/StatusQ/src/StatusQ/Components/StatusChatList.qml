@@ -166,6 +166,11 @@ Item {
                     },
                     StatusChatListItem {
                         id: statusChatListItem
+
+                        readonly property bool isContactIcon: type === StatusChatListItem.Type.OneToOneChat && model.usesDefaultName
+                        readonly property int iconWidth: 24
+                        readonly property int iconHeight: 24
+
                         objectName: model.name
                         Layout.fillWidth: true
                         height: visible ? implicitHeight : 0
@@ -185,9 +190,26 @@ Item {
                         notificationsCount: model.notificationsCount
                         highlightWhenCreated: !!model.highlight
                         selected: (model.active && root.highlightItem)
+
+                        asset.isImage: !!model.icon
                         asset.emoji: !!model.emoji ? model.emoji : ""
-                        asset.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
-                        asset.name: model.icon
+                        asset.color: isContactIcon ? Theme.palette.indirectColor2 : (!!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId])
+                        asset.bgColor: isContactIcon ? Theme.palette.userCustomizationColors[model.colorId] : "transparent"
+                        asset.name: {
+                            if (asset.isImage) {
+                                return model.icon
+                            }
+                            if (isContactIcon) {
+                                return "contact"
+                            }
+                            return ""
+                        }
+                        asset.width: iconWidth
+                        asset.height: iconHeight
+                        asset.bgRadius: iconWidth / 2
+                        asset.bgWidth: iconWidth
+                        asset.bgHeight: iconHeight
+
                         ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
                         onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
                         sensor.enabled: draggableItem.dragActive

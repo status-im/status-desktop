@@ -46,10 +46,7 @@ Item {
             icon.height: 40
             color: "transparent"
             icon.color: Utils.colorForColorId(model.colorId)
-            ringSettings.ringSpecModel: model.colorHash
-            badge.border.color: Theme.palette.baseColor4
-            badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
-            badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
+            colorHash: model.colorHash
 
             hoverEnabled: false
         }

@@ -9,6 +9,7 @@ proc createTestChatItem(id: string, catId: string = "", isCategory: bool = false
   return initChatItem(
       id = id,
       name = "",
+      usesDefaultName = true,
       icon = "",
       color = "",
       emoji = "",
@@ -70,7 +71,7 @@ suite "updating chat items":
 
   test "update item details by id":
     # Don't touch hideIfPermissionsNotMet
-    var updatedRoles = model.updateItemDetailsById(
+    var updatedRoles = model.updateCommunityItemDetailsById(
         id = "0xa",
         name = "Chat A",
         description = "Desc A",
@@ -81,7 +82,7 @@ suite "updating chat items":
     check(updatedRoles.len() == 4)
 
     # Only update hideIfPermissionsNotMet
-    updatedRoles = model.updateItemDetailsById(
+    updatedRoles = model.updateCommunityItemDetailsById(
         id = "0xa",
         name = "Chat A",
         description = "Desc A",

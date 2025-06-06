@@ -28,6 +28,7 @@ Item {
     property url previewIcon: icon
     property int trustStatus
     property int onlineStatus: Constants.onlineStatus.unknown
+    property bool usesDefaultName: false
     property bool isContact: false
     property bool isBlocked
     property bool isCurrentUser
@@ -115,13 +116,14 @@ Item {
             implicitWidth: userImage.width
             implicitHeight: userImage.height
 
-            UserImage {
+            StatusUserImage {
                 id: userImage
 
                 objectName: "ProfileHeader_userImage"
                 name: root.displayName
+                usesDefaultName: root.usesDefaultName
                 colorHash: root.colorHash
-                colorId: root.colorId
+                userColor: Utils.colorForColorId(root.colorId)
                 image: root.previewIcon
                 interactive: false
                 imageWidth: d.getSize(36, 64, 170)

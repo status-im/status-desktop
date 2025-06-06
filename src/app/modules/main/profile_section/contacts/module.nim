@@ -70,31 +70,10 @@ method delete*(self: Module) =
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
-
-  return initUserItem(
-    pubKey = contactDetails.dto.id,
-    displayName = contactDetails.dto.displayName,
-    ensName = contactDetails.dto.name,
-    isEnsVerified = contactDetails.dto.ensVerified,
-    localNickname = contactDetails.dto.localNickname,
-    alias = contactDetails.dto.alias,
-    icon = contactDetails.icon,
-    colorId = contactDetails.colorId,
-    colorHash = contactDetails.colorHash,
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
-    isContact = contactDetails.dto.isContact(),
-    isBlocked = contactDetails.dto.isBlocked(),
-    isCurrentUser = contactDetails.isCurrentUser,
-    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
-    lastUpdated = contactDetails.dto.lastUpdated,
-    lastUpdatedLocally = contactDetails.dto.lastUpdatedLocally,
-    bio = contactDetails.dto.bio,
-    thumbnailImage = contactDetails.dto.image.thumbnail,
-    largeImage = contactDetails.dto.image.large,
-    isContactRequestReceived = contactDetails.dto.isContactRequestReceived,
-    isContactRequestSent = contactDetails.dto.isContactRequestSent,
-    isRemoved = contactDetails.dto.removed,
-    trustStatus = contactDetails.dto.trustStatus,
+  return createItemFromDto(
+    contactDetails,
+    toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
+    contactDetails.dto.contactRequestState,
   )
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =

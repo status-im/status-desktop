@@ -18,6 +18,7 @@ type
 proc initMemberItem*(
   pubKey: string,
   displayName: string,
+  usesDefaultName: bool,
   ensName: string,
   isEnsVerified: bool,
   localNickname: string,
@@ -48,6 +49,7 @@ proc initMemberItem*(
   result.UserItem.setup(
     pubKey = pubKey,
     displayName = displayName,
+    usesDefaultName = usesDefaultName,
     ensName = ensName,
     isEnsVerified = isEnsVerified,
     localNickname = localNickname,
@@ -67,6 +69,7 @@ proc `$`*(self: MemberItem): string =
   result = fmt"""Member Item(
     pubKey: {self.pubkey},
     displayName: {self.displayName},
+    usesDefaultName: {self.usesDefaultName},
     ensName: {self.ensName},
     isEnsVerified: {self.isEnsVerified},
     localNickname: {self.localNickname},

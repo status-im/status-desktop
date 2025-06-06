@@ -7,6 +7,7 @@ QtObject {
     property bool ensVerified
     property string localNickname
     property string alias
+    property bool usesDefaultName
     property string icon
     property int colorId
     property var colorHash

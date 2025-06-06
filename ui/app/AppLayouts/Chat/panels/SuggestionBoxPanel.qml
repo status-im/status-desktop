@@ -129,16 +129,14 @@ Rectangle {
         model: container.suggestionsModel
 
         delegate: Rectangle {
-            readonly property string preferredDisplayName: model.preferredDisplayName
-
             id: itemDelegate
-            objectName: preferredDisplayName
+            objectName: model.preferredDisplayName
             color: ListView.isCurrentItem ? Theme.palette.backgroundHover : Theme.palette.transparent
             width: ListView.view.width
             height: 42
             radius: Theme.radius
 
-            UserImage {
+            StatusUserImage {
                 id: accountImage
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
@@ -146,15 +144,16 @@ Rectangle {
                 imageWidth: 32
                 imageHeight: 32
 
-                name: preferredDisplayName
+                name: model.preferredDisplayName
+                usesDefaultName: model.usesDefaultName
                 colorHash: model.colorHash
-                colorId: model.colorId
+                userColor: Utils.colorForColorId(model.colorId)
                 image: model.icon
                 interactive: false
             }
 
             StyledText {
-                text: preferredDisplayName
+                text: model.preferredDisplayName
                 color: Theme.palette.textColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: accountImage.right

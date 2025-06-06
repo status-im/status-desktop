@@ -18,6 +18,7 @@ StatusMemberListItem {
     pubKey: model.isEnsVerified ? "" : model.compressedPubKey
     nickName: model.localNickname
     userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
+    usesDefaultName: model.usesDefaultName
     isBlocked: model.isBlocked
     isVerified: model.isVerified || model.trustStatus === Constants.trustStatus.trusted
     isUntrustworthy: model.isUntrustworthy || model.trustStatus === Constants.trustStatus.untrustworthy
@@ -25,6 +26,6 @@ StatusMemberListItem {
     icon.name: model.thumbnailImage || model.icon
     icon.color: Utils.colorForColorId(model.colorId)
     status: model.onlineStatus
-    ringSettings.ringSpecModel: model.colorHash
+    colorHash: model.colorHash
     color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
 }

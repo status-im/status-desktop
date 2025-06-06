@@ -8,6 +8,7 @@ type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     Name
+    UsesDefaultName
     MemberRole
     Icon
     Color
@@ -108,6 +109,7 @@ QtObject:
     {
       ModelRole.Id.int:"itemId",
       ModelRole.Name.int:"name",
+      ModelRole.UsesDefaultName.int:"usesDefaultName",
       ModelRole.MemberRole.int:"memberRole",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
@@ -157,6 +159,8 @@ QtObject:
       result = newQVariant(item.id)
     of ModelRole.Name:
       result = newQVariant(item.name)
+    of ModelRole.UsesDefaultName:
+      result = newQVariant(item.usesDefaultName)
     of ModelRole.MemberRole:
       result = newQVariant(item.memberRole.int)
     of ModelRole.Icon:
@@ -446,7 +450,7 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Blocked.int])
 
-  proc updateItemDetailsById*(self: Model, id, name, icon: string, trustStatus: TrustStatus) =
+  proc updateUserItemDetailsById*(self: Model, id, name: string, usesDefaultName: bool, icon: string, trustStatus: TrustStatus) =
     let ind = self.getItemIdxById(id)
     if ind == -1:
       return
@@ -456,6 +460,7 @@ QtObject:
     updateRole(name, Name)
     updateRole(icon, Icon)
     updateRole(trustStatus, TrustStatus)
+    updateRole(usesDefaultName, UsesDefaultName)
 
     if roles.len == 0:
       return
@@ -464,7 +469,7 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, roles)
 
-  proc updateItemDetailsById*(self: Model, id, name, description, emoji, color: string, hideIfPermissionsNotMet: bool): seq[int] =
+  proc updateCommunityItemDetailsById*(self: Model, id, name, description, emoji, color: string, hideIfPermissionsNotMet: bool): seq[int] =
     let ind = self.getItemIdxById(id)
     if ind == -1:
       return
@@ -488,7 +493,7 @@ QtObject:
     self.updateHiddenFlagForCategory(self.items[ind].categoryId)
     return roles # return roles so that we can use it in tests
 
-  proc updateNameColorIconOnItemById*(self: Model, id, name, color, icon: string) =
+  proc updateNameColorIconOnGroupItemById*(self: Model, id, name, color, icon: string) =
     let ind = self.getItemIdxById(id)
     if ind == -1:
       return
@@ -591,16 +596,21 @@ QtObject:
         ])
         break
 
-  proc renameCategory*(self: Model, categoryId, newName: string) =
-    let index = self.getItemIdxById(categoryId)
-    if index == -1:
+  proc renameCategory*(self: Model, categoryId, name: string) =
+    let ind = self.getItemIdxById(categoryId)
+    if ind == -1:
       return
-    if self.items[index].name == newName:
+    
+    var roles: seq[int] = @[]
+
+    updateRole(name, Name)
+
+    if roles.len == 0:
       return
-    self.items[index].name = newName
-    let modelIndex = self.createIndex(index, 0, nil)
+
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int])
+    self.dataChanged(modelIndex, modelIndex, roles)
 
   proc renameItemById*(self: Model, id, name: string) =
     let index = self.getItemIdxById(id)
@@ -611,7 +621,7 @@ QtObject:
     self.items[index].name = name
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int])
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int, ModelRole.UsesDefaultName.int])
 
   proc updateItemOnlineStatusById*(self: Model, id: string, onlineStatus: OnlineStatus) =
     let index = self.getItemIdxById(id)

@@ -49,13 +49,14 @@ StatusDialog {
                     anchors.margins: 20
                     anchors.bottomMargin: Theme.padding
 
-                    UserImage {
+                    StatusUserImage {
                         Layout.preferredWidth: 72
                         Layout.preferredHeight: 72
                         Layout.alignment: Qt.AlignHCenter
 
                         name: root.pubKey
-                        colorId: root.colorId
+                        usesDefaultName: true
+                        userColor: Utils.colorForColorId(root.colorId)
                         imageWidth: 68
                         imageHeight: 68
                         colorHash: root.colorHash
@@ -89,14 +90,15 @@ StatusDialog {
                     anchors.margins: 20
                     anchors.bottomMargin: Theme.padding
 
-                    UserImage {
+                    StatusUserImage {
                         Layout.preferredWidth: 72
                         Layout.preferredHeight: 72
                         Layout.alignment: Qt.AlignHCenter
 
                         name: root.pubKey
+                        usesDefaultName: true
                         image: Theme.png("onboarding/avatar")
-                        colorId: root.colorId
+                        userColor: Utils.colorForColorId(root.colorId)
                         imageWidth: 68
                         imageHeight: 68
                         colorHash: root.colorHash

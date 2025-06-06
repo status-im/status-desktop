@@ -52,6 +52,7 @@ Loader {
 
     property string senderId: ""
     property string senderDisplayName: ""
+    property bool usesDefaultName: false
     property string senderOptionalName: ""
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
@@ -193,6 +194,7 @@ Loader {
             trustStatus: contactDetails.trustStatus,
             ensVerified: contactDetails.ensVerified,
             onlineStatus: contactDetails.onlineStatus,
+            usesDefaultName: contactDetails.usesDefaultName,
             hasLocalNickname: !!contactDetails.localNickname
         }
 
@@ -867,6 +869,7 @@ Loader {
                     amISender: root.amISender
                     sender.id: root.senderIsEnsVerified ? "" : root.compressedKey
                     sender.displayName: root.senderDisplayName
+                    sender.usesDefaultName: root.usesDefaultName
                     sender.secondaryName: root.senderOptionalName
                     sender.isEnsVerified: root.isBridgeMessage ? false : root.senderIsEnsVerified
                     sender.isContact: root.isBridgeMessage ? false : root.senderIsAdded

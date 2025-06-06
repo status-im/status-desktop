@@ -2,8 +2,7 @@ import NimQml, tables, json, sequtils, stew/shims/strformat, marshal, times, chr
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
-import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
-import app/modules/shared_models/[color_hash_item, color_hash_model]
+import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details, contacts_utils, color_hash_item, color_hash_model]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/global/app_sections_config
 import app/global/app_signals
@@ -1438,7 +1437,8 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "trustStatus": contactDetails.dto.trustStatus.int,
     "contactRequestState": contactDetails.dto.contactRequestState.int,
     "bio": contactDetails.dto.bio,
-    "onlineStatus": onlineStatus.int
+    "onlineStatus": onlineStatus.int,
+    "usesDefaultName": resolveUsesDefaultName(contactDetails.dto.localNickname, contactDetails.dto.name, contactDetails.dto.displayName)
   }
   return $jsonObj
 
@@ -2129,26 +2129,13 @@ proc createMemberItem[T](
     ): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId, skipBackendCalls = true)
   let status = self.controller.getStatusForContactWithId(memberId)
-  return initMemberItem(
-    pubKey = memberId,
-    displayName = contactDetails.dto.displayName,
-    ensName = contactDetails.dto.name,
-    isEnsVerified = contactDetails.dto.ensVerified,
-    localNickname = contactDetails.dto.localNickname,
-    alias = contactDetails.dto.alias,
-    icon = contactDetails.icon,
-    colorId = contactDetails.colorId,
-    colorHash = contactDetails.colorHash,
-    onlineStatus = toOnlineStatus(status.statusType),
-    isContact = contactDetails.dto.isContact,
-    isBlocked = contactDetails.dto.isBlocked,
-    isCurrentUser = contactDetails.isCurrentUser,
-    trustStatus = contactDetails.dto.trustStatus,
-    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
-    memberRole = role,
-    membershipRequestState = state,
-    requestToJoinId = requestId,
-    airdropAddress = airdropAddress,
+  return createMemberItemFromDtos(
+    contactDetails,
+    toOnlineStatus(status.statusType),
+    state,
+    requestId,
+    role,
+    airdropAddress,
   )
 
 method contactUpdated*[T](self: Module[T], contactId: string) =
