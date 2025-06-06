@@ -3,7 +3,7 @@ import NimQml, Tables, stew/shims/strformat, sequtils, sugar
 
 import app/global/global_singleton
 import ../../../app_service/common/types
-import ../../../app_service/service/contacts/dto/contacts
+import ../../../app_service/service/contacts/dto/[contacts, contact_details]
 import member_item
 import contacts_utils
 import model_utils
@@ -15,6 +15,7 @@ type
     IsCurrentUser
     DisplayName
     PreferredDisplayName
+    UsesDefaultName
     EnsName
     IsEnsVerified
     LocalNickname
@@ -86,6 +87,7 @@ QtObject:
       ModelRole.IsCurrentUser.int: "isCurrentUser",
       ModelRole.DisplayName.int: "displayName",
       ModelRole.PreferredDisplayName.int: "preferredDisplayName",
+      ModelRole.UsesDefaultName.int: "usesDefaultName",
       ModelRole.EnsName.int: "ensName",
       ModelRole.IsEnsVerified.int: "isEnsVerified",
       ModelRole.LocalNickname.int: "localNickname",
@@ -128,6 +130,8 @@ QtObject:
       result = newQVariant(item.isCurrentUser)
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
+    of ModelRole.UsesDefaultName:
+      result = newQVariant(item.usesDefaultName)
     of ModelRole.PreferredDisplayName:
       return newQVariant(resolvePreferredDisplayName(
         item.localNickname, item.ensName, item.displayName, item.alias))
@@ -259,9 +263,12 @@ QtObject:
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
+    let usesDefaultName = resolveUsesDefaultName(localNickname, ensName, displayName)
+
     updateRole(displayName, DisplayName)
     updateRole(ensName, EnsName)
     updateRole(localNickname, LocalNickname)
+    updateRole(usesDefaultName, UsesDefaultName)
 
     if roles.len == 0:
       return
@@ -316,8 +323,10 @@ QtObject:
       resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
     let trustStatusChanged = trustStatus != self.items[ind].trustStatus
+    let usesDefaultName = resolveUsesDefaultName(localNickname, ensName, displayName)
 
     updateRole(displayName, DisplayName)
+    updateRole(usesDefaultName, UsesDefaultName)
     updateRole(ensName, EnsName)
     updateRole(localNickname, LocalNickname)
     updateRole(isEnsVerified, IsEnsVerified)
@@ -553,3 +562,40 @@ QtObject:
     if ind == -1:
       return false
     return self.getMemberItemByIndex(ind).membershipRequestState == MembershipRequestState.Banned
+
+  proc createMemberItemFromDtos*(
+      contactDetails: ContactDetails,
+      status: OnlineStatus,
+      state: MembershipRequestState,
+      requestId: string = "",
+      role: MemberRole,
+      airdropAddress: string = "",
+      joined: bool = false,
+      ): MemberItem =
+    return initMemberItem(
+      pubKey = contactDetails.dto.id,
+      displayName = contactDetails.dto.displayName,
+      usesDefaultName = resolveUsesDefaultName(
+        contactDetails.dto.localNickname,
+        contactDetails.dto.name,
+        contactDetails.dto.displayName,
+      ),
+      ensName = contactDetails.dto.name,
+      isEnsVerified = contactDetails.dto.ensVerified,
+      localNickname = contactDetails.dto.localNickname,
+      alias = contactDetails.dto.alias,
+      icon = contactDetails.icon,
+      colorId = contactDetails.colorId,
+      colorHash = contactDetails.colorHash,
+      onlineStatus = status,
+      isContact = contactDetails.dto.isContact,
+      isBlocked = contactDetails.dto.isBlocked,
+      isCurrentUser = contactDetails.isCurrentUser,
+      trustStatus = contactDetails.dto.trustStatus,
+      contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
+      memberRole = role,
+      membershipRequestState = state,
+      requestToJoinId = requestId,
+      airdropAddress = airdropAddress,
+      joined = joined,
+    )

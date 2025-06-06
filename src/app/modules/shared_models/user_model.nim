@@ -3,6 +3,7 @@ import user_item
 
 import ../../../app_service/common/types
 import ../../../app_service/service/accounts/utils
+import ../../../app_service/service/contacts/dto/[contacts, contact_details]
 import contacts_utils
 import model_utils
 
@@ -12,6 +13,7 @@ type
     CompressedPubKey
     DisplayName
     PreferredDisplayName
+    UsesDefaultName
     EnsName
     IsEnsVerified
     LocalNickname
@@ -81,6 +83,7 @@ QtObject:
       ModelRole.CompressedPubKey.int: "compressedPubKey",
       ModelRole.DisplayName.int: "displayName",
       ModelRole.PreferredDisplayName.int: "preferredDisplayName",
+      ModelRole.UsesDefaultName.int: "usesDefaultName",
       ModelRole.EnsName.int: "ensName",
       ModelRole.IsEnsVerified.int: "isEnsVerified",
       ModelRole.LocalNickname.int: "localNickname",
@@ -127,6 +130,8 @@ QtObject:
     of ModelRole.PreferredDisplayName:
       return newQVariant(resolvePreferredDisplayName(
         item.localNickname, item.ensName, item.displayName, item.alias))
+    of ModelRole.UsesDefaultName:
+      result = newQVariant(resolveUsesDefaultName(item.localNickname, item.ensName, item.displayName))
     of ModelRole.EnsName:
       result = newQVariant(item.ensName)
     of ModelRole.IsEnsVerified:
@@ -256,6 +261,7 @@ QtObject:
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
+      roles.add(ModelRole.UsesDefaultName.int)
 
     if roles.len == 0:
       return
@@ -331,6 +337,7 @@ QtObject:
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
+      roles.add(ModelRole.UsesDefaultName.int)
 
     if trustStatusChanged:
       roles.add(ModelRole.IsUntrustworthy.int)
@@ -421,3 +428,38 @@ QtObject:
 # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =
     return self.items.map(i => i.pubKey)
+
+  proc createItemFromDto*(
+      contactDetails: ContactDetails,
+      status: OnlineStatus,
+      contactRequest: ContactRequestState,
+    ): UserItem =
+    return initUserItem(
+      pubKey = contactDetails.dto.id,
+      displayName = contactDetails.dto.displayName,
+      usesDefaultName = resolveUsesDefaultName(
+        contactDetails.dto.localNickname,
+        contactDetails.dto.name,
+        contactDetails.dto.displayName),
+      ensName = contactDetails.dto.name,
+      isEnsVerified = contactDetails.dto.ensVerified,
+      localNickname = contactDetails.dto.localNickname,
+      alias = contactDetails.dto.alias,
+      icon = contactDetails.icon,
+      colorId = contactDetails.colorId,
+      colorHash = contactDetails.colorHash,
+      onlineStatus = status,
+      isContact = contactDetails.dto.isContact(),
+      isBlocked = contactDetails.dto.isBlocked(),
+      isCurrentUser = contactDetails.isCurrentUser,
+      contactRequest = toContactStatus(contactRequest),
+      lastUpdated = contactDetails.dto.lastUpdated,
+      lastUpdatedLocally = contactDetails.dto.lastUpdatedLocally,
+      bio = contactDetails.dto.bio,
+      thumbnailImage = contactDetails.dto.image.thumbnail,
+      largeImage = contactDetails.dto.image.large,
+      isContactRequestReceived = contactDetails.dto.isContactRequestReceived,
+      isContactRequestSent = contactDetails.dto.isContactRequestSent,
+      isRemoved = contactDetails.dto.removed,
+      trustStatus = contactDetails.dto.trustStatus,
+    )
