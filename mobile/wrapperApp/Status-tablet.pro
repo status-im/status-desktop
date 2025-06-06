@@ -30,8 +30,8 @@ android {
 
     LIBS += -L$$PWD/../lib/android/$$LIB_PREFIX -lnim_status_client
     ANDROID_EXTRA_LIBS += \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libssl_1_1.so \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libcrypto_1_1.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libssl_3.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libcrypto_3.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libnim_status_client.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
                         $$PWD/../lib/android/$$LIB_PREFIX/libpcre.so \
@@ -44,7 +44,7 @@ ios {
     QMAKE_APPLICATION_BUNDLE_NAME = tablet
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
 
-    LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_1_1 -lcrypto_1_1 -lqzxing -lresolv -lqrcodegen -lpcre
+    LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen -lpcre
 }
 
 DESTDIR=$$PWD/../bin/$$LIB_PREFIX
