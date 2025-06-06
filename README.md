@@ -19,6 +19,7 @@
   - [Windows](#windows)
   - [Linux](#linux)
 - [🛠️ Build from Source](#%EF%B8%8F-build-from-source)
+- [📱 Build for Mobile](mobile/README.md)]
 - [🤝 Contributing](#-contributing)
 - [📚 Documentation](#-documentation)
 
@@ -67,7 +68,6 @@ Get the latest release for your platform:
 <!-- TODO Move building docs to Github -->
 
 To build Status Desktop from source, follow the instructions specific to your operating system. Detailed build instructions are available in the [official documentation](https://zealous-polka-dc7.notion.site/Building-ca1db4fb3baf4f15bab8da717832b743?pvs=74).
-
 
 ## 🤝 Contributing
 
