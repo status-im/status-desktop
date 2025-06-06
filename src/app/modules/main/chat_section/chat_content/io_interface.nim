@@ -10,13 +10,13 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface, chatItem: chat_item.Item) {.base.} =
+method load*(self: AccessInterface, chatItem: ChatItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatUpdated*(self: AccessInterface, chatItem: chat_item.Item) {.base.} =
+method onChatUpdated*(self: AccessInterface, chatItem: ChatItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =

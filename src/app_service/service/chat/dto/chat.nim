@@ -1,11 +1,9 @@
 {.used.}
 
 import json, stew/shims/strformat, strutils, tables
-import ../../community/dto/community
 import ../../shared_urls/dto/url_data
 
 include ../../../common/json_utils
-import ../../../../app_service/common/types
 
 type ChatType* {.pure.}= enum
   Unknown = 0,

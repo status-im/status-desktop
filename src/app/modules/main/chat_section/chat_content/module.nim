@@ -73,7 +73,7 @@ method delete*(self: Module) =
   if self.usersModule != nil:
     self.usersModule.delete
 
-method load*(self: Module, chatItem: chat_item.Item) =
+method load*(self: Module, chatItem: ChatItem) =
   self.controller.init()
 
   var chatName = chatItem.name
@@ -342,7 +342,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
 
-method onChatUpdated*(self: Module, chatItem: chat_item.Item) =
+method onChatUpdated*(self: Module, chatItem: ChatItem) =
   if chatItem.`type` != ChatType.OneToOne.int:
     self.view.chatDetails.setName(chatItem.name)
     self.view.chatDetails.setIcon(chatItem.icon)

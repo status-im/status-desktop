@@ -59,7 +59,7 @@ type
     isPendingOwnershipRequest: bool
     activeMembersCount: int
 
-proc initItem*(
+proc initSectionItem*(
     id: string,
     sectionType: SectionType,
     name: string,

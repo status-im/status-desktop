@@ -312,6 +312,7 @@ QObject {
 
         markerRoleName: "sectionType"
         expectedRoles: ["key", "id", "enabled", "name", "icon", "color", "hasNotification", "notificationsCount", // common props
+            "chatType", "onlineStatus", // chat
             "banner", "members", "activeMembers", "pending", "banned", // community
             "isExperimental", // settings
             "walletType", "currencyBalance", // wallet

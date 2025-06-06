@@ -22,7 +22,7 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface) {.base.} =
+method load*(self: AccessInterface, buildChats: bool = false) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatsLoaded*(self: AccessInterface,
@@ -88,7 +88,7 @@ method addOrUpdateChat*(self: AccessInterface,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
     isSectionBuild: bool = false,
-  ): Item {.base.} =
+  ): ChatItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onNewMessagesReceived*(self: AccessInterface, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,

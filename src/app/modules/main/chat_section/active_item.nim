@@ -4,7 +4,7 @@ import ../../../../app_service/common/types
 
 QtObject:
   type ActiveItem* = ref object of QObject
-    item: Item
+    item: ChatItem
 
   proc setup(self: ActiveItem) =
     self.QObject.setup
@@ -22,12 +22,12 @@ QtObject:
 
   #################################################
 
-  proc setActiveItemData*(self: ActiveItem, item: Item) =
+  proc setActiveItemData*(self: ActiveItem, item: ChatItem) =
     self.item = item
 
   # Used when there is no longer an active item (last channel was deleted)
   proc resetActiveItemData*(self: ActiveItem) =
-    self.item = Item()
+    self.item = ChatItem()
     self.idChanged()
 
   proc getId(self: ActiveItem): string {.slot.} =
