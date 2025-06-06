@@ -7,7 +7,7 @@ def isPRBuild = utils.isPRBuild()
 pipeline {
   /* This way we run the same Jenkinsfile on different platforms. */
   agent {
-    label "${getAgentLabels().join(' && ')} && qt-5.15 && go-1.22 && xcode-16.2"
+    label "${getAgentLabels().join(' && ')} && qt-6.9.0 && go-1.22 && xcode-16.2"
   }
 
   parameters {
@@ -65,11 +65,13 @@ pipeline {
     PLATFORM = "macos/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
-    QT_VERSION="5.15.16_1"
-    BREW_PREFIX = sh(script: "brew --prefix", returnStdout: true).trim()
-    QTDIR="${BREW_PREFIX}/Cellar/qt@5/${QT_VERSION}"
+    QT_VERSION="6.9.0"
+    QMAKE = "/Users/admin/${QT_VERSION}/macos/bin/qmake"
+    /* QMAKE = sh(script: "which qmake", returnStdout: true).trim() */
+    QTDIR = sh(script:"${env.QMAKE} -query QT_INSTALL_PREFIX", returnStdout: true).trim()
     /* Enforce Go version installed infra-role-golang. */
-    PATH = "${env.QTDIR}/bin:${env.HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
+    /* to fix missing rcc, since QT6 rcc is located at ${QTDIR}/libexec/rcc */
+    PATH = "${env.QTDIR}/bin:${env.QTDIR}/libexec:${env.HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */

@@ -18,6 +18,7 @@ from gui.components.wallet.confirmation_popup import ConfirmationPopup
 from gui.components.wallet.receive_popup import ReceivePopup
 from gui.components.wallet.remove_wallet_account_popup import RemoveWalletAccountPopup
 from gui.components.wallet.send_popup import SendPopup
+from gui.components.wallet.wallet_account_context_menu import WalletAccountContextMenu
 from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.elements.button import Button
 from gui.elements.list import List
@@ -102,7 +103,7 @@ class WalletLeftPanel(QObject):
         return ContextMenu().wait_until_appears()
 
     @allure.step('Open context menu for specific account')
-    def _open_context_menu_for_account(self, account_name: str) -> ContextMenu:
+    def _open_context_menu_for_account(self, account_name: str) -> WalletAccountContextMenu:
         account_items = self.accounts
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
@@ -110,7 +111,7 @@ class WalletLeftPanel(QObject):
             for _ in range(2):
                 self.wallet_account_item.right_click()
                 try:
-                    return ContextMenu().wait_until_appears()
+                    return WalletAccountContextMenu().wait_until_appears()
                 except Exception:
                     pass  # Retry one more time
                 raise LookupError(f'Could not open context menu for {account_name}')
@@ -123,7 +124,7 @@ class WalletLeftPanel(QObject):
     @allure.step('Open account popup for editing from context menu')
     def open_edit_account_popup_from_context_menu(self, account_name: str) -> AccountPopup:
         context_menu = self._open_context_menu_for_account(account_name)
-        context_menu.edit_from_context.click()
+        context_menu.edit_from_wallet_account_context.click()
         return AccountPopup().wait_until_appears().verify_edit_account_popup_present()
 
     @allure.step('Open account popup')
@@ -145,7 +146,7 @@ class WalletLeftPanel(QObject):
     @allure.step('Delete account from the list from context menu')
     def delete_account_from_context_menu(self, account_name: str, attempt: int = 2) -> RemoveWalletAccountPopup:
         try:
-            self._open_context_menu_for_account(account_name).delete_from_context.click()
+            self._open_context_menu_for_account(account_name).delete_from_wallet_account_context.click()
             return RemoveWalletAccountPopup().wait_until_appears()
         except Exception as ex:
             if attempt:
@@ -155,7 +156,7 @@ class WalletLeftPanel(QObject):
 
     @allure.step('Copy address for the account in the context menu')
     def copy_account_address_in_context_menu(self, account_name: str):
-        self._open_context_menu_for_account(account_name).copy_address_from_context.click()
+        self._open_context_menu_for_account(account_name).copy_address_from_wallet_account_context.click()
         return str(pyperclip.paste())
 
 
