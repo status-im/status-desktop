@@ -13,14 +13,11 @@ class ContextMenu(QObject):
     def __init__(self):
         super(ContextMenu, self).__init__(names.contextMenu_PopupItem)
         self.menu_item = QObject(names.contextMenuItem)
-        # wallet account context items
+        # wallet left panel context items
         self.add_watched_address_from_context = QObject(names.contextMenuItem_AddWatchOnly)
-        self.delete_from_context = QObject(names.contextMenuItem_Delete)
-        self.edit_from_context = QObject(names.contextMenuItem_Edit)
-        self.copy_address_from_context = QObject(names.contextMenuItem_Copy_Address)
-        self.hide_include_in_total_balance = QObject(names.contextMenuItem_HideInclude)
         self.edit_saved_address_from_context = QObject(names.contextSavedAddressEdit)
         self.delete_saved_address_from_context = QObject(names.contextSavedAddressDelete)
+
         # community context items
         self.edit_channel_from_context = QObject(communities_names.edit_Channel_StatusMenuItem)
         self.delete_channel_from_context = QObject(communities_names.delete_Channel_StatusMenuItem)

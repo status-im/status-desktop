@@ -272,10 +272,6 @@ mainWallet_Saved_Addreses_Popup_Address_Add_Button = {"container": statusDesktop
 contextMenu_PopupItem = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
 contextMenuItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 contextMenuItem_AddWatchOnly = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-AddWatchOnlyAccountAction*"), "type": "StatusMenuItem", "visible": True}
-contextMenuItem_Delete = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-DeleteAction*"), "type": "StatusMenuItem", "visible": True}
-contextMenuItem_Edit = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-EditAction*"), "type": "StatusMenuItem", "visible": True}
-contextMenuItem_Copy_Address = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-CopyAddressAction*"), "type": "StatusSuccessAction", "visible": True}
-contextMenuItem_HideInclude = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-HideFromTotalBalance*"), "type": "StatusMenuItem", "visible": True}
 contextSavedAddressEdit = {"container": statusDesktop_mainWindow, "objectName": "editSavedAddress", "type": "StatusMenuItem", "visible": True}
 contextSavedAddressDelete = {"container": statusDesktop_mainWindow, "objectName": "deleteSavedAddress", "type": "StatusMenuItem", "visible": True}
 
@@ -322,11 +318,12 @@ addAccountPopup_GeneratedAddressesListPageIndicatior_StatusPageIndicator = {"con
 page_StatusBaseButton = {"checkable": False, "container": addAccountPopup_GeneratedAddressesListPageIndicatior_StatusPageIndicator, "objectName": RegularExpression("Page-*"), "type": "StatusBaseButton", "visible": True}
 mainWindow_DisabledTooltipButton = {"container": statusDesktop_mainWindow, "type": "DisabledTooltipButton", "icon": "send", "visible": True}
 
-# Add/Edit account popup:
+"""Add/ edit wallet account popup"""
+
 grid_Grid = {"container": statusDesktop_mainWindow_overlay, "id": "grid", "type": "Grid", "unnamed": 1, "visible": True}
 color_StatusColorRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "type": "StatusColorRadioButton", "unnamed": 1, "visible": True}
 
-mainWallet_AddEditAccountPopup_Content = {"container": statusDesktop_mainWindow, "objectName": "AddAccountPopup-Content", "type": "Item", "visible": True}
+mainWallet_AddEditAccountPopup_Content = {"container": statusDesktop_mainWindow_overlay, "objectName": "AddAccountPopup", "type": "PopupItem", "visible": True}
 mainWallet_AddEditAccountPopup_PrimaryButton = {"container": statusDesktop_mainWindow, "objectName": "AddAccountPopup-PrimaryButton", "type": "StatusButton", "visible": True}
 mainWallet_AddEditAccountPopup_BackButton = {"container": statusDesktop_mainWindow, "objectName": "AddAccountPopup-BackButton", "type": "StatusBackButton", "visible": True}
 mainWallet_AddEditAccountPopup_AccountNameComponent = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "AddAccountPopup-AccountName", "type": "StatusInput", "visible": True}
@@ -387,6 +384,7 @@ editWalletSettings_ColorSelector = {"container": statusDesktop_mainWindow_overla
 editWalletSettings_EmojiItem = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("statusEmoji_*"), "type": "StatusEmoji"}
 
 # Remove Account from settings popup
+removeAccountConfirmationPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "RemoveAccountConfirmationPopup", "type": "PopupItem", "visible": True}
 removeConfirmationCrossCloseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "close-icon", "type": "StatusIcon", "visible": True}
 removeConfirmationTextTitle = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerTitle", "type": "StatusBaseText", "visible": True}
 removeConfirmationTextBody = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
@@ -531,12 +529,6 @@ signSendModalRejectButton = {"container": statusDesktop_mainWindow_overlay, "obj
 send_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "sendMenuItem", "type": "StatusMenuItem", "visible": True}
 receive_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "receiveMenuItem", "type": "StatusMenuItem", "visible": True}
 
-# Receive popup
-tabBar_StatusSwitchTabBar = {"container": statusDesktop_mainWindow_overlay, "id": "tabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
-accountSelector_AccountSelectorHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "accountSelector", "type": "AccountSelectorHeader", "visible": True}
-textContent_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "textContent", "type": "StatusBaseText", "visible": True}
-greenCircleAroundIcon_Rectangle = {"container": statusDesktop_mainWindow_overlay, "id": "greenCircleAroundIcon", "type": "Rectangle", "unnamed": 1, "visible": True}
-qrCodeImage_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "qrCodeImage", "type": "Image", "visible": True}
 
 # Bridge popup
 holdingSelector_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "holdingSelector", "type": "TokenSelectorNew", "visible": True}
