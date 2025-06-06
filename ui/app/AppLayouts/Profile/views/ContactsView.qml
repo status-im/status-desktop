@@ -59,6 +59,7 @@ SettingsContentBase {
             trustStatus: entry.trustStatus,
             onlineStatus: entry.onlineStatus,
             ensVerified: entry.isEnsVerified,
+            usesDefaultName: entry.usesDefaultName,
             hasLocalNickname: !!entry.localNickname
         }
 

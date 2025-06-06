@@ -11,6 +11,7 @@ type
   ChatItem* = ref object
     id: string
     name: string
+    usesDefaultName: bool
     `type`: int
     memberRole: MemberRole
     icon: string
@@ -44,7 +45,8 @@ type
 
 proc initChatItem*(
     id,
-    name,
+    name: string,
+    usesDefaultName: bool,
     icon,
     color,
     emoji,
@@ -79,6 +81,7 @@ proc initChatItem*(
   result = ChatItem()
   result.id = id
   result.name = name
+  result.usesDefaultName = usesDefaultName
   result.memberRole = memberRole
   result.icon = icon
   result.color = color
@@ -115,6 +118,7 @@ proc `$`*(self: ChatItem): string =
   result = fmt"""chat_section/ChatItem(
     id: {self.id},
     name: {$self.name},
+    usesDefaultName: {$self.usesDefaultName},
     memberRole: {$self.memberRole},
     icon: {$self.icon},
     color: {$self.color},
@@ -149,6 +153,7 @@ proc toJsonNode*(self: ChatItem): JsonNode =
   result = %* {
     "itemId": self.id,
     "name": self.name,
+    "usesDefaultName": self.usesDefaultName,
     "memberRole": self.memberRole,
     "icon": self.icon,
     "color": self.color,
@@ -190,6 +195,12 @@ proc name*(self: ChatItem): string =
 
 proc `name=`*(self: var ChatItem, value: string) =
   self.name = value
+
+proc usesDefaultName*(self: ChatItem): bool =
+  self.usesDefaultName
+
+proc `usesDefaultName=`*(self: var ChatItem, value: bool) =
+  self.usesDefaultName = value
 
 proc memberRole*(self: ChatItem): MemberRole =
   self.memberRole

@@ -23,6 +23,7 @@ QObject {
     property string selfName
     property string selfPreferredDisplayName
     property string selfAlias
+    property bool selfUsesDefaultName
     property string selfIcon
     property int selfColorId
     property var selfColorHash
@@ -35,7 +36,7 @@ QObject {
         id: concatModel
 
         expectedRoles: [
-            "pubKey", "displayName", "ensName", "isEnsVerified", "localNickname",
+            "pubKey", "displayName", "ensName", "isEnsVerified", "localNickname", "usesDefaultName",
             "alias", "icon", "colorId", "colorHash", "onlineStatus",
             "isContact", "isCurrentUser", "isVerified", "isUntrustworthy",
             "isBlocked", "contactRequestState", "preferredDisplayName",
@@ -65,6 +66,7 @@ QObject {
                         readonly property string preferredDisplayName: root.selfPreferredDisplayName
                         readonly property string name: preferredDisplayName
                         readonly property string alias: root.selfAlias
+                        readonly property bool usesDefaultName: root.selfUsesDefaultName
                         readonly property string icon: root.selfIcon
                         readonly property int colorId: root.selfColorId
                         readonly property var colorHash: root.selfColorHash

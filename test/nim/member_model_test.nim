@@ -7,6 +7,7 @@ proc createTestMemberItem(pubKey: string): MemberItem =
   return initMemberItem(
       pubKey = pubKey,
       displayName = "",
+      usesDefaultName = true,
       ensName = "",
       isEnsVerified = false,
       localNickname = "",
@@ -51,8 +52,8 @@ suite "updating member items":
         contactRequest = ContactRequest.None,
         callDataChanged = false,
       )
-    # Two updated roles, because preferredDisplayName gets updated too
-    check(updatedRoles.len() == 2)
+    # Three updated roles, because preferredDisplayName and UsesDefaultName get updated too
+    check(updatedRoles.len() == 3)
     let item = model.getMemberItem("0xa")
     check(item.displayName == "newName")
 
@@ -64,8 +65,8 @@ suite "updating member items":
         isEnsVerified = false,
         localNickname = "",
         alias = "",
-        icon = "icon",
-        isContact = true,
+        icon = "icon", # Updated
+        isContact = true, # Updated
         isBlocked = false,
         memberRole = MemberRole.None,
         joined = false,

@@ -124,6 +124,7 @@ Item {
             delegate: StatusMemberListItem {
                 width: ListView.view.width
 
+                usesDefaultName: model.usesDefaultName
                 nickName: model.localNickname
                 userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                 pubKey: model.isEnsVerified ? "" : model.compressedPubKey
@@ -135,7 +136,7 @@ Item {
                 icon.name: model.icon
                 icon.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus
-                ringSettings.ringSpecModel: model.colorHash
+                colorHash: model.colorHash
 
                 onClicked: Global.openProfilePopup(model.pubKey)
                 onRightClicked: {
@@ -155,6 +156,7 @@ Item {
                         onlineStatus: model.onlineStatus,
                         ensVerified: model.isEnsVerified,
                         hasLocalNickname: !!model.localNickname,
+                        usesDefaultName: model.usesDefaultName,
                         chatType: root.chatType,
                         isAdmin: root.isAdmin
                     }

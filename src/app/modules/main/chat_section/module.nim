@@ -9,11 +9,7 @@ import ../../shared_models/message_item as member_msg_item
 import ../../shared_models/message_model as member_msg_model
 import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
-import ../../shared_models/token_permissions_model
-import ../../shared_models/token_permission_item
-import ../../shared_models/token_criteria_item
-import ../../shared_models/token_criteria_model
-import ../../shared_models/token_permission_chat_list_model
+import ../../shared_models/[token_permissions_model, token_permission_item, token_criteria_item, token_criteria_model, token_permission_chat_list_model, contacts_utils]
 
 import chat_content/module as chat_content_module
 import chat_content/users/module as users_module
@@ -224,6 +220,7 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
   result = chat_item.initChatItem(
         id = category.id,
         category.name,
+        usesDefaultName = false,
         icon = "",
         color = "",
         emoji = "",
@@ -302,20 +299,10 @@ proc buildChatSectionUI(
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
 
-  return initUserItem(
-    pubKey = contactDetails.dto.id,
-    displayName = contactDetails.dto.displayName,
-    ensName = contactDetails.dto.name,
-    isEnsVerified = contactDetails.dto.ensVerified,
-    localNickname = contactDetails.dto.localNickname,
-    alias = contactDetails.dto.alias,
-    icon = contactDetails.icon,
-    colorId = contactDetails.colorId,
-    colorHash = if not contactDetails.dto.ensVerified: contactDetails.colorHash else: "",
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
-    isContact = contactDetails.dto.isContact(),
-    trustStatus = contactDetails.dto.trustStatus,
-    isBlocked = contactDetails.dto.isBlocked(),
+  return createItemFromDto(
+    contactDetails,
+    toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
+    contactRequest = ContactRequestState.None,
   )
 
 proc initContactRequestsModel(self: Module) =
@@ -611,6 +598,7 @@ proc getChatItemFromChatDto(
   var chatName = chatDto.name
   var chatImage = chatDto.icon
   var blocked = false
+  var usesDefaultName = false
   var colorHash: ColorHashDto = @[]
   var colorId: int = 0
   var onlineStatus = OnlineStatus.Inactive
@@ -619,6 +607,11 @@ proc getChatItemFromChatDto(
   if chatDto.chatType == ChatType.OneToOne:
     let contactDetails = self.controller.getContactDetails(chatDto.id)
     chatName = contactDetails.defaultDisplayName
+    usesDefaultName = resolveUsesDefaultName(
+      contactDetails.dto.localNickname,
+      contactDetails.dto.name,
+      contactDetails.dto.displayName,
+    )
     chatImage = contactDetails.icon
     blocked = contactDetails.dto.isBlocked()
     if not contactDetails.dto.ensVerified:
@@ -684,6 +677,7 @@ proc getChatItemFromChatDto(
   result = chat_item.initChatItem(
     chatDto.id,
     chatName,
+    usesDefaultName,
     chatImage,
     chatDto.color,
     chatDto.emoji,
@@ -857,7 +851,7 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
   self.changeCanPostValues(chat.id, chat.canPost, chat.canView, chat.canPostReactions, chat.viewersCanPostReactions)
-  discard self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color, chat.hideIfPermissionsNotMet)
+  discard self.view.chatsModel().updateCommunityItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color, chat.hideIfPermissionsNotMet)
   self.refreshHiddenBecauseNotPermittedState()
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
@@ -1168,7 +1162,12 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let chatName = contactDetails.defaultDisplayName
   let chatImage = contactDetails.icon
   let trustStatus = contactDetails.dto.trustStatus
-  self.view.chatsModel().updateItemDetailsById(publicKey, chatName, chatImage, trustStatus)
+  let usesUsedDefaultName = resolveUsesDefaultName(
+    contactDetails.dto.localNickname,
+    contactDetails.dto.name,
+    contactDetails.dto.displayName,
+  )
+  self.view.chatsModel().updateUserItemDetailsById(publicKey, chatName, usesUsedDefaultName, chatImage, trustStatus)
 
 method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,
     chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int,
@@ -1263,7 +1262,7 @@ method onChatRenamed*(self: Module, chatId: string, newName: string) =
   self.view.tokenPermissionsModel().renameChatById(chatId, newName)
 
 method onGroupChatDetailsUpdated*(self: Module, chatId, newName, newColor, newImage: string) =
-  self.view.chatsModel().updateNameColorIconOnItemById(chatId, newName, newColor, newImage)
+  self.view.chatsModel().updateNameColorIconOnGroupItemById(chatId, newName, newColor, newImage)
 
 method acceptRequestToJoinCommunity*(self: Module, requestId: string, communityId: string) =
   self.controller.acceptRequestToJoinCommunity(requestId, communityId)
@@ -1333,6 +1332,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
     let chatItem = chat_item.initChatItem(
       c.id,
       c.name,
+      usesDefaultName = false,
       icon="",
       c.color,
       c.emoji,
@@ -1357,6 +1357,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
     let chatItem = chat_item.initChatItem(
       c.id,
       c.name,
+      usesDefaultName = false,
       icon="",
       c.color,
       c.emoji,

@@ -182,7 +182,7 @@ ItemDelegate {
             status: root.onlineStatus
             icon.name: root.iconName
             icon.color: Utils.colorForPubkey(root.pubKey)
-            ringSettings.ringSpecModel: Utils.getColorHashAsJson(root.pubKey)
+            colorHash: Utils.getColorHashAsJson(root.pubKey)
         }
     }
 

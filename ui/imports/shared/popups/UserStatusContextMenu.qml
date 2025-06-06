@@ -14,6 +14,7 @@ StatusMenu {
     property alias headerIcon: header.icon
     property alias colorHash: header.colorHash
     property alias colorId: header.colorId
+    property alias usesDefaultName: header.usesDefaultName
 
     property alias isEnsVerified: header.userIsEnsVerified
 

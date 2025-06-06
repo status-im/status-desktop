@@ -13,6 +13,7 @@ StatusNavBarTabButton {
     id: root
 
     required property string name
+    required property string usesDefaultName
     required property string pubKey
     required property string compressedPubKey
     required property bool isEnsVerified
@@ -36,8 +37,24 @@ StatusNavBarTabButton {
     identicon.asset.width: width
     identicon.asset.height: height
     identicon.asset.useAcronymForLetterIdenticon: true
-    identicon.asset.color: Utils.colorForPubkey(root.pubKey)
     identicon.ringSettings.ringSpecModel: root.colorHash
+
+    identicon.asset.name: {
+        if (identicon.asset.isImage) {
+            return icon.source
+        }
+        if (root.usesDefaultName) {
+            return "contact"
+        }
+        return icon.name
+    }
+    // identicon.asset.width: identicon.asset.isImage ? 28 : (root.usesDefaultName ? Math.floor(width * 0.9) : width)
+    // identicon.asset.height: identicon.asset.isImage ? 28 : (root.usesDefaultName ? Math.floor(height * 0.9) : height)
+    identicon.asset.bgWidth: root.usesDefaultName ? width : 0
+    identicon.asset.bgHeight: root.usesDefaultName ? height : 0
+    identicon.asset.color: root.usesDefaultName ? Theme.palette.indirectColor2 : Utils.colorForPubkey(root.pubKey)
+    identicon.asset.isLetterIdenticon: root.usesDefaultName ? false : icon.name !== "" && !identicon.asset.isImage
+    identicon.asset.bgColor: root.usesDefaultName ? Utils.colorForPubkey(root.pubKey) : "transparent"
 
     badge.visible: true
     badge.anchors {
@@ -76,6 +93,7 @@ StatusNavBarTabButton {
         name: root.name
         headerIcon: root.iconSource
         isEnsVerified: root.isEnsVerified
+        usesDefaultName: root.usesDefaultName
 
         currentUserStatus: root.currentUserStatus
 

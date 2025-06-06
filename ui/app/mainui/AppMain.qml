@@ -128,6 +128,7 @@ Item {
         selfName: appMain.profileStore.name
         selfPreferredDisplayName: appMain.profileStore.preferredName
         selfAlias: appMain.profileStore.username
+        selfUsesDefaultName: appMain.profileStore.usesDefaultName
         selfIcon: appMain.profileStore.icon
         selfColorId: appMain.profileStore.colorId
         selfColorHash: appMain.profileStore.colorHash
@@ -1360,6 +1361,7 @@ Item {
                 objectName: "statusProfileNavBarTabButton"
 
                 name: appMain.profileStore.name
+                usesDefaultName: appMain.profileStore.usesDefaultName
                 pubKey: appMain.profileStore.pubkey
                 compressedPubKey: appMain.profileStore.compressedPubKey
                 isEnsVerified: !!appMain.profileStore.preferredName

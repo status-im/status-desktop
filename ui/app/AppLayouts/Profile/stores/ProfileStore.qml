@@ -13,6 +13,7 @@ QtObject {
     property string name: userProfile.name
     property string username: userProfile.username
     property string displayName: userProfile.displayName
+    property bool usesDefaultName: userProfile.usesDefaultName
     property string preferredName: userProfile.preferredName
     property string profileLargeImage: userProfile.largeImage
     property string icon: userProfile.icon

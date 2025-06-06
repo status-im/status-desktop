@@ -22,6 +22,7 @@ StatusMenu {
     property int profileType: Constants.profileType.regular
     property bool ensVerified: false
     property bool hasLocalNickname: false
+    property bool usesDefaultName: false
     property int chatType: Constants.chatType.unknown
     property bool isAdmin: false
     property var emojiHash: []
@@ -48,6 +49,7 @@ StatusMenu {
         displayNamePlusIconsVisible: true
         editButtonVisible: false
         displayName: StatusQUtils.Emoji.parse(root.displayName, StatusQUtils.Emoji.size.verySmall)
+        usesDefaultName: root.usesDefaultName
         compressedPubKey: root.compressedPubKey
         emojiHash: root.emojiHash
         colorHash: root.colorHash

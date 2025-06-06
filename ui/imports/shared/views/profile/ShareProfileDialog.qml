@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
@@ -22,6 +23,7 @@ StatusDialog {
     required property int colorId
 
     required property string displayName
+    required property bool usesDefaultName
     required property string largeImage
 
     footer: null
@@ -57,12 +59,13 @@ StatusDialog {
                     smooth: false
                     source: root.qrCode
 
-                    UserImage {
+                    StatusUserImage {
                         anchors.centerIn: parent
 
                         name: root.displayName
+                        usesDefaultName: root.usesDefaultName
                         image: root.largeImage
-                        colorId: root.colorId
+                        userColor: Utils.colorForColorId(root.colorId)
 
                         interactive: false
                         imageWidth: 78

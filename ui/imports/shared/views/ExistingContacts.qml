@@ -94,7 +94,7 @@ Item {
             icon.width: 40
             icon.height: 40
             icon.color: Utils.colorForColorId(model.colorId)
-            ringSettings.ringSpecModel: model.colorHash
+            colorHash: model.colorHash
 
             onClicked: {
                 root.contactClicked(model);

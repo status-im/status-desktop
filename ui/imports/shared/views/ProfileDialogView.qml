@@ -195,6 +195,7 @@ Pane {
             linkToProfile: d.linkToProfile
             qrCode: root.profileStore.getQrCodeSource(linkToProfile)
             displayName: userImage.name
+            usesDefaultName: userImage.usesDefaultName
             largeImage: userImage.image
             colorId: root.profileStore.colorId
         }
@@ -213,13 +214,14 @@ Pane {
             Layout.fillWidth: true
             spacing: Theme.halfPadding
 
-            UserImage {
+            StatusUserImage {
                 id: userImage
                 Layout.alignment: Qt.AlignTop
                 objectName: "ProfileDialog_userImage"
                 name: d.mainDisplayName
+                usesDefaultName: contactDetails.usesDefaultName
                 image: contactDetails.largeImage
-                colorId: contactDetails.colorId
+                userColor: Utils.colorForColorId(contactDetails.colorId)
                 colorHash: contactDetails.colorHash
 
                 interactive: false

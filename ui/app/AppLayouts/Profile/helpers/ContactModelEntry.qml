@@ -21,6 +21,7 @@ QObject {
         ensVerified: entry.isEnsVerified ?? false
         localNickname: entry.localNickname ?? ""
         alias: entry.alias ?? ""
+        usesDefaultName: entry.usesDefaultName ?? false
         icon: entry.icon ?? ""
         colorId: entry.colorId ?? 0
         colorHash: entry.colorHash ?? []

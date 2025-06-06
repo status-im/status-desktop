@@ -17,6 +17,7 @@ Item {
 
     property var devicesModel
     property string userDisplayName
+    property bool usesDefaultName
     property int userColorId
     property var userColorHash
     property string userPublicKey
@@ -45,10 +46,11 @@ Item {
         anchors.fill: parent
         spacing: 0
 
-        UserImage {
+        StatusUserImage {
             Layout.alignment: Qt.AlignHCenter
             name: root.userDisplayName
-            colorId: root.userColorId
+            usesDefaultName: root.usesDefaultName
+            userColor: Utils.colorForColorId(root.userColorId)
             colorHash: root.userColorHash
             image: root.userImage
             interactive: false

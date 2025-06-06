@@ -213,6 +213,7 @@ StatusDialog {
             visible: localPairingBaseState.active
             devicesModel: root.devicesStore.devicesModel
             userDisplayName: root.profileStore.displayName
+            usesDefaultName: root.profileStore.usesDefaultName
             userPublicKey: root.profileStore.pubkey
             userImage: root.profileStore.icon
             userColorHash: root.profileStore.colorHash

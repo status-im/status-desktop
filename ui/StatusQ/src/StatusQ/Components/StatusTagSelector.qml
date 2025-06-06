@@ -94,13 +94,6 @@ Item {
     property int nameCountLimit: 5
 
     /*!
-        \qmlproperty var StatusTagSelector::ringSpecModelGetter
-        This property holds the function to calculate the ring spec model
-        based on the public key.
-    */
-    property var ringSpecModelGetter: (pubKey) => { /*return ringSpecModel*/ }
-
-    /*!
         \qmlproperty var StatusTagSelector::compressKeyGetter
         This property holds the function to calculate the compressed
         key based on the public key.
@@ -418,7 +411,7 @@ Item {
                 icon.name: model.icon
                 icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.pubKey)]
                 status: model.onlineStatus
-                ringSettings.ringSpecModel: root.ringSpecModelGetter(model.pubKey)
+                colorHash: model.colorHash
                 color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
                 onClicked: {
                     root.insertTag(model.displayName, model.pubKey, model.isAdmin, model.isAdmin ? "crown" : "");

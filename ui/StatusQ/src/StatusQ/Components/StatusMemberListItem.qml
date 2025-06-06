@@ -53,6 +53,11 @@ ItemDelegate {
     */
     property string userName: ""
     /*!
+       \qmlproperty bool StatusMemberListItem::usesDefaultName
+       This property holds whether the member represented uses the default name.
+    */
+    property bool usesDefaultName: false
+    /*!
        \qmlproperty string StatusMemberListItem::pubKey
        This property holds the chat public key of the member represented.
     */
@@ -114,16 +119,10 @@ ItemDelegate {
     property alias components: componentsRow.children
 
     /*!
-       \qmlproperty StatusIdenticonRingSettings StatusMemberListItem::ringSettings
-       This property holds the StatusSmartIdenticon ring settings
+       \qmlproperty var StatusMemberListItem::colorHash
+       This property holds the color hash of the member represented.
     */
-    property alias ringSettings: identicon.ringSettings
-
-    /*!
-       \qmlproperty StatusBadge StatusMemberListItem::badge
-       This property holds the StatusBadge used for displaying user's online status
-    */
-    property alias badge: identicon.badge
+    property var colorHash: []
 
     /*!
         \qmlsignal rightClicked
@@ -189,27 +188,16 @@ ItemDelegate {
     contentItem: RowLayout {
         spacing: root.spacing
 
-        StatusSmartIdenticon {
-            id: identicon
-
+        StatusUserImage {
             name: root.nickName || root.userName
-
-            asset.name: root.icon.name
-            asset.color: root.icon.color
-            asset.isImage: asset.name !== ""
-            asset.isLetterIdenticon: asset.name === ""
-            asset.width: root.icon.width
-            asset.height: root.icon.height
-            asset.charactersLen: 2
-            asset.letterSize: asset._twoLettersSize
-
-            // badge
-            badge.visible: true
-            badge.color: root.status === 1 ? Theme.palette.successColor1 : Theme.palette.baseColor1 // FIXME, see root.status
-            badge.border.width: 2
-            badge.border.color: root.hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-            badge.implicitHeight: 12 // 8 px + 2 px * 2 borders
-            badge.implicitWidth: 12 // 8 px + 2 px * 2 borders
+            usesDefaultName: root.usesDefaultName
+            colorHash: root.colorHash
+            userColor: root.icon.color
+            image: root.icon.name
+            interactive: false
+            imageWidth: root.icon.width
+            imageHeight: root.icon.height
+            onlineStatus: root.status
         }
 
         ColumnLayout {
