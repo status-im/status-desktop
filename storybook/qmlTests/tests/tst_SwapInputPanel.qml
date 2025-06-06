@@ -10,6 +10,7 @@ import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.popups.swap 1.0
 import AppLayouts.Wallet.adaptors 1.0
+import AppLayouts.Wallet 1.0
 
 import shared.stores 1.0
 
@@ -351,7 +352,7 @@ Item {
                 mouseClick(holdingSelector)
                 waitForRendering(assetSelectorList)
 
-                let delToTest = assetSelectorList.itemAtIndex(i)
+                const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
                 verify(!!delToTest)
                 mouseClick(delToTest)
 

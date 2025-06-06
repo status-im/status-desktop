@@ -106,7 +106,7 @@ SplitView {
                 }
 
                 currencyStore: d.adaptor.currencyStore
-                flatNetworksModel: d.adaptor.swapStore.flatNetworks
+                flatNetworksModel: d.adaptor.networksStore.activeNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
                 plainTokensBySymbolModel: plainTokensModel
 
@@ -133,7 +133,7 @@ SplitView {
                 }
 
                 currencyStore: d.adaptor.currencyStore
-                flatNetworksModel: d.adaptor.swapStore.flatNetworks
+                flatNetworksModel: d.adaptor.networksStore.activeNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
                 plainTokensBySymbolModel: plainTokensModel
 

@@ -160,6 +160,8 @@ Item {
 
             controlUnderTest.text = "0xdeadbeef"
 
+            waitForRendering(controlUnderTest)
+
             // clear button should be visible with some text
             verify(clearButton.visible)
             mouseClick(clearButton)
