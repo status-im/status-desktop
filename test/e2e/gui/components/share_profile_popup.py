@@ -8,10 +8,10 @@ from gui.elements.text_label import TextLabel
 from gui.objects_map import names
 
 
-class ShareProfilePopup(BasePopup):
+class ShareProfilePopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.shareProfileDialog)
         self._profile_qr_code = QObject(names.o_Image)
         self._profile_link_input = QObject(names.profileLinkInput_StatusBaseInput)
         self._emoji_hash = TextLabel(names.o_EmojiHash)

@@ -5,9 +5,9 @@ from gui.elements.object import QObject
 from gui.objects_map import onboarding_names
 
 
-class OnboardingLoginUsersPopup(BasePopup):
+class OnboardingLoginUsersPopup(QObject):
     def __init__(self):
-        super().__init__()
+        super().__init__(onboarding_names.statusDropdown)
         self.user_login_item = QObject(onboarding_names.userLoginItem)
         self.create_profile_button = Button(onboarding_names.createProfileButton)
         self.login_button = Button(onboarding_names.returningLoginButton)

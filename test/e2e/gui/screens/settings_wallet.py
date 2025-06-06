@@ -13,8 +13,8 @@ from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.settings.rename_keypair_popup import RenameKeypairPopup
 from gui.components.wallet.rpc_change_restart_popup import RPCChangeRestartPopup
-from gui.components.wallet.add_saved_address_popup import AddressPopup
-from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountConfirmationSettings
+from gui.components.wallet.add_saved_address_popup import AddEditSavedAddressPopup
+from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountWithConfirmation
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 
 from gui.components.wallet.wallet_account_popups import AccountPopup, EditAccountFromSettingsPopup
@@ -171,7 +171,7 @@ class AccountDetailsView(WalletSettingsView):
     @allure.step('Click Remove account button')
     def click_remove_account_button(self):
         self._remove_account_button.click()
-        return RemoveAccountConfirmationSettings().wait_until_appears()
+        return RemoveAccountWithConfirmation().wait_until_appears()
 
     @allure.step('Check if Remove account button is visible')
     def is_remove_account_button_visible(self):
@@ -241,15 +241,14 @@ class SavedAddressesWalletSettings(WalletSettingsView):
         return self
 
     @allure.step('Click add new address button')
-    def open_add_saved_address_popup(self, attempt: int = 2) -> 'AddressPopup':
-        self.add_new_address_button.click()
-        try:
-            return AddressPopup()
-        except AssertionError as err:
-            if attempt:
-                self.open_add_saved_address_popup(attempt - 1)
-            else:
-                raise err
+    def open_add_saved_address_popup(self, attempts: int = 2) -> 'AddEditSavedAddressPopup':
+        for _ in range(attempts):
+            try:
+                self.add_new_address_button.click()
+                return AddEditSavedAddressPopup()
+            except Exception:
+                pass
+        raise LookupError(f'Add saved address popup was not displayed within {attempts} attempts')
 
     @allure.step('Get saved addresses settings_names list')
     def get_saved_address_names_list(self):

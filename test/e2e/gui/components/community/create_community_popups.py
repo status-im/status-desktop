@@ -116,8 +116,9 @@ class CreateNewCommunityPopup(QObject):
     def set_color(self, value: str):
         self._scroll.vertical_scroll_down(self._select_color_button)
         self._select_color_button.click()
-        self._scroll.vertical_scroll_down(self._select_color_button)
-        ColorSelectPopup().wait_until_appears().select_color(value)
+        color_select_popup = ColorSelectPopup()
+        color_select_popup.select_color(value)
+        color_select_popup.wait_until_hidden()
 
     @allure.step('Get community tags')
     def get_tags(self):

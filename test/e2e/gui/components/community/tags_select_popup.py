@@ -7,12 +7,13 @@ import allure
 import configs
 import driver
 from gui.components.base_popup import BasePopup
+from gui.components.status_modals import StatusStackModal
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.objects_map import names
 
 
-class TagsSelectPopup(BasePopup):
+class TagsSelectPopup(StatusStackModal):
 
     def __init__(self):
         super().__init__()

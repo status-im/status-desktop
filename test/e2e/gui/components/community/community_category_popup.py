@@ -12,10 +12,10 @@ from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class CategoryPopup(BasePopup):
+class CategoryPopup(QObject):
 
     def __init__(self):
-        super(CategoryPopup, self).__init__()
+        super().__init__(names.newChannelnewCategoryPopup)
         self._name_text_edit = TextEdit(names.createOrEditCommunityCategoryNameInput_TextEdit)
         self.channel_item_checkbox = CheckBox(names.channelItemCheckbox_StatusCheckBox)
         self._channels_view = QObject(names.createOrEditCommunityCategoryChannelList_StatusListView)

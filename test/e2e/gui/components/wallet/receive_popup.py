@@ -4,16 +4,17 @@ import pyperclip
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
-from gui.objects_map import names
+from gui.objects_map import names, wallet_names
 
 
-class ReceivePopup(BasePopup):
+class ReceivePopup(QObject):
 
     def __init__(self):
-        super().__init__()
-        self.account_selector_text = QObject(names.textContent_StatusBaseText)
-        self.copy_button = Button(names.greenCircleAroundIcon_Rectangle)
-        self.qr_code = QObject(names.qrCodeImage_Image)
+        super().__init__(wallet_names.receiveModal)
+        self.receive_modal = QObject(wallet_names.receiveModal)
+        self.account_selector_text = QObject(wallet_names.textContent_StatusBaseText)
+        self.copy_button = Button(wallet_names.greenCircleAroundIcon_Rectangle)
+        self.qr_code = QObject(wallet_names.qrCodeImage_Image)
 
     @allure.step('Get current text in account selector')
     def get_text_from_account_selector(self) -> str:

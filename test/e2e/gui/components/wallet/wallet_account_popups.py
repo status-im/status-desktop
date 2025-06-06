@@ -1,4 +1,3 @@
-
 import configs.timeouts
 from constants.wallet import *
 from gui.screens.settings_keycard import KeycardSettingsView
@@ -18,9 +17,11 @@ from gui.objects_map import names, onboarding_names
 GENERATED_PAGES_LIMIT = 20
 
 
-class AccountPopup(BasePopup):
+class AccountPopup(QObject):
     def __init__(self):
-        super(AccountPopup, self).__init__()
+        super(AccountPopup, self).__init__(names.mainWallet_AddEditAccountPopup_Content)
+
+        self.add_wallet_account_popup = QObject(names.mainWallet_AddEditAccountPopup_Content)
         self._scroll = Scroll(names.generalView_StatusScrollView)
         self._name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountName)
         self._name_text_input = QObject(names.mainWallet_AddEditAccountPopup_AccountNameComponent)
@@ -46,6 +47,7 @@ class AccountPopup(BasePopup):
         self._derivation_path_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_DerivationPathInput)
         self._address_combobox_button = Button(names.mainWallet_AddEditAccountPopup_GeneratedAddressComponent)
         self._non_eth_checkbox = CheckBox(names.mainWallet_AddEditAccountPopup_NonEthDerivationPathCheckBox)
+        self.non_ethereum_checkbox_indicator = QObject(names.nonEthCheckBoxIndicator)
 
     def verify_add_account_popup_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._popup_header_title.is_visible, timeout_msec)
@@ -149,15 +151,14 @@ class AccountPopup(BasePopup):
         self._scroll.vertical_scroll_down(self._derivation_path_text_edit)
         if value in [_.value for _ in DerivationPathName]:
             self._derivation_path_combobox_button.click()
-            self._derivation_path_list_item.real_name['title'] = value
+            self._derivation_path_list_item.real_name['objectName'] = "AddAccountPopup-PreDefinedDerivationPath-" + value
             self._derivation_path_list_item.click()
+            # del self._derivation_path_list_item.real_name['title']
             self._address_combobox_button.click()
-            addresses_list = GeneratedAddressesList().wait_until_appears()
-            addresses_list.select(index)
-            if value != 'Ethereum':
+            GeneratedAddressesList().select(index)
+            if value != DerivationPathName.ETHEREUM.value:
                 self._scroll.vertical_scroll_down(self._non_eth_checkbox)
-                assert self._non_eth_checkbox.is_visible
-                self._non_eth_checkbox.set(True)
+                self.non_ethereum_checkbox_indicator.click()
         else:
             self._derivation_path_text_edit.type_text(str(index))
         return self
@@ -176,9 +177,9 @@ class AccountPopup(BasePopup):
         return self
 
 
-class EditAccountFromSettingsPopup(BasePopup):
+class EditAccountFromSettingsPopup(QObject):
     def __init__(self):
-        super(EditAccountFromSettingsPopup, self).__init__()
+        super(EditAccountFromSettingsPopup, self).__init__(names.renameAccountModal)
         self._change_name_button = Button(names.editWalletSettings_renameButton)
         self._account_name_input = TextEdit(names.editWalletSettings_AccountNameInput)
         self._emoji_selector = QObject(names.editWalletSettings_EmojiSelector)
@@ -214,10 +215,10 @@ class EditAccountFromSettingsPopup(BasePopup):
         return self
 
 
-class AddNewAccountPopup(BasePopup):
+class AddNewAccountPopup(QObject):
 
     def __init__(self):
-        super(AddNewAccountPopup, self).__init__()
+        super(AddNewAccountPopup, self).__init__(names.mainWallet_AddEditAccountPopup_Content)
         self._import_private_key_button = Button(names.mainWallet_AddEditAccountPopup_MasterKey_ImportPrivateKeyOption)
         self._private_key_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_PrivateKey)
         self._private_key_name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_PrivateKeyName)
@@ -305,7 +306,7 @@ class AddNewAccountPopup(BasePopup):
     @allure.step('Generate new seed phrase')
     def generate_new_master_key(self, name: str):
         self._generate_master_key_button.click()
-        BackUpYourSeedPhrasePopUp().wait_until_appears().generate_seed_phrase(name)
+        BackUpYourSeedPhrasePopUp().generate_seed_phrase(name)
 
     @allure.step('Get text of error')
     def get_already_added_error(self):
@@ -316,37 +317,24 @@ class AddNewAccountPopup(BasePopup):
 class GeneratedAddressesList(QObject):
 
     def __init__(self):
-        super().__init__(names.basePopupItem)
-        self._address_list_item = QObject(names.addAccountPopup_GeneratedAddress)
-        self._paginator_page = QObject(names.page_StatusBaseButton)
+        super().__init__(names.accountAddressSelectionModal)
+        self.address_list_item = QObject(names.addAccountPopup_GeneratedAddress)
+        self.paginator_page = QObject(names.page_StatusBaseButton)
 
-    @property
-    @allure.step('Load generated addresses list')
-    def is_paginator_load(self) -> bool:
-        try:
-            return str(driver.findAllObjects(self._paginator_page.real_name)[0].text) == '1'
-        except IndexError:
-            return False
-
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        if 'text' in self._paginator_page.real_name:
-            del self._paginator_page.real_name['text']
-        assert driver.waitFor(lambda: self.is_paginator_load, timeout_msec), 'Generated address list not load'
-        return self
 
     @allure.step('Select address in list')
     def select(self, index: int):
-        self._address_list_item.real_name['objectName'] = f'AddAccountPopup-GeneratedAddress-{index}'
+        self.address_list_item.real_name['objectName'] = 'AddAccountPopup-GeneratedAddress-' + str(index)
 
         selected_page_number = 1
         while selected_page_number != GENERATED_PAGES_LIMIT:
-            if self._address_list_item.is_visible:
-                self._address_list_item.click()
-                self._paginator_page.wait_until_hidden()
+            if self.address_list_item.is_visible:
+                self.address_list_item.click()
+                self.paginator_page.wait_until_hidden()
                 break
+
             else:
                 selected_page_number += 1
-                self._paginator_page.real_name['text'] = selected_page_number
-                self._paginator_page.click()
+                self.paginator_page.real_name['text'] = selected_page_number
+                self.paginator_page.click()
                 time.sleep(0.5)

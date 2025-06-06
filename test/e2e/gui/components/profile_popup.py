@@ -18,11 +18,11 @@ from gui.objects_map import names
 from gui.screens.settings_profile import ProfileSettingsView
 
 
-class ProfilePopup(BasePopup):
+class ProfilePopup(QObject):
 
     def __init__(self):
-        super().__init__()
-        self._profile_popup_content_item = QObject(names.ProfileContentItem)
+        super().__init__(names.ProfileDialogView)
+        self._profile_popup_content_item = QObject(names.ProfileDialogView)
         self._profile_image = QObject(names.ProfileHeader_userImage)
         self._user_name_label = TextLabel(names.ProfilePopup_displayName)
         self._edit_profile_button = Button(names.ProfilePopup_editButton)

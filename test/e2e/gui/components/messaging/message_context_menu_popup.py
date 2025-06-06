@@ -6,10 +6,10 @@ from gui.elements.object import QObject
 from gui.objects_map import messaging_names
 
 
-class MessageContextMenuPopup(BasePopup):
+class MessageContextMenuPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(messaging_names.messageContextView)
         self._emoji_reaction = QObject(messaging_names.o_EmojiReaction)
 
     @allure.step('Wait until appears {0}')

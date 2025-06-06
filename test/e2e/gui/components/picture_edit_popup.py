@@ -5,6 +5,7 @@ import allure
 
 import driver.mouse
 from gui.components.base_popup import BasePopup
+from gui.components.status_modals import StatusModal
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.slider import Slider
@@ -13,7 +14,7 @@ from gui.objects_map import names
 shift_image = namedtuple('Shift', ['left', 'right', 'top', 'bottom'])
 
 
-class PictureEditPopup(BasePopup):
+class PictureEditPopup(StatusModal):
 
     def __init__(self):
         super().__init__()

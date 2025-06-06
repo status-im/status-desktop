@@ -8,10 +8,10 @@ from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class AuthenticatePopup(BasePopup):
+class AuthenticatePopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.authenticatePopup)
         self._authenticate_popup_content = QObject(names.keycardSharedPopupContent_KeycardPopupContent)
         self._password_text_edit = TextEdit(names.password_PlaceholderText)
         self._authenticate_button = Button(names.authenticate_StatusButton)

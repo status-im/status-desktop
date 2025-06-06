@@ -60,6 +60,7 @@ clear_History_StatusMenuItem = {"checkable": False, "container": mainWindow_Over
 close_Chat_StatusMenuItem = {"checkable": False, "container": mainWindow_Overlay, "enabled": True, "objectName": "deleteOrLeaveMenuItem", "type": "StatusMenuItem", "visible": True}
 o_EmojiReaction = {"container": mainWindow_Overlay, "type": "EmojiReaction", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_StatusEmoji = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "emojiReaction", "type": "StatusEmoji", "unnamed": 1, "visible": True}
+messageContextView = {"container": mainWindow_Overlay, "objectName": "MessageContextMenuView", "type": "PopupItem", "visible": True}
 
 # User List Panel
 mainWindow_UserListPanel = {"container": mainWindow_chatView_ChatView, "type": "UserListPanel", "unnamed": 1, "visible": True}

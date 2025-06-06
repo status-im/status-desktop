@@ -6,14 +6,15 @@ from gui.components.community.new_permission_popup import NewPermissionPopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
+from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class ChannelPopup(BasePopup):
+class ChannelPopup(QObject):
 
     def __init__(self):
-        super(ChannelPopup, self).__init__()
+        super().__init__(names.newChannelnewCategoryPopup)
         self._name_text_edit = TextEdit(names.createOrEditCommunityChannelNameInput_TextEdit)
         self._description_text_edit = TextEdit(names.createOrEditCommunityChannelDescriptionInput_TextEdit)
         self.save_create_button = Button(names.createOrEditCommunityChannelBtn_StatusButton)

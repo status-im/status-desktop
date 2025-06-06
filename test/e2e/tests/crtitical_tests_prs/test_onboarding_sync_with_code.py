@@ -66,8 +66,7 @@ def test_sync_device_during_onboarding(multiple_instances):
             profile_syncing_view.log_in_button.click()
             if configs.system.get_platform() == "Darwin":
                 OnboardingBiometricsView().maybe_later()
-            splash_screen = SplashScreen().wait_until_appears()
-            splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
+            SplashScreen().wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
 
         with step('Verify user details are the same with user in first instance'):
             # TODO: Switch this to use shell online identifier

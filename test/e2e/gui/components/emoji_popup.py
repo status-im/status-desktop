@@ -9,9 +9,9 @@ from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class EmojiPopup(BasePopup):
+class EmojiPopup(QObject):
     def __init__(self):
-        super().__init__()
+        super().__init__(names.emojiPopup)
         self._search_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountEmojiSearchBox)
         self._emoji_item = QObject(names.mainWallet_AddEditAccountPopup_AccountEmoji)
 

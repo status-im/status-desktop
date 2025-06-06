@@ -81,7 +81,7 @@ def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: Ma
             f'Account with {name2} is not displayed even it should be'
 
     with step('Delete wallet account with agreement'):
-        wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
+        wallet.left_panel.delete_account_from_context_menu(new_name).remove_account_with_confirmation()
 
     with step('Verify toast message notification when removing account'):
         messages = main_screen.wait_for_notification()

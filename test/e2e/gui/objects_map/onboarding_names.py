@@ -27,6 +27,7 @@ useRecoveryPhraseButton = {"container": buttonFrame, "objectName": "btnCreateWit
 useEmptyKeycardButton = {"container": statusDesktop_mainWindow, "objectName": "btnCreateWithEmptyKeycard", "type": "ListItemButton", "visible": True}
 
 # Log in by syncing checklist popup
+statusDialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusDialog", "type": "PopupItem", "visible": True}
 connectBothDevicesOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack1", "type": "StatusCheckBox", "visible": True}
 makeSureYouAreLoggedOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack2", "type": "StatusCheckBox", "visible": True}
 disableTheFirewallOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack3", "type": "StatusCheckBox", "visible": True}
@@ -182,6 +183,7 @@ loginButton = {"container": mainWindow_LoginView, "objectName": "loginButton", "
 userLoginItem = {"container": statusDesktop_mainWindow_overlay, "type": "LoginUserSelectorDelegate", "unnamed": 1, "visible": True}
 createProfileButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createProfileDelegate", "type": "LoginUserSelectorDelegate", "visible": True}
 returningLoginButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "logInDelegate", "type": "LoginUserSelectorDelegate", "visible": True}
+statusDropdown = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusDropdown", "type": "PopupItem", "visible": True}
 
 # Touch ID Auth View
 mainWindow_TouchIDAuthView = {"container": statusDesktop_mainWindow, "type": "TouchIDAuthView", "unnamed": 1, "visible": True}

@@ -48,7 +48,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.prepare()
             profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
+            main_window.left_panel.click()
             main_window.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):

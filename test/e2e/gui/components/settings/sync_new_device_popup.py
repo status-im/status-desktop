@@ -10,10 +10,10 @@ from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class SyncNewDevicePopup(BasePopup):
+class SyncNewDevicePopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.setupSyncingPopup)
         self._copy_button = Button(names.copy_SyncCodeStatusButton)
         self._done_button = Button(names.done_SyncCodeStatusButton)
         self._sync_code_field = TextEdit(names.syncCodeInput_StatusPasswordInput)

@@ -1,7 +1,7 @@
 from objectmaphelper import *
 from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
 
-mainWindow_ProfileLayout = {"container": statusDesktop_mainWindow, "objectName": "profileStatusSectionLayout", "type": "StatusSectionLayout", "visible": True}
+mainWindow_ProfileLayout = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayoutLandscape", "type": "ContentItem", "visible": True}
 mainWindow_StatusSectionLayout_ContentItem = {"container": mainWindow_ProfileLayout, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
 settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 settingsContentBaseScrollView_Flickable = {"container": settingsContentBase_ScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
@@ -161,7 +161,7 @@ profileTabBar_Identity_StatusTabButton = {"checkable": True, "container": mainWi
 mainWindow_PasswordView = {"container": statusDesktop_mainWindow, "type": "ChangePasswordView", "unnamed": 1, "visible": True}
 
 # Syncing Settings View
-mainWindow_SyncingView = {"container": mainWindow_StatusSectionLayout_ContentItem, "type": "SyncingView", "unnamed": 1, "visible": True}
+mainWindow_SyncingView = {"container": statusDesktop_mainWindow, "type": "SyncingView", "unnamed": 1, "visible": True}
 syncingInstructionsLayout = {"container": settingsContentBase_ScrollView, "id": "instructionsLayout", "type": "ColumnLayout", "unnamed": 1, "visible": True}
 settings_Setup_Syncing_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncingStatusButton", "type": "StatusButton", "visible": True}
 settings_Backup_Data_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncBackupDataButton", "type": "StatusButton", "visible": True}
@@ -169,6 +169,7 @@ settings_Sync_New_Device_Header = {"container": settingsContentBase_ScrollView, 
 settings_Sync_New_Device_SubTitle = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceSubTitleTextLabel", "type": "StatusBaseText", "visible": True}
 
 #Sing out and quit View
+signOutDialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmationDialog", "type": "PopupItem", "visible": True}
 signOutConfirmationButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "signOutConfirmation", "type": "StatusButton", "visible": True}
 
 # ENS usernames View

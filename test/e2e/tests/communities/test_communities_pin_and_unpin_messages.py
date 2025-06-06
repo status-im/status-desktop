@@ -40,7 +40,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             main_screen.prepare()
             profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
+            main_screen.left_panel.click()
             main_screen.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):

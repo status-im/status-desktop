@@ -20,7 +20,7 @@ def test_context_menu_edit_default_account(main_screen: MainWindow, user_account
 
     with step("Verify default status account can't be deleted"):
         context_menu = wallet.left_panel._open_context_menu_for_account(name)
-        assert not context_menu.delete_from_context.is_visible, \
+        assert not context_menu.delete_from_wallet_account_context.is_visible, \
             f"Delete option should not be present for Status account"
 
     with step('Edit wallet account'):

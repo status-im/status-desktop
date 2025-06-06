@@ -10,10 +10,10 @@ from .base_popup import BasePopup
 from ..objects_map import names
 
 
-class SocialLinksPopup(BasePopup):
+class SocialLinksPopup(QObject):
 
     def __init__(self):
-        super(SocialLinksPopup, self).__init__()
+        super(SocialLinksPopup, self).__init__(names.socialLinksPopup)
         self._add_social_link_list_item = QObject(names.socialLink_StatusListItem)
         self._social_link_text_field = TextEdit(names.edit_TextEdit)
         self._back_button = Button(names.social_links_back_StatusBackButton)

@@ -9,10 +9,10 @@ from gui.objects_map import names
 from scripts.tools.image import Image
 
 
-class WelcomeCommunityPopup(BasePopup):
+class WelcomeCommunityPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.communityMembershipSetupDialog)
         self._title_text_label = TextLabel(names.headerTitle_StatusBaseText)
         self._community_icon = QObject(names.image_StatusImage)
         self._intro_text_label = TextLabel(names.intro_StatusBaseText)

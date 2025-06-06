@@ -11,13 +11,15 @@ import driver
 from constants import WalletAccount
 from driver.objects_access import walk_children
 from gui.components.context_menu import ContextMenu
-from gui.components.wallet.add_saved_address_popup import AddressPopup, EditSavedAddressPopup
+from gui.components.wallet.add_saved_address_popup import AddEditSavedAddressPopup
 from gui.components.wallet.asset_context_menu_popup import AssetContextMenuPopup
 from gui.components.wallet.bridge_popup import BridgePopup
 from gui.components.wallet.confirmation_popup import ConfirmationPopup
+from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountWithConfirmation
 from gui.components.wallet.receive_popup import ReceivePopup
 from gui.components.wallet.remove_wallet_account_popup import RemoveWalletAccountPopup
 from gui.components.wallet.send_popup import SendPopup
+from gui.components.wallet.wallet_account_context_menu import WalletAccountContextMenu
 from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.elements.button import Button
 from gui.elements.list import List
@@ -97,12 +99,12 @@ class WalletLeftPanel(QObject):
         raise LookupError(f'{account_name} is not present in {account_items}')
 
     @allure.step('Open context menu from left wallet panel')
-    def _open_context_menu(self) -> ContextMenu:
+    def _open_context_menu(self) -> WalletAccountContextMenu:
         super(WalletLeftPanel, self).right_click()
-        return ContextMenu().wait_until_appears()
+        return WalletAccountContextMenu().wait_until_appears()
 
     @allure.step('Open context menu for specific account')
-    def _open_context_menu_for_account(self, account_name: str) -> ContextMenu:
+    def _open_context_menu_for_account(self, account_name: str) -> WalletAccountContextMenu:
         account_items = self.accounts
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
@@ -110,7 +112,7 @@ class WalletLeftPanel(QObject):
             for _ in range(2):
                 self.wallet_account_item.right_click()
                 try:
-                    return ContextMenu().wait_until_appears()
+                    return WalletAccountContextMenu().wait_until_appears()
                 except Exception:
                     pass  # Retry one more time
                 raise LookupError(f'Could not open context menu for {account_name}')
@@ -123,7 +125,7 @@ class WalletLeftPanel(QObject):
     @allure.step('Open account popup for editing from context menu')
     def open_edit_account_popup_from_context_menu(self, account_name: str) -> AccountPopup:
         context_menu = self._open_context_menu_for_account(account_name)
-        context_menu.edit_from_context.click()
+        context_menu.edit_from_wallet_account_context.click()
         return AccountPopup().wait_until_appears().verify_edit_account_popup_present()
 
     @allure.step('Open account popup')
@@ -139,23 +141,23 @@ class WalletLeftPanel(QObject):
 
     @allure.step('Select add watched address from context menu')
     def select_add_watched_address_from_context_menu(self) -> AccountPopup:
-        self._open_context_menu().add_watched_address_from_context.click()
+        self._open_context_menu().add_watched_address.click()
         return AccountPopup().wait_until_appears()
 
     @allure.step('Delete account from the list from context menu')
-    def delete_account_from_context_menu(self, account_name: str, attempt: int = 2) -> RemoveWalletAccountPopup:
-        try:
-            self._open_context_menu_for_account(account_name).delete_from_context.click()
-            return RemoveWalletAccountPopup().wait_until_appears()
-        except Exception as ex:
-            if attempt:
-                return self.delete_account_from_context_menu(account_name, attempt - 1)
-            else:
-                raise ex
+    def delete_account_from_context_menu(self, account_name: str, attempts: int = 2) -> RemoveAccountWithConfirmation:
+        for _ in range(attempts):
+            try:
+                self._open_context_menu_for_account(account_name).delete_from_wallet_account_context.click()
+                return RemoveAccountWithConfirmation().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Could not open Remove Account Popup')
+
 
     @allure.step('Copy address for the account in the context menu')
     def copy_account_address_in_context_menu(self, account_name: str):
-        self._open_context_menu_for_account(account_name).copy_address_from_context.click()
+        self._open_context_menu_for_account(account_name).copy_address_from_wallet_account_context.click()
         return str(pyperclip.paste())
 
 
@@ -186,20 +188,19 @@ class SavedAddressesView(QObject):
         return addresses
 
     @allure.step('Open add new address popup')
-    def open_add_saved_address_popup(self, attempt=2) -> 'AddressPopup':
-        self._add_new_address_button.click()
-        try:
-            return AddressPopup().wait_until_appears()
-        except AssertionError as err:
-            if attempt:
-                self.open_add_saved_address_popup(attempt - 1)
-            else:
-                raise err
+    def open_add_saved_address_popup(self, attempts=2) -> 'AddEditSavedAddressPopup':
+        for _ in range(attempts):
+            try:
+                self._add_new_address_button.click()
+                return AddEditSavedAddressPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Could not open AddEditSavedAddress popup within {attempts} attempts')
 
     @allure.step('Open edit address popup for saved address')
-    def open_edit_address_popup(self, name: str) -> 'EditSavedAddressPopup':
+    def right_click_edit_saved_address_popup(self, name: str) -> 'AddEditSavedAddressPopup':
         self.right_click(name).edit_saved_address_from_context.click()
-        return EditSavedAddressPopup()
+        return AddEditSavedAddressPopup()
 
     @allure.step('Delete saved address from the list')
     def delete_saved_address(self, address_name):

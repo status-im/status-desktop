@@ -31,7 +31,7 @@ def test_messaging_settings_rejecting_request(multiple_instances):
             online_identifier = main_window.left_panel.open_online_identifier()
             profile_popup = online_identifier.open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
+            main_window.left_panel.click()
             main_window.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):

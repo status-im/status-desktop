@@ -6,10 +6,10 @@ from gui.elements.object import QObject
 from gui.objects_map import names
 
 
-class LinkPreviewOptionsPopup(BasePopup):
+class LinkPreviewOptionsPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.linkPreviewCardMenu)
         self._show_for_this_message_item = QObject(names.show_for_this_message_StatusMenuItem)
         self._always_show_item = QObject(names.always_show_previews_StatusMenuItem)
         self._never_show_item = QObject(names.never_show_previews_StatusMenuItem)

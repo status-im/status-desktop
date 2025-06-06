@@ -11,7 +11,7 @@ import driver
 from driver.objects_access import walk_children
 from gui.components.activity_center import ActivityCenter
 from gui.components.context_menu import ContextMenu
-from gui.components.delete_popup import DeleteMessagePopup
+from gui.components.delete_popup import ConfirmationMessagePopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.components.messaging.clear_chat_history_popup import ClearChatHistoryPopup
 from gui.components.messaging.close_chat_popup import CloseChatPopup
@@ -475,7 +475,8 @@ class ChatMessagesView(QObject):
         self.open_more_options()
         time.sleep(2)
         self._clear_history_item.click()
-        ClearChatHistoryPopup().wait_until_appears().confirm_clearing_chat()
+        clear_history_popup = ClearChatHistoryPopup().wait_until_appears()
+        clear_history_popup.confirm_clearing_chat()
 
     @allure.step('Close chat')
     def close_chat(self):
@@ -518,7 +519,7 @@ class MessageQuickActions(QObject):
     @allure.step('Delete message')
     def delete_message(self):
         self._delete_button.click()
-        DeleteMessagePopup().delete()
+        ConfirmationMessagePopup().delete_button.click()
 
     @allure.step('Reply to own message')
     def reply_own_message(self, text: str):

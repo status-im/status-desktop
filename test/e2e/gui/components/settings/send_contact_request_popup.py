@@ -5,14 +5,16 @@ import allure
 import configs
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
+from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class SendContactRequest(BasePopup):
+class SendContactRequest(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.contactRequestToChatKeyModal)
+        self.contact_request_to_chat_modal = QObject(names.contactRequestToChatKeyModal)
         self._chat_key_text_edit = TextEdit(names.sendContactRequestModal_ChatKey_Input_TextEdit)
         self._message_text_edit = TextEdit(names.sendContactRequestModal_SayWhoYouAre_Input_TextEdit)
         self._send_button = Button(names.send_Contact_Request_StatusButton)

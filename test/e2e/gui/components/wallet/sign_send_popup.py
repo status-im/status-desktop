@@ -4,9 +4,9 @@ from gui.elements.object import QObject
 from gui.objects_map import names
 
 
-class SignSendModalPopup(BasePopup):
+class SignSendModalPopup(QObject):
     def __init__(self):
-        super().__init__()
+        super().__init__(names.signSendModal)
         self.sign_send_modal_title= QObject(names.signSendModalTitle)
         self.sign_send_modal_asset_item = QObject(names.signSendModalAssetBox)
         self.sign_send_modal_collectible_item = QObject(names.signSendModalCollectibleBox)

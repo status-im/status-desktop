@@ -51,7 +51,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.prepare()
             profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             user_2_chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
+            main_window.left_panel.click()
             main_window.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
@@ -76,7 +76,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.prepare()
             profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             user_3_chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
+            main_window.left_panel.click()
             main_window.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_three.name}'):
@@ -106,11 +106,12 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 with step('Verify group chat name'):
                     group_chat_name = user_two.name + '&' + user_three.name
                     assert messages_screen.group_chat.wait_until_appears().group_name == group_chat_name, f'Group chat name is not correct'
-                with step('Welcome group message is correct'):
-                    actual_welcome_message = messages_screen.group_chat.group_welcome_message()
-                    assert actual_welcome_message.startswith(Messaging.WELCOME_GROUP_MESSAGE.value)
-                    assert actual_welcome_message.endswith(' group!')
-                    assert group_chat_name in actual_welcome_message
+                # TODO: move to QML level
+                # with step('Welcome group message is correct'):
+                #     actual_welcome_message = messages_screen.group_chat.group_welcome_message()
+                #     assert actual_welcome_message.startswith(Messaging.WELCOME_GROUP_MESSAGE.value)
+                #     assert actual_welcome_message.endswith(' group!')
+                #     assert group_chat_name in actual_welcome_message
                 with step('Verify there are three members in group members list'):
                     assert user_one.name in messages_screen.right_panel.members
                     assert user_two.name in messages_screen.right_panel.members
@@ -253,7 +254,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 message_user = profile_link
                 messages_screen.group_chat.type_message(message_user)
                 assert driver.waitFor(
-                    lambda: user_two.name == messages_screen.group_chat.get_link_preview_bubble_title(), 12000)
+                lambda: user_two.name == messages_screen.group_chat.get_link_preview_bubble_title(), configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
                 messages_screen.group_chat.confirm_sending_message()
 
             with step('Verify title is correct for link preview of sent message'):

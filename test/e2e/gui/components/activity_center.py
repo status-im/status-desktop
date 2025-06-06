@@ -50,10 +50,10 @@ class ContactRequest:
         self._decline_button.click()
 
 
-class ActivityCenter(BasePopup):
+class ActivityCenter(QObject):
 
     def __init__(self):
-        super(ActivityCenter, self).__init__()
+        super(ActivityCenter, self).__init__(names.activityCenterPopup)
         self.activity_center_button = Scroll(names.activityCenterStatusFlatButton)
         self.notification_contact_request = QObject(names.o_ActivityNotificationContactRequest)
         self.activity_center_panel = QObject(names.activityCenterTopBar_ActivityCenterPopupTopBarPanel)

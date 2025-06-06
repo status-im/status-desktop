@@ -2,12 +2,13 @@ import allure
 
 import configs
 from gui.components.base_popup import BasePopup
+from gui.components.status_modals import StatusStackModal
 from gui.elements.button import Button
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class ColorSelectPopup(BasePopup):
+class ColorSelectPopup(StatusStackModal):
 
     def __init__(self):
         super().__init__()
@@ -27,4 +28,3 @@ class ColorSelectPopup(BasePopup):
     def select_color(self, value: str):
         self._hex_color_text_edit.text = value
         self._save_button.click()
-        self.wait_until_hidden()
