@@ -85,7 +85,6 @@ ApplicationWindow {
     HotReloader {
         id: reloader
 
-        loader: viewLoader
         enabled: hotReloaderControls.enabled
 
         onReloaded: {
@@ -204,8 +203,9 @@ ApplicationWindow {
                 anchors.fill: parent
                 clip: true
 
-                source: `pages/${root.currentPage}Page.qml`
-                asynchronous: settingsLayout.loadAsynchronously
+                source: reloader.reloading ? "" : `pages/${root.currentPage}Page.qml`
+                active: !!source
+                asynchronous: reloader.reloading ? false : settingsLayout.loadAsynchronously
                 visible: status === Loader.Ready
 
                 // force reload when `asynchronous` changes
