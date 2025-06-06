@@ -16,6 +16,7 @@ proc createTestChatItem(id: string, catId: string = "", isCategory: bool = false
       `type` = if isCategory: CATEGORY_TYPE else: 0,
       memberRole = MemberRole.None,
       lastMessageTimestamp = 0,
+      lastMessage = "",
       hasUnreadMessages = false,
       notificationsCount = 0,
       muted = false,
