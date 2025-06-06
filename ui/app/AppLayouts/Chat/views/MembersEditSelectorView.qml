@@ -19,32 +19,39 @@ import "private"
 MembersSelectorBase {
     id: root
 
-    property UsersStore usersStore
+    property var usersModel
+    property var temporaryUsersModel
+    property bool amIChatAdmin
+
+    signal updateGroupMembers()
+    signal resetTemporaryUsersModel()
+    signal appendTemporaryUsersModel(string pubKey, string displayName)
+    signal removeFromTemporaryUsersModel(string pubKey)
 
     onConfirmed: {
-        usersStore.updateGroupMembers()
-        usersStore.resetTemporaryModel()
+        root.updateGroupMembers()
+        root.resetTemporaryUsersModel()
     }
 
     onRejected: {
-        usersStore.resetTemporaryModel()
+        root.resetTemporaryUsersModel()
     }
 
     onEntryAccepted: if (suggestionsDelegate) {
         if (!root.limitReached) {
-            usersStore.appendTemporaryModel(suggestionsDelegate._pubKey, suggestionsDelegate.userName)
+            root.appendTemporaryUsersModel(suggestionsDelegate._pubKey, suggestionsDelegate.userName)
             root.edit.clear()
         }
     }
 
     onEntryRemoved: if (delegate) {
         if (!delegate.isReadonly) {
-            usersStore.removeFromTemporaryModel(delegate._pubKey)
+            root.removeFromTemporaryUsersModel(delegate._pubKey)
         }
     }
 
     model: SortFilterProxyModel {
-        sourceModel: root.usersStore.temporaryModel
+        sourceModel: root.temporaryUsersModel
         sorters: RoleSorter {
             roleName: "memberRole"
             sortOrder: Qt.DescendingOrder
@@ -59,8 +66,8 @@ MembersSelectorBase {
 
         isReadonly: {
             if (model.memberRole === Constants.memberRole.owner) return true
-            if (root.rootStore.amIChatAdmin()) return false
-            return index < root.usersStore.usersModel.count
+            if (root.amIChatAdmin) return false
+            return index < root.usersModel.count
         }
         icon: model.memberRole === Constants.memberRole.owner ? "crown" : ""
 
@@ -68,6 +75,6 @@ MembersSelectorBase {
     }
 
     Component.onCompleted: {
-        usersStore.resetTemporaryModel()
+        root.resetTemporaryUsersModel()
     }
 }

@@ -16,6 +16,14 @@ import utils 1.0
 QtObject {
     id: root
 
+    // Backend Entry Point:
+    // Important:
+    // Each `ChatLayout` has its own chatCommunitySectionModule
+    // (on the backend chat and community sections share the same module since they are actually the same)
+    property var chatCommunitySectionModule
+
+    readonly property var activeChatContentModule: root.currentChatContentModule()
+
     property ContactsStore contactsStore
     property CommunityTokensStore communityTokensStore
     property WalletStore.RootStore walletStore
@@ -28,12 +36,17 @@ QtObject {
         chatCommunitySectionModuleInst: chatCommunitySectionModule
     }
 
+    // Unique instance for all the chat / channel related low-level UI components
+    readonly property UsersStore usersStore: UsersStore {
+        property var chatDetails: !!root.activeChatContentModule ? root.activeChatContentModule.chatDetails : null
+
+        isFullCommunityMembers: chatDetails.belongsToCommunity && !chatDetails.requiresPermissions
+        usersModule: !!root.activeChatContentModule ? root.activeChatContentModule.usersModule : null
+        chatCommunitySectionModule: root.chatCommunitySectionModule
+    }
+
     property bool openCreateChat: false
 
-    // Important:
-    // Each `ChatLayout` has its own chatCommunitySectionModule
-    // (on the backend chat and community sections share the same module since they are actually the same)
-    property var chatCommunitySectionModule
     readonly property var sectionDetails: d.sectionDetailsInstantiator.count ? d.sectionDetailsInstantiator.objectAt(0) : null
 
     property var communityItemsModel: chatCommunitySectionModule.model

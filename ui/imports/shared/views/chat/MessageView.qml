@@ -27,7 +27,6 @@ Loader {
 
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
-    property ChatStores.UsersStore usersStore
     property ProfileStores.ContactsStore contactsStore
     property var chatContentModule
     property var chatCommunitySectionModule
@@ -160,6 +159,9 @@ Loader {
     property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage || isBridgeMessage
     property bool isMessage: isEmoji || isImage || isSticker || isText
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
+
+    // Users related data:
+    property var usersModel
 
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
@@ -956,7 +958,7 @@ Loader {
                             suggestionsOpened = false
                         }
 
-                        usersModel: root.usersStore.usersModel
+                        usersModel: root.usersModel
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
 
