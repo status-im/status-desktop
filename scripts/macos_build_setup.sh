@@ -3,16 +3,16 @@ set -eo pipefail
 
 GO_VERSION="1.22.10"
 GO_INSTALL_DIR="/usr/local/go"
-QT_VERSION="5.15.16_1"
-# https://github.com/Homebrew/homebrew-core/commit/2c1970eb750f254ecac6640e7e816fd77a5e065e
-QT_BREW_FORMULA_COMMIT_SHA="2c1970eb750f254ecac6640e7e816fd77a5e065e"
-QT_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${QT_BREW_FORMULA_COMMIT_SHA}/Formula/q/qt%405.rb"
+QT_VERSION="6.9.0"
+# https://github.com/Homebrew/homebrew-core/commit/7cd0acddf7097fbbedbcee05211863d263e35b63
+QT_BREW_FORMULA_COMMIT_SHA="7cd0acddf7097fbbedbcee05211863d263e35b63"
+QT_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${QT_BREW_FORMULA_COMMIT_SHA}/Formula/q/qt.rb"
 # https://github.com/Homebrew/homebrew-core/commit/b4e46db74e74a8c1650b38b1da222284ce1ec5ce
 CMAKE_VERSION="3.31.6"
 CMAKE_BREW_FORMULA_COMMIT_SHA="b4e46db74e74a8c1650b38b1da222284ce1ec5ce"
 CMAKE_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${CMAKE_BREW_FORMULA_COMMIT_SHA}/Formula/c/cmake.rb"
 BREW_PREFIX=$(brew --prefix)
-QT_INSTALL_DIR="${BREW_PREFIX}/Cellar/qt@5/${QT_VERSION}"
+QT_INSTALL_DIR="${BREW_PREFIX}/Cellar/qt@6/${QT_VERSION}"
 CMAKE_INSTALL_DIR="${BREW_PREFIX}/Cellar/cmake/${CMAKE_VERSION}"
 
 function check_version {
@@ -33,9 +33,9 @@ function install_qt {
   echo "Detected Homebrew prefix: ${BREW_PREFIX}"
   echo "Qt will be installed to: ${QT_INSTALL_DIR}"
 
-  curl -o /tmp/qt@5.rb "${QT_FORMULA_URL}"
-  brew install /tmp/qt@5.rb
-  rm /tmp/qt@5.rb
+  curl -o /tmp/qt.rb "${QT_FORMULA_URL}"
+  brew install /tmp/qt.rb
+  rm /tmp/qt@.rb
 }
 
 function install_cmake {
