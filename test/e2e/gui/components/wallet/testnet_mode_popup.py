@@ -1,11 +1,12 @@
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
+from gui.elements.object import QObject
 from gui.objects_map import names
 
 
-class TestnetModePopup(BasePopup):
+class TestnetModePopup(QObject):
     def __init__(self):
-        super().__init__()
+        super().__init__(names.testnetAlert)
         self.cancel_button = Button(names.testnet_mode_cancelButton)
         self.close_cross_button = Button(names.closeCrossPopupButton)
         self.turn_on_button = Button(names.turn_on_testnet_mode_StatusButton)

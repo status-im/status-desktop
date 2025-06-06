@@ -13,7 +13,8 @@ from gui.components.community.community_channel_popups import EditChannelPopup, 
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.context_menu import ContextMenu
-from gui.components.delete_popup import DeletePopup
+from gui.components.delete_popup import ConfirmationPopup
+from gui.components.messaging.chat_context_menu import ChatContextMenu
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.elements.button import Button
 from gui.elements.list import List
@@ -46,7 +47,9 @@ class CommunityScreen(QObject):
     @allure.step('Delete channel')
     def delete_channel(self, name: str):
         self.left_panel.select_channel(name)
-        self.tool_bar.open_delete_channel_popup().delete()
+        confirmation_dialog = self.tool_bar.open_delete_channel_popup()
+        confirmation_dialog.delete_button.click()
+        confirmation_dialog.wait_until_hidden()
 
     @allure.step('Verify channel')
     def verify_channel(
@@ -115,7 +118,7 @@ class CommunityToolBar(QObject):
         self._channel_name = TextLabel(
             communities_names.statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
         self._channel_description = TextLabel(communities_names.statusToolBar_TruncatedTextWithTooltip)
-        self._delete_channel_context_item = QObject(communities_names.delete_Channel_StatusMenuItem)
+        self._delete_channel_context_item = QObject(communities_names.delete_or_leave_Channel_StatusMenuItem)
         self._channel_header = QObject(communities_names.statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton)
 
     @property
@@ -146,16 +149,15 @@ class CommunityToolBar(QObject):
 
     @allure.step('Open delete channel popup')
     def open_delete_channel_popup(self):
-        self.open_more_options_dropdown()
-        self._delete_channel_context_item.click()
-        return DeletePopup().wait_until_appears()
+        self.open_more_options_dropdown().delete_channel_context_item.click()
+        return ConfirmationPopup().wait_until_appears()
 
     @allure.step('Open more options dropdown')
-    def open_more_options_dropdown(self):
-        for _ in range(2):
-            self._more_options_button.click()
+    def open_more_options_dropdown(self, attempts: int = 2):
+        for _ in range(attempts):
             try:
-                return ContextMenu().wait_until_appears()
+                self._more_options_button.click()
+                return ChatContextMenu().wait_until_appears()
             except Exception:
                 pass  # Retry one more time
         raise LookupError(f'Could not open context menu for a channel')

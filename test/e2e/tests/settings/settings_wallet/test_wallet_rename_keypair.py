@@ -62,8 +62,6 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
         settings.click_open_menu_button(pk_name)
         rename_keypair_popup = settings.click_rename_keypair()
         rename_keypair_popup.rename_keypair(pk_new_name)
-        rename_keypair_popup.save_changes_button.click()
-        rename_keypair_popup.wait_until_hidden()
         assert pk_new_name in settings.get_keypairs_names()
 
     with step('Verify toast message with successful renaming appears'):

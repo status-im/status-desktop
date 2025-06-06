@@ -8,5 +8,6 @@ from gui.objects_map import names
 class SplashScreen(QObject):
 
     def __init__(self):
-        super(SplashScreen, self).__init__(names.splashScreen)
+        super().__init__(names.splashScreen)
+        self.splash_screen = QObject(names.splashScreen)
 
