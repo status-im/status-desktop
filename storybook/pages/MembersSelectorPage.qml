@@ -210,9 +210,27 @@ SplitView {
 
                     sourceComponent: MembersEditSelectorView {
                         rootStore: rootStoreMock
-                        usersStore: usersStoreMock
-
+                        usersModel: usersStoreMock.usersModel
+                        temporaryUsersModel: usersStoreMock.temporaryModel
+                        amIChatAdmin: rootStoreMock.amIChatAdmin()
                         contactsModel: contacts
+
+                        onUpdateGroupMembers: {
+                            logs.logEvent("MembersEditSelectorView::updateGroupMembers")
+                            usersStoreMock.updateGroupMembers()
+                        }
+                        onResetTemporaryUsersModel: {
+                            logs.logEvent("MembersEditSelectorView::resetTemporaryUsersModel")
+                            usersStoreMock.resetTemporaryModel()
+                        }
+                        onAppendTemporaryUsersModel: {
+                            logs.logEvent("MembersEditSelectorView::appendTemporaryUsersModel")
+                            usersStoreMock.appendTemporaryModel(pubKey, displayName)
+                        }
+                        onRemoveFromTemporaryUsersModel: {
+                            logs.logEvent("MembersEditSelectorView::removeFromTemporaryUsersModel")
+                            usersStoreMock.removeFromTemporaryModel(pubKey)
+                        }
                     }
                 }
             }
