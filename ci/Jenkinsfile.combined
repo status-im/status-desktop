@@ -67,11 +67,6 @@ pipeline {
             }
           }
         }
-        stage('Linux/x86_64/Nix') { steps { script {
-          linux_x86_64_nix = getArtifacts(
-            'Linux-Nix', jenkins.Build('status-desktop/systems/linux/x86_64/package-nix')
-          )
-        } } }
         stage('Windows/x86_64') { steps { script {
           windows_x86_64 = getArtifacts(
             'Windows', jenkins.Build('status-desktop/systems/windows/x86_64/package')
