@@ -226,6 +226,8 @@ SwipeView {
             LayoutItemProxy {
                 id: footerProxy
                 Layout.fillWidth: true
+                Layout.preferredHeight: footer ? footer.implicitHeight : 0
+                Layout.alignment: Qt.AlignBottom
             }
         }
     }
