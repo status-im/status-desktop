@@ -342,7 +342,7 @@ Item {
 
             visible: anyActionAvailable
             width: parent.width
-            height: visible ? 61: implicitHeight
+            height: visible ? implicitHeight: 0
             walletStore: RootStore
             transactionStore: root.transactionStore
             swapEnabled: root.swapEnabled

@@ -99,6 +99,20 @@ Page {
         }
     }
 
+    Page {
+         id: footerItem
+         implicitWidth: 400
+         implicitHeight: 50
+         Rectangle {
+             color: "gray"
+             anchors.fill: parent
+             Label {
+                 text: "Footer Content"
+                 anchors.centerIn: parent
+             }
+         }
+     }
+
     Frame {
         id: wrapper
         width: layoutChooser.currentValue === "portrait" ? 400 : 800
@@ -112,6 +126,7 @@ Page {
             rightPanel: rightPanel
             showRightPanel: rightPanelCheckBox.checked
             navBar: navBarItem
+            footer: footerItem
         }
     }
 }
