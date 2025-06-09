@@ -47,8 +47,8 @@ import "./+qt6" as SectionLayout
 
 SectionLayout.LayoutChooser {
     id: root
-    implicitWidth: 822
-    implicitHeight: 600
+    implicitWidth: Window.window.minimumWidth
+    implicitHeight: Window.window.minimumHeight
 
     property Component handle: Item { }
 
