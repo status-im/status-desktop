@@ -921,22 +921,23 @@ nim-test-run/%: | dotherside $(STATUSGO) $(QRCODEGEN)
 
 tests-nim-linux: $(NIM_TESTS)
 
+define qmkq
+$(shell $(QMAKE) -query $(1))
+endef
+
+export PATH := $(call qmkq,QT_INSTALL_BINS):$(call qmkq,QT_HOST_BINS):$(call qmkq,QT_HOST_LIBEXECS):$(PATH)
+export QTDIR := $(call qmkq,QT_INSTALL_PREFIX)
+
 mobile-run: deps-common
 	echo -e "\033[92mRunning:\033[39m mobile app"
-	PATH="$(shell $(QMAKE) -query QT_INSTALL_BINS):$(shell $(QMAKE) -query QT_HOST_BINS):$(shell $(QMAKE) -query QT_HOST_LIBEXECS):$(PATH)" \
-	QTDIR="$(shell $(QMAKE) -query QT_INSTALL_PREFIX)" \
 	$(MAKE) -C mobile run
 
 mobile-build: | deps-common
 	echo -e "\033[92mBuilding:\033[39m mobile app"
-	PATH="$(shell $(QMAKE) -query QT_INSTALL_BINS):$(shell $(QMAKE) -query QT_HOST_BINS):$(shell $(QMAKE) -query QT_HOST_LIBEXECS):$(PATH)" \
-	QTDIR="$(shell $(QMAKE) -query QT_INSTALL_PREFIX)" \
 	$(MAKE) -C mobile
 
 mobile-clean:
 	echo -e "\033[92mCleaning:\033[39m mobile app"
-	PATH="$(shell $(QMAKE) -query QT_INSTALL_BINS):$(shell $(QMAKE) -query QT_HOST_BINS):$(shell $(QMAKE) -query QT_HOST_LIBEXECS):$(PATH)" \
-	QTDIR="$(shell $(QMAKE) -query QT_INSTALL_PREFIX)" \
 	$(MAKE) -C mobile clean
 
 endif # "variables.mk" was not included

@@ -1,17 +1,17 @@
 #OS: ios, android
 QSPEC:=$(shell qmake -query QMAKE_XSPEC)
 ifeq ($(QSPEC),macx-ios-clang)
-OS:=ios
+    OS:=ios
 else ifeq ($(QSPEC),macx-clang)
-OS:=macx
+    OS:=macx
 else ifeq ($(QSPEC),win32-msvc)
-OS:=win32
+    OS:=win32
 else ifeq ($(QSPEC),linux-g++)
-OS:=linux
+    OS:=linux
 else ifeq ($(QSPEC),android-clang)
-OS:=android
+    OS:=android
 else
-OS:=$(QSPEC)
+    OS:=$(QSPEC)
 endif
 
 HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
@@ -23,36 +23,35 @@ QT_DIR?=$(shell qmake -query QT_INSTALL_PREFIX)
 MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 ifeq ($(OS), ios)
-# iOS
-#SDKs: iphonesimulator, iphoneos
-IPHONE_SDK?=iphonesimulator
-ifeq ($(QT_MAJOR),5)
-IOS_TARGET?=12
-else
-IOS_TARGET?=16
-endif
+    # iOS
+    #SDKs: iphonesimulator, iphoneos
+    IPHONE_SDK?=iphonesimulator
+    ifeq ($(QT_MAJOR),5)
+        IOS_TARGET?=12
+    else
+        IOS_TARGET?=16
+    endif
 
-ifeq ($(IPHONE_SDK), iphoneos)
-ARCH=arm64
-else
-ARCH=x86_64
-endif
+    ifeq ($(IPHONE_SDK), iphoneos)
+        ARCH=arm64
+    else
+        ARCH=x86_64
+    endif
 else ifeq ($(OS), android)
+    # Android
+    ANDROID_API?=28
+    ANDROID_SDK_ROOT?=
+    ANDROID_NDK_ROOT?=
 
-# Android
-ANDROID_API?=28
-ANDROID_SDK_ROOT?=
-ANDROID_NDK_ROOT?=
+    ifeq ($(ANDROID_SDK_ROOT),)
+        $(error "ANDROID_SDK_ROOT is not set. Please set ANDROID_SDK_ROOT to the path of your Android SDK.")
+    endif
 
-ifeq ($(ANDROID_SDK_ROOT),)
-$(error "ANDROID_SDK_ROOT is not set. Please set ANDROID_SDK_ROOT to the path of your Android SDK.")
-endif
-
-ifeq ($(ANDROID_NDK_ROOT),)
-$(error "ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT to the path of your Android NDK.")
-endif
+    ifeq ($(ANDROID_NDK_ROOT),)
+        $(error "ANDROID_NDK_ROOT is not set. Please set ANDROID_NDK_ROOT to the path of your Android NDK.")
+    endif
 else
-$(error "OS=$(OS). OS not supported by build system. Please update qmake to a supported version.")
+    $(error "OS=$(OS). OS not supported by build system. Please update qmake to a supported version.")
 endif
 
 # tool macros
@@ -71,73 +70,73 @@ export QT_MAJOR
 export QT_DIR
 
 ifeq ($(OS), ios)
-export SDK=$(IPHONE_SDK)
-export IOS_TARGET
-export CPATH=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)/usr/include/
-export SDKROOT=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)
-export LIBRARY_PATH:=${SDKROOT}/usr/lib:${LIBRARY_PATH}
-export LIB_EXT := .a
+    export SDK=$(IPHONE_SDK)
+    export IOS_TARGET
+    export CPATH=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)/usr/include/
+    export SDKROOT=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)
+    export LIBRARY_PATH:=${SDKROOT}/usr/lib:${LIBRARY_PATH}
+    export LIB_EXT := .a
 else
-export ANDROID_API
-export AR=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ar
-export AS=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-as
-export RANLIB=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ranlib
-export PATH:=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin:${PATH}
+    export ANDROID_API
+    export AR=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ar
+    export AS=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-as
+    export RANLIB=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ranlib
+    export PATH:=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin:${PATH}
 
-ifeq ($(ARCH), arm64)
-export ANDROID_ABI=arm64-v8a
-else ifeq ($(ARCH), arm)
-export ANDROID_ABI=armeabi-v7a
-else
-export ANDROID_ABI=x86_64
-endif
-ifeq ($(QT_MAJOR),5)
-export LIB_SUFFIX= _$(ANDROID_ABI)
-endif
-export LIB_EXT := .so
+    ifeq ($(ARCH), arm64)
+        export ANDROID_ABI=arm64-v8a
+    else ifeq ($(ARCH), arm)
+        export ANDROID_ABI=armeabi-v7a
+    else
+        export ANDROID_ABI=x86_64
+    endif
+    ifeq ($(QT_MAJOR),5)
+        export LIB_SUFFIX= _$(ANDROID_ABI)
+    endif
+    export LIB_EXT := .so
 endif
 
 
 # Verify tools are installed
 QMAKE := $(shell which qmake)
 ifeq ($(QMAKE),)
-  $(error qmake not found)
+    $(error qmake not found)
 endif
 $(info QMAKE: $(QMAKE))
 
 RCC := $(shell qmake -query QT_HOST_LIBEXECS)/rcc
 ifeq ($(RCC),)
-  $(error rcc not found)
+    $(error rcc not found)
 endif
 $(info RCC: $(RCC))
 
 ifeq ($(OS),android)
-  ANDROIDDEPLOYQT := $(shell which androiddeployqt)
-  ifeq ($(ANDROIDDEPLOYQT),)
-    $(error androiddeployqt not found)
-  endif
-  $(info ANDROIDDEPLOYQT: $(ANDROIDDEPLOYQT))
-  
-  ifeq ($(ANDROID_NDK_ROOT),)
-    $(error ANDROID_NDK_ROOT not set)
-  endif
-  $(info NDK: $(ANDROID_NDK_ROOT))
-  
-  ifeq ($(ANDROID_API),)
-    $(error ANDROID_API not set)
-  endif
-  $(info ANDROID_API: $(ANDROID_API))
+    ANDROIDDEPLOYQT := $(shell which androiddeployqt)
+    ifeq ($(ANDROIDDEPLOYQT),)
+        $(error androiddeployqt not found)
+    endif
+    $(info ANDROIDDEPLOYQT: $(ANDROIDDEPLOYQT))
+
+    ifeq ($(ANDROID_NDK_ROOT),)
+        $(error ANDROID_NDK_ROOT not set)
+    endif
+    $(info NDK: $(ANDROID_NDK_ROOT))
+
+    ifeq ($(ANDROID_API),)
+        $(error ANDROID_API not set)
+    endif
+    $(info ANDROID_API: $(ANDROID_API))
 endif
 
 ifeq ($(OS),ios)
-  ifeq ($(IPHONE_SDK),)
-    $(error IPHONE_SDK not set)
-  endif
-  $(info IPHONE_SDK: $(IPHONE_SDK))
-  
-  ifeq ($(IOS_TARGET),)
-    $(error IOS_TARGET not set)
-  endif
-  $(info IOS_TARGET: $(IOS_TARGET))
+    ifeq ($(IPHONE_SDK),)
+        $(error IPHONE_SDK not set)
+    endif
+    $(info IPHONE_SDK: $(IPHONE_SDK))
+
+    ifeq ($(IOS_TARGET),)
+        $(error IOS_TARGET not set)
+    endif
+    $(info IOS_TARGET: $(IOS_TARGET))
 endif
 # end of tool verification
