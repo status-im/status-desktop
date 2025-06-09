@@ -10,18 +10,12 @@ inputs:
     required: true
 
 outputs:
-  android-arch:
-    description: 'Mapped Android architecture folder name'
-    value: ${{ inputs.architecture == 'arm64' && 'arm64_v8a' || inputs.architecture == 'arm' && 'armv7' || inputs.architecture }}
   qt-android-path:
     description: 'Full Qt Android path'
     value: /opt/qt/${{ inputs.qt-version }}/android_${{ inputs.architecture == 'arm64' && 'arm64_v8a' || inputs.architecture == 'arm' && 'armv7' || inputs.architecture }}
   qt-host-path:
     description: 'Qt host tools path'
     value: /opt/qt/${{ inputs.qt-version }}/gcc_64
-  qt-path:
-    description: 'Base Qt path'
-    value: /opt/qt/${{ inputs.qt-version }}
 
 runs:
   using: "composite"
