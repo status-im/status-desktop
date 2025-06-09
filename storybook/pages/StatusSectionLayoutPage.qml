@@ -1,6 +1,6 @@
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Layout 0.1
 
@@ -121,6 +121,8 @@ Page {
         contentItem: StatusSectionLayout {
             id: sectionLayout
             clip: true
+            implicitWidth: 800
+            implicitHeight: 400
             leftPanel: leftPanelCheckBox.checked ? leftPanel : null
             centerPanel: centerPanelCheckBox.checked ? centerPanel : null
             rightPanel: rightPanel
