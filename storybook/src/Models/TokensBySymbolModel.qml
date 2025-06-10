@@ -47,6 +47,7 @@ ListModel {
             symbol: "STT",
             sources: ";" + status + ";",
             addressPerChain: [
+                { chainId: 1, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
                 {chainId: 5, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
                 { chainId: 11155420, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
                 { chainId: 421614, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
@@ -140,6 +141,7 @@ ListModel {
             communityId: "",
             sources: ";" + uniswap + ";" + status + ";",
             addressPerChain: [
+                { chainId: 1, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
                 { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
                 { chainId: 11155420, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
             ],
