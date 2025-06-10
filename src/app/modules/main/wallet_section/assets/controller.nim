@@ -34,7 +34,6 @@ proc buildAllTokens*(self: Controller, addresses: seq[string]) =
 
 proc init*(self: Controller) =
   let walletAddresses = self.walletAccountService.getWalletAddresses()
-  self.buildAllTokens(walletAddresses)
   discard
 
 proc getChainIds*(self: Controller): seq[int] =

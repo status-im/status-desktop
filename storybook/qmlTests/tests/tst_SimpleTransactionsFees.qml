@@ -41,7 +41,7 @@ Item {
 
             compare(background.color, Theme.palette.indirectColor1)
             compare(gasIcon.asset.name, "gas")
-            compare(infoText.text, qsTr("Est Mainnet transaction fee"))
+            compare(infoText.text, qsTr("Est %1 transaction fee").arg(controlUnderTest.networkName))
             compare(cryptoFeesText.text, "XXXXXXXXXX")
             verify(cryptoFeesText.loading)
             compare(cryptoFeesText.customColor, Theme.palette.baseColor1)
@@ -65,10 +65,11 @@ Item {
 
             controlUnderTest.cryptoFees = "0.0007 ETH"
             controlUnderTest.fiatFees = "1.45 EUR"
+            controlUnderTest.networkName = "Mainnet"
 
             compare(background.color, Theme.palette.indirectColor1)
             compare(gasIcon.asset.name, "gas")
-            compare(infoText.text, qsTr("Est Mainnet transaction fee"))
+            compare(infoText.text, qsTr("Est %1 transaction fee").arg(controlUnderTest.networkName))
             compare(cryptoFeesText.text,"0.0007 ETH")
             verify(!cryptoFeesText.loading)
             compare(cryptoFeesText.customColor, Theme.palette.baseColor1)
@@ -94,7 +95,7 @@ Item {
 
             compare(background.color, Theme.palette.indirectColor1)
             compare(gasIcon.asset.name, "gas")
-            compare(infoText.text, qsTr("Est Mainnet transaction fee"))
+            compare(infoText.text, qsTr("Est %1 transaction fee").arg(controlUnderTest.networkName))
             compare(cryptoFeesText.text,"XXXXXXXXXX")
             verify(cryptoFeesText.loading)
             compare(cryptoFeesText.customColor, Theme.palette.baseColor1)
@@ -104,10 +105,11 @@ Item {
 
             controlUnderTest.cryptoFees = "0.0007 ETH"
             controlUnderTest.fiatFees = "1.45 EUR"
+            controlUnderTest.networkName = "Optimism"
 
             compare(background.color, Theme.palette.indirectColor1)
             compare(gasIcon.asset.name, "gas")
-            compare(infoText.text, qsTr("Est Mainnet transaction fee"))
+            compare(infoText.text, qsTr("Est %1 transaction fee").arg(controlUnderTest.networkName))
             compare(cryptoFeesText.text,"0.0007 ETH")
             verify(cryptoFeesText.loading)
             compare(cryptoFeesText.customColor, Theme.palette.baseColor1)
@@ -132,10 +134,11 @@ Item {
             controlUnderTest.error = true
             controlUnderTest.cryptoFees = "0.0007 ETH"
             controlUnderTest.fiatFees = "1.45 EUR"
+            controlUnderTest.networkName = "Mainnet"
 
             compare(background.color, Theme.palette.indirectColor1)
             compare(gasIcon.asset.name, "gas")
-            compare(infoText.text, qsTr("Est Mainnet transaction fee"))
+            compare(infoText.text, qsTr("Est %1 transaction fee").arg(controlUnderTest.networkName))
             compare(cryptoFeesText.text,"0.0007 ETH")
             verify(!cryptoFeesText.loading)
             compare(cryptoFeesText.customColor, Theme.palette.dangerColor1)
