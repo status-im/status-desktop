@@ -24,6 +24,7 @@ SplitView {
             fiatFees: qsTr("1.45 EUR")
             loading: loadingCheckbox.checked
             error: errorCheckbox.checked
+            networkName: "Mainnet"
         }
     }
 
