@@ -37,10 +37,17 @@ brew install act android-platform-tools android-commandlinetools
 # Ubuntu
 sudo apt-get update
 sudo apt install android-sdk-common
-sdkmanager --install "build-tools;35.0.1" "emulator" "platform-tools" "platforms;android-35" "ndk;27.2.12479018" 'system-images;android-35;google_apis;arm64-v8a'
-# Installing act in /bin
-(cd/;curlhttps://raw.githubusercontent.com/nektos/act/master/install.sh | sudobash)
+
+sdkmanager --install \
+"build-tools;35.0.1" \
+"emulator" \
+"platform-tools" \
+"platforms;android-35" \
+"ndk;27.2.12479018" \
+"system-images;android-35;google_apis;arm64-v8a"
 ```
+
+- Install [act](https://nektosact.com/installation/index.html)
 
 2. **Verify installation:**
 ```bash
@@ -48,6 +55,7 @@ adb --version
 emulator --version
 avdmanager --version
 sdkmanager --version
+act --version
 ```
 
 2. **Running the app**
