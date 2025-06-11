@@ -1908,9 +1908,7 @@ Item {
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
 
                                 // Users related data
-                                property var usersStore: rootStore.usersStore
-                                usersModel: usersStore.usersModel
-                                temporaryUsersModel: usersStore.temporaryModel
+                                usersModel: rootStore.usersStore.usersModel
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -1929,10 +1927,7 @@ Item {
                                 onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
 
                                 // Edit group chat members signals:
-                                onUpdateGroupMembers: usersStore.updateGroupMembers()
-                                onResetTemporaryUsersModel: usersStore.resetTemporaryModel()
-                                onAppendTemporaryUsersModel: usersStore.appendTemporaryModel(pubKey, displayName)
-                                onRemoveFromTemporaryUsersModel: usersStore.removeFromTemporaryModel(pubKey)
+                                onGroupMembersUpdateRequested: rootStore.usersStore.groupMembersUpdateRequested(membersPubKeysList)
                             }
                         }
                     }

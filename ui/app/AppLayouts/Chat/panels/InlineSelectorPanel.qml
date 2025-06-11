@@ -22,6 +22,7 @@ Item {
     property alias suggestionsDelegate: suggestionsListView.delegate
     property alias suggestionsDialog: suggestionsDialog
     property size suggestionsDelegateSize: Qt.size(344, 64)
+    property alias dirty: confirmBtn.enabled
 
     readonly property alias label: label
     readonly property alias warningLabel: warningLabel
@@ -208,6 +209,8 @@ Item {
         }
 
         StatusButton {
+            id: confirmBtn
+
             objectName: "inlineSelectorConfirmButton"
             enabled: (listView.count > 0)
             text: qsTr("Confirm")

@@ -69,14 +69,8 @@ StackLayout {
     readonly property bool amIChatAdmin: root.rootStore.amIChatAdmin()
     property var usersModel
 
-    // Users related but just for group chats:
-    property var temporaryUsersModel
-
     // Users related signals
-    signal updateGroupMembers()
-    signal resetTemporaryUsersModel()
-    signal appendTemporaryUsersModel(string pubKey, string displayName)
-    signal removeFromTemporaryUsersModel(string pubKey)
+    signal groupMembersUpdateRequested(string membersPubKeysList)
 
     signal profileButtonClicked()
     signal openAppSearch()
@@ -256,12 +250,8 @@ StackLayout {
 
             // Users related data:
             usersModel: root.usersModel
-            temporaryUsersModel: root.temporaryUsersModel
 
-            onUpdateGroupMembers: root.updateGroupMembers()
-            onResetTemporaryUsersModel: root.resetTemporaryUsersModel()
-            onAppendTemporaryUsersModel: root.appendTemporaryUsersModel(pubKey, displayName)
-            onRemoveFromTemporaryUsersModel: root.removeFromTemporaryUsersModel(pubKey)
+            onGroupMembersUpdateRequested: root.groupMembersUpdateRequested(membersPubKeysList)
 
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)
             onCommunityInfoButtonClicked: root.currentIndex = 1

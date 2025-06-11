@@ -30,13 +30,9 @@ Item {
     property int padding: Theme.halfPadding
 
     property var usersModel
-    property var temporaryUsersModel
     property var amIChatAdmin
 
-    signal updateGroupMembers()
-    signal resetTemporaryUsersModel()
-    signal appendTemporaryUsersModel(string pubKey, string displayName)
-    signal removeFromTemporaryUsersModel(string pubKey)
+    signal groupMembersUpdateRequested(string membersPubKeysList)
 
     signal searchButtonClicked()
     signal displayEditChannelPopup(string chatId,
@@ -356,17 +352,13 @@ Item {
         MembersEditSelectorView {
             contactsModel: root.mutualContactsModel
             usersModel: root.usersModel
-            temporaryUsersModel: root.temporaryUsersModel
 
             amIChatAdmin: root.amIChatAdmin
 
             onConfirmed: root.state = d.stateInfoButtonContent
             onRejected: root.state = d.stateInfoButtonContent
 
-            onUpdateGroupMembers: root.updateGroupMembers()
-            onResetTemporaryUsersModel: root.resetTemporaryUsersModel()
-            onAppendTemporaryUsersModel: root.appendTemporaryUsersModel(pubKey, displayName)
-            onRemoveFromTemporaryUsersModel: root.removeFromTemporaryUsersModel(pubKey)
+            onGroupMembersUpdateRequested: root.groupMembersUpdateRequested(membersPubKeysList)
         }
     }
 }
