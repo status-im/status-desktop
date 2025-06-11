@@ -35,7 +35,7 @@ AbstractButton {
     implicitWidth: 160
     implicitHeight: 160
 
-    padding: 12
+    padding: Theme.smallPadding
 
     icon.width: 48
     icon.height: 48
@@ -140,13 +140,9 @@ AbstractButton {
                 elide: Text.ElideRight
             }
 
-            // spacer
-            Item {
-                Layout.fillHeight: true
-            }
-
             // extra bottom contents
             RowLayout {
+                Layout.alignment: Qt.AlignBottom
                 Layout.minimumHeight: Theme.bigPadding
                 Loader {
                     id: bottomRowLoader

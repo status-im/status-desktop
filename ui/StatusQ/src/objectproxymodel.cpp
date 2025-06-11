@@ -216,8 +216,7 @@ void ObjectProxyModel::onCustomRoleChanged()
 {
     if (!m_dataChangedQueued) {
         m_dataChangedQueued = true;
-        QMetaObject::invokeMethod(this, "emitAllDataChanged",
-                                  Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, &ObjectProxyModel::emitAllDataChanged, Qt::QueuedConnection);
     }
 }
 
