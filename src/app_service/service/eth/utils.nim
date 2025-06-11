@@ -12,14 +12,6 @@ import ../../common/conversion as common_conversion
 
 export common_conversion
 
-proc isWakuEnabled(): bool =
-  true # TODO:
-
-proc prefix*(procName: string, isExt:bool = true): string =
-  result = if isWakuEnabled(): "waku" else: "shh"
-  result = result & (if isExt: "ext_" else: "_")
-  result = result & procName
-
 proc isOneToOneChat*(chatId: string): bool =
   result = chatId.startsWith("0x") # There is probably a better way to do this
 
@@ -86,7 +78,7 @@ proc validateTransactionInput*(from_addr, to_addr, assetAddress, value, gas, gas
   if not isHexFormat(to_addr): raise newException(ValueError, "to_addr is not a valid ETH address")
   if parseFloat(value) < 0: raise newException(ValueError, "value should be a number >= 0")
   if parseInt(gas) <= 0: raise newException(ValueError, "gas should be a number > 0")
-  
+
   if isEIP1599Enabled:
     if gasPrice != "" and (maxPriorityFeePerGas != "" or maxFeePerGas != ""):
       raise newException(ValueError, "gasPrice can't be used with maxPriorityFeePerGas and maxFeePerGas")
