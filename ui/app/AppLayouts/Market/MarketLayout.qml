@@ -50,8 +50,8 @@ StatusSectionLayout {
 
     centerPanel: ColumnLayout {
         anchors.fill: parent
-        anchors.rightMargin: 64
-        anchors.leftMargin: 64
+        anchors.rightMargin: 8
+        anchors.leftMargin: 8
         spacing: 18
 
         // Header

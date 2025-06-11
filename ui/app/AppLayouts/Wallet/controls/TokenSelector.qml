@@ -109,7 +109,7 @@ Control {
 
                 showSectionName: root.showSectionName
 
-                onAssetSelected: {
+                onAssetSelected: function(key) {
                     const entry = ModelUtils.getByKey(assetsModel, "tokensKey", key)
                     highlightedKey = key
 
@@ -117,7 +117,7 @@ Control {
                     root.assetSelected(key)
                 }
 
-                onCollectibleSelected: {
+                onCollectibleSelected: function(key) {
                     highlightedKey = key
 
                     const subitem = findSubitem(key)
@@ -126,7 +126,7 @@ Control {
                     root.collectibleSelected(key)
                 }
 
-                onCollectionSelected: {
+                onCollectionSelected: function(key) {
                     highlightedKey = key
 
                     const subitem = findSubitem(key)

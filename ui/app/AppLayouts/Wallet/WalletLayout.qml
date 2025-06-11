@@ -313,8 +313,8 @@ Item {
         centerPanel: StackView {
             id: rightPanelStackView
             anchors.fill: parent
-            anchors.leftMargin: 64
-            anchors.rightMargin: 64
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
             initialItem: walletContainer
             replaceEnter: Transition {
                 NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }
