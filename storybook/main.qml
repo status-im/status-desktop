@@ -204,8 +204,7 @@ ApplicationWindow {
                 clip: true
 
                 source: reloader.reloading ? "" : `pages/${root.currentPage}Page.qml`
-                active: !!source
-                asynchronous: reloader.reloading ? false : settingsLayout.loadAsynchronously
+                asynchronous: !reloader.reloading && settingsLayout.loadAsynchronously
                 visible: status === Loader.Ready
 
                 // force reload when `asynchronous` changes

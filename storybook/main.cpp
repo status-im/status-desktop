@@ -24,6 +24,23 @@ struct PagesModelInitialized : public PagesModel {
         : PagesModel(QML_IMPORT_ROOT + QStringLiteral("/pages"), parent) {}
 };
 
+// Starting from Qt 6.8.3 it's necessary to add prefix when loading qml files
+// in order to make the hot reloading working as expected (https://bugreports.qt.io/browse/QTBUG-135448).
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QQmlAbstractUrlInterceptor>
+
+class HotReloadUrlInterceptor : public QQmlAbstractUrlInterceptor {
+    unsigned int counter = 0;
+
+    QUrl intercept(const QUrl &url, QQmlAbstractUrlInterceptor::DataType type) override {
+        if (type != QQmlAbstractUrlInterceptor::QmlFile)
+            return url;
+
+        return url.toString() + "#"+ QString::number(counter++);
+    }
+};
+#endif
+
 void loadContextPropertiesMocks(const char* storybookRoot, QQmlApplicationEngine& engine);
 
 int main(int argc, char *argv[])
@@ -66,7 +83,15 @@ int main(int argc, char *argv[])
     }
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    HotReloadUrlInterceptor interceptor;
+#endif
+
     QQmlApplicationEngine engine;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    engine.addUrlInterceptor(&interceptor);
+#endif
 
     const QStringList additionalImportPaths {
         STATUSQ_MODULE_IMPORT_PATH,

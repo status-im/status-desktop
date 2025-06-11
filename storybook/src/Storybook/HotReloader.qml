@@ -20,11 +20,9 @@ QtObject {
 
     readonly property Connections _d: Connections {
         target: SourceWatcher
+        enabled: root.enabled
 
         function onChanged() {
-            if (!root.enabled)
-                return
-
             forceReload()
         }
     }
