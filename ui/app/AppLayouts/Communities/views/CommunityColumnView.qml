@@ -59,6 +59,7 @@ Item {
 
     signal infoButtonClicked
     signal manageButtonClicked
+    signal chatItemClicked(string id)
 
     QtObject {
         id: d
@@ -188,6 +189,9 @@ Item {
             onChatItemSelected: {
                 Global.closeCreateChatView()
                 root.communitySectionModule.setActiveItem(id)
+            }
+            onChatItemClicked: (id) => {
+                root.chatItemClicked(id)
             }
 
             showCategoryActionButtons: root.isSectionAdmin
