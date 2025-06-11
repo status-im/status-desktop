@@ -4,7 +4,7 @@
 
 ### 2.35
 
-Epic: https://github.com/status-im/status-desktop/issues/17966
+Release Epic: https://github.com/status-im/status-desktop/issues/17966
 
 Estimated release: Mid-End July
 
@@ -17,29 +17,37 @@ Estimated release: Mid-End July
 - [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
 - [Jump to screen (Shell)](https://github.com/status-im/status-desktop/issues/17971)
-- [Memory improvements](https://github.com/status-im/status-go/issues/6544)
 - [UI modularization](https://github.com/status-im/status-desktop/issues/17872)
 - [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
 
 ### 2.36
 
-Epic: https://github.com/status-im/status-desktop/issues/18029
+Release Epic: https://github.com/status-im/status-desktop/issues/18029
 
-Estimated release: End of August
+Estimated release: Mid September
 
 ### Features:
 
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
+- [Memory improvements](https://github.com/status-im/status-go/issues/6544)
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
-- [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
 
 ### 2.37
 
-Epic not created yet as it's too early to know exactly what will be worked on. The taks listed below in the graph are estimates of what could bring value.
+Not all Epics are created yet as it's too early to know exactly what will be worked on. The taks listed below are estimates of what could bring value.
+
+- [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
+- Improve User support
+- RLN
+- News Feed on Waku
+
+Estimated release: End of October
+
 
 ### Visualisation
 
 ```mermaid
+
 gantt
     title Status Roadmap
     excludes    weekends
@@ -47,23 +55,30 @@ gantt
 
     Backend refactor        :2025-06-01, 90d
 
+    2.35 release :milestone, m237, 2025-07-14, 1d
+
     section 2.35
     Qt6 migration           :2025-06-01, 20d
-    Tablet build            :2025-06-01, 26d
-    Jump to screen (shell)  :2025-06-01, 21d
-    UI Modularization       :2025-06-01, 38d
-    Memory improvements     :2025-06-16, 20d
-    User data local backups :2025-06-16, 20d
+    Tablet build            :t1, 2025-06-01, 31d
+    Jump to screen (shell)  :2025-06-01, 24d
+    UI Modularization       :2025-06-01, 60d
+    User data local backups :lb1, 2025-06-16, 20d
+
+    2.36 release            :milestone, m236, 2025-09-01, 1d
 
     section 2.36
     Mobile build            :2025-06-09, 60d
-    Dapp Browser            :2025-07-14, 40d
-    Privacy Mode            :2025-07-14, 25d
-    Messages local backups  :2025-07-14, 15d
+    Memory improvements     :mi1, after lb1, 30d
+    Dapp Browser            :after t1, 35d
+    Messages local backups  :after lb1, 18d
+
+    2.37 release             :milestone, m237, 2025-10-20, 1d
 
     section 2.37
-    Improve user support    :2025-08-18, 15d
-    RLN                     :2025-08-04, 45d
-    Waku News Feed          :2025-08-11, 20d
+    Privacy Mode            :after m236, 25d
+    Improve user support    :after m236, 20d
+    RLN                     :2025-08-04, 55d
+    News Feed on Waku       :after mi1, 25d
+
 
 ```
