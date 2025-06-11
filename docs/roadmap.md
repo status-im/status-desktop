@@ -1,6 +1,50 @@
 # Status Roadmap
 
+## Table of Contents
+- [2025 H2](#2025-h2)
+  - [Gantt Chart](#gantt-chart)
+  - [2.35](#235)
+  - [2.36](#236)
+  - [2.37](#237)
+
 ## 2025 H2
+
+### Gantt Chart
+
+```mermaid
+gantt
+    title Status Roadmap 2025 H2
+    excludes    weekends
+    dateFormat  YYYY-MM-DD
+
+    Backend refactor        :2025-06-01, 90d
+
+    2.35 release :milestone, m237, 2025-07-14, 1d
+
+    section 2.35
+    Qt6 migration           :2025-06-01, 20d
+    Tablet build            :t1, 2025-06-01, 31d
+    Jump to screen (shell)  :2025-06-01, 24d
+    UI Modularization       :2025-06-01, 60d
+    User data local backups :lb1, 2025-06-16, 20d
+
+    2.36 release            :milestone, m236, 2025-09-01, 1d
+
+    section 2.36
+    Mobile build            :2025-06-09, 60d
+    Memory improvements     :mi1, after lb1, 30d
+    Dapp Browser            :after t1, 35d
+    Messages local backups  :after lb1, 18d
+
+    2.37 release             :milestone, m237, 2025-10-20, 1d
+
+    section 2.37
+    Privacy Mode            :after m236, 25d
+    Improve user support    :after m236, 20d
+    RLN                     :2025-08-04, 55d
+    News Feed on Waku       :after mi1, 25d
+    File sending over Codex :2025-09-01, 30d
+```
 
 ### 2.35
 
@@ -54,43 +98,3 @@ Not all Epics are created yet as it's too early to know exactly what will be wor
   - Dependant on Codex being available in Light mode for mobile and having a C library.
 
 Estimated release: End of October
-
-
-### Visualisation
-
-```mermaid
-gantt
-    title Status Roadmap
-    excludes    weekends
-    dateFormat  YYYY-MM-DD
-
-
-
-    Backend refactor        :2025-06-01, 90d
-
-    2.35 release :milestone, m237, 2025-07-14, 1d
-
-    section 2.35
-    Qt6 migration           :2025-06-01, 20d
-    Tablet build            :t1, 2025-06-01, 31d
-    Jump to screen (shell)  :2025-06-01, 24d
-    UI Modularization       :2025-06-01, 60d
-    User data local backups :lb1, 2025-06-16, 20d
-
-    2.36 release            :milestone, m236, 2025-09-01, 1d
-
-    section 2.36
-    Mobile build            :2025-06-09, 60d
-    Memory improvements     :mi1, after lb1, 30d
-    Dapp Browser            :after t1, 35d
-    Messages local backups  :after lb1, 18d
-
-    2.37 release             :milestone, m237, 2025-10-20, 1d
-
-    section 2.37
-    Privacy Mode            :after m236, 25d
-    Improve user support    :after m236, 20d
-    RLN                     :2025-08-04, 55d
-    News Feed on Waku       :after mi1, 25d
-    File sending over Codex :2025-09-01, 30d
-```
