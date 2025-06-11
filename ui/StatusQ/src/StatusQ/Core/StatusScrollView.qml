@@ -42,7 +42,7 @@ import StatusQ.Core.Theme 0.1
 
 
    If you want the content to fill available width:
-    - bind `ScrollView.contetWidth` to `availableWidth`
+    - bind `ScrollView.contentWidth` to `availableWidth`
     - bind content `width` to `availableWidth`
 
    \qml

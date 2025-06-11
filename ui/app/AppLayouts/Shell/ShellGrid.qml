@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
@@ -11,7 +12,7 @@ import AppLayouts.Shell.delegates 1.0
 
 import utils 1.0
 
-StatusGridView {
+StatusScrollView {
     id: root
 
     /**
@@ -53,161 +54,173 @@ StatusGridView {
         pinned             [bool]   - whether the item is pinned in the UI
         timestamp          [int]    - timestamp of the last user interaction with the item
     **/
+    property alias model: repeater.model
 
-    property int cellSize: 160
-    property int cellPadding: Theme.padding
+    property int delegateWidth: 160
+    Behavior on delegateWidth {
+        PropertyAnimation { duration: Theme.AnimationDuration.Fast }
+    }
+    property int delegateHeight: 160
+    Behavior on delegateHeight {
+        PropertyAnimation { duration: Theme.AnimationDuration.Fast }
+    }
 
     signal itemActivated(string key, int sectionType, string itemId)
     signal itemPinRequested(string key, bool pin)
     signal dappDisconnectRequested(string dappUrl)
 
-    cellWidth: cellSize + cellPadding
-    cellHeight: cellWidth
+    padding: 0
+    rightPadding: Theme.padding
 
-    ScrollBar.vertical: StatusScrollBar {
-        policy: ScrollBar.AsNeeded
-        visible: resolveVisibility(policy, root.height, root.contentHeight)
-    }
+    ColumnLayout {
+        width: root.width - root.rightPadding
 
-    delegate: Loader {
-        required property int index
-        required property var model
+        Flow {
+            // calculate a tight bounding box, and then horizontally center over the scrollview width
+            readonly property int delegateCountPerRow: Math.trunc(parent.width / (root.delegateWidth + spacing))
+            Layout.preferredWidth: (delegateCountPerRow * root.delegateWidth) + (spacing * (delegateCountPerRow - 1))
+            Layout.alignment: Qt.AlignHCenter
 
-        sourceComponent: {
-            switch (model.sectionType) {
-            case Constants.appSection.profile:
-                return settingsDelegate
-            case Constants.appSection.community:
-                return communityDelegate
-            case Constants.appSection.wallet:
-                return walletDelegate
-            case Constants.appSection.chat:
-                return chatDelegate
-            case Constants.appSection.dApp:
-                return dappDelegate
-            default:
-                console.warn("Unhandled ShellGridItem delegate for sectionType:", model.sectionType)
+            spacing: Theme.padding
+
+            Repeater {
+                id: repeater
+                delegate: Loader {
+                    required property int index
+                    required property var model
+
+                    sourceComponent: {
+                        switch (model.sectionType) {
+                        case Constants.appSection.profile:
+                            return settingsDelegate
+                        case Constants.appSection.community:
+                            return communityDelegate
+                        case Constants.appSection.wallet:
+                            return walletDelegate
+                        case Constants.appSection.chat:
+                            return chatDelegate
+                        case Constants.appSection.dApp:
+                            return dappDelegate
+                        default:
+                            console.warn("Unhandled ShellGridItem delegate for sectionType:", model.sectionType)
+                        }
+                    }
+
+                    Connections {
+                        target: item ?? null
+                        function onClicked() {
+                            root.itemActivated(model.key, item.sectionType, item.itemId)
+                        }
+                        function onPinRequested() {
+                            root.itemPinRequested(model.key, !model.pinned)
+                        }
+                    }
+                }
             }
-        }
 
-        Connections {
-            target: item ?? null
-            function onClicked() {
-                root.itemActivated(model.key, item.sectionType, item.itemId)
+            Component {
+                id: communityDelegate
+
+                ShellGridCommunityItem {
+                    width: root.delegateWidth
+                    height: root.delegateHeight
+                    itemId: model.id
+                    title: model.name
+                    color: model.color
+                    icon.source: model.icon
+                    banner: model.banner
+                    hasNotification: model.hasNotification
+                    notificationsCount: model.notificationsCount
+                    pinned: model.pinned
+
+                    membersCount: model.members
+                    activeMembersCount: model.activeMembers
+
+                    pending: model.pending
+                    banned: model.banned
+                }
             }
-            function onPinRequested() {
-                root.itemPinRequested(model.key, !model.pinned)
+
+            Component {
+                id: settingsDelegate
+
+                ShellGridSettingsItem {
+                    width: root.delegateWidth
+                    height: root.delegateHeight
+                    itemId: model.id
+                    title: model.name
+                    icon.name: model.icon
+                    hasNotification: model.hasNotification
+                    notificationsCount: model.notificationsCount
+                    pinned: model.pinned
+
+                    isExperimental: model.isExperimental
+                }
             }
-        }
-    }
 
-    Component {
-        id: communityDelegate
+            Component {
+                id: walletDelegate
 
-        ShellGridCommunityItem {
-            width: root.cellSize
-            height: root.cellSize
-            itemId: model.id
-            title: model.name
-            color: model.color
-            icon.source: model.icon
-            banner: model.banner
-            hasNotification: model.hasNotification
-            notificationsCount: model.notificationsCount
-            pinned: model.pinned
+                ShellGridWalletItem {
+                    width: root.delegateWidth
+                    height: root.delegateHeight
+                    itemId: model.id
+                    title: model.name
+                    icon.name: model.icon
+                    icon.color: model.color
+                    hasNotification: model.hasNotification
+                    notificationsCount: model.notificationsCount
+                    pinned: model.pinned
 
-            membersCount: model.members
-            activeMembersCount: model.activeMembers
+                    currencyBalance: model.currencyBalance
+                    walletType: model.walletType
+                }
+            }
 
-            pending: model.pending
-            banned: model.banned
-        }
-    }
+            Component {
+                id: chatDelegate
 
-    Component {
-        id: settingsDelegate
+                ShellGridChatItem {
+                    width: root.delegateWidth
+                    height: root.delegateHeight
+                    itemId: model.id
+                    title: model.name
+                    icon.name: model.icon
+                    icon.color: model.color
+                    hasNotification: model.hasNotification
+                    notificationsCount: model.notificationsCount
+                    pinned: model.pinned
+                    lastMessageText: model.lastMessageText
 
-        ShellGridSettingsItem {
-            width: root.cellSize
-            height: root.cellSize
-            itemId: model.id
-            title: model.name
-            icon.name: model.icon
-            hasNotification: model.hasNotification
-            notificationsCount: model.notificationsCount
-            pinned: model.pinned
+                    chatType: model.chatType
+                    onlineStatus: model.onlineStatus
+                }
+            }
 
-            isExperimental: model.isExperimental
-        }
-    }
+            Component {
+                id: dappDelegate
 
-    Component {
-        id: walletDelegate
+                ShellGridDAppItem {
+                    width: root.delegateWidth
+                    height: root.delegateHeight
+                    itemId: model.id
+                    title: model.name
+                    icon.name: model.icon
+                    icon.color: model.color
+                    pinned: model.pinned
 
-        ShellGridWalletItem {
-            width: root.cellSize
-            height: root.cellSize
-            itemId: model.id
-            title: model.name
-            icon.name: model.icon
-            icon.color: model.color
-            hasNotification: model.hasNotification
-            notificationsCount: model.notificationsCount
-            pinned: model.pinned
+                    connectorBadge: model.connectorBadge
 
-            currencyBalance: model.currencyBalance
-            walletType: model.walletType
-        }
-    }
+                    onDisconnectRequested: root.dappDisconnectRequested(itemId)
+                }
+            }
 
-    Component {
-        id: chatDelegate
-
-        ShellGridChatItem {
-            width: root.cellSize
-            height: root.cellSize
-            itemId: model.id
-            title: model.name
-            icon.name: model.icon
-            icon.color: model.color
-            hasNotification: model.hasNotification
-            notificationsCount: model.notificationsCount
-            pinned: model.pinned
-            lastMessageText: model.lastMessageText
-
-            chatType: model.chatType
-            onlineStatus: model.onlineStatus
-        }
-    }
-
-    Component {
-        id: dappDelegate
-
-        ShellGridDAppItem {
-            width: root.cellSize
-            height: root.cellSize
-            itemId: model.id
-            title: model.name
-            icon.name: model.icon
-            icon.color: model.color
-            pinned: model.pinned
-
-            connectorBadge: model.connectorBadge
-
-            onDisconnectRequested: root.dappDisconnectRequested(itemId)
-        }
-    }
-
-    displaced: Transition {
-        NumberAnimation { properties: "x,y"; }
-    }
-    add: Transition {
-        NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
-    }
-    remove: Transition {
-        ParallelAnimation {
-            NumberAnimation { property: "opacity"; to: 0; duration: Theme.AnimationDuration.Fast }
-            NumberAnimation { properties: "x,y"; to: 0; duration: Theme.AnimationDuration.Fast }
+            move: Transition {
+                NumberAnimation { properties: "x,y"; }
+            }
+            add: Transition {
+                NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
+            }
         }
     }
 }
