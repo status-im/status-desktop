@@ -17,13 +17,13 @@ Estimated release: Mid-End July
 - [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
   - No provided FURPS at the moment and this is about maintaing the same level of quality as with QT5 but with WT6 instead.
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
-  - [FURPS](docs/FURPS/tablet-build.md)
+  - [FURPS](/docs/FURPS/tablet-build.md)
 - [Jump to screen (Shell)](https://github.com/status-im/status-desktop/issues/17971)
-  - [FURPS](docs/FURPS/jump-to-screen-shell.md)
+  - [FURPS](/docs/FURPS/jump-to-screen-shell.md)
 - [UI modularization](https://github.com/status-im/status-desktop/issues/17872)
-  - [FURPS](docs/FURPS/ui-modularization.md)
+  - [FURPS](/docs/FURPS/ui-modularization.md)
 - [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
-  - [FURPS](docs/FURPS/local-user-backups.md)
+  - [FURPS](/docs/FURPS/local-user-backups.md)
 
 ### 2.36
 
@@ -34,18 +34,18 @@ Estimated release: Mid September
 ### Features:
 
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
-  - [FURPS](docs/FURPS/mobile-build.md)
+  - [FURPS](/docs/FURPS/mobile-build.md)
 - [Memory improvements](https://github.com/status-im/status-go/issues/6544)
   - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
-  - [FURPS](docs/FURPS/dapp-browser.md)
+  - [FURPS](/docs/FURPS/dapp-browser.md)
 
 ### 2.37
 
 Not all Epics are created yet as it's too early to know exactly what will be worked on. The taks listed below are estimates of what could bring value.
 
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
-  - [FURPS](docs/FURPS/privacy-mode.md)
+  - [FURPS](/docs/FURPS/privacy-mode.md)
 - Improve User support
 - RLN
   - Dependant on the Chat SDK being (partialy) implemented and integrated as part of the Backend refactor.
