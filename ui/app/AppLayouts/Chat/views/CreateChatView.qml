@@ -64,7 +64,6 @@ Page {
                 Layout.leftMargin: Theme.halfPadding
                 Layout.rightMargin: Theme.halfPadding
 
-                rootStore: root.rootStore
                 utilsStore: root.utilsStore
                 contactsModel: root.mutualContactsModel
 

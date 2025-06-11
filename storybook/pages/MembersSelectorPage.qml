@@ -5,6 +5,8 @@ import QtQuick.Layouts 1.14
 import AppLayouts.Chat.views 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
+import StatusQ.Core.Utils 0.1
+
 import Storybook 1.0
 import utils 1.0
 import shared.stores 1.0 as SharedStores
@@ -90,58 +92,37 @@ SplitView {
             }
         }
 
-        readonly property var temporaryModel: ListModel {
-            Component.onCompleted: usersStoreMock.resetTemporaryModel()
-        }
+        function groupMembersUpdateRequested(membersPubKeysList) {
+            const pubKeys = membersPubKeysList.split(",");
+            const users = [];
 
-        function appendTemporaryModel(pubKey, displayName) {
-            temporaryModel.append({
-                                      pubKey: pubKey,
-                                      displayName: displayName,
-                                  })
-        }
+            for (let i = 0; i < pubKeys.length; i++) {
+                const pubKey = pubKeys[i];
 
-        function removeFromTemporaryModel(pubKey) {
-            for(let i = 0; i < temporaryModel.count; i++) {
-                if (temporaryModel.get(i).pubKey === pubKey) {
-                    temporaryModel.remove(i, 1)
-                    return
-                }
-            }
-        }
-
-        function resetTemporaryModel() {
-            temporaryModel.clear()
-            for(let i = 0; i < usersModel.count; i++) {
-                const obj = usersModel.get(i)
-                temporaryModel.append(obj)
-            }
-        }
-
-        function updateGroupMembers() {
-            const users = []
-            for(let i = 0; i < temporaryModel.count; i++) {
-                const obj = temporaryModel.get(i)
                 users.push({
-                               pubKey: obj.pubKey,
-                               compressedPubKey: "compressed_" + obj.pubKey,
-                               displayName: obj.displayName,
+                               pubKey: pubKey,
+                               compressedPubKey: "compressed_" + pubKey,
+                               displayName: "User_" + pubKey,
+                               preferredDisplayName: "User_" + pubKey,
                                localNickname: "",
-                               alias: "three word name(%1)".arg(obj.pubKey),
+                               alias: `three word name(${pubKey})`,
                                isVerified: false,
                                isUntrustworthy: false,
                                isContact: true,
                                icon: "",
                                color: "red",
                                onlineStatus: 0,
-                               isAdmin: i == 0 ? true : false
-                           })
+                               isAdmin: i === 0,
+                               memberRole: 0
+                           });
             }
-            usersModel.clear()
-            usersModel.append(users)
 
-            logs.logEvent("UsersStore::updateGroupMembers")
+            usersModel.clear();
+            usersModel.append(users);
+
+            logs.logEvent("UsersStore::updateGroupMembers");
         }
+
     }
 
     QtObject {
@@ -181,7 +162,6 @@ SplitView {
                     }
 
                     sourceComponent: MembersSelectorView {
-                        rootStore: rootStoreMock
                         utilsStore: SharedStores.UtilsStore {
                             function isChatKey() {
                                 return true
@@ -209,27 +189,13 @@ SplitView {
                     }
 
                     sourceComponent: MembersEditSelectorView {
-                        rootStore: rootStoreMock
                         usersModel: usersStoreMock.usersModel
-                        temporaryUsersModel: usersStoreMock.temporaryModel
                         amIChatAdmin: rootStoreMock.amIChatAdmin()
                         contactsModel: contacts
 
-                        onUpdateGroupMembers: {
+                        onGroupMembersUpdateRequested: {
                             logs.logEvent("MembersEditSelectorView::updateGroupMembers")
-                            usersStoreMock.updateGroupMembers()
-                        }
-                        onResetTemporaryUsersModel: {
-                            logs.logEvent("MembersEditSelectorView::resetTemporaryUsersModel")
-                            usersStoreMock.resetTemporaryModel()
-                        }
-                        onAppendTemporaryUsersModel: {
-                            logs.logEvent("MembersEditSelectorView::appendTemporaryUsersModel")
-                            usersStoreMock.appendTemporaryModel(pubKey, displayName)
-                        }
-                        onRemoveFromTemporaryUsersModel: {
-                            logs.logEvent("MembersEditSelectorView::removeFromTemporaryUsersModel")
-                            usersStoreMock.removeFromTemporaryModel(pubKey)
+                            usersStoreMock.groupMembersUpdateRequested(membersPubKeysList)
                         }
                     }
                 }
@@ -254,7 +220,12 @@ SplitView {
                     id: chatAdminSwitch
                     visible: selectorsSwitch.checked
                     text: "chat admin"
-                    onCheckedChanged: usersStore.resetTemporaryModel()
+                    onCheckedChanged: {
+                        usersStoreMock.usersModel.clear()
+                        for(let i=0; i < 4; i++) {
+                            usersStoreMock.usersModel.append(d.createMemberDict(i))
+                        }
+                    }
                 }
             }
         }

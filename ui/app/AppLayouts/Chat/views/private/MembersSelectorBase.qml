@@ -17,8 +17,6 @@ import SortFilterProxyModel 0.2
 InlineSelectorPanel {
     id: root
 
-    property ChatStores.RootStore rootStore
-
     property alias contactsModel: suggestionsModel.sourceModel
 
     readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066

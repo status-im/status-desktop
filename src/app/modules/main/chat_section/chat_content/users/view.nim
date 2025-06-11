@@ -1,5 +1,5 @@
-import NimQml, sequtils, sugar
-import ../../../../shared_models/[member_model, member_item]
+import NimQml, sequtils, sets, strutils
+import ../../../../shared_models/[member_model]
 import io_interface
 
 QtObject:
@@ -8,8 +8,6 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
-      temporaryModel: Model # used for editing purposes
-      temporaryModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -20,8 +18,6 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
-    result.temporaryModel = newModel()
-    result.temporaryModelVariant = newQVariant(result.temporaryModel)
 
   proc model*(self: View): Model =
     return self.model
@@ -38,42 +34,22 @@ QtObject:
     read = getModel
     notify = modelChanged
 
-  proc temporaryModelChanged*(self: View) {.signal.}
+  proc groupMembersUpdateRequested*(self: View, membersPubKeysList: string) {.slot.} =
+    # Parse the incoming hash into a set of pubKeys
+    var newIDs: HashSet[string]
+    if membersPubKeysList.len > 0:
+      newIDs = membersPubKeysList.split(",").toHashSet
+    else:
+      newIDs = initHashSet[string]()
 
-  proc getTemporaryModel(self: View): QVariant {.slot.} =
-    return self.temporaryModelVariant
+    let currentIDs = self.model.getItemIds().toHashSet
 
-  QtProperty[QVariant]temporaryModel:
-    read = getTemporaryModel
-    notify = temporaryModelChanged
+    # Update current users model with new members:
+    let membersAdded = toSeq(newIDs - currentIDs)
+    let membersRemoved = toSeq(currentIDs - newIDs)
 
-  proc resetTemporaryModel*(self: View) {.slot.} =
-    self.temporaryModel.setItems(self.model.getItems())
-
-  proc appendTemporaryModel*(self: View, pubKey: string, displayName: string) {.slot.} =
-    # for temporary model only pubKey and displayName is needed
-    let userItem = initMemberItem(
-      pubKey = pubKey,
-      displayName = displayName,
-      usesDefaultName = false,
-      ensName = "",
-      isEnsVerified = false,
-      localNickname = "",
-      alias = "",
-      icon = "",
-      colorId = 0,
-    )
-    self.temporaryModel.addItem(userItem)
-
-  proc removeFromTemporaryModel*(self: View, pubKey: string) {.slot.} =
-    self.temporaryModel.removeItemById(pubKey)
-
-  proc updateGroupMembers*(self: View) {.slot.} =
-    let modelIDs = self.model.getItemIds()
-    let temporaryModelIDs = self.temporaryModel.getItemIds()
-    let membersAdded = filter(temporaryModelIDs, id => not modelIDs.contains(id))
-    let membersRemoved = filter(modelIDs, id => not temporaryModelIDs.contains(id))
-    if (membersAdded.len > 0):
+    if membersAdded.len > 0:
       self.delegate.addGroupMembers(membersAdded)
-    if (membersRemoved.len > 0):
+
+    if membersRemoved.len > 0:
       self.delegate.removeGroupMembers(membersRemoved)

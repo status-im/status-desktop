@@ -112,14 +112,10 @@ StatusSectionLayout {
 
     // Users related data:
     property var usersModel
-    property var temporaryUsersModel
     property bool amIChatAdmin
 
     // Users related signals
-    signal updateGroupMembers()
-    signal resetTemporaryUsersModel()
-    signal appendTemporaryUsersModel(string pubKey, string displayName)
-    signal removeFromTemporaryUsersModel(string pubKey)
+    signal groupMembersUpdateRequested(string membersPubKeysList)
 
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
@@ -249,7 +245,6 @@ StatusSectionLayout {
             emojiPopup: root.emojiPopup
 
             usersModel: root.usersModel
-            temporaryUsersModel: root.temporaryUsersModel
             amIChatAdmin: root.amIChatAdmin
 
             onSearchButtonClicked: root.openAppSearch()
@@ -268,10 +263,7 @@ StatusSectionLayout {
                 });
             }
 
-            onUpdateGroupMembers: root.updateGroupMembers()
-            onResetTemporaryUsersModel: root.resetTemporaryUsersModel()
-            onAppendTemporaryUsersModel: root.appendTemporaryUsersModel(pubKey, displayName)
-            onRemoveFromTemporaryUsersModel: root.removeFromTemporaryUsersModel(pubKey)
+            onGroupMembersUpdateRequested: root.groupMembersUpdateRequested(membersPubKeysList)
         }
     }
 

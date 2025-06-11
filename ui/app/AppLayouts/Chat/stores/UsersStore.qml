@@ -18,18 +18,7 @@ QtObject {
     }
 
     // Used for editing:
-    readonly property var temporaryModel: root.usersModule ? root.usersModule.temporaryModel : null
-
-    function appendTemporaryModel(pubKey, displayName) {
-        root.usersModule.appendTemporaryModel(pubKey, displayName)
-    }
-    function removeFromTemporaryModel(pubKey) {
-        root.usersModule.removeFromTemporaryModel(pubKey)
-    }
-    function resetTemporaryModel() {
-        root.usersModule.resetTemporaryModel()
-    }
-    function updateGroupMembers() {
-        root.usersModule.updateGroupMembers()
+    function groupMembersUpdateRequested(membersPubKeysList) {
+        root.usersModule.groupMembersUpdateRequested(membersPubKeysList)
     }
 }
