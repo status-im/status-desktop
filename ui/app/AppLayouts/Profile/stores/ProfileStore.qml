@@ -8,7 +8,7 @@ QtObject {
 
     property var profileModule
 
-    property string pubkey: userProfile.pubKey
+    property string pubKey: userProfile.pubKey
     property string compressedPubKey: userProfile.compressedPubKey
     property string name: userProfile.name
     property string username: userProfile.username
@@ -24,8 +24,8 @@ QtObject {
     readonly property int currentUserStatus: userProfile.currentUserStatus
     readonly property var thumbnailImage: userProfile.thumbnailImage
     readonly property var largeImage: userProfile.largeImage
-    readonly property int colorId: Utils.colorIdForPubkey(root.pubkey)
-    readonly property var colorHash: Utils.getColorHashAsJson(root.pubkey)
+    readonly property int colorId: Utils.colorIdForPubkey(root.pubKey)
+    readonly property var colorHash: Utils.getColorHashAsJson(root.pubKey)
 
     readonly property string bio: profileModule.bio
     readonly property string socialLinksJson: profileModule.socialLinksJson
