@@ -2154,6 +2154,7 @@ Item {
 
                             theme: appMainLocalSettings.theme
                             fontSize: appMainLocalSettings.fontSize
+                            fnAddressWasShown: WalletStores.RootStore.addressWasShown
 
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
 
