@@ -1,5 +1,4 @@
 #include <QZXing.h>
-#include <qqmlsortfilterproxymodeltypes.h>
 
 #include "StatusQ/audioutils.h"
 #include "StatusQ/clipboardutils.h"
@@ -33,6 +32,9 @@
 #include "StatusQ/undefinedfilter.h"
 #include "StatusQ/urlutils.h"
 #include "StatusQ/writableproxymodel.h"
+
+#include <qtmodelstoolkit/registerqmltypes.h>
+#include <qqmlsortfilterproxymodeltypes.h>
 
 #include "wallet/managetokenscontroller.h"
 #include "wallet/managetokensmodel.h"
@@ -150,6 +152,7 @@ void registerStatusQTypes() {
     Q_INIT_RESOURCE(twemoji_svg);
 #endif
 
+    qtmt::registerQmlTypes();
     QZXing::registerQMLTypes();
     qqsfpm::registerTypes();
 }
