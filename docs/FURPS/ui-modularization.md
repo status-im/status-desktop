@@ -11,14 +11,14 @@
 - Document architectural patterns and usage conventions to reduce ambiguity during development.
 
 ## Reliability
-- Reduce tight coupling between backend logic and UI to minimize bugs from implementation side effects.
+- Reduce tight coupling between business logic and UI to minimize bugs from implementation side effects.
 - Ensure predictable data flow with read-only modules and strictly typed store usage.
 - Safeguard against improper store usage with guidelines on instantiation and component scope.
 
 ## Performance
 - Avoid unnecessary data duplication and propagation through read-only modules and centralized ground truth state.
 - Minimize transformation overhead by using adaptors only when necessary for UI display logic.
-- Ensure UI responsiveness by decoupling backend processing from rendering logic.
+- Ensure UI responsiveness by decoupling business logic processing from rendering logic.
 
 ## Supportability
 - Use strictly typed interfaces (`no var`) to catch issues at compile time and improve tooling support.
