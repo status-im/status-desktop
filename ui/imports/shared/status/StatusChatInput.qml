@@ -158,6 +158,9 @@ Rectangle {
 
         property var imageDialog: null
 
+        // whether to send message using Ctrl+Return or just Enter; based on OSK (virtual keyboard presence)
+        readonly property int kbdModifierToSendMessage: Qt.inputMethod.visible ? Qt.ControlModifier : Qt.NoModifier
+
         // common popups are emoji, jif and stickers
         // Put controlWidth as argument with default value for binding
         function getCommonPopupRelativePosition(popup, popupParent, controlWidth = control.width) {
@@ -374,9 +377,9 @@ Rectangle {
 
     function onKeyPress(event) {
         // get text without HTML formatting
-        const messageLength = messageInputField.getText(0, messageInputField.length).length;
+        const messageLength = messageInputField.length
 
-        if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
+        if (event.modifiers === d.kbdModifierToSendMessage && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
                 event.accepted = true;
                 return
@@ -387,8 +390,7 @@ Rectangle {
                 control.hideExtendedArea();
                 event.accepted = true;
                 return;
-            }
-            else {
+            } else {
                 // pop-up a warning message when trying to send a message over the limit
                 messageLengthLimitTooltip.open();
                 event.accepted = true;
@@ -427,10 +429,10 @@ Rectangle {
             }
         }
 
-        const message = control.extrapolateCursorPosition();
-
         // handle new line in blockquote
-        if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier) && message.data.startsWith(">")) {
+        if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier)) {
+            const message = control.extrapolateCursorPosition();
+
             if(message.data.startsWith(">") && !message.data.endsWith("\n\n")) {
                 let newMessage1 = ""
                 if (message.data.endsWith("\n> ")) {
@@ -440,11 +442,12 @@ Rectangle {
                 }
                 messageInputField.remove(0, messageInputField.cursorPosition);
                 insertInTextInput(0, StatusQUtils.Emoji.parse(newMessage1));
+                event.accepted = true
             }
-            event.accepted = true
         }
 
         if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace) {
+            const message = control.extrapolateCursorPosition();
             if(mentionsPos.length > 0) {
                 let anticipatedCursorPosition = messageInputField.cursorPosition
                 anticipatedCursorPosition += event.key === Qt.Key_Backspace ?
@@ -1304,6 +1307,7 @@ Rectangle {
                             background: null
 
                             inputMethodHints: Qt.ImhMultiLine | Qt.ImhNoEditMenu
+                            EnterKey.type: Qt.EnterKeyReturn // insert newlines hint for OSK
 
                             // This is needed to make sure the text area is disabled when the input is disabled
                             Binding on enabled {
@@ -1451,7 +1455,7 @@ Rectangle {
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                                 visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0
                                 onClicked: {
-                                    control.onKeyPress({modifiers: Qt.NoModifier, key: Qt.Key_Return})
+                                    control.onKeyPress({modifiers: d.kbdModifierToSendMessage, key: Qt.Key_Return})
                                 }
                                 tooltip.text: qsTr("Send message")
                             }
