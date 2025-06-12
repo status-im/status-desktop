@@ -214,7 +214,7 @@ StatusDialog {
             devicesModel: root.devicesStore.devicesModel
             userDisplayName: root.profileStore.displayName
             usesDefaultName: root.profileStore.usesDefaultName
-            userPublicKey: root.profileStore.pubkey
+            userPublicKey: root.profileStore.pubKey
             userImage: root.profileStore.icon
             userColorHash: root.profileStore.colorHash
             userColorId: root.profileStore.colorId
