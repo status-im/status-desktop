@@ -2049,6 +2049,8 @@ Item {
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
 
+                            fnAddressWasShown: WalletStores.RootStore.addressWasShown
+
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
 
                             onConnectUsernameRequested: popupRequestsHandler.sendModalHandler.connectUsername(ensName)

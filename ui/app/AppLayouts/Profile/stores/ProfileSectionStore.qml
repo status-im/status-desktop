@@ -144,8 +144,4 @@ QtObject {
     function checkForUpdates() {
         aboutModuleInst.checkForUpdates()
     }
-
-    function addressWasShown(address) {
-        return root.mainModuleInst.addressWasShown(address)
-    }
 }
