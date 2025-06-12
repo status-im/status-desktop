@@ -38,8 +38,9 @@ SettingsContentBase {
     property int settingsSubSubsection
     property string backButtonName: ""
 
-    property ProfileSectionStore rootStore
-    property WalletStore walletStore: rootStore.walletStore
+    property WalletStore walletStore
+    property KeycardStore keycardStore
+    property ContactsStore contactsStore
     required property TokensStore tokensStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property WalletAssetsStore assetsStore
@@ -58,6 +59,8 @@ SettingsContentBase {
     readonly property string networksSectionTitle: qsTr("Networks")
 
     property bool isKeycardEnabled: true
+
+    property var fnAddressWasShown: function(address) {}
 
     function resetStack() {
         if(stackContainer.currentIndex === root.editNetworksViewIndex) {
@@ -224,7 +227,7 @@ SettingsContentBase {
 
             onGoToAccountView: {
                 if (!!account && !!account.address) {
-                    root.rootStore.addressWasShown(account.address)
+                    root.fnAddressWasShown(account.address)
                 }
 
                 root.walletStore.setSelectedAccount(account.address)
@@ -249,10 +252,10 @@ SettingsContentBase {
                 removeKeypairPopup.active = true
             }
             onRunMoveKeypairToKeycardFlow: {
-                root.rootStore.keycardStore.runSetupKeycardPopup(model.keyPair.keyUid)
+                root.keycardStore.runSetupKeycardPopup(model.keyPair.keyUid)
             }
             onRunStopUsingKeycardFlow: {
-                root.rootStore.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
+                root.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
             }
             onGoToManageTokensView: {
                 stackContainer.currentIndex = manageTokensViewIndex
@@ -339,10 +342,10 @@ SettingsContentBase {
                 root.walletStore.runKeypairImportPopup(keyPair.keyUid, Constants.keypairImportPopup.mode.selectImportMethod)
             }
             onRunMoveKeypairToKeycardFlow: {
-                root.rootStore.keycardStore.runSetupKeycardPopup(keyPair.keyUid)
+                root.keycardStore.runSetupKeycardPopup(keyPair.keyUid)
             }
             onRunStopUsingKeycardFlow: {
-                root.rootStore.keycardStore.runStopUsingKeycardPopup(keyPair.keyUid)
+                root.keycardStore.runStopUsingKeycardPopup(keyPair.keyUid)
             }
             onUpdateWatchAccountHiddenFromTotalBalance: {
                 root.walletStore.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
@@ -391,7 +394,7 @@ SettingsContentBase {
 
         SavedAddressesView {
             id: savedAddressesView
-            contactsStore: root.rootStore.contactsStore
+            contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
 

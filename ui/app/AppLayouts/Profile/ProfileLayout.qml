@@ -78,6 +78,8 @@ StatusSectionLayout {
 
     required property bool isCentralizedMetricsEnabled
 
+    property var fnAddressWasShown: function(address) {}
+
     signal connectUsernameRequested(string ensName)
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
@@ -319,18 +321,22 @@ StatusSectionLayout {
                 settingsSubSubsection: root.settingsSubSubsection
                 isKeycardEnabled: root.isKeycardEnabled
 
-                rootStore: root.store
+                walletStore: root.walletStore
+                keycardStore: root.keycardStore
                 tokensStore: root.tokensStore
                 networkConnectionStore: root.networkConnectionStore
                 assetsStore: root.walletAssetsStore
                 collectiblesStore: root.collectiblesStore
                 networksStore: root.networksStore
+                contactsStore: root.contactsStore
 
                 myPublicKey: root.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
                 backButtonName: d.backButtonName
+
+                fnAddressWasShown: root.fnAddressWasShown
 
                 onBackButtonNameChanged: d.backButtonName = backButtonName
             }
