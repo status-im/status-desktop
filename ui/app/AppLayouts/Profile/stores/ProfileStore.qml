@@ -33,7 +33,6 @@ QtObject {
     readonly property var temporarySocialLinksJson: profileModule.temporarySocialLinksJson
     readonly property bool socialLinksDirty: profileModule.socialLinksDirty
 
-    readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
     readonly property var showcasePreferencesCommunitiesModel: profileModule.showcasePreferencesCommunitiesModel
     readonly property var showcasePreferencesAccountsModel: profileModule.showcasePreferencesAccountsModel

@@ -1159,7 +1159,7 @@ Item {
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusStickersPopup {
             store: appMain.rootChatStore
-            isWalletEnabled: appMain.profileStore.isWalletEnabled
+            isWalletEnabled: appMain.walletProfileStore.isWalletEnabled
             onBuyClicked: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
         }
     }
