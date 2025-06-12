@@ -102,8 +102,8 @@ Control {
                     Layout.preferredHeight: 64
                     spacing: layout.spacing
                     imageSource: imagePreviewArray
-                    onImageClicked: root.imageClicked(chatImage)
-                    onImageRemoved: root.imageRemoved(index)
+                    onImageClicked: (chatImage) => root.imageClicked(chatImage)
+                    onImageRemoved: (index) => root.imageRemoved(index)
                     visible: !!imagePreviewArray && imagePreviewArray.length > 0
                 }
                 Repeater {

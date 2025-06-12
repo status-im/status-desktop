@@ -16,6 +16,7 @@ ListModel {
             isUntrustworthy: false,
             displayName: "Mike has a very long name that should elide " +
                          "eventually and result in a tooltip displayed instead",
+            usesDefaultName: false,
             alias: "",
             localNickname: "",
             ensName: "",

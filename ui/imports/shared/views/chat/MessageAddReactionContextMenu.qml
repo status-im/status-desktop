@@ -13,7 +13,7 @@ StatusMenu {
 
     MessageReactionsRow {
         id: emojiRow
-        onToggleReaction: {
+        onToggleReaction: function(emojiId) {
             root.toggleReaction(emojiId)
             root.close()
         }

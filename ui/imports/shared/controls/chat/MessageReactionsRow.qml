@@ -2,8 +2,7 @@ import QtQuick 2.15
 
 import StatusQ.Core.Theme 0.1
 
-import utils 1.0
-import shared 1.0
+import shared.controls.chat 1.0
 
 Row {
     id: root

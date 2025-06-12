@@ -119,7 +119,7 @@ Rectangle {
         anchors.margins: Theme.halfPadding
         Keys.priority: Keys.AfterItem
         Keys.forwardTo: container.inputField
-        Keys.onPressed: {
+        Keys.onPressed: function(event) {
             if (event.key === Qt.Key_Escape) {
                 container.hide();
             } else if (event.key !== Qt.Key_Up && event.key !== Qt.Key_Down) {
