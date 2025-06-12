@@ -11,6 +11,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Popups 0.1
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 import shared.stores 1.0 as SharedStores

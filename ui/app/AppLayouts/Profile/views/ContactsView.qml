@@ -19,6 +19,7 @@ import shared.views.chat 1.0
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 SettingsContentBase {

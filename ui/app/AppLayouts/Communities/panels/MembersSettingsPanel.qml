@@ -13,6 +13,8 @@ import AppLayouts.Chat.stores 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.popups 1.0
 
+import QtModelsToolkit 1.0
+
 SettingsPage {
     id: root
 

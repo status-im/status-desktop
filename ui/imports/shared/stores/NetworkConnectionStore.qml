@@ -9,6 +9,7 @@ import shared.stores 1.0 as SharedStores
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 QtObject {

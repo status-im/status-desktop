@@ -13,6 +13,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ 0.1
 
+import QtModelsToolkit 1.0
+
 import "../controls"
 
 RowLayout {

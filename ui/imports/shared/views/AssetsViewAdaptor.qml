@@ -1,13 +1,12 @@
 import QtQml 2.15
 
 import StatusQ 0.1
-import StatusQ.Models 0.1
 import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
-
 
 QObject {
     id: root
