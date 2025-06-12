@@ -121,7 +121,7 @@ Item {
 
         contactsModel: appMain.rootStore.contactStore.contactsModel
 
-        selfPubKey: appMain.profileStore.pubkey
+        selfPubKey: appMain.profileStore.pubKey
         selfDisplayName : appMain.profileStore.displayName
         selfName: appMain.profileStore.name
         selfPreferredDisplayName: appMain.profileStore.preferredName
@@ -981,7 +981,7 @@ Item {
             } else if (sectionType === Constants.appSection.swap) {
                 popupRequestsHandler.swapModalHandler.launchSwap()
             } else if (sectionType === Constants.appSection.chat) {
-                appMain.rootStore.setActiveSectionChat(appMain.profileStore.pubkey, subsection)
+                appMain.rootStore.setActiveSectionChat(appMain.profileStore.pubKey, subsection)
             } else if (sectionType === Constants.appSection.community && subsection !== "") {
                 appMain.communitiesStore.setActiveCommunity(subsection)
             }
@@ -1357,7 +1357,7 @@ Item {
 
             name: appMain.profileStore.name
             usesDefaultName: appMain.profileStore.usesDefaultName
-            pubKey: appMain.profileStore.pubkey
+            pubKey: appMain.profileStore.pubKey
             compressedPubKey: appMain.profileStore.compressedPubKey
             isEnsVerified: !!appMain.profileStore.preferredName
             iconSource: appMain.profileStore.icon
@@ -2908,7 +2908,7 @@ Item {
                 }
                 wcSdk: WalletConnectSDK {
                     enabled: featureFlagsStore.dappsEnabled && WalletStores.RootStore.walletSectionInst.walletReady
-                    userUID: appMain.rootStore.profileSectionStore.profileStore.pubkey
+                    userUID: appMain.rootStore.profileSectionStore.profileStore.pubKey
                     projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
                 }
                 bcSdk: DappsConnectorSDK {
