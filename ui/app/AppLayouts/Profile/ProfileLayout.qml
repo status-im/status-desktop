@@ -82,7 +82,7 @@ StatusSectionLayout {
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
 
-    backButtonName: root.store.backButtonName
+    backButtonName: d.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
     hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
 
@@ -124,6 +124,8 @@ StatusSectionLayout {
         // Used to alternatively add an error message to the dirty bubble if ephemeral notification
         // can clash at smaller viewports
         readonly property bool toastClashesWithDirtyBubble: root.Window.width <= 1650 // design
+
+        property string backButtonName
     }
 
     SettingsEntriesModel {
@@ -171,12 +173,12 @@ StatusSectionLayout {
             if (!!children[currentIndex] && !children[currentIndex].active)
                 children[currentIndex].active = true
 
-            root.store.backButtonName = ""
+            d.backButtonName = ""
 
             if (currentIndex === Constants.settingsSubsection.contacts) {
-                root.store.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
+                d.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
             } else if (currentIndex === Constants.settingsSubsection.about_privacy || currentIndex === Constants.settingsSubsection.about_terms) {
-                root.store.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
+                d.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
             } else if (currentIndex === Constants.settingsSubsection.wallet) {
                 walletView.item.resetStack()
             } else if (currentIndex === Constants.settingsSubsection.keycard) {
@@ -326,8 +328,11 @@ StatusSectionLayout {
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
+                backButtonName: d.backButtonName
+
+                onBackButtonNameChanged: d.backButtonName = backButtonName
             }
-            onLoaded: root.store.backButtonName = ""
+            onLoaded: d.backButtonName = ""
         }
 
         Loader {
@@ -481,7 +486,7 @@ StatusSectionLayout {
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
                 mainSectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
-                backButtonName: root.store.backButtonName
+                backButtonName: d.backButtonName
                 contentWidth: d.contentWidth
             }
         }

@@ -12,8 +12,6 @@ import SortFilterProxyModel 0.2
 QtObject {
     id: root
 
-    property string backButtonName
-
     property var aboutModuleInst: aboutModule
     property var mainModuleInst: mainModule
     property var profileSectionModuleInst: profileSectionModule

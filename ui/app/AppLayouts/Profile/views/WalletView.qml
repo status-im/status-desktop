@@ -36,6 +36,7 @@ SettingsContentBase {
     property alias currencySymbol: manageTokensView.currencySymbol
 
     property int settingsSubSubsection
+    property string backButtonName: ""
 
     property ProfileSectionStore rootStore
     property WalletStore walletStore: rootStore.walletStore
@@ -155,7 +156,7 @@ SettingsContentBase {
         }
 
         onCurrentIndexChanged: {
-            root.rootStore.backButtonName = ""
+            root.backButtonName = ""
             root.sectionTitle = root.walletSectionTitle
             root.titleRowComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.sourceComponent = undefined
@@ -168,14 +169,14 @@ SettingsContentBase {
             }
 
             if(currentIndex == root.networksViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.sectionTitle = root.networksSectionTitle
 
                 root.titleRowComponentLoader.sourceComponent = toggleTestnetModeSwitchComponent
             }
 
             if(currentIndex == root.editNetworksViewIndex) {
-                root.rootStore.backButtonName = root.networksSectionTitle
+                root.backButtonName = root.networksSectionTitle
                 root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.network &&
                                                         !!editNetwork.network.chainName ? editNetwork.network.chainName: "")
                 root.titleRowLeftComponentLoader.visible = true
@@ -183,23 +184,23 @@ SettingsContentBase {
                 root.titleLayout.spacing = 12
 
             } else if(currentIndex == root.accountViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.sectionTitle = ""
 
             } else if(currentIndex == root.accountOrderViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
 
             } else if(currentIndex == root.manageTokensViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
             } else if(currentIndex == root.savedAddressesViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Saved addresses")
 
