@@ -15,10 +15,10 @@ import "./keycard"
 SettingsContentBase {
     id: root
 
-    property ProfileSectionStore profileSectionStore
     property KeycardStore keycardStore
     property var emojiPopup
     property string mainSectionTitle: ""
+    property string backButtonName
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         text: qsTr("Get Keycard")
@@ -29,7 +29,7 @@ SettingsContentBase {
 
     function handleBackAction() {
         if (stackLayout.currentIndex === d.detailsViewIndex) {
-            root.profileSectionStore.backButtonName = ""
+            root.backButtonName = ""
             root.sectionTitle = root.mainSectionTitle
             stackLayout.currentIndex = d.mainViewIndex
         }
@@ -55,7 +55,7 @@ SettingsContentBase {
             onDisplayKeycardsForKeypair: {
                 root.keycardStore.keycardModule.prepareKeycardDetailsModel(keyUid)
                 d.observedKeyUid = keyUid
-                root.profileSectionStore.backButtonName = root.mainSectionTitle
+                root.backButtonName = root.mainSectionTitle
                 root.sectionTitle = keypairName
                 stackLayout.currentIndex = d.detailsViewIndex
             }
