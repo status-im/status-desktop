@@ -115,80 +115,47 @@ endif()
 
 add_library(StatusQ ${LIB_TYPE}
         ${STATUSQ_QRC_COMPILED}
-        include/StatusQ/aggregator.h
         include/StatusQ/audioutils.h
         include/StatusQ/clipboardutils.h
-        include/StatusQ/concatmodel.h
         include/StatusQ/constantrole.h
         include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
         include/StatusQ/fastexpressionsorter.h
         include/StatusQ/formatteddoubleproperty.h
-        include/StatusQ/functionaggregator.h
         include/StatusQ/genericvalidator.h
-        include/StatusQ/groupingmodel.h
         include/StatusQ/keychain.h
-        include/StatusQ/leftjoinmodel.h
-        include/StatusQ/modelcount.h
-        include/StatusQ/modelentry.h
-        include/StatusQ/modelsyncedcontainer.h
-        include/StatusQ/modelutilsinternal.h
-        include/StatusQ/movablemodel.h
         include/StatusQ/networkchecker.h
-        include/StatusQ/objectproxymodel.h
         include/StatusQ/permissionutilsinternal.h
-        include/StatusQ/rolesrenamingmodel.h
         include/StatusQ/rxvalidator.h
-        include/StatusQ/singleroleaggregator.h
-        include/StatusQ/snapshotmodel.h
-        include/StatusQ/snapshotobject.h
         include/StatusQ/statusemojimodel.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
-        include/StatusQ/sumaggregator.h
         include/StatusQ/systemutilsinternal.h
         include/StatusQ/typesregistration.h
         include/StatusQ/undefinedfilter.h
         include/StatusQ/urlutils.h
-        include/StatusQ/writableproxymodel.h
-        src/aggregator.cpp
         src/audioutils.cpp
         src/clipboardutils.cpp
-        src/concatmodel.cpp
         src/constantrole.cpp
         src/externc.cpp
         src/fastexpressionfilter.cpp
         src/fastexpressionrole.cpp
         src/fastexpressionsorter.cpp
         src/formatteddoubleproperty.cpp
-        src/functionaggregator.cpp
         src/genericvalidator.cpp
-        src/groupingmodel.cpp
         src/keychain.cpp
-        src/leftjoinmodel.cpp
-        src/modelcount.cpp
-        src/modelentry.cpp
-        src/modelutilsinternal.cpp
-        src/movablemodel.cpp
         src/networkchecker.cpp
-        src/objectproxymodel.cpp
         src/permissionutilsinternal.cpp
-        src/rolesrenamingmodel.cpp
         src/rxvalidator.cpp
-        src/singleroleaggregator.cpp
-        src/snapshotmodel.cpp
-        src/snapshotobject.cpp
         src/statusemojimodel.cpp
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
-        src/sumaggregator.cpp
         src/systemutilsinternal.cpp
         src/typesregistration.cpp
         src/undefinedfilter.cpp
         src/urlutils.cpp
-        src/writableproxymodel.cpp
 
         # wallet
         src/wallet/managetokenscontroller.cpp
@@ -221,6 +188,15 @@ else ()
     )
 endif ()
 
+include(FetchContent)
+FetchContent_Declare(
+  QtModelsToolkit
+  GIT_REPOSITORY https://github.com/status-im/QtModelsToolkit.git
+  GIT_TAG 777b05cc985041b3243186c4b18937b54b6faba5
+)
+
+FetchContent_MakeAvailable(QtModelsToolkit)
+
 target_link_libraries(StatusQ PRIVATE
         Qt::Core
         Qt::Qml
@@ -229,6 +205,7 @@ target_link_libraries(StatusQ PRIVATE
         Qt::QuickControls2
         $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::Core5Compat>
         SortFilterProxyModel
+        QtModelsToolkit
         qzxing
         )
 
