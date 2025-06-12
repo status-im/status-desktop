@@ -390,7 +390,7 @@ Control {
                             inputComponent: root.statusChatInput
                             messageText: root.messageDetails.messageText
                             onEditCancelled: root.editCancelled()
-                            onEditCompleted: root.editCompleted(newMsgText)
+                            onEditCompleted: (newMsgText) => root.editCompleted(newMsgText)
                         }
                     }
                     Loader {
@@ -402,13 +402,11 @@ Control {
                             emojiReactionsModel: root.reactionsModel
                             icons: root.reactionIcons
 
-                            onHoverChanged: {
-                                root.hoverChanged(messageId, hovered)
-                            }
+                            onHoverChanged: (hovered) => root.hoverChanged(messageId, hovered)
 
                             isCurrentUser: root.messageDetails.amISender
-                            onAddEmojiClicked: root.addReactionClicked(sender, mouse)
-                            onToggleReaction: root.toggleReactionClicked(emojiID)
+                            onAddEmojiClicked: (sender, mouse) => root.addReactionClicked(sender, mouse)
+                            onToggleReaction: (emojiID) => root.toggleReactionClicked(emojiID)
                         }
                     }
                 }

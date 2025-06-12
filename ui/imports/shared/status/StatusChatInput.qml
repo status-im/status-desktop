@@ -7,15 +7,10 @@ import utils 1.0
 import shared 1.0
 import shared.controls.chat 1.0
 import shared.panels 1.0
-import shared.popups 1.0
-import shared.stores 1.0 as SharedStores
 
 import mainui 1.0
 
-//TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
-import AppLayouts.Chat.popups 1.0
-import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -1300,7 +1295,7 @@ Rectangle {
                             Binding on enabled {
                                 value: control.enabled
                             }
-                            Keys.onUpPressed: {
+                            Keys.onUpPressed: function(event) {
                                 if (isEdit && !activeFocus) {
                                     forceActiveFocus();
                                 } else {
