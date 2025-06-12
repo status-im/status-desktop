@@ -119,6 +119,8 @@ SplitView {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
                     logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [SQUtils.StringUtils.plainText(chatInput.getTextWithPublicKeys())])
                     logs.logEvent("StatusChatInput::sendMessage", ["RawText"], [chatInput.textInput.text])
+                    imageNb.currentIndex = 0 // images cleared
+                    linksNb.currentIndex = 0 // links cleared
                 }
                 onEnableLinkPreviewForThisMessage: {
                     linkPreviewSwitch.checked = true
@@ -359,5 +361,6 @@ SplitView {
 }
 
 // category: Components
-
-// https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/💬-Chat⎜Desktop?type=design&node-id=23155-66084&mode=design&t=VWBVK4DOUxr1BmTp-0
+// status: decent
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Messenger----Desktop-Legacy?node-id=4360-175&m=dev
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Messenger----Desktop-Legacy?node-id=25492-31491&m=dev

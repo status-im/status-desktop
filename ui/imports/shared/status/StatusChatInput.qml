@@ -1444,6 +1444,19 @@ Rectangle {
                             spacing: 2
 
                             StatusQ.StatusFlatRoundButton {
+                                objectName: "statusChatInputSendButton"
+                                implicitHeight: 32
+                                implicitWidth: 32
+                                icon.name: "send"
+                                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                                visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0
+                                onClicked: {
+                                    control.onKeyPress({modifiers: Qt.NoModifier, key: Qt.Key_Return})
+                                }
+                                tooltip.text: qsTr("Send message")
+                            }
+
+                            StatusQ.StatusFlatRoundButton {
                                 id: emojiBtn
                                 objectName: "statusChatInputEmojiButton"
                                 implicitHeight: 32
