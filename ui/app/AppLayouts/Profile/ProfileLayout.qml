@@ -42,7 +42,20 @@ StatusSectionLayout {
 
     property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
-    property ProfileStores.ProfileSectionStore store
+
+    property ProfileStores.ProfileSectionStore store // TO BE REMOVED
+    property ProfileStores.ProfileStore profileStore
+    property ProfileStores.ContactsStore contactsStore
+    property ProfileStores.DevicesStore devicesStore
+    property ProfileStores.AdvancedStore advancedStore
+    property ProfileStores.PrivacyStore privacyStore
+    property ProfileStores.NotificationsStore notificationsStore
+    property ProfileStores.LanguageStore languageStore
+    property ProfileStores.KeycardStore keycardStore
+    property ProfileStores.WalletStore walletStore
+    property ProfileStores.MessagingStore messagingStore
+    property ProfileStores.EnsUsernamesStore ensUsernamesStore
+
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
     property var emojiPopup
@@ -101,7 +114,7 @@ StatusSectionLayout {
 
     Component.onCompleted: {
         profileContainer.currentIndexChanged()
-        root.store.devicesStore.loadDevices() // Load devices to get non-paired number for badge
+        root.devicesStore.loadDevices() // Load devices to get non-paired number for badge
     }
 
     QtObject {
@@ -122,18 +135,18 @@ StatusSectionLayout {
         id: settingsEntriesModel
 
         showWalletEntries: root.store.walletMenuItemEnabled
-        showBackUpSeed: !root.store.privacyStore.mnemonicBackedUp
+        showBackUpSeed: !root.privacyStore.mnemonicBackedUp
         isKeycardEnabled: root.isKeycardEnabled
 
-        syncingBadgeCount: root.store.devicesStore.devicesModel.count -
-                           root.store.devicesStore.devicesModel.pairedCount
+        syncingBadgeCount: root.devicesStore.devicesModel.count -
+                           root.devicesStore.devicesModel.pairedCount
         messagingBadgeCount: root.pendingReceivedContactsCount
     }
 
     headerBackground: AccountHeaderGradient {
         width: parent.width
-        overview: root.store.walletStore.selectedAccount
-        visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet && !!root.store.walletStore.selectedAccount
+        overview: root.walletStore.selectedAccount
+        visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet && !!root.walletStore.selectedAccount
     }
 
     leftPanel: SettingsLeftTabView {
@@ -186,8 +199,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileStore: root.store.profileStore
-                contactsStore: root.store.contactsStore
+                profileStore: root.profileStore
+                contactsStore: root.contactsStore
                 communitiesStore: root.communitiesStore
                 utilsStore: root.utilsStore
                 networksStore: root.networksStore
@@ -234,7 +247,7 @@ StatusSectionLayout {
             sourceComponent: ChangePasswordView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                privacyStore: root.store.privacyStore
+                privacyStore: root.privacyStore
                 keychain: root.keychain
                 passwordStrengthScoreFunction: root.sharedRootStore.getPasswordStrengthScore
                 contentWidth: d.contentWidth
@@ -248,7 +261,7 @@ StatusSectionLayout {
             sourceComponent: ContactsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                contactsStore: root.store.contactsStore
+                contactsStore: root.contactsStore
                 utilsStore: root.utilsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
@@ -272,9 +285,9 @@ StatusSectionLayout {
 
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                ensUsernamesStore: root.store.ensUsernamesStore
+                ensUsernamesStore: root.ensUsernamesStore
                 walletAssetsStore: root.walletAssetsStore
-                contactsStore: root.store.contactsStore
+                contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
                 onConnectUsernameRequested: root.connectUsernameRequested(ensName)
@@ -293,7 +306,7 @@ StatusSectionLayout {
 
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
                 requestsCount: root.pendingReceivedContactsCount
-                messagingStore: root.store.messagingStore
+                messagingStore: root.messagingStore
             }
         }
 
@@ -316,7 +329,7 @@ StatusSectionLayout {
                 collectiblesStore: root.collectiblesStore
                 networksStore: root.networksStore
 
-                myPublicKey: root.store.contactsStore.myPublicKey
+                myPublicKey: root.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
@@ -347,7 +360,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 languageSelectionEnabled: localAppSettings.translationsEnabled
-                languageStore: root.store.languageStore
+                languageStore: root.languageStore
                 currencyStore: root.currencyStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
@@ -361,8 +374,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                privacyStore: root.store.privacyStore
-                notificationsStore: root.store.notificationsStore
+                privacyStore: root.privacyStore
+                notificationsStore: root.notificationsStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
             }
@@ -376,10 +389,10 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 isProduction: production
-                profileStore: root.store.profileStore
-                devicesStore: root.store.devicesStore
-                privacyStore: root.store.privacyStore
-                advancedStore: root.store.advancedStore
+                profileStore: root.profileStore
+                devicesStore: root.devicesStore
+                privacyStore: root.privacyStore
+                advancedStore: root.advancedStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
             }
@@ -392,9 +405,9 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                messagingStore: root.store.messagingStore
-                advancedStore: root.store.advancedStore
-                walletStore: root.store.walletStore
+                messagingStore: root.messagingStore
+                advancedStore: root.advancedStore
+                walletStore: root.walletStore
                 isFleetSelectionEnabled: fleetSelectionEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
@@ -473,11 +486,11 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileSectionStore: root.store
-                keycardStore: root.store.keycardStore
+                keycardStore: root.keycardStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
                 mainSectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
+                backButtonName: root.store.backButtonName
                 contentWidth: d.contentWidth
             }
         }
@@ -528,7 +541,7 @@ StatusSectionLayout {
             active: false
             asynchronous: true
             sourceComponent: PrivacyAndSecurityView {
-                isStatusNewsViaRSSEnabled: root.store.privacyStore.isStatusNewsViaRSSEnabled
+                isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
                 isCentralizedMetricsEnabled: root.isCentralizedMetricsEnabled
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -537,7 +550,7 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
 
                 onSetNewsRSSEnabledRequested: function (isStatusNewsViaRSSEnabled) {
-                    root.store.privacyStore.setNewsRSSEnabled(isStatusNewsViaRSSEnabled)
+                    root.privacyStore.setNewsRSSEnabled(isStatusNewsViaRSSEnabled)
                 }
             }
         }
@@ -551,7 +564,7 @@ StatusSectionLayout {
     }
 
     Connections {
-        target: root.store.keycardStore.keycardModule
+        target: root.keycardStore.keycardModule
         enabled: profileContainer.currentIndex === Constants.settingsSubsection.wallet ||
                  profileContainer.currentIndex === Constants.settingsSubsection.keycard
 
@@ -570,8 +583,8 @@ StatusSectionLayout {
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
-            myKeyUid: store.profileStore.keyUid
-            sharedKeycardModule: root.store.keycardStore.keycardModule.keycardSharedModule
+            myKeyUid: root.profileStore.keyUid
+            sharedKeycardModule: root.keycardStore.keycardModule.keycardSharedModule
             emojiPopup: root.emojiPopup
 
             // This connection ensures that when a PIN is chagned on Keycard, biometrics are updated (if enabled).
@@ -579,10 +592,10 @@ StatusSectionLayout {
             // We put it here, because ProfileLayout has access to Keychain and it is also the only place
             // where KeycardPopup can be used to change PIN.
             Connections {
-                target: root.store.keycardStore.keycardModule.keycardSharedModule
+                target: root.keycardStore.keycardModule.keycardSharedModule
 
                 function onKeycardPinChanged(pin) {
-                    const keyUid = store.profileStore.keyUid
+                    const keyUid = root.profileStore.keyUid
                     root.keychain.updateCredential(keyUid, pin)
                 }
             }
