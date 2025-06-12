@@ -73,8 +73,18 @@ Item {
             Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
         }
     }
-    readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
-    readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
+
+    readonly property ProfileStores.ProfileStore profileStore: rootStore.profileSectionStore.profileStore
+    readonly property ProfileStores.ContactsStore contactsStore: rootStore.profileSectionStore.contactsStore
+    readonly property ProfileStores.DevicesStore devicesStore: rootStore.profileSectionStore.devicesStore
+    readonly property ProfileStores.AdvancedStore advancedStore: rootStore.profileSectionStore.advancedStore
+    readonly property ProfileStores.PrivacyStore privacyStore: rootStore.profileSectionStore.privacyStore
+    readonly property ProfileStores.NotificationsStore notificationsStore: rootStore.profileSectionStore.notificationsStore
+    readonly property ProfileStores.LanguageStore languageStore: rootStore.profileSectionStore.languageStore
+    readonly property ProfileStores.KeycardStore keycardStore: rootStore.profileSectionStore.keycardStore
+    readonly property ProfileStores.WalletStore walletProfileStore: rootStore.profileSectionStore.walletStore
+    readonly property ProfileStores.MessagingStore messagingStore: rootStore.profileSectionStore.messagingStore
+    readonly property ProfileStores.EnsUsernamesStore ensUsernamesStore: rootStore.profileSectionStore.ensUsernamesStore
 
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
@@ -141,7 +151,7 @@ Item {
     ContactsModelAdaptor {
         id: contactsModelAdaptor
 
-        allContacts: appMain.profileSectionStore.contactsStore.contactsModel
+        allContacts: appMain.contactsStore.contactsModel
     }
 
     // Central UI point for managing app toasts:
@@ -856,7 +866,7 @@ Item {
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
         profileStore: appMain.profileStore
-        devicesStore: appMain.rootStore.profileSectionStore.devicesStore
+        devicesStore: appMain.rootStore.devicesStore
         currencyStore: appMain.currencyStore
         walletAssetsStore: appMain.walletAssetsStore
         walletCollectiblesStore: appMain.walletCollectiblesStore
@@ -864,7 +874,7 @@ Item {
         networkConnectionStore: appMain.networkConnectionStore
         networksStore: appMain.networksStore
         activityCenterStore: appMain.activityCenterStore
-        advancedStore: appMain.profileSectionStore.advancedStore
+        advancedStore: appMain.advancedStore
 
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -1476,8 +1486,8 @@ Item {
                     id: secureYourSeedPhrase
                     objectName: "secureYourSeedPhraseBanner"
                     Layout.fillWidth: true
-                    active: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner
-                              && !appMain.rootStore.profileSectionStore.privacyStore.mnemonicBackedUp
+                    active: !appMain.profileStore.userDeclinedBackupBanner
+                              && !appMain.privacyStore.mnemonicBackedUp
                     type: ModuleWarning.Danger
                     text: qsTr("Secure your recovery phrase")
                     buttonText: qsTr("Back up now")
@@ -1485,7 +1495,7 @@ Item {
                     onClicked: popups.openBackUpSeedPopup()
 
                     onCloseClicked: {
-                        appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner = true
+                        appMain.profileStore.userDeclinedBackupBanner = true
                     }
                 }
 
@@ -1893,7 +1903,7 @@ Item {
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
                                 networksStore: appMain.networksStore
-                                advancedStore: appMain.profileSectionStore.advancedStore
+                                advancedStore: appMain.advancedStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled
@@ -1953,7 +1963,7 @@ Item {
                             objectName: "walletLayoutReal"
                             sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore
-                            contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                            contactsStore: appMain.contactsStore
                             communitiesStore: appMain.communitiesStore
                             transactionStore: appMain.transactionStore
                             emojiPopup: statusEmojiPopup.item
@@ -2005,7 +2015,20 @@ Item {
                         sourceComponent: ProfileLayout {
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
+
                             store: appMain.rootStore.profileSectionStore
+                            profileStore: appMain.profileStore
+                            contactsStore: appMain.contactsStore
+                            devicesStore: appMain.devicesStore
+                            advancedStore: appMain.advancedStore
+                            privacyStore: appMain.privacyStore
+                            notificationsStore: appMain.notificationsStore
+                            languageStore: appMain.languageStore
+                            keycardStore: appMain.keycardStore
+                            walletStore: appMain.walletProfileStore
+                            messagingStore: appMain.messagingStore
+                            ensUsernamesStore: appMain.ensUsernamesStore
+
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore
                             systemPalette: appMain.sysPalette
@@ -2111,7 +2134,7 @@ Item {
                             sourceComponent: ChatLayout {
                                 id: chatLayoutComponent
 
-                                readonly property bool isManageCommunityEnabledInAdvanced: appMain.rootStore.profileSectionStore.advancedStore.isManageCommunityOnTestModeEnabled
+                                readonly property bool isManageCommunityEnabledInAdvanced: appMain.advancedStore.isManageCommunityOnTestModeEnabled
 
                                 Connections {
                                     target: Global
@@ -2151,7 +2174,7 @@ Item {
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
                                 networksStore: appMain.networksStore
-                                advancedStore: appMain.profileSectionStore.advancedStore
+                                advancedStore: appMain.advancedStore
                                 paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -2238,8 +2261,8 @@ Item {
                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                 }
                 activityCenterStore: appMain.activityCenterStore
-                privacyStore: appMain.profileSectionStore.privacyStore
-                notificationsStore: appMain.profileSectionStore.notificationsStore
+                privacyStore: appMain.privacyStore
+                notificationsStore: appMain.notificationsStore
             }
         }
 
@@ -2368,11 +2391,11 @@ Item {
                 showEnabledSectionsOnly: true
                 marketEnabled: appMain.featureFlagsStore.marketEnabled
 
-                syncingBadgeCount: appMain.rootStore.profileSectionStore.devicesStore.devicesModel.count -
-                                   appMain.rootStore.profileSectionStore.devicesStore.devicesModel.pairedCount
+                syncingBadgeCount: appMain.devicesStore.devicesModel.count -
+                                   appMain.devicesStore.devicesModel.pairedCount
                 messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
-                showBackUpSeed: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner &&
-                                !appMain.rootStore.profileSectionStore.privacyStore.mnemonicBackedUp
+                showBackUpSeed: !appMain.profileStore.userDeclinedBackupBanner &&
+                                !appMain.privacyStore.mnemonicBackedUp
 
                 searchPhrase: shell.searchPhrase
 
@@ -2876,7 +2899,7 @@ Item {
                 }
                 wcSdk: WalletConnectSDK {
                     enabled: featureFlagsStore.dappsEnabled && WalletStores.RootStore.walletSectionInst.walletReady
-                    userUID: appMain.rootStore.profileSectionStore.profileStore.pubKey
+                    userUID: appMain.profileStore.pubKey
                     projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
                 }
                 bcSdk: DappsConnectorSDK {
