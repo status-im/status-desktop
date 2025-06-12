@@ -1291,6 +1291,9 @@ Rectangle {
                             leftPadding: 0
                             rightPadding: 0
                             background: null
+
+                            inputMethodHints: Qt.ImhMultiLine | Qt.ImhNoEditMenu
+
                             // This is needed to make sure the text area is disabled when the input is disabled
                             Binding on enabled {
                                 value: control.enabled
