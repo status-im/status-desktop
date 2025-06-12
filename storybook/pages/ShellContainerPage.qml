@@ -51,7 +51,7 @@ SplitView {
 
             searchPhrase: shell.searchPhrase
 
-            profileId: profileStore.pubkey
+            profileId: profileStore.pubKey
         }
 
         shellEntriesModel: shellAdaptor.shellEntriesModel
@@ -60,7 +60,7 @@ SplitView {
 
         profileStore: ProfileStores.ProfileStore {
             id: profileStore
-            readonly property string pubkey: "0xdeadbeef"
+            readonly property string pubKey: "0xdeadbeef"
             readonly property string compressedPubKey: "zxDeadBeef"
             readonly property string name: "John Roe"
             readonly property string icon: ModelsData.icons.rarible

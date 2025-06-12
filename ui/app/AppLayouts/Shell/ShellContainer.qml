@@ -159,7 +159,7 @@ Control {
 
         ProfileButton {
             name: root.profileStore.name
-            pubKey: root.profileStore.pubkey
+            pubKey: root.profileStore.pubKey
             compressedPubKey: root.profileStore.compressedPubKey
             isEnsVerified: !!root.profileStore.preferredName
             iconSource: root.profileStore.icon
