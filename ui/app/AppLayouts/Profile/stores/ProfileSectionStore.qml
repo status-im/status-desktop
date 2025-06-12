@@ -70,8 +70,6 @@ QtObject {
         stickersModule: stickersModuleInst
     }
 
-    property bool walletMenuItemEnabled: profileStore.isWalletEnabled
-
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
                             
     readonly property var communitiesList: SortFilterProxyModel {
