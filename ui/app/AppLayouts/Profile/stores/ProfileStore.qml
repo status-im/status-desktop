@@ -18,7 +18,6 @@ QtObject {
     property string profileLargeImage: userProfile.largeImage
     property string icon: userProfile.icon
     property bool userDeclinedBackupBanner: Global.appIsReady? localAccountSensitiveSettings.userDeclinedBackupBanner : false
-    property var privacyStore: profileSectionModule.privacyModule
     readonly property string keyUid: userProfile.keyUid
     readonly property bool isKeycardUser: userProfile.isKeycardUser
     readonly property int currentUserStatus: userProfile.currentUserStatus

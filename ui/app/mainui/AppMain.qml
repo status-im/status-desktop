@@ -1481,7 +1481,7 @@ Item {
                     objectName: "secureYourSeedPhraseBanner"
                     Layout.fillWidth: true
                     active: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner
-                              && !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
+                              && !appMain.rootStore.profileSectionStore.privacyStore.mnemonicBackedUp
                     type: ModuleWarning.Danger
                     text: qsTr("Secure your recovery phrase")
                     buttonText: qsTr("Back up now")
