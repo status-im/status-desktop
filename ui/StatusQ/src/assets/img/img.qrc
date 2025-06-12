@@ -120,6 +120,7 @@
         <file>icons/close-circle.svg</file>
         <file>icons/close.svg</file>
         <file>icons/code.svg</file>
+        <file>icons/code-block.svg</file>
         <file>icons/communities.svg</file>
         <file>icons/contact-book.svg</file>
         <file>icons/contact.svg</file>
@@ -267,6 +268,7 @@
         <file>icons/touch-id.svg</file>
         <file>icons/travel-and-places.svg</file>
         <file>icons/tributeToTalk.svg</file>
+        <file>icons/underline.svg</file>
         <file>icons/unfavourite.svg</file>
         <file>icons/union.svg</file>
         <file>icons/unlock.svg</file>
