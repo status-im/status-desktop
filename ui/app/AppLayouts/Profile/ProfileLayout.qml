@@ -134,7 +134,7 @@ StatusSectionLayout {
     SettingsEntriesModel {
         id: settingsEntriesModel
 
-        showWalletEntries: root.store.walletMenuItemEnabled
+        showWalletEntries: root.walletStore.isWalletEnabled
         showBackUpSeed: !root.privacyStore.mnemonicBackedUp
         isKeycardEnabled: root.isKeycardEnabled
 
