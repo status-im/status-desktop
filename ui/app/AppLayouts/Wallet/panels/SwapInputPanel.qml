@@ -20,6 +20,7 @@ import shared.popups.send.views 1.0
 import utils 1.0
 import shared.stores 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 Control {

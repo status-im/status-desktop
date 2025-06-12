@@ -14,6 +14,7 @@ import shared.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 Control {

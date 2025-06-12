@@ -16,6 +16,8 @@ import Models 1.0
 
 import StatusQ 0.1
 
+import QtModelsToolkit 1.0
+
 SplitView {
     id: root
 

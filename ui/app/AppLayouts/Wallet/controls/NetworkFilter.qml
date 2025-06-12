@@ -13,6 +13,7 @@ import StatusQ.Components 0.1
 import StatusQ.Components.private 0.1 as SQP
 import StatusQ.Controls 0.1
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.helpers 1.0

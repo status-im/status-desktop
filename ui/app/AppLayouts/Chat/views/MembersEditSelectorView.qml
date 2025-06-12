@@ -12,6 +12,8 @@ import StatusQ.Components 0.1
 import AppLayouts.Chat.stores 1.0
 
 import utils 1.0
+
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 import "private"

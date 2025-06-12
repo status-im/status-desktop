@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtTest 1.15
-import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
@@ -12,6 +11,9 @@ import Models 1.0
 
 import shared.stores 1.0
 import utils 1.0
+
+import QtModelsToolkit 1.0
+import SortFilterProxyModel 0.2
 
 Item {
     id: root

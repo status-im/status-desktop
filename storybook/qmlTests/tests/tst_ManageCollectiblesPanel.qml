@@ -3,13 +3,14 @@ import QtTest 1.15
 
 import Qt.labs.settings 1.0
 
-import StatusQ 0.1
 import StatusQ.Models 0.1
 
 import AppLayouts.Wallet.panels 1.0
 
 import Models 1.0
 import utils 1.0
+
+import QtModelsToolkit 1.0
 
 Item {
     id: root

@@ -12,6 +12,7 @@ import StatusQ.Popups 0.1
 import AppLayouts.Communities.controls 1.0
 import shared.controls 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 StatusDropdown {

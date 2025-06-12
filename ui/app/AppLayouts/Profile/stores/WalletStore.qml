@@ -5,6 +5,7 @@ import utils 1.0
 import StatusQ 0.1
 import StatusQ.Models 0.1
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 QtObject {
