@@ -14,6 +14,8 @@ import shared.panels 1.0 as SharedPanels
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
+
 Rectangle {
     id: root
 

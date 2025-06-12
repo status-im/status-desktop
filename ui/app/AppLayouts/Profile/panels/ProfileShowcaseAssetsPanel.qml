@@ -10,6 +10,8 @@ import shared.panels 1.0
 
 import AppLayouts.Profile.controls 1.0
 
+import QtModelsToolkit 1.0
+
 ProfileShowcasePanel {
     id: root
 

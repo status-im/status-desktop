@@ -20,6 +20,8 @@ import shared.controls 1.0
 
 import utils 1.0
 import shared.popups 1.0
+
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 StackView {

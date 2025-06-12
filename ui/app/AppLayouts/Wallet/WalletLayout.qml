@@ -18,6 +18,8 @@ import AppLayouts.stores 1.0 as AppLayoutsStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 
+import QtModelsToolkit 1.0
+
 import "popups"
 import "panels"
 import "views"

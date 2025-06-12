@@ -16,6 +16,8 @@ import utils 1.0
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
+import QtModelsToolkit 1.0
+
 Page {
     id: root
 

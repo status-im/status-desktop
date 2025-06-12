@@ -4,12 +4,14 @@ import QtQuick.Layouts 1.15
 
 import Storybook 1.0
 import Models 1.0
-import SortFilterProxyModel 0.2
 
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Profile.stores 1.0
 
 import StatusQ 0.1
+
+import QtModelsToolkit 1.0
+import SortFilterProxyModel 0.2
 
 SplitView {
     id: root
