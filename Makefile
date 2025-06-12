@@ -237,6 +237,11 @@ ifeq ($(mkspecs),macx)
  endif
 endif
 
+LIBSDS := vendor/status-go/vendor/github.com/waku-org/sds-go-bindings/third_party/nim-sds/build/libsds.so
+LIBSDS_LIBDIR := $(shell pwd)/$(shell dirname "$(LIBSDS)")
+export LIBSDS
+NIM_EXTRA_PARAMS +=	--passL:"-L$(LIBSDS_LIBDIR)" --passL:"-lsds"
+
 INCLUDE_DEBUG_SYMBOLS ?= false
 ifeq ($(INCLUDE_DEBUG_SYMBOLS),true)
  # We need `-d:debug` to get Nim's default stack traces
@@ -888,12 +893,12 @@ ICON_TOOL := node_modules/.bin/fileicon
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
@@ -904,7 +909,7 @@ run-macos: nim_status_client
 		ln -fs ../../../nim_status_client ./
 	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
 	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
-	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
+	DYLD_LIBRARY_PATH="$(STATUSGO_LIBDIR)" ./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
 run-windows: STATUS_RC_FILE = status-dev.rc
 run-windows: compile_windows_resources nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
