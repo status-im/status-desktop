@@ -6,6 +6,8 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
+import QtModelsToolkit 1.0
+
 Item {
     id: root
     ListModel {

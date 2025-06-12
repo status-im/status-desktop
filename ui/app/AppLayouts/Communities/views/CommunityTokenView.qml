@@ -14,6 +14,8 @@ import shared.panels 1.0
 import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Communities.panels 1.0
 
+import QtModelsToolkit 1.0
+
 StatusScrollView {
     id: root
 

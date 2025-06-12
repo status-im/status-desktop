@@ -17,6 +17,7 @@ import AppLayouts.stores 1.0
 
 import Models 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 SplitView {

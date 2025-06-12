@@ -13,6 +13,8 @@ import shared.controls.chat.menuItems 1.0
 import AppLayouts.stores 1.0 as AppLayoutsStores
 import AppLayouts.Chat.views 1.0
 
+import QtModelsToolkit 1.0
+
 StatusListView {
     id: root
 

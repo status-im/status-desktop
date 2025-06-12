@@ -10,6 +10,8 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
+
 Loader {
     id: root
 

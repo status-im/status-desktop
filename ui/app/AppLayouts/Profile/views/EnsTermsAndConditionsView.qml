@@ -18,6 +18,8 @@ import StatusQ.Components 0.1
 
 import AppLayouts.Profile.stores 1.0
 
+import QtModelsToolkit 1.0
+
 Item {
     id: root
 

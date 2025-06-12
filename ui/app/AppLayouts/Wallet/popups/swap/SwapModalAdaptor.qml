@@ -9,6 +9,8 @@ import shared.stores 1.0
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
+import QtModelsToolkit 1.0
+
 QObject {
     id: root
 

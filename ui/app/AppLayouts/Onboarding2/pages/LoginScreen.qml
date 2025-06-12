@@ -20,6 +20,8 @@ import AppLayouts.Onboarding2.components 1.0
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
+
 OnboardingPage {
     id: root
 

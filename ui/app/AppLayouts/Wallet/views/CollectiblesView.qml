@@ -22,6 +22,7 @@ import utils 1.0
 import AppLayouts.Wallet.views.collectibles 1.0
 import AppLayouts.Wallet.controls 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 ColumnLayout {

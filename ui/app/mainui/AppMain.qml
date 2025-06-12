@@ -55,6 +55,7 @@ import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
 import mainui.Handlers 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 Item {
