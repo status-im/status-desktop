@@ -56,6 +56,9 @@ QtObject {
     property WalletStores.BuyCryptoStore buyCryptoStore
     property ProfileStores.AdvancedStore advancedStore
     property ActivityCenterStore activityCenterStore
+    property ProfileStores.AboutStore aboutStore
+    property ProfileStores.ContactsStore contactsStore
+    property ProfileStores.PrivacyStore privacyStore
 
     property var allContactsModel
     property var mutualContactsModel
@@ -147,7 +150,7 @@ QtObject {
         const popupProperties = {
             newVersionAvailable: available,
             downloadURL: url,
-            currentVersion: rootStore.profileSectionStore.getCurrentVersion(),
+            currentVersion: root.aboutStore.getCurrentVersion(),
             newVersion: version
         }
         openPopup(downloadPageComponent, popupProperties)
