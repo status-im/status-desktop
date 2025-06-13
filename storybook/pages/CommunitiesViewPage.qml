@@ -48,17 +48,8 @@ SplitView {
         SplitView.preferredHeight: 400
 
         contentWidth: 664
-        profileSectionStore: ProfileSectionStore {
-            property var communitiesProfileModule: QtObject {
-                function setCommunityMuted(communityId, mutedType) {
-                    logs.logEvent("profileSectionStore::communitiesProfileModule::setCommunityMuted", ["communityId", "mutedType"], arguments)
-                }
-                function leaveCommunity(communityId) {
-                    logs.logEvent("profileSectionStore::communitiesProfileModule::leaveCommunity", ["communityId"], arguments)
-                }
-            }
-            readonly property var communitiesList: ctrlEmptyView.checked ? emptyModel : communitiesModel
-        }
+
+        communitiesList: ctrlEmptyView.checked ? emptyModel : communitiesModel
         rootStore: AppLayoutsStores.RootStore {
             function isMyCommunityRequestPending(communityId) {
                 return communityId === "0x0006"
@@ -72,6 +63,9 @@ SplitView {
         }
         currencyStore: currencyStore
         walletAssetsStore: walletAssetsStore
+
+        onLeaveCommunityRequest: logs.logEvent("onLeaveCommunityRequest", ["communityId"], arguments)
+        onSetCommunityMutedRequest: logs.logEvent("onSetCommunityMutedRequest", ["communityId", "mutedType"], arguments)
     }
 
     LogsAndControlsPanel {
