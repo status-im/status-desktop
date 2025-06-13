@@ -273,8 +273,7 @@ QtObject {
                 chatContentModule.inputAreaModule.sendMessage(
                             textMsg,
                             replyMessageId,
-                            Utils.isOnlyEmoji(textMsg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
-                            false)
+                            Utils.isOnlyEmoji(textMsg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType)
 
                 result = true
             }

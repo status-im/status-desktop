@@ -1,20 +1,15 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import SortFilterProxyModel 0.2
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Storybook 1.0
 import Models 1.0
 
 import utils 1.0
 import shared.status 1.0
-import shared.stores 1.0 as SharedStores
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls 0.1
-
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import AppLayouts.Chat.stores 1.0 as ChatStores
 
 SplitView {
     id: root
@@ -124,6 +119,8 @@ SplitView {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
                     logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [SQUtils.StringUtils.plainText(chatInput.getTextWithPublicKeys())])
                     logs.logEvent("StatusChatInput::sendMessage", ["RawText"], [chatInput.textInput.text])
+                    imageNb.currentIndex = 0 // images cleared
+                    linksNb.currentIndex = 0 // links cleared
                 }
                 onEnableLinkPreviewForThisMessage: {
                     linkPreviewSwitch.checked = true
@@ -166,14 +163,6 @@ SplitView {
 
         QtObject {
             id: d
-
-            readonly property var walletAssetsStore: WalletStores.WalletAssetsStore {
-                id: thisWalletAssetStore
-                walletTokensStore: WalletStores.TokensStore {
-                    plainTokensBySymbolModel: TokensBySymbolModel {}
-                }
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-            }
 
             property var paymentRequestModel: ListModel {}
 
@@ -372,5 +361,6 @@ SplitView {
 }
 
 // category: Components
-
-// https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/💬-Chat⎜Desktop?type=design&node-id=23155-66084&mode=design&t=VWBVK4DOUxr1BmTp-0
+// status: decent
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Messenger----Desktop-Legacy?node-id=4360-175&m=dev
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Messenger----Desktop-Legacy?node-id=25492-31491&m=dev

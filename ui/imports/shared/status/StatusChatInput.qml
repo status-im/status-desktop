@@ -7,15 +7,10 @@ import utils 1.0
 import shared 1.0
 import shared.controls.chat 1.0
 import shared.panels 1.0
-import shared.popups 1.0
-import shared.stores 1.0 as SharedStores
 
 import mainui 1.0
 
-//TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
-import AppLayouts.Chat.popups 1.0
-import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -163,6 +158,9 @@ Rectangle {
 
         property var imageDialog: null
 
+        // whether to send message using Ctrl+Return or just Enter; based on OSK (virtual keyboard presence)
+        readonly property int kbdModifierToSendMessage: Qt.inputMethod.visible ? Qt.ControlModifier : Qt.NoModifier
+
         // common popups are emoji, jif and stickers
         // Put controlWidth as argument with default value for binding
         function getCommonPopupRelativePosition(popup, popupParent, controlWidth = control.width) {
@@ -204,8 +202,6 @@ Rectangle {
                 }
             }
         }
-
-        property Menu textFormatMenu: null
 
         function copyMentions(start, end) {
             copiedMentionsPos = []
@@ -308,7 +304,7 @@ Rectangle {
         }
 
         function getSelectedTextWithFormationChars(messageInputField) {
-            const formationChars = ["*", "`", "~"]
+            const formationChars = ["*", "`", "~", "_"]
             let i = 1
             let text = ""
             while (true) {
@@ -381,9 +377,9 @@ Rectangle {
 
     function onKeyPress(event) {
         // get text without HTML formatting
-        const messageLength = messageInputField.getText(0, messageInputField.length).length;
+        const messageLength = messageInputField.length
 
-        if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
+        if (event.modifiers === d.kbdModifierToSendMessage && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
                 event.accepted = true;
                 return
@@ -394,8 +390,7 @@ Rectangle {
                 control.hideExtendedArea();
                 event.accepted = true;
                 return;
-            }
-            else {
+            } else {
                 // pop-up a warning message when trying to send a message over the limit
                 messageLengthLimitTooltip.open();
                 event.accepted = true;
@@ -434,10 +429,10 @@ Rectangle {
             }
         }
 
-        const message = control.extrapolateCursorPosition();
-
         // handle new line in blockquote
-        if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier) && message.data.startsWith(">")) {
+        if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier)) {
+            const message = control.extrapolateCursorPosition();
+
             if(message.data.startsWith(">") && !message.data.endsWith("\n\n")) {
                 let newMessage1 = ""
                 if (message.data.endsWith("\n> ")) {
@@ -447,11 +442,12 @@ Rectangle {
                 }
                 messageInputField.remove(0, messageInputField.cursorPosition);
                 insertInTextInput(0, StatusQUtils.Emoji.parse(newMessage1));
+                event.accepted = true
             }
-            event.accepted = true
         }
 
         if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace) {
+            const message = control.extrapolateCursorPosition();
             if(mentionsPos.length > 0) {
                 let anticipatedCursorPosition = messageInputField.cursorPosition
                 anticipatedCursorPosition += event.key === Qt.Key_Backspace ?
@@ -481,9 +477,7 @@ Rectangle {
                             messageInputField.selectionStart, messageInputField.selectionEnd)
                 d.copyMentions(messageInputField.selectionStart, messageInputField.selectionEnd)
             }
-        }
-
-        if (event.matches(StandardKey.Paste)) {
+        } else if (event.matches(StandardKey.Paste)) {
             if (ClipboardUtils.hasImage) {
                 const clipboardImage = ClipboardUtils.imageBase64
                 validateImagesAndShowImageArea([clipboardImage])
@@ -677,9 +671,6 @@ Rectangle {
         if ((event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.MetaModifier)) // these are likely shortcuts with no meaningful text
             return
 
-        if (event.key === Qt.Key_Backspace && (!!d.textFormatMenu && d.textFormatMenu.opened)) {
-            d.textFormatMenu.close()
-        }
         // the text doesn't get registered to the textarea fast enough
         // we can only get it in the `released` event
 
@@ -1115,62 +1106,81 @@ Rectangle {
                 timeout: 3000 // show for 3 seconds
             }
 
-            Component {
-                id: textFormatMenuComponent
+            StatusTextFormatMenu {
+                id: textFormatMenu
+                visible: !!messageInputField.selectedText && !suggestionsBox.visible
+                focus: false
+                x: messageInputField.positionToRectangle(messageInputField.selectionStart).x
+                y: messageInputField.y - height - 5
 
-                StatusTextFormatMenu {
-                    onClosed: {
-                        messageInputField.deselect()
-                        destroy()
-                    }
+                StatusChatInputTextFormationAction {
+                    id: boldAction
+                    wrapper: "**"
+                    icon.name: "bold"
+                    text: qsTr("Bold")
+                    selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
+                    onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
+                                        : wrapSelection(wrapper)
+                    shortcut: StandardKey.Bold
+                    enabled: textFormatMenu.visible
+                }
+                StatusChatInputTextFormationAction {
+                    id: italicAction
+                    wrapper: "*"
+                    icon.name: "italic"
+                    text: qsTr("Italic")
+                    selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
+                    checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
+                    onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
+                                        : wrapSelection(wrapper)
+                    shortcut: StandardKey.Italic
+                    enabled: textFormatMenu.visible
+                }
+                StatusChatInputTextFormationAction {
+                    id: underlineAction
+                    wrapper: "_"
+                    icon.name: "underline"
+                    text: qsTr("Underline")
+                    selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
+                    onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
+                                        : wrapSelection(wrapper)
+                    shortcut: StandardKey.Underline
+                    enabled: textFormatMenu.visible
+                }
+                StatusChatInputTextFormationAction {
+                    id: strikethruAction
+                    wrapper: "~~"
+                    icon.name: "strikethrough"
+                    text: qsTr("Strikethrough")
+                    selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
+                    onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
+                                        : wrapSelection(wrapper)
+                    shortcut: "Ctrl+Shift+S"
+                    enabled: textFormatMenu.visible
+                }
+                StatusChatInputTextFormationAction {
+                    id: codeAction
+                    readonly property bool multilineSelection: messageInputField.positionToRectangle(messageInputField.selectionEnd).y >
+                                                               messageInputField.positionToRectangle(messageInputField.selectionStart).y
 
-                    StatusChatInputTextFormationAction {
-                        wrapper: "**"
-                        icon.name: "bold"
-                        text: qsTr("Bold")
-                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
-                        onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
-                                               wrapSelection(wrapper)
-                    }
-                    StatusChatInputTextFormationAction {
-                        wrapper: "*"
-                        icon.name: "italic"
-                        text: qsTr("Italic")
-                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
-                        checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
-                        onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
-                                               wrapSelection(wrapper)
-                    }
-                    StatusChatInputTextFormationAction {
-                        wrapper: "~~"
-                        icon.name: "strikethrough"
-                        text: qsTr("Strikethrough")
-                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
-                        onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
-                                               wrapSelection(wrapper)
-                    }
-                    StatusChatInputTextFormationAction {
-                        wrapper: "`"
-                        icon.name: "code"
-                        text: qsTr("Code")
-                        selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
-                        onActionTriggered: checked ?
-                                               unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField)) :
-                                               wrapSelection(wrapper)
-                    }
-                    StatusChatInputTextFormationAction {
-                        wrapper: "> "
-                        icon.name: "quote"
-                        text: qsTr("Quote")
-                        checked: messageInputField.selectedText && isSelectedLinePrefixedBy(messageInputField.selectionStart, wrapper)
-
-                        onActionTriggered: checked
-                                           ? unprefixSelectedLine(wrapper)
-                                           : prefixSelectedLine(wrapper)
-                    }
+                    wrapper: multilineSelection ? "```" : "`"
+                    icon.name: "code"
+                    text: qsTr("Code")
+                    selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
+                    onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
+                                        : wrapSelection(wrapper)
+                    shortcut: multilineSelection ? "Ctrl+Shift+Alt+C" : "Ctrl+Shift+C"
+                    enabled: textFormatMenu.visible
+                }
+                StatusChatInputTextFormationAction {
+                    id: quoteAction
+                    wrapper: "> "
+                    icon.name: "quote"
+                    text: qsTr("Quote")
+                    checked: messageInputField.selectedText && isSelectedLinePrefixedBy(messageInputField.selectionStart, wrapper)
+                    onToggled: !checked ? unprefixSelectedLine(wrapper) : prefixSelectedLine(wrapper)
+                    shortcut: "Ctrl+Shift+Q"
+                    enabled: textFormatMenu.visible
                 }
             }
 
@@ -1275,6 +1285,7 @@ Rectangle {
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                         padding: 0
+                        rightPadding: Theme.padding // for the scrollbar
                         contentWidth: availableWidth
 
                         StatusQ.StatusTextArea {
@@ -1282,8 +1293,6 @@ Rectangle {
 
                             objectName: "messageInputField"
 
-                            property double lastClick: 0
-                            property int cursorWhenPressed: 0
                             property int previousCursorPosition: 0
 
                             width: inputScrollView.availableWidth
@@ -1296,11 +1305,15 @@ Rectangle {
                             leftPadding: 0
                             rightPadding: 0
                             background: null
+
+                            inputMethodHints: Qt.ImhMultiLine | Qt.ImhNoEditMenu
+                            EnterKey.type: Qt.EnterKeyReturn // insert newlines hint for OSK
+
                             // This is needed to make sure the text area is disabled when the input is disabled
                             Binding on enabled {
                                 value: control.enabled
                             }
-                            Keys.onUpPressed: {
+                            Keys.onUpPressed: function(event) {
                                 if (isEdit && !activeFocus) {
                                     forceActiveFocus();
                                 } else {
@@ -1308,18 +1321,14 @@ Rectangle {
                                         control.keyUpPress();
                                     }
                                 }
-                                if (emojiSuggestions.visible) {
-                                    emojiSuggestions.listView.decrementCurrentIndex();
-                                }
                                 event.accepted = false
                             }
-                            Keys.onPressed: {
+                            Keys.onPressed: function(event) {
                                 keyEvent = event;
                                 onKeyPress(event)
-                                cursorWhenPressed = cursorPosition;
                             }
-                            Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
-                            Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
+                            Keys.onReleased: (event) => onRelease(event) // gives much more up to date cursorPosition
+
                             property var keyEvent
 
                             Component.onDestruction: {
@@ -1365,23 +1374,6 @@ Rectangle {
                                 messageLengthLimit.remainingChars = (messageLimit - length);
                             }
 
-                            onReleased: function (event) {
-                                const now = Date.now()
-                                if (messageInputField.selectedText.trim() !== "") {
-                                    // If it's a double click, just check the mouse position
-                                    // If it's a mouse select, use the start and end position average)
-                                    const x = now < messageInputField.lastClick + 500
-                                            ? event.x
-                                            : (messageInputField.cursorRectangle.x + event.x) / 2
-                                    let menu = Global.openMenu(textFormatMenuComponent, messageInput, {})
-                                    menu.x = x - menu.width / 2
-                                    menu.y = messageInputField.y - menu.height - 5
-                                    d.textFormatMenu = menu
-                                    messageInputField.forceActiveFocus()
-                                }
-                                lastClick = now
-                            }
-
                             onLinkActivated: {
                                 const mention = d.getMentionAtPosition(cursorPosition - 1)
                                 if(mention) {
@@ -1415,37 +1407,7 @@ Rectangle {
 
                         Shortcut {
                             enabled: messageInputField.activeFocus
-                            sequence: StandardKey.Bold
-                            onActivated: wrapSelection("**")
-                        }
-                        Shortcut {
-                            enabled: messageInputField.activeFocus
-                            sequence: StandardKey.Italic
-                            onActivated: wrapSelection("*")
-                        }
-                        Shortcut {
-                            enabled: messageInputField.activeFocus
-                            sequence: "Ctrl+Shift+Alt+C"
-                            onActivated: wrapSelection("```")
-                        }
-                        Shortcut {
-                            enabled: messageInputField.activeFocus
-                            sequence: "Ctrl+Shift+C"
-                            onActivated: wrapSelection("`")
-                        }
-                        Shortcut {
-                            enabled: messageInputField.activeFocus
-                            sequence: "Ctrl+Alt+-"
-                            onActivated: wrapSelection("~~")
-                        }
-                        Shortcut {
-                            enabled: messageInputField.activeFocus
-                            sequence: "Ctrl+Shift+X"
-                            onActivated: wrapSelection("~~")
-                        }
-                        Shortcut {
-                            enabled: messageInputField.activeFocus
-                            sequence: "Ctrl+Meta+Space"
+                            sequences: ["Ctrl+Meta+Space", "Ctrl+E"]
                             onActivated: emojiBtn.clicked(null)
                         }
                     }
@@ -1486,6 +1448,19 @@ Rectangle {
                             spacing: 2
 
                             StatusQ.StatusFlatRoundButton {
+                                objectName: "statusChatInputSendButton"
+                                implicitHeight: 32
+                                implicitWidth: 32
+                                icon.name: "send"
+                                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                                visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0
+                                onClicked: {
+                                    control.onKeyPress({modifiers: d.kbdModifierToSendMessage, key: Qt.Key_Return})
+                                }
+                                tooltip.text: qsTr("Send message")
+                            }
+
+                            StatusQ.StatusFlatRoundButton {
                                 id: emojiBtn
                                 objectName: "statusChatInputEmojiButton"
                                 implicitHeight: 32
@@ -1494,15 +1469,14 @@ Rectangle {
                                 icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
                                                                      : Theme.palette.baseColor1
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                                color: "transparent"
                                 highlighted: d.emojiPopupOpened
                                 onClicked: {
                                     if (d.emojiPopupOpened) {
                                         emojiPopup.close()
                                         return
                                     }
-                                    d.emojiPopupOpened = true
                                     emojiPopup.open()
+                                    d.emojiPopupOpened = true
                                 }
                             }
 
@@ -1517,7 +1491,6 @@ Rectangle {
                                 icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
                                                                      : Theme.palette.baseColor1
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                                color: "transparent"
                                 onClicked: {
                                     highlighted = true
                                     control.openGifPopupRequest({// Properties needed for relative position and close
@@ -1549,15 +1522,14 @@ Rectangle {
                                                                      : Theme.palette.baseColor1
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                                 visible: !isEdit && emojiBtn.visible
-                                color: "transparent"
                                 highlighted: d.stickersPopupOpened
                                 onClicked: {
                                     if (d.stickersPopupOpened) {
                                         control.stickersPopup.close()
                                         return
                                     }
-                                    d.stickersPopupOpened = true
                                     control.stickersPopup.open()
+                                    d.stickersPopupOpened = true
                                 }
                             }
                         }

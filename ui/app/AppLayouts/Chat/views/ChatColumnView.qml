@@ -375,7 +375,7 @@ Item {
                             d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
                     }
 
-                    onStickerSelected: {
+                    onStickerSelected: function (hashId, packId, url) {
                         root.rootStore.sendSticker(d.activeChatContentModule.getMyChatId(),
                                                    hashId,
                                                    chatInput.isReply ? chatInput.replyMessageId : "",
@@ -383,7 +383,7 @@ Item {
                                                    url)
                     }
 
-                    onSendMessage: {
+                    onSendMessage: function (event) {
                         if (!d.activeChatContentModule) {
                             console.debug("error on sending message - chat content module is not set")
                             return
@@ -429,7 +429,7 @@ Item {
                     onOpenPaymentRequestModal: () => Global.openPaymentRequestModalRequested(d.activeChatContentModule.inputAreaModule.addPaymentRequest)
                     onRemovePaymentRequestPreview: (index) => d.activeChatContentModule.inputAreaModule.removePaymentRequestPreviewData(index)
 
-                    onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
+                    onOpenGifPopupRequest: (params, cbOnGifSelected, cbOnClose) => root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
                 }
 
                 ChatPermissionQualificationPanel {
