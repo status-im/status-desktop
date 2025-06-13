@@ -35,6 +35,8 @@ import SortFilterProxyModel 0.2
 StatusSectionLayout {
     id: root
 
+    required property bool isProduction
+
     property alias settingsSubsection: leftPanel.settingsSubsection
     property int settingsSubSubsection
 
@@ -390,7 +392,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                isProduction: production
+                isProduction: root.isProduction
                 profileStore: root.profileStore
                 devicesStore: root.devicesStore
                 privacyStore: root.privacyStore
@@ -426,8 +428,6 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
 
                 store: QtObject {
-                    readonly property bool isProduction: production
-
                     function checkForUpdates() {
                         return root.store.checkForUpdates()
                     }
@@ -449,8 +449,8 @@ StatusSectionLayout {
                     }
 
                     function getReleaseNotes() {
-                        const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(getCurrentVersion()) :
-                                                    "https://github.com/status-im/status-desktop/commit/%1".arg(getGitCommit())
+                        const link = root.isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(getCurrentVersion()) :
+                                                         "https://github.com/status-im/status-desktop/commit/%1".arg(getGitCommit())
 
                         openLink(link)
                     }
