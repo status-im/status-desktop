@@ -455,6 +455,13 @@ StatusDialog {
         }
 
         readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.selectedChainId)
+
+
+        readonly property var selectedNetworkEntry: ModelEntry {
+            sourceModel: root.networksModel
+            key: "chainId"
+            value: root.selectedChainId
+        }
     }
 
     width: 556
@@ -752,6 +759,8 @@ StatusDialog {
                         fiatFees: root.estimatedFiatFees
                         loading: root.routesLoading && root.allValuesFilledCorrectly
                         error: d.errNotEnoughEth
+                        networkName: !!d.selectedNetworkEntry.item && d.selectedNetworkEntry.available ?
+                                         d.selectedNetworkEntry.item.chainName: ""
                     }
                     visible: root.allValuesFilledCorrectly
                 }

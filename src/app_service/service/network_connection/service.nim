@@ -246,10 +246,17 @@ QtObject:
       self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(COLLECTIBLES, self.connectionStatus[COLLECTIBLES]))
       discard collectibles_backend.refetchOwnedCollectibles()
 
+  proc checkIfConnected*(self: Service, website: string): bool =
+    if self.connectionStatus.hasKey(website) and self.connectionStatus[website].completelyDown:
+      return false
+    return true
+
   proc networkConnected*(self: Service, connected: bool) =
     if connected:
-      self.walletService.reloadAccountTokens()
-      self.tokenService.rebuildMarketData()
+      if not self.checkIfConnected(BLOCKCHAINS):
+        self.walletService.reloadAccountTokens()
+      if not self.checkIfConnected(MARKET):
+        self.tokenService.rebuildMarketData()
       discard collectibles_backend.refetchOwnedCollectibles()
     else:
       if(self.connectionStatus.hasKey(BLOCKCHAINS)):
@@ -258,8 +265,3 @@ QtObject:
         self.connectionStatus[MARKET] = newConnectionStatus()
       if(self.connectionStatus.hasKey(COLLECTIBLES)):
         self.connectionStatus[COLLECTIBLES] = newConnectionStatus()
-
-  proc checkIfConnected*(self: Service, website: string): bool =
-    if self.connectionStatus.hasKey(website) and self.connectionStatus[website].completelyDown:
-      return false
-    return true

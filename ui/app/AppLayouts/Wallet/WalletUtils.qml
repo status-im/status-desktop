@@ -91,7 +91,7 @@ QtObject {
         if (estimatedTime >= 60) {
             return qsTr(">60s")
         }
-        return qsTr("~%1").arg(estimatedTime)
+        return qsTr("~%1s").arg(estimatedTime)
     }
 
     function getRouterErrorBasedOnCode(code) {

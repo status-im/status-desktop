@@ -18,6 +18,7 @@ Control {
     property bool loading
     /** property to set error state in the fees component **/
     property bool error
+    property string networkName
 
     QtObject {
         id: d
@@ -63,7 +64,7 @@ Control {
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 22
 
-                text: qsTr("Est Mainnet transaction fee")
+                text: qsTr("Est %1 transaction fee").arg(root.networkName)
             }
             StatusTextWithLoadingState {
                 id: cryptoFeesText
