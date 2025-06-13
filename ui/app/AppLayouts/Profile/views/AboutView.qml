@@ -15,16 +15,21 @@ import shared.status
 SettingsContentBase {
     id: root
 
-    property QtObject store
+    property bool isProduction
+    property string currentVersion
+    property string gitCommit
+    property string statusGoVersion
+    property string qtRuntimeVersion
+
+    signal checkForUpdates()
+    signal openLink(string url)
 
     // TODO when we re-implement check for updates, put isProduction back
-    titleRowComponentLoader.active: false //root.store.isProduction
+    titleRowComponentLoader.active: false //root.isProduction
     titleRowComponentLoader.sourceComponent: StatusButton {
         size: StatusBaseButton.Size.Small
         text: qsTr("Check for updates")
-        onClicked: {
-            root.store.checkForUpdates()
-        }
+        onClicked: root.checkForUpdates()
     }
 
     component LinkItem: StatusListItem {
@@ -57,7 +62,7 @@ SettingsContentBase {
                 id: statusIcon
                 width: 80
                 height: 80
-                source: root.store.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
+                source: root.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap: true
             }
@@ -69,8 +74,13 @@ SettingsContentBase {
                 font.pixelSize: Theme.fontSize22
                 font.bold: true
                 normalColor: Theme.palette.directColor1
-                text: root.store.getCurrentVersion()
-                onClicked: root.store.getReleaseNotes()
+                text: root.currentVersion
+                onClicked: {
+                    const link = root.isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(root.currentVersion) :
+                                                     "https://github.com/status-im/status-desktop/commit/%1".arg(root.gitCommit)
+
+                    root.openLink(link)
+                }
             }
 
             StatusBaseText {
@@ -85,8 +95,8 @@ SettingsContentBase {
                 font.pixelSize: Theme.secondaryAdditionalTextSize
                 font.bold: true
                 normalColor: Theme.palette.directColor1
-                text: root.store.getStatusGoVersion().replace(/^v/, '')
-                onClicked: root.store.openLink("https://github.com/status-im/status-go/tree/%1".arg(root.store.getStatusGoVersion()))
+                text: root.statusGoVersion.replace(/^v/, '')
+                onClicked: root.openLink("https://github.com/status-im/status-go/tree/%1".arg(root.statusGoVersion))
             }
 
             StatusBaseText {
@@ -102,8 +112,8 @@ SettingsContentBase {
                 font.pixelSize: Theme.secondaryAdditionalTextSize
                 font.bold: true
                 normalColor: Theme.palette.directColor1
-                text: root.store.qtRuntimeVersion()
-                onClicked: root.store.openLink("https://github.com/qt/qtreleasenotes/blob/dev/qt/%1/release-note.md".arg(text))
+                text: root.qtRuntimeVersion
+                onClicked: root.openLink("https://github.com/qt/qtreleasenotes/blob/dev/qt/%1/release-note.md".arg(text))
             }
 
             StatusBaseText {
@@ -119,8 +129,13 @@ SettingsContentBase {
                 size: StatusBaseButton.Size.Small
                 icon.name: "info"
                 text: qsTr("Release Notes")
-                visible: root.store.isProduction
-                onClicked: root.store.getReleaseNotes()
+                visible: root.isProduction
+                onClicked: {
+                    const link = root.isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(root.currentVersion) :
+                                                     "https://github.com/status-im/status-desktop/commit/%1".arg(root.gitCommit)
+
+                    root.openLink(link)
+                }
             }
         } // Column
 
@@ -131,13 +146,13 @@ SettingsContentBase {
             LinkItem {
                 title: qsTr("Status Manifesto")
                 Layout.fillWidth: true
-                onClicked: root.store.openLink("https://status.app/manifesto")
+                onClicked: root.openLink("https://status.app/manifesto")
             }
 
             LinkItem {
                 title: qsTr("Status Help")
                 Layout.fillWidth: true
-                onClicked: root.store.openLink(Constants.statusHelpLinkPrefix)
+                onClicked: root.openLink(Constants.statusHelpLinkPrefix)
             }
 
             StatusDialogDivider {
@@ -154,22 +169,22 @@ SettingsContentBase {
 
             LinkItem {
                 title: qsTr("status-desktop")
-                onClicked: root.store.openLink("https://github.com/status-im/status-desktop")
+                onClicked: root.openLink("https://github.com/status-im/status-desktop")
             }
 
             LinkItem {
                 title: qsTr("status-go")
-                onClicked: root.store.openLink("https://github.com/status-im/status-go")
+                onClicked: root.openLink("https://github.com/status-im/status-go")
             }
 
             LinkItem {
                 title: qsTr("StatusQ")
-                onClicked: root.store.openLink("https://github.com/status-im/status-desktop/tree/master/ui/StatusQ")
+                onClicked: root.openLink("https://github.com/status-im/status-desktop/tree/master/ui/StatusQ")
             }
 
             LinkItem {
                 title: qsTr("go-waku")
-                onClicked: root.store.openLink("https://github.com/status-im/go-waku")
+                onClicked: root.openLink("https://github.com/status-im/go-waku")
             }
 
             StatusDialogDivider {
@@ -198,7 +213,7 @@ SettingsContentBase {
 
             LinkItem {
                 title: qsTr("Software License")
-                onClicked: root.store.openLink("https://github.com/status-im/status-desktop/blob/master/LICENSE.md")
+                onClicked: root.openLink("https://github.com/status-im/status-desktop/blob/master/LICENSE.md")
             }
         }
     }

@@ -12,11 +12,8 @@ import SortFilterProxyModel
 QtObject {
     id: root
 
-    property var aboutModuleInst: aboutModule
     property var mainModuleInst: mainModule
     property var profileSectionModuleInst: profileSectionModule
-
-    readonly property bool fetchingUpdate: aboutModuleInst.fetching
 
     property ContactsStore contactsStore: ContactsStore {}
 
@@ -67,6 +64,8 @@ QtObject {
     property StickersStore stickersStore: StickersStore {
         stickersModule: stickersModuleInst
     }
+
+    property AboutStore aboutStore: AboutStore {}
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
                             
@@ -123,25 +122,5 @@ QtObject {
             }
             isShowcaseLoading: root.contactsStore.isShowcaseForAContactLoading
         }
-    }
-
-    function getCurrentVersion() {
-        return aboutModuleInst.getCurrentVersion().replace(/^v/, '')
-    }
-
-    function getGitCommit() {
-        return aboutModuleInst.getGitCommit()
-    }
-
-    function getStatusGoVersion() {
-        return aboutModuleInst.getStatusGoVersion()
-    }
-
-    function nodeVersion() {
-        return aboutModuleInst.nodeVersion()
-    }
-
-    function checkForUpdates() {
-        aboutModuleInst.checkForUpdates()
     }
 }

@@ -17,50 +17,43 @@ SplitView {
         SplitView.fillWidth: true
 
         AboutView {
+
+            function getCurrentVersion() {
+                logs.logEvent("AboutView::getCurrentVersion")
+                return isProduction ? "0.13.2" : "0.13.2-dev"
+            }
+
+            function getGitCommit() {
+                logs.logEvent("AboutView::getGitCommit")
+                return "92b88e8a3e1d48f2c39d1db6e4d577ebbe21f7a9"
+            }
+
+            function getStatusGoVersion() {
+                logs.logEvent("AboutView::getStatusGoVersion")
+                return "v0.162.9"
+            }
+
+            function qtRuntimeVersion() {
+                return SQCore.SystemUtils.qtRuntimeVersion()
+            }
+
+            function openTestLink(url) {
+                logs.logEvent("AboutView::openLink", ["url"], arguments)
+                Qt.openUrlExternally(url)
+            }
+
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             contentWidth: parent.width
 
-            store: QtObject {
-                readonly property bool isProduction: ctrlProduction.checked
+            isProduction: ctrlProduction.checked
+            currentVersion: getCurrentVersion()
+            gitCommit: getGitCommit()
+            statusGoVersion: getStatusGoVersion()
+            qtRuntimeVersion: qtRuntimeVersion()
 
-                function checkForUpdates() {
-                    logs.logEvent("store::checkForUpdates")
-                }
-
-                function getCurrentVersion() {
-                    logs.logEvent("store::getCurrentVersion")
-                    return isProduction ? "0.13.2" : "0.13.2-dev"
-                }
-
-                function getGitCommit() {
-                    logs.logEvent("store::getGitCommit")
-                    return "92b88e8a3e1d48f2c39d1db6e4d577ebbe21f7a9"
-                }
-
-                function getStatusGoVersion() {
-                    logs.logEvent("store::getStatusGoVersion")
-                    return "v0.162.9"
-                }
-
-                function qtRuntimeVersion() {
-                    return SQCore.SystemUtils.qtRuntimeVersion()
-                }
-
-                function getReleaseNotes() {
-                    logs.logEvent("store::getReleaseNotes")
-                    const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(getCurrentVersion()) :
-                                                "https://github.com/status-im/status-desktop/commit/%1".arg(getGitCommit())
-
-                    openLink(link)
-                }
-
-                function openLink(url) {
-                    logs.logEvent("store::openLink", ["url"], arguments)
-                    Qt.openUrlExternally(url)
-                }
-            }
-
+            onCheckForUpdates: logs.logEvent("store::checkForUpdates")
+            onOpenLink: openTestLink(url)
         }
 
         LogsAndControlsPanel {
