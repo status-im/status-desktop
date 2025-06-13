@@ -533,7 +533,7 @@ QtObject {
         Component {
             id: backupSeedModalComponent
             BackupSeedModal {
-                privacyStore: rootStore.profileSectionStore.privacyStore
+                privacyStore: root.privacyStore
                 onClosed: destroy()
             }
         },
@@ -577,28 +577,28 @@ QtObject {
 
                 contactDetails: contactModelEntry.contactDetails
 
-                profileStore: rootStore.profileSectionStore.profileStore
-                contactsStore: rootStore.profileSectionStore.contactsStore
+                profileStore: root.profileStore
+                contactsStore: root.contactsStore
                 walletStore: WalletStores.RootStore
                 utilsStore: root.utilsStore
                 networksStore: root.networksStore
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
 
-                showcaseCommunitiesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCommunitiesModel
+                showcaseCommunitiesModel: isCurrentUser ? root.profileStore.ownShowcaseCommunitiesModel
                                                         : rootStore.profileSectionStore.contactShowcaseCommunitiesModel
-                showcaseAccountsModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseAccountsModel
+                showcaseAccountsModel: isCurrentUser ? root.profileStore.ownShowcaseAccountsModel
                                                      : rootStore.profileSectionStore.contactShowcaseAccountsModel
-                showcaseCollectiblesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCollectiblesModel
+                showcaseCollectiblesModel: isCurrentUser ? root.profileStore.ownShowcaseCollectiblesModel
                                                          : rootStore.profileSectionStore.contactShowcaseCollectiblesModel
-                showcaseSocialLinksModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseSocialLinksModel
+                showcaseSocialLinksModel: isCurrentUser ? root.profileStore.ownShowcaseSocialLinksModel
                                                         : rootStore.profileSectionStore.contactShowcaseSocialLinksModel
                 
                 assetsModel: rootStore.globalAssetsModel
                 collectiblesModel: rootStore.globalCollectiblesModel
 
                 onOpened: {
-                    isCurrentUser ? rootStore.profileSectionStore.requestOwnShowcase()
+                    isCurrentUser ? root.profileStore.requestProfileShowcasePreferences()
                                   : rootStore.profileSectionStore.requestContactShowcase(publicKey)
                 }
                 onClosed: {
