@@ -8,6 +8,7 @@ import shared.stores.send 1.0 as SharedSendStores
 import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups.swap 1.0
@@ -35,6 +36,8 @@ QtObject {
     required property WalletStores.TokensStore tokensStore
 
     required property ChatStores.RootStore rootChatStore
+
+    required property ProfileStores.EnsUsernamesStore ensUsernamesStore
 
     readonly property SwapModalHandler swapModalHandler: SwapModalHandler {
 
@@ -79,10 +82,10 @@ QtObject {
         networksStore: root.networksStore
 
         // for ens flows
-        ensRegisteredAddress: root.rootStore.profileSectionStore.ensUsernamesStore.getEnsRegisteredAddress()
+        ensRegisteredAddress: root.ensUsernamesStore.getEnsRegisteredAddress()
         myPublicKey: root.rootStore.contactStore.myPublicKey
         getStatusTokenKey: function() {
-            return root.rootStore.profileSectionStore.ensUsernamesStore.getStatusTokenKey()
+            return root.ensUsernamesStore.getStatusTokenKey()
         }
 
         // for sticker flows
