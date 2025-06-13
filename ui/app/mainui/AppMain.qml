@@ -75,6 +75,7 @@ Item {
         }
     }
 
+    readonly property ProfileStores.AboutStore aboutStore: rootStore.profileSectionStore.aboutStore
     readonly property ProfileStores.ProfileStore profileStore: rootStore.profileSectionStore.profileStore
     readonly property ProfileStores.ContactsStore contactsStore: rootStore.profileSectionStore.contactsStore
     readonly property ProfileStores.DevicesStore devicesStore: rootStore.profileSectionStore.devicesStore
@@ -869,6 +870,9 @@ Item {
         networksStore: appMain.networksStore
         activityCenterStore: appMain.activityCenterStore
         advancedStore: appMain.advancedStore
+        aboutStore: appMain.aboutStore
+        contactsStore: appMain.contactsStore
+        privacyStore: appMain.privacyStore
 
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -2106,6 +2110,7 @@ Item {
                             utilsStore: appMain.utilsStore
 
                             store: appMain.rootStore.profileSectionStore
+                            aboutStore: appMain.aboutStore
                             profileStore: appMain.profileStore
                             contactsStore: appMain.contactsStore
                             devicesStore: appMain.devicesStore
