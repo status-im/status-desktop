@@ -911,6 +911,7 @@ Item {
         transactionStoreNew: appMain.transactionStoreNew
         tokensStore: appMain.tokensStore
         rootChatStore: appMain.rootChatStore
+        ensUsernamesStore: appMain.ensUsernamesStore
     }
 
     Connections {
@@ -2111,8 +2112,6 @@ Item {
 
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
-
-                            store: appMain.rootStore.profileSectionStore
                             aboutStore: appMain.aboutStore
                             profileStore: appMain.profileStore
                             contactsStore: appMain.contactsStore
@@ -2125,19 +2124,19 @@ Item {
                             walletStore: appMain.walletProfileStore
                             messagingStore: appMain.messagingStore
                             ensUsernamesStore: appMain.ensUsernamesStore
-
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore
-                            systemPalette: appMain.sysPalette
-                            emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore
                             walletAssetsStore: appMain.walletAssetsStore
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
-                            isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             networksStore: appMain.networksStore
+
+                            isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             keychain: appMain.keychain
+                            systemPalette: appMain.sysPalette
+                            emojiPopup: statusEmojiPopup.item
 
                             mutualContactsModel: contactsModelAdaptor.mutualContacts
                             blockedContactsModel: contactsModelAdaptor.blockedContacts
@@ -2149,10 +2148,17 @@ Item {
                             fnAddressWasShown: WalletStores.RootStore.addressWasShown
 
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
-
                             onConnectUsernameRequested: popupRequestsHandler.sendModalHandler.connectUsername(ensName)
                             onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
                             onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
+
+                            // Communities related settings view:
+                            readonly property var profileSectionStore: appMain.rootStore.profileSectionStore
+                            onLeaveCommunityRequest: profileSectionStore.communitiesProfileModule.leaveCommunity(communityId)
+                            onSetCommunityMutedRequest: profileSectionStore.communitiesProfileModule.setCommunityMuted(communityId, mutedType)
+                            onInviteFriends: Global.openInviteFriendsToCommunityPopup(communityData,
+                                                                                      profileSectionStore.communitiesProfileModule,
+                                                                                      null)
                         }
                         onLoaded: {
                             item.settingsSubsection = profileLoader.settingsSubsection
