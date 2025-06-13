@@ -28,10 +28,15 @@ import AppLayouts.stores as AppLayoutsStores
 SettingsContentBase {
     id: root
 
-    property ProfileSectionStore profileSectionStore
     property AppLayoutsStores.RootStore rootStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
+
+    property var communitiesList
+
+    signal leaveCommunityRequest(string communityId)
+    signal setCommunityMutedRequest(string communityId, int mutedType)
+    signal inviteFriends(var communityData)
 
     clip: true
 
@@ -49,7 +54,7 @@ SettingsContentBase {
         ColumnLayout {
             id: noCommunitiesLayout
             anchors.fill: parent
-            visible: !root.profileSectionStore.communitiesList.count
+            visible: !root.communitiesList.count
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
             Image {
@@ -186,12 +191,12 @@ SettingsContentBase {
         rootStore: root.rootStore
 
         model: SortFilterProxyModel {
-            sourceModel: root.profileSectionStore.communitiesList
+            sourceModel: root.communitiesList
             filters: panel.filters
         }
 
         onCloseCommunityClicked: {
-            root.profileSectionStore.communitiesProfileModule.leaveCommunity(communityId)
+            root.leaveCommunityRequest(communityId)
         }
 
         onLeaveCommunityClicked: {
@@ -199,7 +204,7 @@ SettingsContentBase {
         }
 
         onSetCommunityMutedClicked: {
-            root.profileSectionStore.communitiesProfileModule.setCommunityMuted(communityId, mutedType)
+            root.setCommunityMutedRequest(communityId, mutedType)
         }
 
         onSetActiveCommunityClicked: {
@@ -207,9 +212,7 @@ SettingsContentBase {
         }
 
         onInviteFriends: {
-            Global.openInviteFriendsToCommunityPopup(communityData,
-                                                     root.profileSectionStore.communitiesProfileModule,
-                                                     null)
+            root.inviteFriends(communityData)
         }
         onShowCommunityMembershipSetupDialog: {
             Global.communityIntroPopupRequested(communityId, name, introMessage, imageSrc, root.rootStore.isMyCommunityRequestPending(communityId))

@@ -29,6 +29,8 @@ import AppLayouts.Wallet.controls
 import AppLayouts.Wallet.stores
 import AppLayouts.stores as AppLayoutsStores
 
+import mainui.activitycenter.stores
+
 import SortFilterProxyModel
 
 
@@ -42,10 +44,15 @@ StatusSectionLayout {
 
     objectName: "profileStatusSectionLayout"
 
+    required property TokensStore tokensStore
+    required property WalletAssetsStore walletAssetsStore
+    required property CollectiblesStore collectiblesStore
+    required property SharedStores.CurrenciesStore currencyStore
+    required property SharedStores.NetworksStore networksStore
+
     property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
-
-    property ProfileStores.ProfileSectionStore store // TO BE REMOVED
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.ContactsStore contactsStore
     property ProfileStores.DevicesStore devicesStore
@@ -58,16 +65,12 @@ StatusSectionLayout {
     property ProfileStores.MessagingStore messagingStore
     property ProfileStores.EnsUsernamesStore ensUsernamesStore
     property ProfileStores.AboutStore aboutStore
-
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
+    property ActivityCenterStore activityCenterStore
+
     property var emojiPopup
-    property SharedStores.NetworkConnectionStore networkConnectionStore
-    required property TokensStore tokensStore
-    required property WalletAssetsStore walletAssetsStore
-    required property CollectiblesStore collectiblesStore
-    required property SharedStores.CurrenciesStore currencyStore
-    required property SharedStores.NetworksStore networksStore
+
     required property Keychain keychain
 
     property bool isKeycardEnabled: true
@@ -90,10 +93,13 @@ StatusSectionLayout {
 
     signal themeChangeRequested(int theme)
     signal fontSizeChangeRequested(int fontSize)
+    signal leaveCommunityRequest(string communityId)
+    signal setCommunityMutedRequest(string communityId, int mutedType)
+    signal inviteFriends(var communityData)
 
     backButtonName: d.backButtonName
-    notificationCount: activityCenterStore.unreadNotificationsCount
-    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+    notificationCount: root.activityCenterStore.unreadNotificationsCount
+    hasUnseenNotifications: root.activityCenterStore.hasUnseenNotifications
 
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
@@ -217,11 +223,11 @@ StatusSectionLayout {
                 sideBySidePreview: d.sideBySidePreviewAvailable
                 toastClashesWithDirtyBubble: d.toastClashesWithDirtyBubble
 
-                communitiesShowcaseModel: root.store.ownShowcaseCommunitiesModel
-                accountsShowcaseModel: root.store.ownShowcaseAccountsModel
-                socialLinksShowcaseModel: root.store.ownShowcaseSocialLinksModel
+                communitiesShowcaseModel: root.profileStore.ownShowcaseCommunitiesModel
+                accountsShowcaseModel: root.profileStore.ownShowcaseAccountsModel
+                socialLinksShowcaseModel: root.profileStore.ownShowcaseSocialLinksModel
                 collectiblesShowcaseModel: SortFilterProxyModel {
-                    sourceModel: root.store.ownShowcaseCollectiblesModel
+                    sourceModel: root.profileStore.ownShowcaseCollectiblesModel
                     sorters: [
                         FastExpressionSorter {
                             expression: {
@@ -455,12 +461,16 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileSectionStore: root.store
                 rootStore: root.globalStore
                 currencyStore: root.currencyStore
                 walletAssetsStore: root.walletAssetsStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
+                communitiesList: root.profileStore.communitiesList
+
+                onLeaveCommunityRequest: root.leaveCommunityRequest(communityId)
+                onSetCommunityMutedRequest: root.setCommunityMutedRequest(communityId, mutedType)
+                onInviteFriends: root.inviteFriends(communityData)
             }
         }
 
