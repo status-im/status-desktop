@@ -57,6 +57,7 @@ StatusSectionLayout {
     property ProfileStores.WalletStore walletStore
     property ProfileStores.MessagingStore messagingStore
     property ProfileStores.EnsUsernamesStore ensUsernamesStore
+    property ProfileStores.AboutStore aboutStore
 
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
@@ -434,39 +435,14 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
                 contentWidth: d.contentWidth
+                isProduction: root.isProduction
+                currentVersion: root.aboutStore.getCurrentVersion()
+                gitCommit: root.aboutStore.getGitCommit()
+                statusGoVersion: root.aboutStore.getStatusGoVersion()
+                qtRuntimeVersion: SystemUtils.qtRuntimeVersion()
 
-                store: QtObject {
-                    function checkForUpdates() {
-                        return root.store.checkForUpdates()
-                    }
-
-                    function getCurrentVersion() {
-                        return root.store.getCurrentVersion()
-                    }
-
-                    function getGitCommit() {
-                        return root.store.getGitCommit()
-                    }
-
-                    function getStatusGoVersion() {
-                        return root.store.getStatusGoVersion()
-                    }
-
-                    function qtRuntimeVersion() {
-                        return SystemUtils.qtRuntimeVersion()
-                    }
-
-                    function getReleaseNotes() {
-                        const link = root.isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(getCurrentVersion()) :
-                                                         "https://github.com/status-im/status-desktop/commit/%1".arg(getGitCommit())
-
-                        openLink(link)
-                    }
-
-                    function openLink(url) {
-                        Global.openLink(url)
-                    }
-                }
+                onCheckForUpdates: root.aboutStore.checkForUpdates()
+                onOpenLink: Global.openLink(url)
             }
         }
 
