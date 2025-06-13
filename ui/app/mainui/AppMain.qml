@@ -890,7 +890,7 @@ Item {
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
 
-        isDevBuild: !production
+        isDevBuild: !appMain.rootStore.isProduction
 
         onOpenExternalLink: globalConns.onOpenLink(link)
         onSaveDomainToUnfurledWhitelist: {
@@ -2117,6 +2117,8 @@ Item {
                         asynchronous: true
                         sourceComponent: ProfileLayout {
                             navBar: appMain.navBar
+                            isProduction: appMain.rootStore.isProduction
+
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
 
@@ -2276,7 +2278,7 @@ Item {
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
-                                                           (production && appMain.networksStore.areTestNetworksEnabled)
+                                                           (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore

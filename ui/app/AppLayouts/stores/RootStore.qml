@@ -12,6 +12,7 @@ import AppLayouts.Wallet.stores as WalletStore
 QtObject {
     id: root
 
+    readonly property var isProduction: production
     property var mainModuleInst: mainModule
     property var walletSectionInst: walletSection
     property var aboutModuleInst: aboutModule
