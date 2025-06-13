@@ -269,7 +269,8 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] =
       "logLevel": status_const.getStatusGoLogLevel(),
       "apiLoggingEnabled": status_const.API_LOGGING,
       "metricsEnabled": status_const.METRICS_ENABLED,
-      "metricsAddress": status_const.METRICS_ADDRESS
+      "metricsAddress": status_const.METRICS_ADDRESS,
+      "wakuFleetsConfigFilePath": status_const.WAKU_FLEETS_CONFIG,
     }
     # Do not remove the sleep 700
     # This sleep prevents a crash on intel MacOS
