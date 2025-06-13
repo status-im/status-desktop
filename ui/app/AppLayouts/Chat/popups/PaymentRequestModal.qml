@@ -16,6 +16,8 @@ import shared.controls 1.0
 import shared.popups.send.views 1.0
 import utils 1.0
 
+import QtModelsToolkit 1.0
+
 StatusDialog {
     id: root
 

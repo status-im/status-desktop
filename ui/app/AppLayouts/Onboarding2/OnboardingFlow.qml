@@ -9,6 +9,8 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
+import QtModelsToolkit 1.0
+
 OnboardingStackView {
     id: root
 

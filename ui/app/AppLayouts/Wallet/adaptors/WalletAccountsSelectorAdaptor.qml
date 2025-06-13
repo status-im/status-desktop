@@ -1,8 +1,10 @@
 import QtQuick 2.15
-import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
+
+import QtModelsToolkit 1.0
+import SortFilterProxyModel 0.2
 
 /**
   Transforms and prepares the wallet accounts model to display

@@ -9,6 +9,8 @@ import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
+
 Item {
     id: root
 

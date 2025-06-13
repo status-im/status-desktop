@@ -10,6 +10,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.views 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 /**

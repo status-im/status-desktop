@@ -1,9 +1,9 @@
 import QtQuick 2.15
 
-import StatusQ 0.1
-
 import Storybook 1.0
 import Models 1.0
+
+import QtModelsToolkit 1.0
 
 QtObject {
     id: root

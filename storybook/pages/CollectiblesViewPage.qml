@@ -24,6 +24,8 @@ import shared.views 1.0
 import Storybook 1.0
 import Models 1.0
 
+import QtModelsToolkit 1.0
+
 SplitView {
     id: root
 
