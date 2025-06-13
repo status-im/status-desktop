@@ -879,7 +879,7 @@ Item {
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
 
-        isDevBuild: !production
+        isDevBuild: !appMain.rootStore.isProduction
 
         onOpenExternalLink: globalConns.onOpenLink(link)
         onSaveDomainToUnfurledWhitelist: {
@@ -1334,7 +1334,7 @@ Item {
                             id: leaveCommunityMenuItem
                             objectName: "leaveCommunityMenuItem"
                             // allow to leave community for the owner in non-production builds
-                            enabled: model.memberRole !== Constants.memberRole.owner || !production
+                            enabled: model.memberRole !== Constants.memberRole.owner || !appMain.rootStore.isProduction
                             text: {
                                 if (communityContextMenu.isSpectator)
                                     return qsTr("Close Community")
@@ -2013,6 +2013,8 @@ Item {
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
                         sourceComponent: ProfileLayout {
+                            isProduction: appMain.rootStore.isProduction
+
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
 
@@ -2158,7 +2160,7 @@ Item {
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
-                                                           (production && appMain.networksStore.areTestNetworksEnabled)
+                                                           (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
