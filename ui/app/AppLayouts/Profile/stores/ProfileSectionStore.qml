@@ -7,8 +7,6 @@ import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.helpers 1.0
 import utils 1.0
 
-import SortFilterProxyModel 0.2
-
 QtObject {
     id: root
 
@@ -42,6 +40,9 @@ QtObject {
 
     property ProfileStore profileStore: ProfileStore {
         profileModule: profileSectionModuleInst.profileModule
+        sectionsModel: root.mainModuleInst.sectionsModel
+        ownAccounts: root.walletStore.ownAccounts
+        collectibles: root.walletStore.collectibles
     }
 
     property PrivacyStore privacyStore: PrivacyStore {
@@ -69,19 +70,7 @@ QtObject {
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
                             
-    readonly property var communitiesList: SortFilterProxyModel {
-        sourceModel: root.mainModuleInst.sectionsModel
-        filters: ValueFilter {
-            roleName: "sectionType"
-            value: Constants.appSection.community
-        }
-    }
     property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
-
-    readonly property alias ownShowcaseCommunitiesModel: ownShowcaseModels.adaptedCommunitiesSourceModel
-    readonly property alias ownShowcaseAccountsModel: ownShowcaseModels.adaptedAccountsSourceModel
-    readonly property alias ownShowcaseCollectiblesModel: ownShowcaseModels.adaptedCollectiblesSourceModel
-    readonly property alias ownShowcaseSocialLinksModel: ownShowcaseModels.adaptedSocialLinksSourceModel
 
     readonly property alias contactShowcaseCommunitiesModel: contactShowcaseModels.adaptedCommunitiesSourceModel
     readonly property alias contactShowcaseAccountsModel: contactShowcaseModels.adaptedAccountsSourceModel
@@ -92,22 +81,7 @@ QtObject {
         root.contactsStore.requestProfileShowcase(address)
     }
 
-    function requestOwnShowcase() {
-        root.profileStore.requestProfileShowcasePreferences()
-    }
-
     readonly property QObject d: QObject {
-        ProfileShowcaseSettingsModelAdapter {
-            id: ownShowcaseModels
-            communitiesSourceModel: root.communitiesList
-            communitiesShowcaseModel: root.profileStore.showcasePreferencesCommunitiesModel
-            accountsSourceModel: root.walletStore.ownAccounts
-            accountsShowcaseModel: root.profileStore.showcasePreferencesAccountsModel
-            collectiblesSourceModel: root.walletStore.collectibles
-            collectiblesShowcaseModel: root.profileStore.showcasePreferencesCollectiblesModel
-            socialLinksSourceModel: root.profileStore.showcasePreferencesSocialLinksModel
-        }
-
         ProfileShowcaseModelAdapter {
             id: contactShowcaseModels
             communitiesSourceModel: root.communitiesModuleInst.model

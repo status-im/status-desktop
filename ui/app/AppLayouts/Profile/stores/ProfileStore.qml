@@ -1,12 +1,19 @@
 import QtQuick 2.15
 import QtQml 2.15
 
+import StatusQ.Core.Utils 0.1
+
+import AppLayouts.Profile.helpers 1.0
+
 import utils 1.0
+
+import SortFilterProxyModel 0.2
 
 QtObject {
     id: root
 
     property var profileModule
+    property var sectionsModel
 
     property string pubKey: userProfile.pubKey
     property string compressedPubKey: userProfile.compressedPubKey
@@ -40,7 +47,24 @@ QtObject {
     readonly property var showcasePreferencesAssetsModel: profileModule.showcasePreferencesAssetsModel
     readonly property var showcasePreferencesSocialLinksModel: profileModule.showcasePreferencesSocialLinksModel
 
+    readonly property alias ownShowcaseCommunitiesModel: ownShowcaseModels.adaptedCommunitiesSourceModel
+    readonly property alias ownShowcaseAccountsModel: ownShowcaseModels.adaptedAccountsSourceModel
+    readonly property alias ownShowcaseCollectiblesModel: ownShowcaseModels.adaptedCollectiblesSourceModel
+    readonly property alias ownShowcaseSocialLinksModel: ownShowcaseModels.adaptedSocialLinksSourceModel
+
+    property var ownAccounts
+    property var collectibles
+
     readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
+
+    // TODO: Review if this model shoud come from `CommunitiesStore` or in a more appropriate domain
+    readonly property var communitiesList: SortFilterProxyModel {
+        sourceModel: root.sectionsModel
+        filters: ValueFilter {
+            roleName: "sectionType"
+            value: Constants.appSection.community
+        }
+    }
 
     // The following signals wrap the settings / preferences save request responses in one unique result (identity + preferences result)
     signal profileSettingsSaveSucceeded()
@@ -51,6 +75,19 @@ QtObject {
     signal profileIdentitySaveFailed()
     signal profileShowcasePreferencesSaveSucceeded()
     signal profileShowcasePreferencesSaveFailed()
+
+    readonly property QObject d: QObject {
+        ProfileShowcaseSettingsModelAdapter {
+            id: ownShowcaseModels
+            communitiesSourceModel: root.communitiesList
+            communitiesShowcaseModel: root.showcasePreferencesCommunitiesModel
+            accountsSourceModel: root.ownAccounts
+            accountsShowcaseModel: root.showcasePreferencesAccountsModel
+            collectiblesSourceModel: root.collectibles
+            collectiblesShowcaseModel: root.showcasePreferencesCollectiblesModel
+            socialLinksSourceModel: root.showcasePreferencesSocialLinksModel
+        }
+    }
 
     readonly property Connections profileModuleConnections: Connections {
         target: root.profileModule
