@@ -1,15 +1,16 @@
-from gui.components.base_popup import BasePopup
 from gui.objects_map import names
 from gui.screens.settings_wallet import *
 from gui.elements.button import Button
 from gui.elements.text_label import TextLabel
 from gui.elements.check_box import CheckBox
+from gui.elements.object import QObject
 
 
-class RemoveAccountConfirmationSettings(BasePopup):
+class RemoveAccountConfirmationSettings(QObject):
 
     def __init__(self):
-        super(RemoveAccountConfirmationSettings, self).__init__()
+        super(RemoveAccountConfirmationSettings, self).__init__(names.removeAccountConfirmationPopup)
+        self.remove_account_confirmation_popup = QObject(names.removeAccountConfirmationPopup)
         self._remove_confirmation_close_button = Button(names.removeConfirmationCrossCloseButton)
         self._remove_confirmation_title_text = TextLabel(names.removeConfirmationTextTitle)
         self._remove_confirmation_body_text = TextLabel(names.removeConfirmationTextBody)

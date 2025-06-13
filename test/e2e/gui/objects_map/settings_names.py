@@ -169,6 +169,7 @@ settings_Sync_New_Device_Header = {"container": settingsContentBase_ScrollView, 
 settings_Sync_New_Device_SubTitle = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceSubTitleTextLabel", "type": "StatusBaseText", "visible": True}
 
 #Sing out and quit View
+signOutDialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmationDialog", "type": "PopupItem", "visible": True}
 signOutConfirmationButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "signOutConfirmation", "type": "StatusButton", "visible": True}
 
 # ENS usernames View

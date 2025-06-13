@@ -17,9 +17,11 @@ from gui.objects_map import names, onboarding_names
 GENERATED_PAGES_LIMIT = 20
 
 
-class AccountPopup(BasePopup):
+class AccountPopup(QObject):
     def __init__(self):
-        super(AccountPopup, self).__init__()
+        super(AccountPopup, self).__init__(names.mainWallet_AddEditAccountPopup_Content)
+
+        self.add_wallet_account_popup = QObject(names.mainWallet_AddEditAccountPopup_Content)
         self._scroll = Scroll(names.generalView_StatusScrollView)
         self._name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountName)
         self._name_text_input = QObject(names.mainWallet_AddEditAccountPopup_AccountNameComponent)
