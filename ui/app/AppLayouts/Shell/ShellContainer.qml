@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
@@ -65,9 +64,7 @@ Control {
     QtObject {
         id: d
         readonly property int narrowViewThreshold: 660
-        readonly property bool isNarrowView: root.availableWidth < d.narrowViewThreshold ||
-                                             root.Screen.primaryOrientation === Qt.PortraitOrientation ||
-                                             root.Screen.primaryOrientation === Qt.InvertedPortraitOrientation
+        readonly property bool isNarrowView: root.width < root.height
     }
 
     background: MouseArea { // eat every event behind the control
@@ -85,28 +82,28 @@ Control {
         spacing: root.spacing
 
         ShellSearchField {
-            Layout.fillWidth: true
+            Layout.maximumWidth: parent.width
+            Layout.alignment: Qt.AlignHCenter
 
             id: searchField
-
             objectName: "shellSearchField"
-            leftPadding: d.isNarrowView ? 0 : root.width * .1
-            rightPadding: d.isNarrowView ? 0 : root.width * .1
+
+            font.pixelSize: d.isNarrowView ? 23 : 27
+
             placeholderText: qsTr("Jump to a community, chat, account or a dApp...")
         }
 
         ShellGrid {
-            Layout.fillWidth: !d.isNarrowView
-            Layout.preferredWidth: d.isNarrowView ? (3*cellSize) + (3*cellPadding) : implicitWidth
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
+            Layout.rightMargin: -root.horizontalPadding
             Layout.fillHeight: true
 
             objectName: "shellGrid"
 
             model: root.shellEntriesModel
 
-            leftMargin: d.isNarrowView ? 0 : root.width * .1
-            rightMargin: d.isNarrowView ? 0 : root.width * .1
+            delegateWidth: d.isNarrowView ? 140 : 160
+            spacing: d.isNarrowView ? 10 : Theme.padding
 
             onItemActivated: function(key, sectionType, itemId) {
                 root.itemActivated(key, sectionType, itemId)

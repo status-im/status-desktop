@@ -160,7 +160,11 @@ QObject {
     }
 
     function clear() {
-        shellProxyModel.clear()
+        const count = shellProxyModel.ModelCount.count
+        for (let i = 0; i < count; i++) {
+            shellProxyModel.proxyObject(i).pinned = false
+            shellProxyModel.proxyObject(i).timestamp = 0
+        }
     }
 
     ObjectProxyModel {
@@ -365,13 +369,11 @@ QObject {
     }
 
     function load() {
-        let length = 0
         const settingsData = shellSettings.value("ShellEntries")
         let dataArray = []
 
         try {
             dataArray = JSON.parse(settingsData)
-            length = dataArray.length
         } catch (e) {
             console.warn("Error parsing ShellEntries:", e.message)
             return

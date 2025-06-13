@@ -1408,6 +1408,7 @@ Item {
                 id: bannersLayout
 
                 enabled: !localAppSettings.testEnvironment
+                         && appMain.rootStore.mainModuleInst.activeSection.sectionType !== Constants.appSection.shell
                 visible: enabled
 
                 property var updateBanner: null
@@ -1812,7 +1813,6 @@ Item {
 
                     Loader {
                         id: shellLoader
-                        anchors.fill: parent
                         focus: active
                         active: appMain.featureFlagsStore.shellEnabled && appView.currentIndex === Constants.appViewStackIndex.shell
 

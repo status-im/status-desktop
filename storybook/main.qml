@@ -354,4 +354,10 @@ ApplicationWindow {
         context: Qt.ApplicationShortcut
         onActivated: d.performInspection()
     }
+
+    Shortcut {
+        sequences: [StandardKey.Refresh]
+        context: Qt.ApplicationShortcut
+        onActivated: reloader.forceReload()
+    }
 }
