@@ -32,10 +32,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     QT_PLATFORM=gcc_64 \
     QT_VERSION=$QT_VERSION
 
-# to fix : bash: line 1: rcc: command not found
-# since QT6 rcc lives at /opt/qt/6.9.0/gcc_64/libexec/rcc
-ENV PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/libexec:$PATH \
-    QTDIR=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}
+ENV QTDIR=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}
+# Since QT6 rcc is in libexec folder.
+ENV PATH=${QTDIR}/bin:${QTDIR}/libexec:$PATH
 
 ENV LD_LIBRARY_PATH=${QTDIR}/lib:${LD_LIBRARY_PATH}
 
@@ -55,7 +54,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
     libxext6 libxrender1 libxkbcommon-dev libxkbcommon-x11-dev libxcomposite1 libxtst6 \
     libxrandr2 libxcursor1 libxi6 libxcb-randr0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
     libxcb-render-util0 libxcb-shape0 libxcb-render0 libxcb-xinerama0 \
-    autoconf automake libtool gcc g++ \
+    autoconf automake libtool gcc-11 g++-11 \
     libxslt1.1 libxslt1-dev libxkbfile1 libxkbfile-dev \
     libxcb-cursor0 libxcb-cursor-dev \
     libatk1.0-0 libatk1.0-dev \
@@ -87,8 +86,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && apt-get -qq clean
 
 # Install linuxdeployqt
+# built from https://github.com/probonopd/linuxdeployqt/commit/0393b84
 RUN mkdir -p /usr/local/bin \
- && curl -Lo/usr/local/bin/linuxdeployqt "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" \
+ && curl -Lo/usr/local/bin/linuxdeployqt "https://status-misc.ams3.digitaloceanspaces.com/desktop/linuxdeployqt-20250615-0393b84-x86_64.AppImage" \
  && chmod a+x /usr/local/bin/linuxdeployqt
 
 # Reconfigure locale
