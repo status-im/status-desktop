@@ -7,9 +7,7 @@ export GST_PLUGIN_SYSTEM_PATH="${APPDIR}/usr/lib/gstreamer-1.0"
 export GST_PLUGIN_SYSTEM_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib/:${APPDIR}/usr/lib/nss:${LD_LIBRARY_PATH}"
 export QT_QPA_PLATFORM="xcb"
-# TODO: Remove once qt 5.15.2 support is dropped
-# Fixing bug: https://bugs.launchpad.net/ubuntu/+source/glibc/+bug/1944468
-export QTWEBENGINE_CHROMIUM_FLAGS="${QTWEBENGINE_CHROMIUM_FLAGS} --disable-seccomp-filter-sandbox"
+export QTWEBENGINE_DISABLE_SANDBOX=1
 
 # Set up pcsc-lite environment
 export PCSC_DRIVERS_DIR="${APPDIR}/usr/lib/pcsc/drivers"

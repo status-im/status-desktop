@@ -52,6 +52,7 @@ o_StatusListView = {"container": statusDesktop_mainWindow_overlay, "type": "Popu
 """ Onboarding """
 
 # Back Up Your Seed Phrase Popup
+backUpSeedModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal", "type": "PopupItem", "visible": True}
 o_PopupItem = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
 i_have_a_pen_and_paper_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_havePen", "type": "StatusCheckBox", "visible": True}
 i_know_where_I_ll_store_it_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_storeIt", "type": "StatusCheckBox", "visible": True}
@@ -76,6 +77,7 @@ contactRequest_SayWhoYouAre_Input = {"container": statusDesktop_mainWindow_overl
 contactRequest_Send_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_Send_Button", "type": "StatusButton"}
 
 # User Status Profile Menu
+onlineIdentifier = {"container": statusDesktop_mainWindow_overlay, "objectName": "UserStatusContextMenu", "type": "PopupItem", "visible": True}
 onlineIdentifierProfileHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "onlineIdentifierProfileHeader", "type": "ProfileHeader", "visible": True}
 userContextmenu_AlwaysActiveButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAlwaysOnlineAction", "type": "StatusMenuItem", "visible": True}
 userContextmenu_InActiveButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuInactiveAction", "type": "StatusMenuItem", "visible": True}
@@ -86,20 +88,20 @@ userLabel_StyledText = {"container": statusDesktop_mainWindow_overlay, "type": "
 o_StatusIdenticonRing = {"container": statusDesktop_mainWindow_overlay, "type": "StatusIdenticonRing", "unnamed": 1, "visible": True}
 
 # My Profile Popup (online identifier)
-ProfileContentItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialogView", "type": "ContentItem", "visible": True}
-ProfileHeader_userImage = {"container": ProfileContentItem, "objectName": "ProfileDialog_userImage", "type": "UserImage", "visible": True}
-ProfilePopup_displayName = {"container": ProfileContentItem, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
-ProfilePopup_editButton = {"container": ProfileContentItem, "objectName": "editProfileButton", "type": "StatusButton", "visible": True}
-share_Profile_StatusFlatButton = {"checkable": False, "container": ProfileContentItem, "objectName": "shareProfileButton", "type": "StatusFlatButton", "visible": True}
-ProfilePopup_SendContactRequestButton = {"container": ProfileContentItem, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
-profileDialog_userEmojiHash_EmojiHash = {"container": ProfileContentItem, "objectName": "ProfileDialog_userEmojiHash", "type": "EmojiHash", "visible": True}
-edit_TextEdit = {"container": ProfileContentItem, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+ProfileDialogView = {"container": statusDesktop_mainWindow_overlay, "id": "profileView", "type": "ProfileDialogView", "unnamed": 1, "visible": True}
+ProfileHeader_userImage = {"container": ProfileDialogView, "objectName": "ProfileDialog_userImage", "type": "UserImage", "visible": True}
+ProfilePopup_displayName = {"container": ProfileDialogView, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
+ProfilePopup_editButton = {"container": ProfileDialogView, "objectName": "editProfileButton", "type": "StatusButton", "visible": True}
+share_Profile_StatusFlatButton = {"checkable": False, "container": ProfileDialogView, "objectName": "shareProfileButton", "type": "StatusFlatButton", "visible": True}
+ProfilePopup_SendContactRequestButton = {"container": ProfileDialogView, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
+profileDialog_userEmojiHash_EmojiHash = {"container": ProfileDialogView, "objectName": "ProfileDialog_userEmojiHash", "type": "EmojiHash", "visible": True}
+edit_TextEdit = {"container": ProfileDialogView, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 https_status_app_StatusBaseText = {"container": edit_TextEdit, "type": "StatusBaseText", "unnamed": 1, "visible": True}
-copy_icon_CopyButton = {"container": ProfileContentItem, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
-request_ID_verification_StatusFlatButton = {"checkable": False, "container": ProfileContentItem, "objectName": "requestIDVerification_StatusItem", "type": "StatusFlatButton", "visible": True}
+copy_icon_CopyButton = {"container": ProfileDialogView, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
+request_ID_verification_StatusFlatButton = {"checkable": False, "container": ProfileDialogView, "objectName": "requestIDVerification_StatusItem", "type": "StatusFlatButton", "visible": True}
 send_Message_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "sendMessageButton", "type": "StatusButton", "visible": True}
-send_contact_request_StatusButton = {"checkable": False, "container": ProfileContentItem, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
-review_contact_request_StatusButton = {"checkable": False, "container": ProfileContentItem, "objectName": "profileDialog_reviewContactRequestButton", "type": "StatusButton", "visible": True}
+send_contact_request_StatusButton = {"checkable": False, "container": ProfileDialogView, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}
+review_contact_request_StatusButton = {"checkable": False, "container": ProfileDialogView, "objectName": "profileDialog_reviewContactRequestButton", "type": "StatusButton", "visible": True}
 profileDialogView_ContentItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialogView", "type": "ContentItem", "visible": True}
 menuButton_StatusFlatButton = {"checkable": False, "container": profileDialogView_ContentItem, "id": "menuButton", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
 block_user_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "blockUserStatusAction", "type": "StatusMenuItem", "visible": True}
@@ -160,6 +162,8 @@ delete_Category_StatusButton = {"checkable": False, "container": statusDesktop_m
 save_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryBtn", "type": "StatusButton", "visible": True}
 
 # Invite Contacts Popup
+inviteFriendsToCommunityPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup", "type": "PopupItem", "visible": True}
+closeButton = {"container": inviteFriendsToCommunityPopup, "objectName": "headerCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 communityProfilePopupInviteFrindsPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteFrindsPanel_ColumnLayout", "type": "ProfilePopupInviteFriendsPanel", "visible": True}
 communityProfilePopupInviteMessagePanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteMessagePanel_ColumnLayout", "type": "ProfilePopupInviteMessagePanel", "visible": True}
 o_StatusMemberListItem = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("statusMemberListItem*"), "type": "StatusMemberListItem", "visible": True}
@@ -198,6 +202,7 @@ introduceYourselfEditProfileButton = {"container": statusDesktop_mainWindow_over
 """ Settings """
 
 # Send Contact Request
+contactRequestToChatKeyModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestToChatKeyModal", "type": "PopupItem", "visible": True}
 sendContactRequestModal_ChatKey_Input_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_ChatKey_Input", "type": "TextEdit", "visible": True}
 sendContactRequestModal_SayWhoYouAre_Input_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_SayWhoYouAre_Input", "type": "TextEdit", "visible": True}
 send_Contact_Request_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_Send_Button", "type": "StatusButton", "visible": True}
@@ -263,19 +268,16 @@ save_and_restart_Status_StatusButton = {"checkable": False, "container": statusD
 restart_required_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "mustBeRestartedText","type": "StatusBaseText", "visible": True}
 
 # Add saved address popup
+addEditSavedAddressPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "AddEditSavedAddressPopup", "type": "PopupItem", "visible": True}
 mainWallet_Saved_Addreses_Popup_Name_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressNameInput", "type": "TextEdit"}
 mainWallet_Saved_Addreses_Popup_Address_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressAddressInput", "type": "StatusInput"}
 mainWallet_Saved_Addreses_Popup_Address_Input_Edit = {"container": statusDesktop_mainWindow, "objectName": "savedAddressAddressInputEdit", "type": "TextEdit"}
 mainWallet_Saved_Addreses_Popup_Address_Add_Button = {"container": statusDesktop_mainWindow, "objectName": "addSavedAddress", "type": "StatusButton"}
 
 # Context Menu
-contextMenu_PopupItem = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
+contextMenu_PopupItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusMenu", "type": "PopupItem", "visible": True}
 contextMenuItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 contextMenuItem_AddWatchOnly = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-AddWatchOnlyAccountAction*"), "type": "StatusMenuItem", "visible": True}
-contextMenuItem_Delete = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-DeleteAction*"), "type": "StatusMenuItem", "visible": True}
-contextMenuItem_Edit = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-EditAction*"), "type": "StatusMenuItem", "visible": True}
-contextMenuItem_Copy_Address = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-CopyAddressAction*"), "type": "StatusSuccessAction", "visible": True}
-contextMenuItem_HideInclude = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-HideFromTotalBalance*"), "type": "StatusMenuItem", "visible": True}
 contextSavedAddressEdit = {"container": statusDesktop_mainWindow, "objectName": "editSavedAddress", "type": "StatusMenuItem", "visible": True}
 contextSavedAddressDelete = {"container": statusDesktop_mainWindow, "objectName": "deleteSavedAddress", "type": "StatusMenuItem", "visible": True}
 
@@ -301,6 +303,8 @@ delete_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow
 confirm_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "confirmDeleteCategoryButton", "type": "StatusButton", "visible": True}
 confirm_permission_delete_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "confirmButton", "type": "StatusButton", "unnamed": 1, "visible": True}
 confirm_delete_message_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "chatButtonsPanelConfirmDeleteMessageButton", "text": "Confirm", "type": "StatusButton", "visible": True}
+confirmationDialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmationDialog", "type": "PopupItem", "visible": True}
+confirmationDeleteMessagePopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "DeleteMessageConfirmationPopup", "type": "PopupItem", "visible": True}
 
 # Authenticate Popup
 keycardSharedPopupContent_KeycardPopupContent = {"container": statusDesktop_mainWindow_overlay, "objectName": "KeycardSharedPopupContent", "type": "KeycardPopupContent", "visible": True}
@@ -322,11 +326,12 @@ addAccountPopup_GeneratedAddressesListPageIndicatior_StatusPageIndicator = {"con
 page_StatusBaseButton = {"checkable": False, "container": addAccountPopup_GeneratedAddressesListPageIndicatior_StatusPageIndicator, "objectName": RegularExpression("Page-*"), "type": "StatusBaseButton", "visible": True}
 mainWindow_DisabledTooltipButton = {"container": statusDesktop_mainWindow, "type": "DisabledTooltipButton", "icon": "send", "visible": True}
 
-# Add/Edit account popup:
+"""Add/ edit wallet account popup"""
+
 grid_Grid = {"container": statusDesktop_mainWindow_overlay, "id": "grid", "type": "Grid", "unnamed": 1, "visible": True}
 color_StatusColorRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "type": "StatusColorRadioButton", "unnamed": 1, "visible": True}
 
-mainWallet_AddEditAccountPopup_Content = {"container": statusDesktop_mainWindow, "objectName": "AddAccountPopup-Content", "type": "Item", "visible": True}
+mainWallet_AddEditAccountPopup_Content = {"container": statusDesktop_mainWindow_overlay, "objectName": "AddAccountPopup", "type": "PopupItem", "visible": True}
 mainWallet_AddEditAccountPopup_PrimaryButton = {"container": statusDesktop_mainWindow, "objectName": "AddAccountPopup-PrimaryButton", "type": "StatusButton", "visible": True}
 mainWallet_AddEditAccountPopup_BackButton = {"container": statusDesktop_mainWindow, "objectName": "AddAccountPopup-BackButton", "type": "StatusBackButton", "visible": True}
 mainWallet_AddEditAccountPopup_AccountNameComponent = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "AddAccountPopup-AccountName", "type": "StatusInput", "visible": True}
@@ -387,6 +392,7 @@ editWalletSettings_ColorSelector = {"container": statusDesktop_mainWindow_overla
 editWalletSettings_EmojiItem = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("statusEmoji_*"), "type": "StatusEmoji"}
 
 # Remove Account from settings popup
+removeAccountConfirmationPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "RemoveAccountConfirmationPopup", "type": "PopupItem", "visible": True}
 removeConfirmationCrossCloseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "close-icon", "type": "StatusIcon", "visible": True}
 removeConfirmationTextTitle = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerTitle", "type": "StatusBaseText", "visible": True}
 removeConfirmationTextBody = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
@@ -435,6 +441,7 @@ mainWindow_secureYourSeedPhraseBanner_ModuleWarning = {"container": statusDeskto
 mainWindow_secureYourSeedPhraseBanner_Button = {"container": statusDesktop_mainWindow, "id": "button", "text": "Back up now", "type": "Button", "unnamed": 1, "visible": True}
 
 # Sync new device popup
+setupSyncingPopup= {"container": statusDesktop_mainWindow_overlay, "objectName": "SetupSyncingPopup", "type": "PopupItem", "visible": True}
 copy_SyncCodeStatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncCodeCopyButton", "type": "StatusButton", "visible": True}
 done_SyncCodeStatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncAnewDeviceNextButton", "type": "StatusButton", "visible": True}
 syncCodeInput_StatusPasswordInput = {"container": statusDesktop_mainWindow_overlay, "id": "syncCodeInput", "type": "StatusPasswordInput", "unnamed": 1, "visible": True}
@@ -442,6 +449,7 @@ close_SyncCodeStatusFlatRoundButton = {"container": statusDesktop_mainWindow_ove
 errorView_SyncingErrorMessage = {"container": statusDesktop_mainWindow_overlay, "id": "errorView", "type": "SyncingErrorMessage", "unnamed": 1, "visible": True}
 
 # Edit group name and image popup
+renameGroupPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "RenameGroupPopup", "type": "PopupItem", "visible": True}
 groupChatEdit_name_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_name", "type": "TextEdit", "visible": True}
 save_changes_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_save", "type": "StatusButton", "visible": True}
 
@@ -531,12 +539,6 @@ signSendModalRejectButton = {"container": statusDesktop_mainWindow_overlay, "obj
 send_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "sendMenuItem", "type": "StatusMenuItem", "visible": True}
 receive_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "receiveMenuItem", "type": "StatusMenuItem", "visible": True}
 
-# Receive popup
-tabBar_StatusSwitchTabBar = {"container": statusDesktop_mainWindow_overlay, "id": "tabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
-accountSelector_AccountSelectorHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "accountSelector", "type": "AccountSelectorHeader", "visible": True}
-textContent_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "textContent", "type": "StatusBaseText", "visible": True}
-greenCircleAroundIcon_Rectangle = {"container": statusDesktop_mainWindow_overlay, "id": "greenCircleAroundIcon", "type": "Rectangle", "unnamed": 1, "visible": True}
-qrCodeImage_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "qrCodeImage", "type": "Image", "visible": True}
 
 # Bridge popup
 holdingSelector_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "holdingSelector", "type": "TokenSelectorNew", "visible": True}

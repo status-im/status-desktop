@@ -27,6 +27,7 @@ useRecoveryPhraseButton = {"container": buttonFrame, "objectName": "btnCreateWit
 useEmptyKeycardButton = {"container": statusDesktop_mainWindow, "objectName": "btnCreateWithEmptyKeycard", "type": "ListItemButton", "visible": True}
 
 # Log in by syncing checklist popup
+statusDialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusDialog", "type": "PopupItem", "visible": True}
 connectBothDevicesOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack1", "type": "StatusCheckBox", "visible": True}
 makeSureYouAreLoggedOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack2", "type": "StatusCheckBox", "visible": True}
 disableTheFirewallOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack3", "type": "StatusCheckBox", "visible": True}

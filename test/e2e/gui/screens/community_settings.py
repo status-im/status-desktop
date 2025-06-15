@@ -9,7 +9,7 @@ import driver
 from gui.components.community.ban_member_popup import BanMemberPopup
 from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
-from gui.components.delete_popup import DeletePermissionPopup
+from gui.components.delete_popup import ConfirmationPermissionPopup
 from gui.components.kick_member_popup import KickMemberPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
@@ -419,9 +419,9 @@ class PermissionsIntroView(QObject):
         return PermissionsSettingsView().wait_until_appears()
 
     @allure.step('Click delete permission button')
-    def click_delete_permission(self) -> 'DeletePermissionPopup':
+    def click_delete_permission(self) -> 'ConfirmationPermissionPopup':
         self._delete_permission_button.click()
-        return DeletePermissionPopup().wait_until_appears()
+        return ConfirmationPermissionPopup().wait_until_appears()
 
     @allure.step('Click duplicate permission button')
     def click_duplicate_permission(self) -> 'PermissionsSettingsView':
