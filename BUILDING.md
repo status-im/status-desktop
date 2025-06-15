@@ -45,11 +45,11 @@ Run with **Administrator** privileges:
 choco install make cmake mingw wget
 ```
 
-#### Install Go 1.22
+#### Install Go 1.23
 
-Download and install Go 1.22 from the [official website](https://go.dev/dl/).
+Download and install Go 1.23 from the [official website](https://go.dev/dl/).
 
-> ⚠️ Note: 1.22 version is a strict requirement for now. Version 1.23 won't work
+> ⚠️ Note: 1.23 version is a strict requirement for now. Version 1.24 won't work
 
 > ⚠️ Note: There is a script `scripts/windows_build_setup.ps1`, but it may be outdated.
 
@@ -71,7 +71,7 @@ wget https://launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/
 sudo dpkg -i libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
 ```
 
-Install **Go 1.22**:
+Install **Go 1.23**:
 
 Download and install from the [official website](https://go.dev/dl/).
 
@@ -127,7 +127,7 @@ Install [Homebrew](https://brew.sh/) if not already installed.
 #### Install Required Packages
 
 ```bash
-brew install cmake pkg-config go@1.22 qt@5 jq nvm yarn protobuf
+brew install cmake pkg-config go@1.23 qt@5 jq nvm yarn protobuf
 ```
 
 
