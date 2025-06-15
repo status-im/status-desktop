@@ -33,7 +33,7 @@ function Install-Dependencies {
     if (!(scoop bucket list | Where { $_.Name -eq "extras" })) {
         scoop bucket add extras
     }
-    scoop install --global go@1.22.10
+    scoop install --global go@1.23.10
     scoop install --global protobuf@3.20.0
     scoop install --global vcredist2022
     scoop install --global cmake@3.31.6
