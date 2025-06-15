@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-GO_VERSION="1.22.10"
+GO_VERSION="1.23.10"
 GO_INSTALL_DIR="/usr/local/go"
 QT_VERSION="6.9.0"
 QT_INSTALL_DIR="/opt/qt"
@@ -69,15 +69,15 @@ function install_golang {
   fi
   declare -A GO_SHA256_MAP
   GO_SHA256_MAP=(
-    ["amd64"]="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252092"
-    ["arm64"]="5213c5e32fde3bd7da65516467b7ffbfe40d2bb5a5f58105e387eef450583eec"
-    ["armv6l"]="a7bbbc80fe736269820bbdf3555e91ada5d18a5cde2276aac3b559bc1d52fc70"
+    ["amd64"]="535f9f81802499f2a7dbfa70abb8fda3793725fcc29460f719815f6e10b5fd60"
+    ["arm64"]="bfb1f1df7173f44648ee070a39ab0481068632f595305a699d89cd56a33b8081"
+    ["armv6l"]="b6e00c9a72406d394b9f167e74670e28b72ed559cca8115b21be1cb9d5316cb4"
   )
   echo "Install GoLang ${GO_VERSION}"
   GO_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
   GO_ARCH=$(get_go_arch)
   GO_TARBALL="go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
-  # example: https://dl.google.com/go/go1.22.10.linux-amd64.tar.gz
+  # example: https://dl.google.com/go/go1.23.10.linux-amd64.tar.gz
   wget -q "https://dl.google.com/go/${GO_TARBALL}" -O "${GO_TARBALL}"
   echo "${GO_SHA256_MAP[${GO_ARCH}]} ${GO_TARBALL}" | sha256sum -c
   tar -C "${GO_INSTALL_DIR}" -xzf "${GO_TARBALL}"
