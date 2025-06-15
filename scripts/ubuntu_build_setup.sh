@@ -3,7 +3,7 @@ set -eo pipefail
 
 GO_VERSION="1.22.10"
 GO_INSTALL_DIR="/usr/local/go"
-QT_VERSION="5.15.2"
+QT_VERSION="6.9.0"
 QT_INSTALL_DIR="/opt/qt"
 
 function check_version {
@@ -47,7 +47,10 @@ function install_qt {
   apt install -y python3-pip
   pip install -U pip
   pip install aqtinstall
-  aqt install-qt linux desktop ${QT_VERSION} gcc_64 -m qtwebengine -O ${QT_INSTALL_DIR}
+  aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 -m qtwebchannel \
+  qtwebview qtwebsockets qt5compat \
+  qtmultimedia qtwebengine qtpositioning \
+  qtserialport qtshadertools qtimageformats qtscxml -O ${QT_INSTALL_DIR}
 }
 
 function get_go_arch {

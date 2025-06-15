@@ -3,16 +3,11 @@ set -eo pipefail
 
 GO_VERSION="1.22.10"
 GO_INSTALL_DIR="/usr/local/go"
-QT_VERSION="5.15.16_1"
-# https://github.com/Homebrew/homebrew-core/commit/2c1970eb750f254ecac6640e7e816fd77a5e065e
-QT_BREW_FORMULA_COMMIT_SHA="2c1970eb750f254ecac6640e7e816fd77a5e065e"
-QT_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${QT_BREW_FORMULA_COMMIT_SHA}/Formula/q/qt%405.rb"
-# https://github.com/Homebrew/homebrew-core/commit/b4e46db74e74a8c1650b38b1da222284ce1ec5ce
+QT_VERSION="6.9.0"
 CMAKE_VERSION="3.31.6"
 CMAKE_BREW_FORMULA_COMMIT_SHA="b4e46db74e74a8c1650b38b1da222284ce1ec5ce"
 CMAKE_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${CMAKE_BREW_FORMULA_COMMIT_SHA}/Formula/c/cmake.rb"
 BREW_PREFIX=$(brew --prefix)
-QT_INSTALL_DIR="${BREW_PREFIX}/Cellar/qt@5/${QT_VERSION}"
 CMAKE_INSTALL_DIR="${BREW_PREFIX}/Cellar/cmake/${CMAKE_VERSION}"
 
 function check_version {
@@ -24,18 +19,12 @@ function check_version {
 
 function install_build_dependencies {
   echo "Install build dependencies"
-  brew install pkg-config libtool jq node@18 yarn protoc-gen-go
+  brew install pkg-config libtool jq node@18 yarn protoc-gen-go aqtinstall
 }
 
 function install_qt {
   echo "Installing QT ${QT_VERSION}"
-
-  echo "Detected Homebrew prefix: ${BREW_PREFIX}"
-  echo "Qt will be installed to: ${QT_INSTALL_DIR}"
-
-  curl -o /tmp/qt@5.rb "${QT_FORMULA_URL}"
-  brew install /tmp/qt@5.rb
-  rm /tmp/qt@5.rb
+  aqt install-qt mac desktop ${QT_VERSION} clang_64 -m all
 }
 
 function install_cmake {
@@ -86,7 +75,6 @@ SUCCESS!
 
 Before you attempt to build status-desktop you'll need a few environment variables set:
 
-export QTDIR=${QT_INSTALL_DIR}
 export PATH=\$QTDIR:\$QTDIR/bin:\$PATH
 export CMAKE_PREFIX_PATH=${CMAKE_INSTALL_DIR}
 "
