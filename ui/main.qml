@@ -62,6 +62,15 @@ StatusWindow {
     }
     visible: true
 
+    function updatePaddings() {
+        if (applicationWindow.width < applicationWindow.minimumWidth) {
+            const coefficient = applicationWindow.width / applicationWindow.minimumWidth;
+            Theme.updatePaddings(Theme.defaultPadding * coefficient);
+        } else {
+            Theme.updatePaddings(Theme.defaultPadding);
+        }
+    }
+
     function restoreAppState() {
         let geometry = localAppSettings.geometry;
         let visibility = localAppSettings.visibility;
@@ -113,7 +122,10 @@ StatusWindow {
 
     onXChanged: Qt.callLater(storeAppState)
     onYChanged: Qt.callLater(storeAppState)
-    onWidthChanged: Qt.callLater(storeAppState)
+    onWidthChanged: {
+        updatePaddings()
+        Qt.callLater(storeAppState)
+    }
     onHeightChanged: Qt.callLater(storeAppState)
 
     QtObject {

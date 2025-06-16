@@ -147,12 +147,21 @@ QtObject {
     property int tertiaryTextFontSize: 12
     property int asideTextFontSize: 10
 
-    property int xlPadding: 32
-    property int bigPadding: 24
-    property int padding: 16
-    property int halfPadding: 8
-    property int smallPadding: 10
-    property int radius: 8
+    // Responsive properties used for responsive components (e.g. containers)
+    property int xlPadding: defaultXlPadding
+    property int bigPadding: defaultBigPadding
+    property int padding: defaultPadding
+    property int halfPadding: defaultHalfPadding
+    property int smallPadding: defaultSmallPadding
+    property int radius: defaultRadius
+
+    // Constant properties used for non-responsive components (e.g. buttons)
+    readonly property int defaultXlPadding: defaultPadding * 2
+    readonly property int defaultBigPadding: defaultPadding * 1.5
+    readonly property int defaultPadding: 16
+    readonly property int defaultHalfPadding: defaultPadding / 2
+    readonly property int defaultSmallPadding: defaultPadding * 0.75
+    readonly property int defaultRadius: defaultHalfPadding
 
     readonly property real disabledOpacity: 0.3
     readonly property real pressedOpacity: 0.7
@@ -213,6 +222,15 @@ QtObject {
                 asideTextFontSize = 13
                 break;
         }
+    }
+
+    function updatePaddings(basePadding:int) {
+        xlPadding = basePadding * 2
+        bigPadding = basePadding * 1.5
+        padding = basePadding
+        halfPadding = basePadding / 2
+        smallPadding = basePadding * 0.75
+        radius = basePadding
     }
 
     enum AnimationDuration {
