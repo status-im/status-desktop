@@ -20,6 +20,8 @@ QtObject {
 
     readonly property bool fetchingUpdate: aboutModuleInst.fetching
 
+    property bool localBackupEnabled: false
+
     property ContactsStore contactsStore: ContactsStore {}
 
     property AdvancedStore advancedStore: AdvancedStore {
@@ -35,6 +37,7 @@ QtObject {
 
     property DevicesStore devicesStore: DevicesStore {
         devicesModule: profileSectionModuleInst.devicesModule
+        syncModule: profileSectionModuleInst.syncModule
     }
 
     property NotificationsStore notificationsStore: NotificationsStore {
