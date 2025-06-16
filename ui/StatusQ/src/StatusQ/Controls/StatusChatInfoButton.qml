@@ -47,14 +47,14 @@ Button {
     verticalPadding: 2
     spacing: 4
 
-    background: Rectangle {
-        radius: 8
-        color: root.enabled && root.hovered ? Theme.palette.baseColor2 : "transparent"
+    HoverHandler {
+        enabled: root.hoverEnabled
+        cursorShape: hovered ? Qt.PointingHandCursor : undefined
+    }
 
-        HoverHandler {
-            enabled: root.hoverEnabled
-            cursorShape: enabled ? Qt.PointingHandCursor : undefined
-        }
+    background: Rectangle {
+        radius: Theme.radius
+        color: root.enabled && root.hovered ? Theme.palette.baseColor2 : "transparent"
     }
 
     component TruncatedTextWithTooltip: StatusBaseText {
@@ -113,7 +113,7 @@ Button {
                             var iconName = "tiny/channel"
                             if (root.requiresPermissions)
                                 iconName = root.locked ? "tiny/channel-locked" : "tiny/channel-unlocked"
-                            return Theme.palette.name === "light" ? iconName : iconName+"-white"
+                            return iconName
                         }
                         default:
                             return ""
@@ -124,7 +124,6 @@ Button {
                 TruncatedTextWithTooltip {
                     Layout.fillWidth: true
                     Layout.maximumWidth: Math.ceil(implicitWidth)
-                    Layout.alignment: Qt.AlignVCenter
                     objectName: "statusChatInfoButtonNameText"
                     text: root.title
                     color: root.muted ? Theme.palette.directColor5 : Theme.palette.directColor1
@@ -170,8 +169,8 @@ Button {
                     text: root.subTitle
                     visible: text
                     color: Theme.palette.baseColor1
-                    font.pixelSize: 12
-                    onLinkActivated: root.linkActivated(link)
+                    font.pixelSize: Theme.tertiaryTextFontSize
+                    onLinkActivated: (link) => root.linkActivated(link)
                 }
 
                 Rectangle {
@@ -197,7 +196,7 @@ Button {
                     Layout.fillWidth: true
                     Layout.maximumWidth: Math.ceil(implicitWidth)
                     text: qsTr("%Ln pinned message(s)", "", root.pinnedMessagesCount)
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     font.underline: hovered
                     visible: root.pinnedMessagesCount
                     color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
