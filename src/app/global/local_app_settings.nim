@@ -27,7 +27,7 @@ const DEFAULT_LAS_KEY_METRICS_POPUP_SEEN = false
 const LS_KEY_SEEN_NETWORK_CHAINS = "global/seenNetworkChains"
 const DEFAULT_SEEN_NETWORK_CHAINS = "[]"
 when defined(android) or defined(ios):
-  const DEFAULT_VISIBILITY = 5 #full screen visibility, from qml
+  const DEFAULT_VISIBILITY = 4 #maximized visibility, from qml
 else:
   const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
 
