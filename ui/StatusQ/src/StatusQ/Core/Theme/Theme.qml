@@ -140,12 +140,39 @@ QtObject {
         }
     }
 
-    property int secondaryAdditionalTextSize: 17
-    property int primaryTextFontSize: 15
-    property int secondaryTextFontSize: 14
-    property int additionalTextSize: 13
-    property int tertiaryTextFontSize: 12
-    property int asideTextFontSize: 10
+    readonly property int secondaryAdditionalTextSize: fontSize17
+    readonly property int primaryTextFontSize: fontSize15
+    readonly property int secondaryTextFontSize: fontSize14
+    readonly property int additionalTextSize: fontSize13
+    readonly property int tertiaryTextFontSize: fontSize12
+    readonly property int asideTextFontSize: fontSize10
+
+    readonly property int fontSize9: 9 + dynamicFontUnits
+    readonly property int fontSize10: 10 + dynamicFontUnits
+    readonly property int fontSize11: 11 + dynamicFontUnits
+    readonly property int fontSize12: 12 + dynamicFontUnits
+    readonly property int fontSize13: 13 + dynamicFontUnits
+    readonly property int fontSize14: 14 + dynamicFontUnits
+    readonly property int fontSize15: 15 + dynamicFontUnits
+    readonly property int fontSize16: 16 + dynamicFontUnits
+    readonly property int fontSize17: 17 + dynamicFontUnits
+    readonly property int fontSize18: 18 + dynamicFontUnits
+    readonly property int fontSize19: 19 + dynamicFontUnits
+    readonly property int fontSize20: 20 + dynamicFontUnits
+    readonly property int fontSize21: 21 + dynamicFontUnits
+    readonly property int fontSize22: 22 + dynamicFontUnits
+    readonly property int fontSize23: 23 + dynamicFontUnits
+    readonly property int fontSize24: 24 + dynamicFontUnits
+    readonly property int fontSize25: 25 + dynamicFontUnits
+    readonly property int fontSize26: 26 + dynamicFontUnits
+    readonly property int fontSize27: 27 + dynamicFontUnits
+    readonly property int fontSize28: 28 + dynamicFontUnits
+    readonly property int fontSize29: 29 + dynamicFontUnits
+    readonly property int fontSize30: 30 + dynamicFontUnits
+    readonly property int fontSize34: 34 + dynamicFontUnits
+    readonly property int fontSize38: 38 + dynamicFontUnits
+    readonly property int fontSize40: 40 + dynamicFontUnits
+
 
     // Responsive properties used for responsive components (e.g. containers)
     property int xlPadding: defaultXlPadding
@@ -166,60 +193,32 @@ QtObject {
     readonly property real disabledOpacity: 0.3
     readonly property real pressedOpacity: 0.7
 
+    property int dynamicFontUnits: 0
+
     function updateFontSize(fontSize:int) {
         switch (fontSize) {
             case Theme.FontSizeXS:
-                secondaryAdditionalTextSize = 15
-                primaryTextFontSize = 13
-                secondaryTextFontSize = 12
-                additionalTextSize = 11
-                tertiaryTextFontSize = 10
-                asideTextFontSize = 8
+                dynamicFontUnits = -2
                 break;
 
             case Theme.FontSizeS:
-                secondaryAdditionalTextSize = 16
-                primaryTextFontSize = 14
-                secondaryTextFontSize = 13
-                additionalTextSize = 12
-                tertiaryTextFontSize = 11
-                asideTextFontSize = 9
+                dynamicFontUnits = -1
                 break;
 
             case Theme.FontSizeM:
-                secondaryAdditionalTextSize = 17
-                primaryTextFontSize = 15
-                secondaryTextFontSize = 14
-                additionalTextSize = 13
-                tertiaryTextFontSize = 12
-                asideTextFontSize = 10
+                dynamicFontUnits = 0
                 break;
 
             case Theme.FontSizeL:
-                secondaryAdditionalTextSize = 18
-                primaryTextFontSize = 16
-                secondaryTextFontSize = 15
-                additionalTextSize = 14
-                tertiaryTextFontSize = 13
-                asideTextFontSize = 11
+                dynamicFontUnits = 1
                 break;
 
             case Theme.FontSizeXL:
-                secondaryAdditionalTextSize = 19
-                primaryTextFontSize = 17
-                secondaryTextFontSize = 16
-                additionalTextSize = 15
-                tertiaryTextFontSize = 14
-                asideTextFontSize = 12
+                dynamicFontUnits = 2
                 break;
 
             case Theme.FontSizeXXL:
-                secondaryAdditionalTextSize = 20
-                primaryTextFontSize = 18
-                secondaryTextFontSize = 17
-                additionalTextSize = 16
-                tertiaryTextFontSize = 15
-                asideTextFontSize = 13
+                dynamicFontUnits = 3
                 break;
         }
     }

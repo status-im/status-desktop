@@ -98,7 +98,7 @@ Item {
                 }
                 opacity: 0.7
                 font.weight: Font.Bold
-                font.pixelSize: 18
+                font.pixelSize: Theme.fontSize18
                 color: Theme.palette.indirectColor1
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -200,7 +200,7 @@ Item {
                         :
                         ".stateofus.eth"
                     font.weight: Font.Bold
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     anchors.leftMargin: Theme.padding
                     color: Theme.palette.directColor1
                 }
@@ -210,7 +210,7 @@ Item {
                         qsTr("I want a stateofus.eth domain")
                         :
                         qsTr("I own a name on another domain")
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     color: Theme.palette.primaryColor1
                     anchors.right: parent.right
                     anchors.rightMargin: Theme.padding

@@ -63,7 +63,7 @@ Badge {
 
             color: Theme.palette.baseColor1
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
 
             StatusMouseArea {
                 id: replyArea

@@ -36,7 +36,7 @@ SplitView {
                     height: 16
                     padding: 0
                     text: "📋"
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.asideTextFontSize
                     onClicked: ClipboardUtils.setText(textLabel.text)
                     ToolTip.text: "Copy color name"
                     ToolTip.visible: hovered
@@ -57,7 +57,7 @@ SplitView {
                     height: 16
                     padding: 0
                     text: "📋"
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.asideTextFontSize
                     onClicked: ClipboardUtils.setText(colorLabel.text)
                     ToolTip.text: "Copy color value"
                     ToolTip.visible: hovered

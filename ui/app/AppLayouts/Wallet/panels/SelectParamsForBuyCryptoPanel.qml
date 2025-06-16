@@ -57,7 +57,7 @@ ColumnLayout {
         StatusBaseText {
             text: qsTr("Select network")
             color: Theme.palette.directColor1
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 22
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter
@@ -81,7 +81,7 @@ ColumnLayout {
         StatusBaseText {
             text: qsTr("Select asset")
             color: Theme.palette.directColor1
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 22
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter

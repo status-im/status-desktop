@@ -15,7 +15,7 @@ ColumnLayout {
         objectName: "permissionsTitle"
         text: qsTr("%1 will be able to:").arg(root.dappName)
         Layout.preferredHeight: 18
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         elide: Text.ElideMiddle
         color: Theme.palette.baseColor1
     }
@@ -25,7 +25,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 18
         elide: Text.ElideRight
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
     }
 
     StatusBaseText {
@@ -33,6 +33,6 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 18
         elide: Text.ElideRight
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
     }
 }

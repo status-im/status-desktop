@@ -39,7 +39,7 @@ ProgressBar {
                 anchors.centerIn: parent
                 property bool _fittedInBar: width < bar.width ? true : false
                 text: control.text
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 color: Theme.palette.indirectColor1
                 Component.onCompleted: opacity = width < bar.width ? 1 : 0
                 on_FittedInBarChanged: {

@@ -141,7 +141,7 @@ SplitView {
 
                 Layout.fillWidth: true
 
-                font.pixelSize: 22
+                font.pixelSize: Theme.fontSize22
                 font.italic: true
                 color: "red"
             }
@@ -151,7 +151,7 @@ SplitView {
 
                 Layout.fillWidth: true
 
-                font.pixelSize: 22
+                font.pixelSize: Theme.fontSize22
                 font.italic: true
                 color: "orange"
             }

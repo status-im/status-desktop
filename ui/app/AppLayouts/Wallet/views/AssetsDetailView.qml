@@ -286,7 +286,7 @@ Item {
                                             drawTicks: false,
                                         },
                                         ticks: {
-                                            fontSize: 10,
+                                            fontSize: Theme.asideTextFontSize,
                                             fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                                             padding: 16,
                                             maxRotation: 0,
@@ -315,7 +315,7 @@ Item {
                                             axis.min = 0;
                                         },
                                         ticks: {
-                                            fontSize: 10,
+                                            fontSize: Theme.asideTextFontSize,
                                             fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                                             padding: 8,
                                             callback: function(value, index, ticks) {
@@ -447,7 +447,7 @@ Item {
                     id: tokenDescriptionText
                     width: Math.max(536 , scrollView.availableWidth - websiteBlock.width - 24)
 
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     lineHeight: 22
                     lineHeightMode: Text.FixedHeight
                     text: token && token.description ? token.description : d.tokenDetailsLoading ? Constants.dummyText: ""

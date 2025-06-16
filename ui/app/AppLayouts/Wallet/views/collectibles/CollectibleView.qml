@@ -171,7 +171,7 @@ Control {
             Layout.preferredWidth: root.isLoading ? 88 : width
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             customColor: Theme.palette.baseColor1
             elide: Text.ElideRight
             text: root.isLoading ? Constants.dummyText : root.subTitle

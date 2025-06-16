@@ -59,7 +59,7 @@ Rectangle {
             LayoutMirroring.enabled: true
             LayoutMirroring.childrenInherit: true
             textColor: Theme.palette.baseColor1
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             onToggled: root.toggleSwitch()
         }
         Loader {

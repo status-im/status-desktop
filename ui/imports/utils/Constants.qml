@@ -402,20 +402,20 @@ QtObject {
         readonly property int biometricsImageHeight: 185
         readonly property int userImageWidth: 40
         readonly property int userImageHeight: 40
-        readonly property int titleFontSize: 17
-        readonly property int fontSize1: 22
-        readonly property int fontSize2: 17
-        readonly property int fontSize3: 15
-        readonly property int fontSize4: 12
+        readonly property int titleFontSize: Theme.fontSize17
+        readonly property int fontSize1: Theme.fontSize22
+        readonly property int fontSize2: Theme.fontSize17
+        readonly property int fontSize3: Theme.primaryTextFontSize
+        readonly property int fontSize4: Theme.tertiaryTextFontSize
         readonly property int loginInfoHeight1: 24
         readonly property int loginInfoHeight2: 44
         readonly property int loginInfoHeight3: 66
         readonly property int radius: 8
         readonly property QtObject profileFetching: QtObject {
             readonly property int    timeout: 120 * 1000 //2 mins in milliseconds
-            readonly property int    titleFontSize: 22
-            readonly property int    entityFontSize: 15
-            readonly property int    entityProgressFontSize: 12
+            readonly property int    titleFontSize: Theme.fontSize22
+            readonly property int    entityFontSize: Theme.primaryTextFontSize
+            readonly property int    entityProgressFontSize: Theme.tertiaryTextFontSize
             readonly property string imgInProgress: "onboarding/profile_fetching_in_progress"
 
             readonly property QtObject entity: QtObject {
@@ -565,9 +565,9 @@ QtObject {
     readonly property QtObject settingsSection: QtObject {
         readonly property int itemSpacing: 10
         readonly property int radius: 8
-        readonly property int mainHeaderFontSize: 28
+        readonly property int mainHeaderFontSize: Theme.fontSize28 // Keep as is - special case for main header
         readonly property int subHeaderFontSize: Theme.primaryTextFontSize
-        readonly property int importantInfoFontSize: 18
+        readonly property int importantInfoFontSize: Theme.fontSize18
         readonly property int infoFontSize: Theme.primaryTextFontSize
         readonly property int infoLineHeight: 22
         readonly property int infoSpacing: 5
@@ -628,14 +628,14 @@ QtObject {
             readonly property int keycardPairingCodeInputWidth: 512
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
-            readonly property int fontSize1: 22
-            readonly property int fontSize2: 15
-            readonly property int fontSize3: 12
+            readonly property int fontSize1: Theme.fontSize22
+            readonly property int fontSize2: Theme.primaryTextFontSize
+            readonly property int fontSize3: Theme.tertiaryTextFontSize
             readonly property int seedPhraseCellWidth: 193
             readonly property int seedPhraseCellHeight: 60
             readonly property int seedPhraseCellNumberWidth: 24
-            readonly property int seedPhraseCellFontSize: 12
-            readonly property int buttonFontSize: 15
+            readonly property int seedPhraseCellFontSize: Theme.tertiaryTextFontSize
+            readonly property int buttonFontSize: Theme.primaryTextFontSize
             readonly property int pukCellWidth: 50
             readonly property int pukCellHeight: 60
             readonly property int popupWidth: 640
@@ -723,8 +723,8 @@ QtObject {
         readonly property int contentHeight2: 642
         readonly property int itemHeight: 64
         readonly property int importPrivateKeyWarningHeight: 86
-        readonly property int labelFontSize1: 15
-        readonly property int labelFontSize2: 13
+        readonly property int labelFontSize1: Theme.primaryTextFontSize
+        readonly property int labelFontSize2: Theme.additionalTextSize
         readonly property int footerButtonsHeight: 44
         readonly property int keyPairNameMaxLength: 20
         readonly property int keyPairAccountNameMinLength: 5
@@ -765,7 +765,7 @@ QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight: 626
         readonly property int footerButtonsHeight: 44
-        readonly property int labelFontSize1: 15
+        readonly property int labelFontSize1: Theme.primaryTextFontSize
         readonly property string instructionsLabelForQr: qsTr("How to display the QR code on your other device")
         readonly property string instructionsLabelForEncryptedKey: qsTr("How to copy the encrypted key from your other device")
 

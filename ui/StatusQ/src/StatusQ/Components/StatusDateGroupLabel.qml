@@ -13,7 +13,7 @@ StatusBaseText {
     readonly property int lastMessageInDays: previousMessageTimestamp / msInADay
     readonly property int currentMessageInDays: messageTimestamp / msInADay
 
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
     color: Theme.palette.baseColor1
     horizontalAlignment: Text.AlignHCenter
 

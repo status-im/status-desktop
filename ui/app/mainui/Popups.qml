@@ -921,7 +921,7 @@ QtObject {
                     StatusBaseText {
                         Layout.fillWidth: true
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.additionalTextSize
                         text: qsTr("You will need to request to join if you want to become a member again in the future. If you joined the Community via public key ensure you have a copy of it before you go.")
                     }
                 }

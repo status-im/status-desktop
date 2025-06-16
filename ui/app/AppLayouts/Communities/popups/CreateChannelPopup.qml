@@ -392,7 +392,7 @@ StatusStackModal {
                     }
                     StatusBaseText {
                         visible: fileListViewItem.fileListModelEmpty && !issuePill.visible
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.tertiaryTextFontSize
                         color: Theme.palette.baseColor1
                         text: qsTr("(JSON file format only)")
                     }
@@ -484,7 +484,7 @@ StatusStackModal {
                                 StatusBaseText {
                                     Layout.fillWidth: true
                                     text: model.filePath
-                                    font.pixelSize: 13
+                                    font.pixelSize: Theme.additionalTextSize
                                     elide: Text.ElideRight
                                     wrapMode: Text.WordWrap
                                     maximumLineCount: 2
@@ -506,7 +506,7 @@ StatusStackModal {
                                 Layout.fillWidth: true
                                 text: "%1 %2".arg("⚠").arg(model.errorMessage)
                                 visible: model.errorMessage
-                                font.pixelSize: 13
+                                font.pixelSize: Theme.additionalTextSize
                                 font.weight: Font.Medium
                                 elide: Text.ElideMiddle
                                 color: Theme.palette.dangerColor1

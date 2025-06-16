@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
 
@@ -11,7 +12,7 @@ import Storybook 1.0
 Control {
     id: root
 
-    font.pixelSize: 16
+    font.pixelSize: Theme.fontSize16
     padding: 10
 
     ListModel {
@@ -127,7 +128,7 @@ Control {
 
             insetComponent: Button {
                 height: 20
-                font.pixelSize: 11
+                font.pixelSize: Theme.fontSize11
                 text: "remove"
 
                 onClicked: {

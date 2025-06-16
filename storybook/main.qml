@@ -20,7 +20,7 @@ ApplicationWindow {
 
     title: "%1 – %2".arg(currentPage).arg(Qt.application.displayName)
 
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
 
     // cf. Universal theme kept here as the basic light/dark theme for the app itself
     Universal.theme: darkModeCheckBox.checked ? Theme.Style.Dark : Theme.Style.Light

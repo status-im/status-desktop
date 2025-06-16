@@ -30,7 +30,7 @@ OnboardingPage {
             StatusBaseText {
                 Layout.fillWidth: true
                 text: qsTr("Backup your recovery phrase")
-                font.pixelSize: 22
+                font.pixelSize: Theme.fontSize22
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter

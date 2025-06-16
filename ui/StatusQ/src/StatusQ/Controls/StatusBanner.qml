@@ -53,7 +53,7 @@ Column {
        \qmlproperty int StatusBanner::textPixels
        This property holds the pixels size of the text inside the banner.
     */
-    property int textPixels: 15
+    property int textPixels: Theme.primaryTextFontSize
     /*!
        \qmlproperty int StatusBanner::statusBannerHeight
        This property holds the height of the banner rectangle.

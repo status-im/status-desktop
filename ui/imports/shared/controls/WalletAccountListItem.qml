@@ -62,7 +62,7 @@ StatusListItem {
             StatusTextWithLoadingState   {
                 objectName: "walletAccountCurrencyBalance"
                 anchors.right: parent.right
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 text: !!root.currencyBalance ? LocaleUtils.currencyAmountToLocaleString(root.currencyBalance) : ""
             }
             StatusIcon {
@@ -91,7 +91,7 @@ StatusListItem {
         asset.height: 16
         asset.width: 16
         title: root.accountBalance.formattedBalance
-        titleText.font.pixelSize: 12
+        titleText.font.pixelSize: Theme.tertiaryTextFontSize
         titleText.color: root.accountBalance.balance === "0" ? Theme.palette.baseColor1 : Theme.palette.directColor1
         asset.isImage: true
         asset.name: Theme.svg(root.accountBalance.iconUrl)

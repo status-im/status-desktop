@@ -50,13 +50,13 @@ SplitView {
                 spacing: 16
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: 22
+                    font.pixelSize: Theme.fontSize22
                     font.bold: true
                     text: "Custom header inside contentItem"
                 }
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: 17
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
                     text: "Here comes the content\n\nThe quick brown fox jumps over the lazy dog"
                 }
             }
@@ -103,11 +103,11 @@ SplitView {
                         StatusBaseText {
                             text: "Max. slippage:"
                             color: Theme.palette.baseColor1
-                            font.pixelSize: 13
+                            font.pixelSize: Theme.additionalTextSize
                         }
                         StatusBaseText {
                             text: "0.5%"
-                            font.pixelSize: 13
+                            font.pixelSize: Theme.additionalTextSize
                         }
                     }
                 }
@@ -123,11 +123,11 @@ SplitView {
                             StatusBaseText {
                                 text: "Max. fees:"
                                 color: Theme.palette.baseColor1
-                                font.pixelSize: 13
+                                font.pixelSize: Theme.additionalTextSize
                             }
                             StatusBaseText {
                                 text: "1.54 EUR"
-                                font.pixelSize: 13
+                                font.pixelSize: Theme.additionalTextSize
                             }
                         }
                         StatusButton {

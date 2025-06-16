@@ -182,11 +182,11 @@ StatusScrollView {
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignVCenter
                     StatusBaseText {
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         text: d.helperInfo[model.type].text
                     }
                     StatusBaseText {
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.tertiaryTextFontSize
                         color: {
                             if (model.progress >= 1)
                                 return Theme.palette.successColor1
@@ -200,7 +200,7 @@ StatusScrollView {
                 Item { Layout.fillWidth: true }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignVCenter
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                     visible: subtaskProgressBar.visible
                     text: qsTr("%1%").arg(Math.round(model.progress*100))
@@ -284,7 +284,7 @@ StatusScrollView {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 text: {
                     switch (d.status) {
                     case DiscordImportProgressContents.ImportStatus.InProgress:
@@ -337,7 +337,7 @@ StatusScrollView {
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Qt.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             text: d.status === DiscordImportProgressContents.ImportStatus.InProgress ?
                       qsTr("This process can take a while. Feel free to hide this window and use Status normally in the meantime. We’ll notify you when the %1 is ready for you.").arg(root.importingSingleChannel ? qsTr("Channel") : qsTr("Community")) :
                       qsTr("If there were any issues with your import you can upload new JSON files via the community page at any time.")

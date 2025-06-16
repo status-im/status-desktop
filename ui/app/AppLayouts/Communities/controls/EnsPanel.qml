@@ -34,7 +34,7 @@ ColumnLayout {
         maximumHeight: 36
         topPadding: 0
         bottomPadding: 0
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         input.placeholderText: "name.eth"
 
         errorMessageCmp.visible: false
@@ -85,7 +85,7 @@ ColumnLayout {
 
         wrapMode: Text.Wrap
         color: Theme.palette.baseColor1
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         lineHeight: 18
         lineHeightMode: Text.FixedHeight
     }
@@ -104,7 +104,7 @@ ColumnLayout {
 
             text: domainNameInput.errorMessageCmp.text
 
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             lineHeight: 18
             lineHeightMode: Text.FixedHeight
 

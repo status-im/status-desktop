@@ -68,7 +68,7 @@ Control {
                 id: title
                 Layout.fillWidth: true
                 text: d.paragraphTitle
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 font.bold: true
                 color: Theme.palette.directColor1
                 wrapMode: Text.WordWrap
@@ -78,7 +78,7 @@ Control {
                 id: subtitle
                 Layout.fillWidth: true
                 text: d.paragraphSubtitle
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
             }

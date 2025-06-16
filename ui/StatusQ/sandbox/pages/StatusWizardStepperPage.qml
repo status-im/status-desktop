@@ -44,7 +44,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         color: Theme.palette.directColor1
         text: "Press Ctrl+R to run the animation"
-        font.pixelSize: 17
+        font.pixelSize: Theme.secondaryAdditionalTextSize
     }
 
     SequentialAnimation {

@@ -185,7 +185,7 @@ Item {
                     text: root.isCommunityCollectible && !!communityDetails ? qsTr("Minted by %1").arg(root.communityDetails.name):
                                                                               !!collectible ? collectible.collectionName: ""
                     color: Theme.palette.directColor1
-                    font.pixelSize: 17
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight
@@ -201,7 +201,7 @@ Item {
                     text: !!collectible ? collectible.description : ""
                     textFormat: Text.MarkdownText
                     color: Theme.palette.directColor4
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     lineHeight: 22
                     lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight

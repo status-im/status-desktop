@@ -189,7 +189,7 @@ StatusScrollView {
                             text: d.getDeployStateInfo(model.deployState)
                             color: model.deployState === Constants.ContractTransactionStatus.Failed
                                    ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
-                            font.pixelSize: 13
+                            font.pixelSize: Theme.additionalTextSize
                         },
                         StatusIcon {
                             anchors.verticalCenter: parent.verticalCenter

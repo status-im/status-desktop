@@ -184,10 +184,10 @@ StatusDropdown {
             rightPadding: 6
 
             statusListItemTitleArea.anchors.leftMargin: 8
-            statusListItemTitle.font.pixelSize: 13
+            statusListItemTitle.font.pixelSize: Theme.additionalTextSize
             statusListItemTitle.font.weight: Font.Medium
 
-            statusListItemSubTitle.font.pixelSize: 12
+            statusListItemSubTitle.font.pixelSize: Theme.tertiaryTextFontSize
 
             components: [
                 StatusRadioButton {

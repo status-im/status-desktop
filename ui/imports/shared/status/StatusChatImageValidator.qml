@@ -57,7 +57,7 @@ Item {
             anchors.topMargin: 7
             anchors.leftMargin: 6
             wrapMode: Text.WordWrap
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             height: 18
             color: Theme.palette.dangerColor1
         }
@@ -69,7 +69,7 @@ Item {
             anchors.topMargin: 7
             anchors.leftMargin: 6
             wrapMode: Text.WordWrap
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             height: 18
             color: Theme.palette.textColor
         }

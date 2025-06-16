@@ -11,6 +11,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Theme 0.1
 
 SplitView {
     id: root
@@ -250,7 +251,7 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
 
         ColumnLayout {
             anchors.centerIn: parent

@@ -38,7 +38,7 @@ ColumnLayout {
                 Layout.topMargin: 30
                 Layout.bottomMargin: 30
                 text: root.chatDateTimeText
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
             }
 
@@ -47,7 +47,7 @@ ColumnLayout {
 
                 StatusBaseText {
                     text: root.listUsersText
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                 }
             }
 

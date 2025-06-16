@@ -230,7 +230,7 @@ Item {
                 horizontalPadding: 5
                 size: StatusBaseButton.Tiny
                 type: StatusBaseButton.Warning
-                font.pixelSize: 9
+                font.pixelSize: Theme.fontSize9
                 text: qsTr("Resend")
                 onClicked: root.resendClicked()
             }

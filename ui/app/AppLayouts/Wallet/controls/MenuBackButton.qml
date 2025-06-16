@@ -12,7 +12,7 @@ StatusIconTextButton {
     statusIcon: "tiny/chevron-left"
     icon.width: 18
     icon.height: 18
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
     text: qsTr("Back")
     background: Rectangle {
         anchors.fill: parent

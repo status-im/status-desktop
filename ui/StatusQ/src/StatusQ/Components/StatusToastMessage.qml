@@ -338,7 +338,7 @@ Control {
                 StatusBaseText {
                     id: title
                     Layout.fillWidth: true
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     color: Theme.palette.directColor1
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap
@@ -353,7 +353,7 @@ Control {
                     Layout.fillWidth: true
                     visible: (!linkText.visible && !!root.secondaryText)
                     height: visible ? contentHeight : 0
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     color: Theme.palette.baseColor1
                     text: root.secondaryText
                     elide: Text.ElideRight
@@ -366,7 +366,7 @@ Control {
                     Layout.fillWidth: true
                     visible: (!!root.linkUrl) || root.actionRequired
                     height: visible ? implicitHeight : 0
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     hoveredLinkColor: Theme.palette.primaryColor1
                     text: root.actionRequired ? "<p><a style='text-decoration:none' href=' '>%1</a></p>".arg(root.secondaryText) :
                                                 "<p><a style='text-decoration:none' href='%1'>%2</a></p>".arg(root.linkUrl).arg(root.secondaryText)

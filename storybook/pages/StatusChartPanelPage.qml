@@ -123,7 +123,7 @@ SplitView {
                                     drawTicks: false,
                                 },
                                 ticks: {
-                                    fontSize: 10,
+                                    fontSize: Theme.asideTextFontSize,
                                     fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                                     padding: 16
                                 }
@@ -142,7 +142,7 @@ SplitView {
                                 axis.paddingBottom = 0;
                             },
                             ticks: {
-                                fontSize: 10,
+                                fontSize: Theme.asideTextFontSize,
                                 fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                                 padding: 8,
                                 min: d.minStep,
@@ -187,7 +187,7 @@ SplitView {
                                 drawTicks: false
                                 },
                             ticks: {
-                                fontSize:10,
+                                fontSize: Theme.asideTextFontSize,
                                 fontColor: "#939ba1",
                                 padding:16
                             }
@@ -204,7 +204,7 @@ SplitView {
                                 color: "#33939ba1"
                             },
                             ticks: {
-                                fontSize: 10,
+                                fontSize: Theme.asideTextFontSize,
                                 fontColor: "#939ba1",
                                 padding: 8,
                                 maxTicksLimit: 10,

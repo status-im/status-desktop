@@ -107,7 +107,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
             visible: contactsModel.count === 0
             wrapMode: Text.WordWrap
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
             text: qsTr("You can only send direct messages to your Contacts.\n
 Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.")

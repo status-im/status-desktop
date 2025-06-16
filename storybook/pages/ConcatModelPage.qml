@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import Qt.labs.qmlmodels 1.0
 
@@ -203,7 +204,7 @@ Item {
                     Label {
                         height: implicitHeight * 2
                         text: section + " inset"
-                        font.pixelSize: 20
+                        font.pixelSize: Theme.fontSize20
                         font.bold: true
                         font.underline: true
 

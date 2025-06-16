@@ -85,7 +85,7 @@ ItemDelegate {
                     text: root.balance
                     visible: root.balance !== ""
                     color: Theme.palette.baseColor1
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                     elide: Text.ElideRight
                 }

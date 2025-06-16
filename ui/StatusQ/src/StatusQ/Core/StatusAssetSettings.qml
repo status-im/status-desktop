@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import StatusQ.Core.Theme 0.1
 
 QtObject {
     id: root
@@ -17,15 +18,15 @@ QtObject {
     property bool isLetterIdenticon
     property bool useAcronymForLetterIdenticon: true
     property bool letterIdenticonBgWithAlpha: false
-    property int letterSize: emoji ? 11 : (charactersLen == 1 ? _oneLetterSize : _twoLettersSize)
+    property int letterSize: emoji ? (Theme.fontSize11) : (charactersLen == 1 ? _oneLetterSize : _twoLettersSize)
     property int charactersLen: 1
 
     property string emoji
     property string emojiSize: _emojiSize
 
     // can't have QtObject { id: d } inside QtObject, using '_' to indicate private
-    readonly property int _oneLetterSize: Math.max(15, root.width / 2.0)
-    readonly property int _twoLettersSize: Math.max(12, root.width / 2.2)
+    readonly property int _oneLetterSize: Math.max(Theme.primaryTextFontSize, root.width / 2.0)
+    readonly property int _twoLettersSize: Math.max(Theme.tertiaryTextFontSize, root.width / 2.2)
     readonly property string _emojiSize: "%1x%1".arg(Math.max(16, root.width * 0.6))
 
     //icon bg

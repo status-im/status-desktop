@@ -39,7 +39,7 @@ ColumnLayout {
     StatusBaseText {
         Layout.alignment: Qt.AlignRight | Qt.AlignTop
         text: root.isBridgeTx ? qsTr("Amount Bridged") : qsTr("Recipient will get")
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         lineHeight: 18
         lineHeightMode: Text.FixedHeight
         color: Theme.palette.directColor1
@@ -51,7 +51,7 @@ ColumnLayout {
             id: amountToReceiveText
             Layout.alignment: Qt.AlignVCenter
             text: isLoading ? "..." : inputIsFiat ? d.fiatValue : d.cryptoValue
-            font.pixelSize: 34
+            font.pixelSize: Theme.fontSize34
             color: Theme.palette.directColor1
         }
     }
@@ -61,7 +61,7 @@ ColumnLayout {
             id: txtFiatBalance
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             text: isLoading ? "..." : inputIsFiat ? d.cryptoValue : d.fiatValue
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             color: Theme.palette.directColor5
         }
     }

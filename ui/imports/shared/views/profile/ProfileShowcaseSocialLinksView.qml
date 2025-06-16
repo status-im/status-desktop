@@ -107,7 +107,7 @@ Item {
                 color: Theme.palette.directColor1
             }
             StatusBaseText {
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 text: qsTr("Social handles and links are unverified")
             }
         }

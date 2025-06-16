@@ -39,7 +39,7 @@ StatusScrollView {
 
             text: qsTr("No results")
             color: Theme.palette.baseColor1
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
             wrapMode: Text.Wrap
         }
 
@@ -100,7 +100,7 @@ StatusScrollView {
                         Layout.leftMargin: 8
                         text: model.name
                         color: Theme.palette.directColor1
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.additionalTextSize
                         elide: Text.ElideRight
                     }
                 }

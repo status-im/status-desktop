@@ -133,7 +133,7 @@ Input {
         anchors.rightMargin: 13
         anchors.verticalCenter: parent.verticalCenter
         text: qsTr("Amount")
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.baseColor1
-        font.pixelSize: 13
     }
 }

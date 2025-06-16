@@ -11,7 +11,7 @@ StatusBaseText {
     property bool showFullTimestamp
 
     color: Theme.palette.baseColor1
-    font.pixelSize: 10
+    font.pixelSize: Theme.asideTextFontSize
     visible: !!text
     text: d.formattedLabel
 

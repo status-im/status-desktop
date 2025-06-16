@@ -62,7 +62,7 @@ ColumnLayout {
         Layout.preferredWidth: 400
         Layout.alignment: Qt.AlignHCenter
 
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         font.weight: Font.DemiBold
 
         wrapMode: Text.WordWrap
@@ -104,7 +104,7 @@ ColumnLayout {
             StatusBaseText {
                 text: qsTr("Only sign if you trust the dApp")
 
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 color: Theme.palette.directColor1
             }
         }

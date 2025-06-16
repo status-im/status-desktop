@@ -118,7 +118,7 @@ StatusScrollView {
             StatusBaseText {
                 text: qsTr("%1 / %2").arg(d.countSelectedTags).arg(maxSelectedTags)
                 color: Theme.palette.baseColor1
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
             }
         }
 
@@ -139,7 +139,7 @@ StatusScrollView {
             text: qsTr("No tags selected yet")
             color: Theme.palette.baseColor1
             visible: d.countSelectedTags === 0
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             horizontalAlignment: Qt.AlignHCenter
         }
     }

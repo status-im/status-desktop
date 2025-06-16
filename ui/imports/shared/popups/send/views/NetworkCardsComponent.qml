@@ -75,7 +75,7 @@ Item {
             StatusBaseText {
                 Layout.maximumWidth: 100
                 elide: Text.ElideRight
-                font.pixelSize: 10
+                font.pixelSize: Theme.asideTextFontSize
                 color: Theme.palette.baseColor1
                 text: qsTr("Your Balances")
                 font.capitalization: Font.AllUppercase
@@ -138,7 +138,7 @@ Item {
                     text: root.receiverIdentityText
                     Layout.fillWidth: true
 
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.asideTextFontSize
                     color: Theme.palette.baseColor1
                     elide: Text.ElideMiddle
                     horizontalAlignment: Text.AlignRight

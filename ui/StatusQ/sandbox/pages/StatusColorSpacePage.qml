@@ -95,7 +95,7 @@ Item {
             StatusBaseText {
                 anchors.centerIn: parent
                 color: Theme.palette.white
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 text: "Quick brown fox jumps over the lazy dog"
             }
         }

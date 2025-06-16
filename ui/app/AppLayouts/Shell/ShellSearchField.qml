@@ -10,7 +10,7 @@ StatusTextField {
     topPadding: 12
     bottomPadding: 12
     background: null
-    font.pixelSize: 27
+    font.pixelSize: Theme.fontSize27
     font.weight: Font.DemiBold
 
     StatusClearButton {

@@ -128,7 +128,7 @@ StatusFlowSelector {
                 Layout.alignment: Qt.AlignVCenter
                 text: OperatorsUtils.setOperatorTextFormat(model.operator)
                 color: Theme.palette.primaryColor1
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

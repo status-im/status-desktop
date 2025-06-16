@@ -222,7 +222,7 @@ Column {
 
     //         StatusBaseText {
     //             text: qsTr("Import key pairs from this device to your other synced devices")
-    //             font.pixelSize: 15
+    //             font.pixelSize: Theme.primaryTextFontSize
     //         }
 
     //         StatusButton {
@@ -252,7 +252,7 @@ Column {
 
             StatusBaseText {
                 text: qsTr("%n key pair(s) require import to use on this device", "", d.unimportedNonProfileKeypairs)
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
 
             StatusButton {

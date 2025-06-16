@@ -60,7 +60,7 @@ Control {
             objectName: "welcomeSettingsTitle"
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 17
+            font.pixelSize: Theme.secondaryAdditionalTextSize
             font.weight: Font.Bold
             color: Theme.palette.directColor1
             wrapMode: Text.WordWrap
@@ -72,7 +72,7 @@ Control {
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
             lineHeight: 1.2
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
             wrapMode: Text.WordWrap
         }

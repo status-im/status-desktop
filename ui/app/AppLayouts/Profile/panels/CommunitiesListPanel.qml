@@ -42,7 +42,7 @@ StatusListView {
 
         width: ListView.view.width
         title: model.name
-        statusListItemTitle.font.pixelSize: 17
+        statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
         statusListItemTitle.font.bold: true
         statusListItemIcon.anchors.verticalCenter: undefined
         statusListItemIcon.anchors.top: statusListItemTitleArea.top

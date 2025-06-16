@@ -44,7 +44,7 @@ RowLayout {
     StatusBaseText {
         text: qsTr("Hold")
         color: Theme.palette.directColor6
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
     }
 
     Repeater {
@@ -58,7 +58,7 @@ RowLayout {
     StatusBaseText {
         text: qsTr("or")
         color: Theme.palette.directColor6
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
     }
 
     Loader {
@@ -73,7 +73,7 @@ RowLayout {
     StatusBaseText {
         text: qsTr("to post")
         color: Theme.palette.directColor6
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
     }
 
     QtObject {
@@ -128,7 +128,7 @@ RowLayout {
                     id: text
                     text: amount + " " + token
                     color: textColor
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                 }
 
                 Item {

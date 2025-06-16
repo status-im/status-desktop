@@ -243,7 +243,7 @@ Rectangle {
             StatusBaseText {
                 id: primaryText
                 Layout.maximumWidth: layout.width - cardIcon.width - 24
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 font.weight: Font.Medium
                 elide: Text.ElideRight
                 lineHeight: 22
@@ -264,7 +264,7 @@ Rectangle {
                 id: secondaryLabel
                 Layout.fillWidth: true
                 elide: Text.ElideRight
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
                 verticalAlignment: Text.AlignVCenter
@@ -294,7 +294,7 @@ Rectangle {
                     return Theme.palette.directColor5
                 return Theme.palette.directColor1
             }
-            input.edit.font.pixelSize: 13
+            input.edit.font.pixelSize: Theme.additionalTextSize
             input.edit.readOnly: disabled
             input.background.radius: 4
             input.background.color: input.edit.activeFocus ? "transparent" : Theme.palette.directColor8
@@ -349,7 +349,7 @@ Rectangle {
             Layout.maximumWidth: layout.width
             Layout.preferredHeight: 20
             elide: Text.ElideRight
-            font.pixelSize: 10
+            font.pixelSize: Theme.asideTextFontSize
             lineHeight: 14
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter
@@ -361,7 +361,7 @@ Rectangle {
             elide: Text.ElideRight
             font.weight: Font.Medium
             color: Theme.palette.primaryColor1
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             lineHeight: 18
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter

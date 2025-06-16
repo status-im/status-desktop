@@ -52,7 +52,7 @@ RowLayout {
             spacing: 8
 
             StatusBaseText {
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 font.weight: Font.Medium
                 color: Theme.palette.directColor1
                 text: qsTr("Networks")
@@ -65,7 +65,7 @@ RowLayout {
         }
         StatusBaseText {
             Layout.maximumWidth: parent.width
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
             text: isBridgeTx ? qsTr("Routes will be automatically calculated to give you the lowest cost.") :
                                qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")

@@ -36,7 +36,7 @@ Item {
         StyledText {
             id: shareKeyLink
             text: qsTr("Share your chat key")
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.primaryColor1
 
             StatusMouseArea {
@@ -56,7 +56,7 @@ Item {
         StyledText {
             id: orText
             text: qsTr("or")
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.secondaryText
             anchors.left: shareKeyLink.right
             anchors.leftMargin: 2
@@ -66,7 +66,7 @@ Item {
         StyledText {
             id: inviteLink
             text: qsTr("invite")
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.primaryColor1
             anchors.left: orText.right
             anchors.leftMargin: 2
@@ -91,7 +91,7 @@ Item {
 
     StyledText {
         text: qsTr("friends to start messaging in Status")
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.secondaryText
         anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
         anchors.top: links.bottom

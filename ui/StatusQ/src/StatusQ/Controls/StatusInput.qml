@@ -93,7 +93,7 @@ Control {
 
         \qml
             StatusInput {
-                errorMessageCmp.font.pixelSize: 15
+                errorMessageCmp.font.pixelSize: Theme.primaryTextFontSize
                 errorMessageCmp.font.weight: Font.Medium
             }
         \endqml
@@ -111,7 +111,7 @@ Control {
         \qml
             StatusInput {
                 bottomLabelMessageLeftCmp.text: "some text"
-                bottomLabelMessageLeftCmp.font.pixelSize: 15
+                bottomLabelMessageLeftCmp.font.pixelSize: Theme.primaryTextFontSize
                 bottomLabelMessageLeftCmp.font.weight: Font.Medium
             }
         \endqml
@@ -129,7 +129,7 @@ Control {
         \qml
             StatusInput {
                 bottomLabelMessageRightCmp.text: "some text"
-                bottomLabelMessageRightCmp.font.pixelSize: 15
+                bottomLabelMessageRightCmp.font.pixelSize: Theme.primaryTextFontSize
                 bottomLabelMessageRightCmp.font.weight: Font.Medium
             }
         \endqml

@@ -114,7 +114,7 @@ Item {
                     Layout.alignment: Qt.AlignVCenter
 
                     font.family: Theme.monoFont.name
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     font.weight: Font.Medium
                     elide: Text.ElideMiddle
                     color: Theme.palette.baseColor1

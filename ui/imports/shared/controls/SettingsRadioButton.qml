@@ -24,8 +24,8 @@ Item {
 
     StatusBaseText {
         text: root.label
-        font.pixelSize: 13
         color: Theme.palette.directColor1
+        font.pixelSize: Theme.additionalTextSize
         anchors.left: radioButton.right
         anchors.leftMargin: 12
         anchors.verticalCenter: radioButton.verticalCenter

@@ -109,8 +109,8 @@ StatusListItem {
             height: 16
         }
         title: Utils.appTranslation(model.account.name)
-        titleText.font.pixelSize: 12
         titleText.color: Theme.palette.indirectColor1
+        titleText.font.pixelSize: Theme.tertiaryTextFontSize
 
         onClicked: {
             root.removeAccount(index, model.account.name)

@@ -23,7 +23,7 @@ StatusListItem {
 
     sensor.enabled: isInteractive
     statusListItemTitle.customColor: Theme.palette.baseColor1
-    statusListItemTitle.font.pixelSize: 13
+    statusListItemTitle.font.pixelSize: Theme.additionalTextSize
     statusListItemTitle.lineHeightMode: Text.FixedHeight
     statusListItemTitle.lineHeight: 18
     statusListItemSubTitle.customColor: Theme.palette.directColor1

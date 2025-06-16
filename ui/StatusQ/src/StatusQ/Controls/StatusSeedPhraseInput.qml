@@ -249,7 +249,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: seedWord
                     color: mouseArea.containsMouse || index === seedSuggestionsList.currentIndex ? Theme.palette.indirectColor1 : Theme.palette.directColor1
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     elide: Text.ElideRight
                 }
                 StatusMouseArea {

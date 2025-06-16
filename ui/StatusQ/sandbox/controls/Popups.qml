@@ -182,7 +182,7 @@ Column {
         contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -207,7 +207,7 @@ Column {
             id: text
             anchors.centerIn: parent
             text: "Some text content"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -232,7 +232,7 @@ Column {
         contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -258,7 +258,7 @@ Column {
         contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -285,7 +285,7 @@ Column {
         contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -312,7 +312,7 @@ Column {
         contentItem: StatusBaseText {
             anchors.centerIn: parent
             text: "Some text content"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -371,7 +371,7 @@ Column {
             StatusBaseText {
                 anchors.centerIn: parent
                 text: "Add any header here"
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -384,7 +384,7 @@ Column {
             StatusBaseText {
                 anchors.centerIn: parent
                 text: "Add any footer here"
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
