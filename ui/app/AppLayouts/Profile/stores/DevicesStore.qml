@@ -5,6 +5,7 @@ QtObject {
     id: root
 
     property var devicesModule
+    property var syncModule
 
     property var devicesModel: devicesModule ?  devicesModule.model : null
 
@@ -16,6 +17,10 @@ QtObject {
     readonly property string localPairingInstallationId: devicesModule ? devicesModule.localPairingInstallationId : ""
     readonly property string localPairingInstallationName: devicesModule ? devicesModule.localPairingInstallationName : ""
     readonly property string localPairingInstallationDeviceType: devicesModule ? devicesModule.localPairingInstallationDeviceType : ""
+    
+    // Backup import properties
+    readonly property int backupImportState: syncModule ? syncModule.backupImportState : 0
+    readonly property string backupImportError: syncModule ? syncModule.backupImportError : ""
 
     function loadDevices() {
         return root.devicesModule.loadDevices()
@@ -47,5 +52,9 @@ QtObject {
 
     function inputConnectionStringForBootstrapping(connectionString) {
         root.devicesModule.inputConnectionStringForBootstrapping(connectionString)
+    }
+
+    function importLocalBackupFile(filePath: string) {
+        root.syncModule.importLocalBackupFile(filePath)
     }
 }

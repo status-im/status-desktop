@@ -85,3 +85,6 @@ method backupData*(self: AccessInterface): int64 {.base.} =
 
 method onUrlUnfurlingModeUpdated*(self: AccessInterface, mode: int) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method messagesFromContactsOnlyChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

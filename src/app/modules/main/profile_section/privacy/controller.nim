@@ -74,6 +74,9 @@ proc init*(self: Controller) =
     var args = UrlUnfurlingModeArgs(e)
     self.delegate.onUrlUnfurlingModeUpdated(args.value.int)
 
+  self.events.on(SIGNAL_MESSAGES_FROM_CONTACTS_ONLY_UPDATED) do(e: Args):
+    self.delegate.messagesFromContactsOnlyChanged()
+
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.privacyService.isMnemonicBackedUp()
 
