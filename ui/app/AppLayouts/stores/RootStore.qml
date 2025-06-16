@@ -22,6 +22,7 @@ QtObject {
     readonly property bool sectionsLoaded: internal.mainModuleInst && internal.mainModuleInst.sectionsLoaded
     readonly property string activeSectionId: internal.mainModuleInst.activeSection.id
     readonly property int activeSectionType: internal.mainModuleInst.activeSection.sectionType
+    property bool localBackupEnabled: false
 
     // Here define the needed properties that access to `Context Properties`:
     readonly property QtObject _internal: QtObject{
@@ -32,7 +33,9 @@ QtObject {
 
     // Here there should be all the ContextSpecificRootStore objects creation
     readonly property MessagingStores.MessagingRootStore messagingRootStore: MessagingStores.MessagingRootStore {}
-    readonly property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {}
+    readonly property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {
+        localBackupEnabled: root.localBackupEnabled
+    }
     readonly property ContactsStore contactsStore: ContactsStore {}
 
     // readonly property ChatStores.RootStore rootChatStore: ChatStores.RootStore { ... }

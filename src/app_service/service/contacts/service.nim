@@ -1,9 +1,9 @@
 import NimQml, Tables, json, sequtils, stew/shims/strformat, chronicles, strutils, times, std/times
 
-import ../../../app/global/global_singleton
-import ../../../app/core/signals/types
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import app/global/global_singleton
+import app/core/signals/types
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
 
 import ../../common/types as common_types
 import ../../common/conversion as service_conversion
@@ -19,8 +19,8 @@ import ./dto/status_update as status_update_dto
 import ./dto/contact_details
 import ./dto/profile_showcase
 
-import ../../../backend/contacts as status_contacts
-import ../../../backend/accounts as status_accounts
+import backend/contacts as status_contacts
+import backend/accounts as status_accounts
 
 export contacts_dto, status_update_dto, contact_details
 
@@ -34,6 +34,7 @@ logScope:
 type
   ContactArgs* = ref object of Args
     contactId*: string
+    fromBackup*: bool
 
   TrustArgs* = ref object of Args
     publicKey*: string
@@ -111,6 +112,7 @@ QtObject:
   proc saveContact(self: Service, contact: ContactsDto)
   proc requestContactInfo*(self: Service, pubkey: string)
   proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false, skipBackendCalls: bool = false): ContactDetails
+  proc parseContactsResponse*(self: Service, contacts: JsonNode, fromBackup: bool = false)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -197,10 +199,21 @@ QtObject:
         for contactId in receivedData.updatedProfileShowcaseContactIDs:
           self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED,
             ProfileShowcaseContactIdArgs(contactId: contactId))
+
     self.events.on(SignalType.StatusUpdatesTimedout.event) do(e:Args):
       var receivedData = StatusUpdatesTimedoutSignal(e)
       if(receivedData.statusUpdates.len > 0):
         self.updateAndEmitStatuses(receivedData.statusUpdates)
+
+    self.events.on(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED) do(e: Args):
+      let args = LocalBackupImportArg(e)
+      if args.error.len > 0:
+        # The error will be shown in the UI, so we don't need to log it here
+        return
+
+      # If we have imported contacts from the local backup, we need to emit the contacts loaded signal
+      if args.response.hasKey("contacts"):
+        self.parseContactsResponse(args.response["contacts"], fromBackup = true)
 
   proc setImageServerUrl(self: Service) =
     try:
@@ -375,10 +388,12 @@ QtObject:
         statusType: currentUserStatus.statusType,
         clock: currentUserStatus.clock.uint64,
         text: currentUserStatus.text)
-    # This proc will fetch current accurate status from `status-go` once we add an api point there for it.
-    if(not self.contactsStatus.hasKey(publicKey)):
-      # following line ensures that we have added a contact before setting status for it
-      discard self.getContactById(publicKey)
+
+    if not self.contactsStatus.hasKey(publicKey):
+      return StatusUpdateDto(publicKey: publicKey,
+        statusType: StatusType.Unknown,
+        clock: 0,
+        text: "")
 
     return self.contactsStatus[publicKey]
 
@@ -395,7 +410,8 @@ QtObject:
       isCurrentUser = contact.id == singletonInstance.userProfile.getPubKey()
     )
 
-  proc updateContact(self: Service, contact: ContactsDto) =
+  # fromBackup is used to indicate that the contact was loaded from a backup
+  proc updateContact(self: Service, contact: ContactsDto, fromBackup: bool = false) =
     var signal = SIGNAL_CONTACT_ADDED
     let publicKey = contact.id
     if self.contacts.hasKey(publicKey):
@@ -404,19 +420,23 @@ QtObject:
       if contact.removed and not self.contacts[publicKey].dto.removed:
         singletonInstance.globalEvents.showContactRemoved("Contact removed", fmt "You removed {contact.displayName} as a contact", contact.id)
         signal = SIGNAL_CONTACT_REMOVED
-
     self.contacts[publicKey] = self.constructContactDetails(
       contact,
       isCurrentUser = contact.id == singletonInstance.userProfile.getPubKey()
     )
-    self.events.emit(signal, ContactArgs(contactId: publicKey))
+    self.events.emit(signal, ContactArgs(contactId: publicKey, fromBackup: fromBackup))
 
-  proc parseContactsResponse*(self: Service, response: RpcResponse[JsonNode]) =
+  proc parseContactsResponse*(self: Service, contacts: JsonNode, fromBackup: bool = false) =
+    for contactJson in contacts:
+      let contact = contactJson.toContactsDto()
+      self.updateContact(contact, fromBackup)
+
+  proc parseContactsResponse*(self: Service, response: RpcResponse[JsonNode], fromBackup: bool = false) =
     let contacts = response.result{"contacts"}
     if contacts == nil:
       return
-    for contactJson in contacts:
-      self.updateContact(contactJson.toContactsDto())
+    self.parseContactsResponse(contacts, fromBackup)
+    
 
   proc sendContactRequest*(self: Service, publicKey: string, message: string) =
     # Prefetch contact to avoid race condition with AC notification

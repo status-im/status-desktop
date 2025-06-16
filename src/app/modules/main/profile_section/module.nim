@@ -96,16 +96,21 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.controller = controller.newController(result)
   result.moduleLoaded = false
 
-  result.profileModule = profile_module.newModule(result, events, profileService, settingsService, communityService, walletAccountService, tokenService)
+  result.profileModule = profile_module.newModule(result, events, profileService, settingsService, communityService,
+    walletAccountService, tokenService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService, networkService)
   result.languageModule = language_module.newModule(result, events, languageService)
-  result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService, generalService)
+  result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService,
+    generalService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
-  result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService)
+  result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService,
+    nodeConfigurationService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
-  result.syncModule = sync_module.newModule(result, events, settingsService, nodeConfigurationService, mailserversService)
+  result.syncModule = sync_module.newModule(result, events, settingsService, nodeConfigurationService,
+    mailserversService, generalService)
   result.wakuModule = waku_module.newModule(result, events, settingsService, nodeConfigurationService)
-  result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService, contactsService, communityService)
+  result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService,
+    contactsService, communityService)
   result.ensUsernamesModule = ens_usernames_module.newModule(
     result, events, settingsService, ensService, walletAccountService, networkService, tokenService
   )

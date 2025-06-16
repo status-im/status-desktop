@@ -8,6 +8,7 @@ import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Popups
+import StatusQ.Popups.Dialog
 import StatusQ.Core.Utils as StatusQUtils
 
 import utils
@@ -33,6 +34,7 @@ SettingsContentBase {
     property ProfileStores.AdvancedStore advancedStore
 
     required property bool isProduction
+    required property bool localBackupEnabled
 
     ColumnLayout {
         id: layout
@@ -284,13 +286,41 @@ SettingsContentBase {
             objectName: "setupSyncBackupDataButton"
 
             id: backupBtn
-            visible: !root.isProduction
+            visible: !root.isProduction || root.localBackupEnabled
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Backup Data")
             onClicked : {
                 const lastUpdate = root.privacyStore.backupData() * 1000
                 console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
             }
+        }
+
+        StatusButton {
+            objectName: "importLocalBackupFileButton"
+
+            id: importBackupBtn
+            visible: root.localBackupEnabled
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("Import Local Backup File")
+            loading: root.devicesStore.backupImportState === Constants.BackupImportState.InProgress
+            onClicked : importBackupFileDialog.open()
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignHCenter
+            color: Theme.palette.successColor1
+            visible: root.devicesStore.backupImportState === Constants.BackupImportState.Completed && !root.devicesStore.backupImportError
+            text: qsTr("Success importing local data")
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignHCenter
+            color: Theme.palette.dangerColor1
+            visible: !!root.devicesStore.backupImportError
+            wrapMode: Text.WordWrap
+            text: qsTr("Error importing backup file: %1").arg(root.devicesStore.backupImportError)
         }
 
         Component {
@@ -360,6 +390,17 @@ SettingsContentBase {
             id: getSyncCodeInstructionsPopup
             GetSyncCodeInstructionsPopup {
                 destroyOnClose: true
+            }
+        }
+
+        StatusFileDialog {
+            id: importBackupFileDialog
+
+            title: qsTr("Select your backup file")
+            nameFilters: [qsTr("Supported backup formats (%1)").arg("*.bkp")]
+            selectMultiple: false
+            onAccepted: {
+                root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
             }
         }
 

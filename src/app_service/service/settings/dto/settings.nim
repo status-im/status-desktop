@@ -231,11 +231,12 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
 
   var lastTokensUpdate: string
   discard jsonObj.getProp(KEY_LAST_TOKENS_UPDATE, lastTokensUpdate)
-  try:
-    let dateTime = parse(lastTokensUpdate, DateTimeFormat)
-    result.lastTokensUpdate = dateTime.toTime().toUnix()
-  except ValueError:
-    warn "Failed to parse lastTokensUpdate: ", lastTokensUpdate
+  if lastTokensUpdate == "":
+    try:
+      let dateTime = parse(lastTokensUpdate, DateTimeFormat)
+      result.lastTokensUpdate = dateTime.toTime().toUnix()
+    except ValueError:
+      warn "Failed to parse lastTokensUpdate: ", lastTokensUpdate
 
   var urlUnfurlingMode: int
   discard jsonObj.getProp(KEY_URL_UNFURLING_MODE, urlUnfurlingMode)

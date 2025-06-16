@@ -64,6 +64,7 @@ Item {
     
     // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
+        localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
         onOpenUrl: {
             Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
         }

@@ -1,4 +1,6 @@
+import json
 import "app_service/common/safe_json_serialization"
+from app/core/eventemitter import Args
 
 type
   ContentType* {.pure.} = enum
@@ -106,3 +108,10 @@ type TrustStatus* {.pure.}= enum
   Unknown = 0,
   Trusted = 1,
   Untrustworthy = 2
+
+const SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED* = "localBackupImportCompletedSignal"
+
+type
+  LocalBackupImportArg* = ref object of Args
+    error*: string
+    response*: JsonNode

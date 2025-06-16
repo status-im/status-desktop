@@ -3,10 +3,12 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
 
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/mailservers/service as mailservers_service
-import ../../../../../app_service/service/node_configuration/service as node_configuration_service
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/general/service as general_service
+import app_service/service/settings/service as settings_service
+import app_service/service/mailservers/service as mailservers_service
+import app_service/service/node_configuration/service as node_configuration_service
 
 export io_interface
 
@@ -21,16 +23,20 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  mailserversService: mailservers_service.Service): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    mailserversService: mailservers_service.Service,
+    generalService: general_service.Service,
+  ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService, mailserversService)
+  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService,
+    mailserversService, generalService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -96,3 +102,11 @@ method getUseMailservers*(self: Module): bool =
 method setUseMailservers*(self: Module, value: bool) =
   if self.controller.setUseMailservers(value):
     self.view.useMailserversChanged()
+
+method importLocalBackupFile*(self: Module, filePath: string) =
+  let formattedFilePath = singletonInstance.utils.formatImagePath(filePath)
+  self.controller.importLocalBackupFile(formattedFilePath)
+
+method onLocalBackupImportCompleted*(self: Module, error: string) =
+  self.view.setBackupImportState(BackupImportState.Completed)
+  self.view.setBackupImportError(error)

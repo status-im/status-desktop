@@ -111,7 +111,7 @@ method onSectionMutedChanged*(self: AccessInterface) {.base.} =
 method onCommunityMuted*(self: AccessInterface, chatId: string, muted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onContactAdded*(self: AccessInterface, publicKey: string) {.base.} =
+method onContactAdded*(self: AccessInterface, publicKey: string, frombackup: bool = false) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactRejected*(self: AccessInterface, publicKey: string) {.base.} =
