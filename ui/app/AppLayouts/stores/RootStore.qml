@@ -17,6 +17,7 @@ QtObject {
     property var aboutModuleInst: aboutModule
     property var communitiesModuleInst: communitiesModule
     property bool newVersionAvailable: false
+    property bool localBackupEnabled: false
     readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
     readonly property bool checkingPermissionToJoinInProgress: communitiesModuleInst.checkingPermissionToJoinInProgress
     readonly property bool joinPermissionsCheckCompletedWithoutErrors: communitiesModuleInst.joinPermissionsCheckCompletedWithoutErrors
@@ -136,6 +137,7 @@ QtObject {
     }
 
     property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {
+        localBackupEnabled: root.localBackupEnabled
     }
 
     property var chatSearchModel: mainModuleInst.chatSearchModel

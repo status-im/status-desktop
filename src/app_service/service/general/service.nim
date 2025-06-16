@@ -1,10 +1,11 @@
 import NimQml, os, json, chronicles
 
-import ../../../backend/mailservers as status_mailservers
-import ../../../backend/general as status_general
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import backend/mailservers as status_mailservers
+import backend/general as status_general
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
 import ../../../constants as app_constants
+import ../../common/types
 
 from app_service/service/activity_center/service import SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED, ActivityCenterNotificationsArgs
 from app_service/service/activity_center/dto/notification import parseActivityCenterNotifications
@@ -16,6 +17,7 @@ include async_tasks
 const TimerIntervalInMilliseconds = 1000 # 1 second
 
 const SIGNAL_GENERAL_TIMEOUT* = "timeoutSignal"
+
 
 logScope:
   topics = "general-app-service"
@@ -126,3 +128,26 @@ QtObject:
       return response.result.getInt
     except Exception as e:
       error "error: ", procName="backupData", errName = e.name, errDesription = e.msg
+
+
+  proc asyncImportLocalBackupFile*(self: Service, filePath: string) =
+    let arg = AsyncImportLocalBackupFileTaskArg(
+      tptr: asyncImportLocalBackupFileTask,
+      vptr: cast[uint](self.vptr),
+      slot: "onImportLocalBackupFileDone",
+      filePath: filePath
+    )
+    self.threadpool.start(arg)
+
+  proc onImportLocalBackupFileDone(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+
+      # TODO use tghe response to populate other services?
+      self.events.emit(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED, LocalBackupImportArg(error: "", response: rpcResponseObj["response"]["result"]))
+    except Exception as e:
+      error "error:", procName="asyncImportLocalBackupFile", errName = e.name, errDesription = e.msg
+      self.events.emit(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED, LocalBackupImportArg(error: e.msg))

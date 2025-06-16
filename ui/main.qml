@@ -42,6 +42,7 @@ StatusWindow {
         keycardEnabled: featureFlags ? featureFlags.keycardEnabled : false
         marketEnabled: featureFlags ? featureFlags.marketEnabled : false
         shellEnabled: featureFlags ? featureFlags.shellEnabled : false
+        localBackupEnabled: featureFlags ? featureFlags.localBackupEnabled : false
     }
 
     property MetricsStore metricsStore: MetricsStore {}
