@@ -115,3 +115,12 @@ method getAutoRefreshTokensLists*(self: AccessInterface): bool {.base.} =
 
 method toggleAutoRefreshTokensLists*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method displayAssetsBelowBalanceChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method displayAssetsBelowBalanceThresholdChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method showCommunityAssetWhenSendingTokensChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

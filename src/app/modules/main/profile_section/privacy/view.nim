@@ -47,7 +47,7 @@ QtObject:
   proc getMnemonicWordAtIndex*(self: View, index: int): string {.slot.} =
     return self.delegate.getMnemonicWordAtIndex(index)
 
-  proc messagesFromContactsOnlyChanged(self: View) {.signal.}
+  proc messagesFromContactsOnlyChanged*(self: View) {.signal.}
   proc getMessagesFromContactsOnly(self: View): bool {.slot.} =
     return self.delegate.getMessagesFromContactsOnly()
   proc setMessagesFromContactsOnly(self: View, value: bool) {.slot.} =

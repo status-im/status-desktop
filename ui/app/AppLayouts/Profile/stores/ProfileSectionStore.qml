@@ -11,6 +11,7 @@ import SortFilterProxyModel
 
 QtObject {
     id: root
+    property bool localBackupEnabled: false
 
     readonly property QtObject _d: QtObject {
         id: d
@@ -36,6 +37,8 @@ QtObject {
 
     property DevicesStore devicesStore: DevicesStore {
         devicesModule: d.profileSectionModuleInst.devicesModule
+        syncModule: d.profileSectionModuleInst.syncModule
+        localBackupEnabled: root.localBackupEnabled
     }
 
     property PrivacyStore privacyStore: PrivacyStore {

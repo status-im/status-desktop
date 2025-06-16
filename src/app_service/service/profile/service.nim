@@ -1,13 +1,13 @@
 import NimQml, json, chronicles, tables, sequtils
 
 import ../settings/service as settings_service
-import ../../../app/global/global_singleton
+import app/global/global_singleton
 
-import ../../../app/core/signals/types
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import app/core/signals/types
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
 
-import ../../../backend/accounts as status_accounts
+import backend/accounts as status_accounts
 
 import ../accounts/dto/accounts
 import dto/profile_showcase_preferences
@@ -49,6 +49,9 @@ QtObject:
       elif(imageDto.imgType == "thumbnail"):
         singletonInstance.userProfile.setThumbnailImage(imageDto.uri)
 
+  proc updateDisplayName*(displayName: string)  =
+    singletonInstance.userProfile.setDisplayName(displayName)
+
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
@@ -59,7 +62,16 @@ QtObject:
 
     self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
       let args = SettingsTextValueArgs(e)
-      singletonInstance.userProfile.setDisplayName(args.value)
+      updateDisplayName(args.value)
+
+    self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
+      var receivedData = WakuBackedUpProfileSignal(e)
+
+      if receivedData.backedUpProfile.displayName != "":
+        updateDisplayName(receivedData.backedUpProfile.displayName)
+
+      if receivedData.backedUpProfile.images.len > 0:
+        updateProfileIdentityImages(receivedData.backedUpProfile.images)
 
   proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
     try:

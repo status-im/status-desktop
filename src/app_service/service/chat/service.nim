@@ -148,36 +148,55 @@ QtObject:
   proc processMessengerResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])
   proc getChatById*(self: Service, chatId: string, showWarning: bool = true): ChatDto
 
+  proc parseChatsInMessengerResponse*(self: Service, chatsInResponse: seq[ChatDto]) =
+    var chats: seq[ChatDto] = @[]
+    for chatDto in chatsInResponse:
+      if chatDto.active:
+        var updatedChat = chatDto
+        # Handling members update for non-community chats
+        let isCommunityChat = chatDto.chatType == ChatType.CommunityChat
+        if not isCommunityChat and self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].members != chatDto.members:
+          self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
+
+        if isCommunityChat and self.chats.hasKey(chatDto.id):
+          updatedChat.updateMissingFields(self.chats[chatDto.id])
+
+        chats.add(updatedChat)
+        self.updateOrAddChat(updatedChat)
+
+      elif self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].active:
+        # We left the chat
+        self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatDto.id))
+
+    self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
+
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
 
       # Handling chat updates
       if (receivedData.chats.len > 0):
-        var chats: seq[ChatDto] = @[]
-        for chatDto in receivedData.chats:
-          if (chatDto.active):
-            var updatedChat = chatDto
-            # Handling members update for non-community chats
-            let isCommunityChat = chatDto.chatType == ChatType.CommunityChat
-            if not isCommunityChat and self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].members != chatDto.members:
-              self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
-
-            if isCommunityChat and self.chats.hasKey(chatDto.id):
-              updatedChat.updateMissingFields(self.chats[chatDto.id])
-
-            chats.add(updatedChat)
-            self.updateOrAddChat(updatedChat)
-
-          elif self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].active:
-            # We left the chat
-            self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatDto.id))
-
-        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
+        self.parseChatsInMessengerResponse(receivedData.chats)
 
       if (receivedData.clearedHistories.len > 0):
         for clearedHistoryDto in receivedData.clearedHistories:
           self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: clearedHistoryDto.chatId))
+
+    self.events.on(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED) do(e: Args):
+      let args = LocalBackupImportArg(e)
+      if args.error.len > 0:
+        # The error will be shown in the UI, so we don't need to log it here
+        return
+
+      # If we have imported contacts from the local backup, we need to emit the contacts loaded signal
+      if args.response.hasKey("chats"):
+        try:
+          var chatDtos: seq[ChatDto] = @[]
+          for chat in args.response["chats"]:
+            chatDtos.add(chat.toChatDto())
+          self.parseChatsInMessengerResponse(chatDtos)
+        except Exception as e:
+          error "Error parsing chats from local backup import response: ", msg = e.msg
 
   proc asyncGetActiveChats*(self: Service) =
     let arg = AsyncGetActiveChatsTaskArg(

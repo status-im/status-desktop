@@ -7,6 +7,7 @@ import app_service/common/types as common_types
 import backend/mailservers as status_mailservers
 import backend/settings as status_settings
 import backend/status_update as status_update
+import app/global/global_singleton
 
 import ./dto/settings as settings_dto
 import ../stickers/dto/stickers as stickers_dto
@@ -28,6 +29,10 @@ const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
 const SIGNAL_URL_UNFURLING_MODE_UPDATED* = "urlUnfurlingModeUpdated"
 const SIGNAL_PINNED_MAILSERVER_CHANGED* = "pinnedMailserverChanged"
 const SIGNAL_AUTO_REFRESH_TOKENS_UPDATED* = "autoRefreshTokensUpdated"
+const SIGNAL_DISPLAY_ASSET_BELOW_BALANCE_UPDATED* = "displayAssetsBelowBalanceUpdated"
+const SIGNAL_DISPLAY_ASSET_BELOW_BALANCE_THRESHOLD_UPDATED* = "displayAssetsBelowBalanceThresholdUpdated"
+const SIGNAL_MESSAGES_FROM_CONTACTS_ONLY_UPDATED* = "messagesFromContactsOnlyUpdated"
+const SIGNAL_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS_UPDATED* = "showCommunityAssetWhenSendingTokensUpdated"
 
 logScope:
   topics = "settings-service"
@@ -76,6 +81,51 @@ QtObject:
     result.notifExemptionsCache = initTable[string, NotificationsExemptions]()
     result.QObject.setup
 
+  proc parseSettingsField(self: Service, settingsField: SettingsFieldDto) =
+    case settingsField.name
+    of KEY_CURRENCY:
+      self.settings.currency = settingsField.value.getStr
+      self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
+    of KEY_DISPLAY_NAME:
+      self.settings.displayName = settingsField.value.getStr
+      self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: self.settings.displayName))
+    of KEY_PREFERRED_NAME:
+      self.settings.preferredName = settingsField.value.getStr
+      singletonInstance.userProfile.setPreferredName(self.settings.preferredName)
+    of KEY_BIO:
+      self.settings.bio = settingsField.value.getStr
+      self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio))
+    of KEY_MNEMONIC:
+      self.settings.mnemonic = ""
+      self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
+    of PROFILE_MIGRATION_NEEDED:
+      self.settings.profileMigrationNeeded = settingsField.value.getBool
+      self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
+    of KEY_URL_UNFURLING_MODE:
+      self.settings.urlUnfurlingMode = toUrlUnfurlingMode(settingsField.value.getInt)
+      self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
+    of KEY_AUTO_REFRESH_TOKENS:
+      self.settings.autoRefreshTokens = settingsField.value.getBool
+      self.events.emit(SIGNAL_AUTO_REFRESH_TOKENS_UPDATED, SettingsBoolValueArgs(value: self.settings.autoRefreshTokens))
+    of KEY_DISPLAY_ASSETS_BELOW_BALANCE:
+      if self.settings.displayAssetsBelowBalance != settingsField.value.getBool:
+        self.settings.displayAssetsBelowBalance = settingsField.value.getBool
+        self.events.emit(SIGNAL_DISPLAY_ASSET_BELOW_BALANCE_UPDATED, Args())
+    of KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD:
+      if self.settings.displayAssetsBelowBalanceThreshold != settingsField.value.getInt:
+        self.settings.displayAssetsBelowBalanceThreshold = settingsField.value.getInt
+        self.events.emit(SIGNAL_DISPLAY_ASSET_BELOW_BALANCE_THRESHOLD_UPDATED, Args())
+    of KEY_MESSAGES_FROM_CONTACTS_ONLY:
+      if self.settings.messagesFromContactsOnly != settingsField.value.getBool:
+        self.settings.messagesFromContactsOnly = settingsField.value.getBool
+        self.events.emit(SIGNAL_MESSAGES_FROM_CONTACTS_ONLY_UPDATED, Args())
+    of KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS:
+      if self.settings.showCommunityAssetWhenSendingTokens != settingsField.value.getBool:
+        self.settings.showCommunityAssetWhenSendingTokens = settingsField.value.getBool
+        self.events.emit(SIGNAL_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS_UPDATED, Args())
+    else:
+      discard
+
   proc init*(self: Service) =
     try:
       let response = status_settings.getSettings()
@@ -94,27 +144,11 @@ QtObject:
 
       if receivedData.settings.len > 0:
         for settingsField in receivedData.settings:
-          if settingsField.name == KEY_CURRENCY:
-            self.settings.currency = settingsField.value.getStr
-            self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
-          if settingsField.name == KEY_DISPLAY_NAME:
-            self.settings.displayName = settingsField.value.getStr
-            self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: self.settings.displayName))
-          if settingsField.name == KEY_BIO:
-            self.settings.bio = settingsField.value.getStr
-            self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio))
-          if settingsField.name == KEY_MNEMONIC:
-            self.settings.mnemonic = ""
-            self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
-          if settingsField.name == PROFILE_MIGRATION_NEEDED:
-            self.settings.profileMigrationNeeded = settingsField.value.getBool
-            self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
-          if settingsField.name == KEY_URL_UNFURLING_MODE:
-            self.settings.urlUnfurlingMode = toUrlUnfurlingMode(settingsField.value.getInt)
-            self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
-          if settingsField.name == KEY_AUTO_REFRESH_TOKENS:
-            self.settings.autoRefreshTokens = settingsField.value.getBool
-            self.events.emit(SIGNAL_AUTO_REFRESH_TOKENS_UPDATED, SettingsBoolValueArgs(value: self.settings.autoRefreshTokens))
+          self.parseSettingsField(settingsField)
+
+    self.events.on(SignalType.WakuBackedUpSettings.event) do(e: Args):
+      var receivedData = WakuBackedUpSettingsSignal(e)
+      self.parseSettingsField(receivedData.backedUpSettingField)
 
     self.initialized = true
 

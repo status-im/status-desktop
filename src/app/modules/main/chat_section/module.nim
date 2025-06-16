@@ -884,8 +884,8 @@ method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
   self.controller.createOneToOneChat("", chatId, "")
 
 method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =
-  if(self.controller.isCommunity()):
-     # initiate chat creation in the `Chat` seciton module.
+  if self.controller.isCommunity():
+     # initiate chat creation in the `Chat` section module.
      self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
      return
 
@@ -1125,11 +1125,11 @@ method getCurrentFleet*(self: Module): string =
 method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
   self.controller.acceptContactRequest(publicKey, contactRequestId)
 
-method onContactAdded*(self: Module, publicKey: string) =
+method onContactAdded*(self: Module, publicKey: string, frombackup: bool = false) =
   self.view.contactRequestsModel().removeItemById(publicKey)
 
   let contact = self.controller.getContactById(publicKey)
-  if (contact.isContact):
+  if contact.isContact and not frombackup:
     self.switchToOrCreateOneToOneChat(publicKey)
 
 method acceptAllContactRequests*(self: Module) =

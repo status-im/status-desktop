@@ -4,7 +4,7 @@ import base
 import ../../../../app_service/service/settings/dto/[settings]
 
 type WakuBackedUpSettingsSignal* = ref object of Signal
-  backedUpSettings*: SettingsDto
+  backedUpSettingField*: SettingsFieldDto
 
 proc fromEvent*(T: type WakuBackedUpSettingsSignal, event: JsonNode): WakuBackedUpSettingsSignal =
   result = WakuBackedUpSettingsSignal()
@@ -12,4 +12,4 @@ proc fromEvent*(T: type WakuBackedUpSettingsSignal, event: JsonNode): WakuBacked
 
   let e = event["event"]
   if e.contains("backedUpSettings"):
-    result.backedUpSettings = e["backedUpSettings"].toSettingsDto()
+    result.backedUpSettingField = e["backedUpSettings"].toSettingsFieldDto()
