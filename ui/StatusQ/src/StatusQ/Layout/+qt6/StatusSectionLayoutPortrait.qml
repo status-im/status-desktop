@@ -163,6 +163,8 @@ SwipeView {
             color: backgroundColor || Theme.palette.statusAppLayout.rightPanelBackgroundColor
         }
         onInViewChanged: {
+            // If the panel is not in view, we need to remove it from the swipe view
+            // and add it to the cache wrapper items so that we can restore it later if needed.
             if (!inView && !!parent) {
                 d.items.push(root.takeItem(baseProxyPanel.implicitIndex));
             } else if (inView && !parent) {
