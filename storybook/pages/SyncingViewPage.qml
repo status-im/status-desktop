@@ -34,6 +34,7 @@ SplitView {
         contentWidth: 664
 
         isProduction: ctrlIsProduction.checked
+        localBackupEnabled: localBackupEnabledSwitch.checked
 
         advancedStore: ProfileStores.AdvancedStore {
             readonly property bool isDebugEnabled: ctrlDebugEnabled.checked
@@ -129,6 +130,12 @@ SplitView {
             Switch {
                 id: ctrlIsProduction
                 text: "Is production"
+                checked: true
+            }
+
+            Switch {
+                id: localBackupEnabledSwitch
+                text: "Local backup enabled"
                 checked: true
             }
         }

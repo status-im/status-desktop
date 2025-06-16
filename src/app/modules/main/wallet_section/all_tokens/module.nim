@@ -186,3 +186,12 @@ method toggleAutoRefreshTokensLists*(self: Module) =
     error "Failed to toggle autoRefreshTokensLists"
     return
   self.view.emitAutoRefreshTokensListsChanged()
+
+method displayAssetsBelowBalanceChanged*(self: Module) =
+  self.view.displayAssetsBelowBalanceChanged()
+
+method displayAssetsBelowBalanceThresholdChanged*(self: Module) =
+  self.view.displayAssetsBelowBalanceThresholdChanged()
+
+method showCommunityAssetWhenSendingTokensChanged*(self: Module) =
+  self.view.showCommunityAssetWhenSendingTokensChanged()
