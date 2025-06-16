@@ -13,6 +13,7 @@ ToolBar {
     property bool hasUnseenNotifications: false
     property Item headerContent
     property alias notificationButton: notificationButton
+    property bool backButtonVisible: !!backButtonName
 
     signal backButtonClicked()
     signal notificationButtonClicked()
@@ -30,7 +31,7 @@ ToolBar {
             Layout.leftMargin: 20
             objectName: "toolBarBackButton"
             icon.name: "arrow-left"
-            visible: !!root.backButtonName
+            visible: root.backButtonVisible
             text: root.backButtonName
             onClicked: { root.backButtonClicked(); }
         }

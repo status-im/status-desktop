@@ -158,6 +158,11 @@ SectionLayout.LayoutChooser {
         if (portraitView.visible)
             portraitView.currentIndex = portraitView.currentIndex + 1;
     }
+    
+    function goToPreviousPanel() {
+        if (portraitView.visible)
+            portraitView.currentIndex = portraitView.currentIndex - 1;
+    }
 
     criteria: [
         root.height > root.width && root.width < root.implicitWidth, // Portrait mode
@@ -182,6 +187,10 @@ SectionLayout.LayoutChooser {
         showRightPanel: root.showRightPanel
         rightPanelWidth: root.rightPanelWidth
         showHeader: root.showHeader
+        backButtonName: root.backButtonName
+        hasUnseenNotifications: root.hasUnseenNotifications
+        notificationCount: root.notificationCount
+        headerContent: root.headerContent
 
         onNotificationButtonClicked: root.notificationButtonClicked()
         onBackButtonClicked: root.backButtonClicked()
@@ -199,6 +208,10 @@ SectionLayout.LayoutChooser {
         showRightPanel: root.showRightPanel
         rightPanelWidth: root.rightPanelWidth
         showHeader: root.showHeader
+        backButtonName: root.backButtonName
+        hasUnseenNotifications: root.hasUnseenNotifications
+        notificationCount: root.notificationCount
+        headerContent: root.headerContent
 
         onNotificationButtonClicked: root.notificationButtonClicked()
         onBackButtonClicked: root.backButtonClicked()

@@ -206,22 +206,30 @@ SwipeView {
             LayoutItemProxy {
                 id: headerBackgroundProxy
                 Layout.fillWidth: true
-            }
-            StatusToolBar {
-                id: statusToolBar
-                Layout.fillWidth: true
-                visible: root.showHeader
-                onBackButtonClicked: {
-                    root.backButtonClicked();
-                }
-                onNotificationButtonClicked: {
-                    root.notificationButtonClicked();
+                StatusToolBar {
+                    id: statusToolBar
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    visible: root.showHeader
+                    backButtonVisible: root.currentIndex !== 0
+                    onBackButtonClicked: {
+                        if (!root.backButtonName) {
+                            root.currentIndex = root.currentIndex - 1
+                            return
+                        }
+                        root.backButtonClicked();
+                    }
+                    onNotificationButtonClicked: {
+                        root.notificationButtonClicked();
+                    }
                 }
             }
             LayoutItemProxy {
                 id: centerPanelProxy
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.topMargin: statusToolBar.height - headerBackgroundProxy.height
                 implicitHeight: centerPanel ? centerPanel.implicitHeight : 0
                 implicitWidth: centerPanel ? centerPanel.implicitWidth : 0
             }

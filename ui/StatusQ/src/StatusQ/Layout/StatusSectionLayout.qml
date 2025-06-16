@@ -157,6 +157,13 @@ SplitView {
     function goToNextPanel() {
         // Placeholder to align with qt6 StatusSectionLayout
     }
+    /*!
+        \qmlmethod StatusSectionLayout::goToNextPanel()
+        This method is used to focus the panel that needs to be active.
+    */
+    function goToPreviousPanel() {
+        // Placeholder to align with qt6 StatusSectionLayout
+    }
 
     onCenterPanelChanged: {
         if (!!centerPanel) {

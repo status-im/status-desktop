@@ -31,8 +31,8 @@ StatusTextField {
     QtObject {
         id: d
 
-        readonly property int inputTextPadding: Theme.padding
-        readonly property int radius: Theme.radius
+        readonly property int inputTextPadding: Theme.defaultPadding
+        readonly property int radius: Theme.defaultRadius
     }
 
     leftPadding: d.inputTextPadding
