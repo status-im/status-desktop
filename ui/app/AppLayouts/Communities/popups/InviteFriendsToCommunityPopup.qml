@@ -87,7 +87,7 @@ StatusStackModal {
     subHeaderItem: StyledText {
         text: root.validationError || root.successMessage
         visible: root.validationError !== "" || root.successMessage !== ""
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         color: !!root.validationError ? Theme.palette.dangerColor1 : Theme.palette.successColor1
         horizontalAlignment: Text.AlignHCenter
         height: visible ? contentHeight : 0

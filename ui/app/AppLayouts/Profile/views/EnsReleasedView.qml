@@ -21,7 +21,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: Theme.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Theme.fontSize20
         color: Theme.palette.directColor1
 
         StatusBetaTag {
@@ -47,7 +47,7 @@ Item {
             text: "✓"
             opacity: 0.7
             font.weight: Font.Bold
-            font.pixelSize: 18
+            font.pixelSize: Theme.fontSize18
             color: Theme.palette.indirectColor1
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -60,7 +60,7 @@ Item {
         anchors.top: circle.bottom
         anchors.topMargin: Theme.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 24
+        font.pixelSize: Theme.fontSize24
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -73,7 +73,7 @@ Item {
         text: qsTr("The username %1 will be removed and your deposit will be returned once the transaction is mined").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
-        font.pixelSize: 14
+        font.pixelSize: Theme.secondaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -86,7 +86,7 @@ Item {
         text: qsTr("You can follow the progress in the Transaction History section of your wallet.")
         anchors.top: subtitle.bottom
         anchors.topMargin: 24
-        font.pixelSize: 12
+        font.pixelSize: Theme.tertiaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter

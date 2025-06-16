@@ -73,7 +73,7 @@ StatusDialog {
                         anchors.left: parent.left
                         width: Math.min(implicitWidth, contactRow.width - verificationIcons.width - verificationIcons.anchors.leftMargin)
                         font.bold: true
-                        font.pixelSize: 17
+                        font.pixelSize: Theme.secondaryAdditionalTextSize
                         elide: Text.ElideRight
                         text: root.mainDisplayName
                     }
@@ -93,7 +93,7 @@ StatusDialog {
                     StatusBaseText {
                         id: contactSecondaryName
                         color: Theme.palette.baseColor1
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.additionalTextSize
                         text: root.optionalDisplayName
                         visible: !!contactDetails.localNickname
                     }
@@ -105,8 +105,8 @@ StatusDialog {
                         visible: contactSecondaryName.visible
                     }
                     StatusBaseText {
-                        font.pixelSize: 13
                         color: Theme.palette.baseColor1
+                        font.pixelSize: Theme.additionalTextSize
                         text: Utils.getElidedCompressedPk(root.publicKey)
                         HoverHandler {
                             id: keyHoverHandler

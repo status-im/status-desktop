@@ -41,7 +41,7 @@ ColumnLayout {
             StatusBaseText {
                 id: collectibleName
 
-                font.pixelSize: 22
+                font.pixelSize: Theme.fontSize22
                 lineHeight: 30
                 lineHeightMode: Text.FixedHeight
                 elide: Text.ElideRight
@@ -50,7 +50,7 @@ ColumnLayout {
             StatusBaseText {
                 id: collectibleId
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                font.pixelSize: 22
+                font.pixelSize: Theme.fontSize22
                 lineHeight: 30
                 lineHeightMode: Text.FixedHeight
                 elide: Text.ElideRight

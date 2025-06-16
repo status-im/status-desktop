@@ -104,8 +104,8 @@ CalloutCard {
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignTop
                     Layout.topMargin: verticalAlignment === Text.AlignTop && contentHeight < logo.height ? (logo.height - contentHeight) / 2 : 0
-                    font.pixelSize: 13
                     font.weight: Font.Medium
+                    font.pixelSize: Theme.additionalTextSize
                     wrapMode: Text.Wrap
                     elide: Text.ElideRight
                     verticalAlignment: centerText ? Text.AlignVCenter : Text.AlignTop
@@ -124,7 +124,7 @@ CalloutCard {
                 id: description
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 color: Theme.palette.baseColor1
@@ -149,9 +149,9 @@ CalloutCard {
     }
 
     component FooterText: StatusBaseText {
-        font.pixelSize: 12
         lineHeight: 16
         lineHeightMode: Text.FixedHeight
+        font.pixelSize: Theme.tertiaryTextFontSize
         color: Theme.palette.baseColor1
         elide: Text.ElideRight
         wrapMode: Text.Wrap

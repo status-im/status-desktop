@@ -26,7 +26,7 @@ BackupSeedStepBase {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.bold: true
-            font.pixelSize: 17
+            font.pixelSize: Theme.secondaryAdditionalTextSize
             lineHeight: 1.2
             text: qsTr("Store Your Phrase Offline and Complete Your Back Up")
             Layout.fillWidth: true

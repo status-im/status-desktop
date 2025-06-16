@@ -166,8 +166,8 @@ Pane {
                 color: Theme.palette.baseColor1
             }
             StatusBaseText {
-                font.pixelSize: 13
                 font.weight: Font.Medium
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
                 verticalAlignment: Text.AlignVCenter
                 text: qsTr("Contact Request Pending")
@@ -389,7 +389,7 @@ Pane {
                     width: Math.min(implicitWidth, contactRow.width - verificationIcons.width - verificationIcons.anchors.leftMargin)
                     objectName: "ProfileDialog_displayName"
                     font.bold: true
-                    font.pixelSize: 22
+                    font.pixelSize: Theme.fontSize22
                     elide: Text.ElideRight
                     text: StatusQUtils.Emoji.parse(d.mainDisplayName, StatusQUtils.Emoji.size.middle)
                 }

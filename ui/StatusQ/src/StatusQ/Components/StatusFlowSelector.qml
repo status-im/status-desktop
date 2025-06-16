@@ -108,7 +108,7 @@ StatusGroupBox {
             asset.isImage: true
             closeButtonVisible: false
             titleText.color: Theme.palette.baseColor1
-            titleText.font.pixelSize: 15
+            titleText.font.pixelSize: Theme.primaryTextFontSize
 
             height: root.placeholderItemHeight
         }

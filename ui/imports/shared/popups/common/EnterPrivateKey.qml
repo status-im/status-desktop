@@ -99,7 +99,7 @@ Item {
                     Layout.alignment: Qt.AlignRight
                     visible: privKeyInput.text !== "" && !(root.store.enteredPrivateKeyIsValid && root.store.enteredPrivateKeyMatchTheKeypair)
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     color: Theme.palette.dangerColor1
                     text: {
                         if (!root.store.enteredPrivateKeyIsValid)

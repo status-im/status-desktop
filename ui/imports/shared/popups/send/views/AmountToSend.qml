@@ -199,7 +199,7 @@ Control {
 
             visible: text.length > 0
 
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             lineHeight: 18
             lineHeightMode: Text.FixedHeight
             color: Theme.palette.directColor1
@@ -235,7 +235,7 @@ Control {
                             + "0".repeat(root.fiatDecimalPlaces)
                 }
 
-                font.pixelSize: 34
+                font.pixelSize: Theme.fontSize34
 
                 validator: AmountValidator {
                     id: validator

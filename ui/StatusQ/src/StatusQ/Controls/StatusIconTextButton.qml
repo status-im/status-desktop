@@ -54,7 +54,7 @@ AbstractButton {
     icon.color: Theme.palette.primaryColor1
     icon.height: 24
     icon.width: 24
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
     contentItem: RowLayout {
          spacing: root.spacing
          StatusIcon {

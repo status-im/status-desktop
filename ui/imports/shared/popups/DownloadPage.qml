@@ -46,7 +46,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: logoImage.bottom
         anchors.topMargin: 75
-        font.pixelSize: 38
+        font.pixelSize: Theme.fontSize38
         font.weight: Font.Medium
         color: Theme.palette.directColor1
     }
@@ -57,7 +57,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: title.bottom
         anchors.topMargin: 32
-        font.pixelSize: 28
+        font.pixelSize: Theme.fontSize28
         color: Theme.palette.directColor1
     }
 
@@ -66,7 +66,7 @@ Rectangle {
         text: qsTr("There's new version available to download.")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: currentVersionText.bottom
-        font.pixelSize: 28
+        font.pixelSize: Theme.fontSize28
         color: Theme.palette.directColor1
     }
 

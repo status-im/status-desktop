@@ -24,7 +24,7 @@ Control {
                 id: titleText
 
                 color: Theme.palette.directColor1
-                font.pixelSize: 26
+                font.pixelSize: Theme.fontSize26
                 font.bold: true
             }
 
@@ -36,7 +36,7 @@ Control {
 
                 visible: !!text
                 color: Theme.palette.baseColor1
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
         }
 

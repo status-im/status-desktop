@@ -48,7 +48,7 @@ Control {
                 id: tokenName
                 Layout.alignment: Qt.AlignHCenter
                 Layout.maximumWidth: root.width-root.asset.width-8
-                font.pixelSize: 28
+                font.pixelSize: Theme.fontSize28
                 font.bold: true
                 lineHeight: 38
                 lineHeightMode: Text.FixedHeight
@@ -77,7 +77,7 @@ Control {
                 StatusTextWithLoadingState {
                     id: cryptoBalance
                     Layout.alignment: Qt.AlignHCenter
-                    font.pixelSize: 28
+                    font.pixelSize: Theme.fontSize28
                     font.bold: true
                     lineHeight: 38
                     lineHeightMode: Text.FixedHeight
@@ -88,7 +88,7 @@ Control {
                     id: fiatBalance
                     Layout.alignment: Qt.AlignBottom
                     Layout.bottomMargin: 2
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     lineHeight: 22
                     lineHeightMode: Text.FixedHeight
                     customColor: Theme.palette.baseColor1

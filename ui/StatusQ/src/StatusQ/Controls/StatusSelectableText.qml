@@ -70,7 +70,7 @@ Item {
                 selectionColor: Theme.palette.primaryColor2
                 selectedTextColor: color
                 focus: true
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 font.family: Theme.baseFont.name
                 color: Theme.palette.directColor1
                 textFormat: Text.RichText

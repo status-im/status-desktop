@@ -100,8 +100,8 @@ StatusComboBox {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            font.pixelSize: 13
             color: Theme.palette.directColor1
+            font.pixelSize: Theme.additionalTextSize
         }
     }
 

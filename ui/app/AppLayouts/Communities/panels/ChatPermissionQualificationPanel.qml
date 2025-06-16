@@ -67,7 +67,7 @@ Item {
                                     closeButtonVisible: false
                                     titleText.color: model.available ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
                                     bgColor: model.available ? Theme.palette.primaryColor2 :Theme.palette.dangerColor2
-                                    titleText.font.pixelSize: 12
+                                    titleText.font.pixelSize: Theme.tertiaryTextFontSize
                                 }
                             }
                         }

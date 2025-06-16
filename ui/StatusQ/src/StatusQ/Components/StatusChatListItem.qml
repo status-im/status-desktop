@@ -164,7 +164,7 @@ Rectangle {
                           root.notificationsCount > 0 ||
                           root.highlightWhenCreated ||
                           statusBadge.visible) ? Font.Bold : Font.Medium
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
         }
 
         StatusIcon {

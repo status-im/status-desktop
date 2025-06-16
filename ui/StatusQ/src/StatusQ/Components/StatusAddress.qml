@@ -14,7 +14,7 @@ StatusBaseText {
     property real maxWidth: width
 
     font.family: Theme.monoFont.name
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
     elide: Text.ElideMiddle
     color: Theme.palette.baseColor1
 

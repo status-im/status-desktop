@@ -65,7 +65,7 @@ GridLayout {
     * Multiple selection.\n
     * Multiple selection and displayed name is the symbol + shortName\n"
         color: Theme.palette.baseColor1
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
     }
 
     // Outsite area

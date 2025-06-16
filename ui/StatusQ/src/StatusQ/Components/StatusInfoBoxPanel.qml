@@ -81,7 +81,7 @@ Control {
             Layout.fillWidth: true
 
             wrapMode: Text.Wrap
-            font.pixelSize: 17
+            font.pixelSize: Theme.secondaryAdditionalTextSize
             font.weight: Font.Bold
 
             horizontalAlignment: Text.AlignHCenter
@@ -94,7 +94,7 @@ Control {
             Layout.fillWidth: true
 
             wrapMode: Text.Wrap
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
 
             horizontalAlignment: Text.AlignHCenter

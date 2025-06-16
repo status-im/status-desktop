@@ -25,7 +25,7 @@ Repeater {
             id: sectionTitle
             text: modelData.name
             font.bold: true
-            font.pixelSize: 16
+            font.pixelSize: Theme.fontSize16
         }
         Flow {
             width: parent.width

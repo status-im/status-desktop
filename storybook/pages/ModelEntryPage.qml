@@ -6,6 +6,7 @@ import QtQml.Models 2.15
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import Models 1.0
 import Storybook 1.0
@@ -104,7 +105,7 @@ Control {
             insetComponent: RowLayout {
                 Button {
                     height: 20
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.fontSize11
                     text: "remove"
                     highlighted: model.index === itemData.row
 
@@ -114,7 +115,7 @@ Control {
                 }
                 Button {
                     height: 20
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.fontSize11
                     text: "edit"
                     highlighted: model.index === itemData.row
 
@@ -134,7 +135,7 @@ Control {
                 width: parent.width
                 text: "Item Signals"
                 font.bold: true
-                font.pixelSize: 16
+                font.pixelSize: Theme.fontSize16
                 bottomPadding: 20
                 Button {
                     anchors.right: parent.right

@@ -32,7 +32,7 @@ Column {
             anchors.leftMargin: 16
             anchors.rightMargin: 16
             text: root.community.description
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
             wrapMode: Text.Wrap
             textFormat: Text.PlainText

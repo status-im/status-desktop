@@ -29,7 +29,7 @@ ActivityNotificationMessage {
         text: root.isOutgoingMessage ? qsTr("Contact request sent to %1").arg(contactName) :
                                        qsTr("Contact request:")
         font.italic: true
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         maximumLineCount: 2
         wrapMode: Text.WordWrap
         color: Theme.palette.baseColor1

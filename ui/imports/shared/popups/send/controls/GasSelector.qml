@@ -80,7 +80,7 @@ Item {
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
                         text: root.formatCurrencyAmount(totalGasAmountFiat, root.currentCurrency)
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.baseColor1
                     }
                 ]
@@ -111,7 +111,7 @@ Item {
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
                         text:  root.formatCurrencyAmount(approvalGasFeesFiat, root.currentCurrency)
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.baseColor1
                     }
                 ]
@@ -141,7 +141,7 @@ Item {
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
                         text: root.formatCurrencyAmount(tokenFeesFiat, root.currentCurrency)
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.baseColor1
                     }
                 ]

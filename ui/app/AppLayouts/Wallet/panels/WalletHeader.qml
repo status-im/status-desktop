@@ -67,7 +67,7 @@ Item {
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 38
                 font.bold: true
-                font.pixelSize: 28
+                font.pixelSize: Theme.fontSize28
                 text: {
                     if (root.walletStore.showSavedAddresses)
                         return qsTr("Saved addresses")
@@ -237,7 +237,7 @@ Item {
                      !!root.networkConnectionStore &&
                      !networkConnectionStore.accountBalanceNotAvailable
             StatusTextWithLoadingState {
-                font.pixelSize: 28
+                font.pixelSize: Theme.fontSize28
                 font.bold: true
                 customColor: Theme.palette.directColor1
                 text: loading ?

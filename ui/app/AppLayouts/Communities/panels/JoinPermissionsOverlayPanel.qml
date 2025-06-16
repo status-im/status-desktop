@@ -168,7 +168,7 @@ Control {
             loading: root.requestToJoinState === Constants.RequestToJoinState.InProgress
             text: root.isInvitationPending ? (root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText)
                                            : d.communityRequestToJoinText
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
 
             onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.requestToJoinClicked()
         }

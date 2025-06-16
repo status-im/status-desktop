@@ -69,7 +69,7 @@ Item {
         id: inputLabel
         text: inputBox.label
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.textColor
     }
 
@@ -182,10 +182,10 @@ Item {
         anchors.top: inputField.bottom
         anchors.topMargin: validationErrorTopMargin
         horizontalAlignment: Text.AlignRight
-        font.pixelSize: 12
         height: 16
         width: inputField.width
         color: validationErrorColor
+        font.pixelSize: Theme.tertiaryTextFontSize
         wrapMode: TextEdit.Wrap
     }
 }

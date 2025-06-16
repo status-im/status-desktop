@@ -259,7 +259,7 @@ Control {
                         Layout.alignment: Qt.AlignVCenter
 
                         text: token.chainName
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.additionalTextSize
                         font.weight: Font.Medium
                         color: Theme.palette.baseColor1
                     }

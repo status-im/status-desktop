@@ -26,7 +26,7 @@ StatusModal {
         StatusBaseText {
             text: "A community of cat lovers, meow!"
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             height: 46
             color: Theme.palette.directColor1
             anchors.left: parent.left
@@ -56,7 +56,7 @@ StatusModal {
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            statusListItemTitle.font.pixelSize: 17
+            statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
             title: "Members"
             asset.name: "group-chat"
             label: "184"
@@ -71,7 +71,7 @@ StatusModal {
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            statusListItemTitle.font.pixelSize: 17
+            statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
             title: "Notifications"
             asset.name: "notification"
             components: [
@@ -86,7 +86,7 @@ StatusModal {
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            statusListItemTitle.font.pixelSize: 17
+            statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
             title: "Edit community"
             asset.name: "edit"
             type: StatusListItem.Type.Secondary
@@ -94,7 +94,7 @@ StatusModal {
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            statusListItemTitle.font.pixelSize: 17
+            statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
             title: "Transfer ownership"
             asset.name: "exchange"
             type: StatusListItem.Type.Secondary
@@ -102,7 +102,7 @@ StatusModal {
 
         StatusListItem {
             anchors.horizontalCenter: parent.horizontalCenter
-            statusListItemTitle.font.pixelSize: 17
+            statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
             title: "Leave community"
             asset.name: "arrow-left"
             type: StatusListItem.Type.Secondary

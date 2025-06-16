@@ -154,7 +154,7 @@ Item {
 
             StatusBaseText {
                 text: root.text
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 color: Theme.palette.indirectColor1
                 linkColor: color
@@ -179,7 +179,7 @@ Item {
                 }
                 contentItem: StatusBaseText {
                     text: button.text
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                     font.family: Theme.baseFont.name
                     horizontalAlignment: Text.AlignHCenter
@@ -206,7 +206,7 @@ Item {
             anchors.rightMargin: Theme.halfPadding
             text: qsTr("%1%").arg(progressBar.value)
             visible: progressBar.visible
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
             verticalAlignment: Text.AlignVCenter
             color: Theme.palette.white
         }

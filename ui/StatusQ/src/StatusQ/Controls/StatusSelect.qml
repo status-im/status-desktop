@@ -49,7 +49,7 @@ Item {
         anchors.leftMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
     }
 
@@ -145,7 +145,7 @@ Item {
         anchors.topMargin: validationErrorTopMargin
         anchors.right: parent.right
         anchors.left: parent.left
-        font.pixelSize: 12
+        font.pixelSize: Theme.tertiaryTextFontSize
         height: visible ? implicitHeight : 0
         color: Theme.palette.dangerColor1
         horizontalAlignment: TextEdit.AlignRight

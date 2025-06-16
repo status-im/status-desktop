@@ -135,7 +135,7 @@ Control {
 
                 color: Theme.palette.directColor1
 
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 font.weight: Font.Medium
 
                 elide: Text.ElideMiddle

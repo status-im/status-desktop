@@ -22,7 +22,7 @@ Item {
         text: control.label
         anchors.left: parent.left
         anchors.top: parent.top
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: control.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
     }
 

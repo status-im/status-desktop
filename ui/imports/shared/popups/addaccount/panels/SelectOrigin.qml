@@ -66,7 +66,7 @@ StatusSelect {
                 height: 16
             }
             title: model.account.name
-            titleText.font.pixelSize: 12
+            titleText.font.pixelSize: Theme.tertiaryTextFontSize
             titleText.color: Theme.palette.indirectColor1
         }
     }
@@ -129,7 +129,7 @@ StatusSelect {
                 height: 16
             }
             title: model.account.name
-            titleText.font.pixelSize: 12
+            titleText.font.pixelSize: Theme.tertiaryTextFontSize
             titleText.color: Theme.palette.indirectColor1
         }
 

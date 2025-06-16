@@ -53,7 +53,7 @@ Rectangle {
         anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
         text: root.text
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.textColor
     }
 
@@ -62,7 +62,7 @@ Rectangle {
         visible: !!root.currentValue
         text: root.currentValue
         elide: Text.ElideRight
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         horizontalAlignment: Text.AlignRight
         color: Theme.palette.secondaryText
         anchors.left: textItem.right
@@ -94,7 +94,7 @@ Rectangle {
         width: root.badgeSize
         height: root.badgeSize
         Text {
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.white
             anchors.centerIn: parent
             text: root.badgeText

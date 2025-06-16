@@ -105,7 +105,7 @@ Control {
             text: d.communityVerified ? qsTr("Verified community invitation") : qsTr("Community invitation")
             color: d.communityVerified ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
         }
 
         Rectangle {
@@ -151,7 +151,7 @@ Control {
                     text: d.communityName
                     font.weight: Font.Bold
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    font.pixelSize: 17
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
                     color: Theme.palette.directColor1
                 }
 
@@ -167,7 +167,7 @@ Control {
                     Layout.fillWidth: true
                     objectName: "communityMembers"
                     text: qsTr("%n member(s)", "", d.communityNbMembers)
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                     color: Theme.palette.baseColor1
                 }

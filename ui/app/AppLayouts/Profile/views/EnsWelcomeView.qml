@@ -50,7 +50,7 @@ Item {
                 anchors.top: image.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
-                font.pixelSize: 24
+                font.pixelSize: Theme.fontSize24
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -63,7 +63,7 @@ Item {
                 text: qsTr("ENS names transform those crazy-long addresses into unique usernames.")
                 anchors.top: title.bottom
                 anchors.topMargin: 24
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -79,7 +79,7 @@ Item {
                 anchors.top: subtitle.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -93,7 +93,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -106,7 +106,7 @@ Item {
                 anchors.topMargin: 24
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -118,7 +118,7 @@ Item {
                 anchors.top: element1Subtitle.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -132,7 +132,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -145,7 +145,7 @@ Item {
                 anchors.topMargin: 24
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -157,7 +157,7 @@ Item {
                 anchors.top: element2Subtitle.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -171,7 +171,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -184,7 +184,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 anchors.topMargin: 24
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -196,7 +196,7 @@ Item {
                 anchors.top: element3Subtitle.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -210,7 +210,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -223,7 +223,7 @@ Item {
                 anchors.topMargin: 24
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -236,7 +236,7 @@ Item {
                 anchors.top: element4Subtitle.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -250,7 +250,7 @@ Item {
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -263,7 +263,7 @@ Item {
                 anchors.topMargin: 24
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -276,7 +276,7 @@ Item {
                 anchors.topMargin: 40
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 11
+                font.pixelSize: Theme.fontSize11
                 color: Theme.palette.directColor1
             }
         }

@@ -107,7 +107,7 @@ Item {
                     StatusBaseText {
                         width: savedAddresses.width
                         height: visible ? 56 : 0
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                         text: qsTr("No Saved Address")
                         horizontalAlignment: Text.AlignHCenter
@@ -158,7 +158,7 @@ Item {
                 header: StatusBaseText {
                     height: visible ? 56 : 0
                     width: recents.width
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     color: Theme.palette.directColor1
                     text: qsTr("No Recents")
                     horizontalAlignment: Text.AlignHCenter
@@ -191,7 +191,7 @@ Item {
                             rotation: 45
                         },
                         StatusTextWithLoadingState {
-                            font.pixelSize: 15
+                            font.pixelSize: Theme.primaryTextFontSize
                             customColor: Theme.palette.directColor1
                             text: LocaleUtils.currencyAmountToLocaleString(entry.amountCurrency)
                         }

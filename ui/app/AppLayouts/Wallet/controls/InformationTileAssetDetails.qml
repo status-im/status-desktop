@@ -28,7 +28,7 @@ Control {
         StatusBaseText {
             id: primaryText
             Layout.fillWidth: true
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             lineHeight: 18
             lineHeightMode: Text.FixedHeight
             color: Theme.palette.directColor5

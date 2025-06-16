@@ -62,7 +62,7 @@ Control {
             StatusBaseText {
                 id: primaryText
                 width: parent.width
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
@@ -73,7 +73,7 @@ Control {
             StatusBaseText {
                 id: secondaryText
                 width: parent.width
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 lineHeight: 16
                 lineHeightMode: Text.FixedHeight
                 color: Theme.palette.baseColor1

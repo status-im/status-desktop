@@ -129,7 +129,7 @@ Row {
                 id: headerTitle
                 objectName: "headerTitle"
                 font.family: Theme.baseFont.name
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 font.bold: true
                 elide: statusImageWithTitle.titleElide
                 color: Theme.palette.directColor1
@@ -156,7 +156,7 @@ Row {
             id: headerSubTitle
             objectName: "headerSubTitle"
             font.family: Theme.baseFont.name
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color:Theme.palette.baseColor1
             width: parent.width
             elide: statusImageWithTitle.subTitleElide

@@ -56,9 +56,8 @@ GroupBox {
                 Layout.fillWidth: true
 
                 text: root.title
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 color: enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                font.pixelSize: 17
-
                 elide: Text.ElideRight
             }
         }

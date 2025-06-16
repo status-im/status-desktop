@@ -452,14 +452,14 @@ Column {
             icon.height: 24
             iconRotation: 180
             text: "Previous page"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             onClicked: testText.visible = !testText.visible
         }
         StatusBaseText {
             id: testText
             Layout.alignment: Qt.AlignVCenter
             text: "Click and hide!"
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
         }
     }
 }

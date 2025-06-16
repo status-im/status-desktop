@@ -41,7 +41,7 @@ Rectangle {
                 width: 40
                 height: 40
                 name: root.identicon
-                letterSize: 15
+                letterSize: Theme.primaryTextFontSize
                 color: Theme.palette.miscColor5
                 imgIsIdenticon: true
             }
@@ -73,7 +73,7 @@ Rectangle {
         elide: Text.ElideRight
         text: root.name
         font.weight: Font.Medium
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: "#4b4b4b"
     }
 
@@ -87,7 +87,7 @@ Rectangle {
         anchors.rightMargin: 16
         elide: Text.ElideRight
         clip: true // This is needed because emojis don't ellide correctly
-        font.pixelSize: 14
+        font.pixelSize: Theme.secondaryTextFontSize
         color: "#4b4b4b"
         text: root.message
     }
@@ -108,7 +108,7 @@ Rectangle {
 
         StatusBaseText {
             font.weight: Font.Medium
-            font.pixelSize: 14
+            font.pixelSize: Theme.secondaryTextFontSize
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Open")

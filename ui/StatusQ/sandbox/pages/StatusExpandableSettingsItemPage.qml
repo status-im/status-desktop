@@ -143,7 +143,7 @@ Column {
                 id: infoText
                 anchors.centerIn: parent
                 color: Theme.palette.directColor4
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 lineHeight: 22
                 lineHeightMode: Text.FixedHeight
                 font.weight: Font.Medium

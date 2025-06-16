@@ -66,7 +66,7 @@ SettingsContentBase {
 
             StatusLinkText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 22
+                font.pixelSize: Theme.fontSize22
                 font.bold: true
                 normalColor: Theme.palette.directColor1
                 text: root.store.getCurrentVersion()
@@ -82,7 +82,7 @@ SettingsContentBase {
 
             StatusLinkText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 font.bold: true
                 normalColor: Theme.palette.directColor1
                 text: root.store.getStatusGoVersion().replace(/^v/, '')
@@ -99,7 +99,7 @@ SettingsContentBase {
 
             StatusLinkText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 font.bold: true
                 normalColor: Theme.palette.directColor1
                 text: root.store.qtRuntimeVersion()

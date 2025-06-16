@@ -270,7 +270,7 @@ ColumnLayout {
         Layout.fillWidth: true
         text: qsTr("I understand that changing network settings can cause unforeseen issues, errors, security risks and potentially even loss of funds.")
         checkState: Qt.Unchecked
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
     }
 
     Separator {}
@@ -318,7 +318,7 @@ ColumnLayout {
                     StatusBaseText {
                         objectName: "mustBeRestartedText"
                         text: qsTr("For new JSON RPC URLs to take effect, Status must be restarted. Are you ready to do this now?")
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         anchors.left: parent.left
                         anchors.right: parent.right
                         wrapMode: Text.WordWrap

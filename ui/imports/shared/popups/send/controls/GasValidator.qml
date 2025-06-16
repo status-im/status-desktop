@@ -40,7 +40,7 @@ ColumnLayout {
                   qsTr("Balance exceeded") : qsTr("No route found")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.dangerColor1
         visible: !isLoading
     }

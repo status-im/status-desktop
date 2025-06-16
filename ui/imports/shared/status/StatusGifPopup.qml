@@ -147,7 +147,7 @@ Popup {
                 }
                 visible: searchBox.text === ""
                 color: Theme.palette.secondaryText
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 topPadding: gifHeader.headerMargin
                 leftPadding: gifHeader.headerMargin
             }

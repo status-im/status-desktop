@@ -341,7 +341,7 @@ ColumnLayout {
                         leftPadding: Theme.padding
                         bottomPadding: Theme.halfPadding
                         text: transactionDelegate.model.date
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.additionalTextSize
                     }
                 }
             }
@@ -391,7 +391,7 @@ ColumnLayout {
                 Layout.leftMargin: Theme.padding
                 text: "01.01.2000"
                 width: d.loadingSectionWidth
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 loading: visible
                 visible: d.isInitialLoading
             }
@@ -429,7 +429,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("You have reached the beginning of the activity for this account")
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
                 visible: footerColumn.allActivityLoaded
                 horizontalAlignment: Text.AlignHCenter

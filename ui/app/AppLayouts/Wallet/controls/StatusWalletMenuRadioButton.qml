@@ -11,7 +11,7 @@ StatusRadioButton {
     property bool checkedState: false
     contentItem: StatusBaseText {
         width: parent.width
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
         color: Theme.palette.directColor1

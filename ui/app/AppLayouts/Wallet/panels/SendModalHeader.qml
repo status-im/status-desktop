@@ -138,7 +138,7 @@ RowLayout {
 
         text: qsTr("On:")
         color: Theme.palette.baseColor1
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         lineHeight: 38
         lineHeightMode: Text.FixedHeight
         verticalAlignment: Text.AlignVCenter

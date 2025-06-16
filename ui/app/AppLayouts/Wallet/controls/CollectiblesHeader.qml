@@ -40,13 +40,13 @@ Rectangle {
         anchors.left: collectibleIconImage.right
         anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 17
+        font.pixelSize: Theme.secondaryAdditionalTextSize
     }
 
     StyledText {
         visible: collectiblesQty >= Constants.maxTokens
         text: qsTr("Maximum number of collectibles to display reached")
-        font.pixelSize: 17
+        font.pixelSize: Theme.secondaryAdditionalTextSize
         color: Theme.palette.secondaryText
         anchors.left: collectibleName.right
         anchors.leftMargin: Theme.padding
@@ -80,7 +80,7 @@ Rectangle {
                 id: numberCollectibleText
                 color: Theme.palette.secondaryText
                 text: !!error ? "-" : collectibleHeader.collectiblesQty
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 anchors.verticalCenter: parent.verticalCenter
             }
 

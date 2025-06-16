@@ -81,7 +81,7 @@ Popup {
         visible: !!popup.title
         height: visible ? implicitHeight : 0
         text: popup.title
-        font.pixelSize: 17
+        font.pixelSize: Theme.secondaryAdditionalTextSize
         anchors.top: parent.top
     }
 
@@ -196,7 +196,7 @@ Popup {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: imageLoader.right
                 anchors.leftMargin: Theme.smallPadding
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
 
             StatusMouseArea {

@@ -99,22 +99,22 @@ AbstractButton {
 
     horizontalPadding: {
         if (d.iconOnly) {
-            return isRoundIcon ? Theme.halfPadding : spacing
+            return isRoundIcon ? Theme.defaultHalfPadding : spacing
         }
         if (root.icon.name) {
             switch (size) {
             case StatusBaseButton.Size.XSmall:
                 return 6
             case StatusBaseButton.Size.Tiny:
-                return Theme.halfPadding
+                return Theme.defaultHalfPadding
             case StatusBaseButton.Size.Small:
-                return Theme.padding
+                return Theme.defaultPadding
             case StatusBaseButton.Size.Large:
             default:
                 return 18
             }
         }
-        return size === StatusBaseButton.Size.Large ? Theme.bigPadding : 12
+        return size === StatusBaseButton.Size.Large ? Theme.defaultBigPadding : 12
     }
     verticalPadding: {
         if (d.iconOnly) {
@@ -126,7 +126,7 @@ AbstractButton {
         case StatusBaseButton.Size.Tiny:
             return 5
         case StatusBaseButton.Size.Small:
-            return Theme.halfPadding
+            return Theme.defaultHalfPadding
         case StatusBaseButton.Size.Large:
         default:
             return 11

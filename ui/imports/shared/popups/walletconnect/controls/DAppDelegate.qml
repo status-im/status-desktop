@@ -54,7 +54,7 @@ StatusMouseArea {
 
                 Layout.fillWidth: true
 
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 font.bold: true
 
                 elide: Text.ElideRight
@@ -66,7 +66,7 @@ StatusMouseArea {
 
                 Layout.fillWidth: true
 
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 color: Theme.palette.baseColor1
 
                 elide: Text.ElideRight

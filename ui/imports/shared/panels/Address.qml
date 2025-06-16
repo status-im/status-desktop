@@ -11,7 +11,7 @@ StyledText {
     property int oldWidth
     id: addressComponent
     text: "0x9ce0056c5fc6bb9459a4dcfa35eaad8c1fee5ce9"
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
     font.family: Theme.monoFont.name
     elide: Text.ElideMiddle
     color: Theme.palette.secondaryText
