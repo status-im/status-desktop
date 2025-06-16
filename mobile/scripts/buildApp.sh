@@ -54,9 +54,9 @@ if [[ "${OS}" == "android" ]]; then
 else
     qmake "$CWD/../wrapperApp/Status-tablet.pro" RESOURCES+="$COMPAT_RESOURCES" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
     # Compile resources
-    xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH"
+    xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_STYLE=Automatic
     # Compile the app
-    xcodebuild -configuration Release -target Status-tablet install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+    xcodebuild -configuration Release -target Status-tablet install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_STYLE=Automatic
 
     if [[ -e "$BIN_DIR/Status-tablet.app/Info.plist" ]]; then
         echo "Build succeeded"
