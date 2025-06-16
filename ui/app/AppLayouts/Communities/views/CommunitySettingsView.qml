@@ -164,7 +164,7 @@ StatusSectionLayout {
             }
             text: "<- " + qsTr("Back to community")
             color: Theme.palette.baseColor1
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             font.underline: true
 
             StatusMouseArea {

@@ -151,7 +151,7 @@ Item {
                            drawTicks: false,
                        },
                        ticks: {
-                           fontSize: 10,
+                           fontSize: Theme.asideTextFontSize,
                            fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                            padding: 16
                        }
@@ -170,7 +170,7 @@ Item {
                           axis.paddingBottom = 0;
                         },
                        ticks: {
-                          fontSize: 10,
+                          fontSize: Theme.asideTextFontSize
                           fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                           padding: 8,
                           min: d.minStep,

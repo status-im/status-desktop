@@ -87,7 +87,7 @@ StatusDialog {
                     StatusBaseText {
                         anchors.centerIn: parent
                         text: qsTr("Add any header here")
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                     }
                 }
@@ -115,7 +115,7 @@ StatusDialog {
                     StatusBaseText {
                         anchors.centerIn: parent
                         text: qsTr("Add any footer here")
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                     }
                 }

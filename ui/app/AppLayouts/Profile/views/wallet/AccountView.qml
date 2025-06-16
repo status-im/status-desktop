@@ -60,7 +60,7 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignLeft
                 text: !!root.account? root.account.name : ""
                 font.weight: Font.Bold
-                font.pixelSize: 28
+                font.pixelSize: Theme.fontSize28
                 color: !!root.account? Utils.getColorForId(root.account.colorId) : Theme.palette.directColor1
             }
             StatusEmoji {
@@ -97,7 +97,7 @@ ColumnLayout {
         objectName: "AccountDetails_TextLabel"
         Layout.topMargin: Theme.bigPadding
         text: qsTr("Account details")
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.baseColor1
     }
 
@@ -143,7 +143,7 @@ ColumnLayout {
                 text: qsTr("Key pair")
                 Layout.leftMargin: 16
                 Layout.topMargin: 12
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
                 visible: !d.watchOnlyAccount
             }

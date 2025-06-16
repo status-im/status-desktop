@@ -109,7 +109,7 @@ StatusModal {
                 id: colorSelectionGrid
                 titleText: qsTr("Standard colours")
                 title.color: Theme.palette.directColor1
-                title.font.pixelSize: 15
+                title.font.pixelSize: Theme.primaryTextFontSize
                 columns: 8
                 model: ["#4360df", "#887af9", "#d37ef4", "#51d0f0", "#26a69a", "#7cda00", "#eab700", "#fa6565"]
                 selectedColorIndex: -1

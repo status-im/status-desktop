@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -89,7 +90,7 @@ Item {
                     text: "SOURCE MODEL"
 
                     font.bold: true
-                    font.pixelSize: 17
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
                 }
 
                 ListView {
@@ -222,7 +223,7 @@ Item {
                     text: "SFPM MODEL"
 
                     font.bold: true
-                    font.pixelSize: 17
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
                 }
 
                 ListView {
@@ -269,7 +270,7 @@ Item {
                 Label {
                     text: "MOVABLE MODEL"
                     font.bold: true
-                    font.pixelSize: 17
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
                 }
 
                 ListView {
@@ -411,7 +412,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
 
             text: "SAVE ORDER"
-            font.pixelSize: 30
+            font.pixelSize: Theme.fontSize30
 
             onClicked: {
                 const count = simpleSourceModel.count

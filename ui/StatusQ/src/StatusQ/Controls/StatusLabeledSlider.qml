@@ -13,7 +13,7 @@ StatusSlider {
     property string textRole: ""
     property string valueRole: ""
 
-    property int fontSize: 12
+    property int fontSize: Theme.tertiaryTextFontSize
     property int labelMargin: 2
 
     readonly property string currentText: Array.isArray(root.model)

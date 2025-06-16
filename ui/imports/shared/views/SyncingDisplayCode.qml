@@ -126,7 +126,7 @@ ColumnLayout {
         Layout.topMargin: 16
 
         StatusBaseText {
-            font.pixelSize: 17
+            font.pixelSize: Theme.secondaryAdditionalTextSize
             text: qsTr("Code valid for: ")
         }
 
@@ -134,7 +134,7 @@ ColumnLayout {
             id: timeoutText
             width: fontMetrics.advanceWidth("10:00")
             horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 17
+            font.pixelSize: Theme.secondaryAdditionalTextSize
             color: d.secondsLeft < 60 ? Theme.palette.dangerColor1 : Theme.palette.directColor1
 
             text: {
@@ -161,8 +161,8 @@ ColumnLayout {
         Layout.bottomMargin: 7
         text: root.connectionStringLabel
         font.weight: Font.Medium
-        font.pixelSize: 13
         color: Theme.palette.directColor1
+        font.pixelSize: Theme.additionalTextSize
     }
 
     StatusPasswordInput {
@@ -226,7 +226,7 @@ ColumnLayout {
         Layout.fillHeight: true
         horizontalAlignment: Text.AlignHCenter
         visible: !d.codeExpired
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.baseColor1
         text: root.importCodeInstructions
     }
@@ -236,7 +236,7 @@ ColumnLayout {
         Layout.fillHeight: true
         horizontalAlignment: Text.AlignHCenter
         visible: d.codeExpired
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.baseColor1
         text: root.codeExpiredMessage
     }

@@ -72,7 +72,7 @@ Control {
             anchors.topMargin: -height/2
             height: 20
             text: qsTr("Included")
-            font.pixelSize: 11
+            font.pixelSize: Theme.fontSize11
             font.bold: true
             isReadonly: true
             background: Rectangle {

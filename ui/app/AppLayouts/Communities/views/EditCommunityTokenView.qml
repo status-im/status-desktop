@@ -251,7 +251,7 @@ StatusScrollView {
                     Layout.fillWidth: true
                     Layout.rightMargin: Theme.padding
 
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                     elide: Text.ElideRight
                     lineHeight: 24

@@ -217,7 +217,7 @@ Item {
         bgColor: Theme.palette.primaryColor3
         contentColor: Theme.palette.primaryColor1
         text: d.selectedItemsText
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         type: StatusPickerButton.PickerType.Down
 
         onClicked: {
@@ -355,7 +355,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: section
                     color: Theme.palette.baseColor1
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     elide: Text.ElideRight
                 }
             }// End of Category item

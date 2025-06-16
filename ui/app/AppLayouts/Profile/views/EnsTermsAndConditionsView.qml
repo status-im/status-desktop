@@ -48,7 +48,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Theme.fontSize20
         color: Theme.palette.directColor1
 
         StatusBetaTag {
@@ -219,7 +219,7 @@ Item {
                     text: "@"
                     opacity: 0.7
                     font.weight: Font.Bold
-                    font.pixelSize: 18
+                    font.pixelSize: Theme.fontSize18
                     color: Theme.palette.white
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -230,7 +230,7 @@ Item {
                 id: ensUsername
                 text: username + ".stateofus.eth"
                 font.weight: Font.Bold
-                font.pixelSize: 18
+                font.pixelSize: Theme.fontSize18
                 anchors.top: circleAt.bottom
                 anchors.topMargin: 24
                 anchors.left: parent.left
@@ -332,7 +332,7 @@ Item {
             anchors.leftMargin: 5
             anchors.top: image1.top
             color: Theme.palette.directColor1
-            font.pixelSize: 14
+            font.pixelSize: Theme.secondaryTextFontSize
         }
 
         StatusBaseText {
@@ -342,7 +342,7 @@ Item {
             anchors.topMargin: 5
             anchors.top: ensPriceLbl.bottom
             color: Theme.palette.baseColor1
-            font.pixelSize: 14
+            font.pixelSize: Theme.secondaryTextFontSize
         }
     }
 

@@ -507,8 +507,8 @@ Loader {
                         `</body>`+
                         `</html>`;
             }
-            font.pixelSize: 14
             color: Theme.palette.secondaryText
+            font.pixelSize: Theme.secondaryTextFontSize
             width: parent.width - 120
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
@@ -540,8 +540,8 @@ Loader {
                         return root.messageText
                 }
             }
-            font.pixelSize: 14
             color: Theme.palette.secondaryText
+            font.pixelSize: Theme.secondaryTextFontSize
             width: parent.width - 120
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter

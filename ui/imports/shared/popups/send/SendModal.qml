@@ -636,7 +636,7 @@ StatusDialog {
                         id: label
                         elide: Text.ElideRight
                         text: qsTr("To")
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                     }
                     RecipientView {

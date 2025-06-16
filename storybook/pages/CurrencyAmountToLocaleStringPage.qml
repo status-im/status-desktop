@@ -55,7 +55,7 @@ SplitView {
             text: {
                 return LocaleUtils.currencyAmountToLocaleString(d.currencyAmount, d.options)
             }
-            font.pixelSize: 24
+            font.pixelSize: Theme.fontSize24
         }
     }
 

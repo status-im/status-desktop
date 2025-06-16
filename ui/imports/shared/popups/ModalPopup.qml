@@ -72,7 +72,7 @@ Popup {
                 anchors.right: parent.right
                 anchors.rightMargin: 44
                 font.bold: true
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 height: visible ? 24 : 0
                 elide: Text.ElideRight
                 visible: !!title

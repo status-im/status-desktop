@@ -13,7 +13,7 @@ Item {
     property string packThumb: "QmfZrHmLR5VvkXSDbArDR3TX6j4FgpDcrvNz2fHSJk1VvG"
     property string packName: "Status Cat"
     property string packAuthor: "cryptoworld1373"
-    property int packNameFontSize: 15
+    property int packNameFontSize: Theme.primaryTextFontSize
     property int spacing: Theme.padding
 
     height: childrenRect.height
@@ -41,7 +41,7 @@ Item {
             color: Theme.palette.secondaryText
             text: packAuthor
             font.family: Theme.baseFont.name
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
         }
     }
 

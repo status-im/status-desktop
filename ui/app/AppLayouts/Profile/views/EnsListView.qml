@@ -56,7 +56,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 24
             font.weight: Font.Bold
-            font.pixelSize: 20
+            font.pixelSize: Theme.fontSize20
             color: Theme.palette.directColor1
 
             StatusBetaTag {
@@ -89,7 +89,7 @@ Item {
                 anchors.left: addButton.right
                 anchors.leftMargin: Theme.padding
                 anchors.verticalCenter: addButton.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
 
             StatusMouseArea {
@@ -106,7 +106,7 @@ Item {
             anchors.left: parent.left
             anchors.top: addUsername.bottom
             anchors.topMargin: 24
-            font.pixelSize: 16
+            font.pixelSize: Theme.fontSize16
             color: Theme.palette.directColor1
         }
 
@@ -132,7 +132,7 @@ Item {
                     subTitle: model.ensUsername.substr(indexOfDomainStart)
                     titleAsideText: model.isPending ? qsTr("(pending)") : ""
 
-                    statusListItemTitle.font.pixelSize: 17
+                    statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
                     statusListItemTitle.font.bold: true
 
                     asset.isImage: false
@@ -169,7 +169,7 @@ Item {
             anchors.left: parent.left
             anchors.top: ensList.bottom
             anchors.topMargin: 24
-            font.pixelSize: 16
+            font.pixelSize: Theme.fontSize16
             color: Theme.palette.directColor1
         }
 
@@ -186,7 +186,7 @@ Item {
                 id: usernameLabel
                 visible: chatSettingsLabel.visible
                 text: qsTr("Primary Username")
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
@@ -197,7 +197,7 @@ Item {
                 text: root.ensUsernamesStore.preferredUsername || qsTr("None selected")
                 anchors.left: usernameLabel.right
                 anchors.leftMargin: Theme.padding
-                font.pixelSize: 14
+                font.pixelSize: Theme.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -239,7 +239,7 @@ Item {
             anchors.left: messagesShownAs.left
             anchors.topMargin: Theme.padding
             text: qsTr("You’re displaying your ENS username in chats")
-            font.pixelSize: 14
+            font.pixelSize: Theme.fontSize14
             color: Theme.palette.baseColor1
         }
     }

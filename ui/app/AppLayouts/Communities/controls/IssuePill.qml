@@ -32,7 +32,7 @@ Control {
     property string icon: "warning"
 
     font.family: Theme.baseFont.name
-    font.pixelSize: 12
+    font.pixelSize: Theme.tertiaryTextFontSize
 
     horizontalPadding: 8
     verticalPadding: 4

@@ -55,7 +55,7 @@ Control {
             Layout.topMargin: Theme.halfPadding
 
             color: Theme.palette.dangerColor1
-            font.pixelSize: Theme.tertiaryTextFontSize + 1
+            font.pixelSize: Theme.additionalTextSize
             horizontalAlignment: Text.AlignRight
             visible: text !== ""
             wrapMode: Text.Wrap

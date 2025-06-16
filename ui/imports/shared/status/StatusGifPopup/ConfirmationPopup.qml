@@ -68,7 +68,7 @@ Popup {
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.secondaryText
     }
 

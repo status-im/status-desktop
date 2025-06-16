@@ -204,7 +204,7 @@ Rectangle {
             StatusTextWithLoadingState {
                 id: statusListItemTitle
                 text: root.title
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 height: visible ? contentHeight : 0
                 elide: Text.ElideRight
                 anchors.left: parent.left
@@ -266,7 +266,7 @@ Rectangle {
                 anchors.top: bottomModel.length === 0 ? undefined:  parent.top
                 anchors.topMargin: bottomModel.length === 0 ? undefined : 20
                 text: root.titleAsideText
-                font.pixelSize: 10
+                font.pixelSize: Theme.asideTextFontSize
                 customColor: Theme.palette.baseColor1
                 visible: !!root.titleAsideText
                 loading: root.loading
@@ -315,7 +315,7 @@ Rectangle {
                     Layout.preferredWidth: inlineTagModelRepeater.count > 0 ? contentWidth : parent.width - subTitleBadgeLoader.width
 
                     text: root.subTitle
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     customColor: !root.enabled || !root.tertiaryTitle ?
                                      Theme.palette.baseColor1 : Theme.palette.directColor1
                     visible: !!root.subTitle
@@ -331,7 +331,7 @@ Rectangle {
                     Layout.topMargin: -48
 
                     text: "."
-                    font.pixelSize: 40
+                    font.pixelSize: Theme.fontSize40
                     customColor: Theme.palette.baseColor1
                     lineHeightMode: Text.FixedHeight
                     lineHeight: 24
@@ -366,7 +366,7 @@ Rectangle {
                 height: visible ? contentHeight : 0
                 text: root.tertiaryTitle
                 customColor: Theme.palette.baseColor1
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 visible: !!root.tertiaryTitle
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 loading: root.loading
@@ -422,7 +422,7 @@ Rectangle {
                     visible: !!root.beneathTagsTitle
                     text: root.beneathTagsTitle
                     customColor: Theme.palette.baseColor1
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 }
             }
@@ -453,7 +453,7 @@ Rectangle {
             anchors.rightMargin: statusListItemComponentsSlot.width > 0 ? 10 : 0
 
             text: root.label
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             customColor: Theme.palette.baseColor1
             visible: !!root.label
             loading: root.loading

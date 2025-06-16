@@ -5,6 +5,7 @@ import QtQml 2.15
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
 
@@ -159,7 +160,7 @@ ColumnLayout {
 
                     Label {
                         text: "Backend models"
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSize22
                         padding: 10
                     }
 
@@ -178,7 +179,7 @@ ColumnLayout {
 
                     Label {
                         text: "Display models"
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSize22
                         padding: 10
                     }
 
@@ -250,7 +251,7 @@ ColumnLayout {
 
                     Label {
                         text: "Backend models"
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSize22
                         padding: 10
                     }
                     GenericListView {
@@ -267,7 +268,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Label {
                         text: "Display models"
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSize22
                         padding: 10
                     }
 
@@ -356,7 +357,7 @@ ColumnLayout {
 
                     Label {
                         text: "Backend models"
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSize22
                         padding: 10
                     }
 
@@ -376,7 +377,7 @@ ColumnLayout {
 
                     Label {
                         text: "Display models"
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSize22
                         padding: 10
                     }
 

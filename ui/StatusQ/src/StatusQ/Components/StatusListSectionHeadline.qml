@@ -15,7 +15,7 @@ Item {
         anchors.bottomMargin: 4
         anchors.leftMargin: 16
         id: label
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.baseColor1
     }
 }

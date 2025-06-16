@@ -33,9 +33,9 @@ ColumnLayout {
     StatusBaseText {
         Layout.alignment: Qt.AlignHCenter
         text: qsTr("Have you written down your password?")
-        font.pixelSize: 22
         font.bold: true
         color: Theme.palette.directColor1
+        font.pixelSize: Theme.fontSize22
     }
 
     ColumnLayout {
@@ -45,22 +45,22 @@ ColumnLayout {
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("You will never be able to recover your password if you lose it.")
-            font.pixelSize: 15
             color: Theme.palette.dangerColor1
+            font.pixelSize: Theme.primaryTextFontSize
         }
 
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("If you need to, write it using pen and paper and keep in a safe place.")
-            font.pixelSize: 15
             color: Theme.palette.baseColor1
+            font.pixelSize: Theme.primaryTextFontSize
         }
 
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("If you lose your password you will lose access to your Status profile.")
-            font.pixelSize: 15
             color: Theme.palette.baseColor1
+            font.pixelSize: Theme.primaryTextFontSize
         }
     }
 
@@ -105,7 +105,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         Layout.fillHeight: true
         Layout.topMargin: -Theme.halfPadding
-        font.pixelSize: 12
         color: Theme.palette.dangerColor1
+        font.pixelSize: Theme.tertiaryTextFontSize
     }
 }

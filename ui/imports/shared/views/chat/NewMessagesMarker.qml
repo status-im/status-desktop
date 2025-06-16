@@ -35,7 +35,7 @@ Item {
             text: qsTr("%n missed message(s) since %1", "", count).arg(LocaleUtils.formatDate(timestamp))
             color: Theme.palette.primaryColor1
             font.weight: Font.Bold
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
         }
 
         Item {
@@ -66,7 +66,7 @@ Item {
                         text: qsTr("NEW", "new message(s)")
                         color: Theme.palette.indirectColor1
                         font.weight: Font.DemiBold
-                        font.pixelSize: 11
+                        font.pixelSize: Theme.fontSize11
                     }
                 }
             }

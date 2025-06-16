@@ -20,7 +20,7 @@ ActivityNotificationMessage {
     messageSubheaderComponent: StatusBaseText {
         text: qsTr("Removed you as a contact")
         font.italic: true
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.baseColor1
     }
 

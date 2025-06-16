@@ -12,7 +12,7 @@ StatusListItem {
     implicitHeight: 44
     leftPadding: 8
     rightPadding: 3
-    statusListItemTitle.font.pixelSize: 13
+    statusListItemTitle.font.pixelSize: Theme.additionalTextSize
 
     statusListItemTitleArea.anchors.leftMargin: 8
 

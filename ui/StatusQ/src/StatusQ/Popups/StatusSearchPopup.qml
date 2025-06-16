@@ -96,7 +96,7 @@ StatusModal {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     focus: true
-                    font.pixelSize: 28
+                    font.pixelSize: Theme.fontSize28
                     leftPadding: 5
                     topPadding: 5 //smaller padding to handle bigger font
                     bottomPadding: 5
@@ -104,7 +104,7 @@ StatusModal {
                     input.showBackground: false
                     input.placeholder {
                         text: qsTr("Search")
-                        font.pixelSize: 28
+                        font.pixelSize: Theme.fontSize28
                         color: Theme.palette.directColor9
                     }
 
@@ -172,7 +172,7 @@ StatusModal {
                                     color: Theme.palette.directColor1
                                     text: qsTr("In: ")
                                     font.weight: Font.Medium
-                                    font.pixelSize: 15
+                                    font.pixelSize: Theme.primaryTextFontSize
                                 }
 
                                 StatusSmartIdenticon {
@@ -191,7 +191,7 @@ StatusModal {
                                     color: Theme.palette.directColor1
                                     text: searchOptionsMenuButton.primaryText
                                     font.weight: Font.Medium
-                                    font.pixelSize: 13
+                                    font.pixelSize: Theme.additionalTextSize
                                 }
                                 StatusIcon {
                                     Layout.preferredWidth: 16
@@ -215,7 +215,7 @@ StatusModal {
                                     visible: !!searchOptionsMenuButton.secondaryText
                                     text: searchOptionsMenuButton.secondaryText
                                     font.weight: Font.Medium
-                                    font.pixelSize: 13
+                                    font.pixelSize: Theme.additionalTextSize
                                 }
                                 StatusIcon {
                                     Layout.preferredWidth: 16
@@ -309,7 +309,7 @@ StatusModal {
                         height: 34
                         width: view.width
                         StatusBaseText {
-                            font.pixelSize: 15
+                            font.pixelSize: Theme.primaryTextFontSize
                             color: Theme.palette.baseColor1
                             text: section
                             anchors.left: parent.left
@@ -332,7 +332,7 @@ StatusModal {
                     anchors.centerIn: parent
                     text: root.noResultsLabel
                     color: Theme.palette.baseColor1
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     visible: ((inputText.text !== "") && (view.count === 0) && !root.loading)
                 }
             }

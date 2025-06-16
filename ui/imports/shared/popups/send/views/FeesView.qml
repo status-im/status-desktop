@@ -52,9 +52,9 @@ Rectangle {
                 StatusBaseText {
                     id: text
                     anchors.left: parent.left
-                    font.pixelSize: 15
                     font.weight: Font.Medium
                     color: Theme.palette.directColor1
+                    font.pixelSize: Theme.primaryTextFontSize
                     text: qsTr("Fees")
                     wrapMode: Text.WordWrap
                 }
@@ -63,7 +63,7 @@ Rectangle {
                     anchors.rightMargin: Theme.padding
                     id: totalFeesAdvanced
                     text: root.isLoading ? "..." : root.currencyStore.formatCurrencyAmount(root.gasFiatAmount, root.currencyStore.currentCurrency)
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     color: Theme.palette.directColor1
                     visible: !root.isLoading && !!root.bestRoutes && root.bestRoutes !== undefined && root.bestRoutes.count > 0
                 }

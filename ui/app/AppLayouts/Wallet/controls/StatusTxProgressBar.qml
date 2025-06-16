@@ -47,7 +47,7 @@ ColumnLayout {
         id: title
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.directColor1
         lineHeight: 22
         lineHeightMode: Text.FixedHeight
@@ -108,7 +108,7 @@ ColumnLayout {
         id: subText
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.baseColor1
         lineHeight: 18
         lineHeightMode: Text.FixedHeight

@@ -157,7 +157,7 @@ StatusModal {
                     ens: d.ens
                     colorId: d.colorId
 
-                    statusListItemTitle.font.pixelSize: 22
+                    statusListItemTitle.font.pixelSize: Theme.fontSize22
                     statusListItemTitle.font.bold: Font.Bold
 
                     onAboutToOpenPopup: {
@@ -213,7 +213,7 @@ StatusModal {
                         anchors.verticalCenter: parent.verticalCenter
                         text: !!d.ens ? d.ens : d.address
                         wrapMode: Text.WrapAnywhere
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                     }
 

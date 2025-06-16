@@ -489,7 +489,7 @@ Popup {
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
-                    font.pixelSize: 27
+                    font.pixelSize: Theme.fontSize27
                     font.weight: Font.Medium
                     font.letterSpacing: 5
                     text: truncateDeviceId(deviceId)
@@ -539,7 +539,7 @@ Popup {
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
-                    font.pixelSize: 27
+                    font.pixelSize: Theme.fontSize27
                     font.weight: Font.Medium
                     font.letterSpacing: 5
                     text: truncateDeviceId(deviceId)

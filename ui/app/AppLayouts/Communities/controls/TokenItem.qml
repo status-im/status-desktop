@@ -54,7 +54,7 @@ Control {
                 Layout.fillWidth: true
                 text: root.name
                 color: Theme.palette.directColor1
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 elide: Text.ElideRight
             }
@@ -64,7 +64,7 @@ Control {
                 Layout.fillWidth: true
                 text: root.shortName
                 color: Theme.palette.baseColor1
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 elide: Text.ElideRight
             }
         }
@@ -73,7 +73,7 @@ Control {
             visible: !!root.amount && !root.selected
             text: root.amount
             color: Theme.palette.baseColor1
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
             font.weight: Font.Medium
             elide: Text.ElideRight
 

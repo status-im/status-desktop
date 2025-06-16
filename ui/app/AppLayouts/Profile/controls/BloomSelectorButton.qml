@@ -48,7 +48,7 @@ Rectangle {
     StyledText {
         id: txt
         text: btnText
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: radioBtn.bottom
         anchors.topMargin: 6

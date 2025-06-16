@@ -109,7 +109,7 @@ StatusModal {
                     textFormat: TextEdit.RichText
                     wrapMode: Text.WrapAnywhere
                     text: root.selectedAccount.mixedcaseAddress
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     color: Theme.palette.directColor1
                 }
 

@@ -40,7 +40,7 @@ StatusListItem {
         return t
     }
     statusListItemSubTitle.text: !!root.keycardUid? "(%1)".arg(root.keycardUid) : ""
-    statusListItemSubTitle.font.pixelSize: 10
+    statusListItemSubTitle.font.pixelSize: Theme.asideTextFontSize
     statusListItemSubTitle.visible: !!statusListItemSubTitle.text
 
     asset {
@@ -80,7 +80,7 @@ StatusListItem {
             height: 16
         }
         title: Utils.appTranslation(model.account.name)
-        titleText.font.pixelSize: 12
+        titleText.font.pixelSize: Theme.tertiaryTextFontSize
         titleText.color: Theme.palette.indirectColor1
     }
 

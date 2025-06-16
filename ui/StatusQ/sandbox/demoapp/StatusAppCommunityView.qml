@@ -282,7 +282,7 @@ StatusSectionLayout {
         anchors.fill: parent
         StatusBaseText {
             anchors.centerIn: parent
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("Community content here")
         }
     }
@@ -297,7 +297,7 @@ StatusSectionLayout {
             anchors.leftMargin: 16
             opacity: (rightPanel.width > 50) ? 1.0 : 0.0
             visible: (opacity > 0.1)
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("Members")
         }
 

@@ -338,7 +338,7 @@ StatusChartPanel {
                         axis.paddingBottom = 0;
                     },
                     ticks: {
-                        fontSize: 10,
+                        fontSize: Theme.asideTextFontSize,
                         fontColor: d.baseColor1,
                         padding: Theme.halfPadding,
                         maxTicksLimit: Theme.asideTextFontSize,

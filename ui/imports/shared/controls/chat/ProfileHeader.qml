@@ -253,7 +253,7 @@ Item {
             visible: root.pubkeyVisible
             text: root.isBridgedAccount ? qsTr("Bridged from Discord") : Utils.getElidedPk(compressedPubKey)
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             color: Theme.palette.secondaryText
         }
 

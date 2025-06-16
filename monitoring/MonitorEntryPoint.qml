@@ -7,6 +7,7 @@ import Qt.labs.settings 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 Component {
     ColumnLayout {
@@ -301,7 +302,7 @@ Component {
                                     readonly property bool last: headerRepeater.count - 1 === index
 
                                     text: model.name + (last ? "" : "  ->  ")
-                                    font.pixelSize: 20
+                                    font.pixelSize: Theme.fontSize20
                                     font.bold: true
 
                                     selectByMouse: true

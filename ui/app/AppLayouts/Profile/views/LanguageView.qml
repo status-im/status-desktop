@@ -196,7 +196,7 @@ SettingsContentBase {
             StatusCheckBox {
                 id: use24hDefault
                 text: qsTr("Use System Settings")
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 checked: LocaleUtils.settings.timeFormatUsesDefaults
                 onToggled: {
                     LocaleUtils.settings.timeFormatUsesDefaults = checked
@@ -206,7 +206,7 @@ SettingsContentBase {
             }
             StatusCheckBox {
                 text: qsTr("Use 24-Hour Time")
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 enabled: !use24hDefault.checked
                 checked: LocaleUtils.settings.timeFormatUses24Hours
                 onToggled: LocaleUtils.settings.timeFormatUses24Hours = checked

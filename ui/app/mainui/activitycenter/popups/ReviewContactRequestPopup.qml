@@ -68,7 +68,7 @@ StatusDialog {
                 StatusBaseText {
                     text: CoreUtils.Utils.stripHtmlTags(root.messageDetails.messageText)
                     wrapMode: Text.Wrap
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     Layout.alignment: Qt.AlignVCenter
                     Layout.fillWidth: true
                     Layout.rightMargin: -Theme.halfPadding

@@ -140,7 +140,7 @@ ColumnLayout {
                 anchors.verticalCenter: parent.verticalCenter
                 text: section.toUpperCase()
                 color: Theme.palette.baseColor1
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
         }
 

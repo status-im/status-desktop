@@ -69,7 +69,7 @@ ToolTip {
         color: Theme.palette.white
         linkColor: Theme.palette.white
         wrapMode: Text.Wrap
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         font.weight: Font.Medium
         horizontalAlignment: Text.AlignHCenter
         bottomPadding: 8

@@ -56,12 +56,12 @@ Rectangle {
        \qmlproperty int StatusCommunityCard::titleFontSize
        This property holds the title's font size.
     */
-    property int titleFontSize: 19
+    property int titleFontSize: Theme.fontSize19
     /*!
        \qmlproperty int StatusCommunityCard::descriptionFontSize
        This property holds the description's font size.
     */
-    property int descriptionFontSize: cardSize === StatusCommunityCard.Size.Big ? 15 : 13
+    property int descriptionFontSize: cardSize === StatusCommunityCard.Size.Big ? Theme.primaryTextFontSize : Theme.additionalTextSize
     /*!
        \qmlproperty string StatusCommunityCard::communityId
        This property holds the community identifier value.
@@ -423,7 +423,7 @@ Rectangle {
                                 asset.color: "transparent"
                                 asset.isLetterIdenticon: true
                                 title: model.name
-                                titleText.font.pixelSize: 12
+                                titleText.font.pixelSize: Theme.tertiaryTextFontSize
                                 titleText.color: d.fontColor
                             }
                         }

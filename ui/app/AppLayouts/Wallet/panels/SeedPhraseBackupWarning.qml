@@ -24,7 +24,7 @@ Rectangle {
 
         StyledText {
             text: qsTr("Back up your recovery phrase")
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             anchors.verticalCenter: parent.verticalCenter
             color: Theme.palette.white
         }
@@ -36,7 +36,7 @@ Rectangle {
                 anchors.fill: parent
                 Text {
                     text: qsTr("Back up")
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                     font.family: Theme.baseFont.name
                     horizontalAlignment: Text.AlignHCenter

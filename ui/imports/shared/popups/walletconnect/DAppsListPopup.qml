@@ -61,7 +61,7 @@ StatusDropdown {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
 
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 color: Theme.palette.baseColor1
             }
         }

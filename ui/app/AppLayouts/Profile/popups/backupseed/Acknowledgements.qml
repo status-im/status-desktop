@@ -56,7 +56,7 @@ ColumnLayout {
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
                         font.bold: true
-                        font.pixelSize: 22
+                        font.pixelSize: Theme.fontSize22
                         Layout.fillWidth: true
                     }
 
