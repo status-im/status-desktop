@@ -29,13 +29,13 @@ ListView {
         TextField {
             Layout.fillWidth: true
             text: model.name
-            onTextChanged: model.name = text
+            onTextEdited: model.name = text
         }
 
         TextField {
             Layout.fillWidth: true
             text: model.description
-            onTextChanged: model.description = text
+            onTextEdited: model.description = text
         }
 
         Flow {
@@ -178,14 +178,14 @@ ListView {
             Layout.fillWidth: true
             maximumLength: 1024 * 1024 * 1024
             text: model.icon
-            onTextChanged: model.icon = text
+            onTextEdited: model.icon = text
         }
 
         TextField {
             Layout.fillWidth: true
             maximumLength: 1024 * 1024 * 1024
             text: model.banner
-            onTextChanged: model.banner = text
+            onTextEdited: model.banner = text
         }
 
         Row {
@@ -199,7 +199,7 @@ ListView {
                 height: 30
                 from: 0; to: 10 * 1000 * 1000
                 value:  model.members
-                onValueChanged: model.members = value
+                onValueModified: model.members = value
             }
         }
 
@@ -214,7 +214,7 @@ ListView {
                 height: 30
                 from: 0; to: 10 * 1000 * 1000
                 value:  model.activeMembers
-                onValueChanged: model.activeMembers = value
+                onValueModified: model.activeMembers = value
             }
         }
 
@@ -229,7 +229,7 @@ ListView {
                 height: 30
                 from: 0; to: 10 * 1000 * 1000
                 value:  model.popularity
-                onValueChanged: model.popularity = value
+                onValueModified: model.popularity = value
             }
         }
     }
