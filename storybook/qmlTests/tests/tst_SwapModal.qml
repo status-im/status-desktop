@@ -110,7 +110,7 @@ Item {
             formValuesChanged.clear()
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(!!controlUnderTest.opened)
+            tryVerify(() => !!(controlUnderTest.opened))
         }
 
         function closeAndVerfyModal() {
@@ -2013,8 +2013,9 @@ Item {
             const invertQuoteApproximation = findChild(controlUnderTest, "invertQuoteApproximation")
             verify(!!invertQuoteApproximation)
 
-            verify(!sellItem.visible)
-            verify(!quoteItem.visible)
+            verify(sellItem.visible) // left item is visible once the from token is set
+            verify(quoteItem.visible) 
+            verify(quoteItem.loading) // right item is loading until routes are fetched
             verify(!priceItem.visible)
             verify(!invertQuoteApproximation.visible)
 

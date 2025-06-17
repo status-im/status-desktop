@@ -1088,7 +1088,7 @@ Item {
             waitForRendering(controlUnderTest.visualParent, 200)
             let popup = findChild(controlUnderTest, "dappsRequestModal")
             verify(!!popup)
-            verify(popup.opened)
+            tryVerify(() => popup.opened)
             verify(popup.visible)
 
             compare(popup.dappName, request.dappName)
@@ -1117,7 +1117,7 @@ Item {
             controlUnderTest.sessionRequestsModel.enqueue(request)
             waitForRendering(controlUnderTest.visualParent, 200)
             const popup = findChild(controlUnderTest, "dappsRequestModal")
-            verify(popup.opened)
+            tryVerify(() => popup.opened)
 
             const acceptButton = findChild(popup, "signButton")
             const rejectButton = findChild(popup, "rejectButton")

@@ -7,7 +7,7 @@ import Models 1.0
 
 Item {
     id: root
-    width: 600
+    width: 1200
     height: 800
 
     Component {
@@ -59,6 +59,8 @@ Item {
 
         function test_initialState() {
             dappModal = createTemporaryObject(componentUnderTest, root, {visible: true})
+
+            tryVerify(() => dappModal.opened)
 
             verify(dappModal.visible, "ConnectDAppModal should be visible")
             verify(dappModal.accounts, "ConnectDAppModal should have accounts")
