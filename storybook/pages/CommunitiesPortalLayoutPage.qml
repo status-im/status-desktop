@@ -35,6 +35,7 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
+            createCommunityEnabled: ctrlCommunityCreationEnabled.checked
             createCommunityBadgeVisible: !communitiesStore.createCommunityPopupSeen
 
             assetsModel: AssetsModel {}
@@ -76,17 +77,25 @@ SplitView {
 
             logsView.logText: logs.logText
 
-            Row {
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "number of communities:"
+            Column {
+                Row {
+                    Label {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "number of communities:"
+                    }
+
+                    Slider {
+                        id: slider
+                        value: 9
+                        from: 0
+                        to: 9
+                    }
                 }
 
-                Slider {
-                    id: slider
-                    value: 9
-                    from: 0
-                    to: 9
+                Switch {
+                    id: ctrlCommunityCreationEnabled
+                    text: "Community creation enabled"
+                    checked: true
                 }
             }
         }

@@ -904,6 +904,10 @@ QtObject {
     readonly property string windows: "windows"
     readonly property string linux: "linux"
     readonly property string mac: "osx"
+    readonly property string android: "android"
+    readonly property string ios: "ios"
+
+    readonly property bool isMobile: Qt.platform.os === android || Qt.platform.os === ios
 
     // Transaction states
     readonly property int addressRequested: 1

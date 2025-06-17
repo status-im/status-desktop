@@ -31,6 +31,7 @@ StatusSectionLayout {
     property var assetsModel
     property var collectiblesModel
 
+    property bool createCommunityEnabled: true
     property bool createCommunityBadgeVisible
 
     objectName: "communitiesPortalLayout"
@@ -133,6 +134,7 @@ StatusSectionLayout {
 
                 StatusButton {
                     objectName: "createCommunityButton"
+                    visible: root.createCommunityEnabled
                     Layout.preferredHeight: 38
                     verticalPadding: 0
                     text: qsTr("Create New Community")

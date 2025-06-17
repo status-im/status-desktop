@@ -2014,6 +2014,7 @@ Item {
                         asynchronous: true
                         CommunitiesPortalLayout {
                             anchors.fill: parent
+                            createCommunityEnabled: !Constants.isMobile
                             navBar: appMain.navBar
                             communitiesStore: appMain.communitiesStore
                             assetsModel: appMain.rootStore.globalAssetsModel
