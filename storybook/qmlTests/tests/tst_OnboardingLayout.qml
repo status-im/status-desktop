@@ -277,7 +277,7 @@ Item {
             mouseClick(infoButton)
             const helpUsImproveDetailsPopup = findChild(controlUnderTest, "helpUsImproveDetailsPopup")
             verify(!!helpUsImproveDetailsPopup)
-            compare(helpUsImproveDetailsPopup.opened, true)
+            tryVerify( () => helpUsImproveDetailsPopup.opened)
             keyClick(Qt.Key_Escape) // close the popup
 
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
@@ -301,7 +301,7 @@ Item {
             mouseClick(infoButton)
             const passwordDetailsPopup = findChild(controlUnderTest, "passwordDetailsPopup")
             verify(!!passwordDetailsPopup)
-            compare(passwordDetailsPopup.opened, true)
+            tryVerify(() => passwordDetailsPopup.opened)
             keyClick(Qt.Key_Escape) // close the popup
 
             const btnConfirmPassword = findChild(controlUnderTest, "btnConfirmPassword")

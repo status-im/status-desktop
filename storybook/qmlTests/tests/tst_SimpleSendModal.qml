@@ -464,7 +464,7 @@ Item {
         function test_launchPopup() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
         }
 
         function test_closeModal() {
@@ -476,7 +476,7 @@ Item {
         function test_default_state() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             waitForRendering(controlUnderTest.contentItem)
 
@@ -563,7 +563,7 @@ Item {
         function test_preset_values() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             waitForRendering(controlUnderTest.contentItem)
 
@@ -717,7 +717,7 @@ Item {
         function test_preset_ens() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             waitForRendering(controlUnderTest.contentItem)
 
@@ -734,7 +734,7 @@ Item {
         function test_scrolling_state() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             waitForRendering(controlUnderTest.contentItem)
 
@@ -840,7 +840,7 @@ Item {
         function test_set_interactive_false() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             // waitForRendering(controlUnderTest.contentItem)
 
@@ -884,7 +884,7 @@ Item {
         function test_displayOnlyAssets() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             const sendModalHeader = findChild(controlUnderTest, "sendModalHeader")
             verify(!!sendModalHeader)
@@ -901,7 +901,7 @@ Item {
         function test_transferOwnership() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             const stickySendModalHeader = findChild(controlUnderTest, "stickySendModalHeader")
             verify(!!stickySendModalHeader)
@@ -921,7 +921,7 @@ Item {
         function test_selectAssetOrCollectible() {
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            verify(controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.opened)
 
             waitForRendering(controlUnderTest.contentItem)
 

@@ -131,7 +131,7 @@ Item {
             controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 11155111
             controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey = "ETH"
             controlUnderTest.open()
-            verify(!!controlUnderTest.opened)
+            tryVerify(() => !!controlUnderTest.opened)
         }
 
         function testDelegateItems(providersList, modelToCompareAgainst) {
