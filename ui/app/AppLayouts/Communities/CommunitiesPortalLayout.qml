@@ -46,9 +46,7 @@ StatusSectionLayout {
 
         // values from the design
         readonly property int layoutTopMargin: 10
-        readonly property int layoutBottomMargin: 249
-        readonly property int layoutHMargin: 64
-        readonly property int layoutWidth: 1037
+        readonly property int layoutBottomMargin: Theme.xlPadding*2
         readonly property int titlePixelSize: 28
         readonly property int preventShadowClipMargin: 40
 
@@ -90,13 +88,11 @@ StatusSectionLayout {
     }
 
     centerPanel: Item {
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        width: d.layoutWidth
+        anchors.fill: parent
 
         anchors.topMargin: d.layoutTopMargin
-        anchors.leftMargin: d.layoutHMargin
+        anchors.leftMargin: Theme.xlPadding*2
+        anchors.rightMargin: Theme.xlPadding
 
         ColumnLayout {
             id: column
