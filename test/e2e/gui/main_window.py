@@ -23,6 +23,7 @@ from gui.screens.messages import MessagesScreen
 from gui.screens.onboarding import OnboardingWelcomeToStatusView, ReturningLoginView
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
+from gui.screens.shell import ShellScreen
 from scripts.tools.image import Image
 
 LOG = logging.getLogger(__name__)
@@ -142,6 +143,7 @@ class MainWindow(Window):
     def __init__(self):
         super().__init__(names.statusDesktop_mainWindow)
         self.left_panel = MainLeftPanel()
+        self.shell = ShellScreen()
 
     @allure.step('Create new profile')
     def create_profile(self, user_account: UserAccount):
@@ -151,12 +153,14 @@ class MainWindow(Window):
         splash_screen = create_password_view.create_password(user_account.password)
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
+        
+        # Navigate from shell to settings first
         # since we now struggle with 3 words names, I need to change display name first
-        left_panel = MainLeftPanel()
-        profile = left_panel.open_settings().left_panel.open_profile_settings()
+        settings_screen = self.shell.open_settings_from_dock()
+        profile = settings_screen.left_panel.open_profile_settings()  
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
-        left_panel.open_wallet()
+        self.left_panel.open_wallet()
         return self
 
     @allure.step('Log in returning user')
