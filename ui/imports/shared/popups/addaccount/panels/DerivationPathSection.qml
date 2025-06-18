@@ -105,9 +105,9 @@ Column {
     }
 
     Loader {
+        width: parent.width - 2 * root.padding
         active: root.store.editMode
         sourceComponent: DerivationPathDisplay {
-            width: parent.width - 2 * root.padding
             store: root.store
         }
     }
