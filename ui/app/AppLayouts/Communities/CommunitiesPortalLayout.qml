@@ -129,6 +129,7 @@ StatusSectionLayout {
                 StatusButton {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 38
+                    Layout.maximumWidth: implicitWidth
                     text: qsTr("Join Community")
                     verticalPadding: 0
                     onClicked: Global.importCommunityPopupRequested()
