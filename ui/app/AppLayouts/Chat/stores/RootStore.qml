@@ -265,7 +265,14 @@ QtObject {
         }
 
         if (fileUrlsAndSources.length > 0) {
-            const convertedImagePaths = UrlUtils.convertUrlsToLocalPaths(fileUrlsAndSources)
+            let convertedImagePaths = fileUrlsAndSources.map((file) => {
+                if (Utils.isBase64DataUrl(file)) {
+                    // No need to convert base64 data URLs, they are already in the correct format
+                    return file
+                } else {
+                    return UrlUtils.convertUrlToLocalPath(file)
+                }
+            })
             chatContentModule.inputAreaModule.sendImages(JSON.stringify(convertedImagePaths), textMsg.trim(), replyMessageId)
             result = true
         } else {

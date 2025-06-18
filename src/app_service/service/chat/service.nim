@@ -1,7 +1,7 @@
 import NimQml, Tables, json, sequtils, chronicles, os, strutils, uuids, base64
 import std/[times, os]
 
-import ../../../app/core/tasks/[qt, threadpool]
+import app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
 import ../message/dto/[link_preview, standard_link_preview, status_link_preview]
@@ -9,13 +9,14 @@ import ../message/dto/payment_request
 import ../activity_center/dto/notification as notification_dto
 import ../community/dto/community as community_dto
 import ../contacts/service as contact_service
-import ../../../backend/chat as status_chat
-import ../../../backend/communities as status_communities
-import ../../../backend/group_chat as status_group_chat
-import ../../../backend/chatCommands as status_chat_commands
-import ../../../app/global/global_singleton
-import ../../../app/core/eventemitter
-import ../../../app/core/signals/types
+import backend/chat as status_chat
+import backend/communities as status_communities
+import backend/group_chat as status_group_chat
+import backend/chatCommands as status_chat_commands
+import app/global/[global_singleton, utils]
+import app/core/eventemitter
+import app/core/signals/types
+import constants
 
 import ../../common/message as message_common
 from ../../common/account_constants import ZERO_ADDRESS
@@ -26,7 +27,7 @@ logScope:
   topics = "chat-service"
 
 include ../../common/json_utils
-include ../../../app/core/tasks/common
+include app/core/tasks/common
 include async_tasks
 
 type
@@ -433,6 +434,7 @@ QtObject:
         slot: "onAsyncSendImagesDone",
         chatId: chatId,
         imagePathsJson: imagePathsJson,
+        tempDir: TMPDIR,
         msg: msg,
         replyTo: replyTo,
         preferredUsername: preferredUsername,
@@ -457,7 +459,9 @@ QtObject:
 
       let rpcResponse = Json.safeDecode($rpcResponseObj["response"], RpcResponse[JsonNode])
 
-      discard self.processMessengerResponse(rpcResponse)
+      let (chats, messages) = self.processMessengerResponse(rpcResponse)
+      if chats.len == 0 or messages.len == 0:
+        raise newException(CatchableError, "no chat or message returned")
     except Exception as e:
       error "Error sending images", msg = e.msg
       self.events.emit(SIGNAL_SENDING_FAILED, MessageSendingFailure(chatId: rpcResponseObj["chatId"].getStr, error: e.msg))
