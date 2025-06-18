@@ -133,6 +133,7 @@ Control {
         id: regularDockButton
 
         ShellDockButton {
+            objectName: "regularDockButton" + model.name
             sectionType: model.sectionType
             text: model.name
             hasNotification: model.hasNotification ?? false
@@ -149,6 +150,7 @@ Control {
         id: pinnedDockButton
 
         ShellDockButton {
+            objectName: "pinnedDockButton" + model.name
             id: pinnedDelegate
             sectionType: model.sectionType
             text: model.name
