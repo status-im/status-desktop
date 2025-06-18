@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -229,6 +230,15 @@ StatusScrollView {
             add: Transition {
                 NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
             }
+        }
+
+        StatusBaseText {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Theme.xlPadding * 2
+            width: d.delegateWidth
+            visible: root.model.ModelCount.count === 0
+            text: qsTr("No communities found")
+            color: Theme.palette.baseColor1
         }
     }
 }
