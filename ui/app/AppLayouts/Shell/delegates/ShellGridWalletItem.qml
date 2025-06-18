@@ -19,7 +19,7 @@ ShellGridItem {
     subtitle: SQUtils.Utils.elideAndFormatWalletAddress(root.itemId)
 
     background: Rectangle {
-        color: hovered ? "#222833" : "#161c27"
+        color: hovered ? Qt.lighter(Theme.palette.baseColor4, 1.5) : Theme.palette.baseColor4
         Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
         radius: Theme.padding
 
@@ -38,7 +38,6 @@ ShellGridItem {
         StatusBaseText {
             Layout.fillWidth: true
             text: root.currencyBalance
-            color: Theme.palette.white
             font.pixelSize: Theme.tertiaryTextFontSize
             font.weight: Font.Medium
         }
@@ -52,7 +51,7 @@ ShellGridItem {
                     return "keycard"
                 return ""
             }
-            color: Theme.palette.white
+            color: Theme.palette.directColor1
             visible: !!icon
         }
     }

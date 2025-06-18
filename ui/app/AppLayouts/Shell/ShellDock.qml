@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
@@ -63,8 +64,18 @@ Control {
     spacing: Theme.smallPadding
 
     background: Rectangle {
-        color: "#161d27"
+        color: Theme.palette.baseColor4
         radius: Theme.smallPadding * 2
+    }
+
+    layer.enabled: true
+    layer.effect: DropShadow {
+        horizontalOffset: 0
+        verticalOffset: 4
+        radius: 12
+        samples: 25
+        spread: 0
+        color: Theme.palette.dropShadow
     }
 
     implicitHeight: 84 // by design
@@ -127,7 +138,7 @@ Control {
             hasNotification: model.hasNotification ?? false
             notificationsCount: model.notificationsCount ?? 0
             connectorBadge: model.connectorBadge ?? ""
-            icon.color: Theme.palette.white
+            icon.color: hovered ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             icon.name: (root.useNewDockIcons ? "shell/" : "") + model.icon
             enabled: model.enabled
             onClicked: root.itemActivated(model.key, sectionType, "") // not interested in item (section) id here
@@ -145,7 +156,7 @@ Control {
             notificationsCount: model.notificationsCount ?? 0
             connectorBadge: model.connectorBadge ?? ""
             icon.name: model.icon
-            icon.color: model.color ?? Theme.palette.white
+            icon.color: model.color ?? Theme.palette.directColor1
             icon.width: 24
             icon.height: 24
             tooltipText: "%1 (%2)".arg(text).arg(Utils.translatedSectionName(sectionType))

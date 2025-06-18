@@ -60,8 +60,7 @@ ShellGridItem {
         horizontalPadding: Theme.halfPadding
         verticalPadding: 4
         bgRadius: 20
-        bgBorderColor: Qt.rgba(1, 1, 1, 0.1)
-        tagPrimaryLabel.color: Theme.palette.white
+        bgBorderColor: Theme.palette.directColor6
         tagPrimaryLabel.font.weight: Font.Medium
         asset.color: Theme.palette.baseColor1
     }

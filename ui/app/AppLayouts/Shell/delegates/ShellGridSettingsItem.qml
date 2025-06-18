@@ -13,17 +13,13 @@ ShellGridItem {
     property int activeMembersCount
     property bool isExperimental
 
-    icon.color: Theme.palette.primaryColor1
-
     sectionType: Constants.appSection.profile
-    color: Qt.lighter(icon.color, 1.7)
+    color: Theme.palette.primaryColor2
 
     iconLoaderComponent: StatusRoundIcon {
         asset.name: root.icon.name
-        asset.color: root.icon.color
         asset.bgWidth: width
         asset.bgHeight: height
-        asset.bgColor: Qt.lighter(asset.color, 1.8)
     }
 
     bottomRowComponent: StatusBetaTag {

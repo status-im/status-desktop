@@ -74,7 +74,7 @@ Control {
 
         Rectangle {
             anchors.fill: parent
-            color: "#0b121d"
+            color: Theme.palette.baseColor3
         }
     }
 
@@ -152,10 +152,6 @@ Control {
             Layout.preferredWidth: 40
             Layout.preferredHeight: 40
             icon.height: 24
-            icon.color: hovered ? Theme.palette.white : Theme.palette.baseColor1
-            Behavior on icon.color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
-            color: "transparent"
-            tooltip.color: "#222833"
             unreadNotificationsCount: root.aCNotificationCount
             hasUnseenNotifications: root.hasUnseenACNotifications
             onClicked: root.notificationButtonClicked()
@@ -174,8 +170,6 @@ Control {
 
             getEmojiHashFn: root.getEmojiHashFn
             getLinkToProfileFn: root.getLinkToProfileFn
-
-            badge.border.color: hovered ? "#222833" : "#161c27"
 
             onSetCurrentUserStatusRequested: (status) => root.setCurrentUserStatusRequested(status)
             onViewProfileRequested: (pubKey) => root.viewProfileRequested(pubKey)

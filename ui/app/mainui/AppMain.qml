@@ -1854,7 +1854,7 @@ Item {
                             getEmojiHashFn: appMain.utilsStore.getEmojiHash
                             getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
 
-                            useNewDockIcons: true
+                            useNewDockIcons: false
                             hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
                             aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
 
