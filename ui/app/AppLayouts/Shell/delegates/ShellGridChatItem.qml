@@ -35,8 +35,8 @@ ShellGridItem {
             visible: root.chatType === Constants.chatType.oneToOne
             color: root.onlineStatus === Constants.onlineStatus.online ? Theme.palette.successColor1
                                                                        : Theme.palette.baseColor1
-            border.width: 2
-            border.color: hovered ? "#222833" : "#161c27"
+            border.width: 1
+            border.color: hovered ? Qt.lighter(Theme.palette.baseColor4, 1.5) : Theme.palette.baseColor4
             implicitHeight: 10
             implicitWidth: 10
             anchors.rightMargin: 1
@@ -51,7 +51,6 @@ ShellGridItem {
         sourceComponent: StatusBaseText {
             text: root.lastMessageText
             font.pixelSize: Theme.additionalTextSize
-            color: Theme.palette.white
             maximumLineCount: 1
             textFormat: Text.PlainText
             elide: Text.ElideRight

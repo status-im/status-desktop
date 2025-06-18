@@ -121,7 +121,6 @@ SplitView {
             Switch {
                 id: ctrlNewIcons
                 text: "Use new dock icons"
-                checked: true
             }
             Switch {
                 id: ctrlShowEnabledSectionsOnly

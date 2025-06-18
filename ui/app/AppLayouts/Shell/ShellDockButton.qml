@@ -36,7 +36,8 @@ ToolButton {
     icon.height: 36
 
     background: Rectangle {
-        color: Qt.rgba(1, 1, 1, hovered ? 0.1 : 0.05) // FIXME get rid of opacity tricks
+        id: background
+        color: hovered ? Theme.palette.directColor7 : Theme.palette.directColor8
         Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
         radius: Theme.smallPadding * 2
 
@@ -44,10 +45,9 @@ ToolButton {
         StatusBadge {
             width: root.notificationsCount ? implicitWidth : 12 + border.width // bigger dot
             height: root.notificationsCount ? implicitHeight : 12 + border.width
-            color: hovered ? Qt.lighter(root.badgeColor, 1.25) : root.badgeColor
-            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
             border.width: 2
-            border.color: "#161d27"
+            border.color: parent.color
+            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
             anchors.right: parent.right
             anchors.rightMargin: root.notificationsCount ? -2 : 0
             anchors.top: parent.top
@@ -67,8 +67,8 @@ ToolButton {
         asset.bgRadius: root.pinned && root.sectionType === Constants.appSection.wallet ? Theme.padding : asset.bgWidth/2
         name: root.text
 
-        Binding on asset.bgColor {
-            value: Qt.lighter(root.icon.color, 1.8)
+        Binding on asset.bgColor { // need some round background around the icon
+            value: Theme.palette.primaryColor3//Theme.palette.name === Constants.lightThemeName ? Qt.lighter(root.icon.color, 1.7) : Qt.darker(root.icon.color, 1.7)
             when: root.pinned && (root.sectionType === Constants.appSection.dApp || root.sectionType === Constants.appSection.profile)
         }
 
@@ -90,8 +90,8 @@ ToolButton {
             visible: root.chatType === Constants.chatType.oneToOne
             color: root.onlineStatus === Constants.onlineStatus.online ? Theme.palette.successColor1
                                                                        : Theme.palette.baseColor1
-            border.width: 2
-            border.color: hovered ? "#222833" : "#161c27"
+            border.width: 1
+            border.color: background.color
             implicitHeight: 10
             implicitWidth: 10
             anchors.rightMargin: 1
@@ -102,7 +102,6 @@ ToolButton {
     StatusToolTip {
         visible: !!text && root.hovered
         offset: -(x + width/2 - root.width/2)
-        color: "#222833"
         text: root.tooltipText
     }
 

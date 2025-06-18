@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -42,6 +43,14 @@ AbstractButton {
 
     signal pinRequested
 
+    layer.enabled: true
+    layer.effect: Glow {
+        samples: 33
+        spread: 0.1
+        color: root.hovered ? Theme.palette.backdropColor : Theme.palette.dropShadow
+        Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+    }
+
     background: Item {
         StatusRoundedImage {
             id: mainBgImage
@@ -67,7 +76,7 @@ AbstractButton {
             anchors.bottom: parent.bottom
             width: parent.width
 
-            color: hovered ? "#222833" : "#161c27"
+            color: hovered ? Qt.lighter(Theme.palette.baseColor4, 1.5) : Theme.palette.baseColor4
             Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
 
             radius: mainBgImage.radius
@@ -99,8 +108,6 @@ AbstractButton {
                 Layout.preferredHeight: root.icon.height
 
                 color: mainBgRect.color
-                Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
-
                 radius: width/2
 
                 Loader {
@@ -115,7 +122,6 @@ AbstractButton {
                 Layout.fillWidth: true
                 text: root.title
                 font.weight: Font.DemiBold
-                color: Theme.palette.white
                 elide: Text.ElideRight
 
                 HoverHandler {
@@ -125,7 +131,6 @@ AbstractButton {
                 StatusToolTip {
                     visible: titleTextHHandler.hovered
                     offset: -(x + width/2 - root.width/2)
-                    color: "#161c27"
                     text: root.title
                 }
             }
@@ -152,7 +157,6 @@ AbstractButton {
                 StatusBadge {
                     visible: root.hasNotification
                     value: root.notificationsCount
-                    color: Theme.palette.primaryColor1
                 }
             }
         }

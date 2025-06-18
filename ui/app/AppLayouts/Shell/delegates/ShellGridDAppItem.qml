@@ -21,7 +21,7 @@ ShellGridItem {
     extraMenuActions: [disconnectAction]
 
     background: Rectangle {
-        color: hovered ? "#222833" : "#161c27"
+        color: hovered ? Qt.lighter(Theme.palette.baseColor4, 1.5) : Theme.palette.baseColor4
         Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
         radius: Theme.padding
 
@@ -64,7 +64,6 @@ ShellGridItem {
         StatusToolTip {
             visible: titleTextHHandler.hovered
             offset: -(x + width/2 - root.width/2)
-            color: "#161c27"
             text: root.itemId
         }
     }

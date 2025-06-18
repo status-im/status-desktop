@@ -7,6 +7,7 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Shell.delegates 1.0
 
@@ -72,8 +73,15 @@ StatusScrollView {
     padding: 0
     rightPadding: Theme.padding
 
+    contentWidth: availableWidth
+
+    QtObject {
+        id: d
+        property bool positioningComplete // delay the animations
+    }
+
     ColumnLayout {
-        width: root.width - root.rightPadding
+        width: root.availableWidth
 
         Flow {
             // calculate a tight bounding box, and then horizontally center over the scrollview width
@@ -82,6 +90,13 @@ StatusScrollView {
             Layout.alignment: Qt.AlignHCenter
 
             spacing: Theme.padding
+
+            // for the drop shadow
+            topPadding: Theme.smallPadding
+            bottomPadding: Theme.padding
+
+            // delay the animations
+            onPositioningComplete: Backpressure.debounce(this, 500, () => {d.positioningComplete = true})()
 
             Repeater {
                 id: repeater
@@ -216,9 +231,11 @@ StatusScrollView {
             }
 
             move: Transition {
+                enabled: d.positioningComplete
                 NumberAnimation { properties: "x,y"; }
             }
             add: Transition {
+                enabled: d.positioningComplete
                 NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
             }
         }

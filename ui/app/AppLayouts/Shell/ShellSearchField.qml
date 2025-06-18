@@ -12,10 +12,6 @@ StatusTextField {
     background: null
     font.pixelSize: 27
     font.weight: Font.DemiBold
-    color: Theme.palette.white
-    selectedTextColor: Theme.palette.white
-    selectionColor: Theme.palette.primaryColor1
-    placeholderTextColor: Qt.rgba(1, 1, 1, 0.3)
 
     StatusClearButton {
         anchors.right: parent.right
@@ -26,8 +22,6 @@ StatusTextField {
         visible: parent.text
         icon.width: 24
         icon.height: 24
-        icon.color: Theme.palette.white
-        tooltip.color: "#222833"
         onClicked: {
             parent.forceActiveFocus()
             parent.clear()

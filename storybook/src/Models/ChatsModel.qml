@@ -95,6 +95,6 @@ ListModel {
         muted: false
         isCategory: false
         categoryOpened: true
-        lastMessageText: ""
+        lastMessageText: "💩"
     }
 }
