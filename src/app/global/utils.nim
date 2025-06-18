@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, httpclient
+import NimQml, strutils, uri, stew/shims/strformat, re, stint, httpclient
 import stew/byteutils
 import ./utils/qrcodegen
 
@@ -146,3 +146,6 @@ QtObject:
 
   proc isChatKey*(self: Utils, value: string): bool {.slot.} =
       result = (conversion.startsWith0x(value) and conversion.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
+
+  proc isBase64DataUrl*(str: string): bool =
+    return str.match(re"^data:.*;base64,")
