@@ -278,7 +278,7 @@ void LeftJoinModel::classBegin()
 void LeftJoinModel::componentComplete()
 {
     if (!m_initialized)
-        initializeIfReady(false);
+        initializeIfReady(true);
 }
 
 void LeftJoinModel::setLeftModel(QAbstractItemModel* model)
