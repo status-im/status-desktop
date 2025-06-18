@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.9.16'
 pipeline {
 
   agent {
-    label "linux && x86_64 && qt-5.15.2"
+    label "linux && x86_64 && qt-5.15.2 && desktop-e2e"
   }
 
   parameters {
