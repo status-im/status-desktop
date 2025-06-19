@@ -7,6 +7,7 @@ mainWindow_StatusWindow = {"name": "mainWindow", "type": "StatusWindow", "visibl
 statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type": "Overlay", "unnamed": 1, "visible": True}
 statusDesktop_mainWindow_overlay_popup2 = {"container": statusDesktop_mainWindow_overlay, "occurrence": 2, "type": "PopupItem", "unnamed": 1, "visible": True}
 basePopupItem = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
+basePopupHelper = {"container": statusDesktop_mainWindow_overlay, "objectName": "testHelper", "type": "Item", "visible": True}
 scrollView_StatusScrollView = {"container": statusDesktop_mainWindow_overlay, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScreenV2", "type": "DidYouKnowSplashScreen"}
 mainWindow_LoadingAnimation = {"container": statusDesktop_mainWindow, "objectName": "loadingAnimation", "type": "LoadingAnimation", "visible": True}
@@ -147,7 +148,7 @@ croppedImageBanner = {"container": statusDesktop_mainWindow_overlay, "objectName
 createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelNameInput", "type": "TextEdit", "visible": True}
 createOrEditCommunityChannelDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelDescriptionInput", "type": "TextEdit", "visible": True}
 createOrEditCommunityChannelBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelBtn", "type": "StatusButton", "visible": True}
-createOrEditCommunityChannel_EmojiButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusChannelPopup_emojiButton", "type": "StatusRoundButton", "visible": True}
+createOrEditCommunityChannel_EmojiButton = {"container": statusDesktop_mainWindow, "objectName": "StatusChannelPopup_emojiButton", "type": "StatusRoundButton", "visible": True}
 add_permission_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "addPermissionButton", "type": "StatusButton", "visible": True}
 hide_channel_checkbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "hideChannelCheckbox", "type": "StatusCheckBox", "visible": True}
 
@@ -288,7 +289,8 @@ mainWallet_Saved_Addresses_More_Confirm_Notification = {"container": statusDeskt
 # Picture Edit Popup
 o_StatusSlider = {"container": statusDesktop_mainWindow_overlay, "type": "StatusSlider", "unnamed": 1, "visible": True}
 cropSpaceItem_Item = {"container": statusDesktop_mainWindow_overlay, "id": "cropSpaceItem", "type": "Item", "unnamed": 1, "visible": True}
-make_picture_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "imageCropperAcceptButton", "type": "StatusButton", "visible": True}
+make_picture_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "imageCropperAcceptButton", "type": "StatusButton"}
+make_picture_Header = {"container": statusDesktop_mainWindow_overlay, "id": "imageWithTitle", "type": "StatusImageWithTitle", "unnamed": 1, "visible": True}
 o_DropShadow = {"container": statusDesktop_mainWindow_overlay, "type": "DropShadow", "unnamed": 1, "visible": True}
 
 # Emoji Popup

@@ -1,3 +1,5 @@
+import time
+
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.objects_map import onboarding_names

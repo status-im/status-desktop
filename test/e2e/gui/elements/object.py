@@ -96,6 +96,7 @@ class QObject:
         except (LookupError, RuntimeError, AttributeError):
             return False
 
+
     @property
     @allure.step('Get image {0}')
     def image(self):
