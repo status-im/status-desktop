@@ -25,6 +25,7 @@ from gui.screens.settings_wallet import WalletSettingsView
                          ])
 def test_delete_generated_account_from_wallet_settings(
         main_screen: MainWindow, user_account, account_name: str, color: str, emoji: str, emoji_unicode: str):
+    
     with step('Open add account pop up from wallet settings'):
         add_account_popup = \
             main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
