@@ -19,7 +19,7 @@ from gui.main_window import MainWindow
 # TODO: follow up on https://github.com/status-im/status-desktop/issues/13013
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account):
     with step('Open change password view'):
-        settings_scr = main_screen.left_panel.open_settings()
+        settings_scr = main_screen.shell.open_settings_from_dock()
         password_view = settings_scr.left_panel.open_password_settings()
 
     with step('Fill in the change password form and submit'):
