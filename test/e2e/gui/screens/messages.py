@@ -414,7 +414,6 @@ class ChatMessagesView(QObject):
     @allure.step('Close link preview popup by clicking preview bubble area')
     def close_link_preview_popup(self):
         self._link_preview_card.click()
-        LinkPreviewOptionsPopup().wait_until_hidden()
         return self
 
     @allure.step('Get text of title of link preview bubble')
