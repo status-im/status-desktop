@@ -75,7 +75,7 @@ SwipeView {
         \qmlproperty Component StatusAppLayout::headerBackground
         This property holds the headerBackground of the component.
     */
-    property alias headerBackground: headerBackgroundProxy.target
+    property Item headerBackground
     /*!
         \qmlproperty bool StatusSectionLayout::showRightPanel
         This property sets the right panel component's visibility to true/false.
@@ -122,7 +122,7 @@ SwipeView {
         This property holds a reference to the custom header content of
         the header component.
     */
-    property alias headerContent: statusToolBar.headerContent
+    property Item headerContent
     /*!
         \qmlproperty alias StatusSectionLayout::notificationButton
         This property holds a reference to the notification button of the header
@@ -203,25 +203,22 @@ SwipeView {
             objectName: "centerPanelLayout"
             anchors.fill: parent
             spacing: 0
-            LayoutItemProxy {
-                id: headerBackgroundProxy
+            Item {
                 Layout.fillWidth: true
-                StatusToolBar {
+                implicitHeight: headerBackgroundProxy.implicitHeight
+                LayoutItemProxy {
+                    id: headerBackgroundProxy
+                    anchors.fill: parent
+                    target: root.headerBackground
+                }
+                BaseToolBar {
                     id: statusToolBar
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    visible: root.showHeader
-                    backButtonVisible: root.currentIndex !== 0
-                    onBackButtonClicked: {
-                        if (!root.backButtonName) {
-                            root.currentIndex = root.currentIndex - 1
-                            return
-                        }
-                        root.backButtonClicked();
-                    }
-                    onNotificationButtonClicked: {
-                        root.notificationButtonClicked();
+                    headerContent: LayoutItemProxy {
+                        id: headerContentProxy
+                        target: root.headerContent
                     }
                 }
             }
@@ -243,9 +240,36 @@ SwipeView {
     }
 
     BaseProxyPanel {
-        id: rightPanelProxy
         backgroundColor: Theme.palette.baseColor4
         implicitIndex: 2
         inView: !!root.rightPanel && root.showRightPanel
+        target: ColumnLayout {
+            objectName: "rightPanelLayout"
+            anchors.fill: parent
+            spacing: 0
+            BaseToolBar {
+                Layout.fillWidth: true
+            }
+            LayoutItemProxy {
+                id: rightPanelProxy
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+        }
+    }
+
+    component BaseToolBar: StatusToolBar {
+        visible: root.showHeader
+        backButtonVisible: root.currentIndex !== 0
+        onBackButtonClicked: {
+            if (!root.backButtonName) {
+                root.currentIndex = root.currentIndex - 1
+                return
+            }
+            root.backButtonClicked();
+        }
+        onNotificationButtonClicked: {
+            root.notificationButtonClicked();
+        }
     }
 }
