@@ -1,3 +1,5 @@
+import time
+
 import configs
 from gui.components.base_popup import BasePopup
 from gui.components.community.new_permission_popup import NewPermissionPopup

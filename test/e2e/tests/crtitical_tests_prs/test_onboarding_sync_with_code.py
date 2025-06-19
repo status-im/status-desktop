@@ -33,6 +33,7 @@ def test_sync_device_during_onboarding(multiple_instances):
                 sync_settings_view.is_backup_button_present()
             setup_syncing = main_window.left_panel.open_settings().left_panel.open_syncing_settings().open_sync_new_device_popup(
                 user.password)
+            setup_syncing.wait_until_enabled()
             sync_code = setup_syncing.syncing_code
             main_window.hide()
 
