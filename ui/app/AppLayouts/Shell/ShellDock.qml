@@ -159,7 +159,7 @@ Control {
             icon.color: model.color ?? Theme.palette.directColor1
             icon.width: 24
             icon.height: 24
-            tooltipText: "%1 (%2)".arg(text).arg(Utils.translatedSectionName(sectionType))
+            tooltipText: "%1 (%2)".arg(text).arg(Utils.translatedSectionName(sectionType) || model.sectionName)
 
             chatType: model.chatType ?? Constants.chatType.unknown
             onlineStatus: model.onlineStatus ?? Constants.onlineStatus.unknown

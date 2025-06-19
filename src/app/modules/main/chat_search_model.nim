@@ -12,6 +12,7 @@ type
     SectionId
     SectionName
     Emoji
+    ChatType
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -46,6 +47,7 @@ QtObject:
       ModelRole.SectionId.int:"sectionId",
       ModelRole.SectionName.int:"sectionName",
       ModelRole.Emoji.int:"emoji",
+      ModelRole.ChatType.int:"chatType",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -75,3 +77,5 @@ QtObject:
         result = newQVariant(item.sectionName)
       of ModelRole.Emoji:
         result = newQVariant(item.emoji)
+      of ModelRole.ChatType:
+        result = newQVariant(item.chatType)

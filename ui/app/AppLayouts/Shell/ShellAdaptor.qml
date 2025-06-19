@@ -19,6 +19,7 @@ QObject {
     // for Shell grid entries
     required property var sectionsBaseModel
     required property var chatsBaseModel
+    property var chatsSearchBaseModel
     required property var walletsBaseModel
     required property var dappsBaseModel
 
@@ -37,6 +38,7 @@ QObject {
     property bool showCommunities: true
     property bool showSettings: true
     property bool showChats: true
+    property bool showAllChats: false // from the chat_search_model
     property bool showWallets: true
     property bool showDapps: true
 
@@ -259,6 +261,29 @@ QObject {
     }
 
     ObjectProxyModel {
+        id: chatsSearchModel
+        sourceModel: SortFilterProxyModel {
+            sourceModel: root.chatsSearchBaseModel
+            filters: [
+                ValueFilter {
+                    roleName: "chatType"
+                    value: Constants.chatType.communityChat
+                }
+            ]
+        }
+        delegate: QtObject {
+            readonly property string key: model.sectionId + ';' + model.chatId
+            readonly property string id: model.chatId
+            readonly property string name: model.name
+            readonly property string icon: model.icon || model.emoji
+            readonly property color color: model.color || Utils.colorForColorId(model.colorId)
+        }
+
+        expectedRoles: ["sectionId", "chatId", "chatType", "name", "sectionName", "emoji", "icon", "color", "colorId"]
+        exposedRoles: ["key", "id", "name", "icon", "color"]
+    }
+
+    ObjectProxyModel {
         id: walletsModel
 
         sourceModel: root.walletsBaseModel
@@ -315,6 +340,10 @@ QObject {
                 markerRoleValue: Constants.appSection.chat
             },
             SourceModel {
+                model: root.showChats ? chatsSearchModel : null
+                markerRoleValue: -1 // search, no section
+            },
+            SourceModel {
                 model: root.showDapps ? dappsModel : null
                 markerRoleValue: Constants.appSection.dApp
             }
@@ -323,6 +352,7 @@ QObject {
         markerRoleName: "sectionType"
         expectedRoles: ["key", "id", "enabled", "name", "icon", "color", "hasNotification", "notificationsCount", // common props
             "chatType", "onlineStatus", "lastMessageText", // chat
+            "sectionName", // chat search
             "banner", "members", "activeMembers", "pending", "banned", // community
             "isExperimental", // settings
             "walletType", "currencyBalance", // wallet
@@ -396,6 +426,12 @@ QObject {
             SearchFilter {
                 roleName: "name"
                 searchPhrase: root.searchPhrase
+            },
+            ValueFilter {
+                roleName: "sectionType"
+                value: -1 // search only
+                inverted: true
+                enabled: root.searchPhrase === "" && !root.showAllChats
             }
         ]
         sorters: [
