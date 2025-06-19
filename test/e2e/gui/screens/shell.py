@@ -45,6 +45,7 @@ class ShellScreen(QObject):
     @allure.step('Open Wallet from shell dock')
     def open_wallet_from_dock(self) -> WalletScreen:
         """Navigate to Wallet from shell dock"""
+        self.wait_for_shell_ui_loaded()
         wallet_button = Button(shell_names.shell_regular_dock_button_wallet)
         wallet_button.click()
         return WalletScreen().wait_until_appears()
@@ -60,6 +61,7 @@ class ShellScreen(QObject):
     @allure.step('Open Messages from shell dock')
     def open_messages_from_dock(self) -> MessagesScreen:
         """Navigate to Messages from shell dock"""
+        self.wait_for_shell_ui_loaded()
         messages_button = Button(shell_names.shell_regular_dock_button_messages)
         messages_button.click()
         return MessagesScreen().wait_until_appears()
@@ -67,6 +69,7 @@ class ShellScreen(QObject):
     @allure.step('Open Communities from shell dock')
     def open_communities_from_dock(self) -> CommunitiesPortal:
         """Navigate to Communities from shell dock"""
+        self.wait_for_shell_ui_loaded()
         communities_button = Button(shell_names.shell_regular_dock_button_communities)
         communities_button.click()
         return CommunitiesPortal().wait_until_appears()
@@ -74,6 +77,7 @@ class ShellScreen(QObject):
     @allure.step('Open Market from shell dock')
     def open_market_from_dock(self):
         """Navigate to Market from shell dock"""
+        self.wait_for_shell_ui_loaded()
         market_button = Button(shell_names.shell_regular_dock_button_market)
         market_button.click()
 
