@@ -1,3 +1,5 @@
+import time
+
 import allure
 
 import configs
@@ -17,6 +19,7 @@ class SendContactRequest(BasePopup):
 
     @allure.step('Send contact request')
     def send(self, chat_key: str, message: str):
+        time.sleep(0.3) # to allow the modal to render, will be removed with Qt6
         self._chat_key_text_edit.text = chat_key
         self._message_text_edit.text = message
         self._send_button.click()

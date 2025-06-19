@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pyperclip
 
@@ -31,6 +33,7 @@ class SyncNewDevicePopup(BasePopup):
     @property
     @allure.step('Get syncing code')
     def syncing_code(self):
+        time.sleep(0.3) # to allow the modal to render, will be removed with Qt6
         self._copy_button.click()
         return pyperclip.paste()
 

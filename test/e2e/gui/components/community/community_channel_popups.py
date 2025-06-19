@@ -1,3 +1,5 @@
+import time
+
 import configs
 from gui.components.base_popup import BasePopup
 from gui.components.community.new_permission_popup import NewPermissionPopup
@@ -30,6 +32,7 @@ class NewChannelPopup(ChannelPopup):
         self._name_text_edit.text = name
         self._description_text_edit.text = description
         if emoji is not None:
+            time.sleep(0.3) # to allow the modal to render, will be removed with Qt6
             self._emoji_button.click()
             EmojiPopup().wait_until_appears().select(emoji)
         return self

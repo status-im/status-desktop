@@ -1,3 +1,5 @@
+import time
+
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.objects_map import onboarding_names
@@ -14,6 +16,7 @@ class LogInBySyncingChecklist(BasePopup):
         self.continue_button = Button(onboarding_names.continueButton)
 
     def complete(self):
+        time.sleep(0.5)  # to allow the modal to render, will be removed with Qt6
         self.connect_both_devices_option.set(True)
         self.make_sure_you_are_logged_option.set(True)
         self.disable_the_firewall_option.set(True)

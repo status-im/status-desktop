@@ -13,13 +13,14 @@ from gui.objects_map import names
 shift_image = namedtuple('Shift', ['left', 'right', 'top', 'bottom'])
 
 
-class PictureEditPopup(BasePopup):
+class PictureEditPopup(QObject):
 
     def __init__(self):
-        super(PictureEditPopup, self).__init__()
+        super().__init__(names.make_picture_StatusButton)
+        self.make_picture_header = QObject(names.make_picture_Header)
         self._zoom_slider = Slider(names.o_StatusSlider)
         self._view = QObject(names.cropSpaceItem_Item)
-        self._make_picture_button = Button(names.make_picture_StatusButton)
+        self.make_picture_button = Button(names.make_picture_StatusButton)
         self._slider_handler = QObject(names.o_DropShadow)
 
     @allure.step('Set zoom shift for picture and make picture')
@@ -48,15 +49,12 @@ class PictureEditPopup(BasePopup):
                 driver.mouse.press_and_move(
                     self._view.object, 1, self._view.height, 1, self._view.height - shift.bottom, step=1)
                 time.sleep(1)
+        time.sleep(0.3)
         self.make_picture()
 
     @allure.step('Make picture')
-    def make_picture(self, attempts: int = 2):
-        self._make_picture_button.click()
-        try:
-            self._make_picture_button.wait_until_hidden()
-        except AssertionError as err:
-            if attempts:
-                self.make_picture(attempts - 1)
-            else:
-                raise err
+    def make_picture(self):
+        self.make_picture_button.click()
+        return self
+
+
