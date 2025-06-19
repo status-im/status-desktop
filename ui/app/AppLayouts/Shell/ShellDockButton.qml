@@ -87,7 +87,7 @@ ToolButton {
 
         // for chat items
         badge {
-            visible: root.chatType === Constants.chatType.oneToOne
+            visible: root.chatType === Constants.chatType.oneToOne && root.onlineStatus !== Constants.onlineStatus.unknown
             color: root.onlineStatus === Constants.onlineStatus.online ? Theme.palette.successColor1
                                                                        : Theme.palette.baseColor1
             border.width: 1

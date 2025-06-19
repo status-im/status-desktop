@@ -1274,6 +1274,7 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
       sectionId,
       sectionName,
       chat.emoji,
+      chat.chatType.int
     ))
 
   self.view.chatSearchModel().setItems(items)

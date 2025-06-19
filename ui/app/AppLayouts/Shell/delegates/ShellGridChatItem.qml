@@ -32,7 +32,7 @@ ShellGridItem {
         name: root.title
 
         badge {
-            visible: root.chatType === Constants.chatType.oneToOne
+            visible: root.chatType === Constants.chatType.oneToOne && root.onlineStatus !== Constants.onlineStatus.unknown
             color: root.onlineStatus === Constants.onlineStatus.online ? Theme.palette.successColor1
                                                                        : Theme.palette.baseColor1
             border.width: 1
@@ -45,15 +45,12 @@ ShellGridItem {
     }
 
     bottomRowComponentFillsWidth: true
-    bottomRowComponent: Loader {
-        active: root.lastMessageText && root.lastMessageText.length > 0
-
-        sourceComponent: StatusBaseText {
-            text: root.lastMessageText
-            font.pixelSize: Theme.additionalTextSize
-            maximumLineCount: 1
-            textFormat: Text.PlainText
-            elide: Text.ElideRight
-        }
+    bottomRowComponent: StatusBaseText {
+        visible: !!root.lastMessageText
+        text: root.lastMessageText
+        font.pixelSize: Theme.additionalTextSize
+        maximumLineCount: 1
+        textFormat: Text.PlainText
+        elide: Text.ElideRight
     }
 }

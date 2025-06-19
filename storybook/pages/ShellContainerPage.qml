@@ -31,12 +31,14 @@ SplitView {
 
             sectionsBaseModel: SectionsModel {}
             chatsBaseModel: ChatsModel {}
+            chatsSearchBaseModel: ChatsSearchModel {}
             walletsBaseModel: WalletAccountsModel {}
             dappsBaseModel: DappsModel {}
 
             showCommunities: ctrlShowCommunities.checked || ctrlShowAllEntries.checked
             showSettings: ctrlShowSettings.checked || ctrlShowAllEntries.checked
             showChats: ctrlShowChats.checked || ctrlShowAllEntries.checked
+            showAllChats: ctrlShowAllChats.checked || ctrlShowAllEntries.checked
             showWallets: ctrlShowWallets.checked || ctrlShowAllEntries.checked
             showDapps: ctrlShowDapps.checked || ctrlShowAllEntries.checked
 
@@ -64,6 +66,7 @@ SplitView {
             readonly property string icon: ModelsData.icons.rarible
             readonly property int colorId: 7
             readonly property var colorHash: [{colorId: 7, segmentLength: 1}, {colorId: 6, segmentLength: 2}]
+            readonly property bool usesDefaultName: false
             property int currentUserStatus: Constants.currentUserStatus.automatic
         }
 
@@ -148,6 +151,12 @@ SplitView {
                     text: "Show Chats"
                     checked: true
                     enabled: !ctrlShowAllEntries.checked
+                }
+                Switch {
+                    id: ctrlShowAllChats
+                    text: "Show All Chats"
+                    checked: true
+                    enabled: ctrlShowChats.checked && !ctrlShowAllEntries.checked
                 }
                 Switch {
                     id: ctrlShowWallets
