@@ -1,13 +1,11 @@
 TEMPLATE = app
 
-QT += quick gui qml webview svg widgets
+QT += quick gui qml webview svg widgets multimedia
 
 equals(QT_MAJOR_VERSION, 6) {
     message("qt 6 config!!")
     QT += core5compat core
 }
-
-QMAKE_IOS_DEPLOYMENT_TARGET=16.0
 
 SOURCES += \
         sources/main.cpp
@@ -40,6 +38,10 @@ android {
 }
 
 ios {
+    CONFIG += add_ios_ffmpeg_libraries
+
+    QMAKE_INFO_PLIST = $$PWD/../ios/Info.plist
+    QMAKE_IOS_DEPLOYMENT_TARGET=16.0
     QMAKE_TARGET_BUNDLE_PREFIX = im.status
     QMAKE_APPLICATION_BUNDLE_NAME = tablet
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
