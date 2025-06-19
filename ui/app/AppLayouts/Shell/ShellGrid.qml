@@ -113,6 +113,7 @@ StatusScrollView {
                         case Constants.appSection.wallet:
                             return walletDelegate
                         case Constants.appSection.chat:
+                        case -1: // search
                             return chatDelegate
                         case Constants.appSection.dApp:
                             return dappDelegate
@@ -124,7 +125,7 @@ StatusScrollView {
                     Connections {
                         target: item ?? null
                         function onClicked() {
-                            root.itemActivated(model.key, item.sectionType, item.itemId)
+                            root.itemActivated(model.key, model.sectionType, item.itemId)
                         }
                         function onPinRequested() {
                             root.itemPinRequested(model.key, !model.pinned)
@@ -202,13 +203,19 @@ StatusScrollView {
                     title: model.name
                     icon.name: model.icon
                     icon.color: model.color
-                    hasNotification: model.hasNotification
-                    notificationsCount: model.notificationsCount
+                    hasNotification: model.hasNotification ?? false
+                    notificationsCount: model.notificationsCount ?? 0
                     pinned: model.pinned
-                    lastMessageText: model.lastMessageText
+                    lastMessageText: {
+                        if (!!model.lastMessageText)
+                            return model.lastMessageText
+                        if (model.sectionType === -1 && model.chatType === Constants.chatType.communityChat)
+                            return model.sectionName
+                        return ""
+                    }
 
-                    chatType: model.chatType
-                    onlineStatus: model.onlineStatus
+                    chatType: model.chatType ?? Constants.chatType.unknown
+                    onlineStatus: model.onlineStatus ?? Constants.onlineStatus.unknown
                 }
             }
 
