@@ -127,7 +127,7 @@ SplitView {
         This property holds a reference to the custom header content of
         the header component.
     */
-    property alias headerContent: statusToolBar.headerContent
+    property Item headerContent
     /*!
         \qmlproperty alias StatusSectionLayout::notificationButton
         This property holds a reference to the notification button of the header
@@ -182,20 +182,23 @@ SplitView {
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
         }
         contentItem: Item {
-            Item {
+            LayoutItemProxy {
                 id: headerBackgroundSlot
                 anchors.top: parent.top
                 // Needed cause I see a gap otherwise
                 anchors.topMargin: -3
-                width: visible ? parent.width : 0
-                height: visible ? childrenRect.height : 0
-                visible: (!!headerBackground)
+                width: parent.width
+                target: root.headerBackground
             }
             StatusToolBar {
                 id: statusToolBar
                 anchors.top: parent.top
                 width: visible ? parent.width : 0
                 visible: root.showHeader
+                headerContent: LayoutItemProxy {
+                    id: headerContentProxy
+                    target: root.headerContent
+                }
                 onBackButtonClicked: {
                     root.backButtonClicked();
                 }
