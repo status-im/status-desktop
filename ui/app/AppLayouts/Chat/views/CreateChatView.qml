@@ -112,6 +112,17 @@ Page {
                 onDownKeyPressed: {
                     contactsList.incrementCurrentIndex();
                 }
+
+                onResolveENS: (address) => root.rootStore.contactsStore.resolveENS(address);
+
+                Connections {
+                    enabled: membersSelector.visible
+                    target: root.rootStore.contactsStore
+                    function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
+                        membersSelector.ensResolved(resolvedPubKey, resolvedAddress, uuid);
+                    }
+                }
+
             }
 
             StatusActivityCenterButton {
