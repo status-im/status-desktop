@@ -229,6 +229,8 @@ StatusSectionLayout {
 
                 isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
+                isMobile: Constants.isMobile
+
                 onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
 
                 onCollectCommunityMetricsMessagesCount: {
