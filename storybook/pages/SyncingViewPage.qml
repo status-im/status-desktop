@@ -35,7 +35,11 @@ SplitView {
 
         isProduction: ctrlIsProduction.checked
         localBackupEnabled: localBackupEnabledSwitch.checked
-
+        backupPath: "file:///home/dev/status-desktop/backups"
+        toFileUri: function(path) {return path}
+        onBackupPathSet: function(path) {
+            logs.logEvent("SyncingView::onBackupPathSet", path)
+        }
         advancedStore: ProfileStores.AdvancedStore {
             readonly property bool isDebugEnabled: ctrlDebugEnabled.checked
         }

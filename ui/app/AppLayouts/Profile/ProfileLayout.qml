@@ -367,6 +367,8 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 localBackupEnabled: root.store.localBackupEnabled
+                backupPath: root.store.devicesStore.backupPath
+                toFileUri: root.store.devicesStore.toFileUri
                 isProduction: production
                 profileStore: root.store.profileStore
                 devicesStore: root.store.devicesStore
@@ -374,6 +376,9 @@ StatusSectionLayout {
                 advancedStore: root.store.advancedStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
+                onBackupPathSet: function(path) {
+                    root.store.devicesStore.setBackupPath(path)
+                }
             }
         }
 
