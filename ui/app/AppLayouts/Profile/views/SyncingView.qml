@@ -17,6 +17,7 @@ import shared.panels
 import shared.popups
 import shared.controls
 import shared.controls.chat
+import shared.status
 
 import SortFilterProxyModel
 
@@ -35,6 +36,10 @@ SettingsContentBase {
 
     required property bool isProduction
     required property bool localBackupEnabled
+    required property url backupPath
+    required property var toFileUri // Function to convert a file path to a file URI
+
+    signal backupPathSet(url path)
 
     ColumnLayout {
         id: layout
@@ -282,6 +287,14 @@ SettingsContentBase {
             onClicked: Global.openPopup(getSyncCodeInstructionsPopup)
         }
 
+        StatusSettingsLineButton {
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            text: qsTr("Directory of the local backup files")
+            currentValue: root.backupPath
+            onClicked: backupPathDialog.open()
+        }
+
         StatusButton {
             objectName: "setupSyncBackupDataButton"
 
@@ -402,6 +415,14 @@ SettingsContentBase {
             onAccepted: {
                 root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
             }
+        }
+
+        StatusFolderDialog {
+            id: backupPathDialog
+
+            title: qsTr("Select your backup directory")
+            currentFolder: root.devicesStore.toFileUri(root.backupPath)
+            onAccepted: root.backupPathSet(backupPathDialog.selectedFolder)
         }
 
         Item {

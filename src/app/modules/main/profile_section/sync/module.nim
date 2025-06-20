@@ -104,7 +104,7 @@ method setUseMailservers*(self: Module, value: bool) =
     self.view.useMailserversChanged()
 
 method importLocalBackupFile*(self: Module, filePath: string) =
-  let formattedFilePath = singletonInstance.utils.formatImagePath(filePath)
+  let formattedFilePath = singletonInstance.utils.fromPathUri(filePath)
   self.controller.importLocalBackupFile(formattedFilePath)
 
 method onLocalBackupImportCompleted*(self: Module, error: string) =

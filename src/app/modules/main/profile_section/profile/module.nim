@@ -86,7 +86,7 @@ method setIsFirstShowcaseInteraction(self: Module) =
 
 proc storeIdentityImage*(self: Module, identityImage: IdentityImage): bool =
   let keyUid = singletonInstance.userProfile.getKeyUid()
-  let image = singletonInstance.utils.formatImagePath(identityImage.source)
+  let image = singletonInstance.utils.fromPathUri(identityImage.source)
   # FIXME the function to get the file size is messed up
   # let size = image_getFileSize(image)
   # TODO find a way to i18n this (maybe send just a code and then QML sets the right string)

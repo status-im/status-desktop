@@ -3,7 +3,7 @@ import json, times, stint, strutils, sugar, os, re, chronicles
 import nimcrypto
 import account_constants
 
-import ../../constants as main_constants
+import constants as main_constants
 
 const STATUS_DOMAIN* = ".stateofus.eth"
 const ETH_DOMAIN* = ".eth"

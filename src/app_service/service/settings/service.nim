@@ -8,6 +8,7 @@ import backend/mailservers as status_mailservers
 import backend/settings as status_settings
 import backend/status_update as status_update
 import app/global/global_singleton
+import constants
 
 import ./dto/settings as settings_dto
 import ../stickers/dto/stickers as stickers_dto
@@ -1125,3 +1126,39 @@ QtObject:
     read = getNewsRSSEnabled
     write = setNewsRSSEnabled
     notify = newsRSSEnabledChanged
+  
+  # BACKUP
+  proc getBackupPathWithDefault(backupPath: string): string =
+    if backupPath.len > 0:
+      return backupPath
+    else:
+      return DEFAULT_BACKUP_DIR
+
+  proc backupPathChanged*(self: Service) {.signal.}
+  proc getBackupPath*(self: Service): string {.slot.} =
+    if self.initialized:
+      return getBackupPathWithDefault(self.settings.backupPath)
+
+    try:
+      let response = status_settings.backupPath()
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+      return getBackupPathWithDefault(response.result.getStr)
+    except Exception as e:
+      let errDesription = e.msg
+      error "reading backupPath setting error: ", errDesription
+
+  proc setBackupPath*(self: Service, value: string) {.slot.} =
+    try:
+      let formattedPath = singletonInstance.utils.fromPathUri(value)
+      if self.saveSetting(KEY_BACKUP_PATH, formattedPath):
+        self.settings.backupPath = formattedPath
+        self.backupPathChanged()
+      else:
+        raise newException(RpcException, "Failed to save backup path setting")
+    except Exception as e:
+      error "error: ", procName="setBackupPath", errName = e.name, errDesription = e.msg
+
+  QtProperty[string] backupPath:
+    read = getBackupPath
+    notify = backupPathChanged

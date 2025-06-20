@@ -1,6 +1,8 @@
 import QtQuick
 import utils
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 QtObject {
     id: root
 
@@ -22,6 +24,21 @@ QtObject {
     // Backup import properties
     readonly property int backupImportState: syncModule ? syncModule.backupImportState : 0
     readonly property string backupImportError: syncModule ? syncModule.backupImportError : ""
+    readonly property url backupPath: d.appSettingsInst.backupPath
+
+    readonly property QtObject _d: StatusQUtils.QObject {
+        id: d
+        readonly property var appSettingsInst: appSettings
+        readonly property var globalUtilsInst: globalUtils
+    }
+
+    function setBackupPath(path) {
+        d.appSettingsInst.setBackupPath(path)
+    }
+
+    function toFileUri(path) {
+        return d.globalUtilsInst.toFileUri(path)
+    }
 
     function loadDevices() {
         return root.devicesModule.loadDevices()

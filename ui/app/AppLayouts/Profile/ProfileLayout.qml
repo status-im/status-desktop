@@ -416,8 +416,13 @@ StatusSectionLayout {
                 privacyStore: root.privacyStore
                 advancedStore: root.advancedStore
                 localBackupEnabled: root.devicesStore.localBackupEnabled
+                backupPath: root.devicesStore.backupPath
+                toFileUri: root.devicesStore.toFileUri
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
+                onBackupPathSet: function(path) {
+                    root.devicesStore.setBackupPath(path)
+                }
             }
         }
 
