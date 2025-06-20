@@ -1056,8 +1056,6 @@ QtObject {
         "connected-different-key": qsTr("Continuing will require a transaction to connect the username with your current chat key."),
     }
 
-    readonly property bool isCppApp: typeof cppApp !== "undefined" ? cppApp : false
-
     readonly property QtObject startupErrorType: QtObject {
         readonly property int unknownType: 0
         readonly property int importAccError: 1

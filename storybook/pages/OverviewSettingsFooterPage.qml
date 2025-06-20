@@ -63,6 +63,6 @@ SplitView {
 }
 
 // category: Panels
-
+// status: good
 // https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=36894-684461&mode=design&t=6k1ago8SSQ5Ip9J8-0
 // https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=36894-684611&mode=design&t=6k1ago8SSQ5Ip9J8-0
