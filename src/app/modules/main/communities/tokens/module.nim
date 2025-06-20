@@ -357,7 +357,7 @@ method computeDeployCollectiblesFee*(self: Module, uuid: string, communityId: st
   self.tempDeploymentParams.description = description
 
   let croppedImage = imageCropInfoJson.parseJson
-  let base65Image = singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr)
+  let base65Image = singletonInstance.utils.fromPathUri(croppedImage["imagePath"].getStr)
   self.tempDeploymentParams.base64image = base65Image
 
   self.tempDeploymentParams.communityId = communityId
@@ -378,7 +378,7 @@ method computeDeployTokenOwnerFee*(self: Module, uuid: string, communityId: stri
   self.tempCommunityId = communityId
   self.tempChainId = chainId
   let croppedImage = imageCropInfoJson.parseJson
-  let base65Image = singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr)
+  let base65Image = singletonInstance.utils.fromPathUri(croppedImage["imagePath"].getStr)
   (self.tempOwnerDeploymentParams, self.tempMasterDeploymentParams) = self.createOwnerAndMasterDeploymentParams(communityId)
   self.tempOwnerDeploymentParams.description = ownerDescription
   self.tempOwnerDeploymentParams.tokenType = TokenType.ERC721
@@ -413,7 +413,7 @@ method computeDeployAssetsFee*(self: Module, uuid: string, communityId: string, 
   self.tempDeploymentParams.description = description
 
   let croppedImage = imageCropInfoJson.parseJson
-  let base65Image = singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr)
+  let base65Image = singletonInstance.utils.fromPathUri(croppedImage["imagePath"].getStr)
   self.tempDeploymentParams.base64image = base65Image
 
   self.tempDeploymentParams.communityId = communityId

@@ -21,6 +21,14 @@ QtObject {
     // Backup import properties
     readonly property int backupImportState: syncModule ? syncModule.backupImportState : 0
     readonly property string backupImportError: syncModule ? syncModule.backupImportError : ""
+    readonly property string backupPath: appSettings.backupPath
+    function setBackupPath(path) {
+        appSettings.backupPath = path
+    }
+
+    function toFileUri(path) {
+        return globalUtils.toFileUri(path)
+    }
 
     function loadDevices() {
         return root.devicesModule.loadDevices()
