@@ -13,40 +13,59 @@ Dialog {
     id: root
 
     property string subtitle
+
     /*!
        \qmlproperty bool destroyOnClose
         This property decides whether the popup component should be destroyed when closed. Default value is false.
     */
     property bool destroyOnClose: false
+
     /*!
        \qmlproperty color backgroundColor
         This property decides the modal background color
     */
     property color backgroundColor: Theme.palette.statusModal.backgroundColor
+
     /*!
        \qmlproperty var closeHandler
         This property decides the action to be performed when the close button is clicked. It allows to define
         a custom function to be called when the popup is closed by the user.
     */
     property var closeHandler: root.close
+
     /*!
        \qmlproperty string okButtonText
         This property decides what text to use for an "OK" button
     */
     property string okButtonText: qsTr("OK")
 
-    readonly property bool bottomSheet: root.contentItem.Window.height > root.contentItem.Window.width &&
-                                       root.contentItem.Window.width <= 1200 // The max width of a phone in portrait mode
+    readonly property bool bottomSheet: root.contentItem.Window.height
+                                        > root.contentItem.Window.width
+                                        && root.contentItem.Window.width
+                                        <= 1200 // The max width of a phone in portrait mode
 
     readonly property real desiredY: root.bottomSheet ? root.contentItem.Window.height - root.height : ((root.Overlay.overlay.height - root.height) / 2)
 
     enter: Transition {
         id: enterTransition
         ParallelAnimation {
-            NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 150 }
-            NumberAnimation { property: "y"; from: root.parent.height; to: root.desiredY; duration: 150; easing.type: Easing.OutCubic }
+            NumberAnimation {
+                property: "opacity"
+                from: 0.0
+                to: 1.0
+                duration: 150
+            }
+            NumberAnimation {
+                property: "y"
+                from: root.parent.height
+                to: root.desiredY
+                duration: 150
+                easing.type: Easing.OutCubic
+            }
         }
     }
+
+    enabled: opened
 
     Binding on width {
         when: root.bottomSheet
@@ -103,19 +122,23 @@ Dialog {
 
         readonly property int rejectRoleFlags: Dialog.Cancel | Dialog.Close | Dialog.Abort
         readonly property int noRoleFlags: Dialog.No | Dialog.NoToAll
-        readonly property int acceptRoleFlags: Dialog.Ok | Dialog.Open | Dialog.Save | Dialog.SaveAll | Dialog.Retry | Dialog.Ignore
+        readonly property int acceptRoleFlags: Dialog.Ok | Dialog.Open | Dialog.Save
+                                               | Dialog.SaveAll | Dialog.Retry | Dialog.Ignore
         readonly property int yesRoleFlags: Dialog.Yes | Dialog.YesToAll
 
-        visible: rightButtons &&
-                 root.standardButtons & (rejectRoleFlags | noRoleFlags | acceptRoleFlags | yesRoleFlags | Dialog.ApplyRole)
+        visible: rightButtons
+                 && root.standardButtons & (rejectRoleFlags | noRoleFlags | acceptRoleFlags
+                                            | yesRoleFlags | Dialog.ApplyRole)
 
         rightButtons: ObjectModel {
             StatusButton {
                 visible: root.standardButtons & footerItem.rejectRoleFlags
                 type: StatusButton.Danger
                 text: {
-                    if (root.standardButtons & Dialog.Close) return qsTr("Close")
-                    if (root.standardButtons & Dialog.Abort) return qsTr("Abort")
+                    if (root.standardButtons & Dialog.Close)
+                        return qsTr("Close")
+                    if (root.standardButtons & Dialog.Abort)
+                        return qsTr("Abort")
                     return qsTr("Cancel")
                 }
 
@@ -126,7 +149,8 @@ Dialog {
                 visible: root.standardButtons & footerItem.noRoleFlags
                 type: StatusButton.Danger
                 text: {
-                    if (root.standardButtons & Dialog.NoToAll) return qsTr("No to all")
+                    if (root.standardButtons & Dialog.NoToAll)
+                        return qsTr("No to all")
                     return qsTr("No")
                 }
 
@@ -136,11 +160,16 @@ Dialog {
             StatusButton {
                 visible: root.standardButtons & footerItem.acceptRoleFlags
                 text: {
-                    if (root.standardButtons & Dialog.Open) return qsTr("Open")
-                    if (root.standardButtons & Dialog.Save) return qsTr("Save")
-                    if (root.standardButtons & Dialog.SaveAll) return qsTr("Save all")
-                    if (root.standardButtons & Dialog.Retry) return qsTr("Retry")
-                    if (root.standardButtons & Dialog.Ignore) return qsTr("Ignore")
+                    if (root.standardButtons & Dialog.Open)
+                        return qsTr("Open")
+                    if (root.standardButtons & Dialog.Save)
+                        return qsTr("Save")
+                    if (root.standardButtons & Dialog.SaveAll)
+                        return qsTr("Save all")
+                    if (root.standardButtons & Dialog.Retry)
+                        return qsTr("Retry")
+                    if (root.standardButtons & Dialog.Ignore)
+                        return qsTr("Ignore")
                     return root.okButtonText
                 }
 
@@ -151,7 +180,8 @@ Dialog {
                 visible: root.standardButtons & footerItem.yesRoleFlags
                 type: StatusButton.Danger
                 text: {
-                    if (root.standardButtons & Dialog.YesToAll) return qsTr("Yes to all")
+                    if (root.standardButtons & Dialog.YesToAll)
+                        return qsTr("Yes to all")
                     return qsTr("Yes")
                 }
 
@@ -169,7 +199,7 @@ Dialog {
 
     onClosed: {
         if (root.destroyOnClose) {
-            root.destroy();
+            root.destroy()
         }
     }
 }
