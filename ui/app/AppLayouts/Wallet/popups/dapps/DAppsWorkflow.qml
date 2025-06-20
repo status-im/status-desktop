@@ -434,6 +434,7 @@ SQUtils.QObject {
 
     Loader {
         id: dappConnectSelectLoader
+        objectName: "dappConnectSelectLoader"
         active: false
         sourceComponent: StatusDialog {
             id: dappConnectSelect

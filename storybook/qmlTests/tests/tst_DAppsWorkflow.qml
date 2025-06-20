@@ -1046,6 +1046,7 @@ Item {
 
         function test_uriPairingSuccess() {
             const pairWCModal = openPairModal()
+            tryVerify(() => pairWCModal.opened)
             //type: test url
             keyClick("a")
             keyClick("b")
@@ -1059,6 +1060,8 @@ Item {
 
         function test_uriPairingFail() {
             const pairWCModal = openPairModal()
+            tryVerify(() => pairWCModal.opened)
+
             //type: test url
             keyClick("a")
             keyClick("b")
@@ -1238,6 +1241,13 @@ Item {
             waitForRendering(controlUnderTest.visualParent, 200)
             waitForItemPolished(controlUnderTest.visualParent, 200)
 
+            const dappConnectSelectLoader = findChild(controlUnderTest.visualParent, "dappConnectSelectLoader")
+            verify(!!dappConnectSelectLoader)
+            verify(dappConnectSelectLoader.loaded)
+            const dappConnectSelectPopup = dappConnectSelectLoader.item
+            verify(!!dappConnectSelectPopup)
+            tryVerify(() => dappConnectSelectPopup.opened)
+
             const connectorButton = findChild(controlUnderTest.visualParent, "btnStatusConnector")
             const wcButton = findChild(controlUnderTest.visualParent, "btnWalletConnect")
             verify(!!connectorButton)
@@ -1264,6 +1274,13 @@ Item {
             waitForRendering(controlUnderTest.visualParent, 200)
             waitForItemPolished(controlUnderTest.visualParent, 200)
 
+            let dappConnectSelectLoader = findChild(controlUnderTest.visualParent, "dappConnectSelectLoader")
+            verify(!!dappConnectSelectLoader)
+            verify(dappConnectSelectLoader.loaded)
+            let dappConnectSelectPopup = dappConnectSelectLoader.item
+            verify(!!dappConnectSelectPopup)
+            tryVerify(() => dappConnectSelectPopup.opened)
+
             const wcButton = findChild(controlUnderTest, "btnWalletConnect")
             verify(!!wcButton)
 
@@ -1274,6 +1291,13 @@ Item {
             controlUnderTest.chooseConnector()
             waitForRendering(controlUnderTest.visualParent, 200)
             waitForItemPolished(controlUnderTest.visualParent, 200)
+
+            dappConnectSelectLoader = findChild(controlUnderTest.visualParent, "dappConnectSelectLoader")
+            verify(!!dappConnectSelectLoader)
+            verify(dappConnectSelectLoader.loaded)
+            dappConnectSelectPopup = dappConnectSelectLoader.item
+            verify(!!dappConnectSelectPopup)
+            tryVerify(() => dappConnectSelectPopup.opened)
 
             const connectorButton = findChild(controlUnderTest, "btnStatusConnector")
             verify(!!connectorButton)

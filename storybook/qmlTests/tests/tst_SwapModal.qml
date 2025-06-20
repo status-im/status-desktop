@@ -110,7 +110,8 @@ Item {
             formValuesChanged.clear()
             verify(!!controlUnderTest)
             controlUnderTest.open()
-            tryVerify(() => !!(controlUnderTest.opened))
+            tryVerify(() => controlUnderTest.opened)
+            tryVerify(() => controlUnderTest.enabled)
         }
 
         function closeAndVerfyModal() {
@@ -1388,6 +1389,8 @@ Item {
         }
 
         function test_modal_exchange_button_enabled_state(data) {
+            // Launch popup
+            launchAndVerfyModal()
             const swapExchangeButton = findChild(controlUnderTest, "swapExchangeButton")
             verify(!!swapExchangeButton)
 

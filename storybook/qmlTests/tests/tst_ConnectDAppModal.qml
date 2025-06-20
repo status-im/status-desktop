@@ -75,6 +75,7 @@ Item {
 
         function test_notConnectedState() {
             dappModal = createTemporaryObject(componentUnderTest, root, {visible: true})
+            tryVerify(() => dappModal.opened)
 
             compare(dappModal.connectionStatus, dappModal.notConnectedStatus)
 
@@ -141,6 +142,7 @@ Item {
 
         function test_connectedState() {
             dappModal = createTemporaryObject(componentUnderTest, root, {visible: true})
+            tryVerify(() => dappModal.opened)
             dappModal.pairSuccessful()
             compare(dappModal.connectionStatus, dappModal.connectionSuccessfulStatus)
 
@@ -160,6 +162,7 @@ Item {
             mouseClick(closeButton)
             compare(dappModal.opened, false)
             dappModal.open()
+            tryVerify(() => dappModal.opened)
 
             // Disconnect button should be enabled
             const disconnectButton = findChild(dappModal, "disconnectButton")
@@ -198,6 +201,7 @@ Item {
 
         function test_connectionFailedState() {
             dappModal = createTemporaryObject(componentUnderTest, root, {visible: true})
+            tryVerify(() => dappModal.opened)
             dappModal.pairFailed()
             compare(dappModal.connectionStatus, dappModal.connectionFailedStatus)
 
@@ -254,6 +258,7 @@ Item {
 
         function test_selectingAccount() {
             dappModal = createTemporaryObject(componentUnderTest, root, {visible: true, dAppChains: [1, 11155111]})
+            tryVerify(() => dappModal.opened)
 
             const accountSelector = findChild(dappModal, "accountSelector")
             verify(accountSelector, "Account selector should be present")
