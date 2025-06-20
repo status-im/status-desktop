@@ -153,6 +153,7 @@ SettingsContentBase {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Archive Protocol Enabled")
+                visible: !Constants.isMobile
                 isSwitch: true
                 switchChecked: root.advancedStore.archiveProtocolEnabled
                 onClicked: {
