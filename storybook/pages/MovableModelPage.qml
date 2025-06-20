@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
@@ -57,7 +58,7 @@ Item {
                 text: "SOURCE MODEL"
 
                 font.bold: true
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
             }
 
             ListView {
@@ -123,7 +124,7 @@ Item {
                 text: "MOVABLE MODEL (press to drag&drop)"
 
                 font.bold: true
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
             }
 
             ListView {

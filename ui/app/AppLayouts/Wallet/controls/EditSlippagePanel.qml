@@ -82,7 +82,7 @@ Control {
             spacing: 4
             StatusBaseText {
                 text: qsTr("Receive at least")
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
             }
             StatusSmartIdenticon {
@@ -99,7 +99,7 @@ Control {
                                                         : 0
                     return ("%1 %2").arg(LocaleUtils.numberToLocaleString(amount.toFixed())).arg(d.selectedToTokenSymbol)
                 }
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 loading: root.loading
             }

@@ -47,7 +47,7 @@ Rectangle {
 
         StatusBaseText {
             anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             font.weight: Font.DemiBold
             font.capitalization: Font.AllLowercase
             color: root.enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1

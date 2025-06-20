@@ -54,7 +54,7 @@ ColumnLayout {
             Layout.alignment: Qt.AlignTop
 
             color: Theme.palette.directColor1
-            font.pixelSize: Theme.primaryTextFontSize + 2
+            font.pixelSize: Theme.secondaryAdditionalTextSize
             elide: Text.ElideRight
         }
     }

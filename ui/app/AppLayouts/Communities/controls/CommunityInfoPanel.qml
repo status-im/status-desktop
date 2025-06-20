@@ -71,7 +71,7 @@ Control {
                         text: root.isOwner ? qsTr("%1 Owner token").arg(root.communityName) :
                                              qsTr("%1 TokenMaster token").arg(root.communityName)
                         font.bold: true
-                        font.pixelSize: 17
+                        font.pixelSize: Theme.secondaryAdditionalTextSize
                         elide: Text.ElideMiddle
                     }
 

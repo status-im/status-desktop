@@ -72,7 +72,7 @@ StatusSectionLayout {
                             asset.color: "transparent"
                             asset.isLetterIdenticon: true
                             title: model.name
-                            titleText.font.pixelSize: 15
+                            titleText.font.pixelSize: Theme.primaryTextFontSize
                             titleText.color: Theme.palette.primaryColor1
                         }
                     }

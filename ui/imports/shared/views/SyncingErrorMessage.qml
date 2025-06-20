@@ -21,7 +21,7 @@ ColumnLayout {
         Layout.fillWidth: true
         horizontalAlignment: Text.AlignHCenter
         text: root.primaryText
-        font.pixelSize: 17
+        font.pixelSize: Theme.secondaryAdditionalTextSize
         color: Theme.palette.dangerColor1
     }
 

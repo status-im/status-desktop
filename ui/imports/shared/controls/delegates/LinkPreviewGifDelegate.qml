@@ -63,7 +63,7 @@ CalloutCard {
                 StatusBaseText {
                     anchors.centerIn: parent
                     text: "GIF"
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     color: "white"
                 }
             }

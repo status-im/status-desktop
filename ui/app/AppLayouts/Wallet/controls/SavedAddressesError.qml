@@ -26,7 +26,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: errorIcon.right
         anchors.leftMargin: Theme.halfPadding
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.dangerColor1
     }
 }

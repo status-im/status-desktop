@@ -54,7 +54,7 @@ Rectangle {
        \qmlproperty int StatusItemPicker::namePixelSize
        This property holds pixel size of the name to be displayed.
     */
-    property int namePixelSize: 15
+    property int namePixelSize: Theme.primaryTextFontSize
 
     /*!
        \qmlproperty string StatusItemPicker::shortName
@@ -150,7 +150,7 @@ Rectangle {
             id: dummyNameItem
             visible: false
             text: root.name
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
         }
     }
 
@@ -164,7 +164,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         text: root.shortName
         color: Theme.palette.baseColor1
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         clip: true
         elide: Text.ElideRight
         horizontalAlignment: Text.AlignRight

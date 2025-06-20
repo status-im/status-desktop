@@ -37,7 +37,7 @@ ActivityNotificationBase {
 
         StatusBaseText {
             text: qsTr("You were kicked from")
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             Layout.alignment: Qt.AlignVCenter
         }
 

@@ -526,7 +526,7 @@ StatusModal {
                         anchors.horizontalCenter: parent.horizontalCenter
                         title: model.title
                         subTitle: model.address
-                        statusListItemSubTitle.font.pixelSize: 12
+                        statusListItemSubTitle.font.pixelSize: Theme.tertiaryTextFontSize
                         sensor.hoverEnabled: false
                         statusListItemIcon.badge.visible: model.type === AddEditSavedAddressPopup.CardType.Contact
                         statusListItemIcon.badge.color: model.type === AddEditSavedAddressPopup.CardType.Contact && model.onlineStatus === 1?

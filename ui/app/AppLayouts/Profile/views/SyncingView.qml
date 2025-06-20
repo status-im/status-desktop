@@ -179,7 +179,7 @@ SettingsContentBase {
                         objectName: "syncNewDeviceTextLabel"
 
                         color: Theme.palette.primaryColor1
-                        font.pixelSize: 17
+                        font.pixelSize: Theme.secondaryAdditionalTextSize
                         font.weight: Font.Bold
                         text: qsTr("Sync a New Device")
 
@@ -199,7 +199,7 @@ SettingsContentBase {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     color: Theme.palette.baseColor1
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     font.weight: Font.Medium
                     text: qsTr("You own your data. Sync it among your devices.")
                 }
@@ -215,7 +215,7 @@ SettingsContentBase {
                         StatusBaseText {
                             Layout.alignment: Qt.AlignVCenter
                             color: Theme.palette.baseColor1
-                            font.pixelSize: 13
+                            font.pixelSize: Theme.additionalTextSize
                             font.weight: Font.Medium
                             text: index + 1
                         }
@@ -228,7 +228,7 @@ SettingsContentBase {
                             Layout.alignment: Qt.AlignVCenter
                             horizontalAlignment: Text.AlignLeft
                             color: Theme.palette.directColor1
-                            font.pixelSize: 15
+                            font.pixelSize: Theme.primaryTextFontSize
                             text: modelData
                         }
                     }
@@ -253,7 +253,7 @@ SettingsContentBase {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     color: Theme.palette.baseColor1
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     text: "* " + qsTr("This is best done in private. The code will grant access to your profile.")
                 }
             }

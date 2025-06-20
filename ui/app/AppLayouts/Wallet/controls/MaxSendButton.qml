@@ -15,6 +15,6 @@ StatusButton {
     implicitHeight: 22
 
     radius: 20
-    font.pixelSize: 12
+    font.pixelSize: Theme.tertiaryTextFontSize
     font.weight: Font.Normal
 }

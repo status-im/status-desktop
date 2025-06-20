@@ -443,14 +443,14 @@ SettingsContentBase {
                 width: volumeSlider.width
 
                 StatusBaseText {
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     text: volumeSlider.from
                     Layout.preferredWidth: volumeSlider.width/2
                     color: Theme.palette.baseColor1
                 }
 
                 StatusBaseText {
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     text: volumeSlider.to
                     Layout.alignment: Qt.AlignRight
                     color: Theme.palette.baseColor1

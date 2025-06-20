@@ -13,14 +13,14 @@ Column {
     }
 
     StatusTextWithLoadingState {
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         text: "Text is big"
         loading: loadingButton.checked
         width: 100
     }
 
     StatusTextWithLoadingState {
-        font.pixelSize: 22
+        font.pixelSize: Theme.fontSize22
         text: "Text is big"
         loading: loadingButton.checked
         width: 200

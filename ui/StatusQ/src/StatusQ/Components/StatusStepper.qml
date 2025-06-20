@@ -32,7 +32,7 @@ Item {
     id: root
 
     property alias title: title.text
-    property int titleFontSize: 12
+    property int titleFontSize: Theme.tertiaryTextFontSize
     property color titleColor: Theme.palette.baseColor1
     property int totalSteps: 1
     property int completedSteps: 1

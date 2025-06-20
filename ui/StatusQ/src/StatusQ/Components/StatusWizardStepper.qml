@@ -91,7 +91,7 @@ Item {
                     StatusBaseText {
                         anchors.centerIn: parent
                         text: index+1
-                        font.pixelSize: 17
+                        font.pixelSize: Theme.secondaryAdditionalTextSize
                         color: (stepCompleted && (barBorder.visible ? (barBorder.value === barBorder.to) : true))
                                ? Theme.palette.indirectColor1 : Theme.palette.primaryColor1
                     }
@@ -101,7 +101,7 @@ Item {
                     anchors.bottom: parent.bottom
                     text: description
                     color: Theme.palette.directColor1
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                 }
             }
         }

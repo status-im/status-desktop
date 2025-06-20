@@ -132,6 +132,7 @@ Column {
     Separator {}
 
     StatusListItem {
+        id: accountOrderItem
         objectName: "accountOrderItem"
         title: qsTr("Account order")
         height: 64
@@ -149,7 +150,7 @@ Column {
             id: accountOrderBetaTag
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: 125
+            anchors.leftMargin: accountOrderItem.statusListItemTitle.width + Theme.bigPadding
             tooltipText: qsTr("Under construction, you might experience some minor issues")
             cursorShape: Qt.PointingHandCursor
         }
@@ -158,6 +159,7 @@ Column {
     Separator {}
 
     StatusListItem {
+        id: manageTokensItem
         objectName: "manageTokensItem"
         title: qsTr("Manage Tokens")
         height: 64
@@ -175,7 +177,7 @@ Column {
             id: manageTokensBetaTag
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: 135
+            anchors.leftMargin: manageTokensItem.statusListItemTitle.width + Theme.bigPadding
             tooltipText: qsTr("Under construction, you might experience some minor issues")
             cursorShape: Qt.PointingHandCursor
         }
@@ -222,7 +224,7 @@ Column {
 
     //         StatusBaseText {
     //             text: qsTr("Import key pairs from this device to your other synced devices")
-    //             font.pixelSize: 15
+    //             font.pixelSize: Theme.primaryTextFontSize
     //         }
 
     //         StatusButton {
@@ -252,7 +254,7 @@ Column {
 
             StatusBaseText {
                 text: qsTr("%n key pair(s) require import to use on this device", "", d.unimportedNonProfileKeypairs)
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
 
             StatusButton {

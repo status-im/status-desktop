@@ -48,8 +48,8 @@ Rectangle {
         anchors.left: buttonImage.right
         anchors.leftMargin: headerButton.margin
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 13
         font.weight: Font.Medium
+        font.pixelSize: Theme.additionalTextSize
         color: Theme.palette.primaryColor1
     }
 

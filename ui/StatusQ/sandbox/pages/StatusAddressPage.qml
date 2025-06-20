@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
@@ -39,7 +40,7 @@ Item {
         StatusAddressPanel {
             value: "0xDC2c4826f6C56F61C1b9cC6Bb531d0Fe45402fC9"
 
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             font.weight: Font.Normal
 
             showFrame: false

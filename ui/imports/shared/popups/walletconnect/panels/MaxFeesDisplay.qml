@@ -13,7 +13,7 @@ ColumnLayout {
     StatusBaseText {
         text: qsTr("Max fees:")
 
-        font.pixelSize: 12
+        font.pixelSize: Theme.tertiaryTextFontSize
         color: Theme.palette.directColor1
     }
     StatusBaseText {
@@ -22,7 +22,8 @@ ColumnLayout {
 
         visible: !!text
 
-        font.pixelSize: 16
+        font.pixelSize: Theme.fontSize16
+
     }
     StatusBaseText {
         text: qsTr("No fees")

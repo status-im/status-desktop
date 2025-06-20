@@ -44,7 +44,7 @@ Badge {
             maximumLineCount: 1
             wrapMode: Text.Wrap
             elide: Text.ElideRight
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             Layout.maximumWidth: 300
             Layout.alignment: Qt.AlignVCenter
         }

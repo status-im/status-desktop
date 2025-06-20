@@ -51,7 +51,7 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: uploadRate.right
                 anchors.rightMargin: Theme.padding
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
         }
 
@@ -81,7 +81,7 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: downloadRate.right
                 anchors.rightMargin: Theme.padding
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
         }
     }

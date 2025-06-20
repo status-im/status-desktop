@@ -196,7 +196,7 @@ Rectangle {
                 id: walletTitleText
                 text: qsTr("Wallet")
                 font.weight: Font.Bold
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 color: Theme.palette.directColor1
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -338,7 +338,7 @@ Rectangle {
                             color: Theme.palette.baseColor1
                             text: qsTr("All accounts")
                             font.weight: Font.Medium
-                            font.pixelSize: 15
+                            font.pixelSize: Theme.primaryTextFontSize
                             lineHeightMode: Text.FixedHeight
                             lineHeight: 22
                         }
@@ -349,7 +349,7 @@ Rectangle {
                                 objectName: "walletLeftListAmountValue"
                                 customColor: Theme.palette.textColor
                                 text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance, {noSymbol: true})
-                                font.pixelSize: 22
+                                font.pixelSize: Theme.fontSize22
                                 loading: RootStore.balanceLoading
                                 lineHeightMode: Text.FixedHeight
                                 lineHeight: 36
@@ -358,7 +358,7 @@ Rectangle {
                             StatusTextWithLoadingState {
                                 customColor: Theme.palette.textColor
                                 text: RootStore.totalCurrencyBalance.symbol
-                                font.pixelSize: 13
+                                font.pixelSize: Theme.additionalTextSize
                                 loading: RootStore.balanceLoading
                                 font.weight: Font.Medium
                                 lineHeightMode: Text.FixedHeight

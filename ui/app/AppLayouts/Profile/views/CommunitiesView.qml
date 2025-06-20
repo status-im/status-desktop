@@ -67,7 +67,7 @@ SettingsContentBase {
                 color: Theme.palette.directColor1
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 17
+                font.pixelSize: Theme.secondaryAdditionalTextSize
                 Layout.topMargin: 35
 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
@@ -77,7 +77,7 @@ SettingsContentBase {
                 text: qsTr("Explore and see what communities are trending")
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 Layout.topMargin: 8
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             }

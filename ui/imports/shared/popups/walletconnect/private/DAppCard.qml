@@ -47,7 +47,7 @@ ColumnLayout {
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
             font.bold: true
-            font.pixelSize: 17
+            font.pixelSize: Theme.secondaryAdditionalTextSize
         }
 
         StatusFlatButton {
@@ -62,7 +62,7 @@ ColumnLayout {
             textColor: Theme.palette.directColor1
             hoverColor: "transparent"
             spacing: 0
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             font.weight: Font.Normal
             horizontalPadding: 0
             verticalPadding: 0

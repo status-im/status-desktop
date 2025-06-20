@@ -21,7 +21,7 @@ Control {
 
     contentItem: StatusBaseText {
         color: Theme.palette.directColor1
-        font.pixelSize: 10
+        font.pixelSize: Theme.asideTextFontSize
         font.family: Theme.baseFont.name
         text: {
             if (root.balance > 99) {

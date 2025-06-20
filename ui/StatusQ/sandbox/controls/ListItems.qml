@@ -208,7 +208,7 @@ ColumnLayout {
         subTitle: "Subtitle"
         tertiaryTitle: "Tertiary title"
 
-        statusListItemTitle.font.pixelSize: 17
+        statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
         statusListItemTitle.font.weight: Font.Bold
     }
 
@@ -218,7 +218,7 @@ ColumnLayout {
         tertiaryTitle: "Tertiary title"
         asset.name: "info"
 
-        statusListItemTitle.font.pixelSize: 17
+        statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
         statusListItemTitle.font.weight: Font.Bold
     }
 
@@ -429,7 +429,7 @@ ColumnLayout {
             asset.emojiSize: Emoji.size.verySmall
             asset.isLetterIdenticon: true
             title: model.name
-            titleText.font.pixelSize: 12
+            titleText.font.pixelSize: Theme.tertiaryTextFontSize
             titleText.color: Theme.palette.indirectColor1
         }
     }
@@ -458,14 +458,14 @@ ColumnLayout {
                     }
                     StatusBaseText {
                         text: "0.0000015 ETH"
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                     }
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignRight
                     text: "1201.10 USD"
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     color: Theme.palette.baseColor1
                 }
             }
@@ -581,7 +581,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: 16
         text: "Device delegate with online badge"
-        font.pixelSize: 17
+        font.pixelSize: Theme.secondaryAdditionalTextSize
     }
 
     component DeviceListItem: StatusListItem {

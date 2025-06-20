@@ -141,7 +141,7 @@ Item {
                 color: imageMessage.status === Image.Error?
                         Theme.palette.dangerColor1 :
                         Theme.palette.textColor
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
             }
         }
     }

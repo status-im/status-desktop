@@ -4,9 +4,10 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import SortFilterProxyModel 0.2
+import StatusQ.Core.Theme 0.1
 
 Control {
-    font.pixelSize: 15
+    font.pixelSize: Theme.primaryTextFontSize
 
     ListModel {
         id: leftBaseModel

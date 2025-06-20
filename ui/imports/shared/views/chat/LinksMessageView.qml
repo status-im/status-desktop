@@ -182,7 +182,7 @@ Flow {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 anchors.top: enableText.bottom
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
             }
             Separator {

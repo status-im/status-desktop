@@ -241,7 +241,7 @@ Item {
             StatusBaseText {
                 Layout.preferredWidth: 22
                 Layout.alignment: Qt.AlignVCenter
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.baseColor1
                 text: root.toLabelText
                 visible: (parent.width>22)
@@ -288,7 +288,7 @@ Item {
                 focus: true
                 color: Theme.palette.directColor1
                 clip: true
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 wrapMode: TextEdit.NoWrap
                 font.family: Theme.baseFont.name
                 Layout.fillWidth: true
@@ -320,7 +320,7 @@ Item {
                 visible: (namesModel.count === root.nameCountLimit)
                 Layout.preferredWidth: visible ? 120 : 0
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                font.pixelSize: 10
+                font.pixelSize: Theme.asideTextFontSize
                 color: Theme.palette.dangerColor1
                 text: root.nameCountLimit + " " + root.warningText
             }
@@ -329,7 +329,7 @@ Item {
 
     StatusBaseText {
         id: contactsLabel
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         anchors.left: parent.left
         anchors.leftMargin: 8
         anchors.top: tagSelectorRect.bottom

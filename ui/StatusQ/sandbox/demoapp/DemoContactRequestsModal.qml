@@ -22,7 +22,7 @@ StatusModal {
     contentItem: StatusBaseText {
         anchors.centerIn: parent
         text: "Contact request will be shown here"
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.directColor1
     }
 

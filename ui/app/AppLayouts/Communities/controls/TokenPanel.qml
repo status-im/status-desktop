@@ -53,7 +53,7 @@ ColumnLayout {
 
     component CustomText: StatusBaseText {
         color: Theme.palette.baseColor1
-        font.pixelSize: 12
+        font.pixelSize: Theme.tertiaryTextFontSize
         elide: Text.ElideRight
 
         Layout.fillWidth: true
@@ -102,7 +102,7 @@ ColumnLayout {
                 text: d.networkLabelText
 
                 color: Theme.palette.baseColor1
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 elide: Text.ElideRight
             }
 

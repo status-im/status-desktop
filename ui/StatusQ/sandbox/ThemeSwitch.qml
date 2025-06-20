@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: themeSwitchWrapper
@@ -24,7 +25,7 @@ Item {
 
             Text {
                 text: "🌤"
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -42,7 +43,7 @@ Item {
 
             Text {
                 text: "🌙"
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 anchors.verticalCenter: parent.verticalCenter
             }
         }

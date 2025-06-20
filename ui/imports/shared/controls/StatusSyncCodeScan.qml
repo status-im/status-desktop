@@ -96,7 +96,7 @@ Column {
                     text: qsTr('Enable access to your camera')
                     leftPadding: 48
                     rightPadding: 48
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -106,7 +106,7 @@ Column {
                     text: qsTr("To scan a QR, Status needs\naccess to your webcam")
                     leftPadding: 48
                     rightPadding: 48
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                     color: Theme.palette.directColor4

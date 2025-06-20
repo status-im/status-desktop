@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -285,7 +286,7 @@ Item {
                                     anchors.centerIn: parent
 
                                     text: `${model.name} (${model.balance})`
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.asideTextFontSize
                                 }
 
                                 StatusMouseArea {

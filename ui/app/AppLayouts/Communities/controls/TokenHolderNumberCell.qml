@@ -14,7 +14,7 @@ StatusBaseText {
     verticalAlignment: Qt.AlignVCenter
 
     font.weight: Font.Medium
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
 
     color: Theme.palette.baseColor1
     elide: Qt.ElideRight

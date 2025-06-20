@@ -53,14 +53,14 @@ Item {
         RowLayout {
             StatusBaseText {
                 text: qsTr("Selected tags")
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 Layout.fillWidth: true
             }
 
             StatusBaseText {
                 text: cntSelectedTags + "/" + maxSelectedTags
                 color: Theme.palette.baseColor1
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
             }
         }
 

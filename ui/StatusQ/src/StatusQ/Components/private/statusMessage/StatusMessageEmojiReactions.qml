@@ -121,7 +121,7 @@ Item {
                     StatusBaseText {
                         anchors.verticalCenter: parent.verticalCenter
                         text: model.numberOfReactions
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.tertiaryTextFontSize
                         color: model.didIReactWithThisEmoji ? Theme.palette.white : Theme.palette.directColor1
                     }
 

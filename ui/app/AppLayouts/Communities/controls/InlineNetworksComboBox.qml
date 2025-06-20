@@ -47,7 +47,7 @@ StatusComboBox {
 
         readonly property int padding: 8
         readonly property int radius: 8
-        readonly property int fontSize: 13
+        readonly property int fontSize: Theme.additionalTextSize
         readonly property int iconSize: 32
 
         readonly property string infinitySymbol: "∞"

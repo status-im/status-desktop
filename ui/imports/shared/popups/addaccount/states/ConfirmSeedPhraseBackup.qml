@@ -59,7 +59,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.bold: true
-            font.pixelSize: 18
+            font.pixelSize: Theme.fontSize18
             color: Theme.palette.directColor1
             text: qsTr("Store Your Phrase Offline and Complete Your Back Up")
         }

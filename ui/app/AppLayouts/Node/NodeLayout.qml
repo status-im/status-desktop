@@ -45,7 +45,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSize20
             }
             StatusBaseText {
                 id: peerNumber
@@ -56,7 +56,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSize20
             }
         }
 
@@ -70,7 +70,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSize20
             }
             StatusTextArea {
                 id: mailserverLogTxt
@@ -94,7 +94,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSize20
             }
             StatusTextArea {
                 id: logsTxt
@@ -141,7 +141,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSize20
             }
             StatusBaseText {
                 id: test
@@ -152,7 +152,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSize20
             }
         }
 
@@ -204,7 +204,7 @@ StatusSectionLayout {
                         text: ""
                         leftPadding: 0
                         padding: 0
-                        font.pixelSize: 14
+                        font.pixelSize: Theme.secondaryTextFontSize
                         placeholderText: qsTr("Type json-rpc message... e.g {\"method\": \"eth_accounts\"}")
                         anchors.right: rpcSendBtn.left
                         anchors.rightMargin: 16

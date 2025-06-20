@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -82,7 +83,7 @@ ListView {
         height: visible ? undefined : 0
         text: root.label
         font.bold: true
-        font.pixelSize: 16
+        font.pixelSize: Theme.fontSize16
         bottomPadding: 20
     }
 

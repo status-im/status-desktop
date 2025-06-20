@@ -30,7 +30,7 @@ StatusListItem {
     leftPadding: 21
     rightPadding: 21
     asset: root.assetSettings
-    statusListItemTitle.font.pixelSize: 13
+    statusListItemTitle.font.pixelSize: Theme.additionalTextSize
     components: [
         StatusCheckBox {
             id: checkBox

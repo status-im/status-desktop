@@ -505,7 +505,7 @@ StatusWindow {
 
                 Text {
                     text: "OSX"
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -521,7 +521,7 @@ StatusWindow {
 
                 Text {
                     text: "Win"
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.primaryTextFontSize
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }

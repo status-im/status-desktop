@@ -65,7 +65,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             color: Theme.palette.directColor1
             font.weight: Font.Bold
-            font.pixelSize: 22
+            font.pixelSize: Theme.fontSize22
             elide: Text.ElideRight
             wrapMode: Text.Wrap
             text: root.userDisplayName
@@ -75,7 +75,7 @@ Item {
             Layout.fillWidth: true
             Layout.topMargin: Theme.xlPadding
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Theme.secondaryAdditionalTextSize
+            font.pixelSize: Theme.fontSize22
             color: d.pairingFailed ? Theme.palette.dangerColor1 : Theme.palette.directColor1
             text: {
                 if (d.pairingInProgress)

@@ -29,7 +29,7 @@ ColumnLayout {
     StatusBaseText {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         color: Theme.palette.dangerColor1

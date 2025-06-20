@@ -61,7 +61,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.bold: true
-            font.pixelSize: 22
+            font.pixelSize: Theme.fontSize22
             text: qsTr("Secure Your Assets and Funds")
         }
 

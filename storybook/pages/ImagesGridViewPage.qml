@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import Storybook 1.0
+import StatusQ.Core.Theme 0.1
 
 Pane {
     id: root
@@ -27,7 +28,7 @@ Pane {
             Label {
                 anchors.centerIn: parent
                 text: "image " + index
-                font.pixelSize: 20
+                font.pixelSize: Theme.fontSize20
             }
 
             Image {

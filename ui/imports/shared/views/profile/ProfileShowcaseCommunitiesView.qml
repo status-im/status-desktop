@@ -54,7 +54,7 @@ Item {
             cardSize: StatusCommunityCard.Size.Small
             implicitWidth: GridView.view.cellWidth - Theme.padding
             implicitHeight: GridView.view.cellHeight - Theme.padding
-            titleFontSize: 15
+            titleFontSize: Theme.primaryTextFontSize
             communityId: model.id ?? ""
             loaded: !!model.id && !model.isShowcaseLoading
             asset.source: model.image ?? ""
@@ -66,7 +66,7 @@ Item {
             members: model.membersCount
             activeUsers: model.activeMembersCount
             banner: model.bannerImageData ?? ""
-            descriptionFontSize: 12
+            descriptionFontSize: Theme.tertiaryTextFontSize
             descriptionFontColor: Theme.palette.baseColor1
             description: {
                 switch (model.memberRole)  {

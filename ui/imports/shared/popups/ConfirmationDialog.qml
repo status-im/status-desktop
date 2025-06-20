@@ -49,7 +49,7 @@ StatusModal {
 
             StatusBaseText {
                 text: confirmationDialog.confirmationText
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 anchors.left: parent.left
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap

@@ -50,7 +50,7 @@ Rectangle {
         anchors.topMargin: Theme.halfPadding
         anchors.left: parent.left
         anchors.leftMargin: Theme.smallPadding
-        font.pixelSize: 13
+        font.pixelSize: Theme.additionalTextSize
         font.weight: Font.Medium
     }
 
@@ -70,7 +70,7 @@ Rectangle {
             text: StatusQUtils.Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(StatusQUtils.Utils.linkifyAndXSS(message)), false)
             anchors.fill: parent
             elide: Text.ElideRight
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             font.weight: Font.Normal
             textFormat: Text.RichText
             color: Theme.palette.textColor

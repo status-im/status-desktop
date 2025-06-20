@@ -37,7 +37,7 @@ Rectangle {
         StatusBaseText {
             id: primaryText
             Layout.maximumWidth: root.maxWidth - Theme.xlPadding
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             color: Theme.palette.directColor5
             visible: text
             elide: Text.ElideRight
@@ -47,7 +47,7 @@ Rectangle {
             StatusTextWithLoadingState {
                 id: secondaryText
                 Layout.maximumWidth: root.maxWidth - Theme.xlPadding - (root.copy ? 50 : 0)
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 customColor: Theme.palette.directColor1
                 visible: text
                 elide: Text.ElideRight

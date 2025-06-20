@@ -114,8 +114,8 @@ StatusDropdown {
             input.asset.width: 15
             input.asset.height: 15
             input.leftPadding: 13
-            input.font.pixelSize: 13
-            input.placeholder.font.pixelSize: 13
+            input.font.pixelSize: Theme.additionalTextSize
+            input.placeholder.font.pixelSize: Theme.additionalTextSize
         }
 
         StatusBaseText {

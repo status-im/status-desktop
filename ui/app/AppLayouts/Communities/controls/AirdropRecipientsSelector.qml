@@ -70,7 +70,7 @@ StatusFlowSelector {
               ? qsTr("∞ recipients", "infinite number of recipients")
               : qsTr("%n recipient(s)", "", root.maxNumberOfRecipients))
 
-        font.pixelSize: Theme.tertiaryTextFontSize + 1
+        font.pixelSize: Theme.additionalTextSize
         color: valid ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
         elide: Text.ElideRight
     }

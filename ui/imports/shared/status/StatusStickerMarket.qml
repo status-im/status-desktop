@@ -123,7 +123,7 @@ Item {
                         packThumb: thumbnail
                         packName: name
                         packAuthor: author
-                        packNameFontSize: 17
+                        packNameFontSize: Theme.secondaryAdditionalTextSize
                         spacing: Theme.padding / 2
                     }
 

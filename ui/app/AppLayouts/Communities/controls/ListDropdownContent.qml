@@ -229,7 +229,7 @@ StatusListView {
                 width: parent.width - anchors.leftMargin
                 text: sectionDelegateRoot.section
                 color: Theme.palette.baseColor1
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 elide: Text.ElideRight
                 wrapMode: Text.WordWrap
                 lineHeight: 1.2

@@ -60,7 +60,7 @@ OnboardingPage {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                font.pixelSize: 22
+                font.pixelSize: Theme.fontSize22
                 font.bold: true
                 wrapMode: Text.WordWrap
                 text: root.title

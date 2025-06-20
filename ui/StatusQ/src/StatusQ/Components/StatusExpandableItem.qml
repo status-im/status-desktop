@@ -90,7 +90,7 @@ Rectangle {
                                                           parent.width - asset.bgWidth - 70)
 
             font.weight: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? Font.Medium : Font.Normal
-            font.pixelSize: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? 15 : 17
+            font.pixelSize: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? Theme.primaryTextFontSize : Theme.secondaryAdditionalTextSize
             lineHeight: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? 22 : 24
             lineHeightMode: Text.FixedHeight
             elide: Text.ElideRight
@@ -104,7 +104,7 @@ Rectangle {
             anchors.left: primaryText.left
             anchors.right: primaryText.right
 
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 22
             lineHeightMode: Text.FixedHeight
             elide: Text.ElideRight
@@ -118,7 +118,7 @@ Rectangle {
             anchors.right: expandImage.left
             anchors.rightMargin: 16
 
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 24
             lineHeightMode: Text.FixedHeight
             elide: Text.ElideRight

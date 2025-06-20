@@ -99,7 +99,7 @@ StatusListItem {
 
                     anchors.verticalCenter: parent.verticalCenter
                     customColor: d.textColor
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     loading: root.marketDetailsLoading
 
                     text: qsTr("%1 %2%", "[up/down/none character depending on value sign] [localized percentage value]%")
@@ -117,7 +117,7 @@ StatusListItem {
 
                     anchors.verticalCenter: parent.verticalCenter
                     customColor: d.textColor
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.additionalTextSize
                     loading: root.marketDetailsLoading
                     text: loading ? Constants.dummyText : root.marketCurrencyPrice
                 }

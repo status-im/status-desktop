@@ -195,7 +195,7 @@ Popup {
                     StyledText {
                         id: lblNoStickersYet
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: Theme.primaryTextFontSize
                         text: d.installedPacksCount === 0 || !d.online ? qsTr("You don't have any stickers yet")
                                                                        : qsTr("Recently used stickers will appear here")
                         lineHeight: 22

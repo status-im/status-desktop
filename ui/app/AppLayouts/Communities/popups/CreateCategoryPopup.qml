@@ -119,7 +119,7 @@ StatusModal {
                             text: qsTr("Channels")
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: 4
-                            font.pixelSize: 15
+                            font.pixelSize: Theme.primaryTextFontSize
                             color: Theme.palette.baseColor1
                         }
                     }

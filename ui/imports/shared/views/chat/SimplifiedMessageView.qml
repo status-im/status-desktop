@@ -75,7 +75,7 @@ RowLayout {
                 maximumLineCount: root.maximumLineCount
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
-                font.pixelSize: 15
+                font.pixelSize: Theme.primaryTextFontSize
                 Layout.alignment: Qt.AlignVCenter
                 Layout.fillWidth: !root.messageBadgeComponent
             }
