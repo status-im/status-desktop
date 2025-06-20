@@ -8,6 +8,8 @@ import AppLayouts.Communities.panels 1.0
 
 import shared.stores 1.0 as SharedStores
 
+import Models 1.0
+
 SplitView {
     id: root
     SplitView.fillWidth: true

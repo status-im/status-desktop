@@ -216,7 +216,6 @@ StatusSectionLayout {
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
                 editable: true
-                loginType: root.rootStore.loginType
                 isControlNode: root.isControlNode
                 communitySettingsDisabled: root.communitySettingsDisabled
                 overviewChartData: rootStore.overviewChartData
