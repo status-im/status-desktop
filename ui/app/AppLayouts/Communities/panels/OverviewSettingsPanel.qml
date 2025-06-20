@@ -55,6 +55,8 @@ StackLayout {
 
     property bool isTokenDeployed: !!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed
 
+    required property bool isMobile
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -121,7 +123,7 @@ StackLayout {
                     Layout.preferredHeight: 38
                     Layout.alignment: Qt.AlignTop
                     objectName: "communityOverviewSettingsTransferOwnershipButton"
-                    visible: root.isOwner
+                    visible: root.isOwner && !root.isMobile
                     text: qsTr("Transfer ownership")
                     size: StatusBaseButton.Size.Small
 
