@@ -85,22 +85,31 @@ RUN ln -sf /usr/local/openssl3/lib64/libssl.so.3 /usr/lib/x86_64-linux-gnu/libss
 # https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential debhelper dpkg-dev libudev-dev libusb-1.0-0-dev pkg-config flex libsystemd-dev check git wget \
-    meson ninja-build libglib2.0-dev libexpat1-dev python3-pip \
+    ninja-build libglib2.0-dev libexpat1-dev python3-pip \
+ && python3 -m pip install meson==0.60.0 \
  && cd /tmp \
  && wget https://pcsclite.apdu.fr/files/pcsc-lite-${PCSCLITE_VERSION}.tar.xz \
  && tar -xJf pcsc-lite-${PCSCLITE_VERSION}.tar.xz \
  && cd pcsc-lite-${PCSCLITE_VERSION} \
  && meson setup builddir \
   -Dpolkit=false \
-  -Dsystemd=false \
   -Dserial=false \
   -Dipcdir=/tmp/pcscd/run \
  && cd builddir \
  && ninja \
  && ninja install \
+ && cd /tmp \
+ && wget https://ccid.apdu.fr/files/ccid-1.6.2.tar.xz \
+ && tar -xJf ccid-1.6.2.tar.xz \
+ && cd ccid-1.6.2 \
+ && meson setup builddir \
+  --prefix=/usr \
+ && cd builddir \
+ && meson compile \
+ && meson install \
  && ldconfig \
  && cd / \
- && rm -rf /tmp/pcsc-lite* \
+ && rm -rf /tmp/pcsc-lite* /tmp/ccid* \
  && apt-get -qq clean
 
 # Install linuxdeployqt
