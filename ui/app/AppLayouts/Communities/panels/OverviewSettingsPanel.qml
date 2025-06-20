@@ -55,7 +55,7 @@ StackLayout {
 
     property bool isTokenDeployed: !!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed
 
-    required property bool isMobile
+    property bool isMobile
 
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
@@ -204,7 +204,6 @@ StackLayout {
             communityColor: root.color
             isControlNode: root.isControlNode
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
-            isPromoteSelfToControlNodeEnabled: root.isControlNode || root.isTokenDeployed
 
             onExportControlNodeClicked:{
                 if(root.isTokenDeployed) {
@@ -249,9 +248,11 @@ StackLayout {
             active: {
                 if (root.communitySettingsDisabled)
                     return false
+                if (root.isMobile)
+                    return false
                 if (root.isAdmin || root.isTokenMaster)
                     return root.isPendingOwnershipRequest // not allowed for admin or TM unless there's the pending request
-                return true
+                return root.isControlNode || root.isTokenDeployed
             }
         }
     }
@@ -313,7 +314,7 @@ StackLayout {
 
                 options {
                     archiveSupportEnabled: root.archiveSupportEnabled
-                    archiveSupporVisible: root.archiveSupporVisible
+                    archiveSupporVisible: root.archiveSupporVisible && !root.isMobile
                     requestToJoinEnabled: root.requestToJoinEnabled
                     pinMessagesEnabled: root.pinMessagesEnabled
                 }
