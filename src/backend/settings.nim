@@ -110,3 +110,6 @@ proc toggleNewsFeedEnabled*(value: bool): RpcResponse[JsonNode] =
 
 proc toggleNewsRSSEnabled*(value: bool): RpcResponse[JsonNode] =
   result = core.callPrivateRPC("toggleNewsRSSEnabled".prefix, %*[ value ])
+
+proc backupPath*(): RpcResponse[JsonNode] =
+  return core.callPrivateRPC("settings_backupPath")

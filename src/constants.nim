@@ -28,7 +28,8 @@ let
   OPENURI* = desktopConfig.uri
   DATADIR* = baseDir & sep
   STATUSGODIR* = joinPath(baseDir, "data") & sep
-  ROOTKEYSTOREDIR* = joinPath(baseDir, "data", "keystore")
+  ROOTKEYSTOREDIR* = joinPath(STATUSGODIR, "keystore")
+  DEFAULT_BACKUP_DIR* = joinPath(STATUSGODIR, "backups") & sep
   TMPDIR* = joinPath(baseDir, "tmp") & sep
   LOGDIR* = joinPath(baseDir, "logs") & sep
   KEYCARD_DATA_DIR* = joinPath(baseDir, "data", "keycard")
