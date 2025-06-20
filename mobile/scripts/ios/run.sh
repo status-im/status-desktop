@@ -1,35 +1,81 @@
 #!/usr/bin/env bash
-set -ef pipefail
+# iOS run helper – mirrors the behaviour of mobile/scripts/android/run.sh
+# 1. Lists available iOS simulators and lets the user choose one.
+# 2. If no simulator exists, a default iPad simulator is created automatically.
+# 3. Boots the chosen simulator (if needed), installs the built app and launches it.
+
+set -euo pipefail
 set -o xtrace
 
 CWD=$(realpath "$(dirname "$0")")
-APPID=${APPID:-com.statusim.Status}
-APP=${APP:-"$CWD/../../bin/Applications/Status-tablet.app"}
-echo "APP: $APP"
-SIMULATOR_INFO=$(xcrun simctl list devices "iPad Pro" | grep -m 1 "iPad Pro" || true)
+APPID=${APPID:-im.status.Status-tablet}            # Bundle identifier of the app
+APP=${APP:-"$CWD/../../bin/Applications/Status-tablet.app"}  # Path to the .app bundle
+SIMULATOR_UDID=${SIMULATOR_UDID:-""}               # Specify to skip interactive selection
 
-echo "Simulator info: $SIMULATOR_INFO"
+# Create a default iPad simulator if none are found
+create_default_simulator() {
+  DEFAULT_NAME="status-default-sim"
+  DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M4-16GB"
+
+  echo "Creating default simulator: $DEFAULT_NAME ($DEVICE_TYPE)"
+  xcrun simctl create "$DEFAULT_NAME" "$DEVICE_TYPE" || {
+    echo "Failed to create the default simulator"; exit 1;
+  }
+}
+
+# Present the list of available simulators and let the user pick one
+select_simulator() {
+  local device_lines
+  device_lines=$(xcrun simctl list devices available | grep -E "^\s{4}.*\(" || true)
+
+  if [[ -z "$device_lines" ]]; then
+    echo "No simulators found. Creating a default one..."
+    create_default_simulator
+    device_lines=$(xcrun simctl list devices available | grep -E "^\s{4}.*\(")
+  fi
+
+  echo "Available simulators:"
+  echo "$device_lines" | nl -w2 -s': '
+
+  read -rp "Select a simulator to use (enter number): " selection
+
+  local selected_line
+  selected_line=$(echo "$device_lines" | sed -n "${selection}p")
+  if [[ -z "$selected_line" ]]; then
+    echo "Invalid selection. Exiting."; exit 1;
+  fi
+
+  SIMULATOR_UDID=$(echo "$selected_line" | grep -E -o "([0-9A-Fa-f-]{36})")
+  SIMULATOR_NAME=$(echo "$selected_line" | sed -E 's/^\s+([^()]*)\s+\(.*/\1/' | xargs)
+}
+
+# If no UDID provided via env var, ask the user
+if [[ -z "$SIMULATOR_UDID" ]]; then
+  select_simulator
+fi
+
+# Get info/state for the chosen simulator
+SIMULATOR_INFO=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" | head -n 1 || true)
 if [[ -z "$SIMULATOR_INFO" ]]; then
-    echo "No matching simulator found. Creating a new one..."
-    xcrun simctl create "iPad Pro" com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M4-16GB
-    SIMULATOR_INFO=$(xcrun simctl list devices | grep -m 1 "iPad Pro")
-    if [[ -z "$SIMULATOR_INFO" ]]; then
-        echo "Failed to create or find the simulator. Exiting."
-        exit 1
-    fi
+  echo "Simulator $SIMULATOR_UDID not found. Exiting."; exit 1;
+fi
+SIMULATOR_STATE=$(echo "$SIMULATOR_INFO" | grep -E -o "\((Booted|Shutdown|Shutting Down|Creating|Deleting)\)" | tr -d '()')
+
+echo "Using simulator: ${SIMULATOR_NAME:-$SIMULATOR_UDID} – state: $SIMULATOR_STATE"
+
+# Boot if necessary
+if [[ "$SIMULATOR_STATE" != "Booted" ]]; then
+  echo "Booting simulator $SIMULATOR_UDID..."
+  xcrun simctl boot "$SIMULATOR_UDID"
 fi
 
-SIMULATOR_DEVICE_ID=$(echo "$SIMULATOR_INFO" | grep -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})")
-SIMULATOR_DEVICE_STATE=$(echo "$SIMULATOR_INFO" | grep -E -o -i "\((Booted|Shutdown|Shutting Down|Creating|Deleting)\)" | tr -d '()')
+# Bring Simulator app to foreground with the chosen device
+open -a Simulator --args -CurrentDeviceUDID "$SIMULATOR_UDID"
 
-echo "Booting simulator with device id: $SIMULATOR_DEVICE_ID and state: $SIMULATOR_DEVICE_STATE"
+# Re-install the app
+echo "Installing app $APP onto simulator $SIMULATOR_UDID"
+xcrun simctl install "$SIMULATOR_UDID" "$APP"
 
-if [[ "$SIMULATOR_DEVICE_STATE" != "Booted" ]]; then
-    xcrun simctl boot "$SIMULATOR_DEVICE_ID"
-fi
-
-echo "Installing app $APP on simulator $SIMULATOR_DEVICE_ID"
-open -a Simulator --args -CurrentDeviceUDID "$SIMULATOR_DEVICE_ID"
-xcrun simctl install "$SIMULATOR_DEVICE_ID" "$APP"
-# For some reason --console will freeze the app, so we need to use --console-pty
-xcrun simctl launch --console-pty "$SIMULATOR_DEVICE_ID" im.status.Status-tablet
+# Launch the app (using --console-pty to avoid freeze issues)
+echo "Launching $APPID"
+xcrun simctl launch --console-pty "$SIMULATOR_UDID" "$APPID"
