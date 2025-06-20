@@ -10,6 +10,7 @@ Item {
     property alias nameFilters: dlg.nameFilters
     property alias selectedFile: dlg.fileUrl
     property alias selectedFiles: dlg.fileUrls
+    property alias selectFolder: dlg.selectFolder
     property alias modality: dlg.modality
     property alias currentFolder: dlg.folder
     property alias selectMultiple: dlg.selectMultiple
