@@ -823,6 +823,7 @@ Item {
 
             const loginWithSyncAckPopup = findChild(page, "loginWithSyncAckPopup")
             verify(!!loginWithSyncAckPopup)
+            tryVerify(() => loginWithSyncAckPopup.opened)
 
             let btnContinue = findChild(loginWithSyncAckPopup, "btnContinue")
             verify(!!btnContinue)
