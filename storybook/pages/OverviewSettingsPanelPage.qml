@@ -31,6 +31,7 @@ SplitView {
         logoImageData: communityEditor.image
         color: communityEditor.color
         bannerImageData: communityEditor.banner
+            isMobile: ctrlIsMobile.checked
 
         isOwner: communityEditor.amISectionAdmin
         isAdmin: ctrlIsAdmin.checked
@@ -56,6 +57,10 @@ SplitView {
             CommunityInfoEditor {
                 id: communityEditor
 
+                Switch {
+                    id: ctrlIsMobile
+                    text: "Is mobile?"
+                }
                 Switch {
                     id: pendingOwnershipSwitch
                     text: "Pending transfer ownership request?"
