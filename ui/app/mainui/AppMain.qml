@@ -1816,6 +1816,10 @@ Item {
                         focus: active
                         active: appMain.featureFlagsStore.shellEnabled && appView.currentIndex === Constants.appViewStackIndex.shell
 
+                        onLoaded: {
+                            rootStore.rebuildChatSearchModel()
+                        }
+
                         sourceComponent: ShellContainer {
                             id: shell
 
@@ -1827,7 +1831,8 @@ Item {
 
                                 sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
                                 chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model
-                                                            : null
+                                                               : null
+                                chatsSearchBaseModel: sectionsLoaded && !!rootStore.chatSearchModel ? rootStore.chatSearchModel : null
                                 walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
                                 dappsBaseModel: dAppsServiceLoader.active && dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
 
@@ -1835,7 +1840,7 @@ Item {
                                 marketEnabled: appMain.featureFlagsStore.marketEnabled
 
                                 syncingBadgeCount: appMain.rootStore.profileSectionStore.devicesStore.devicesModel.count -
-                                                appMain.rootStore.profileSectionStore.devicesStore.devicesModel.pairedCount
+                                                   appMain.rootStore.profileSectionStore.devicesStore.devicesModel.pairedCount
                                 messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
                                 showBackUpSeed: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner &&
                                                 !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
@@ -1861,7 +1866,10 @@ Item {
                             onItemActivated: function(key, sectionType, itemId) {
                                 shellAdaptor.setTimestamp(key, new Date().valueOf())
 
-                                if (sectionType === Constants.appSection.profile) {
+                                if (sectionType === -1) { // search
+                                    const [sectionId, chatId] = key.split(";")
+                                    return rootStore.setActiveSectionChat(sectionId, chatId)
+                                } else if (sectionType === Constants.appSection.profile) {
                                     if (itemId == Constants.settingsSubsection.backUpSeed) {
                                         return Global.openBackUpSeedPopup()
                                     } else if (itemId == Constants.settingsSubsection.signout) {
