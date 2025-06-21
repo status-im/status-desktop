@@ -100,18 +100,28 @@ Page {
     }
 
     Page {
-         id: footerItem
-         implicitWidth: 400
-         implicitHeight: 50
-         Rectangle {
-             color: "gray"
-             anchors.fill: parent
-             Label {
-                 text: "Footer Content"
-                 anchors.centerIn: parent
-             }
-         }
-     }
+        id: footerItem
+        implicitWidth: 400
+        implicitHeight: 50
+        Rectangle {
+            color: "gray"
+            anchors.fill: parent
+            Label {
+                text: "Footer Content"
+                anchors.centerIn: parent
+            }
+        }
+    }
+
+    ToolBar {
+        id: headerContent
+        RowLayout {
+            anchors.fill: parent
+            spacing: 5
+            Button { text: "Action 1" }
+            Button { text: "Action 2" }
+        }
+    }
 
     Frame {
         id: wrapper
@@ -129,6 +139,20 @@ Page {
             showRightPanel: rightPanelCheckBox.checked
             navBar: navBarItem
             footer: footerItem
+            headerContent: headerContent
+            headerBackground: Control {
+                implicitHeight: 115
+
+                contentItem: Loader {
+                    sourceComponent: Rectangle {
+                                id: headerBackground
+                                color: "yellow"
+                                width: 300
+                                height: 50
+                                onHeightChanged: console.trace()
+                        }
+                    }
+                }
+            }
         }
     }
-}

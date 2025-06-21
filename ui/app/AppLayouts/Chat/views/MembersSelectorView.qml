@@ -15,11 +15,21 @@ MembersSelectorBase {
 
     property UtilsStore utilsStore
 
+    signal resolveENS(string address)
+
     limitReached: model.count >= membersLimit - 1 // -1 because creator is not on the list of members when creating chat
 
     function cleanup() {
         root.edit.clear()
         d.selectedMembers.clear()
+    }
+
+    function ensResolved(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
+        if (resolvedPubKey === "") {
+            root.suggestionsDialog.forceHide = false
+            return
+        }
+        d.processContact(resolvedPubKey)
     }
 
     onEntryAccepted: if (suggestionsDelegate) {
@@ -78,7 +88,7 @@ MembersSelectorBase {
             }
 
             if (Utils.isValidEns(value)) {
-                root.rootStore.contactsStore.resolveENS(value)
+                root.resolveENS(value)
                 return
             }
 
@@ -149,19 +159,6 @@ MembersSelectorBase {
         interval: 500
         onTriggered: {
             d.lookupContact(edit.text)
-        }
-    }
-
-    Connections {
-        enabled: root.visible
-        target: root.rootStore.contactsStore
-
-        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
-            if (resolvedPubKey === "") {
-                root.suggestionsDialog.forceHide = false
-                return
-            }
-            d.processContact(resolvedPubKey)
         }
     }
 }
