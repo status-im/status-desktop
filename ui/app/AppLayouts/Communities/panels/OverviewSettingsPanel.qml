@@ -1,12 +1,11 @@
-﻿import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+﻿import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.panels 1.0
@@ -14,7 +13,6 @@ import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 
 import shared.popups 1.0
-
 
 import utils 1.0
 
@@ -44,7 +42,6 @@ StackLayout {
     property bool archiveSupporVisible: true
     property bool editable: false
     property bool isControlNode: false
-    property int loginType: Constants.LoginType.Password
     property bool communitySettingsDisabled
     property var ownerToken: null
 
@@ -57,6 +54,8 @@ StackLayout {
     property string pubsubTopicKey
 
     property bool isTokenDeployed: !!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed
+
+    required property bool isMobile
 
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
@@ -124,7 +123,7 @@ StackLayout {
                     Layout.preferredHeight: 38
                     Layout.alignment: Qt.AlignTop
                     objectName: "communityOverviewSettingsTransferOwnershipButton"
-                    visible: root.isOwner
+                    visible: root.isOwner && !root.isMobile
                     text: qsTr("Transfer ownership")
                     size: StatusBaseButton.Size.Small
 
@@ -168,7 +167,7 @@ StackLayout {
 
             OverviewSettingsChart {
                 model: JSON.parse(root.overviewChartData)
-                onCollectCommunityMetricsMessagesCount: {
+                onCollectCommunityMetricsMessagesCount: (intervals) => {
                     root.collectCommunityMetricsMessagesCount(intervals)
                 }
                 Layout.topMargin: 16
@@ -205,7 +204,6 @@ StackLayout {
             communityColor: root.color
             isControlNode: root.isControlNode
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
-            isPromoteSelfToControlNodeEnabled: root.isControlNode || root.isTokenDeployed
 
             onExportControlNodeClicked:{
                 if(root.isTokenDeployed) {
@@ -250,9 +248,11 @@ StackLayout {
             active: {
                 if (root.communitySettingsDisabled)
                     return false
+                if (root.isMobile)
+                    return false
                 if (root.isAdmin || root.isTokenMaster)
                     return root.isPendingOwnershipRequest // not allowed for admin or TM unless there's the pending request
-                return true
+                return root.isControlNode || root.isTokenDeployed
             }
         }
     }
@@ -314,7 +314,7 @@ StackLayout {
 
                 options {
                     archiveSupportEnabled: root.archiveSupportEnabled
-                    archiveSupporVisible: root.archiveSupporVisible
+                    archiveSupporVisible: root.archiveSupporVisible && !root.isMobile
                     requestToJoinEnabled: root.requestToJoinEnabled
                     pinMessagesEnabled: root.pinMessagesEnabled
                 }
