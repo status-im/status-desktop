@@ -5,7 +5,6 @@ import shared.status 1.0
 import shared.popups 1.0
 import shared.panels 1.0
 
-
 import AppLayouts.Profile.popups.networkSettings 1.0
 
 import StatusQ 0.1
@@ -18,6 +17,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 import "../../stores"

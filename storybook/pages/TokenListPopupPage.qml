@@ -3,11 +3,13 @@ import QtQuick.Controls 2.15
 
 import Storybook 1.0
 import Models 1.0
-import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
 
 import AppLayouts.Profile.popups 1.0
+
+import QtModelsToolkit 1.0
+import SortFilterProxyModel 0.2
 
 SplitView {
     id: root

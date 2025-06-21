@@ -11,6 +11,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet 1.0

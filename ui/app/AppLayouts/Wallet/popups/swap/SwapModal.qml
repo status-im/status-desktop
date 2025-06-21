@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
+
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 import utils 1.0

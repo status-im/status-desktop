@@ -4,7 +4,6 @@ import QtQuick.Controls 2.15
 
 import Qt.labs.settings 1.1
 
-import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Models 0.1
 
@@ -15,6 +14,8 @@ import utils 1.0
 
 import Storybook 1.0
 import Models 1.0
+
+import QtModelsToolkit 1.0
 
 SplitView {
     id: root

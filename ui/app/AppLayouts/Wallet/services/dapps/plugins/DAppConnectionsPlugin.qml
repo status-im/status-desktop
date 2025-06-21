@@ -9,6 +9,8 @@ import AppLayouts.Wallet.services.dapps.types 1.0
 import shared.stores 1.0
 import utils 1.0
 
+import QtModelsToolkit 1.0
+
 // Plugin providing the connection handling for dApps
 // Features provided:
 // 1. connect

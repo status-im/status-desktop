@@ -1,16 +1,16 @@
 pragma Singleton
 
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ 0.1
-import StatusQ.Internal 0.1 as Internal
+import QtModelsToolkit 1.0 as QtMT
 
 QtObject {
     function get(model, index, role = "") {
         if (role)
-            return Internal.ModelUtils.get(model, index, role)
+            return QtMT.ModelQuery.get(model, index, role)
         else
-            return Internal.ModelUtils.get(model, index)
+            return QtMT.ModelQuery.get(model, index)
     }
 
     function getByKey(model, keyRole, keyValue, role = "") {
@@ -33,12 +33,12 @@ QtObject {
         const array = []
 
         for (let i = 0; i < count; i++) {
-            const modelItem = Internal.ModelUtils.get(model, i)
+            const modelItem = QtMT.ModelQuery.get(model, i)
             const arrayItem = {}
 
             roles.forEach(role => {
                 const entry = modelItem[role]
-                const isModel = Internal.ModelUtils.isModel(entry)
+                const isModel = QtMT.ModelQuery.isModel(entry)
 
                 if (isModel)
                     arrayItem[role] = modelToArray(entry)
@@ -61,15 +61,15 @@ QtObject {
     }
 
     function indexOf(model, role, key) {
-        return Internal.ModelUtils.indexOf(model, role, key)
+        return QtMT.ModelQuery.indexOf(model, role, key)
     }
 
     function persistentIndex(model, index) {
-        return Internal.ModelUtils.persistentIndex(model, index)
+        return QtMT.ModelQuery.persistentIndex(model, index)
     }
 
     function contains(model, roleName, value, mode = Qt.CaseSensitive) {
-        return Internal.ModelUtils.contains(model, roleName, value, mode)
+        return QtMT.ModelQuery.contains(model, roleName, value, mode)
     }
 
     function checkItemsEquality(itemA, itemB, roles) {
@@ -90,8 +90,8 @@ QtObject {
             return true
 
         for (let i = 0; i < countA; i++) {
-            const itemA = Internal.ModelUtils.get(modelA, i)
-            const itemB = Internal.ModelUtils.get(modelB, i)
+            const itemA = QtMT.ModelQuery.get(modelA, i)
+            const itemB = QtMT.ModelQuery.get(modelB, i)
 
             if (!checkItemsEquality(itemA, itemB, roles))
                 return false
@@ -114,11 +114,11 @@ QtObject {
             return true
 
         for (let i = 0; i < countA; i++) {
-            const itemA = Internal.ModelUtils.get(modelA, i)
+            const itemA = QtMT.ModelQuery.get(modelA, i)
             let found = false
 
             for (let j = 0; j < countB; j++) {
-                const itemB = Internal.ModelUtils.get(modelB, j)
+                const itemB = QtMT.ModelQuery.get(modelB, j)
 
                 if (checkItemsEquality(itemA, itemB, roles))
                     found = true
@@ -132,7 +132,7 @@ QtObject {
     }
 
     function roleNames(model) {
-        return Internal.ModelUtils.roleNames(model)
+        return QtMT.ModelQuery.roleNames(model)
     }
 
     /// Returns the first model entry that satisfies the condition function or null if none is found.
@@ -143,7 +143,7 @@ QtObject {
         const count = model.rowCount()
 
         for (let i = 0; i < count; i++) {
-            const modelItem = Internal.ModelUtils.get(model, i)
+            const modelItem = QtMT.ModelQuery.get(model, i)
 
             if (conditionFn(modelItem)) {
                 return modelItem
@@ -160,7 +160,7 @@ QtObject {
         const count = model.rowCount()
 
         for (let i = 0; i < count; i++) {
-            const modelItem = Internal.ModelUtils.get(model, i)
+            const modelItem = QtMT.ModelQuery.get(model, i)
             callback(modelItem)
         }
     }

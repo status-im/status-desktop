@@ -18,6 +18,7 @@ import shared.stores 1.0 as SharedStores
 import AppLayouts.Wallet.helpers 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
+import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 import "../controls"

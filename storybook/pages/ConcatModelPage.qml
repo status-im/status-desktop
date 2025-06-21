@@ -2,8 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import StatusQ 0.1
 import StatusQ.Core 0.1
+import QtModelsToolkit 1.0
 
 import Qt.labs.qmlmodels 1.0
 
