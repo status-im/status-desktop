@@ -69,6 +69,7 @@ Item {
     readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
     
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
+        localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
         onOpenUrl: {
             Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
         }
