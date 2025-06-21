@@ -49,7 +49,7 @@ def test_ens_name_purchase(main_window, user_account, ens_name):
         register_ens = ens_settings.click_next_button().register_ens_name()
 
     with step('Confirm sending amount for purchasing ens username in send popup'):
-        register_ens._send_button.click()
+        register_ens.send_button.click()
         send_popup = SendPopup().wait_until_appears()
 
     with step('Sign and send transaction to blockchain'):

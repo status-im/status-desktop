@@ -66,7 +66,7 @@ def test_create_edit_community(main_screen: MainWindow):
 
         assert f'Join {new_name} community in Status' in content_list
         assert new_description in content_list
-        invite_modal.close()
+        invite_modal.close_button.click()
 
     with step('Verify community parameters on settings overview'):
         overview_setting = community_setting.left_panel.open_overview()

@@ -37,7 +37,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             main_screen.prepare()
             profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
+            main_screen.left_panel.click()
             main_screen.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
@@ -65,7 +65,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             main_screen.prepare()
             profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
-            profile_popup.close()
+            main_screen.left_panel.click()
             main_screen.hide()
 
         with step(f'User {user_two.name}, send contact request to {user_three.name}'):

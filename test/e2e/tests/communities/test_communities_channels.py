@@ -106,7 +106,7 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
             assert more_options.edit_channel_from_context.exists is False, \
                 f'Edit channel option is present when it should not'
         with step('Verify that delete item is not present in context menu'):
-            assert more_options.delete_channel_from_context.exists is False, \
+            assert more_options.delete_channel_context_item.exists is False, \
                 f'Delete channel option is present when it should not'
 
 

@@ -12,10 +12,10 @@ from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class BackUpYourSeedPhrasePopUp(BasePopup):
+class BackUpYourSeedPhrasePopUp(QObject):
 
     def __init__(self):
-        super(BackUpYourSeedPhrasePopUp, self).__init__()
+        super().__init__(names.backUpSeedModal)
         self._scroll = Scroll(names.generalView_StatusScrollView)
         self._i_have_a_pen_and_paper_check_box = CheckBox(names.mainWallet_AddEditAccountPopup_HavePenAndPaperCheckBox)
         self._i_know_where_i_ll_store_it_check_box = CheckBox(
