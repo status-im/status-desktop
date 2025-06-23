@@ -34,6 +34,7 @@ class MainLeftPanel(QObject):
     def __init__(self):
         super(MainLeftPanel, self).__init__(names.mainWindow_LeftPanelNavBar)
         self.profile_button = Button(names.onlineIdentifierButton)
+        self.shell_button = Button(names.shell_nav_button)
         self.messages_button = Button(names.chatButton)
         self.communities_portal_button = Button(names.communitiesPortalButton)
         self.community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
@@ -49,6 +50,10 @@ class MainLeftPanel(QObject):
             except Exception:
                 pass  # Retry if attempts remain
         raise Exception(f"Failed to open {screen_class.__name__} after {attempts} attempts")
+
+    @allure.step('Click Shell button and open Shell screen')
+    def open_shell(self, attempts: int = 2) -> ShellScreen:
+        return self._open_screen_from_left_nav(self.shell_button, ShellScreen, attempts)
 
     @allure.step('Click Chat button and open Messages screen')
     def open_messages_screen(self, attempts: int = 2) -> MessagesScreen:

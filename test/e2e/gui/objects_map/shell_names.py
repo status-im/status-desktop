@@ -24,7 +24,7 @@ shell_dock = {"container": statusDesktop_mainWindow, "type": "ListView", "visibl
 shell_regular_dock_button_wallet = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonWallet", "type": "ShellDockButton", "visible": True}
 shell_regular_dock_button_market = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonMarket", "type": "ShellDockButton", "visible": True}
 shell_regular_dock_button_messages = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonMessages", "type": "ShellDockButton", "visible": True}
-shell_regular_dock_button_communities = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonCommunities", "type": "ShellDockButton", "visible": True}
+shell_regular_dock_button_communities = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonCommunities Portal", "type": "ShellDockButton", "visible": True}
 shell_regular_dock_button_settings = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonSettings", "type": "ShellDockButton", "visible": True}
 
 # TODO: Methods for pinned dock buttons
@@ -39,9 +39,6 @@ shell_pinned_dock_button = {"container": statusDesktop_mainWindow, "type": "Shel
 shell_dock_button_context_menu = {"type": "StatusMenu", "visible": True}
 shell_dock_button_unpin_menu_action = {"container": shell_dock_button_context_menu, "text": "Unpin", "type": "StatusAction", "visible": True}
 shell_dock_button_disconnect_menu_action = {"container": shell_dock_button_context_menu, "text": "Disconnect", "type": "StatusAction", "visible": True}
-
-# Shell Navigation
-shell_nav_button = {"container": "statusAppNavBar", "objectName": "ShellNavBarButton", "type": "StatusNavBarTabButton", "visible": True}
 
 
 

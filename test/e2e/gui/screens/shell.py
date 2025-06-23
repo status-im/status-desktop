@@ -9,6 +9,7 @@ from gui.elements.text_edit import TextEdit
 from gui.objects_map import shell_names
 from gui.objects_map.names import statusDesktop_mainWindow
 from gui.screens.community_portal import CommunitiesPortal
+from gui.screens.market import MarketScreen
 from gui.screens.messages import MessagesScreen
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
@@ -80,6 +81,7 @@ class ShellScreen(QObject):
         self.wait_for_shell_ui_loaded()
         market_button = Button(shell_names.shell_regular_dock_button_market)
         market_button.click()
+        return MarketScreen().wait_until_appears()
 
     @allure.step('Open Communities Portal from shell grid')
     def open_communities_portal_from_grid(self) -> CommunitiesPortal:
@@ -116,16 +118,8 @@ class ShellScreen(QObject):
 
     @allure.step('Wait for shell UI to be fully loaded')
     def wait_for_shell_ui_loaded(self):
-        """Wait for shell UI to be fully loaded before interacting"""
-        max_retries = 10
-        for i in range(max_retries):
-            all_objects_length = 10
-            try:
-                all_objects = driver.findAllObjects({"container": statusDesktop_mainWindow})
-                if len(all_objects) > all_objects_length:  # UI appears to be loaded
-                    break
-                time.sleep(1)
-            except Exception:
-                raise Exception(f"all_objects did not reach {all_objects_length} after {max_retries} retries. Shell UI may not be fully loaded.")
+        # Wait for animation and loading to finish
+        time.sleep(0.5)
+    
         return self
 
