@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, httpclient
+import NimQml, strutils, uri, stew/shims/strformat, re, stint, httpclient
 import stew/byteutils
 import ./utils/qrcodegen
 
@@ -143,3 +143,6 @@ QtObject:
       return client.head(url).status == URL_STATUS_OK
     except:
       return false
+
+  proc isBase64DataUrl*(str: string): bool =
+    return str.match(re"^data:.*;base64,")
