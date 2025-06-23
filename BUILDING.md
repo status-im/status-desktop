@@ -49,6 +49,8 @@ choco install make cmake mingw wget
 
 Download and install Go 1.22 from the [official website](https://go.dev/dl/).
 
+> ⚠️ Note: 1.22 version is a strict requirement for now. Version 1.23 won't work
+
 > ⚠️ Note: There is a script `scripts/windows_build_setup.ps1`, but it may be outdated.
 
 ### Linux
