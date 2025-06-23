@@ -187,7 +187,7 @@ QtObject {
     readonly property int defaultBigPadding: defaultPadding * 1.5
     readonly property int defaultPadding: 16
     readonly property int defaultHalfPadding: defaultPadding / 2
-    readonly property int defaultSmallPadding: defaultPadding * 0.75
+    readonly property int defaultSmallPadding: defaultPadding * 0.625
     readonly property int defaultRadius: defaultHalfPadding
 
     readonly property real disabledOpacity: 0.3
@@ -228,7 +228,7 @@ QtObject {
         bigPadding = basePadding * 1.5
         padding = basePadding
         halfPadding = basePadding / 2
-        smallPadding = basePadding * 0.75
+        smallPadding = basePadding * 0.625
         radius = basePadding
     }
 
