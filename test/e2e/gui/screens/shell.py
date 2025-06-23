@@ -96,6 +96,33 @@ class ShellScreen(QObject):
         grid_item = Button({"container": shell_names.shell_grid, "title": title, "type": "ShellGridItem", "visible": True})
         grid_item.click()
 
+    @allure.step('Check if account exists in Shell grid by name')
+    def has_account_in_grid_by_name(self, account_name: str) -> bool:
+        """Check if an account with the given name exists in the Shell grid"""
+        locator = shell_names.shell_grid_item.copy()
+        locator["title"] = account_name
+        account_grid_item = Button(locator)
+        return account_grid_item.is_visible
+
+    @allure.step('Check if account exists in Shell grid')
+    def has_account_in_grid(self, account_name: str) -> bool:
+        """Check if an account exists in Shell grid by name."""
+        return self.has_account_in_grid_by_name(account_name)
+
+    @allure.step('Wait for account to appear in Shell grid')
+    def wait_for_account_in_grid(self, account_name: str, timeout_msec: int = 10000):
+        """Wait for an account to appear in the Shell grid"""
+        return driver.waitFor(
+            lambda: self.has_account_in_grid(account_name), timeout_msec
+        )
+
+    @allure.step('Wait for account to be removed from Shell grid')
+    def wait_for_account_removed_from_grid(self, account_name: str, timeout_msec: int = 10000):
+        """Wait for an account to be removed from the Shell grid"""
+        return driver.waitFor(
+            lambda: not self.has_account_in_grid(account_name), timeout_msec
+        )
+
     @allure.step('Click dock button by text')
     def click_dock_button(self, text: str):
         """Click a dock button by its text"""

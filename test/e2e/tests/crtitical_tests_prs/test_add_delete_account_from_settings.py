@@ -45,7 +45,8 @@ def test_delete_generated_account_from_wallet_settings(
         assert acc_view.get_account_name_value() == account_name, \
             f"Generated account name is incorrect, current name is {acc_view.get_account_name_value()}, expected {account_name}"
 
-        assert acc_view.get_account_address_value() is not None, \
+        account_address = acc_view.get_account_address_value()
+        assert account_address is not None, \
             f"Generated account address is not present"
 
         assert acc_view.get_account_origin_value() == WalletAccountSettings.STATUS_ACCOUNT_ORIGIN.value, \
@@ -56,6 +57,19 @@ def test_delete_generated_account_from_wallet_settings(
 
         assert acc_view.get_account_storage_value() == WalletAccountSettings.STORED_ON_DEVICE.value, \
             f"Status account storage should be {WalletAccountSettings.STORED_ON_DEVICE.value}"
+
+    with step('Verify new account appears in Shell grid'):
+        shell_screen = main_screen.left_panel.open_shell()
+        shell_screen.wait_for_shell_ui_loaded()
+        
+        # Verify account appears in grid
+        assert shell_screen.wait_for_account_in_grid(account_name=account_name), \
+            f"Account '{account_name}' should be visible in Shell grid"
+
+    with step('Navigate to wallet and reopen account details for deletion'):
+        # Navigate to wallet screen first, then to settings to get fresh acc_view
+        main_screen.shell.open_wallet_from_dock()
+        step('Open account details view for the generated account')
 
     with step('Delete generated account'):
         delete_confirmation_popup = acc_view.click_remove_account_button()
@@ -71,3 +85,10 @@ def test_delete_generated_account_from_wallet_settings(
         assert driver.waitFor(
             lambda: account_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
             f'Account with {account_name} is still displayed even it should not be'
+
+    with step('Verify removed account no longer appears in Shell grid'):
+        shell_screen = main_screen.left_panel.open_shell()
+        shell_screen.wait_for_shell_ui_loaded()
+        
+        assert shell_screen.wait_for_account_removed_from_grid(account_name=account_name), \
+            f"Account '{account_name}' should no longer be visible in Shell grid"
