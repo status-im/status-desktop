@@ -227,7 +227,7 @@ C:\Users\{your_username}\AppData\Local\Programs\Microsoft VS Code\bin
 
 If you installed Qt via your system's package manager, additional environment configuration may not be necessary.
 
-Otherwise, set those envirionment variables:
+Otherwise, set those environment variables:
 ```shell
 export QTDIR="/path/to/Qt/5.15.2/gcc_64"
 export PATH="${QTDIR}/bin:${PATH}"

@@ -48,7 +48,7 @@ StatusDialog {
     property int expirationSeconds
     property bool hasExpiryDate: false
 
-    // Close hidden explicitely until we have persistent notifications in place to reopen this dialog from outside
+    // Close hidden explicitly until we have persistent notifications in place to reopen this dialog from outside
     property bool headerActionsCloseButtonVisible: false
 
     property ObjectModel leftFooterContents

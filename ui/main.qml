@@ -236,7 +236,7 @@ StatusWindow {
         }
     }
 
-    // On MacOS, explicitely restore the window on activating
+    // On MacOS, explicitly restore the window on activating
     Connections {
         target: Qt.application
         enabled: Qt.platform.os === Constants.mac

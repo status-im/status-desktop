@@ -176,7 +176,7 @@ private:
 
     bool m_modelConnectionsInitialized{false};
 
-    // explicitely mass-hidden asset/collectible groups
+    // explicitly mass-hidden asset/collectible groups
     QSet<QString> m_hiddenCommunityGroups;
     QStringList hiddenCommunityGroups() const;
 

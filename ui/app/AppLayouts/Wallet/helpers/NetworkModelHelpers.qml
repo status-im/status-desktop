@@ -33,7 +33,7 @@ QtObject {
     }
 
     // Given a network model, it looks for the provided chainId and returns
-    // the index of the the specific chain. If not found, returns 0 value.
+    // the index of the specific chain. If not found, returns 0 value.
     function getChainIndexByChainId(networksModel, chainId) {
         if(!!networksModel && chainId !== undefined)
             return ModelUtils.indexOf(networksModel, "chainId", chainId)
