@@ -114,7 +114,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             banned_community_screen = chat.open_banned_community(community.name, 0)
             assert banned_community_screen.community_banned_member_panel.is_visible
             assert banned_community_screen.banned_title() == f"You've been banned from {community.name}"
-            main_screen.left_panel.open_community_context_menu(community.name).leave_community()
+            main_screen.left_panel.open_community_context_menu(community.name).leave_community_option.click()
             assert not main_screen.left_panel.communities()
             main_screen.hide()
 
@@ -141,7 +141,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             message = toast_messages[0]
             assert message == ToastMessages.UNBANNED_USER_CONFIRM.value + community.name, \
                 f"Toast message is incorrect, current message is {message}"
-            main_screen.left_panel.open_community_context_menu(community.name).leave_community()
+            main_screen.left_panel.open_community_context_menu(community.name).leave_community_option.click()
 
             messages_view1 = main_screen.left_panel.open_messages_screen()
             chat = messages_view1.left_panel.click_chat_by_name(user_two.name)
