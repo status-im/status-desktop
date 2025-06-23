@@ -41,11 +41,6 @@ class ContextMenu(QObject):
         self.invite_from_context.click()
         return InviteContactsPopup()
 
-    @allure.step('Select leave community in context menu')
-    def leave_community(self):
-        self.leave_community_option.click()
-        return LeaveCommunityConfirmationPopup()
-
     @allure.step('Open edit category popup')
     def open_edit_category_popup(self) -> EditCategoryPopup:
         self.edit_category_item.click()

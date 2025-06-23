@@ -7,8 +7,9 @@ from gui.components.authenticate_popup import AuthenticatePopup
 
 
 def authenticate_with_password(user_account):
-    AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
-    AuthenticatePopup().wait_until_hidden()
+    auth_popup = AuthenticatePopup().wait_until_appears()
+    auth_popup.authenticate(user_account.password)
+    auth_popup.wait_until_hidden()
 
 
 def open_send_modal_for_account(main_window, account_name):

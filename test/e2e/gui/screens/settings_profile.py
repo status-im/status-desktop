@@ -52,8 +52,7 @@ class ProfileSettingsView(QObject):
     @allure.step('Get social links')
     def get_social_links(self) -> dict:
         self._web_tab_button.click()
-        if BuildShowcasePopup().is_visible:
-            BuildShowcasePopup().close()
+        self.showcase_popup_close_if_present()
         links = {}
         for link_name in walk_children(
                 driver.waitForObjectExists(self._links_list.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)):
@@ -62,6 +61,15 @@ class ProfileSettingsView(QObject):
                     if getattr(link_value, 'id', '') == 'textMouseArea':
                         links[str(link_name.title)] = str(driver.object.parent(link_value).text)
         return links
+
+    @allure.step('Close Showcase profile popup if it is there')
+    def showcase_popup_close_if_present(self):
+        try:
+            showcase_popup = BuildShowcasePopup()
+            if showcase_popup.is_visible:
+                showcase_popup.close()
+        except (LookupError, TimeoutError, RuntimeError, AssertionError):
+            pass
 
     @allure.step('Set social links')
     def set_social_links(self, links):
@@ -82,8 +90,7 @@ class ProfileSettingsView(QObject):
     @allure.step('Verify social links')
     def verify_social_links(self, links):
         self._web_tab_button.click()
-        if BuildShowcasePopup().is_visible:
-            BuildShowcasePopup().close()
+        self.showcase_popup_close_if_present()
         twitter = links[0]
         personal_site = links[1]
         github = links[2]
@@ -106,7 +113,6 @@ class ProfileSettingsView(QObject):
     @allure.step('Open social links form')
     def open_social_links_popup(self):
         self._web_tab_button.click()
-        if BuildShowcasePopup().is_visible:
-            BuildShowcasePopup().close()
+        self.showcase_popup_close_if_present()
         self._add_more_links_label.click()
         return SocialLinksPopup().wait_until_appears()

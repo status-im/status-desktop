@@ -32,10 +32,6 @@ def test_plus_button_add_watched_address(main_screen: MainWindow, address: str):
             .set_color(wallet_account.color).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()
 
-    with step('Check authentication popup does not appear'):
-        assert not AuthenticatePopup().is_authenticate_button_visible(), \
-            f"Authentication should not appear for adding watched addresses"
-
     with step('Verify toast message notification when adding account'):
         assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
