@@ -161,8 +161,8 @@ class MainWindow(Window):
         
         # Navigate from shell to settings first
         # since we now struggle with 3 words names, I need to change display name first
-        settings_screen = self.shell.open_settings_from_dock()
-        profile = settings_screen.left_panel.open_profile_settings()  
+        settings_screen = self.shell.open_from_dock("Settings")
+        profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
         self.left_panel.open_wallet()

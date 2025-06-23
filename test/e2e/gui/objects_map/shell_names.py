@@ -34,11 +34,13 @@ shell_pinned_dock_button_ = {"container": statusDesktop_mainWindow, "objectName"
 shell_any_regular_dock_button = {"container": statusDesktop_mainWindow, "type": "ShellDockButton", "pinned": False, "visible": True}
 shell_any_pinned_dock_button = {"container": statusDesktop_mainWindow, "type": "ShellDockButton", "pinned": True, "visible": True}
 shell_pinned_dock_button = {"container": statusDesktop_mainWindow, "type": "ShellDockButton", "pinned": True, "visible": True}
+shell_generic_dock_button = {"container": statusDesktop_mainWindow, "type": "ShellDockButton", "visible": True}
 
 # Dock Button Context Menu
 shell_dock_button_context_menu = {"type": "StatusMenu", "visible": True}
 shell_dock_button_unpin_menu_action = {"container": shell_dock_button_context_menu, "text": "Unpin", "type": "StatusAction", "visible": True}
 shell_dock_button_disconnect_menu_action = {"container": shell_dock_button_context_menu, "text": "Disconnect", "type": "StatusAction", "visible": True}
+
 
 
 

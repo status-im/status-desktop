@@ -71,7 +71,7 @@ def test_sync_device_during_onboarding(multiple_instances):
 
         with step('Verify user details are the same with user in first instance'):
             # TODO: Switch this to use shell online identifier
-            main_window.shell.open_settings_from_dock()
+            main_window.shell.open_from_dock("Settings")
             online_identifier = main_window.left_panel.open_online_identifier()
             assert online_identifier.get_user_name == user.name, \
                 f'Name in online identifier and display name do not match'

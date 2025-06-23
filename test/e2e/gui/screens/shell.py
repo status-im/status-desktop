@@ -21,6 +21,21 @@ class ShellScreen(QObject):
         self.search_field = TextEdit(shell_names.shell_search_field)
         self.grid = QObject(shell_names.shell_grid)
         self.dock = QObject(shell_names.shell_dock)
+        
+        # Dock button mapping
+        self.dock_buttons = {
+            "Wallet": (shell_names.shell_regular_dock_button_wallet, WalletScreen),
+            "Settings": (shell_names.shell_regular_dock_button_settings, SettingsScreen),
+            "Messages": (shell_names.shell_regular_dock_button_messages, MessagesScreen),
+            "Communities": (shell_names.shell_regular_dock_button_communities, CommunitiesPortal),
+            "Market": (shell_names.shell_regular_dock_button_market, MarketScreen)
+        }
+        
+
+
+    # =============================================================================
+    # SEARCH FUNCTIONS
+    # =============================================================================
 
     @allure.step('Search in Shell')
     def search(self, query: str):
@@ -38,115 +53,87 @@ class ShellScreen(QObject):
         """Get current search text"""
         return self.search_field.text
 
+    # =============================================================================
+    # GRID FUNCTIONS
+    # =============================================================================
+
     @allure.step('Get grid items count')
     def get_grid_items_count(self) -> int:
         """Get number of items currently visible in the grid"""
         return self.grid.object.count if hasattr(self.grid.object, 'count') else 0
 
-    @allure.step('Open Wallet from shell dock')
-    def open_wallet_from_dock(self) -> WalletScreen:
-        """Navigate to Wallet from shell dock"""
-        self.wait_for_shell_ui_loaded()
-        wallet_button = Button(shell_names.shell_regular_dock_button_wallet)
-        wallet_button.click()
-        return WalletScreen().wait_until_appears()
+    @allure.step('Click grid item by title')
+    def click_grid_item_by_title(self, title: str):
+        """Click a grid item by its title"""
+        locator = shell_names.shell_grid_item.copy()
+        locator["title"] = title
+        grid_item = Button(locator)
+        grid_item.click()
 
-    @allure.step('Open Settings from shell dock')
-    def open_settings_from_dock(self) -> SettingsScreen:
-        """Navigate to Settings from shell dock"""
-        self.wait_for_shell_ui_loaded()
-        settings_button = Button(shell_names.shell_regular_dock_button_settings)
-        settings_button.click()
-        return SettingsScreen().wait_until_appears()
+    @allure.step('Check if grid item exists by title')
+    def has_grid_item_by_title(self, title: str) -> bool:
+        """Check if a grid item with the given title exists in the Shell grid"""
+        locator = shell_names.shell_grid_item.copy()
+        locator["title"] = title
+        grid_item = Button(locator)
+        return grid_item.is_visible
 
-    @allure.step('Open Messages from shell dock')
-    def open_messages_from_dock(self) -> MessagesScreen:
-        """Navigate to Messages from shell dock"""
-        self.wait_for_shell_ui_loaded()
-        messages_button = Button(shell_names.shell_regular_dock_button_messages)
-        messages_button.click()
-        return MessagesScreen().wait_until_appears()
+    @allure.step('Wait for grid item to appear')
+    def wait_for_grid_item_by_title(self, title: str, timeout_msec: int = 10000):
+        """Wait for a grid item to appear in the Shell grid"""
+        return driver.waitFor(
+            lambda: self.has_grid_item_by_title(title), timeout_msec
+        )
 
-    @allure.step('Open Communities from shell dock')
-    def open_communities_from_dock(self) -> CommunitiesPortal:
-        """Navigate to Communities from shell dock"""
-        self.wait_for_shell_ui_loaded()
-        communities_button = Button(shell_names.shell_regular_dock_button_communities)
-        communities_button.click()
-        return CommunitiesPortal().wait_until_appears()
-
-    @allure.step('Open Market from shell dock')
-    def open_market_from_dock(self):
-        """Navigate to Market from shell dock"""
-        self.wait_for_shell_ui_loaded()
-        market_button = Button(shell_names.shell_regular_dock_button_market)
-        market_button.click()
-        return MarketScreen().wait_until_appears()
+    @allure.step('Wait for grid item to be removed')
+    def wait_for_grid_item_removed_by_title(self, title: str, timeout_msec: int = 10000):
+        """Wait for a grid item to be removed from the Shell grid"""
+        return driver.waitFor(
+            lambda: not self.has_grid_item_by_title(title), timeout_msec
+        )
 
     @allure.step('Open Communities Portal from shell grid')
     def open_communities_portal_from_grid(self) -> CommunitiesPortal:
         """Navigate to Communities Portal from shell grid"""
-        communities_item = Button({"container": shell_names.shell_grid, "title": "Communities", "type": "ShellGridItem", "visible": True})
-        communities_item.click()
+        self.click_grid_item_by_title("Communities")
         return CommunitiesPortal().wait_until_appears()
 
-    @allure.step('Click grid item by title')
-    def click_grid_item(self, title: str):
-        """Click a grid item by its title"""
-        grid_item = Button({"container": shell_names.shell_grid, "title": title, "type": "ShellGridItem", "visible": True})
-        grid_item.click()
+    # =============================================================================
+    # DOCK FUNCTIONS
+    # =============================================================================
 
-    @allure.step('Check if account exists in Shell grid by name')
-    def has_account_in_grid_by_name(self, account_name: str) -> bool:
-        """Check if an account with the given name exists in the Shell grid"""
-        locator = shell_names.shell_grid_item.copy()
-        locator["title"] = account_name
-        account_grid_item = Button(locator)
-        return account_grid_item.is_visible
-
-    @allure.step('Check if account exists in Shell grid')
-    def has_account_in_grid(self, account_name: str) -> bool:
-        """Check if an account exists in Shell grid by name."""
-        return self.has_account_in_grid_by_name(account_name)
-
-    @allure.step('Wait for account to appear in Shell grid')
-    def wait_for_account_in_grid(self, account_name: str, timeout_msec: int = 10000):
-        """Wait for an account to appear in the Shell grid"""
-        return driver.waitFor(
-            lambda: self.has_account_in_grid(account_name), timeout_msec
-        )
-
-    @allure.step('Wait for account to be removed from Shell grid')
-    def wait_for_account_removed_from_grid(self, account_name: str, timeout_msec: int = 10000):
-        """Wait for an account to be removed from the Shell grid"""
-        return driver.waitFor(
-            lambda: not self.has_account_in_grid(account_name), timeout_msec
-        )
+    @allure.step('Open screen from shell dock')
+    def open_from_dock(self, screen_name: str):
+        """Navigate to a screen from shell dock"""
+        self.wait_for_shell_ui_loaded()
+        
+        if screen_name in self.dock_buttons:
+            button_locator, screen_class = self.dock_buttons[screen_name]
+            Button(button_locator).click()
+            return screen_class().wait_until_appears()
+        else:
+            raise ValueError(f"Unknown screen: {screen_name}")
 
     @allure.step('Click dock button by text')
-    def click_dock_button(self, text: str):
+    def click_dock_button_by_text(self, text: str):
         """Click a dock button by its text"""
-        # Use specific static locators for known buttons
-        if text == "Wallet":
-            dock_button = Button(shell_names.shell_regular_dock_button_wallet)
-        elif text == "Market":
-            dock_button = Button(shell_names.shell_regular_dock_button_market)
-        elif text == "Messages":
-            dock_button = Button(shell_names.shell_regular_dock_button_messages)
-        elif text == "Communities":
-            dock_button = Button(shell_names.shell_regular_dock_button_communities)
-        elif text == "Settings":
-            dock_button = Button(shell_names.shell_regular_dock_button_settings)
+        if text in self.dock_buttons:
+            button_locator, _ = self.dock_buttons[text]
+            Button(button_locator).click()
         else:
-            # Fallback to generic locator for unknown buttons
-            dock_button = Button({"container": shell_names.shellDockButtonLoader_Loader, "text": text, "type": "ShellDockButton", "visible": True})
-        
-        dock_button.click()
+            # Fallback for unknown buttons
+            locator = shell_names.shell_generic_dock_button.copy()
+            locator["text"] = text
+            Button(locator).click()
+
+
+    # =============================================================================
+    # UTILITY FUNCTIONS
+    # =============================================================================
 
     @allure.step('Wait for shell UI to be fully loaded')
     def wait_for_shell_ui_loaded(self):
-        # Wait for animation and loading to finish
+        # TODO: Create method to confirm rendering has finished.
         time.sleep(0.5)
-    
         return self
 

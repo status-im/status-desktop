@@ -63,13 +63,13 @@ def test_delete_generated_account_from_wallet_settings(
         shell_screen.wait_for_shell_ui_loaded()
         
         # Verify account appears in grid
-        assert shell_screen.wait_for_account_in_grid(account_name=account_name), \
+        assert shell_screen.wait_for_grid_item_by_title(account_name), \
             f"Account '{account_name}' should be visible in Shell grid"
 
     with step('Navigate to wallet and reopen account details for deletion'):
         # Navigate to wallet screen first, then to settings to get fresh acc_view
-        main_screen.shell.open_wallet_from_dock()
-        step('Open account details view for the generated account')
+        main_screen.shell.open_from_dock("Wallet")
+        acc_view = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(account_name, account_index)
 
     with step('Delete generated account'):
         delete_confirmation_popup = acc_view.click_remove_account_button()
@@ -90,5 +90,5 @@ def test_delete_generated_account_from_wallet_settings(
         shell_screen = main_screen.left_panel.open_shell()
         shell_screen.wait_for_shell_ui_loaded()
         
-        assert shell_screen.wait_for_account_removed_from_grid(account_name=account_name), \
+        assert shell_screen.wait_for_grid_item_removed_by_title(account_name), \
             f"Account '{account_name}' should no longer be visible in Shell grid"
