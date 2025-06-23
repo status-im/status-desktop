@@ -125,8 +125,22 @@ Install [Homebrew](https://brew.sh/) if not already installed.
 #### Install Required Packages
 
 ```bash
-brew install cmake pkg-config go@1.22 qt@5 jq nvm yarn
+brew install cmake pkg-config go@1.22 qt@5 jq nvm yarn protobuf
 ```
+
+
+#### Export GITHUB_USER and GITHUB_TOKEN environment variables
+
+`status-desktop` uses Homebrew to download precompiled binary packages ("bottles") from GitHub.
+Sometimes, Homebrew can hit GitHub's API rate limits, causing builds to fail.
+To avoid this, you can generate a [GitHub personal access token](https://github.com/settings/personal-access-tokens) and export it in your environment:
+
+
+```shell
+export GITHUB_TOKEN=github_pat_YOURSUPERSECRETTOKENDONOTSHARE
+export GITHUB_USER=yourgithubname
+```
+
 
 #### Install Node.js
 
