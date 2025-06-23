@@ -23,6 +23,4 @@
 - Run file I/O operations asynchronously to avoid blocking the UI.
 
 ## Supportability
-- Define a clear schema and versioning strategy for the backup file format.
-- Keep backup/export logic modular to support future extensions (e.g., selective data export, cloud sync).
-- Ensure testability of backup/import logic and provide mocks or fixtures for CI.
+- Keep backup/export logic modular to support future extensions (e.g., selective data export).
