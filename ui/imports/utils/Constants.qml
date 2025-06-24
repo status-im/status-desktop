@@ -908,6 +908,10 @@ QtObject {
     readonly property string ios: "ios"
 
     readonly property bool isMobile: Qt.platform.os === android || Qt.platform.os === ios
+    readonly property bool isIOS: Qt.platform.os === ios
+    readonly property bool isAndroid: Qt.platform.os === android
+
+    readonly property string iosPhotoLibraryShortcut: "assets-library://"
 
     // Transaction states
     readonly property int addressRequested: 1
