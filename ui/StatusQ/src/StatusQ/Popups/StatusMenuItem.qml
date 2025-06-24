@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
 
 MenuItem {
     id: root
@@ -23,10 +22,10 @@ MenuItem {
         id: d
 
         readonly property bool isSubMenu: !!root.subMenu
-        readonly property bool isStatusSubMenu: isSubMenu && (root.subMenu instanceof StatusMenu)
+        readonly property bool isStatusSubMenu: isSubMenu && root.subMenu.toString().startsWith("StatusMenu_")
         readonly property bool subMenuOpened: isSubMenu && root.subMenu.opened
         readonly property bool hasAction: !!root.action
-        readonly property bool isStatusAction: d.hasAction && (root.action instanceof StatusAction)
+        readonly property bool isStatusAction: d.hasAction && root.action.toString().startsWith("StatusAction_")
         readonly property bool isStatusDangerAction: (d.isStatusAction && root.action.type === StatusAction.Type.Danger) ||
                                                      (d.isStatusSubMenu && root.subMenu.type === StatusAction.Type.Danger)
         readonly property bool isStatusSuccessAction: (d.isStatusAction && root.action.type === StatusAction.Type.Success) ||
