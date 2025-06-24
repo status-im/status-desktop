@@ -8,6 +8,8 @@
 #include <QProcess>
 #include <QSaveFile>
 
+#include "ios_utils.h"
+
 SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
     : QObject{parent}
 {}
@@ -23,6 +25,47 @@ void SystemUtilsInternal::restartApplication() const
 #endif
     QMetaObject::invokeMethod(QCoreApplication::instance(), &QCoreApplication::exit, Qt::QueuedConnection, EXIT_SUCCESS);
 }
+
+#if defined(Q_OS_IOS)
+void save(const QByteArray& imageData)
+{
+    saveImageToPhotosAlbum(imageData);
+}
+#else
+void save(const QByteArray& imageData, const QString& targetDir)
+{
+
+    // Get current Date/Time information to use in naming of the image file
+    const auto dateTimeString = QDateTime::currentDateTime().toString(
+                QStringLiteral("dd-MM-yyyy_hh-mm-ss"));
+
+    // Get the preferred extension
+    QMimeDatabase mimeDb;
+    auto ext = mimeDb.mimeTypeForData(imageData).preferredSuffix();
+    if (ext.isEmpty())
+        ext = QStringLiteral("jpg");
+
+    // Construct the target path
+    const auto targetFile = QStringLiteral("%1/image_%2.%3").arg(
+                targetDir, dateTimeString, ext);
+
+    // Save the image in a safe way
+    QSaveFile image(targetFile);
+    if (!image.open(QIODevice::WriteOnly)) {
+        qWarning() << "SystemUtilsInternal::downloadImageByUrl: "
+                        "Downloading image failed while opening the save file:"
+                    << targetFile;
+        return;
+    }
+
+    if (image.write(imageData) != -1)
+        image.commit();
+    else
+        qWarning() << "SystemUtilsInternal::downloadImageByUrl: "
+                        "Downloading image failed while saving to file:"
+                    << targetFile;
+}
+#endif
 
 void SystemUtilsInternal::downloadImageByUrl(
         const QUrl& url, const QString& path) const
@@ -48,36 +91,11 @@ void SystemUtilsInternal::downloadImageByUrl(
         // Extract the image data to be able to load and save it
         const auto btArray = reply->readAll();
         Q_ASSERT(!btArray.isEmpty());
-
-        // Get current Date/Time information to use in naming of the image file
-        const auto dateTimeString = QDateTime::currentDateTime().toString(
-                    QStringLiteral("dd-MM-yyyy_hh-mm-ss"));
-
-        // Get the preferred extension
-        QMimeDatabase mimeDb;
-        auto ext = mimeDb.mimeTypeForData(btArray).preferredSuffix();
-        if (ext.isEmpty())
-            ext = QStringLiteral("jpg");
-
-        // Construct the target path
-        const auto targetFile = QStringLiteral("%1/image_%2.%3").arg(
-                    targetDir, dateTimeString, ext);
-
-        // Save the image in a safe way
-        QSaveFile image(targetFile);
-        if (!image.open(QIODevice::WriteOnly)) {
-            qWarning() << "SystemUtilsInternal::downloadImageByUrl: "
-                          "Downloading image failed while opening the save file:"
-                       << targetFile;
-            return;
-        }
-
-        if (image.write(btArray) != -1)
-            image.commit();
-        else
-            qWarning() << "SystemUtilsInternal::downloadImageByUrl: "
-                          "Downloading image failed while saving to file:"
-                       << targetFile;
+        #ifdef Q_OS_IOS
+        save(btArray);
+        #else
+        save(btArray, targetDir);
+        #endif
     });
 }
 

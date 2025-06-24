@@ -221,8 +221,8 @@ Item {
                 property var lastDragPoint: null
                 onReleased: lastDragPoint = null
 
-                onMouseXChanged: updateDrag(Qt.point(mouse.x, mouse.y))
-                onMouseYChanged: updateDrag(Qt.point(mouse.x, mouse.y))
+                onMouseXChanged: (mouse) => updateDrag(Qt.point(mouse.x, mouse.y))
+                onMouseYChanged: (mouse) => updateDrag(Qt.point(mouse.x, mouse.y))
 
                 onWheel: {
                     const delta = wheel.angleDelta.y / 120
