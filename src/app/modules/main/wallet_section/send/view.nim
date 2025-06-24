@@ -165,12 +165,6 @@ QtObject:
   proc sendTransactionSentSignal*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) =
     self.transactionSent(uuid, chainId, approvalTx, txHash, error)
 
-  proc parseChainIds(chainIds: string): seq[int] =
-    var parsedChainIds: seq[int] = @[]
-    for chainId in chainIds.split(':'):
-      parsedChainIds.add(chainId.parseInt())
-    return parsedChainIds
-
   proc authenticateAndTransfer*(self: View, uuid: string) {.slot.} =
     self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, uuid)
 
@@ -204,11 +198,8 @@ QtObject:
     except:
       error "parsing slippage failed", slippage=slippagePercentageString
 
-    # need to append the disabled chains from global settings, otherwise a route
-    # with a network that is not enabled is returned by the router
-    let disabledChainIds = self.delegate.getDisabledChainIds()
-    let disabledFromNetworks = disabledChainIds & self.fromNetworksRouteModel.getRouteDisabledNetworkChainIds()
-    let disabledToNetworks = disabledChainIds & self.toNetworksRouteModel.getRouteDisabledNetworkChainIds()
+    let selectedFromChain = self.fromNetworksRouteModel.getSelectedChain()
+    let selectedToChain = self.toNetworksRouteModel.getSelectedChain()
 
     self.delegate.suggestedRoutes(
       uuid,
@@ -220,8 +211,8 @@ QtObject:
       amountIn,
       self.selectedToAssetKey,
       amountOut,
-      disabledFromNetworks,
-      disabledToNetworks,
+      selectedFromChain,
+      selectedToChain,
       slippagePercentage,
       extraParamsTable
     )
@@ -266,8 +257,8 @@ QtObject:
     amountOut: string,
     token: string,
     toToken: string,
-    disabledFromChainIDs: string,
-    disabledToChainIDs: string,
+    fromChainID: int,
+    toChainID: int,
     sendType: int,
     slippagePercentageString: string) {.slot.} =
     var slippagePercentage: float
@@ -286,8 +277,8 @@ QtObject:
       amountIn,
       toToken,
       amountOut,
-      parseChainIds(disabledFromChainIDs),
-      parseChainIds(disabledToChainIDs),
+      fromChainID,
+      toChainID,
       slippagePercentage
     )
 

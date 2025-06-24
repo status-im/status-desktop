@@ -25,7 +25,7 @@ QtObject {
     readonly property CurrenciesStore currencyStore: CurrenciesStore {}
 
     readonly property TokensStore tokensStore: TokensStore {}
-    
+
     readonly property var accounts: WalletSendAccountsModel {
         Component.onCompleted: selectedSenderAccountAddress = accounts.get(0).address
     }
@@ -164,7 +164,7 @@ QtObject {
     function setAllNetworksAsRoutePreferredChains() {
     }
 
-    function setRouteEnabledFromChains(chainId) {
+    function setRouteEnabledChain(chainId) {
     }
 
     function setSelectedTokenIsOwnerToken(isOwnerToken) {

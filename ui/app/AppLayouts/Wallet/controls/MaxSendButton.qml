@@ -2,6 +2,7 @@ import QtQuick 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 StatusButton {
     required property string formattedValue

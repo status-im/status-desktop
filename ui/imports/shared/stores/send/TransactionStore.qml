@@ -98,18 +98,6 @@ QtObject {
         walletSectionSendInst.setReceiverAccount(address)
     }
 
-    function toggleFromDisabledChains(chainId) {
-        walletSectionSendInst.fromNetworksRouteModel.toggleRouteDisabledChains(chainId)
-    }
-
-    function toggleToDisabledChains(chainId) {
-        walletSectionSendInst.toNetworksRouteModel.toggleRouteDisabledChains(chainId)
-    }
-
-    function setRouteDisabledChains(chainId, disabled) {
-        walletSectionSendInst.toNetworksRouteModel.setRouteDisabledChains(chainId, disabled)
-    }
-
     function setSelectedTokenName(tokenName) {
         walletSectionSendInst.setSelectedTokenName(tokenName)
     }
@@ -118,8 +106,12 @@ QtObject {
         walletSectionSendInst.setSelectedTokenIsOwnerToken(isOwnerToken)
     }
 
-    function setRouteEnabledFromChains(chainId) {
-        walletSectionSendInst.fromNetworksRouteModel.setRouteEnabledFromChains(chainId)
+    function setRouteEnabledChainFrom(chainId) {
+        walletSectionSendInst.fromNetworksRouteModel.setRouteEnabledChain(chainId)
+    }
+
+    function setRouteEnabledChainTo(chainId) {
+        walletSectionSendInst.toNetworksRouteModel.setRouteEnabledChain(chainId)
     }
 
     function setSelectedAssetKey(assetsKey) {

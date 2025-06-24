@@ -81,10 +81,10 @@ SplitView {
             readonly property var accounts: WalletAccountsModel {}
 
             function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
-                                          disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType) {
+                                          fromChainID, toChainID, preferredChainIDs, sendType) {
                 console.debug("fetchSuggestedRoutes called >> uuid = ", uuid, " accountFrom = ", accountFrom, " accountTo =",
                               accountTo, "amount = ", amount, " tokenFrom = ", tokenFrom, " tokenTo = ", tokenTo,
-                              " disabledFromChainIDs = ", disabledFromChainIDs, " disabledToChainIDs = ", disabledToChainIDs,
+                              " fromChainID = ", fromChainID, " toChainID = ", toChainID,
                               " preferredChainIDs = ", preferredChainIDs, " sendType =", sendType)
                 d.uuid = uuid
                 fetchSuggestedRoutesSignal()
