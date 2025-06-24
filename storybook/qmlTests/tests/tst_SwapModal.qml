@@ -35,7 +35,7 @@ Item {
             return wei/(10**decimals)
         }
         function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
-                                      disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType) {
+                                      fromChainID, toChainID, preferredChainIDs, sendType) {
                     swapStore.fetchSuggestedRoutesCalled()
         }
         function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
@@ -2017,7 +2017,7 @@ Item {
             verify(!!invertQuoteApproximation)
 
             verify(sellItem.visible) // left item is visible once the from token is set
-            verify(quoteItem.visible) 
+            verify(quoteItem.visible)
             verify(quoteItem.loading) // right item is loading until routes are fetched
             verify(!priceItem.visible)
             verify(!invertQuoteApproximation.visible)

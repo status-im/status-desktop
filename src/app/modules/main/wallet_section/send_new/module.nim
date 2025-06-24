@@ -310,8 +310,6 @@ method suggestedRoutes*(self: Module,
   slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
   self.clearTmpData()
-  let networks = self.controller.getCurrentNetworks()
-  let disabledNetworks = networks.filter(x => x.chainId != chainId).map(x => x.chainId)
   self.controller.suggestedRoutes(
     uuid,
     sendType,
@@ -322,8 +320,8 @@ method suggestedRoutes*(self: Module,
     amountIn,
     toToken,
     amountOut,
-    disabledNetworks,
-    disabledNetworks,
+    chainId,
+    chainId,
     slippagePercentage,
     extraParamsTable
   )

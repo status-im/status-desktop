@@ -92,8 +92,8 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
     try:
       if event.contains("Uuid"):
         result.uuid = event["Uuid"].getStr()
-      if event.contains("Best"):
-        let bestRouteJsonNode = event["Best"]
+      if event.contains("Route"):
+        let bestRouteJsonNode = event["Route"]
         result.bestRouteRaw = $bestRouteJsonNode
         result.bestRoute = bestRouteJsonNode.toTransactionPathsDtoV2()
       if event.contains("ErrorResponse"):

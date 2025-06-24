@@ -6,18 +6,6 @@ import stint
 import ../../../backend/backend as backend
 
 type
-  GetSuggestedRoutesTaskArg* = ref object of QObjectTaskArg
-    accountFrom: string
-    accountTo: string
-    amount: Uint256
-    token: string
-    toToken: string # used for swap only
-    disabledFromChainIDs: seq[int]
-    disabledToChainIDs: seq[int]
-    preferredChainIDs: seq[int]
-    sendType: SendType
-
-type
   WatchTransactionTaskArg* = ref object of QObjectTaskArg
     data: string
     hash: string
