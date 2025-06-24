@@ -66,6 +66,8 @@ Control {
             }
 
             function updateCommunityImage() {
+                if (!root.communityId) // in a grouped (non-community) delegate don't overwrite the group icon
+                    return
                 // Ensure we keep the flag in sync with the type of asset otherwise we generate warnings
                 identicon.asset.name = ""
                 identicon.asset.isImage = !!root.communityImage
@@ -100,7 +102,7 @@ Control {
                     return root.communityName
                 }
                 elide: Text.ElideRight
-                color: enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1                
+                color: enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
             }
 
             CopyToClipBoardButton {
@@ -113,7 +115,7 @@ Control {
                 icon.color: Theme.palette.directColor1
                 color: Theme.palette.transparent
                 textToCopy: root.communityName
-                onCopyClicked: ClipboardUtils.setText(textToCopy)
+                onCopyClicked: (textToCopy) => ClipboardUtils.setText(textToCopy)
             }           
         }
     }
