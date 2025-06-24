@@ -115,13 +115,39 @@ if [ -z "$ANDROID_SERIAL" ]; then
 fi
 
 echo "Installing app"
-$ADB -s $ANDROID_SERIAL uninstall im.status.tablet
-$ADB -s $ANDROID_SERIAL install -r $APP
+
+echo
+echo "⚠️  NOTE: In some cases installing new app without uninstalling old "
+echo "    one will create a signature mismatch issue and lead to failure in app installation "
+echo "    if you choose to Uninstall the existing app, please note that -"
+echo "    Uninstalling the existing app will wipe its stored data."
+echo "    If you care about keeping your messages and media, please"
+echo "    back up Status folder"
+read -p "Do you want to uninstall the existing app before installing the new one? [y/N] " confirm
+
+if [[ "$confirm" =~ ^[Yy] ]]; then
+    echo
+    echo "→ Uninstalling existing app…"
+    $ADB -s $ANDROID_SERIAL uninstall im.status.tablet
+    if [ $? -ne 0 ]; then
+        echo "❌ Uninstall failed (perhaps it wasn’t installed?). Continuing with install…"
+    fi
+    echo
+    echo "→ Installing new app…"
+    $ADB -s $ANDROID_SERIAL install -r "$APP"
+else
+    echo
+    echo "→ Skipping uninstall. Installing new app directly…"
+    $ADB -s $ANDROID_SERIAL install -r "$APP"
+fi
+
 if [ $? -ne 0 ]; then
-    echo "App installation failed."
+    echo
+    echo "❌ App installation failed."
     exit 1
 else
-    echo "App installed successfully."
+    echo
+    echo "✅ App installed successfully."
 fi
 
 echo "App installed. Starting app"
