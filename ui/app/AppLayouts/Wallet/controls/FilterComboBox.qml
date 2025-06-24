@@ -36,7 +36,7 @@ ComboBox {
     }
 
     enabled: d.searchTextLowerCase || d.combinedProxyModel.count || d.uncategorizedModel.count
-    opacity: enabled ? 1 : 0.3
+    opacity: enabled ? 1 : Theme.disabledOpacity
 
     displayText: qsTr("Collection")
 
@@ -257,22 +257,12 @@ ComboBox {
                     height: d.defaultDelegateHeight
                     spacing: 0
 
-                    Rectangle {
+                    StatusMenuHeadline {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        color: Theme.palette.statusListItem.backgroundColor
 
-                        StatusBaseText {
-                            anchors.fill: parent
-                            anchors.leftMargin: Theme.padding
-                            anchors.rightMargin: Theme.padding
-                            verticalAlignment: Text.AlignVCenter
-                            text: section === "community" ? qsTr("Community minted") : root.hasCommunityGroups ? qsTr("Other")
-                                                                                                               : qsTr("Collections")
-                            color: Theme.palette.baseColor1
-                            font.pixelSize: Theme.tertiaryTextFontSize
-                            elide: Text.ElideRight
-                        }
+                        text: section === "community" ? qsTr("Community minted") : root.hasCommunityGroups ? qsTr("Other")
+                                                                                                           : qsTr("Collections")
                     }
 
                     // floating divider

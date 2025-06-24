@@ -9,9 +9,8 @@ StatusMenu {
 
     hideDisabledItems: false
 
-    StatusAction {
+    StatusMenuHeadline {
         text: qsTr("Link previews")
-        enabled: false
     }
 
     StatusAction {
