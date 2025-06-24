@@ -13,7 +13,9 @@ QtObject {
     readonly property string android: "android"
     readonly property string ios: "ios"
 
-    readonly property bool isMobile: Qt.platform.os === android || Qt.platform.os === ios
+    readonly property bool isMobile: isIOS || isAndroid
+    readonly property bool isIOS: Qt.platform.os === ios
+    readonly property bool isAndroid: Qt.platform.os === android
 
     function getAbsolutePosition(node) {
         var returnPos = {};
