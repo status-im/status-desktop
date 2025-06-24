@@ -32,11 +32,11 @@ QtObject {
     }
 
     function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amountIn, amountOut, tokenFrom, tokenTo,
-        disabledFromChainIDs, disabledToChainIDs, sendType, slippagePercentage) {
+        fromChainID, toChainID, sendType, slippagePercentage) {
         const valueIn = AmountsArithmetic.fromNumber(amountIn)
         const valueOut = AmountsArithmetic.fromNumber(amountOut)
         root.walletSectionSendInst.fetchSuggestedRoutesWithParameters(uuid, accountFrom, accountTo, valueIn.toFixed(), valueOut.toFixed(),
-            tokenFrom, tokenTo, disabledFromChainIDs, disabledToChainIDs, sendType, slippagePercentage)
+            tokenFrom, tokenTo, fromChainID, toChainID, sendType, slippagePercentage)
     }
 
     function resetData() {

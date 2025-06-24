@@ -152,7 +152,7 @@ StatusDialog {
                 store.setSendType(sendType)
                 amountToSend.setValue("1")
                 store.setSelectedAssetKey(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
-                store.setRouteEnabledFromChains(selectedHolding.chainId)
+                store.setRouteEnabledChain(selectedHolding.chainId)
                 store.updateRoutePreferredChains(selectedHolding.chainId)
                 store.setSelectedTokenIsOwnerToken(selectedHolding.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner)
             }
@@ -266,6 +266,28 @@ StatusDialog {
             store.setSendType(popup.preSelectedSendType)
         }
 
+        if(d.isBridgeTx) {
+            let initiallySelectedFromChain = 0
+            if (fromNetworksRouteModel.ModelCount.count > 0) {
+                const item = SQUtils.ModelUtils.get(fromNetworksRouteModel, 0)
+                initiallySelectedFromChain = item.chainId
+            }
+
+            let initiallySelectedToChain = 0
+            for (let i = 0; i < toNetworksRouteModel.ModelCount.count; ++i) {
+                const item = SQUtils.ModelUtils.get(toNetworksRouteModel, i)
+                if (item.chainId !== initiallySelectedFromChain) {
+                    initiallySelectedToChain = item.chainId
+                    break
+                }
+            }
+
+            if (initiallySelectedFromChain > 0 && initiallySelectedToChain > 0) {
+                popup.store.setRouteEnabledChainFrom(initiallySelectedFromChain)
+                popup.store.setRouteEnabledChainTo(initiallySelectedToChain)
+            }
+        }
+
         // To be removed once bridge is splitted to a different component:
         if(d.isBridgeTx && !!popup.preSelectedAccountAddress) {
             // Default preselected type is `Helpers.RecipientAddressObjectType.Address` coinciding with bridge usecase
@@ -329,7 +351,7 @@ StatusDialog {
         if (!!popup.preDefinedRawAmountToSend) {
             amountToSend.setRawValue(popup.preDefinedRawAmountToSend)
         }
-        
+
         if (!!popup.preSelectedChainId) {
             popup.preDefinedAmountToSend = popup.preDefinedAmountToSend.replace(Qt.locale().decimalPoint, '.')
             store.updateRoutePreferredChains(popup.preSelectedChainId)

@@ -27,7 +27,7 @@ Item {
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
-    property bool advancedMode: tabBar.currentIndex === 1
+    property bool advancedMode: true
     property bool errorMode: advancedNetworkRoutingPage.errorMode
     property bool interactive: true
     property bool isBridgeTx: false
@@ -38,8 +38,6 @@ Item {
     property int errorType: Constants.NoError
     property var bestRoutes
     property double totalFeesInFiat
-
-    readonly property int currentIndex: tabBar.currentIndex
 
     property string routerError: ""
     property string routerErrorDetails: ""
@@ -55,63 +53,12 @@ Item {
         readonly property color backgroundRectColor: Theme.palette.indirectColor1
     }
 
-    StatusSwitchTabBar {
-        id: tabBar
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: !root.isCollectiblesTransfer
-        StatusSwitchTabButton {
-            text: qsTr("Simple")
-        }
-        StatusSwitchTabButton {
-            text: qsTr("Advanced")
-            showBetaTag: true
-        }
-    }
-
     StackLayout {
         id: stackLayout
-        anchors.top: !root.isCollectiblesTransfer ? tabBar.bottom: parent.top
+        anchors.top: parent.top
         anchors.topMargin: !root.isCollectiblesTransfer ? Theme.bigPadding: 0
-        height: currentIndex == 0 ? networksSimpleRoutingPage.height + networksSimpleRoutingPage.anchors.margins + Theme.bigPadding:
-                                   advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Theme.bigPadding
+        height: advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Theme.bigPadding
         width: parent.width
-        currentIndex: root.isCollectiblesTransfer ? 0: tabBar.currentIndex === 0 ? 0 : 1
-
-        Rectangle {
-            id: simple
-            radius: d.backgroundRectRadius
-            color: d.backgroundRectColor
-            NetworksSimpleRoutingView {
-                id: networksSimpleRoutingPage
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.margins: Theme.padding
-                isBridgeTx: root.isBridgeTx
-                isCollectiblesTransfer: root.isCollectiblesTransfer
-                minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
-                isLoading: root.isLoading
-                store: root.store
-                networksStore: root.networksStore
-                errorMode: root.errorMode
-                errorType: root.errorType
-                fromNetworksList: root.fromNetworksList
-                suggestedToNetworksList: root.suggestedToNetworksList
-                // Collectibles don't have a symbol
-                selectedSymbol: !!root.selectedAsset && !!root.selectedAsset.symbol ? root.selectedAsset.symbol: ""
-                fnRawToDecimal: function(rawValue) {
-                    if(!!selectedAsset && root.selectedAsset !== undefined)
-                        return parseFloat(store.getWei2Eth(rawValue, root.selectedAsset.decimals))
-                }
-                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
-                reCalculateSuggestedRoute: function() {
-                    root.reCalculateSuggestedRoute()
-                }
-
-                showBetaTag: !root.isLoading && !!root.bestRoutes && root.bestRoutes.count > 1
-            }
-        }
 
         Rectangle {
             id: advanced

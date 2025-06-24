@@ -201,17 +201,6 @@ QObject {
         d.txHash = ""
     }
 
-    function getDisabledChainIds(enabledChainId) {
-        let disabledChainIds = []
-        let chainIds = ModelUtils.modelToFlatArray(root.networksStore.activeNetworks, "chainId")
-        for (let i = 0; i < chainIds.length; i++) {
-            if (chainIds[i] !== enabledChainId) {
-                disabledChainIds.push(chainIds[i])
-            }
-        }
-        return disabledChainIds.join(":")
-    }
-
     function invalidateSuggestedRoute() {
         d.uuid = ""
         root.validSwapProposalReceived = false
@@ -229,11 +218,11 @@ QObject {
             root.swapProposalLoading = true
 
             let accountAddress = root.swapFormData.selectedAccountAddress
-            let disabledChainIds = getDisabledChainIds(root.swapFormData.selectedNetworkChainId)
 
             root.swapStore.fetchSuggestedRoutes(d.uuid, accountAddress, accountAddress,
                                                 cryptoValueInRaw, "0", root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
-                                                disabledChainIds, disabledChainIds, Constants.SendType.Swap, root.swapFormData.selectedSlippage)
+                                                root.swapFormData.selectedNetworkChainId, root.swapFormData.selectedNetworkChainId,
+                                                Constants.SendType.Swap, root.swapFormData.selectedSlippage)
         } else {
             root.swapProposalLoading = false
             root.swapOutputData.reset()
