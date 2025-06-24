@@ -107,14 +107,10 @@ ComboBox {
 
         contentItem: ColumnLayout {
             spacing: 0
-            StatusBaseText {
+            StatusMenuHeadline {
                 Layout.fillWidth: true
                 Layout.preferredHeight: d.defaultDelegateHeight
                 text: qsTr("Sort by")
-                font.pixelSize: Theme.tertiaryTextFontSize
-                leftPadding: Theme.padding
-                verticalAlignment: Qt.AlignVCenter
-                color: Theme.palette.baseColor1
             }
             StatusListView {
                 Layout.fillWidth: true
