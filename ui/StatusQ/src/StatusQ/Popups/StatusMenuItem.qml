@@ -151,7 +151,7 @@ MenuItem {
         StatusIcon {
             Layout.preferredHeight: 16
             Layout.alignment: Qt.AlignRight
-            visible: root.checkable && root.checked
+            visible: root.checked
             icon: "tiny/checkmark"
             color: Theme.palette.primaryColor1
         }
