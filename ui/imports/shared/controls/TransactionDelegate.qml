@@ -131,12 +131,14 @@ StatusListItem {
     }
 
     readonly property string tokenImage: {
-        if (!isModelDataValid || d.txType === Constants.TransactionType.ContractDeployment)
+        if (!isModelDataValid || 
+            d.txType === Constants.TransactionType.ContractDeployment || 
+            d.txType === Constants.TransactionType.ContractInteraction)
             return ""
         if (root.isNFT) {
             return modelData.nftImageUrl ? modelData.nftImageUrl : ""
         } else {
-            return Constants.tokenIcon(isMultiTransaction ? modelData.outSymbol : modelData.symbol)
+            return Constants.tokenIcon(isMultiTransaction ? d.txType === Constants.TransactionType.Receive ? modelData.inSymbol : modelData.outSymbol : modelData.symbol)
         }
     }
 
@@ -298,6 +300,7 @@ StatusListItem {
             if (allAccounts)
                 return qsTr("%1 in %2 for %3 on %4").arg(transactionValue).arg(fromAddress).arg(approvalSpender).arg(networkName)
             return qsTr("%1 for %2 on %3").arg(transactionValue).arg(approvalSpender).arg(networkName)
+        case Constants.TransactionType.ContractInteraction:
         default:
             // Unknown contract interaction
             if (allAccounts)
