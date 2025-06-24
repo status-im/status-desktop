@@ -30,7 +30,7 @@ SplitView {
             hasImage: true
             image: "https://picsum.photos/200/300?random=1"
             iconName: "https://picsum.photos/40/40?random=1"
-            showcaseVisibility: 1
+            showcaseVisibility: 2
             name: "Test community"
             joined: true
             isControlNode: true
@@ -194,7 +194,7 @@ SplitView {
                                                                        hasImage: true,
                                                                        image: "https://picsum.photos/200/300?random=" + i,
                                                                        iconName: "https://picsum.photos/40/40?random=" + i,
-                                                                       showcaseVisibility: Math.ceil(Math.random() * 3),
+                                                                       showcaseVisibility: Math.random() > 0.5 ? Constants.ShowcaseVisibility.Everyone : Constants.ShowcaseVisibility.Contacts,
                                                                        name: "Test community",
                                                                        joined: true,
                                                                        isControlNode: true,
@@ -202,7 +202,7 @@ SplitView {
                                                                        hasTag: Math.random() > 0.5,
                                                                        tagText: "New " + 1,
                                                                        tagAsset: "https://picsum.photos/40/40?random=" + i,
-                                                                       tagLoading: Math.random() > 0.5
+                                                                       tagLoading: Math.random() > 0.9
                                                                    })} : (i) => {
             inShowcaseModelItem.remove(inShowcaseModelItem.count - 1);
         }
@@ -222,7 +222,7 @@ SplitView {
                                                                    hasImage: true,
                                                                    image: "https://picsum.photos/200/300?random=" + i,
                                                                    iconName: "https://picsum.photos/40/40?random=" + i,
-                                                                   showcaseVisibility: 0,
+                                                                   showcaseVisibility: Constants.ShowcaseVisibility.NoOne,
                                                                    name: "Test community",
                                                                    joined: true,
                                                                    memberRole: Constants.memberRole.owner,
@@ -243,3 +243,4 @@ SplitView {
 }
 
 // category: Panels
+// status: good
