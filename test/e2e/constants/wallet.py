@@ -3,11 +3,12 @@ from enum import Enum
 
 
 class DerivationPathName(Enum):
-    CUSTOM = 'Custom'
+    # TODO: https://github.com/status-im/status-desktop/issues/18233
+    # CUSTOM = 'Custom'
     ETHEREUM = 'Ethereum'
-    ETHEREUM_ROPSTEN = 'Ethereum Testnet (Ropsten)'
-    ETHEREUM_LEDGER = 'Ethereum (Ledger)'
-    ETHEREUM_LEDGER_LIVE = 'Ethereum (Ledger Live/KeepKey)'
+    # ETHEREUM_ROPSTEN = 'Ethereum Testnet (Ropsten)'
+    # ETHEREUM_LEDGER = 'Ethereum (Ledger)'
+    # ETHEREUM_LEDGER_LIVE = 'Ethereum (Ledger Live/KeepKey)'
 
     @classmethod
     def select_random_path_name(cls):

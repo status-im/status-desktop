@@ -1,3 +1,4 @@
+
 import configs.timeouts
 from constants.wallet import *
 from gui.screens.settings_keycard import KeycardSettingsView
@@ -145,15 +146,17 @@ class AccountPopup(BasePopup):
     def set_derivation_path(self, value: str, index: int, password: str):
         self._edit_derivation_path_button.hover().click()
         AuthenticatePopup().wait_until_appears().authenticate(password)
+        self._scroll.vertical_scroll_down(self._derivation_path_text_edit)
         if value in [_.value for _ in DerivationPathName]:
             self._derivation_path_combobox_button.click()
             self._derivation_path_list_item.real_name['title'] = value
             self._derivation_path_list_item.click()
-            del self._derivation_path_list_item.real_name['title']
             self._address_combobox_button.click()
-            GeneratedAddressesList().wait_until_appears().select(index)
-            if value != DerivationPathName.ETHEREUM.value:
+            addresses_list = GeneratedAddressesList().wait_until_appears()
+            addresses_list.select(index)
+            if value != 'Ethereum':
                 self._scroll.vertical_scroll_down(self._non_eth_checkbox)
+                assert self._non_eth_checkbox.is_visible
                 self._non_eth_checkbox.set(True)
         else:
             self._derivation_path_text_edit.type_text(str(index))
