@@ -337,8 +337,8 @@ method suggestedRoutes*(self: Module,
   amountIn: string,
   toToken: string = "",
   amountOut: string = "",
-  disabledFromChainIDs: seq[int] = @[],
-  disabledToChainIDs: seq[int] = @[],
+  fromChainID: int = 0,
+  toChainID: int = 0,
   slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
   self.clearTmpData()
@@ -352,8 +352,8 @@ method suggestedRoutes*(self: Module,
     amountIn,
     toToken,
     amountOut,
-    disabledFromChainIDs,
-    disabledToChainIDs,
+    fromChainID,
+    toChainID,
     slippagePercentage,
     extraParamsTable
   )
@@ -421,6 +421,3 @@ method reevaluateSwap*(self: Module, uuid: string, chainId: int, isApprovalTx: b
   let err = self.controller.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
   if err.len > 0:
     error "reevaluateRouterPath failed: ", err=err
-
-method getDisabledChainIds*(self: Module): seq[int] =
-  return self.controller.getDisabledChainIds()

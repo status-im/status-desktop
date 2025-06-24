@@ -31,8 +31,8 @@ method suggestedRoutes*(self: AccessInterface,
   amountIn: string,
   toToken: string = "",
   amountOut: string = "",
-  disabledFromChainIDs: seq[int] = @[],
-  disabledToChainIDs: seq[int] = @[],
+  fromChainID: int = 0,
+  toChainID: int = 0,
   slippagePercentage: float = 0.0,
   extraParamsTable: Table[string, string] = initTable[string, string]()) {.base.} =
     raise newException(ValueError, "No implementation available")
@@ -86,7 +86,4 @@ method getNetworkChainId*(self: AccessInterface, shortName: string): int {.base.
   raise newException(ValueError, "No implementation available")
 
 method reevaluateSwap*(self: AccessInterface, uuid: string, chainId: int, isApprovalTx: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getDisabledChainIds*(self: AccessInterface): seq[int] {.base.} =
   raise newException(ValueError, "No implementation available")

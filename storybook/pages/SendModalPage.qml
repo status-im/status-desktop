@@ -95,7 +95,6 @@ SplitView {
 
         property bool areTestNetworksEnabled: true
 
-        function setRouteDisabledChains(chainId, disabled) {}
         function resetData() {}
 
         walletAssetStore: root.walletAssetStore

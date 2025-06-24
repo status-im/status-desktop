@@ -111,7 +111,7 @@ Item {
                     disabled: !model.isRouteEnabled
                     clickable: root.interactive
                     onClicked: {
-                        store.toggleFromDisabledChains(model.chainId)
+                        store.setRouteEnabledChainFrom(model.chainId)
                         root.reCalculateSuggestedRoute()
                     }
                 }
@@ -173,7 +173,7 @@ Item {
                     clickable: root.interactive
                     loading: root.isLoading
                     onClicked: {
-                        store.toggleToDisabledChains(model.chainId)
+                        store.setRouteEnabledChainTo(model.chainId)
                         root.reCalculateSuggestedRoute()
                     }
                 }

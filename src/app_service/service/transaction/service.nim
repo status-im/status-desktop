@@ -378,8 +378,8 @@ QtObject:
     amountIn: string,
     toToken: string = "",
     amountOut: string = "",
-    disabledFromChainIDs: seq[int] = @[],
-    disabledToChainIDs: seq[int] = @[],
+    fromChainID: int = 0,
+    toChainID: int = 0,
     slippagePercentage: float = 0.0,
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
 
@@ -393,7 +393,7 @@ QtObject:
 
     try:
       let err = wallet.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
-        tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, slippagePercentage, extraParamsTable)
+        tokenIsOwnerToken, toToken, fromChainID, toChainID, slippagePercentage, extraParamsTable)
       if err.len > 0:
         raise newException(CatchableError, "err fetching the best route: " & err)
     except CatchableError as e:
@@ -406,17 +406,13 @@ QtObject:
     masterTokenParameters: JsonNode = JsonNode(), deploymentParameters: JsonNode = JsonNode()) =
     self.lastRequestForSuggestedRoutes = (uuid, sendType)
     try:
-      let
-        disabledFromChainIDs = self.networkService.getDisabledChainIdsForEnabledChainIds(@[chainId])
-        disabledToChainIDs = disabledFromChainIDs
-        feeToken = wallet_constants.nativeCurrencySymbol(chainId)
-
+      let feeToken = wallet_constants.nativeCurrencySymbol(chainId)
       let err = wallet.suggestedRoutesAsyncForCommunities(
         uuid,
         ord(sendType),
         accountFrom,
-        disabledFromChainIDs,
-        disabledToChainIDs,
+        fromChainID=chainId,
+        toChainID=chainId,
         communityId,
         feeToken,
         signerPubKey,
