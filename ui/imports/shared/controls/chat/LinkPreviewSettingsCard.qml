@@ -109,42 +109,4 @@ CalloutCard {
             onClicked: root.dismiss()
         }
     }
-
-    component ContextMenu: StatusMenu {
-        id: contextMenu
-
-        signal enableLinkPreviewForThisMessage()
-        signal enableLinkPreview()
-        signal disableLinkPreview()
-
-        hideDisabledItems: false
-        StatusAction {
-            text: qsTr("Link previews")
-            enabled: false
-        }
-
-        StatusAction {
-            text: qsTr("Show for this message")
-            objectName: "showForThisMessagePreviewMenuItem"
-            icon.name: "show"
-            onTriggered: contextMenu.enableLinkPreviewForThisMessage()
-        }
-
-        StatusAction {
-            text: qsTr("Always show previews")
-            objectName: "alwaysShowPreviewMenuItem"
-            icon.name: "show"
-            onTriggered: contextMenu.enableLinkPreview()
-        }
-
-        StatusMenuSeparator { }
-
-        StatusAction {
-            text: qsTr("Never show previews")
-            objectName: "neverShowPreviewsMenuItem"
-            icon.name: "hide"
-            type: StatusAction.Type.Danger
-            onTriggered: contextMenu.disableLinkPreview()
-        }
-    }
 }
