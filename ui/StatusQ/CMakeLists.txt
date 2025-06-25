@@ -189,6 +189,7 @@ add_library(StatusQ ${LIB_TYPE}
         src/undefinedfilter.cpp
         src/urlutils.cpp
         src/writableproxymodel.cpp
+        src/ios_utils.h
 
         # wallet
         src/wallet/managetokenscontroller.cpp
@@ -213,6 +214,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_sources(StatusQ PRIVATE
         src/statuswindow_osx.mm
         src/keychain_osx.mm
+    )
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
+    target_sources(StatusQ PRIVATE
+        src/ios_utils.mm
     )
 else ()
     target_sources(StatusQ PRIVATE

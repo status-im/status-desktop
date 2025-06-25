@@ -341,6 +341,13 @@ QtObject {
     }
 
     function openDownloadImageDialog(imageSource) {
+        // On IOS the app is sandboxed and the FileDialog has limited access to the system.
+        // We'll save the image to the default location - currenty the Photos album.
+        if (Constants.isIOS) {
+            SystemUtils.downloadImageByUrl(imageSource, "")
+            return
+        }
+
         // We don't use `openPopup`, because there's no `FileDialog::closed` signal.
         const popup = downloadImageDialogComponent.createObject(popupParent, { imageSource })
         popup.open()
@@ -612,7 +619,7 @@ QtObject {
             ImageCropWorkflow {
                 title: qsTr("Profile Picture")
                 acceptButtonText: qsTr("Make this my Profile Pic")
-                onImageCropped: {
+                onImageCropped: (image, cropRect) => {
                     if (!callback) {
                         console.error("ImageCropWorkflow: no callback provided")
                         return
