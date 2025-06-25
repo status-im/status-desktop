@@ -72,11 +72,6 @@ pipeline {
             'Windows', jenkins.Build('status-desktop/systems/windows/x86_64/package')
           )
         } } }
-        stage('MacOS/x86_64') { steps { script {
-          macos_x86_64 = getArtifacts(
-            'MacOS/x86_64', jenkins.Build('status-desktop/systems/macos/x86_64/package')
-          )
-        } } }
         stage('MacOS/aarch64') { steps { script {
           macos_aarch64 = getArtifacts(
             'MacOS/aarch64', jenkins.Build('status-desktop/systems/macos/aarch64/package')
