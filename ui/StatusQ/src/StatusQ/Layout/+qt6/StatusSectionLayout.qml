@@ -5,6 +5,8 @@ import QtQuick.Controls
 // TODO: Remove this once qt5 is dropped
 import "./+qt6" as SectionLayout
 
+import StatusQ.Core.Theme 0.1
+
 /*!
      \qmltype StatusSectionLayout
      \inherits LayoutChooser
@@ -47,8 +49,8 @@ import "./+qt6" as SectionLayout
 
 SectionLayout.LayoutChooser {
     id: root
-    implicitWidth: Window.window.minimumWidth
-    implicitHeight: Window.window.minimumHeight
+    implicitWidth: Theme.portraitBreakpoint.width
+    implicitHeight: Theme.portraitBreakpoint.height
 
     property Component handle: Item { }
 
