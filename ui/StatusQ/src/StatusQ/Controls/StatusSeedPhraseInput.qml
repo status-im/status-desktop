@@ -138,6 +138,7 @@ Item {
         implicitWidth: parent.width
         input.leftComponent: seedInputLeftComponent
         input.acceptReturn: true
+        input.edit.inputMethodHints: Qt.ImhSensitiveData | Qt.ImhNoPredictiveText | Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase
 
         Binding on input.background.border.color {
             value: Theme.palette.dangerColor1
