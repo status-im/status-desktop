@@ -685,7 +685,7 @@ QtObject:
   proc updateGroupChatDetails*(self: Service, communityID: string, chatID: string, name: string, color: string, imageJson: string) =
     try:
       var parsedImage = imageJson.parseJson
-      parsedImage["imagePath"] = %singletonInstance.utils.formatImagePath(parsedImage["imagePath"].getStr)
+      parsedImage["imagePath"] = %singletonInstance.utils.fromPathUri(parsedImage["imagePath"].getStr)
       let response = status_chat.editChat(communityID, chatID, name, color, $parsedImage)
 
       discard self.processMessengerResponse(response)

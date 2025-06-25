@@ -17,6 +17,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.controls 1.0
 import shared.controls.chat 1.0
+import shared.status 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -268,6 +269,14 @@ SettingsContentBase {
             onClicked: Global.openPopup(getSyncCodeInstructionsPopup)
         }
 
+        StatusSettingsLineButton {
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            text: qsTr("Directory of the local backup files")
+            currentValue: root.devicesStore.backupPath
+            onClicked: backupPathDialog.open()
+        }
+
         StatusButton {
             objectName: "setupSyncBackupDataButton"
 
@@ -345,6 +354,14 @@ SettingsContentBase {
             onAccepted: {
                 root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
             }
+        }
+
+        StatusFolderDialog {
+            id: backupPathDialog
+
+            title: qsTr("Select your backup directory")
+            currentFolder:root.devicesStore.toFileUri(root.devicesStore.backupPath)
+            onAccepted: root.devicesStore.setBackupPath(backupPathDialog.selectedFolder)
         }
 
         Item {

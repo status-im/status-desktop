@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, stew/shims/strformat, re, stint, httpclient
+import NimQml, strutils, uri, stew/shims/strformat, re, stint, httpclient, os
 import stew/byteutils
 import ./utils/qrcodegen
 
@@ -27,11 +27,20 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc formatImagePath*(self: Utils, imagePath: string): string =
-    result = uri.decodeUrl(replace(imagePath, "file://", ""), decodePlus=false)
+  proc fromPathUri*(self: Utils, path: string): string {.slot.} =
+    result = uri.decodeUrl(replace(path, "file://", ""), decodePlus=false)
     if defined(windows):
       # Windows doesn't work with paths starting with a slash
       result.removePrefix('/')
+
+  proc toFileUri*(self: Utils, path: string): string {.slot.} =
+    let absPath = absolutePath(path)   # Ensure it's absolute
+    let uriPath = if defined(windows):
+                    # Convert to URI-compliant format
+                    "file:///" & absPath.replace("\\", "/")
+                  else:
+                    "file://" & absPath
+    return uriPath
 
   proc isAlias*(self: Utils, value: string): bool {.slot.} =
     result = isAlias(value)
