@@ -14,6 +14,7 @@ from gui.screens.messages import MessagesScreen
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
 
+
 class ShellScreen(QObject):
 
     def __init__(self):
@@ -21,7 +22,7 @@ class ShellScreen(QObject):
         self.search_field = TextEdit(shell_names.shell_search_field)
         self.grid = QObject(shell_names.shell_grid)
         self.dock = QObject(shell_names.shell_dock)
-        
+
         # Dock button mapping
         self.dock_buttons = {
             "Wallet": (shell_names.shell_regular_dock_button_wallet, WalletScreen),
@@ -30,8 +31,6 @@ class ShellScreen(QObject):
             "Communities": (shell_names.shell_regular_dock_button_communities, CommunitiesPortal),
             "Market": (shell_names.shell_regular_dock_button_market, MarketScreen)
         }
-        
-
 
     # =============================================================================
     # SEARCH FUNCTIONS
@@ -106,7 +105,7 @@ class ShellScreen(QObject):
     def open_from_dock(self, screen_name: str):
         """Navigate to a screen from shell dock"""
         self.wait_for_shell_ui_loaded()
-        
+
         if screen_name in self.dock_buttons:
             button_locator, screen_class = self.dock_buttons[screen_name]
             Button(button_locator).click()
@@ -126,7 +125,6 @@ class ShellScreen(QObject):
             locator["text"] = text
             Button(locator).click()
 
-
     # =============================================================================
     # UTILITY FUNCTIONS
     # =============================================================================
@@ -136,4 +134,3 @@ class ShellScreen(QObject):
         # TODO: Create method to confirm rendering has finished.
         time.sleep(0.5)
         return self
-

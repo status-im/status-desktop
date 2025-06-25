@@ -27,7 +27,7 @@ shell_regular_dock_button_messages = {"container": statusDesktop_mainWindow, "ob
 shell_regular_dock_button_communities = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonCommunities Portal", "type": "ShellDockButton", "visible": True}
 shell_regular_dock_button_settings = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonSettings", "type": "ShellDockButton", "visible": True}
 
-# TODO: Methods for pinned dock buttons
+# TODO: Methods for pinned dock buttons https://github.com/status-im/status-desktop/issues/18239
 shell_pinned_dock_button_ = {"container": statusDesktop_mainWindow, "objectName": "pinnedDockButton", "type": "ShellDockButton", "visible": True}
 
 # Generic Dock Button Locators
@@ -40,9 +40,3 @@ shell_generic_dock_button = {"container": statusDesktop_mainWindow, "type": "She
 shell_dock_button_context_menu = {"type": "StatusMenu", "visible": True}
 shell_dock_button_unpin_menu_action = {"container": shell_dock_button_context_menu, "text": "Unpin", "type": "StatusAction", "visible": True}
 shell_dock_button_disconnect_menu_action = {"container": shell_dock_button_context_menu, "text": "Disconnect", "type": "StatusAction", "visible": True}
-
-
-
-
-
-
