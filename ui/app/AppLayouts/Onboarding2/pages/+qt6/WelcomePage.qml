@@ -23,7 +23,7 @@ OnboardingPage {
     signal privacyPolicyRequested()
     signal termsOfUseRequested()
 
-    readonly property bool isPortrait: root.width < root.height && root.width < root.implicitWidth
+    readonly property bool isPortrait: root.width < root.height && root.width <= root.implicitWidth
 
     QtObject {
         id: d
@@ -75,9 +75,6 @@ OnboardingPage {
                 ColumnLayout {
                     id: logoAndTextLayout
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.topMargin: root.isPortrait ? Theme.padding : logoAndTextLayout.height / 2
                     spacing: root.isPortrait ? 6 : 28
                     StatusImage {
                         Layout.preferredWidth: 90
@@ -139,7 +136,6 @@ OnboardingPage {
                     StatusBaseText {
                         objectName: "approvalLinks"
                         Layout.fillWidth: true
-                        Layout.topMargin: Theme.halfPadding
                         text: qsTr("By proceeding you accept Status<br>%1 and %2")
                             .arg(Utils.getStyledLink(qsTr("Terms of Use"), "#terms", hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
                             .arg(Utils.getStyledLink(qsTr("Privacy Policy"), "#privacy", hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))

@@ -48,8 +48,6 @@ StatusWindow {
     property UtilsStore utilsStore: UtilsStore {}
 
     objectName: "mainWindow"
-    minimumWidth: 1200
-    minimumHeight: 680
     color: Theme.palette.background
     title: {
         // Set application settings
@@ -63,8 +61,8 @@ StatusWindow {
     visible: true
 
     function updatePaddings() {
-        if (applicationWindow.width < applicationWindow.minimumWidth) {
-            const coefficient = applicationWindow.width / applicationWindow.minimumWidth;
+        if (applicationWindow.width < Theme.portraitBreakpoint.width) {
+            const coefficient = applicationWindow.width / Theme.portraitBreakpoint.width;
             Theme.updatePaddings(Theme.defaultPadding * coefficient);
         } else {
             Theme.updatePaddings(Theme.defaultPadding);
@@ -104,8 +102,8 @@ StatusWindow {
         if (visibility === Window.Windowed) {
             applicationWindow.x = geometry.x;
             applicationWindow.y = geometry.y;
-            applicationWindow.width = Math.max(geometry.width, applicationWindow.minimumWidth)
-            applicationWindow.height = Math.max(geometry.height, applicationWindow.minimumHeight)
+            applicationWindow.width = Math.max(geometry.width, Theme.portraitBreakpoint.width)
+            applicationWindow.height = Math.max(geometry.height, Theme.portraitBreakpoint.height)
         }
     }
 
@@ -153,6 +151,20 @@ StatusWindow {
                 }
             }
         }
+    }
+
+    // Only set minimum width/height for desktop apps
+    Binding {
+        target: applicationWindow
+        property: "minimumWidth"
+        when: !Constants.isMobile
+        value: Theme.portraitBreakpoint.width
+    }
+    Binding {
+        target: applicationWindow
+        property: "minimumHeight"
+        when: !Constants.isMobile
+        value: Theme.portraitBreakpoint.height
     }
 
     Action {
