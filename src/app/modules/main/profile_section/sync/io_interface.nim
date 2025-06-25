@@ -48,6 +48,9 @@ method getUseMailservers*(self: AccessInterface): bool {.base.} =
 method setUseMailservers*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method performLocalBackup*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method importLocalBackupFile*(self: AccessInterface, filePath: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

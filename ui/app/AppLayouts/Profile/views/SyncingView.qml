@@ -299,13 +299,22 @@ SettingsContentBase {
             objectName: "setupSyncBackupDataButton"
 
             id: backupBtn
-            visible: !root.isProduction || root.localBackupEnabled
+            visible: !root.isProduction
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Backup Data")
             onClicked : {
                 const lastUpdate = root.privacyStore.backupData() * 1000
                 console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
             }
+        }
+
+        StatusButton {
+            objectName: "setupSyncLocalBackupDataButton"
+
+            visible: root.localBackupEnabled
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("Backup Data Locally")
+            onClicked : root.devicesStore.performLocalBackup()
         }
 
         StatusButton {

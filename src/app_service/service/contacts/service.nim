@@ -205,16 +205,6 @@ QtObject:
       if(receivedData.statusUpdates.len > 0):
         self.updateAndEmitStatuses(receivedData.statusUpdates)
 
-    self.events.on(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED) do(e: Args):
-      let args = LocalBackupImportArg(e)
-      if args.error.len > 0:
-        # The error will be shown in the UI, so we don't need to log it here
-        return
-
-      # If we have imported contacts from the local backup, we need to emit the contacts loaded signal
-      if args.response.hasKey("contacts"):
-        self.parseContactsResponse(args.response["contacts"], fromBackup = true)
-
   proc setImageServerUrl(self: Service) =
     try:
       let response = status_contacts.getImageServerURL()
