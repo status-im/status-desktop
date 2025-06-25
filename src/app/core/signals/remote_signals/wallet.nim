@@ -9,6 +9,7 @@ import app_service/service/transaction/router_transactions_dto
 const
   EventPendingTransactionUpdate* = "pending-transaction-update"
   EventPendingTransactionStatusChanged* = "pending-transaction-status-changed"
+  EventWatchOnlyAccountRetrieved* = "wallet-watch-only-account-retrieved"
 
 type WalletSignal* = ref object of Signal
   content*: string
@@ -66,6 +67,10 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
       except CatchableError:
         return
       result.transactionStatusChange = toTransactionStatusChange(statusChangedPayload)
+    ## handling watch-only account retrieval
+    if result.eventType == EventWatchOnlyAccountRetrieved:
+      # Message is parsed in the service
+      return
     return
   if signalType == SignalType.WalletSignTransactions:
     if event.kind != JArray:

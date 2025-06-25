@@ -132,6 +132,9 @@ QtObject:
     read = getBackupImportError
     notify = backupImportErrorChanged
 
+  proc performLocalBackup*(self: View): string {.slot.} =
+    return self.delegate.performLocalBackup()
+
   proc importLocalBackupFile*(self: View, filePath: string) {.slot.} =
     self.setBackupImportState(BackupImportState.InProgress)
     self.setBackupImportError("")
