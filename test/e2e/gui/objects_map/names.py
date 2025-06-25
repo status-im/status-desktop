@@ -22,6 +22,8 @@ mainWindow_scrollView_StatusScrollView = {"container": statusDesktop_mainWindow,
 mainWindow_LeftPanelNavBar = {"container": statusDesktop_mainWindow, "objectName": "statusAppNavBar", "type": "StatusAppNavBar", "visible": True}
 
 # First half of left main panel: chat button, wallet button, swap button
+# Shell Navigation
+shell_nav_button = {"checkable": True, "container": mainWindow_LeftPanelNavBar, "objectName": "Shell-navbar", "type": "StatusNavBarTabButton", "visible": True}
 walletChatSwapNavBarList = {"container": mainWindow_LeftPanelNavBar, "objectName": "statusChatNavBarListView", "type": "ListView", "visible": True}
 mainWalletButton = {"container": walletChatSwapNavBarList, "objectName": "Wallet-navbar", "type": "StatusNavBarTabButton", "visible": True}
 chatButton = {"container": walletChatSwapNavBarList, "objectName": "Messages-navbar", "type": "StatusNavBarTabButton", "visible": True}

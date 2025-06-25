@@ -23,6 +23,7 @@ from gui.screens.messages import MessagesScreen
 from gui.screens.onboarding import OnboardingWelcomeToStatusView, ReturningLoginView
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
+from gui.screens.shell import ShellScreen
 from scripts.tools.image import Image
 
 LOG = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ class MainLeftPanel(QObject):
     def __init__(self):
         super(MainLeftPanel, self).__init__(names.mainWindow_LeftPanelNavBar)
         self.profile_button = Button(names.onlineIdentifierButton)
+        self.shell_button = Button(names.shell_nav_button)
         self.messages_button = Button(names.chatButton)
         self.communities_portal_button = Button(names.communitiesPortalButton)
         self.community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
@@ -48,6 +50,10 @@ class MainLeftPanel(QObject):
             except Exception:
                 pass  # Retry if attempts remain
         raise Exception(f"Failed to open {screen_class.__name__} after {attempts} attempts")
+
+    @allure.step('Click Shell button and open Shell screen')
+    def open_shell(self, attempts: int = 2) -> ShellScreen:
+        return self._open_screen_from_left_nav(self.shell_button, ShellScreen, attempts)
 
     @allure.step('Click Chat button and open Messages screen')
     def open_messages_screen(self, attempts: int = 2) -> MessagesScreen:
@@ -142,6 +148,7 @@ class MainWindow(Window):
     def __init__(self):
         super().__init__(names.statusDesktop_mainWindow)
         self.left_panel = MainLeftPanel()
+        self.shell = ShellScreen()
 
     @allure.step('Create new profile')
     def create_profile(self, user_account: UserAccount):
@@ -151,12 +158,14 @@ class MainWindow(Window):
         splash_screen = create_password_view.create_password(user_account.password)
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
+        
+        # Navigate from shell to settings first
         # since we now struggle with 3 words names, I need to change display name first
-        left_panel = MainLeftPanel()
-        profile = left_panel.open_settings().left_panel.open_profile_settings()
+        settings_screen = self.shell.open_from_dock("Settings")
+        profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
-        left_panel.open_wallet()
+        self.left_panel.open_wallet()
         return self
 
     @allure.step('Log in returning user')
