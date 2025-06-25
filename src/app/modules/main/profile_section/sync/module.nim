@@ -103,6 +103,9 @@ method setUseMailservers*(self: Module, value: bool) =
   if self.controller.setUseMailservers(value):
     self.view.useMailserversChanged()
 
+method performLocalBackup*(self: Module): string =
+  return self.controller.performLocalBackup()
+
 method importLocalBackupFile*(self: Module, filePath: string) =
   let formattedFilePath = singletonInstance.utils.fromPathUri(filePath)
   self.controller.importLocalBackupFile(formattedFilePath)

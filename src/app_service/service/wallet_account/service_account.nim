@@ -177,6 +177,14 @@ proc init*(self: Service) =
       of "wallet-tick-reload":
         let addresses = self.getWalletAddresses()
         self.buildAllTokens(addresses, store = true)
+      of EventWatchOnlyAccountRetrieved:
+        var watchOnlyAccountPayload: JsonNode
+        try:
+          watchOnlyAccountPayload = data.message.parseJson
+          let account = watchOnlyAccountPayload["WatchOnlyAccount"].toWalletAccountDto()
+          self.handleWalletAccount(account)
+        except CatchableError:
+          return
 
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.buildAllTokens(self.getWalletAddresses(), store = true)

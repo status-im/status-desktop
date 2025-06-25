@@ -137,10 +137,6 @@ proc makeAdmin*(communityID: string, chatId: string, pubKey: string): RpcRespons
   let payload = %* [nil, communityID, chatId, [pubKey]]
   result = callPrivateRPC("addAdminsToGroupChat".prefix, payload)
 
-proc createGroupChat*(communityID: string, groupName: string, pubKeys: seq[string]): RpcResponse[JsonNode] =
-  let payload = %* [nil, communityID, groupName, pubKeys]
-  result = callPrivateRPC("createGroupChatWithMembers".prefix, payload)
-
 proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: string): RpcResponse[JsonNode] =
   let payload = %* [groupName, chatId, adminPK]
   result = callPrivateRPC("createGroupChatFromInvitation".prefix, payload)
