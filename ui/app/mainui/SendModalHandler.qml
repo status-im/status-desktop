@@ -729,8 +729,24 @@ QtObject {
                 }
 
                 readonly property var totalFeesAggregator: FunctionAggregator {
-                    model: !!handler.fetchedPathModel ?
-                               handler.fetchedPathModel: null
+                    model: {
+                        let noFees = true
+                        for (let i = 0; i < handler.fetchedPathModel.ModelCount.count; i++) {
+                            const item = SQUtils.ModelUtils.get(handler.fetchedPathModel, i)
+                            noFees = noFees && item["fromChainNoBaseFee"] && item["fromChainNoPriorityFee"]
+                            if (!noFees) {
+                                break
+                            }
+                        }
+
+                        if (noFees) {
+                            const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                            simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount("0", nativeTokenSymbol)
+                            simpleSendModal.estimatedFiatFees = root.fnFormatCurrencyAmount("0", root.currentCurrency)
+                        }
+
+                        return !!handler.fetchedPathModel? handler.fetchedPathModel: null
+                    }
                     initialValue: "0"
                     roleName: "txTotalFee"
 
