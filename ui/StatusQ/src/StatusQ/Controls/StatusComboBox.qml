@@ -37,7 +37,7 @@ Item {
 
     readonly property Component defaultBackgroundComponent: Rectangle {
         color: root.type === StatusComboBox.Type.Secondary ? "transparent" : Theme.palette.baseColor2
-        radius: 8
+        radius: Theme.radius
         border.width: (!!root.validationError || root.forceError
                         || comboBox.hovered || comboBox.down
                         || comboBox.visualFocus
