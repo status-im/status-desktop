@@ -698,12 +698,17 @@ method load*[T](
   self.view.load()
   self.connectForNotificationsOnly()
 
+  let shellEnabled = singletonInstance.featureFlags().getShellEnabled()
+
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
-  if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID:
+
+  # Default to Wallet section if no active section is set or if the active section is the settings section
+  # or if the active section is the shell section but shell is not enabled
+  if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID or
+    (activeSectionId == SHELL_SECTION_ID and not shellEnabled):
     activeSectionId = WALLET_SECTION_ID
 
-  let shellEnabled = singletonInstance.featureFlags().getShellEnabled()
   var shellSectionItem: SectionItem
 
   # Shell Section
