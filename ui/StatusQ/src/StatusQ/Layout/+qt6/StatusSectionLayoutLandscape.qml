@@ -65,7 +65,7 @@ SplitView {
         \qmlproperty Item StatusSectionLayout::rightPanel
         This property holds the right panel of the component.
     */
-    property Item rightPanel
+    property alias rightPanel: rightPanelProxy.target
     /*!
         \qmlproperty Item StatusSectionLayout::navBar
         This property holds the navigation bar of the component. Usually displayed next to the leftPanel.
@@ -77,7 +77,7 @@ SplitView {
     */
     property Item footer
     /*!
-        \qmlproperty Component StatusAppLayout::headerBackground
+        \qmlproperty Item StatusAppLayout::headerBackground
         This property holds the headerBackground of the component.
     */
     property Item headerBackground
@@ -233,7 +233,7 @@ SplitView {
             color: Theme.palette.baseColor4
         }
         contentItem: LayoutItemProxy {
-            target: root.rightPanel
+            id: rightPanelProxy
         }
     }
 }
