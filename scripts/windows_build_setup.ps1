@@ -45,7 +45,7 @@ function Install-Dependencies {
 
 function Install-Qt-SDK {
     Write-Host "Installing Qt $QtVersion SDK..."
-    pip install aqtinstall
+    pip install --upgrade aqtinstall
     aqt install-qt -O "C:\Qt" windows desktop $QtVersion win64_msvc2022_64 -m all
 }
 

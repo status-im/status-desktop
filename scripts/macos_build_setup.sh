@@ -24,7 +24,7 @@ function install_build_dependencies {
 
 function install_qt {
   echo "Installing QT ${QT_VERSION}"
-  aqt install-qt mac desktop ${QT_VERSION} clang_64 -m all
+  sudo aqt install-qt mac desktop ${QT_VERSION} clang_64 -m all
 }
 
 function install_cmake {
