@@ -21,9 +21,9 @@ class ProfileSettingsView(QObject):
         self._display_name_text_field = TextEdit(settings_names.displayName_TextEdit)
         self.save_changes_button = Button(names.mainWindow_Save_changes_StatusButton)
         self._bio_text_field = TextEdit(settings_names.bio_TextEdit)
-        self._add_more_links_label = TextLabel(settings_names.addMoreSocialLinks)
+        self.add_more_links_label = TextLabel(settings_names.addMoreSocialLinks)
         self._links_list = QObject(names.linksView)
-        self._web_tab_button = Button(settings_names.profileTabBar_Web_StatusTabButton)
+        self.web_tab_button = Button(settings_names.profileTabBar_Web_StatusTabButton)
         self._identity_tab_button = Button(settings_names.profileTabBar_Identity_StatusTabButton)
 
     @property
@@ -51,7 +51,7 @@ class ProfileSettingsView(QObject):
     @property
     @allure.step('Get social links')
     def get_social_links(self) -> dict:
-        self._web_tab_button.click()
+        self.web_tab_button.click()
         self.showcase_popup_close_if_present()
         links = {}
         for link_name in walk_children(
@@ -89,7 +89,7 @@ class ProfileSettingsView(QObject):
 
     @allure.step('Verify social links')
     def verify_social_links(self, links):
-        self._web_tab_button.click()
+        self.web_tab_button.click()
         self.showcase_popup_close_if_present()
         twitter = links[0]
         personal_site = links[1]
@@ -112,7 +112,7 @@ class ProfileSettingsView(QObject):
 
     @allure.step('Open social links form')
     def open_social_links_popup(self):
-        self._web_tab_button.click()
+        self.web_tab_button.click()
         self.showcase_popup_close_if_present()
-        self._add_more_links_label.click()
+        self.add_more_links_label.click()
         return SocialLinksPopup().wait_until_appears()

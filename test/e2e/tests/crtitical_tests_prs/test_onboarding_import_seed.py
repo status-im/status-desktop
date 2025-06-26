@@ -3,6 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import UserAccount
+from constants.dock_buttons import DockButtons
 from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
 from helpers.onboarding_helper import open_create_profile_view, import_seed_and_log_in
@@ -32,7 +33,7 @@ def test_import_and_reimport_random_seed(
 
     with step('Verify that restored account reveals correct status wallet address'):
         left_panel = MainLeftPanel()
-        profile = main_window.shell.open_from_dock("Settings").left_panel.open_profile_settings()
+        profile = main_window.shell.open_from_dock(DockButtons.SETTINGS.value).left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
 

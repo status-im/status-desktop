@@ -7,6 +7,7 @@ import configs.testpath
 import driver
 from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
 from constants import UserAccount, RandomUser
+from constants.dock_buttons import DockButtons
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
 from gui.screens.onboarding import OnboardingWelcomeToStatusView, SyncResultView, OnboardingProfileSyncedView, \
@@ -70,7 +71,7 @@ def test_sync_device_during_onboarding(multiple_instances):
 
         with step('Verify user details are the same with user in first instance'):
             # TODO: Switch this to use shell online identifier
-            main_window.shell.open_from_dock("Settings")
+            main_window.shell.open_from_dock(DockButtons.SETTINGS.value)
             online_identifier = main_window.left_panel.open_online_identifier()
             assert online_identifier.get_user_name == user.name, \
                 f'Name in online identifier and display name do not match'
