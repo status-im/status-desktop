@@ -309,6 +309,7 @@ Item {
                 d.displayAllAddresses()
             }
             selectSavedAddresses: function() {
+                walletSectionLayout.goToNextPanel()
                 d.displaySavedAddresses()
             }
         }
