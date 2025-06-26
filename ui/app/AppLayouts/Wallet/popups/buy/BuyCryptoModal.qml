@@ -138,7 +138,7 @@ StatusStackModal {
     }
 
     width: 560
-    height: 515
+    implicitHeight: 515
     padding: Theme.xlPadding
     stackTitle: !!root.buyCryptoInputParamsForm.selectedTokenKey ? qsTr("Ways to buy %1 for %2").arg(d.selectedTokenEntry.item.name).arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: ""): qsTr("Ways to buy assets for %1").arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: "")
     rightButtons: [d.buyButton, finishButton]
