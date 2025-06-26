@@ -77,6 +77,6 @@ pipeline {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
     always  { script { env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText" } }
-    cleanup { cleanWs() }
+    cleanup { cleanWs(disableDeferredWipeout: true) }
   }
 }

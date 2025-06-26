@@ -108,7 +108,7 @@ pipeline {
         cred: 'discord-status-desktop-webhook',
       )
     } }
-    cleanup { cleanWs() }
+    cleanup { cleanWs(disableDeferredWipeout: true) }
   }
 }
 
