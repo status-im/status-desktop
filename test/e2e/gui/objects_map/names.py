@@ -48,6 +48,7 @@ secureYourSeedPhraseBanner_ModuleWarning = {"container": statusDesktop_mainWindo
 # Scroll
 o_Flickable = {"container": statusDesktop_mainWindow_overlay, "type": "Flickable", "unnamed": 1, "visible": True}
 generalView_StatusScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
+generalView_StatusScrollViewOverlay = {"container": statusDesktop_mainWindow_overlay, "id": "generalView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 
 # Context Menu
 o_StatusListView = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
@@ -192,11 +193,6 @@ join_StatusButton = { "container": statusDesktop_mainWindow_overlay, "type": "St
 welcome_authenticate_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 share_your_addresses_to_join_StatusButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 
-# Kick member popup
-confirm_kick_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
-
-# Ban member popup
-ban_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_BanModal_BanButton", "type": "StatusButton", "visible": True}
 
 # Pinned messages
 unpinButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "id": "unpinButton", "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}
@@ -223,9 +219,6 @@ accept_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow
 
 # RemoveContactPopup
 remove_contact_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "removeContactButton", "type": "StatusButton", "visible": True}
-
-# Kick member popup
-confirm_kick_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
 
 # Block user popup
 blockWarningBox_StatusWarningBox = {"container": statusDesktop_mainWindow_overlay, "objectName": "blockWarningBox", "type": "StatusWarningBox", "visible": True}

@@ -19,21 +19,19 @@ from gui.components.settings.sign_out_popup import SignOutPopup
 from scripts.utils.decorators import retry_settings
 
 
-class LeftPanel(QObject):
+class SettingsLeftPanel(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_LeftTabView)
-        self._settings_section_template = QObject(settings_names.mainWindow_settingsList_SettingsListItem)
-        self._scroll = Scroll(settings_names.mainWindow_settingsList_VerticalScroll)
+        self.settings_section_template = QObject(settings_names.mainWindow_settingsList_SettingsListItem)
+        self.scroll = Scroll(settings_names.mainWindow_settingsList_VerticalScroll)
         self.settings_section_back_up_seed_option = QObject(settings_names.settingsBackUpSeedPhraseOption)
-        self.settings_section_wallet_option = QObject(settings_names.settingsWalletOption)
-        self.settings_section_sign_out_quit_option = QObject(settings_names.settingsSignOutQuitOption)
 
     def _open_settings(self, object_name: str):
-        self._settings_section_template.real_name['objectName'] = object_name
-        if not self._settings_section_template.is_visible:
-            self._scroll.vertical_scroll_down(self._settings_section_template)
-        self._settings_section_template.click()
+        self.settings_section_template.real_name['objectName'] = object_name
+        if not self.settings_section_template.is_visible:
+            self.scroll.vertical_scroll_down(self.settings_section_template)
+        self.settings_section_template.click()
 
     @allure.step('Choose back up seed phrase in settings')
     @retry_settings(BackUpYourSeedPhrasePopUp, '18-MenuItem')
@@ -95,4 +93,4 @@ class SettingsScreen(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_ProfileLayout)
-        self.left_panel = LeftPanel()
+        self.left_panel = SettingsLeftPanel()

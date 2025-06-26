@@ -36,7 +36,7 @@ class CreateNewCommunityPopup(QObject):
 
     def __init__(self):
         super().__init__(names.createCommunityNameInput_TextEdit)
-        self._scroll = Scroll(names.generalView_StatusScrollView)
+        self._scroll = Scroll(names.generalView_StatusScrollViewOverlay)
         self._name_text_edit = TextEdit(names.createCommunityNameInput_TextEdit)
         self._description_text_edit = TextEdit(names.createCommunityDescriptionInput_TextEdit)
         self._add_logo_button = Button(names.addButton_StatusRoundButton2)
