@@ -9,6 +9,7 @@ import constants.colors
 import driver
 from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
 from constants import UserAccount, CommunityData, Color
+from constants.dock_buttons import DockButtons
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.toast_message import ToastMessage
@@ -32,7 +33,7 @@ LOG = logging.getLogger(__name__)
 class MainLeftPanel(QObject):
 
     def __init__(self):
-        super(MainLeftPanel, self).__init__(names.mainWindow_LeftPanelNavBar)
+        super().__init__(names.mainWindow_LeftPanelNavBar)
         self.profile_button = Button(names.onlineIdentifierButton)
         self.shell_button = Button(names.shell_nav_button)
         self.messages_button = Button(names.chatButton)
@@ -161,7 +162,7 @@ class MainWindow(Window):
         
         # Navigate from shell to settings first
         # since we now struggle with 3 words names, I need to change display name first
-        settings_screen = self.shell.open_from_dock("Settings")
+        settings_screen = self.shell.open_from_dock(DockButtons.SETTINGS.value)
         profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()

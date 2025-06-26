@@ -5,6 +5,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from constants.dock_buttons import DockButtons
 from helpers.wallet_helper import authenticate_with_password
 
 import driver
@@ -68,7 +69,7 @@ def test_delete_generated_account_from_wallet_settings(
 
     with step('Navigate to wallet and reopen account details for deletion'):
         # Navigate to wallet screen first, then to settings to get fresh acc_view
-        main_screen.shell.open_from_dock("Wallet")
+        main_screen.shell.open_from_dock(DockButtons.WALLET.value)
         acc_view = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(account_name, account_index)
 
     with step('Delete generated account'):

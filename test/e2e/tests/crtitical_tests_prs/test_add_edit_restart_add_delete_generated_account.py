@@ -3,6 +3,7 @@ import pyperclip
 import pytest
 from allure_commons._allure import step
 
+from constants.dock_buttons import DockButtons
 from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
 from helpers.wallet_helper import authenticate_with_password
@@ -64,7 +65,7 @@ def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: Ma
         main_screen.authorize_user(user_account)
 
     with step('Add second generated wallet account'):
-        wallet = main_screen.shell.open_from_dock("Wallet")
+        wallet = main_screen.shell.open_from_dock(DockButtons.WALLET.value)
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name2).save_changes()
 
