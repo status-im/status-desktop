@@ -538,7 +538,10 @@ StatusSectionLayout {
 
     showRightPanel: d.isProfilePanelActive && d.sideBySidePreviewAvailable
     rightPanelWidth: d.rightPanelWidth
-    rightPanel: d.isProfilePanelActive ? profileContainer.currentItem.sideBySidePreviewComponent : null
+    rightPanel: Loader {
+        active: root.showRightPanel
+        sourceComponent: profileContainer.currentItem.sideBySidePreviewComponent
+    }
 
     Connections {
         target: root.store.keycardStore.keycardModule

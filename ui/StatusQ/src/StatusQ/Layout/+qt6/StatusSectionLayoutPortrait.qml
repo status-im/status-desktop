@@ -62,7 +62,7 @@ SwipeView {
     */
     property alias centerPanel: centerPanelProxy.target
     /*!
-        \qmlproperty Component StatusSectionLayout::rightPanel
+        \qmlproperty Item StatusSectionLayout::rightPanel
         This property holds the right panel of the component.
     */
     property alias rightPanel: rightPanelProxy.target
@@ -72,7 +72,7 @@ SwipeView {
     */
     property alias footer: footerProxy.target
     /*!
-        \qmlproperty Component StatusAppLayout::headerBackground
+        \qmlproperty Item StatusAppLayout::headerBackground
         This property holds the headerBackground of the component.
     */
     property Item headerBackground
