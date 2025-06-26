@@ -112,6 +112,8 @@ Item {
                 implicitWidth: flow.implicitWidth
                 implicitHeight: flow.implicitHeight
 
+                color: "transparent"
+
                 readonly property var topModel: model
 
                 Row {
@@ -218,7 +220,7 @@ Item {
                 z: 2
 
                 Rectangle {
-                    color: "whitesmoke"
+                    color: "transparent"
                     anchors.fill: parent
                     border.color: "gray"
                 }
