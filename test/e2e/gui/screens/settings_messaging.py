@@ -172,7 +172,7 @@ class ContactsSettingsView(QObject):
 
     @allure.step('Open contacts request form')
     def send_contacts_request(self):
-        LeftPanel().open_messaging_settings().open_contacts_settings().open_contact_request_form()
+        SettingsLeftPanel().open_messaging_settings().open_contacts_settings().open_contact_request_form()
 
     @allure.step('Accept contact request')
     def find_contact_in_list(

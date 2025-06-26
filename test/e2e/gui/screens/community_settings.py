@@ -6,11 +6,10 @@ import allure
 
 import configs
 import driver
-from gui.components.community.ban_member_popup import BanMemberPopup
+from gui.components.community.kick_ban_member_popup import KickBanMemberPopup
 from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.delete_popup import ConfirmationPermissionPopup
-from gui.components.kick_member_popup import KickMemberPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.elements.button import Button
@@ -303,7 +302,7 @@ class MembersView(QObject):
         self.kick_member_button.hover()
         time.sleep(1)
         self.kick_member_button.native_mouse_click()
-        kick_member_popup = KickMemberPopup()
+        kick_member_popup = KickBanMemberPopup()
         kick_member_popup.confirm_kicking()
 
     @allure.step('Ban community member')
@@ -313,7 +312,7 @@ class MembersView(QObject):
         self.ban_member_button.hover()
         time.sleep(1)
         self.ban_member_button.native_mouse_click()
-        return BanMemberPopup().wait_until_appears()
+        return KickBanMemberPopup().wait_until_appears()
 
     @allure.step('Unban community member')
     def unban_member(self, member_name: str):
