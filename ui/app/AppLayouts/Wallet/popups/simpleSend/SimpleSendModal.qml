@@ -467,7 +467,7 @@ StatusDialog {
     }
 
     width: 556
-    height: d.calculatedHeight
+    implicitHeight: d.calculatedHeight
     padding: 0
     horizontalPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding

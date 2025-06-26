@@ -39,12 +39,19 @@ Dialog {
     */
     property string okButtonText: qsTr("OK")
 
-    readonly property bool bottomSheet: root.contentItem.Window.height
-                                        > root.contentItem.Window.width
-                                        && root.contentItem.Window.width
-                                        <= 1200 // The max width of a phone in portrait mode
+    readonly property bool bottomSheet: d.windowHeight
+                                        > d.windowWidth
+                                        && d.windowWidth
+                                        <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
 
     readonly property real desiredY: root.bottomSheet ? root.contentItem.Window.height - root.height : ((root.Overlay.overlay.height - root.height) / 2)
+
+    QtObject {
+        id: d
+
+        readonly property int windowWidth: root.contentItem.Window ? root.contentItem.Window.width: Screen.width
+        readonly property int windowHeight: root.contentItem.Window? root.contentItem.Window.height : Screen.height
+    }
 
     enter: Transition {
         id: enterTransition
@@ -70,7 +77,12 @@ Dialog {
     Binding on width {
         when: root.bottomSheet
         restoreMode: Binding.RestoreBindingOrValue
-        value: root.contentItem.Window.width
+        value: d.windowWidth
+    }
+    Binding on height {
+        when: root.bottomSheet && !enterTransition.running
+        restoreMode: Binding.RestoreBindingOrValue
+        value: Math.min(root.implicitHeight, d.windowHeight * 0.9)
     }
     Binding on y {
         when: root.bottomSheet && !enterTransition.running
@@ -81,13 +93,13 @@ Dialog {
     Binding on y {
         when: !root.bottomSheet && !enterTransition.running
         restoreMode: Binding.RestoreBindingOrValue
-        value: (root.contentItem.Window.height - root.height) / 2
+        value: (d.windowHeight - root.height) / 2
     }
 
     Binding on x {
         when: !root.bottomSheet
         restoreMode: Binding.RestoreBindingOrValue
-        value: (root.contentItem.Window.width - root.width) / 2
+        value: (d.windowWidth - root.width) / 2
     }
 
     Binding on x {
