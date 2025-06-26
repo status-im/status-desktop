@@ -12,6 +12,7 @@ export QT_QPA_PLATFORM="xcb"
 export QTWEBENGINE_CHROMIUM_FLAGS="${QTWEBENGINE_CHROMIUM_FLAGS} --disable-seccomp-filter-sandbox"
 
 # Set up pcsc-lite environment
+export PCSCLITE_HP_DROPDIR="${APPDIR}/usr/lib/pcsc/drivers"
 export PCSC_DRIVERS_DIR="${APPDIR}/usr/lib/pcsc/drivers"
 export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
 
@@ -21,6 +22,11 @@ export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
 PCSCD_RUN_DIR="/tmp/pcscd/run"
 rm -rf "${PCSCD_RUN_DIR}"
 mkdir -p "${PCSCD_RUN_DIR}"
+
+# Debug: Check if drivers are present
+echo "Checking for CCID drivers in ${APPDIR}/usr/lib/pcsc/drivers:"
+ls -la "${APPDIR}/usr/lib/pcsc/drivers/" || echo "No drivers directory found"
+
 echo "starting pcscd with ${APPDIR}/usr/bin/pcscd -f &"
 "${APPDIR}/usr/bin/pcscd" -f &
 
