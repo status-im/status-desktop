@@ -143,7 +143,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.onContactAdded(args.contactId)
+    self.delegate.onContactAdded(args.contactId, args.fromBackup)
 
   self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
     var args = ContactArgs(e)

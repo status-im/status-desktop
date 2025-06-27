@@ -1602,4 +1602,10 @@ QtObject {
         }
         return uniqueSymbol
     }
+
+    enum BackupImportState {
+        None,
+        InProgress,
+        Completed
+    }
 }
