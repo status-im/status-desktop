@@ -76,6 +76,43 @@ Item {
         function showDisabledTooltipForAddressEnsName(link) {
             return link.startsWith('//send-via-personal-chat//') && !!root.disabledTooltipText
         }
+
+        function highlightCodeBlocks(text) {
+            var codeBlockPattern = /```([^`]+)```/g;
+
+            text = text.replace(/<code>([\s\S]+?)<\/code>/g, function(match, codeBlock) {
+                return '```' + codeBlock + '```';
+            });
+
+            var highlightedText = text.replace(codeBlockPattern, function(match, codeBlock) {
+                var codeBlock = addLineSpaces(codeBlock)
+                return "<pre style=\"background-color:" + Theme.palette.baseColor2 + "; padding: 10px;\"><code>" +
+                    highlightSyntax(codeBlock) + "</code></pre>";
+            });
+            return highlightedText.replace(/\n/g, "<br>");
+        }
+
+        function addLineSpaces(code) {
+            return code.split("\n")
+                    .map((line, index) => index === 0 ? `\n ${line}` : ` ${line}`)
+                    .join("\n");
+        }
+
+        function highlightSyntax(code) {
+            var keywords = "\\b(abstract|arguments|await|boolean|break|byte|case|catch|char|class|const|continue|" +
+                        "debugger|default|delete|do|double|else|enum|eval|export|extends|false|final|finally|float|" +
+                        "for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|" +
+                        "package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|" +
+                        "throws|transient|true|try|typeof|var|void|volatile|while|with|yield|" +
+                        "uint32_t|uint64_t|void|char|float|double|bool|long|short|int|" +
+                        "signed|unsigned|const|volatile|static|inline|extern|mutable|class|struct|namespace|using|public|private|protected|virtual|template|typename|new|delete|sizeof|define)\\b";
+            var strings = /'[^']*'|"[^"]*"|`[^`]*`/g;
+
+            code = code.replace(strings, '<span style="color: green;">$&</span>');
+            code = code.replace(new RegExp(keywords, 'g'), '<span style="color: brown;">$1</span>');
+
+            return code;
+        }
     }
 
     Rectangle {
@@ -99,7 +136,7 @@ Item {
         anchors.leftMargin: d.isQuote ? 8 : 0
         anchors.right: parent.right
         opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
-        text: d.text
+        text: d.highlightCodeBlocks(d.text)
         selectedTextColor: Theme.palette.directColor1
         selectionColor: Theme.palette.primaryColor3
         color: d.isQuote ? Theme.palette.baseColor1 : Theme.palette.directColor1
