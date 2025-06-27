@@ -39,6 +39,7 @@ StatusDialog {
     objectName: "swapModal"
 
     implicitWidth: 556
+    height: d.calculatedHeight
     topPadding: Theme.xlPadding
     backgroundColor: Theme.palette.baseColor3
 
@@ -85,6 +86,14 @@ StatusDialog {
         readonly property int loadingFeesWidth: 60
 
         readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.swapInputParamsForm.selectedNetworkChainId)
+
+        readonly property int calculatedHeight: {
+            const calculateContentHeight = headerItem.height +
+                                         Theme.padding +
+                                         contentLayout.height +
+                                         footer.height
+            return Math.min(root.contentItem.Window.height, calculateContentHeight)
+        }
     }
 
     ModelEntry {
@@ -131,6 +140,8 @@ StatusDialog {
 
     header: Item {
         AccountSelectorHeader {
+            id: headerItem
+
             y: -height - Theme.padding
             control.popup.width: 512
             model: d.accountsSelectorAdaptor.processedWalletAccounts
@@ -148,9 +159,11 @@ StatusDialog {
         anchors.fill: parent
         contentWidth: availableWidth
         topPadding: 0
-        bottomPadding: Theme.xlPadding
+        bottomPadding: 0
 
         ColumnLayout {
+            id: contentLayout
+
             anchors.left: parent.left
             anchors.right: parent.right
             spacing: Theme.padding

@@ -221,6 +221,8 @@ Control {
                 leftPadding: 0
                 background: null
 
+                inputMethodHints: Qt.ImhDigitsOnly | Qt.ImhFormattedNumbersOnly
+
                 readOnly: !root.interactive
 
                 color: text.length === 0 || (root.valid && !root.markAsInvalid)

@@ -23,6 +23,7 @@ StatusModal {
     property bool isKeycardEnabled: true
 
     width: Constants.addAccountPopup.popupWidth
+    height: scrollView.contentHeight + header.implicitHeight + footer.height + topPadding + bottomPadding
 
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !root.store.disablePopup
