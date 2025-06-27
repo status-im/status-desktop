@@ -72,9 +72,6 @@ GridLayout {
             if (root.store.addAccountModule.derivationPath.startsWith(Constants.addAccountPopup.predefinedPaths.ethereum)) {
                 root.store.selectedRootPath = Constants.addAccountPopup.predefinedPaths.ethereum
             }
-            else if (root.store.addAccountModule.derivationPath.startsWith(Constants.addAccountPopup.predefinedPaths.ethereumRopsten)) {
-                root.store.selectedRootPath = Constants.addAccountPopup.predefinedPaths.ethereumRopsten
-            }
             else if (root.store.addAccountModule.derivationPath.startsWith(Constants.addAccountPopup.predefinedPaths.ethereumLedger)) {
                 root.store.selectedRootPath = Constants.addAccountPopup.predefinedPaths.ethereumLedger
             }

@@ -49,7 +49,6 @@ BasePopupStore {
     property string selectedRootPath: Constants.addAccountPopup.predefinedPaths.ethereum
     readonly property var roots: [Constants.addAccountPopup.predefinedPaths.custom,
         Constants.addAccountPopup.predefinedPaths.ethereum,
-        Constants.addAccountPopup.predefinedPaths.ethereumRopsten,
         Constants.addAccountPopup.predefinedPaths.ethereumLedger,
         Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive
     ]
@@ -228,8 +227,6 @@ BasePopupStore {
             return qsTr("Custom")
         case Constants.addAccountPopup.predefinedPaths.ethereum:
             return qsTr("Ethereum")
-        case Constants.addAccountPopup.predefinedPaths.ethereumRopsten:
-            return qsTr("Ethereum Testnet (Ropsten)")
         case Constants.addAccountPopup.predefinedPaths.ethereumLedger:
             return qsTr("Ethereum (Ledger)")
         case Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive:

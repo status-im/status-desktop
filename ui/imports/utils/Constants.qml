@@ -741,7 +741,6 @@ QtObject {
         readonly property QtObject predefinedPaths: QtObject {
             readonly property string custom: "m/44'"
             readonly property string ethereum: "m/44'/60'/0'/0"
-            readonly property string ethereumRopsten: "m/44'/1'/0'/0"
             readonly property string ethereumLedger: "m/44'/60'/0'"
             readonly property string ethereumLedgerLive: "m/44'/60'"
         }
@@ -923,7 +922,6 @@ QtObject {
     readonly property string zeroAddress: "0x0000000000000000000000000000000000000000"
 
     readonly property string networkMainnet: "Mainnet"
-    readonly property string networkRopsten: "Ropsten"
 
     readonly property string ethToken: "ETH"
     readonly property string bnbToken: "BNB"
