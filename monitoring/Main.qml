@@ -1,6 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import StatusQ.Core.Utils 0.1 as SQUtils
+
 ApplicationWindow {
     id: monitorRoot
 
@@ -16,13 +18,10 @@ ApplicationWindow {
         repeat: true
 
         onTriggered: {
-            const xhr = new XMLHttpRequest()
-            xhr.open("GET", "MonitorEntryPoint.qml", false)
-            xhr.send()
+            const content = SQUtils.StringUtils.readTextFile(
+                              Qt.resolvedUrl("MonitorEntryPoint.qml"))
 
-            const content = xhr.responseText
-
-            if (loader.source != content)
+            if (loader.source !== content)
                 loader.source = content
         }
     }
