@@ -1285,8 +1285,10 @@ QtObject {
         ContractDeployment,
         Mint,
         Approve,
-        Sell,
-        Destroy // TODO update value when added to backend
+        ContractInteraction,
+        Unknown,
+        Sell,   // Not handled in backend yet
+        Destroy // Not handled in backend yet
     }
 
     // To-do sync with backend
