@@ -27,8 +27,6 @@ SplitView {
                 return qsTr("Custom")
             case Constants.addAccountPopup.predefinedPaths.ethereum:
                 return qsTr("Ethereum")
-            case Constants.addAccountPopup.predefinedPaths.ethereumRopsten:
-                return qsTr("Ethereum Testnet (Ropsten)")
             case Constants.addAccountPopup.predefinedPaths.ethereumLedger:
                 return qsTr("Ethereum (Ledger)")
             case Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive:
@@ -72,7 +70,6 @@ SplitView {
 
                     roots: [Constants.addAccountPopup.predefinedPaths.custom,
                         Constants.addAccountPopup.predefinedPaths.ethereum,
-                        Constants.addAccountPopup.predefinedPaths.ethereumRopsten,
                         Constants.addAccountPopup.predefinedPaths.ethereumLedger,
                         Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive
                     ]
@@ -275,11 +272,6 @@ SplitView {
             ListElement {
                 name: "Ethereum Classic"
                 derivationPath: "m/44'/61'/0'/0"
-            }
-
-            ListElement {
-                name: "Ethereum Testnet (Ropsten)"
-                derivationPath: "m/44'/1'/0'/0"
             }
 
             ListElement {
