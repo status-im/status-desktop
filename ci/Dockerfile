@@ -1,9 +1,12 @@
-ARG QT_VERSION=6.9.0
+ARG QT_VERSION="6.9.0"
+ARG QT_MODULES="qtwebchannel qtwebview qtwebsockets qt5compat qtmultimedia qtwebengine qtpositioning qtserialport qtshadertools qtimageformats qtscxml"
+ARG LINUXDEPLOYQT_VERSION="20250615-0393b84"
+ARG PCSCLITE_VERSION="2.2.3"
 
 # QT Installation Image --------------------------------------------------------
 FROM ubuntu:22.04 AS qt-install
-ARG QT_VERSION
-ARG QT_MODULES="qtwebchannel qtwebview qtwebsockets qt5compat qtmultimedia qtwebengine qtpositioning qtserialport qtshadertools qtimageformats qtscxml"
+
+ARG QT_VERSION QT_MODULES
 
 RUN apt update && apt full-upgrade -y \
  && apt install -y --no-install-recommends sudo python3 python3-pip python3-dev build-essential \
@@ -17,11 +20,33 @@ RUN python3 -m pip install setuptools \
  && python3 -m pip install aqtinstall \
  && python3 -m aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 -m ${QT_MODULES} -O /opt/qt --timeout 3000
 
+# PCSC Lite Build Image --------------------------------------------------------
+FROM ubuntu:22.04 AS pcsc-build
+
+ARG PCSCLITE_VERSION
+
+# To fix: https://github.com/status-im/status-desktop/issues/16768
+# https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    build-essential debhelper dpkg-dev libudev-dev libusb-1.0-0-dev pkg-config flex libsystemd-dev check git wget \
+    meson ninja-build libglib2.0-dev libexpat1-dev python3-pip \
+ && apt-get -qq clean
+
+RUN wget https://pcsclite.apdu.fr/files/pcsc-lite-${PCSCLITE_VERSION}.tar.xz -O /tmp/pcsc.tar.xz
+RUN mkdir /pcsc
+RUN tar -xJf /tmp/pcsc.tar.xz -C /pcsc --strip-components=1
+
+WORKDIR /pcsc
+
+RUN meson setup builddir -Dpolkit=false -Dlibsystemd=false -Dserial=false -Dipcdir=/pcscd/run
+RUN cd builddir && ninja
+RUN cp builddir/pcsclite.h src/PCSC
+
 # Build Image ------------------------------------------------------------------
 FROM ubuntu:22.04
-ARG QT_VERSION
-ARG LINUXDEPLOYQT_VERSION=20250615-0393b84
-ARG PCSCLITE_VERSION=2.2.3
+
+ARG QT_VERSION LINUXDEPLOYQT_VERSION PCSCLITE_VERSION
 
 # Adapted from a12e/docker-qt by Aurélien Brooke
 
@@ -62,27 +87,14 @@ RUN apt update -yq && apt install -yq software-properties-common \
     libgdk-pixbuf-2.0-0 libgdk-pixbuf2.0-dev \
  && apt-get -qq clean
 
-# To fix: https://github.com/status-im/status-desktop/issues/16768
-# https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential debhelper dpkg-dev libudev-dev libusb-1.0-0-dev pkg-config flex libsystemd-dev check git wget \
-    meson ninja-build libglib2.0-dev libexpat1-dev python3-pip \
- && cd /tmp \
- && wget https://pcsclite.apdu.fr/files/pcsc-lite-${PCSCLITE_VERSION}.tar.xz \
- && tar -xJf pcsc-lite-${PCSCLITE_VERSION}.tar.xz \
- && cd pcsc-lite-${PCSCLITE_VERSION} \
- && meson setup builddir \
-  -Dpolkit=false \
-  -Dlibsystemd=false \
-  -Dserial=false \
-  -Dipcdir=/tmp/pcscd/run \
- && cd builddir \
- && ninja \
- && ninja install \
- && ldconfig \
- && cd / \
- && rm -rf /tmp/pcsc-lite* \
- && apt-get -qq clean
+# Install PCSC Lite
+COPY --from=pcsc-build /pcsc/builddir/pcscd   /usr/local/sbin/
+COPY --from=pcsc-build /pcsc/src/PCSC /usr/local/include/
+COPY --from=pcsc-build /pcsc/builddir/meson-private/libpcsclite.pc /usr/local/lib/x86_64-linux-gnu/pkgconfig/
+COPY --from=pcsc-build /pcsc/builddir/libpcsclite_real.so.1 /pcsc/builddir/libpcsclite_real.so \
+                       /pcsc/builddir/libpcsclite.so.1      /pcsc/builddir/libpcsclite.so \
+                       /pcsc/builddir/libpcscspy.so.0       /pcsc/builddir/libpcscspy.so \
+                       /usr/local/lib/x86_64-linux-gnu/
 
 # Install linuxdeployqt
 # built from https://github.com/probonopd/linuxdeployqt/commit/0393b84
