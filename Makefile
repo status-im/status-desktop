@@ -939,6 +939,10 @@ mobile-build: | deps-common
 	echo -e "\033[92mBuilding:\033[39m mobile app"
 	$(MAKE) -C mobile
 
+mobile-build-squish: | deps-common
+	echo -e "\033[92mBuilding:\033[39m mobile app (Squish enabled)"
+	$(MAKE) -C mobile QMAKE_EXTRA_ARGS="ENABLE_SQUISH=1"
+
 mobile-clean:
 	echo -e "\033[92mCleaning:\033[39m mobile app"
 	$(MAKE) -C mobile clean
