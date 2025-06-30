@@ -58,20 +58,20 @@ Estimated release: Mid-End July
   - Runs parallel to other features and doesn't need to be shipped to any particular milestones
   - No API changes are expected until the Chat SDK is integrated
   - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
-  - In Progress ⏳
+  - In Progress ⏳ 16% 🟨⬜⬜⬜⬜ (estimated progress as not all subtasks are created)
 - [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
   - No provided FURPS at the moment
     - This is about maintaing the same level of quality as with QT5 but with QT6 instead.
-  - In Progress ⏳ 🟩🟩🟩🟩⬜ 89%
+  - In Progress ⏳ 🟩🟩🟩🟩⬜ 87%
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
   - [FURPS](/docs/FURPS/tablet-build.md)
-  - In Progress ⏳ 🟩🟩🟩⬜⬜ 63.79%
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 67% (+3%)
 - [Jump to screen (Shell)](https://github.com/status-im/status-desktop/issues/17971)
   - [FURPS](/docs/FURPS/jump-to-screen-shell.md)
-  - In Progress ⏳ 🟩🟩🟩🟩🟨 96.88%
+  - In Progress ⏳ 🟩🟩🟩🟩🟨 92%
 - [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
   - [FURPS](/docs/FURPS/local-user-backups.md)
-  - In Progress ⏳ 🟩🟩🟨⬜⬜ 56.8%
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 45%
 
 ### 2.36
 
@@ -83,12 +83,12 @@ Estimated release: Mid September
 
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
-  - In Progress (See Table Build section)
+  - In Progress (See Tablet Build section)
 - [Memory improvements](https://github.com/status-im/status-go/issues/6544)
   - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
 - [UI modularization](https://github.com/status-im/status-desktop/issues/17872)
   - [FURPS](/docs/FURPS/ui-modularization.md)
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 20.19%
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 24% (+4%)
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
 - Ethereum Follow Protocol
