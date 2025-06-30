@@ -133,7 +133,6 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/rxvalidator.h
         include/StatusQ/statusemojimodel.h
         include/StatusQ/statussyntaxhighlighter.h
-        include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/systemutilsinternal.h
         include/StatusQ/typesregistration.h
@@ -154,7 +153,6 @@ add_library(StatusQ ${LIB_TYPE}
         src/rxvalidator.cpp
         src/statusemojimodel.cpp
         src/statussyntaxhighlighter.cpp
-        src/statuswindow.cpp
         src/stringutilsinternal.cpp
         src/systemutilsinternal.cpp
         src/typesregistration.cpp
@@ -182,12 +180,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_library(LocalAuthentication LocalAuthentication)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication})
     target_sources(StatusQ PRIVATE
-        src/statuswindow_osx.mm
         src/keychain_osx.mm
     )
 else ()
     target_sources(StatusQ PRIVATE
-        src/statuswindow_other.cpp
         src/keychain_other.cpp
     )
 endif ()

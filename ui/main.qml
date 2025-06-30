@@ -1,13 +1,8 @@
-import QtQuick 2.15
+import QtQuick
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Qt.labs.platform 1.1
 import Qt.labs.settings 1.1
-import QtQuick.Window 2.15
-import QtQml 2.15
 
 import utils 1.0
-import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
@@ -23,9 +18,9 @@ import AppLayouts.Onboarding2.pages 1.0
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Backpressure 0.1
+import StatusQ.Platform 0.1
 
-StatusWindow {
+ApplicationWindow {
     id: applicationWindow
 
     property bool appIsReady: false
@@ -52,13 +47,17 @@ StatusWindow {
     title: {
         // Set application settings
         Qt.application.name = "Status Desktop"
-        Qt.application.displayName = qsTr("Status Desktop")
+        Qt.application.displayName = d.macOSWindowed ? "" : qsTr("Status Desktop")
         Qt.application.organization = "Status"
         Qt.application.domain = "status.im"
         Qt.application.version = aboutModule.getCurrentVersion()
         return Qt.application.displayName
     }
-    visible: true
+
+    // this is added so that the system toolbar integrated with client ui without a safe area on top
+    topPadding: 0
+    // These flgas integrate the systel titlebar into the client UI on macOS
+    flags: Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
 
     function updatePaddings() {
         if (applicationWindow.width < Theme.portraitBreakpoint.width) {
@@ -151,6 +150,14 @@ StatusWindow {
                 }
             }
         }
+
+        readonly property bool macOSWindowed: Qt.platform.os === "osx" && applicationWindow.visibility !== Window.FullScreen
+
+        function restoreWindowState() {
+             if (applicationWindow.visibility === Window.Minimized) {
+                 applicationWindow.showNormal()
+             }
+         }
     }
 
     // Only set minimum width/height for desktop apps
@@ -169,18 +176,24 @@ StatusWindow {
 
     Action {
         shortcut: StandardKey.FullScreen
-        onTriggered: applicationWindow.toggleFullScreen()
+        onTriggered: {
+            if (applicationWindow.visibility === Window.FullScreen) {
+                applicationWindow.showNormal();
+            } else {
+                applicationWindow.showFullScreen();
+            }
+        }
     }
 
     Action {
         shortcut: "Ctrl+M"
-        onTriggered: applicationWindow.toggleMinimize()
+        onTriggered: applicationWindow.showMinimized()
     }
 
     Action {
         shortcut: StandardKey.Close
         onTriggered: {
-            applicationWindow.visible = false;
+            applicationWindow.visibility = Window.Hidden
         }
     }
 
@@ -222,8 +235,6 @@ StatusWindow {
         Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
         d.runMockedKeycardControllerWindow()
-
-        startupOnboardingLoader.active = false
     }
 
     //! Workaround for custom QQuickWindow
@@ -241,7 +252,7 @@ StatusWindow {
                         Qt.quit();
                     } else {
                         close.accepted = false
-                        applicationWindow.visible = false;
+                        applicationWindow.visibility = Window.Hidden
                     }
                 }
             }
@@ -286,8 +297,8 @@ StatusWindow {
     signal navigateTo(string path)
 
     function makeStatusAppActive() {
-        applicationWindow.restoreWindowState()
-        applicationWindow.visible = true
+        d.restoreWindowState()
+        applicationWindow.visibility = Window.Windowed
         applicationWindow.raise()
         applicationWindow.requestActivate()
     }
@@ -314,11 +325,17 @@ StatusWindow {
 
     Loader {
         id: loader
+
         anchors.fill: parent
+        anchors.topMargin: Constants.isMobile ? parent.SafeArea.margins.top : 0
+
         asynchronous: true
         opacity: active ? 1.0 : 0.0
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}
+        /* only unload splash screen once appmain is loaded else we see
+        an empty screen for a sec until it is laoded */
+        onLoaded: startupOnboardingLoader.active = false
     }
 
     Component {
@@ -353,7 +370,10 @@ StatusWindow {
 
     Loader {
         id: startupOnboardingLoader
+
         anchors.fill: parent
+        anchors.topMargin: Constants.isMobile ? parent.SafeArea.margins.top : 0
+
         sourceComponent: onboardingV2
     }
 
@@ -474,33 +494,19 @@ StatusWindow {
         }
     }
 
-    MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 13
-
-        visible: Qt.platform.os === Constants.mac && applicationWindow.visibility !== Window.FullScreen
-
-        onClose: {
-            if (loader.sourceComponent != app) {
-                Qt.quit()
-                return
-            }
-
-            if (localAccountSensitiveSettings.quitOnClose) {
-                Qt.quit();
-                return
-            }
-
-            applicationWindow.visible = false;
+    // This is needed to enable the move window functionality on macOS when windowed
+    MouseArea {
+        enabled: d.macOSWindowed
+        height: applicationWindow.SafeArea.margins.top
+        width: parent.width
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
         }
+        preventStealing: true
+        propagateComposedEvents: true
+        onPressed: applicationWindow.startSystemMove()
 
-        onMinimised: {
-            applicationWindow.toggleMinimize()
-        }
-
-        onMaximized: {
-            applicationWindow.toggleFullScreen()
-        }
     }
 }
