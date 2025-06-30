@@ -2,8 +2,8 @@ from objectmaphelper import *
 
 # MAIN NAMES
 
-statusDesktop_mainWindow = {"name": "mainWindow", "type": "StatusWindow"}
-mainWindow_StatusWindow = {"name": "mainWindow", "type": "StatusWindow", "visible": True}
+statusDesktop_mainWindow = {"name": "mainWindow", "type": "ApplicationWindow"}
+mainWindow_StatusWindow = {"name": "mainWindow", "type": "ApplicationWindow", "visible": True}
 statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type": "Overlay", "unnamed": 1,
                                     "visible": True}
 statusDesktop_mainWindow_overlay_popup2 = {"container": statusDesktop_mainWindow_overlay, "occurrence": 2,

@@ -1,13 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Qt.labs.platform 1.1
 import Qt.labs.settings 1.1
-import QtQuick.Window 2.15
-import QtQml 2.15
 
 import utils 1.0
-import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
@@ -23,9 +18,9 @@ import AppLayouts.Onboarding2.pages 1.0
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Backpressure 0.1
+import StatusQ.Platform 0.1
 
-StatusWindow {
+ApplicationWindow {
     id: applicationWindow
 
     property bool appIsReady: false
@@ -59,6 +54,7 @@ StatusWindow {
         return Qt.application.displayName
     }
     visible: true
+    flags: d.showCustomMacOsToolbar ? Qt.CustomizeWindowHint: Qt.Window
 
     function updatePaddings() {
         if (applicationWindow.width < Theme.portraitBreakpoint.width) {
@@ -151,6 +147,14 @@ StatusWindow {
                 }
             }
         }
+
+        readonly property bool showCustomMacOsToolbar: Qt.platform.os === "osx" && applicationWindow.visibility !== Window.FullScreen
+
+        function restoreWindowState() {
+             if (applicationWindow.visibility === Window.Minimized) {
+                 applicationWindow.showNormal()
+             }
+         }
     }
 
     // Only set minimum width/height for desktop apps
@@ -169,12 +173,18 @@ StatusWindow {
 
     Action {
         shortcut: StandardKey.FullScreen
-        onTriggered: applicationWindow.toggleFullScreen()
+        onTriggered: {
+            if (applicationWindow.visibility === Window.FullScreen) {
+                applicationWindow.showNormal();
+            } else {
+                applicationWindow.showFullScreen();
+            }
+        }
     }
 
     Action {
         shortcut: "Ctrl+M"
-        onTriggered: applicationWindow.toggleMinimize()
+        onTriggered: applicationWindow.showMinimized()
     }
 
     Action {
@@ -290,6 +300,10 @@ StatusWindow {
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
+        // This helper method will update the rounded borders for macOS when the
+        // window is minimized with a custom titlebar.
+        SystemUtils.setWindowDecoration(applicationWindow)
+
         Theme.changeTheme(Theme.Style.System, systemPalette.isCurrentSystemThemeDark());
 
         restoreAppState();
@@ -301,7 +315,7 @@ StatusWindow {
     signal navigateTo(string path)
 
     function makeStatusAppActive() {
-        applicationWindow.restoreWindowState()
+        d.restoreWindowState()
         applicationWindow.visible = true
         applicationWindow.raise()
         applicationWindow.requestActivate()
@@ -490,33 +504,46 @@ StatusWindow {
         }
     }
 
-    MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar
+    // TODO: This area for MacOs and generic topbar
+    // for with notification and Profile button should probably
+    // be combined here.
+    // https://github.com/status-im/status-desktop/issues/18186
+    Item {
+        visible: d.showCustomMacOsToolbar
+
         anchors.left: parent.left
+        anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 13
 
-        visible: Qt.platform.os === Constants.mac && applicationWindow.visibility !== Window.FullScreen
+        implicitHeight: 40
 
-        onClose: {
-            if (loader.sourceComponent != app) {
-                Qt.quit()
-                return
-            }
-
-            if (localAccountSensitiveSettings.quitOnClose) {
-                Qt.quit();
-                return
-            }
-
-            applicationWindow.visible = false;
+        MouseArea {
+            anchors.fill: parent
+            preventStealing: true
+            propagateComposedEvents: true
+            onPressed: applicationWindow.startSystemMove()
         }
 
-        onMinimised: {
-            applicationWindow.toggleMinimize()
-        }
+        StatusMacTrafficLights {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: 13
+            anchors.leftMargin: Theme.smallPadding
+            onClose: {
+                if (loader.sourceComponent != app) {
+                    Qt.quit()
+                    return
+                }
 
-        onMaximized: {
-            applicationWindow.toggleFullScreen()
+                if (localAccountSensitiveSettings.quitOnClose) {
+                    Qt.quit();
+                    return
+                }
+
+                applicationWindow.visible = false;
+            }
+            onMinimised: applicationWindow.showMinimized()
+            onMaximized: applicationWindow.showFullScreen()
         }
     }
 }

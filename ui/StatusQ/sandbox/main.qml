@@ -19,7 +19,7 @@ import SortFilterProxyModel 0.2
 
 import "demoapp/data" 1.0
 
-StatusWindow {
+ApplicationWindow {
     id: rootWindow
 
     width: 1224
@@ -554,7 +554,7 @@ StatusWindow {
         anchors.top: parent.top
         anchors.margins: 13
 
-        visible: Qt.platform.os == "osx"
+        visible: Qt.platform.os === "osx" && rootWindow.visibility !== Window.FullScreen
 
         onClose: {
             rootWindow.close()
@@ -565,7 +565,7 @@ StatusWindow {
         }
 
         onMaximized: {
-            rootWindow.toggleFullScreen()
+            rootWindow.showFullScreen()
         }
     }
 
@@ -584,7 +584,7 @@ StatusWindow {
         }
 
         onMaximized: {
-            rootWindow.toggleFullScreen()
+            rootWindow.showFullScreen()
         }
     }
 

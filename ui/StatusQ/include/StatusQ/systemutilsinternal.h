@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QQuickItem>
 #include <QMouseEvent>
+#include <QQuickWindow>
 
 class SystemUtilsInternal : public QObject
 {
@@ -14,4 +15,10 @@ public:
     Q_INVOKABLE void restartApplication() const;
     Q_INVOKABLE void downloadImageByUrl(const QUrl& url, const QString& path) const;
     Q_INVOKABLE void synthetizeRightClick(QQuickItem* item, qreal x, qreal y, Qt::KeyboardModifiers modifiers) const;
+    Q_INVOKABLE void setWindowDecoration(QQuickWindow* windowObj);
+
+private:
+    void updateDecoration(QQuickWindow* windowObj);
+    void customWindowDecoration(QQuickWindow* windowObj);
+    void defaultWindowDecoration(QQuickWindow* windowObj);
 };
