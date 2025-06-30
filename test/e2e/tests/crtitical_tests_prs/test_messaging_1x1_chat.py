@@ -54,7 +54,6 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             aut_one.attach()
             main_window.prepare()
-            # Test is on wallet screen, so we need to open settings from left panel
             settings = main_window.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
@@ -71,7 +70,6 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         with step(f'Verify that contact request was received by {user_two.name}'):
             aut_two.attach()
             main_window.prepare()
-            # Test is on wallet screen, so we need to open settings from left panel
             settings = main_window.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
@@ -104,7 +102,6 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         with step(f'Verify that contact appeared in contacts list of {user_one.name} in messaging settings'):
             aut_one.attach()
             main_window.prepare()
-            # Test is in contact settings, so we need to open settings from left panel
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
             assert str(contacts_settings.section_header.object.text) == 'Contacts'
@@ -120,14 +117,12 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         with step(f'Verify that 1X1 chat with {user_one.name} appeared for {user_two.name}'):
             aut_two.attach()
             main_window.prepare()
-            # Shell is not open, so we need to open messages from left panel
             messages_screen = main_window.left_panel.open_messages_screen()
             assert user_one.name in messages_screen.left_panel.get_chats_names
 
         with step(f'User {user_one.name} send  a message to {user_two.name}'):
             aut_one.attach()
             main_window.prepare()
-            # Shell is not open, so we need to open messages from left panel
             left_panel_chat = main_window.left_panel.open_messages_screen().left_panel
             assert driver.waitFor(lambda: user_two.name in left_panel_chat.get_chats_names,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)

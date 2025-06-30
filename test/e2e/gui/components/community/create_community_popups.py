@@ -21,21 +21,10 @@ from gui.screens.community import CommunityScreen
 LOG = logging.getLogger(__name__)
 
 
-class CreateCommunitiesBanner(QObject):
-
-    def __init__(self):
-        super().__init__(names.create_new_StatusButton)
-        self.create_new_button = Button(names.create_new_StatusButton)
-
-    def open_create_community_popup(self) -> 'CreateNewCommunityPopup':
-        self.create_new_button.click()
-        return CreateNewCommunityPopup().wait_until_appears()
-
-
 class CreateNewCommunityPopup(QObject):
 
     def __init__(self):
-        super().__init__(names.createCommunityNameInput_TextEdit)
+        super().__init__(names.createCommunityPopup)
         self._scroll = Scroll(names.generalView_StatusScrollViewOverlay)
         self._name_text_edit = TextEdit(names.createCommunityNameInput_TextEdit)
         self._description_text_edit = TextEdit(names.createCommunityDescriptionInput_TextEdit)

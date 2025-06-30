@@ -111,11 +111,10 @@ class MainLeftPanel(QObject):
             self.communities_portal_button.click()
             introduce_yourself_popup = IntroduceYourselfPopup()
             if introduce_yourself_popup.is_visible:
-                introduce_yourself_popup.skip_button.click()
-                introduce_yourself_popup.wait_until_hidden()
-            time.sleep(0.2)
+                introduce_yourself_popup.skip_intro()
             try:
-                return CommunitiesPortal().wait_until_appears()
+                portal = CommunitiesPortal().wait_until_appears()
+                return portal
             except Exception:
                 pass  # Retry if attempts remain
         raise Exception(f"Failed to open Communities Portal after {attempts} attempts")

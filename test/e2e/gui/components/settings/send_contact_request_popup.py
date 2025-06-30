@@ -1,9 +1,6 @@
-import time
-
 import allure
 
 import configs
-from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
@@ -27,10 +24,10 @@ class SendContactRequest(QObject):
         self.wait_until_hidden()
 
 
-class SendContactRequestFromProfile(BasePopup):
+class SendContactRequestFromProfile(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.sendContactRequestModal)
         self._message_text_edit = TextEdit(names.profileSendContactRequestModal_sayWhoYouAreInput_TextEdit)
         self._send_button = Button(names.send_contact_request_StatusButton_2)
 

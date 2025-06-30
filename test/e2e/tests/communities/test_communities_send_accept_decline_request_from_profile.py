@@ -145,7 +145,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             main_screen.prepare()
             community_screen = main_screen.left_panel.select_community(community.name)
             profile_popup = community_screen.right_panel.click_member(user_one.name)
-            profile_popup.review_contact_request().accept()
+            profile_popup.review_contact_request().accept_button.click()
             main_screen.hide()
 
         with step(f'User {user_one.name} verify that send message button appeared in profile popup'):
@@ -156,7 +156,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
 
         with step(f'User {user_one.name} remove {user_three.name} from contacts from user profile'):
             profile_popup.choose_context_menu_option('Remove contact')
-            RemoveContactPopup().wait_until_appears().remove()
+            RemoveContactPopup().wait_until_appears().remove_contact_button.click()
 
         with step(f'User {user_one.name}, send contact request to {user_three.name} from user profile again'):
             profile_popup.send_request().send(f'Hello {user_three.name}')
@@ -167,7 +167,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             aut_three.attach()
             main_screen.prepare()
             profile_decline = community_screen.right_panel.click_member(user_one.name)
-            profile_decline.review_contact_request().decline()
+            profile_decline.review_contact_request().ignore_button.click()
 
         with step(f'User {user_three.name} verify that send request button is available again in profile popup'):
             assert driver.waitFor(lambda: profile_popup.is_send_request_button_visible,

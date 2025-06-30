@@ -1,4 +1,6 @@
 import random
+
+from gui.components.base_popup import BasePopup
 from gui.components.wallet.send_popup import *
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -6,9 +8,9 @@ from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
 
 
-class TokenSelectorPopup(BasePopup):
+class TokenSelectorPopup(QObject):
     def __init__(self):
-        super().__init__()
+        super().__init__(names.tokenSelectorPanel_TokenSelectorNew)
         self.token_selector_panel = QObject(names.tokenSelectorPanel_TokenSelectorNew)
         self.tab_bar = QObject(names.tokensTabBar_StatusTabBar)
         self.assets_tab = QObject(names.tokenSelectorPanel_AssetsTab)

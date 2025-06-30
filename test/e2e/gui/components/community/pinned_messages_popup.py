@@ -1,16 +1,15 @@
 import allure
 
 import configs
-from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.objects_map import names
 
 
-class PinnedMessagesPopup(BasePopup):
+class PinnedMessagesPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.pinnedMessagesPopup)
         self._close_button = Button(names.headerActionsCloseButton_StatusFlatRoundButton)
         self._unpin_button = Button(names.unpinButton_StatusFlatRoundButton)
         self._pinned_message_details = QObject(names.o_StatusPinMessageDetails)

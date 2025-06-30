@@ -14,7 +14,7 @@ from driver.objects_access import walk_children
 from gui.components.settings.rename_keypair_popup import RenameKeypairPopup
 from gui.components.wallet.rpc_change_restart_popup import RPCChangeRestartPopup
 from gui.components.wallet.add_saved_address_popup import AddEditSavedAddressPopup
-from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountWithConfirmation
+from gui.components.wallet.delete_account_confirmation_popup import RemoveAccountWithConfirmation
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 
 from gui.components.wallet.wallet_account_popups import AccountPopup, EditAccountFromSettingsPopup

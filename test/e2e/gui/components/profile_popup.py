@@ -4,10 +4,9 @@ import pyperclip
 import configs
 import constants
 import driver
-from gui.components.base_popup import BasePopup
 from gui.components.context_menu import ContextMenu
 from gui.components.settings.block_user_popup import BlockUserPopup
-from gui.components.settings.review_contact_request_popup import AcceptRequestFromProfile
+from gui.components.settings.review_contact_request_popup import AcceptIgnoreRequestFromProfile
 from gui.components.settings.send_contact_request_popup import SendContactRequestFromProfile
 from gui.components.settings.unblock_user_popup import UnblockUserPopup
 from gui.components.share_profile_popup import ShareProfilePopup
@@ -120,7 +119,7 @@ class ProfilePopupFromMembers(ProfilePopup):
     def review_contact_request(self):
         self._review_request_button.wait_until_appears(15000)
         self._review_request_button.click()
-        return AcceptRequestFromProfile().wait_until_appears()
+        return AcceptIgnoreRequestFromProfile().wait_until_appears()
 
     @allure.step('Get send message button visibility state')
     def is_send_message_button_visible(self):

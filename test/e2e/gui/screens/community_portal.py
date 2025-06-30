@@ -3,7 +3,7 @@ import time
 import allure
 
 import driver
-from gui.components.community.create_community_popups import CreateCommunitiesBanner, CreateNewCommunityPopup
+from gui.components.community.create_community_popups import CreateNewCommunityPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.objects_map import communities_names
@@ -21,7 +21,7 @@ class CommunitiesPortal(QObject):
             self.create_new_community_button.click()
             time.sleep(0.1)
             try:
-                return CreateNewCommunityPopup()
+                return CreateNewCommunityPopup().wait_until_appears()
             except Exception:
                 pass
         raise LookupError(f'Create Communities banner is not displayed')

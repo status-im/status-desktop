@@ -5,7 +5,7 @@ from enum import Enum
 class OnboardingMessages(Enum):
     WRONG_LOGIN_LESS_LETTERS = 'Display Names must be at least 5 character(s) long'
     WRONG_LOGIN_SYMBOLS_NOT_ALLOWED = 'Invalid characters (use A-Z and 0-9, hyphens and underscores only)'
-    WRONG_PASSWORD = 'Minimum 10 character(s)'
+    WRONG_PASSWORD = 'Minimum 10 characters'
     PASSWORDS_DONT_MATCH = "Passwords don't match"
     PASSWORD_INCORRECT = 'Password incorrect'
 

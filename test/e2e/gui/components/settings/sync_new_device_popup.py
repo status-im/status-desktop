@@ -1,9 +1,6 @@
-import time
-
 import allure
 import pyperclip
 
-from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
