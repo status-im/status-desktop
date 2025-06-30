@@ -30,7 +30,7 @@ pytest_plugins = [
 
 @pytest.fixture(scope='session', autouse=True)
 def setup_session_scope(
-        init_testrail_api,
+        # init_testrail_api, TODO: https://github.com/status-im/status-desktop/issues/18288
         prepare_test_directory,
         start_squish_server
 ):
@@ -42,7 +42,7 @@ def setup_session_scope(
 def setup_function_scope(
         caplog,
         generate_test_data,
-        check_result,
+        # check_result, TODO: https://github.com/status-im/status-desktop/issues/18288
         application_logs,
         launch_keycard_controller
 ):
