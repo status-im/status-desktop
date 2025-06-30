@@ -22,23 +22,14 @@ Item {
     property var model
     property alias contentWidth: flow.width
 
-    readonly property int itemsWidth: {
-        let result = 0;
-        for (let i = 0; i < repeater.count; ++i) {
-            result +=  flow.spacing + repeater.itemAt(i).width;
-        }
-        return result;
-    }
-
     signal clicked(var item)
 
-    implicitWidth: itemsWidth
-    implicitHeight: flow.height
+    implicitWidth: flow.implicitWidth
+    implicitHeight: flow.implicitHeight
 
     Flow {
         id: flow
         anchors.centerIn: parent
-        width: Math.min(parent.width, root.itemsWidth);
         spacing: 10
 
         Repeater {
