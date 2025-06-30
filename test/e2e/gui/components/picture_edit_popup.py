@@ -4,7 +4,6 @@ from collections import namedtuple
 import allure
 
 import driver.mouse
-from gui.components.base_popup import BasePopup
 from gui.components.status_modals import StatusModal
 from gui.elements.button import Button
 from gui.elements.object import QObject

@@ -55,7 +55,7 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
 
     with step('Delete account'):
         with step('Delete wallet account'):
-            wallet.left_panel.delete_account_from_context_menu(wallet_account.name).agree_and_confirm()
+            wallet.left_panel.delete_account_from_context_menu(wallet_account.name).remove_account_with_confirmation()
 
     with step('Add the same account again and check derivation path'):
         add_new_account_popup = wallet.left_panel.open_add_account_popup()

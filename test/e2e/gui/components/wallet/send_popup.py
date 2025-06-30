@@ -6,20 +6,18 @@ import typing
 import configs.timeouts
 import driver
 from driver.objects_access import walk_children
-from gui.components.base_popup import BasePopup
 from gui.components.wallet.sign_send_popup import SignSendModalPopup
 from gui.components.wallet.token_selector_popup import TokenSelectorPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
-from gui.elements.text_label import TextLabel
 from gui.objects_map import names
 
 
-class SendPopup(BasePopup):
+class SendPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.simpleSendModal)
         self.send_modal_header = QObject(names.sendModalHeader)
         self.send_modal_recipient_panel = QObject(names.sendModalRecipientPanel)
         self.send_modal_token_selector = Button(names.sendModalTokenSelector)
@@ -33,7 +31,6 @@ class SendPopup(BasePopup):
         self.tokens_list = QObject(names.statusListView)
         self.asset_list_item = QObject(names.o_TokenBalancePerChainDelegate_template)
         self.ens_address_text_edit = TextEdit(names.ens_or_address_TextEdit)
-
 
     @allure.step('Get assets or collectibles list')
     def get_assets_or_collectibles_list(self, tab: str) -> typing.List[str]:
@@ -91,4 +88,3 @@ class SendPopup(BasePopup):
         self.open_sign_send_modal().sign_send_modal_reject_button.click()
         sign_send_modal = self.open_sign_send_modal()
         sign_send_modal.sign_send_modal_sign_button.click()
-

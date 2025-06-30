@@ -6,9 +6,7 @@ import allure
 import configs.timeouts
 import driver
 from driver.objects_access import walk_children
-from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
-from gui.elements.list import List
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.objects_map import names

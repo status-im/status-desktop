@@ -1,9 +1,6 @@
 import allure
 import pyperclip
 
-import configs
-import driver
-from gui.components.base_popup import BasePopup
 from gui.components.profile_popup import ProfilePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject

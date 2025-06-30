@@ -1,7 +1,4 @@
-import time
-
 import configs
-from gui.components.base_popup import BasePopup
 from gui.components.community.new_permission_popup import NewPermissionPopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.elements.button import Button

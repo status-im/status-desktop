@@ -12,6 +12,7 @@ class RemoveAccountWithConfirmation(QObject):
         super().__init__(names.removeAccountConfirmationPopup)
         self.remove_account_confirmation_popup = QObject(names.removeAccountConfirmationPopup)
         self.remove_confirmation_close_button = Button(names.removeConfirmationCrossCloseButton)
+        self.remove_button = Button(names.removeButton)
         self.remove_confirmation_title_text = TextLabel(names.removeConfirmationTextTitle)
         self.remove_confirmation_body_text = TextLabel(names.removeConfirmationTextBody)
         self.remove_confirmation_remove_account_button = Button(names.removeConfirmationRemoveButton)

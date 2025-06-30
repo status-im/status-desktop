@@ -15,9 +15,8 @@ from gui.components.wallet.add_saved_address_popup import AddEditSavedAddressPop
 from gui.components.wallet.asset_context_menu_popup import AssetContextMenuPopup
 from gui.components.wallet.bridge_popup import BridgePopup
 from gui.components.wallet.confirmation_popup import ConfirmationPopup
-from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountWithConfirmation
+from gui.components.wallet.delete_account_confirmation_popup import RemoveAccountWithConfirmation
 from gui.components.wallet.receive_popup import ReceivePopup
-from gui.components.wallet.remove_wallet_account_popup import RemoveWalletAccountPopup
 from gui.components.wallet.send_popup import SendPopup
 from gui.components.wallet.wallet_account_context_menu import WalletAccountContextMenu
 from gui.components.wallet.wallet_account_popups import AccountPopup

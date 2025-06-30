@@ -43,7 +43,7 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
             f'Account with {new_name} is not displayed even it should be'
 
     with step('Delete watched account with agreement'):
-        wallet.left_panel.delete_account_from_context_menu(new_name).confirm()
+        wallet.left_panel.delete_account_from_context_menu(new_name).remove_button.click()
 
     with step('Verify toast message notification when removing account'):
         messages = main_screen.wait_for_notification()

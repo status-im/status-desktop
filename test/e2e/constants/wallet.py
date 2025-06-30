@@ -99,5 +99,5 @@ class WalletSeedPhrase(Enum):
 
 class WalletAccountPopup(Enum):
     WALLET_ACCOUNT_NAME_MIN = 'Account name must be at least 5 characters'
-    WALLET_KEYPAIR_NAME_MIN = 'Key pair name must be at least 5 character(s)'
+    WALLET_KEYPAIR_NAME_MIN = 'Key pair name must be at least 5 characters'
     WALLET_KEYPAIR_MIN = 'Key pair must be at least 5 character(s)'

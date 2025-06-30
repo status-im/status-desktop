@@ -1,8 +1,6 @@
-import configs.timeouts
 from constants.wallet import *
 from gui.screens.settings_keycard import KeycardSettingsView
 from gui.screens.settings_wallet import *
-from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
