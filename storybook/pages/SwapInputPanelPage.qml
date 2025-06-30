@@ -280,5 +280,5 @@ SplitView {
 }
 
 // category: Panels
-
+// status: good
 // https://www.figma.com/design/TS0eQX9dAZXqZtELiwKIoK/Swap---Milestone-1?node-id=3404-111405&t=G96tBLQr2j73HT9X-0

@@ -29,9 +29,6 @@ StatusDropdown {
     width: d.width
     padding: d.padding
 
-    // force keeping within the bounds of the enclosing window
-    margins: 0
-
     onAboutToShow: {
         group.checkState = Qt.Unchecked
         d.initialPermissionTypeChanged()

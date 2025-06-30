@@ -78,7 +78,7 @@ Item {
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
 
-    opacity: enabled ? 1 : 0.3
+    opacity: enabled ? 1 : Theme.disabledOpacity
 
     LayoutMirroring.childrenInherit: true
 
@@ -107,8 +107,8 @@ Item {
             font.family: Theme.baseFont.name
             font.pixelSize: root.size === StatusComboBox.Size.Large ? Theme.secondaryTextFontSize : 13
 
-            padding: 16
-            spacing: 16
+            padding: Theme.padding
+            spacing: Theme.padding
 
             background: Loader {
                 sourceComponent: root.defaultBackgroundComponent
@@ -147,14 +147,14 @@ Item {
                 implicitWidth: comboBox.width
                 height: Math.min(implicitContentHeight + topPadding + bottomPadding,
                                  comboBox.Window.height - topMargin - bottomMargin)
-                margins: 8
+                margins: Theme.halfPadding
 
                 padding: 1
-                verticalPadding: 8
+                verticalPadding: Theme.halfPadding
 
                 background: Rectangle {
                     color: Theme.palette.statusSelect.menuItemBackgroundColor
-                    radius: 8
+                    radius: Theme.radius
                     border.color: Theme.palette.baseColor2
                     layer.enabled: true
                     layer.effect: DropShadow {

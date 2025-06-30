@@ -24,6 +24,8 @@ Popup {
     signal stickerSelected(string hashId, string packId, string url)
     signal buyClicked(string packId, string price)
 
+    margins: 0 // NB: !== -1 to stay within Window bounds
+
     QtObject {
         id: d
 

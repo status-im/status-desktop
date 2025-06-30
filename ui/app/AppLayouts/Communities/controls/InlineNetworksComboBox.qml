@@ -45,8 +45,8 @@ StatusComboBox {
 
         readonly property bool oneItem: control.count === 1
 
-        readonly property int padding: 8
-        readonly property int radius: 8
+        readonly property int padding: Theme.halfPadding
+        readonly property int radius: Theme.radius
         readonly property int fontSize: Theme.additionalTextSize
         readonly property int iconSize: 32
 

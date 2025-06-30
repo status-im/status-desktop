@@ -25,6 +25,8 @@ Popup {
     property bool showSearchBox: false
     property var messageInput
 
+    margins: 0 // NB: !== -1 to stay within Window bounds
+
     function openPopup(listParam) {
         modelList = listParam
         popup.open()

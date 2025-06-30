@@ -165,5 +165,5 @@ SplitView {
 }
 
 // category: Components
-
+// status: good
 // https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=13179-346563&mode=design&t=RUkJVqqhgam32C1S-0
