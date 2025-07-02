@@ -202,7 +202,8 @@ method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[Derive
       path = derivedAddresses[0].path,
       alreadyCreated = derivedAddresses[0].alreadyCreated,
       hasActivity = derivedAddresses[0].hasActivity,
-      loaded = true)
+      alreadyCreatedChecked = true,
+      detailsLoaded = true)
     if currStateObj.stateType() == StateType.ImportPrivateKey:
       if cmpIgnoreCase(self.view.getPrivateKeyAccAddress().getAddress(), addressDetailsItem.getAddress()) == 0:
         self.view.setPrivateKeyAccAddress(addressDetailsItem)

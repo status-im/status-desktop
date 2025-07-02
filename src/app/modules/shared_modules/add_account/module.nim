@@ -118,7 +118,8 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
     path = accountDto.path,
     alreadyCreated = true,
     hasActivity = false,
-    loaded = true)
+    alreadyCreatedChecked = true,
+    detailsLoaded = true)
 
   self.view.setDisablePopup(false)
   self.view.setStoredAccountName(accountDto.name)
@@ -513,12 +514,13 @@ method onDerivedAddressesFromKeycardFetched*[T](self: Module[T], keycardFlowType
   if self.authenticationReason == AuthenticationReason.AddingAccount:
     self.doAddAccount()
 
-method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto], error: string) =
+method updateDerivedAddresses*[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto], error: string, detailsLoaded: bool) =
   if not self.view.getScanningForActivityIsOngoing():
     return
-  if error.len > 0:
+  var errorInCheckedIfAccountAlreadyExists = error.len > 0 and not detailsLoaded
+  var errorInScanningActivity = error.len > 0 and detailsLoaded
+  if errorInScanningActivity:
     error "fetching address details error", err=error
-    return
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     error "waa_cannot resolve current state"
@@ -532,7 +534,9 @@ method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[Derive
       path = derivedAddresses[0].path,
       alreadyCreated = derivedAddresses[0].alreadyCreated,
       hasActivity = derivedAddresses[0].hasActivity,
-      loaded = true)
+      alreadyCreatedChecked = not errorInCheckedIfAccountAlreadyExists and not errorInScanningActivity,
+      detailsLoaded = detailsLoaded,
+      errorInScanningActivity = errorInScanningActivity)
     if currStateObj.stateType() == StateType.EnterPrivateKey:
       if cmpIgnoreCase(self.view.getPrivateKeyAccAddress().getAddress(), addressDetailsItem.getAddress()) == 0:
         self.view.setPrivateKeyAccAddress(addressDetailsItem)
@@ -549,7 +553,9 @@ method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[Derive
         addressDetailsItem.setPublicKey(selectedAddress.getPublicKey())
         addressDetailsItem.setPath(selectedAddress.getPath())
         self.view.setSelectedDerivedAddress(addressDetailsItem)
-      self.view.derivedAddressModel().updateDetailsForAddressAndBubbleItToTop(addressDetailsItem.getAddress(), addressDetailsItem.getHasActivity())
+      self.view.derivedAddressModel().updateDetailsForAddressAndBubbleItToTop(addressDetailsItem.getAddress(),
+      addressDetailsItem.getHasActivity(),
+      detailsLoaded, errorInScanningActivity)
       return
     error "derived addresses received in the state in which the app doesn't expect them"
     return

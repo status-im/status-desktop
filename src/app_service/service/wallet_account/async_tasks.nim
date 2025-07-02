@@ -41,38 +41,32 @@ proc fetchDerivedAddressesForMnemonicTask*(argEncoded: string) {.gcsafe, nimcall
   arg.finish(output)
 
 type
-  FetchDetailsForAddressesTaskArg* = ref object of QObjectTaskArg
+  FetchDetailsForAddressTaskArg* = ref object of QObjectTaskArg
     uniqueId: string
-    addresses: seq[string]
+    address: string
 
-proc fetchDetailsForAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[FetchDetailsForAddressesTaskArg](argEncoded)
-  for address in arg.addresses:
-    var data = %* {
-      "uniqueId": arg.uniqueId,
-      "details": "",
-      "error": ""
-    }
-    var jsonReponse = %* {
-      "address": address,
-      "alreadyCreated": false,
-      "path": "",
-      "hasActivity": false
-    }
-    try:
-      var response = status_go_accounts.addressExists(address)
-      if response.result.getBool:
-        jsonReponse["alreadyCreated"] = %*true
-      else:
-        response = status_go_accounts.getAddressDetails(address, chainIds = @[], timeoutInMilliseconds = 3000)
-        jsonReponse = response.result
-      sleep(250)
-      data["details"] = jsonReponse
-    except Exception as e:
-      if not jsonReponse["alreadyCreated"].getBool:
-        let err = fmt"Error fetching details for an address: {e.msg}"
-        data["error"] = %* err
-    arg.finish(data)
+proc fetchDetailsForAddressTask*(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchDetailsForAddressTaskArg](argEncoded)
+  var jsonReponse = %* {
+    "address": arg.address,
+    "alreadyCreated": false,
+    "path": "",
+    "hasActivity": false
+  }
+  var data = %* {
+    "uniqueId": arg.uniqueId,
+    "details": jsonReponse,
+    "error": ""
+  }
+  try:
+    let response = status_go_accounts.getAddressDetails(arg.address, chainIds = @[], timeoutInMilliseconds = 3000)
+    if not response.error.isNil:
+      raise newException(CatchableError, response.error.message)
+    data["details"] = response.result
+  except Exception as e:
+    let err = fmt"Error fetching details for an address: {e.msg}"
+    data["error"] = %* err
+  arg.finish(data)
 
 #################################################
 # Async building token

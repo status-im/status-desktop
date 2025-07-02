@@ -8,7 +8,9 @@ QtObject:
     path: string
     hasActivity: bool
     alreadyCreated: bool
-    loaded: bool
+    alreadyCreatedChecked: bool
+    detailsLoaded: bool
+    errorInScanningActivity: bool
 
   proc delete*(self: DerivedAddressItem) =
     self.QObject.delete
@@ -20,7 +22,9 @@ QtObject:
     path: string = "",
     alreadyCreated: bool = false,
     hasActivity: bool = false,
-    loaded: bool = false
+    alreadyCreatedChecked: bool = false,
+    detailsLoaded: bool = false,
+    errorInScanningActivity: bool = false
   ): DerivedAddressItem =
     new(result, delete)
     result.QObject.setup
@@ -30,7 +34,9 @@ QtObject:
     result.path = path
     result.alreadyCreated = alreadyCreated
     result.hasActivity = hasActivity
-    result.loaded = loaded
+    result.alreadyCreatedChecked = alreadyCreatedChecked
+    result.detailsLoaded = detailsLoaded
+    result.errorInScanningActivity = errorInScanningActivity
 
   proc `$`*(self: DerivedAddressItem): string =
     result = fmt"""DerivedAddressItem(
@@ -40,8 +46,10 @@ QtObject:
       path: {self.path},
       alreadyCreated: {self.alreadyCreated},
       hasActivity: {self.hasActivity},
-      loaded: {self.loaded}
-      ]"""
+      alreadyCreatedChecked: {self.alreadyCreatedChecked},
+      detailsLoaded: {self.detailsLoaded}
+      errorInScanningActivity: {self.errorInScanningActivity}
+      )""""
 
   proc orderChanged*(self: DerivedAddressItem) {.signal.}
   proc getOrder*(self: DerivedAddressItem): int {.slot.} =
@@ -109,16 +117,38 @@ QtObject:
     write = setHasActivity
     notify = hasActivityChanged
 
-  proc loadedChanged*(self: DerivedAddressItem) {.signal.}
-  proc getLoaded*(self: DerivedAddressItem): bool {.slot.} =
-    return self.loaded
-  proc setLoaded*(self: DerivedAddressItem, value: bool) {.slot.} =
-    self.loaded = value
-    self.loadedChanged()
-  QtProperty[bool] loaded:
-    read = getLoaded
-    write = setLoaded
-    notify = loadedChanged
+  proc alreadyCreatedCheckedChanged*(self: DerivedAddressItem) {.signal.}
+  proc getAlreadyCreatedChecked*(self: DerivedAddressItem): bool {.slot.} =
+    return self.alreadyCreatedChecked
+  proc setAlreadyCreatedChecked*(self: DerivedAddressItem, value: bool) {.slot.} =
+    self.alreadyCreatedChecked = value
+    self.alreadyCreatedCheckedChanged()
+  QtProperty[bool] alreadyCreatedChecked:
+    read = getAlreadyCreatedChecked
+    write = setAlreadyCreatedChecked
+    notify = alreadyCreatedCheckedChanged
+
+  proc detailsLoadedChanged*(self: DerivedAddressItem) {.signal.}
+  proc getDetailsLoaded*(self: DerivedAddressItem): bool {.slot.} =
+    return self.detailsLoaded
+  proc setDetailsLoaded*(self: DerivedAddressItem, value: bool) {.slot.} =
+    self.detailsLoaded = value
+    self.detailsLoadedChanged()
+  QtProperty[bool] detailsLoaded:
+    read = getDetailsLoaded
+    write = setDetailsLoaded
+    notify = detailsLoadedChanged
+
+  proc errorInScanningActivityChanged*(self: DerivedAddressItem) {.signal.}
+  proc getErrorInScanningActivity*(self: DerivedAddressItem): bool {.slot.} =
+    return self.errorInScanningActivity
+  proc setErrorInScanningActivity*(self: DerivedAddressItem, value: bool) {.slot.} =
+    self.errorInScanningActivity = value
+    self.errorInScanningActivityChanged()
+  QtProperty[bool] errorInScanningActivity:
+    read = getErrorInScanningActivity
+    write = setErrorInScanningActivity
+    notify = errorInScanningActivityChanged
 
   proc setItem*(self: DerivedAddressItem, item: DerivedAddressItem) =
     self.setOrder(item.getOrder())
@@ -127,4 +157,6 @@ QtObject:
     self.setPath(item.getPath())
     self.setAlreadyCreated(item.getAlreadyCreated())
     self.setHasActivity(item.getHasActivity())
-    self.setLoaded(item.getLoaded())
+    self.setAlreadyCreatedChecked(item.getAlreadyCreatedChecked())
+    self.setDetailsLoaded(item.getDetailsLoaded())
+    self.setErrorInScanningActivity(item.getErrorInScanningActivity())

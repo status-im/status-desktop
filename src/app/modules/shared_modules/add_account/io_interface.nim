@@ -85,7 +85,7 @@ method onDerivedAddressesFromMnemonicFetched*(self: AccessInterface, derivedAddr
 method onAddressesFromNotImportedMnemonicFetched*(self: AccessInterface, derivations: Table[string, DerivedAccountDetails], error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onAddressDetailsFetched*(self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string) {.base.} =
+method updateDerivedAddresses*(self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string, detailsLoaded: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method startScanningForActivity*(self: AccessInterface) {.base.} =

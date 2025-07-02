@@ -36,7 +36,7 @@ QtObject:
 
   proc loadedCountChanged(self: DerivedAddressModel) {.signal.}
   proc getLoadedCount(self: DerivedAddressModel): int {.slot.} =
-    return self.items.filter(x => x.getLoaded()).len
+    return self.items.filter(x => x.getDetailsLoaded()).len
   QtProperty[int] loadedCount:
     read = getLoadedCount
     notify = loadedCountChanged
@@ -83,7 +83,12 @@ QtObject:
         return it
     return nil
   
-  proc updateDetailsForAddressAndBubbleItToTop*(self: DerivedAddressModel, address: string, hasActivity: bool) =
+  proc updateDetailsForAddressAndBubbleItToTop*(
+    self: DerivedAddressModel,
+    address: string,
+    hasActivity: bool,
+    detailsLoaded: bool,
+    errorInScanningActivity: bool) =
     var item: DerivedAddressItem
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
@@ -101,7 +106,7 @@ QtObject:
 
     var indexToInsertTo = 0
     for i in 0 ..< self.items.len:
-      if not self.items[i].getLoaded():
+      if not self.items[i].getDetailsLoaded():
         break
       indexToInsertTo.inc
 
@@ -110,7 +115,8 @@ QtObject:
     self.beginInsertRows(parentModelIndex, indexToInsertTo, indexToInsertTo)
     self.items.insert(
       newDerivedAddressItem(item.getOrder(), item.getAddress(), item.getPublicKey(), item.getPath(), item.getAlreadyCreated(), 
-        hasActivity, loaded = true), 
+        hasActivity, alreadyCreatedChecked = true, detailsLoaded = detailsLoaded,
+        errorInScanningActivity = errorInScanningActivity),
       indexToInsertTo
     )
     self.endInsertRows()
