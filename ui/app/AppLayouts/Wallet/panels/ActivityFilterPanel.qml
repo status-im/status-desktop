@@ -85,6 +85,8 @@ Column {
                                           return qsTr("Contract Deployment")
                                       case Constants.TransactionType.Mint:
                                           return qsTr("Mint")
+                                      case Constants.TransactionType.ContractInteraction:
+                                          return qsTr("Contract Interaction")
                                       default:
                                           console.warn("Unhandled type :: ",activityFilterStore.typeFilters[index])
                                           return ""
@@ -102,6 +104,8 @@ Column {
                                     return "contract_deploy"
                                 case Constants.TransactionType.Mint:
                                     return "token"
+                                case Constants.TransactionType.ContractInteraction:
+                                    return "contract_interaction"
                                 default:
                                     console.warn("Unhandled type :: ",activityFilterStore.typeFilters[index])
                                     return ""
