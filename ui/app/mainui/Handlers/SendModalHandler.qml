@@ -736,12 +736,17 @@ QtObject {
                 readonly property var totalFeesAggregator: FunctionAggregator {
                     model: !!handler.fetchedPathModel ?
                                handler.fetchedPathModel: null
-                    initialValue: "0"
+                    initialValue: "-1"
                     roleName: "txTotalFee"
 
-                    aggregateFunction: (aggr, value) => SQUtils.AmountsArithmetic.sum(
-                                           SQUtils.AmountsArithmetic.fromString(aggr),
-                                           SQUtils.AmountsArithmetic.fromString(value)).toString()
+                    aggregateFunction: (aggr, value) => {
+                                            if (aggr === "-1") {
+                                                return value
+                                            }
+                                            return SQUtils.AmountsArithmetic.sum(
+                                                SQUtils.AmountsArithmetic.fromString(aggr),
+                                                SQUtils.AmountsArithmetic.fromString(value)).toString()
+                                        }
 
                     onValueChanged: {
                         const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
