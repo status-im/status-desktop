@@ -264,7 +264,7 @@ BasePopupStore {
                 return valid &&
                         (!root.addAccountModule.actionAuthenticated ||
                         !!root.selectedDerivedAddress &&
-                        root.selectedDerivedAddress.loaded &&
+                        root.selectedDerivedAddress.alreadyCreatedChecked &&
                         !root.selectedDerivedAddress.alreadyCreated &&
                         root.selectedDerivedAddress.address !== "") &&
                         root.derivationPathRegEx.test(root.addAccountModule.derivationPath) &&
@@ -275,7 +275,7 @@ BasePopupStore {
                     root.selectedOrigin.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc) {
                 return valid &&
                         !!root.watchOnlyAccAddress &&
-                        root.watchOnlyAccAddress.loaded &&
+                        root.watchOnlyAccAddress.alreadyCreatedChecked &&
                         !root.watchOnlyAccAddress.alreadyCreated &&
                         root.watchOnlyAccAddress.address !== ""
             }
@@ -283,7 +283,7 @@ BasePopupStore {
                 return valid &&
                         root.enteredPrivateKeyIsValid &&
                         !!root.privateKeyAccAddress &&
-                        root.privateKeyAccAddress.loaded &&
+                        root.privateKeyAccAddress.alreadyCreatedChecked &&
                         !root.privateKeyAccAddress.alreadyCreated &&
                         root.privateKeyAccAddress.address !== "" &&
                         root.addAccountModule.newKeyPairName.length >= Constants.addAccountPopup.keyPairAccountNameMinLength
@@ -293,7 +293,7 @@ BasePopupStore {
         if (root.currentState.stateType === Constants.addAccountPopup.state.enterPrivateKey) {
             return root.enteredPrivateKeyIsValid &&
                     !!root.privateKeyAccAddress &&
-                    root.privateKeyAccAddress.loaded &&
+                    root.privateKeyAccAddress.alreadyCreatedChecked  &&
                     !root.privateKeyAccAddress.alreadyCreated &&
                     root.privateKeyAccAddress.address !== "" &&
                     root.addAccountModule.newKeyPairName.length >= Constants.addAccountPopup.keyPairAccountNameMinLength

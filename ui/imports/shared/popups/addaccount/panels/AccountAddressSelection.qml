@@ -108,7 +108,8 @@ StatusMenu {
                 objectName: "AddAccountPopup-GeneratedAddress-%1".arg(model.addressDetails.order)
                 width: ListView.view.width
                 height: Constants.addAccountPopup.itemHeight
-                enabled: !model.addressDetails.alreadyCreated
+                enabled: model.addressDetails.alreadyCreatedChecked &&
+                         !model.addressDetails.alreadyCreated
                 radius: Theme.halfPadding
                 color: {
                     if (sensor.containsMouse) {
@@ -137,7 +138,9 @@ StatusMenu {
                     StatusBaseText {
                         Layout.fillWidth: true
                         elide: Text.ElideMiddle
-                        color: model.addressDetails.alreadyCreated? Theme.palette.baseColor1 : Theme.palette.directColor1
+                        color: model.addressDetails.alreadyCreatedChecked &&
+                               model.addressDetails.alreadyCreated? Theme.palette.baseColor1 :
+                                                                    Theme.palette.directColor1
                         font.pixelSize: Constants.addAccountPopup.labelFontSize1
                         text: model.addressDetails.address
                     }
@@ -146,7 +149,7 @@ StatusMenu {
                         spacing: Theme.halfPadding * 0.5
 
                         StatusIcon {
-                            visible: model.addressDetails.loaded && model.addressDetails.hasActivity
+                            visible: model.addressDetails.detailsLoaded && model.addressDetails.hasActivity
                             Layout.preferredWidth: 20
                             Layout.preferredHeight: 20
                             icon: "flash"
@@ -160,7 +163,11 @@ StatusMenu {
                                 if (!root.store.addAccountModule.scanningForActivityIsOngoing) {
                                     return ""
                                 }
-                                if (!model.addressDetails.loaded) {
+                                if(model.addressDetails.detailsLoaded &&
+                                        model.addressDetails.errorInScanningActivity) {
+                                    return qsTr("Activity unknown")
+                                }
+                                if (!model.addressDetails.detailsLoaded) {
                                     return qsTr("loading...")
                                 }
                                 if (model.addressDetails.hasActivity) {
@@ -169,7 +176,7 @@ StatusMenu {
                                 return qsTr("No activity")
                             }
                             color: {
-                                if (!root.store.addAccountModule.scanningForActivityIsOngoing || !model.addressDetails.loaded) {
+                                if (!root.store.addAccountModule.scanningForActivityIsOngoing || !model.addressDetails.detailsLoaded) {
                                     return "transparent"
                                 }
                                 if (model.addressDetails.hasActivity) {
@@ -177,7 +184,7 @@ StatusMenu {
                                 }
                                 return Theme.palette.warningColor1
                             }
-                            loading: root.store.addAccountModule.scanningForActivityIsOngoing && !model.addressDetails.loaded
+                            loading: root.store.addAccountModule.scanningForActivityIsOngoing && !model.addressDetails.detailsLoaded
                         }
                     }
 

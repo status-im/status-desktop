@@ -63,7 +63,8 @@ BasePopupStore {
             return root.enteredPrivateKeyIsValid &&
                     root.enteredPrivateKeyMatchTheKeypair &&
                     !!root.privateKeyAccAddress &&
-                    root.privateKeyAccAddress.loaded &&
+                    root.privateKeyAccAddress.detailsLoaded &&
+                    root.privateKeyAccAddress.alreadyCreatedChecked &&
                     root.privateKeyAccAddress.alreadyCreated &&
                     root.privateKeyAccAddress.address !== ""
         }

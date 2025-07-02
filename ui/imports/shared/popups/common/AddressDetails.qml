@@ -17,7 +17,7 @@ Row {
     StatusIcon {
         id: icon
         visible: root.addressDetailsItem &&
-                 root.addressDetailsItem.loaded &&
+                 root.addressDetailsItem.detailsLoaded &&
                  root.addressDetailsItem.address !== "" &&
                  root.addressDetailsItem.hasActivity
         width: 20
@@ -34,11 +34,17 @@ Row {
             if (root.defaultMessageCondition) {
                 return root.defaultMessage
             }
-            if (!root.addressDetailsItem || !root.addressDetailsItem.loaded) {
-                return qsTr("Scanning for activity...")
-            }
-            if (root.alreadyCreatedAccountIsAnError && root.addressDetailsItem.alreadyCreated) {
+            if (root.alreadyCreatedAccountIsAnError &&
+                    root.addressDetailsItem.alreadyCreatedChecked &&
+                    root.addressDetailsItem.alreadyCreated) {
                 return qsTr("Already added")
+            }
+            if(root.addressDetailsItem.detailsLoaded &&
+                    root.addressDetailsItem.errorInScanningActivity) {
+                return qsTr("Activity unknown")
+            }
+            if (!root.addressDetailsItem || !root.addressDetailsItem.detailsLoaded) {
+                return qsTr("Scanning for activity...")
             }
             if (root.addressDetailsItem.hasActivity) {
                 return qsTr("Has activity")
@@ -46,11 +52,13 @@ Row {
             return qsTr("No activity")
         }
         color: {
-            if (root.defaultMessageCondition || !root.addressDetailsItem || !root.addressDetailsItem.loaded) {
-                return Theme.palette.baseColor1
-            }
-            if (root.alreadyCreatedAccountIsAnError && root.addressDetailsItem.alreadyCreated) {
+            if (root.alreadyCreatedAccountIsAnError &&
+                    root.addressDetailsItem.alreadyCreatedChecked &&
+                    root.addressDetailsItem.alreadyCreated) {
                 return Theme.palette.dangerColor1
+            }
+            if (root.defaultMessageCondition || !root.addressDetailsItem || !root.addressDetailsItem.detailsLoaded) {
+                return Theme.palette.baseColor1
             }
             if (root.addressDetailsItem.hasActivity) {
                 return Theme.palette.successColor1

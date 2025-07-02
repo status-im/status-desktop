@@ -88,7 +88,12 @@ proc init*(self: Controller) =
     let args = DerivedAddressesArgs(e)
     if args.uniqueId != self.uniqueFetchingDetailsId:
       return
-    self.delegate.onAddressDetailsFetched(args.derivedAddresses, args.error)
+    self.delegate.updateDerivedAddresses(args.derivedAddresses, args.error, true)
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_ADDRESS_ALREADY_ADDED_FETCHED) do(e:Args):
+    let args = DerivedAddressesArgs(e)
+    self.delegate.updateDerivedAddresses(args.derivedAddresses, args.error, false)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_SAVED_ADDRESS_DELETED) do(e:Args):

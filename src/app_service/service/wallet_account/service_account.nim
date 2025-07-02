@@ -662,16 +662,33 @@ proc onDerivedAddressesForMnemonicFetched*(self: Service, jsonString: string) {.
     error: error
   ))
 
-proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[string]) =
+proc fetchDetailsForAddress(self: Service, uniqueId: string, address: string) =
   let network = self.networkService.getAppNetwork()
-  let arg = FetchDetailsForAddressesTaskArg(
+  let arg = FetchDetailsForAddressTaskArg(
     uniqueId: uniqueId,
-    addresses: addresses,
-    tptr: fetchDetailsForAddressesTask,
+    address: address,
+    tptr: fetchDetailsForAddressTask,
     vptr: cast[uint](self.vptr),
     slot: "onAddressDetailsFetched",
   )
   self.threadpool.start(arg)
+
+proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[string]) =
+  var data = DerivedAddressesArgs()
+  for address in addresses:
+    try:
+      let response = status_go_accounts.addressExists(address)
+      if not response.error.isNil:
+        data.error = response.error.message
+        raise newException(CatchableError, response.error.message)
+      let alreadyAdded = response.result.getBool
+      data.derivedAddresses.add(DerivedAddressDto(address: address, alreadyCreated: alreadyAdded))
+      if not alreadyAdded:
+        self.fetchDetailsForAddress(uniqueId, address)
+    except Exception as e:
+      error "error: ", procName="fetchDetailsForAddresses", errName=e.name, errDesription=e.msg
+      data.error = e.msg
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_ADDRESS_ALREADY_ADDED_FETCHED, data)
 
 proc onAddressDetailsFetched*(self: Service, jsonString: string) {.slot.} =
   var data = DerivedAddressesArgs()
