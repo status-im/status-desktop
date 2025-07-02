@@ -59,6 +59,15 @@ proc init*(self: Controller) =
     )
     self.tokenService.addNewCommunityToken(token)
 
+  self.events.on(SIGNAL_DISPLAY_ASSET_BELOW_BALANCE_UPDATED) do(e:Args):
+    self.delegate.displayAssetsBelowBalanceChanged()
+
+  self.events.on(SIGNAL_DISPLAY_ASSET_BELOW_BALANCE_THRESHOLD_UPDATED) do(e:Args):
+    self.delegate.displayAssetsBelowBalanceThresholdChanged()
+
+  self.events.on(SIGNAL_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS_UPDATED) do(e:Args):
+    self.delegate.showCommunityAssetWhenSendingTokensChanged()
+
   self.tokenService.getSupportedTokensList()
 
 proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =

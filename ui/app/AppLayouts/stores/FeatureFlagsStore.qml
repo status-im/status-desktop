@@ -10,4 +10,5 @@ QtObject {
     property bool keycardEnabled
     property bool marketEnabled
     property bool shellEnabled
+    property bool localBackupEnabled
 }
