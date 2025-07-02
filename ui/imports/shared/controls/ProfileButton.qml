@@ -82,6 +82,7 @@ StatusNavBarTabButton {
 
     UserStatusContextMenu {
         id: userStatusContextMenu
+        objectName: "userStatusContextMenu"
 
         y: root.y - userStatusContextMenu.height + root.height
         x: root.x + root.width + 5

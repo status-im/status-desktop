@@ -63,12 +63,13 @@ ToolButton {
         asset.letterSize: Theme.secondaryAdditionalTextSize
         asset.emoji: root.pinned && (root.sectionType === Constants.appSection.wallet || root.chatType === Constants.chatType.communityChat) ? root.icon.name : ""
         asset.color: root.icon.color
+        Behavior on asset.color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
         asset.name: asset.emoji ? "" : root.icon.name
         asset.bgRadius: root.pinned && root.sectionType === Constants.appSection.wallet ? Theme.padding : asset.bgWidth/2
         name: root.text
 
         Binding on asset.bgColor { // need some round background around the icon
-            value: Theme.palette.primaryColor3//Theme.palette.name === Constants.lightThemeName ? Qt.lighter(root.icon.color, 1.7) : Qt.darker(root.icon.color, 1.7)
+            value: Theme.palette.primaryColor3
             when: root.pinned && (root.sectionType === Constants.appSection.dApp || root.sectionType === Constants.appSection.profile)
         }
 
@@ -118,12 +119,15 @@ ToolButton {
     Component {
         id: contextMenuComponent
         StatusMenu {
+            objectName: "shellDockButtonCtxMenu"
             StatusAction {
+                objectName: "unpinAction"
                 icon.name: "unpin"
                 text: qsTr("Unpin")
                 onTriggered: root.itemPinRequested(model.key, false)
             }
             StatusAction {
+                objectName: "disconnectAction"
                 enabled: root.sectionType === Constants.appSection.dApp
                 icon.name: "disconnect"
                 text: qsTr("Disconnect")

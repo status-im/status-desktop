@@ -70,6 +70,7 @@ ShellGridItem {
 
     StatusAction {
         id: disconnectAction
+        objectName: "disconnectAction"
         icon.name: "disconnect"
         text: qsTr("Disconnect")
         onTriggered: root.disconnectRequested()

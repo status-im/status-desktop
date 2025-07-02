@@ -191,6 +191,7 @@
         <file>StatusQ/Core/StatusRollArea.qml</file>
         <file>StatusQ/Core/StatusScrollView.qml</file>
         <file>StatusQ/Core/StatusSharedUpdateTimer.qml</file>
+        <file>StatusQ/Core/StatusTestCase.qml</file>
         <file>StatusQ/Core/StatusTooltipSettings.qml</file>
         <file>StatusQ/Core/Theme/StatusColors.qml</file>
         <file>StatusQ/Core/Theme/StatusDarkTheme.qml</file>

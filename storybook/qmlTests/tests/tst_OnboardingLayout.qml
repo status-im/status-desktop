@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtTest 1.15
 
 import StatusQ 0.1 // ClipboardUtils
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Onboarding2 1.0
@@ -163,9 +164,8 @@ Item {
 
     property OnboardingLayout controlUnderTest: null
 
-    TestCase {
+    StatusTestCase {
         name: "OnboardingLayout"
-        when: windowShown
 
         function disableTransitions(stack) {
             stack.pushEnter = null
@@ -198,12 +198,6 @@ Item {
             dynamicSpy.cleanup()
             finishedSpy.clear()
             loginSpy.clear()
-        }
-
-        function keyClickSequence(keys) {
-            for (let k of keys) {
-                keyClick(k)
-            }
         }
 
         function getCurrentPage(stack, pageClass) {
