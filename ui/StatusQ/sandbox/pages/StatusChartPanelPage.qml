@@ -170,7 +170,7 @@ Item {
                           axis.paddingBottom = 0;
                         },
                        ticks: {
-                          fontSize: Theme.asideTextFontSize
+                          fontSize: Theme.asideTextFontSize,
                           fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                           padding: 8,
                           min: d.minStep,
