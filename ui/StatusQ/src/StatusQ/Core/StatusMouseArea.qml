@@ -5,8 +5,8 @@ import StatusQ.Core 0.1
 /*!
    \qmltype StatusMouseArea
    \inherits StatusMouseArea
-   \inqmlmodule StatusQ.Components
-   \since StatusQ.Components 0.1
+   \inqmlmodule StatusQ.Core
+   \since StatusQ.Core 0.1
    \brief Mouse area that emits right click event on long press.
 
    Example:

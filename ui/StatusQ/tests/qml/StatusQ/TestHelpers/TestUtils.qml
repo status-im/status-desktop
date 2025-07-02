@@ -1,7 +1,7 @@
 pragma Singleton
 
-import QtQml 2.14
-import QtTest 1.0
+import QtQml 2.15
+import QtTest 1.15
 
 QtObject {
 

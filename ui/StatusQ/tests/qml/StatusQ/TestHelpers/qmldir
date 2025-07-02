@@ -1,3 +1,4 @@
 module StatusQ.TestHelpers
 
+StatusTestCase 0.1 StatusTestCase.qml
 singleton TestUtils 0.1 TestUtils.qml
