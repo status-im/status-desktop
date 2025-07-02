@@ -5,7 +5,7 @@ import QtQml.Models 2.15
 Instantiator {
     id: root
 
-    property Menu menu
+    property var menu
 
     onObjectAdded: function(index, object) {
         if (object instanceof Menu)

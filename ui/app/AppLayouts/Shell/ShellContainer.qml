@@ -148,6 +148,7 @@ Control {
         spacing: 12
 
         StatusActivityCenterButton {
+            objectName: "shellACButton"
             Layout.topMargin: 4
             Layout.preferredWidth: 40
             Layout.preferredHeight: 40
@@ -158,6 +159,7 @@ Control {
         }
 
         ProfileButton {
+            objectName: "shellProfileButton"
             name: root.profileStore.name
             pubKey: root.profileStore.pubkey
             compressedPubKey: root.profileStore.compressedPubKey

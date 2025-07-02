@@ -104,6 +104,8 @@ StatusScrollView {
                     required property int index
                     required property var model
 
+                    objectName: "shellGridItemLoader_" + model.key
+
                     sourceComponent: {
                         switch (model.sectionType) {
                         case Constants.appSection.profile:
@@ -144,7 +146,7 @@ StatusScrollView {
                     title: model.name
                     color: model.color
                     icon.source: model.icon
-                    banner: model.banner
+                    banner: model.banner ?? ""
                     hasNotification: model.hasNotification
                     notificationsCount: model.notificationsCount
                     pinned: model.pinned
@@ -231,7 +233,7 @@ StatusScrollView {
                     icon.color: model.color
                     pinned: model.pinned
 
-                    connectorBadge: model.connectorBadge
+                    connectorBadge: model.connectorBadge ?? ""
 
                     onDisconnectRequested: root.dappDisconnectRequested(itemId)
                 }

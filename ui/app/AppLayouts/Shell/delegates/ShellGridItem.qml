@@ -85,19 +85,15 @@ AbstractButton {
 
     onPressAndHold: contextMenuComponent.createObject(root).popup(root.pressX, root.pressY)
 
-    HoverHandler {
-        cursorShape: hovered ? Qt.PointingHandCursor : undefined
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: false
-        acceptedButtons: Qt.RightButton
-        cursorShape: containsMouse ? Qt.PointingHandCursor : undefined
-        onClicked: contextMenuComponent.createObject(root).popup()
-    }
-
     contentItem: Item {
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.RightButton
+            cursorShape: containsMouse ? Qt.PointingHandCursor : undefined
+            onClicked: contextMenuComponent.createObject(root).popup()
+        }
+
         // contents
         ColumnLayout {
             anchors.fill: parent
@@ -163,6 +159,7 @@ AbstractButton {
 
         // top right corner
         ShellToolButton {
+            objectName: "pinButton"
             anchors.right: parent.right
             anchors.rightMargin: -4
             anchors.top: parent.top
@@ -177,6 +174,7 @@ AbstractButton {
 
     StatusAction {
         id: pinAction
+        objectName: "pinAction"
         icon.name: root.pinned ? "unpin" : "pin"
         text: root.pinned ? qsTr("Unpin") : qsTr("Pin")
         onTriggered: root.pinRequested()
@@ -186,6 +184,7 @@ AbstractButton {
         id: contextMenuComponent
         StatusMenu {
             id: contextMenu
+            objectName: "shellGridItemContextMenu"
             StatusMenuInstantiator {
                 model: [pinAction, ...root.extraMenuActions]
                 menu: contextMenu

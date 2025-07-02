@@ -22,7 +22,7 @@ add_library(StatusQTestLib
     src/TestHelpers/modelaccessobserverproxy.h
 )
 
-target_link_libraries(StatusQTestLib PUBLIC Qt::Core Qt::Quick Qt::Test StatusQ)
+target_link_libraries(StatusQTestLib PUBLIC Qt::Core Qt::Quick Qt::QuickTest Qt::Test StatusQ)
 target_include_directories(StatusQTestLib PUBLIC src)
 
 enable_testing()
@@ -32,18 +32,18 @@ enable_testing()
 ###########
 
 file(GLOB_RECURSE TEST_QML_FILES "*.qml")
-add_executable(QmlTests main.cpp "${TEST_QML_FILES}")
+add_executable(StatusQQmlTests main.cpp "${TEST_QML_FILES}")
 
-target_compile_definitions(QmlTests PRIVATE
+target_compile_definitions(StatusQQmlTests PRIVATE
     STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
     # no need to copy around qml test files for shadow builds - just set the respective define
     QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )
-target_link_libraries(QmlTests PRIVATE Qt::QuickTest Qt::Qml Qt::Quick
+target_link_libraries(StatusQQmlTests PRIVATE Qt::QuickTest Qt::Qml Qt::Quick
     $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::WebEngineQuick>
     $<$<EQUAL:${QT_VERSION_MAJOR},5>:Qt::WebEngine>
     StatusQ StatusQTestLib
 )
-add_test(NAME QmlTests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMAND QmlTests -input "${CMAKE_CURRENT_SOURCE_DIR}"
+add_test(NAME StatusQQmlTests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND StatusQQmlTests -input "${CMAKE_CURRENT_SOURCE_DIR}"
 )
