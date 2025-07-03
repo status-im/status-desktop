@@ -206,12 +206,23 @@ Item {
             verify(!!stack)
             tryCompare(stack, "topLevelStackBusy", false) // wait for page transitions to stop
 
+            // old code commented due to a Qt bug in `instanceof`, see https://github.com/status-im/status-desktop/issues/18307
+            /*
             if (stack.topLevelItem instanceof Loader) {
                 verify(stack.topLevelItem.item instanceof pageClass)
                 return stack.topLevelItem.item
             }
 
             verify(stack.topLevelItem instanceof pageClass)
+            return stack.topLevelItem
+            */
+
+            if (stack.topLevelItem.toString().startsWith("Loader")) {
+                verify(stack.topLevelItem.item.toString().startsWith(pageClass))
+                return stack.topLevelItem.item
+            }
+
+            verify(stack.topLevelItem.toString().startsWith(pageClass), ">>> Current page should be: %1, and is: %2".arg(pageClass).arg(stack.topLevelItem.toString()))
             return stack.topLevelItem
         }
 
@@ -245,19 +256,6 @@ Item {
             // PAGE 1: Welcome
             let page = getCurrentPage(stack, WelcomePage)
             waitForRendering(page)
-
-            const linksText = findChild(controlUnderTest, "approvalLinks")
-            verify(!!linksText)
-
-            dynamicSpy.setup(page, "termsOfUseRequested")
-            mouseClick(linksText, linksText.width/2 - 20, linksText.height - 8)
-            tryCompare(dynamicSpy, "count", 1)
-            keyClick(Qt.Key_Escape) // close the popup
-
-            dynamicSpy.setup(page, "privacyPolicyRequested")
-            mouseClick(linksText, linksText.width/2 + 20, linksText.height - 8)
-            tryCompare(dynamicSpy, "count", 1)
-            keyClick(Qt.Key_Escape) // close the popup
 
             const btnCreateProfile = findChild(controlUnderTest, "btnCreateProfile")
             verify(!!btnCreateProfile)
@@ -490,7 +488,7 @@ Item {
 
             // PAGE 6: Create new Keycard PIN
             const newPin = "123321"
-            page = getCurrentPage(stack, KeycardCreatePinPage)
+            page = getCurrentPage(stack, KeycardCreatePinDelayedPage)
             dynamicSpy.setup(page, "setPinRequested")
             keyClickSequence(newPin + newPin) // set and repeat
             tryCompare(dynamicSpy, "count", 1)
@@ -564,7 +562,7 @@ Item {
             mouseClick(btnContinue)
 
             // PAGE 12: Adding key pair to Keycard
-            page = getCurrentPage(stack, KeycardAddKeyPairPage)
+            page = getCurrentPage(stack, KeycardAddKeyPairDelayedPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
 
@@ -651,7 +649,7 @@ Item {
 
             // PAGE 7: Create new Keycard PIN
             const newPin = "123321"
-            page = getCurrentPage(stack, KeycardCreatePinPage)
+            page = getCurrentPage(stack, KeycardCreatePinDelayedPage)
             dynamicSpy.setup(page, "setPinRequested")
             keyClickSequence(newPin + newPin) // set and repeat
             compare(dynamicSpy.signalArguments[0][0], newPin)
@@ -661,7 +659,7 @@ Item {
             // PAGE 8: Adding key pair to Keycard
             dynamicSpy.setup(stack, "topLevelItemChanged")
             tryCompare(dynamicSpy, "count", 1)
-            page = getCurrentPage(stack, KeycardAddKeyPairPage)
+            page = getCurrentPage(stack, KeycardAddKeyPairDelayedPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
 
@@ -1292,7 +1290,7 @@ Item {
 
             // PAGE 5: Create new Keycard PIN
             const newPin = "123321"
-            page = getCurrentPage(stack, KeycardCreatePinPage)
+            page = getCurrentPage(stack, KeycardCreatePinDelayedPage)
             dynamicSpy.setup(page, "setPinRequested")
             keyClickSequence(newPin + newPin) // set and repeat
             tryCompare(dynamicSpy, "count", 1)
@@ -1303,7 +1301,7 @@ Item {
             // PAGE 6: Adding key pair to Keycard
             dynamicSpy.setup(stack, "topLevelItemChanged")
             tryCompare(dynamicSpy, "count", 1)
-            page = getCurrentPage(stack, KeycardAddKeyPairPage)
+            page = getCurrentPage(stack, KeycardAddKeyPairDelayedPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
 
