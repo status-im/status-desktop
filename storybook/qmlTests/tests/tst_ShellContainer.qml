@@ -254,7 +254,8 @@ Item {
                 })
                 // click the "Pin" menu item
                 const pinMenuItem = ctxMenu.itemAt(0)
-                tryCompare(pinMenuItem, "objectName", "statusMenuItem_pinAction")
+                verify(!!pinMenuItem)
+                tryCompare(pinMenuItem.action, "objectName", "pinAction")
                 mouseClick(pinMenuItem)
             }
 
@@ -298,7 +299,8 @@ Item {
                 })
                 // click the "Unpin" menu item
                 const unpinMenuItem = ctxMenu.itemAt(0)
-                tryCompare(unpinMenuItem, "objectName", "statusMenuItem_pinAction")
+                verify(!!unpinMenuItem)
+                tryCompare(unpinMenuItem.action, "objectName", "pinAction")
                 mouseClick(unpinMenuItem)
             }
 
@@ -352,7 +354,8 @@ Item {
 
             // click the "Unpin" menu item
             const unpinMenuItem = ctxMenu.itemAt(0)
-            tryCompare(unpinMenuItem, "objectName", "statusMenuItem_unpinAction")
+            verify(!!unpinMenuItem)
+            tryCompare(unpinMenuItem.action, "objectName", "unpinAction")
             mouseClick(unpinMenuItem)
 
             // verify the pinned model is down to 0 and the button (eventually) disappears from the dock
