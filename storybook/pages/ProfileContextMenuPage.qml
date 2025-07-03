@@ -13,7 +13,7 @@ import Models 1.0
 SplitView {
     Logs { id: logs }
 
-    Component.onCompleted: contextMenu.open()
+    Component.onCompleted: Qt.callLater(() => contextMenu.open())
 
     Pane {
         SplitView.fillWidth: true
