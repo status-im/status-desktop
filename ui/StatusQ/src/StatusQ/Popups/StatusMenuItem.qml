@@ -9,7 +9,7 @@ import StatusQ.Components 0.1
 MenuItem {
     id: root
 
-    objectName: !!action ? "statusMenuItem_" + action.objectName : "StatusMenuItemDelegate"
+    objectName: action ? action.objectName : "StatusMenuItemDelegate"
 
     spacing: 4
     horizontalPadding: Theme.halfPadding
