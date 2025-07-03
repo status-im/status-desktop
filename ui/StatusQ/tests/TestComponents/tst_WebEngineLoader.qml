@@ -33,7 +33,7 @@ TestCase {
         active: false
 
         sourceComponent: WebEngineLoader {
-            url: "./WebEngineLoader/test.html"
+            url: Qt.resolvedUrl("./WebEngineLoader/test.html")
             webChannelObjects: [testObject]
 
             waitForInternet: false

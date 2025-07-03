@@ -19,6 +19,7 @@ public:
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QtWebEngine::initialize();
 #else
+        qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
         QtWebEngineQuick::initialize();
 #endif
     }
