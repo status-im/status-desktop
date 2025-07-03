@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 // TODO: Remove this once qt5 is dropped
-import "./+qt6" as SectionLayout
+import "." as SectionLayout
 
 import StatusQ.Core.Theme 0.1
 
