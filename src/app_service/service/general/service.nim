@@ -133,9 +133,9 @@ QtObject:
   proc performLocalBackup*(self: Service): string =
     try:
       let response =  status_go.performLocalBackup()
-      let rpcResponseObj = Json.safeDecode(response, JsonNode)
+      let rpcResponseObj = response.parseJson
 
-      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+      if rpcResponseObj.hasKey("error") and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
     except Exception as e:
       error "error: ", procName="performLocalBackup", errName = e.name, errDesription = e.msg

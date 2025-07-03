@@ -22,7 +22,7 @@ type
 proc asyncImportLocalBackupFileTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncImportLocalBackupFileTaskArg](argEncoded)
   try:
-    let response = status_go.loadLocalBackup(arg.filePath)
+    let response = status_go.loadLocalBackup($(%* {"filePath": arg.filePath}))
     arg.finish(%* {
       "response": response,
       "error": "",
