@@ -33,7 +33,7 @@ void registerStatusQTypes() {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QByteArrayList selectors = qgetenv("QT_FILE_SELECTORS").split(',');
     selectors << QByteArrayLiteral("qt6");
-    qputenv("QT_FILE_SELECTORS", selectors.join(','));
+    qputenv("QT_FILE_SELECTORS", selectors.join(","));
 #endif
 
     qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
