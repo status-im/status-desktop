@@ -38,7 +38,7 @@ pipeline {
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Makefile assumes the compiler folder is included */
-    QTDIR = "/opt/qt/5.15.2/gcc_64"
+    QTDIR = "/opt/qt/6.9.0/gcc_64"
     PATH = "${env.QTDIR}/bin:${env.PATH}"
   }
 
