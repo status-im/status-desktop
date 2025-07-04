@@ -21,6 +21,7 @@ type
     customizationColor*: string
     emoji*: string
 
+    wakuV2Fleet*: string
     wakuV2Nameserver*: Option[string]
     wakuV2LightClient*: bool
     wakuV2EnableStoreConfirmationForMessagesSent*: bool
@@ -61,6 +62,7 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "imageCropRectangle": self.imageCropRectangle,
     "customizationColor": self.customizationColor,
     "emoji": self.emoji,
+    "wakuV2Fleet": self.wakuV2Fleet,
     "wakuV2LightClient": self.wakuV2LightClient,
     "logFilePath": self.logFilePath,
     "logEnabled": self.logEnabled,
