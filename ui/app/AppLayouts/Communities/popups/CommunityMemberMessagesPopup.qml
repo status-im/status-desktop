@@ -68,6 +68,7 @@ StatusDialog {
                     chatCommunitySectionModule: root.chatCommunitySectionModule
                     messageStore: root.rootStore.messageStore
                     messageId: model.id
+                    joined: root.rootStore.joined
                     chatId: model.chatId
                     responseToMessageWithId: model.responseToMessageWithId
                     amIChatAdmin: true

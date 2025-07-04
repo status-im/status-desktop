@@ -45,6 +45,7 @@ QtObject {
     required property CommunityTokensStore communityTokensStore
     required property NetworksStore networksStore
 
+    property ChatStores.RootStore chatStore
     property UtilsStore utilsStore
     property CommunitiesStore communitiesStore
     property ProfileStores.ProfileStore profileStore
@@ -238,8 +239,7 @@ QtObject {
     }
 
     function openInviteFriendsToCommunityByIdPopup(communityId, cb) {
-        root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityId)
-        const communitySectionModuleData = root.rootStore.mainModuleInst.getCommunitySectionModule()
+        const communitySectionModuleData = root.chatStore.getCommunitySectionModule(communityId)
         const communityData = root.communitiesStore.getCommunityDetails(communityId)
 
         openPopup(inviteFriendsToCommunityPopup, { community: communityData, communitySectionModule: communitySectionModuleData }, cb)
@@ -996,10 +996,8 @@ QtObject {
 
                 readonly property ChatStores.RootStore chatStore: ChatStores.RootStore {
                     contactsStore: root.rootStore.contactStore
-                    chatCommunitySectionModule: {
-                        root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(editSharedAddressesPopup.communityId)
-                        return root.rootStore.mainModuleInst.getCommunitySectionModule()
-                    }
+                    isChatSectionModule: false
+                    communityId: editSharedAddressesPopup.communityId
                 }
 
                 isEditMode: true
