@@ -46,6 +46,7 @@ OTHER_FILES += $$files("$$PWD/../Makefile")
 QML_IMPORT_PATH = $$PWD/imports \
                   $$PWD/StatusQ \
                   $$PWD/StatusQ/src \
+                  $$PWD/StatusQ/tests/qml \
                   $$PWD/app
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
