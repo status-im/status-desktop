@@ -67,14 +67,6 @@ proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNo
     error "error", methodName = "generateImages", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] =
-  try:
-    let response = status_go.initKeystore(keystoreDir)
-    result.result = Json.safeDecode(response, JsonNode)
-  except RpcException as e:
-    error "error", methodName = "initKeystore", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc backupData*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("backupData".prefix, payload)
@@ -87,7 +79,7 @@ proc parseSharedUrl*(url: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("parseSharedURL".prefix, %*[url])
 
 proc hashMessageForSigning*(message: string): string =
-  try: 
+  try:
     let response = status_go.hashMessage(message)
     let jsonResponse = parseJson(response)
     return jsonResponse{"result"}.getStr()

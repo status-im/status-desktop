@@ -260,8 +260,8 @@ proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
 proc openedAccounts*(path: string): RpcResponse[JsonNode] =
   try:
     let payload = %* {
-      "dataDir": path, 
-      "mixpanelAppId": MIXPANEL_APP_ID, 
+      "dataDir": path,
+      "mixpanelAppId": MIXPANEL_APP_ID,
       "mixpanelToken": MIXPANEL_TOKEN,
       "sentryDSN": SENTRY_DSN_STATUS_GO,
       "logEnabled": true,
@@ -343,10 +343,10 @@ proc loginAccount*(request: LoginAccountRequest): RpcResponse[JsonNode] =
     error "loginAccount failed", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc verifyAccountPassword*(address: string, hashedPassword: string, keystoreDir: string):
+proc verifyAccountPassword*(address: string, hashedPassword: string):
   RpcResponse[JsonNode] =
   try:
-    let response = status_go.verifyAccountPassword(keystoreDir, address, hashedPassword)
+    let response = status_go.verifyAccountPassword(address, hashedPassword)
     result.result = Json.safeDecode(response, JsonNode)
 
   except RpcException as e:
