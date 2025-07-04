@@ -45,6 +45,8 @@ Loader {
     // without an explicit need to fetch those details via message store/module.
     property bool isChatBlocked: false
 
+    property bool joined: false
+
     property string chatId
     property string messageId: ""
     property string communityId: ""
@@ -204,7 +206,7 @@ Loader {
     }
 
     function openMessageContextMenu() {
-        if (isViewMemberMessagesePopup || placeholderMessage || !root.rootStore.mainModuleInst.activeSection.joined)
+        if (isViewMemberMessagesePopup || placeholderMessage || !root.joined)
             return
 
         const params = {
@@ -680,7 +682,7 @@ Loader {
                                   root.placeholderMessage ||
                                   root.isInPinnedPopup ||
                                   root.editModeOn ||
-                                  !root.rootStore.mainModuleInst.activeSection.joined
+                                  !root.joined
                 }
 
                 function editCancelledHandler() {
@@ -986,7 +988,7 @@ Loader {
                         senderColorId: Utils.colorIdForPubkey(root.senderId)
                         paymentRequestModel: root.paymentRequestModel
                         playAnimations: root.Window.active && root.messageStore.isChatActive
-                        isOnline: root.rootStore.mainModuleInst.isOnline
+                        isOnline: root.rootStore.isOnline
                         highlightLink: delegate.hoveredLink
                         areTestNetworksEnabled: root.areTestNetworksEnabled
                         formatBalance: root.formatBalance
