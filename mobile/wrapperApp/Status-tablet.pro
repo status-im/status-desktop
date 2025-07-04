@@ -35,6 +35,33 @@ android {
                         $$PWD/../lib/android/$$LIB_PREFIX/libpcre.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libstatus.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
+
+    # Squish integration for testing
+    equals(ENABLE_SQUISH, "1") {
+        message("Squish integration enabled for test builds")
+        
+        # Set SQUISH_ATTACH_PORT (use environment variable with fallback)
+        TEMP_PORT = $$(SQUISH_ATTACH_PORT)
+        isEmpty(TEMP_PORT) {
+            TEMP_PORT = 4711
+        }
+        SQUISH_ATTACH_PORT = $$TEMP_PORT
+        
+        # Set SQUISH_WRAPPER_EXTENSIONS for Android/static Qt builds
+        SQUISH_WRAPPER_EXTENSIONS = squishqtquick squishqtquicktypes
+        
+        SQUISH_DIR = $$(SQUISH_DIR)
+        isEmpty(SQUISH_DIR) {
+            SQUISH_DIR = /Applications/Squish for Qt 9.0.1 - qt6.9
+        }
+
+        SQUISH_DIR_ANDROID = $$(SQUISH_DIR_ANDROID)
+        isEmpty(SQUISH_DIR_ANDROID) {
+            SQUISH_DIR = $$(SQUISH_DIR)/squish-9.0.1-qt69x-android-x64
+        }
+        
+        include($$SQUISH_DIR_ANDROID/qtbuiltinhook.pri)
+    }
 }
 
 ios {
