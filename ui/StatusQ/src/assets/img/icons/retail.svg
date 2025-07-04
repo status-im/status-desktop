@@ -1,9 +1,1 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="10.4091" cy="14.1122" r="7.4091" stroke="#939BA1" stroke-width="1.5" stroke-linecap="round"/>
-<path d="M14.6428 14.4668C14.6428 16.805 12.7473 18.7006 10.4091 18.7006" stroke="#939BA1" stroke-width="1.5" stroke-linecap="round"/>
-<path d="M15.7013 4.94077C17.1951 3.44698 19.4058 3.35314 21.1108 4.47003" stroke="#939BA1" stroke-width="1.5" stroke-linecap="round"/>
-<mask id="path-4-inside-1_21759_493814" fill="white">
-<rect x="13.4341" y="3.10156" width="5.74772" height="4.24913" rx="1" transform="rotate(30 13.4341 3.10156)"/>
-</mask>
-<rect x="13.4341" y="3.10156" width="5.74772" height="4.24913" rx="1" transform="rotate(30 13.4341 3.10156)" stroke="#939BA1" stroke-width="3" mask="url(#path-4-inside-1_21759_493814)"/>
-</svg>
+<svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><mask id="a" fill="#fff"><rect fill="#fff" height="4.24913" rx="1" transform="matrix(.8660254 .5 -.5 .8660254 3.350608 -6.30152)" width="5.74772" x="13.4341" y="3.10156"/></mask><g stroke="#939ba1"><g stroke-linecap="round" stroke-width="1.5"><circle cx="10.4091" cy="14.1122" r="7.4091"/><path d="m14.6428 14.4668c0 2.3382-1.8955 4.2338-4.2337 4.2338"/><path d="m15.7013 4.94077c1.4938-1.49379 3.7045-1.58763 5.4095-.47074"/></g><rect height="4.24913" mask="url(#a)" rx="1" stroke-width="3" transform="matrix(.8660254 .5 -.5 .8660254 3.350608 -6.30152)" width="5.74772" x="13.4341" y="3.10156"/></g></svg>
