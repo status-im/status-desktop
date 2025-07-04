@@ -166,7 +166,7 @@ Item {
     }
 
     Connections {
-        target: rootStore.mainModuleInst
+        target: rootStore
 
         function onDisplayUserProfile(publicKey: string) {
             popups.openProfilePopup(publicKey)
@@ -828,7 +828,7 @@ Item {
         }
 
         function openHomePage() {
-            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(Constants.appSection.homePage)
+            appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
             homePageLoader.item.focusSearch()
         }
 
@@ -857,6 +857,7 @@ Item {
         sharedRootStore: appMain.sharedRootStore
         popupParent: appMain
         rootStore: appMain.rootStore
+        chatStore: appMain.rootChatStore
         utilsStore: appMain.utilsStore
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
@@ -941,7 +942,7 @@ Item {
         }
 
         function onActivateDeepLink(link: string) {
-            appMain.rootStore.mainModuleInst.activateStatusDeepLink(link)
+            appMain.rootStore.activateStatusDeepLink(link)
         }
 
         function onPlaySendMessageSound() {
@@ -960,16 +961,11 @@ Item {
         }
 
         function onSetNthEnabledSectionActive(nthSection: int) {
-            if(!appMain.rootStore.mainModuleInst)
-                return
-            appMain.rootStore.mainModuleInst.setNthEnabledSectionActive(nthSection)
+            appMain.rootStore.setNthEnabledSectionActive(nthSection)
         }
 
         function onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection = -1, data = {}) {
-            if(!appMain.rootStore.mainModuleInst)
-                return
-
-            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
+            appMain.rootStore.setActiveSectionBySectionType(sectionType)
 
             if (sectionType === Constants.appSection.profile) {
                 profileLoader.settingsSubsection = subsection || Constants.settingsSubsection.profile
@@ -1065,7 +1061,7 @@ Item {
     }
 
     function changeAppSectionBySectionId(sectionId) {
-        appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
+        appMain.rootStore.setActiveSectionById(sectionId)
     }
 
     StatusSoundEffect {
@@ -1142,7 +1138,7 @@ Item {
 
     Loader {
         id: statusEmojiPopup
-        active: appMain.rootStore.mainModuleInst.sectionsLoaded
+        active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
             height: 440
             settings: localAccountSensitiveSettings
@@ -1152,7 +1148,7 @@ Item {
 
     Loader {
         id: statusStickersPopupLoader
-        active: appMain.rootStore.mainModuleInst.sectionsLoaded
+        active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusStickersPopup {
             store: appMain.rootChatStore
             isWalletEnabled: appMain.walletProfileStore.isWalletEnabled
@@ -1165,7 +1161,7 @@ Item {
         width: visible ? implicitWidth : 0
 
         topSectionModel: SortFilterProxyModel {
-            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            sourceModel: appMain.rootStore.sectionsModel
             filters: [
                 AnyOf {
                     ValueFilter {
@@ -1200,7 +1196,7 @@ Item {
         topSectionDelegate: navbarButton
 
         communityItemsModel: SortFilterProxyModel {
-            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            sourceModel: appMain.rootStore.sectionsModel
             filters: [
                 ValueFilter {
                     roleName: "sectionType"
@@ -1246,8 +1242,7 @@ Item {
                     openHandler: function () {
                         // we cannot return QVariant if we pass another parameter in a function call
                         // that's why we're using it this way
-                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
-                        communityContextMenu.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
+                        communityContextMenu.chatCommunitySectionModule = appMain.rootChatStore.getCommunitySectionModule(model.id)
                     }
 
                     StatusAction {
@@ -1333,7 +1328,7 @@ Item {
         }
 
         regularItemsModel: SortFilterProxyModel {
-            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            sourceModel: appMain.rootStore.sectionsModel
             filters: [
                 RangeFilter {
                     roleName: "sectionType"
@@ -1421,12 +1416,12 @@ Item {
                 id: bannersLayout
 
                 enabled: !localAppSettings.testEnvironment
-                         && appMain.rootStore.mainModuleInst.activeSection.sectionType !== Constants.appSection.homePage
+                         && appMain.rootStore.activeSection.sectionType !== Constants.appSection.homePage
                 visible: enabled
 
                 property var updateBanner: null
                 property var connectedBanner: null
-                readonly property bool isConnected: appMain.rootStore.mainModuleInst.isOnline
+                readonly property bool isConnected: appMain.rootStore.isOnline
 
                 function processUpdateAvailable() {
                     if (!updateBanner)
@@ -1781,7 +1776,7 @@ Item {
                     anchors.fill: parent
 
                     currentIndex: {
-                        const activeSectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
+                        const activeSectionType = appMain.rootStore.activeSectionType
                         switch (activeSectionType) {
                         case Constants.appSection.homePage:
                             return Constants.appViewStackIndex.homePage
@@ -1790,13 +1785,13 @@ Item {
                         case Constants.appSection.community:
                             for (let i = this.children.length - 1; i >= 0; i--) {
                                 var obj = this.children[i]
-                                if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.mainModuleInst.activeSection.id) {
+                                if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.activeSectionId) {
                                     return i
                                 }
                             }
                             // Should never be here, correct index must be returned from the for loop above
-                            console.error("Wrong section type:", appMain.rootStore.mainModuleInst.activeSection.sectionType,
-                                          "or section id: ", appMain.rootStore.mainModuleInst.activeSection.id)
+                            console.error("Wrong section type:", appMain.rootStore.activeSectionType,
+                                          "or section id: ", appMain.rootStore.activeSectionId)
                             return Constants.appViewStackIndex.community
                         case Constants.appSection.communitiesPortal:
                             return Constants.appViewStackIndex.communitiesPortal
@@ -1814,7 +1809,7 @@ Item {
                         }
                     }
                     onCurrentIndexChanged: {
-                        const sectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
+                        const sectionType = appMain.rootStore.activeSectionType
                         if (sectionType !== Constants.appSection.profile && sectionType !== Constants.appSection.wallet) {
                             d.maybeDisplayIntroduceYourselfPopup()
                         }
@@ -1840,10 +1835,10 @@ Item {
 
                             HomePageAdaptor {
                                 id: homePageAdaptor
-                                readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
+                                readonly property bool sectionsLoaded: appMain.rootStore.sectionsLoaded
 
-                                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
-                                chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model
+                                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.sectionsModel : null
+                                chatsBaseModel: sectionsLoaded ? appMain.rootChatStore.chatSectionModuleModel
                                                                : null
                                 chatsSearchBaseModel: sectionsLoaded && !!rootStore.chatSearchModel ? rootStore.chatSearchModel : null
                                 walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
@@ -1922,10 +1917,10 @@ Item {
                         asynchronous: true
                         active: false
                         sourceComponent: {
-                            if (appMain.rootStore.mainModuleInst.chatsLoadingFailed) {
+                            if (appMain.rootChatStore.chatsLoadingFailed) {
                                 return errorStateComponent
                             }
-                            if (appMain.rootStore.mainModuleInst.sectionsLoaded) {
+                            if (appMain.rootStore.sectionsLoaded) {
                                 return personalChatLayoutComponent
                             }
                             return loadingStateComponent
@@ -1982,8 +1977,7 @@ Item {
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
                                     networkConnectionStore: appMain.networkConnectionStore
-
-                                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                    isChatSectionModule: true
                                 }
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 tokensStore: appMain.tokensStore
@@ -2209,7 +2203,7 @@ Item {
 
                     Repeater {
                         model: SortFilterProxyModel {
-                            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+                            sourceModel: appMain.rootStore.sectionsModel
                             filters: ValueFilter {
                                 roleName: "sectionType"
                                 value: Constants.appSection.community
@@ -2230,7 +2224,7 @@ Item {
                             // to reset scroll, not send text input and etc during the
                             // sections switching
                             Binding on active {
-                                when: sectionId === appMain.rootStore.mainModuleInst.activeSection.id
+                                when: sectionId === appMain.rootStore.activeSectionId
                                 value: true
                                 restoreMode: Binding.RestoreNone
                             }
@@ -2268,11 +2262,8 @@ Item {
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
-
-                                    chatCommunitySectionModule: {
-                                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
-                                        return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
-                                    }
+                                    isChatSectionModule: false
+                                    communityId: model.id
                                 }
                                 tokensStore: appMain.tokensStore
                                 transactionStore: appMain.transactionStore
@@ -2316,7 +2307,7 @@ Item {
                     property bool opened: false
                     readonly property real defaultWidth: parent.width - Constants.chatSectionLeftColumnWidth -
                              anchors.rightMargin - anchors.leftMargin
-                    active: appMain.rootStore.mainModuleInst.sectionsLoaded && opened
+                    active: appMain.rootStore.sectionsLoaded && opened
 
                     asynchronous: true
                     anchors.top: parent.top
@@ -2334,7 +2325,7 @@ Item {
                             communityTokensStore: appMain.communityTokensStore
                             emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                             openCreateChat: createChatView.opened
-                            chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                            isChatSectionModule: true
                         }
                         createChatPropertiesStore: appMain.createChatPropertiesStore
 
@@ -2363,7 +2354,7 @@ Item {
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                     openCreateChat: createChatView.opened
                     walletStore: WalletStores.RootStore
-                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                    isChatSectionModule: true
                 }
                 activityCenterStore: appMain.activityCenterStore
                 privacyStore: appMain.privacyStore
@@ -2491,7 +2482,7 @@ Item {
         height: Math.min(parent.height - 120, toastArea.contentHeight)
         spacing: 8
         verticalLayoutDirection: ListView.BottomToTop
-        model: appMain.rootStore.mainModuleInst.ephemeralNotificationModel
+        model: appMain.rootStore.ephemeralNotificationModel
         clip: false
 
         delegate: StatusToastMessage {
@@ -2522,7 +2513,7 @@ Item {
             actionRequired: model.actionType !== ToastsManager.ActionType.None
             duration: model.durationInMs
             onClicked: {
-                appMain.rootStore.mainModuleInst.ephemeralNotificationClicked(model.timestamp)
+                appMain.rootStore.ephemeralNotificationClicked(model.timestamp)
                 this.open = false
             }
             onLinkActivated: {
@@ -2543,7 +2534,7 @@ Item {
                     Global.openLink(link)
             }
             onClose: {
-                appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.timestamp)
+                appMain.rootStore.removeEphemeralNotification(model.timestamp)
             }
         }
     }
@@ -2553,7 +2544,7 @@ Item {
         active: false
         sourceComponent: KeycardPopup {
             myKeyUid: appMain.profileStore.keyUid
-            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModuleForAuthenticationOrSigning
+            sharedKeycardModule: appMain.rootStore.keycardSharedModuleForAuthenticationOrSigning
         }
 
         onLoaded: {
@@ -2566,7 +2557,7 @@ Item {
         active: false
         sourceComponent: KeycardPopup {
             myKeyUid: appMain.profileStore.keyUid
-            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModule
+            sharedKeycardModule: appMain.rootStore.keycardSharedModule
         }
 
         onLoaded: {

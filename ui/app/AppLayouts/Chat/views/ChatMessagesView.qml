@@ -305,6 +305,7 @@ Item {
             usersModel: root.usersModel
 
             isChatBlocked: root.isChatBlocked
+            joined: root.rootStore.joined
 
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
