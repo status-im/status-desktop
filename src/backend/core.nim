@@ -80,6 +80,3 @@ proc callPrivateRPCNoDecode*(
     "params": %payload
   }
   return makePrivateRpcCallNoDecode(methodName, inputJSON)
-
-proc migrateKeyStoreDir*(account: string, hashedPassword: string, oldKeystoreDir: string, multiaccountKeystoreDir: string) =
-  discard status_go.migrateKeyStoreDir(account, hashedPassword, oldKeystoreDir, multiaccountKeystoreDir)
