@@ -90,6 +90,7 @@ StatusDialog {
                     rootStore: root.store
                     messageStore: root.messageStore
 
+                    joined: root.store.joined
                     messageId: model.id
                     responseToMessageWithId: model.responseToMessageWithId
                     senderId: model.senderId
