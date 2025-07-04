@@ -234,6 +234,7 @@ Item {
         y: parent.height + Theme.halfPadding
         visible: edit.text !== "" && !forceHide
         padding: Theme.halfPadding
+        margins: 0 // NB: !== -1 to stay within Window bounds
         background: StatusDialogBackground {
             id: bg
             layer.enabled: true

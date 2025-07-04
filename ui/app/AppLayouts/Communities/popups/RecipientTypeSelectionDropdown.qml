@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
-
+import StatusQ.Core.Theme 0.1
 
 StatusDropdown {
     id: root
@@ -11,8 +11,8 @@ StatusDropdown {
     signal communityMembersSelected
 
     width: 289
-    padding: 8
-    leftPadding: 16
+    padding: Theme.halfPadding
+    leftPadding: Theme.padding
 
     contentItem: ColumnLayout {
         spacing: 8

@@ -172,7 +172,7 @@ StatusComboBox {
         showManageNetworksButton: root.showManageNetworksButton
         showNewChainIcon: root.showNewChainIcon
 
-        onToggleNetwork: root.toggleNetwork(chainId, index)
+        onToggleNetwork: (chainId, index) => root.toggleNetwork(chainId, index)
 
         onManageNetworksClicked: {
             control.popup.close()
