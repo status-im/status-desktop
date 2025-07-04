@@ -95,3 +95,29 @@ void SystemUtilsInternal::synthetizeRightClick(QQuickItem* item, qreal x, qreal 
     QCoreApplication::postEvent(item, rightClickPress);
     QCoreApplication::postEvent(item, rightClickRelease);
 }
+
+void SystemUtilsInternal::setWindowDecoration(QQuickWindow* windowObj)
+{
+#ifdef Q_OS_MAC
+    if (!windowObj)
+        return;
+    // call update first time
+    updateDecoration(windowObj);
+    // re-apply whenever the window state changes
+    QObject::connect(windowObj, &QWindow::windowStateChanged, this,
+                     [this, windowObj](Qt::WindowState) {
+                         updateDecoration(windowObj);
+                     });
+#endif
+}
+
+void SystemUtilsInternal::updateDecoration(QQuickWindow* win) {
+    if (!win)
+        return;
+
+    bool isFullScreen = (win->windowState() & Qt::WindowFullScreen);
+    if (!isFullScreen)
+        customWindowDecoration(win);
+    else
+        defaultWindowDecoration(win);
+}
