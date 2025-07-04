@@ -20,8 +20,27 @@ QtObject {
     // Backend Entry Point:
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule
-    // (on the backend chat and community sections share the same module since they are actually the same)
-    property var chatCommunitySectionModule
+    // (on the backend chat and community sections share the same module since they are actually the same)   
+    readonly property var chatCommunitySectionModule: {
+        if(root.isChatSectionModule) {
+            return root.mainModuleInst.getChatSectionModule()
+        } else {
+            return getCommunitySectionModule(root.communityId)
+        }
+    }
+
+    readonly property var chatSectionModuleModel: root.mainModuleInst.getChatSectionModule().model
+    readonly property bool chatsLoadingFailed: root.mainModuleInst.chatsLoadingFailed
+
+    // Meanwhile cleanup and refactor of this store is not done, use the following
+    // property to distinguish if store is currently related to chat or to community
+    property bool isChatSectionModule: false
+    property var communityId
+
+    function getCommunitySectionModule(communityId) {
+        root.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityId)
+        return root.mainModuleInst.getCommunitySectionModule()
+    }
 
     readonly property var activeChatContentModule: root.currentChatContentModule()
 
@@ -49,6 +68,9 @@ QtObject {
     property bool openCreateChat: false
 
     readonly property var sectionDetails: d.sectionDetailsInstantiator.count ? d.sectionDetailsInstantiator.objectAt(0) : null
+
+    // TODO: Review if `mainModuleInst.activeSection` is indeed the same as `sectionDetails` here. If yes, this is redundant
+    readonly property bool joined: root.mainModuleInst.activeSection.joined
 
     property var communityItemsModel: chatCommunitySectionModule.model
 

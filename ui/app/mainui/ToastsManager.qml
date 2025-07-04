@@ -148,7 +148,7 @@ QtObject {
         target: Global
 
         function onDisplayToastMessage(title: string, subTitle: string, icon: string, loading: bool, ephNotifType: int, url: string) {
-            root.rootStore.mainModuleInst.displayEphemeralNotification(
+            root.rootStore.displayEphemeralNotification(
                 title,
                 subTitle,
                 "", // image
@@ -165,7 +165,7 @@ QtObject {
         // TO UNIFY with the one above.
         // Further refactor will be done in a next step
         function onDisplayToastWithActionMessage(title: string, subTitle: string, icon: string, iconColor: string, loading: bool, ephNotifType: int, actionType: int, actionData: string) {
-            root.rootStore.mainModuleInst.displayEphemeralNotification(
+            root.rootStore.displayEphemeralNotification(
                 title,
                 subTitle,
                 "", // image
@@ -180,7 +180,7 @@ QtObject {
         }
 
         function onDisplayImageToastWithActionMessage(title: string, subTitle: string, image: string, ephNotifType: int, actionType: int, actionData: string) {
-            root.rootStore.mainModuleInst.displayEphemeralNotification(
+            root.rootStore.displayEphemeralNotification(
                 title,
                 subTitle,
                 image,
@@ -196,9 +196,9 @@ QtObject {
     }
 
     readonly property Connections _mainConnections: Connections {
-        target: root.rootStore.mainModuleInst
+        target: root.rootStore
 
-        function onNewsFeedEphemeralNotification(newsTitle: string, notificationId: string) {
+        function onShowEphemeralNewsNotification(newsTitle: string, notificationId: string) {
             Global.displayImageToastWithActionMessage(
                 newsTitle,
                 qsTr("Read more"),
@@ -209,7 +209,6 @@ QtObject {
             )
         }
     }
-
 
     // Profile settings related toasts:
     readonly property Connections _profileStoreConnections: Connections {
