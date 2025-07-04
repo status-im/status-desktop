@@ -60,7 +60,6 @@ QtObject:
     fleetConfiguration: FleetConfiguration
     accounts: seq[AccountDto]
     loggedInAccount: AccountDto
-    keyStoreDir: string
     tmpAccount: AccountDto
     tmpHashedPassword: string
 
@@ -75,7 +74,6 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.fleetConfiguration = fleetConfiguration
-    result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
 
   proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000)
 
@@ -94,13 +92,6 @@ QtObject:
     self.loggedInAccount.name = displayName
     self.loggedInAccount.images = images
     singletonInstance.localAccountSettings.setFileName(displayName)
-
-  proc setKeyStoreDir(self: Service, key: string) =
-    self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
-    discard status_general.initKeystore(self.keyStoreDir)
-
-  proc getKeyStoreDir*(self: Service): string =
-    return self.keyStoreDir
 
   proc init*(self: Service) =
     discard
@@ -411,7 +402,7 @@ QtObject:
 
   proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
     try:
-      let response = status_account.verifyAccountPassword(account, utils.hashPassword(password), self.keyStoreDir)
+      let response = status_account.verifyAccountPassword(account, utils.hashPassword(password))
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr
         if(errMsg.len == 0):
@@ -462,16 +453,6 @@ QtObject:
 
   proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "", mnemonic: string = "") =
     try:
-      # WARNING: Is this keystore migration still needed?
-      let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
-      if not dirExists(keyStoreDir):
-        os.createDir(keyStoreDir)
-        status_core.migrateKeyStoreDir($ %* {
-          "key-uid": account.keyUid
-        }, hashedPassword, main_constants.ROOTKEYSTOREDIR, keyStoreDir)
-
-      self.setKeyStoreDir(account.keyUid)
-
       if mnemonic == "":
         let oldHashedPassword = hashedPasswordToUpperCase(hashedPassword)
         if self.verifyDatabasePassword(account.keyUid, oldHashedPassword):
