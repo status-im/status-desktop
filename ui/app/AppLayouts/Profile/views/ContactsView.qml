@@ -9,7 +9,6 @@ import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Profile.popups 1.0
-import AppLayouts.Profile.stores 1.0
 
 import shared 1.0
 import shared.controls 1.0
@@ -19,13 +18,15 @@ import shared.views.chat 1.0
 
 import utils 1.0
 
+import AppLayouts.stores 1.0 as AppLayoutStores
+
 import QtModelsToolkit 1.0
 import SortFilterProxyModel 0.2
 
 SettingsContentBase {
     id: root
 
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property SharedStores.UtilsStore utilsStore
 
     required property var mutualContactsModel

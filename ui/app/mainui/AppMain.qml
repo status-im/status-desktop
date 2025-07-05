@@ -69,10 +69,12 @@ Item {
         }
     }
 
+    // Global cross-domain stores (just references from `rootStore`)
+    readonly property AppStores.ContactsStore contactsStore: rootStore.contactsStore
+
     // Settings (just references from `rootStore`)
     readonly property ProfileStores.AboutStore aboutStore: rootStore.profileSectionStore.aboutStore
     readonly property ProfileStores.ProfileStore profileStore: rootStore.profileSectionStore.profileStore
-    readonly property ProfileStores.ContactsStore contactsStore: rootStore.profileSectionStore.contactsStore
     readonly property ProfileStores.DevicesStore devicesStore: rootStore.profileSectionStore.devicesStore
     readonly property ProfileStores.AdvancedStore advancedStore: rootStore.profileSectionStore.advancedStore
     readonly property ProfileStores.PrivacyStore privacyStore: rootStore.profileSectionStore.privacyStore
@@ -95,7 +97,7 @@ Item {
     readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
 
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
-        contactsStore: appMain.rootStore.contactStore
+        contactsStore: appMain.contactsStore
         currencyStore: appMain.currencyStore
         communityTokensStore: appMain.communityTokensStore
         emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -139,7 +141,7 @@ Item {
     AllContactsAdaptor {
         id: allContacsAdaptor
 
-        contactsModel: appMain.rootStore.contactStore.contactsModel
+        contactsModel: appMain.contactsStore.contactsModel
 
         selfPubKey: appMain.profileStore.pubKey
         selfDisplayName : appMain.profileStore.displayName
@@ -167,6 +169,7 @@ Item {
         id: toastsManager
 
         rootStore: appMain.rootStore
+        contactsStore: appMain.contactsStore
         rootChatStore: appMain.rootChatStore
         communityTokensStore: appMain.communityTokensStore
         profileStore: appMain.profileStore
@@ -907,6 +910,7 @@ Item {
 
         // Stores:
         rootStore: appMain.rootStore
+        contactsStore: appMain.contactsStore
         featureFlagsStore: appMain.featureFlagsStore
         sharedRootStore: appMain.sharedRootStore
         currencyStore: appMain.currencyStore
@@ -1368,7 +1372,7 @@ Item {
             currentUserStatus: appMain.profileStore.currentUserStatus
 
             getEmojiHashFn: appMain.utilsStore.getEmojiHash
-            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+            getLinkToProfileFn: appMain.contactsStore.getLinkToProfile
             onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
             onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
         }
@@ -1874,7 +1878,7 @@ Item {
                             profileStore: appMain.profileStore
 
                             getEmojiHashFn: appMain.utilsStore.getEmojiHash
-                            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+                            getLinkToProfileFn: appMain.contactsStore.getLinkToProfile
 
                             useNewDockIcons: false
                             hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
@@ -1980,7 +1984,7 @@ Item {
 
                                 navBar: appMain.navBar
                                 rootStore: ChatStores.RootStore {
-                                    contactsStore: appMain.rootStore.contactStore
+                                    contactsStore: appMain.contactsStore
                                     currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -2266,7 +2270,7 @@ Item {
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
                                 rootStore: ChatStores.RootStore {
-                                    contactsStore: appMain.rootStore.contactStore
+                                    contactsStore: appMain.contactsStore
                                     currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -2329,7 +2333,7 @@ Item {
                         width: Math.min(Math.max(implicitWidth, createChatView.defaultWidth), createChatView.parent.width)
                         utilsStore: appMain.utilsStore
                         rootStore: ChatStores.RootStore {
-                            contactsStore: appMain.rootStore.contactStore
+                            contactsStore: appMain.contactsStore
                             currencyStore: appMain.currencyStore
                             communityTokensStore: appMain.communityTokensStore
                             emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -2357,7 +2361,7 @@ Item {
                 y: parent.y + _buttonSize
                 height: appView.height - _buttonSize * 2
                 store: ChatStores.RootStore {
-                    contactsStore: appMain.rootStore.contactStore
+                    contactsStore: appMain.contactsStore
                     currencyStore: appMain.currencyStore
                     communityTokensStore: appMain.communityTokensStore
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -2809,7 +2813,7 @@ Item {
 
         sourceComponent: WalletPopups.SavedAddressActivityPopup {
             networkConnectionStore: appMain.networkConnectionStore
-            contactsStore: appMain.rootStore.contactStore
+            contactsStore: appMain.contactsStore
             networksStore: appMain.networksStore
 
             onSendToAddressRequested: {

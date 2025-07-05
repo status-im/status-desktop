@@ -17,6 +17,7 @@ import shared.controls 1.0
 import shared.views.chat 1.0
 
 import AppLayouts.Profile.stores 1.0
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 import "../helpers"
 import "../controls"
@@ -33,7 +34,7 @@ ColumnLayout {
     property var chatSectionModule
 
     property RootStore rootStore
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property string chatId
     property int chatType: Constants.chatType.unknown
     property var formatBalance

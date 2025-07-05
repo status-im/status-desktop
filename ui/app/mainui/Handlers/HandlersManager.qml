@@ -23,6 +23,7 @@ QtObject {
     // Stores definition:
     required property AppStores.RootStore rootStore
     required property AppStores.FeatureFlagsStore featureFlagsStore
+    required property AppStores.ContactsStore contactsStore
 
     required property SharedStores.RootStore sharedRootStore
     required property SharedStores.CurrenciesStore currencyStore
@@ -83,7 +84,7 @@ QtObject {
 
         // for ens flows
         ensRegisteredAddress: root.ensUsernamesStore.getEnsRegisteredAddress()
-        myPublicKey: root.rootStore.contactStore.myPublicKey
+        myPublicKey: root.contactsStore.myPublicKey
         getStatusTokenKey: function() {
             return root.ensUsernamesStore.getStatusTokenKey()
         }
