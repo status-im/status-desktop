@@ -26,12 +26,13 @@ import AppLayouts.Profile.helpers 1.0
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 SettingsContentBase {
     id: root
 
     property ProfileStores.ProfileStore profileStore
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     property SharedStores.UtilsStore utilsStore
     required property SharedStores.NetworksStore networksStore

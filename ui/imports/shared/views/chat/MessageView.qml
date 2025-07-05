@@ -20,14 +20,14 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 Loader {
     id: root
 
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property var chatContentModule
     property var chatCommunitySectionModule
 

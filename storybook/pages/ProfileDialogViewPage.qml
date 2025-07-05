@@ -169,7 +169,7 @@ SplitView {
                             }
                         }
 
-                        contactsStore: ProfileStores.ContactsStore {
+                        contactsStore: AppLayoutStores.ContactsStore {
                             function joinPrivateChat(publicKey) {
                                 logs.logEvent("contactsStore::joinPrivateChat", ["publicKey"], arguments)
                             }

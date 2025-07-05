@@ -31,6 +31,7 @@ import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 import "../controls"
 import "../helpers"
@@ -40,7 +41,7 @@ import "../popups"
 StatusSectionLayout {
     id: root
 
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property CommunitiesStores.CommunitiesStore communitiesStore

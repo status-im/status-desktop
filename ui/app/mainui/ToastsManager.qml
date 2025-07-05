@@ -34,6 +34,7 @@ QtObject {
 
     // Stores:
     required property RootStore rootStore
+    required property ContactsStore contactsStore
     required property ChatStores.RootStore rootChatStore
     required property SharedStores.CommunityTokensStore communityTokensStore
     required property ProfileStore profileStore
@@ -234,10 +235,10 @@ QtObject {
     }
 
     readonly property Connections _contactStoreConnections: Connections {
-        target: root.rootStore.contactStore
+        target: root.contactsStore
 
         function onTrustStatusRemoved(pubKey: string) {
-            const displayName = SQUtils.ModelUtils.getByKey(root.rootStore.contactStore.contactsModel, "pubKey", pubKey, "preferredDisplayName")
+            const displayName = SQUtils.ModelUtils.getByKey(root.contactsStore.contactsModel, "pubKey", pubKey, "preferredDisplayName")
             Global.displaySuccessToastMessage(qsTr("Trust mark removed for %1").arg(displayName))
         }
     }

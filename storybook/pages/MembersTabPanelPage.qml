@@ -6,7 +6,7 @@ import Qt.labs.settings 1.0
 
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 import shared.stores 1.0
 import utils 1.0
@@ -33,7 +33,7 @@ SplitView {
         searchString: ctrlSearch.text
 
         rootStore: ChatStores.RootStore {
-            contactsStore: ProfileStores.ContactsStore {
+            contactsStore: AppLayoutStores.ContactsStore {
                 readonly property string myPublicKey: "0x000"
             }
         }

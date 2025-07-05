@@ -7,7 +7,7 @@ import Storybook 1.0
 
 import shared.stores 1.0 as SharedStores
 import AppLayouts.Profile.views 1.0
-import AppLayouts.Profile.stores 1.0
+import AppLayouts.stores 1.0 as AppLayoutStores
 import mainui.adaptors 1.0
 
 Item {
@@ -18,7 +18,7 @@ Item {
         anchors.topMargin: 16
         contentWidth: 560
 
-        contactsStore: ContactsStore {
+        contactsStore: AppLayoutStores.ContactsStore {
             function joinPrivateChat(pubKey) {
                 console.info("ContactsStore::joinPrivateChat", pubKey)
             }
