@@ -34,7 +34,6 @@ Item {
     property var chatSectionModule
 
     property RootStore store
-    property AppLayoutStores.ContactsStore contactsStore
     property var emojiPopup
 
     signal openProfileClicked()

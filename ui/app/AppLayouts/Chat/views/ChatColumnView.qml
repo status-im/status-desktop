@@ -42,7 +42,6 @@ Item {
 
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
-    property AppLayoutStores.ContactsStore contactsStore
     property var emojiPopup
     property var stickersPopup
     property bool areTestNetworksEnabled
@@ -65,6 +64,9 @@ Item {
     // Users related data:
     property var usersModel
 
+    // Contacts related data:
+    property string myPublicKey
+
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
 
@@ -72,6 +74,12 @@ Item {
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
+
+    // Contacts related requests:
+    signal changeContactNicknameRequest(string pubKey, string nickname, string displayName, bool isEdit)
+    signal removeTrustStatusRequest(string pubKey)
+    signal dismissContactRequest(string chatId, string contactRequestId)
+    signal acceptContactRequest(string chatId, string contactRequestId)
 
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
@@ -253,7 +261,6 @@ Item {
                         chatType: model.type
                         chatMessagesLoader.active: model.loaderActive
                         rootStore: root.rootStore
-                        contactsStore: root.contactsStore
                         formatBalance: d.formatBalance
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
@@ -268,6 +275,9 @@ Item {
                         neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
                         usersModel: root.usersModel
+
+                        // Contacts related data:
+                        myPublicKey: root.myPublicKey
 
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
@@ -284,6 +294,12 @@ Item {
                         onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
                         onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
+
+                        // Contacts related requests:
+                        onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+                        onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
+                        onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
+                        onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
 
                         Component.onCompleted: {
                             chatContentModule = d.getChatContentModule(model.itemId)
@@ -406,7 +422,7 @@ Item {
                     }
 
                     onKeyUpPress: {
-                        d.activeMessagesStore.setEditModeOnLastMessage(root.contactsStore.myPublicKey)
+                        d.activeMessagesStore.setEditModeOnLastMessage(root.myPublicKey)
                     }
 
                     onLinkPreviewReloaded: (link) => d.activeChatContentModule.inputAreaModule.reloadLinkPreview(link)
