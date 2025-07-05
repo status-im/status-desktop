@@ -27,7 +27,6 @@ Loader {
 
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
-    property AppLayoutStores.ContactsStore contactsStore
     property var chatContentModule
     property var chatCommunitySectionModule
 
@@ -165,6 +164,13 @@ Loader {
     // Users related data:
     property var usersModel
 
+    // Contacts related data:
+    property string myPublicKey
+
+    // Contacts related requests:
+    signal changeContactNicknameRequest(string pubKey, string nickname, string displayName, bool isEdit)
+    signal removeTrustStatusRequest(string pubKey)
+
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
             return false
@@ -180,7 +186,7 @@ Loader {
 
         // TODO: getContactDetailsAsJson will be called from contacts store when refactored
         const contactDetails = Utils.getContactDetailsAsJson(pubKey, true, true, true)
-        const isMe = pubKey === root.contactsStore.myPublicKey
+        const isMe = pubKey === root.myPublicKey
 
         const profileType = Utils.getProfileType(isMe, isBridgedAccount, contactDetails.isBlocked)
         const contactType = Utils.getContactType(contactDetails.contactRequestState, contactDetails.isContact)
@@ -1231,11 +1237,11 @@ Loader {
             onReviewContactRequest: Global.openReviewContactRequestPopup(profileContextMenu.pubKey, null)
             onSendContactRequest: Global.openContactRequestPopup(profileContextMenu.pubKey, null)
             onEditNickname: Global.openNicknamePopupRequested(profileContextMenu.pubKey, null)
-            onRemoveNickname: root.rootStore.contactsStore.changeContactNickname(profileContextMenu.pubKey,
-                                                                                 "", profileContextMenu.displayName, true)
+            onRemoveNickname: root.changeContactNicknameRequest(profileContextMenu.pubKey,
+                                                                  "", profileContextMenu.displayName, true)
             onUnblockContact: Global.unblockContactRequested(profileContextMenu.pubKey)
             onMarkAsUntrusted: Global.markAsUntrustedRequested(profileContextMenu.pubKey)
-            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(profileContextMenu.pubKey)
+            onRemoveTrustStatus: root.removeTrustStatusRequest(profileContextMenu.pubKey)
             onRemoveContact: Global.removeContactRequested(profileContextMenu.pubKey)
             onBlockContact: Global.blockContactRequested(profileContextMenu.pubKey)
             onRemoveFromGroup: root.rootStore.removeMemberFromGroupChat(profileContextMenu.pubKey)
