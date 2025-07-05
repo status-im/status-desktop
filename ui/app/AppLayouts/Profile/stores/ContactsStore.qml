@@ -2,6 +2,7 @@ import QtQuick
 
 import StatusQ
 import StatusQ.Core.Utils as SQUtils
+import AppLayouts.Profile.helpers
 
 import utils
 
@@ -16,6 +17,8 @@ QtObject {
         readonly property var contactsModuleInst: profileSectionModule.contactsModule
         readonly property var mainModuleInst: mainModule
         readonly property var globalUtilsInst: globalUtils
+        readonly property var communitiesModuleInst: Global.appIsReady ? communitiesModule : null
+
 
         Component.onCompleted: {
             mainModuleInst.resolvedENS.connect(root.resolvedENS)
@@ -43,11 +46,35 @@ QtObject {
     // Support models for showcase for a contact with showcasePublicKey
     readonly property var showcaseCollectiblesModel: d.contactsModuleInst.showcaseCollectiblesModel
 
+    // Adapted contacts showcase models (TODO: Review if the store is the proper place. Should it be in an intermediate
+    // layer in between of store and the corresponding views?)
+    readonly property alias contactShowcaseCommunitiesModel: contactShowcaseModels.adaptedCommunitiesSourceModel
+    readonly property alias contactShowcaseAccountsModel: contactShowcaseModels.adaptedAccountsSourceModel
+    readonly property alias contactShowcaseCollectiblesModel: contactShowcaseModels.adaptedCollectiblesSourceModel
+    readonly property alias contactShowcaseSocialLinksModel: contactShowcaseModels.adaptedSocialLinksSourceModel
+
+    readonly property SQUtils.QObject adaptors: SQUtils.QObject {
+        ProfileShowcaseModelAdapter {
+            id: contactShowcaseModels
+            communitiesSourceModel: d.communitiesModuleInst.model
+            communitiesShowcaseModel: root.showcaseContactCommunitiesModel
+            accountsSourceModel: root.showcaseContactAccountsModel
+            collectiblesSourceModel: root.showcaseCollectiblesModel
+            collectiblesShowcaseModel: root.showcaseContactCollectiblesModel
+            socialLinksSourceModel: root.showcaseContactSocialLinksModel
+
+            isAddressSaved: (address) => {
+                return false
+            }
+            isShowcaseLoading: root.isShowcaseForAContactLoading
+        }
+    }
+
     signal resolvedENS(string resolvedPubKey, string resolvedAddress, string uuid)
     signal trustStatusRemoved(string pubKey)
 
     // Sets showcasePublicKey and updates showcase models with corresponding data
-    function requestProfileShowcase(publicKey) {
+    function requestContactShowcase(publicKey) {
         d.contactsModuleInst.requestProfileShowcase(publicKey)
     }
 

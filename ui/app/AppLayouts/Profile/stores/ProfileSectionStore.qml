@@ -69,34 +69,4 @@ QtObject {
     }
 
     property AboutStore aboutStore: AboutStore {}
-
-    property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
-                            
-    property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
-
-    readonly property alias contactShowcaseCommunitiesModel: contactShowcaseModels.adaptedCommunitiesSourceModel
-    readonly property alias contactShowcaseAccountsModel: contactShowcaseModels.adaptedAccountsSourceModel
-    readonly property alias contactShowcaseCollectiblesModel: contactShowcaseModels.adaptedCollectiblesSourceModel
-    readonly property alias contactShowcaseSocialLinksModel: contactShowcaseModels.adaptedSocialLinksSourceModel
-
-    function requestContactShowcase(address) {
-        root.contactsStore.requestProfileShowcase(address)
-    }
-
-    readonly property QObject d: QObject {
-        ProfileShowcaseModelAdapter {
-            id: contactShowcaseModels
-            communitiesSourceModel: root.communitiesModuleInst.model
-            communitiesShowcaseModel: root.contactsStore.showcaseContactCommunitiesModel
-            accountsSourceModel: root.contactsStore.showcaseContactAccountsModel
-            collectiblesSourceModel: root.contactsStore.showcaseCollectiblesModel
-            collectiblesShowcaseModel: root.contactsStore.showcaseContactCollectiblesModel
-            socialLinksSourceModel: root.contactsStore.showcaseContactSocialLinksModel
-
-            isAddressSaved: (address) => {
-                return false
-            }
-            isShowcaseLoading: root.contactsStore.isShowcaseForAContactLoading
-        }
-    }
 }

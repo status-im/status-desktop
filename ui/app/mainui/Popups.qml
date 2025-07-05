@@ -586,20 +586,20 @@ QtObject {
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
 
                 showcaseCommunitiesModel: isCurrentUser ? root.profileStore.ownShowcaseCommunitiesModel
-                                                        : rootStore.profileSectionStore.contactShowcaseCommunitiesModel
+                                                        : root.contactsStore.contactShowcaseCommunitiesModel
                 showcaseAccountsModel: isCurrentUser ? root.profileStore.ownShowcaseAccountsModel
-                                                     : rootStore.profileSectionStore.contactShowcaseAccountsModel
+                                                     : root.contactsStore.contactShowcaseAccountsModel
                 showcaseCollectiblesModel: isCurrentUser ? root.profileStore.ownShowcaseCollectiblesModel
-                                                         : rootStore.profileSectionStore.contactShowcaseCollectiblesModel
+                                                         : root.contactsStore.contactShowcaseCollectiblesModel
                 showcaseSocialLinksModel: isCurrentUser ? root.profileStore.ownShowcaseSocialLinksModel
-                                                        : rootStore.profileSectionStore.contactShowcaseSocialLinksModel
+                                                        : root.contactsStore.contactShowcaseSocialLinksModel
                 
                 assetsModel: rootStore.globalAssetsModel
                 collectiblesModel: rootStore.globalCollectiblesModel
 
                 onOpened: {
                     isCurrentUser ? root.profileStore.requestProfileShowcasePreferences()
-                                  : rootStore.profileSectionStore.requestContactShowcase(publicKey)
+                                  : root.contactsStore.requestContactShowcase(publicKey)
                 }
                 onClosed: {
                     if (profilePopup.parentPopup) {
@@ -940,7 +940,7 @@ QtObject {
                         text: qsTr("Leave %1").arg(leavePopup.community)
                         onClicked: {
                             leavePopup.close()
-                            root.rootStore.profileSectionStore.communitiesProfileModule.leaveCommunity(leavePopup.communityId)
+                            root.communitiesStore.leaveCommunity(leavePopup.communityId)
                         }
                     }
                 ]
