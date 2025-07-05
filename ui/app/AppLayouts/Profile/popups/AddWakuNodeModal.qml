@@ -11,11 +11,12 @@ import StatusQ.Popups 0.1
 import utils 1.0
 
 import AppLayouts.Profile.stores 1.0
+import AppLayouts.stores.Messaging 1.0
 
 StatusModal {
     id: root
 
-    property MessagingStore messagingStore
+    property MessagingSettingsStore messagingSettingsStore
     property AdvancedStore advancedStore
 
     height: 560
@@ -63,7 +64,7 @@ StatusModal {
             text: qsTr("Save")
             enabled: addrInput.valid
             onClicked: {
-                root.messagingStore.saveNewWakuNode(addrInput.text)
+                root.messagingSettingsStore.saveNewWakuNode(addrInput.text)
                 root.close()
             }
         }

@@ -28,6 +28,7 @@ import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.stores 1.0 as AppLayoutsStores
+import AppLayouts.stores.Messaging 1.0 as MessagingStores
 
 import mainui.activitycenter.stores 1.0
 
@@ -62,13 +63,13 @@ StatusSectionLayout {
     property ProfileStores.LanguageStore languageStore
     property ProfileStores.KeycardStore keycardStore
     property ProfileStores.WalletStore walletStore
-    property ProfileStores.MessagingStore messagingStore
     property ProfileStores.EnsUsernamesStore ensUsernamesStore
     property ProfileStores.AboutStore aboutStore
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
     property ActivityCenterStore activityCenterStore
 
+    property MessagingStores.MessagingSettingsStore messagingSettingsStore
 
     property var systemPalette
     property var emojiPopup
@@ -316,7 +317,7 @@ StatusSectionLayout {
 
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
                 requestsCount: root.pendingReceivedContactsCount
-                messagingStore: root.messagingStore
+                messagingSettingsStore: root.messagingSettingsStore
             }
         }
 
@@ -420,7 +421,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                messagingStore: root.messagingStore
+                messagingSettingsStore: root.messagingSettingsStore
                 advancedStore: root.advancedStore
                 walletStore: root.walletStore
                 isFleetSelectionEnabled: fleetSelectionEnabled

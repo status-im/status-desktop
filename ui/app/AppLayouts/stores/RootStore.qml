@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import SortFilterProxyModel 0.2
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.stores.Messaging 1.0 as MessagingStores
 
 // WIP: Previous reorganization step before refactoring `RootStore`
 QtObject {
@@ -30,8 +31,9 @@ QtObject {
     }
 
     // Here there should be all the ContextSpecificRootStore objects creation
-    readonly property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {
-    }
+    readonly property MessagingStores.MessagingRootStore messagingRootStore: MessagingStores.MessagingRootStore {}
+    readonly property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {}
+
     readonly property ProfileStores.ContactsStore contactStore: profileSectionStore.contactsStore // It should be extracted from `ProfileSectionStore`
     // since it's not a profile specific thing but a global store
 

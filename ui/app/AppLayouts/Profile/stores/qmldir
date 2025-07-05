@@ -4,7 +4,6 @@ ContactsStore 1.0 ContactsStore.qml
 DevicesStore 1.0 DevicesStore.qml
 EnsUsernamesStore 1.0 EnsUsernamesStore.qml
 LanguageStore 1.0 LanguageStore.qml
-MessagingStore 1.0 MessagingStore.qml
 NotificationsStore 1.0 NotificationsStore.qml
 PrivacyStore 1.0 PrivacyStore.qml
 ProfileSectionStore 1.0 ProfileSectionStore.qml
