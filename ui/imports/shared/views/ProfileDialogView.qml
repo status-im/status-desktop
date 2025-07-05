@@ -26,6 +26,7 @@ import SortFilterProxyModel
 import AppLayouts.Profile.helpers
 import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.stores as AppLayoutStores
 
 Pane {
     id: root
@@ -37,7 +38,7 @@ Pane {
     readonly property alias isCurrentUser: d.isCurrentUser
 
     property ProfileStores.ProfileStore profileStore
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property SharedStores.UtilsStore utilsStore
     property WalletStores.RootStore walletStore
     required property SharedStores.NetworksStore networksStore

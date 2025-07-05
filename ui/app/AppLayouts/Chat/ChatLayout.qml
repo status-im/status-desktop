@@ -17,6 +17,7 @@ import AppLayouts.Communities.stores as CommunitiesStores
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.stores as WalletStore
+import AppLayouts.stores as AppLayoutStores
 
 import StatusQ
 import StatusQ.Core.Utils
@@ -29,7 +30,7 @@ StackLayout {
 
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
-    readonly property ProfileStores.ContactsStore contactsStore: rootStore.contactsStore
+    readonly property AppLayoutStores.ContactsStore contactsStore: rootStore.contactsStore
     readonly property SharedStores.PermissionsStore permissionsStore: rootStore.permissionsStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.TokensStore tokensStore

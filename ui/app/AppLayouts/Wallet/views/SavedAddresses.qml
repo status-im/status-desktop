@@ -12,7 +12,7 @@ import SortFilterProxyModel
 import utils
 import shared.controls
 import shared.stores as SharedStores
-import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.stores as AppLayoutStores
 
 import "../stores"
 import "../controls"
@@ -20,7 +20,7 @@ import "../controls"
 ColumnLayout {
     id: root
 
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property SharedStores.NetworksStore networksStore
 

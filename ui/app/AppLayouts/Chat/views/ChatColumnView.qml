@@ -23,7 +23,7 @@ import SortFilterProxyModel
 
 import AppLayouts.Communities.popups
 import AppLayouts.Communities.panels
-import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.stores as AppLayoutStores
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Wallet.stores as WalletStore
 
@@ -42,7 +42,7 @@ Item {
 
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property var emojiPopup
     property var stickersPopup
     property bool areTestNetworksEnabled

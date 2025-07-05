@@ -1,4 +1,5 @@
 AppSearchStore 1.0 AppSearchStore.qml
 CloneModel 1.0 CloneModel.qml
+ContactsStore 1.0 ContactsStore.qml
 FeatureFlagsStore 1.0 FeatureFlagsStore.qml
 RootStore 1.0 RootStore.qml

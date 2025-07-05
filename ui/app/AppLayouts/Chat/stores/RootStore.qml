@@ -11,6 +11,7 @@ import StatusQ.Core.Theme
 import AppLayouts.Profile.stores
 import AppLayouts.Wallet.stores as WalletStore
 import shared.stores
+import AppLayouts.stores as AppLayoutStores
 
 import utils
 
@@ -44,7 +45,7 @@ QtObject {
 
     readonly property var activeChatContentModule: root.currentChatContentModule()
 
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property CommunityTokensStore communityTokensStore
     property WalletStore.RootStore walletStore
     property CurrenciesStore currencyStore

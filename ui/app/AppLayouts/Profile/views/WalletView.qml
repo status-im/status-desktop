@@ -28,6 +28,7 @@ import AppLayouts.Profile.views.wallet
 import AppLayouts.Wallet.stores
 import AppLayouts.Wallet.controls
 import AppLayouts.Wallet
+import AppLayouts.stores as AppLayoutStores
 
 SettingsContentBase {
     id: root
@@ -41,7 +42,7 @@ SettingsContentBase {
 
     property WalletStore walletStore
     property KeycardStore keycardStore
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     required property TokensStore tokensStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property WalletAssetsStore assetsStore
