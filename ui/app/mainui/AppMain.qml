@@ -2012,6 +2012,9 @@ Item {
                                 // Users related data
                                 usersModel: rootStore.usersStore.usersModel
 
+                                // Contacts related data:
+                                myPublicKey: appMain.contactsStore.myPublicKey
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -2030,6 +2033,12 @@ Item {
 
                                 // Edit group chat members signals:
                                 onGroupMembersUpdateRequested: rootStore.usersStore.groupMembersUpdateRequested(membersPubKeysList)
+
+                                // Contacts related requests:
+                                onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
+                                onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
+                                onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
+                                onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
                             }
                         }
                     }
@@ -2290,6 +2299,9 @@ Item {
 
                                 usersModel: rootStore.usersStore.usersModel
 
+                                // Contacts related data:
+                                myPublicKey: appMain.contactsStore.myPublicKey
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -2305,6 +2317,12 @@ Item {
                                 onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
                                 onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
+
+                                // Contacts related requests:
+                                onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
+                                onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
+                                onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
+                                onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
                             }
                         }
                     }
