@@ -15,7 +15,8 @@ import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Controls
 
-import "../stores"
+import AppLayouts.stores.Messaging 1.0
+
 import "../controls"
 import "../popups"
 import "../panels"
@@ -23,7 +24,7 @@ import "../panels"
 SettingsContentBase {
     id: root
 
-    property MessagingStore messagingStore
+    property MessagingSettingsStore messagingSettingsStore
 
     property alias requestsCount: contactRequestsIndicator.requestsCount
 
@@ -55,12 +56,12 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: switch3
-                    checked: !root.messagingStore.privacyModule.messagesFromContactsOnly
+                    checked: !root.messagingSettingsStore.messagesFromContactsOnly
                     onCheckedChanged: {
                         // messagesFromContactsOnly needs to be accessed from the module (view),
                         // because otherwise doing `messagesFromContactsOnly = value` only changes the bool property on QML
-                        if (root.messagingStore.privacyModule.messagesFromContactsOnly === checked) {
-                            root.messagingStore.privacyModule.messagesFromContactsOnly = !checked
+                        if (root.messagingSettingsStore.messagesFromContactsOnly === checked) {
+                            root.messagingSettingsStore.setMessagesFromContactsOnly(!checked)
                         }
                     }
                 }
@@ -140,9 +141,9 @@ SettingsContentBase {
             label: qsTr("Always ask")
             objectName: "MessagingView_AlwaysAsk_RadioButton"
             group: urlUnfurlingGroup
-            checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeAlwaysAsk
+            checked: root.messagingSettingsStore.urlUnfurlingMode === Constants.UrlUnfurlingModeAlwaysAsk
             onClicked: {
-                root.messagingStore.privacyModule.urlUnfurlingMode = Constants.UrlUnfurlingModeAlwaysAsk
+                root.messagingSettingsStore.setUrlUnfurlingMode(Constants.UrlUnfurlingModeAlwaysAsk)
             }
         }
 
@@ -154,9 +155,9 @@ SettingsContentBase {
             label: qsTr("Always show previews")
             objectName: "MessagingView_AlwaysShow_RadioButton"
             group: urlUnfurlingGroup
-            checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeEnableAll
+            checked: root.messagingSettingsStore.urlUnfurlingMode === Constants.UrlUnfurlingModeEnableAll
             onClicked: {
-                root.messagingStore.privacyModule.urlUnfurlingMode = Constants.UrlUnfurlingModeEnableAll
+                root.messagingSettingsStore.setUrlUnfurlingMode(Constants.UrlUnfurlingModeEnableAll)
             }
         }
 
@@ -168,9 +169,9 @@ SettingsContentBase {
             label: qsTr("Never show previews")
             objectName: "MessagingView_NeverShow_RadioButton"
             group: urlUnfurlingGroup
-            checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeDisableAll
+            checked: root.messagingSettingsStore.urlUnfurlingMode === Constants.UrlUnfurlingModeDisableAll
             onClicked: {
-                root.messagingStore.privacyModule.urlUnfurlingMode = Constants.UrlUnfurlingModeDisableAll
+                root.messagingSettingsStore.setUrlUnfurlingMode(Constants.UrlUnfurlingModeDisableAll)
             }
         }
     }

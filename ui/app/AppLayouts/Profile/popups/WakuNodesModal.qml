@@ -18,6 +18,7 @@ import shared.status
 import shared.controls
 
 import AppLayouts.Profile.stores
+import AppLayouts.stores.Messaging
 
 StatusModal {
     id: root
@@ -27,7 +28,7 @@ StatusModal {
     padding: 8
     headerSettings.title: qsTr("Waku nodes")
 
-    property MessagingStore messagingStore
+    property MessagingSettingsStore messagingSettingsStore
     property AdvancedStore advancedStore
     
     onClosed: {
@@ -45,7 +46,7 @@ StatusModal {
 
             Repeater {
                 id: wakunodesListView
-                model: root.messagingStore.wakunodes
+                model: root.messagingSettingsStore.wakunodes
                 delegate: Component {
                     StatusListItem {
                         width: parent.width
@@ -75,7 +76,7 @@ StatusModal {
     Component {
         id: wakuNodeModalComponent
         AddWakuNodeModal {
-            messagingStore: root.messagingStore
+            messagingSettingsStore: root.messagingSettingsStore
             advancedStore: root.advancedStore
         }
     }

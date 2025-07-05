@@ -8,6 +8,7 @@ import StatusQ.Controls
 import StatusQ.Controls.Validators
 import StatusQ.Popups
 
+import AppLayouts.stores.Messaging 1.0
 
 import utils
 
@@ -19,7 +20,7 @@ StatusModal {
     padding: 8
     headerSettings.title: qsTr("Waku nodes")
 
-    property var messagingStore
+    property MessagingSettingsStore messagingSettingsStore
     property var advancedStore
 
     onClosed: {
@@ -76,7 +77,7 @@ StatusModal {
             enabled: nameInput.valid && enodeInput.valid
             // enabled: nameInput.text !== "" && enodeInput.text !== ""
             onClicked: {
-                root.messagingStore.saveNewMailserver(nameInput.text, enodeInput.text)
+                root.messagingSettingsStore.saveNewMailserver(nameInput.text, enodeInput.text)
                 popup.close()
             }
         }

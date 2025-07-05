@@ -49,6 +49,7 @@ import AppLayouts.Wallet.popups as WalletPopups
 import AppLayouts.Wallet.popups.dapps as DAppsPopups
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.stores as AppStores
+import AppLayouts.stores.Messaging as MessagingStores
 
 import mainui.adaptors
 import mainui.activitycenter.stores
@@ -60,21 +61,15 @@ import SortFilterProxyModel
 
 Item {
     id: appMain
-
-    readonly property SharedStores.RootStore sharedRootStore: SharedStores.RootStore {
-        currencyStore: appMain.currencyStore
-    }
-
-    property SharedStores.UtilsStore utilsStore
-
-    readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
     
+    // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
         onOpenUrl: {
             Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
         }
     }
 
+    // Settings (just references from `rootStore`)
     readonly property ProfileStores.AboutStore aboutStore: rootStore.profileSectionStore.aboutStore
     readonly property ProfileStores.ProfileStore profileStore: rootStore.profileSectionStore.profileStore
     readonly property ProfileStores.ContactsStore contactsStore: rootStore.profileSectionStore.contactsStore
@@ -85,8 +80,19 @@ Item {
     readonly property ProfileStores.LanguageStore languageStore: rootStore.profileSectionStore.languageStore
     readonly property ProfileStores.KeycardStore keycardStore: rootStore.profileSectionStore.keycardStore
     readonly property ProfileStores.WalletStore walletProfileStore: rootStore.profileSectionStore.walletStore
-    readonly property ProfileStores.MessagingStore messagingStore: rootStore.profileSectionStore.messagingStore
     readonly property ProfileStores.EnsUsernamesStore ensUsernamesStore: rootStore.profileSectionStore.ensUsernamesStore
+
+    // Messaging (just references from `rootStore`)
+    readonly property MessagingStores.MessagingSettingsStore messagingSettingsStore: rootStore.messagingRootStore.messagingSettingsStore
+
+    // Note: The following stores have not yet been refactored to follow the entry-point pattern via the main root store
+    readonly property SharedStores.RootStore sharedRootStore: SharedStores.RootStore {
+        currencyStore: appMain.currencyStore
+    }
+
+    property SharedStores.UtilsStore utilsStore
+
+    readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
 
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
@@ -2130,7 +2136,7 @@ Item {
                             languageStore: appMain.languageStore
                             keycardStore: appMain.keycardStore
                             walletStore: appMain.walletProfileStore
-                            messagingStore: appMain.messagingStore
+                            messagingSettingsStore: appMain.messagingSettingsStore
                             ensUsernamesStore: appMain.ensUsernamesStore
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore

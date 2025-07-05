@@ -18,6 +18,7 @@ import shared.status
 import shared.controls
 
 import AppLayouts.Profile.stores
+import AppLayouts.stores.Messaging
 
 StatusModal {
     id: root
@@ -27,7 +28,7 @@ StatusModal {
     padding: 8
     headerSettings.title: qsTr("History Nodes")
 
-    property MessagingStore messagingStore
+    property MessagingSettingsStore messagingSettingsStore
     property AdvancedStore advancedStore
     property string nameValidationError: ""
     property string enodeValidationError: ""
@@ -50,12 +51,12 @@ StatusModal {
                 title: qsTr("Use Waku nodes")
                 components: [
                     StatusSwitch {
-                        checked: root.messagingStore.useMailservers
-                        onCheckedChanged: root.messagingStore.toggleUseMailservers(checked)
+                        checked: root.messagingSettingsStore.useMailservers
+                        onCheckedChanged: root.messagingSettingsStore.toggleUseMailservers(checked)
                     }
                 ]
                 onClicked: {
-                    root.messagingStore.toggleUseMailservers(!root.messagingStore.useMailservers)
+                    root.messagingSettingsStore.toggleUseMailservers(!root.messagingSettingsStore.useMailservers)
                 }
             }
 
@@ -69,8 +70,8 @@ StatusModal {
                 components: [
                     StatusSwitch {
                         id: automaticSelectionSwitch
-                        checked: root.messagingStore.automaticMailserverSelection
-                        onCheckedChanged: root.messagingStore.enableAutomaticMailserverSelection(checked)
+                        checked: root.messagingSettingsStore.automaticMailserverSelection
+                        onCheckedChanged: root.messagingSettingsStore.enableAutomaticMailserverSelection(checked)
                     }
                 ]
                 onClicked: {
@@ -91,7 +92,7 @@ StatusModal {
 
             Repeater {
                 id: mailServersListView
-                model: root.messagingStore.mailservers
+                model: root.messagingSettingsStore.mailservers
                 delegate: Component {
                     StatusListItem {
                         title: qsTr("Node %1").arg(index + 1)
@@ -102,10 +103,10 @@ StatusModal {
                             StatusRadioButton {
                                 id: nodeRadioBtn
                                 ButtonGroup.group: nodesButtonGroup
-                                checked: model.name === root.messagingStore.pinnedMailserverId
+                                checked: model.name === root.messagingSettingsStore.pinnedMailserverId
                                 onCheckedChanged: {
                                      if (checked) {
-                                         root.messagingStore.setPinnedMailserverId(model.name)
+                                         root.messagingSettingsStore.setPinnedMailserverId(model.name)
                                     }
                                 }
                             }
@@ -134,7 +135,7 @@ StatusModal {
     Component {
         id: wakuNodeModalComponent
         AddWakuNodeModal {
-            messagingStore: root.messagingStore
+            messagingSettingsStore: root.messagingSettingsStore
             advancedStore: root.advancedStore
         }
     }

@@ -12,61 +12,56 @@ import SortFilterProxyModel
 QtObject {
     id: root
 
-    property var mainModuleInst: mainModule
-    property var profileSectionModuleInst: profileSectionModule
+    readonly property QtObject _d: QtObject {
+        id: d
 
-    property ContactsStore contactsStore: ContactsStore {}
-
-    property AdvancedStore advancedStore: AdvancedStore {
-        walletModule: profileSectionModuleInst.walletModule
-        advancedModule: profileSectionModuleInst.advancedModule
-    }
-
-    property MessagingStore messagingStore: MessagingStore {
-        privacyModule: profileSectionModuleInst.privacyModule
-        syncModule: profileSectionModuleInst.syncModule
-        wakuModule: profileSectionModuleInst.wakuModule
-    }
-
-    property DevicesStore devicesStore: DevicesStore {
-        devicesModule: profileSectionModuleInst.devicesModule
-    }
-
-    property NotificationsStore notificationsStore: NotificationsStore {
-        notificationsModule: profileSectionModuleInst.notificationsModule
-    }
-
-    property LanguageStore languageStore: LanguageStore {
-        languageModule: profileSectionModuleInst.languageModule
+        readonly property var mainModuleInst: mainModule
+        readonly property var profileSectionModuleInst: profileSectionModule
     }
 
     property ProfileStore profileStore: ProfileStore {
-        profileModule: profileSectionModuleInst.profileModule
-        sectionsModel: root.mainModuleInst.sectionsModel
+        profileModule: d.profileSectionModuleInst.profileModule
+        sectionsModel: d.mainModuleInst.sectionsModel
         ownAccounts: root.walletStore.ownAccounts
         collectibles: root.walletStore.collectibles
     }
 
-    property PrivacyStore privacyStore: PrivacyStore {
-        privacyModule: profileSectionModuleInst.privacyModule
+    property KeycardStore keycardStore: KeycardStore {
+        keycardModule: d.profileSectionModuleInst.keycardModule
     }
 
     property EnsUsernamesStore ensUsernamesStore: EnsUsernamesStore {
-        ensUsernamesModule: profileSectionModuleInst.ensUsernamesModule
+        ensUsernamesModule: d.profileSectionModuleInst.ensUsernamesModule
     }
 
-    property WalletStore walletStore: WalletStore {
-        walletModule: profileSectionModuleInst.walletModule
+    property DevicesStore devicesStore: DevicesStore {
+        devicesModule: d.profileSectionModuleInst.devicesModule
     }
 
-    property KeycardStore keycardStore: KeycardStore {
-        keycardModule: profileSectionModuleInst.keycardModule
+    property PrivacyStore privacyStore: PrivacyStore {
+        privacyModule: d.profileSectionModuleInst.privacyModule
     }
 
-    property var stickersModuleInst: stickersModule
-    property StickersStore stickersStore: StickersStore {
-        stickersModule: stickersModuleInst
+    property NotificationsStore notificationsStore: NotificationsStore {
+        notificationsModule: d.profileSectionModuleInst.notificationsModule
+    }
+
+    property LanguageStore languageStore: LanguageStore {
+        languageModule: d.profileSectionModuleInst.languageModule
+    }
+
+    property AdvancedStore advancedStore: AdvancedStore {
+        walletModule: d.profileSectionModuleInst.walletModule
+        advancedModule: d.profileSectionModuleInst.advancedModule
     }
 
     property AboutStore aboutStore: AboutStore {}
+
+    // TODO: Move up to `RootStore`
+    property ContactsStore contactsStore: ContactsStore {}
+
+    // TODO: Move to wallet related store
+    property WalletStore walletStore: WalletStore {
+        walletModule: d.profileSectionModuleInst.walletModule
+    }
 }
