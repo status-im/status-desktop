@@ -33,12 +33,14 @@ Item {
 
     property RootStore rootStore
     property MessageStore messageStore
-    property AppLayoutStores.ContactsStore contactsStore
     property string channelEmoji
     property var formatBalance
 
     // Users related data:
     property var usersModel
+
+    // Contacts related data:
+    property string myPublicKey
 
     property var emojiPopup
     property var stickersPopup
@@ -67,6 +69,12 @@ Item {
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
+
+    // Contacts related requests:
+    signal changeContactNicknameRequest(string pubKey, string nickname, string displayName, bool isEdit)
+    signal removeTrustStatusRequest(string pubKey)
+    signal dismissContactRequest(string chatId, string contactRequestId)
+    signal acceptContactRequest(string chatId, string contactRequestId)
 
     QtObject {
         id: d
@@ -295,7 +303,6 @@ Item {
 
             rootStore: root.rootStore
             messageStore: root.messageStore
-            contactsStore: root.contactsStore
             channelEmoji: root.channelEmoji
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
@@ -389,6 +396,9 @@ Item {
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
+            // Contacts related data:
+            myPublicKey: root.myPublicKey
+
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
@@ -414,6 +424,11 @@ Item {
             onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
             onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
+
+            // Contacts related requests:
+            onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+            onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
+
         }
         header: {
             if (!root.isContactBlocked && root.isOneToOne && root.rootStore.oneToOneChatContact) {
@@ -464,14 +479,14 @@ Item {
                 text: qsTr("Reject Contact Request")
                 type: StatusBaseButton.Type.Danger
                 onClicked: {
-                    root.contactsStore.dismissContactRequest(root.chatId, "")
+                    root.dismissContactRequest(root.chatId, "")
                 }
             }
 
             StatusButton {
                 text: qsTr("Accept Contact Request")
                 onClicked: {
-                    root.contactsStore.acceptContactRequest(root.chatId, "")
+                    root.acceptContactRequest(root.chatId, "")
                 }
             }
         }
