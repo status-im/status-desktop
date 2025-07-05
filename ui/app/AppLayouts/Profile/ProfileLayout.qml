@@ -55,7 +55,6 @@ StatusSectionLayout {
     property SharedStores.UtilsStore utilsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property ProfileStores.ProfileStore profileStore
-    property ProfileStores.ContactsStore contactsStore
     property ProfileStores.DevicesStore devicesStore
     property ProfileStores.AdvancedStore advancedStore
     property ProfileStores.PrivacyStore privacyStore
@@ -65,10 +64,11 @@ StatusSectionLayout {
     property ProfileStores.WalletStore walletStore
     property ProfileStores.EnsUsernamesStore ensUsernamesStore
     property ProfileStores.AboutStore aboutStore
-    property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
     property ActivityCenterStore activityCenterStore
     property MessagingStores.MessagingSettingsStore messagingSettingsStore
+    property AppLayoutsStores.ContactsStore contactsStore
+    property AppLayoutsStores.RootStore globalStore
 
     property var emojiPopup
 

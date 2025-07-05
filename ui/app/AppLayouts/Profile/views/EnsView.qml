@@ -15,6 +15,7 @@ import shared.stores as SharedStores
 import shared.popups.send
 
 import AppLayouts.Wallet.stores
+import AppLayouts.stores as AppLayoutStores
 
 import "../stores"
 
@@ -24,7 +25,7 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property WalletAssetsStore walletAssetsStore
 
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
 
     property int profileContentWidth

@@ -21,7 +21,7 @@ import "../panels"
 import "../popups"
 import AppLayouts.Chat.stores
 import AppLayouts.Communities.popups
-import AppLayouts.Profile.stores
+import AppLayouts.stores as AppLayoutStores
 
 Item {
     id: root
@@ -34,7 +34,7 @@ Item {
     property var chatSectionModule
 
     property RootStore store
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property var emojiPopup
 
     signal openProfileClicked()

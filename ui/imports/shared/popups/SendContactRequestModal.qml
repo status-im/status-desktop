@@ -16,7 +16,7 @@ import AppLayouts.stores as AppLayoutStores
 CommonContactDialog {
     id: root
 
-    property AppLayoutStores.RootStore rootStore
+    property AppLayoutStores.ContactsStore contactsStore
 
     property string labelText: qsTr("Why should they accept your contact request?")
     property string challengeText: qsTr("Write a short message telling them who you are...")
@@ -31,7 +31,7 @@ CommonContactDialog {
 
         // (request) update from mailserver
         if (root.contactDetails.displayName === "") {
-            root.rootStore.contactStore.requestContactInfo(root.publicKey)
+            root.contactsStore.requestContactInfo(root.publicKey)
             root.loadingContactDetails = true
         }
     }
@@ -46,14 +46,14 @@ CommonContactDialog {
 
     readonly property var _conn: Connections {
         enabled: root.loadingContactDetails
-        target: root.rootStore.contactStore
+        target: root.contactsStore
 
         function onContactInfoRequestFinished(publicKey, ok) {
             if (publicKey !== root.publicKey) {
                 return
             }
             if (ok) {
-                root.contactDetails = SQUtils.ModelUtils.getByKey(root.rootStore.contactStore.contactsModel, "pubKey", root.publicKey)
+                root.contactDetails = SQUtils.ModelUtils.getByKey(root.contactsStore.contactsModel, "pubKey", root.publicKey)
             }
             root.loadingContactDetails = false
         }

@@ -45,6 +45,7 @@ QtObject {
     required property CommunityTokensStore communityTokensStore
     required property NetworksStore networksStore
 
+    property AppLayoutStores.ContactsStore contactsStore
     property ChatStores.RootStore chatStore
     property UtilsStore utilsStore
     property CommunitiesStore communitiesStore
@@ -58,7 +59,6 @@ QtObject {
     property ProfileStores.AdvancedStore advancedStore
     property ActivityCenterStore activityCenterStore
     property ProfileStores.AboutStore aboutStore
-    property ProfileStores.ContactsStore contactsStore
     property ProfileStores.PrivacyStore privacyStore
 
     property var allContactsModel
@@ -255,7 +255,7 @@ QtObject {
 
     function openReviewContactRequestPopup(publicKey, cb) {
         try {
-            const crDetails = rootStore.contactStore.getLatestContactRequestForContactAsJson(publicKey)
+            const crDetails = root.contactsStore.getLatestContactRequestForContactAsJson(publicKey)
             if (crDetails.from !== publicKey) {
                 console.warn("Popups.openReviewContactRequestPopup: not matching publicKey:", publicKey)
                 return
@@ -434,11 +434,11 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.removeContact(publicKey)
+                    root.contactsStore.removeContact(publicKey)
                     if (removeIDVerification)
-                        rootStore.contactStore.removeTrustStatus(publicKey)
+                        root.contactsStore.removeTrustStatus(publicKey)
                     if (markAsUntrusted) {
-                        rootStore.contactStore.markUntrustworthy(publicKey)
+                        root.contactsStore.markUntrustworthy(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
                     } else {
                         Global.displaySuccessToastMessage(qsTr("%1 removed from contacts").arg(mainDisplayName))
@@ -455,7 +455,7 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.markAsTrusted(publicKey)
+                    root.contactsStore.markAsTrusted(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 marked as trusted").arg(mainDisplayName))
                     close()
                 }
@@ -470,17 +470,17 @@ QtObject {
 
                 onAccepted: {
                     if (markAsUntrusted && removeContact) {
-                        rootStore.contactStore.markUntrustworthy(publicKey)
-                        rootStore.contactStore.removeContact(publicKey)
+                        root.contactsStore.markUntrustworthy(publicKey)
+                        root.contactsStore.removeContact(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 trust mark removed, removed from contacts and marked as untrusted").arg(mainDisplayName))
                     } else if (markAsUntrusted) {
-                        rootStore.contactStore.markUntrustworthy(publicKey)
+                        root.contactsStore.markUntrustworthy(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 trust mark removed and marked as untrusted").arg(mainDisplayName))
                     } else if (removeContact) {
-                        rootStore.contactStore.removeContact(publicKey)
+                        root.contactsStore.removeContact(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 trust mark removed and removed from contacts").arg(mainDisplayName))
                     } else {
-                        rootStore.contactStore.removeTrustStatus(publicKey)
+                        root.contactsStore.removeTrustStatus(publicKey)
                     }
                     close()
                 }
@@ -503,10 +503,10 @@ QtObject {
             id: sendContactRequestPopupComponent
 
             SendContactRequestModal {
-                rootStore: root.rootStore
+                contactsStore: root.contactsStore
                 utilsStore: root.utilsStore
 
-                onAccepted: rootStore.contactStore.sendContactRequest(publicKey, message)
+                onAccepted: root.contactsStore.sendContactRequest(publicKey, message)
                 onClosed: destroy()
             }
         },
@@ -517,12 +517,12 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.acceptContactRequest(publicKey, contactRequestId)
+                    root.contactsStore.acceptContactRequest(publicKey, contactRequestId)
                     Global.displaySuccessToastMessage(qsTr("Contact request accepted"))
                     close()
                 }
                 onDiscarded: {
-                    rootStore.contactStore.dismissContactRequest(publicKey, contactRequestId)
+                    root.contactsStore.dismissContactRequest(publicKey, contactRequestId)
                     Global.displaySuccessToastMessage(qsTr("Contact request ignored"))
                     close()
                 }
@@ -671,12 +671,12 @@ QtObject {
 
                 onEditDone: {
                     if (nickname !== newNickname) {
-                        rootStore.contactStore.changeContactNickname(publicKey, newNickname, optionalDisplayName, !!nickname)
+                        root.contactsStore.changeContactNickname(publicKey, newNickname, optionalDisplayName, !!nickname)
                     }
                     close()
                 }
                 onRemoveNicknameRequested: {
-                    rootStore.contactStore.changeContactNickname(publicKey, "", optionalDisplayName, true)
+                    root.contactsStore.changeContactNickname(publicKey, "", optionalDisplayName, true)
                     close()
                 }
                 onClosed: destroy()
@@ -689,9 +689,9 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.markUntrustworthy(publicKey)
+                    root.contactsStore.markUntrustworthy(publicKey)
                     if (removeContact) {
-                        rootStore.contactStore.removeContact(publicKey)
+                        root.contactsStore.removeContact(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
                     } else {
                         Global.displaySuccessToastMessage(qsTr("%1 marked as untrusted").arg(mainDisplayName))
@@ -708,7 +708,7 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.unblockContact(publicKey)
+                    root.contactsStore.unblockContact(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 unblocked").arg(mainDisplayName))
                     close()
                 }
@@ -722,11 +722,11 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.blockContact(publicKey)
+                    root.contactsStore.blockContact(publicKey)
                     if (removeIDVerification)
-                        rootStore.contactStore.removeTrustStatus(publicKey)
+                        root.contactsStore.removeTrustStatus(publicKey)
                     if (removeContact)
-                        rootStore.contactStore.removeContact(publicKey)
+                        root.contactsStore.removeContact(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 blocked").arg(mainDisplayName))
                     close()
                 }
@@ -995,7 +995,7 @@ QtObject {
                 id: editSharedAddressesPopup
 
                 readonly property ChatStores.RootStore chatStore: ChatStores.RootStore {
-                    contactsStore: root.rootStore.contactStore
+                    contactsStore: root.contactsStore
                     isChatSectionModule: false
                     communityId: editSharedAddressesPopup.communityId
                 }

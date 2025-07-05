@@ -33,9 +33,7 @@ QtObject {
     // Here there should be all the ContextSpecificRootStore objects creation
     readonly property MessagingStores.MessagingRootStore messagingRootStore: MessagingStores.MessagingRootStore {}
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {}
-
-    readonly property ProfileStores.ContactsStore contactStore: profileSectionStore.contactsStore // It should be extracted from `ProfileSectionStore`
-    // since it's not a profile specific thing but a global store
+    readonly property ContactsStore contactsStore: ContactsStore {}
 
     // readonly property ChatStores.RootStore rootChatStore: ChatStores.RootStore { ... }
     // readonly property ActivityCenterStore activityCenterStore: ActivityCenterStore { ... }

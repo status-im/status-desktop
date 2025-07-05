@@ -10,6 +10,7 @@ import StatusQ.Core.Utils
 import AppLayouts.Profile.panels
 import AppLayouts.Profile.popups
 import AppLayouts.Profile.stores
+import AppLayouts.stores as AppLayoutStores
 
 import shared
 import shared.controls
@@ -25,7 +26,7 @@ import SortFilterProxyModel
 SettingsContentBase {
     id: root
 
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property SharedStores.UtilsStore utilsStore
 
     required property var mutualContactsModel

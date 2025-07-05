@@ -21,7 +21,7 @@ import shared.controls
 import shared.views.chat
 
 import AppLayouts.Chat.stores
-import AppLayouts.Profile.stores
+import AppLayouts.stores as AppLayoutStores
 
 import "../controls"
 import "../panels"
@@ -33,7 +33,7 @@ Item {
 
     property RootStore rootStore
     property MessageStore messageStore
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
     property string channelEmoji
     property var formatBalance
 

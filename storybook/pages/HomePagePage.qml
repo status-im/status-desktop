@@ -76,7 +76,7 @@ SplitView {
 
             return["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"]
         }
-        getLinkToProfileFn: function(pubKey) { // <- root.rootStore.contactStore.getLinkToProfile(pubKey)
+        getLinkToProfileFn: function(pubKey) { // <- root.rootStore.contactsStore.getLinkToProfile(pubKey)
             return Constants.userLinkPrefix + pubKey
         }
 

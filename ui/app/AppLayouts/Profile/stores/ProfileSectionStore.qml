@@ -57,9 +57,6 @@ QtObject {
 
     property AboutStore aboutStore: AboutStore {}
 
-    // TODO: Move up to `RootStore`
-    property ContactsStore contactsStore: ContactsStore {}
-
     // TODO: Move to wallet related store
     property WalletStore walletStore: WalletStore {
         walletModule: d.profileSectionModuleInst.walletModule

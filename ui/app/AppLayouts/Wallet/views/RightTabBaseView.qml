@@ -15,7 +15,7 @@ FocusScope {
     id: root
 
     property AppLayoutsStores.RootStore store
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutsStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     property NetworkConnectionStore networkConnectionStore
     required property NetworksStore networksStore
