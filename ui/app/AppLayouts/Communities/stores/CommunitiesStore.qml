@@ -44,9 +44,16 @@ QtObject {
 
     property string communityTags: communitiesModuleInst.tags
 
+    readonly property QtObject _d: QtObject {
+        id: d
+        readonly property var profileSectionModuleInst: profileSectionModule
+    }
+    readonly property var communitiesProfileModule: d.profileSectionModuleInst.communitiesModule // TODO: Must be private or directly removed (no direct access to modules externally)
+
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
     signal communityInfoRequestCompleted(string communityId, string errorMsg)
+
 
     function createCommunity(args = {
                                 name: "",
@@ -228,6 +235,14 @@ QtObject {
             return false
 
         return communitiesModuleInst.isDisplayNameDupeOfCommunityMember(displayName)
+    }
+
+    function leaveCommunity(communityId) {
+        d.profileSectionModuleInst.communitiesModule.leaveCommunity(communityId)
+    }
+
+    function setCommunityMuted(communityId, mutedType) {
+        d.profileSectionModuleInst.communitiesModule.setCommunityMuted(communityId, mutedType)
     }
 
     readonly property Connections connections: Connections {
