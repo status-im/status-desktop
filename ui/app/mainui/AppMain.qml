@@ -2170,11 +2170,10 @@ Item {
                                 Theme.changeFontSize(fontSize)
                             }
                             // Communities related settings view:
-                            readonly property var profileSectionStore: appMain.rootStore.profileSectionStore
-                            onLeaveCommunityRequest: profileSectionStore.communitiesProfileModule.leaveCommunity(communityId)
-                            onSetCommunityMutedRequest: profileSectionStore.communitiesProfileModule.setCommunityMuted(communityId, mutedType)
+                            onLeaveCommunityRequest: appMain.communitiesStore.leaveCommunity(communityId)
+                            onSetCommunityMutedRequest: appMain.communitiesStore.setCommunityMuted(communityId, mutedType)
                             onInviteFriends: Global.openInviteFriendsToCommunityPopup(communityData,
-                                                                                      profileSectionStore.communitiesProfileModule,
+                                                                                      appMain.communitiesStore.communitiesProfileModule,
                                                                                       null)
                         }
                         onLoaded: {
