@@ -19,6 +19,8 @@ import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Controls.Validators
 
+import AppLayouts.stores.Messaging 1.0
+
 import "../stores"
 import "../controls"
 import "../popups"
@@ -27,7 +29,7 @@ import "../panels"
 SettingsContentBase {
     id: root
 
-    property MessagingStore messagingStore
+    property MessagingSettingsStore messagingSettingsStore
     property AdvancedStore advancedStore
     property WalletStore walletStore
 
@@ -280,7 +282,7 @@ SettingsContentBase {
                 anchors.leftMargin: Theme.padding
                 anchors.rightMargin: Theme.padding
                 title: qsTr("History nodes")
-                label: root.messagingStore.activeMailserverId || "---"
+                label: root.messagingSettingsStore.activeMailserverId || "---"
                 components: [
                     StatusIcon {
                         icon: "next"
@@ -293,7 +295,7 @@ SettingsContentBase {
             Component {
                 id: wakuStoreModalComponent
                 WakuStoreModal {
-                    messagingStore: root.messagingStore
+                    messagingSettingsStore: root.messagingSettingsStore
                     advancedStore: root.advancedStore
                 }
             }
@@ -480,7 +482,7 @@ SettingsContentBase {
         Component {
             id: wakuNodesModalComponent
             WakuNodesModal {
-                messagingStore: root.messagingStore
+                messagingSettingsStore: root.messagingSettingsStore
                 advancedStore: root.advancedStore
             }
         }
