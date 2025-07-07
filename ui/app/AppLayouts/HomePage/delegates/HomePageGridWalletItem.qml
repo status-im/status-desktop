@@ -9,7 +9,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
-ShellGridItem {
+HomePageGridItem {
     id: root
 
     property string currencyBalance

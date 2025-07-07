@@ -11,7 +11,7 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 
-import AppLayouts.Shell 1.0
+import AppLayouts.HomePage 1.0
 
 AbstractButton {
     id: root
@@ -158,7 +158,7 @@ AbstractButton {
         }
 
         // top right corner
-        ShellToolButton {
+        HomePageToolButton {
             objectName: "pinButton"
             anchors.right: parent.right
             anchors.rightMargin: -4

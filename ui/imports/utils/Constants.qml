@@ -338,12 +338,12 @@ QtObject {
         readonly property int swap: 8
         readonly property int market: 9
 
-        readonly property int shell: 0
+        readonly property int homePage: 0
         readonly property int dApp: 999
     }
 
     readonly property QtObject appViewStackIndex: QtObject {
-        readonly property int shell: 0
+        readonly property int homePage: 0
         readonly property int chat: 1
         readonly property int community: 8 // any stack layout children with the index 8 or higher is community
         readonly property int communitiesPortal: 2

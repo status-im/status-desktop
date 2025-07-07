@@ -17,7 +17,7 @@ import AppLayouts.Profile.helpers 1.0
 QObject {
     id: root
 
-    // for Shell grid entries
+    // for HomePage grid entries
     required property var sectionsBaseModel
     required property var chatsBaseModel
     property var chatsSearchBaseModel
@@ -83,10 +83,10 @@ QObject {
         timestamp          [int]    - timestamp of the last user interaction with the item
     **/
 
-    readonly property var shellEntriesModel: d.shellEntriesModel
+    readonly property var homePageEntriesModel: d.homePageEntriesModel
     Component.onCompleted: {
         Qt.callLater(function() {
-            d.shellEntriesModel = filteredCombinedModel // FIXME bug in SFPM or OPM
+            d.homePageEntriesModel = filteredCombinedModel // FIXME bug in SFPM or OPM
             load()
         })
     }
@@ -95,7 +95,7 @@ QObject {
 
     QtObject {
         id: d
-        property var shellEntriesModel
+        property var homePageEntriesModel
     }
 
     // Provides data for the Dock's left (fixed) part; w/o the writable layer
@@ -104,7 +104,7 @@ QObject {
         filters: [
             ValueFilter {
                 roleName: "sectionType"
-                value: Constants.appSection.shell
+                value: Constants.appSection.homePage
                 inverted: true
             },
             ValueFilter {
@@ -148,7 +148,7 @@ QObject {
 
     // Provides data for the Dock's right (variable/pinned) part
     readonly property var pinnedModel: SortFilterProxyModel {
-        sourceModel: shellProxyModel
+        sourceModel: homePageProxyModel
         filters: [
             ValueFilter {
                 roleName: "pinned"
@@ -163,10 +163,10 @@ QObject {
     }
 
     function clear() {
-        const count = shellProxyModel.ModelCount.count
+        const count = homePageProxyModel.ModelCount.count
         for (let i = 0; i < count; i++) {
-            shellProxyModel.proxyObject(i).pinned = false
-            shellProxyModel.proxyObject(i).timestamp = 0
+            homePageProxyModel.proxyObject(i).pinned = false
+            homePageProxyModel.proxyObject(i).timestamp = 0
         }
     }
 
@@ -362,12 +362,12 @@ QObject {
     }
 
     Settings {
-        id: shellSettings
-        category: "Shell_%1".arg(root.profileId)
+        id: homePageSettings
+        category: "HomePage_%1".arg(root.profileId)
     }
 
     ObjectProxyModel { // provides a writable overlay for "timestamp" and "pinned" roles
-        id: shellProxyModel
+        id: homePageProxyModel
 
         sourceModel: combinedModel
         delegate: QtObject {
@@ -379,49 +379,49 @@ QObject {
     }
 
     function setPinned(key, pinned) {
-        const idx = ModelUtils.indexOf(shellProxyModel, "key", key)
+        const idx = ModelUtils.indexOf(homePageProxyModel, "key", key)
         if (idx > -1) {
-            shellProxyModel.proxyObject(idx).pinned = pinned
+            homePageProxyModel.proxyObject(idx).pinned = pinned
         }
     }
 
     function setTimestamp(key, timestamp) {
-        const idx = ModelUtils.indexOf(shellProxyModel, "key", key)
+        const idx = ModelUtils.indexOf(homePageProxyModel, "key", key)
         if (idx > -1) {
-            shellProxyModel.proxyObject(idx).timestamp = timestamp
+            homePageProxyModel.proxyObject(idx).timestamp = timestamp
         }
     }
 
     function save() {
-        const dataArray = ModelUtils.modelToArray(shellProxyModel, ["key", "timestamp", "pinned"])
+        const dataArray = ModelUtils.modelToArray(homePageProxyModel, ["key", "timestamp", "pinned"])
         const settingsData = JSON.stringify(dataArray)
-        shellSettings.setValue("ShellEntries", settingsData)
-        shellSettings.sync()
+        homePageSettings.setValue("HomePageEntries", settingsData)
+        homePageSettings.sync()
     }
 
     function load() {
-        const settingsData = shellSettings.value("ShellEntries")
+        const settingsData = homePageSettings.value("HomePageEntries")
         let dataArray = []
 
         try {
             dataArray = JSON.parse(settingsData)
         } catch (e) {
-            console.warn("Error parsing ShellEntries:", e.message)
+            console.warn("Error parsing HomePageEntries:", e.message)
             return
         }
 
         dataArray.forEach(function(item) {
-            const idx = ModelUtils.indexOf(shellProxyModel, "key", item.key)
+            const idx = ModelUtils.indexOf(homePageProxyModel, "key", item.key)
             if (idx > -1) {
-                shellProxyModel.proxyObject(idx).pinned = item.pinned
-                shellProxyModel.proxyObject(idx).timestamp = item.timestamp
+                homePageProxyModel.proxyObject(idx).pinned = item.pinned
+                homePageProxyModel.proxyObject(idx).timestamp = item.timestamp
             }
         })
     }
 
     SortFilterProxyModel {
         id: filteredCombinedModel
-        sourceModel: shellProxyModel
+        sourceModel: homePageProxyModel
 
         filters: [
             SearchFilter {

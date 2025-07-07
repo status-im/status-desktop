@@ -133,7 +133,7 @@ Control {
     Component {
         id: regularDockButton
 
-        ShellDockButton {
+        HomePageDockButton {
             objectName: "regularDockButton" + model.name
             sectionType: model.sectionType
             text: model.name
@@ -141,7 +141,7 @@ Control {
             notificationsCount: model.notificationsCount ?? 0
             connectorBadge: model.connectorBadge ?? ""
             icon.color: hovered ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
-            icon.name: (root.useNewDockIcons ? "shell/" : "") + model.icon
+            icon.name: (root.useNewDockIcons ? "homepage/" : "") + model.icon
             enabled: model.enabled
             onClicked: root.itemActivated(model.key, sectionType, "") // not interested in item (section) id here
         }
@@ -150,7 +150,7 @@ Control {
     Component {
         id: pinnedDockButton
 
-        ShellDockButton {
+        HomePageDockButton {
             objectName: "pinnedDockButton" + model.name
             id: pinnedDelegate
             sectionType: model.sectionType

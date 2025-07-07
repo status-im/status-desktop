@@ -435,8 +435,8 @@ QtObject {
             return qsTr("Community")
         case Constants.appSection.dApp:
             return qsTr("dApp")
-        case Constants.appSection.shell:
-            return "%1 (%2)".arg(qsTr("Shell")).arg(additionalTextFunction(sectionType))
+        case Constants.appSection.homePage:
+            return "%1 (%2)".arg(qsTr("Home Page")).arg(additionalTextFunction(sectionType))
         default:
             return fallback
         }

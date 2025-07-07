@@ -11,7 +11,7 @@ import Storybook 1.0
 
 import utils 1.0
 
-import AppLayouts.Shell 1.0
+import AppLayouts.HomePage 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 SplitView {
@@ -21,13 +21,13 @@ SplitView {
 
     Logs { id: logs }
 
-    ShellContainer {
-        id: shell
+    HomePage {
+        id: homePage
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        ShellAdaptor {
-            id: shellAdaptor
+        HomePageAdaptor {
+            id: homePageAdaptor
 
             sectionsBaseModel: SectionsModel {}
             chatsBaseModel: ChatsModel {}
@@ -49,14 +49,14 @@ SplitView {
             messagingBadgeCount: 4
             showBackUpSeed: true
 
-            searchPhrase: shell.searchPhrase
+            searchPhrase: homePage.searchPhrase
 
             profileId: profileStore.pubkey
         }
 
-        shellEntriesModel: shellAdaptor.shellEntriesModel
-        sectionsModel: shellAdaptor.sectionsModel
-        pinnedModel: shellAdaptor.pinnedModel
+        homePageEntriesModel: homePageAdaptor.homePageEntriesModel
+        sectionsModel: homePageAdaptor.sectionsModel
+        pinnedModel: homePageAdaptor.pinnedModel
 
         profileStore: ProfileStores.ProfileStore {
             id: profileStore
@@ -85,14 +85,14 @@ SplitView {
         aCNotificationCount: ctrlNotificationsCount.value
 
         onItemActivated: function(key, sectionType, itemId) {
-            shellAdaptor.setTimestamp(key, new Date().valueOf())
+            homePageAdaptor.setTimestamp(key, new Date().valueOf())
             logs.logEvent("onItemActivated", ["key", "sectionType", "itemId"], arguments)
             console.info("!!! ITEM ACTIVATED; key:", key, "; sectionType:", sectionType, "; itemId:", itemId)
         }
         onItemPinRequested: function(key, pin) {
-            shellAdaptor.setPinned(key, pin)
+            homePageAdaptor.setPinned(key, pin)
             if (pin)
-                shellAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
+                homePageAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
             logs.logEvent("onItemPinRequested", ["key", "pin"], arguments)
             console.info("!!! ITEM", key, "PINNED:", pin)
         }
@@ -193,7 +193,7 @@ SplitView {
             }
             Button {
                 text: "Reset"
-                onClicked: shellAdaptor.clear()
+                onClicked: homePageAdaptor.clear()
             }
         }
     }

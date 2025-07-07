@@ -16,7 +16,7 @@ import AppLayouts.Communities 1.0
 import AppLayouts.Market 1.0
 import AppLayouts.Market.stores 1.0
 import AppLayouts.Wallet.services.dapps 1.0
-import AppLayouts.Shell 1.0
+import AppLayouts.HomePage 1.0
 
 import utils 1.0
 import shared 1.0
@@ -819,9 +819,9 @@ Item {
             }
         }
 
-        function openShell() {
-            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(Constants.appSection.shell)
-            shellLoader.item.focusSearch()
+        function openHomePage() {
+            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(Constants.appSection.homePage)
+            homePageLoader.item.focusSearch()
         }
 
         function maybeDisplayIntroduceYourselfPopup() {
@@ -1107,7 +1107,7 @@ Item {
         asynchronous: true
 
         function openSearchPopup() {
-            if (shellLoader.active)
+            if (homePageLoader.active)
                 return
             if (!active)
                 active = true
@@ -1149,7 +1149,7 @@ Item {
     }
     
     property Item navBar: StatusAppNavBar {
-        visible: !shellLoader.active
+        visible: !homePageLoader.active
         width: visible ? implicitWidth : 0
 
         topSectionModel: SortFilterProxyModel {
@@ -1158,7 +1158,7 @@ Item {
                 AnyOf {
                     ValueFilter {
                         roleName: "sectionType"
-                        value: Constants.appSection.shell
+                        value: Constants.appSection.homePage
                     }
                     ValueFilter {
                         roleName: "sectionType"
@@ -1367,8 +1367,8 @@ Item {
                 icon.name: model.icon
                 icon.source: model.image
                 tooltip.text: Utils.translatedSectionName(model.sectionType, model.name, (sectionType) => {
-                    if (sectionType === Constants.appSection.shell) {
-                        return shellShortcut.nativeText
+                    if (sectionType === Constants.appSection.homePage) {
+                        return homePageShortcut.nativeText
                     }
                     return ""
                 })
@@ -1409,7 +1409,7 @@ Item {
                 id: bannersLayout
 
                 enabled: !localAppSettings.testEnvironment
-                         && appMain.rootStore.mainModuleInst.activeSection.sectionType !== Constants.appSection.shell
+                         && appMain.rootStore.mainModuleInst.activeSection.sectionType !== Constants.appSection.homePage
                 visible: enabled
 
                 property var updateBanner: null
@@ -1771,8 +1771,8 @@ Item {
                     currentIndex: {
                         const activeSectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
                         switch (activeSectionType) {
-                        case Constants.appSection.shell:
-                            return Constants.appViewStackIndex.shell
+                        case Constants.appSection.homePage:
+                            return Constants.appViewStackIndex.homePage
                         case Constants.appSection.chat:
                             return Constants.appViewStackIndex.chat
                         case Constants.appSection.community:
@@ -1813,21 +1813,21 @@ Item {
                     // Constants.appViewStackIndex accordingly
 
                     Loader {
-                        id: shellLoader
+                        id: homePageLoader
                         focus: active
-                        active: appMain.featureFlagsStore.shellEnabled && appView.currentIndex === Constants.appViewStackIndex.shell
+                        active: appMain.featureFlagsStore.homePageEnabled && appView.currentIndex === Constants.appViewStackIndex.homePage
 
                         onLoaded: {
                             rootStore.rebuildChatSearchModel()
                         }
 
-                        sourceComponent: ShellContainer {
-                            id: shell
+                        sourceComponent: HomePage {
+                            id: homePage
 
                             objectName: "shellContainer"
 
-                            ShellAdaptor {
-                                id: shellAdaptor
+                            HomePageAdaptor {
+                                id: homePageAdaptor
                                 readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
 
                                 sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
@@ -1846,14 +1846,14 @@ Item {
                                 showBackUpSeed: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner &&
                                                 !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
 
-                                searchPhrase: shell.searchPhrase
+                                searchPhrase: homePage.searchPhrase
 
                                 profileId: appMain.profileStore.pubkey
                             }
 
-                            shellEntriesModel: shellAdaptor.shellEntriesModel
-                            sectionsModel: shellAdaptor.sectionsModel
-                            pinnedModel: shellAdaptor.pinnedModel
+                            homePageEntriesModel: homePageAdaptor.homePageEntriesModel
+                            sectionsModel: homePageAdaptor.sectionsModel
+                            pinnedModel: homePageAdaptor.pinnedModel
 
                             profileStore: appMain.profileStore
 
@@ -1865,7 +1865,7 @@ Item {
                             aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
 
                             onItemActivated: function(key, sectionType, itemId) {
-                                shellAdaptor.setTimestamp(key, new Date().valueOf())
+                                homePageAdaptor.setTimestamp(key, new Date().valueOf())
 
                                 if (sectionType === -1) { // search
                                     const [sectionId, chatId] = key.split(";")
@@ -1891,9 +1891,9 @@ Item {
                                 globalConns.onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
                             }
                             onItemPinRequested: function(key, pin) {
-                                shellAdaptor.setPinned(key, pin)
+                                homePageAdaptor.setPinned(key, pin)
                                 if (pin)
-                                    shellAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
+                                    homePageAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
                             }
                             onDappDisconnectRequested: function(dappUrl) {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
@@ -2395,7 +2395,7 @@ Item {
         Action {
             shortcut: "Ctrl+K"
             onTriggered: {
-                if (shellLoader.active)
+                if (homePageLoader.active)
                     return
                 // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
                 if (!channelPickerLoader.active)
@@ -2439,11 +2439,11 @@ Item {
     }
 
     Shortcut {
-        id: shellShortcut
+        id: homePageShortcut
         context: Qt.ApplicationShortcut
         sequence: "Ctrl+J"
-        onActivated: d.openShell()
-        enabled: appMain.featureFlagsStore.shellEnabled
+        onActivated: d.openHomePage()
+        enabled: appMain.featureFlagsStore.homePageEnabled
     }
 
     StatusListView {

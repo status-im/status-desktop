@@ -16,10 +16,10 @@ import utils 1.0
 Control {
     id: root
 
-    // grid (see ShellAdaptor for docu)
-    required property var shellEntriesModel
+    // grid (see HomePageAdaptor for docu)
+    required property var homePageEntriesModel
 
-    // dock (see ShellAdaptor for docu)
+    // dock (see HomePageAdaptor for docu)
     required property var sectionsModel
     required property var pinnedModel
 
@@ -81,7 +81,7 @@ Control {
     contentItem: ColumnLayout {
         spacing: root.spacing
 
-        ShellSearchField {
+        HomePageSearchField {
             Layout.maximumWidth: parent.width
             Layout.alignment: Qt.AlignHCenter
 
@@ -93,14 +93,14 @@ Control {
             placeholderText: qsTr("Jump to a community, chat, account or a dApp...")
         }
 
-        ShellGrid {
+        HomePageGrid {
             Layout.fillWidth: true
             Layout.rightMargin: -root.horizontalPadding
             Layout.fillHeight: true
 
             objectName: "shellGrid"
 
-            model: root.shellEntriesModel
+            model: root.homePageEntriesModel
 
             delegateWidth: d.isNarrowView ? 140 : 160
             spacing: d.isNarrowView ? 10 : Theme.padding
@@ -116,7 +116,7 @@ Control {
             }
         }
 
-        ShellDock {
+        HomePageDock {
             Layout.alignment: d.isNarrowView && root.availableWidth < implicitWidth ? 0 : Qt.AlignHCenter
             Layout.fillWidth: d.isNarrowView && root.availableWidth < implicitWidth
             Layout.maximumWidth: parent.width

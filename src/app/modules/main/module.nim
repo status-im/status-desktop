@@ -698,36 +698,36 @@ method load*[T](
   self.view.load()
   self.connectForNotificationsOnly()
 
-  let shellEnabled = singletonInstance.featureFlags().getShellEnabled()
+  let homePageEnabled = singletonInstance.featureFlags().getHomePageEnabled()
 
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
 
   # Default to Wallet section if no active section is set or if the active section is the settings section
-  # or if the active section is the shell section but shell is not enabled
+  # or if the active section is the home page section but home page is not enabled
   if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID or
-    (activeSectionId == SHELL_SECTION_ID and not shellEnabled):
+    (activeSectionId == HOMEPAGE_SECTION_ID and not homePageEnabled):
     activeSectionId = WALLET_SECTION_ID
 
-  var shellSectionItem: SectionItem
+  var homePageSectionItem: SectionItem
 
-  # Shell Section
-  if shellEnabled:
-    shellSectionItem = initSectionItem(
-      SHELL_SECTION_ID,
-      SectionType.Shell,
-      SHELL_SECTION_NAME,
+  # Home Page Section
+  if homePageEnabled:
+    homePageSectionItem = initSectionItem(
+      HOMEPAGE_SECTION_ID,
+      SectionType.HomePage,
+      HOMEPAGE_SECTION_NAME,
       memberRole = MemberRole.Owner,
       description = "",
       image = "",
-      icon = SHELL_SECTION_ICON,
+      icon = HOMEPAGE_SECTION_ICON,
       color = "",
       hasNotification = false,
       notificationsCount = 0,
       active = true,
       enabled = true,
     )
-    self.view.model().addItem(shellSectionItem)
+    self.view.model().addItem(homePageSectionItem)
 
   # Communities Portal Section
   let communitiesPortalSectionItem = initSectionItem(
@@ -867,9 +867,9 @@ method load*[T](
   self.sharedUrlsModule.load()
   self.marketModule.load()
 
-  # If the shell is enabled, we default to it as the opening section
-  if shellEnabled:
-    activeSection = shellSectionItem
+  # If the home page is enabled, we default to it as the opening section
+  if homePageEnabled:
+    activeSection = homePageSectionItem
 
   # Set active section on app start
   # If section is empty or profile wait until chats are loaded
@@ -983,8 +983,8 @@ method onChatsLoaded*[T](
 
   self.events.emit(SIGNAL_MAIN_LOADED, Args())
 
-  # Set active section if it is one of the channel sections and the shell is not enabled
-  if not singletonInstance.featureFlags().getShellEnabled() and not activeSection.isEmpty():
+  # Set active section if it is one of the channel sections and the home page is not enabled
+  if not singletonInstance.featureFlags().getHomePageEnabled() and not activeSection.isEmpty():
     self.setActiveSection(activeSection)
 
   self.view.sectionsLoaded()
