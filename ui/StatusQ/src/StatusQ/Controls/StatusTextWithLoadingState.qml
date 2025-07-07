@@ -57,7 +57,7 @@ StatusBaseText {
         active: root.loading && root.text
         sourceComponent: LoadingComponent {
             anchors.centerIn: parent
-            radius: textMetrics.font.pixelSize === 15 ? 4 : 8
+            radius: textMetrics.font.pixelSize <= 15 ? 4 : 8
             height: textMetrics.tightBoundingRect.height
             width: Math.min(root.width, root.maximumLoadingStateWidth)
         }

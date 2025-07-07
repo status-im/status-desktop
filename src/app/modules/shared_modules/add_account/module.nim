@@ -534,7 +534,7 @@ method updateDerivedAddresses*[T](self: Module[T], derivedAddresses: seq[Derived
       path = derivedAddresses[0].path,
       alreadyCreated = derivedAddresses[0].alreadyCreated,
       hasActivity = derivedAddresses[0].hasActivity,
-      alreadyCreatedChecked = not errorInCheckedIfAccountAlreadyExists and not errorInScanningActivity,
+      alreadyCreatedChecked = not errorInCheckedIfAccountAlreadyExists,
       detailsLoaded = detailsLoaded,
       errorInScanningActivity = errorInScanningActivity)
     if currStateObj.stateType() == StateType.EnterPrivateKey:

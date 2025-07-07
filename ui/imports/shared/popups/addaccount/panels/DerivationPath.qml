@@ -103,7 +103,7 @@ GridLayout {
                 translation: root.store.translation
                 selectedRootPath: root.store.selectedRootPath
 
-                onSelected: {
+                onSelected: function(rootPath) {
                     root.store.changeRootDerivationPath(rootPath)
                     derivationPathInput.resetDerivationPath(root.store.selectedRootPath, root.store.addAccountModule.derivationPath)
                 }
@@ -170,7 +170,7 @@ GridLayout {
             width: root.width
             store: root.store
 
-            onSelected: {
+            onSelected: function(address) {
                 accountAddressSelection.close()
                 root.store.changeSelectedDerivedAddress(address)
             }
