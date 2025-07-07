@@ -27,12 +27,12 @@ gantt
     Jump to screen (shell)  :2025-06-01, 24d
     UI Modularization       :2025-06-01, 60d
     User data local backups :lb1, 2025-06-16, 20d
+    Memory improvements     :mi1, 2025-07-01, 30d
 
     2.36 release            :milestone, m236, 2025-09-01, 1d
 
     section 2.36
     Mobile build            :2025-06-09, 60d
-    Memory improvements     :mi1, after lb1, 30d
     Dapp Browser            :after t1, 35d
     Messages local backups  :after lb1, 18d
 
@@ -58,20 +58,23 @@ Estimated release: Mid-End July
   - Runs parallel to other features and doesn't need to be shipped to any particular milestones
   - No API changes are expected until the Chat SDK is integrated
   - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
-  - In Progress ⏳ 16% 🟨⬜⬜⬜⬜ (estimated progress as not all subtasks are created)
+  - In Progress ⏳ 18% 🟨⬜⬜⬜⬜ (+2%) (estimated progress as not all subtasks are created)
 - [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
   - No provided FURPS at the moment
     - This is about maintaing the same level of quality as with QT5 but with QT6 instead.
   - In Progress ⏳ 🟩🟩🟩🟩⬜ 87%
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
   - [FURPS](/docs/FURPS/tablet-build.md)
-  - In Progress ⏳ 🟩🟩🟩⬜⬜ 67% (+3%)
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 67%
 - [Jump to screen (Shell)](https://github.com/status-im/status-desktop/issues/17971)
   - [FURPS](/docs/FURPS/jump-to-screen-shell.md)
-  - In Progress ⏳ 🟩🟩🟩🟩🟨 92%
+  - Done ✅ 🟩🟩🟩🟩🟩 100% (+8%)
 - [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
   - [FURPS](/docs/FURPS/local-user-backups.md)
   - In Progress ⏳ 🟩🟩🟨⬜⬜ 45%
+- [Memory improvements](https://github.com/status-im/status-desktop/issues/18296)
+  - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
+  - In Progress ⏳ 🟩🟨⬜⬜⬜ 31%
 
 ### 2.36
 
@@ -83,12 +86,11 @@ Estimated release: Mid September
 
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
-  - In Progress (See Tablet Build section)
-- [Memory improvements](https://github.com/status-im/status-go/issues/6544)
-  - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
+  - Progress is also inherited from the Tablet Epic above
+  - In Progress ⏳⬜⬜⬜⬜⬜ 4%
 - [UI modularization](https://github.com/status-im/status-desktop/issues/17872)
   - [FURPS](/docs/FURPS/ui-modularization.md)
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 24% (+4%)
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 23%
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
 - Ethereum Follow Protocol
