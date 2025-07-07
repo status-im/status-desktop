@@ -10,7 +10,7 @@ import ../../../app_service/service/community_tokens/community_collectible_owner
 
 type
   SectionType* {.pure.} = enum
-    Shell = 0,
+    HomePage = 0,
     Wallet,
     Chat,
     Community,

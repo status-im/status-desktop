@@ -62,7 +62,7 @@ def test_delete_generated_account_from_wallet_settings(
     with step('Verify new account appears in Shell grid'):
         shell_screen = main_screen.left_panel.open_shell()
         shell_screen.wait_for_shell_ui_loaded()
-        
+
         # Verify account appears in grid
         assert shell_screen.wait_for_grid_item_by_title(account_name), \
             f"Account '{account_name}' should be visible in Shell grid"
@@ -90,6 +90,6 @@ def test_delete_generated_account_from_wallet_settings(
     with step('Verify removed account no longer appears in Shell grid'):
         shell_screen = main_screen.left_panel.open_shell()
         shell_screen.wait_for_shell_ui_loaded()
-        
+
         assert shell_screen.wait_for_grid_item_removed_by_title(account_name), \
             f"Account '{account_name}' should no longer be visible in Shell grid"

@@ -9,7 +9,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Backpressure 0.1
 
-import AppLayouts.Shell.delegates 1.0
+import AppLayouts.HomePage.delegates 1.0
 
 import utils 1.0
 
@@ -120,7 +120,7 @@ StatusScrollView {
                         case Constants.appSection.dApp:
                             return dappDelegate
                         default:
-                            console.warn("Unhandled ShellGridItem delegate for sectionType:", model.sectionType)
+                            console.warn("Unhandled HomePageGridItem delegate for sectionType:", model.sectionType)
                         }
                     }
 
@@ -139,7 +139,7 @@ StatusScrollView {
             Component {
                 id: communityDelegate
 
-                ShellGridCommunityItem {
+                HomePageGridCommunityItem {
                     width: root.delegateWidth
                     height: root.delegateHeight
                     itemId: model.id
@@ -162,7 +162,7 @@ StatusScrollView {
             Component {
                 id: settingsDelegate
 
-                ShellGridSettingsItem {
+                HomePageGridSettingsItem {
                     width: root.delegateWidth
                     height: root.delegateHeight
                     itemId: model.id
@@ -179,7 +179,7 @@ StatusScrollView {
             Component {
                 id: walletDelegate
 
-                ShellGridWalletItem {
+                HomePageGridWalletItem {
                     width: root.delegateWidth
                     height: root.delegateHeight
                     itemId: model.id
@@ -198,7 +198,7 @@ StatusScrollView {
             Component {
                 id: chatDelegate
 
-                ShellGridChatItem {
+                HomePageGridChatItem {
                     width: root.delegateWidth
                     height: root.delegateHeight
                     itemId: model.id
@@ -224,7 +224,7 @@ StatusScrollView {
             Component {
                 id: dappDelegate
 
-                ShellGridDAppItem {
+                HomePageGridDAppItem {
                     width: root.delegateWidth
                     height: root.delegateHeight
                     itemId: model.id

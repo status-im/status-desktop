@@ -161,6 +161,7 @@
         <file>icons/help.svg</file>
         <file>icons/hide.svg</file>
         <file>icons/history.svg</file>
+        <file>icons/home.svg</file>
         <file>icons/image.svg</file>
         <file>icons/images_icon.svg</file>
         <file>icons/in-contacts.svg</file>
@@ -429,16 +430,16 @@
         <file>icons/transaction/finished.svg</file>
         <file>icons/transaction/pending.svg</file>
         <file>icons/market.svg</file>
-        <file>icons/shell/browser.svg</file>
-        <file>icons/shell/communities.svg</file>
-        <file>icons/shell/discover.svg</file>
-        <file>icons/shell/feed.svg</file>
-        <file>icons/shell/chat.svg</file>
-        <file>icons/shell/market.svg</file>
-        <file>icons/shell/node.svg</file>
-        <file>icons/shell/settings.svg</file>
-        <file>icons/shell/shell.svg</file>
-        <file>icons/shell/swap.svg</file>
-        <file>icons/shell/wallet.svg</file>
+        <file>icons/homepage/browser.svg</file>
+        <file>icons/homepage/communities.svg</file>
+        <file>icons/homepage/discover.svg</file>
+        <file>icons/homepage/feed.svg</file>
+        <file>icons/homepage/chat.svg</file>
+        <file>icons/homepage/market.svg</file>
+        <file>icons/homepage/node.svg</file>
+        <file>icons/homepage/settings.svg</file>
+        <file>icons/homepage/shell.svg</file>
+        <file>icons/homepage/swap.svg</file>
+        <file>icons/homepage/wallet.svg</file>
     </qresource>
 </RCC>

@@ -6,7 +6,7 @@ import Storybook 1.0
 
 import StatusQ.TestHelpers 0.1
 
-import AppLayouts.Shell 1.0
+import AppLayouts.HomePage 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import utils 1.0
@@ -16,8 +16,8 @@ Item {
     width: 1000
     height: 800
 
-    ShellAdaptor {
-        id: shellAdaptor
+    HomePageAdaptor {
+        id: homePageAdaptor
 
         sectionsBaseModel: SectionsModel {}
         chatsBaseModel: ChatsModel {}
@@ -48,14 +48,12 @@ Item {
 
     Component {
         id: componentUnderTest
-        ShellContainer {
-            id: shell
-
+        HomePage {
             anchors.fill: parent
 
-            shellEntriesModel: shellAdaptor.shellEntriesModel
-            sectionsModel: shellAdaptor.sectionsModel
-            pinnedModel: shellAdaptor.pinnedModel
+            homePageEntriesModel: homePageAdaptor.homePageEntriesModel
+            sectionsModel: homePageAdaptor.sectionsModel
+            pinnedModel: homePageAdaptor.pinnedModel
 
             profileStore: mockProfileStore
 
@@ -74,12 +72,12 @@ Item {
             aCNotificationCount: 3
 
             onItemActivated: function(key, sectionType, itemId) {
-                shellAdaptor.setTimestamp(key, new Date().valueOf())
+                homePageAdaptor.setTimestamp(key, new Date().valueOf())
             }
             onItemPinRequested: function(key, pin) {
-                shellAdaptor.setPinned(key, pin)
+                homePageAdaptor.setPinned(key, pin)
                 if (pin)
-                    shellAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
+                    homePageAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
             }
             onSetCurrentUserStatusRequested: function (status) {
                 profileStore.currentUserStatus = status
@@ -103,10 +101,10 @@ Item {
         }
     }
 
-    property ShellContainer controlUnderTest: null
+    property HomePage controlUnderTest: null
 
     StatusTestCase {
-        name: "ShellContainer"
+        name: "HomePage"
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
@@ -114,7 +112,7 @@ Item {
 
         function cleanup() {
             dynamicSpy.cleanup()
-            shellAdaptor.clear() // cleanup the pinned items
+            homePageAdaptor.clear() // cleanup the pinned items
         }
 
         function test_basic_geometry() {
@@ -131,7 +129,7 @@ Item {
             tryCompare(dynamicSpy, "count", 1)
         }
 
-        function test_shellProfileButton() {
+        function test_homePageProfileButton() {
             const btn = findChild(controlUnderTest, "shellProfileButton")
             verify(!!btn)
             mouseClick(btn)
@@ -271,7 +269,7 @@ Item {
             // verify dock and pinned model has the new button
             var dockBtn = findChild(dock, "pinnedDockButton" + gridBtn.title)
             verify(!!dockBtn)
-            tryCompare(shellAdaptor.pinnedModel, "count", 1)
+            tryCompare(homePageAdaptor.pinnedModel, "count", 1)
 
             // verify the pinned dock button emits itemActivated properly
             wait(1000)
@@ -310,7 +308,7 @@ Item {
                 dockBtn = findChild(dock, "pinnedDockButton" + gridBtn.title)
                 return dockBtn === null
             })
-            tryCompare(shellAdaptor.pinnedModel, "count", 0)
+            tryCompare(homePageAdaptor.pinnedModel, "count", 0)
         }
 
         function test_pin_from_grid_unpin_from_dock() {
@@ -344,7 +342,7 @@ Item {
             // verify dock and pinned model has the new button
             var dockBtn = findChild(dock, "pinnedDockButton" + gridBtn.title)
             verify(!!dockBtn)
-            tryCompare(shellAdaptor.pinnedModel, "count", 1)
+            tryCompare(homePageAdaptor.pinnedModel, "count", 1)
 
             // trigger the dock button's context menu
             mouseRightClick(dockBtn)
@@ -363,7 +361,7 @@ Item {
                 dockBtn = findChild(dock, "pinnedDockButton" + gridBtn.title)
                 return dockBtn === null
             })
-            tryCompare(shellAdaptor.pinnedModel, "count", 0)
+            tryCompare(homePageAdaptor.pinnedModel, "count", 0)
         }
     }
 }
