@@ -35,7 +35,6 @@ Row {
                 return root.defaultMessage
             }
             if (root.alreadyCreatedAccountIsAnError &&
-                    root.addressDetailsItem.alreadyCreatedChecked &&
                     root.addressDetailsItem.alreadyCreated) {
                 return qsTr("Already added")
             }
@@ -53,7 +52,6 @@ Row {
         }
         color: {
             if (root.alreadyCreatedAccountIsAnError &&
-                    root.addressDetailsItem.alreadyCreatedChecked &&
                     root.addressDetailsItem.alreadyCreated) {
                 return Theme.palette.dangerColor1
             }

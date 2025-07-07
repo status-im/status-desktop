@@ -290,7 +290,7 @@ BasePopupStore {
         if (root.currentState.stateType === Constants.addAccountPopup.state.enterPrivateKey) {
             return root.enteredPrivateKeyIsValid &&
                     !!root.privateKeyAccAddress &&
-                    root.privateKeyAccAddress.alreadyCreatedChecked  &&
+                    root.privateKeyAccAddress.alreadyCreatedChecked &&
                     !root.privateKeyAccAddress.alreadyCreated &&
                     root.privateKeyAccAddress.address !== "" &&
                     root.addAccountModule.newKeyPairName.length >= Constants.addAccountPopup.keyPairAccountNameMinLength
