@@ -185,6 +185,7 @@ QtObject {
         return networksModule.getBlockExplorerTxURL(chainID)
     }
 
+    // TODO is this used? It doesn't seem to have the right arguments
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,
                              communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY,
                              historyArchiveSupportEnabled, pinMessagesAllowedForMembers, bannerJsonStr, encrypted) {
