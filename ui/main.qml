@@ -153,10 +153,10 @@ ApplicationWindow {
         readonly property bool macOSWindowed: Qt.platform.os === "osx" && applicationWindow.visibility !== Window.FullScreen
 
         function restoreWindowState() {
-             if (applicationWindow.visibility === Window.Minimized) {
-                 applicationWindow.showNormal()
-             }
-         }
+            if (applicationWindow.visibility === Window.Minimized) {
+                applicationWindow.showNormal()
+            }
+        }
     }
 
     // Only set minimum width/height for desktop apps
@@ -284,7 +284,6 @@ ApplicationWindow {
 
     function makeStatusAppActive() {
         d.restoreWindowState()
-        applicationWindow.visibility = Window.Windowed
         applicationWindow.raise()
         applicationWindow.requestActivate()
     }

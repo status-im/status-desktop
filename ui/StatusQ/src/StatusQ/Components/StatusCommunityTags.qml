@@ -11,6 +11,7 @@ Item {
 
     property string filterString
     property bool active: true
+    property bool flow: true
 
     enum Mode {
         ShowUnselectedOnly,
@@ -29,6 +30,8 @@ Item {
 
     Flow {
         id: flow
+
+        width: root.flow ? parent.width: undefined
         anchors.centerIn: parent
         spacing: 10
 
