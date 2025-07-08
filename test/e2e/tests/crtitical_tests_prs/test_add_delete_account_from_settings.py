@@ -59,17 +59,17 @@ def test_delete_generated_account_from_wallet_settings(
         assert acc_view.get_account_storage_value() == WalletAccountSettings.STORED_ON_DEVICE.value, \
             f"Status account storage should be {WalletAccountSettings.STORED_ON_DEVICE.value}"
 
-    with step('Verify new account appears in Shell grid'):
-        shell_screen = main_screen.left_panel.open_shell()
-        shell_screen.wait_for_shell_ui_loaded()
+    with step('Verify new account appears in Home grid'):
+        home_screen = main_screen.left_panel.open_home_screen()
+        home_screen.wait_for_home_ui_loaded()
 
         # Verify account appears in grid
-        assert shell_screen.wait_for_grid_item_by_title(account_name), \
-            f"Account '{account_name}' should be visible in Shell grid"
+        assert home_screen.wait_for_grid_item_by_title(account_name), \
+            f"Account '{account_name}' should be visible in Home grid"
 
     with step('Navigate to wallet and reopen account details for deletion'):
         # Navigate to wallet screen first, then to settings to get fresh acc_view
-        main_screen.shell.open_from_dock(DockButtons.WALLET.value)
+        main_screen.home.open_from_dock(DockButtons.WALLET.value)
         acc_view = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(account_name, account_index)
 
     with step('Delete generated account'):
@@ -87,9 +87,9 @@ def test_delete_generated_account_from_wallet_settings(
             lambda: account_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
             f'Account with {account_name} is still displayed even it should not be'
 
-    with step('Verify removed account no longer appears in Shell grid'):
-        shell_screen = main_screen.left_panel.open_shell()
-        shell_screen.wait_for_shell_ui_loaded()
+    with step('Verify removed account no longer appears in Home grid'):
+        home_screen = main_screen.left_panel.open_home_screen()
+        home_screen.wait_for_home_ui_loaded()
 
-        assert shell_screen.wait_for_grid_item_removed_by_title(account_name), \
-            f"Account '{account_name}' should no longer be visible in Shell grid"
+        assert home_screen.wait_for_grid_item_removed_by_title(account_name), \
+            f"Account '{account_name}' should no longer be visible in Home grid"

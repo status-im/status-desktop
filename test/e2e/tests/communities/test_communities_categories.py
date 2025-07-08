@@ -22,7 +22,7 @@ from gui.main_window import MainWindow
 def test_member_role_cannot_add_edit_or_delete_category(main_screen, user_data, user_account):
 
     with step('Choose community user is not owner of'):
-        main_screen.shell.open_from_dock(DockButtons.WALLET.value)
+        main_screen.home.open_from_dock(DockButtons.WALLET.value)
         community_screen = main_screen.left_panel.select_community('Community with 2 users')
 
     with step('Verify that member cannot add category'):

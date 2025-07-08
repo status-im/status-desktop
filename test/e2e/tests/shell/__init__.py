@@ -1,3 +1,3 @@
 import pytest
 
-marks = pytest.mark.shell_all
+marks = pytest.mark.home_all
