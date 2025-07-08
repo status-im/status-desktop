@@ -19,6 +19,8 @@ import SortFilterProxyModel 0.2
 
 import "demoapp/data" 1.0
 
+import utils 1.0
+
 ApplicationWindow {
     id: rootWindow
 
@@ -586,7 +588,7 @@ ApplicationWindow {
     }
 
     MouseArea {
-        enabled: Qt.platform.os == "osx" && rootWindow.visibility !== Window.FullScreen
+        enabled: Qt.platform.os === Constants.mac && rootWindow.visibility !== Window.FullScreen
         height: rootWindow.SafeArea.margins.top
         width: parent.width
         anchors {
