@@ -20,7 +20,9 @@ import SortFilterProxyModel
 
 import "demoapp/data"
 
-StatusWindow {
+import utils 1.0
+
+ApplicationWindow {
     id: rootWindow
 
     width: 1224
@@ -587,7 +589,7 @@ StatusWindow {
     }
 
     MouseArea {
-        enabled: Qt.platform.os == "osx" && rootWindow.visibility !== Window.FullScreen
+        enabled: Qt.platform.os === Constants.mac && rootWindow.visibility !== Window.FullScreen
         height: rootWindow.SafeArea.margins.top
         width: parent.width
         anchors {
