@@ -41,6 +41,8 @@ StatusRollArea {
 
     content: StatusCommunityTags {
         id: tagsFlow
+
+        flow: false
         model: d.tagsModel
         mode: StatusCommunityTags.Highlight
 
