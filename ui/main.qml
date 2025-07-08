@@ -218,7 +218,7 @@ StatusWindow {
             localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
         }
 
-        Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+        Theme.changeTheme(localAppSettings.theme)
         Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
         d.runMockedKeycardControllerWindow()
@@ -272,25 +272,10 @@ StatusWindow {
         }
     }
 
-    // The easiest way to get current system theme (is it light or dark) without using
-    // OS native methods is to check lightness (0 - 1.0) of the window color.
-    // If it's too high (0.85+) means light theme is an active.
-    SystemPalette {
-        id: systemPalette
-        function isCurrentSystemThemeDark() {
-            return window.hslLightness < 0.85
-        }
-    }
-
-    function changeThemeFromOutside() {
-        Theme.changeTheme(startupOnboardingLoader.item.visible ? Theme.Style.System : localAppSettings.theme,
-                          systemPalette.isCurrentSystemThemeDark())
-    }
-
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
-        Theme.changeTheme(Theme.Style.System, systemPalette.isCurrentSystemThemeDark());
+        Theme.changeTheme(Theme.Style.System);
 
         restoreAppState();
 
@@ -342,7 +327,6 @@ StatusWindow {
             utilsStore: applicationWindow.utilsStore
             featureFlagsStore: applicationWindow.featureFlagsStore
 
-            sysPalette: systemPalette
             visible: !startupOnboardingLoader.active
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
 

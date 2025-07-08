@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQuick 2.15
+import QtQuick
 
 QtObject {
     enum FontSize {
@@ -18,6 +18,12 @@ QtObject {
         System
     }
 
+    readonly property int systemColorScheme: Application.styleHints.colorScheme
+    onSystemColorSchemeChanged: {
+        const theme = typeof localAppSettings !== "undefined" ? localAppSettings.theme : Theme.Style.System // force the System theme before login
+        changeTheme(theme)
+    }
+
     property ThemePalette palette: StatusLightTheme {}
 
     readonly property ThemePalette statusQLightTheme: StatusLightTheme {}
@@ -25,7 +31,7 @@ QtObject {
 
     readonly property string assetPath: Qt.resolvedUrl("../../../assets/")
 
-    function changeTheme(theme:int, isCurrentSystemThemeDark:bool) {
+    function changeTheme(theme:int) {
         switch (theme) {
         case Theme.Style.Light:
             Theme.palette = statusQLightTheme
@@ -34,7 +40,7 @@ QtObject {
             Theme.palette = statusQDarkTheme
             break
         case Theme.Style.System:
-            Theme.palette = isCurrentSystemThemeDark ? statusQDarkTheme : statusQLightTheme
+            Theme.palette = systemColorScheme === Qt.ColorScheme.Dark ? statusQDarkTheme : statusQLightTheme
             break
         default:
             console.warn('Unknown theme. Valid themes are "light" and "dark"')

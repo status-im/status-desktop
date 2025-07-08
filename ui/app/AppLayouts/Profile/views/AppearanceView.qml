@@ -19,11 +19,9 @@ import "../stores"
 SettingsContentBase {
     id: appearanceView
 
-    property var systemPalette
-
     function updateTheme(theme) {
         localAppSettings.theme = theme
-        Theme.changeTheme(theme, systemPalette.isCurrentSystemThemeDark())
+        Theme.changeTheme(theme)
     }
 
     function updateFontSize(fontSize) {

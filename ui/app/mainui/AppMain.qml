@@ -116,9 +116,6 @@ Item {
 
     required property bool isCentralizedMetricsEnabled
 
-    // set from main.qml
-    property var sysPalette
-
     AllContactsAdaptor {
         id: allContacsAdaptor
 
@@ -2098,7 +2095,6 @@ Item {
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore
-                            systemPalette: appMain.sysPalette
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore

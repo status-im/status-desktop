@@ -65,6 +65,8 @@ QtObject:
   proc getTheme*(self: LocalAppSettings): int {.slot.} =
     self.settings.value(LAS_KEY_THEME, newQVariant(DEFAULT_THEME)).intVal
   proc setTheme*(self: LocalAppSettings, value: int) {.slot.} =
+    if self.getTheme() == value:
+      return
     self.settings.setValue(LAS_KEY_THEME, newQVariant(value))
     self.themeChanged()
 

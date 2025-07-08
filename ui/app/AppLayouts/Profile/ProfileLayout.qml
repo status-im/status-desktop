@@ -45,7 +45,6 @@ StatusSectionLayout {
     property ProfileStores.ProfileSectionStore store
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
-    property var systemPalette
     property var emojiPopup
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property TokensStore tokensStore
@@ -328,7 +327,6 @@ StatusSectionLayout {
 
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.appearance)
                 contentWidth: d.contentWidth
-                systemPalette: root.systemPalette
             }
         }
 
