@@ -33,7 +33,7 @@ def test_import_and_reimport_random_seed(
 
     with step('Verify that restored account reveals correct status wallet address'):
         left_panel = MainLeftPanel()
-        profile = main_window.shell.open_from_dock(DockButtons.SETTINGS.value).left_panel.open_profile_settings()
+        profile = main_window.home.open_from_dock(DockButtons.SETTINGS.value).left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
 

@@ -84,7 +84,7 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
 def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow):
 
     with step('Choose community user is not owner of'):
-        main_screen.shell.open_from_dock(DockButtons.WALLET.value)
+        main_screen.home.open_from_dock(DockButtons.WALLET.value)
         community_screen = main_screen.left_panel.select_community('Community with 2 users')
     with step('Verify that member cannot add new channel'):
         with step('Verify that create channel or category button is not present'):
