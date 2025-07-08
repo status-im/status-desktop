@@ -1,4 +1,2 @@
-CommunityAccessStore 1.0 CommunityAccessStore.qml
-CommunityRootStore 1.0 CommunityRootStore.qml
 MessagingRootStore 1.0 MessagingRootStore.qml
 MessagingSettingsStore 1.0 MessagingSettingsStore.qml

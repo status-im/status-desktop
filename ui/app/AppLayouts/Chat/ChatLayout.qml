@@ -34,7 +34,7 @@ StackLayout {
     property ChatStores.RootStore rootStore
 
     // WIP: This is the new store's structure, now partially used, just PermissionsStore
-    property MessagingStores.CommunityRootStore newCommnityStore
+    property CommunityStores.CommunityRootStore newCommnityStore
     readonly property CommunityStores.PermissionsStore communityPermissionsStore: newCommnityStore.communityPermissionsStore
 
     // Rest of stores references (to be reviewed)
