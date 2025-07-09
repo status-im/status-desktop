@@ -64,9 +64,15 @@ StatusSectionLayout {
 
     required property bool isCentralizedMetricsEnabled
 
+    required property int theme // Theme.Style.xxx
+    required property int fontSize // Theme.FontSize.xxx
+
     signal connectUsernameRequested(string ensName)
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
+
+    signal themeChangeRequested(int theme)
+    signal fontSizeChangeRequested(int fontSize)
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -324,9 +330,12 @@ StatusSectionLayout {
             sourceComponent: AppearanceView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.appearance)
                 contentWidth: d.contentWidth
+                theme: root.theme
+                fontSize: root.fontSize
+                onThemeChangeRequested: (theme) => root.themeChangeRequested(theme)
+                onFontSizeChangeRequested: (fontSize) => root.fontSizeChangeRequested(fontSize)
             }
         }
 

@@ -206,19 +206,6 @@ StatusWindow {
 
         loader.sourceComponent = app
 
-        if(localAccountSensitiveSettings.recentEmojis === "") {
-            localAccountSensitiveSettings.recentEmojis = [];
-        }
-        if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
-            localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
-        }
-        if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
-            localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
-        }
-
-        Theme.changeTheme(localAppSettings.theme)
-        Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
-
         d.runMockedKeycardControllerWindow()
 
         startupOnboardingLoader.active = false
@@ -273,9 +260,9 @@ StatusWindow {
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
-        Theme.changeTheme(Theme.Style.System);
+        Theme.changeTheme(Theme.Style.System)
 
-        restoreAppState();
+        restoreAppState()
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
         Global.addCentralizedMetricIfEnabled.connect(metricsStore.addCentralizedMetricIfEnabled)

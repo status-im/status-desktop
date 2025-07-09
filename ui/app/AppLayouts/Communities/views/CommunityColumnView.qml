@@ -1,3 +1,4 @@
+import QtCore
 import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
@@ -406,26 +407,29 @@ Item {
             anchors.topMargin: Theme.padding
             spacing: Theme.bigPadding
 
+            Settings {
+                id: bannerSettings
+                category: "BannerSettings_%1".arg(communityData.id)
+                property bool hiddenCommunityWelcomeBanners
+                property bool hiddenCommunityChannelAndCategoriesBanners
+            }
+
             Loader {
-                active: root.isSectionAdmin &&
-                        (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
-                         !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
+                active: root.isSectionAdmin && !bannerSettings.hiddenCommunityWelcomeBanners
                 width: parent.width
                 visible: active
                 sourceComponent: Component {
                     WelcomeBannerPanel {
                         activeCommunity: communityData
-                        store: root.store
                         communitySectionModule: root.communitySectionModule
                         onManageCommunityClicked: root.manageButtonClicked()
+                        onHideBannerRequested: bannerSettings.hiddenCommunityWelcomeBanners = true
                     }
                 }
             } // Loader
 
             Loader {
-                active: root.isSectionAdmin &&
-                        (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
-                         !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
+                active: root.isSectionAdmin && !bannerSettings.hiddenCommunityChannelAndCategoriesBanners
                 width: parent.width
                 visible: active
                 sourceComponent: Component {
@@ -438,6 +442,7 @@ Item {
                         onAddCategoriesClicked: {
                             Global.openPopup(createCategoryPopup);
                         }
+                        onHideBannerRequested: bannerSettings.hiddenCommunityChannelAndCategoriesBanners = true
                     }
                 }
             } // Loader

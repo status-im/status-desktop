@@ -19,25 +19,13 @@ const DEFAULT_SHOW_ONLINE_USERS = true
 const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
 const DEFAULT_EXPAND_USERS_LIST = true
 const DEFAULT_IS_MULTI_NETWORK_ENABLED = false
-const LSS_KEY_RECENT_EMOJIS* = "recentEmojis"
-const DEFAULT_RECENT_EMOJIS = ""
-const LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS* = "hiddenCommunityWelcomeBanners"
-const DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS = ""
-const LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS* = "hiddenCommunityChannelsAndCategoriesBanner"
-const DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS = ""
-const LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS* = "hiddenCommunityBackUpBanners"
-const DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS = ""
 const LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN* = "neverAskAboutUnfurlingAgain"
 const DEFAULT_NEVER_ASK_ABOUT_UNFURLING_AGAIN = false
 const LSS_KEY_HIDE_CHANNEL_SUGGESTIONS* = "hideChannelSuggestions"
 const DEFAULT_HIDE_CHANNEL_SUGGESTIONS = false
-const LSS_KEY_FONT_SIZE* = "fontSize"
-const DEFAULT_FONT_SIZE = 2 #fontSizeM from qml
 const DEFAULT_HIDE_SIGN_PHRASE_MODAL = false
 const LSS_KEY_QUITE_ON_CLOSE* = "quitOnClose"
 const DEFAULT_QUITE_ON_CLOSE = false
-const LSS_KEY_SKIN_COLOR* = "skinColor"
-const DEFAULT_SKIN_COLOR = ""
 const LSS_KEY_SHOW_DELETE_MESSAGE_WARNING* = "showDeleteMessageWarning"
 const DEFAULT_SHOW_DELETE_MESSAGE_WARNING = true
 const LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED* = "downloadChannelMessagesEnabled"
@@ -70,7 +58,6 @@ const LSS_KEY_STICKERS_ENS_ROPSTEN* = "stickersEnsRopsten"
 const DEFAULT_STICKERS_ENS_ROPSTEN = false
 const LSS_KEY_USER_DECLINED_BACKUP_BANNER* = "userDeclinedBackupBanner"
 const DEFAULT_USER_DECLINED_BACKUP_BANNER = false
-const DEFAULT_IS_DISCORD_IMPORT_TOOL_ENABLED = false
 const LSS_KEY_GIF_UNFURLING_ENABLED* = "gifUnfurlingEnabled"
 const DEFAULT_GIF_UNFURLING_ENABLED* = false
 const LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN = "createCommunityPopupSeen"
@@ -254,56 +241,6 @@ QtObject:
     write = setExpandUsersList
     notify = expandUsersListChanged
 
-
-  proc recentEmojisChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getRecentEmojis*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_RECENT_EMOJIS, newQVariant(DEFAULT_RECENT_EMOJIS))
-  proc setRecentEmojis*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
-    setSettingsProp(self, LSS_KEY_RECENT_EMOJIS, value):
-      self.recentEmojisChanged()
-
-  QtProperty[QVariant] recentEmojis:
-    read = getRecentEmojis
-    write = setRecentEmojis
-    notify = recentEmojisChanged
-
-
-  proc hiddenCommunityWelcomeBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getHiddenCommunityWelcomeBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS))
-  proc setHiddenCommunityWelcomeBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
-    setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, value):
-      self.hiddenCommunityWelcomeBannersChanged()
-
-  QtProperty[QVariant] hiddenCommunityWelcomeBanners:
-    read = getHiddenCommunityWelcomeBanners
-    write = setHiddenCommunityWelcomeBanners
-    notify = hiddenCommunityWelcomeBannersChanged
-
-  proc hiddenCommunityChannelAndCategoriesBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getHiddenCommunityChannelAndCategoriesBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS))
-  proc setHiddenCommunityChannelAndCategoriesBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
-    setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS, value):
-      self.hiddenCommunityChannelAndCategoriesBannersChanged()
-
-  QtProperty[QVariant] hiddenCommunityChannelAndCategoriesBanners:
-    read = getHiddenCommunityChannelAndCategoriesBanners
-    write = setHiddenCommunityChannelAndCategoriesBanners
-    notify = hiddenCommunityChannelAndCategoriesBannersChanged
-
-  proc hiddenCommunityBackUpBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getHiddenCommunityBackUpBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS))
-  proc setHiddenCommunityBackUpBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
-    setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS, value):
-      self.hiddenCommunityBackUpBannersChanged()
-
-  QtProperty[QVariant] hiddenCommunityBackUpBanners:
-    read = getHiddenCommunityBackUpBanners
-    write = setHiddenCommunityBackUpBanners
-    notify = hiddenCommunityBackUpBannersChanged
-
   proc neverAskAboutUnfurlingAgainChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getNeverAskAboutUnfurlingAgain*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN, newQVariant(DEFAULT_NEVER_ASK_ABOUT_UNFURLING_AGAIN))
@@ -330,19 +267,6 @@ QtObject:
     notify = hideChannelSuggestionsChanged
 
 
-  proc fontSizeChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getfontSize*(self: LocalAccountSensitiveSettings): int {.slot.} =
-    getSettingsProp[int](self, LSS_KEY_FONT_SIZE, newQVariant(DEFAULT_FONT_SIZE))
-  proc setfontSize*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
-    setSettingsProp(self, LSS_KEY_FONT_SIZE, newQVariant(value)):
-      self.fontSizeChanged()
-
-  QtProperty[int] fontSize:
-    read = getfontSize
-    write = setfontSize
-    notify = fontSizeChanged
-
-
   proc quitOnCloseChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getQuitOnClose*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_QUITE_ON_CLOSE, newQVariant(DEFAULT_QUITE_ON_CLOSE))
@@ -354,19 +278,6 @@ QtObject:
     read = getQuitOnClose
     write = setQuitOnClose
     notify = quitOnCloseChanged
-
-
-  proc skinColorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getSkinColor*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_SKIN_COLOR, newQVariant(DEFAULT_SKIN_COLOR))
-  proc setSkinColor*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_SKIN_COLOR, newQVariant(value)):
-      self.skinColorChanged()
-
-  QtProperty[string] skinColor:
-    read = getSkinColor
-    write = setSkinColor
-    notify = skinColorChanged
 
 
   proc showDeleteMessageWarningChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -602,15 +513,9 @@ QtObject:
       of LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED: self.ensCommunityPermissionsEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
-      of LSS_KEY_RECENT_EMOJIS: self.recentEmojisChanged()
-      of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS: self.hiddenCommunityWelcomeBannersChanged()
-      of LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS: self.hiddenCommunityChannelAndCategoriesBannersChanged()
-      of LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS: self.hiddenCommunityBackUpBannersChanged()
       of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN: self.neverAskAboutUnfurlingAgainChanged()
       of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS: self.hideChannelSuggestionsChanged()
-      of LSS_KEY_FONT_SIZE: self.fontSizeChanged()
       of LSS_KEY_QUITE_ON_CLOSE: self.quitOnCloseChanged()
-      of LSS_KEY_SKIN_COLOR: self.skinColorChanged()
       of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING: self.showDeleteMessageWarningChanged()
       of LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED: self.downloadChannelMessagesEnabledChanged()
       of LSS_KEY_ACTIVE_SECTION: self.activeSectionChanged()

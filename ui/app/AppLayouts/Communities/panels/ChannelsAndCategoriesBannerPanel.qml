@@ -16,6 +16,7 @@ Rectangle {
     property string communityId
     signal addMembersClicked()
     signal addCategoriesClicked()
+    signal hideBannerRequested()
 
     implicitHeight: childrenRect.height + Theme.padding
     anchors.left: parent.left
@@ -56,14 +57,7 @@ Rectangle {
         icon.width: 20
         icon.name: "close-circle"
         type: StatusFlatRoundButton.Type.Tertiary
-        onClicked: {
-            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners || []
-            if (hiddenBannerIds.includes(communityId)) {
-                return
-            }
-            hiddenBannerIds.push(communityId)
-            localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners = hiddenBannerIds
-        }
+        onClicked: root.hideBannerRequested()
     }
 
     StatusBaseText {
