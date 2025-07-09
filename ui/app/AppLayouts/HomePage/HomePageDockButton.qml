@@ -119,7 +119,7 @@ ToolButton {
     Component {
         id: contextMenuComponent
         StatusMenu {
-            objectName: "shellDockButtonCtxMenu"
+            objectName: "homeDockButtonCtxMenu"
             StatusAction {
                 objectName: "unpinAction"
                 icon.name: "unpin"
