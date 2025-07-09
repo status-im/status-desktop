@@ -1,9 +1,9 @@
+import QtCore
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.platform 1.1
-import Qt.labs.settings 1.1
 import QtQml.Models 2.15
 import QtQml 2.15
 
@@ -836,8 +836,24 @@ Item {
 
     Settings {
         id: appMainLocalSettings
+        category: "AppMainLocalSettings_%1".arg(allContacsAdaptor.selfPubKey)
         property var whitelistedUnfurledDomains: []
         property bool introduceYourselfPopupSeen
+        property var recentEmojis
+        property int theme: Theme.Style.System
+        property int fontSize: Theme.FontSize.FontSizeM
+
+        Component.onCompleted: {
+            Theme.changeTheme(appMainLocalSettings.theme)
+            Theme.changeFontSize(appMainLocalSettings.fontSize)
+        }
+    }
+
+    Connections {
+        target: Application.styleHints
+        function onColorSchemeChanged() {
+            Theme.changeTheme(appMainLocalSettings.theme) // re-apply the theme when the System theme/colorscheme changes
+        }
     }
 
     Popups {
@@ -1130,7 +1146,7 @@ Item {
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
             height: 440
-            settings: localAccountSensitiveSettings
+            settings: appMainLocalSettings
             emojiModel: SQUtils.Emoji.emojiModel
         }
     }
@@ -2111,6 +2127,8 @@ Item {
                             pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
+
+                            localSettings: appMainLocalSettings
 
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
 

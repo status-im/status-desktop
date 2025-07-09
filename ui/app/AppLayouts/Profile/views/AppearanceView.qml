@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
 
 import utils 1.0
 import shared 1.0
@@ -13,23 +12,19 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1 as StatusQ
 
-import "../popups"
-import "../stores"
-
 SettingsContentBase {
     id: appearanceView
 
+    required property var localSettings
+
     function updateTheme(theme) {
-        localAppSettings.theme = theme
+        localSettings.theme = theme
         Theme.changeTheme(theme)
     }
 
     function updateFontSize(fontSize) {
+        localSettings.fontSize = fontSize
         Theme.changeFontSize(fontSize)
-    }
-
-    Component.onCompleted: {
-        appearanceView.updateFontSize(localAccountSensitiveSettings.fontSize)
     }
 
     Item {
@@ -86,23 +81,17 @@ SettingsContentBase {
             textRole: "name"
             valueRole: "value"
             model: ListModel {
-                ListElement { name: qsTr("XS"); value: Theme.FontSizeXS }
-                ListElement { name: qsTr("S"); value: Theme.FontSizeS }
-                ListElement { name: qsTr("M"); value: Theme.FontSizeM }
-                ListElement { name: qsTr("L"); value: Theme.FontSizeL }
-                ListElement { name: qsTr("XL"); value: Theme.FontSizeXL }
-                ListElement { name: qsTr("XXL"); value: Theme.FontSizeXXL }
+                ListElement { name: qsTr("XS"); value: Theme.FontSize.FontSizeXS }
+                ListElement { name: qsTr("S"); value: Theme.FontSize.FontSizeS }
+                ListElement { name: qsTr("M"); value: Theme.FontSize.FontSizeM }
+                ListElement { name: qsTr("L"); value: Theme.FontSize.FontSizeL }
+                ListElement { name: qsTr("XL"); value: Theme.FontSize.FontSizeXL }
+                ListElement { name: qsTr("XXL"); value: Theme.FontSize.FontSizeXXL }
             }
 
-            value: localAccountSensitiveSettings.fontSize
+            value: localSettings.fontSize
 
-            onCurrentValueChanged: {
-                const fontSize = currentValue
-                if (localAccountSensitiveSettings.fontSize !== fontSize) {
-                    localAccountSensitiveSettings.fontSize = fontSize
-                    appearanceView.updateFontSize(fontSize)
-                }
-            }
+            onMoved: appearanceView.updateFontSize(value)
         }
 
         Rectangle {
@@ -137,8 +126,8 @@ SettingsContentBase {
                 Layout.preferredHeight: implicitHeight
                 image.source: Theme.png("appearance-light")
                 control.text: qsTr("Light")
-                control.checked: localAppSettings.theme === Theme.Style.Light
-                onRadioCheckedChanged: {
+                control.checked: localSettings.theme === Theme.Style.Light
+                onRadioCheckedChanged: function(checked) {
                     if (checked) {
                         appearanceView.updateTheme(Theme.Style.Light)
                     }
@@ -149,8 +138,8 @@ SettingsContentBase {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Theme.png("appearance-dark")
                 control.text: qsTr("Dark")
-                control.checked: localAppSettings.theme === Theme.Style.Dark
-                onRadioCheckedChanged: {
+                control.checked: localSettings.theme === Theme.Style.Dark
+                onRadioCheckedChanged: function(checked) {
                     if (checked) {
                         appearanceView.updateTheme(Theme.Style.Dark)
                     }
@@ -161,8 +150,8 @@ SettingsContentBase {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Theme.png("appearance-system")
                 control.text: qsTr("System")
-                control.checked: localAppSettings.theme === Theme.Style.System
-                onRadioCheckedChanged: {
+                control.checked: localSettings.theme === Theme.Style.System
+                onRadioCheckedChanged: function(checked) {
                     if (checked) {
                         appearanceView.updateTheme(Theme.Style.System)
                     }

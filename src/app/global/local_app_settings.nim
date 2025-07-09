@@ -5,8 +5,6 @@ import constants
 # Local App Settings keys:
 const LAS_KEY_LANGUAGE* = "global/language"
 const DEFAULT_LAS_KEY_LANGUAGE* = "en"
-const LAS_KEY_THEME* = "global/theme"
-const DEFAULT_THEME = 2 #system theme, from qml
 const LAS_KEY_GEOMETRY = "global/app_geometry"
 const LAS_KEY_VISIBILITY = "global/app_visibility"
 const LAS_KEY_SCROLL_VELOCITY = "global/scroll_velocity"
@@ -59,21 +57,6 @@ QtObject:
     read = getLanguage
     write = setLanguage
     notify = languageChanged
-
-
-  proc themeChanged*(self: LocalAppSettings) {.signal.}
-  proc getTheme*(self: LocalAppSettings): int {.slot.} =
-    self.settings.value(LAS_KEY_THEME, newQVariant(DEFAULT_THEME)).intVal
-  proc setTheme*(self: LocalAppSettings, value: int) {.slot.} =
-    if self.getTheme() == value:
-      return
-    self.settings.setValue(LAS_KEY_THEME, newQVariant(value))
-    self.themeChanged()
-
-  QtProperty[int] theme:
-    read = getTheme
-    write = setTheme
-    notify = themeChanged
 
 
   proc geometryChanged*(self: LocalAppSettings) {.signal.}
@@ -206,7 +189,6 @@ QtObject:
 
     case key:
       of LAS_KEY_LANGUAGE: self.languageChanged()
-      of LAS_KEY_THEME: self.themeChanged()
       of LAS_KEY_GEOMETRY: self.geometryChanged()
       of LAS_KEY_VISIBILITY: self.visibilityChanged()
       of LAS_KEY_SCROLL_VELOCITY: self.scrollVelocityChanged()

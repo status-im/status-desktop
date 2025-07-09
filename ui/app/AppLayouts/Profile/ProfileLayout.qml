@@ -63,6 +63,7 @@ StatusSectionLayout {
     property var dismissedReceivedRequestContactsModel
 
     required property bool isCentralizedMetricsEnabled
+    required property var localSettings
 
     signal connectUsernameRequested(string ensName)
     signal registerUsernameRequested(string ensName)
@@ -324,7 +325,7 @@ StatusSectionLayout {
             sourceComponent: AppearanceView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-
+                localSettings: root.localSettings
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.appearance)
                 contentWidth: d.contentWidth
             }
