@@ -19,31 +19,33 @@ gantt
 
     Backend refactor        :2025-06-01, 90d
 
-    2.35 release :milestone, m237, 2025-07-14, 1d
+    2.35 release :milestone, m237, 2025-07-21, 1d
 
     section 2.35
-    Qt6 migration           :2025-06-01, 20d
-    Tablet build            :t1, 2025-06-01, 31d
+    Qt6 migration           :2025-06-01, 26d
+    Tablet build            :t1, 2025-06-08, 31d
     Jump to screen (shell)  :2025-06-01, 24d
     UI Modularization       :2025-06-01, 60d
-    User data local backups :lb1, 2025-06-16, 20d
+    User data local backups :lb1, 2025-06-16, 25d
     Memory improvements     :mi1, 2025-07-01, 30d
 
-    2.36 release            :milestone, m236, 2025-09-01, 1d
+    2.36 release            :milestone, m236, 2025-09-08, 1d
 
     section 2.36
     Mobile build            :2025-06-09, 60d
     Dapp Browser            :after t1, 35d
     Messages local backups  :after lb1, 18d
 
-    2.37 release             :milestone, m237, 2025-10-20, 1d
+    2.37 release             :milestone, m237, 2025-10-27, 1d
 
     section 2.37
-    Privacy Mode            :after m236, 25d
-    Improve user support    :after m236, 20d
-    RLN                     :2025-08-04, 55d
-    News Feed on Waku       :after mi1, 25d
-    File sending over Codex :2025-09-01, 30d
+    Privacy Mode                :after m236, 25d
+    Improve user support        :after m236, 20d
+    RLN                         :2025-08-04, 55d
+    News Feed on Waku           :after mi1, 25d
+    File sending over Codex     :2025-09-01, 30d
+    Keycard Shell integration   :2025-09-01, 25d
+
 ```
 
 ### 2.35
@@ -107,5 +109,6 @@ Not all Epics are created yet as it's too early to know exactly what will be wor
 - News Feed on Waku
 - File sending over Codex
   - Dependant on Codex being available in Light mode for mobile and having a C library.
+- Keycard Shell Integration
 
 Estimated release: End of October
