@@ -104,7 +104,7 @@ StatusScrollView {
                     required property int index
                     required property var model
 
-                    objectName: "shellGridItemLoader_" + model.key
+                    objectName: "homeGridItemLoader_" + model.key
 
                     sourceComponent: {
                         switch (model.sectionType) {

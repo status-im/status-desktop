@@ -122,7 +122,7 @@ Item {
         }
 
         function test_activityCenterButton() {
-            const btn = findChild(controlUnderTest, "shellACButton")
+            const btn = findChild(controlUnderTest, "homeACButton")
             verify(!!btn)
             dynamicSpy.setup(controlUnderTest, "notificationButtonClicked")
             mouseClick(btn)
@@ -130,7 +130,7 @@ Item {
         }
 
         function test_homePageProfileButton() {
-            const btn = findChild(controlUnderTest, "shellProfileButton")
+            const btn = findChild(controlUnderTest, "homeProfileButton")
             verify(!!btn)
             mouseClick(btn)
             const popupMenu = findChild(btn, "userStatusContextMenu")
@@ -151,12 +151,12 @@ Item {
         }
 
         function test_gridItem_search_and_click(data) {
-            const grid = findChild(controlUnderTest, "shellGrid")
+            const grid = findChild(controlUnderTest, "homeGrid")
             verify(!!grid)
             tryVerify(() => grid.width > 0)
             tryVerify(() => grid.height > 0)
 
-            const searchField = findChild(controlUnderTest, "shellSearchField")
+            const searchField = findChild(controlUnderTest, "homeSearchField")
             verify(!!searchField)
             tryCompare(searchField, "cursorVisible", true)
             searchField.clear()
@@ -166,7 +166,7 @@ Item {
 
             waitForRendering(grid)
 
-            const gridBtn = findChild(grid, "shellGridItemLoader_" + data.key).item
+            const gridBtn = findChild(grid, "homeGridItemLoader_" + data.key).item
             tryVerify(() => !!gridBtn)
 
             waitForItemPolished(grid)
@@ -194,7 +194,7 @@ Item {
         }
 
         function test_dock_regular_buttons(data) {
-            const dock = findChild(controlUnderTest, "shellDock")
+            const dock = findChild(controlUnderTest, "homeDock")
             verify(!!dock)
             tryVerify(() => dock.width > 0)
             tryVerify(() => dock.height > 0)
@@ -222,10 +222,10 @@ Item {
         function test_pin_unpin_from_grid(data) {
             const keyId = "4;11" // Settings/About
 
-            const grid = findChild(controlUnderTest, "shellGrid")
+            const grid = findChild(controlUnderTest, "homeGrid")
             verify(!!grid)
 
-            const gridBtn = findChild(grid, "shellGridItemLoader_" + keyId).item
+            const gridBtn = findChild(grid, "homeGridItemLoader_" + keyId).item
             tryVerify(() => !!gridBtn)
 
             compatMouseMove(gridBtn)
@@ -247,7 +247,7 @@ Item {
 
                 var ctxMenu = null
                 tryVerify(function () {
-                    ctxMenu = findChild(gridBtn, "shellGridItemContextMenu")
+                    ctxMenu = findChild(gridBtn, "homeGridItemContextMenu")
                     return !!ctxMenu
                 })
                 // click the "Pin" menu item
@@ -260,7 +260,7 @@ Item {
             // verify pinned
             tryCompare(gridBtn, "pinned", true)
 
-            const dock = findChild(controlUnderTest, "shellDock")
+            const dock = findChild(controlUnderTest, "homeDock")
             verify(!!dock)
 
             waitForRendering(dock)
@@ -292,7 +292,7 @@ Item {
 
                 var ctxMenu = null
                 tryVerify(function () {
-                    ctxMenu = findChild(gridBtn, "shellGridItemContextMenu")
+                    ctxMenu = findChild(gridBtn, "homeGridItemContextMenu")
                     return !!ctxMenu
                 })
                 // click the "Unpin" menu item
@@ -314,10 +314,10 @@ Item {
         function test_pin_from_grid_unpin_from_dock() {
             const keyId = "4;11" // Settings/About
 
-            const grid = findChild(controlUnderTest, "shellGrid")
+            const grid = findChild(controlUnderTest, "homeGrid")
             verify(!!grid)
 
-            const gridBtn = findChild(grid, "shellGridItemLoader_" + keyId).item
+            const gridBtn = findChild(grid, "homeGridItemLoader_" + keyId).item
             tryVerify(() => !!gridBtn)
 
             compatMouseMove(gridBtn)
@@ -333,7 +333,7 @@ Item {
             // verify pinned
             tryCompare(gridBtn, "pinned", true)
 
-            var dock = findChild(controlUnderTest, "shellDock")
+            var dock = findChild(controlUnderTest, "homeDock")
             verify(!!dock)
 
             waitForRendering(dock)
@@ -346,7 +346,7 @@ Item {
 
             // trigger the dock button's context menu
             mouseRightClick(dockBtn)
-            const ctxMenu = findChild(dockBtn, "shellDockButtonCtxMenu")
+            const ctxMenu = findChild(dockBtn, "homeDockButtonCtxMenu")
             verify(!!ctxMenu)
             tryCompare(ctxMenu, "opened", true)
 

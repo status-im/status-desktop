@@ -110,7 +110,7 @@ Control {
         interactive: contentWidth > width
         delegate: Loader {
             id: delegateLoader
-            objectName: "shellDockButtonLoader"
+            objectName: "homeDockButtonLoader"
 
             required property var model
             required property int index

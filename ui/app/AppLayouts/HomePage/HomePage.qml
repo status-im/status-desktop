@@ -86,7 +86,7 @@ Control {
             Layout.alignment: Qt.AlignHCenter
 
             id: searchField
-            objectName: "shellSearchField"
+            objectName: "homeSearchField"
 
             font.pixelSize: d.isNarrowView ? 23 : 27
 
@@ -98,7 +98,7 @@ Control {
             Layout.rightMargin: -root.horizontalPadding
             Layout.fillHeight: true
 
-            objectName: "shellGrid"
+            objectName: "homeGrid"
 
             model: root.homePageEntriesModel
 
@@ -121,7 +121,7 @@ Control {
             Layout.fillWidth: d.isNarrowView && root.availableWidth < implicitWidth
             Layout.maximumWidth: parent.width
 
-            objectName: "shellDock"
+            objectName: "homeDock"
 
             useNewDockIcons: root.useNewDockIcons
             sectionsModel: root.sectionsModel
@@ -148,7 +148,7 @@ Control {
         spacing: 12
 
         StatusActivityCenterButton {
-            objectName: "shellACButton"
+            objectName: "homeACButton"
             Layout.topMargin: 4
             Layout.preferredWidth: 40
             Layout.preferredHeight: 40
@@ -159,7 +159,7 @@ Control {
         }
 
         ProfileButton {
-            objectName: "shellProfileButton"
+            objectName: "homeProfileButton"
             name: root.profileStore.name
             pubKey: root.profileStore.pubkey
             compressedPubKey: root.profileStore.compressedPubKey

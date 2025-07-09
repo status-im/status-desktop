@@ -184,7 +184,7 @@ AbstractButton {
         id: contextMenuComponent
         StatusMenu {
             id: contextMenu
-            objectName: "shellGridItemContextMenu"
+            objectName: "homeGridItemContextMenu"
             StatusMenuInstantiator {
                 model: [pinAction, ...root.extraMenuActions]
                 menu: contextMenu

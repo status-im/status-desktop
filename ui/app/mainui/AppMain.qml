@@ -1821,7 +1821,7 @@ Item {
                         sourceComponent: HomePage {
                             id: homePage
 
-                            objectName: "shellContainer"
+                            objectName: "homeContainer"
 
                             HomePageAdaptor {
                                 id: homePageAdaptor
