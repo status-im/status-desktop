@@ -836,8 +836,25 @@ Item {
 
     Settings {
         id: appMainLocalSettings
+        category: "AppMainLocalSettings_%1".arg(allContacsAdaptor.selfPubKey)
         property var whitelistedUnfurledDomains: []
         property bool introduceYourselfPopupSeen
+        property var recentEmojis
+        property color skinColor
+        property int theme: Theme.Style.System
+        property int fontSize: Theme.FontSize.FontSizeM
+
+        Component.onCompleted: {
+            Theme.changeTheme(appMainLocalSettings.theme)
+            Theme.changeFontSize(appMainLocalSettings.fontSize)
+        }
+    }
+
+    Connections {
+        target: Application.styleHints
+        function onColorSchemeChanged() {
+            Theme.changeTheme(appMainLocalSettings.theme) // re-apply the theme when the System theme/colorscheme changes
+        }
     }
 
     Popups {
@@ -1130,7 +1147,7 @@ Item {
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
             height: 440
-            settings: localAccountSensitiveSettings
+            settings: appMainLocalSettings
             emojiModel: SQUtils.Emoji.emojiModel
         }
     }
@@ -2112,11 +2129,23 @@ Item {
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
 
+                            theme: appMainLocalSettings.theme
+                            fontSize: appMainLocalSettings.fontSize
+
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
 
                             onConnectUsernameRequested: popupRequestsHandler.sendModalHandler.connectUsername(ensName)
                             onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
                             onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
+
+                            onThemeChangeRequested: function(theme) {
+                                appMainLocalSettings.theme = theme
+                                Theme.changeTheme(theme)
+                            }
+                            onFontSizeChangeRequested: function(fontSize) {
+                                appMainLocalSettings.fontSize = fontSize
+                                Theme.changeFontSize(fontSize)
+                            }
                         }
                         onLoaded: {
                             item.settingsSubsection = profileLoader.settingsSubsection

@@ -21,7 +21,7 @@ void SystemUtilsInternal::restartApplication() const
 #if QT_CONFIG(process)
     QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
 #endif
-    QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(QCoreApplication::instance(), &QCoreApplication::exit, Qt::QueuedConnection, EXIT_SUCCESS);
 }
 
 void SystemUtilsInternal::downloadImageByUrl(
@@ -30,7 +30,7 @@ void SystemUtilsInternal::downloadImageByUrl(
     static thread_local QNetworkAccessManager manager;
     manager.setAutoDeleteReplies(true);
 
-    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url)));
+    QNetworkReply *reply = manager.get(QNetworkRequest(url));
 
     // accept both "file:/foo/bar" and "/foo/bar"
     auto targetDir = QUrl::fromUserInput(path).toLocalFile();

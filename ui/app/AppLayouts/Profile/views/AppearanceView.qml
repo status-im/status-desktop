@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Window
 
 import utils
 import shared
@@ -13,30 +12,20 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Controls as StatusQ
 
-import "../popups"
-import "../stores"
-
 SettingsContentBase {
-    id: appearanceView
+    id: root
 
-    function updateTheme(theme) {
-        localAppSettings.theme = theme
-        Theme.changeTheme(theme)
-    }
+    required property int theme // Theme.Style.xxx
+    required property int fontSize // Theme.FontSize.xxx
 
-    function updateFontSize(fontSize) {
-        Theme.changeFontSize(fontSize)
-    }
-
-    Component.onCompleted: {
-        appearanceView.updateFontSize(localAccountSensitiveSettings.fontSize)
-    }
+    signal themeChangeRequested(int theme)
+    signal fontSizeChangeRequested(int fontSize)
 
     Item {
         id: appearanceContainer
         anchors.left: !!parent ? parent.left : undefined
         anchors.leftMargin: Theme.padding
-        width: appearanceView.contentWidth - 2 * Theme.padding
+        width: root.contentWidth - 2 * Theme.padding
         height: childrenRect.height
 
         Rectangle {
@@ -86,23 +75,17 @@ SettingsContentBase {
             textRole: "name"
             valueRole: "value"
             model: ListModel {
-                ListElement { name: qsTr("XS"); value: Theme.FontSizeXS }
-                ListElement { name: qsTr("S"); value: Theme.FontSizeS }
-                ListElement { name: qsTr("M"); value: Theme.FontSizeM }
-                ListElement { name: qsTr("L"); value: Theme.FontSizeL }
-                ListElement { name: qsTr("XL"); value: Theme.FontSizeXL }
-                ListElement { name: qsTr("XXL"); value: Theme.FontSizeXXL }
+                ListElement { name: qsTr("XS"); value: Theme.FontSize.FontSizeXS }
+                ListElement { name: qsTr("S"); value: Theme.FontSize.FontSizeS }
+                ListElement { name: qsTr("M"); value: Theme.FontSize.FontSizeM }
+                ListElement { name: qsTr("L"); value: Theme.FontSize.FontSizeL }
+                ListElement { name: qsTr("XL"); value: Theme.FontSize.FontSizeXL }
+                ListElement { name: qsTr("XXL"); value: Theme.FontSize.FontSizeXXL }
             }
 
-            value: localAccountSensitiveSettings.fontSize
+            value: root.fontSize
 
-            onCurrentValueChanged: {
-                const fontSize = currentValue
-                if (localAccountSensitiveSettings.fontSize !== fontSize) {
-                    localAccountSensitiveSettings.fontSize = fontSize
-                    appearanceView.updateFontSize(fontSize)
-                }
-            }
+            onMoved: root.fontSizeChangeRequested(value)
         }
 
         Rectangle {
@@ -137,10 +120,10 @@ SettingsContentBase {
                 Layout.preferredHeight: implicitHeight
                 image.source: Theme.png("appearance-light")
                 control.text: qsTr("Light")
-                control.checked: localAppSettings.theme === Theme.Style.Light
-                onRadioCheckedChanged: {
+                control.checked: root.theme === Theme.Style.Light
+                onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        appearanceView.updateTheme(Theme.Style.Light)
+                        root.themeChangeRequested(Theme.Style.Light)
                     }
                 }
             }
@@ -149,10 +132,10 @@ SettingsContentBase {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Theme.png("appearance-dark")
                 control.text: qsTr("Dark")
-                control.checked: localAppSettings.theme === Theme.Style.Dark
-                onRadioCheckedChanged: {
+                control.checked: root.theme === Theme.Style.Dark
+                onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        appearanceView.updateTheme(Theme.Style.Dark)
+                        root.themeChangeRequested(Theme.Style.Dark)
                     }
                 }
             }
@@ -161,10 +144,10 @@ SettingsContentBase {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Theme.png("appearance-system")
                 control.text: qsTr("System")
-                control.checked: localAppSettings.theme === Theme.Style.System
-                onRadioCheckedChanged: {
+                control.checked: root.theme === Theme.Style.System
+                onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        appearanceView.updateTheme(Theme.Style.System)
+                        root.themeChangeRequested(Theme.Style.System)
                     }
                 }
             }

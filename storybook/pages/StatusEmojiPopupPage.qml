@@ -52,7 +52,7 @@ SplitView {
             anchors.centerIn: parent
             settings: settings
             emojiModel: StatusQUtils.Emoji.emojiModel
-            onEmojiSelected: d.lastSelectedEmoji = emoji
+            onEmojiSelected: (emoji) => d.lastSelectedEmoji = emoji
         }
     }
 
@@ -68,6 +68,7 @@ SplitView {
             Button {
                 text: "Clear settings (reload to take effect)"
                 onClicked: {
+                    d.lastSelectedEmoji = ""
                     settings.recentEmojis = []
                     settings.skinColor = ""
                     settings.sync()
@@ -75,7 +76,7 @@ SplitView {
             }
 
             Label {
-                text: "Last selected: %1 ('%2')".arg(d.lastSelectedEmoji).arg(settings.recentEmojis[0])
+                text: "Last selected: %1 ('%2')".arg(d.lastSelectedEmoji).arg(settings.recentEmojis[0] ?? "")
             }
 
             Button {
@@ -89,5 +90,5 @@ SplitView {
 }
 
 // category: Popups
-
+// status: good
 // https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/%F0%9F%92%AC-Chat%E2%8E%9CDesktop?node-id=1006-0&t=VC6BL8H0Il3VbDxX-0
