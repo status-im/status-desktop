@@ -4,11 +4,11 @@ from objectmaphelper import *
 # Map for home screens, views locators
 
 # HomePage Container
-home_container = {"container": statusDesktop_mainWindow, "objectName": "shellContainer", "type": "HomePage", "visible": True}
-home_search_field = {"container": statusDesktop_mainWindow, "objectName": "shellSearchField", "type": "HomePageSearchField", "visible": True}
+home_container = {"container": statusDesktop_mainWindow, "objectName": "homeContainer", "type": "HomePage", "visible": True}
+home_search_field = {"container": statusDesktop_mainWindow, "objectName": "homeSearchField", "type": "HomePageSearchField", "visible": True}
 
 # HomePage Grid
-home_grid = {"container": home_container, "objectName": "shellGrid", "type": "HomePageGrid", "visible": True}
+home_grid = {"container": home_container, "objectName": "homeGrid", "type": "HomePageGrid", "visible": True}
 home_grid_item = {"container": home_grid, "type": "HomePageGridItem", "visible": True}
 home_grid_item_pin_button = {"container": home_grid_item, "type": "HomePageToolButton", "visible": True}
 
