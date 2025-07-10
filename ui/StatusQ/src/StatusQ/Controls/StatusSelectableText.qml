@@ -69,7 +69,7 @@ Item {
                 selectByMouse: true
                 selectionColor: Theme.palette.primaryColor2
                 selectedTextColor: color
-                focus: true
+                focus: Qt.platform.os === android || Qt.platform.os === ios
                 font.pixelSize: Theme.primaryTextFontSize
                 font.family: Theme.baseFont.name
                 color: Theme.palette.directColor1

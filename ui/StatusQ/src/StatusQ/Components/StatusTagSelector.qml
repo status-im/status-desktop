@@ -285,7 +285,7 @@ Item {
             TextInput {
                 id: edit
                 verticalAlignment: Text.AlignVCenter
-                focus: true
+                focus: (Qt.platform.os === android || Qt.platform.os === ios) ? false : true
                 color: Theme.palette.directColor1
                 clip: true
                 font.pixelSize: Theme.primaryTextFontSize

@@ -50,15 +50,16 @@ Control {
 
     spacing: Theme.defaultBigPadding
 
-    function focusSearch() {
+    function focusSearch(force = false) {
+        if (Constants.isMobile && !force) {
+            return
+        }
         // Need to use Qt.callLater to ensure the focus is set after the component is fully loaded
         Qt.callLater(() => searchField.forceActiveFocus())
     }
 
     Component.onCompleted: {
-        if (!Constants.isMobile) {
-            focusSearch()
-        }
+        focusSearch()
     }
 
     Keys.onEscapePressed: {
