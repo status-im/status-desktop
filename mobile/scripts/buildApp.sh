@@ -52,11 +52,11 @@ if [[ "${OS}" == "android" ]]; then
 
     echo "Build succeeded. APK is available at $BIN_DIR/Status-tablet.apk"
 else
-    qmake "$CWD/../wrapperApp/Status-tablet.pro" RESOURCES+="$COMPAT_RESOURCES" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
+    qmake "$CWD/../wrapperApp/Status-tablet.pro" RESOURCES+="$COMPAT_RESOURCES" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device QMAKE_BUNDLE_SUFFIX=$(whoami)
     # Compile resources
     xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_STYLE=Automatic
     # Compile the app
-    xcodebuild -configuration Release -target Status-tablet install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_STYLE=Automatic
+    xcodebuild -configuration Release -target Status-tablet install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates
 
     if [[ -e "$BIN_DIR/Status-tablet.app/Info.plist" ]]; then
         echo "Build succeeded"
