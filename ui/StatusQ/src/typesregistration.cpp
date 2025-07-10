@@ -99,11 +99,6 @@ void registerStatusQTypes() {
     qmlRegisterModuleImport("Qt.labs.calendar", QQmlModuleImportModuleAny,
                             "QtQuick.Controls", QQmlModuleImportLatest);
 #endif
-        
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-    qmlRegisterModuleImport("Qt.labs.qmlmodels", QQmlModuleImportModuleAny,
-                            "QtQml.Models", QQmlModuleImportLatest);
-#endif
 
 #ifdef BUNDLE_QML_RESOURCES
     Q_INIT_RESOURCE(statusq);

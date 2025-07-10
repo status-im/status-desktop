@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQml 2.15
 import QtQuick.Controls 2.15
 
-import Qt.labs.qmlmodels 1.0
+import QtQml.Models
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
