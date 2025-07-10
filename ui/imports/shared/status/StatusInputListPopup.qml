@@ -5,6 +5,7 @@ import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import utils
 import shared
@@ -34,7 +35,9 @@ Popup {
         listView.currentIndex = 0
         if (showSearchBox) {
             searchBox.text = ""
-            searchBox.textField.forceActiveFocus()
+            if (!SQUtils.Utils.isMobile) {
+                searchBox.textField.forceActiveFocus()
+            }
         }
     }
 

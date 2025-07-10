@@ -239,7 +239,7 @@ StatusSectionLayout {
 
                 isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
-                isMobile: Constants.isMobile
+                isMobile: StatusQUtils.Utils.isMobile
 
                 onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
 

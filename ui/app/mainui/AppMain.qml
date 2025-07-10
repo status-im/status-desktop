@@ -1446,7 +1446,7 @@ Item {
 
                 enabled: !localAppSettings.testEnvironment
                          && appMain.rootStore.activeSectionType !== Constants.appSection.homePage
-                         && !Constants.isMobile // Temp disable until we have proper way to handle banners on mobile
+                         && !SQUtils.Utils.isMobile // Temp disable until we have proper way to handle banners on mobile
                 visible: enabled
 
                 property var updateBanner: null
@@ -2066,7 +2066,7 @@ Item {
                         asynchronous: true
                         CommunitiesPortalLayout {
                             anchors.fill: parent
-                            createCommunityEnabled: !Constants.isMobile
+                            createCommunityEnabled: !SQUtils.Utils.isMobile
                             navBar: appMain.navBar
                             communitiesStore: appMain.communitiesStore
                             assetsModel: appMain.rootStore.globalAssetsModel

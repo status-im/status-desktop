@@ -11,13 +11,15 @@ import shared.popups
 import shared.status
 import shared.controls
 
-import StatusQ.Core
-import StatusQ.Popups
-import StatusQ.Popups.Dialog
 import StatusQ.Components
-import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Controls.Validators
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
+
 
 import AppLayouts.stores.Messaging 1.0
 
@@ -155,7 +157,7 @@ SettingsContentBase {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Archive Protocol Enabled")
-                visible: !Constants.isMobile
+                visible: !SQUtils.Utils.isMobile
                 isSwitch: true
                 switchChecked: root.advancedStore.archiveProtocolEnabled
                 onClicked: {

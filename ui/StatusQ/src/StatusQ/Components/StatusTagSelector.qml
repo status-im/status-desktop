@@ -6,6 +6,7 @@ import Qt5Compat.GraphicalEffects
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Controls
+import StatusQ.Core.Utils
 
 /*!
      \qmltype StatusTagSelector
@@ -285,7 +286,7 @@ Item {
             TextInput {
                 id: edit
                 verticalAlignment: Text.AlignVCenter
-                focus: true
+                focus: !Utils.isMobile // Do not focus on mobile devices
                 color: Theme.palette.directColor1
                 clip: true
                 font.pixelSize: Theme.primaryTextFontSize

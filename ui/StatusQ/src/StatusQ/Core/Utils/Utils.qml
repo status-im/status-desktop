@@ -7,6 +7,14 @@ import "./xss.js" as XSS
 QtObject {
     id: root
 
+    readonly property string windows: "windows"
+    readonly property string linux: "linux"
+    readonly property string mac: "osx"
+    readonly property string android: "android"
+    readonly property string ios: "ios"
+
+    readonly property bool isMobile: Qt.platform.os === android || Qt.platform.os === ios
+
     function getAbsolutePosition(node) {
         var returnPos = {};
         returnPos.x = 0;
