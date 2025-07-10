@@ -1,6 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtGraphicalEffects 1.15
+import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1

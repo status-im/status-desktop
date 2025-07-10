@@ -1,7 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
-import QtGraphicalEffects 1.15
+import Qt5Compat.GraphicalEffects
 
 import utils 1.0
 import shared.panels 1.0

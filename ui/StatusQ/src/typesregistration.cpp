@@ -91,10 +91,6 @@ void registerStatusQTypes() {
 // create import alias from QtGraphicalEffects 1.15 to Qt5Compat.GraphicalEffects
 // in order to satisfy both Qt 5/6, relying the same version of qml code
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    qmlRegisterModule("QtGraphicalEffects", 1, 15);
-    qmlRegisterModuleImport("QtGraphicalEffects", QQmlModuleImportModuleAny,
-                            "Qt5Compat.GraphicalEffects", QQmlModuleImportLatest);
-
     qmlRegisterModule("Qt.labs.calendar", 1, 0);
     qmlRegisterModuleImport("Qt.labs.calendar", QQmlModuleImportModuleAny,
                             "QtQuick.Controls", QQmlModuleImportLatest);

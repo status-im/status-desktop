@@ -1,5 +1,5 @@
 import QtQuick 2.13
-import QtGraphicalEffects 1.15
+import Qt5Compat.GraphicalEffects
 import QtQuick.Layouts 1.14
 
 import StatusQ.Controls 0.1
