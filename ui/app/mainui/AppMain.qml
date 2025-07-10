@@ -1446,6 +1446,7 @@ Item {
 
                 enabled: !localAppSettings.testEnvironment
                          && appMain.rootStore.activeSectionType !== Constants.appSection.homePage
+                         && !Constants.isMobile // Temp disable until we have proper way to handle banners on mobile
                 visible: enabled
 
                 property var updateBanner: null
