@@ -177,9 +177,13 @@ QObject {
         }
 
         property var recentRecipientsAddressesFlatList: []
-        Component.onCompleted: refreshRecentsModelFlatList()
 
-        sourceModel: ObjectProxyModel {
+        Component.onCompleted: {
+            refreshRecentsModelFlatList()
+            sourceModel = src
+        }
+
+        property var src: ObjectProxyModel {
             sourceModel: recentsModel.recentRecipientsExtractModel
 
             delegate: QtObject {
