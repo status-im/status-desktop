@@ -61,12 +61,12 @@ Control {
     signal itemPinRequested(string key, bool pin)
     signal dappDisconnectRequested(string dappUrl)
 
-    padding: Theme.smallPadding
-    spacing: Theme.smallPadding
+    padding: Theme.defaultSmallPadding
+    spacing: Theme.defaultSmallPadding
 
     background: Rectangle {
         color: Theme.palette.baseColor4
-        radius: Theme.smallPadding * 2
+        radius: Theme.defaultSmallPadding * 2
     }
 
     layer.enabled: true

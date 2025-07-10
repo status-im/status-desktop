@@ -36,7 +36,7 @@ AbstractButton {
     implicitWidth: 160
     implicitHeight: 160
 
-    padding: Theme.smallPadding
+    padding: Theme.defaultSmallPadding
 
     icon.width: 48
     icon.height: 48
@@ -59,7 +59,7 @@ AbstractButton {
             height: 40 + radius*2 // draw under the rect below
             color: root.color
             Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
-            radius: Theme.padding
+            radius: Theme.defaultPadding
             image.source: root.banner
             image.verticalAlignment: Image.AlignTop
             image.fillMode: Image.Tile
@@ -144,7 +144,7 @@ AbstractButton {
             // extra bottom contents
             RowLayout {
                 Layout.alignment: Qt.AlignBottom
-                Layout.minimumHeight: Theme.bigPadding
+                Layout.minimumHeight: Theme.defaultBigPadding
                 Loader {
                     id: bottomRowLoader
                     Layout.fillWidth: root.bottomRowComponentFillsWidth
@@ -164,7 +164,7 @@ AbstractButton {
             anchors.rightMargin: -4
             anchors.top: parent.top
             anchors.topMargin: -4
-            spacing: Theme.halfPadding
+            spacing: Theme.defaultHalfPadding
             visible: opacity > 0
             opacity: root.hovered || root.pinned ? 1 : 0
             Behavior on opacity { OpacityAnimator { duration: Theme.AnimationDuration.Fast } }
