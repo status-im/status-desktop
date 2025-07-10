@@ -58,6 +58,7 @@ StatusScrollView {
     property alias model: repeater.model
 
     property int delegateWidth: 160
+    property int minItemsPerRow: 3
     Behavior on delegateWidth {
         PropertyAnimation { duration: Theme.AnimationDuration.Fast }
     }
@@ -71,29 +72,35 @@ StatusScrollView {
     signal dappDisconnectRequested(string dappUrl)
 
     padding: 0
-    rightPadding: Theme.padding
-
+    rightPadding: Theme.defaultPadding
     contentWidth: availableWidth
+    contentItem.scale: d.scale
+    contentItem.width: availableWidth / contentItem.scale
+    contentItem.height: availableHeight / contentItem.scale
+    contentItem.transformOrigin: Item.TopLeft
 
     QtObject {
         id: d
         property bool positioningComplete // delay the animations
+        readonly property real minWidth: (root.delegateWidth * root.minItemsPerRow) + (flow.spacing * (minItemsPerRow - 1)) + root.rightPadding + root.leftPadding
+        readonly property real scale: Math.min(1, root.availableWidth / minWidth)
     }
 
     ColumnLayout {
-        width: root.availableWidth
+        width: root.availableWidth / d.scale
 
         Flow {
+            id: flow
             // calculate a tight bounding box, and then horizontally center over the scrollview width
             readonly property int delegateCountPerRow: Math.trunc(parent.width / (root.delegateWidth + spacing))
             Layout.preferredWidth: (delegateCountPerRow * root.delegateWidth) + (spacing * (delegateCountPerRow - 1))
             Layout.alignment: Qt.AlignHCenter
 
-            spacing: Theme.padding
+            spacing: Theme.defaultPadding
 
             // for the drop shadow
-            topPadding: Theme.smallPadding
-            bottomPadding: Theme.padding
+            topPadding: Theme.defaultSmallPadding
+            bottomPadding: Theme.defaultPadding
 
             // delay the animations
             onPositioningComplete: Backpressure.debounce(this, 500, () => {d.positioningComplete = true})()

@@ -49,7 +49,8 @@ Item {
     Component {
         id: componentUnderTest
         HomePage {
-            anchors.fill: parent
+            width: root.width
+            height: root.height
 
             homePageEntriesModel: homePageAdaptor.homePageEntriesModel
             sectionsModel: homePageAdaptor.sectionsModel
