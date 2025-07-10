@@ -1,34 +1,32 @@
-import QtQuick 2.15
-import QtMultimedia 5.15
+import QtQuick
+import QtMultimedia
+
+import StatusQ
 
 Item {
     id: root
 
-    property alias muted: audio.muted
-    property alias volume: audio.volume
-    property alias source: audio.source
+    property alias muted: soundEffect.muted
+    property alias volume: soundEffect.volume
+    property alias source: soundEffect.source
 
-    readonly property bool playing: audio.playbackState === Audio.PlayingState
-    readonly property bool isError: audio.error !== Audio.NoError
-    readonly property string statusString: audio.errorString
+    readonly property alias playing: soundEffect.playing
+    readonly property bool isError: soundEffect.status === SoundEffect.Error
+    readonly property string statusString: soundEffect.status
 
     function play() {
-        audio.play()
+        soundEffect.play()
     }
 
     function stop() {
-        audio.stop()
+        soundEffect.stop()
     }
 
     function convertVolume(volume) {
-        return QtMultimedia.convertVolume(volume,
-                                          QtMultimedia.LogarithmicVolumeScale,
-                                          QtMultimedia.LinearVolumeScale)
+        return AudioUtils.convertLogarithmicToLinearVolumeScale(volume)
     }
 
-    Audio {
-        id: audio
-
-        audioRole: Audio.NotificationRole
+    SoundEffect {
+        id: soundEffect
     }
 }
