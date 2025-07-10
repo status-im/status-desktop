@@ -22,6 +22,7 @@ import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Core.Backpressure
+import StatusQ.Core.Utils as SQUtils
 
 StatusWindow {
     id: applicationWindow
@@ -155,13 +156,13 @@ StatusWindow {
     Binding {
         target: applicationWindow
         property: "minimumWidth"
-        when: !Constants.isMobile
+        when: !SQUtils.Utils.isMobile
         value: Theme.portraitBreakpoint.width
     }
     Binding {
         target: applicationWindow
         property: "minimumHeight"
-        when: !Constants.isMobile
+        when: !SQUtils.Utils.isMobile
         value: Theme.portraitBreakpoint.height
     }
 

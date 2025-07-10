@@ -69,7 +69,7 @@ Item {
                 selectByMouse: true
                 selectionColor: Theme.palette.primaryColor2
                 selectedTextColor: color
-                focus: true
+                focus: !Utils.isMobile // Do not focus on mobile devices
                 font.pixelSize: Theme.primaryTextFontSize
                 font.family: Theme.baseFont.name
                 color: Theme.palette.directColor1

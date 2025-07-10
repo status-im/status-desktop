@@ -23,6 +23,7 @@ import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Components
 
 import utils
@@ -73,7 +74,7 @@ Rectangle {
             // We change it back to 0 so that it can be used to select using the keyboard
             listView.currentIndex = 0
         }
-        if (visible) {
+        if (visible && !SQUtils.Utils.isMobile) {
             listView.forceActiveFocus();
         }
     }

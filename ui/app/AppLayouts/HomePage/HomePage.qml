@@ -6,6 +6,7 @@ import StatusQ
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import AppLayouts.Profile.stores as ProfileStores
 
@@ -50,15 +51,16 @@ Control {
 
     spacing: Theme.defaultBigPadding
 
-    function focusSearch() {
+    function focusSearch(force = false) {
+        if (SQUtils.Utils.isMobile && !force) {
+            return
+        }
         // Need to use Qt.callLater to ensure the focus is set after the component is fully loaded
         Qt.callLater(() => searchField.forceActiveFocus())
     }
 
     Component.onCompleted: {
-        if (!Constants.isMobile) {
-            focusSearch()
-        }
+        focusSearch()
     }
 
     Keys.onEscapePressed: {
