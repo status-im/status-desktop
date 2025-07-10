@@ -11,6 +11,7 @@ import app_service/service/node/service as node_service
 import backend/connection_status as connection_status_backend
 import app_service/service/token/service as token_service
 import backend/collectibles as collectibles_backend
+import backend/provider_status_types
 
 logScope:
   topics = "network-connection-service"
@@ -69,6 +70,7 @@ QtObject:
   proc getChainIdsDown(self: Service, chainStatusTable: ConnectionStatusNotification, inhibitChainIds: seq[int]): (bool, bool, seq[int], int)
   proc getIsDown(message: string): bool
   proc getChainStatusTable(message: string): ConnectionStatusNotification
+  proc getChainStatusTable(statusPerChain: Table[int, ProviderStatus]): ConnectionStatusNotification
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -92,15 +94,16 @@ QtObject:
                                 COLLECTIBLES: newConnectionStatus()}.toTable
 
   proc init*(self: Service) =
+    self.events.on(SignalType.NetworksBlockchainHealthChanged.event) do(e:Args):
+      var data = NetworksBlockchainHealthChangedSignal(e)
+      if self.nodeService.isConnected():
+        let website = BLOCKCHAINS
+        let chainStateTable = getChainStatusTable(data.fullStatus.statusPerChain)
+        let (allKnown, allDown, chainsDown, at) =  self.getChainIdsDown(chainStateTable, UNSUPPORTED_MULTICHAIN_FEATURES.getOrDefault(website))
+        self.updateMultichainStatus(website, allDown, chainsDown, at)
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       case data.eventType:
-        of "wallet-blockchain-status-changed":
-          if self.nodeService.isConnected():
-            let website = BLOCKCHAINS
-            let chainStateTable = getChainStatusTable(data.message)
-            let (allKnown, allDown, chainsDown, at) =  self.getChainIdsDown(chainStateTable, UNSUPPORTED_MULTICHAIN_FEATURES.getOrDefault(website))
-            self.updateMultichainStatus(website, allDown, chainsDown, data.at)
         of "wallet-market-status-changed":
           if self.nodeService.isConnected():
             self.updateSimpleStatus(MARKET, getIsDown(data.message), data.at)
@@ -124,6 +127,14 @@ QtObject:
   proc getIsDown(message: string): bool =
     result = message == "down"
 
+  proc getStateValue(state: provider_status_types.StateValue): connection_status_backend.StateValue =
+    if state == provider_status_types.StateValue.Down:
+      return connection_status_backend.StateValue.Disconnected
+    elif state == provider_status_types.StateValue.Up:
+      return connection_status_backend.StateValue.Connected
+    else:
+      return connection_status_backend.StateValue.Unknown
+
   proc getStateValue(message: string): connection_status_backend.StateValue =
     if message == "down":
       return connection_status_backend.StateValue.Disconnected
@@ -141,6 +152,15 @@ QtObject:
         result[k] = connection_status_backend.initConnectionState(
           value = getStateValue(v.getStr)
         )
+  
+  proc getChainStatusTable(statusPerChain: Table[int, ProviderStatus]): ConnectionStatusNotification =
+    result = initCustomStatusNotification()
+    for chain, status in statusPerChain.pairs:
+      result[$chain] = connection_status_backend.initConnectionState(
+        value = getStateValue(status.status),
+        lastCheckedAt = max(status.lastSuccessAt, status.lastErrorAt),
+        lastSuccessAt = status.lastSuccessAt,
+      )
 
   proc getChainIdsDown(self: Service, chainStatusTable: ConnectionStatusNotification, inhibitChainIds: seq[int]): (bool, bool, seq[int], int) =
     var allKnown: bool = true
