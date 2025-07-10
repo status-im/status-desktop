@@ -335,6 +335,11 @@ type StatusDesktopConfig = object
     desc: "Sets address for prometheus metrics"
     name: "METRICS_ADDRESS"
     abbr: "metrics-address" .}: string
+  noUiDisplacement* {.
+    defaultValue: false
+    desc: "Disables UI displacement warnings like connection warnings"
+    name: "NO_UI_DISPLACEMENT"
+    abbr: "no-ui-displacement" .}: bool
 
 # On macOS the first time when a user gets the "App downloaded from the
 # internet" warning, and clicks the Open button, the OS passes a unique process

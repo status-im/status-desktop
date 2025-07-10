@@ -209,6 +209,7 @@ proc mainProc() =
   singletonInstance.engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
   singletonInstance.engine.setRootContextProperty("isExperimental", isExperimentalQVariant)
   singletonInstance.engine.setRootContextProperty("fleetSelectionEnabled", newQVariant(FLEET_SELECTION_ENABLED))
+  singletonInstance.engine.setRootContextProperty("noUiDisplacementEnabled", newQVariant(NO_UI_DISPLACEMENT_ENABLED))
   singletonInstance.engine.setRootContextProperty("signals", signalsManagerQVariant)
   singletonInstance.engine.setRootContextProperty("production", isProductionQVariant)
 
