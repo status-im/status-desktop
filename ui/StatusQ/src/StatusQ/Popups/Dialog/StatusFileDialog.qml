@@ -1,20 +1,22 @@
-import QtQuick 2.15
-import QtQuick.Dialogs 1.3
+import QtQuick
+import QtQuick.Dialogs
+import QtCore
 
-// Since this is a temporal component, it will be wrapped into this visual item since wrapping the
-// FileDialog into a SQUtils.QObject it does not open the dialog in macos
-Item {
+import StatusQ.Core.Utils
+
+QObject {
     id: root
 
     property alias title: dlg.title
     property alias nameFilters: dlg.nameFilters
-    property alias selectedFile: dlg.fileUrl
-    property alias selectedFiles: dlg.fileUrls
-    property alias modality: dlg.modality
-    property alias currentFolder: dlg.folder
-    property alias selectMultiple: dlg.selectMultiple
+    property alias selectedFile: dlg.selectedFile
+    property alias selectedFiles: dlg.selectedFiles
+    property bool selectMultiple
 
-    readonly property string picturesShortcut: dlg.shortcuts.pictures
+    property alias modality: dlg.modality
+    property alias currentFolder: dlg.currentFolder
+
+    property string picturesShortcut: StandardPaths.writableLocation(StandardPaths.PicturesLocation)
 
     signal accepted
     signal rejected
@@ -29,6 +31,8 @@ Item {
 
     FileDialog {
         id: dlg
+
+        fileMode: selectMultiple ? FileDialog.OpenFiles : FileDialog.OpenFile
 
         onAccepted: root.accepted()
         onRejected: root.rejected()

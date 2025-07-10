@@ -1,19 +1,18 @@
-import QtQuick 2.13
-import QtQml 2.15
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
+
 /*!
      \qmltype StatusSectionLayout
-     \inherits SplitView
+     \inherits LayoutChooser
      \inqmlmodule StatusQ.Layout
      \since StatusQ.Layout 0.1
-     \brief Displays a three column layout with a header in the central panel.
+     \brief Displays a three column layout in landscape mode or a three views swipeview in portrait mode, with a header in the central panel.
      Inherits \l{https://doc.qt.io/qt-6/qml-qtquick-controls2-splitview.html}{SplitView}.
 
-     The \c StatusSectionLayout displays a three column layout with a header in the central panel to be used as the base layout of all application
+     The \c StatusSectionLayout displays a three column layout in landscape mode or a three views swipeview in portrait mode, with a header in the central panel to be used as the base layout of all application
      sections.
      For example:
 
@@ -45,12 +44,12 @@ import StatusQ.Core.Theme 0.1
      For a list of components available see StatusQ.
 */
 
-SplitView {
+LayoutChooser {
     id: root
-    implicitWidth: 822
-    implicitHeight: 600
+    implicitWidth: Theme.portraitBreakpoint.width
+    implicitHeight: Theme.portraitBreakpoint.height
 
-    handle: Item { }
+    property Component handle: Item { }
 
     /*!
         \qmlproperty Item StatusSectionLayout::leftPanel
@@ -66,7 +65,7 @@ SplitView {
         \qmlproperty Component StatusSectionLayout::rightPanel
         This property holds the right panel of the component.
     */
-    property Component rightPanel
+    property Item rightPanel
     /*!
         \qmlproperty Item StatusSectionLayout::navBar
         This property holds the navigation bar of the component. Usually displayed next to the leftPanel.
@@ -103,38 +102,38 @@ SplitView {
     property bool showHeader: true
 
     /*!
-        \qmlproperty alias StatusSectionLayout::notificationCount
+        \qmlproperty int StatusSectionLayout::notificationCount
         This property holds a reference to the notificationCount property of the
         header component.
     */
-    property alias notificationCount: statusToolBar.notificationCount
+    property int notificationCount
 
     /*!
-        \qmlproperty alias StatusSectionLayout::hasUnseenNotifications
+        \qmlproperty bool StatusSectionLayout::hasUnseenNotifications
         This property holds a reference to the hasUnseenNotifications property of the
         header component.
     */
-    property alias hasUnseenNotifications: statusToolBar.hasUnseenNotifications
+    property bool hasUnseenNotifications
 
     /*!
-        \qmlproperty alias StatusSectionLayout::backButtonName
+        \qmlproperty string StatusSectionLayout::backButtonName
         This property holds a reference to the backButtonName property of the
         header component.
     */
-    property alias backButtonName: statusToolBar.backButtonName
+    property string backButtonName
 
     /*!
-        \qmlproperty alias StatusSectionLayout::headerContent
+        \qmlproperty Item StatusSectionLayout::headerContent
         This property holds a reference to the custom header content of
         the header component.
     */
-    property alias headerContent: statusToolBar.headerContent
+    property Item headerContent
     /*!
-        \qmlproperty alias StatusSectionLayout::notificationButton
+        \qmlproperty Item StatusSectionLayout::notificationButton
         This property holds a reference to the notification button of the header
         component.
     */
-    property alias notificationButton: statusToolBar.notificationButton
+    property Item notificationButton
 
     /*!
         \qmlsignal
@@ -155,116 +154,65 @@ SplitView {
         This method is used to focus the panel that needs to be active.
     */
     function goToNextPanel() {
-        // Placeholder to align with qt6 StatusSectionLayout
+        if (portraitView.visible)
+            portraitView.currentIndex = portraitView.currentIndex + 1;
     }
-    /*!
-        \qmlmethod StatusSectionLayout::goToNextPanel()
-        This method is used to focus the panel that needs to be active.
-    */
+
     function goToPreviousPanel() {
-        // Placeholder to align with qt6 StatusSectionLayout
+        if (portraitView.visible)
+            portraitView.currentIndex = portraitView.currentIndex - 1;
     }
 
-    onCenterPanelChanged: {
-        if (!!centerPanel) {
-            centerPanel.parent = centerPanelSlot;
-        }
+    criteria: [
+        root.height > root.width && root.width < root.implicitWidth, // Portrait mode
+        true // Defaults to landscape mode
+    ]
+
+    layoutChoices: [
+        portraitView,
+        landscapeView
+    ]
+
+    StatusSectionLayoutLandscape {
+        id: landscapeView
+        anchors.fill: parent
+        handle: root.handle
+        leftPanel: root.leftPanel
+        centerPanel: root.centerPanel
+        rightPanel: root.rightPanel
+        navBar: root.navBar
+        footer: root.footer
+        headerBackground: root.headerBackground
+        showRightPanel: root.showRightPanel
+        rightPanelWidth: root.rightPanelWidth
+        showHeader: root.showHeader
+        backButtonName: root.backButtonName
+        hasUnseenNotifications: root.hasUnseenNotifications
+        notificationCount: root.notificationCount
+        headerContent: root.headerContent
+
+        onNotificationButtonClicked: root.notificationButtonClicked()
+        onBackButtonClicked: root.backButtonClicked()
     }
 
-    onFooterChanged: {
-        if (!!footer) {
-            footer.parent = footerSlot
-        }
-    }
+    StatusSectionLayoutPortrait {
+        id: portraitView
+        anchors.fill: parent
+        leftPanel: root.leftPanel
+        centerPanel: root.centerPanel
+        rightPanel: root.rightPanel
+        navBar: root.navBar
+        footer: root.footer
+        headerBackground: root.headerBackground
+        showRightPanel: root.showRightPanel
+        rightPanelWidth: root.rightPanelWidth
+        showHeader: root.showHeader
+        backButtonName: root.backButtonName
+        hasUnseenNotifications: root.hasUnseenNotifications
+        notificationCount: root.notificationCount
+        headerContent: root.headerContent
 
-    onHeaderBackgroundChanged:  {
-        if (!!headerBackground) {
-            headerBackground.parent = headerBackgroundSlot
-        }
-    }
-
-    Control {
-        id: navBarControl
-        SplitView.preferredWidth: (!!navBar) ? navBar.implicitWidth : 0
-        SplitView.fillHeight: (!!navBar)
-        background: Rectangle {
-            color: Theme.palette.baseColor4
-        }
-        contentItem: root.navBar
-        Binding {
-            when: (!!navBar) && root.visible
-            target: root.navBar
-            property: "parent"
-            value: navBarControl
-        }
-    }
-
-    Control {
-        SplitView.minimumWidth: (!!leftPanel) ? 304 : 0
-        SplitView.preferredWidth: (!!leftPanel) ? 304 : 0
-        SplitView.fillHeight: (!!leftPanel)
-        background: Rectangle {
-            color: Theme.palette.baseColor4
-        }
-        contentItem: (!!leftPanel) ? leftPanel : null
-    }
-
-    Control {
-        SplitView.minimumWidth: (!!centerPanel) ? 300 : 0
-        SplitView.fillWidth: (!!centerPanel)
-        SplitView.fillHeight: (!!centerPanel)
-        background: Rectangle {
-            color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
-        }
-        contentItem: Item {
-            Item {
-                id: headerBackgroundSlot
-                anchors.top: parent.top
-                // Needed cause I see a gap otherwise
-                anchors.topMargin: -3
-                width: visible ? parent.width : 0
-                height: visible ? childrenRect.height : 0
-                visible: (!!headerBackground)
-            }
-            StatusToolBar {
-                id: statusToolBar
-                anchors.top: parent.top
-                width: visible ? parent.width : 0
-                visible: root.showHeader
-                onBackButtonClicked: {
-                    root.backButtonClicked();
-                }
-                onNotificationButtonClicked: {
-                    root.notificationButtonClicked();
-                }
-            }
-            Item {
-                id: centerPanelSlot
-                width: parent.width
-                anchors.top: statusToolBar.bottom
-                anchors.bottom: footerSlot.top
-                anchors.bottomMargin: footerSlot.visible ? 8 : 0
-            }
-            Item {
-                id: footerSlot
-                width: parent.width
-                height: visible ? childrenRect.height : 0
-                anchors.bottom: parent.bottom
-                visible: (!!footer)
-            }
-        }
-    }
-
-    Control {
-        SplitView.preferredWidth: root.showRightPanel ? root.rightPanelWidth : 0
-        SplitView.minimumWidth: root.showRightPanel ? 58 : 0
-        opacity: root.showRightPanel ? 1.0 : 0.0
-        visible: (opacity > 0.1)
-        background: Rectangle {
-            color: Theme.palette.baseColor4
-        }
-        contentItem: Loader {
-            sourceComponent: (!!rightPanel) ? rightPanel : null
-        }
+        onNotificationButtonClicked: root.notificationButtonClicked()
+        onBackButtonClicked: root.backButtonClicked()
     }
 }

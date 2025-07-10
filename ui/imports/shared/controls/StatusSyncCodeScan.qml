@@ -1,6 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtCore
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -71,7 +72,11 @@ Column {
         width: 330
         height: 330
 
-        sourceComponent: d.showCamera ? cameraComponent : btnComponent
+        CameraPermission {
+            id: cameraPermission
+        }
+
+        sourceComponent: d.showCamera && cameraPermission.status === Qt.Granted ? cameraComponent : btnComponent
     }
 
     Component {
@@ -96,7 +101,7 @@ Column {
                     text: qsTr('Enable access to your camera')
                     leftPadding: 48
                     rightPadding: 48
-                    font.pixelSize: Theme.primaryTextFontSize
+                    font.pixelSize: 15
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -106,7 +111,7 @@ Column {
                     text: qsTr("To scan a QR, Status needs\naccess to your webcam")
                     leftPadding: 48
                     rightPadding: 48
-                    font.pixelSize: Theme.primaryTextFontSize
+                    font.pixelSize: 15
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                     color: Theme.palette.directColor4
@@ -118,6 +123,7 @@ Column {
                     text: qsTr("Enable camera access")
                     onClicked: {
                         loading = true
+                        cameraPermission.request()
                         Backpressure.debounce(this, 250, () => {
                             button.loading = false
                             d.showCamera = true
@@ -142,7 +148,7 @@ Column {
             }
         }
     }
-    
+
     Item {
         width: parent.width
         height: 8
