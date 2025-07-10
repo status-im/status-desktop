@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import StatusQ
 import StatusQ.Controls
+import StatusQ.Core
 import StatusQ.Core.Theme
 
 import AppLayouts.Profile.stores as ProfileStores
@@ -43,18 +44,22 @@ Control {
     signal setCurrentUserStatusRequested(int status)
     signal viewProfileRequested(string pubKey)
 
-    topPadding: Theme.bigPadding * 2
+    topPadding: Theme.defaultBigPadding * 2
     bottomPadding: Theme.smallPadding * 2
-    horizontalPadding: Theme.smallPadding * 2
+    horizontalPadding: Theme.defaultSmallPadding * 2
 
-    spacing: Theme.bigPadding
+    spacing: Theme.defaultBigPadding
 
     function focusSearch() {
         // Need to use Qt.callLater to ensure the focus is set after the component is fully loaded
         Qt.callLater(() => searchField.forceActiveFocus())
     }
 
-    Component.onCompleted: focusSearch()
+    Component.onCompleted: {
+        if (!Constants.isMobile) {
+            focusSearch()
+        }
+    }
 
     Keys.onEscapePressed: {
         searchField.clear()
@@ -81,19 +86,37 @@ Control {
     contentItem: ColumnLayout {
         spacing: root.spacing
 
-        HomePageSearchField {
+        Rectangle {
             Layout.maximumWidth: parent.width
+            Layout.preferredWidth: Math.max(searchField.implicitWidth, placeholderText.implicitWidth)
+            Layout.preferredHeight: searchField.implicitHeight
             Layout.alignment: Qt.AlignHCenter
+            color: Theme.palette.baseColor3
+            radius: Theme.defaultSmallPadding * 2
+            z: grid.z + 1 // to make sure it's on top of the grid
 
-            id: searchField
-            objectName: "homeSearchField"
+            HomePageSearchField {
+                id: searchField
+                objectName: "homeSearchField"
+                anchors.fill: parent
 
-            font.pixelSize: d.isNarrowView ? 23 : 27
+                font.pixelSize: d.isNarrowView ? Theme.fontSize23 : Theme.fontSize27
 
-            placeholderText: qsTr("Jump to a community, chat, account or a dApp...")
+                StatusBaseText {
+                    id: placeholderText
+                    anchors.fill: parent
+                    text: qsTr("Jump to a community, chat, account or a dApp...")
+                    font.pixelSize: searchField.font.pixelSize
+                    fontSizeMode: Text.Fit
+                    color: Theme.palette.baseColor1
+                    verticalAlignment: Text.AlignVCenter
+                    visible: searchField.text.length === 0
+                }
+            }
         }
 
         HomePageGrid {
+            id: grid
             Layout.fillWidth: true
             Layout.rightMargin: -root.horizontalPadding
             Layout.fillHeight: true
@@ -102,8 +125,8 @@ Control {
 
             model: root.homePageEntriesModel
 
-            delegateWidth: d.isNarrowView ? 140 : 160
-            spacing: d.isNarrowView ? 10 : Theme.padding
+            delegateWidth: 160
+            spacing: d.isNarrowView ? 10 : Theme.defaultPadding
 
             onItemActivated: function(key, sectionType, itemId) {
                 root.itemActivated(key, sectionType, itemId)
@@ -142,9 +165,9 @@ Control {
     // top right action buttons
     RowLayout {
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Theme.defaultPadding
         anchors.top: parent.top
-        anchors.topMargin: Theme.smallPadding
+        anchors.topMargin: Theme.defaultSmallPadding
         spacing: 12
 
         StatusActivityCenterButton {
