@@ -12,6 +12,7 @@ type SignalType* {.pure.} = enum
   WalletTransactionStatusChanged = "wallet.transaction.status-changed"
   WalletSuggestedRoutes = "wallet.suggested.routes"
   WalletTokensListsUpdated = "wallet.token-lists.updated"
+  NetworksBlockchainHealthChanged = "networks.blockchainHealthChanged"
   NodeReady = "node.ready"
   NodeCrashed = "node.crashed"
   NodeStarted = "node.started"
