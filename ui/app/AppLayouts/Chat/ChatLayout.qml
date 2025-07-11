@@ -17,6 +17,7 @@ import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
@@ -29,7 +30,6 @@ StackLayout {
 
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
-    readonly property ProfileStores.ContactsStore contactsStore: rootStore.contactsStore
     readonly property SharedStores.PermissionsStore permissionsStore: rootStore.permissionsStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.TokensStore tokensStore
@@ -83,10 +83,19 @@ StackLayout {
     // Community transfer ownership related props/signals:
     property bool isPendingOwnershipRequest: sectionItemModel.isPendingOwnershipRequest
 
+    // Contacts related data:
+    property string myPublicKey
+
     // Unfurling related requests:
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
+
+    // Contacts related requests:
+    signal changeContactNicknameRequest(string pubKey, string nickname, string displayName, bool isEdit)
+    signal removeTrustStatusRequest(string pubKey)
+    signal dismissContactRequest(string chatId, string contactRequestId)
+    signal acceptContactRequest(string chatId, string contactRequestId)
 
     onIsPrivilegedUserChanged: if (root.currentIndex === 1) root.currentIndex = 0
 
@@ -179,7 +188,6 @@ StackLayout {
             objectName: "chatViewComponent"
             navBar: root.navBar
 
-            contactsStore: root.contactsStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
             communitiesStore: root.communitiesStore
@@ -256,6 +264,9 @@ StackLayout {
             // Users related data:
             usersModel: root.usersModel
 
+            // Contacts related data:
+            myPublicKey: root.myPublicKey
+
             onGroupMembersUpdateRequested: root.groupMembersUpdateRequested(membersPubKeysList)
 
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)
@@ -284,6 +295,12 @@ StackLayout {
             onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
             onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
+
+            // Contacts related requests:
+            onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+            onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
+            onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
+            onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
         }
     }
 

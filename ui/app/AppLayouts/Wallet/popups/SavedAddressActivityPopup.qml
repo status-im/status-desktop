@@ -24,7 +24,7 @@ StatusModal {
     id: root
 
     property SharedStores.NetworkConnectionStore networkConnectionStore
-    property ProfileStores.ContactsStore contactsStore
+    property ContactsStore contactsStore
     required property SharedStores.NetworksStore networksStore
 
     signal sendToAddressRequested(string address)

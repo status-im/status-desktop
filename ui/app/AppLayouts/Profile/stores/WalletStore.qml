@@ -17,6 +17,9 @@ QtObject {
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
+    readonly property bool isWalletEnabled: Global.appIsReady ?
+                                                mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
+
     property var selectedAccount
 
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile

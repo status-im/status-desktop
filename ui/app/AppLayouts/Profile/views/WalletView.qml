@@ -27,6 +27,7 @@ import AppLayouts.Profile.views.wallet 1.0
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet 1.0
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 SettingsContentBase {
     id: root
@@ -36,9 +37,11 @@ SettingsContentBase {
     property alias currencySymbol: manageTokensView.currencySymbol
 
     property int settingsSubSubsection
+    property string backButtonName: ""
 
-    property ProfileSectionStore rootStore
-    property WalletStore walletStore: rootStore.walletStore
+    property WalletStore walletStore
+    property KeycardStore keycardStore
+    property AppLayoutStores.ContactsStore contactsStore
     required property TokensStore tokensStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property WalletAssetsStore assetsStore
@@ -57,6 +60,8 @@ SettingsContentBase {
     readonly property string networksSectionTitle: qsTr("Networks")
 
     property bool isKeycardEnabled: true
+
+    property var fnAddressWasShown: function(address) {}
 
     function resetStack() {
         if(stackContainer.currentIndex === root.editNetworksViewIndex) {
@@ -155,7 +160,7 @@ SettingsContentBase {
         }
 
         onCurrentIndexChanged: {
-            root.rootStore.backButtonName = ""
+            root.backButtonName = ""
             root.sectionTitle = root.walletSectionTitle
             root.titleRowComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.sourceComponent = undefined
@@ -168,14 +173,14 @@ SettingsContentBase {
             }
 
             if(currentIndex == root.networksViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.sectionTitle = root.networksSectionTitle
 
                 root.titleRowComponentLoader.sourceComponent = toggleTestnetModeSwitchComponent
             }
 
             if(currentIndex == root.editNetworksViewIndex) {
-                root.rootStore.backButtonName = root.networksSectionTitle
+                root.backButtonName = root.networksSectionTitle
                 root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.network &&
                                                         !!editNetwork.network.chainName ? editNetwork.network.chainName: "")
                 root.titleRowLeftComponentLoader.visible = true
@@ -183,23 +188,23 @@ SettingsContentBase {
                 root.titleLayout.spacing = 12
 
             } else if(currentIndex == root.accountViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.sectionTitle = ""
 
             } else if(currentIndex == root.accountOrderViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
 
             } else if(currentIndex == root.manageTokensViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
             } else if(currentIndex == root.savedAddressesViewIndex) {
-                root.rootStore.backButtonName = root.walletSectionTitle
+                root.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Saved addresses")
 
@@ -223,7 +228,7 @@ SettingsContentBase {
 
             onGoToAccountView: {
                 if (!!account && !!account.address) {
-                    root.rootStore.addressWasShown(account.address)
+                    root.fnAddressWasShown(account.address)
                 }
 
                 root.walletStore.setSelectedAccount(account.address)
@@ -248,10 +253,10 @@ SettingsContentBase {
                 removeKeypairPopup.active = true
             }
             onRunMoveKeypairToKeycardFlow: {
-                root.rootStore.keycardStore.runSetupKeycardPopup(model.keyPair.keyUid)
+                root.keycardStore.runSetupKeycardPopup(model.keyPair.keyUid)
             }
             onRunStopUsingKeycardFlow: {
-                root.rootStore.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
+                root.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
             }
             onGoToManageTokensView: {
                 stackContainer.currentIndex = manageTokensViewIndex
@@ -338,10 +343,10 @@ SettingsContentBase {
                 root.walletStore.runKeypairImportPopup(keyPair.keyUid, Constants.keypairImportPopup.mode.selectImportMethod)
             }
             onRunMoveKeypairToKeycardFlow: {
-                root.rootStore.keycardStore.runSetupKeycardPopup(keyPair.keyUid)
+                root.keycardStore.runSetupKeycardPopup(keyPair.keyUid)
             }
             onRunStopUsingKeycardFlow: {
-                root.rootStore.keycardStore.runStopUsingKeycardPopup(keyPair.keyUid)
+                root.keycardStore.runStopUsingKeycardPopup(keyPair.keyUid)
             }
             onUpdateWatchAccountHiddenFromTotalBalance: {
                 root.walletStore.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
@@ -390,7 +395,7 @@ SettingsContentBase {
 
         SavedAddressesView {
             id: savedAddressesView
-            contactsStore: root.rootStore.contactsStore
+            contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
 

@@ -12,12 +12,12 @@ import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
-import AppLayouts.Profile.stores 1.0
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 StatusModal {
     id: root
 
-    property ContactsStore contactsStore
+    property AppLayoutStores.ContactsStore contactsStore
 
     headerSettings.title: qsTr("Send Contact Request to chat key")
     padding: d.contentMargins

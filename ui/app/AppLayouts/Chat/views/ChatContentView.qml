@@ -17,6 +17,7 @@ import shared.controls 1.0
 import shared.views.chat 1.0
 
 import AppLayouts.Profile.stores 1.0
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 import "../helpers"
 import "../controls"
@@ -33,7 +34,6 @@ ColumnLayout {
     property var chatSectionModule
 
     property RootStore rootStore
-    property ContactsStore contactsStore
     property string chatId
     property int chatType: Constants.chatType.unknown
     property var formatBalance
@@ -62,6 +62,9 @@ ColumnLayout {
     property bool sendViaPersonalChatEnabled
     property string disabledTooltipText
 
+    // Contacts related data:
+    property string myPublicKey
+
     signal showReplyArea(messageId: string)
     signal forceInputFocus()
 
@@ -72,6 +75,12 @@ ColumnLayout {
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
+
+    // Contacts related requests:
+    signal changeContactNicknameRequest(string pubKey, string nickname, string displayName, bool sEdit)
+    signal removeTrustStatusRequest(string pubKey)
+    signal dismissContactRequest(string chatId, string contactRequestId)
+    signal acceptContactRequest(string chatId, string contactRequestId)
 
     objectName: "chatContentViewColumn"
     spacing: 0
@@ -95,7 +104,6 @@ ColumnLayout {
             chatContentModule: root.chatContentModule
 
             rootStore: root.rootStore
-            contactsStore: root.contactsStore
             messageStore: root.messageStore
             formatBalance: root.formatBalance
             emojiPopup: root.emojiPopup
@@ -115,6 +123,9 @@ ColumnLayout {
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             neverAskAboutUnfurlingAgain: root.neverAskAboutUnfurlingAgain
 
+            // Contacts related data:
+            myPublicKey: root.myPublicKey
+
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)
             }
@@ -131,6 +142,12 @@ ColumnLayout {
             onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
             onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
+
+            // Contacts related requests:
+            onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+            onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
+            onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
+            onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
         }
     }
 }

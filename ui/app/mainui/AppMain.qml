@@ -49,6 +49,7 @@ import AppLayouts.Wallet.popups 1.0 as WalletPopups
 import AppLayouts.Wallet.popups.dapps 1.0 as DAppsPopups
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.stores 1.0 as AppStores
+import AppLayouts.stores.Messaging 1.0 as MessagingStores
 
 import mainui.adaptors 1.0
 import mainui.activitycenter.stores 1.0
@@ -60,7 +61,33 @@ import SortFilterProxyModel 0.2
 
 Item {
     id: appMain
+    
+    // Primary store container — all additional stores should be initialized under this root
+    readonly property AppStores.RootStore rootStore: AppStores.RootStore {
+        onOpenUrl: {
+            Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+        }
+    }
 
+    // Global cross-domain stores (just references from `rootStore`)
+    readonly property AppStores.ContactsStore contactsStore: rootStore.contactsStore
+
+    // Settings (just references from `rootStore`)
+    readonly property ProfileStores.AboutStore aboutStore: rootStore.profileSectionStore.aboutStore
+    readonly property ProfileStores.ProfileStore profileStore: rootStore.profileSectionStore.profileStore
+    readonly property ProfileStores.DevicesStore devicesStore: rootStore.profileSectionStore.devicesStore
+    readonly property ProfileStores.AdvancedStore advancedStore: rootStore.profileSectionStore.advancedStore
+    readonly property ProfileStores.PrivacyStore privacyStore: rootStore.profileSectionStore.privacyStore
+    readonly property ProfileStores.NotificationsStore notificationsStore: rootStore.profileSectionStore.notificationsStore
+    readonly property ProfileStores.LanguageStore languageStore: rootStore.profileSectionStore.languageStore
+    readonly property ProfileStores.KeycardStore keycardStore: rootStore.profileSectionStore.keycardStore
+    readonly property ProfileStores.WalletStore walletProfileStore: rootStore.profileSectionStore.walletStore
+    readonly property ProfileStores.EnsUsernamesStore ensUsernamesStore: rootStore.profileSectionStore.ensUsernamesStore
+
+    // Messaging (just references from `rootStore`)
+    readonly property MessagingStores.MessagingSettingsStore messagingSettingsStore: rootStore.messagingRootStore.messagingSettingsStore
+
+    // Note: The following stores have not yet been refactored to follow the entry-point pattern via the main root store
     readonly property SharedStores.RootStore sharedRootStore: SharedStores.RootStore {
         currencyStore: appMain.currencyStore
     }
@@ -68,17 +95,9 @@ Item {
     property SharedStores.UtilsStore utilsStore
 
     readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
-    
-    readonly property AppStores.RootStore rootStore: AppStores.RootStore {
-        onOpenUrl: {
-            Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
-        }
-    }
-    readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
-    readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
 
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
-        contactsStore: appMain.rootStore.contactStore
+        contactsStore: appMain.contactsStore
         currencyStore: appMain.currencyStore
         communityTokensStore: appMain.communityTokensStore
         emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -119,9 +138,9 @@ Item {
     AllContactsAdaptor {
         id: allContacsAdaptor
 
-        contactsModel: appMain.rootStore.contactStore.contactsModel
+        contactsModel: appMain.contactsStore.contactsModel
 
-        selfPubKey: appMain.profileStore.pubkey
+        selfPubKey: appMain.profileStore.pubKey
         selfDisplayName : appMain.profileStore.displayName
         selfName: appMain.profileStore.name
         selfPreferredDisplayName: appMain.profileStore.preferredName
@@ -139,7 +158,7 @@ Item {
     ContactsModelAdaptor {
         id: contactsModelAdaptor
 
-        allContacts: appMain.profileSectionStore.contactsStore.contactsModel
+        allContacts: appMain.contactsStore.contactsModel
     }
 
     // Central UI point for managing app toasts:
@@ -147,6 +166,7 @@ Item {
         id: toastsManager
 
         rootStore: appMain.rootStore
+        contactsStore: appMain.contactsStore
         rootChatStore: appMain.rootChatStore
         communityTokensStore: appMain.communityTokensStore
         profileStore: appMain.profileStore
@@ -155,7 +175,7 @@ Item {
     }
 
     Connections {
-        target: rootStore.mainModuleInst
+        target: rootStore
 
         function onDisplayUserProfile(publicKey: string) {
             popups.openProfilePopup(publicKey)
@@ -817,7 +837,7 @@ Item {
         }
 
         function openHomePage() {
-            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(Constants.appSection.homePage)
+            appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
             homePageLoader.item.focusSearch()
         }
 
@@ -846,11 +866,12 @@ Item {
         sharedRootStore: appMain.sharedRootStore
         popupParent: appMain
         rootStore: appMain.rootStore
+        chatStore: appMain.rootChatStore
         utilsStore: appMain.utilsStore
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
         profileStore: appMain.profileStore
-        devicesStore: appMain.rootStore.profileSectionStore.devicesStore
+        devicesStore: appMain.rootStore.devicesStore
         currencyStore: appMain.currencyStore
         walletAssetsStore: appMain.walletAssetsStore
         walletCollectiblesStore: appMain.walletCollectiblesStore
@@ -858,12 +879,15 @@ Item {
         networkConnectionStore: appMain.networkConnectionStore
         networksStore: appMain.networksStore
         activityCenterStore: appMain.activityCenterStore
-        advancedStore: appMain.profileSectionStore.advancedStore
+        advancedStore: appMain.advancedStore
+        aboutStore: appMain.aboutStore
+        contactsStore: appMain.contactsStore
+        privacyStore: appMain.privacyStore
 
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
 
-        isDevBuild: !production
+        isDevBuild: !appMain.rootStore.isProduction
 
         onOpenExternalLink: globalConns.onOpenLink(link)
         onSaveDomainToUnfurledWhitelist: {
@@ -883,6 +907,7 @@ Item {
 
         // Stores:
         rootStore: appMain.rootStore
+        contactsStore: appMain.contactsStore
         featureFlagsStore: appMain.featureFlagsStore
         sharedRootStore: appMain.sharedRootStore
         currencyStore: appMain.currencyStore
@@ -894,6 +919,7 @@ Item {
         transactionStoreNew: appMain.transactionStoreNew
         tokensStore: appMain.tokensStore
         rootChatStore: appMain.rootChatStore
+        ensUsernamesStore: appMain.ensUsernamesStore
     }
 
     Connections {
@@ -926,7 +952,7 @@ Item {
         }
 
         function onActivateDeepLink(link: string) {
-            appMain.rootStore.mainModuleInst.activateStatusDeepLink(link)
+            appMain.rootStore.activateStatusDeepLink(link)
         }
 
         function onPlaySendMessageSound() {
@@ -945,16 +971,11 @@ Item {
         }
 
         function onSetNthEnabledSectionActive(nthSection: int) {
-            if(!appMain.rootStore.mainModuleInst)
-                return
-            appMain.rootStore.mainModuleInst.setNthEnabledSectionActive(nthSection)
+            appMain.rootStore.setNthEnabledSectionActive(nthSection)
         }
 
         function onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection = -1, data = {}) {
-            if(!appMain.rootStore.mainModuleInst)
-                return
-
-            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
+            appMain.rootStore.setActiveSectionBySectionType(sectionType)
 
             if (sectionType === Constants.appSection.profile) {
                 profileLoader.settingsSubsection = subsection || Constants.settingsSubsection.profile
@@ -964,7 +985,7 @@ Item {
             } else if (sectionType === Constants.appSection.swap) {
                 popupRequestsHandler.swapModalHandler.launchSwap()
             } else if (sectionType === Constants.appSection.chat) {
-                appMain.rootStore.setActiveSectionChat(appMain.profileStore.pubkey, subsection)
+                appMain.rootStore.setActiveSectionChat(appMain.profileStore.pubKey, subsection)
             } else if (sectionType === Constants.appSection.community && subsection !== "") {
                 appMain.communitiesStore.setActiveCommunity(subsection)
             }
@@ -1050,7 +1071,7 @@ Item {
     }
 
     function changeAppSectionBySectionId(sectionId) {
-        appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
+        appMain.rootStore.setActiveSectionById(sectionId)
     }
 
     StatusSoundEffect {
@@ -1127,7 +1148,7 @@ Item {
 
     Loader {
         id: statusEmojiPopup
-        active: appMain.rootStore.mainModuleInst.sectionsLoaded
+        active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
             height: 440
             settings: localAccountSensitiveSettings
@@ -1137,10 +1158,10 @@ Item {
 
     Loader {
         id: statusStickersPopupLoader
-        active: appMain.rootStore.mainModuleInst.sectionsLoaded
+        active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusStickersPopup {
             store: appMain.rootChatStore
-            isWalletEnabled: appMain.profileStore.isWalletEnabled
+            isWalletEnabled: appMain.walletProfileStore.isWalletEnabled
             onBuyClicked: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
         }
     }
@@ -1150,7 +1171,7 @@ Item {
         width: visible ? implicitWidth : 0
 
         topSectionModel: SortFilterProxyModel {
-            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            sourceModel: appMain.rootStore.sectionsModel
             filters: [
                 AnyOf {
                     ValueFilter {
@@ -1185,7 +1206,7 @@ Item {
         topSectionDelegate: navbarButton
 
         communityItemsModel: SortFilterProxyModel {
-            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            sourceModel: appMain.rootStore.sectionsModel
             filters: [
                 ValueFilter {
                     roleName: "sectionType"
@@ -1231,8 +1252,7 @@ Item {
                     openHandler: function () {
                         // we cannot return QVariant if we pass another parameter in a function call
                         // that's why we're using it this way
-                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
-                        communityContextMenu.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
+                        communityContextMenu.chatCommunitySectionModule = appMain.rootChatStore.getCommunitySectionModule(model.id)
                     }
 
                     StatusAction {
@@ -1318,7 +1338,7 @@ Item {
         }
 
         regularItemsModel: SortFilterProxyModel {
-            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+            sourceModel: appMain.rootStore.sectionsModel
             filters: [
                 RangeFilter {
                     roleName: "sectionType"
@@ -1340,7 +1360,7 @@ Item {
 
             name: appMain.profileStore.name
             usesDefaultName: appMain.profileStore.usesDefaultName
-            pubKey: appMain.profileStore.pubkey
+            pubKey: appMain.profileStore.pubKey
             compressedPubKey: appMain.profileStore.compressedPubKey
             isEnsVerified: !!appMain.profileStore.preferredName
             iconSource: appMain.profileStore.icon
@@ -1349,7 +1369,7 @@ Item {
             currentUserStatus: appMain.profileStore.currentUserStatus
 
             getEmojiHashFn: appMain.utilsStore.getEmojiHash
-            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+            getLinkToProfileFn: appMain.contactsStore.getLinkToProfile
             onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
             onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
         }
@@ -1406,12 +1426,12 @@ Item {
                 id: bannersLayout
 
                 enabled: !localAppSettings.testEnvironment
-                         && appMain.rootStore.mainModuleInst.activeSection.sectionType !== Constants.appSection.homePage
+                         && appMain.rootStore.activeSection.sectionType !== Constants.appSection.homePage
                 visible: enabled
 
                 property var updateBanner: null
                 property var connectedBanner: null
-                readonly property bool isConnected: appMain.rootStore.mainModuleInst.isOnline
+                readonly property bool isConnected: appMain.rootStore.isOnline
 
                 function processUpdateAvailable() {
                     if (!updateBanner)
@@ -1463,8 +1483,8 @@ Item {
                     id: secureYourSeedPhrase
                     objectName: "secureYourSeedPhraseBanner"
                     Layout.fillWidth: true
-                    active: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner
-                              && !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
+                    active: !appMain.profileStore.userDeclinedBackupBanner
+                              && !appMain.privacyStore.mnemonicBackedUp
                     type: ModuleWarning.Danger
                     text: qsTr("Secure your recovery phrase")
                     buttonText: qsTr("Back up now")
@@ -1472,7 +1492,7 @@ Item {
                     onClicked: popups.openBackUpSeedPopup()
 
                     onCloseClicked: {
-                        appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner = true
+                        appMain.profileStore.userDeclinedBackupBanner = true
                     }
                 }
 
@@ -1766,7 +1786,7 @@ Item {
                     anchors.fill: parent
 
                     currentIndex: {
-                        const activeSectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
+                        const activeSectionType = appMain.rootStore.activeSectionType
                         switch (activeSectionType) {
                         case Constants.appSection.homePage:
                             return Constants.appViewStackIndex.homePage
@@ -1775,13 +1795,13 @@ Item {
                         case Constants.appSection.community:
                             for (let i = this.children.length - 1; i >= 0; i--) {
                                 var obj = this.children[i]
-                                if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.mainModuleInst.activeSection.id) {
+                                if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.activeSectionId) {
                                     return i
                                 }
                             }
                             // Should never be here, correct index must be returned from the for loop above
-                            console.error("Wrong section type:", appMain.rootStore.mainModuleInst.activeSection.sectionType,
-                                          "or section id: ", appMain.rootStore.mainModuleInst.activeSection.id)
+                            console.error("Wrong section type:", appMain.rootStore.activeSectionType,
+                                          "or section id: ", appMain.rootStore.activeSectionId)
                             return Constants.appViewStackIndex.community
                         case Constants.appSection.communitiesPortal:
                             return Constants.appViewStackIndex.communitiesPortal
@@ -1799,7 +1819,7 @@ Item {
                         }
                     }
                     onCurrentIndexChanged: {
-                        const sectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
+                        const sectionType = appMain.rootStore.activeSectionType
                         if (sectionType !== Constants.appSection.profile && sectionType !== Constants.appSection.wallet) {
                             d.maybeDisplayIntroduceYourselfPopup()
                         }
@@ -1825,10 +1845,10 @@ Item {
 
                             HomePageAdaptor {
                                 id: homePageAdaptor
-                                readonly property bool sectionsLoaded: appMain.rootStore.mainModuleInst && appMain.rootStore.mainModuleInst.sectionsLoaded
+                                readonly property bool sectionsLoaded: appMain.rootStore.sectionsLoaded
 
-                                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.sectionsModel : null
-                                chatsBaseModel: sectionsLoaded ? appMain.rootStore.mainModuleInst.getChatSectionModule().model
+                                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.sectionsModel : null
+                                chatsBaseModel: sectionsLoaded ? appMain.rootChatStore.chatSectionModuleModel
                                                                : null
                                 chatsSearchBaseModel: sectionsLoaded && !!rootStore.chatSearchModel ? rootStore.chatSearchModel : null
                                 walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
@@ -1855,7 +1875,7 @@ Item {
                             profileStore: appMain.profileStore
 
                             getEmojiHashFn: appMain.utilsStore.getEmojiHash
-                            getLinkToProfileFn: appMain.rootStore.contactStore.getLinkToProfile
+                            getLinkToProfileFn: appMain.contactsStore.getLinkToProfile
 
                             useNewDockIcons: false
                             hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
@@ -1907,10 +1927,10 @@ Item {
                         asynchronous: true
                         active: false
                         sourceComponent: {
-                            if (appMain.rootStore.mainModuleInst.chatsLoadingFailed) {
+                            if (appMain.rootChatStore.chatsLoadingFailed) {
                                 return errorStateComponent
                             }
-                            if (appMain.rootStore.mainModuleInst.sectionsLoaded) {
+                            if (appMain.rootStore.sectionsLoaded) {
                                 return personalChatLayoutComponent
                             }
                             return loadingStateComponent
@@ -1961,14 +1981,13 @@ Item {
 
                                 navBar: appMain.navBar
                                 rootStore: ChatStores.RootStore {
-                                    contactsStore: appMain.rootStore.contactStore
+                                    contactsStore: appMain.contactsStore
                                     currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
                                     networkConnectionStore: appMain.networkConnectionStore
-
-                                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                    isChatSectionModule: true
                                 }
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 tokensStore: appMain.tokensStore
@@ -1976,7 +1995,7 @@ Item {
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
                                 networksStore: appMain.networksStore
-                                advancedStore: appMain.profileSectionStore.advancedStore
+                                advancedStore: appMain.advancedStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled
@@ -1992,6 +2011,9 @@ Item {
 
                                 // Users related data
                                 usersModel: rootStore.usersStore.usersModel
+
+                                // Contacts related data:
+                                myPublicKey: appMain.contactsStore.myPublicKey
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -2011,6 +2033,12 @@ Item {
 
                                 // Edit group chat members signals:
                                 onGroupMembersUpdateRequested: rootStore.usersStore.groupMembersUpdateRequested(membersPubKeysList)
+
+                                // Contacts related requests:
+                                onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
+                                onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
+                                onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
+                                onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
                             }
                         }
                     }
@@ -2039,7 +2067,7 @@ Item {
                             navBar: appMain.navBar
                             sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore
-                            contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                            contactsStore: appMain.contactsStore
                             communitiesStore: appMain.communitiesStore
                             transactionStore: appMain.transactionStore
                             emojiPopup: statusEmojiPopup.item
@@ -2090,20 +2118,34 @@ Item {
                         asynchronous: true
                         sourceComponent: ProfileLayout {
                             navBar: appMain.navBar
+                            isProduction: appMain.rootStore.isProduction
+
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
-                            store: appMain.rootStore.profileSectionStore
+                            aboutStore: appMain.aboutStore
+                            profileStore: appMain.profileStore
+                            contactsStore: appMain.contactsStore
+                            devicesStore: appMain.devicesStore
+                            advancedStore: appMain.advancedStore
+                            privacyStore: appMain.privacyStore
+                            notificationsStore: appMain.notificationsStore
+                            languageStore: appMain.languageStore
+                            keycardStore: appMain.keycardStore
+                            walletStore: appMain.walletProfileStore
+                            messagingSettingsStore: appMain.messagingSettingsStore
+                            ensUsernamesStore: appMain.ensUsernamesStore
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore
-                            emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore
                             walletAssetsStore: appMain.walletAssetsStore
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
-                            isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             networksStore: appMain.networksStore
+
+                            isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             keychain: appMain.keychain
+                            emojiPopup: statusEmojiPopup.item
 
                             mutualContactsModel: contactsModelAdaptor.mutualContacts
                             blockedContactsModel: contactsModelAdaptor.blockedContacts
@@ -2112,11 +2154,19 @@ Item {
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
 
-                            onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
+                            fnAddressWasShown: WalletStores.RootStore.addressWasShown
 
+                            onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
                             onConnectUsernameRequested: popupRequestsHandler.sendModalHandler.connectUsername(ensName)
                             onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
                             onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
+
+                            // Communities related settings view:
+                            onLeaveCommunityRequest: appMain.communitiesStore.leaveCommunity(communityId)
+                            onSetCommunityMutedRequest: appMain.communitiesStore.setCommunityMuted(communityId, mutedType)
+                            onInviteFriends: Global.openInviteFriendsToCommunityPopup(communityData,
+                                                                                      appMain.communitiesStore.communitiesProfileModule,
+                                                                                      null)
                         }
                         onLoaded: {
                             item.settingsSubsection = profileLoader.settingsSubsection
@@ -2171,7 +2221,7 @@ Item {
 
                     Repeater {
                         model: SortFilterProxyModel {
-                            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+                            sourceModel: appMain.rootStore.sectionsModel
                             filters: ValueFilter {
                                 roleName: "sectionType"
                                 value: Constants.appSection.community
@@ -2192,7 +2242,7 @@ Item {
                             // to reset scroll, not send text input and etc during the
                             // sections switching
                             Binding on active {
-                                when: sectionId === appMain.rootStore.mainModuleInst.activeSection.id
+                                when: sectionId === appMain.rootStore.activeSectionId
                                 value: true
                                 restoreMode: Binding.RestoreNone
                             }
@@ -2200,7 +2250,7 @@ Item {
                             sourceComponent: ChatLayout {
                                 id: chatLayoutComponent
 
-                                readonly property bool isManageCommunityEnabledInAdvanced: appMain.rootStore.profileSectionStore.advancedStore.isManageCommunityOnTestModeEnabled
+                                readonly property bool isManageCommunityEnabledInAdvanced: appMain.advancedStore.isManageCommunityOnTestModeEnabled
 
                                 Connections {
                                     target: Global
@@ -2223,25 +2273,22 @@ Item {
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
-                                                           (production && appMain.networksStore.areTestNetworksEnabled)
+                                                           (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
                                 rootStore: ChatStores.RootStore {
-                                    contactsStore: appMain.rootStore.contactStore
+                                    contactsStore: appMain.contactsStore
                                     currencyStore: appMain.currencyStore
                                     communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
-
-                                    chatCommunitySectionModule: {
-                                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
-                                        return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
-                                    }
+                                    isChatSectionModule: false
+                                    communityId: model.id
                                 }
                                 tokensStore: appMain.tokensStore
                                 transactionStore: appMain.transactionStore
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
                                 networksStore: appMain.networksStore
-                                advancedStore: appMain.profileSectionStore.advancedStore
+                                advancedStore: appMain.advancedStore
                                 paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -2251,6 +2298,9 @@ Item {
                                 neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
 
                                 usersModel: rootStore.usersStore.usersModel
+
+                                // Contacts related data:
+                                myPublicKey: appMain.contactsStore.myPublicKey
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -2267,6 +2317,12 @@ Item {
                                 onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
                                 onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
+
+                                // Contacts related requests:
+                                onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
+                                onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
+                                onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
+                                onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
                             }
                         }
                     }
@@ -2278,7 +2334,7 @@ Item {
                     property bool opened: false
                     readonly property real defaultWidth: parent.width - Constants.chatSectionLeftColumnWidth -
                              anchors.rightMargin - anchors.leftMargin
-                    active: appMain.rootStore.mainModuleInst.sectionsLoaded && opened
+                    active: appMain.rootStore.sectionsLoaded && opened
 
                     asynchronous: true
                     anchors.top: parent.top
@@ -2291,12 +2347,12 @@ Item {
                         width: Math.min(Math.max(implicitWidth, createChatView.defaultWidth), createChatView.parent.width)
                         utilsStore: appMain.utilsStore
                         rootStore: ChatStores.RootStore {
-                            contactsStore: appMain.rootStore.contactStore
+                            contactsStore: appMain.contactsStore
                             currencyStore: appMain.currencyStore
                             communityTokensStore: appMain.communityTokensStore
                             emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                             openCreateChat: createChatView.opened
-                            chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                            isChatSectionModule: true
                         }
                         createChatPropertiesStore: appMain.createChatPropertiesStore
 
@@ -2319,17 +2375,17 @@ Item {
                 y: parent.y + _buttonSize
                 height: appView.height - _buttonSize * 2
                 store: ChatStores.RootStore {
-                    contactsStore: appMain.rootStore.contactStore
+                    contactsStore: appMain.contactsStore
                     currencyStore: appMain.currencyStore
                     communityTokensStore: appMain.communityTokensStore
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                     openCreateChat: createChatView.opened
                     walletStore: WalletStores.RootStore
-                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                    isChatSectionModule: true
                 }
                 activityCenterStore: appMain.activityCenterStore
-                privacyStore: appMain.profileSectionStore.privacyStore
-                notificationsStore: appMain.profileSectionStore.notificationsStore
+                privacyStore: appMain.privacyStore
+                notificationsStore: appMain.notificationsStore
             }
         }
 
@@ -2453,7 +2509,7 @@ Item {
         height: Math.min(parent.height - 120, toastArea.contentHeight)
         spacing: 8
         verticalLayoutDirection: ListView.BottomToTop
-        model: appMain.rootStore.mainModuleInst.ephemeralNotificationModel
+        model: appMain.rootStore.ephemeralNotificationModel
         clip: false
 
         delegate: StatusToastMessage {
@@ -2484,7 +2540,7 @@ Item {
             actionRequired: model.actionType !== ToastsManager.ActionType.None
             duration: model.durationInMs
             onClicked: {
-                appMain.rootStore.mainModuleInst.ephemeralNotificationClicked(model.timestamp)
+                appMain.rootStore.ephemeralNotificationClicked(model.timestamp)
                 this.open = false
             }
             onLinkActivated: {
@@ -2505,7 +2561,7 @@ Item {
                     Global.openLink(link)
             }
             onClose: {
-                appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.timestamp)
+                appMain.rootStore.removeEphemeralNotification(model.timestamp)
             }
         }
     }
@@ -2515,7 +2571,7 @@ Item {
         active: false
         sourceComponent: KeycardPopup {
             myKeyUid: appMain.profileStore.keyUid
-            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModuleForAuthenticationOrSigning
+            sharedKeycardModule: appMain.rootStore.keycardSharedModuleForAuthenticationOrSigning
         }
 
         onLoaded: {
@@ -2528,7 +2584,7 @@ Item {
         active: false
         sourceComponent: KeycardPopup {
             myKeyUid: appMain.profileStore.keyUid
-            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModule
+            sharedKeycardModule: appMain.rootStore.keycardSharedModule
         }
 
         onLoaded: {
@@ -2771,7 +2827,7 @@ Item {
 
         sourceComponent: WalletPopups.SavedAddressActivityPopup {
             networkConnectionStore: appMain.networkConnectionStore
-            contactsStore: appMain.rootStore.contactStore
+            contactsStore: appMain.contactsStore
             networksStore: appMain.networksStore
 
             onSendToAddressRequested: {
@@ -2879,7 +2935,7 @@ Item {
                 }
                 wcSdk: WalletConnectSDK {
                     enabled: featureFlagsStore.dappsEnabled && WalletStores.RootStore.walletSectionInst.walletReady
-                    userUID: appMain.rootStore.profileSectionStore.profileStore.pubkey
+                    userUID: appMain.profileStore.pubKey
                     projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
                 }
                 bcSdk: DappsConnectorSDK {

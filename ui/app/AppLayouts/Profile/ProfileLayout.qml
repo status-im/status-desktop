@@ -28,6 +28,9 @@ import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.stores 1.0 as AppLayoutsStores
+import AppLayouts.stores.Messaging 1.0 as MessagingStores
+
+import mainui.activitycenter.stores 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -35,23 +38,40 @@ import SortFilterProxyModel 0.2
 StatusSectionLayout {
     id: root
 
+    required property bool isProduction
+
     property alias settingsSubsection: leftPanel.settingsSubsection
     property int settingsSubSubsection
 
     objectName: "profileStatusSectionLayout"
 
-    property SharedStores.RootStore sharedRootStore
-    property SharedStores.UtilsStore utilsStore
-    property ProfileStores.ProfileSectionStore store
-    property AppLayoutsStores.RootStore globalStore
-    property CommunitiesStore.CommunitiesStore communitiesStore
-    property var emojiPopup
-    property SharedStores.NetworkConnectionStore networkConnectionStore
     required property TokensStore tokensStore
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
+
+    property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
+    property ProfileStores.ProfileStore profileStore
+    property ProfileStores.DevicesStore devicesStore
+    property ProfileStores.AdvancedStore advancedStore
+    property ProfileStores.PrivacyStore privacyStore
+    property ProfileStores.NotificationsStore notificationsStore
+    property ProfileStores.LanguageStore languageStore
+    property ProfileStores.KeycardStore keycardStore
+    property ProfileStores.WalletStore walletStore
+    property ProfileStores.EnsUsernamesStore ensUsernamesStore
+    property ProfileStores.AboutStore aboutStore
+    property CommunitiesStore.CommunitiesStore communitiesStore
+    property ActivityCenterStore activityCenterStore
+    property MessagingStores.MessagingSettingsStore messagingSettingsStore
+    property AppLayoutsStores.ContactsStore contactsStore
+    property AppLayoutsStores.RootStore globalStore
+
+    property var emojiPopup
+
     required property Keychain keychain
 
     property bool isKeycardEnabled: true
@@ -64,13 +84,19 @@ StatusSectionLayout {
 
     required property bool isCentralizedMetricsEnabled
 
+    property var fnAddressWasShown: function(address) {}
+
     signal connectUsernameRequested(string ensName)
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
 
-    backButtonName: root.store.backButtonName
-    notificationCount: activityCenterStore.unreadNotificationsCount
-    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+    signal leaveCommunityRequest(string communityId)
+    signal setCommunityMutedRequest(string communityId, int mutedType)
+    signal inviteFriends(var communityData)
+
+    backButtonName: d.backButtonName
+    notificationCount: root.activityCenterStore.unreadNotificationsCount
+    hasUnseenNotifications: root.activityCenterStore.hasUnseenNotifications
 
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
@@ -95,7 +121,7 @@ StatusSectionLayout {
 
     Component.onCompleted: {
         profileContainer.currentIndexChanged()
-        root.store.devicesStore.loadDevices() // Load devices to get non-paired number for badge
+        root.devicesStore.loadDevices() // Load devices to get non-paired number for badge
     }
 
     QtObject {
@@ -110,24 +136,26 @@ StatusSectionLayout {
         // Used to alternatively add an error message to the dirty bubble if ephemeral notification
         // can clash at smaller viewports
         readonly property bool toastClashesWithDirtyBubble: root.Window.width <= 1650 // design
+
+        property string backButtonName
     }
 
     SettingsEntriesModel {
         id: settingsEntriesModel
 
-        showWalletEntries: root.store.walletMenuItemEnabled
-        showBackUpSeed: !root.store.privacyStore.mnemonicBackedUp
+        showWalletEntries: root.walletStore.isWalletEnabled
+        showBackUpSeed: !root.privacyStore.mnemonicBackedUp
         isKeycardEnabled: root.isKeycardEnabled
 
-        syncingBadgeCount: root.store.devicesStore.devicesModel.count -
-                           root.store.devicesStore.devicesModel.pairedCount
+        syncingBadgeCount: root.devicesStore.devicesModel.count -
+                           root.devicesStore.devicesModel.pairedCount
         messagingBadgeCount: root.pendingReceivedContactsCount
     }
 
     headerBackground: AccountHeaderGradient {
         width: parent.width
-        overview: root.store.walletStore.selectedAccount
-        visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet && !!root.store.walletStore.selectedAccount
+        overview: root.walletStore.selectedAccount
+        visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet && !!root.walletStore.selectedAccount
     }
 
     leftPanel: SettingsLeftTabView {
@@ -159,12 +187,12 @@ StatusSectionLayout {
             if (!!children[currentIndex] && !children[currentIndex].active)
                 children[currentIndex].active = true
 
-            root.store.backButtonName = ""
+            d.backButtonName = ""
 
             if (currentIndex === Constants.settingsSubsection.contacts) {
-                root.store.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
+                d.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
             } else if (currentIndex === Constants.settingsSubsection.about_privacy || currentIndex === Constants.settingsSubsection.about_terms) {
-                root.store.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
+                d.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
             } else if (currentIndex === Constants.settingsSubsection.wallet) {
                 walletView.item.resetStack()
             } else if (currentIndex === Constants.settingsSubsection.keycard) {
@@ -180,8 +208,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileStore: root.store.profileStore
-                contactsStore: root.store.contactsStore
+                profileStore: root.profileStore
+                contactsStore: root.contactsStore
                 communitiesStore: root.communitiesStore
                 utilsStore: root.utilsStore
                 networksStore: root.networksStore
@@ -192,11 +220,11 @@ StatusSectionLayout {
                 sideBySidePreview: d.sideBySidePreviewAvailable
                 toastClashesWithDirtyBubble: d.toastClashesWithDirtyBubble
 
-                communitiesShowcaseModel: root.store.ownShowcaseCommunitiesModel
-                accountsShowcaseModel: root.store.ownShowcaseAccountsModel
-                socialLinksShowcaseModel: root.store.ownShowcaseSocialLinksModel
+                communitiesShowcaseModel: root.profileStore.ownShowcaseCommunitiesModel
+                accountsShowcaseModel: root.profileStore.ownShowcaseAccountsModel
+                socialLinksShowcaseModel: root.profileStore.ownShowcaseSocialLinksModel
                 collectiblesShowcaseModel: SortFilterProxyModel {
-                    sourceModel: root.store.ownShowcaseCollectiblesModel
+                    sourceModel: root.profileStore.ownShowcaseCollectiblesModel
                     sorters: [
                         FastExpressionSorter {
                             expression: {
@@ -228,7 +256,7 @@ StatusSectionLayout {
             sourceComponent: ChangePasswordView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                privacyStore: root.store.privacyStore
+                privacyStore: root.privacyStore
                 keychain: root.keychain
                 passwordStrengthScoreFunction: root.sharedRootStore.getPasswordStrengthScore
                 contentWidth: d.contentWidth
@@ -242,7 +270,7 @@ StatusSectionLayout {
             sourceComponent: ContactsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                contactsStore: root.store.contactsStore
+                contactsStore: root.contactsStore
                 utilsStore: root.utilsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
@@ -266,9 +294,9 @@ StatusSectionLayout {
 
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                ensUsernamesStore: root.store.ensUsernamesStore
+                ensUsernamesStore: root.ensUsernamesStore
                 walletAssetsStore: root.walletAssetsStore
-                contactsStore: root.store.contactsStore
+                contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
                 onConnectUsernameRequested: root.connectUsernameRequested(ensName)
@@ -287,7 +315,7 @@ StatusSectionLayout {
 
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
                 requestsCount: root.pendingReceivedContactsCount
-                messagingStore: root.store.messagingStore
+                messagingSettingsStore: root.messagingSettingsStore
             }
         }
 
@@ -303,19 +331,26 @@ StatusSectionLayout {
                 settingsSubSubsection: root.settingsSubSubsection
                 isKeycardEnabled: root.isKeycardEnabled
 
-                rootStore: root.store
+                walletStore: root.walletStore
+                keycardStore: root.keycardStore
                 tokensStore: root.tokensStore
                 networkConnectionStore: root.networkConnectionStore
                 assetsStore: root.walletAssetsStore
                 collectiblesStore: root.collectiblesStore
                 networksStore: root.networksStore
+                contactsStore: root.contactsStore
 
-                myPublicKey: root.store.contactsStore.myPublicKey
+                myPublicKey: root.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
+                backButtonName: d.backButtonName
+
+                fnAddressWasShown: root.fnAddressWasShown
+
+                onBackButtonNameChanged: d.backButtonName = backButtonName
             }
-            onLoaded: root.store.backButtonName = ""
+            onLoaded: d.backButtonName = ""
         }
 
         Loader {
@@ -338,7 +373,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 languageSelectionEnabled: localAppSettings.translationsEnabled
-                languageStore: root.store.languageStore
+                languageStore: root.languageStore
                 currencyStore: root.currencyStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
@@ -352,8 +387,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                privacyStore: root.store.privacyStore
-                notificationsStore: root.store.notificationsStore
+                privacyStore: root.privacyStore
+                notificationsStore: root.notificationsStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
             }
@@ -366,11 +401,11 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                isProduction: production
-                profileStore: root.store.profileStore
-                devicesStore: root.store.devicesStore
-                privacyStore: root.store.privacyStore
-                advancedStore: root.store.advancedStore
+                isProduction: root.isProduction
+                profileStore: root.profileStore
+                devicesStore: root.devicesStore
+                privacyStore: root.privacyStore
+                advancedStore: root.advancedStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
             }
@@ -383,9 +418,9 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                messagingStore: root.store.messagingStore
-                advancedStore: root.store.advancedStore
-                walletStore: root.store.walletStore
+                messagingSettingsStore: root.messagingSettingsStore
+                advancedStore: root.advancedStore
+                walletStore: root.walletStore
                 isFleetSelectionEnabled: fleetSelectionEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
@@ -400,41 +435,14 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
                 contentWidth: d.contentWidth
+                isProduction: root.isProduction
+                currentVersion: root.aboutStore.getCurrentVersion()
+                gitCommit: root.aboutStore.getGitCommit()
+                statusGoVersion: root.aboutStore.getStatusGoVersion()
+                qtRuntimeVersion: SystemUtils.qtRuntimeVersion()
 
-                store: QtObject {
-                    readonly property bool isProduction: production
-
-                    function checkForUpdates() {
-                        return root.store.checkForUpdates()
-                    }
-
-                    function getCurrentVersion() {
-                        return root.store.getCurrentVersion()
-                    }
-
-                    function getGitCommit() {
-                        return root.store.getGitCommit()
-                    }
-
-                    function getStatusGoVersion() {
-                        return root.store.getStatusGoVersion()
-                    }
-
-                    function qtRuntimeVersion() {
-                        return SystemUtils.qtRuntimeVersion()
-                    }
-
-                    function getReleaseNotes() {
-                        const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(getCurrentVersion()) :
-                                                    "https://github.com/status-im/status-desktop/commit/%1".arg(getGitCommit())
-
-                        openLink(link)
-                    }
-
-                    function openLink(url) {
-                        Global.openLink(url)
-                    }
-                }
+                onCheckForUpdates: root.aboutStore.checkForUpdates()
+                onOpenLink: Global.openLink(url)
             }
         }
 
@@ -447,12 +455,16 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileSectionStore: root.store
                 rootStore: root.globalStore
                 currencyStore: root.currencyStore
                 walletAssetsStore: root.walletAssetsStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
+                communitiesList: root.profileStore.communitiesList
+
+                onLeaveCommunityRequest: root.leaveCommunityRequest(communityId)
+                onSetCommunityMutedRequest: root.setCommunityMutedRequest(communityId, mutedType)
+                onInviteFriends: root.inviteFriends(communityData)
             }
         }
 
@@ -464,11 +476,11 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileSectionStore: root.store
-                keycardStore: root.store.keycardStore
+                keycardStore: root.keycardStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
                 mainSectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
+                backButtonName: d.backButtonName
                 contentWidth: d.contentWidth
             }
         }
@@ -519,7 +531,7 @@ StatusSectionLayout {
             active: false
             asynchronous: true
             sourceComponent: PrivacyAndSecurityView {
-                isStatusNewsViaRSSEnabled: root.store.privacyStore.isStatusNewsViaRSSEnabled
+                isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
                 isCentralizedMetricsEnabled: root.isCentralizedMetricsEnabled
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -528,7 +540,7 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
 
                 onSetNewsRSSEnabledRequested: function (isStatusNewsViaRSSEnabled) {
-                    root.store.privacyStore.setNewsRSSEnabled(isStatusNewsViaRSSEnabled)
+                    root.privacyStore.setNewsRSSEnabled(isStatusNewsViaRSSEnabled)
                 }
             }
         }
@@ -542,7 +554,7 @@ StatusSectionLayout {
     }
 
     Connections {
-        target: root.store.keycardStore.keycardModule
+        target: root.keycardStore.keycardModule
         enabled: profileContainer.currentIndex === Constants.settingsSubsection.wallet ||
                  profileContainer.currentIndex === Constants.settingsSubsection.keycard
 
@@ -561,8 +573,8 @@ StatusSectionLayout {
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
-            myKeyUid: store.profileStore.keyUid
-            sharedKeycardModule: root.store.keycardStore.keycardModule.keycardSharedModule
+            myKeyUid: root.profileStore.keyUid
+            sharedKeycardModule: root.keycardStore.keycardModule.keycardSharedModule
             emojiPopup: root.emojiPopup
 
             // This connection ensures that when a PIN is chagned on Keycard, biometrics are updated (if enabled).
@@ -570,10 +582,10 @@ StatusSectionLayout {
             // We put it here, because ProfileLayout has access to Keychain and it is also the only place
             // where KeycardPopup can be used to change PIN.
             Connections {
-                target: root.store.keycardStore.keycardModule.keycardSharedModule
+                target: root.keycardStore.keycardModule.keycardSharedModule
 
                 function onKeycardPinChanged(pin) {
-                    const keyUid = store.profileStore.keyUid
+                    const keyUid = root.profileStore.keyUid
                     root.keychain.updateCredential(keyUid, pin)
                 }
             }

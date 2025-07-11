@@ -35,7 +35,7 @@ Item {
 
     property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutsStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     required property TransactionStore transactionStore
     required property SharedStores.NetworksStore networksStore

@@ -5,7 +5,7 @@ import StatusQ.Core 0.1
 
 import shared.stores 1.0
 
-import AppLayouts.stores 1.0 as AppLayoutsStores
+import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -14,8 +14,8 @@ import "../panels"
 FocusScope {
     id: root
 
-    property AppLayoutsStores.RootStore store
-    property ProfileStores.ContactsStore contactsStore
+    property AppLayoutStores.RootStore store
+    property AppLayoutStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     property NetworkConnectionStore networkConnectionStore
     required property NetworksStore networksStore

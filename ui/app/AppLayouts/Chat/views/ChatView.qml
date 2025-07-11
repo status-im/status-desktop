@@ -31,6 +31,7 @@ import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.stores 1.0 as AppLayoutStores
 
 import "../controls"
 import "../helpers"
@@ -40,7 +41,6 @@ import "../popups"
 StatusSectionLayout {
     id: root
 
-    property ContactsStore contactsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property CommunitiesStores.CommunitiesStore communitiesStore
@@ -117,6 +117,9 @@ StatusSectionLayout {
     // Users related signals
     signal groupMembersUpdateRequested(string membersPubKeysList)
 
+    // Contacts related data:
+    property string myPublicKey
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -136,6 +139,12 @@ StatusSectionLayout {
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     signal openGifPopupRequest(var params, var cbOnGifSelected, var cbOnClose)
+
+    // Contacts related requests:
+    signal changeContactNicknameRequest(string pubKey, string nickname, string displayName, bool isEdit)
+    signal removeTrustStatusRequest(string pubKey)
+    signal dismissContactRequest(string chatId, string contactRequestId)
+    signal acceptContactRequest(string chatId, string contactRequestId)
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -217,7 +226,7 @@ StatusSectionLayout {
 
         onRemoveNicknameRequested: {
             const oldName = ModelUtils.getByKey(usersModel, "pubKey", pubKey, "localNickname")
-            root.contactsStore.changeContactNickname(pubKey, "", oldName, true)
+            root.changeContactNicknameRequest(pubKey, "", oldName, true)
         }
 
         onCreateOneToOneChatRequested: {
@@ -225,7 +234,7 @@ StatusSectionLayout {
             root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
         }
 
-        onRemoveTrustStatusRequested: root.contactsStore.removeTrustStatus(pubKey)
+        onRemoveTrustStatusRequested: root.removeTrustStatusRequest(pubKey)
         onRemoveContactFromGroupRequested: root.rootStore.removeMemberFromGroupChat(pubKey)
 
         onMarkAsTrustedRequested: Global.openMarkAsIDVerifiedPopup(pubKey, null)
@@ -283,7 +292,6 @@ StatusSectionLayout {
             rootStore: root.rootStore
             areTestNetworksEnabled: root.areTestNetworksEnabled
             createChatPropertiesStore: root.createChatPropertiesStore
-            contactsStore: root.contactsStore
             stickersLoaded: root.stickersLoaded
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
@@ -301,6 +309,9 @@ StatusSectionLayout {
             // Users related data:
             usersModel: root.usersModel
 
+            // Contacts related data:
+            myPublicKey: root.myPublicKey
+
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
             }
@@ -310,6 +321,12 @@ StatusSectionLayout {
             onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 
             onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
+
+            // Contacts related requests:
+            onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+            onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
+            onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
+            onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
         }
     }
 
@@ -342,7 +359,6 @@ StatusSectionLayout {
         ContactsColumnView {
             chatSectionModule: root.rootStore.chatCommunitySectionModule
             store: root.rootStore
-            contactsStore: root.contactsStore
             emojiPopup: root.emojiPopup
             onOpenProfileClicked: {
                 root.profileButtonClicked();
