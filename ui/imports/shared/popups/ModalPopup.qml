@@ -42,6 +42,7 @@ Popup {
             popup.destroy();
     }
     padding: 0
+    margins: 0 // NB: !== -1 to stay within Window bounds
     contentItem: Item {
 
         Item {

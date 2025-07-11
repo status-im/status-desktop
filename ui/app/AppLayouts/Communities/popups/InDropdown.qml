@@ -19,10 +19,7 @@ StatusDropdown {
     id: root
 
     width: 289
-    padding: 8
-
-    // force keeping within the bounds of the enclosing window
-    margins: 0
+    padding: Theme.halfPadding
 
     property bool allowChoosingEntireCommunity: false
     property bool showAddChannelButton: false

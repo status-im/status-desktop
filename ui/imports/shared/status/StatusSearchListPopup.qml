@@ -20,6 +20,8 @@ Popup {
     width: 400
     height: 300
 
+    margins: 0 // NB: !== -1 to stay within Window bounds
+
     required property var model
 
     property string searchBoxPlaceholder: qsTr("Search...")

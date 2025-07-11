@@ -23,6 +23,8 @@ Popup {
     horizontalPadding: 6
     verticalPadding: 32
 
+    margins: 0 // NB: !== -1 to stay within Window bounds
+
     modal: false
     closePolicy: Popup.NoAutoClose
 

@@ -31,8 +31,9 @@ Popup {
     signal toggleNetwork(int chainId, int index)
     signal manageNetworksClicked()
 
-
     modal: false
+
+    margins: 0 // NB: !== -1 to stay within Window bounds
 
     padding: 4
     implicitWidth: 300
@@ -67,7 +68,7 @@ Popup {
             showIndicator: root.showSelectionIndicator
             showNewChainIcon: root.showNewChainIcon
 
-            onToggleNetwork: {
+            onToggleNetwork: function (chainId, index) {
                 if (!root.multiSelection && root.closePolicy !== Popup.NoAutoClose)
                     root.close()
                 root.toggleNetwork(chainId, index)

@@ -28,7 +28,9 @@ ItemDelegate {
     horizontalPadding: Theme.padding
     verticalPadding: 4
 
-    opacity: enabled ? 1 : 0.3
+    hoverEnabled: enabled
+
+    opacity: enabled ? 1 : Theme.disabledOpacity
     implicitHeight: 60
 
     icon.width: 32

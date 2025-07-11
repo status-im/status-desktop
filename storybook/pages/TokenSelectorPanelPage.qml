@@ -199,17 +199,17 @@ Pane {
         collectiblesModel: collectiblesModelCheckBox.checked
                            ? collectiblesModel : null
 
-        onCollectibleSelected: {
+        onCollectibleSelected: function(key) {
             highlightedKey = key
             console.log("collectible selected:", key)
         }
 
-        onCollectionSelected: {
+        onCollectionSelected: function(key) {
             highlightedKey = key
             console.log("collection selected:", key)
         }
 
-        onAssetSelected: {
+        onAssetSelected: function(key) {
             highlightedKey = key
             console.log("asset selected:", key)
         }

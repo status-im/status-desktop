@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtGraphicalEffects 1.15
-import QtQuick.Controls 2.15 as QC
+import QtQuick.Controls 2.15
 import QtQml 2.15
 
 import StatusQ.Core.Theme 0.1
@@ -12,7 +12,7 @@ import StatusQ.Core.Theme 0.1
    \since StatusQ.Controls 0.1
    \brief The StatusDropdown provides a template for creating dropdowns.
 
-   NOTE: Each consumer needs to set the x and y postion of the dropdown.
+   NOTE: Each consumer needs to set the x and y position of the dropdown.
 
    Example of how to use it:
 
@@ -28,18 +28,18 @@ import StatusQ.Core.Theme 0.1
 
    For a list of components available see StatusQ.
 */
-QC.Popup {
+Popup {
     id: root
 
     dim: false
 
+    margins: 0 // NB: !== -1 to stay within Window bounds
+
     background: Rectangle {
        color: Theme.palette.statusMenu.backgroundColor
        radius: Theme.radius
-       border.color: "transparent"
        layer.enabled: true
        layer.effect: DropShadow {
-           source: root.background
            horizontalOffset: 0
            verticalOffset: 4
            radius: 12

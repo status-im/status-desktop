@@ -68,6 +68,7 @@ Control {
 
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: 4
             Layout.bottomMargin: 4
             text: qsTr("Your assets will appear here")
             color: Theme.palette.baseColor1
@@ -97,11 +98,9 @@ Control {
 
             objectName: "assetsListView"
 
-            clip: true
-
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.preferredHeight: contentHeight
+            implicitHeight: contentHeight
             Layout.leftMargin: 4
             Layout.rightMargin: 4
 
@@ -113,7 +112,7 @@ Control {
             section.delegate: TokenSelectorSectionDelegate {
                 width: ListView.view.width
                 text: section
-                height: root.showSectionName ? implicitHeight : 0
+                height: root.showSectionName ? implicitHeight + 4 : 0
             }
 
             delegate: TokenSelectorAssetDelegate {
