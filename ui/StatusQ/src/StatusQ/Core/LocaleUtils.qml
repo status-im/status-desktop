@@ -1,7 +1,7 @@
 pragma Singleton
 
+import QtCore
 import QtQml
-import Qt.labs.settings
 
 QtObject {
     id: root

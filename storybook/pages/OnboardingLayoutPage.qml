@@ -1,13 +1,12 @@
+import QtCore
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
 
-import StatusQ.Core.Backpressure
-
-import Qt.labs.settings
-
 import StatusQ
+import StatusQ.Core.Backpressure
 
 import AppLayouts.Onboarding.enums
 import AppLayouts.Onboarding2

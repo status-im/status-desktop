@@ -1,6 +1,7 @@
+import QtCore
 import QtQuick
+
 import QtQuick.Controls
-import Qt.labs.settings
 
 import StatusQ
 import StatusQ.Controls

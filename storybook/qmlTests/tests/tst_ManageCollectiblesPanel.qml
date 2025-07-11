@@ -1,7 +1,6 @@
+import QtCore
 import QtQuick
 import QtTest
-
-import Qt.labs.settings
 
 import StatusQ.Models
 

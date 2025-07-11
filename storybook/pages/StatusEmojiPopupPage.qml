@@ -1,7 +1,8 @@
+import QtCore
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt.labs.settings
 
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as StatusQUtils

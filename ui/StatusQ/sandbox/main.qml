@@ -1,11 +1,12 @@
+import QtCore
 import QtQuick
-import QtQuick.Window
-import QtQuick.Controls
+
 import Qt5Compat.GraphicalEffects
-import QtQuick.Layouts
-import Qt.labs.settings
-import QtQml.Models
 import QtMultimedia
+import QtQml.Models
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
 
 import StatusQ
 import StatusQ.Core

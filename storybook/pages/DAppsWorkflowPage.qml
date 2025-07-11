@@ -1,10 +1,11 @@
+import QtCore
+import QtQml
 import QtQuick
+import QtTest
+
+import QtQml.Models
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQml
-import Qt.labs.settings
-import QtTest
-import QtQml.Models
 
 import StatusQ
 import StatusQ.Core

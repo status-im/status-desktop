@@ -1,7 +1,7 @@
+import QtCore
 import QtQuick
-import QtQuick.Controls
 
-import Qt.labs.settings
+import QtQuick.Controls
 
 import StatusQ.Core.Backpressure
 

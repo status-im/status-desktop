@@ -1,8 +1,8 @@
+import QtCore
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Layouts
-
-import Qt.labs.settings
 
 import AppLayouts.Communities.panels
 import AppLayouts.Chat.stores as ChatStores
