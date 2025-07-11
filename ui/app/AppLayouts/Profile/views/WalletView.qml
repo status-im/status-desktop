@@ -1,32 +1,32 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
-import Qt.labs.settings 1.1
-import QtQml 2.15
+import Qt.labs.settings
+import QtQml
 
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
-import utils 1.0
-import shared 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.popups.keypairimport 1.0
-import shared.status 1.0
-import shared.stores 1.0 as SharedStores
+import utils
+import shared
+import shared.panels
+import shared.popups
+import shared.popups.keypairimport
+import shared.status
+import shared.stores as SharedStores
 
 import "../stores"
 import "../controls"
 import "../popups"
 import "../panels"
 
-import AppLayouts.Profile.views.wallet 1.0
-import AppLayouts.Wallet.stores 1.0
-import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet 1.0
+import AppLayouts.Profile.views.wallet
+import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.controls
+import AppLayouts.Wallet
 
 SettingsContentBase {
     id: root

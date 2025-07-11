@@ -1,7 +1,7 @@
 pragma Singleton
 
-import QtQuick 2.15
-import StatusQ.Core.Theme 0.1
+import QtQuick
+import StatusQ.Core.Theme
 import "./xss.js" as XSS
 
 QtObject {

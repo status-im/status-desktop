@@ -1,26 +1,26 @@
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Window
+import QtQuick.Layouts
 
-import utils 1.0
-import shared.panels 1.0
-import shared.status 1.0
-import shared.controls 1.0
-import shared.popups 1.0
-import shared.views.chat 1.0
-import shared.controls.chat 1.0
-import shared.stores 1.0 as SharedStores
-import shared.popups.send 1.0
+import utils
+import shared.panels
+import shared.status
+import shared.controls
+import shared.popups
+import shared.views.chat
+import shared.controls.chat
+import shared.stores as SharedStores
+import shared.popups.send
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Controls
+import StatusQ.Components
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.Profile.stores as ProfileStores
 
 Loader {
     id: root

@@ -1,22 +1,22 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Controls.Validators 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Controls.Validators
+import StatusQ.Components
+import StatusQ.Core.Utils as SQUtils
 
-import utils 1.0
+import utils
 
-import AppLayouts.Communities.helpers 1.0
-import AppLayouts.Communities.panels 1.0
-import AppLayouts.Wallet.controls 1.0
-import shared.panels 1.0
-import shared.popups 1.0
+import AppLayouts.Communities.helpers
+import AppLayouts.Communities.panels
+import AppLayouts.Wallet.controls
+import shared.panels
+import shared.popups
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 StatusScrollView {
     id: root

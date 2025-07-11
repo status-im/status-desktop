@@ -1,10 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
-import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core
+import StatusQ.Popups.Dialog
 
-import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.panels
 
 StatusDialog {
     id: root

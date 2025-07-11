@@ -1,5 +1,5 @@
-import QtQuick.Layouts 1.14
-import StatusQ.Controls 0.1
+import QtQuick.Layouts
+import StatusQ.Controls
 
 GridLayout {
     columns: 1

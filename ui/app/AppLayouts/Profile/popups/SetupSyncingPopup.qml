@@ -1,20 +1,20 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtQml.Models 2.14
-import QtQml.StateMachine 1.14 as DSM
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml.Models
+import QtQml.StateMachine as DSM
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
+import StatusQ.Core.Utils
 
-import utils 1.0
-import shared.controls 1.0
-import shared.views 1.0
+import utils
+import shared.controls
+import shared.views
 
 import "../stores"
 

@@ -1,8 +1,8 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Popups.Dialog 0.1
+import StatusQ.Popups.Dialog
 
-import shared.views 1.0
+import shared.views
 
 StatusDialog {
     id: root

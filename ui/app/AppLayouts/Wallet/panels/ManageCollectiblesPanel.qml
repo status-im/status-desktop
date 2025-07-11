@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQml.Models
 
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Controls
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
-import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.controls
 
-import shared.controls 1.0
+import shared.controls
 
 DoubleFlickableWithFolding {
     id: root

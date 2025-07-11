@@ -1,8 +1,8 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
-import utils 1.0
+import utils
 /*!
     \qmltype AirdropFeesSubscriber
     \inherits QtObject

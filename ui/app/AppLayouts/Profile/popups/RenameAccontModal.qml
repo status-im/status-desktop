@@ -1,19 +1,19 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Controls.Validators 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
+import StatusQ.Controls.Validators
+import StatusQ.Core.Utils as StatusQUtils
 
-import utils 1.0
+import utils
 
-import shared.panels 1.0
-import shared.controls 1.0
+import shared.panels
+import shared.controls
 
 import "../stores"
 

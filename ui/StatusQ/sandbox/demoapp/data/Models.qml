@@ -1,6 +1,6 @@
 pragma Singleton
-import QtQuick 2.14
-import StatusQ.Components 0.1
+import QtQuick
+import StatusQ.Components
 
 QtObject {
 

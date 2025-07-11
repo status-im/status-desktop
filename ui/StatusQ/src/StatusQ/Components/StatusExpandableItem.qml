@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
+import QtQuick
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Core.Theme
+import StatusQ.Components
 
 Rectangle {
     id: statusExpandableItem

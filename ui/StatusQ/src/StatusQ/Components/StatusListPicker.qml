@@ -1,12 +1,12 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 /*!
    \qmltype StatusListPicker

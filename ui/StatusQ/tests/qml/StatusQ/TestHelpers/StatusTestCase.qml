@@ -1,5 +1,5 @@
-import QtTest 1.15
-import QtQml 2.15
+import QtTest
+import QtQml
 
 /*!
     \qmltype StatusTestCase

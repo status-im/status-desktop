@@ -1,17 +1,17 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
-import StatusQ.Core 0.1
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Window
+import StatusQ.Core
 
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core.Theme
+import StatusQ.Components
+import StatusQ.Controls
 
-import shared.controls.chat 1.0
+import shared.controls.chat
 
-import utils 1.0
+import utils
 
 CalloutCard {
     id: root

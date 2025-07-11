@@ -1,6 +1,6 @@
-import QtQuick 2.15
+import QtQuick
 
-import utils 1.0
+import utils
 
 /* This is so that all the data from the response
 to the swap request can be placed here at one place. */

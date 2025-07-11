@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
 // WARNING: to be used solely inside a SequenceColumnLayout (referencing the `parent`)
 

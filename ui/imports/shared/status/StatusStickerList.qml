@@ -1,11 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Controls
 
-import utils 1.0
-import shared.panels 1.0
+import utils
+import shared.panels
 
 StatusGridView {
     id: root

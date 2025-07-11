@@ -1,11 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
 
-import utils 1.0
-import shared.stores 1.0
+import utils
+import shared.stores
 
 ColumnLayout {
     id: root

@@ -1,24 +1,24 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml.Models
 import Qt5Compat.GraphicalEffects
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Popups.Dialog 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
 
-import shared.controls 1.0
-import shared.stores 1.0
+import shared.controls
+import shared.stores
 
-import AppLayouts.Wallet.views.collectibles 1.0
+import AppLayouts.Wallet.views.collectibles
 
-import utils 1.0
+import utils
 
 StatusDialog {
     id: root

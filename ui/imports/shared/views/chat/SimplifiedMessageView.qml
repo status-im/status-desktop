@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as CoreUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-import StatusQ.Components.private 0.1
+import StatusQ.Core
+import StatusQ.Core.Utils as CoreUtils
+import StatusQ.Core.Theme
+import StatusQ.Components
+import StatusQ.Components.private
 
-import shared 1.0
-import utils 1.0
+import shared
+import utils
 
 RowLayout {
     id: root

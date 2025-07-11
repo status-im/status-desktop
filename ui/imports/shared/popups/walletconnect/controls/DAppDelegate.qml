@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Core.Utils as SQUtils
 
-import shared.popups.walletconnect 1.0
+import shared.popups.walletconnect
 
 StatusMouseArea {
     id: root

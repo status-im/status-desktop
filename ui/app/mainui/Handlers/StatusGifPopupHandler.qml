@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import shared.status 1.0
-import shared.stores 1.0
+import shared.status
+import shared.stores
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
 QtObject {
     id: root

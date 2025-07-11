@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import utils 1.0
+import utils
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 Control {
     id: root

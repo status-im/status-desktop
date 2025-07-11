@@ -1,17 +1,17 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
 
-import utils 1.0
-import shared 1.0
-import shared.views 1.0
-import shared.status 1.0
-import shared.views.chat 1.0
+import utils
+import shared
+import shared.views
+import shared.status
+import shared.views.chat
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1 as StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls as StatusQ
 
 import "../popups"
 import "../stores"

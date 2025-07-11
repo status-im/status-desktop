@@ -1,15 +1,15 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
 import QtQml.Models
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Popups
 
-import "../demoapp/data" 1.0
+import "../demoapp/data"
 
 GridLayout {
     columns: 1

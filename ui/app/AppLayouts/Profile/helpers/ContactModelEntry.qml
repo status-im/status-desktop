@@ -1,8 +1,8 @@
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
-import utils 1.0
+import utils
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 /**
   * Wrapper over generic ModelEntry to expose entries from model of contacts.

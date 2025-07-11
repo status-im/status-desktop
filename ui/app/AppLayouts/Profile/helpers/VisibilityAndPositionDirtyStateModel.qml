@@ -1,8 +1,8 @@
-import QtQml 2.15
+import QtQml
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 /**
   * Basic building block for storing temporary state in the "Profile Showcase"

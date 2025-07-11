@@ -1,4 +1,4 @@
-import shared.popups 1.0
+import shared.popups
 
 ConfirmationDialog {
     required property string symbol

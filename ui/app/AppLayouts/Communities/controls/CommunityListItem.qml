@@ -1,8 +1,8 @@
-import QtQuick 2.14
+import QtQuick
 
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
+import StatusQ.Components
+import StatusQ.Controls
+import StatusQ.Core
 
 StatusListItem {
     property alias checked: checkBox.checked

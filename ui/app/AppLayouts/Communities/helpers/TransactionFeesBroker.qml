@@ -1,11 +1,11 @@
-import QtQuick 2.15
+import QtQuick
 
-import shared.stores 1.0
+import shared.stores
 
-import StatusQ.Core.Utils 0.1
-import AppLayouts.Wallet 1.0
+import StatusQ.Core.Utils
+import AppLayouts.Wallet
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

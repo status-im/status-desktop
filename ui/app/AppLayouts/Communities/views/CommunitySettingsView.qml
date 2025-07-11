@@ -1,34 +1,34 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Window
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
-import StatusQ 0.1
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
-import StatusQ.Layout 0.1
-import StatusQ.Popups.Dialog 0.1
+import StatusQ
+import StatusQ.Components
+import StatusQ.Controls
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Layout
+import StatusQ.Popups.Dialog
 
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.stores 1.0
-import shared.stores.send 1.0
-import shared.views.chat 1.0
-import utils 1.0
+import shared.panels
+import shared.popups
+import shared.stores
+import shared.stores.send
+import shared.views.chat
+import utils
 
-import AppLayouts.Communities.controls 1.0
-import AppLayouts.Communities.panels 1.0
-import AppLayouts.Communities.popups 1.0
-import AppLayouts.Communities.helpers 1.0
+import AppLayouts.Communities.controls
+import AppLayouts.Communities.panels
+import AppLayouts.Communities.popups
+import AppLayouts.Communities.helpers
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores
 
 StatusSectionLayout {
     id: root

@@ -1,7 +1,7 @@
-import QtQuick 2.14
+import QtQuick
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 /*!
    \qmltype StatusBanner

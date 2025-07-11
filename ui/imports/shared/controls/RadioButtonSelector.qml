@@ -1,11 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Components
+import StatusQ.Controls
 
-import utils 1.0
+import utils
 
 import "../popups"
 

@@ -1,29 +1,29 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Qt.labs.platform 1.1
-import Qt.labs.settings 1.1
-import QtQuick.Window 2.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Qt.labs.platform
+import Qt.labs.settings
+import QtQuick.Window
+import QtQml
 
-import utils 1.0
-import shared 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.stores 1.0
+import utils
+import shared
+import shared.panels
+import shared.popups
+import shared.stores
 
-import mainui 1.0
-import AppLayouts.stores 1.0 as AppStores
+import mainui
+import AppLayouts.stores as AppStores
 
-import AppLayouts.Onboarding.enums 1.0
-import AppLayouts.Onboarding2 1.0 as Onboarding2
-import AppLayouts.Onboarding2.stores 1.0
-import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding.enums
+import AppLayouts.Onboarding2 as Onboarding2
+import AppLayouts.Onboarding2.stores
+import AppLayouts.Onboarding2.pages
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Backpressure 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Backpressure
 
 StatusWindow {
     id: applicationWindow

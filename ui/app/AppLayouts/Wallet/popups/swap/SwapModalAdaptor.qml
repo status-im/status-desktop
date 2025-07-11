@@ -1,15 +1,15 @@
-import QtQml 2.15
+import QtQml
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Core.Utils
 
-import utils 1.0
+import utils
 
-import shared.stores 1.0
-import AppLayouts.Wallet 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import shared.stores
+import AppLayouts.Wallet
+import AppLayouts.Wallet.stores as WalletStore
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 QObject {
     id: root

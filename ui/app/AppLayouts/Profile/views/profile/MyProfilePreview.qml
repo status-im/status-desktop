@@ -1,12 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import shared.controls 1.0
-import shared.views 1.0 as SharedViews
+import AppLayouts.Wallet.stores as WalletStores
+import shared.controls
+import shared.views as SharedViews
 
 Item {
     property alias contactDetails: profilePreview.contactDetails

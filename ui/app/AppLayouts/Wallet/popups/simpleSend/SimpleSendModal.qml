@@ -1,28 +1,28 @@
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Layouts 1.15
-import QtQml.Models 2.15
-import Qt.labs.settings 1.0  // Import required for Settings
+import QtQuick
+import QtQuick.Window
+import QtQuick.Layouts
+import QtQml.Models
+import Qt.labs.settings  // Import required for Settings
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Core.Backpressure 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Popups.Dialog
+import StatusQ.Core.Backpressure
 
-import shared.popups.send.views 1.0 as SendViews
-import shared.controls 1.0
+import shared.popups.send.views as SendViews
+import shared.controls
 
-import AppLayouts.Wallet.panels 1.0
-import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet.views 1.0
-import AppLayouts.Wallet 1.0
+import AppLayouts.Wallet.panels
+import AppLayouts.Wallet.controls
+import AppLayouts.Wallet.views
+import AppLayouts.Wallet
 
-import utils 1.0
+import utils
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 StatusDialog {
     id: root

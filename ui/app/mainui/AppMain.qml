@@ -1,62 +1,62 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Window 2.15
-import QtQuick.Layouts 1.15
-import Qt.labs.platform 1.1
-import Qt.labs.settings 1.1
-import QtQml.Models 2.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Window
+import QtQuick.Layouts
+import Qt.labs.platform
+import Qt.labs.settings
+import QtQml.Models
+import QtQml
 
-import AppLayouts.Wallet 1.0
-import AppLayouts.Node 1.0
-import AppLayouts.Chat 1.0
-import AppLayouts.Chat.views 1.0
-import AppLayouts.Profile 1.0
-import AppLayouts.Communities 1.0
-import AppLayouts.Market 1.0
-import AppLayouts.Market.stores 1.0
-import AppLayouts.Wallet.services.dapps 1.0
-import AppLayouts.HomePage 1.0
+import AppLayouts.Wallet
+import AppLayouts.Node
+import AppLayouts.Chat
+import AppLayouts.Chat.views
+import AppLayouts.Profile
+import AppLayouts.Communities
+import AppLayouts.Market
+import AppLayouts.Market.stores
+import AppLayouts.Wallet.services.dapps
+import AppLayouts.HomePage
 
-import utils 1.0
-import shared 1.0
-import shared.controls 1.0
-import shared.controls.chat.menuItems 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.popups.keycard 1.0
-import shared.status 1.0
-import shared.stores 1.0 as SharedStores
-import shared.popups.send 1.0 as SendPopups
-import shared.popups.send.views 1.0
-import shared.stores.send 1.0
+import utils
+import shared
+import shared.controls
+import shared.controls.chat.menuItems
+import shared.panels
+import shared.popups
+import shared.popups.keycard
+import shared.status
+import shared.stores as SharedStores
+import shared.popups.send as SendPopups
+import shared.popups.send.views
+import shared.stores.send
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Components 0.1
-import StatusQ.Components.private 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Layout 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Popups.Dialog 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Components
+import StatusQ.Components.private
+import StatusQ.Controls
+import StatusQ.Layout
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Communities.stores 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Wallet.popups 1.0 as WalletPopups
-import AppLayouts.Wallet.popups.dapps 1.0 as DAppsPopups
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import AppLayouts.stores 1.0 as AppStores
+import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.Communities.stores
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.popups as WalletPopups
+import AppLayouts.Wallet.popups.dapps as DAppsPopups
+import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.stores as AppStores
 
-import mainui.adaptors 1.0
-import mainui.activitycenter.stores 1.0
-import mainui.activitycenter.popups 1.0
-import mainui.Handlers 1.0
+import mainui.adaptors
+import mainui.activitycenter.stores
+import mainui.activitycenter.popups
+import mainui.Handlers
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
 Item {
     id: appMain

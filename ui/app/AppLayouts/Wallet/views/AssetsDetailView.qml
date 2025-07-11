@@ -1,25 +1,25 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
-import QtQuick.Window 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQuick.Window
 
-import StatusQ 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
+import StatusQ
+import StatusQ.Components
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Core
+import StatusQ.Controls
 
-import utils 1.0
-import shared.views 1.0
-import shared.controls 1.0
-import shared.stores 1.0 as SharedStores
+import utils
+import shared.views
+import shared.controls
+import shared.stores as SharedStores
 
-import AppLayouts.Wallet.helpers 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.helpers
+import AppLayouts.Wallet.stores as WalletStores
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
 import "../controls"
 

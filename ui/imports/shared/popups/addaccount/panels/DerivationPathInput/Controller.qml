@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 
 /// \note ensures data model always has consecutive Separator and Number after Base without duplicates except current element
 /// \note for future work: split deleteInContent in deleteInContent and deleteElements and move data model to a DataModel object;

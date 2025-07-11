@@ -1,15 +1,15 @@
-import QtQuick 2.13
+import QtQuick
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import shared.stores 1.0
+import shared.stores
 
-import utils 1.0
+import utils
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Core.Utils
 
-import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Wallet.stores
 
 QtObject {
     id: root

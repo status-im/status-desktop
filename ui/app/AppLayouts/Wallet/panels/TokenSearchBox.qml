@@ -1,4 +1,4 @@
-import shared.controls 1.0
+import shared.controls
 
 SearchBox {
     input.leftPadding: 14

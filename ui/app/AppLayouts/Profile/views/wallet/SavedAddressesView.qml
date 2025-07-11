@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import AppLayouts.Wallet.views 1.0
+import AppLayouts.Wallet.views
 
-import shared.stores 1.0 as SharedStores
+import shared.stores as SharedStores
 
 import "../../stores"
 

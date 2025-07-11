@@ -1,28 +1,28 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import utils 1.0
-import shared.popups 1.0
-import shared.stores 1.0 as SharedStores
-import shared.stores.send 1.0 as SendStores
+import utils
+import shared.popups
+import shared.stores as SharedStores
+import shared.stores.send as SendStores
 
 import "views"
 
-import AppLayouts.Communities.views 1.0
-import AppLayouts.Communities.popups 1.0
-import AppLayouts.Communities.helpers 1.0
-import AppLayouts.Communities.stores 1.0 as CommunitiesStores
+import AppLayouts.Communities.views
+import AppLayouts.Communities.popups
+import AppLayouts.Communities.helpers
+import AppLayouts.Communities.stores as CommunitiesStores
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores as WalletStore
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Core.Utils
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
 StackLayout {
     id: root

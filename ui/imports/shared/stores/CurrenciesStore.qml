@@ -1,10 +1,10 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
 
-import utils 1.0
-import AppLayouts.Profile.stores 1.0
+import utils
+import AppLayouts.Profile.stores
 
 QtObject {
     id: root

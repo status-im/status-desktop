@@ -1,17 +1,17 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core.Utils as SQUtils
 
-import utils 1.0
+import utils
 
-import AppLayouts.Wallet 1.0
+import AppLayouts.Wallet
 
-import AppLayouts.stores 1.0
-import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Profile.stores 1.0
-import StatusQ.Core.Theme 0.1
+import AppLayouts.stores
+import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.Profile.stores
+import StatusQ.Core.Theme
 
-import shared.stores 1.0 as SharedStores
+import shared.stores as SharedStores
 
 // The purpose of this class is to be the central point for generating toasts in the application.
 // It will have as input all needed stores.

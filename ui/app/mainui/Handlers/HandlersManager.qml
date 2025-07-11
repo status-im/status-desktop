@@ -1,17 +1,17 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core.Utils as SQUtils
 
-import shared.stores 1.0 as SharedStores
-import shared.stores.send 1.0 as SharedSendStores
+import shared.stores as SharedStores
+import shared.stores.send as SharedSendStores
 
-import AppLayouts.stores 1.0 as AppStores
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.stores as AppStores
+import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.Chat.stores as ChatStores
 
-import AppLayouts.Wallet.popups.buy 1.0
-import AppLayouts.Wallet.popups.swap 1.0
-import utils 1.0
+import AppLayouts.Wallet.popups.buy
+import AppLayouts.Wallet.popups.swap
+import utils
 
 // Public API for this object are ONLY `stores` + the main `popupParent`
 QtObject {

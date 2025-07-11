@@ -1,10 +1,10 @@
-import QtQml 2.15
+import QtQml
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import StatusQ 0.1
+import StatusQ
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

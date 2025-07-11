@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 Switch {
     id: root

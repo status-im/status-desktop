@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQml.Models 2.14
+import QtQuick
+import QtQml.Models
 
 /**
   Converts JSON string array to ListModel

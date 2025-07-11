@@ -1,15 +1,15 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.12
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Layout 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Popups
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Layout
+import StatusQ.Core.Theme
 
-import "data" 1.0
+import "data"
 
 StatusSectionLayout {
     id: root

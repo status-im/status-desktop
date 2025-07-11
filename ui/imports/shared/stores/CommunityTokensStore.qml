@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import SortFilterProxyModel 0.2
+import QtQuick
+import SortFilterProxyModel
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

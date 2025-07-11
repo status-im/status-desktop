@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQml
 
-import StatusQ 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ
+import StatusQ.Popups
+import StatusQ.Core.Utils as SQUtils
 
-import AppLayouts.Onboarding2.pages 1.0
-import AppLayouts.Onboarding.enums 1.0
+import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.enums
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 OnboardingStackView {
     id: root

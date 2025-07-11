@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
-import StatusQ.Controls 0.1
+import StatusQ.Controls
 
 GridLayout {
     columns: 1

@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQml 2.15
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import QtQuick
+import QtQml
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 /*!
     \qmltype StatusRoundedMedia

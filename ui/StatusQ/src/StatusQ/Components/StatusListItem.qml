@@ -1,10 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Components
+import StatusQ.Controls
 import Qt5Compat.GraphicalEffects
 
 import "private"

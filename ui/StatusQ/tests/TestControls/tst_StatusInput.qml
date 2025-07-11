@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import StatusQ 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Controls.Validators 0.1
+import StatusQ
+import StatusQ.Controls
+import StatusQ.Controls.Validators
 
-import StatusQ.TestHelpers 0.1
+import StatusQ.TestHelpers
 
 Item {
     id: root

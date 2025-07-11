@@ -1,27 +1,27 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
-import QtQml 2.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import QtQml
+import QtQml.Models
 
-import utils 1.0
-import shared.panels 1.0
+import utils
+import shared.panels
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
-import StatusQ.Controls 0.1
-import StatusQ.Controls.Validators 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Popups.Dialog 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Controls
+import StatusQ.Controls.Validators
+import StatusQ.Components
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
 
-import AppLayouts.Communities.views 1.0
-import AppLayouts.Communities.panels 1.0
-import AppLayouts.Communities.models 1.0
-import AppLayouts.Communities.controls 1.0
-import AppLayouts.Communities.stores 1.0 as CommunitiesStores
+import AppLayouts.Communities.views
+import AppLayouts.Communities.panels
+import AppLayouts.Communities.models
+import AppLayouts.Communities.controls
+import AppLayouts.Communities.stores as CommunitiesStores
 
 StatusStackModal {
     id: root

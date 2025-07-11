@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Shapes 1.5
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import utils 1.0
-import shared 1.0
-import shared.controls 1.0
+import utils
+import shared
+import shared.controls
 
 
 Control {

@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick
 
 Image {
     sourceSize.width: width || undefined
