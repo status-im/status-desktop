@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core.Backpressure 0.1
+import StatusQ.Core.Backpressure
 
-import AppLayouts.Onboarding2.pages 1.0
-import AppLayouts.Onboarding.enums 1.0
+import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.enums
 
 Item {
     id: root

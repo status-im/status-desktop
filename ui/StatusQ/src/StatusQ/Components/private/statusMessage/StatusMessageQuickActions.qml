@@ -1,9 +1,9 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.15
-import QtQuick.Layouts 1.14
+import QtQuick
+import Qt5Compat.GraphicalEffects
+import QtQuick.Layouts
 
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls
+import StatusQ.Core.Theme
 
 Rectangle {
     id: root

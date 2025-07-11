@@ -1,18 +1,18 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Components 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls.Validators 0.1
+import StatusQ.Components
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls.Validators
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import utils 1.0
-import shared.controls 1.0
-import shared.stores 1.0 as SharedStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
+import utils
+import shared.controls
+import shared.stores as SharedStores
+import AppLayouts.Profile.stores as ProfileStores
 
 import "../stores"
 import "../controls"

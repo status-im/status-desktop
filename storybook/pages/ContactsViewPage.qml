@@ -1,14 +1,14 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ 0.1
+import StatusQ
 
-import Models 1.0
-import Storybook 1.0
+import Models
+import Storybook
 
-import shared.stores 1.0 as SharedStores
-import AppLayouts.Profile.views 1.0
-import AppLayouts.Profile.stores 1.0
-import mainui.adaptors 1.0
+import shared.stores as SharedStores
+import AppLayouts.Profile.views
+import AppLayouts.Profile.stores
+import mainui.adaptors
 
 Item {
     ContactsView {

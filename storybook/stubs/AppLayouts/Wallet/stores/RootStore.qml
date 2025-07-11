@@ -1,10 +1,10 @@
 // This should not be a singleton. TODO: Remove it once the "real" Wallet root store is not a singleton anymore.
 pragma Singleton
 
-import QtQml 2.15
+import QtQml
 
-import utils 1.0
-import Models 1.0
+import utils
+import Models
 
 QtObject {
     id: root

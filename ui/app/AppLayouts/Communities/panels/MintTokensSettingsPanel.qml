@@ -1,28 +1,28 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml
 
-import StatusQ 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core.Backpressure 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ
+import StatusQ.Controls
+import StatusQ.Core.Backpressure
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
-import AppLayouts.Communities.controls 1.0
-import AppLayouts.Communities.helpers 1.0
-import AppLayouts.Communities.layouts 1.0
-import AppLayouts.Communities.popups 1.0
-import AppLayouts.Communities.views 1.0
-import AppLayouts.Wallet.helpers 1.0
+import AppLayouts.Communities.controls
+import AppLayouts.Communities.helpers
+import AppLayouts.Communities.layouts
+import AppLayouts.Communities.popups
+import AppLayouts.Communities.views
+import AppLayouts.Wallet.helpers
 
-import shared.controls 1.0
+import shared.controls
 
-import utils 1.0
-import shared.popups 1.0
+import utils
+import shared.popups
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
 StackView {
     id: root

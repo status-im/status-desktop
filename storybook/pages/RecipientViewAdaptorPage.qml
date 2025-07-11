@@ -1,16 +1,16 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import SortFilterProxyModel 0.2
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import SortFilterProxyModel
 
-import AppLayouts.Wallet.stores 1.0
-import AppLayouts.Wallet.adaptors 1.0
+import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.adaptors
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
-import shared.stores 1.0
-import utils 1.0
+import shared.stores
+import utils
 
 Item {
     id: root

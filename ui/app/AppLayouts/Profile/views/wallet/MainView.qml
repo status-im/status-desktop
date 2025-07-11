@@ -1,15 +1,15 @@
-import QtQuick 2.13
+import QtQuick
 
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
+import StatusQ.Core.Theme
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Components
 
-import utils 1.0
-import shared.status 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.popups.addaccount 1.0
+import utils
+import shared.status
+import shared.panels
+import shared.popups
+import shared.popups.addaccount
 
 import "../../stores"
 import "../../controls"

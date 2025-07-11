@@ -1,4 +1,4 @@
-import utils 1.0
+import utils
 
 TokenDelegate {
     title: Constants.dummyText

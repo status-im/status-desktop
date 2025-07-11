@@ -1,9 +1,9 @@
-import QtQuick 2.0
-import QtTest 1.0
+import QtQuick
+import QtTest
 
-import StatusQ.Controls 0.1
+import StatusQ.Controls
 
-import StatusQ.TestHelpers 0.1
+import StatusQ.TestHelpers
 
 Item {
     width: 400

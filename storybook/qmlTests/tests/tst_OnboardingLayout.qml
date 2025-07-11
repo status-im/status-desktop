@@ -1,20 +1,20 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import StatusQ 0.1 // ClipboardUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.TestHelpers 0.1
+import StatusQ // ClipboardUtils
+import StatusQ.Core.Theme
+import StatusQ.TestHelpers
 
-import AppLayouts.Onboarding2 1.0
-import AppLayouts.Onboarding2.pages 1.0
-import AppLayouts.Onboarding2.stores 1.0
-import AppLayouts.Onboarding.enums 1.0
+import AppLayouts.Onboarding2
+import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding2.stores
+import AppLayouts.Onboarding.enums
 
-import shared.stores 1.0 as SharedStores
+import shared.stores as SharedStores
 
-import utils 1.0
+import utils
 
-import Models 1.0
+import Models
 
 Item {
     id: root

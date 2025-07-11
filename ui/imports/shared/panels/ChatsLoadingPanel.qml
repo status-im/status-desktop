@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import StatusQ.Core 0.1
-import shared 1.0
+import QtQuick
+import StatusQ.Core
+import shared
 
 Loader {
     property var chatSectionModule

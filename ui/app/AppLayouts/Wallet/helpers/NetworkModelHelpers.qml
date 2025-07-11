@@ -1,12 +1,12 @@
 pragma Singleton
 
-import QtQml 2.14
+import QtQml
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Internal 0.1 as Internal
+import StatusQ.Core
+import StatusQ.Core.Utils
+import StatusQ.Internal as Internal
 
-import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.controls
 
 QtObject {
 

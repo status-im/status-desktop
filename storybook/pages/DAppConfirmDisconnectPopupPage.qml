@@ -1,12 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Qt.labs.settings 1.0
+import QtCore
+import QtQuick
 
-import Models 1.0
-import Storybook 1.0
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import shared.popups.walletconnect 1.0
+import Models
+import Storybook
+
+import shared.popups.walletconnect
 
 
 Item {

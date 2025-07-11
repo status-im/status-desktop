@@ -1,11 +1,11 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Dialogs 1.3
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Dialogs
 
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls
+import StatusQ.Popups
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 Column {
     spacing: 10

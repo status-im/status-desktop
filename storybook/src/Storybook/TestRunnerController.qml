@@ -1,6 +1,6 @@
-import QtQml 2.15
+import QtQml
 
-import Storybook 1.0
+import Storybook
 
 QtObject {
     id: root

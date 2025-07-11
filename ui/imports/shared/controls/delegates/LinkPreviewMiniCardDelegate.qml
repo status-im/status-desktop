@@ -1,7 +1,7 @@
-import QtQuick 2.15
+import QtQuick
 
-import utils 1.0
-import shared.controls.chat 1.0
+import utils
+import shared.controls.chat
 
 LinkPreviewMiniCard {
     id: root

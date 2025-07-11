@@ -40,10 +40,6 @@ int main(int argc, char *argv[]) {
     // Parse excluded files list
     QStringList excludedFiles;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    excludedFiles += {"StatusQrCodeScanner.qml", "StatusImageSelector.qml"}; // fail to load recursively; remove when fully switching to Qt6
-#endif
-
 #ifdef STATUSQ_EXCLUDE_FILES
     const QString excludedFilesStr{QStringLiteral(STATUSQ_EXCLUDE_FILES)};
     excludedFiles += excludedFilesStr.split(",", Qt::SkipEmptyParts);
@@ -66,11 +62,6 @@ int main(int argc, char *argv[]) {
         if (info.suffix() != QStringLiteral("qml"))
             continue;
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        if (info.path().contains("+qt6"))
-            continue;
-#endif
-
         // Check if this file should be excluded
         bool shouldExclude = false;
         const QString relativePath = QDir(iterationPath).relativeFilePath(it.filePath());
@@ -89,14 +80,6 @@ int main(int argc, char *argv[]) {
             continue;
 
         QString filePath = it.filePath();
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        QString qt6AlternativeComponentPath = info.path() + QStringLiteral("/+qt6/") + info.fileName();
-
-        if (QFile::exists(qt6AlternativeComponentPath)) {
-            filePath = qt6AlternativeComponentPath;
-        }
-#endif
-
         QFile file(filePath);
         file.open(QIODevice::ReadOnly);
 

@@ -1,14 +1,14 @@
 pragma Singleton
 
-import QtQuick 2.15
-import QtQml 2.15
+import QtQuick
+import QtQml
 
-import utils 1.0
-import shared.stores 1.0
-import shared.stores.send 1.0
+import utils
+import shared.stores
+import shared.stores.send
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
 
 import "./controls"
 import "./views"

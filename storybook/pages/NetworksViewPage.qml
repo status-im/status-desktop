@@ -1,20 +1,20 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Profile.views.wallet 1.0
+import AppLayouts.Profile.views.wallet
 
-import StatusQ 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Core
+import StatusQ.Core.Utils
 
-import Models 1.0
+import Models
 
-import Storybook 1.0
+import Storybook
 
-import utils 1.0
+import utils
 
 SplitView {
     Logs { id: logs }

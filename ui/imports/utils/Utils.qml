@@ -1,12 +1,12 @@
 pragma Singleton
 
-import QtQuick 2.15
+import QtQuick
 
-import shared 1.0
+import shared
 
-import StatusQ 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as StatusQUtils
 
 QtObject {
     function isDigit(value) {

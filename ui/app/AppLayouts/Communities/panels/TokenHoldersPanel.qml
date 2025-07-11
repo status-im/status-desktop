@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Popups 0.1
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import StatusQ.Controls
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Popups
 
-import utils 1.0
-import shared.controls 1.0
+import utils
+import shared.controls
 
 Control {
     id: root

@@ -1,12 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import shared.stores 1.0
-import shared.views 1.0
+import shared.stores
+import shared.views
 
-import utils 1.0
+import utils
 
 Item {
     id: root

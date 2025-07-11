@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Controls.Universal 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Universal
 
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Components
+import StatusQ.Core.Theme
 
 TextField {
     id: root

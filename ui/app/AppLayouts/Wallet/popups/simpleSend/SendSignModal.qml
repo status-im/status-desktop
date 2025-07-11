@@ -1,20 +1,20 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQml.Models
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
+import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Components
 
-import AppLayouts.Wallet 1.0
-import AppLayouts.Wallet.panels 1.0
-import AppLayouts.Wallet.views 1.0
-import AppLayouts.Wallet.popups 1.0
-import AppLayouts.Wallet 1.0
+import AppLayouts.Wallet
+import AppLayouts.Wallet.panels
+import AppLayouts.Wallet.views
+import AppLayouts.Wallet.popups
+import AppLayouts.Wallet
 
-import utils 1.0
+import utils
 
 SignTransactionModalBase {
     id: root

@@ -1,6 +1,6 @@
-import QtQuick 2.15
+import QtQuick
 
-import shared.stores 1.0
+import shared.stores
 
 SessionRequestResolved {
     id: root

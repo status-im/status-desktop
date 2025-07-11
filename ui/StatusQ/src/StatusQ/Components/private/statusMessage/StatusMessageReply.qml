@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Shapes 1.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Shapes
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Components 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
+import StatusQ.Components
 
 Item {
     id: root

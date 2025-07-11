@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import shared.controls 1.0
+import shared.controls
 
 Item {
     RowLayout {

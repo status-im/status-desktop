@@ -1,12 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtCore
+import QtQuick
 
-import Qt.labs.settings 1.1
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Wallet.controls 1.0
-import StatusQ.Core.Theme 0.1
-import utils 1.0
+import AppLayouts.Wallet.controls
+import StatusQ.Core.Theme
+import utils
 
 Pane {
     padding: 0

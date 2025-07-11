@@ -1,13 +1,14 @@
-import QtQuick 2.15
-import Qt.labs.platform 1.1
+import QtQuick
+import QtQuick.Dialogs
+import QtCore
 
-// Since this is a temporal component, it will be wrapped into this visual item since wrapping the
-// FileDialog into a SQUtils.QObject it does not open the dialog in macos
-Item {
+import StatusQ.Core.Utils
+
+QObject {
     id: root
 
     property alias title: dlg.title
-    property alias selectedFile: dlg.currentFile
+    property alias selectedFile: dlg.selectedFile
     property alias acceptLabel: dlg.acceptLabel
     property alias defaultSuffix: dlg.defaultSuffix
 

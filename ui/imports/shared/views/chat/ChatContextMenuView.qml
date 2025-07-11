@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Popups.Dialog 0.1
+import StatusQ
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
 
-import AppLayouts.Communities.popups 1.0
-import shared.controls.chat.menuItems 1.0
-import shared.popups 1.0
-import utils 1.0
+import AppLayouts.Communities.popups
+import shared.controls.chat.menuItems
+import shared.popups
+import utils
 
 StatusMenu {
     id: root

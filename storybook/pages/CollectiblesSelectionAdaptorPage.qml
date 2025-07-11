@@ -1,20 +1,20 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Models 0.1
+import StatusQ
+import StatusQ.Core.Utils
+import StatusQ.Models
 
-import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet.adaptors 1.0
-import utils 1.0
+import AppLayouts.Wallet.controls
+import AppLayouts.Wallet.adaptors
+import utils
 
-import Models 1.0
-import Storybook 1.0
+import Models
+import Storybook
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
 Pane {
     id: root

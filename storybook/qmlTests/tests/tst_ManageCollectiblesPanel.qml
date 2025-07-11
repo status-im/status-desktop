@@ -1,16 +1,15 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtCore
+import QtQuick
+import QtTest
 
-import Qt.labs.settings 1.0
+import StatusQ.Models
 
-import StatusQ.Models 0.1
+import AppLayouts.Wallet.panels
 
-import AppLayouts.Wallet.panels 1.0
+import Models
+import utils
 
-import Models 1.0
-import utils 1.0
-
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 Item {
     id: root

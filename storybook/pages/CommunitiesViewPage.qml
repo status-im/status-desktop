@@ -1,18 +1,18 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
-import AppLayouts.stores 1.0 as AppLayoutsStores
-import AppLayouts.Profile.views 1.0
-import AppLayouts.Wallet.stores 1.0
-import AppLayouts.Profile.stores 1.0
-import mainui 1.0
-import utils 1.0
+import AppLayouts.stores as AppLayoutsStores
+import AppLayouts.Profile.views
+import AppLayouts.Wallet.stores
+import AppLayouts.Profile.stores
+import mainui
+import utils
 
-import Storybook 1.0
-import Models 1.0
-import shared.stores 1.0 as SharedStores
+import Storybook
+import Models
+import shared.stores as SharedStores
 
 SplitView {
     id: root

@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ
+import StatusQ.Core.Utils as StatusQUtils
 
-import shared.popups.send.controls 1.0
+import shared.popups.send.controls
 
 Item {
     id: root

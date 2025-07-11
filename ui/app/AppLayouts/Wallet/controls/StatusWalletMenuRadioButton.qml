@@ -1,9 +1,9 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.12
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core.Theme
+import StatusQ.Core
+import StatusQ.Controls
 
 StatusRadioButton {
     id: root

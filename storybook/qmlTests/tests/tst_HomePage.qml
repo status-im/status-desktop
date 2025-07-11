@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import Models 1.0
-import Storybook 1.0
+import Models
+import Storybook
 
-import StatusQ.TestHelpers 0.1
+import StatusQ.TestHelpers
 
-import AppLayouts.HomePage 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.HomePage
+import AppLayouts.Profile.stores as ProfileStores
 
-import utils 1.0
+import utils
 
 Item {
     id: root

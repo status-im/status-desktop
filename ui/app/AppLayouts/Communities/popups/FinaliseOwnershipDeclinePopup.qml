@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQml.Models
 
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Popups.Dialog
+import StatusQ.Core.Theme
 
-import utils 1.0
+import utils
 
 StatusDialog {
     id: root

@@ -1,9 +1,9 @@
-import QtQuick 2.12
+import QtQuick
 
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls
+import StatusQ.Core
+import StatusQ.Popups
+import StatusQ.Core.Theme
 
 StatusModal {
     id: root

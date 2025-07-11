@@ -1,8 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Controls
 
 StatusIcon {
     id: root

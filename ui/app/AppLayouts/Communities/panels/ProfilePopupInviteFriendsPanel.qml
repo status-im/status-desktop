@@ -1,20 +1,20 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ
+import StatusQ.Core.Theme
+import StatusQ.Components
+import StatusQ.Controls
+import StatusQ.Popups
 
-import utils 1.0
-import shared 1.0
-import shared.controls 1.0
-import shared.panels 1.0
-import shared.views 1.0
-import shared.status 1.0
+import utils
+import shared
+import shared.controls
+import shared.panels
+import shared.views
+import shared.status
 
-import AppLayouts.stores 1.0 as AppLayoutStores
+import AppLayouts.stores as AppLayoutStores
 
 ColumnLayout {
     id: root

@@ -1,14 +1,14 @@
 pragma Singleton
 
-import QtQuick 2.14
+import QtQuick
 
-import utils 1.0
-import StatusQ.Core.Theme 0.1
+import utils
+import StatusQ.Core.Theme
 
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Utils as StatusQUtils
 
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import shared.stores 1.0 as SharedStores
+import AppLayouts.Wallet.stores as WalletStores
+import shared.stores as SharedStores
 
 QtObject {
 

@@ -1,22 +1,22 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Controls 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Utils
+import StatusQ.Controls
 
-import Storybook 1.0
-import Models 1.0
-import utils 1.0
+import Storybook
+import Models
+import utils
 
-import shared.popups.send 1.0
-import shared.stores 1.0
-import shared.stores.send 1.0
+import shared.popups.send
+import shared.stores
+import shared.stores.send
 
-import SortFilterProxyModel 0.2
-import AppLayouts.Wallet.stores 1.0
+import SortFilterProxyModel
+import AppLayouts.Wallet.stores
 
 SplitView {
     id: root

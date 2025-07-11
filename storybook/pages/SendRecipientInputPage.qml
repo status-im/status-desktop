@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
-import Storybook 1.0
+import Storybook
 
-import utils 1.0
+import utils
 
-import shared.popups.send.controls 1.0
+import shared.popups.send.controls
 
 SplitView {
     id: root

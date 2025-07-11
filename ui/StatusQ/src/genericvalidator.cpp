@@ -87,11 +87,7 @@ void GenericValidator::fixup(QString& input) const
         return;
     }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    if (value.type() == QVariant::String)
-#else
     if (value.typeId() == QMetaType::QString)
-#endif
         input = m_fixupExpression->evaluate().toString();
     else
         qWarning() << "Validator: fixup expression must return string.";
@@ -121,18 +117,10 @@ QValidator::State GenericValidator::validate(QString& input, int& pos) const
         return QValidator::Invalid;
     }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    if (value.type() == QVariant::Bool)
-#else
     if (value.typeId() == QMetaType::Bool)
-#endif
         return value.toBool() ? QValidator::Acceptable : QValidator::Invalid;
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    if (value.type() == QVariant::Int) {
-#else
     if (value.typeId() == QMetaType::Int) {
-#endif
         auto stateInt = value.toInt();
 
         if (isValidState(stateInt)) {

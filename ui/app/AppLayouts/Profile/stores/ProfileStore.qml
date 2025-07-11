@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQml 2.15
+import QtQuick
+import QtQml
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

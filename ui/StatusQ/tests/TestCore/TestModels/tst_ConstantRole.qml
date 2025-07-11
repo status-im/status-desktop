@@ -1,10 +1,10 @@
-import QtQml 2.15
-import QtQuick 2.15
-import QtTest 1.15
+import QtQml
+import QtQuick
+import QtTest
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import StatusQ 0.1
+import StatusQ
 
 Item {
     id: root

@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import StatusQ.Core.Theme 0.1
+import QtQuick
+import QtQuick.Controls
+import StatusQ.Core.Theme
 
 TabButton {
     id: root

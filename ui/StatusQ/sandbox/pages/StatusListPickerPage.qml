@@ -1,12 +1,12 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core 0.1
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Core.Theme
+import StatusQ.Core
 
-import "../demoapp/data" 1.0
+import "../demoapp/data"
 
 GridLayout {
     id: root

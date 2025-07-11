@@ -1,4 +1,4 @@
-import StatusQ.Popups 0.1
+import StatusQ.Popups
 
 StatusMenu {
     id: root

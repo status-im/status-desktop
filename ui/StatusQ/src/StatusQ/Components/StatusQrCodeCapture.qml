@@ -1,18 +1,17 @@
-import QtQuick 2.15
+import QtQuick
 
-import QtMultimedia 5.15
-import QZXing 3.3
+import QtMultimedia
+import QZXing
 
 Item {
     id: root
 
     readonly property size sourceSize: Qt.size(videoOutput.sourceRect.width,
                                                videoOutput.sourceRect.height)
-    readonly property real sourceRatio: videoOutput.sourceRect.width
-                                        / videoOutput.sourceRect.height
     readonly property size contentSize: Qt.size(videoOutput.contentRect.width,
                                                 videoOutput.contentRect.height)
-    readonly property alias contentRect: videoOutput.contentRect
+    readonly property real sourceRatio: videoOutput.sourceRect.width
+                                        / videoOutput.sourceRect.height
 
     readonly property int failsCount: d.failsCount
     readonly property int tagsCount: d.tagsCount
@@ -20,83 +19,85 @@ Item {
     readonly property string lastTag: d.lastTag
     readonly property string currentTag: d.currentTag
 
-    readonly property var availableCameras: d.availableCameras
-    readonly property bool cameraAvailable: camera.availability === Camera.Available
-    readonly property string cameraError: camera.errorString
+    readonly property alias contentRect: videoOutput.contentRect
 
-    function setCameraDevice(deviceId) {
-        camera.deviceId = "" // Workaround for Qt bug. Without this the device changes only first time.
-        camera.deviceId = deviceId
+    readonly property var availableCameras: {
+        return mediaDevices.videoInputs.map(d => ({
+            deviceId: d.id.toString(),
+            displayName: d.description
+        }))
     }
+
+    readonly property bool cameraAvailable: camera.active
+    readonly property string cameraError: camera.errorString
 
     signal tagFound(string tag)
 
+    function setCameraDevice(deviceId: string) {
+        camera.cameraDevice = mediaDevices.videoInputs.find(
+                    d => d.id.toString() === deviceId)
+    }
+
+    MediaDevices {
+        id: mediaDevices
+    }
+
     QtObject {
         id: d
-
-        // NOTE: QtMultimedia.availableCameras also makes a request to OS, if not made previously.
-        //       So we postpone this call until the `Camera` component is loaded
-        property var availableCameras: []
 
         property int failsCount: 0
         property int tagsCount: 0
         property int decodeTime: 0
         property string lastTag
         property string currentTag
+    }
 
+    Camera {
+        id: camera
+
+        active: true
+        focusMode: Camera.FocusModeAutoNear
+
+        Component.onDestruction: camera.active = false
+    }
+
+    CaptureSession {
+        camera: camera
+        videoOutput: videoOutput
     }
 
     VideoOutput {
         id: videoOutput
 
         anchors.fill: parent
-
-        source: Camera {
-            id: camera
-
-            focus {
-                focusMode: CameraFocus.FocusContinuous
-                focusPointMode: CameraFocus.FocusPointAuto
-            }
-
-            Component.onCompleted: {
-                d.availableCameras = QtMultimedia.availableCameras
-            }
-        }
-
-        filters: QZXingFilter {
-            id: qzxingFilter
-            orientation: videoOutput.orientation
-            captureRect: {
-                videoOutput.contentRect; videoOutput.sourceRect // bindings
-                const normalizedRectangle = Qt.rect(0, 0, 1, 1)
-                const rectangle = videoOutput.mapNormalizedRectToItem(normalizedRectangle)
-
-                console.log("CAPTURE RECT:", videoOutput.mapRectToSource(rectangle))
-
-                return videoOutput.mapRectToSource(rectangle);
-            }
-
-            decoder {
-                enabledDecoders: QZXing.DecoderFormat_QR_CODE
-                onTagFound: {
-                    d.currentTag = tag
-                    d.lastTag = tag
-                    root.tagFound(tag)
-                }
-            }
-
-            onDecodingFinished: {
-                if (succeeded) {
-                    ++d.tagsCount
-                } else {
-                    ++d.failsCount
-                    d.currentTag = ""
-                }
-                d.decodeTime = decodeTime
-            }
-        }
-
         fillMode: VideoOutput.PreserveAspectCrop
+    }
+
+    QZXingFilter {
+        id: zxingFilter
+        videoSink: videoOutput.videoSink
+        orientation: videoOutput.orientation
+
+        captureRect: videoOutput.sourceRect
+
+        decoder {
+            enabledDecoders: QZXing.DecoderFormat_EAN_13 | QZXing.DecoderFormat_CODE_39 | QZXing.DecoderFormat_QR_CODE
+            onTagFound: (tag) => {
+                d.currentTag = tag
+                d.lastTag = tag
+                root.tagFound(tag)
+            }
+            tryHarder: false
+        }
+
+        onDecodingFinished: (succeeded, decodeTime) => {
+            if (succeeded) {
+                ++d.tagsCount
+            } else {
+                ++d.failsCount
+                d.currentTag = ""
+            }
+            d.decodeTime = decodeTime
+        }
     }
 }

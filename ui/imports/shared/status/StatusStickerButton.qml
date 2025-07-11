@@ -1,12 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQml
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
-import utils 1.0
+import utils
 
 StatusButton {
     id: root

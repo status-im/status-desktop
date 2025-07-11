@@ -1,8 +1,8 @@
-import QtQml 2.15
+import QtQml
 
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core.Utils as SQUtils
 
-import utils 1.0
+import utils
 
 /* This is used so that there is an easy way to fill in the data
 needed to launch the Swap Modal with pre-filled requisites. */

@@ -1,11 +1,11 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Popups 0.1
+import StatusQ.Popups
 
 import "../controls"
 import "./filterSubMenus"
 
-import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.stores as WalletStores
 
 StatusMenu {
     id: root

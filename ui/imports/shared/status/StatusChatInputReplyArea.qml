@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import utils 1.0
-import shared 1.0
-import shared.panels 1.0
+import utils
+import shared
+import shared.panels
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
-import StatusQ.Components.private 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Components.private
 
 Rectangle {
     id: root

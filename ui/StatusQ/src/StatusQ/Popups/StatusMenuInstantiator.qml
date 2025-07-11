@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Controls.Universal 2.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Universal
+import QtQml.Models
 
 Instantiator {
     id: root

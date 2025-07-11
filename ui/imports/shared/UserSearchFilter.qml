@@ -1,6 +1,6 @@
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 AnyOf {
     id: root

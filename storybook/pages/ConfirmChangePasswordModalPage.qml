@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Profile.popups 1.0
+import AppLayouts.Profile.popups
 
-import Storybook 1.0
+import Storybook
 
 SplitView {
     PopupBackground {

@@ -1,9 +1,9 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.Wallet.services.dapps.types 1.0
-import StatusQ.Core.Utils 0.1 as SQUtils
+import AppLayouts.Wallet.services.dapps.types
+import StatusQ.Core.Utils as SQUtils
 
-import shared.stores 1.0
+import shared.stores
 
 // The TransactionFeesBroker is responsible for managing the subscriptions to the estimated time, fees and gas limit for a transaction
 // It will bundle the same requests to optimise the backend load and will notify the subscribers when the data is ready

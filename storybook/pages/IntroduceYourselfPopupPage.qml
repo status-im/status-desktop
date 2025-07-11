@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import Storybook 1.0
+import Storybook
 
-import shared.popups 1.0
+import shared.popups
 
 Item {
     Button {

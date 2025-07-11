@@ -1,13 +1,13 @@
-import QtQuick 2.15
+import QtQuick
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
-import StatusQ 0.1
+import StatusQ
 
-import utils 1.0
+import utils
 
-import shared.stores 1.0 as SharedStores
+import shared.stores as SharedStores
 
 QtObject {
     id: root

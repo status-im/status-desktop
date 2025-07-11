@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import StatusQ.Core.Backpressure 0.1
+import QtQuick
+import StatusQ.Core.Backpressure
 
 Item {
     id: statusAsyncValidator

@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml
 
-import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.popups
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import Storybook 1.0
+import Storybook
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
 SplitView {
     id: root

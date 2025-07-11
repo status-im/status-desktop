@@ -1,4 +1,4 @@
-import QtQml 2.14
+import QtQml
 
 QtObject {
     enum Mode {

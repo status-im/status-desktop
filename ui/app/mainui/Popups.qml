@@ -1,39 +1,39 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
-import QtQml.Models 2.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Window
+import QtQml.Models
+import QtQml
 
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Popups
+import StatusQ.Popups.Dialog
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
-import AppLayouts.stores 1.0 as AppLayoutStores
-import AppLayouts.Chat.popups 1.0
-import AppLayouts.Profile.popups 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Communities.popups 1.0
-import AppLayouts.Communities.helpers 1.0
-import AppLayouts.Wallet.popups.buy 1.0
-import AppLayouts.Wallet.popups 1.0
-import AppLayouts.Wallet.adaptors 1.0
-import AppLayouts.Communities.stores 1.0
-import AppLayouts.Profile.helpers 1.0
-import mainui.activitycenter.stores 1.0
+import AppLayouts.stores as AppLayoutStores
+import AppLayouts.Chat.popups
+import AppLayouts.Profile.popups
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Communities.popups
+import AppLayouts.Communities.helpers
+import AppLayouts.Wallet.popups.buy
+import AppLayouts.Wallet.popups
+import AppLayouts.Wallet.adaptors
+import AppLayouts.Communities.stores
+import AppLayouts.Profile.helpers
+import mainui.activitycenter.stores
 
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.Chat.stores as ChatStores
 
-import shared.popups 1.0
-import shared.status 1.0
-import shared.stores 1.0
-import shared.views 1.0
+import shared.popups
+import shared.status
+import shared.stores
+import shared.views
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

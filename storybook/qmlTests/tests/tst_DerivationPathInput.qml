@@ -1,10 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQml 2.14
-import QtTest 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQml
+import QtTest
 
-import shared.popups.addaccount.panels 1.0
-import shared.popups.addaccount.panels.DerivationPathInput 1.0
+import shared.popups.addaccount.panels
+import shared.popups.addaccount.panels.DerivationPathInput
 
 Item {
     id: root

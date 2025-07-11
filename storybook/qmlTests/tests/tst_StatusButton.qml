@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls
+import StatusQ.Core.Theme
 
-import Models 1.0
+import Models
 
 Item {
     id: root

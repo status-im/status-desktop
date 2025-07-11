@@ -1,8 +1,8 @@
 pragma Singleton
 
-import QtQml 2.15
+import QtQml
 
-import Monitoring 1.0
+import Monitoring
 
 QtObject {
     function typeName(obj) {

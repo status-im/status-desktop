@@ -1,20 +1,20 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1 as StatusQControls
-import StatusQ.Components 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls as StatusQControls
+import StatusQ.Components
 
-import utils 1.0
-import shared.status 1.0
-import shared.popups 1.0
-import shared.popups.send 1.0
-import shared.stores.send 1.0
+import utils
+import shared.status
+import shared.popups
+import shared.popups.send
+import shared.stores.send
 
-import AppLayouts.Profile.stores 1.0
+import AppLayouts.Profile.stores
 
 Item {
     id: root

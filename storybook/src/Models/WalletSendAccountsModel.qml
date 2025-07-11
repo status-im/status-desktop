@@ -1,6 +1,6 @@
-import QtQuick 2.15
+import QtQuick
 
-import utils 1.0
+import utils
 
 ListModel {
     readonly property var data: [

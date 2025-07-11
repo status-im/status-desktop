@@ -1,27 +1,27 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Layout 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Popups.Dialog
+import StatusQ.Layout
 
-import utils 1.0
-import shared.controls 1.0
-import shared.popups 1.0
-import shared.stores 1.0
+import utils
+import shared.controls
+import shared.popups
+import shared.stores
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import AppLayouts.Communities.controls 1.0
-import AppLayouts.Communities.popups 1.0
-import AppLayouts.Communities.views 1.0
-import AppLayouts.Communities.panels 1.0
-import AppLayouts.Communities.stores 1.0
+import AppLayouts.Communities.controls
+import AppLayouts.Communities.popups
+import AppLayouts.Communities.views
+import AppLayouts.Communities.panels
+import AppLayouts.Communities.stores
 
 StatusSectionLayout {
     id: root

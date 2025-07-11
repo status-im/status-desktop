@@ -1,11 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Utils
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
 Item {
     id: control

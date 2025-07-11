@@ -1,6 +1,6 @@
-import QtQuick 2.14
+import QtQuick
 
-import StatusQ.Controls 0.1
+import StatusQ.Controls
 
 /*!
    \qmltype StatusRegularExpressionValidator

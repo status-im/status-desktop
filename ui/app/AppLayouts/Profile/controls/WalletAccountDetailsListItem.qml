@@ -1,10 +1,10 @@
-import QtQuick 2.13
+import QtQuick
 
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Components
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
-import shared.controls 1.0
+import shared.controls
 
 StatusListItem {
     id: root

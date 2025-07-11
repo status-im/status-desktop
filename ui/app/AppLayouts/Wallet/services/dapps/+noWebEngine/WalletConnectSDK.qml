@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 
 /*
     Dummy WalletConnectSDK.qml file to avoid WebEngine dependency

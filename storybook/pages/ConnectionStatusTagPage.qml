@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import shared.popups.walletconnect 1.0
+import shared.popups.walletconnect
 
 Item {
     id: root

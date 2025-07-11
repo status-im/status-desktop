@@ -1,11 +1,11 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.Wallet.helpers 1.0
-import AppLayouts.Wallet.services.dapps 1.0
-import AppLayouts.Wallet.services.dapps.types 1.0 as DAppsTypes
+import AppLayouts.Wallet.helpers
+import AppLayouts.Wallet.services.dapps
+import AppLayouts.Wallet.services.dapps.types as DAppsTypes
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Core.Utils
 
 // This plugin handles the chain ability for the dapps
 // It monitors the chain availability and updates the dapps accordingly

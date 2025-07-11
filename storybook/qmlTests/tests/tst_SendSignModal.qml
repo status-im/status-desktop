@@ -1,18 +1,18 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtTest 1.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtTest
+import QtQml
 
-import Models 1.0
+import Models
 
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
-import AppLayouts.Wallet 1.0
-import AppLayouts.Wallet.popups.simpleSend 1.0
+import AppLayouts.Wallet
+import AppLayouts.Wallet.popups.simpleSend
 
-import utils 1.0
+import utils
 
 Item {
     id: root

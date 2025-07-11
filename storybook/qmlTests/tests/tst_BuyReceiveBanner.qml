@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.panels
 
 Item {
     id: root

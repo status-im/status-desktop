@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import AppLayouts.Onboarding.enums 1.0
+import AppLayouts.Onboarding.enums
 
 /*!
    \qmltype KeycardAddKeyPairDelayedPage

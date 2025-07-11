@@ -1,9 +1,9 @@
 pragma Singleton
 
-import QtQml 2.15
+import QtQml
 
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Theme
+import StatusQ.Controls.Validators
 
 QtObject {
 

@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
-import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding2.pages
 
-import utils 1.0
+import utils
 
 SQUtils.QObject {
     id: root

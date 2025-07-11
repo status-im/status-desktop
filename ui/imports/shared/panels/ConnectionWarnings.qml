@@ -1,11 +1,11 @@
-import QtQuick 2.14
+import QtQuick
 
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Controls
 
-import utils 1.0
+import utils
 
-import shared.stores 1.0
+import shared.stores
 
 Loader {
     id: root

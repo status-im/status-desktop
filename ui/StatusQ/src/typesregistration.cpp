@@ -30,12 +30,6 @@
 #include <QQmlEngine>
 
 void registerStatusQTypes() {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QByteArrayList selectors = qgetenv("QT_FILE_SELECTORS").split(',');
-    selectors << QByteArrayLiteral("qt6");
-    qputenv("QT_FILE_SELECTORS", selectors.join(","));
-#endif
-
     qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
     qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
@@ -93,23 +87,6 @@ void registerStatusQTypes() {
                                               "Onboarding", [](QQmlEngine*, QJSEngine*) {
                                                   return new OnboardingEnums;
                                               });
-
-// create import alias from QtGraphicalEffects 1.15 to Qt5Compat.GraphicalEffects
-// in order to satisfy both Qt 5/6, relying the same version of qml code
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    qmlRegisterModule("QtGraphicalEffects", 1, 15);
-    qmlRegisterModuleImport("QtGraphicalEffects", QQmlModuleImportModuleAny,
-                            "Qt5Compat.GraphicalEffects", QQmlModuleImportLatest);
-
-    qmlRegisterModule("Qt.labs.calendar", 1, 0);
-    qmlRegisterModuleImport("Qt.labs.calendar", QQmlModuleImportModuleAny,
-                            "QtQuick.Controls", QQmlModuleImportLatest);
-#endif
-        
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
-    qmlRegisterModuleImport("Qt.labs.qmlmodels", QQmlModuleImportModuleAny,
-                            "QtQml.Models", QQmlModuleImportLatest);
-#endif
 
 #ifdef BUNDLE_QML_RESOURCES
     Q_INIT_RESOURCE(statusq);

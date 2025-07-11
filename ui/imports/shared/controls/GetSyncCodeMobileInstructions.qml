@@ -1,9 +1,9 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import shared.controls 1.0
-import shared.views 1.0
+import shared.controls
+import shared.views
 
 Column {
     id: root

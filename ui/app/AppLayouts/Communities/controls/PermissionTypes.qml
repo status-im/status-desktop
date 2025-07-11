@@ -1,8 +1,8 @@
 pragma Singleton
 
-import QtQml 2.14
+import QtQml
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
 QtObject {
     enum Type {

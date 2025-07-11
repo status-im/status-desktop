@@ -1,5 +1,5 @@
 pragma Singleton
-import QtQuick 2.15
+import QtQuick
 
 QtObject {
     // Maps to https://eips.ethereum.org/EIPS/eip-1193#rpc-errors

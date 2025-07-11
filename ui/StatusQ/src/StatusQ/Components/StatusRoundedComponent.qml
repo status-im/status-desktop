@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.15
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import QtQuick
+import Qt5Compat.GraphicalEffects
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 /*!
     \qmltype StatusRoundedComponent

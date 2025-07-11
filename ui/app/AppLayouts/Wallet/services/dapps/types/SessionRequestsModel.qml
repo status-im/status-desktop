@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 
 /// Data model that holds a queue of SessionRequestResolved events as they are received from the SDK
 ListModel {

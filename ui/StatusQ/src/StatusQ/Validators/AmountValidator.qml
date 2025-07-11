@@ -1,4 +1,4 @@
-import StatusQ 0.1
+import StatusQ
 
 /*!
   \qmltype AmountValidator

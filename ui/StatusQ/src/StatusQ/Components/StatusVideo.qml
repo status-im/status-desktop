@@ -1,15 +1,14 @@
-import QtQuick 2.13
-import QtMultimedia 5.15
+import QtQuick
+import QtMultimedia
 
 /*!
     \qmltype StatusVideo
     \inherits Item
     \inqmlmodule StatusQ.Components
     \since StatusQ.Components 0.1
-    \brief Displays a video. Bundles \l{https://doc.qt.io/qt-5/qml-qtmultimedia-mediaplayer.html}{MediaPlayer} and 
-    \l{https://doc.qt.io/qt-5/qml-qtmultimedia-video.html}{Video}.
+    \brief Displays a video. \l{https://doc.qt.io/qt-6/qml-qtmultimedia-video.html}{Video}.
 
-    This is a plain wrapper for the MediaPlayer and Video QML types, providing an interface similar to the Image QML type. It 
+    This is a plain wrapper for Video QML type, providing an interface similar to the Image QML type. It
     sets some default property values and adds some properties common to other media type wrappers.
 
     Example of how to use it:
@@ -28,25 +27,23 @@ import QtMultimedia 5.15
 Item {
     id: root
 
-    readonly property bool isLoading: player.playbackState !== MediaPlayer.PlayingState
-    readonly property bool isError: player.status === MediaPlayer.InvalidMedia
+    readonly property bool isLoading: video.playbackState !== MediaPlayer.PlayingState
+    readonly property bool isError: video.status !== MediaPlayer.NoError
 
-    property alias source: player.source
-    property alias player: player
-    property alias output: output
-    property alias fillMode: output.fillMode
+    property alias source: video.source
+    property alias fillMode: video.fillMode
 
-    MediaPlayer {
-        id: player
+    // In Qt6, both playback and rendering functionalities are encapsulated in the same `Video` component
+    // so the `player` and the `output` are redundant here. Keeping both to have the same interface than with Qt5
+    property alias player: video
+    property alias output: video
+
+    Video {
+        id: video
         autoPlay: true
         muted: true
         loops: MediaPlayer.Infinite
-    }
-
-    VideoOutput {
-        id: output
         anchors.fill: parent
         fillMode: VideoOutput.PreserveAspectFit
-        source: player
     }
 }

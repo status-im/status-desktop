@@ -1,12 +1,12 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.Wallet.popups.swap 1.0
-import AppLayouts.stores 1.0 as AppLayoutStores
-import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.popups.swap
+import AppLayouts.stores as AppLayoutStores
+import AppLayouts.Wallet.stores as WalletStores
 
-import shared.stores 1.0
+import shared.stores
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

@@ -1,14 +1,14 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQml 2.14
-import QtTest 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQml
+import QtTest
 
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core.Utils as SQUtils
 
-import utils 1.0
-import shared.status 1.0
+import utils
+import shared.status
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Chat.stores as ChatStores
 
 Item {
     id: root

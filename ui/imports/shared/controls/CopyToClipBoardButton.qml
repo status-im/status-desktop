@@ -1,8 +1,8 @@
-import QtQuick 2.13
+import QtQuick
 
-import StatusQ.Controls 0.1
+import StatusQ.Controls
 
-import utils 1.0
+import utils
 
 StatusRoundButton {
     id: copyToClipboardButton

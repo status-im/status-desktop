@@ -1,6 +1,6 @@
-import QtQuick 2.14
+import QtQuick
 
-import Storybook 1.0
+import Storybook
 
 QtObject {
     id: root

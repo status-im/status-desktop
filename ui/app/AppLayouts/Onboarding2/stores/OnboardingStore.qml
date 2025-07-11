@@ -1,8 +1,8 @@
-import QtQml 2.15
+import QtQml
 
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Utils as StatusQUtils
 
-import AppLayouts.Onboarding.enums 1.0
+import AppLayouts.Onboarding.enums
 
 QtObject {
     id: root

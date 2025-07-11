@@ -1,5 +1,5 @@
 // Mock of src/app/modules/main/wallet_section/buy_sell_crypto/view.nim
-import QtQuick 2.15
+import QtQuick
 
 QtObject {
     readonly property string contextPropertyName: "walletSectionBuySellCrypto"

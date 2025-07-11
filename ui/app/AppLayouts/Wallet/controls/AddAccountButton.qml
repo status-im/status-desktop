@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Controls 0.1
+import StatusQ.Controls
 
 StatusRoundButton {
     id: btnAdd

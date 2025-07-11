@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtTest 1.15
-import QtQml 2.15
+import QtQuick
+import QtTest
+import QtQml
 
-import AppLayouts.Wallet.adaptors 1.0
+import AppLayouts.Wallet.adaptors
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Core.Utils
 
-import utils 1.0
+import utils
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 Item {
     id: root

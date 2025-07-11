@@ -1,5 +1,5 @@
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls
+import StatusQ.Core.Theme
 
 StatusFlatButton {
     width: 32

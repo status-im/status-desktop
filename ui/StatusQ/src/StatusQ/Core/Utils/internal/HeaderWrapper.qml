@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import QtQml 2.15
+import QtQuick
+import QtQml
 
 // This component is implementation detail of DoubleFlickableWithFolding
 // Moved to external file instead of using inline component because a bug

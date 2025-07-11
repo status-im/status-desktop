@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Controls 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls
+import StatusQ.Core.Utils
+import StatusQ.Core.Theme
 
-import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.panels
 
-import utils 1.0
+import utils
 
 Control {
     id: root

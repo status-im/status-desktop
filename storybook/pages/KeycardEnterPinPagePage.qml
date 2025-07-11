@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding2.pages
 
-import utils 1.0
+import utils
 
 Item {
     id: root

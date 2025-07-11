@@ -1,15 +1,15 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ
+import StatusQ.Core.Utils as SQUtils
 
-import AppLayouts.Wallet.services.dapps 1.0
-import AppLayouts.Wallet.services.dapps.types 1.0
+import AppLayouts.Wallet.services.dapps
+import AppLayouts.Wallet.services.dapps.types
 
-import shared.stores 1.0
-import utils 1.0
+import shared.stores
+import utils
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 // Plugin providing the connection handling for dApps
 // Features provided:

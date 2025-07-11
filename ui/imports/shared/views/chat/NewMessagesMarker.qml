@@ -1,10 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
 
-import utils 1.0
+import utils
 
 Item {
     id: root

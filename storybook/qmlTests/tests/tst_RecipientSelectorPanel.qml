@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import shared.popups.send.panels 1.0
+import shared.popups.send.panels
 
-import utils 1.0
+import utils
 
-import Models 1.0
+import Models
 
 Item {
     id: root

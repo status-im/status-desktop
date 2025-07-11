@@ -1,14 +1,14 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
-import mainui 1.0
+import mainui
 
-import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.panels
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
 SplitView {
     id: root

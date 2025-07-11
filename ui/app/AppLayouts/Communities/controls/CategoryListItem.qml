@@ -1,4 +1,4 @@
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
 CommunityListItem {
     implicitHeight: 34

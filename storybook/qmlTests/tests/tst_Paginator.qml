@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import QtTest 1.15
+import QtTest
 
-import AppLayouts.Market.controls 1.0
+import AppLayouts.Market.controls
 
 Item {
     id: root

@@ -1,19 +1,19 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import AppLayouts.Communities.controls 1.0
-import AppLayouts.Communities.layouts 1.0
-import AppLayouts.Communities.views 1.0
+import AppLayouts.Communities.controls
+import AppLayouts.Communities.layouts
+import AppLayouts.Communities.views
 
-import StatusQ 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Controls
+import StatusQ.Core
+import StatusQ.Core.Utils
 
-import utils 1.0
-import shared.popups 1.0
+import utils
+import shared.popups
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 StackView {
     id: root

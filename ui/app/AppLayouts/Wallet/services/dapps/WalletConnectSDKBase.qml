@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 
 /// SDK requires a visible parent to embed WebEngineView
 Item {

@@ -1,10 +1,10 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.Wallet.services.dapps 1.0
-import StatusQ.Core.Utils 0.1 as SQUtils
+import AppLayouts.Wallet.services.dapps
+import StatusQ.Core.Utils as SQUtils
 
-import shared.stores 1.0
-import utils 1.0
+import shared.stores
+import utils
 
 /*
     SiweRequestPlugin is a plugin that listens for siwe requests and manages the lifecycle of the request.

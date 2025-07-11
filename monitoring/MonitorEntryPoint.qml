@@ -1,13 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtCore
+import QtQuick
 
-import Monitoring 1.0
-import Qt.labs.settings 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import Monitoring
+import AppLayouts.Wallet.stores as WalletStores
+
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 Component {
     ColumnLayout {

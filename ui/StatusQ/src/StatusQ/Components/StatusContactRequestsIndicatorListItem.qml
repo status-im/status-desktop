@@ -1,6 +1,6 @@
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Components
 
 StatusListItem {
     id: statusContactRequestsListItem

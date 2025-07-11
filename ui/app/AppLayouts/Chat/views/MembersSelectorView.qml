@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQml.Models
 
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
+import StatusQ.Controls
+import StatusQ.Components
 
 import "private"
 
-import shared.stores 1.0
-import utils 1.0
+import shared.stores
+import utils
 
 MembersSelectorBase {
     id: root

@@ -1,13 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import Qt.labs.settings 1.0
+import mainui.activitycenter.views
+import mainui.activitycenter.stores
 
-import mainui.activitycenter.views 1.0
-import mainui.activitycenter.stores 1.0
-
-import Storybook 1.0
+import Storybook
 
 SplitView {
     id: root

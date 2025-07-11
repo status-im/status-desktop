@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.panels
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import Storybook 1.0
+import Storybook
 
-import utils 1.0
+import utils
 
 Item {
     id: root

@@ -1,6 +1,6 @@
-import QtQuick 2.14
+import QtQuick
 
-import utils 1.0
+import utils
 
 import "./states"
 

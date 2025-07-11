@@ -1,9 +1,9 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.13
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Components 0.1
+import StatusQ.Components
 
-import "../demoapp/data" 1.0
+import "../demoapp/data"
 
 GridLayout {
 

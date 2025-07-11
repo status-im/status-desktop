@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Backpressure 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Core
+import StatusQ.Core.Backpressure
+import StatusQ.Popups
 
-import shared.stores 1.0
-import utils 1.0
+import shared.stores
+import utils
 
-import AppLayouts.stores 1.0
+import AppLayouts.stores
 
 Item {
     id: root

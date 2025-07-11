@@ -1,15 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml 2.15
+import QtCore
+import QtQml
+import QtQuick
 
-import QtQuick.Window 2.15
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
 
-import Qt.labs.settings 1.0
+import StatusQ
 
-import StatusQ 0.1
-
-import Storybook 1.0
+import Storybook
 
 Page {
     id: root

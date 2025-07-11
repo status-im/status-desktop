@@ -1,6 +1,6 @@
-import StatusQ.Popups 0.1
+import StatusQ.Popups
 
-import shared.controls.chat 1.0
+import shared.controls.chat
 
 StatusMenu {
     id: root

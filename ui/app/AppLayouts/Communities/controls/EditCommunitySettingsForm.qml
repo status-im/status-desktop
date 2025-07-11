@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import utils 1.0
+import utils
 
-import StatusQ.Popups 0.1
+import StatusQ.Popups
 
-import AppLayouts.Communities.controls 1.0
-import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.controls
+import AppLayouts.Communities.panels
 
 Control {
     id: root

@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import QtQuick
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 Rectangle {
     id: root

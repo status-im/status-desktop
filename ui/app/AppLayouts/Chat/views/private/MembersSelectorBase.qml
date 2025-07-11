@@ -1,18 +1,18 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Chat.panels 1.0
+import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.Chat.panels
 
-import utils 1.0
-import shared.controls.delegates 1.0
+import utils
+import shared.controls.delegates
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 InlineSelectorPanel {
     id: root

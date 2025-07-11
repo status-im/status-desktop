@@ -1,17 +1,17 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Components
+import StatusQ.Core.Theme
 
-import shared.popups.keycard.helpers 1.0
-import shared.status 1.0
+import shared.popups.keycard.helpers
+import shared.status
 
-import utils 1.0
+import utils
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 import "../stores"
 

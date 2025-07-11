@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import StatusQ.Controls 0.1
+import QtQuick
+import QtQuick.Controls
+import StatusQ.Controls
 
 StatusComboBox {
     id: root

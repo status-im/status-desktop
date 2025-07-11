@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Components
+import StatusQ.Core.Theme
 /*!
      \qmltype StatusSectionLayoutLandscape
      \inherits SplitView

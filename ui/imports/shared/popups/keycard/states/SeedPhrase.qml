@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Components
+import StatusQ.Controls
 
-import utils 1.0
-import shared.panels 1.0 as SharedPanels
+import utils
+import shared.panels as SharedPanels
 
 Item {
     id: root

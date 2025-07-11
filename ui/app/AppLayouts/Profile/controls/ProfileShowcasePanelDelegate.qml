@@ -1,6 +1,6 @@
-import QtQuick 2.15
+import QtQuick
 
-import utils 1.0
+import utils
 
 // Component implementing the common ShowcaseDelegate interface needed for the ProfileShowcasePanel
 // Workaround until the all plafroms support public inline components.

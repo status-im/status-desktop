@@ -1,12 +1,12 @@
-import QtQuick 2.15
+import QtQuick
 
-import utils 1.0
+import utils
 
-import shared.controls.chat 1.0
-import shared.status 1.0
+import shared.controls.chat
+import shared.status
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 CalloutCard {
     id: root

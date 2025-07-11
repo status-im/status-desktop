@@ -1,7 +1,7 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.0
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 /*!
    \qmltype StatusIdenticonRing
    \inherits Item

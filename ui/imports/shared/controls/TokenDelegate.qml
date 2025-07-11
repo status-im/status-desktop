@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core.Theme
+import StatusQ.Components
+import StatusQ.Core
+import StatusQ.Controls
 
-import AppLayouts.Wallet 1.0
-import AppLayouts.Wallet.controls 1.0
-import utils 1.0
+import AppLayouts.Wallet
+import AppLayouts.Wallet.controls
+import utils
 
 StatusListItem {
     id: root

@@ -1,18 +1,17 @@
-import QtQuick 2.15
+import QtCore
+import QtQuick
 
-import Qt.labs.settings 1.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import QtModelsToolkit
+import SortFilterProxyModel
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import utils
 
-import utils 1.0
-
-import AppLayouts.Profile.helpers 1.0
+import AppLayouts.Profile.helpers
 
 QObject {
     id: root
