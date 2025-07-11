@@ -130,3 +130,6 @@ method backupData*(self: Module): int64 =
 
 method onUrlUnfurlingModeUpdated*(self: Module, mode: int) =
   self.view.emitUrlUnfurlingModeUpdated(mode)
+
+method messagesFromContactsOnlyChanged*(self: Module) =
+  self.view.messagesFromContactsOnlyChanged()

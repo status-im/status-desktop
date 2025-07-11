@@ -366,6 +366,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                localBackupEnabled: root.store.localBackupEnabled
                 isProduction: production
                 profileStore: root.store.profileStore
                 devicesStore: root.store.devicesStore
