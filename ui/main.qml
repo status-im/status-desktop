@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.platform 1.1
-import Qt.labs.settings 1.1
 import QtQuick.Window 2.15
 import QtQml 2.15
 
@@ -207,19 +206,6 @@ StatusWindow {
         Global.appIsReady = true
 
         loader.sourceComponent = app
-
-        if(localAccountSensitiveSettings.recentEmojis === "") {
-            localAccountSensitiveSettings.recentEmojis = [];
-        }
-        if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
-            localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
-        }
-        if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
-            localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
-        }
-
-        Theme.changeTheme(localAppSettings.theme)
-        Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
         d.runMockedKeycardControllerWindow()
 

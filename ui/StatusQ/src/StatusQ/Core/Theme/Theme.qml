@@ -18,12 +18,6 @@ QtObject {
         System
     }
 
-    readonly property int systemColorScheme: Application.styleHints.colorScheme
-    onSystemColorSchemeChanged: {
-        const theme = typeof localAppSettings !== "undefined" ? localAppSettings.theme : Theme.Style.System // force the System theme before login
-        changeTheme(theme)
-    }
-
     property ThemePalette palette: StatusLightTheme {}
 
     readonly property ThemePalette statusQLightTheme: StatusLightTheme {}
@@ -40,7 +34,7 @@ QtObject {
             Theme.palette = statusQDarkTheme
             break
         case Theme.Style.System:
-            Theme.palette = systemColorScheme === Qt.ColorScheme.Dark ? statusQDarkTheme : statusQLightTheme
+            Theme.palette = Application.styleHints.colorScheme === Qt.ColorScheme.Dark ? statusQDarkTheme : statusQLightTheme
             break
         default:
             console.warn('Unknown theme. Valid themes are "light" and "dark"')

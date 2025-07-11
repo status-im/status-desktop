@@ -4,8 +4,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
-import AppLayouts.Chat.stores 1.0
-
 import shared.panels 1.0
 import shared.status 1.0
 
@@ -15,10 +13,10 @@ Rectangle {
     id: root
 
     property var activeCommunity
-    property RootStore store
     property var communitySectionModule
 
     signal manageCommunityClicked()
+    signal hideBannerRequested()
 
     height: childrenRect.height + Theme.padding
     anchors.left: parent.left
@@ -59,14 +57,7 @@ Rectangle {
         icon.width: 20
         icon.name: "close-circle"
         type: StatusFlatRoundButton.Type.Tertiary
-        onClicked: {
-            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityWelcomeBanners || []
-            if (hiddenBannerIds.includes(root.activeCommunity.id)) {
-                return
-            }
-            hiddenBannerIds.push(root.activeCommunity.id)
-            localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = hiddenBannerIds
-        }
+        onClicked: root.hideBannerRequested()
     }
 
     StatusBaseText {
