@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-GO_VERSION="1.22.10"
+GO_VERSION="1.23.10"
 GO_INSTALL_DIR="/usr/local/go"
 QT_VERSION="6.9.0"
 CMAKE_VERSION="3.31.6"
@@ -54,14 +54,14 @@ function install_golang {
   fi
   declare -A GO_SHA256_MAP
   GO_SHA256_MAP=(
-    ["amd64"]="dd2c4ac3702658c2c20e3a8b394da1917d86156b2cb4312c9d2f657f80067874"
-    ["arm64"]="21cf49415ffe0755b45f2b63e75d136528a32f7bb7bdd0166f51d22a03eb0a3f"
+    ["amd64"]="1cbd7af6f07bc6fa1f8672f9b913c961986864100e467e0acdc942e0ae46fe68"
+    ["arm64"]="25c64bfa8a8fd8e7f62fb54afa4354af8409a4bb2358c2699a1003b733e6fce5"
   )
   echo "Install GoLang ${GO_VERSION}"
   GO_ARCH=$(get_go_arch)
   GO_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
   GO_TARBALL="go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
-  # example: https://dl.google.com/go/go1.22.10.darwin-amd64.tar.gz
+  # example: https://dl.google.com/go/go1.23.10.darwin-amd64.tar.gz
   wget -q "https://dl.google.com/go/${GO_TARBALL}" -O "${GO_TARBALL}"
   echo "${GO_SHA256_MAP[${GO_ARCH}]} ${GO_TARBALL}" | sha256sum -c
   tar -C "${GO_INSTALL_DIR%/go}" -xzf "${GO_TARBALL}"
