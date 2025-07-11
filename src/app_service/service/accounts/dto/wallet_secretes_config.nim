@@ -8,14 +8,7 @@ type
     openseaApiKey*: string
     raribleMainnetApiKey*: string
     raribleTestnetApiKey*: string
-    alchemyEthereumMainnetToken*: string
-    alchemyEthereumSepoliaToken*: string
-    alchemyArbitrumMainnetToken*: string
-    alchemyArbitrumSepoliaToken*: string
-    alchemyOptimismMainnetToken*: string
-    alchemyOptimismSepoliaToken*: string
-    alchemyBaseMainnetToken*: string
-    alchemyBaseSepoliaToken*: string
+    alchemyApiKey*: string
     statusProxyStageName*: string
     statusProxyMarketUser*: string
     statusProxyMarketPassword*: string
@@ -36,14 +29,7 @@ proc toJson*(self: WalletSecretsConfig): JsonNode =
     "openseaApiKey": self.openseaApiKey,
     "raribleMainnetApiKey": self.raribleMainnetApiKey,
     "raribleTestnetApiKey": self.raribleTestnetApiKey,
-    "alchemyEthereumMainnetToken": self.alchemyEthereumMainnetToken,
-    "alchemyEthereumSepoliaToken": self.alchemyEthereumSepoliaToken,
-    "alchemyArbitrumMainnetToken": self.alchemyArbitrumMainnetToken,
-    "alchemyArbitrumSepoliaToken": self.alchemyArbitrumSepoliaToken,
-    "alchemyOptimismMainnetToken": self.alchemyOptimismMainnetToken,
-    "alchemyOptimismSepoliaToken": self.alchemyOptimismSepoliaToken,
-    "alchemyBaseMainnetToken": self.alchemyBaseMainnetToken,
-    "alchemyBaseSepoliaToken": self.alchemyBaseSepoliaToken,
+    "alchemyApiKey": self.alchemyApiKey,
     "statusProxyStageName": self.statusProxyStageName,
     "statusProxyMarketUser": self.statusProxyMarketUser,
     "statusProxyMarketPassword": self.statusProxyMarketPassword,
