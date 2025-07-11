@@ -1,12 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Controls.Universal 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Universal
+import QtQuick.Layouts
 
-import Qt.labs.settings 1.1
+import Qt.labs.settings
 
-import StatusQ.Core.Theme 0.1
-import Storybook 1.0
+import StatusQ.Core.Theme
+import Storybook
 
 
 ApplicationWindow {

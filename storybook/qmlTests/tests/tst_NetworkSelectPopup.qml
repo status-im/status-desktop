@@ -1,11 +1,11 @@
-import QtQuick 2.14
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.popups
 
-import utils 1.0
+import utils
 
-import Models 1.0
+import Models
 
 Item {
     id: root

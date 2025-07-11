@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 
 // Required mock of: src/app/modules/main/wallet_section/send/view.nim
 

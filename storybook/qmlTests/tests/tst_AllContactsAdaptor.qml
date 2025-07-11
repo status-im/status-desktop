@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtTest 1.15
-import QtQml 2.15
+import QtQuick
+import QtTest
+import QtQml
 
-import utils 1.0
+import utils
 
-import StatusQ.Core.Utils 0.1
-import mainui.adaptors 1.0
+import StatusQ.Core.Utils
+import mainui.adaptors
 
 Item {
     id: root

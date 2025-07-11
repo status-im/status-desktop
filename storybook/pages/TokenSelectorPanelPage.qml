@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
-import AppLayouts.Wallet.panels 1.0
-import utils 1.0
+import AppLayouts.Wallet.panels
+import utils
 
 Pane {
     readonly property var assetsData: [

@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtTest 1.15
+import QtQuick
+import QtQuick.Controls
+import QtTest
 
-import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.controls
 
-import utils 1.0
+import utils
 
 Item {
     id: root

@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
-import AppLayouts.Wallet.stores 1.0
-import AppLayouts.Communities.panels 1.0
+import AppLayouts.Wallet.stores
+import AppLayouts.Communities.panels
 
 
 SplitView {

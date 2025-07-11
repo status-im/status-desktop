@@ -1,4 +1,4 @@
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 SortFilterProxyModel {
     property alias roleName: valueFilter.roleName

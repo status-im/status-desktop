@@ -1,18 +1,18 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import shared.views 1.0
-import utils 1.0
+import shared.views
+import utils
 
-import Storybook 1.0
+import Storybook
 
-import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.controls
+import AppLayouts.Wallet.panels
 
-import Qt.labs.settings 1.1
+import Qt.labs.settings
 
-import StatusQ.Popups.Dialog 0.1
+import StatusQ.Popups.Dialog
 
 SplitView {
     id: root

@@ -1,14 +1,14 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
-import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.controls
 
-import Models 1.0
+import Models
 
-import utils 1.0
+import utils
 
 Flickable {
     id: root

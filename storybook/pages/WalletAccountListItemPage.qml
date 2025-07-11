@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import shared.controls 1.0
+import shared.controls
 
-import utils 1.0
+import utils
 
 SplitView {
     id: root

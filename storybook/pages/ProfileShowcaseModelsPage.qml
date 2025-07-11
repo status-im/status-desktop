@@ -1,19 +1,19 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ
+import StatusQ.Core.Utils
+import StatusQ.Core.Theme
 
-import Storybook 1.0
+import Storybook
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import utils 1.0
+import utils
 
-import AppLayouts.Profile.helpers 1.0
+import AppLayouts.Profile.helpers
 
 ColumnLayout {
     ListModel {

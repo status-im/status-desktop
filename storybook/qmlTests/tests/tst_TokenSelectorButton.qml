@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.controls
 
-import Storybook 1.0
+import Storybook
 
-import StatusQ.Components 0.1
+import StatusQ.Components
 
 Item {
     id: root

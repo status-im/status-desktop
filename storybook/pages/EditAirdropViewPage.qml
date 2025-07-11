@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Communities.views 1.0
-import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.views
+import AppLayouts.Communities.controls
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
-import SortFilterProxyModel 0.2
-import utils 1.0
+import SortFilterProxyModel
+import utils
 
 SplitView {
     orientation: Qt.Vertical

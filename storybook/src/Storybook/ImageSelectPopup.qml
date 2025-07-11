@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
 Popup {
     id: root

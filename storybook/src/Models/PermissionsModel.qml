@@ -1,12 +1,12 @@
 pragma Singleton
 
-import QtQuick 2.14
+import QtQuick
 
-import Models 1.0
-import StatusQ.Core.Utils 0.1
-import AppLayouts.Communities.controls 1.0
+import Models
+import StatusQ.Core.Utils
+import AppLayouts.Communities.controls
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

@@ -1,11 +1,11 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
-import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.controls
 
-import Storybook 1.0
+import Storybook
 
 SplitView {
     id: root

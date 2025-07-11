@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import AppLayouts.Profile.popups.networkSettings 1.0
+import AppLayouts.Profile.popups.networkSettings
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core
+import StatusQ.Core.Utils
 
 SplitView {
     orientation: Qt.Vertical

@@ -1,4 +1,4 @@
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 LeftJoinModel {
     id: root

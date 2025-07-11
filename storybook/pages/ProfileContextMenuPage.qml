@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import Qt.labs.settings 1.1
+import Qt.labs.settings
 
-import shared.views.chat 1.0
-import utils 1.0
+import shared.views.chat
+import utils
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
 SplitView {
     Logs { id: logs }

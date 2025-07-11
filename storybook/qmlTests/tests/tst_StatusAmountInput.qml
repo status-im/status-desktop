@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import StatusQ.Controls 0.1
+import StatusQ.Controls
 
-import Storybook 1.0
-import shared.controls 1.0
+import Storybook
+import shared.controls
 
 Item {
     id: root

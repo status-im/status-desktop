@@ -1,24 +1,24 @@
-import QtQuick 2.15
+import QtQuick
 
-import QtTest 1.15
+import QtTest
 import "helpers/wallet_connect.js" as Testing
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
-import QtQuick.Controls 2.15
+import QtQuick.Controls
 
-import Storybook 1.0
+import Storybook
 
-import AppLayouts.Wallet.services.dapps 1.0
-import AppLayouts.Wallet.services.dapps.types 1.0
-import AppLayouts.Profile.stores 1.0
-import AppLayouts.Wallet.panels 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
-import AppLayouts.Wallet.popups.dapps 1.0
+import AppLayouts.Wallet.services.dapps
+import AppLayouts.Wallet.services.dapps.types
+import AppLayouts.Profile.stores
+import AppLayouts.Wallet.panels
+import AppLayouts.Wallet.stores as WalletStore
+import AppLayouts.Wallet.popups.dapps
 
-import shared.stores 1.0
+import shared.stores
 
-import utils 1.0
+import utils
 
 Item {
     id: root

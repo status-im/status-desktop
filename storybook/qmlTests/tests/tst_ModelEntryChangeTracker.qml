@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
 Item {
     id: root
