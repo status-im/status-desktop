@@ -1,5 +1,5 @@
-import StatusQ.Controls 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Controls
+import StatusQ.Core.Utils
 
 StatusValidator {
     name: "addressOrEns"

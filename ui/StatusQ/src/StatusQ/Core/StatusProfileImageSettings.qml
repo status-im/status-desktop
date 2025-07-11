@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import StatusQ.Core.Theme 0.1
+import QtQuick
+import StatusQ.Core.Theme
 
 QtObject {
     id: root

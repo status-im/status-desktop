@@ -1,10 +1,10 @@
 pragma Singleton
 
-import QtQml 2.15
+import QtQml
 
-import AppLayouts.Wallet.services.dapps 1.0
-import StatusQ.Core.Utils 0.1 as SQUtils
-import utils 1.0
+import AppLayouts.Wallet.services.dapps
+import StatusQ.Core.Utils as SQUtils
+import utils
 
 QtObject {
 

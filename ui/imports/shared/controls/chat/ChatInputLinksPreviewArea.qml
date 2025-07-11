@@ -1,16 +1,16 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import QtQuick.Layouts 1.15
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
-import shared.status 1.0
-import shared.controls.delegates 1.0
+import shared.status
+import shared.controls.delegates
 
-import utils 1.0
+import utils
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 Control {
     id: root

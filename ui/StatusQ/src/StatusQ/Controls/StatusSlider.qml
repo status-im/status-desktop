@@ -1,10 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
 /*!
   /note beware, the slider processes the mouse events only in its control space. So it must be at least as high

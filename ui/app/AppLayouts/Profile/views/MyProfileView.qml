@@ -1,31 +1,31 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml
 
-import utils 1.0
-import shared 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.stores 1.0 as SharedStores
-import shared.validators 1.0
-import shared.controls.chat 1.0
+import utils
+import shared
+import shared.panels
+import shared.popups
+import shared.stores as SharedStores
+import shared.validators
+import shared.controls.chat
 
 import "../popups"
 import "../controls"
 import "./profile"
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
+import StatusQ.Components
+import StatusQ.Controls
 
-import AppLayouts.Communities.stores 1.0 as CommunitiesStores
-import AppLayouts.Profile.helpers 1.0
-import AppLayouts.Profile.panels 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Communities.stores as CommunitiesStores
+import AppLayouts.Profile.helpers
+import AppLayouts.Profile.panels
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores as WalletStores
 
 SettingsContentBase {
     id: root

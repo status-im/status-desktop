@@ -1,6 +1,6 @@
-import QtQuick 2.14
+import QtQuick
 
-import StatusQ.Components 0.1
+import StatusQ.Components
 
 Item {
     id: root

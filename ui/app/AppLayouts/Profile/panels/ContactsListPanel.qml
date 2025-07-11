@@ -1,9 +1,9 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
-import shared.views 1.0
-import utils 1.0
+import shared.views
+import utils
 
 StatusListView {
     id: root

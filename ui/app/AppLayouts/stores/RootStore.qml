@@ -1,13 +1,13 @@
-import QtQuick 2.13
+import QtQuick
 
-import utils 1.0
+import utils
 
-import StatusQ 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ
+import StatusQ.Core.Theme
 
-import SortFilterProxyModel 0.2
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import SortFilterProxyModel
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores as WalletStore
 
 QtObject {
     id: root

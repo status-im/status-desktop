@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick
 
 /*!
   Enables StatusListPicker to work with incompatible models.

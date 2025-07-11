@@ -1,9 +1,9 @@
-import QtQml 2.15
+import QtQml
 
-import shared.stores 1.0
-import StatusQ.Core.Utils 0.1 as SQUtils
+import shared.stores
+import StatusQ.Core.Utils as SQUtils
 
-import utils 1.0
+import utils
 
 SQUtils.QObject {
     id: root

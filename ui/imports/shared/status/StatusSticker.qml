@@ -1,7 +1,7 @@
-import QtQuick 2.14
+import QtQuick
 
-import shared.panels 1.0
-import utils 1.0
+import shared.panels
+import utils
 
 Loader {
     property color color

@@ -1,8 +1,8 @@
-import StatusQ 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
+import StatusQ
+import StatusQ.Components
+import StatusQ.Popups
 
-import utils 1.0
+import utils
 
 StatusModal {
     id: root

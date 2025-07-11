@@ -1,12 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Controls 0.1
-import StatusQ.Platform 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls
+import StatusQ.Platform
+import StatusQ.Core
+import StatusQ.Core.Theme
 
-import utils 1.0
+import utils
 
 Item {
     property bool checked: false

@@ -1,9 +1,9 @@
-import QtQml 2.15
+import QtQml
 
-import StatusQ.Core.Utils 0.1
-import utils 1.0
+import StatusQ.Core.Utils
+import utils
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 QObject {
     id: root

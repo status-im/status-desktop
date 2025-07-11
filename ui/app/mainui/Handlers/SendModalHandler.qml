@@ -1,25 +1,25 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Controls 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Controls
 
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import AppLayouts.Wallet.popups.simpleSend 1.0
-import AppLayouts.Wallet.adaptors 1.0
-import AppLayouts.Wallet 1.0
+import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.Wallet.popups.simpleSend
+import AppLayouts.Wallet.adaptors
+import AppLayouts.Wallet
 
-import shared.popups.send 1.0
-import shared.stores 1.0 as SharedStores
-import shared.stores.send 1.0
+import shared.popups.send
+import shared.stores as SharedStores
+import shared.stores.send
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

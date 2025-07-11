@@ -1,16 +1,16 @@
 pragma Singleton
 
-import QtQuick 2.15
+import QtQuick
 
 // Aliasing not to conflict with the shared.stores.RootStore
-import shared.stores 1.0 as SharedStores
+import shared.stores as SharedStores
 
-import utils 1.0
+import utils
 
-import StatusQ 0.1
-import SortFilterProxyModel 0.2
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ
+import SortFilterProxyModel
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 QtObject {
     id: root

@@ -1,4 +1,4 @@
-import StatusQ.Controls 0.1
+import StatusQ.Controls
 
 StatusValidator {
 

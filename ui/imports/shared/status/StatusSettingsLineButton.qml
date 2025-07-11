@@ -1,12 +1,12 @@
-import QtQuick 2.15
+import QtQuick
 
-import utils 1.0
+import utils
 import ".."
 import "../panels"
 
-import StatusQ.Controls 0.1 as StatusQControls
-import StatusQ.Core 0.1 as StatusQCore
-import StatusQ.Core.Theme 0.1
+import StatusQ.Controls as StatusQControls
+import StatusQ.Core as StatusQCore
+import StatusQ.Core.Theme
 
 Rectangle {
     property string text

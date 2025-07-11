@@ -1,25 +1,25 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
-import QtQml.Models 2.15
+import QtQml.Models
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
+import StatusQ.Controls
 
-import utils 1.0
-import shared 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.status 1.0
-import shared.popups.send 1.0
-import shared.stores.send 1.0
+import utils
+import shared
+import shared.panels
+import shared.popups
+import shared.status
+import shared.popups.send
+import shared.stores.send
 
 //TODO remove this dependency!
-import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.Wallet.stores
 
 Item {
     id: root

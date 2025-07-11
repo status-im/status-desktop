@@ -1,8 +1,8 @@
-import QtQuick 2.15
+import QtQuick
 
-import shared.status 1.0
+import shared.status
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
 StatusInputListPopup {
     id: emojiSuggestions

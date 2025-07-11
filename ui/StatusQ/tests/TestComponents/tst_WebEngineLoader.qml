@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import QtWebEngine 1.10
-import QtWebChannel 1.15
+import QtWebEngine
+import QtWebChannel
 
-import StatusQ.Components 0.1
-import StatusQ.TestHelpers 0.1
+import StatusQ.Components
+import StatusQ.TestHelpers
 
 TestCase {
     id: root

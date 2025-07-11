@@ -1,11 +1,11 @@
-import QtQuick 2.13
+import QtQuick
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core
+import StatusQ.Core.Utils
 
-import utils 1.0
+import utils
 
 QtObject {
     id: root

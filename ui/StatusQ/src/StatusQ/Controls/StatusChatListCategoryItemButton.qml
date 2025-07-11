@@ -1,6 +1,6 @@
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Core
 
 StatusFlatRoundButton {
     id: statusChatListCategoryItemButton

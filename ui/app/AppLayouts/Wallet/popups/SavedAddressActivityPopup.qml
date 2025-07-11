@@ -1,21 +1,21 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Popups
 
-import AppLayouts.stores 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.stores
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores as WalletStore
 
-import utils 1.0
-import shared.views 1.0
-import shared.popups.send 1.0
-import shared.stores 1.0 as SharedStores
+import utils
+import shared.views
+import shared.popups.send
+import shared.stores as SharedStores
 
 import "../controls"
 import ".."

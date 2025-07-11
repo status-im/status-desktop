@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
-import shared.stores 1.0
+import shared.stores
 
-import AppLayouts.stores 1.0 as AppLayoutsStores
-import AppLayouts.Communities.stores 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.stores as AppLayoutsStores
+import AppLayouts.Communities.stores
+import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores as WalletStores
 import "../panels"
 
 FocusScope {

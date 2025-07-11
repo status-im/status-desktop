@@ -1,7 +1,7 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Core.Utils
 
 QtObject {
     id: root

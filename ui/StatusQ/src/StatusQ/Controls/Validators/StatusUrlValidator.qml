@@ -1,5 +1,5 @@
-import StatusQ.Core.Utils 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core.Utils
+import StatusQ.Controls
 
 StatusValidator {
     name: "url"

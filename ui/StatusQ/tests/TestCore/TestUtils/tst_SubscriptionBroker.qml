@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtTest 1.0
+import QtQuick
+import QtTest
 
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils
 
-import StatusQ.TestHelpers 0.1
+import StatusQ.TestHelpers
 
 TestCase {
     id: testCase

@@ -1,6 +1,6 @@
-import QtQuick 2.14
+import QtQuick
 
-import StatusQ.Popups 0.1
+import StatusQ.Popups
 
 StatusAction {
     text: qsTr("Send message")

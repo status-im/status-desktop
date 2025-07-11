@@ -1,4 +1,4 @@
-import QtQml.Models 2.14
+import QtQml.Models
 
 ListModel {
     ListElement {

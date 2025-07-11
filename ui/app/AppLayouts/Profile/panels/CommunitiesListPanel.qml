@@ -1,19 +1,19 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Components
+import StatusQ.Controls
+import StatusQ.Popups
 
-import utils 1.0
-import shared.controls.chat.menuItems 1.0
-import AppLayouts.stores 1.0 as AppLayoutsStores
-import AppLayouts.Chat.views 1.0
+import utils
+import shared.controls.chat.menuItems
+import AppLayouts.stores as AppLayoutsStores
+import AppLayouts.Chat.views
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 StatusListView {
     id: root

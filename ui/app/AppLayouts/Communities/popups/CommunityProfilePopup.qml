@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ
+import StatusQ.Controls
+import StatusQ.Popups
 
 
-import utils 1.0
+import utils
 
-import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.panels
 
 StatusModal {
     id: root

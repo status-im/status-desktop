@@ -1,36 +1,36 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import Qt.labs.settings 1.0
+import Qt.labs.settings
 
-import utils 1.0
-import shared 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.status 1.0
-import shared.stores 1.0 as SharedStores
-import shared.views.chat 1.0
-import shared.stores.send 1.0 as SendStores
-import SortFilterProxyModel 0.2
+import utils
+import shared
+import shared.panels
+import shared.popups
+import shared.status
+import shared.stores as SharedStores
+import shared.views.chat
+import shared.stores.send as SendStores
+import SortFilterProxyModel
 
-import StatusQ 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Layout 0.1
-import StatusQ.Popups 0.1
+import StatusQ
+import StatusQ.Controls
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
+import StatusQ.Layout
+import StatusQ.Popups
 
-import AppLayouts.Communities.controls 1.0
-import AppLayouts.Communities.panels 1.0
-import AppLayouts.Communities.stores 1.0 as CommunitiesStores
-import AppLayouts.Communities.views 1.0
+import AppLayouts.Communities.controls
+import AppLayouts.Communities.panels
+import AppLayouts.Communities.stores as CommunitiesStores
+import AppLayouts.Communities.views
 
-import AppLayouts.Profile.stores 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Profile.stores
+import AppLayouts.Wallet.stores as WalletStore
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Chat.stores as ChatStores
 
 import "../controls"
 import "../helpers"

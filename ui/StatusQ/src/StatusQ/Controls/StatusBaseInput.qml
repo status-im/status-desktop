@@ -1,13 +1,13 @@
-import QtQuick 2.14
+import QtQuick
 
-import QtQuick.Controls 2.14 as QC
-import QtQuick.Layouts 1.14
+import QtQuick.Controls as QC
+import QtQuick.Layouts
 
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Components
+import StatusQ.Controls
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 /*!
       \qmltype StatusBaseInput

@@ -1,8 +1,8 @@
-import QtQuick 2.13
+import QtQuick
 import Qt5Compat.GraphicalEffects
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Components
+import StatusQ.Controls
+import StatusQ.Popups
 
 Item {
     id: statusChatInfoToolBar

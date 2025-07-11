@@ -1,8 +1,8 @@
-import Qt.labs.platform 1.1
+import Qt.labs.platform
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import utils 1.0
+import utils
 
 SystemTrayIcon {
     id: root

@@ -1,19 +1,19 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ
+import StatusQ.Controls
+import StatusQ.Core.Theme
 
-import shared.controls 1.0
-import shared.stores 1.0 as SharedStores
-import utils 1.0
+import shared.controls
+import shared.stores as SharedStores
+import utils
 
-import AppLayouts.Chat.stores 1.0
-import AppLayouts.Communities.layouts 1.0
-import AppLayouts.Communities.popups 1.0
+import AppLayouts.Chat.stores
+import AppLayouts.Communities.layouts
+import AppLayouts.Communities.popups
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 SettingsPage {
     id: root

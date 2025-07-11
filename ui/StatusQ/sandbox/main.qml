@@ -1,23 +1,23 @@
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import QtQuick.Layouts 1.15
-import Qt.labs.settings 1.0
-import QtQml.Models 2.15
-import QtMultimedia 5.15
+import QtQuick.Layouts
+import Qt.labs.settings
+import QtQml.Models
+import QtMultimedia
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Layout 0.1
-import StatusQ.Platform 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Layout
+import StatusQ.Platform
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import "demoapp/data" 1.0
+import "demoapp/data"
 
 StatusWindow {
     id: rootWindow

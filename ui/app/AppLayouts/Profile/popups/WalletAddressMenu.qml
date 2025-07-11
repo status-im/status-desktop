@@ -1,12 +1,12 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Core.Utils 0.1 as StatusQUtils
-import StatusQ.Popups 0.1
+import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Popups
 
-import shared.popups 1.0
-import utils 1.0
+import shared.popups
+import utils
 
-import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.popups
 
 ////////////////////////////////////////////////////////////////////////////////
 // NOTE:

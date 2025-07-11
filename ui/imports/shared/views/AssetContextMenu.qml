@@ -1,6 +1,6 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Popups 0.1
+import StatusQ.Popups
 
 StatusMenu {
     id: root

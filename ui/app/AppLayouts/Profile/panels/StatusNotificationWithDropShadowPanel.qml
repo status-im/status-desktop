@@ -1,10 +1,10 @@
-import QtQuick 2.15
+import QtQuick
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Platform 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Platform
+import StatusQ.Core.Theme
 
-import utils 1.0
+import utils
 
 Item {
     property string name

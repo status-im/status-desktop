@@ -1,15 +1,15 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ 0.1
+import StatusQ
 
-import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.controls
 
-import QtModelsToolkit 1.0
-import SortFilterProxyModel 0.2
+import QtModelsToolkit
+import SortFilterProxyModel
 
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Utils as StatusQUtils
 
-import utils 1.0
+import utils
 
 
 /// Helper component for editing channel permissions

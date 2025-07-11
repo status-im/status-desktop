@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import utils 1.0
+import utils
 
-import StatusQ.Popups 0.1
-import shared.controls.chat.menuItems 1.0
+import StatusQ.Popups
+import shared.controls.chat.menuItems
 
 
 StatusMenu {

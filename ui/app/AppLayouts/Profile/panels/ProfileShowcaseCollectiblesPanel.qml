@@ -1,16 +1,16 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
-import utils 1.0
-import shared.panels 1.0
+import utils
+import shared.panels
 
-import AppLayouts.Profile.controls 1.0
-import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Profile.controls
+import AppLayouts.Wallet.controls
 
 ProfileShowcasePanel {
     id: root

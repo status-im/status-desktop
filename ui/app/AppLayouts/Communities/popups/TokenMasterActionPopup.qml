@@ -1,17 +1,17 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml.Models
 
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Popups.Dialog
+import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
-import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.panels
 
-import utils 1.0
+import utils
 
 
 StatusDialog {

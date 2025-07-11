@@ -1,18 +1,18 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import utils 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-import shared.controls 1.0
+import utils
+import shared.panels
+import shared.popups
+import shared.controls
 
-import StatusQ.Core 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Popups
+import StatusQ.Controls
+import StatusQ.Core.Theme
 
-import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Profile.stores as ProfileStores
 
 import "backupseed"
 

@@ -1,4 +1,4 @@
-import QtQml 2.15
+import QtQml
 
 // Simple utility allowing to declare children within QtObject without having
 // to assigne them to properties, like `QtObject { ListModel {} }`

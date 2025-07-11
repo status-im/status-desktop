@@ -1,9 +1,9 @@
-import QtQuick 2.15
+import QtQuick
 
-import StatusQ.Components 0.1
-import StatusQ.Core 0.1
+import StatusQ.Components
+import StatusQ.Core
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
 Item {
     id: root

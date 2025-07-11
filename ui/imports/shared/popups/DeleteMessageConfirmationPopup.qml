@@ -1,6 +1,6 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.Chat.stores 1.0
+import AppLayouts.Chat.stores
 
 ConfirmationDialog {
     id: root

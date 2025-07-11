@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
+import StatusQ.Components
 
 TabButton {
     id: statusIconTabButton

@@ -1,8 +1,8 @@
-import QtQuick 2.3
+import QtQuick
 import Qt5Compat.GraphicalEffects
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Core.Theme
 
 Item {
     id: imageContainer

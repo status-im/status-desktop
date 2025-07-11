@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 
 //This is a helper component that is used to batch requests and send them periodically
 //It is used to reduce the number of requests sent to the server and notify different subscribers of the same request

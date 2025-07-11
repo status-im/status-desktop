@@ -1,6 +1,6 @@
-import QtQuick 2.13
+import QtQuick
 
-import StatusQ.Core 0.1
+import StatusQ.Core
 
 QtObject {
     id: msgDetails

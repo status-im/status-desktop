@@ -1,10 +1,10 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.Wallet.services.dapps 1.0
-import StatusQ.Core.Utils 0.1
+import AppLayouts.Wallet.services.dapps
+import StatusQ.Core.Utils
 
-import shared.stores 1.0
-import utils 1.0
+import shared.stores
+import utils
 
 DAppsModel {
     id: root

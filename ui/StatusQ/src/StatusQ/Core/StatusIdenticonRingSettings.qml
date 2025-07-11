@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import StatusQ.Core 0.1
+import QtQuick
+import StatusQ.Core
 
 /*!
    \qmltype StatusIdenticonRingSettings

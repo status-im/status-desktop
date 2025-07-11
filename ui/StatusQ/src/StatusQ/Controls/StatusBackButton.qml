@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import StatusQ.Controls 0.1
+import QtQuick
+import StatusQ.Controls
 
 StatusButton {
     isRoundIcon: true
