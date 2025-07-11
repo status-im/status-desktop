@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
 import QtQuick.Layouts
-import Qt.labs.platform
 import Qt.labs.settings
 import QtQml.Models
 import QtQml
