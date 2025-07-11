@@ -24,6 +24,8 @@ Loader {
     property string toastText
 
     function updateBanner() {
+        if (typeof noUiDisplacementEnabled !== "undefined" && noUiDisplacementEnabled)
+            return
         root.active = true
         if (connectionState === Constants.ConnectionStatus.Failure)
             item.show()

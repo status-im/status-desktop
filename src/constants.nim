@@ -42,6 +42,7 @@ let
   TORRENT_CONFIG_PORT* = desktopConfig.defaultTorentConfigPort
   LOG_LEVEL* = desktopConfig.logLevel
   FLEET_SELECTION_ENABLED* = desktopConfig.enableFleetSelection
+  NO_UI_DISPLACEMENT_ENABLED* = desktopConfig.noUiDisplacement
 
   # build variables
   POKT_TOKEN_RESOLVED* = desktopConfig.poktToken
