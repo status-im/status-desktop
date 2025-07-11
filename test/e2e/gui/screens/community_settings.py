@@ -296,32 +296,43 @@ class MembersView(QObject):
         return member
 
     @allure.step('Kick community member')
-    def kick_member(self, member_name: str):
-        member = self.get_member_object(member_name)
-        QObject(real_name=driver.objectMap.realName(member)).hover()
-        self.kick_member_button.hover()
-        time.sleep(1)
-        self.kick_member_button.native_mouse_click()
-        kick_member_popup = KickBanMemberPopup()
-        kick_member_popup.confirm_kicking()
+    def open_kick_member_popup(self, member_name: str, attempts: int = 3):
+        for _ in range(attempts):
+            try:
+                member = self.get_member_object(member_name)
+                QObject(real_name=driver.objectMap.realName(member)).hover()
+                self.kick_member_button.hover()
+                self.kick_member_button.native_mouse_click()
+                return KickBanMemberPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f"Can't open Kick/Ban member popup within {attempts} attempts")
 
     @allure.step('Ban community member')
-    def ban_member(self, member_name: str):
-        member = self.get_member_object(member_name)
-        QObject(real_name=driver.objectMap.realName(member)).hover()
-        self.ban_member_button.hover()
-        time.sleep(1)
-        self.ban_member_button.native_mouse_click()
-        return KickBanMemberPopup().wait_until_appears()
+    def ban_member(self, member_name: str, attempts: int = 3):
+        for _ in range(attempts):
+            try:
+                member = self.get_member_object(member_name)
+                QObject(real_name=driver.objectMap.realName(member)).hover()
+                self.ban_member_button.hover()
+                self.ban_member_button.native_mouse_click()
+                return KickBanMemberPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f"Can't open Kick/Ban member popup within {attempts} attempts")
 
     @allure.step('Unban community member')
-    def unban_member(self, member_name: str):
-        member = self.get_member_object(member_name)
-        QObject(real_name=driver.objectMap.realName(member)).hover()
-        self.unban_member_button.hover()
-        time.sleep(1)
-        self.unban_member_button.native_mouse_click()
-        return self
+    def unban_member(self, member_name: str, attempts: int = 3):
+        for _ in range(attempts):
+            try:
+                member = self.get_member_object(member_name)
+                QObject(real_name=driver.objectMap.realName(member)).hover()
+                self.unban_member_button.hover()
+                self.unban_member_button.native_mouse_click()
+                return self
+            except Exception:
+                pass
+        raise LookupError(f"Could not unban member within {attempts} attempts")
 
 
 class AirdropsView(QObject):
