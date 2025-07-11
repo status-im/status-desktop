@@ -1,0 +1,115 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Personal AI/IDE preferences (keep team .cursorrules tracked)
+.cursorrules.local
+.cursorrules.personal
+.cursor/
+
+# Test artifacts and reports
+report/
+reports/
+screenshots/
+logs/
+*.log
+result.xml
+junit.xml
+test-results/
+test-reports/
+allure-results/
+allure-reports/
+
+# Local configuration files (keep team configs tracked)
+configs/environments/local_*
+configs/environments/*_local.json
+configs/environments/*_local.yaml
+*.local.json
+*.local.yaml
+
+# Credentials and sensitive data
+*credentials*
+*secrets*
+*.key
+*.pem
+.env.local
+.env.*.local
+
+# Test session artifacts
+driver_logs/
+session_logs/
+video_recordings/
+performance_logs/
+
+# Appium and WebDriver
+node_modules/
+appium.log
+driver.log
+selenium-debug.log
+
+# LambdaTest artifacts
+lambdatest_*
+lt_*
+
+# Android
+*.apk
+*.aab
+*.keystore
+
+# iOS
+*.ipa
+*.mobileprovision
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.backup
+*.bak
+
+# Framework-specific temporary files
+.pytest_cache/
+.cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+config.sh
+.specstory/
