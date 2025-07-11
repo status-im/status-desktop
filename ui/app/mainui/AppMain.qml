@@ -2396,12 +2396,15 @@ Item {
         Component {
             id: activityCenterPopupComponent
             ActivityCenterPopup {
+                id: activityCenterPopup
                 // TODO get screen size // Taken from old code top bar height was fixed there to 56
                 readonly property int _buttonSize: 56
+                readonly property bool isBottomSheet: Theme.portraitBreakpoint.width > parent.width
 
-                x: parent.width - width - Theme.smallPadding
-                y: parent.y + _buttonSize
+                x: isBottomSheet ? 0 : parent.width - width - Theme.smallPadding
+                y: isBottomSheet ? parent.height - height : parent.y + _buttonSize
                 height: appView.height - _buttonSize * 2
+                width: isBottomSheet ? parent.width : implicitWidth
                 store: ChatStores.RootStore {
                     contactsStore: appMain.contactsStore
                     currencyStore: appMain.currencyStore
