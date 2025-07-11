@@ -92,6 +92,7 @@ type
     controller: Controller
     chatSectionModules: OrderedTable[string, chat_section_module.AccessInterface]
     events: EventEmitter
+    tempCommunities: seq[CommunityDto]
     urlsManager: UrlsManager
     keycardService: keycard_service.Service
     settingsService: settings_service.Service
@@ -949,9 +950,8 @@ method onChatsLoaded*[T](
   # For the personal chat section we load the chats immediately
   self.chatSectionModules[myPubKey].load(buildChats = true)
 
-  let communities = self.controller.getJoinedAndSpectatedCommunities()
   # Create Community sections
-  for community in communities:
+  for community in self.tempCommunities:
     self.chatSectionModules[community.id] = chat_section_module.newModule(
       self,
       events,
@@ -977,6 +977,8 @@ method onChatsLoaded*[T](
 
     self.chatSectionModules[community.id].load()
 
+  self.tempCommunities = @[]
+
   self.view.model().addItems(items)
 
   self.checkIfWeHaveNotifications()
@@ -993,6 +995,7 @@ method onChatsLoaded*[T](
 
 method onCommunityDataLoaded*[T](
   self: Module[T],
+  communities: seq[CommunityDto],
   events: EventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
@@ -1008,7 +1011,9 @@ method onCommunityDataLoaded*[T](
   networkService: network_service.Service,
 ) =
   self.communityDataLoaded = true
+  self.tempCommunities = filter(communities, proc(community: CommunityDto): bool = community.joined or community.spectated)
   if not self.isEverythingLoaded:
+    # Filter communities to only those that are joined or spectated
     return
 
   self.onChatsLoaded(

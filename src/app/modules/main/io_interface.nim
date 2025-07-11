@@ -101,6 +101,7 @@ method onChatsLoaded*(
 
 method onCommunityDataLoaded*(
     self: AccessInterface,
+    communities: seq[CommunityDto],
     events: EventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,

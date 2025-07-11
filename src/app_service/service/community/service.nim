@@ -830,14 +830,15 @@ QtObject:
 
       # All communities
       let communities = parseCommunities(responseObj["communities"], categories)
+      var communitiesTable = initTable[string, CommunityDto]()
       for community in communities:
-        self.communities[community.id] = community
+        communitiesTable[community.id] = community
 
       # Communities settings
       let communitiesSettings = parseCommunitiesSettings(responseObj["settings"])
       for settings in communitiesSettings:
-        if self.communities.hasKey(settings.id):
-          self.communities[settings.id].settings = settings
+        if communitiesTable.hasKey(settings.id):
+          communitiesTable[settings.id].settings = settings
 
       # Non approved requests to join for all communities
       let nonAprrovedRequestsToJoinObj = responseObj["nonAprrovedRequestsToJoin"]
@@ -845,22 +846,22 @@ QtObject:
       if nonAprrovedRequestsToJoinObj{"result"}.kind != JNull:
         for jsonCommunityReqest in nonAprrovedRequestsToJoinObj["result"]:
           let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-          if not (communityRequest.communityId in self.communities):
+          if not (communityRequest.communityId in communitiesTable):
             warn "community was not found for community request", communityID=communityRequest.communityId, requestId=communityRequest.id
             continue
           case RequestToJoinType(communityRequest.state):
             of RequestToJoinType.Pending, RequestToJoinType.AcceptedPending, RequestToJoinType.DeclinedPending:
-              self.communities[communityRequest.communityId].pendingRequestsToJoin.add(communityRequest)
+              communitiesTable[communityRequest.communityId].pendingRequestsToJoin.add(communityRequest)
             of RequestToJoinType.Declined:
-              self.communities[communityRequest.communityId].declinedRequestsToJoin.add(communityRequest)
+              communitiesTable[communityRequest.communityId].declinedRequestsToJoin.add(communityRequest)
             of RequestToJoinType.Canceled:
-              self.communities[communityRequest.communityId].canceledRequestsToJoin.add(communityRequest)
+              communitiesTable[communityRequest.communityId].canceledRequestsToJoin.add(communityRequest)
             of RequestToJoinType.AwaitingAddress:
-              self.communities[communityRequest.communityId].waitingForSharedAddressesRequestsToJoin.add(communityRequest)
+              communitiesTable[communityRequest.communityId].waitingForSharedAddressesRequestsToJoin.add(communityRequest)
             of RequestToJoinType.Accepted:
               continue
 
-      self.events.emit(SIGNAL_COMMUNITY_DATA_LOADED, Args())
+      self.events.emit(SIGNAL_COMMUNITY_DATA_LOADED, CommunitiesArgs(communities: toSeq(communitiesTable.values)))
     except Exception as e:
       let errDesription = e.msg
       error "error loading all communities: ", errDesription
@@ -878,10 +879,30 @@ QtObject:
     if communityId == "":
       return
 
-    if not self.communities.hasKey(communityId):
+    
+    try:
+      # TODO this gets called A LOT
+      let response = status_go.getCommunityByID(communityId)
+
+      if response.error != nil:
+        let error = Json.safeDecode($response.error, RpcError)
+        raise newException(RpcException, "Error getting community: " & error.message)
+
+      if response.result == nil or response.result.kind == JNull:
+        error "error: ", procName="getCommunityById", errDesription = "result is nil"
+        return
+
+      # TODO check if we're missing the categories
+      return response.result.toCommunityDto()
+    except Exception as e:
+      error "error getting community by id", msg = e.msg
       return
 
-    return self.communities[communityId]
+
+    # if not self.communities.hasKey(communityId):
+    #   return
+
+    # return self.communities[communityId]
 
   proc getCommunityIds*(self: Service): seq[string] =
     return toSeq(self.communities.keys)

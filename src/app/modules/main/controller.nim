@@ -126,8 +126,10 @@ proc init*(self: Controller) =
       self.networksService,
     )
 
-  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+  self.events.once(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+    let args = CommunitiesArgs(e)
     self.delegate.onCommunityDataLoaded(
+      args.communities,
       self.events,
       self.settingsService,
       self.nodeConfigurationService,
