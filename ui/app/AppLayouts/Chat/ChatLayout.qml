@@ -33,8 +33,9 @@ StackLayout {
     // WIP: It will be refactored step by step (now PermissionsStore is not used from here)
     property ChatStores.RootStore rootStore
 
-    // WIP: This is the new store's structure, now partially used, just PermissionsStore
+    // WIP: This is the new store's structure, now partially used, `PermissionsStore` and starting switching to `CommunityAccessStore` step by step
     property CommunityStores.CommunityRootStore newCommnityStore
+    readonly property CommunityStores.CommunityAccessStore communityAccessStore: newCommnityStore.communityAccessStore
     readonly property CommunityStores.PermissionsStore communityPermissionsStore: newCommnityStore.communityPermissionsStore
 
     // Rest of stores references (to be reviewed)
@@ -160,7 +161,7 @@ StackLayout {
                              sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             communityItemsModel: root.rootStore.communityItemsModel
             requirementsMet: root.communityPermissionsStore.allTokenRequirementsMet
-            requirementsCheckPending: root.rootStore.permissionsCheckOngoing
+            requirementsCheckPending: root.communityAccessStore.communityPermissionsCheckOngoing
             requiresRequest: !sectionItemModel.amIMember
             communityHoldingsModel: root.communityPermissionsStore.becomeMemberPermissionsModel
             viewOnlyHoldingsModel: root.communityPermissionsStore.viewOnlyPermissionsModel
@@ -262,8 +263,14 @@ StackLayout {
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
             requestToJoinState: sectionItem.requestToJoinState
+            ensCommunityPermissionsEnabled: root.advancedStore.ensCommunityPermissionsEnabled
 
+            // Community access related data:
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+            allChannelsAreHiddenBecauseNotPermitted: root.communityAccessStore.allChannelsAreHiddenBecauseNotPermitted
+            communityMemberReevaluationStatus: root.communityAccessStore.communityMemberReevaluationStatus
+            spectatedPermissionsModel: root.communityAccessStore.spectatedPermissionsModel
+            chatPermissionsCheckOngoing: root.communityAccessStore.chatPermissionsCheckOngoing
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
@@ -315,6 +322,7 @@ StackLayout {
             onRemovePermissionRequested: root.communityPermissionsStore.removePermission(key)
             onEditPermissionRequested: root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
             onSetHideIfPermissionsNotMetRequested: root.communityPermissionsStore.setHideIfPermissionsNotMet(chatId, checked)
+            onPrepareTokenModelForCommunityChat: root.communityAccessStore.prepareTokenModelForCommunityChat(communityId, chatId)
         }
     }
 
@@ -339,6 +347,7 @@ StackLayout {
             advancedStore: root.advancedStore
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+            ensCommunityPermissionsEnabled: root.advancedStore.ensCommunityPermissionsEnabled
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: root.sectionItemModel

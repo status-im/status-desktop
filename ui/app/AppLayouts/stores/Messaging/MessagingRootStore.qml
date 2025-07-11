@@ -10,8 +10,13 @@ QtObject {
     // Dynamic `CommunityRootStore` instance creation logic.
     // Each `CommunityRootStore` is owned by the delegate that needs it and gets destroyed with it (clear ownership).
     function createCommunityRootStore(parent, communityId) {
-        console.log("Creating `CommunityRootStore` for community ID:", communityId)
-        return communityRootStoreComponent.createObject(parent, { communityId: communityId })
+        const store = communityRootStoreComponent.createObject(parent, { communityId: communityId })
+
+        if (!store) {
+            console.error("Failed to create CommunityRootStore! Context might be invalid.")
+        }
+
+        return store
     }
 
     property Component communityRootStoreComponent: Component {

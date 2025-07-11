@@ -68,9 +68,12 @@ StatusSectionLayout {
     property bool hasViewAndPostPermissions: false
     property bool amIMember: false
     property bool amISectionAdmin: false
-    readonly property bool allChannelsAreHiddenBecauseNotPermitted: rootStore.allChannelsAreHiddenBecauseNotPermitted
+    property bool allChannelsAreHiddenBecauseNotPermitted: false
 
     property int requestToJoinState: Constants.RequestToJoinState.None
+
+    // Settings related:
+    property bool ensCommunityPermissionsEnabled
 
     property var viewOnlyPermissionsModel
     property var viewAndPostPermissionsModel
@@ -105,6 +108,11 @@ StatusSectionLayout {
         }
         return false
     }
+
+    // Community access related data:
+    property int communityMemberReevaluationStatus
+    property var spectatedPermissionsModel
+    property bool chatPermissionsCheckOngoing
 
     // Unfurling related data:
     property bool gifUnfurlingEnabled
@@ -151,6 +159,7 @@ StatusSectionLayout {
     signal removePermissionRequested(string key)
     signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
     signal setHideIfPermissionsNotMetRequested(string chatId, bool checked)
+    signal prepareTokenModelForCommunityChat(string communityId, string chatId)
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -217,7 +226,7 @@ StatusSectionLayout {
         isAdmin: root.chatContentModule.amIChatAdmin()
 
         label: qsTr("Members")
-        communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
+        communityMemberReevaluationStatus: root.communityMemberReevaluationStatus
 
         usersModel: root.usersModel
 
@@ -353,7 +362,7 @@ StatusSectionLayout {
             requirementsMet: root.missingEncryptionKey ||
                              (root.canView && viewOnlyPermissionsModel.count > 0) ||
                              (root.canPost && viewAndPostPermissionsModel.count > 0)
-            requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
+            requirementsCheckPending: root.chatPermissionsCheckOngoing
             missingEncryptionKey: root.missingEncryptionKey
             onRequestToJoinClicked: root.requestToJoinClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
@@ -394,6 +403,8 @@ StatusSectionLayout {
             currencyStore: root.currencyStore
             emojiPopup: root.emojiPopup
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+            ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
+            spectatedPermissionsModel: root.spectatedPermissionsModel
 
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
@@ -405,6 +416,7 @@ StatusSectionLayout {
             onRemovePermissionRequested: root.removePermissionRequested(key)
             onEditPermissionRequested: root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
             onSetHideIfPermissionsNotMetRequested: root.setHideIfPermissionsNotMetRequested(chatId, checked)
+            onPrepareTokenModelForCommunityChatRequested: root.prepareTokenModelForCommunityChat(communityId, chatId)
         }
     }
 
