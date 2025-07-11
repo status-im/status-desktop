@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core.Utils as SQUtils
 
 ApplicationWindow {
     id: monitorRoot
