@@ -10,7 +10,10 @@ QtObject {
 
     // Indicates whether the current community module is initialized and available.
     required property bool isModuleReady
-    required property bool joined //** TODO
+
+    // Whether the user has joined the community
+    required property bool joined
+
     required property bool allChannelsAreHiddenBecauseNotPermitted
     required property int communityMemberReevaluationStatus
 

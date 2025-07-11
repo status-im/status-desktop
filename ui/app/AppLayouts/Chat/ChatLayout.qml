@@ -271,6 +271,7 @@ StackLayout {
             communityMemberReevaluationStatus: root.communityAccessStore.communityMemberReevaluationStatus
             spectatedPermissionsModel: root.communityAccessStore.spectatedPermissionsModel
             chatPermissionsCheckOngoing: root.communityAccessStore.chatPermissionsCheckOngoing
+            joined: root.communityAccessStore.joined
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled

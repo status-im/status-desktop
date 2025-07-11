@@ -53,6 +53,7 @@ ColumnLayout {
     property bool isBlocked: false
     property bool isUserAllowedToSendMessage: root.rootStore.isUserAllowedToSendMessage
     property bool stickersLoaded: false
+    property bool joined
 
     readonly property MessageStore messageStore: MessageStore {
         messageModule: chatContentModule ? chatContentModule.messagesModule : null
@@ -118,6 +119,7 @@ ColumnLayout {
             disabledTooltipText: root.disabledTooltipText
             areTestNetworksEnabled: root.areTestNetworksEnabled
             usersModel: root.usersModel
+            joined: root.joined
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
