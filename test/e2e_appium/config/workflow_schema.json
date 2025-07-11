@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "E2E Workflow Configuration Schema",
+  "type": "object",
+  "properties": {
+    "apk_source_type": {
+      "type": "string",
+      "enum": ["github_artifact", "direct_url", "lambdatest_app_id"],
+      "description": "Source type for the APK under test"
+    },
+    "apk_source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "APK source identifier",
+      "anyOf": [
+        {
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "GitHub artifact name"
+        },
+        {
+          "pattern": "^https?://.*\\.apk$",
+          "description": "Direct URL to APK file"
+        },
+        {
+          "pattern": "^lt://APP[0-9]+$", 
+          "description": "LambdaTest app ID"
+        }
+      ]
+    },
+    "build_run_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]+$",
+      "description": "GitHub Actions run ID"
+    },
+    "test_selection_type": {
+      "type": "string", 
+      "enum": ["marker", "specific_test", "test_file", "custom"]
+    },
+    "test_target": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Test target specification"
+    },
+    "test_environment": {
+      "type": "string",
+      "enum": ["lambdatest", "local"],
+      "default": "lambdatest"
+    },
+    "device_config": {
+      "type": "string",
+      "enum": ["default", "pixel_tablet", "galaxy_tab_a"],
+      "default": "default"
+    },
+    "parallel_execution": {
+      "type": "boolean",
+      "default": false
+    },
+    "enable_github_reporting": {
+      "type": "boolean", 
+      "default": true
+    }
+  },
+  "required": ["apk_source_type", "apk_source", "test_selection_type", "test_target"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "apk_source_type": { "const": "github_artifact" } }
+      },
+      "then": {
+        "properties": {
+          "apk_source": {
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "apk_source_type": { "const": "direct_url" } }
+      },
+      "then": {
+        "properties": {
+          "apk_source": {
+            "pattern": "^https?://.*\\.apk$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "apk_source_type": { "const": "lambdatest_app_id" } }
+      },
+      "then": {
+        "properties": {
+          "apk_source": {
+            "pattern": "^lt://APP[0-9]+$"
+          }
+        }
+      }
+    }
+  ]
+} 
