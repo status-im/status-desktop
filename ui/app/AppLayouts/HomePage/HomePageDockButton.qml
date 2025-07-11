@@ -28,7 +28,7 @@ ToolButton {
     implicitWidth: 64
     implicitHeight: 64
 
-    padding: Theme.smallPadding
+    padding: Theme.defaultSmallPadding
     opacity: pressed || down ? Theme.pressedOpacity : enabled ? 1 : Theme.disabledOpacity
     Behavior on opacity { NumberAnimation { duration: Theme.AnimationDuration.Fast } }
 
@@ -39,7 +39,7 @@ ToolButton {
         id: background
         color: hovered ? Theme.palette.directColor7 : Theme.palette.directColor8
         Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
-        radius: Theme.smallPadding * 2
+        radius: Theme.defaultSmallPadding * 2
 
         // top right corner
         StatusBadge {
@@ -65,7 +65,7 @@ ToolButton {
         asset.color: root.icon.color
         Behavior on asset.color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
         asset.name: asset.emoji ? "" : root.icon.name
-        asset.bgRadius: root.pinned && root.sectionType === Constants.appSection.wallet ? Theme.padding : asset.bgWidth/2
+        asset.bgRadius: root.pinned && root.sectionType === Constants.appSection.wallet ? Theme.defaultPadding : asset.bgWidth/2
         name: root.text
 
         Binding on asset.bgColor { // need some round background around the icon

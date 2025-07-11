@@ -240,7 +240,6 @@ QtObject {
         padding = basePadding
         halfPadding = basePadding / 2
         smallPadding = basePadding * 0.625
-        radius = halfPadding
     }
 
     enum AnimationDuration {

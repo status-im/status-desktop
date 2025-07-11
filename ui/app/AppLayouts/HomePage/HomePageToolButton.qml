@@ -25,7 +25,7 @@ AbstractButton {
 
     background: Rectangle {
         color: Theme.palette.baseColor5
-        radius: Theme.halfPadding
+        radius: Theme.defaultHalfPadding
     }
     contentItem: Item {
         StatusIcon {

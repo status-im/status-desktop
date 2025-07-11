@@ -34,7 +34,9 @@ Popup {
         listView.currentIndex = 0
         if (showSearchBox) {
             searchBox.text = ""
-            searchBox.textField.forceActiveFocus()
+            if (!Constants.isMobile) {
+                searchBox.textField.forceActiveFocus()
+            }
         }
     }
 
