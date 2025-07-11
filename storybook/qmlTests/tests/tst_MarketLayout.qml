@@ -1,17 +1,17 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import Models 1.0
-import SortFilterProxyModel 0.2
+import Models
+import SortFilterProxyModel
 
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Core.Theme
 
-import AppLayouts.Market 1.0
-import AppLayouts.Wallet 1.0
+import AppLayouts.Market
+import AppLayouts.Wallet
 
-import utils 1.0
+import utils
 
 Item {
     id: root

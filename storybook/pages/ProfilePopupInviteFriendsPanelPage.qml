@@ -1,8 +1,8 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import AppLayouts.Communities.panels 1.0
-import AppLayouts.stores 1.0 as AppLayoutStores
+import AppLayouts.Communities.panels
+import AppLayouts.stores as AppLayoutStores
 
 Item {
     Frame {

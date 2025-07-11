@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import QtTest 1.15
+import QtTest
 
-import StatusQ 0.1
+import StatusQ
 
-import shared.popups.send.views 1.0
+import shared.popups.send.views
 
 Item {
     id: root

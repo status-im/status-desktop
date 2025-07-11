@@ -1,9 +1,9 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import QtTest 1.15
+import QtTest
 
-import StatusQ.Validators 0.1
+import StatusQ.Validators
 
 Item {
     id: root

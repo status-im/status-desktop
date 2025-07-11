@@ -1,22 +1,22 @@
 ﻿import QtQuick 2.15
-import QtTest 1.15
+import QtTest
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
+import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
+import StatusQ.Core.Theme
+import StatusQ.Controls
 
-import QtQuick.Controls 2.15
+import QtQuick.Controls
 
-import Models 1.0
-import Storybook 1.0
+import Models
+import Storybook
 
-import utils 1.0
-import shared.stores 1.0
-import AppLayouts.Wallet.popups.swap 1.0
-import AppLayouts.Wallet.stores 1.0
-import AppLayouts.Wallet 1.0
-import AppLayouts.Wallet.adaptors 1.0
+import utils
+import shared.stores
+import AppLayouts.Wallet.popups.swap
+import AppLayouts.Wallet.stores
+import AppLayouts.Wallet
+import AppLayouts.Wallet.adaptors
 
 Item {
     id: root

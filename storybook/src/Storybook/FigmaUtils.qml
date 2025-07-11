@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQml 2.14
+import QtQml
 
 QtObject {
     function decomposeLink(link) {

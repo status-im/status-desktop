@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQml 2.15
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQml
+import QtQml.Models
 
-import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ
+import StatusQ.Core.Utils
 
-import QtTest 1.15
+import QtTest
 
-import shared.panels 1.0
-import utils 1.0
+import shared.panels
+import utils
 
 Item {
     id: root

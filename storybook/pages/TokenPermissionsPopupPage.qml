@@ -1,11 +1,11 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
-import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.popups
 
 SplitView {
     SplitView {

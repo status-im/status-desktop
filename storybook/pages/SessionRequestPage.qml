@@ -1,8 +1,8 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Wallet.services.dapps.types 1.0
+import AppLayouts.Wallet.services.dapps.types
 
 SplitView {
     id: root

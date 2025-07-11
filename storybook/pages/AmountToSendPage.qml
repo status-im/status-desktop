@@ -1,10 +1,10 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import Qt.labs.settings 1.1
+import Qt.labs.settings
 
-import shared.popups.send.views 1.0
+import shared.popups.send.views
 
 SplitView {
     orientation: Qt.Vertical

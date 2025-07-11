@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import shared.controls 1.0
+import shared.controls
 
 Item {
     id: root

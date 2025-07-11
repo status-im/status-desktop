@@ -1,15 +1,15 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Profile.panels 1.0
-import AppLayouts.Profile.controls 1.0
-import AppLayouts.Wallet.controls 1.0
-import StatusQ.Components 0.1
+import AppLayouts.Profile.panels
+import AppLayouts.Profile.controls
+import AppLayouts.Wallet.controls
+import StatusQ.Components
 
-import utils 1.0
+import utils
 
-import Storybook 1.0
+import Storybook
 
 SplitView {
     id: root

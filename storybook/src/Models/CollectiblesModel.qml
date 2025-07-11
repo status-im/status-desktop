@@ -1,6 +1,6 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.controls
 
 ListModel {
     readonly property var data: [

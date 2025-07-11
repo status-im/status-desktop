@@ -1,11 +1,11 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
-import Storybook 1.0
-import utils 1.0
+import Storybook
+import utils
 
 Dialog {
     id: root

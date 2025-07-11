@@ -1,8 +1,8 @@
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
-import AppLayouts.Wallet.services.dapps 1.0
-import shared.stores 1.0
+import AppLayouts.Wallet.services.dapps
+import shared.stores
 
 Item {
     id: root

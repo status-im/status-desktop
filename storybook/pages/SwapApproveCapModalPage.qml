@@ -1,18 +1,18 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import Storybook 1.0
-import Models 1.0
+import Storybook
+import Models
 
-import AppLayouts.Wallet 1.0
-import AppLayouts.Wallet.popups.swap 1.0
+import AppLayouts.Wallet
+import AppLayouts.Wallet.popups.swap
 
-import utils 1.0
+import utils
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 SplitView {
     id: root

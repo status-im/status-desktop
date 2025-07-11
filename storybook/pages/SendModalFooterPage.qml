@@ -1,13 +1,13 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQml.Models 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQml.Models
 
-import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Theme
 
-import Storybook 1.0
+import Storybook
 
-import AppLayouts.Wallet.views 1.0
-import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.views
+import AppLayouts.Wallet.controls
 
 SplitView {
     orientation: Qt.Vertical

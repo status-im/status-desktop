@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Core.Utils 0.1
-import AppLayouts.Profile.helpers 1.0
-import utils 1.0
+import StatusQ.Core.Utils
+import AppLayouts.Profile.helpers
+import utils
 
-import Storybook 1.0
+import Storybook
 
-import QtModelsToolkit 1.0
+import QtModelsToolkit
 
 Item {
     id: root

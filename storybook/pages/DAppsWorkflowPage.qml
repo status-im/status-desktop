@@ -1,39 +1,39 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQml 2.15
-import Qt.labs.settings 1.0
-import QtTest 1.15
-import QtQml.Models 2.14
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml
+import Qt.labs.settings
+import QtTest
+import QtQml.Models
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Backpressure 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Popups.Dialog 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Backpressure
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Core.Theme
+import StatusQ.Popups.Dialog
+import StatusQ.Core.Utils as SQUtils
 
-import Models 1.0
-import Storybook 1.0 as StoryBook
+import Models
+import Storybook as StoryBook
 
-import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet.services.dapps 1.0
-import AppLayouts.Wallet.services.dapps.types 1.0
+import AppLayouts.Wallet.controls
+import AppLayouts.Wallet.services.dapps
+import AppLayouts.Wallet.services.dapps.types
 
-import SortFilterProxyModel 0.2
+import SortFilterProxyModel
 
-import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet.panels 1.0
-import AppLayouts.Wallet.popups.dapps 1.0
-import AppLayouts.Profile.stores 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
-import AppLayouts.stores 1.0 as AppLayoutStores
+import AppLayouts.Wallet.controls
+import AppLayouts.Wallet.panels
+import AppLayouts.Wallet.popups.dapps
+import AppLayouts.Profile.stores
+import AppLayouts.Wallet.stores as WalletStore
+import AppLayouts.stores as AppLayoutStores
 
-import mainui 1.0
-import shared.stores 1.0 as SharedStores
-import utils 1.0
+import mainui
+import shared.stores as SharedStores
+import utils
 
 Item {
     id: root

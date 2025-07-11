@@ -1,12 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import AppLayouts.Chat.panels 1.0
+import AppLayouts.Chat.panels
 
-import Models 1.0
+import Models
 
-import utils 1.0
+import utils
 
 SplitView {
     orientation: Qt.Vertical

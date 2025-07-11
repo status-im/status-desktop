@@ -1,12 +1,12 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick
+import QtQuick.Controls
 
-import AppLayouts.stores 1.0 as AppLayoutStores
-import AppLayouts.Communities.popups 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-import utils 1.0
+import AppLayouts.stores as AppLayoutStores
+import AppLayouts.Communities.popups
+import AppLayouts.Profile.stores as ProfileStores
+import utils
 
-import Storybook 1.0
+import Storybook
 
 SplitView {
     orientation: Qt.Vertical

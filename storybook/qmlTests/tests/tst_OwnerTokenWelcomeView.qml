@@ -1,14 +1,14 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
-import QtTest 1.15
+import QtTest
 
-import StatusQ 0.1
+import StatusQ
 
-import SortFilterProxyModel 0.2
-import AppLayouts.Communities.views 1.0
+import SortFilterProxyModel
+import AppLayouts.Communities.views
 
-import Models 1.0
+import Models
 
 Item {
 

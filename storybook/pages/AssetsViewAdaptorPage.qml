@@ -1,13 +1,13 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ.Models 0.1
+import StatusQ.Models
 
-import Storybook 1.0
+import Storybook
 
-import utils 1.0
-import shared.views 1.0
+import utils
+import shared.views
 
 Item {
     id: root
