@@ -1,9 +1,10 @@
+import QtCore
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Layouts
 
 import Monitoring
-import Qt.labs.settings
 import AppLayouts.Wallet.stores as WalletStores
 
 import StatusQ.Core

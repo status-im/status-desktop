@@ -1,10 +1,11 @@
+import QtCore
+import QtQml
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Window
 import QtQuick.Layouts
-import Qt.labs.settings
 import QtQml.Models
-import QtQml
 
 import AppLayouts.Wallet
 import AppLayouts.Node

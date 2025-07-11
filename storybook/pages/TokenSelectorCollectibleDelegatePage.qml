@@ -1,12 +1,12 @@
+import QtCore
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Layouts
 
 import AppLayouts.Wallet.views
 import StatusQ.Core.Theme
 import utils
-
-import Qt.labs.settings
 
 SplitView {
     id: root

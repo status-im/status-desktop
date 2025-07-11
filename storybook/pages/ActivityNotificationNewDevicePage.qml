@@ -2,8 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import Qt.labs.settings
-
 import mainui.activitycenter.views
 import mainui.activitycenter.stores
 

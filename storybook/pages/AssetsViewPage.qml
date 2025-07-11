@@ -1,4 +1,6 @@
+import QtCore
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -9,8 +11,6 @@ import Storybook
 
 import AppLayouts.Wallet.controls
 import AppLayouts.Wallet.panels
-
-import Qt.labs.settings
 
 import StatusQ.Popups.Dialog
 

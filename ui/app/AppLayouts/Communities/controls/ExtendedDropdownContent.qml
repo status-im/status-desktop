@@ -1,9 +1,9 @@
+import QtCore
+import QtQml
 import QtQuick
+
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQml
-
-import Qt.labs.settings
 
 import StatusQ.Controls
 import StatusQ.Core.Theme

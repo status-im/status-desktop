@@ -1,6 +1,5 @@
+import QtCore
 import QtQuick
-
-import Qt.labs.settings
 
 import StatusQ
 import StatusQ.Core

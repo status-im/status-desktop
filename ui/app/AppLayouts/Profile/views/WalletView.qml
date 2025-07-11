@@ -1,9 +1,10 @@
+import QtCore
+import QtQml
 import QtQuick
+
+import Qt5Compat.GraphicalEffects
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
-import Qt.labs.settings
-import QtQml
 
 import StatusQ.Controls
 import StatusQ.Components
