@@ -1,0 +1,35 @@
+extends: "base.yaml"
+
+metadata:
+  environment: "local"
+  description: "Local development environment"
+
+device:
+  name: "sdk_gphone64_arm64"
+  platform_version: "15"
+  
+appium:
+  server_url: "http://localhost:4723"
+  
+app:
+  source_type: "local_file"
+  path_template: "${LOCAL_APP_PATH}"
+  
+timeouts:
+  default: 60
+  element_wait: 45
+  
+logging:
+  level: "DEBUG"
+  enable_video_recording: false
+  
+directories:
+  logs: "logs/local"
+  reports: "reports/local"
+  screenshots: "screenshots/local"
+
+capabilities:
+  platformName: "android"
+  automationName: "UiAutomator2"
+  newCommandTimeout: 300
+  noReset: false 
