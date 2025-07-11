@@ -49,14 +49,6 @@ Rectangle {
         }
     }
 
-    StatusMacTrafficLights {
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 13
-        z: statusAppLayout.z + 1
-        visible: titleStyle === "osx"
-    }
-
     StatusWindowsTitleBar {
         id: windowsTitle
         anchors.top: parent.top
