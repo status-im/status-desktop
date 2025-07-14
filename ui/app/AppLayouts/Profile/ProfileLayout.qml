@@ -51,19 +51,20 @@ StatusSectionLayout {
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
 
+    required property ProfileStores.ProfileStore profileStore
+    required property ProfileStores.DevicesStore devicesStore
+    required property ProfileStores.AdvancedStore advancedStore
+    required property ProfileStores.PrivacyStore privacyStore
+    required property ProfileStores.NotificationsStore notificationsStore
+    required property ProfileStores.LanguageStore languageStore
+    required property ProfileStores.KeycardStore keycardStore
+    required property ProfileStores.WalletStore walletStore
+    required property ProfileStores.EnsUsernamesStore ensUsernamesStore
+    required property ProfileStores.AboutStore aboutStore
+
     property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
-    property ProfileStores.ProfileStore profileStore
-    property ProfileStores.DevicesStore devicesStore
-    property ProfileStores.AdvancedStore advancedStore
-    property ProfileStores.PrivacyStore privacyStore
-    property ProfileStores.NotificationsStore notificationsStore
-    property ProfileStores.LanguageStore languageStore
-    property ProfileStores.KeycardStore keycardStore
-    property ProfileStores.WalletStore walletStore
-    property ProfileStores.EnsUsernamesStore ensUsernamesStore
-    property ProfileStores.AboutStore aboutStore
     property CommunitiesStore.CommunitiesStore communitiesStore
     property ActivityCenterStore activityCenterStore
     property MessagingStores.MessagingSettingsStore messagingSettingsStore
@@ -86,8 +87,8 @@ StatusSectionLayout {
 
     required property int theme // Theme.Style.xxx
     required property int fontSize // Theme.FontSize.xxx
-    property var fnAddressWasShown: function(address) {}
-
+    
+    signal addressWasShownRequested(string address)
     signal connectUsernameRequested(string ensName)
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
@@ -348,9 +349,8 @@ StatusSectionLayout {
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
-                backButtonName: d.backButtonName
 
-                fnAddressWasShown: root.fnAddressWasShown
+                onAddressWasShownRequested: root.addressWasShownRequested(address)
 
                 onBackButtonNameChanged: d.backButtonName = backButtonName
             }

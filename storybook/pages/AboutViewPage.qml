@@ -17,43 +17,18 @@ SplitView {
         SplitView.fillWidth: true
 
         AboutView {
-
-            function getCurrentVersion() {
-                logs.logEvent("AboutView::getCurrentVersion")
-                return isProduction ? "0.13.2" : "0.13.2-dev"
-            }
-
-            function getGitCommit() {
-                logs.logEvent("AboutView::getGitCommit")
-                return "92b88e8a3e1d48f2c39d1db6e4d577ebbe21f7a9"
-            }
-
-            function getStatusGoVersion() {
-                logs.logEvent("AboutView::getStatusGoVersion")
-                return "v0.162.9"
-            }
-
-            function qtRuntimeVersion() {
-                return SQCore.SystemUtils.qtRuntimeVersion()
-            }
-
-            function openTestLink(url) {
-                logs.logEvent("AboutView::openLink", ["url"], arguments)
-                Qt.openUrlExternally(url)
-            }
-
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             contentWidth: parent.width
 
             isProduction: ctrlProduction.checked
-            currentVersion: getCurrentVersion()
-            gitCommit: getGitCommit()
-            statusGoVersion: getStatusGoVersion()
-            qtRuntimeVersion: qtRuntimeVersion()
+            currentVersion: isProduction ? "0.13.2" : "0.13.2-dev"
+            gitCommit: "92b88e8a3e1d48f2c39d1db6e4d577ebbe21f7a9"
+            statusGoVersion: "v0.162.9"
+            qtRuntimeVersion: SQCore.SystemUtils.qtRuntimeVersion()
 
             onCheckForUpdates: logs.logEvent("store::checkForUpdates")
-            onOpenLink: openTestLink(url)
+            onOpenLink: Qt.openUrlExternally(url)
         }
 
         LogsAndControlsPanel {

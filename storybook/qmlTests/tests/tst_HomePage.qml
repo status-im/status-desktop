@@ -31,12 +31,12 @@ Item {
 
         searchPhrase: controlUnderTest ? controlUnderTest.searchPhrase : ""
 
-        profileId: mockProfileStore.pubkey
+        profileId: mockProfileStore.pubKey
     }
 
     ProfileStores.ProfileStore {
         id: mockProfileStore
-        readonly property string pubkey: "0xdeadbeef"
+        readonly property string pubKey: "0xdeadbeef"
         readonly property string compressedPubKey: "zxDeadBeef"
         readonly property string name: "John Roe"
         readonly property string icon: ModelsData.icons.rarible

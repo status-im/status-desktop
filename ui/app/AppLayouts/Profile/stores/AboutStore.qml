@@ -1,27 +1,31 @@
 import QtQuick 2.15
 
 QtObject {
-    property var aboutModuleInst: aboutModule
 
-    readonly property bool fetchingUpdate: aboutModuleInst.fetching
+    readonly property QtObject _d: QtObject {
+        id: d
+        property var aboutModuleInst: aboutModule
+    }
+
+    readonly property bool fetchingUpdate: d.aboutModuleInst.fetching
 
     function getCurrentVersion() {
-        return aboutModuleInst.getCurrentVersion().replace(/^v/, '')
+        return d.aboutModuleInst.getCurrentVersion().replace(/^v/, '')
     }
 
     function getGitCommit() {
-        return aboutModuleInst.getGitCommit()
+        return d.aboutModuleInst.getGitCommit()
     }
 
     function getStatusGoVersion() {
-        return aboutModuleInst.getStatusGoVersion()
+        return d.aboutModuleInst.getStatusGoVersion()
     }
 
     function nodeVersion() {
-        return aboutModuleInst.nodeVersion()
+        return d.aboutModuleInst.nodeVersion()
     }
 
     function checkForUpdates() {
-        aboutModuleInst.checkForUpdates()
+        d.aboutModuleInst.checkForUpdates()
     }
 }

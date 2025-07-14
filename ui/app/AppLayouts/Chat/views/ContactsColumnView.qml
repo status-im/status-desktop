@@ -21,7 +21,6 @@ import "../panels"
 import "../popups"
 import AppLayouts.Chat.stores
 import AppLayouts.Communities.popups
-import AppLayouts.stores as AppLayoutStores
 
 Item {
     id: root
