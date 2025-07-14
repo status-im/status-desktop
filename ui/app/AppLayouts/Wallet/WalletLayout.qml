@@ -213,12 +213,6 @@ Item {
         }
     }
 
-    SeedPhraseBackupWarning {
-        id: seedPhraseWarning
-        width: parent.width
-        anchors.top: parent.top
-    }
-
     Component {
         id: cmpSavedAddresses
         SavedAddressesView {
@@ -281,9 +275,7 @@ Item {
     StatusSectionLayout {
         id: walletSectionLayout
         navBar: root.navBar
-        anchors.top: seedPhraseWarning.bottom
-        height: root.height - seedPhraseWarning.height
-        width: root.width
+        anchors.fill: parent
         backButtonName: RootStore.backButtonName
         notificationCount: activityCenterStore.unreadNotificationsCount
         hasUnseenNotifications: activityCenterStore.hasUnseenNotifications

@@ -35,7 +35,6 @@ QtObject {
     /* This property holds address of currently selected account in Wallet Main layout  */
     readonly property var addressFilters: walletSectionInst.addressFilters
     readonly property var keypairImportModule: walletSectionInst.keypairImportModule
-    readonly property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
 
     readonly property var transactionActivityStatus: walletSectionInst.activityController.status
 

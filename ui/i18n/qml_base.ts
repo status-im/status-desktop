@@ -14554,17 +14554,6 @@ to load</translation>
     </message>
 </context>
 <context>
-    <name>SeedPhraseBackupWarning</name>
-    <message>
-        <source>Back up your recovery phrase</source>
-        <translation>Back up your recovery phrase</translation>
-    </message>
-    <message>
-        <source>Back up</source>
-        <translation>Back up</translation>
-    </message>
-</context>
-<context>
     <name>SeedphrasePage</name>
     <message>
         <source>Create profile using a recovery phrase</source>
