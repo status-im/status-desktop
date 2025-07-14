@@ -18,10 +18,6 @@ cd "${BUILD_DIR}"
 
 echo "Building wrapperApp"
 
-if [[ "${QT_MAJOR}" == "6" ]]; then
-    COMPAT_RESOURCES=compat_resources.qrc
-fi
-
 if [[ "${OS}" == "android" ]]; then
     if [[ -z "${JAVA_HOME}" ]]; then
         echo "JAVA_HOME is not set. Please set JAVA_HOME to the path of your JDK 11 or later."
