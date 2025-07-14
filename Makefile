@@ -73,7 +73,7 @@ nix-shell:
 -include $(BUILD_SYSTEM_DIR)/makefiles/targets.mk
 
 # `qmake` path, either passed explicitely, or as found in PATH
-# (makes it possible to override with a custom Qt5/Qt6 install dir)
+# (makes it possible to override with a custom Qt6 install dir)
 QMAKE ?= $(shell which qmake)
 QSPEC:=$(shell $(QMAKE) -query QMAKE_XSPEC)
 ifeq ($(QSPEC),macx-ios-clang)
@@ -190,6 +190,10 @@ COMMON_CMAKE_CONFIG_PARAMS := -DCMAKE_PREFIX_PATH=$(QT_INSTALL_PREFIX)
 # Qt dirs (we can't indent with tabs here)
  QT_MAJOR_VERSION := $(shell $(QMAKE) -query QT_VERSION | head -c 1 2>/dev/null)
 
+ifneq ($(QT_MAJOR_VERSION),6)
+ $(error Detected Qt major version $(QT_MAJOR_VERSION), but version 6 is required. Please install Qt 6 and set paths accordingly.)
+endif
+
 ifneq ($(mkspecs),win32)
  export QT_LIBDIR := $(shell $(QMAKE) -query QT_INSTALL_LIBS 2>/dev/null)
  QT_QMLDIR := $(shell $(QMAKE) -query QT_INSTALL_QML 2>/dev/null)
@@ -218,11 +222,7 @@ else
 endif
 
 ifeq ($(mkspecs),win32)
- ifeq ($(QT_MAJOR_VERSION),5)
- 	COMMON_CMAKE_CONFIG_PARAMS += -T"v141" -A x64
- else
-    COMMON_CMAKE_CONFIG_PARAMS += -A x64
- endif
+ COMMON_CMAKE_CONFIG_PARAMS += -A x64
 endif
 
 ifeq ($(mkspecs),macx)
@@ -667,13 +667,7 @@ STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
 ifeq ($(mkspecs),linux)
  export FCITX5_QT := vendor/fcitx5-qt/build/qt$(QT_MAJOR_VERSION)/platforminputcontext/libfcitx5platforminputcontextplugin.so
  FCITX5_QT_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY_PLUGIN=ON -DENABLE_QT4=OFF
-
- ifeq ($(QT_MAJOR_VERSION),6)
-  FCITX5_QT_CMAKE_PARAMS += -DENABLE_QT5=OFF -DENABLE_QT6=ON
- else
-  FCITX5_QT_CMAKE_PARAMS += -DENABLE_QT5=ON -DENABLE_QT6=OFF
- endif
-
+ FCITX5_QT_CMAKE_PARAMS += -DENABLE_QT5=OFF -DENABLE_QT6=ON
  FCITX5_QT_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 endif
 
