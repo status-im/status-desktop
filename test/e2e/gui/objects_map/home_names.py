@@ -19,6 +19,7 @@ home_grid_item_unpin_menu_action = {"container": home_grid_item_context_menu, "t
 
 # HomePage Dock
 home_dock = {"container": statusDesktop_mainWindow, "type": "ListView", "visible": True}
+home_profile = {"checkable": True, "container": statusDesktop_mainWindow, "objectName": "homeProfileButton", "type": "ProfileButton", "visible": True}
 
 # Regular Dock Buttons
 home_regular_dock_button_wallet = {"container": statusDesktop_mainWindow, "objectName": "regularDockButtonWallet", "type": "HomePageDockButton", "visible": True}

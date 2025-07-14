@@ -862,6 +862,7 @@ change_password_menu_new_password_confirm = {"container": settingsContentBase_Sc
 change_password_menu_change_password_button = {"container": settingsContentBase_ScrollView,
                                                "objectName": "changePasswordModalSubmitButton", "type": "StatusButton",
                                                "visible": True}
+changePasswordPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmChangePasswordModal", "type": "PopupItem", "visible": True}
 reEncryptRestartButton = {"container": statusDesktop_mainWindow_overlay,
                           "objectName": "changePasswordModalSubmitButton", "type": "StatusButton", "visible": True}
 reEncryptionComplete = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusListItemSubTitle",
