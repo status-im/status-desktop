@@ -181,13 +181,8 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "App installed. Starting app"
-if [ "$QT_MAJOR" = "6" ]; then
-    # For Qt6, use the new package name
-    DEFAULT_ACTIVITY_NAME="im.status.tablet/org.qtproject.qt.android.bindings.QtActivity"
-else
-    # For Qt5, use the old package name
-    DEFAULT_ACTIVITY_NAME="im.status.tablet/org.qtproject.qt5.android.bindings.QtActivity"
-fi
+
+DEFAULT_ACTIVITY_NAME="im.status.tablet/org.qtproject.qt.android.bindings.QtActivity"
 $ADB -s $ANDROID_SERIAL shell am start -a android.intent.action.MAIN -n $DEFAULT_ACTIVITY_NAME
 # wait for the app to start and then start logcat
 echo "Waiting for the app to start"
