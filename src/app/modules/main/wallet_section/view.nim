@@ -15,7 +15,6 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       totalCurrencyBalance: CurrencyAmount
-      isMnemonicBackedUp: bool
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
@@ -79,12 +78,6 @@ QtObject:
     read = getTotalCurrencyBalance
     notify = totalCurrencyBalanceChanged
 
-  proc getIsMnemonicBackedUp(self: View): QVariant {.slot.} =
-    return newQVariant(self.isMnemonicBackedUp)
-
-  QtProperty[QVariant] isMnemonicBackedUp:
-    read = getIsMnemonicBackedUp
-
   proc addressFiltersChanged*(self: View) {.signal.}
   proc setAddressFilters*(self: View, address: string) =
     self.addressFilters = address
@@ -121,9 +114,6 @@ QtObject:
     self.tmpAmount = 0
     self.tmpSymbol = "ERROR"
     return newQVariant(currencyAmount)
-
-  proc setData*(self: View, mnemonicBackedUp: bool) =
-    self.isMnemonicBackedUp = mnemonicBackedUp
 
   proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =
     self.delegate.runAddAccountPopup(addingWatchOnlyAccount)
