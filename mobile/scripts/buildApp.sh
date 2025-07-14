@@ -10,6 +10,7 @@ BIN_DIR=${BIN_DIR:-"$CWD/../bin/ios"}
 BUILD_DIR=${BUILD_DIR:-"$CWD/../build"}
 ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
 QT_MAJOR=${QT_MAJOR:-"5"}
+QMAKE_EXTRA_ARGS=${QMAKE_EXTRA_ARGS:-""}
 
 echo "Building wrapperApp for ${OS}, ${ANDROID_ABI}"
 
@@ -39,7 +40,7 @@ if [[ "${OS}" == "android" ]]; then
         exit 1
     fi
 
-    qmake "$CWD/../wrapperApp/Status-tablet.pro" CONFIG+=device CONFIG+=release RESOURCES+="$COMPAT_RESOURCES" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
+    qmake "$CWD/../wrapperApp/Status-tablet.pro" CONFIG+=device CONFIG+=release RESOURCES+="$COMPAT_RESOURCES" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after $QMAKE_EXTRA_ARGS
 
     # Build the app
     make -j"$(nproc)" apk_install_target
