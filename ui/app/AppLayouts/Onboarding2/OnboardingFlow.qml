@@ -58,6 +58,7 @@ OnboardingStackView {
     signal loadMnemonicRequested
     signal authorizationRequested(string pin)
     signal performKeycardFactoryResetRequested
+    signal importLocalBackupRequested(url importFilePath)
 
     signal linkActivated(string link)
 
@@ -300,6 +301,9 @@ OnboardingStackView {
 
             onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
             onSetPasswordRequested: (password) => root.setPasswordRequested(password)
+
+            onImportLocalBackupRequested: (importFilePath) => root.importLocalBackupRequested(importFilePath)
+
             onFinished: d.pushOrSkipBiometricsPage()
         }
     }
@@ -369,7 +373,7 @@ OnboardingStackView {
             remainingPinAttempts: root.remainingPinAttempts
             remainingPukAttempts: root.remainingPukAttempts
             displayKeycardPromoBanner: root.displayKeycardPromoBanner
-            onAuthorizationRequested: root.authorizationRequested(pin)
+            onAuthorizationRequested: (pin) => root.authorizationRequested(pin)
 
             keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
@@ -378,6 +382,8 @@ OnboardingStackView {
             onKeycardFactoryResetRequested: root.push(keycardFactoryResetFlow)
             onUnblockWithSeedphraseRequested: root.push(unblockWithSeedphraseFlow)
             onUnblockWithPukRequested: root.push(unblockWithPukFlow)
+
+            onImportLocalBackupRequested: (importFilePath) => root.importLocalBackupRequested(importFilePath)
 
             onFinished: {
                 d.flow = Onboarding.OnboardingFlow.LoginWithKeycard

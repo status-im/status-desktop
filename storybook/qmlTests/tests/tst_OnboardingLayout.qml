@@ -751,7 +751,14 @@ Item {
 
             mouseClick(btnConfirmPassword)
 
-            // PAGE 6: Enable Biometrics
+            // PAGE 6: Local import
+            page = getCurrentPage(stack, ImportLocalBackupPage)
+
+            const btnSkipImport = findChild(controlUnderTest, "btnSkipImport")
+            verify(!!btnSkipImport)
+            mouseClick(btnSkipImport)
+
+            // PAGE 7: Enable Biometrics
             if (data.biometrics) {
                 page = getCurrentPage(stack, EnableBiometricsPage)
 
@@ -770,6 +777,7 @@ Item {
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, mockDriver.mnemonic)
+            compare(resultData.backupImportFileUrl, "")
         }
 
         // FLOW: Log in -> Log in by syncing
@@ -920,11 +928,16 @@ Item {
             page = getCurrentPage(stack, KeycardExtractingKeysPage)
             mockDriver.restoreKeysExportState = Onboarding.ProgressState.Success
 
-            // PAGE 7: Enable Biometrics
-            if (data.biometrics) {
-                dynamicSpy.setup(stack, "topLevelItemChanged")
-                tryCompare(dynamicSpy, "count", 1)
+            // PAGE 7: Local import
+            waitForRendering(page)
+            page = getCurrentPage(stack, ImportLocalBackupPage)
 
+            const btnSkipImport = findChild(controlUnderTest, "btnSkipImport")
+            verify(!!btnSkipImport)
+            mouseClick(btnSkipImport)
+
+            // PAGE 8: Enable Biometrics
+            if (data.biometrics) {
                 page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
@@ -943,6 +956,7 @@ Item {
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, "")
+            compare(resultData.backupImportFileUrl, "")
         }
 
         // LOGIN SCREEN
