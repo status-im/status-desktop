@@ -11,24 +11,21 @@ from driver.aut import AUT
 from gui.main_window import MainWindow
 
 
-@pytest.mark.timeout(timeout=180)
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703005',
                  'Change the password and login with new password')
 @pytest.mark.case(703005)
 # @pytest.mark.critical
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15178')
 # TODO: follow up on https://github.com/status-im/status-desktop/issues/13013
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account):
     with step('Open change password view'):
-        settings_scr = main_screen.home.open_from_dock(DockButtons.SETTINGS.value)
-        password_view = settings_scr.left_panel.open_password_settings()
+        password_view = main_screen.left_panel.open_settings().left_panel.open_password_settings()
 
     with step('Fill in the change password form and submit'):
         new_password = random_password_string()
-        password_view.change_password(user_account.password, new_password)
+        change_password_popup = password_view.change_password(user_account.password, new_password)
 
     with step('Click re-encrypt data button and then restart'):
-        ChangePasswordPopup().click_re_encrypt_data_restart_button()
+        change_password_popup.click_re_encrypt_data_restart_button()
 
     with step('Restart application'):
         aut.restart()
@@ -39,6 +36,6 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
                                                password=new_password))
 
     with step('Verify that the user logged in correctly'):
-        online_identifier = main_screen.left_panel.open_online_identifier()
+        online_identifier = main_screen.home.open_online_identifier()
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_account.name

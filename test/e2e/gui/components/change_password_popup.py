@@ -2,14 +2,15 @@ import driver
 from constants.settings import PasswordView
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
+from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 from gui.objects_map import names
 
 
-class ChangePasswordPopup(BasePopup):
+class ChangePasswordPopup(QObject):
 
     def __init__(self):
-        super(ChangePasswordPopup, self).__init__()
+        super().__init__(names.changePasswordPopup)
         self.re_encrypt_data_restart_button = Button(names.reEncryptRestartButton)
         self.re_encryption_complete_element = TextLabel(names.reEncryptionComplete)
 

@@ -165,7 +165,6 @@ class MainWindow(Window):
         profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
-        self.left_panel.open_wallet()
         return self
 
     @allure.step('Log in returning user')

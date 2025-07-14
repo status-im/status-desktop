@@ -3,6 +3,7 @@ import time
 import allure
 
 import driver
+from gui.components.online_identifier import OnlineIdentifier
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
@@ -21,6 +22,7 @@ class HomeScreen(QObject):
         self.search_field = TextEdit(home_names.home_search_field)
         self.grid = QObject(home_names.home_grid)
         self.dock = QObject(home_names.home_dock)
+        self.profile_button = QObject(home_names.home_profile)
 
         # Dock button mapping
         self.dock_buttons = {
@@ -95,6 +97,11 @@ class HomeScreen(QObject):
         """Navigate to Communities Portal from home grid"""
         self.click_grid_item_by_title("Communities")
         return CommunitiesPortal().wait_until_appears()
+
+    @allure.step('Open online identifier from home screen')
+    def open_online_identifier(self) -> OnlineIdentifier:
+        self.profile_button.click()
+        return OnlineIdentifier().wait_until_appears()
 
     # =============================================================================
     # DOCK FUNCTIONS
