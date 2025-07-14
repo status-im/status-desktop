@@ -22,15 +22,15 @@ QT_MAJOR?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
 QT_DIR?=$(shell qmake -query QT_INSTALL_PREFIX)
 MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
+ifneq ($(QT_MAJOR),6)
+    $(error Detected Qt major version $(QT_MAJOR), but version 6 is required.)
+endif
+
 ifeq ($(OS), ios)
     # iOS
     #SDKs: iphonesimulator, iphoneos
     IPHONE_SDK?=iphonesimulator
-    ifeq ($(QT_MAJOR),5)
-        IOS_TARGET?=12
-    else
-        IOS_TARGET?=16
-    endif
+    IOS_TARGET?=16
 
     ifeq ($(IPHONE_SDK), iphoneos)
         ARCH=arm64
@@ -89,9 +89,6 @@ else
         export ANDROID_ABI=armeabi-v7a
     else
         export ANDROID_ABI=x86_64
-    endif
-    ifeq ($(QT_MAJOR),5)
-        export LIB_SUFFIX= _$(ANDROID_ABI)
     endif
     export LIB_EXT := .so
 endif

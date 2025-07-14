@@ -9,7 +9,6 @@ JAVA_HOME=${JAVA_HOME:-}
 BIN_DIR=${BIN_DIR:-"$CWD/../bin/ios"}
 BUILD_DIR=${BUILD_DIR:-"$CWD/../build"}
 ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
-QT_MAJOR=${QT_MAJOR:-"5"}
 
 echo "Building wrapperApp for ${OS}, ${ANDROID_ABI}"
 
@@ -24,18 +23,10 @@ if [[ "${OS}" == "android" ]]; then
         exit 1
     fi
 
-    if [[ "${QT_MAJOR}" == "5" ]]; then
-        echo "Building for Android 31"
-        ANDROID_PLATFORM=android-31
-    elif [[ "${QT_MAJOR}" == "6" ]]; then
-        echo "Building for Android 35"
-        ANDROID_PLATFORM=android-35
-    else
-        echo "Invalid QT_MAJOR. Please set QT_MAJOR to 5 or 6."
-        exit 1
-    fi
+    echo "Building for Android 35"
+    ANDROID_PLATFORM=android-35
 
-    qmake "$CWD/../wrapperApp/Status-tablet.pro" CONFIG+=device CONFIG+=release RESOURCES+="$COMPAT_RESOURCES" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
+    qmake "$CWD/../wrapperApp/Status-tablet.pro" CONFIG+=device CONFIG+=release -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
 
     # Build the app
     make -j"$(nproc)" apk_install_target
@@ -48,7 +39,7 @@ if [[ "${OS}" == "android" ]]; then
 
     echo "Build succeeded. APK is available at $BIN_DIR/Status-tablet.apk"
 else
-    qmake "$CWD/../wrapperApp/Status-tablet.pro" RESOURCES+="$COMPAT_RESOURCES" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
+    qmake "$CWD/../wrapperApp/Status-tablet.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
     # Compile resources
     xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_STYLE=Automatic
     # Compile the app

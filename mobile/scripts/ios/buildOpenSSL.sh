@@ -65,11 +65,3 @@ mkdir -p ${SSL_BUILD_DIR}
 echo "Copying $CRYPTO_OUTPUT_LIB and $SSL_OUTPUT_LIB to $LIB_PATH"
 cp "${SSL_BUILD_DIR}/libcrypto${LIB_EXT}" "$CRYPTO_OUTPUT_LIB"
 cp "${SSL_BUILD_DIR}/libssl${LIB_EXT}" "$SSL_OUTPUT_LIB"
-
-if [[ "$LIB_EXT" == ".so" ]]; then
-    # Just in case this lands in a qt5 build, strip the unneeded symbols
-    # Qt6 androidDeployQt will strip it by default.
-    HOST_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-    ${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-strip --strip-all $CRYPTO_OUTPUT_LIB
-    ${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-strip --strip-all $SSL_OUTPUT_LIB
-fi
