@@ -12,8 +12,7 @@ OnboardingStackView {
         Login
     }
 
-    // https://bugreports.qt.io/browse/QTBUG-84269, required can be restored on Qt6
-    /*required*/ property int type
+    required property int type
 
     // functions
     required property var passwordStrengthScoreFunction // (string) => int
@@ -22,6 +21,7 @@ OnboardingStackView {
 
     signal seedphraseSubmitted(string seedphrase)
     signal setPasswordRequested(string password)
+    signal importLocalBackupRequested(url importFilePath)
     signal finished
 
     initialItem: type === UseRecoveryPhraseFlow.Type.KeycardRecovery ? conversionAckPage : seedPhrasePage
@@ -79,10 +79,24 @@ OnboardingStackView {
         CreatePasswordPage {
             passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
 
-            onSetPasswordRequested: {
+            onSetPasswordRequested: function(password) {
                 root.setPasswordRequested(password)
+                if (root.type === UseRecoveryPhraseFlow.Type.Login)
+                    root.push(importLocalBackupPage)
+                else
+                    root.finished()
+            }
+        }
+    }
+
+    Component {
+        id: importLocalBackupPage
+        ImportLocalBackupPage {
+            onImportLocalBackupRequested: function(importFilePath) {
+                root.importLocalBackupRequested(importFilePath)
                 root.finished()
             }
+            onSkipRequested: root.finished()
         }
     }
 }

@@ -206,23 +206,12 @@ Item {
             verify(!!stack)
             tryCompare(stack, "topLevelStackBusy", false) // wait for page transitions to stop
 
-            // old code commented due to a Qt bug in `instanceof`, see https://github.com/status-im/status-desktop/issues/18307
-            /*
             if (stack.topLevelItem instanceof Loader) {
                 verify(stack.topLevelItem.item instanceof pageClass)
                 return stack.topLevelItem.item
             }
 
             verify(stack.topLevelItem instanceof pageClass)
-            return stack.topLevelItem
-            */
-
-            if (stack.topLevelItem.toString().startsWith("Loader")) {
-                verify(stack.topLevelItem.item.toString().startsWith(pageClass))
-                return stack.topLevelItem.item
-            }
-
-            verify(stack.topLevelItem.toString().startsWith(pageClass), ">>> Current page should be: %1, and is: %2".arg(pageClass).arg(stack.topLevelItem.toString()))
             return stack.topLevelItem
         }
 
@@ -762,7 +751,14 @@ Item {
 
             mouseClick(btnConfirmPassword)
 
-            // PAGE 6: Enable Biometrics
+            // PAGE 6: Local import
+            page = getCurrentPage(stack, ImportLocalBackupPage)
+
+            const btnSkipImport = findChild(controlUnderTest, "btnSkipImport")
+            verify(!!btnSkipImport)
+            mouseClick(btnSkipImport)
+
+            // PAGE 7: Enable Biometrics
             if (data.biometrics) {
                 page = getCurrentPage(stack, EnableBiometricsPage)
 
@@ -781,6 +777,7 @@ Item {
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, mockDriver.mnemonic)
+            compare(resultData.backupImportFileUrl, "")
         }
 
         // FLOW: Log in -> Log in by syncing
@@ -931,11 +928,16 @@ Item {
             page = getCurrentPage(stack, KeycardExtractingKeysPage)
             mockDriver.restoreKeysExportState = Onboarding.ProgressState.Success
 
-            // PAGE 7: Enable Biometrics
-            if (data.biometrics) {
-                dynamicSpy.setup(stack, "topLevelItemChanged")
-                tryCompare(dynamicSpy, "count", 1)
+            // PAGE 7: Local import
+            waitForRendering(page)
+            page = getCurrentPage(stack, ImportLocalBackupPage)
 
+            const btnSkipImport = findChild(controlUnderTest, "btnSkipImport")
+            verify(!!btnSkipImport)
+            mouseClick(btnSkipImport)
+
+            // PAGE 8: Enable Biometrics
+            if (data.biometrics) {
                 page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
@@ -954,6 +956,7 @@ Item {
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, "")
+            compare(resultData.backupImportFileUrl, "")
         }
 
         // LOGIN SCREEN
