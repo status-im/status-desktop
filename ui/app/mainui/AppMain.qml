@@ -3,7 +3,6 @@ import QtQml
 import QtQuick
 
 import QtQuick.Controls
-import QtQuick.Window
 import QtQuick.Layouts
 import QtQml.Models
 
@@ -827,6 +826,8 @@ Item {
 
         property var activityCenterPopupObj: null
 
+        readonly property int activeSectionType: appMain.rootStore.activeSectionType
+
         function openActivityCenterPopup() {
             if (!activityCenterPopupObj) {
                 activityCenterPopupObj = activityCenterPopupComponent.createObject(appMain)
@@ -1449,77 +1450,30 @@ Item {
                 id: bannersLayout
 
                 enabled: !localAppSettings.testEnvironment
-                         && appMain.rootStore.activeSectionType !== Constants.appSection.homePage
+                         && d.activeSectionType !== Constants.appSection.homePage
                          && !SQUtils.Utils.isMobile // Temp disable until we have proper way to handle banners on mobile
                 visible: enabled
 
-                property var updateBanner: null
-                property var connectedBanner: null
-                readonly property bool isConnected: appMain.rootStore.isOnline
-
-                function processUpdateAvailable() {
-                    if (!updateBanner)
-                        updateBanner = updateBannerComponent.createObject(this)
-                }
-
-                function processConnected() {
-                    if (!connectedBanner)
-                        connectedBanner = connectedBannerComponent.createObject(this)
-                }
-
                 Layout.fillWidth: true
+
+                // apply left/right margins when we remove the window titlebar
+                Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.Window.SafeArea.margins.left : 0
+                Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.Window.SafeArea.margins.right : 0
+
                 Layout.maximumHeight: implicitHeight
                 spacing: 1
 
-                onIsConnectedChanged: {
-                    processConnected()
-                }
-
-                Component.onCompleted: {
-                    if (!isConnected)
-                        processConnected()
-                }
-
-                Connections {
-                    target: rootStore.aboutModuleInst
-                    function onAppVersionFetched(available: bool, version: string, url: string) {
-                        rootStore.setLatestVersionInfo(available, version, url);
-                        // TODO when we re-implement check for updates, uncomment this
-                        // bannersLayout.processUpdateAvailable()
-                    }
-                }
-
-                ModuleWarning {
-                    id: testnetBanner
-                    objectName: "testnetBanner"
+                GlobalBanner {
                     Layout.fillWidth: true
-                    text: qsTr("Testnet mode enabled. All balances, transactions and dApp interactions will be on testnets.")
-                    buttonText: qsTr("Turn off")
-                    type: ModuleWarning.Warning
-                    iconName: "warning"
-                    active: appMain.networksStore.areTestNetworksEnabled
-                    delay: false
-                    onClicked: Global.openTestnetPopup()
-                    closeBtnVisible: false
+
+                    isOnline: appMain.rootStore.isOnline
+                    testnetEnabled: appMain.networksStore.areTestNetworksEnabled
+                    seedphraseBackedUp: appMain.privacyStore.mnemonicBackedUp || appMain.profileStore.userDeclinedBackupBanner
+
+                    onOpenTestnetPopupRequested: Global.openTestnetPopup()
+                    onOpenBackUpSeedPopupRequested: popups.openBackUpSeedPopup()
+                    onUserDeclinedBackupBannerRequested: appMain.profileStore.setUserDeclinedBackupBanner()
                 }
-
-                ModuleWarning {
-                    id: secureYourSeedPhrase
-                    objectName: "secureYourSeedPhraseBanner"
-                    Layout.fillWidth: true
-                    active: !appMain.profileStore.userDeclinedBackupBanner
-                              && !appMain.privacyStore.mnemonicBackedUp
-                    type: ModuleWarning.Danger
-                    text: qsTr("Secure your recovery phrase")
-                    buttonText: qsTr("Back up now")
-                    delay: false
-                    onClicked: popups.openBackUpSeedPopup()
-
-                    onCloseClicked: {
-                        appMain.profileStore.userDeclinedBackupBanner = true
-                    }
-                }
-
 
                 ModuleWarning {
                     Layout.fillWidth: true
@@ -1577,106 +1531,11 @@ Item {
                 }
 
                 ModuleWarning {
-                    id: downloadingArchivesBanner
-                    Layout.fillWidth: true
-                    active: appMain.communitiesStore.downloadingCommunityHistoryArchives
-                    type: ModuleWarning.Danger
-                    text: qsTr("Downloading message history archives, DO NOT CLOSE THE APP until this banner disappears.")
-                    closeBtnVisible: false
-                    delay: false
-                }
-
-                ModuleWarning {
                     id: mailserverConnectionBanner
                     type: ModuleWarning.Warning
                     text: qsTr("Can not connect to store node. Retrying automatically")
                     onCloseClicked: hide()
                     Layout.fillWidth: true
-                }
-
-                Component {
-                    id: connectedBannerComponent
-
-                    ModuleWarning {
-                        id: connectedBanner
-                        property bool isConnected: true
-
-                        objectName: "connectionInfoBanner"
-                        Layout.fillWidth: true
-                        text: isConnected ? qsTr("You are back online") : qsTr("Internet connection lost. Reconnect to ensure everything is up to date.")
-                        type: isConnected ? ModuleWarning.Success : ModuleWarning.Danger
-
-                        function updateState() {
-                            if (isConnected)
-                                showFor()
-                            else
-                                show();
-                        }
-
-                        Component.onCompleted: {
-                            connectedBanner.isConnected = Qt.binding(() => bannersLayout.isConnected);
-                        }
-                        onIsConnectedChanged: {
-                            updateState();
-                        }
-                        onCloseClicked: {
-                            hide();
-                        }
-                        onHideFinished: {
-                            destroy()
-                            bannersLayout.connectedBanner = null
-                        }
-                    }
-                }
-
-                Component {
-                    id: updateBannerComponent
-
-                    ModuleWarning {
-                        readonly property string version: appMain.rootStore.latestVersion
-                        readonly property bool updateAvailable: appMain.rootStore.newVersionAvailable
-
-                        objectName: "appVersionUpdateBanner"
-                        Layout.fillWidth: true
-                        type: ModuleWarning.Success
-                        delay: false
-                        text: updateAvailable ? qsTr("A new version of Status (%1) is available").arg(version)
-                                              : qsTr("Your version is up to date")
-
-                        buttonText: updateAvailable ? qsTr("Update")
-                                                    : qsTr("Close")
-
-                        function updateState() {
-                            if (updateAvailable)
-                                show()
-                            else
-                                showFor(5000)
-                        }
-
-                        Component.onCompleted: {
-                            updateState()
-                        }
-                        onUpdateAvailableChanged: {
-                            updateState();
-                        }
-                        onClicked: {
-                            if (updateAvailable)
-                                Global.openDownloadModal(appMain.rootStore.newVersionAvailable,
-                                                         appMain.rootStore.latestVersion,
-                                                         appMain.rootStore.downloadURL)
-                            else
-                                close()
-                        }
-                        onCloseClicked: {
-                            if (updateAvailable)
-                                appMain.rootStore.resetLastVersion();
-                            hide()
-                        }
-                        onHideFinished: {
-                            destroy()
-                            bannersLayout.updateBanner = null
-                        }
-                    }
                 }
 
                 ConnectionWarnings {
@@ -1810,8 +1669,7 @@ Item {
                     anchors.fill: parent
 
                     currentIndex: {
-                        const activeSectionType = appMain.rootStore.activeSectionType
-                        switch (activeSectionType) {
+                        switch (d.activeSectionType) {
                         case Constants.appSection.homePage:
                             return Constants.appViewStackIndex.homePage
                         case Constants.appSection.chat:
@@ -1824,7 +1682,7 @@ Item {
                                 }
                             }
                             // Should never be here, correct index must be returned from the for loop above
-                            console.error("Wrong section type:", activeSectionType,
+                            console.error("Wrong section type:", d.activeSectionType,
                                           "or section id: ", appMain.rootStore.activeSectionId)
                             return Constants.appViewStackIndex.community
                         case Constants.appSection.communitiesPortal:
@@ -1843,8 +1701,7 @@ Item {
                         }
                     }
                     onCurrentIndexChanged: {
-                        const sectionType = appMain.rootStore.activeSectionType
-                        if (sectionType !== Constants.appSection.profile && sectionType !== Constants.appSection.wallet) {
+                        if (d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.wallet) {
                             d.maybeDisplayIntroduceYourselfPopup()
                         }
                     }

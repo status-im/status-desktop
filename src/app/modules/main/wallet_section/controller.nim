@@ -39,9 +39,6 @@ proc init*(self: Controller) =
 proc getCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-proc isMnemonicBackedUp*(self: Controller): bool =
-  return self.settingsService.getMnemonic().len > 0
-
 proc getTotalCurrencyBalance*(self: Controller, addresses: seq[string], chainIds: seq[int]): CurrencyAmount =
   return currencyAmountToItem(self.walletAccountService.getTotalCurrencyBalance(addresses, chainIds), self.currencyService.getCurrencyFormat(self.getCurrency()))
 

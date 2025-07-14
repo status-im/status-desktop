@@ -7,7 +7,7 @@ QtObject {
     property var privacyModule
 
     // Module Properties
-    property bool mnemonicBackedUp: privacyModule.mnemonicBackedUp
+    readonly property bool mnemonicBackedUp: privacyModule.mnemonicBackedUp
     readonly property string keyUid: userProfile.keyUid
 
     // The following properties wrap Privacy and Security View related properties:
