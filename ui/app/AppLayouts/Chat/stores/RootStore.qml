@@ -36,7 +36,7 @@ QtObject {
     // Meanwhile cleanup and refactor of this store is not done, use the following
     // property to distinguish if store is currently related to chat or to community
     property bool isChatSectionModule: false
-    property var communityId
+    property string communityId
 
     function getCommunitySectionModule(communityId) {
         root.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityId)

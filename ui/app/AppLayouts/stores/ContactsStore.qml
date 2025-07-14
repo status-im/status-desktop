@@ -17,7 +17,7 @@ QtObject {
         readonly property var contactsModuleInst: profileSectionModule.contactsModule
         readonly property var mainModuleInst: mainModule
         readonly property var globalUtilsInst: globalUtils
-        readonly property var communitiesModuleInst: Global.appIsReady ? communitiesModule : null
+        readonly property var communitiesModuleInst: communitiesModule
 
 
         Component.onCompleted: {

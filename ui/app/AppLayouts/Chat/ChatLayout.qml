@@ -17,7 +17,6 @@ import AppLayouts.Communities.stores as CommunitiesStores
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.stores as WalletStore
-import AppLayouts.stores as AppLayoutStores
 
 import StatusQ
 import StatusQ.Core.Utils

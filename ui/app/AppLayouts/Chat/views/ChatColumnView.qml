@@ -296,11 +296,18 @@ Item {
                         onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
 
                         // Contacts related requests:
-                        onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
-                        onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
-                        onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
-                        onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
-
+                        onChangeContactNicknameRequest: (pubKey, nickname, displayName, isEdit) => {
+                            root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+                        }
+                        onRemoveTrustStatusRequest: (pubKey) => {
+                            root.removeTrustStatusRequest(pubKey)
+                        }
+                        onDismissContactRequest: (chatId, contactRequestId) => {
+                            root.dismissContactRequest(chatId, contactRequestId)
+                        }
+                        onAcceptContactRequest: (chatId, contactRequestId) => {
+                            root.acceptContactRequest(chatId, contactRequestId)
+                        }
                         Component.onCompleted: {
                             chatContentModule = d.getChatContentModule(model.itemId)
                             chatSectionModule = root.parentModule

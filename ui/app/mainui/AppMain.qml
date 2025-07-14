@@ -1882,7 +1882,7 @@ Item {
 
                                 searchPhrase: homePage.searchPhrase
 
-                                profileId: appMain.profileStore.pubkey
+                                profileId: appMain.profileStore.pubKey
                             }
 
                             homePageEntriesModel: homePageAdaptor.homePageEntriesModel
@@ -2173,8 +2173,8 @@ Item {
 
                             theme: appMainLocalSettings.theme
                             fontSize: appMainLocalSettings.fontSize
-                            fnAddressWasShown: WalletStores.RootStore.addressWasShown
-
+                            
+                            onAddressWasShownRequested: WalletStores.RootStore.addressWasShown(address)
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
                             onConnectUsernameRequested: popupRequestsHandler.sendModalHandler.connectUsername(ensName)
                             onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)

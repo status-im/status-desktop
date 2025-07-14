@@ -139,22 +139,6 @@ QtObject {
     // End of Notifications related stuff
 
     // Settings related properties and functions that shall be moved to `SettingsRootStore`
-    property var aboutModuleInst: aboutModule // To be removed. All versioning related stuff should be managed by `AboutStore`. `aboutModuleInst` should not be accessed externally.
-    property bool newVersionAvailable: false
-
-    property string latestVersion
-    property string downloadURL
-
-    function setLatestVersionInfo(newVersionAvailable, latestVersion, downloadURL) {
-        root.newVersionAvailable = newVersionAvailable;
-        root.latestVersion = latestVersion;
-        root.downloadURL = downloadURL;
-    }
-
-    function resetLastVersion(){
-        root.newVersionAvailable = false
-    }
-
     property real volume: !!appSettings ? appSettings.volume * 0.01 : 0.5
     property bool notificationSoundsEnabled: !!appSettings ? appSettings.notificationSoundsEnabled : true
 

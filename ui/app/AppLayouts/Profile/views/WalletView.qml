@@ -38,7 +38,7 @@ SettingsContentBase {
     property alias currencySymbol: manageTokensView.currencySymbol
 
     property int settingsSubSubsection
-    property string backButtonName: ""
+    readonly property alias backButtonName: priv.backButtonName
 
     property WalletStore walletStore
     property KeycardStore keycardStore
@@ -62,7 +62,7 @@ SettingsContentBase {
 
     property bool isKeycardEnabled: true
 
-    property var fnAddressWasShown: function(address) {}
+    signal addressWasShownRequested(string address)
 
     function resetStack() {
         if(stackContainer.currentIndex === root.editNetworksViewIndex) {
@@ -133,6 +133,8 @@ SettingsContentBase {
         readonly property var walletSettings: Settings {
             category: "walletSettings-" + root.myPublicKey
         }
+
+        property string backButtonName: ""
     }
 
     StackLayout {
@@ -161,7 +163,7 @@ SettingsContentBase {
         }
 
         onCurrentIndexChanged: {
-            root.backButtonName = ""
+            priv.backButtonName = ""
             root.sectionTitle = root.walletSectionTitle
             root.titleRowComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.sourceComponent = undefined
@@ -174,14 +176,14 @@ SettingsContentBase {
             }
 
             if(currentIndex == root.networksViewIndex) {
-                root.backButtonName = root.walletSectionTitle
+                priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = root.networksSectionTitle
 
                 root.titleRowComponentLoader.sourceComponent = toggleTestnetModeSwitchComponent
             }
 
             if(currentIndex == root.editNetworksViewIndex) {
-                root.backButtonName = root.networksSectionTitle
+                priv.backButtonName = root.networksSectionTitle
                 root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.network &&
                                                         !!editNetwork.network.chainName ? editNetwork.network.chainName: "")
                 root.titleRowLeftComponentLoader.visible = true
@@ -189,23 +191,23 @@ SettingsContentBase {
                 root.titleLayout.spacing = 12
 
             } else if(currentIndex == root.accountViewIndex) {
-                root.backButtonName = root.walletSectionTitle
+                priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = ""
 
             } else if(currentIndex == root.accountOrderViewIndex) {
-                root.backButtonName = root.walletSectionTitle
+                priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
 
             } else if(currentIndex == root.manageTokensViewIndex) {
-                root.backButtonName = root.walletSectionTitle
+                priv.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
             } else if(currentIndex == root.savedAddressesViewIndex) {
-                root.backButtonName = root.walletSectionTitle
+                priv.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Saved addresses")
 
@@ -229,7 +231,7 @@ SettingsContentBase {
 
             onGoToAccountView: {
                 if (!!account && !!account.address) {
-                    root.fnAddressWasShown(account.address)
+                    root.addressWasShownRequested(account.address)
                 }
 
                 root.walletStore.setSelectedAccount(account.address)
