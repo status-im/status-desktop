@@ -39,18 +39,23 @@ Dialog {
     */
     property string okButtonText: qsTr("OK")
 
-    readonly property bool bottomSheet: d.windowHeight
-                                        > d.windowWidth
-                                        && d.windowWidth
-                                        <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
+    readonly property bool bottomSheet: d.windowHeight > d.windowWidth
+                                        && d.windowWidth <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
 
-    readonly property real desiredY: root.bottomSheet ? root.contentItem.Window.height - root.height : ((root.Overlay.overlay.height - root.height) / 2)
+    readonly property real desiredY: root.bottomSheet ? d.windowHeight - root.height
+                                                      : (root.Overlay.overlay.height - root.height) / 2
 
     QtObject {
         id: d
 
-        readonly property int windowWidth: root.contentItem.Window ? root.contentItem.Window.width: Screen.width
-        readonly property int windowHeight: root.contentItem.Window? root.contentItem.Window.height : Screen.height
+        // NB: needs to be delayed for the `contentItem` to be not null
+        property int windowWidth
+        property int windowHeight
+    }
+
+    onAboutToShow: {
+        d.windowWidth = Qt.binding(() => root.contentItem.Window ? root.contentItem.Window.width: Screen.width)
+        d.windowHeight = Qt.binding(() => root.contentItem.Window? root.contentItem.Window.height : Screen.height)
     }
 
     enter: Transition {
@@ -60,13 +65,13 @@ Dialog {
                 property: "opacity"
                 from: 0.0
                 to: 1.0
-                duration: 150
+                duration: Theme.AnimationDuration.Fast
             }
             NumberAnimation {
                 property: "y"
                 from: root.parent.height
                 to: root.desiredY
-                duration: 150
+                duration: Theme.AnimationDuration.Fast
                 easing.type: Easing.OutCubic
             }
         }
@@ -76,35 +81,29 @@ Dialog {
 
     Binding on width {
         when: root.bottomSheet
-        restoreMode: Binding.RestoreBindingOrValue
         value: d.windowWidth
     }
     Binding on height {
         when: root.bottomSheet && !enterTransition.running
-        restoreMode: Binding.RestoreBindingOrValue
         value: Math.min(root.implicitHeight, d.windowHeight * 0.9)
     }
     Binding on y {
         when: root.bottomSheet && !enterTransition.running
-        restoreMode: Binding.RestoreBindingOrValue
         value: root.desiredY
     }
 
     Binding on y {
         when: !root.bottomSheet && !enterTransition.running
-        restoreMode: Binding.RestoreBindingOrValue
         value: (d.windowHeight - root.height) / 2
     }
 
     Binding on x {
         when: !root.bottomSheet
-        restoreMode: Binding.RestoreBindingOrValue
         value: (d.windowWidth - root.width) / 2
     }
 
     Binding on x {
         when: root.bottomSheet
-        restoreMode: Binding.RestoreBindingOrValue
         value: 0
     }
 

@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml.Models
-import Qt5Compat.GraphicalEffects
 
 import Storybook
 
@@ -37,11 +36,8 @@ SplitView {
         StatusDialog {
             id: dialog
 
-            closePolicy: Popup.NoAutoClose
-
             title: ctrlTitle.text
             subtitle: ctrlSubTitle.text
-            //backgroundColor: Theme.palette.baseColor3
             backgroundColor: !!ctrlBgColor.text ? ctrlBgColor.text : Theme.palette.statusModal.backgroundColor
 
             padding: ctrlPadding.text
@@ -71,7 +67,6 @@ SplitView {
 
             // custom header; not needed unless you want to override the icon or the (close) button(s)
             header: StatusDialogHeader {
-                //color: Theme.palette.baseColor3
                 color: !!ctrlHeaderBgColor.text ? ctrlHeaderBgColor.text : Theme.palette.statusModal.backgroundColor
                 dropShadowEnabled: ctrlHeaderDropShadow.checked
 
@@ -93,7 +88,6 @@ SplitView {
             }
 
             footer: StatusDialogFooter {
-                //color: Theme.palette.baseColor3
                 color: !!ctrlFooterBgColor.text ? ctrlFooterBgColor.text : Theme.palette.statusModal.backgroundColor
                 dropShadowEnabled: ctrlDropShadow.checked
 
@@ -261,3 +255,4 @@ SplitView {
 }
 
 // category: Popups
+// status: good

@@ -190,10 +190,7 @@ QtObject {
     readonly property int defaultSmallPadding: defaultPadding * 0.625
     readonly property int defaultRadius: defaultHalfPadding
 
-    property var portraitBreakpoint: QtObject {
-        readonly property int width: 1200
-        readonly property int height: 680
-    }
+    readonly property var portraitBreakpoint: Qt.size(1200, 680)
 
     readonly property real disabledOpacity: 0.3
     readonly property real pressedOpacity: 0.7
