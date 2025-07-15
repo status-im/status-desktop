@@ -3,13 +3,7 @@ project(TestStatusQ LANGUAGES CXX)
 set(CMAKE_AUTOMOC ON)
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
-        QuickTest Qml Quick REQUIRED)
-
-if (${QT_VERSION_MAJOR} EQUAL 6)
-    find_package(Qt6 COMPONENTS WebEngineQuick REQUIRED)
-else()
-    find_package(Qt5 COMPONENTS WebEngine REQUIRED)
-endif()
+        QuickTest Qml Quick WebEngineQuick REQUIRED)
 
 ##############
 # Test Library
@@ -40,9 +34,7 @@ target_compile_definitions(StatusQQmlTests PRIVATE
     QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )
 target_link_libraries(StatusQQmlTests PRIVATE Qt::QuickTest Qt::Qml Qt::Quick
-    $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::WebEngineQuick>
-    $<$<EQUAL:${QT_VERSION_MAJOR},5>:Qt::WebEngine>
-    StatusQ StatusQTestLib
+    Qt::WebEngineQuick StatusQ StatusQTestLib
 )
 add_test(NAME StatusQQmlTests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMAND StatusQQmlTests -input "${CMAKE_CURRENT_SOURCE_DIR}"
