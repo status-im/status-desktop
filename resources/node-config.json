@@ -74,7 +74,7 @@
     "OpenseaAPIKey": "",
     "RaribleMainnetAPIKey": "",
     "RaribleTestnetAPIKey": "",
-    "AlchemyAPIKeys": {},
+    "AlchemyAPIKey": "",
     "InfuraAPIKey": "",
     "InfuraAPIKeySecret": ""
   },

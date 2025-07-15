@@ -18,14 +18,7 @@ const BASE_NAME_POKT_TOKEN = "POKT_TOKEN"
 const BASE_NAME_OPENSEA_API_KEY = "OPENSEA_API_KEY"
 const BASE_NAME_RARIBLE_MAINNET_API_KEY = "RARIBLE_MAINNET_API_KEY"
 const BASE_NAME_RARIBLE_TESTNET_API_KEY = "RARIBLE_TESTNET_API_KEY"
-const BASE_NAME_ALCHEMY_ETHEREUM_MAINNET_TOKEN = "ALCHEMY_ETHEREUM_MAINNET_TOKEN"
-const BASE_NAME_ALCHEMY_ETHEREUM_SEPOLIA_TOKEN = "ALCHEMY_ETHEREUM_SEPOLIA_TOKEN"
-const BASE_NAME_ALCHEMY_ARBITRUM_MAINNET_TOKEN = "ALCHEMY_ARBITRUM_MAINNET_TOKEN"
-const BASE_NAME_ALCHEMY_ARBITRUM_SEPOLIA_TOKEN = "ALCHEMY_ARBITRUM_SEPOLIA_TOKEN"
-const BASE_NAME_ALCHEMY_OPTIMISM_MAINNET_TOKEN = "ALCHEMY_OPTIMISM_MAINNET_TOKEN"
-const BASE_NAME_ALCHEMY_OPTIMISM_SEPOLIA_TOKEN = "ALCHEMY_OPTIMISM_SEPOLIA_TOKEN"
-const BASE_NAME_ALCHEMY_BASE_MAINNET_TOKEN = "ALCHEMY_BASE_MAINNET_TOKEN"
-const BASE_NAME_ALCHEMY_BASE_SEPOLIA_TOKEN = "ALCHEMY_BASE_SEPOLIA_TOKEN"
+const BASE_NAME_ALCHEMY_API_KEY = "ALCHEMY_API_KEY"
 const BASE_NAME_TENOR_API_KEY = "TENOR_API_KEY"
 const BASE_NAME_STATUS_PROXY_STAGE_NAME = "PROXY_STAGE_NAME"
 const BASE_NAME_STATUS_PROXY_USER = "PROXY_USER"
@@ -67,14 +60,7 @@ const
 const BUILD_OPENSEA_API_KEY = getEnv(BUILD_TIME_PREFIX & BASE_NAME_OPENSEA_API_KEY)
 const BUILD_RARIBLE_MAINNET_API_KEY = getEnv(BUILD_TIME_PREFIX & BASE_NAME_RARIBLE_MAINNET_API_KEY)
 const BUILD_RARIBLE_TESTNET_API_KEY = getEnv(BUILD_TIME_PREFIX & BASE_NAME_RARIBLE_TESTNET_API_KEY)
-const BUILD_ALCHEMY_ETHEREUM_MAINNET_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_ETHEREUM_MAINNET_TOKEN)
-const BUILD_ALCHEMY_ETHEREUM_SEPOLIA_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_ETHEREUM_SEPOLIA_TOKEN)
-const BUILD_ALCHEMY_ARBITRUM_MAINNET_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_ARBITRUM_MAINNET_TOKEN)
-const BUILD_ALCHEMY_ARBITRUM_SEPOLIA_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_ARBITRUM_SEPOLIA_TOKEN)
-const BUILD_ALCHEMY_OPTIMISM_MAINNET_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_OPTIMISM_MAINNET_TOKEN)
-const BUILD_ALCHEMY_OPTIMISM_SEPOLIA_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_OPTIMISM_SEPOLIA_TOKEN)
-const BUILD_ALCHEMY_BASE_MAINNET_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_BASE_MAINNET_TOKEN)
-const BUILD_ALCHEMY_BASE_SEPOLIA_TOKEN = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_BASE_SEPOLIA_TOKEN)
+const BUILD_ALCHEMY_API_KEY = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ALCHEMY_API_KEY)
 
 const
   DEFAULT_STATUS_PROXY_STAGE_NAME = "test"
@@ -169,46 +155,11 @@ type StatusDesktopConfig = object
     desc: "Sets rarible testnet api key"
     name: $BASE_NAME_RARIBLE_TESTNET_API_KEY
     abbr: "rarible-testnet-api-key" .}: string
-  alchemyEthereumMainnetToken* {.
-    defaultValue: BUILD_ALCHEMY_ETHEREUM_MAINNET_TOKEN
-    desc: "Sets alchemy ethereum mainnet token"
-    name: $BASE_NAME_ALCHEMY_ETHEREUM_MAINNET_TOKEN
-    abbr: "alchemy-ethereum-mainnet-token" .}: string
-  alchemyEthereumSepoliaToken* {.
-    defaultValue: BUILD_ALCHEMY_ETHEREUM_SEPOLIA_TOKEN
-    desc: "Sets alchemy ethereum sepolia token"
-    name: $BASE_NAME_ALCHEMY_ETHEREUM_SEPOLIA_TOKEN
-    abbr: "alchemy-ethereum-sepolia-token" .}: string
-  alchemyArbitrumMainnetToken* {.
-    defaultValue: BUILD_ALCHEMY_ARBITRUM_MAINNET_TOKEN
-    desc: "Sets alchemy arbitrum mainnet token"
-    name: $BASE_NAME_ALCHEMY_ARBITRUM_MAINNET_TOKEN
-    abbr: "alchemy-arbitrum-mainnet-token" .}: string
-  alchemyArbitrumSepoliaToken* {.
-    defaultValue: BUILD_ALCHEMY_ARBITRUM_SEPOLIA_TOKEN
-    desc: "Sets alchemy arbitrum sepolia token"
-    name: $BASE_NAME_ALCHEMY_ARBITRUM_SEPOLIA_TOKEN
-    abbr: "alchemy-arbitrum-sepolia-token" .}: string
-  alchemyOptimismMainnetToken* {.
-    defaultValue: BUILD_ALCHEMY_OPTIMISM_MAINNET_TOKEN
-    desc: "Sets alchemy optimism mainnet token"
-    name: $BASE_NAME_ALCHEMY_OPTIMISM_MAINNET_TOKEN
-    abbr: "alchemy-optimism-mainnet-token" .}: string
-  alchemyOptimismSepoliaToken* {.
-    defaultValue: BUILD_ALCHEMY_OPTIMISM_SEPOLIA_TOKEN
-    desc: "Sets alchemy optimism sepolia token"
-    name: $BASE_NAME_ALCHEMY_OPTIMISM_SEPOLIA_TOKEN
-    abbr: "alchemy-optimism-sepolia-token" .}: string
-  alchemyBaseMainnetToken* {.
-    defaultValue: BUILD_ALCHEMY_BASE_MAINNET_TOKEN
-    desc: "Sets alchemy base mainnet token"
-    name: $BASE_NAME_ALCHEMY_BASE_MAINNET_TOKEN
-    abbr: "alchemy-base-mainnet-token" .}: string
-  alchemyBaseSepoliaToken* {.
-    defaultValue: BUILD_ALCHEMY_BASE_SEPOLIA_TOKEN
-    desc: "Sets alchemy base sepolia token"
-    name: $BASE_NAME_ALCHEMY_BASE_SEPOLIA_TOKEN
-    abbr: "alchemy-base-sepolia-token" .}: string
+  alchemyApiKey* {.
+    defaultValue: BUILD_ALCHEMY_API_KEY
+    desc: "Sets alchemy api key"
+    name: $BASE_NAME_ALCHEMY_API_KEY
+    abbr: "alchemy-api-key" .}: string
   tenorApiKey* {.
     defaultValue: BUILD_TENOR_API_KEY
     desc: "Sets tenor api key"
