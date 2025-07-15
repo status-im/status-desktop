@@ -18,7 +18,6 @@ from scripts.utils.generators import random_text_message
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014, 738735, 738736, 738739, 738740)
-@pytest.mark.timeout(timeout=315)
 @pytest.mark.critical
 @pytest.mark.smoke
 @pytest.mark.parametrize('community_name, domain_link, domain_link_2',
@@ -33,7 +32,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
     main_window = MainWindow()
     messages_screen = MessagesScreen()
     path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
-    timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+    timeout = 15000
 
     with \
             multiple_instances(user_data=None) as aut_one, \
@@ -90,7 +89,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             aut_three.attach()
             main_window.prepare()
             activity_center = ToolBar().open_activity_center()
-            request = activity_center.find_contact_request_in_list(user_one.name, timeout)
+            request = activity_center.find_contact_request_in_list(user_one.name, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
             activity_center.click_activity_center_button(
                 'Contact requests').accept_contact_request(request)
             main_window.left_panel.click()

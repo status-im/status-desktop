@@ -193,4 +193,4 @@ class MainWindow(Window):
                 LOG.info(f"Notification not found: {err}")
                 time.sleep(0.1)  # Small delay to prevent CPU overuse
 
-        raise LookupError(f"Notifications were not found within the {timeout_sec} period.")
+        raise LookupError(f"Notifications were not found within the {timeout_sec} seconds period.")
