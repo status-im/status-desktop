@@ -279,6 +279,8 @@ QtObject:
   proc changeCategoryOpened*(self: Model, categoryId: string, opened: bool) {.slot.} =
     for i in 0 ..< self.items.len:
       if self.items[i].categoryId == categoryId:
+        if self.items[i].categoryOpened == opened:
+          return
         self.items[i].categoryOpened = opened
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
@@ -628,26 +630,36 @@ QtObject:
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int, ModelRole.UsesDefaultName.int])
 
   proc updateItemOnlineStatusById*(self: Model, id: string, onlineStatus: OnlineStatus) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
+    let ind = self.getItemIdxById(id)
+    if ind == -1:
       return
-    if(self.items[index].onlineStatus == onlineStatus):
+
+    var roles: seq[int] = @[]
+    updateRole(onlineStatus, OnlineStatus)
+    if roles.len == 0:
       return
-    self.items[index].onlineStatus = onlineStatus
-    let modelIndex = self.createIndex(index, 0, nil)
+
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.OnlineStatus.int])
+    self.dataChanged(modelIndex, modelIndex, roles)
 
   proc updateNotificationsForItemById*(self: Model, id: string, hasUnreadMessages: bool,
       notificationsCount: int) =
-    let index = self.getItemIdxById(id)
-    if index == -1:
+    let ind = self.getItemIdxById(id)
+    if ind == -1:
       return
-    self.items[index].hasUnreadMessages = hasUnreadMessages
-    self.items[index].notificationsCount = notificationsCount
-    let modelIndex = self.createIndex(index, 0, nil)
+
+    var roles: seq[int] = @[]
+
+    updateRole(hasUnreadMessages, HasUnreadMessages)
+    updateRole(notificationsCount, NotificationsCount)
+
+    if roles.len == 0:
+      return
+
+    let modelIndex = self.createIndex(ind, 0, nil)
     defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
+    self.dataChanged(modelIndex, modelIndex, roles)
 
   proc updateLastMessageOnItemById*(self: Model, id: string, lastMessageText: string, lastMessageTimestamp: int) =
     let ind = self.getItemIdxById(id)

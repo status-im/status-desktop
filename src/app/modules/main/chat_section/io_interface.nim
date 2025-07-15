@@ -75,6 +75,7 @@ method doesTopLevelChatExist*(self: AccessInterface, chatId: string): bool {.bas
 
 method addOrUpdateChat*(self: AccessInterface,
     chat: ChatDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,

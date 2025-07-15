@@ -161,14 +161,20 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
       let belongsToCommunity = chat.communityId.len > 0
-      discard self.delegate.addOrUpdateChat(chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
+      var community = CommunityDto()
+      if belongsToCommunity:
+        community = self.getMyCommunity()
+      discard self.delegate.addOrUpdateChat(chat, community, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
         self.contactService, self.chatService, self.communityService, self.messageService,
         self.mailserversService, self.sharedUrlsService, setChatAsActive = false)
 
   self.events.on(SIGNAL_CHAT_CREATED) do(e: Args):
     var args = CreatedChatArgs(e)
     let belongsToCommunity = args.chat.communityId.len > 0
-    discard self.delegate.addOrUpdateChat(args.chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
+    var community = CommunityDto()
+    if belongsToCommunity:
+      community = self.getMyCommunity()
+    discard self.delegate.addOrUpdateChat(args.chat, community, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.mailserversService, self.sharedUrlsService, setChatAsActive = true)
 
@@ -176,7 +182,10 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
       let belongsToCommunity = args.chat.communityId.len > 0
-      discard self.delegate.addOrUpdateChat(args.chat, belongsToCommunity, self.events, self.settingsService,
+      var community = CommunityDto()
+      if belongsToCommunity:
+        community = self.getMyCommunity()
+      discard self.delegate.addOrUpdateChat(args.chat, community, belongsToCommunity, self.events, self.settingsService,
         self.nodeConfigurationService, self.contactService, self.chatService, self.communityService,
         self.messageService, self.mailserversService, self.sharedUrlsService, setChatAsActive = true)
 
@@ -504,8 +513,8 @@ proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 
 proc createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
-  if(response.success):
-    discard self.delegate.addOrUpdateChat(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
+  if response.success:
+    discard self.delegate.addOrUpdateChat(response.chatDto, CommunityDto(), false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.mailserversService, self.sharedUrlsService)
 
@@ -577,15 +586,15 @@ proc makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: s
 
 proc createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
   let response = self.chatService.createGroupChat(communityID, groupName, pubKeys)
-  if(response.success):
-    discard self.delegate.addOrUpdateChat(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
+  if response.success:
+    discard self.delegate.addOrUpdateChat(response.chatDto, CommunityDto(), false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.mailserversService, self.sharedUrlsService)
 
 proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
-  if(response.success):
-    discard self.delegate.addOrUpdateChat(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
+  if response.success:
+    discard self.delegate.addOrUpdateChat(response.chatDto, CommunityDto(), false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.mailserversService, self.sharedUrlsService)
 

@@ -73,6 +73,7 @@ method onCommunityCheckChannelPermissionsResponse*(self: Module, chatId: string,
 method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto)
 method addOrUpdateChat(self: Module,
     chat: ChatDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -237,6 +238,7 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         position = -1, # Set position as -1, so that the Category Item is on top of its Channels
         category.id,
         category.position,
+        categoryOpened = not category.collapsed,
         hideIfPermissionsNotMet = false,
         missingEncryptionKey = false,
       )
@@ -260,7 +262,6 @@ proc buildChatSectionUI(
   ) =
   var selectedItemId = ""
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
-
   var items: seq[ChatItem] = @[]
   for categoryDto in community.categories:
     # Add items for the categories. We use a special type to identify categories
@@ -277,6 +278,7 @@ proc buildChatSectionUI(
 
     items.add(self.addOrUpdateChat(
       chatDto,
+      community,
       belongsToCommunity = chatDto.communityId.len > 0,
       events,
       settingsService,
@@ -291,8 +293,6 @@ proc buildChatSectionUI(
       insertIntoModel = false,
       isSectionBuild = true,
     ))
-
-  self.updateParentBadgeNotifications()
 
   self.view.chatsModel.setData(items)
   self.setActiveItem(selectedItemId)
@@ -391,7 +391,6 @@ method onChatsLoaded*(
     # we do this only in case of chat section (not in case of communities)
     self.initContactRequestsModel()
   else:
-    let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
     self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(community.id))
     var requestToJoinState = RequestToJoinState.None
@@ -452,16 +451,19 @@ proc updateActiveChatMembership*(self: Module) =
 
 method activeItemSet*(self: Module, itemId: string) =
   let mySectionId = self.controller.getMySectionId()
-  if (itemId == ""):
+  if itemId == "":
     self.view.activeItem().resetActiveItemData()
     singletonInstance.localAccountSensitiveSettings.removeSectionChatRecord(mySectionId)
     return
 
   let chat_item = self.view.chatsModel().getItemById(itemId)
-  if(chat_item.isNil):
+  if chat_item.isNil:
     # Should never be here
     error "chat-view unexisting item id: ", itemId, methodName="activeItemSet"
     return
+  
+  if not self.chatContentModules[itemId].isLoaded:
+    self.chatContentModules[itemId].load(chat_item)
 
   # update view maintained by this module
   self.view.activeItemSet(chat_item)
@@ -539,7 +541,7 @@ proc updatePermissionsRequiredOnChat(self: Module, communityChat: ChatDto) =
     return
   self.view.chatsModel().setItemPermissionsRequired(communityChat.id, communityChat.tokenGated)
 
-proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int, skipParentBadge: bool = false) =
+proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int) =
   let chatId = chat.id
 
   if self.chatsLoaded:
@@ -556,9 +558,7 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
         let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityChat.communityId, communityChat.categoryId)
         self.view.chatsModel().setCategoryHasUnreadMessages(communityChat.categoryId, hasUnreadMessages)
 
-  # We skip evaluation the parent badge when initiating the section, since it's heavy and can be done at the end
-  if not skipParentBadge:
-    self.updateParentBadgeNotifications()
+  self.updateParentBadgeNotifications()
 
 method updateLastMessage*(self: Module, chatId: string, lastMessageTimestamp: int, lastMessage: MessageDto) =
   var communityChats: seq[ChatDto] = @[]
@@ -572,10 +572,9 @@ method updateLastMessage*(self: Module, chatId: string, lastMessageTimestamp: in
   )
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
-  if(sectionId != self.controller.getMySectionId()):
+  if sectionId != self.controller.getMySectionId():
     self.controller.setIsCurrentSectionActive(false)
     return
-
   var firstLoad = false
   if not self.view.getChatsLoaded:
     firstLoad = true
@@ -652,19 +651,16 @@ proc getChatItemFromChatDto(
       memberRole = community.memberRole
 
   var categoryOpened = true
+  let categories = community.categories
 
   if chatDto.categoryId != "":
-    let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), chatDto.categoryId)
+    let categoryIndex = findIndexById(chatDto.categoryId, categories)
+    let category = categories[categoryIndex]
     if category.id == "":
       error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
     else:
       categoryOpened = not category.collapsed
       categoryPosition = category.position
-
-      # TODO: This call will update the model for each category in channels which is not
-      # preferable. Please fix-me in https://github.com/status-im/status-desktop/issues/14431
-      self.view.chatsModel().changeCategoryOpened(category.id, categoryOpened)
-
 
   var canPost = true
   var canView = true
@@ -764,7 +760,6 @@ proc addNewChat(
     sharedUrlsService,
   )
 
-  self.chatContentModules[chatDto.id].load(chatItem)
   if insertIntoModel:
     self.view.chatsModel().appendItem(chatItem)
   if setChatAsActive:
@@ -1415,6 +1410,7 @@ method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
 
 method addOrUpdateChat(self: Module,
     chat: ChatDto,
+    community: CommunityDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
@@ -1433,7 +1429,6 @@ method addOrUpdateChat(self: Module,
   if belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
     return
-  self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount, skipParentBadge = isSectionBuild)
 
   if not self.chatsLoaded:
     return
@@ -1442,13 +1437,10 @@ method addOrUpdateChat(self: Module,
   if chat.id == activeChatId:
     self.updateActiveChatMembership()
 
-  var community = CommunityDto()
-  if belongsToCommunity:
-    community = self.controller.getMyCommunity()
   result = self.getChatItemFromChatDto(chat, community, setChatAsActive)
 
   if self.doesCatOrChatExist(chat.id):
-    if (self.chatContentModules.contains(chat.id)):
+    if self.chatContentModules.contains(chat.id):
       self.chatContentModules[chat.id].onChatUpdated(result)
 
     self.changeMutedOnChat(chat.id, chat.muted)
