@@ -454,7 +454,7 @@ QtObject:
         return idx
     return -1
 
-  proc findIndexById(id: string, categories: seq[Category]): int =
+  proc findIndexById*(id: string, categories: seq[Category]): int =
     var idx = -1
     for category in categories:
       inc idx
@@ -933,7 +933,7 @@ QtObject:
       return 0
 
   proc getCategoryById*(self: Service, communityId: string, categoryId: string): Category =
-    if(not self.communities.contains(communityId)):
+    if not self.communities.contains(communityId):
       error "trying to get community categories for an unexisting community id"
       return
 
