@@ -206,23 +206,12 @@ Item {
             verify(!!stack)
             tryCompare(stack, "topLevelStackBusy", false) // wait for page transitions to stop
 
-            // old code commented due to a Qt bug in `instanceof`, see https://github.com/status-im/status-desktop/issues/18307
-            /*
             if (stack.topLevelItem instanceof Loader) {
                 verify(stack.topLevelItem.item instanceof pageClass)
                 return stack.topLevelItem.item
             }
 
             verify(stack.topLevelItem instanceof pageClass)
-            return stack.topLevelItem
-            */
-
-            if (stack.topLevelItem.toString().startsWith("Loader")) {
-                verify(stack.topLevelItem.item.toString().startsWith(pageClass))
-                return stack.topLevelItem.item
-            }
-
-            verify(stack.topLevelItem.toString().startsWith(pageClass), ">>> Current page should be: %1, and is: %2".arg(pageClass).arg(stack.topLevelItem.toString()))
             return stack.topLevelItem
         }
 
