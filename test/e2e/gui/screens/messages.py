@@ -10,6 +10,7 @@ import configs
 import driver
 from driver.objects_access import walk_children
 from gui.components.activity_center import ActivityCenter
+from gui.components.community.pinned_messages_popup import PinnedMessagesPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import ConfirmationMessagePopup
 from gui.components.emoji_popup import EmojiPopup
@@ -105,6 +106,11 @@ class ToolBar(QObject):
     def open_activity_center(self):
         self.notifications_button.click()
         return ActivityCenter().wait_until_appears()
+
+    @allure.step('Open Pinned messages popup')
+    def open_pinned_messages_popup(self):
+        self.pinned_message_tooltip.click()
+        return PinnedMessagesPopup().wait_until_appears()
 
 
 class Message:
@@ -288,8 +294,6 @@ class ChatView(QObject):
             if time.monotonic() - started_at > 80:
                 raise LookupError(f'Community invitation was not found')
         return message
-
-
 
 
 class CreateChatView(QObject):
