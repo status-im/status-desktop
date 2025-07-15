@@ -5,10 +5,6 @@ find_package(
         COMPONENTS Core Quick QuickControls2
         REQUIRED)
 
-if (${QT_VERSION_MAJOR} EQUAL 6)
-    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
-endif()
-
 file(GLOB_RECURSE QML_FILES "../*.qml" "../qmldir")
 file(GLOB_RECURSE JS_FILES "../*.js")
 
@@ -32,6 +28,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt::Core
         Qt::Quick
         Qt::QuickControls2
-        $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::Core5Compat>
         StatusQ
         )

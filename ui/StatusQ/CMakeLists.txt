@@ -35,14 +35,10 @@ if(MSVC)
   add_definitions(/MP)
 endif()
 
-find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
         Core Qml Gui Quick QuickControls2 REQUIRED)
-
-if (${QT_VERSION_MAJOR} EQUAL 6)
-    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
-endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest REQUIRED)
@@ -207,7 +203,6 @@ target_link_libraries(StatusQ PRIVATE
         Qt::Gui
         Qt::Quick
         Qt::QuickControls2
-        $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::Core5Compat>
         SortFilterProxyModel
         QtModelsToolkit
         qzxing
