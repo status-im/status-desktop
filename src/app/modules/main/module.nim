@@ -1140,7 +1140,7 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
     return
   let item = self.view.model().getItemById(sectionId)
 
-  if(item.isEmpty()):
+  if item.isEmpty():
     # should never be here
     warn "main-module, incorrect section id", sectionId
     return
