@@ -8,8 +8,6 @@ import AppLayouts.Profile.popups
 
 import shared.popups
 
-
-
 SplitView {
     Logs { id: logs }
 
@@ -54,3 +52,4 @@ SplitView {
 }
 
 // category: Popups
+// status: good
