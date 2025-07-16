@@ -86,6 +86,7 @@ Item {
     readonly property ProfileStores.EnsUsernamesStore ensUsernamesStore: rootStore.profileSectionStore.ensUsernamesStore
 
     // Messaging (just references from `rootStore`)
+    readonly property MessagingStores.MessagingRootStore messagingRootStore: rootStore.messagingRootStore
     readonly property MessagingStores.MessagingSettingsStore messagingSettingsStore: rootStore.messagingRootStore.messagingSettingsStore
 
     // Note: The following stores have not yet been refactored to follow the entry-point pattern via the main root store
@@ -2303,6 +2304,8 @@ Item {
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
+
+                                newCommnityStore: appMain.messagingRootStore.createCommunityRootStore(this, model.id)
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.contactsStore
                                     currencyStore: appMain.currencyStore

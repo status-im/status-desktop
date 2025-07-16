@@ -51,22 +51,6 @@ QtObject {
     property CurrenciesStore currencyStore
     property NetworkConnectionStore networkConnectionStore
 
-    readonly property PermissionsStore permissionsStore: PermissionsStore {
-        activeSectionId: mainModuleInst.activeSection.id
-        activeChannelId: root.currentChatContentModule().chatDetails.id
-        permissionsModel: root.chatCommunitySectionModule.permissionsModel
-        allTokenRequirementsMet: root.chatCommunitySectionModule.allTokenRequirementsMet
-
-        onCreateOrEditCommunityTokenPermission: {
-            root.chatCommunitySectionModule.createOrEditCommunityTokenPermission(activeSection, key,
-                                                                                 permissionType, holdings,
-                                                                                 channels, isPrivate)
-        }
-        onDeleteCommunityTokenPermission: {
-            root.chatCommunitySectionModule.deleteCommunityTokenPermission(activeSectionId, key)
-        }
-    }
-
     // Unique instance for all the chat / channel related low-level UI components
     readonly property UsersStore usersStore: UsersStore {
         property var chatDetails: !!root.activeChatContentModule ? root.activeChatContentModule.chatDetails : null
