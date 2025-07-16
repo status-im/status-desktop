@@ -44,11 +44,9 @@ QtObject {
         readonly property var localAccountSensitiveSettingsInst: localAccountSensitiveSettings
     }
 
-    // TODO: Switch handler in `Popups.qml`
-    signal communityAccessRequested(string communityId)
-
-    // TODO: Switch handler in `Popups.qml`
     signal communityAccessFailed(string communityId)
+
+    signal allSharedAddressesSigned()
 
     // TODO: Rename it since store should not know about UI flows or navigations
     signal goToMembershipRequestsPage()
@@ -134,14 +132,14 @@ QtObject {
     }
 
     readonly property Connections communitiesModuleConnections: Connections {
-      target: d.communitiesModuleInst
+        target: d.communitiesModuleInst
 
-      function onCommunityAccessRequested(communityId: string) {
-          root.communityAccessRequested(communityId)
-      }
+        function onCommunityAccessFailed(communityId: string, error: string) {
+            root.communityAccessFailed(communityId, error)
+        }
 
-      function onCommunityAccessFailed(communityId: string, error: string) {
-          root.communityAccessFailed(communityId, error)
-      }
+        function onAllSharedAddressesSigned() {
+            root.allSharedAddressesSigned()
+        }
     }
 }

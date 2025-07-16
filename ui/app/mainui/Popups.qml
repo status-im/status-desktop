@@ -817,21 +817,6 @@ QtObject {
                     root.rootStore.cancelPendingRequest(dialogRoot.communityId)
                 }
 
-                Connections {
-                    target: root.communitiesStore.communitiesModuleInst
-                    function onCommunityAccessRequested(communityId: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        root.communitiesStore.spectateCommunity(communityId);
-                        dialogRoot.close();
-                    }
-                    function onCommunityAccessFailed(communityId: string, error: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        dialogRoot.close();
-                    }
-                }
-
                 onSharedAddressesUpdated: {
                     root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
                 }
@@ -844,9 +829,16 @@ QtObject {
                 }
 
                 Connections {
-                    target: root.rootStore.communitiesModuleInst
+                    target: dialogRoot.communityAccessStore
+
+                    function onCommunityAccessFailed(communityId: string, error: string) {
+                        if (communityId !== dialogRoot.communityId)
+                            return
+                        dialogRoot.close();
+                    }
 
                     function onAllSharedAddressesSigned() {
+
                         if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
                             dialogRoot.joinCommunity()
                             dialogRoot.close()
@@ -1083,7 +1075,7 @@ QtObject {
                 }
 
                 Connections {
-                    target: root.rootStore.communitiesModuleInst
+                    target: editSharedAddressesPopup.communityAccessStore
 
                     function onAllSharedAddressesSigned() {
                         if (editSharedAddressesPopup.profileProvesOwnershipOfSelectedAddresses) {
