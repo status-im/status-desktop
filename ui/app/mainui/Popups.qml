@@ -27,6 +27,8 @@ import mainui.activitycenter.stores
 
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.stores.Messaging.Community as CommunityStores
 
 import shared.popups
 import shared.status
@@ -60,6 +62,8 @@ QtObject {
     property ActivityCenterStore activityCenterStore
     property ProfileStores.AboutStore aboutStore
     property ProfileStores.PrivacyStore privacyStore
+
+    property MessagingStores.MessagingRootStore messagingRootStore
 
     property var allContactsModel
     property var mutualContactsModel
@@ -763,7 +767,11 @@ QtObject {
             CommunityMembershipSetupDialog {
                 id: dialogRoot
 
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                property CommunityStores.CommunityRootStore communityRootStore: root.messagingRootStore.createCommunityRootStore(this, dialogRoot.communityId)
+                readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
+                                                                                                 communityRootStore.communityAccessStore : null
+
+                requirementsCheckPending: communityAccessStore ? communityAccessStore.spectatedPermissionsCheckOngoing : false
                 checkingPermissionToJoinInProgress: root.rootStore.checkingPermissionToJoinInProgress
                 joinPermissionsCheckCompletedWithoutErrors: root.rootStore.joinPermissionsCheckCompletedWithoutErrors
 
@@ -774,8 +782,11 @@ QtObject {
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                    return root.rootStore.permissionsModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareTokenModelForCommunity(dialogRoot.communityId)
+                        return communityAccessStore.spectatedPermissionsModel
+                    }
+                    return null
                 }
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
@@ -999,11 +1010,16 @@ QtObject {
             CommunityMembershipSetupDialog {
                 id: editSharedAddressesPopup
 
+                // TODO: This will be replaced at some point to some combination of `CommunityStores` objects
                 readonly property ChatStores.RootStore chatStore: ChatStores.RootStore {
                     contactsStore: root.contactsStore
                     isChatSectionModule: false
                     communityId: editSharedAddressesPopup.communityId
                 }
+
+                property CommunityStores.CommunityRootStore communityRootStore:  root.messagingRootStore.createCommunityRootStore(this, editSharedAddressesPopup.communityId)
+                readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
+                                                                                                 communityRootStore.communityAccessStore : null
 
                 isEditMode: true
 
@@ -1013,7 +1029,7 @@ QtObject {
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
 
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                requirementsCheckPending: communityAccessStore ? communityAccessStore.spectatedPermissionsCheckOngoing : false
                 checkingPermissionToJoinInProgress: root.rootStore.checkingPermissionToJoinInProgress
                 joinPermissionsCheckCompletedWithoutErrors: root.rootStore.joinPermissionsCheckCompletedWithoutErrors
 
@@ -1027,8 +1043,11 @@ QtObject {
                 walletCollectiblesModel: WalletStores.RootStore.collectiblesStore.allCollectiblesModel
 
                 permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
-                    return root.rootStore.permissionsModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
+                        return communityAccessStore.spectatedPermissionsModel
+                    }
+                    return null
                 }
                 assetsModel: chatStore.assetsModel
                 collectiblesModel: chatStore.collectiblesModel

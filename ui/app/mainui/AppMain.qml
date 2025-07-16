@@ -902,6 +902,7 @@ Item {
         aboutStore: appMain.aboutStore
         contactsStore: appMain.contactsStore
         privacyStore: appMain.privacyStore
+        messagingRootStore: appMain.messagingRootStore
 
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts

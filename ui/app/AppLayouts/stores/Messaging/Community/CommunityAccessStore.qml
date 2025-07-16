@@ -8,17 +8,31 @@ import shared.stores 1.0
 QtObject {
     id: root
 
+    // Indicates whether the current community module is initialized and available.
     required property bool isModuleReady
+    required property bool joined //** TODO
     required property bool allChannelsAreHiddenBecauseNotPermitted
     required property int communityMemberReevaluationStatus
-    required property bool requirementsCheckPending
-    required property var permissionsModel
-    required property bool permissionsCheckOngoing
 
-    // TODO: Review if `mainModuleInst.activeSection` is indeed the same as `sectionDetails` here. If yes, this is redundant
-    readonly property bool joined: d.mainModuleInst.activeSection.joined
-    readonly property bool ensCommunityPermissionsEnabled: localAccountSensitiveSettingsInst.ensCommunityPermissionsEnabled
+    // Validates temporal requirements when a user shares one or more addresses with the community.
+    // This applies during both the joining flow and when editing shared addresses later.
+    required property bool spectatedPermissionsCheckOngoing
 
+    // Temporary permissions model used in join/edit address flows.
+    // Reflects which permissions are met based on currently selected addresses,
+    // without affecting the real community state
+    required property var spectatedPermissionsModel
+
+    // TODO: Review if the 2 next properties should be inside `PermissionsStore` instead
+    // Indicates whether a permission check is currently ongoing at the community level.
+    // Used to determine access to community-wide features and channels.
+    required property bool communityPermissionsCheckOngoing
+
+    // Indicates whether a permission check is in progress for the currently active chat.
+    // Used to validate whether the user can read or post in a specific conversation.
+    required property bool chatPermissionsCheckOngoing
+
+    // Private property used to define context properties asignements and other private stuff.
     readonly property QtObject _d: StatusQUtils.QObject {
         id: d
 
@@ -47,6 +61,16 @@ QtObject {
     function declineRequestToJoinCommunity(requestId, communityId) {
         root.declineRequestToJoinCommunity(requestId, communityId)
     }*/
+
+    // TO REVIEW: Should be on Community PermissionsStore instead?
+    function prepareTokenModelForCommunity(publicKey) { //
+        d.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
+    }
+
+    // TO REVIEW: Should be on Community PermissionsStore instead?
+    function prepareTokenModelForCommunityChat(publicKey, chatId) { //
+        d.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
+    }
 
     function spectateCommunity(id, ensName) {
         return d.communitiesModuleInst.spectateCommunity(id, ensName)
