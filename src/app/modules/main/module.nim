@@ -133,6 +133,8 @@ proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
 proc checkIfWeHaveNotifications[T](self: Module[T])
 proc createMemberItem[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole, airdropAddress: string = ""): MemberItem
+proc getAllCommunityMemberItems[T](self: Module[T], community: CommunityDto): seq[MemberItem]
+
 
 proc newModule*[T](
   delegate: T,
@@ -325,23 +327,29 @@ method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
   )
   self.view.model().setTokenItems(communityId, communityTokensItems)
 
-proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto, isEdit: bool = false): SectionItem =
+proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto): SectionItem =
   var communityTokensItems: seq[TokenItem]
   var communityMembersAirdropAddress: Table[string, string]
 
   let existingCommunity = self.view.model().getItemById(communityDetails.id)
-  if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
-    if not isEdit:
-      # When first creating the section, we load the community tokens and the members revealed accounts
-      self.controller.getCommunityTokensDetailsAsync(communityDetails.id)
 
-      # Get community members' revealed accounts
-      # We will update the model later when we finish loading the accounts
-      self.controller.asyncGetRevealedAccountsForAllMembers(communityDetails.id)
+  # Members will be lazy loaded when the user goes to the Members panel in the Admin section
+  var members: seq[MemberItem] = @[]
 
+  if not existingCommunity.isEmpty() and
+      (communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster):
+    if existingCommunity.joinedMembersCount != communityDetails.members.len:
+      # If the number of joined members has changed, we need to update the members list
+      # There is the slight chance that the number stays the same if someone left at the same tme as someone joined,
+      # but it's not a big deal, it will correct itself on the next community update
+      members = self.getAllCommunityMemberItems(communityDetails)
+    else:
+      # If the number of joined members is the same, we can use the existing members
+      members = existingCommunity.members.getItems()
+    
     # If there are tokens already in the model, we should keep the existing community tokens, until
     # getCommunityTokensDetailsAsync will trigger onCommunityTokensDetailsLoaded
-    if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
+    if not existingCommunity.communityTokens.isNil:
       communityTokensItems = existingCommunity.communityTokens.items
 
   let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
@@ -351,60 +359,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
 
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
-
-  # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
-  var members = communityDetails.members
-  for requestForAutoRejoin in communityDetails.waitingForSharedAddressesRequestsToJoin:
-    var chatMember = ChatMember()
-    chatMember.id = requestForAutoRejoin.publicKey
-    chatMember.joined = false
-    chatMember.role = MemberRole.None
-    members.add(chatMember)
-
-  var bannedMembers = newSeq[MemberItem]()
-  for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
-    let state = memberState.toMembershipRequestState()
-    case state:
-      of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
-        bannedMembers.add(self.createMemberItem(memberId, "", state, MemberRole.None))
-      else:
-        discard
-
-  var memberItems = members.map(proc(member: ChatMember): MemberItem =
-      var state = MembershipRequestState.Accepted
-      if member.id in communityDetails.pendingAndBannedMembers:
-        let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
-        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
-          state = memberState
-      elif not member.joined:
-        state = MembershipRequestState.AwaitingAddress
-      var airdropAddress = ""
-      if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
-        airdropAddress = existingCommunity.members.getAirdropAddressForMember(member.id)
-      result = self.createMemberItem(
-        member.id,
-        requestId = "",
-        state,
-        member.role,
-        airdropAddress,
-      )
-    )
-
-  let pendingMembers = communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    )
-
-  let declinedMemberItems = communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    )
-
-  memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
-
-  # Remove duplicates, this can happen when the requests to join have not updated in time
-  var finalMembers: Table[string, MemberItem]
-  for memberItem in memberItems:
-    if not finalMembers.contains(memberItem.pubKey):
-      finalMembers[memberItem.pubKey] = memberItem
 
   result = initSectionItem(
     communityDetails.id,
@@ -433,7 +387,8 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.permissions.access,
     communityDetails.permissions.ensOnly,
     communityDetails.muted,
-    finalMembers.values.toSeq(),
+    members,
+    communityDetails.members.len,
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
     communityDetails.encrypted,
@@ -1412,7 +1367,7 @@ method communityEdited*[T](
     community: CommunityDto) =
   if not self.chatSectionModules.contains(community.id):
     return
-  var communitySectionItem = self.createCommunitySectionItem(community, isEdit = true)
+  var communitySectionItem = self.createCommunitySectionItem(community)
   # We need to calculate the unread counts because the community update doesn't come with it
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
     communitySectionItem.id,
@@ -2184,5 +2139,75 @@ method contactUpdated*[T](self: Module[T], contactId: string) =
     trustStatus = contactDetails.dto.trustStatus,
     contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
   )
+
+proc getAllCommunityMemberItems[T](self: Module[T], community: CommunityDto): seq[MemberItem] =
+  # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
+  var members = community.members
+  for requestForAutoRejoin in community.waitingForSharedAddressesRequestsToJoin:
+    var chatMember = ChatMember()
+    chatMember.id = requestForAutoRejoin.publicKey
+    chatMember.joined = false
+    chatMember.role = MemberRole.None
+    members.add(chatMember)
+
+  var bannedMembers = newSeq[MemberItem]()
+  for memberId, memberState in community.pendingAndBannedMembers.pairs:
+    let state = memberState.toMembershipRequestState()
+    case state:
+      of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
+        bannedMembers.add(self.createMemberItem(memberId, "", state, MemberRole.None))
+      else:
+        discard
+
+  var memberItems = members.map(proc(member: ChatMember): MemberItem =
+      var state = MembershipRequestState.Accepted
+      if member.id in community.pendingAndBannedMembers:
+        let memberState = community.pendingAndBannedMembers[member.id].toMembershipRequestState()
+        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+          state = memberState
+      elif not member.joined:
+        state = MembershipRequestState.AwaitingAddress
+      result = self.createMemberItem(
+        member.id,
+        requestId = "",
+        state,
+        member.role,
+        airdropAddress = "",
+      )
+    )
+
+  let pendingMembers = community.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
+    )
+
+  let declinedMemberItems = community.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
+    )
+
+  memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
+
+  # Remove duplicates, this can happen when the requests to join have not updated in time
+  var finalMembers: Table[string, MemberItem]
+  for memberItem in memberItems:
+    if not finalMembers.contains(memberItem.pubKey):
+      finalMembers[memberItem.pubKey] = memberItem
+
+  return finalMembers.values.toSeq()
+
+method loadMembersForSectionId*[T](self: Module[T], sectionId: string) =
+  let existingCommunity = self.view.model().getItemById(sectionId)
+  if existingCommunity.isEmpty():
+    error "Cannot load members for section", sectionId
+    return
+
+  let community = self.controller.getCommunityById(sectionId)
+
+  if community.memberRole == MemberRole.Owner or community.memberRole == MemberRole.TokenMaster:
+    self.controller.getCommunityTokensDetailsAsync(community.id)
+    self.controller.asyncGetRevealedAccountsForAllMembers(community.id)
+
+  let memberItems = self.getAllCommunityMemberItems(community)
+
+  self.view.model.setMembersItems(sectionId, memberItems)
 
 {.pop.}
