@@ -50,17 +50,9 @@ QtObject {
 
     signal communityMembershipNotificationReceived()
 
-    signal acceptRequestToJoinCommunity(string requestId, string communityId)
+    signal acceptRequestToJoinCommunityRequested(string requestId, string communityId)
 
-    signal declineRequestToJoinCommunity(string requestId, string communityId)
-
-    /*function acceptRequestToJoinCommunity(requestId, communityId) {
-        root.acceptRequestToJoinCommunity(requestId, communityId)
-    }
-
-    function declineRequestToJoinCommunity(requestId, communityId) {
-        root.declineRequestToJoinCommunity(requestId, communityId)
-    }*/
+    signal declineRequestToJoinCommunityRequested(string requestId, string communityId)
 
     // TO REVIEW: Should be on Community PermissionsStore instead?
     function prepareTokenModelForCommunity(publicKey) { //

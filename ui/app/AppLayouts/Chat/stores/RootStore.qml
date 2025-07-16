@@ -429,14 +429,6 @@ QtObject {
                 )
     }
 
-    function acceptRequestToJoinCommunity(requestId, communityId) {
-        chatCommunitySectionModule.acceptRequestToJoinCommunity(requestId, communityId)
-    }
-
-    function declineRequestToJoinCommunity(requestId, communityId) {
-        chatCommunitySectionModule.declineRequestToJoinCommunity(requestId, communityId)
-    }
-
     function removeCommunityChat(chatId) {
         chatCommunitySectionModule.removeCommunityChat(chatId)
     }
