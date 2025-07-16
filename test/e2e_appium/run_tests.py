@@ -12,6 +12,25 @@ import os
 def run_tests(env="lt"):
     """Run the E2E tests with specified environment."""
     
+    # Validate environment before running tests
+    try:
+        sys.path.insert(0, os.path.dirname(__file__))
+        from core import EnvironmentSwitcher, ConfigurationError
+        
+        switcher = EnvironmentSwitcher()
+        if env == "auto":
+            env = switcher.auto_detect_environment()
+            print(f"🔍 Auto-detected environment: {env}")
+        
+        config = switcher.switch_to(env)
+        print(f"✅ Using environment: {env}")
+        print(f"   Device: {config.device_name}")
+        print(f"   App: {config.get_resolved_app_path()}")
+        
+    except ConfigurationError as e:
+        print(f"❌ Configuration error: {e}")
+        return 1
+    
     # Build pytest command
     cmd = [
         "python", "-m", "pytest", 
@@ -21,20 +40,6 @@ def run_tests(env="lt"):
     ]
     
     print(f"Running command: {' '.join(cmd)}")
-    print(f"Environment: {env}")
-    
-    # Show configuration status
-    if env in ["lt", "lambdatest"]:
-        lt_username = os.getenv('LT_USERNAME', '')
-        app_url = os.getenv('STATUS_APP_URL', '')
-        
-        if not lt_username:
-            print("WARNING: LT_USERNAME not set. Tests may fail.")
-        if not app_url:
-            print("WARNING: STATUS_APP_URL not set. Using default.")
-        
-        print(f"LambdaTest User: {lt_username or 'Not configured'}")
-        print(f"App URL: {app_url or 'Using default'}")
     
     # Run the tests
     result = subprocess.run(cmd, cwd=os.path.dirname(__file__))
@@ -49,22 +54,25 @@ Usage: python run_tests.py [environment]
 Environments:
   lt, lambdatest  - Run tests on LambdaTest cloud (default)
   local          - Run tests on local Appium server
+  auto           - Auto-detect best environment
 
 Environment Variables:
-  See env_variables.example for all configuration options.
-  
   Required for LambdaTest:
     LT_USERNAME      - Your LambdaTest username
     LT_ACCESS_KEY    - Your LambdaTest access key
+    STATUS_APP_URL   - LambdaTest app ID (lt://APP123...)
     
-  Optional:
-    STATUS_APP_URL   - App URL for testing (default provided)
-    DEVICE_NAME      - Target device (default: Galaxy Tab S8)
-    PLATFORM_VERSION - Android version (default: 13.0)
+  Required for Local:
+    LOCAL_APP_PATH   - Path to APK file
 
 Examples:
+  python run_tests.py auto        # Auto-detect environment
   python run_tests.py lt          # Run on LambdaTest
   python run_tests.py local       # Run locally
+  
+Environment Management:
+  python cli/env_manager.py list         # List available environments
+  python cli/env_manager.py validate lt  # Validate environment
 """)
 
 
@@ -75,7 +83,7 @@ if __name__ == "__main__":
     
     env = sys.argv[1] if len(sys.argv) > 1 else "lt"
     
-    if env not in ["lt", "lambdatest", "local"]:
+    if env not in ["lt", "lambdatest", "local", "auto"]:
         print(f"Error: Unknown environment '{env}'")
         print_usage()
         sys.exit(1)

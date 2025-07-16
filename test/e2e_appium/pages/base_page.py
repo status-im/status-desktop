@@ -1,4 +1,5 @@
 import time
+import os
 from datetime import datetime
 from typing import Optional, Tuple, Union, List
 
@@ -8,14 +9,32 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from config import get_config, get_logger, log_element_action
+from core import EnvironmentSwitcher
 
 
 class BasePage:
     
     def __init__(self, driver):
         self.driver = driver
-        config = get_config()
-        self.wait = WebDriverWait(driver, config.element_wait_timeout)
+        
+        # Use new YAML-based configuration if available, fallback to old system
+        try:
+            env_name = os.getenv('CURRENT_TEST_ENVIRONMENT', 'lambdatest')
+            switcher = EnvironmentSwitcher()
+            env_config = switcher.switch_to(env_name)
+            self.timeouts = env_config.timeouts
+            self.wait = WebDriverWait(driver, self.timeouts['element_wait'])
+        except Exception:
+            # Fallback to old configuration system
+            config = get_config()
+            self.timeouts = {
+                'element_wait': config.element_wait_timeout,
+                'element_click': config.element_click_timeout,
+                'element_find': config.element_find_timeout,
+                'default': config.default_timeout
+            }
+            self.wait = WebDriverWait(driver, config.element_wait_timeout)
+            
         self.logger = get_logger('pages')
     
     def find_element(self, locator):
@@ -37,7 +56,10 @@ class BasePage:
         locator_str = f"{locator[0]}: {locator[1]}"
         
         try:
-            element = self.wait.until(EC.element_to_be_clickable(locator))
+            # Use click timeout from YAML config
+            timeout = self.timeouts.get('element_click', 10)
+            click_wait = WebDriverWait(self.driver, timeout)
+            element = click_wait.until(EC.element_to_be_clickable(locator))
             element.click()
             duration_ms = int((datetime.now() - start_time).total_seconds() * 1000)
             log_element_action("click_element", locator_str, True, duration_ms)
@@ -47,8 +69,11 @@ class BasePage:
             log_element_action("click_element", locator_str, False, duration_ms)
             return False
     
-    def is_element_visible(self, locator, timeout=10):
+    def is_element_visible(self, locator, timeout=None):
         try:
+            # Use YAML timeout if not specified
+            if timeout is None:
+                timeout = self.timeouts.get('element_find', 15)
             wait = WebDriverWait(self.driver, timeout)
             wait.until(EC.visibility_of_element_located(locator))
             return True

@@ -1,8 +1,11 @@
+import os
 import pytest
 from datetime import datetime
 from pathlib import Path
+
 from .config import setup_logging, log_test_start, log_test_end, get_config
 from .config.logging_config import get_logger
+from .core import EnvironmentSwitcher
 
 
 _logging_setup = None
@@ -12,19 +15,41 @@ def pytest_configure(config):
     global _logging_setup
     _logging_setup = setup_logging()
     
-    test_config = get_config()
-    reports_dir = Path(test_config.reports_dir)
+    # Try to use new YAML-based configuration, fallback to old system
+    try:
+        env_name = os.getenv('CURRENT_TEST_ENVIRONMENT', 'lambdatest')
+        switcher = EnvironmentSwitcher()
+        env_config = switcher.switch_to(env_name)
+        
+        # Use directories from YAML config
+        reports_dir = Path(env_config.directories.get('reports', 'reports'))
+        enable_xml_report = env_config.logging_config.get('enable_xml_report', True)
+        enable_html_report = env_config.logging_config.get('enable_html_report', True)
+        
+        logger = get_logger('conftest')
+        logger.info(f"📁 Using reports directory from {env_name} config: {reports_dir}")
+        
+    except Exception as e:
+        # Fallback to legacy configuration
+        test_config = get_config()
+        reports_dir = Path(test_config.reports_dir)
+        enable_xml_report = test_config.enable_xml_report
+        enable_html_report = test_config.enable_html_report
+        
+        logger = get_logger('conftest')
+        logger.warning(f"⚠️ Using legacy configuration for reports: {e}")
+    
     reports_dir.mkdir(exist_ok=True)
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     
     if not hasattr(config.option, 'xmlpath') or not config.option.xmlpath:
-        if test_config.enable_xml_report:
+        if enable_xml_report:
             xml_report = reports_dir / f"pytest_results_{timestamp}.xml"
             config.option.xmlpath = str(xml_report)
     
     if not hasattr(config.option, 'htmlpath') or not config.option.htmlpath:
-        if test_config.enable_html_report:
+        if enable_html_report:
             html_report = reports_dir / f"pytest_report_{timestamp}.html"
             config.option.htmlpath = str(html_report)
             config.option.self_contained_html = True

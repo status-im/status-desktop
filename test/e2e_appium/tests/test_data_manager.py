@@ -7,8 +7,10 @@ from selenium.webdriver.remote.client_config import ClientConfig
 
 try:
     from config import get_config, TestConfig, get_logger, log_session_info
+    from core import EnvironmentSwitcher, ConfigurationError
 except ImportError:
     from config import get_config, TestConfig, get_logger, log_session_info
+    from core import EnvironmentSwitcher, ConfigurationError
 
 
 class TestDataManager:
@@ -18,12 +20,32 @@ class TestDataManager:
         self.driver = None
         self.logger = get_logger('session')
         
-        self.config = get_config()
-        
-        self.logger.info(f"✅ Configuration loaded for {environment}")
-        self.logger.info(f"   Device: {self.config.device_name} ({self.config.platform_name} {self.config.platform_version})")
-        self.logger.info(f"   LambdaTest User: {self.config.lt_username}")
-        self.logger.info(f"   App URL: {self.config.status_app_url}")
+        # Load new YAML-based configuration
+        try:
+            switcher = EnvironmentSwitcher()
+            self.env_config = switcher.switch_to(environment)
+            
+            # Only load old config for LambdaTest credentials (until fully migrated)
+            if environment in ["lt", "lambdatest"]:
+                self.legacy_config = get_config()
+            else:
+                self.legacy_config = None
+            
+            self.logger.info(f"✅ Configuration loaded for {environment}")
+            self.logger.info(f"   Device: {self.env_config.device_name} ({self.env_config.platform_name} {self.env_config.platform_version})")
+            if environment == "lambdatest" and self.legacy_config:
+                self.logger.info(f"   LambdaTest User: {self.legacy_config.lt_username}")
+            self.logger.info(f"   App: {self.env_config.get_resolved_app_path()}")
+            
+            # Log timeout configuration being used
+            timeouts = self.env_config.timeouts
+            self.logger.info(f"   Timeouts: default={timeouts.get('default')}s, wait={timeouts.get('element_wait')}s")
+            
+        except ConfigurationError as e:
+            self.logger.error(f"❌ Configuration error: {e}")
+            self.logger.warning("Falling back to legacy environment variable configuration")
+            self.env_config = None
+            self.legacy_config = get_config()
     
     def get_driver(self):
         if self.driver:
@@ -41,13 +63,33 @@ class TestDataManager:
     def _create_lambdatest_driver(self):
         options = AppiumOptions()
         
-        capabilities = self.config.get_lambdatest_capabilities()
+        if self.env_config:
+            # Use new YAML-based configuration
+            capabilities = self.env_config.get_device_capabilities()
+            server_url = self.env_config.get_appium_server_url()
+            
+            if self.env_config.environment == "lambdatest":
+                capabilities.setdefault('lt:options', {}).update({
+                    'app': self.env_config.get_resolved_app_path()
+                })
+            
+            # Get LambdaTest credentials (still from environment variables)
+            username = os.getenv('LT_USERNAME')
+            access_key = os.getenv('LT_ACCESS_KEY')
+            
+        else:
+            # Fallback to legacy configuration
+            capabilities = self.legacy_config.get_lambdatest_capabilities()
+            server_url = self.legacy_config.lt_hub_url
+            username = self.legacy_config.lt_username
+            access_key = self.legacy_config.lt_access_key
+        
         options.load_capabilities(capabilities)
         
         client_config = ClientConfig(
-            remote_server_addr=self.config.lt_hub_url,
-            username=self.config.lt_username,
-            password=self.config.lt_access_key
+            remote_server_addr=server_url,
+            username=username,
+            password=access_key
         )
         
         driver = webdriver.Remote(
@@ -63,10 +105,18 @@ class TestDataManager:
     def _create_local_driver(self):
         options = AppiumOptions()
         
-        capabilities = self.config.get_local_capabilities()
+        if self.env_config:
+            # Use new YAML-based configuration
+            capabilities = self.env_config.get_device_capabilities()
+            server_url = self.env_config.get_appium_server_url()
+        else:
+            # Fallback to legacy configuration
+            capabilities = self.legacy_config.get_local_capabilities()
+            server_url = self.legacy_config.local_appium_server
+            
         options.load_capabilities(capabilities)
         
-        return webdriver.Remote(self.config.local_appium_server, options=options)
+        return webdriver.Remote(server_url, options=options)
     
     def cleanup_driver(self):
         if self.driver:
@@ -76,4 +126,12 @@ class TestDataManager:
             self.driver = None
     
     def get_configuration_summary(self):
-        return self.config.summary() 
+        if self.env_config:
+            return {
+                'environment': self.env_config.environment,
+                'device': f"{self.env_config.device_name} ({self.env_config.platform_name} {self.env_config.platform_version})",
+                'app_source': self.env_config.app_source['source_type'],
+                'app_path': self.env_config.get_resolved_app_path(),
+                'appium_server': self.env_config.get_appium_server_url()
+            }
+        return self.legacy_config.summary() 

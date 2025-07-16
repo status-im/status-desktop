@@ -12,7 +12,15 @@ class BaseTest:
         # Initialize logger for test instance
         self.logger = get_logger('tests')
         
-        self.test_data_manager = TestDataManager("lambdatest")
+        # Get environment from pytest config or environment variable
+        import os
+        test_env = os.getenv('CURRENT_TEST_ENVIRONMENT', 'lambdatest')
+        
+        # Try to get environment from pytest if available
+        if hasattr(self, 'request') and hasattr(self.request, 'config'):
+            test_env = self.request.config.getoption('--env', default=test_env)
+        
+        self.test_data_manager = TestDataManager(test_env)
         self.driver = self.test_data_manager.get_driver()
         self.test_name = method.__name__
         
