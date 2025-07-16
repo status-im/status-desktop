@@ -58,6 +58,9 @@ StatusSectionLayout {
 
     property var permissionsModel // holdings, permissionType, isPrivate, channels
 
+    // Settings related:
+    property bool ensCommunityPermissionsEnabled
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -363,7 +366,7 @@ StatusSectionLayout {
                 collectiblesModel: rootStore.collectiblesModel
                 channelsModel: rootStore.chatCommunitySectionModule.model
 
-                ensCommunityPermissionsEnabled: rootStore.ensCommunityPermissionsEnabled
+                ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
 
                 communityDetails: d.communityDetails
 

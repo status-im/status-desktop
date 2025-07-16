@@ -14,28 +14,45 @@ QtObject {
         readonly property var communitiesModuleInst: communitiesModule
 
         // Foreach `communityId` there will be the corresponding community module:
-        readonly property var currentCommunityModule: {
-            d.mainModuleInst.prepareCommunitySectionModuleForCommunityId(root.communityId)
+        property var currentCommunityModule: d.getCurrentCommunityModule(root.communityId)
+
+        // Foreach `communityId` there will be the corresponding active chat content module:
+        property var currentChatContentModule: d.getChatContentModule(d.currentCommunityModule)
+
+        function getCurrentCommunityModule(communityId) {
+            if (!communityId) {
+                console.warn("CommunityRootStore: No communityId set")
+                return null
+            }
+            d.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityId)
             return d.mainModuleInst.getCommunitySectionModule()
         }
-        // Foreach `communityId` there will be the corresponding active chat content module:
-        readonly property var currentChatContentModule: {
-            d.currentCommunityModule.prepareChatContentModuleForChatId(d.currentCommunityModule.activeItem.id)
-            var a =  d.currentCommunityModule.getChatContentModule()
-            return a
+
+        function getChatContentModule(communityModule) {
+            if (communityModule && communityModule.activeItem) {
+                communityModule.prepareChatContentModuleForChatId(
+                    communityModule.activeItem.id
+                )
+                return communityModule.getChatContentModule()
+            } else {
+                console.warn("No active item for chat content module")
+            }
+            return null
         }
     }
 
     readonly property CommunityAccessStore communityAccessStore: CommunityAccessStore {
         isModuleReady: !!d.currentCommunityModule
+        joined: d.currentCommunityModule ? d.currentCommunityModule.joined : false
         allChannelsAreHiddenBecauseNotPermitted: d.currentCommunityModule.allChannelsAreHiddenBecauseNotPermitted &&
                                                  !d.currentCommunityModule.requiresTokenPermissionToJoin
         communityMemberReevaluationStatus: d.currentCommunityModule &&
                                            d.currentCommunityModule.communityMemberReevaluationStatus
-        requirementsCheckPending: d.communitiesModuleInst.requirementsCheckPending
-        permissionsModel: !!d.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                              d.communitiesModuleInst.spectatedCommunityPermissionModel : null
-        permissionsCheckOngoing: d.currentCommunityModule.permissionsCheckOngoing
+        spectatedPermissionsCheckOngoing: d.communitiesModuleInst.requirementsCheckPending
+        spectatedPermissionsModel: !!d.communitiesModuleInst.spectatedCommunityPermissionModel ?
+                                       d.communitiesModuleInst.spectatedCommunityPermissionModel : null
+        communityPermissionsCheckOngoing: d.currentCommunityModule.permissionsCheckOngoing
+        chatPermissionsCheckOngoing: d.currentChatContentModule.permissionsCheckOngoing
 
         onAcceptRequestToJoinCommunity: {
             d.currentCommunityModule.acceptRequestToJoinCommunity(requestId, communityId)
@@ -46,7 +63,7 @@ QtObject {
     }
     readonly property PermissionsStore communityPermissionsStore: PermissionsStore {
         activeSectionId: d.mainModuleInst.activeSection.id
-        activeChannelId: d.currentChatContentModule.chatDetails.id
+        activeChannelId: d.currentChatContentModule ? d.currentChatContentModule.chatDetails.id : ""
         permissionsModel: d.currentCommunityModule.permissionsModel
         allTokenRequirementsMet: d.currentCommunityModule.allTokenRequirementsMet
 

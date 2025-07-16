@@ -162,24 +162,6 @@ QtObject {
         ]
     }
 
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
-    }
-
-    function prepareTokenModelForCommunityChat(publicKey, chatId) {
-        root.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
-    }
-
-    readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted &&
-                                                                    !root.chatCommunitySectionModule.requiresTokenPermissionToJoin
-
-    readonly property int communityMemberReevaluationStatus: root.chatCommunitySectionModule && root.chatCommunitySectionModule.communityMemberReevaluationStatus
-
-    readonly property bool requirementsCheckPending: root.communitiesModuleInst.requirementsCheckPending
-
-    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
-
     readonly property string overviewChartData: chatCommunitySectionModule.overviewChartData
 
     readonly property bool isUserAllowedToSendMessage: d.isUserAllowedToSendMessage
@@ -202,10 +184,6 @@ QtObject {
     property var advancedModule: profileSectionModule.advancedModule
 
     property var privacyModule: profileSectionModule.privacyModule
-
-    readonly property bool permissionsCheckOngoing: chatCommunitySectionModule.permissionsCheckOngoing
-
-    readonly property bool ensCommunityPermissionsEnabled: localAccountSensitiveSettings.ensCommunityPermissionsEnabled
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
