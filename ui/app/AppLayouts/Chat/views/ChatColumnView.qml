@@ -56,6 +56,7 @@ Item {
     property bool sendViaPersonalChatEnabled
     property string disabledTooltipText
     property bool paymentRequestFeatureEnabled
+    property bool joined
 
     // Unfurling related data:
     property bool gifUnfurlingEnabled
@@ -269,6 +270,7 @@ Item {
                         sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
                         disabledTooltipText: root.disabledTooltipText
                         areTestNetworksEnabled: root.areTestNetworksEnabled
+                        joined: root.joined
 
                         // Unfurling related data:
                         gifUnfurlingEnabled: root.gifUnfurlingEnabled
