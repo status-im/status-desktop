@@ -1,7 +1,7 @@
 """
 Loading Page for Status Desktop E2E Testing
 
-Page object for loading screens throughout the application.
+Page object for splash during onboarding.
 """
 
 import logging

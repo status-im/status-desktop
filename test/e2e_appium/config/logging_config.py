@@ -292,7 +292,7 @@ def setup_logging(config: Optional[LoggingConfig] = None) -> Dict[str, Any]:
     # Log startup information
     main_logger = loggers['main']
     main_logger.info("=" * 80)
-    main_logger.info("🚀 Enterprise E2E Test Framework Starting")
+    main_logger.info("🚀 E2E Test Framework Starting")
     main_logger.info("=" * 80)
     main_logger.info(f"📁 Logs directory: {logs_dir.absolute()}")
     main_logger.info(f"📄 Main log file: {log_file.name}")

@@ -9,12 +9,9 @@ from .user_model import User, UserProfile, CryptoWallet, WalletAddress
 
 class UserType(Enum):
     BASIC = "basic"
-    PREMIUM = "premium"
+    OWNER = "owner"
     ADMIN = "admin"
-    NEW_USER = "new_user"
-    VERIFIED = "verified"
-    MULTI_WALLET = "multi_wallet"
-    DEVELOPER = "developer"
+    TOKEN_MASTER = "token_master"
 
 
 class UserFactory:
@@ -137,13 +134,6 @@ class UserFactory:
                 .with_verified_status(False)
                 .with_backed_up_wallet(False))
     
-    def create_premium_user(self, name: str = "Premium User") -> 'UserFactory':
-        return (self.reset()
-                .with_display_name(name)
-                .with_verified_status(True)
-                .with_backed_up_wallet(True)
-                .with_bio("Premium user with verified status"))
-    
     def create_admin_user(self, name: str = "Admin User") -> 'UserFactory':
         return (self.reset()
                 .with_display_name(name)
@@ -151,29 +141,29 @@ class UserFactory:
                 .with_backed_up_wallet(True)
                 .with_bio("Administrator user with full access"))
     
-    def create_new_user(self, name: str = "New User") -> 'UserFactory':
-        return (self.reset()
-                .with_display_name(name)
-                .with_verified_status(False)
-                .with_backed_up_wallet(False)
-                .with_bio("Fresh user for onboarding"))
-    
-    def create_multi_wallet_user(self, name: str = "Multi Wallet User") -> 'UserFactory':
+    def create_owner_user(self, name: str = "Owner User") -> 'UserFactory':
         return (self.reset()
                 .with_display_name(name)
                 .with_verified_status(True)
                 .with_backed_up_wallet(True)
-                .with_additional_address("bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", "bitcoin", "Bitcoin Wallet"))
-    
-    def create_developer_user(self, name: str = "Developer User") -> 'UserFactory':
-        return (self.reset()
-                .with_display_name(name)
-                .with_verified_status(True)
-                .with_backed_up_wallet(True)
-                .with_bio("Developer with technical access")
+                .with_bio("Owner user with ownership privileges")
                 .with_test_context({
-                    'developer_mode': True,
-                    'debug_enabled': True
+                    'owner_permissions': True,
+                    'can_manage_community': True
+                }))
+    
+    def create_token_master_user(self, name: str = "Token Master User") -> 'UserFactory':
+        return (self.reset()
+                .with_display_name(name)
+                .with_verified_status(True)
+                .with_backed_up_wallet(True)
+                .with_bio("Token master with token management privileges")
+                .with_additional_address("bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", "bitcoin", "Bitcoin Wallet")
+                .with_additional_address("0x742d35CC6634C0532925a3b8D45B1BFA73651234", "ethereum", "Ethereum Wallet")
+                .with_test_context({
+                    'token_master_permissions': True,
+                    'can_manage_tokens': True,
+                    'multi_wallet_enabled': True
                 }))
     
     def build(self) -> User:
@@ -242,12 +232,9 @@ class UserFactory:
         
         type_methods = {
             UserType.BASIC: factory.create_basic_user,
-            UserType.PREMIUM: factory.create_premium_user,
+            UserType.OWNER: factory.create_owner_user,
             UserType.ADMIN: factory.create_admin_user,
-            UserType.NEW_USER: factory.create_new_user,
-            UserType.VERIFIED: factory.create_premium_user,
-            UserType.MULTI_WALLET: factory.create_multi_wallet_user,
-            UserType.DEVELOPER: factory.create_developer_user
+            UserType.TOKEN_MASTER: factory.create_token_master_user
         }
         
         method = type_methods.get(user_type)
@@ -298,8 +285,12 @@ def create_admin_user(name: str = "Admin User") -> User:
     return UserFactory().create_admin_user(name).build()
 
 
-def create_new_user(name: str = "New User") -> User:
-    return UserFactory().create_new_user(name).build()
+def create_owner_user(name: str = "Owner User") -> User:
+    return UserFactory().create_owner_user(name).build()
+
+
+def create_token_master_user(name: str = "Token Master User") -> User:
+    return UserFactory().create_token_master_user(name).build()
 
 
 def create_multi_device_users(count: int = 2, base_name: str = "Multi Device User") -> List[User]:
