@@ -77,7 +77,8 @@ checkWhatsNewKeycard_StatusListItem = {"container": settingsContentBase_ScrollVi
 factoryResetKeycard_StatusListItem = {"container": settingsContentBase_ScrollView, "objectName": "factoryResetKeycard", "type": "StatusListItem", "visible": True}
 
 # Wallet Settings View
-mainWindow_WalletView = {"container": statusDesktop_mainWindow, "type": "WalletView", "unnamed": 1, "visible": True}
+mainWindow_WalletView = {"container": statusDesktop_mainWindow, "id": "walletView", "type": "Loader", "unnamed": 1, "visible": True}
+settingsWallet_View = {"container": statusDesktop_mainWindow, "type": "WalletView", "unnamed": 1, "visible": True}
 settings_Wallet_MainView_Networks = {"container": statusDesktop_mainWindow, "objectName": "networksItem", "type": "StatusListItem"}
 settings_Wallet_MainView_Manage_Tokens = {"container": settingsContentBase_ScrollView, "objectName": "manageTokensItem", "type": "StatusListItem", "visible": True}
 settings_Wallet_MainView_AddNewAccountButton = {"container": statusDesktop_mainWindow, "objectName": "settings_Wallet_MainView_AddNewAccountButton", "type": "StatusButton", "visible": True}
@@ -88,6 +89,7 @@ settings_Wallet_NetworksView_TestNet_Toggle = {"container": statusDesktop_mainWi
 settings_Wallet_NetworksView_TestNet_Toggle_Title = {"container": settingsContentBase_ScrollView, "objectName": "statusListItemSubTitle", "type": "StatusTextWithLoadingState", "visible": True}
 settings_Wallet_SavedAddresses_AddAddressButton = {"container": statusDesktop_mainWindow, "objectName": "addNewSavedAddressButton", "type": "StatusButton", "visible": True}
 settings_Wallet_SavedAddress_ItemDelegate ={"container": settingsContentBase_ScrollView, "objectName": RegularExpression("savedAddressView_Delegate*"), "type": "SavedAddressesDelegate", "visible": True}
+savedAddressItemKebabButton = {"container": statusDesktop_mainWindow, "objectName": RegularExpression("savedAddressView_Delegate_menuButton*"), "type": "StatusRoundButton", "visible": True}
 settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText = {"container": settingsContentBase_ScrollView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_accountsList_StatusListView = {"container": settingsContentBase_ScrollView, "id": "accountsList", "type": "StatusListView", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem = {"checkable": False, "container": settingsContentBase_ScrollView, "id": "draggableDelegate", "type": "StatusDraggableListItem", "unnamed": 1, "visible": True}

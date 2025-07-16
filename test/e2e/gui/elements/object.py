@@ -176,7 +176,7 @@ class QObject:
         LOG.info('%s: right clicked with Qt.RightButton', self)
 
     @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = 10000, check_interval=0.5):
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC, check_interval=0.5):
         timeout_sec = timeout_msec / 1000
         start_time = time.time()
 
@@ -193,7 +193,7 @@ class QObject:
         raise TimeoutError(f'Object {self} is not visible within {timeout_msec} ms')
 
     @allure.step('Wait until hidden {0}')
-    def wait_until_hidden(self, timeout_msec: int = 10000, check_interval=0.5):
+    def wait_until_hidden(self, timeout_msec: int =  configs.timeouts.UI_LOAD_TIMEOUT_MSEC, check_interval=0.5):
         timeout_sec = timeout_msec / 1000
         start_time = time.time()
 

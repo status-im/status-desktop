@@ -13,7 +13,6 @@ class AddEditSavedAddressPopup(QObject):
         self.save_add_address_button = Button(names.mainWallet_Saved_Addreses_Popup_Address_Add_Button)
         self.address_text_edit = TextEdit(names.mainWallet_Saved_Addreses_Popup_Address_Input_Edit)
 
-
     @allure.step('Add saved address')
     def add_saved_address(self, name: str, address: str):
         self.name_text_edit.text = name
@@ -27,7 +26,3 @@ class AddEditSavedAddressPopup(QObject):
         self.name_text_edit.text = new_name
         self.save_add_address_button.click()
         self.wait_until_hidden()
-
-
-
-

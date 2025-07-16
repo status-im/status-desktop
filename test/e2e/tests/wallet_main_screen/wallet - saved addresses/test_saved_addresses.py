@@ -21,7 +21,7 @@ def test_manage_saved_address(main_screen: MainWindow, address: str):
 
     with step('Add new saved address'):
         wallet = main_screen.left_panel.open_wallet()
-        wallet.left_panel.open_saved_addresses().open_add_saved_address_popup().add_saved_address(name, address)
+        wallet.left_panel.open_saved_addresses().open_add_edit_saved_address_popup().add_saved_address(name, address)
 
     with step('Verify that saved address is in the list of saved addresses'):
         assert driver.waitFor(
@@ -47,7 +47,7 @@ def test_manage_saved_address(main_screen: MainWindow, address: str):
             f"Toast message about editing saved address is not correct or not present. Current list of messages: {messages}"
 
     with step('Delete address with new name'):
-        wallet.left_panel.open_saved_addresses().delete_saved_address(new_name)
+        wallet.left_panel.open_saved_addresses().open_context_menu_for_saved_address(new_name)
 
     with step('Verify toast message when deleting saved address'):
         messages = main_screen.wait_for_notification()

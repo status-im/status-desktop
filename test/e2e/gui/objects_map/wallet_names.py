@@ -65,3 +65,8 @@ receiveModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "Re
 textContent_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "textContent", "type": "StatusBaseText", "visible": True}
 greenCircleAroundIcon_Rectangle = {"container": statusDesktop_mainWindow_overlay, "id": "greenCircleAroundIcon", "type": "Rectangle", "unnamed": 1, "visible": True}
 qrCodeImage_Image = {"container": statusDesktop_mainWindow_overlay, "objectName": "qrCodeImage", "type": "Image", "visible": True}
+
+"""Remove saved address popup"""
+removeSavedAddressPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "RemoveSavedAddressPopup", "type": "PopupItem", "visible": True}
+removeSavedAddressButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "RemoveSavedAddressPopup-ConfirmButton", "type": "StatusButton", "visible": True}
+cancelRemovalButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "RemoveSavedAddressPopup-CancelButton", "type": "StatusFlatButton", "visible": True}
