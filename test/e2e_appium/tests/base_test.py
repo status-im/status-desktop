@@ -1,4 +1,6 @@
 import sys
+from datetime import datetime
+from functools import wraps
 
 import pytest
 
@@ -6,11 +8,55 @@ from .test_data_manager import TestDataManager
 from config.logging_config import get_logger
 
 
+def lambdatest_reporting(func):
+    """
+    Decorator to ensure LambdaTest result reporting for cloud tests.
+    
+    Automatically handles success/failure reporting without requiring
+    manual report_test_result() calls in test methods.
+    """
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        try:
+            result = func(self, *args, **kwargs)
+            self.report_test_result(passed=True)
+            return result
+        except Exception as e:
+            error_msg = f"Test failed at {getattr(self, '_current_step', 'unknown step')}: {str(e)}"
+            self.report_test_result(passed=False, error_message=error_msg)
+            raise
+    return wrapper
+
+
+class CloudTestCase:
+    """
+    Base class for cloud-executed tests with automatic result reporting.
+    
+    Provides template method pattern for guaranteed result reporting
+    without requiring decorators or manual calls.
+    """
+    
+    def run_test_with_reporting(self, test_func):
+        """Execute test function with guaranteed result reporting."""
+        try:
+            test_func()
+            self.report_test_result(passed=True)
+        except Exception as e:
+            error_msg = f"Test failed at {getattr(self, '_current_step', 'unknown step')}: {str(e)}"
+            self.report_test_result(passed=False, error_message=error_msg)
+            raise
+
+
 class BaseTest:
     
     def setup_method(self, method):
         # Initialize logger for test instance
         self.logger = get_logger('tests')
+        
+        # Initialize test tracking
+        self._result_reported = False
+        self._test_start_time = datetime.now()
+        self._current_step = "setup"
         
         # Get environment from pytest config or environment variable
         import os
@@ -36,7 +82,9 @@ class BaseTest:
     def teardown_method(self, method):
         if hasattr(self, 'test_data_manager') and self.driver:
             try:
-                pass
+                # Validate explicit reporting was used for cloud tests
+                self._validate_result_reporting()
+                
             except Exception as e:
                 logger = get_logger('session')
                 logger.error(f"⚠️ Error in teardown: {e}", extra={'error': str(e), 'test_name': self.test_name})
@@ -47,6 +95,39 @@ class BaseTest:
                 
                 # Clean up driver
                 self.test_data_manager.cleanup_driver()
+    
+    def _validate_result_reporting(self):
+        """Validate that cloud tests use explicit result reporting."""
+        if self.test_data_manager.environment in ["lt", "lambdatest"]:
+            if not self._result_reported:
+                self.logger.warning(
+                    f"⚠️ Test '{self.test_name}' didn't explicitly report result.\n"
+                    f"   Add 'self.report_test_result(passed=True/False)' for consistent LambdaTest status.\n"
+                    f"   Or use @lambdatest_reporting decorator for automatic reporting."
+                )
+                # Auto-report as fallback
+                self.logger.info("📋 Using fallback result reporting")
+                self.report_test_result(passed=True)  # Assume passed if we got to teardown
+    
+    def report_test_result(self, passed: bool, error_message: str = None):
+        """
+        Report test result to LambdaTest.
+        
+        Args:
+            passed: Whether the test passed
+            error_message: Optional error message for failed tests
+        """
+        self._result_reported = True
+        
+        if self.driver and self.test_data_manager.environment in ["lt", "lambdatest"]:
+            try:
+                self._report_to_lambdatest(self.driver, self.test_name, passed, error_message)
+                logger = get_logger('session')
+                status = "PASSED" if passed else "FAILED"
+                logger.info(f"✅ Reported to LambdaTest: {self.test_name} = {status}")
+            except Exception as e:
+                logger = get_logger('session')
+                logger.error(f"⚠️ Failed to report result to LambdaTest: {e}")
     
     @classmethod
     def _report_to_lambdatest(cls, driver, test_name, test_passed, error_message=None):

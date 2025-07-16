@@ -180,6 +180,60 @@ Step 2: Analytics Screen
 ✅ Test PASSED: test_complete_onboarding_flow
 ```
 
+## LambdaTest Result Reporting Logs
+
+### Result Reporting Success
+```
+✅ Reported to LambdaTest: test_complete_onboarding_flow = PASSED
+```
+
+### Result Reporting Failure
+```
+⚠️ Failed to report result to LambdaTest: Connection timeout
+```
+
+### Compliance Validation
+```
+⚠️ Test 'test_example' didn't explicitly report result.
+   Add 'self.report_test_result(passed=True/False)' for consistent LambdaTest status.
+   Or use @lambdatest_reporting decorator for automatic reporting.
+```
+
+### Fallback Reporting
+```
+📋 Using fallback result reporting
+```
+
+### Step-Level Error Context
+```
+❌ Test failed at Password Screen: AssertionError: Password field not found
+```
+
+### Emergency Backup Reporting
+```
+📋 Emergency backup reporting: test_onboarding_flow = PASSED
+```
+**Note:** Only appears if test crashed before BaseTest teardown could report results.
+
+## Test Pattern Validation Logs
+
+### Validation Script Output
+```bash
+# Successful validation
+✅ Compliant files (2):
+  tests/test_onboarding_flow.py
+  tests/test_data_manager.py
+📊 Compliance Rate: 100.0% (2/2)
+🎉 All tests follow proper patterns!
+
+# With warnings
+⚠️  Warnings (1):
+  tests/test_example.py: test_method missing result reporting pattern.
+💡 To fix warnings:
+  1. Add @lambdatest_reporting decorator to test methods
+  2. Or call self.report_test_result(passed=True/False) explicitly
+```
+
 ## Log Analysis
 
 ### Quick Commands
@@ -207,6 +261,27 @@ jq 'select(.level == "ERROR")' logs/structured_*.json
 
 # Get page object actions
 jq 'select(.logger == "e2e_appium.pages")' logs/structured_*.json
+
+# Check LambdaTest result reporting
+jq 'select(.message | contains("Reported to LambdaTest"))' logs/structured_*.json
+
+# Find compliance warnings
+jq 'select(.message | contains("didn'\''t explicitly report"))' logs/structured_*.json
+```
+
+### LambdaTest Debugging
+```bash
+# Check result reporting status
+grep "Reported to LambdaTest\|Failed to report" logs/test_run_*.log
+
+# Find compliance issues
+grep "didn't explicitly report\|fallback result reporting" logs/test_run_*.log
+
+# Validate test patterns
+python cli/validate_test_patterns.py --test-dir tests
+
+# Check step-level failures
+grep "Test failed at" logs/test_run_*.log
 ```
 
 ## Best Practices
@@ -265,4 +340,29 @@ find reports/ -name "*.xml" -mtime +7 -delete
 - Implement log rotation
 - Clean up old files regularly
 
-This logging system provides comprehensive debugging and reporting capabilities for the Status E2E test framework. 
+### LambdaTest Result Reporting Issues
+
+**Problem:** Tests show "Completed" instead of "Passed" in LambdaTest
+**Solution:** 
+- Check for compliance warnings in logs
+- Run `python scripts/validate_test_patterns.py`
+- Add `@lambdatest_reporting` decorator or explicit `report_test_result()` calls
+
+**Problem:** "Failed to report result to LambdaTest" errors
+**Solution:**
+- Verify LambdaTest credentials (`LT_USERNAME`, `LT_ACCESS_KEY`)
+- Check network connectivity
+- Confirm driver session is still active
+
+**Problem:** Missing step context in error messages
+**Solution:**
+- Add `self._current_step = "Step Name"` before each test step
+- Use decorator pattern which automatically includes step context
+
+**Problem:** Compliance warnings for all tests
+**Solution:**
+- Migrate tests to use supported reporting patterns
+- Run validation script to identify specific issues
+- See `README_result_reporting.md` for migration guide
+
+This logging system provides comprehensive debugging and reporting capabilities for the Status E2E test framework, including specialized LambdaTest result reporting and compliance validation. 

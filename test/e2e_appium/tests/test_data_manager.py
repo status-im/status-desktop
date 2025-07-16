@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from appium import webdriver
 from appium.options.common import AppiumOptions
 from appium.webdriver.appium_connection import AppiumConnection
@@ -46,6 +47,43 @@ class TestDataManager:
             self.logger.warning("Falling back to legacy environment variable configuration")
             self.env_config = None
             self.legacy_config = get_config()
+
+    def _get_lambdatest_naming(self) -> dict:
+        """Generate LambdaTest build and test names with sensible defaults."""
+        if not self.env_config or not self.env_config.lambdatest_config:
+            # Fallback to legacy configuration
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+            return {
+                'build': f"Status E2E Tests - {timestamp}",
+                'name': "Automated Test",
+                'project': "Status E2E_Appium"
+            }
+        
+        lt_config = self.env_config.lambdatest_config
+        
+        # Get templates with defaults
+        build_template = lt_config.get('build_name_template', 'Status E2E Tests - ${BUILD_NUMBER:-${TIMESTAMP}}')
+        test_template = lt_config.get('test_name_template', '${TEST_NAME:-Automated Test}')
+        project_name = lt_config.get('project', 'Status E2E_Appium')
+        
+        # Add timestamp as fallback for build number
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+        os.environ.setdefault('TIMESTAMP', timestamp)
+        
+        # Resolve templates
+        build_name = self.env_config._resolve_template(build_template)
+        test_name = self.env_config._resolve_template(test_template)
+        
+        # Add branch info if available
+        git_branch = os.getenv('GIT_BRANCH')
+        if git_branch and git_branch not in test_name:
+            test_name += f" ({git_branch})"
+        
+        return {
+            'build': build_name,
+            'name': test_name,
+            'project': project_name
+        }
     
     def get_driver(self):
         if self.driver:
@@ -69,8 +107,14 @@ class TestDataManager:
             server_url = self.env_config.get_appium_server_url()
             
             if self.env_config.environment == "lambdatest":
+                # Get LambdaTest naming configuration
+                naming = self._get_lambdatest_naming()
+                
                 capabilities.setdefault('lt:options', {}).update({
-                    'app': self.env_config.get_resolved_app_path()
+                    'app': self.env_config.get_resolved_app_path(),
+                    'build': naming['build'],
+                    'name': naming['name'],
+                    'project': naming['project']
                 })
             
             # Get LambdaTest credentials (still from environment variables)

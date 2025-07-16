@@ -21,6 +21,7 @@ class EnvironmentConfig:
     timeouts: Dict[str, int]
     directories: Dict[str, str]
     logging_config: Dict[str, Any]
+    lambdatest_config: Dict[str, Any] = None
     
     def validate(self) -> None:
         if self.environment == "local":
@@ -59,13 +60,32 @@ class EnvironmentConfig:
     def _resolve_template(self, template: str) -> str:
         if not template:
             return ""
-            
+        
         def replace_var(match):
             var_name = match.group(1)
-            default = match.group(2) if match.group(2) else ""
+            default_part = match.group(2) if len(match.groups()) > 1 and match.group(2) else ""
+            
+            # Handle nested variable resolution in defaults
+            if default_part.startswith('${') and default_part.endswith('}'):
+                default = self._resolve_template(default_part)
+            else:
+                default = default_part
+                
             return os.getenv(var_name, default)
         
-        return re.sub(r'\$\{([^}:]+)(?::([^}]*))?\}', replace_var, template)
+        # Handle ${VAR:-default} syntax - need to be careful with nested braces
+        result = template
+        while '${' in result:
+            # Find variable patterns, handling nested braces properly
+            import re
+            pattern = r'\$\{([^}:-]+)(?::-([^${}]*(?:\$\{[^}]*\}[^${}]*)*))?\}'
+            new_result = re.sub(pattern, replace_var, result)
+            if new_result == result:
+                # No more substitutions possible, break to avoid infinite loop
+                break
+            result = new_result
+            
+        return result
     
     def get_resolved_app_path(self) -> str:
         if self.app_source['source_type'] == 'local_file':
@@ -78,14 +98,32 @@ class EnvironmentConfig:
         return self.appium_config['server_url']
     
     def get_device_capabilities(self) -> Dict[str, Any]:
-        base_caps = {
-            'platformName': self.platform_name,
-            'platformVersion': self.platform_version,
-            'deviceName': self.device_name
-        }
-        
-        if self.environment == "local":
-            base_caps['app'] = self.get_resolved_app_path()
-        
-        base_caps.update(self.capabilities)
-        return base_caps 
+        if self.environment == "lambdatest":
+            # For LambdaTest, structure capabilities according to their expected format
+            base_caps = {}
+            
+            # Start with any existing capabilities from YAML
+            base_caps.update(self.capabilities)
+            
+            # Ensure lt:options exists and add device-specific capabilities
+            lt_options = base_caps.setdefault('lt:options', {})
+            lt_options.update({
+                'platformName': self.platform_name,
+                'platformVersion': self.platform_version,
+                'deviceName': self.device_name
+            })
+            
+            return base_caps
+        else:
+            # For local and other environments, use traditional structure
+            base_caps = {
+                'platformName': self.platform_name,
+                'platformVersion': self.platform_version,
+                'deviceName': self.device_name
+            }
+            
+            if self.environment == "local":
+                base_caps['app'] = self.get_resolved_app_path()
+            
+            base_caps.update(self.capabilities)
+            return base_caps 

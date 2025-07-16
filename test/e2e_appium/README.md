@@ -61,6 +61,50 @@ export CURRENT_TEST_ENVIRONMENT="local"
 pytest tests/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_flow --env=local -v
 ```
 
+## Cloud Testing (LambdaTest)
+
+### Basic Setup
+```bash
+export LT_USERNAME="your_username" 
+export LT_ACCESS_KEY="your_access_key"
+export STATUS_APP_URL="lt://your_app_id"
+export CURRENT_TEST_ENVIRONMENT="lambdatest"
+
+# Run tests
+pytest tests/test_onboarding_flow.py --env=lambdatest -v
+```
+
+### Advanced LambdaTest Configuration
+
+**Custom Build and Test Names:**
+```bash
+# Optional: Customize LambdaTest build and test names
+export BUILD_NUMBER="v1.2.3"
+export TEST_NAME="Galaxy Tab S8 Onboarding Flow"
+export GIT_BRANCH="feature/new-onboarding"
+
+# Run tests with custom naming
+pytest tests/test_onboarding_flow.py --env=lambdatest -v
+```
+
+**Result in LambdaTest Dashboard:**
+- 🏗️ **Build:** `Status E2E Tests - v1.2.3`
+- 📱 **Test:** `Galaxy Tab S8 Onboarding Flow (feature/new-onboarding)`
+- 📁 **Project:** `Status E2E_Appium`
+
+**Professional Defaults (No Environment Variables Required):**
+```bash
+# Just the essentials - framework provides intelligent defaults
+export LT_USERNAME="your_username"
+export LT_ACCESS_KEY="your_access_key" 
+export STATUS_APP_URL="lt://your_app_id"
+
+# Results in:
+# Build: "Status E2E Tests - 20250716_1612" (auto-timestamp)
+# Test: "Automated Test"
+# Device: Galaxy Tab S8 (Android 14, Appium 2.16.2)
+```
+
 ## Test Markers
 
 ```bash
@@ -68,6 +112,30 @@ pytest -m onboarding --env=local -v   # Onboarding flow tests
 pytest -m smoke --env=local -v        # Quick critical tests
 pytest -m tablet --env=local -v       # Tablet-specific tests
 ```
+
+## Configuration Details
+
+### Environment-Specific Settings
+
+**Local Development:**
+- Device: `sdk_gphone64_arm64` (Android 15)
+- Timeouts: Extended for debugging
+- Video recording: Disabled for performance
+
+**LambdaTest Cloud:**
+- Device: `Galaxy Tab S8` (Android 14)
+- Appium: `2.16.2` (latest stable)
+- Full video/screenshot capture enabled
+
+### Template Variables Supported
+
+**Build Names:**
+- `${BUILD_NUMBER}` - CI build number
+- `${TIMESTAMP}` - Auto-generated timestamp fallback
+
+**Test Names:**
+- `${TEST_NAME}` - Custom test description
+- `${GIT_BRANCH}` - Auto-appended branch info
 
 ## Troubleshooting
 
@@ -86,32 +154,10 @@ adb shell getprop ro.product.model
 python cli/env_manager.py validate local
 ```
 
-## Cloud Testing (LambdaTest)
-
+**LambdaTest naming issues?**
 ```bash
-export LT_USERNAME="your_username" 
-export LT_ACCESS_KEY="your_access_key"
-export STATUS_APP_URL="lt://APP123456789"
-
-pytest tests/test_onboarding_flow.py --env=lambdatest -v
-```
-
-## Environment Management
-
-```bash
-# List environments
-python cli/env_manager.py list
-
-# Auto-detect environment  
-python cli/env_manager.py auto-detect
-
-# Validate configuration
-python cli/env_manager.py validate local
-```
-
-## Documentation
-
-- **[Quick Start Guide](docs/QUICK_START.md)** - 5-minute setup
-- **[Local Setup Guide](docs/LOCAL_SETUP.md)** - Detailed local testing setup  
-- **[Environment Management](docs/ENVIRONMENT_MANAGEMENT.md)** - YAML configurations and CLI tools
-- **[Logging Guide](docs/LOGGING.md)** - Understanding logs and reports 
+# Verify environment variables
+echo "Build: $BUILD_NUMBER"
+echo "Test: $TEST_NAME"
+echo "Branch: $GIT_BRANCH"
+``` 

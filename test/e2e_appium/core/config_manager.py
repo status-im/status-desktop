@@ -79,7 +79,8 @@ class ConfigurationManager:
             capabilities=config['capabilities'],
             timeouts=config['timeouts'],
             directories=config['directories'],
-            logging_config=config['logging']
+            logging_config=config['logging'],
+            lambdatest_config=config.get('lambdatest', {})
         )
 
 

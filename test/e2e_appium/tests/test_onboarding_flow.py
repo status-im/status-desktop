@@ -3,7 +3,7 @@ Status Desktop E2E Onboarding Flow Tests
 """
 
 import pytest
-from tests.base_test import BaseTest
+from tests.base_test import BaseTest, lambdatest_reporting
 
 # Import all page objects
 from pages.welcome_screen_page import WelcomeScreenPage
@@ -44,6 +44,7 @@ class TestOnboardingFlow(BaseTest):
     @pytest.mark.smoke
     @pytest.mark.onboarding
     @pytest.mark.e2e
+    @lambdatest_reporting
     def test_complete_onboarding_flow(self):
         """
         Test the complete onboarding flow from Welcome to Main App.
@@ -53,35 +54,41 @@ class TestOnboardingFlow(BaseTest):
         self.logger.info("Starting complete onboarding flow test")
         
         # Step 1: Welcome Screen - Click "Create profile"
+        self._current_step = "Welcome Screen"
         self.logger.info("Step 1: Welcome Screen")
         assert self.welcome_page.is_screen_displayed(), "Welcome screen should be displayed"
         success = self.welcome_page.click_create_profile()
         assert success, "Should successfully click Create Profile button"
         
         # Step 2: Analytics Screen - Click "Not now"
+        self._current_step = "Analytics Screen"
         self.logger.info("Step 2: Analytics Screen")
         assert self.analytics_page.is_screen_displayed(), "Analytics screen should be displayed"
         success = self.analytics_page.skip_analytics_sharing()
         assert success, "Should successfully skip analytics sharing"
         
         # Step 3: Create Profile Screen - Click "Let's go!"
+        self._current_step = "Create Profile Screen"
         self.logger.info("Step 3: Create Profile Screen")
         assert self.create_profile_page.is_screen_displayed(), "Create profile screen should be displayed"
         success = self.create_profile_page.click_lets_go()
         assert success, "Should successfully click Let's go! button"
         
         # Step 4: Password Screen - Create password
+        self._current_step = "Password Screen"
         self.logger.info("Step 4: Password Screen")
         assert self.password_page.is_screen_displayed(), "Password screen should be displayed"
         success = self.password_page.create_password(self.test_user.password)
         assert success, "Should successfully create password"
         
         # Step 5: Loading Screen - Wait for completion
+        self._current_step = "Loading Screen"
         self.logger.info("Step 5: Loading Screen")
         success = self.loading_page.wait_for_loading_completion()
         assert success, "Should successfully complete loading"
         
         # Step 6: Main App - Verify shell container is present
+        self._current_step = "Main App Verification"
         self.logger.info("Step 6: Main App")
         assert self.main_app_page.is_main_app_loaded(), "Main app should be loaded"
         
@@ -91,6 +98,7 @@ class TestOnboardingFlow(BaseTest):
     @pytest.mark.component
     @pytest.mark.onboarding
     @pytest.mark.ui_validation
+    @lambdatest_reporting
     def test_welcome_screen_component_validation(self):
         """
         Test component-level validation for Welcome screen elements.

@@ -15,7 +15,7 @@ app:
   app_id_template: "${STATUS_APP_URL}"
 
 lambdatest:
-  build_name_template: "E2E Tests - Build ${BUILD_NUMBER:-dev}"
+  build_name_template: "Status E2E Tests - ${BUILD_NUMBER:-${TIMESTAMP}}"
   test_name_template: "${TEST_NAME:-Automated Test}"
   project: "Status E2E_Appium"
   idle_timeout: 600
@@ -23,10 +23,12 @@ lambdatest:
 capabilities:
   "lt:options":
     w3c: true
-    appiumVersion: "2.1.3"
+    appiumVersion: "2.16.2"
     devicelog: true
     visual: true
     video: true
     isRealMobile: false
+    deviceOrientation: "landscape"
+    network: false
   "appium:options":
     automationName: "UiAutomator2" 

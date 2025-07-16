@@ -4,7 +4,7 @@ metadata:
 
 device:
   platform_name: "android"
-  platform_version: "15"
+  platform_version: "14"
   device_orientation: "landscape"
 
 timeouts:
