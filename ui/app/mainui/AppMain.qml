@@ -860,7 +860,7 @@ Item {
         property var whitelistedUnfurledDomains: []
         property bool introduceYourselfPopupSeen
         property var recentEmojis
-        property color skinColor
+        property string skinColor // NB: must be a string for the twemoji lib to work; we don't want the `#` in the name
         property int theme: Theme.Style.System
         property int fontSize: Theme.FontSize.FontSizeM
 
