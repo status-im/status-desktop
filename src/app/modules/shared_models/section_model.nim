@@ -36,6 +36,7 @@ type
     EnsOnly
     Muted
     MembersModel
+    JoinedMembersCount
     HistoryArchiveSupportEnabled
     PinMessageAllMembersEnabled
     Encrypted
@@ -109,6 +110,7 @@ QtObject:
       ModelRole.EnsOnly.int:"ensOnly",
       ModelRole.Muted.int:"muted",
       ModelRole.MembersModel.int:"allMembers",
+      ModelRole.JoinedMembersCount.int:"joinedMembersCount",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
       ModelRole.Encrypted.int:"encrypted",
@@ -186,6 +188,8 @@ QtObject:
       result = newQVariant(item.muted)
     of ModelRole.MembersModel:
       result = newQVariant(item.members)
+    of ModelRole.JoinedMembersCount:
+      result = newQVariant(item.joinedMembersCount)
     of ModelRole.HistoryArchiveSupportEnabled:
       result = newQVariant(item.historyArchiveSupportEnabled)
     of ModelRole.PinMessageAllMembersEnabled:

@@ -37,11 +37,6 @@ StatusListView {
     delegate: StatusListItem {
         id: listItem
 
-        MembersModelAdaptor {
-            id: membersModelAdaptor
-            allMembers: model.allMembers
-        }
-
         width: ListView.view.width
         title: model.name
         statusListItemTitle.font.pixelSize: Theme.secondaryAdditionalTextSize
@@ -49,7 +44,7 @@ StatusListView {
         statusListItemIcon.anchors.verticalCenter: undefined
         statusListItemIcon.anchors.top: statusListItemTitleArea.top
         subTitle: model.description
-        tertiaryTitle: qsTr("%n member(s)", "", membersModelAdaptor.joinedMembers.ModelCount.count)
+        tertiaryTitle: qsTr("%n member(s)", "", model.joinedMembersCount)
         statusListItemTertiaryTitle.font.weight: Font.Medium
         asset.name: model.image
         asset.isLetterIdenticon: !model.image

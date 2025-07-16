@@ -352,60 +352,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
 
-  # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
-  var members = communityDetails.members
-  for requestForAutoRejoin in communityDetails.waitingForSharedAddressesRequestsToJoin:
-    var chatMember = ChatMember()
-    chatMember.id = requestForAutoRejoin.publicKey
-    chatMember.joined = false
-    chatMember.role = MemberRole.None
-    members.add(chatMember)
-
-  var bannedMembers = newSeq[MemberItem]()
-  for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
-    let state = memberState.toMembershipRequestState()
-    case state:
-      of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
-        bannedMembers.add(self.createMemberItem(memberId, "", state, MemberRole.None))
-      else:
-        discard
-
-  var memberItems = members.map(proc(member: ChatMember): MemberItem =
-      var state = MembershipRequestState.Accepted
-      if member.id in communityDetails.pendingAndBannedMembers:
-        let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
-        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
-          state = memberState
-      elif not member.joined:
-        state = MembershipRequestState.AwaitingAddress
-      var airdropAddress = ""
-      if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
-        airdropAddress = existingCommunity.members.getAirdropAddressForMember(member.id)
-      result = self.createMemberItem(
-        member.id,
-        requestId = "",
-        state,
-        member.role,
-        airdropAddress,
-      )
-    )
-
-  let pendingMembers = communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    )
-
-  let declinedMemberItems = communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    )
-
-  memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
-
-  # Remove duplicates, this can happen when the requests to join have not updated in time
-  var finalMembers: Table[string, MemberItem]
-  for memberItem in memberItems:
-    if not finalMembers.contains(memberItem.pubKey):
-      finalMembers[memberItem.pubKey] = memberItem
-
   result = initSectionItem(
     communityDetails.id,
     sectionType = SectionType.Community,
@@ -433,7 +379,9 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.permissions.access,
     communityDetails.permissions.ensOnly,
     communityDetails.muted,
-    finalMembers.values.toSeq(),
+    # Members will be lazy loaded when the user goes to the Members panel in the Admin section
+    allMembers = @[],
+    communityDetails.members.len,
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
     communityDetails.encrypted,

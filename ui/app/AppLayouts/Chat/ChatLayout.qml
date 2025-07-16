@@ -143,7 +143,7 @@ StackLayout {
             communityDesc: sectionItemModel.description
             color: sectionItemModel.color
             image: sectionItemModel.image
-            membersCount: membersModelAdaptor.joinedMembers.ModelCount.count
+            membersCount: sectionItemModel.joinedMembersCount
             accessType: mainViewLoader.accessType
             joinCommunity: true
             amISectionAdmin: sectionItemModel.memberRole === Constants.memberRole.owner ||
@@ -198,7 +198,7 @@ StackLayout {
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             sectionItemModel: root.sectionItemModel
-            joinedMembersCount: membersModelAdaptor.joinedMembers.ModelCount.count
+            joinedMembersCount: sectionItemModel.joinedMembersCount
             areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
             amIChatAdmin: root.rootStore.amIChatAdmin()
             amIMember: sectionItem.amIMember
@@ -349,7 +349,7 @@ StackLayout {
             communityDesc: root.sectionItemModel.description
             color: root.sectionItemModel.color
             image: root.sectionItemModel.image
-            membersCount: membersModelAdaptor.joinedMembers.ModelCount.count
+            membersCount: sectionItemModel.joinedMembersCount
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
@@ -368,7 +368,7 @@ StackLayout {
             communityDesc: root.sectionItemModel.description
             color: root.sectionItemModel.color
             image: root.sectionItemModel.image
-            membersCount: membersModelAdaptor.joinedMembers.count
+            membersCount: sectionItemModel.joinedMembersCount
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications

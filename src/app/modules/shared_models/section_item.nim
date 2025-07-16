@@ -50,6 +50,7 @@ type
     ensOnly: bool
     muted: bool
     membersModel: member_model.Model
+    joinedMembersCount: int # This is a separate property because the membersModel may not be loaded yet
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
     encrypted: bool
@@ -88,6 +89,7 @@ proc initSectionItem*(
     ensOnly = false,
     muted = false,
     members: seq[MemberItem] = @[],
+    joinedMembersCount: int = 0,
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false,
     encrypted: bool = false,
@@ -126,6 +128,7 @@ proc initSectionItem*(
   result.muted = muted
   result.membersModel = newModel()
   result.membersModel.setItems(members)
+  result.joinedMembersCount = joinedMembersCount
   result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
   result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
   result.encrypted = encrypted
@@ -169,6 +172,7 @@ proc `$`*(self: SectionItem): string =
     ensOnly:{self.ensOnly},
     muted:{self.muted},
     members:{self.membersModel},
+    joinedMembersCount:{self.joinedMembersCount},
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
     pinMessageAllMembersEnabled:{self.pinMessageAllMembersEnabled},
     encrypted:{self.encrypted},
@@ -334,6 +338,9 @@ proc `muted=`*(self: var SectionItem, value: bool) {.inline.} =
 
 proc members*(self: SectionItem): member_model.Model {.inline.} =
   self.membersModel
+
+proc joinedMembersCount*(self: SectionItem): int {.inline.} =
+  self.joinedMembersCount
 
 proc hasMember*(self: SectionItem, pubkey: string): bool =
   self.membersModel.isContactWithIdAdded(pubkey)
