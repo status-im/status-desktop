@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import AppLayouts.stores.Messaging.Community 1.0
+
 QtObject {
     id: root
 
