@@ -11,7 +11,9 @@ from constants import wallet_account_list_item
 from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
 from driver import objects_access
 from driver.objects_access import walk_children
+from gui.components.context_menu import ContextMenu
 from gui.components.settings.rename_keypair_popup import RenameKeypairPopup
+from gui.components.wallet.remove_saved_address_popup import RemoveSavedAddressPopup
 from gui.components.wallet.rpc_change_restart_popup import RPCChangeRestartPopup
 from gui.components.wallet.add_saved_address_popup import AddEditSavedAddressPopup
 from gui.components.wallet.delete_account_confirmation_popup import RemoveAccountWithConfirmation
@@ -55,7 +57,7 @@ class WalletSettingsView(QObject):
             try:
                 return AccountPopup().verify_add_account_popup_present()
             except Exception:
-                pass # retry one more time
+                pass  # retry one more time
         raise LookupError(f"Failed to open add account popup in settings")
 
     @allure.step('Open saved addresses in wallet settings')
@@ -229,11 +231,12 @@ class AccountDetailsView(WalletSettingsView):
         self._back_button.click()
 
 
-class SavedAddressesWalletSettings(WalletSettingsView):
+class SavedAddressesWalletSettings(QObject):
     def __init__(self):
-        super(SavedAddressesWalletSettings, self).__init__()
+        super().__init__(settings_names.settingsWallet_View)
         self.add_new_address_button = Button(settings_names.settings_Wallet_SavedAddresses_AddAddressButton)
         self.saved_address_item = QObject(settings_names.settings_Wallet_SavedAddress_ItemDelegate)
+        self.saved_address_item_kebab_button = Button(settings_names.savedAddressItemKebabButton)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -241,7 +244,7 @@ class SavedAddressesWalletSettings(WalletSettingsView):
         return self
 
     @allure.step('Click add new address button')
-    def open_add_saved_address_popup(self, attempts: int = 2) -> 'AddEditSavedAddressPopup':
+    def open_add_edit_saved_address_popup(self, attempts: int = 3) -> 'AddEditSavedAddressPopup':
         for _ in range(attempts):
             try:
                 self.add_new_address_button.click()
@@ -254,6 +257,33 @@ class SavedAddressesWalletSettings(WalletSettingsView):
     def get_saved_address_names_list(self):
         settings_names = [str(address.name) for address in driver.findAllObjects(self.saved_address_item.real_name)]
         return settings_names
+
+    @allure.step("Open context menu for saved address item")
+    def open_context_menu_for_saved_address(self, address_name) -> 'ContextMenu':
+        for _ in range(2):
+            try:
+                self.saved_address_item.real_name['objectName'] = "savedAddressView_Delegate_" + address_name
+                self.saved_address_item.hover()
+                self.saved_address_item_kebab_button.real_name[
+                    'objectName'] = 'savedAddressView_Delegate_menuButton_' + address_name
+                self.saved_address_item_kebab_button.click()
+                return ContextMenu().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Could not open context menu for saved address with 2 retries')
+
+    @allure.step('Open Remove saved address popup')
+    def open_delete_saved_address_confirmation_popup(self, address_name) -> 'RemoveSavedAddressPopup':
+        context = self.open_context_menu_for_saved_address(address_name=address_name)
+        context.delete_saved_address_from_context.click()
+        return RemoveSavedAddressPopup().wait_until_appears()
+
+    @allure.step('Confirm delete')
+    def delete_saved_address_with_confirmation(self, account_name):
+        confirmation = self.open_delete_saved_address_confirmation_popup(account_name)
+        confirmation.remove_saved_address_button.click()
+        confirmation.wait_until_hidden()
+        return self
 
 
 class NetworkWalletSettings(WalletSettingsView):

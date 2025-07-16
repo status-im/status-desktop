@@ -28,7 +28,7 @@ def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str
             main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_saved_addresses()
 
     with step('Click Add new address button and open add saved address popup'):
-        add_saved_address_popup = settings_saved_addresses.open_add_saved_address_popup()
+        add_saved_address_popup = settings_saved_addresses.open_add_edit_saved_address_popup()
 
     with step('Fill in the form and preferred networks and add the address'):
         add_saved_address_popup.add_saved_address(name, address)
@@ -43,3 +43,11 @@ def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str
         assert f'{name} successfully added to your saved addresses' in messages, \
             f"Toast message about adding saved address is not correct or not present. \
                 Current list of messages: {messages}"
+
+    with step('Remove saved address'):
+        settings_saved_addresses.delete_saved_address_with_confirmation(name)
+
+    with step('Verify recently added saved address is present in the list'):
+        assert driver.waitFor(
+            lambda: name not in settings_saved_addresses.get_saved_address_names_list(),
+            configs.timeouts.LOADING_LIST_TIMEOUT_MSEC), f'Address: {name} was not deleted'
