@@ -19,6 +19,7 @@ import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.stores as WalletStore
 import AppLayouts.stores as AppLayoutStores
 import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.stores.Messaging.Community as CommunityStores
 
 import StatusQ
 import StatusQ.Core.Utils
@@ -34,7 +35,7 @@ StackLayout {
 
     // WIP: This is the new store's structure, now partially used, just PermissionsStore
     property MessagingStores.CommunityRootStore newCommnityStore
-    readonly property SharedStores.PermissionsStore communityPermissionsStore: newCommnityStore.communityPermissionsStore
+    readonly property CommunityStores.PermissionsStore communityPermissionsStore: newCommnityStore.communityPermissionsStore
 
     // Rest of stores references (to be reviewed)
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore

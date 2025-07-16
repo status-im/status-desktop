@@ -2,7 +2,7 @@ import QtQuick 2.15
 
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import shared.stores 1.0
+import AppLayouts.stores.Messaging.Community 1.0 as CommunityStores
 
 QtObject {
     id: root
@@ -46,7 +46,7 @@ QtObject {
             d.currentCommunityModule.declineRequestToJoinCommunity(requestId, communityId)
         }
     }
-    readonly property PermissionsStore communityPermissionsStore: PermissionsStore {
+    readonly property CommunityStores.PermissionsStore communityPermissionsStore: CommunityStores.PermissionsStore {
         activeSectionId: d.mainModuleInst.activeSection.id
         activeChannelId: d.currentChatContentModule.chatDetails.id
         permissionsModel: d.currentCommunityModule.permissionsModel
