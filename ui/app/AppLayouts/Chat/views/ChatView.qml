@@ -144,6 +144,12 @@ StatusSectionLayout {
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
 
+    // Permissions Related requests:
+    signal createPermissionRequested(var holdings, int permissionType, bool isPrivate, var channels)
+    signal removePermissionRequested(string key)
+    signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
+    signal setHideIfPermissionsNotMetRequested(string chatId, bool checked)
+
     Connections {
         target: root.rootStore.stickersStore.stickersModule
 
@@ -386,10 +392,17 @@ StatusSectionLayout {
             currencyStore: root.currencyStore
             emojiPopup: root.emojiPopup
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
             onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
             onChatItemClicked: (id) => root.goToNextPanel()
+
+            // Permissions Related requests:
+            onCreatePermissionRequested: root.createPermissionRequested(holdings, permissionType, isPrivate, channels)
+            onRemovePermissionRequested: root.removePermissionRequested(key)
+            onEditPermissionRequested: root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
+            onSetHideIfPermissionsNotMetRequested: root.setHideIfPermissionsNotMetRequested(chatId, checked)
         }
     }
 

@@ -56,6 +56,8 @@ StatusSectionLayout {
     readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: community.isControlNode
 
+    property var permissionsModel // holdings, permissionType, isPrivate, channels
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -73,6 +75,11 @@ StatusSectionLayout {
             }
         }
     }
+
+    // Permissions Related requests:
+    signal createPermissionRequested(var holdings, int permissionType, bool isPrivate, var channels)
+    signal removePermissionRequested(string key)
+    signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
 
     readonly property string filteredSelectedTags: {
         let tagsArray = []
@@ -344,10 +351,7 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
         
             sourceComponent: PermissionsSettingsPanel {
-                readonly property PermissionsStore permissionsStore:
-                    rootStore.permissionsStore
-
-                permissionsModel: permissionsStore.permissionsModel
+                permissionsModel: root.permissionsModel
 
                 // temporary solution to provide icons for assets, similar
                 // method is used in wallet (constructing filename from asset's
@@ -364,15 +368,13 @@ StatusSectionLayout {
                 communityDetails: d.communityDetails
 
                 onCreatePermissionRequested:
-                    permissionsStore.createPermission(holdings, permissionType,
-                                                    isPrivate, channels)
+                    root.createPermissionRequested(holdings, permissionType,isPrivate, channels)
 
                 onUpdatePermissionRequested:
-                    permissionsStore.editPermission(
-                        key, holdings, permissionType, channels, isPrivate)
+                    root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
 
                 onRemovePermissionRequested:
-                    permissionsStore.removePermission(key)
+                    root.removePermissionRequested(key)
 
                 onNavigateToMintTokenSettings: {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
