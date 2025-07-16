@@ -217,15 +217,11 @@ QtObject {
 
     // Communities related properties and functions that shall be moved to `CommunitiesRootStore`
     property var communitiesModuleInst: communitiesModule // Should be removed and used only inside `CommunitiesRootStore` AND private, not accessible from outside components
-    readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
     readonly property bool checkingPermissionToJoinInProgress: communitiesModuleInst.checkingPermissionToJoinInProgress
     readonly property bool joinPermissionsCheckCompletedWithoutErrors: communitiesModuleInst.joinPermissionsCheckCompletedWithoutErrors
     readonly property bool channelsPermissionsCheckSuccessful: communitiesModuleInst.channelsPermissionsCheckSuccessful
 
     property string communityKeyToImport
-
-    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
 
     readonly property var myRevealedAddressesForCurrentCommunity: {
         try {
@@ -239,10 +235,6 @@ QtObject {
     }
     readonly property string myRevealedAirdropAddressForCurrentCommunity:
         root.communitiesModuleInst.myRevealedAirdropAddressForCurrentCommunity.toLowerCase()
-
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
-    }
 
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,
                              communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY,

@@ -49,6 +49,12 @@ Item {
 
     property int requestToJoinState: Constants.RequestToJoinState.None
 
+    // Community access related data:
+    property var spectatedPermissionsModel
+
+    // Settings related:
+    property bool ensCommunityPermissionsEnabled
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -67,6 +73,7 @@ Item {
     signal removePermissionRequested(string key)
     signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
     signal setHideIfPermissionsNotMetRequested(string chatId, bool checked)
+    signal prepareTokenModelForCommunityChatRequested(string communityId, string chatId)
 
     QtObject {
         id: d
@@ -559,10 +566,10 @@ Item {
             communitiesStore: root.communitiesStore
             assetsModel: root.store.assetsModel
             collectiblesModel: root.store.collectiblesModel
-            ensCommunityPermissionsEnabled: root.store.ensCommunityPermissionsEnabled
+            ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
             permissionsModel: {
-                root.store.prepareTokenModelForCommunityChat(communityData.id, chatId)
-                return root.store.permissionsModel
+                root.prepareTokenModelForCommunityChatRequested(communityData.id, chatId)
+                return root.spectatedPermissionsModel
             }
             channelsModel: root.store.chatCommunitySectionModule.model
             emojiPopup: root.emojiPopup
