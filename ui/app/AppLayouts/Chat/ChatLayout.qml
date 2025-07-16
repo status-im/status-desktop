@@ -30,10 +30,16 @@ import SortFilterProxyModel
 StackLayout {
     id: root
 
-    // WIP: It will be refactored step by step (now PermissionsStore is not used from here)
+    // NOTE: This `ChatLayout` is currently a view used for both `Chat` and `Communities` and the API is mixed between both cases.
+    // During the transition of refactoring the `ChatStores.RootStore` into `chat specific` or `community specific` stores, this flag
+    // will be used on this view to determine specific UI view flows in case of need so that it allows to identify if a certain store
+    // value is now separated between `chat` and `community` specific
+    required property bool isChatView
+
+    // WIP: It will be refactored step by step (now community permissions and community access logic is not part of this store)
     property ChatStores.RootStore rootStore
 
-    // WIP: This is the new store's structure, now partially used, `PermissionsStore` and starting switching to `CommunityAccessStore` step by step
+    // WIP: This is the new store's structure, now used, `PermissionsStore` and `CommunityAccessStore`. More stores will be added in next steps
     property CommunityStores.CommunityRootStore newCommnityStore
     readonly property CommunityStores.CommunityAccessStore communityAccessStore: newCommnityStore.communityAccessStore
     readonly property CommunityStores.PermissionsStore communityPermissionsStore: newCommnityStore.communityPermissionsStore
@@ -266,6 +272,7 @@ StackLayout {
             communityMemberReevaluationStatus: root.communityAccessStore.communityMemberReevaluationStatus
             spectatedPermissionsModel: root.communityAccessStore.spectatedPermissionsModel
             chatPermissionsCheckOngoing: root.communityAccessStore.chatPermissionsCheckOngoing
+            joined: root.isChatView ? root.rootStore.joined : root.communityAccessStore.joined
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled

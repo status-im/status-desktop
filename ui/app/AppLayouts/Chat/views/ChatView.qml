@@ -111,6 +111,7 @@ StatusSectionLayout {
     property int communityMemberReevaluationStatus
     property var spectatedPermissionsModel
     property bool chatPermissionsCheckOngoing
+    property bool joined
 
     // Unfurling related data:
     property bool gifUnfurlingEnabled
@@ -314,6 +315,7 @@ StatusSectionLayout {
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
+            joined: root.joined
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled

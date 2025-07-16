@@ -25,6 +25,7 @@ StatusDialog {
     property var memberMessagesModel: chatCommunitySectionModule.memberMessagesModel
     property string memberPubKey: ""
     property string displayName: ""
+    property bool joined
 
 
     width: 800
@@ -68,7 +69,7 @@ StatusDialog {
                     chatCommunitySectionModule: root.chatCommunitySectionModule
                     messageStore: root.rootStore.messageStore
                     messageId: model.id
-                    joined: root.rootStore.joined
+                    joined: root.joined
                     chatId: model.chatId
                     responseToMessageWithId: model.responseToMessageWithId
                     amIChatAdmin: true

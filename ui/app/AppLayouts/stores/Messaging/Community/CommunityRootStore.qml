@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import SortFilterProxyModel
+
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
@@ -18,6 +20,29 @@ QtObject {
 
         // Foreach `communityId` there will be the corresponding active chat content module:
         property var currentChatContentModule: d.getChatContentModule(d.currentCommunityModule)
+
+        // This is the community section details for this specific `communityId`
+        readonly property var communityDetails: d.communityDetailsInstantiator.count ? d.communityDetailsInstantiator.objectAt(0) : null
+
+        readonly property var communityDetailsInstantiator: Instantiator {
+            model: SortFilterProxyModel {
+                sourceModel: d.mainModuleInst.sectionsModel
+                filters: ValueFilter {
+                    roleName: "id"
+                    value: root.communityId
+                }
+            }
+            delegate: QtObject {
+                readonly property string id: model.id
+                readonly property int sectionType: model.sectionType
+                readonly property string name: model.name
+                readonly property string image: model.image
+                readonly property bool joined: model.joined
+                readonly property bool amIBanned: model.amIBanned
+                readonly property string introMessage: model.introMessage
+                // add others when needed..
+            }
+        }
 
         function getCurrentCommunityModule(communityId) {
             if (!communityId) {
@@ -43,7 +68,7 @@ QtObject {
 
     readonly property CommunityAccessStore communityAccessStore: CommunityAccessStore {
         isModuleReady: !!d.currentCommunityModule
-        joined: d.currentCommunityModule ? d.currentCommunityModule.joined : false
+        joined: d.communityDetails ? d.communityDetails.joined : false
         allChannelsAreHiddenBecauseNotPermitted: d.currentCommunityModule.allChannelsAreHiddenBecauseNotPermitted &&
                                                  !d.currentCommunityModule.requiresTokenPermissionToJoin
         communityMemberReevaluationStatus: d.currentCommunityModule &&
