@@ -134,8 +134,8 @@ StackLayout {
     }
 
     Connections {
-        target: root.rootStore
-        function onGoToMembershipRequestsPage() {
+        target: root.communityAccessStore
+        function onCommunityMembershipNotificationReceived() {
             root.currentIndex = 1 // go to settings
             if (communitySettingsLoader.item) {
                 communitySettingsLoader.item.goTo(Constants.CommunitySettingsSections.Members, Constants.CommunityMembershipSubSections.MembershipRequests)

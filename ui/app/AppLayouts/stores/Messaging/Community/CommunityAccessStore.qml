@@ -48,8 +48,7 @@ QtObject {
 
     signal allSharedAddressesSigned()
 
-    // TODO: Rename it since store should not know about UI flows or navigations
-    signal goToMembershipRequestsPage()
+    signal communityMembershipNotificationReceived()
 
     signal acceptRequestToJoinCommunity(string requestId, string communityId)
 
@@ -123,11 +122,14 @@ QtObject {
     readonly property Connections mainModuleInstConnections: Connections {
         target: d.mainModuleInst
         enabled: root.isModuleReady
+
+        // TODO: Review this trigger on the business-logic side since it will not be the
+        // one conditioning any UI navigation explicitly (it seems it's related to some OS notifications)
         function onOpenCommunityMembershipRequestsView(sectionId: string) {
             if(root.mySectionId !== sectionId)
                 return
 
-            root.goToMembershipRequestsPage()
+            root.communityMembershipNotificationReceived()
         }
     }
 
