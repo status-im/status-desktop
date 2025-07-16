@@ -189,8 +189,6 @@ QtObject {
 
     signal communityAdded(string communityId)
 
-    signal goToMembershipRequestsPage()
-
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
     }
@@ -628,17 +626,6 @@ QtObject {
       function onCommunityAdded(communityId) {
           root.communityAdded(communityId)
       }
-    }
-
-    readonly property Connections mainModuleInstConnections: Connections {
-        target: mainModuleInst
-        enabled: !!chatCommunitySectionModule
-        function onOpenCommunityMembershipRequestsView(sectionId: string) {
-            if(root.getMySectionId() !== sectionId)
-                return
-
-            root.goToMembershipRequestsPage()
-        }
     }
 
     readonly property QtObject _d: StatusQUtils.QObject {
