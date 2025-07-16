@@ -52,6 +52,7 @@ Item {
     property bool isContactBlocked: false
     property bool isChatBlocked: false
     property bool isOneToOne: false
+    property bool joined
 
     property bool sendViaPersonalChatEnabled
     property string disabledTooltipText
@@ -312,7 +313,7 @@ Item {
             usersModel: root.usersModel
 
             isChatBlocked: root.isChatBlocked
-            joined: root.rootStore.joined
+            joined: root.joined
 
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText

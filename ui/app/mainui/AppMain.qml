@@ -1999,6 +1999,7 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
+                                isChatView: true
                                 navBar: appMain.navBar
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.contactsStore
@@ -2296,6 +2297,7 @@ Item {
                                     }
                                 }
                                 
+                                isChatView: false // This will be a community view
                                 navBar: appMain.navBar
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item

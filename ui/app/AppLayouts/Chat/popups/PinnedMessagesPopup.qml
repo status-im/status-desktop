@@ -26,6 +26,7 @@ StatusDialog {
     property string messageToPin
     property string messageToUnpin
     property string chatId
+    property bool joined
 
     readonly property var contactDetails: store ? store.oneToOneChatContact : null
     readonly property bool isPinActionAvaliable: contactDetails ? contactDetails.isContact : true
@@ -90,7 +91,7 @@ StatusDialog {
                     rootStore: root.store
                     messageStore: root.messageStore
 
-                    joined: root.store.joined
+                    joined: root.joined
                     messageId: model.id
                     responseToMessageWithId: model.responseToMessageWithId
                     senderId: model.senderId
