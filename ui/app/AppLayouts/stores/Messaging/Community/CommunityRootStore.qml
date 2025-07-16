@@ -79,10 +79,10 @@ QtObject {
         communityPermissionsCheckOngoing: d.currentCommunityModule.permissionsCheckOngoing
         chatPermissionsCheckOngoing: d.currentChatContentModule.permissionsCheckOngoing
 
-        onAcceptRequestToJoinCommunity: {
+        onAcceptRequestToJoinCommunityRequested: {
             d.currentCommunityModule.acceptRequestToJoinCommunity(requestId, communityId)
         }
-        onDeclineRequestToJoinCommunity: {
+        onDeclineRequestToJoinCommunityRequested: {
             d.currentCommunityModule.declineRequestToJoinCommunity(requestId, communityId)
         }
     }

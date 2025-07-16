@@ -2424,6 +2424,7 @@ Item {
                 activityCenterStore: appMain.activityCenterStore
                 privacyStore: appMain.privacyStore
                 notificationsStore: appMain.notificationsStore
+                messagingRootStore: appMain.messagingRootStore
             }
         }
 
