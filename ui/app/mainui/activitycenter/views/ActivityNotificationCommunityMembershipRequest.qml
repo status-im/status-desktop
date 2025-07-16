@@ -17,6 +17,10 @@ import "../stores"
 ActivityNotificationMessage {
     id: root
 
+    // Community access requests:
+    signal acceptRequestToJoinCommunityRequested(string requestId, string communityId)
+    signal declineRequestToJoinCommunityRequested(string requestId, string communityId)
+
     contactDetails: notification ? Utils.getContactDetailsAsJson(notification.author, false) : null
 
     messageDetails.messageText: qsTr("Wants to join")
@@ -44,8 +48,8 @@ ActivityNotificationMessage {
 
     ctaComponent: MembershipCta {
         membershipStatus: notification && notification.membershipStatus ? notification.membershipStatus : ActivityCenterStore.ActivityCenterMembershipStatus.None
-        onAcceptRequestToJoinCommunity: root.store.acceptRequestToJoinCommunity(notification.id, notification.communityId)
-        onDeclineRequestToJoinCommunity: root.store.declineRequestToJoinCommunity(notification.id, notification.communityId)
+        onAcceptRequestToJoinCommunity: root.acceptRequestToJoinCommunityRequested(notification.id, notification.communityId)
+        onDeclineRequestToJoinCommunity: root.declineRequestToJoinCommunityRequested(notification.id, notification.communityId)
         //TODO: Get backend value. If the membersip is in acceptedPending or declinedPending state, another user can't accept or decline the request
         //Only the user who requested can cancel the request
         //ctaAllowed: true

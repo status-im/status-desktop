@@ -84,6 +84,11 @@ StatusSectionLayout {
     signal removePermissionRequested(string key)
     signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
 
+
+    // Community access requests:
+    signal acceptRequestToJoinCommunityRequested(string requestId, string communityId)
+    signal declineRequestToJoinCommunityRequested(string requestId, string communityId)
+
     readonly property string filteredSelectedTags: {
         let tagsArray = []
         if (community && community.tags) {
@@ -335,8 +340,8 @@ StatusSectionLayout {
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id, deleteAllMessages)
                 onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
-                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.community.id)
-                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)
+                onAcceptRequestToJoin: root.acceptRequestToJoinCommunityRequested(id, root.community.id)
+                onDeclineRequestToJoin: root.declineRequestToJoinCommunityRequested(id, root.community.id)
                 onViewMemberMessagesClicked: {
                     root.rootStore.loadCommunityMemberMessages(root.community.id, pubKey)
                     Global.openCommunityMemberMessagesPopupRequested(root.rootStore, root.chatCommunitySectionModule, pubKey, displayName)
@@ -755,7 +760,7 @@ StatusSectionLayout {
 
         NoPermissionsToJoinPopup {
             onRejectButtonClicked: {
-                root.rootStore.declineRequestToJoinCommunity(requestId, communityId)
+                root.declineRequestToJoinCommunityRequested(requestId, communityId)
                 close()
             }
             onClosed: destroy()

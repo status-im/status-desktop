@@ -367,6 +367,10 @@ StackLayout {
             onCreatePermissionRequested: root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
             onRemovePermissionRequested: root.communityPermissionsStore.removePermission(key)
             onEditPermissionRequested: root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
+
+            // Communtiy access related requests:
+            onAcceptRequestToJoinCommunityRequested: root.communityAccessStore.acceptRequestToJoinCommunityRequested(requestId, communityId)
+            onDeclineRequestToJoinCommunityRequested: root.communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
         }
     }
 
