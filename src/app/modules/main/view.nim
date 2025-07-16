@@ -426,3 +426,6 @@ QtObject:
   proc openUrl*(self: View, url: string) {.signal.}
   proc emitOpenUrlSignal*(self: View, url: string) =
     self.openUrl(url)
+
+  proc loadMembersForSectionId*(self: View, communityId: string) {.slot.} =
+    self.delegate.loadMembersForSectionId(communityId)

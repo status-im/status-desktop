@@ -63,7 +63,7 @@ Item {
             asset.height: 32
             name: model.name ?? ""
             memberCountVisible: model.joined || !model.encrypted
-            members: model.membersCount
+            members: model.joinedMembersCount
             activeUsers: model.activeMembersCount
             banner: model.bannerImageData ?? ""
             descriptionFontSize: Theme.tertiaryTextFontSize

@@ -50,6 +50,7 @@ type
     ensOnly: bool
     muted: bool
     membersModel: member_model.Model
+    joinedMembersCount: int # This is a separate property because the membersModel may not be loaded yet
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
     encrypted: bool
@@ -59,6 +60,7 @@ type
     shardIndex: int
     isPendingOwnershipRequest: bool
     activeMembersCount: int
+    membersLoaded: bool
 
 proc initSectionItem*(
     id: string,
@@ -88,6 +90,7 @@ proc initSectionItem*(
     ensOnly = false,
     muted = false,
     members: seq[MemberItem] = @[],
+    joinedMembersCount: int = 0,
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false,
     encrypted: bool = false,
@@ -126,6 +129,7 @@ proc initSectionItem*(
   result.muted = muted
   result.membersModel = newModel()
   result.membersModel.setItems(members)
+  result.joinedMembersCount = joinedMembersCount
   result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
   result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
   result.encrypted = encrypted
@@ -136,6 +140,7 @@ proc initSectionItem*(
   result.shardIndex = shardIndex
   result.isPendingOwnershipRequest = isPendingOwnershipRequest
   result.activeMembersCount = activeMembersCount
+  result.membersLoaded = false
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -169,6 +174,7 @@ proc `$`*(self: SectionItem): string =
     ensOnly:{self.ensOnly},
     muted:{self.muted},
     members:{self.membersModel},
+    joinedMembersCount:{self.joinedMembersCount},
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
     pinMessageAllMembersEnabled:{self.pinMessageAllMembersEnabled},
     encrypted:{self.encrypted},
@@ -335,6 +341,12 @@ proc `muted=`*(self: var SectionItem, value: bool) {.inline.} =
 proc members*(self: SectionItem): member_model.Model {.inline.} =
   self.membersModel
 
+proc joinedMembersCount*(self: SectionItem): int {.inline.} =
+  self.joinedMembersCount
+
+proc `joinedMembersCount=`*(self: var SectionItem, value: int) {.inline.} =
+  self.joinedMembersCount = value
+
 proc hasMember*(self: SectionItem, pubkey: string): bool =
   self.membersModel.isContactWithIdAdded(pubkey)
 
@@ -433,3 +445,9 @@ proc activeMembersCount*(self: SectionItem): int {.inline.} =
 
 proc `activeMembersCount=`*(self: var SectionItem, value: int) {.inline.} =
   self.activeMembersCount = value
+
+proc membersLoaded*(self: SectionItem): bool {.inline.} =
+  self.membersLoaded
+
+proc `membersLoaded=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.membersLoaded = value

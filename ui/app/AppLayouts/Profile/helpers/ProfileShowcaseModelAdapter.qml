@@ -56,11 +56,6 @@ QObject {
                 expression: model.id
                 expectedRoles: ["id"]
             },
-            FastExpressionRole {
-                name: "membersCount"
-                expression: model.allMembers.rowCount()
-                expectedRoles: ["allMembers"]
-            },
             ConstantRole {
                 name: "showcaseVisibility"
                 value: Constants.ShowcaseVisibility.Everyone
