@@ -189,8 +189,6 @@ QtObject {
 
     signal communityAdded(string communityId)
 
-    signal communityAccessRequested(string communityId)
-
     signal goToMembershipRequestsPage()
 
     function setActiveCommunity(communityId) {
@@ -625,10 +623,6 @@ QtObject {
       target: communitiesModuleInst
       function onImportingCommunityStateChanged(communityId, state, errorMsg) {
           root.importingCommunityStateChanged(communityId, state, errorMsg)
-      }
-
-      function onCommunityAccessRequested(communityId) {
-          root.communityAccessRequested(communityId)
       }
 
       function onCommunityAdded(communityId) {
