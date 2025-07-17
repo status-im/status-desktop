@@ -20,8 +20,8 @@ QtObject {
     readonly property bool isOnline: internal.mainModuleInst.isOnline
     readonly property var sectionsModel: internal.mainModuleInst.sectionsModel
     readonly property bool sectionsLoaded: internal.mainModuleInst && internal.mainModuleInst.sectionsLoaded
-    readonly property var activeSectionId: internal.mainModuleInst.activeSection.id
-    readonly property var activeSectionType: internal.mainModuleInst.activeSection.sectionType
+    readonly property string activeSectionId: internal.mainModuleInst.activeSection.id
+    readonly property int activeSectionType: internal.mainModuleInst.activeSection.sectionType
 
     // Here define the needed properties that access to `Context Properties`:
     readonly property QtObject _internal: QtObject{

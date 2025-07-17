@@ -1443,7 +1443,7 @@ Item {
                 id: bannersLayout
 
                 enabled: !localAppSettings.testEnvironment
-                         && appMain.rootStore.activeSection.sectionType !== Constants.appSection.homePage
+                         && appMain.rootStore.activeSectionType !== Constants.appSection.homePage
                 visible: enabled
 
                 property var updateBanner: null
@@ -1817,7 +1817,7 @@ Item {
                                 }
                             }
                             // Should never be here, correct index must be returned from the for loop above
-                            console.error("Wrong section type:", appMain.rootStore.activeSectionType,
+                            console.error("Wrong section type:", activeSectionType,
                                           "or section id: ", appMain.rootStore.activeSectionId)
                             return Constants.appViewStackIndex.community
                         case Constants.appSection.communitiesPortal:
@@ -1874,11 +1874,9 @@ Item {
                                 showEnabledSectionsOnly: true
                                 marketEnabled: appMain.featureFlagsStore.marketEnabled
 
-                                syncingBadgeCount: appMain.rootStore.profileSectionStore.devicesStore.devicesModel.count -
-                                                   appMain.rootStore.profileSectionStore.devicesStore.devicesModel.pairedCount
+                                syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
                                 messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
-                                showBackUpSeed: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner &&
-                                                !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
+                                showBackUpSeed: !appMain.profileStore.userDeclinedBackupBanner && !appMain.privacyStore.mnemonicBackedUp
 
                                 searchPhrase: homePage.searchPhrase
 
