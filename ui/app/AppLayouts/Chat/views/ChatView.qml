@@ -160,6 +160,9 @@ StatusSectionLayout {
     signal setHideIfPermissionsNotMetRequested(string chatId, bool checked)
     signal prepareTokenModelForCommunityChat(string communityId, string chatId)
 
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
+
     Connections {
         target: root.rootStore.stickersStore.stickersModule
 
@@ -342,6 +345,9 @@ StatusSectionLayout {
             onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
             onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
             onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
+
+            // Community access related requests:
+            onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
         }
     }
 

@@ -83,6 +83,9 @@ ColumnLayout {
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
 
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
+
     objectName: "chatContentViewColumn"
     spacing: 0
 
@@ -150,6 +153,9 @@ ColumnLayout {
             onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
             onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
             onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
+
+            // Community access related requests:
+            onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
         }
     }
 }
