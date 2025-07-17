@@ -29,3 +29,4 @@ TokenSelectorCompactButton 1.0 TokenSelectorCompactButton.qml
 RecipientViewDelegate 1.0 RecipientViewDelegate.qml
 SendRecipientInput 1.0 SendRecipientInput.qml
 RouterErrorTag 1.0 RouterErrorTag.qml
+SavedAddressesDelegate 1.0 SavedAddressesDelegate.qml

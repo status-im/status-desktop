@@ -6,7 +6,7 @@ import AppLayouts.Wallet.views
 import shared.stores as SharedStores
 import AppLayouts.stores as AppLayoutStores
 
-import "../../stores"
+import AppLayouts.Profile.stores
 
 ColumnLayout {
     id: root

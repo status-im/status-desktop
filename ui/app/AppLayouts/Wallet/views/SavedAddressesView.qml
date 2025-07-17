@@ -8,7 +8,6 @@ RightTabBaseView {
     SavedAddresses {
         objectName: "savedAddressesArea"
         width: root.width
-        height: root.height - header.height
 
         contactsStore: root.contactsStore
         networkConnectionStore: root.networkConnectionStore

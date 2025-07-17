@@ -14,8 +14,8 @@ import shared.controls
 import shared.stores as SharedStores
 import AppLayouts.stores as AppLayoutStores
 
-import "../stores"
-import "../controls"
+import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.controls
 
 ColumnLayout {
     id: root
@@ -98,9 +98,8 @@ ColumnLayout {
         id: listView
         objectName: "SavedAddressesView_savedAddresses"
         Layout.fillWidth: true
-        Layout.fillHeight: true
+        Layout.preferredHeight: contentHeight
         spacing: 8
-        visible: count > 0
 
         model: SortFilterProxyModel {
             sourceModel: RootStore.savedAddresses
