@@ -34,7 +34,7 @@ GOFLAGS="" CGO_ENABLED=1 GOOS="$OS" GOARCH="$GOARCH" \
 	go build \
 		-buildmode="$BUILD_MODE" \
 		-tags 'gowaku_no_rln nowatchdog disable_torrent' \
-		-ldflags="-X github.com/status-im/status-go/vendor/github.com/ethereum/go-ethereum/metrics.EnabledStr=true" \
+		-ldflags="-checklinkname=0 -X github.com/status-im/status-go/vendor/github.com/ethereum/go-ethereum/metrics.EnabledStr=true" \
 		-o "$LIB_DIR/libstatus.$LIB_EXT" \
 		./build/bin/statusgo-lib
 
