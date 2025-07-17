@@ -253,33 +253,14 @@ QtObject {
     function cancelPendingRequest(id: string) {
         communitiesModuleInst.cancelRequestToJoinCommunity(id)
     }
+    
+    function communityHasMember(communityId, pubKey)
+    {
+        return communitiesModuleInst.isMemberOfCommunity(communityId, pubKey)
+    }
 
     function setActiveCommunity(communityId) {
         internal.mainModuleInst.setActiveSectionById(communityId);
-    }
-
-    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
-        communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
-    }
-
-    function signProfileKeypairAndAllNonKeycardKeypairs() {
-        communitiesModuleInst.signProfileKeypairAndAllNonKeycardKeypairs()
-    }
-
-    function signSharedAddressesForKeypair(keyUid) {
-        communitiesModuleInst.signSharedAddressesForKeypair(keyUid)
-    }
-
-    function joinCommunityOrEditSharedAddresses() {
-        communitiesModuleInst.joinCommunityOrEditSharedAddresses()
-    }
-
-    function cleanJoinEditCommunityData() {
-        communitiesModuleInst.cleanJoinEditCommunityData()
-    }
-
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 
     function promoteSelfToControlNode(communityId) {

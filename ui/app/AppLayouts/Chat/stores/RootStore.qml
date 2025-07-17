@@ -445,42 +445,6 @@ QtObject {
         chatCommunitySectionModule.reorderCommunityChat(categoryId, chatId, to)
     }
 
-    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
-        communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
-    }
-
-    function signProfileKeypairAndAllNonKeycardKeypairs() {
-        communitiesModuleInst.signProfileKeypairAndAllNonKeycardKeypairs()
-    }
-
-    function signSharedAddressesForKeypair(keyUid) {
-        communitiesModuleInst.signSharedAddressesForKeypair(keyUid)
-    }
-
-    function joinCommunityOrEditSharedAddresses() {
-        communitiesModuleInst.joinCommunityOrEditSharedAddresses()
-    }
-
-    function cleanJoinEditCommunityData() {
-        communitiesModuleInst.cleanJoinEditCommunityData()
-    }
-
-    function userCanJoin(id) {
-        return communitiesModuleInst.userCanJoin(id)
-    }
-
-    function isUserMemberOfCommunity(id) {
-        return communitiesModuleInst.isUserMemberOfCommunity(id)
-    }
-
-    function isMyCommunityRequestPending(id) {
-        return communitiesModuleInst.isMyCommunityRequestPending(id)
-    }
-
-    function cancelPendingRequest(id: string) {
-        communitiesModuleInst.cancelRequestToJoinCommunity(id)
-    }
-
     function getSectionNameById(id) {
         return communitiesList.getSectionNameById(id)
     }
@@ -687,10 +651,6 @@ QtObject {
             value: Utils.getContactDetailsAsJson(d.activeChatId, false)
             restoreMode: Binding.RestoreBindingOrValue
         }
-    }
-
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 
     function removeMemberFromGroupChat(publicKey) {

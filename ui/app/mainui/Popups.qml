@@ -630,10 +630,10 @@ QtObject {
                         return
                     }
                     callback(image,
-                            cropRect.x.toFixed(),
-                            cropRect.y.toFixed(),
-                            (cropRect.x + cropRect.width).toFixed(),
-                            (cropRect.y + cropRect.height).toFixed())
+                             cropRect.x.toFixed(),
+                             cropRect.y.toFixed(),
+                             (cropRect.x + cropRect.width).toFixed(),
+                             (cropRect.y + cropRect.height).toFixed())
                 }
                 onDone: destroy()
             }
@@ -761,7 +761,7 @@ QtObject {
                                             communityDetails.name,
                                             communityDetails.introMessage,
                                             communityDetails.image,
-                                            root.rootStore.isMyCommunityRequestPending(communityId))
+                                            communityAccessStore.isMyCommunityRequestPending(communityId))
                 }
                 onClosed: destroy()
             }
@@ -802,36 +802,49 @@ QtObject {
                 }
 
                 onPrepareForSigning: {
-                    root.rootStore.prepareKeypairsForSigning(dialogRoot.communityId, dialogRoot.name, sharedAddresses, airdropAddress, false)
-
-                    dialogRoot.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareKeypairsForSigning(dialogRoot.communityId, dialogRoot.name, sharedAddresses, airdropAddress, false)
+                        dialogRoot.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    }
                 }
 
                 onSignProfileKeypairAndAllNonKeycardKeypairs: {
-                    root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    if(communityAccessStore) {
+                        communityAccessStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    }
                 }
 
                 onSignSharedAddressesForKeypair: {
-                    root.rootStore.signSharedAddressesForKeypair(keyUid)
+                    if(communityAccessStore) {
+                        communityAccessStore.signSharedAddressesForKeypair(keyUid)
+                    }
                 }
 
                 onJoinCommunity: {
-                    root.rootStore.joinCommunityOrEditSharedAddresses()
+                    if(communityAccessStore) {
+                        communityAccessStore.joinCommunityOrEditSharedAddresses()
+                    }
                 }
 
                 onCancelMembershipRequest: {
-                    root.rootStore.cancelPendingRequest(dialogRoot.communityId)
+                    if(communityAccessStore) {
+                        communityAccessStore.cancelPendingRequest(dialogRoot.communityId)
+                    }
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
+                    if(communityAccessStore) {
+                        communityAccessStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
+                    }
                 }
 
                 onAboutToShow: { root.rootStore.communityKeyToImport = dialogRoot.communityId; }
 
                 onClosed: {
                     root.rootStore.communityKeyToImport = "";
-                    root.rootStore.cleanJoinEditCommunityData()
+                    if(communityAccessStore) {
+                        communityAccessStore.cleanJoinEditCommunityData()
+                    }
                 }
 
                 Connections {
@@ -1055,29 +1068,36 @@ QtObject {
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                    if(communityAccessStore) {
+                        communityAccessStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                    }
                 }
 
                 onPrepareForSigning: {
-                    root.rootStore.prepareKeypairsForSigning(editSharedAddressesPopup.communityId, "", sharedAddresses, airdropAddress, true)
-
-                    editSharedAddressesPopup.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareKeypairsForSigning(editSharedAddressesPopup.communityId, "", sharedAddresses, airdropAddress, true)
+                        editSharedAddressesPopup.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    }
                 }
 
                 onSignProfileKeypairAndAllNonKeycardKeypairs: {
-                    root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    if(communityAccessStore) {
+                        communityAccessStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    }
                 }
 
                 onSignSharedAddressesForKeypair: {
-                    root.rootStore.signSharedAddressesForKeypair(keyUid)
+                    if(communityAccessStore) {
+                        communityAccessStore.signSharedAddressesForKeypair(keyUid)
+                    }
                 }
 
                 onEditRevealedAddresses: {
-                    root.rootStore.joinCommunityOrEditSharedAddresses()
+                    communityAccessStore.joinCommunityOrEditSharedAddresses()
                 }
 
                 onClosed: {
-                    root.rootStore.cleanJoinEditCommunityData()
+                    communityAccessStore.cleanJoinEditCommunityData()
                 }
 
                 Connections {

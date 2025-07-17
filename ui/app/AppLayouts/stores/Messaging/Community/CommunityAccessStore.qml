@@ -4,9 +4,11 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import shared.stores 1.0
 
-// WIP: Not used yet. Just preparing it for further refactoring
 QtObject {
     id: root
+
+    // All logic from this store will be related to this particular communityId
+    required property var communityId
 
     // Indicates whether the current community module is initialized and available.
     required property bool isModuleReady
@@ -34,6 +36,8 @@ QtObject {
     // Indicates whether a permission check is in progress for the currently active chat.
     // Used to validate whether the user can read or post in a specific conversation.
     required property bool chatPermissionsCheckOngoing
+
+    readonly property bool isMyCommunityRequestPending: d.communitiesModuleInst.isMyCommunityRequestPending(root.communityId)
 
     // Private property used to define context properties asignements and other private stuff.
     readonly property QtObject _d: StatusQUtils.QObject {
@@ -68,17 +72,19 @@ QtObject {
         d.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
     }
 
-    // TO REVIEW: not sure if it's required for access
+    // TO REVIEW: Should be on Community PermissionsStore instead?
+    function updatePermissionsModel(communityId, sharedAddresses) {
+        d.communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
+    }
+
     function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
         d.communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
     }
 
-    // TO REVIEW: not sure if it's required for access
     function signProfileKeypairAndAllNonKeycardKeypairs() {
         d.communitiesModuleInst.signProfileKeypairAndAllNonKeycardKeypairs()
     }
 
-    // TO REVIEW: not sure if it's required for access
     function signSharedAddressesForKeypair(keyUid) {
         d.communitiesModuleInst.signSharedAddressesForKeypair(keyUid)
     }
@@ -91,24 +97,18 @@ QtObject {
         d.communitiesModuleInst.cleanJoinEditCommunityData()
     }
 
+    // Just business-logic api exposed but still not used in the UI
     function userCanJoin(id) {
         return d.communitiesModuleInst.userCanJoin(id)
     }
 
+    // Just business-logic api exposed but still not used in the UI
     function isUserMemberOfCommunity(id) {
         return d.communitiesModuleInst.isUserMemberOfCommunity(id)
     }
 
-    function isMyCommunityRequestPending(id) {
-        return d.communitiesModuleInst.isMyCommunityRequestPending(id)
-    }
-
     function cancelPendingRequest(id: string) {
         d.communitiesModuleInst.cancelRequestToJoinCommunity(id)
-    }
-
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        d.communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 
     readonly property Connections mainModuleInstConnections: Connections {
