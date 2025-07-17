@@ -99,9 +99,14 @@ class HomeScreen(QObject):
         return CommunitiesPortal().wait_until_appears()
 
     @allure.step('Open online identifier from home screen')
-    def open_online_identifier(self) -> OnlineIdentifier:
-        self.profile_button.click()
-        return OnlineIdentifier().wait_until_appears()
+    def open_online_identifier_from_home_screen(self, attempts: int = 3) -> OnlineIdentifier:
+        for _ in range(attempts):
+            try:
+                self.profile_button.click()
+                return OnlineIdentifier().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Online identifier popup was not opened after {attempts} retries')
 
     # =============================================================================
     # DOCK FUNCTIONS
