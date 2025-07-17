@@ -171,6 +171,9 @@ Loader {
     signal changeContactNicknameRequest(string pubKey, string nickname, string displayName, bool isEdit)
     signal removeTrustStatusRequest(string pubKey)
 
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
+
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
             return false
@@ -1023,6 +1026,8 @@ Loader {
                     InvitationBubbleView {
                         store: root.rootStore
                         communityId: root.communityId
+
+                        onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
                     }
                 }
 

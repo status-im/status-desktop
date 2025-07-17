@@ -445,10 +445,6 @@ QtObject {
         chatCommunitySectionModule.reorderCommunityChat(categoryId, chatId, to)
     }
 
-    function spectateCommunity(id, ensName) {
-        return communitiesModuleInst.spectateCommunity(id, ensName)
-    }
-
     function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
         communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
     }

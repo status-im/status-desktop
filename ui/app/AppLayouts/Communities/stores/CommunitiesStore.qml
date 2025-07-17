@@ -97,10 +97,6 @@ QtObject {
 
     property var communitiesList: communitiesModuleInst.model
 
-    function spectateCommunity(publicKey) {
-        root.communitiesModuleInst.spectateCommunity(publicKey, "");
-    }
-
     function getCommunityDetails(communityPubKey) {
         try {
             const communityJson = root.communitiesList.getSectionByIdJson(communityPubKey)

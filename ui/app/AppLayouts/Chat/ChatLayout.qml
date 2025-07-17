@@ -325,6 +325,9 @@ StackLayout {
             onEditPermissionRequested: root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
             onSetHideIfPermissionsNotMetRequested: root.communityPermissionsStore.setHideIfPermissionsNotMet(chatId, checked)
             onPrepareTokenModelForCommunityChat: root.communityAccessStore.prepareTokenModelForCommunityChat(communityId, chatId)
+
+            // Community access related requests:
+            onSpectateCommunityRequested: root.communityAccessStore.spectateCommunity(communityId)
         }
     }
 

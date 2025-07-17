@@ -746,11 +746,17 @@ QtObject {
         Component {
             id: importCommunitiesPopupComponent
             ImportCommunityPopup {
+                id: importPopup
+
+                property CommunityStores.CommunityRootStore communityRootStore: root.messagingRootStore.createCommunityRootStore(this, importPopup.communityId)
+                readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
+                                                                                                 communityRootStore.communityAccessStore : null
+
                 store: root.communitiesStore
                 utilsStore: root.utilsStore
                 onJoinCommunityRequested: function(communityId, communityDetails) {
                     close()
-                    communitiesStore.spectateCommunity(communityId)
+                    communityAccessStore.spectateCommunity(communityId)
                     openCommunityIntroPopup(communityId,
                                             communityDetails.name,
                                             communityDetails.introMessage,
