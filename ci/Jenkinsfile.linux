@@ -60,6 +60,7 @@ pipeline {
     disableConcurrentBuilds(
       abortPrevious: isPRBuild
     )
+    disableRestartFromStage()
   }
 
   environment {
