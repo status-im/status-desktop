@@ -60,6 +60,8 @@ pipeline {
   }
 
   environment {
+    PLATFORM = 'tests/e2e'
+
     SQUISH_DIR = '/opt/squish-runner-9.0.1-qt-6.9'
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
@@ -199,9 +201,15 @@ pipeline {
         properties: [],
         jdk: '',
       ])
+      /* Link for Jenkins Builds GitHub comment. */
+      env.PKG_URL = "${env.BUILD_URL}allure/"
       updateGitHubStatus()
     } } }
+    success { script {
+      github.notifyPR(true)
+    } }
     failure { script {
+      github.notifyPR(false)
       discord.send(
         header: '**Desktop E2E test failure!**',
         cred: 'discord-status-desktop-e2e-webhook',
