@@ -60,6 +60,7 @@ type
     shardIndex: int
     isPendingOwnershipRequest: bool
     activeMembersCount: int
+    membersLoaded: bool
 
 proc initSectionItem*(
     id: string,
@@ -139,6 +140,7 @@ proc initSectionItem*(
   result.shardIndex = shardIndex
   result.isPendingOwnershipRequest = isPendingOwnershipRequest
   result.activeMembersCount = activeMembersCount
+  result.membersLoaded = false
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -342,6 +344,9 @@ proc members*(self: SectionItem): member_model.Model {.inline.} =
 proc joinedMembersCount*(self: SectionItem): int {.inline.} =
   self.joinedMembersCount
 
+proc `joinedMembersCount=`*(self: var SectionItem, value: int) {.inline.} =
+  self.joinedMembersCount = value
+
 proc hasMember*(self: SectionItem, pubkey: string): bool =
   self.membersModel.isContactWithIdAdded(pubkey)
 
@@ -440,3 +445,9 @@ proc activeMembersCount*(self: SectionItem): int {.inline.} =
 
 proc `activeMembersCount=`*(self: var SectionItem, value: int) {.inline.} =
   self.activeMembersCount = value
+
+proc membersLoaded*(self: SectionItem): bool {.inline.} =
+  self.membersLoaded
+
+proc `membersLoaded=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.membersLoaded = value

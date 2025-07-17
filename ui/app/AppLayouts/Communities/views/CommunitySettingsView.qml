@@ -25,6 +25,7 @@ import AppLayouts.Communities.controls
 import AppLayouts.Communities.panels
 import AppLayouts.Communities.popups
 import AppLayouts.Communities.helpers
+import AppLayouts.Communities.views
 
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Profile.stores as ProfileStores
@@ -42,10 +43,6 @@ StatusSectionLayout {
     required property TokensStore tokensStore
     required property ProfileStores.AdvancedStore advancedStore
     required property var community
-    required property var joinedMembers
-    required property var bannedMembers
-    required property var pendingMembers
-    required property var declinedMembers
     required property TransactionStore transactionStore
     property bool communitySettingsDisabled
     required property var activeNetworks
@@ -64,6 +61,18 @@ StatusSectionLayout {
     signal finaliseOwnershipClicked
 
     signal enableNetwork(int chainId)
+    signal loadMembersRequested()
+
+    MembersModelAdaptor {
+        id: membersModelAdaptor
+        allMembers: community.allMembers
+
+        Component.onCompleted: {
+            if (!community.membersLoaded) {
+                root.loadMembersRequested()
+            }
+        }
+    }
 
     readonly property string filteredSelectedTags: {
         let tagsArray = []
@@ -119,7 +128,7 @@ StatusSectionLayout {
                 id: communityHeader
 
                 title: community.name
-                subTitle: qsTr("%n member(s)", "", root.joinedMembers.ModelCount.count || 0)
+                subTitle: qsTr("%n member(s)", "", root.community.joinedMembersCount || 0)
                 asset.name: community.image
                 asset.color: community.color
                 asset.isImage: true
@@ -304,10 +313,10 @@ StatusSectionLayout {
             sourceComponent: MembersSettingsPanel {
                 rootStore: root.rootStore
 
-                membersModel: root.joinedMembers
-                bannedMembersModel: root.bannedMembers
-                pendingMembersModel: root.pendingMembers
-                declinedMembersModel: root.declinedMembers
+                membersModel: membersModelAdaptor.joinedMembers
+                bannedMembersModel: membersModelAdaptor.bannedMembers
+                pendingMembersModel: membersModelAdaptor.pendingMembers
+                declinedMembersModel: membersModelAdaptor.declinedMembers
 
                 editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
                 memberRole: root.community.memberRole
@@ -407,7 +416,7 @@ StatusSectionLayout {
 
                 // Models
                 tokensModel: root.community.communityTokens
-                membersModel: root.joinedMembers
+                membersModel: membersModelAdaptor.joinedMembers
                 flatNetworks: root.activeNetworks
                 accounts: root.walletAccountsModel
                 referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
@@ -594,7 +603,7 @@ StatusSectionLayout {
 
 
 
-                membersModel: root.joinedMembers
+                membersModel: membersModelAdaptor.joinedMembers
                 enabledChainIds: root.enabledChainIds
                 onEnableNetwork: root.enableNetwork(chainId)
 

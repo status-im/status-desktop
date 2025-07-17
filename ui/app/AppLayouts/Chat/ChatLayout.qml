@@ -43,11 +43,6 @@ StackLayout {
     property var mutualContactsModel
     property var sectionItemModel
 
-    MembersModelAdaptor {
-        id: membersModelAdaptor
-        allMembers: !!sectionItemModel ? sectionItemModel.allMembers : null
-    }
-
     readonly property bool isOwner: sectionItemModel.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: sectionItemModel.memberRole === Constants.memberRole.admin
     readonly property bool isTokenMasterOwner: sectionItemModel.memberRole === Constants.memberRole.tokenMaster
@@ -327,11 +322,9 @@ StackLayout {
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: root.sectionItemModel
-            joinedMembers: membersModelAdaptor.joinedMembers
-            bannedMembers: membersModelAdaptor.bannedMembers
-            pendingMembers: membersModelAdaptor.pendingMembers
-            declinedMembers: membersModelAdaptor.declinedMembers
             communitySettingsDisabled: root.communitySettingsDisabled
+
+            onLoadMembersRequested: rootStore.loadMembersForSectionId(root.sectionItemModel.id)
 
             onCommunitySettingsDisabledChanged: if (communitySettingsDisabled) goTo(Constants.CommunitySettingsSections.Overview)
 
