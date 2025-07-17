@@ -28,7 +28,6 @@ QtObject {
     // without affecting the real community state
     required property var spectatedPermissionsModel
 
-    // TODO: Review if the 2 next properties should be inside `PermissionsStore` instead
     // Indicates whether a permission check is currently ongoing at the community level.
     // Used to determine access to community-wide features and channels.
     required property bool communityPermissionsCheckOngoing
@@ -62,17 +61,14 @@ QtObject {
         return d.communitiesModuleInst.spectateCommunity(communityId, "")
     }
 
-    // TO REVIEW: Should be on Community PermissionsStore instead?
-    function prepareTokenModelForCommunity(publicKey) { //
+    function prepareTokenModelForCommunity(publicKey) {
         d.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
     }
 
-    // TO REVIEW: Should be on Community PermissionsStore instead?
-    function prepareTokenModelForCommunityChat(publicKey, chatId) { //
+    function prepareTokenModelForCommunityChat(publicKey, chatId) {
         d.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
     }
 
-    // TO REVIEW: Should be on Community PermissionsStore instead?
     function updatePermissionsModel(communityId, sharedAddresses) {
         d.communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
@@ -95,16 +91,6 @@ QtObject {
 
     function cleanJoinEditCommunityData() {
         d.communitiesModuleInst.cleanJoinEditCommunityData()
-    }
-
-    // Just business-logic api exposed but still not used in the UI
-    function userCanJoin(id) {
-        return d.communitiesModuleInst.userCanJoin(id)
-    }
-
-    // Just business-logic api exposed but still not used in the UI
-    function isUserMemberOfCommunity(id) {
-        return d.communitiesModuleInst.isUserMemberOfCommunity(id)
     }
 
     function cancelPendingRequest(id: string) {

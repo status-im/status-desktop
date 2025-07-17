@@ -384,9 +384,6 @@ method requestCommunityInfo*(self: Module, communityId: string, shard: Shard, im
 method isUserMemberOfCommunity*(self: Module, communityId: string): bool =
   self.controller.isUserMemberOfCommunity(communityId)
 
-method userCanJoin*(self: Module, communityId: string): bool =
-  self.controller.userCanJoin(communityId)
-
 method isMyCommunityRequestPending*(self: Module, communityId: string): bool =
   self.controller.isMyCommunityRequestPending(communityId)
 

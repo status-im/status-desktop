@@ -65,9 +65,6 @@ method requestImportDiscordChannel*(self: AccessInterface, name: string, discord
 method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method userCanJoin*(self: AccessInterface, communityId: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method isMyCommunityRequestPending*(self: AccessInterface, communityId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
