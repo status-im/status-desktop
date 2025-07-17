@@ -57,6 +57,7 @@ pipeline {
       numToKeepStr: '50',
       artifactNumToKeepStr: '50',
     ))
+    disableRestartFromStage()
   }
 
   environment {
