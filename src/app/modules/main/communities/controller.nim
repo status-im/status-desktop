@@ -330,9 +330,6 @@ proc setCommunityMuted*(self: Controller, communityId: string, mutedType: int) =
 proc isUserMemberOfCommunity*(self: Controller, communityId: string): bool =
   return self.communityService.isUserMemberOfCommunity(communityId)
 
-proc userCanJoin*(self: Controller, communityId: string): bool =
-  return self.communityService.userCanJoin(communityId)
-
 proc isMyCommunityRequestPending*(self: Controller, communityId: string): bool =
   return self.communityService.isMyCommunityRequestPending(communityId)
 

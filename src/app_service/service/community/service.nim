@@ -995,11 +995,6 @@ QtObject:
       return false
     return self.communities[communityId].spectated
 
-  proc userCanJoin*(self: Service, communityId: string): bool =
-    if(not self.communities.contains(communityId)):
-      return false
-    return self.communities[communityId].canJoin
-
   proc processRequestsToJoinCommunity(self: Service, responseResult: JsonNode): bool =
     if responseResult{"requestsToJoinCommunity"} == nil or responseResult{"requestsToJoinCommunity"}.kind == JNull:
       return false
