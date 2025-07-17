@@ -128,20 +128,24 @@ class WalletLeftPanel(QObject):
         return AccountPopup().wait_until_appears().verify_edit_account_popup_present()
 
     @allure.step('Open account popup')
-    def open_add_account_popup(self, attempt: int = 2):
-        self.add_account_button.click()
-        try:
-            return AccountPopup().wait_until_appears()
-        except AssertionError as err:
-            if attempt:
-                self.open_add_account_popup(attempt - 1)
-            else:
-                raise err
+    def open_add_account_popup(self, attempts: int = 3) -> 'AccountPopup':
+        for _ in range(attempts):
+            try:
+                self.add_account_button.click()
+                return AccountPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Account popup is not opened with {attempts} retries')
 
     @allure.step('Select add watched address from context menu')
-    def select_add_watched_address_from_context_menu(self) -> AccountPopup:
-        self._open_context_menu().add_watched_address.click()
-        return AccountPopup().wait_until_appears()
+    def select_add_watched_address_from_context_menu(self, attempts: int = 3) -> 'AccountPopup':
+        for _ in range(attempts):
+            try:
+                self._open_context_menu().add_watched_address.click()
+                return AccountPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Account popup is not opened with {attempts} retries')
 
     @allure.step('Delete account from the list from context menu')
     def delete_account_from_context_menu(self, account_name: str, attempts: int = 2) -> RemoveAccountWithConfirmation:
