@@ -20,7 +20,14 @@ status-desktop-rcc: clean-status-desktop-rcc $(STATUS_DESKTOP_RCC)
 
 $(STATUS_GO_LIB): $(STATUS_GO_FILES) $(STATUS_GO_SCRIPT)
 	@echo "Building Status Go"
+ifeq ($(OS),ios)
+	@STATUS_GO=$(STATUS_GO) \
+		CC="$(shell xcrun --sdk ${SDK} --find clang)" \
+		CGO_CFLAGS="-arch ${ARCH} -isysroot $(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path) -miphoneos-version-min=${IOS_TARGET} -fembed-bitcode" \
+		$(STATUS_GO_SCRIPT) $(HANDLE_OUTPUT)
+else
 	@STATUS_GO=$(STATUS_GO) $(STATUS_GO_SCRIPT) $(HANDLE_OUTPUT)
+endif
 	@echo "Status Go built $(STATUS_GO_LIB)"
 
 $(STATUS_Q_LIB): $(STATUS_Q_FILES) $(STATUS_Q_SCRIPT) $(STATUS_Q_UI_FILES)
