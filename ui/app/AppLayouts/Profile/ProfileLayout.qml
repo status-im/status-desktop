@@ -50,6 +50,7 @@ StatusSectionLayout {
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
+    required property MessagingStores.MessagingRootStore messagingRootStore
 
     required property ProfileStores.ProfileStore profileStore
     required property ProfileStores.DevicesStore devicesStore
@@ -471,6 +472,13 @@ StatusSectionLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             sourceComponent: CommunitiesView {
+
+                function getSpecificCommunityAccessStore(communityId: string) {
+                    const communityRootStore = root.messagingRootStore.createCommunityRootStore(this, communityId)
+                    const communityAccessStore = communityRootStore ? communityRootStore.communityAccessStore : null
+                    return communityAccessStore
+                }
+
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -480,10 +488,23 @@ StatusSectionLayout {
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
                 communitiesList: root.profileStore.communitiesList
+                fnIsMyCommunityRequestPending: (communityId) => {
+                                                   const communityAccessStore = getSpecificCommunityAccessStore(communityId)
+                                                   if(communityAccessStore) {
+                                                       return communityAccessStore.isMyCommunityRequestPending
+                                                   }
+                                                   return false
+                                               }
 
                 onLeaveCommunityRequest: root.leaveCommunityRequest(communityId)
                 onSetCommunityMutedRequest: root.setCommunityMutedRequest(communityId, mutedType)
                 onInviteFriends: root.inviteFriends(communityData)
+                onCancelPendingRequestRequested: (communityId) => {
+                                                     const communityAccessStore = getSpecificCommunityAccessStore(communityId)
+                                                     if(communityAccessStore) {
+                                                         communityAccessStore.cancelPendignRequest(communityId)
+                                                     }
+                                                 }
             }
         }
 

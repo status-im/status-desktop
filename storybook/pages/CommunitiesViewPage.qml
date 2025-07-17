@@ -51,21 +51,20 @@ SplitView {
 
         communitiesList: ctrlEmptyView.checked ? emptyModel : communitiesModel
         rootStore: AppLayoutsStores.RootStore {
-            function isMyCommunityRequestPending(communityId) {
-                return communityId === "0x0006"
-            }
-            function cancelPendingRequest(communityId) {
-                logs.logEvent("rootStore::cancelPendingRequest", ["communityId"], arguments)
-            }
             function setActiveCommunity(communityId) {
                 logs.logEvent("rootStore::setActiveCommunity", ["communityId"], arguments)
             }
         }
+        fnIsMyCommunityRequestPending: function isMyCommunityRequestPending(communityId) {
+            return communityId === "0x0006"
+        }
+
         currencyStore: currencyStore
         walletAssetsStore: walletAssetsStore
 
         onLeaveCommunityRequest: logs.logEvent("onLeaveCommunityRequest", ["communityId"], arguments)
         onSetCommunityMutedRequest: logs.logEvent("onSetCommunityMutedRequest", ["communityId", "mutedType"], arguments)
+        onCancelPendingRequestRequested: logs.logEvent("onCancelPendingRequestRequested", ["communityId"], arguments)
     }
 
     LogsAndControlsPanel {
