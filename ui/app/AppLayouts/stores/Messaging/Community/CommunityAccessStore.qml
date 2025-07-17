@@ -54,6 +54,10 @@ QtObject {
 
     signal declineRequestToJoinCommunityRequested(string requestId, string communityId)
 
+    function spectateCommunity(communityId) {
+        return d.communitiesModuleInst.spectateCommunity(communityId, "")
+    }
+
     // TO REVIEW: Should be on Community PermissionsStore instead?
     function prepareTokenModelForCommunity(publicKey) { //
         d.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
@@ -62,10 +66,6 @@ QtObject {
     // TO REVIEW: Should be on Community PermissionsStore instead?
     function prepareTokenModelForCommunityChat(publicKey, chatId) { //
         d.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
-    }
-
-    function spectateCommunity(id, ensName) {
-        return d.communitiesModuleInst.spectateCommunity(id, ensName)
     }
 
     // TO REVIEW: not sure if it's required for access

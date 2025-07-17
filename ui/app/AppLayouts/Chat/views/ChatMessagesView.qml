@@ -77,6 +77,9 @@ Item {
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
 
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
+
     QtObject {
         id: d
 
@@ -430,6 +433,8 @@ Item {
             onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
             onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
 
+            // Community access related requests:
+            onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
         }
         header: {
             if (!root.isContactBlocked && root.isOneToOne && root.rootStore.oneToOneChatContact) {
