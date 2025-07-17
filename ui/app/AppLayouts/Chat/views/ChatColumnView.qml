@@ -82,6 +82,9 @@ Item {
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
 
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
+
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
         if (root.createChatPropertiesStore.createChatStickerHashId !== ""
@@ -310,6 +313,10 @@ Item {
                         onAcceptContactRequest: (chatId, contactRequestId) => {
                             root.acceptContactRequest(chatId, contactRequestId)
                         }
+
+                        // Community access related requests:
+                        onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
+
                         Component.onCompleted: {
                             chatContentModule = d.getChatContentModule(model.itemId)
                             chatSectionModule = root.parentModule
