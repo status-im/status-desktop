@@ -23,7 +23,8 @@ class QObject:
         try:
             return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         except LookupError as e:
-            raise Exception(f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC} ms") from e
+            raise Exception(
+                f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC} ms") from e
 
     def set_text_property(self, text):
         self.object.forceActiveFocus()
@@ -96,7 +97,6 @@ class QObject:
         except (LookupError, RuntimeError, AttributeError):
             return False
 
-
     @property
     @allure.step('Get image {0}')
     def image(self):
@@ -125,13 +125,13 @@ class QObject:
 
         # if timeout is not None:
         #     pass
-            # TODO: enable after fixing https://github.com/status-im/status-desktop/issues/15345
-            # if not isFrozen(timeout):
-            #    pass
+        # TODO: enable after fixing https://github.com/status-im/status-desktop/issues/15345
+        # if not isFrozen(timeout):
+        #    pass
 
-            # else:
-            #    LOG.info("Application context did not respond after click")
-            #    raise Exception(f'Application UI is not responding within {timeout} second(s)')
+        # else:
+        #    LOG.info("Application context did not respond after click")
+        #    raise Exception(f'Application UI is not responding within {timeout} second(s)')
 
     @allure.step('Native click {0}')
     def native_mouse_click(
