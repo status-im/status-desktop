@@ -1,0 +1,17 @@
+{
+  "name": "status-e2e-appium",
+  "version": "1.0.0",
+  "description": "E2E testing framework for Status Desktop using Appium",
+  "private": true,
+  "scripts": {
+    "install-ci": "npm ci",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 

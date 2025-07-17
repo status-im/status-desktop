@@ -1,163 +1,129 @@
-# Status Desktop E2E Appium Tests
+# E2E Testing Framework
 
-Simple E2E test framework for Status tablet app using Appium.
+Automated end-to-end testing for Status Desktop using Appium and LambdaTest.
 
-> **🚀 New here?** See [docs/QUICK_START.md](docs/QUICK_START.md) for 5-minute setup guide.
+## Quick Start
 
-## Quick Start (Local Testing)
-
-### Prerequisites
-- Appium installed: `npm install -g appium`
-- Android Studio with emulator
-- Status tablet APK
-
-### 1. Start Services
-
-```bash
-# Terminal 1: Start Appium
-appium
-
-# Terminal 2: Start Android emulator (ARM64 for M1 Mac)
-emulator -avd your-tablet-avd
-```
-
-### 2. Set Environment
-
-```bash
-export LOCAL_APP_PATH="/path/to/your/Status-tablet-arm64.apk"
-export CURRENT_TEST_ENVIRONMENT="local"
-```
-
-### 3. Run Tests
-
+### 1. Setup
 ```bash
 cd test/e2e_appium
-
-# Run onboarding flow
-pytest tests/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_flow --env=local -v
-
-# Run all onboarding tests
-pytest tests/test_onboarding_flow.py --env=local -v
-
-# Run smoke tests
-pytest -m smoke --env=local -v
+pip install -r requirements.txt
 ```
 
-## Working Example (M1 Mac)
+### 2. Configure LambdaTest (GitHub Secrets)
+Repository administrators need to set:
+- `LT_USERNAME` - Your LambdaTest username
+- `LT_ACCESS_KEY` - Your LambdaTest access key
 
-This setup was tested and works:
+### 3. Run Tests via GitHub Actions
+1. Build APK using `android-build.yml` workflow (architecture: `x86_64`)
+2. Run tests using `e2e-appium-android.yml` workflow
+3. Use artifact name: `Status-tablet-x86_64`
+
+## Test Selection
+
+**By markers:**
+```bash
+pytest -m smoke          # Core functionality
+pytest -m onboarding     # User registration flow
+pytest -m critical       # Essential features
+```
+
+**Specific tests:**
+```bash
+pytest tests/test_onboarding_flow.py::test_complete_onboarding_flow
+```
+
+## Local Testing
 
 ```bash
-# 1. Environment variables
-export LOCAL_APP_PATH="/Users/username/Status-tablet-arm64.apk"
+# Setup local environment
+python scripts/local_setup.py
+
+# Run tests with local APK
+export LOCAL_APP_PATH="/path/to/Status-tablet.apk"
+pytest -m onboarding --env=local -v
+```
+
+## GitHub Actions Workflows
+
+### Build APK Workflow
+- **File**: `android-build.yml`
+- **Architecture**: `x86_64` (required for LambdaTest)
+- **Output**: `Status-tablet-x86_64` artifact
+
+### E2E Testing Workflow
+- **File**: `e2e-appium-android.yml`
+- **APK source**: GitHub artifact (default)
+- **Test target**: `onboarding` (default)
+- **Device**: Galaxy Tab S8 (default)
+
+## Workflow Input Options
+
+### APK Sources
+- **GitHub artifacts**: `Status-tablet-x86_64` (recommended)
+- **Direct URLs**: `https://example.com/app.apk`
+- **LambdaTest IDs**: `lt://APP123456789`
+
+### Device Options
+- **default**: Galaxy Tab S8 (Android 14)
+- **pixel_tablet**: Google Pixel Tablet
+- **galaxy_tab_a**: Samsung Galaxy Tab A
+
+### Test Targets
+- **onboarding**: Complete user onboarding flow
+- **smoke**: Quick critical functionality tests
+- **critical**: Essential features that must pass
+
+## Environment Configuration
+
+### For LambdaTest (Cloud)
+```bash
+# Set in GitHub repository secrets
+LT_USERNAME=your_username
+LT_ACCESS_KEY=your_access_key
+```
+
+### For Local Testing
+```bash
+export LOCAL_APP_PATH="/path/to/Status-tablet.apk"
 export CURRENT_TEST_ENVIRONMENT="local"
-
-# 2. Device: ARM64 emulator (QEMU-based)
-# - Device: sdk_gphone64_arm64
-# - Android: 15 (API 35)
-# - Emulator: emulator-5554
-
-# 3. Run test
-pytest tests/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_flow --env=local -v
 ```
-
-## Cloud Testing (LambdaTest)
-
-### Basic Setup
-```bash
-export LT_USERNAME="your_username" 
-export LT_ACCESS_KEY="your_access_key"
-export STATUS_APP_URL="lt://your_app_id"
-export CURRENT_TEST_ENVIRONMENT="lambdatest"
-
-# Run tests
-pytest tests/test_onboarding_flow.py --env=lambdatest -v
-```
-
-### Advanced LambdaTest Configuration
-
-**Custom Build and Test Names:**
-```bash
-# Optional: Customize LambdaTest build and test names
-export BUILD_NUMBER="v1.2.3"
-export TEST_NAME="Galaxy Tab S8 Onboarding Flow"
-export GIT_BRANCH="feature/new-onboarding"
-
-# Run tests with custom naming
-pytest tests/test_onboarding_flow.py --env=lambdatest -v
-```
-
-**Result in LambdaTest Dashboard:**
-- 🏗️ **Build:** `Status E2E Tests - v1.2.3`
-- 📱 **Test:** `Galaxy Tab S8 Onboarding Flow (feature/new-onboarding)`
-- 📁 **Project:** `Status E2E_Appium`
-
-**Professional Defaults (No Environment Variables Required):**
-```bash
-# Just the essentials - framework provides intelligent defaults
-export LT_USERNAME="your_username"
-export LT_ACCESS_KEY="your_access_key" 
-export STATUS_APP_URL="lt://your_app_id"
-
-# Results in:
-# Build: "Status E2E Tests - 20250716_1612" (auto-timestamp)
-# Test: "Automated Test"
-# Device: Galaxy Tab S8 (Android 14, Appium 2.16.2)
-```
-
-## Test Markers
-
-```bash
-pytest -m onboarding --env=local -v   # Onboarding flow tests
-pytest -m smoke --env=local -v        # Quick critical tests
-pytest -m tablet --env=local -v       # Tablet-specific tests
-```
-
-## Configuration Details
-
-### Environment-Specific Settings
-
-**Local Development:**
-- Device: `sdk_gphone64_arm64` (Android 15)
-- Timeouts: Extended for debugging
-- Video recording: Disabled for performance
-
-**LambdaTest Cloud:**
-- Device: `Galaxy Tab S8` (Android 14)
-- Appium: `2.16.2` (latest stable)
-- Full video/screenshot capture enabled
-
-### Template Variables Supported
-
-**Build Names:**
-- `${BUILD_NUMBER}` - CI build number
-- `${TIMESTAMP}` - Auto-generated timestamp fallback
-
-**Test Names:**
-- `${TEST_NAME}` - Custom test description
-- `${GIT_BRANCH}` - Auto-appended branch info
 
 ## Troubleshooting
 
-**Device not found?**
-```bash
-# Check devices
-adb devices
+**APK Build Issues:**
+- Verify x86_64 architecture selected in android-build.yml
+- Check build workflow completed successfully
 
-# Check actual device name
-adb shell getprop ro.product.model
+**Test Execution Issues:**
+- Verify LambdaTest credentials in repository secrets
+- Check APK artifact name matches exactly: `Status-tablet-x86_64`
+- Review workflow logs for detailed error messages
+
+**Local Testing Issues:**
+- Ensure Appium server running: `appium`
+- Verify Android emulator running with correct device name
+- Check LOCAL_APP_PATH points to valid APK file
+
+## Framework Structure
+
+```
+test/e2e_appium/
+├── tests/              # Test files
+├── pages/              # Page object models
+├── config/             # Configuration files
+├── scripts/            # Automation and setup scripts
+├── docs/               # Documentation
+└── .github/actions/    # Reusable workflow actions
 ```
 
-**Configuration issues?**
-```bash
-# Validate environment
-python cli/env_manager.py validate local
-```
+## Documentation
 
-**LambdaTest naming issues?**
-```bash
-# Verify environment variables
-echo "Build: $BUILD_NUMBER"
-echo "Test: $TEST_NAME"
-echo "Branch: $GIT_BRANCH"
-``` 
+- **Workflow Quick Reference**: `docs/WORKFLOW_QUICKREF.md`
+- **GitHub Actions Guide**: `docs/github-actions.md`
+- **Local Setup Guide**: `docs/LOCAL_SETUP.md` 
+- **Quick Start Guide**: `docs/QUICK_START.md`
+- **Environment Management**: `docs/ENVIRONMENT_MANAGEMENT.md`
+- **Logging Guide**: `docs/LOGGING.md`
+- **Refactoring Details**: `docs/REFACTORING.md` 

@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
+import os
 
 from .logging_config import get_logger
 
@@ -64,7 +65,7 @@ class PerformanceAnalysis:
 
 
 class PerformanceAnalytics:
-    """Enterprise performance analytics system."""
+    """Performance analytics system."""
     
     def __init__(self, db_path: str = "logs/performance_analytics.db"):
         self.db_path = Path(db_path)
@@ -241,7 +242,7 @@ class PerformanceAnalytics:
             return "stable"
     
     def _log_performance_insights(self, analysis: PerformanceAnalysis):
-        """Log performance insights with enterprise formatting."""
+        """Log performance insights with structured formatting."""
         
         # Determine performance status
         if analysis.total_runs == 1:
