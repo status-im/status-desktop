@@ -55,10 +55,10 @@ jobs:
           $HOME/.nimble/bin/choosenim 2.0.12
           echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
 
-      - name: Setup Go 1.22
+      - name: Setup Go 1.23
         uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version: 1.23
           cache-dependency-path: go.sum
 
       - name: Install Go tools
@@ -66,7 +66,7 @@ jobs:
           go install github.com/go-bindata/go-bindata/v3/go-bindata@latest
           go install go.uber.org/mock/mockgen@v0.4.0
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1
-  
+
       - name: Mark repository as safe
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
