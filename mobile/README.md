@@ -30,7 +30,7 @@ This section is for users who want to get up and running quickly with minimal te
 brew install docker --cask
 # Start docker
 open -a Docker
-brew install act android-platform-tools android-commandlinetools
+brew install act android-platform-tools android-commandlinetools xcbeautify
 ```
 
 ```bash
