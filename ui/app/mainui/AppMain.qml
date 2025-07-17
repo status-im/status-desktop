@@ -2163,6 +2163,7 @@ Item {
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
                             networksStore: appMain.networksStore
+                            messagingRootStore: appMain.messagingRootStore
 
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             keychain: appMain.keychain

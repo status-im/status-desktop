@@ -67,6 +67,7 @@ QtObject {
     }
 
     readonly property CommunityAccessStore communityAccessStore: CommunityAccessStore {
+        communityId: root.communityId
         isModuleReady: !!d.currentCommunityModule
         joined: d.communityDetails ? d.communityDetails.joined : false
         allChannelsAreHiddenBecauseNotPermitted: d.currentCommunityModule.allChannelsAreHiddenBecauseNotPermitted &&
@@ -76,8 +77,10 @@ QtObject {
         spectatedPermissionsCheckOngoing: d.communitiesModuleInst.requirementsCheckPending
         spectatedPermissionsModel: !!d.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                        d.communitiesModuleInst.spectatedCommunityPermissionModel : null
-        communityPermissionsCheckOngoing: d.currentCommunityModule.permissionsCheckOngoing
-        chatPermissionsCheckOngoing: d.currentChatContentModule.permissionsCheckOngoing
+        communityPermissionsCheckOngoing: !!d.currentCommunityModule ?
+                                              d.currentCommunityModule.permissionsCheckOngoing : false
+        chatPermissionsCheckOngoing: !!d.currentChatContentModule ?
+                                         d.currentChatContentModule.permissionsCheckOngoing : false
 
         onAcceptRequestToJoinCommunityRequested: {
             d.currentCommunityModule.acceptRequestToJoinCommunity(requestId, communityId)
@@ -89,8 +92,8 @@ QtObject {
     readonly property PermissionsStore communityPermissionsStore: PermissionsStore {
         activeSectionId: d.mainModuleInst.activeSection.id
         activeChannelId: d.currentChatContentModule ? d.currentChatContentModule.chatDetails.id : ""
-        permissionsModel: d.currentCommunityModule.permissionsModel
-        allTokenRequirementsMet: d.currentCommunityModule.allTokenRequirementsMet
+        permissionsModel: d.currentCommunityModule ? d.currentCommunityModule.permissionsModel: null
+        allTokenRequirementsMet: d.currentCommunityModule ? d.currentCommunityModule.allTokenRequirementsMet : false
 
         onCreateOrEditCommunityTokenPermission: {
             d.currentCommunityModule.createOrEditCommunityTokenPermission(activeSection, key,
