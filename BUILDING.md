@@ -127,7 +127,7 @@ Install [Homebrew](https://brew.sh/) if not already installed.
 #### Install Required Packages
 
 ```bash
-brew install cmake pkg-config go@1.23 qt@5 jq nvm yarn protobuf
+brew install cmake pkg-config go@1.23 qt@5 jq nvm yarn protobuf fileicon
 ```
 
 
