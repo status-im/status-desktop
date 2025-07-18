@@ -337,12 +337,22 @@ Item {
                     // We delay the binding so that the `inputAreaModule.preservedProperties.text` doesn't get overriden with empty value.
                     Binding on enabled {
                         delayed: true
-                        value: !!d.activeChatContentModule
-                                 && !d.activeChatContentModule.chatDetails.blocked
-                                 && root.rootStore.sectionDetails.joined
-                                 && !root.rootStore.sectionDetails.amIBanned
-                                 && root.rootStore.isUserAllowedToSendMessage
-                                 && !d.sendingInProgress
+                        value: {
+                            var module = d.activeChatContentModule
+                            var section = root.rootStore.sectionDetails
+
+                            // must have a module and not be blocked
+                            if (!module || module.chatDetails.blocked)
+                                return false
+
+                                if (!!section && section.joined && !section.amIBanned) {
+                                    return true
+                                }
+
+                            // other generic checks
+                            return root.rootStore.isUserAllowedToSendMessage
+                                && !d.sendingInProgress
+                        }
                     }
 
                     usersModel: root.usersModel
@@ -360,7 +370,7 @@ Item {
                         if (!channelPostRestrictions.visible) {
                             if (d.activeChatContentModule && d.activeChatContentModule.chatDetails.blocked)
                                 return qsTr("This user has been blocked.")
-                            if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned) {
+                            if (!!root.rootStore.sectionDetails && (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned)) {
                                 return qsTr("You need to join this community to send messages")
                             }
                             if (!root.canPost) {
