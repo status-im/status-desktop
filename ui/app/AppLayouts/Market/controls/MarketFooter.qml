@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -24,29 +25,33 @@ Control {
         property int startIndex: ((paginator.currentPage - 1) * root.pageSize) + 1
         // Calculate the ending index (ensuring it doesn't exceed totalCount)
         property int endIndex: Math.min(paginator.currentPage * root.pageSize, root.totalCount)
+        // Determine if there is not enough width to display both info text and paginator side by side
+        readonly property bool isPortrait: infoText.contentWidth + paginator.implicitContentWidth > root.width
+        // Calculate the center of the screen for paginator alignment
+        readonly property int centerOfScreen: (root.width - paginator.implicitContentWidth)/2
     }
 
     topPadding: 20
     bottomPadding: 20
 
-    contentItem: Item {
-        anchors.fill: parent
+    contentItem: Flow {
 
-        implicitWidth: childrenRect.width
-        implicitHeight: paginator.height
+        anchors.fill: parent
+        flow: d.isPortrait ? Flow.TopToBottom : Flow.LeftToRight
+        spacing: 0
 
         StatusBaseText {
             id: infoText
 
             objectName: "infoText"
 
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-
+            width: d.isPortrait ? parent.width : contentWidth
             color: Theme.palette.baseColor1
             font.pixelSize: Theme.additionalTextSize
             lineHeightMode: Text.FixedHeight
-            lineHeight: 18
+            lineHeight: paginator.height
+            verticalAlignment: Qt.AlignVCenter
+            horizontalAlignment: Qt.AlignHCenter
 
             text: qsTr("Showing %1 to %2 of %3 results").
             arg(LocaleUtils.numberToLocaleString(d.startIndex)).
@@ -59,7 +64,9 @@ Control {
 
             objectName: "paginator"
 
-            anchors.centerIn: parent
+            leftPadding: d.isPortrait ?
+                             d.centerOfScreen :
+                             Math.max(0, d.centerOfScreen - infoText.contentWidth)
 
             pageSize: root.pageSize
             totalCount: root.totalCount
