@@ -11,7 +11,6 @@ QtObject {
     // Advanced Module Properties
     property string fleet: advancedModule? advancedModule.fleet : ""
     property bool wakuV2LightClientEnabled: advancedModule? advancedModule.wakuV2LightClientEnabled : false
-    property bool isTelemetryEnabled: advancedModule? advancedModule.isTelemetryEnabled : false
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
     property bool isNimbusProxyEnabled: advancedModule? advancedModule.isNimbusProxyEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
@@ -68,13 +67,6 @@ QtObject {
             return
 
         root.advancedModule.setWakuV2LightClientEnabled(mode)
-    }
-
-    function toggleTelemetry() {
-        if(!root.advancedModule)
-            return
-
-        root.advancedModule.toggleTelemetry()
     }
 
     function toggleAutoMessage() {

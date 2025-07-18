@@ -48,19 +48,6 @@ QtObject:
   # proc emitWakuV2LightClientEnabledSignal*(self: View) =
   #   self.wakuV2LightClientEnabledChanged()
 
-  proc isTelemetryEnabledChanged*(self: View) {.signal.}
-  proc getIsTelemetryEnabled*(self: View): bool {.slot.} =
-    return self.delegate.isTelemetryEnabled()
-  QtProperty[bool] isTelemetryEnabled:
-    read = getIsTelemetryEnabled
-    notify = isTelemetryEnabledChanged
-
-  proc emitTelemetryEnabledSignal*(self: View) =
-    self.isTelemetryEnabledChanged()
-
-  proc toggleTelemetry*(self: View) {.slot.} =
-    self.delegate.toggleTelemetry()
-
   proc isAutoMessageEnabledChanged*(self: View) {.signal.}
   proc getIsAutoMessageEnabled*(self: View): bool {.slot.} =
     return self.delegate.isAutoMessageEnabled()
