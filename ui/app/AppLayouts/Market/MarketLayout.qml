@@ -42,7 +42,6 @@ StatusSectionLayout {
         id: d
         readonly property int pageSize: 100
         property int startIndex: ((root.currentPage - 1) * d.pageSize) + 1
-        readonly property bool isSmallWindow: root.width < 1200
     }
 
     onCurrentPageChanged: listView.positionViewAtBeginning()
@@ -88,7 +87,6 @@ StatusSectionLayout {
             headerPositioning: ListView.OverlayHeader
             header: MarketTokenHeader {
                 width: listView.width
-                isSmallWindow: d.isSmallWindow
             }
 
             footer: MarketFooter {
@@ -115,7 +113,6 @@ StatusSectionLayout {
 
             delegate: MarketLoadingTokenDelegate {
                 width: listView.width
-                isSmallWindow: d.isSmallWindow
                 isLastItem: index === (listView.count - 1)
             }
         }
@@ -148,7 +145,6 @@ StatusSectionLayout {
                 marketCap: "%1%2"
                 .arg(root.currencySymbol)
                 .arg(root.fnFormatCurrencyAmount(model.marketCap, {noSymbol: true}))
-                isSmallWindow: d.isSmallWindow
                 isLastItem: index === (listView.count - 1)
             }
         }
