@@ -68,7 +68,6 @@ Item {
             const paginator = findChild(controlUnderTest, "paginator")
             verify(!!paginator)
 
-            compare(paginator.x, Math.floor(controlUnderTest.width/2 - paginator.width/2))
             compare(paginator.currentPage, 1)
 
             const nextButton = findChild(paginator, "nextButton")

@@ -268,6 +268,9 @@ StatusWindow {
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
         Global.addCentralizedMetricIfEnabled.connect(metricsStore.addCentralizedMetricIfEnabled)
+
+        // Without this the paddings are not updated correctly when launched in portrait mode
+        updatePaddings()
     }
 
     signal navigateTo(string path)

@@ -10,14 +10,16 @@ import StatusQ.Components
 Control {
     id: root
 
-    /** Input property holding if token should be min window size mode **/
-    property bool isSmallWindow
-
     QtObject {
         id: d
-        // Split into 4 different equal width columns
+
+        // Split into 5 different columns of equal width
         readonly property int columnWidth:
-            (root.width - indexText.width - tokenNameText.width - Theme.padding) / 4
+            (root.width - indexText.width - iconWidth - Theme.xlPadding) / 5
+        // Minimum width of a column
+        readonly property int minColumnWidth: 130
+        // Derived from MarketTokenDelegate
+        readonly property int iconWidth: 32
     }
 
     padding: 0
@@ -48,8 +50,7 @@ Control {
             StatusBaseText {
                 id: indexText
 
-                // width by design
-                Layout.preferredWidth: 52
+                Layout.preferredWidth: idxMetrics.advanceWidth
 
                 text: qsTr("#")
                 color: Theme.palette.baseColor1
@@ -62,9 +63,9 @@ Control {
 
             // Token
             StatusBaseText {
-                id: tokenNameText
-
-                Layout.preferredWidth: root.isSmallWindow ? 234: 384
+                // set to allign correctly with list
+                Layout.preferredWidth: d.columnWidth + d.iconWidth + Theme.padding
+                Layout.minimumWidth: d.minColumnWidth + d.iconWidth + Theme.padding
                 Layout.leftMargin: Theme.padding
 
                 text: qsTr("Token")
@@ -78,6 +79,7 @@ Control {
             // Price
             StatusBaseText {
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: qsTr("Price")
                 color: Theme.palette.baseColor1
@@ -91,6 +93,7 @@ Control {
             // Change 24 Hour
             StatusBaseText {
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: qsTr("24hr")
                 color: Theme.palette.baseColor1
@@ -104,6 +107,7 @@ Control {
             // 24 hour Volume
             StatusBaseText {
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: qsTr("24hr Volume")
                 color: Theme.palette.baseColor1
@@ -117,6 +121,7 @@ Control {
             // Market Cap
             Item {
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
                 Layout.preferredHeight: childrenRect.height
 
                 StatusSortableColumnHeader {
@@ -133,6 +138,7 @@ Control {
                     text: qsTr("Market Cap")
                     enabled: false
                 }
+
             }
         }
         // Bottom Divider
@@ -143,5 +149,11 @@ Control {
 
             color: Theme.palette.baseColor2
         }
+    }
+
+    TextMetrics {
+        id: idxMetrics
+        font: indexText.font
+        text: "999" // Dummy text to calculate width
     }
 }

@@ -2242,7 +2242,9 @@ Item {
                             }
                             currentPage: appMain.marketStore.currentPage
                             onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
-                            onFetchMarketTokens: appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
+                            onFetchMarketTokens: (pageNumber, pageSize) => {
+                                                     appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
+                                                 }
                         }
                         onActiveChanged: {
                             if(!active) {
