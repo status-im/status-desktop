@@ -132,20 +132,21 @@ Item {
 
         Behavior on color {
             ColorAnimation {
-                duration: 150
+                duration: Theme.AnimationDuration.Fast
             }
         }
 
         RowLayout {
             id: layout
 
-            spacing: 12
-            anchors.centerIn: parent
+            spacing: Theme.halfPadding
+            anchors.fill: parent
+            anchors.leftMargin: Theme.halfPadding
+            anchors.rightMargin: Theme.halfPadding
 
             StatusRoundIcon {
                 Layout.preferredHeight: 16
                 Layout.preferredWidth: 16
-                Layout.rightMargin: -8
                 visible: !!root.iconName
                 asset.name: root.iconName
                 asset.bgColor: Theme.palette.indirectColor1
@@ -153,27 +154,56 @@ Item {
             }
 
             StatusBaseText {
+                objectName: "bannerText"
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
                 text: root.text
                 font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 color: Theme.palette.indirectColor1
                 linkColor: color
-                onLinkActivated: root.linkActivated(link)
+                onLinkActivated: (link) => root.linkActivated(link)
                 HoverHandler {
-                    id: handler1
+                    cursorShape: hovered && parent.hoveredLink ? Qt.PointingHandCursor : undefined
                 }
-                StatusMouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
-                    cursorShape: handler1.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
+
+            StatusBaseText {
+                text: qsTr("%1%").arg(progressBar.value)
+                visible: progressBar.visible
+                font.pixelSize: Theme.tertiaryTextFontSize
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.white
+            }
+
+            ProgressBar {
+                id: progressBar
+                from: 0
+                to: 100
+                visible: root.progressValue > -1
+                value: root.progressValue
+                background: Rectangle {
+                    implicitWidth: 64
+                    implicitHeight: 8
+                    radius: 8
+                    color: "transparent"
+                    border.width: 1
+                    border.color: Theme.palette.white
+                }
+                contentItem: Rectangle {
+                    width: progressBar.width*progressBar.position
+                    implicitHeight: 8
+                    radius: 8
+                    color: Theme.palette.white
                 }
             }
 
             Button {
                 id: button
-                visible: text != ""
+                objectName: "actionButton"
+                visible: !!text
                 focusPolicy: Qt.NoFocus
-                padding: 5
                 onClicked: {
                     root.clicked()
                 }
@@ -192,68 +222,28 @@ Item {
                     border.color: Theme.palette.indirectColor3
                     color: Theme.palette.getColor("white", button.hovered ? 0.4 : 0.1)
                 }
-                StatusMouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
+                HoverHandler {
                     cursorShape: Qt.PointingHandCursor
                 }
             }
-        }
 
-        StatusBaseText {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: progressBar.left
-            anchors.rightMargin: Theme.halfPadding
-            text: qsTr("%1%").arg(progressBar.value)
-            visible: progressBar.visible
-            font.pixelSize: Theme.tertiaryTextFontSize
-            verticalAlignment: Text.AlignVCenter
-            color: Theme.palette.white
-        }
+            StatusIcon {
+                id: closeImg
+                objectName: "closeButton"
+                height: 20
+                width: 20
+                icon: "close-circle"
+                color: Theme.palette.indirectColor1
+                opacity: closeButtonMouseArea.containsMouse ? 1 : 0.7
 
-        ProgressBar {
-            id: progressBar
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: closeImg.left
-            anchors.rightMargin: Theme.bigPadding
-            from: 0
-            to: 100
-            visible: root.progressValue > -1
-            value: root.progressValue
-            background: Rectangle {
-                implicitWidth: 64
-                implicitHeight: 8
-                radius: 8
-                color: "transparent"
-                border.width: 1
-                border.color: Theme.palette.white
-            }
-            contentItem: Rectangle {
-                width: progressBar.width*progressBar.position
-                implicitHeight: 8
-                radius: 8
-                color: Theme.palette.white
-            }
-        }
-
-        StatusIcon {
-            id: closeImg
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 18
-            height: 20
-            width: 20
-            icon: "close-circle"
-            color: Theme.palette.indirectColor1
-            opacity: closeButtonMouseArea.containsMouse ? 1 : 0.7
-
-            StatusMouseArea {
-                id: closeButtonMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.closeClicked()
+                StatusMouseArea {
+                    id: closeButtonMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        root.closeClicked()
+                    }
                 }
             }
         }
