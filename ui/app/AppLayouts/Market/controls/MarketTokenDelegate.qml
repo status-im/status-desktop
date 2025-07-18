@@ -32,16 +32,30 @@ StatusItemDelegate {
     property bool loading
     /** Input property representing index of token list **/
     property string indexString
-    /** Input property holding if token should be min window size mode **/
-    property bool isSmallWindow
     /** Input property holding if token is last item in the list **/
     property bool isLastItem
 
     QtObject {
         id: d
-        // Split into 4 different columns of equal width
+
+        // Fixed width of the left side of the row
+        readonly property int fixedWidth:
+               indexText.width + icon.width + nameSymbolBox.width + Theme.xlPadding
+
+        // Split into columns of equal width
         readonly property int columnWidth:
-            (root.width - indexText.width - icon.width - nameSymbolBox.width - 28) / 4
+            (root.width - fixedWidth) / columnsShown
+
+        // Minimum width of a column
+        readonly property int minColumnWidth: 150
+
+        // Maximum number of columns that can be shown in the list
+        // Price, Change 24 Hour, Volume 24 Hour, Market Cap
+        readonly property int maxColumns: 4
+
+        // Maximum number of columns that can be shown based on available width
+        readonly property int columnsShown:
+            Math.min(d.maxColumns, Math.floor((root.width - fixedWidth) / d.minColumnWidth))
     }
 
     implicitHeight: 76
@@ -73,14 +87,15 @@ StatusItemDelegate {
                 id: indexText
 
                 objectName: "indexText"
-                Layout.preferredWidth: 52
+
+                leftPadding: Theme.padding
+                rightPadding: Theme.padding
 
                 text: root.indexString
                 font.pixelSize: Theme.additionalTextSize
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
                 horizontalAlignment: Text.AlignHCenter
-                leftPadding: 0
                 loading: root.loading
             }
 
@@ -113,7 +128,7 @@ StatusItemDelegate {
                     objectName: "tokenNameText"
 
                     // width by design
-                    Layout.preferredWidth: root.isSmallWindow ? 150: 340
+                    Layout.preferredWidth: d.minColumnWidth
 
                     text: root.tokenName
                     font.weight: Font.Medium
@@ -142,7 +157,10 @@ StatusItemDelegate {
             StatusTextWithLoadingState {
                 objectName: "priceText"
 
+                readonly property int priority: 2
+
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.price
                 font.weight: Font.Medium
@@ -151,13 +169,18 @@ StatusItemDelegate {
                 horizontalAlignment: Qt.AlignRight
                 leftPadding: d.columnWidth - maximumLoadingStateWidth
                 loading: root.loading
+
+                visible: d.columnsShown >= priority
             }
 
             // Change 24 Hour
             StatusTextWithLoadingState {
                 objectName: "changePct24HrText"
 
+                readonly property int priority: 3
+
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.changePct24Hour
                 customColor: root.changePct24HourColor
@@ -167,13 +190,18 @@ StatusItemDelegate {
                 horizontalAlignment: Qt.AlignRight
                 leftPadding: d.columnWidth - maximumLoadingStateWidth
                 loading: root.loading
+
+                visible: d.columnsShown >= priority
             }
 
             // 24 hour Volume
             StatusTextWithLoadingState {
                 objectName: "volume24HrText"
 
+                readonly property int priority: 4
+
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.volume24Hour
                 font.weight: Font.Medium
@@ -182,13 +210,18 @@ StatusItemDelegate {
                 horizontalAlignment: Qt.AlignRight
                 leftPadding: d.columnWidth - maximumLoadingStateWidth
                 loading: root.loading
+
+                visible: d.columnsShown >= priority
             }
 
             // Market Cap
             StatusTextWithLoadingState {
                 objectName: "marketCapText"
 
+                readonly property int priority: 1
+
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.marketCap
                 font.weight: Font.Medium
@@ -198,6 +231,8 @@ StatusItemDelegate {
                 leftPadding: d.columnWidth - maximumLoadingStateWidth
                 rightPadding: Theme.padding
                 loading: root.loading
+
+                visible: d.columnsShown >= priority
             }
         }
 

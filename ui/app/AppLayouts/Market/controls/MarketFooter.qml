@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -24,24 +25,27 @@ Control {
         property int startIndex: ((paginator.currentPage - 1) * root.pageSize) + 1
         // Calculate the ending index (ensuring it doesn't exceed totalCount)
         property int endIndex: Math.min(paginator.currentPage * root.pageSize, root.totalCount)
+        // Determine if there is not enough width to display both info text and paginator side by side
+        readonly property bool isPortrait: infoText.width + paginator.width > root.width
     }
 
     topPadding: 20
     bottomPadding: 20
 
-    contentItem: Item {
-        anchors.fill: parent
+    contentItem: GridLayout {
 
-        implicitWidth: childrenRect.width
-        implicitHeight: paginator.height
+        rows: d.isPortrait ? 2 : 0
+        columns: d.isPortrait ? 0 : 2
+        flow: d.isPortrait ? GridLayout.TopToBottom:
+                                 GridLayout.LeftToRight
 
         StatusBaseText {
             id: infoText
 
             objectName: "infoText"
 
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: d.isPortrait ? Qt.AlignHCenter :
+                                                 Qt.AlignLeft | Qt.AlignVCenter
 
             color: Theme.palette.baseColor1
             font.pixelSize: Theme.additionalTextSize
@@ -59,7 +63,8 @@ Control {
 
             objectName: "paginator"
 
-            anchors.centerIn: parent
+            Layout.alignment: d.isPortrait ? Qt.AlignHCenter :
+                                                 Qt.AlignVCenter
 
             pageSize: root.pageSize
             totalCount: root.totalCount
