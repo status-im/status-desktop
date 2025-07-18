@@ -16,7 +16,6 @@ export stickers_dto
 
 # Default values:
 const DEFAULT_CURRENCY* = "USD"
-const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = Fleet.StatusProd
 
 # Signals:
@@ -350,15 +349,6 @@ QtObject:
 
   proc getSendStatusUpdates*(self: Service): bool =
     self.settings.sendStatusUpdates
-
-  proc saveTelemetryServerUrl*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_TELEMETRY_SERVER_URL, value)):
-      self.settings.telemetryServerUrl = value
-      return true
-    return false
-
-  proc getTelemetryServerUrl*(self: Service): string =
-    return self.settings.telemetryServerUrl
 
   proc saveSendStatusUpdates*(self: Service, newStatus: StatusType): bool =
     try:
@@ -1006,7 +996,7 @@ QtObject:
     result = VALUE_NOTIF_SEND_ALERTS # Default value
 
     var newsFeedEnabled = false
-    var newsOSNotificationsEnabled = false 
+    var newsOSNotificationsEnabled = false
 
     if self.initialized:
       newsFeedEnabled = self.settings.newsFeedEnabled
@@ -1033,7 +1023,7 @@ QtObject:
     # Send alerts means the News Feed is enabled + OS notifications are enabled
     # Deliver quietly means the News Feed is enabled + OS notifications are disabled (so only AC notifications)
     # Turn OFF means the News Feed is disabled (so no notifications at all and no polling)
-    if not newsFeedEnabled: 
+    if not newsFeedEnabled:
       return VALUE_NOTIF_TURN_OFF
     if not newsOSNotificationsEnabled:
       return VALUE_NOTIF_DELIVER_QUIETLY
@@ -1070,7 +1060,7 @@ QtObject:
     read = getNotifSettingStatusNews
     write = setNotifSettingStatusNews
     notify = notifSettingStatusNewsChanged
-  
+
   proc newsRSSEnabledChanged*(self: Service) {.signal.}
   proc getNewsRSSEnabled*(self: Service): bool {.slot.} =
     if self.initialized:
