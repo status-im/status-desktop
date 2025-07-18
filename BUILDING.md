@@ -64,13 +64,6 @@ sudo apt update
 sudo apt install libpcsclite-dev libpcre3-dev build-essential mesa-common-dev libglu1-mesa-dev libssl-dev cmake jq libxcb-xinerama0 protobuf-compiler
 ```
 
-Install **libssl 1.1** (if not available in your distribution):
-
-```bash
-wget https://launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/23606713/+files/libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
-sudo dpkg -i libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
-```
-
 Install **Go 1.23**:
 
 Download and install from the [official website](https://go.dev/dl/).
