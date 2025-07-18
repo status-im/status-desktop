@@ -47,6 +47,7 @@ StackView {
     property bool isOwnerTokenDeployed: false
     property bool isTMasterTokenDeployed: false
     property bool anyPrivilegedTokenFailed: false
+    property bool tokensLoading: false
 
     // It will monitorize if Owner and/or TMaster token items are included in the `tokensModel` despite the deployment state
     property bool ownerOrTMasterTokenItemsExist: false
@@ -177,9 +178,15 @@ StackView {
             StatusButton {
                 objectName: "addNewItemButton"
                 text: qsTr("Mint token")
-                interactive: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed
+                interactive: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed && !root.tokensLoading
+                loading: root.tokensLoading
                 onClicked: root.push(newTokenViewComponent, StackView.Immediate)
-                tooltip.text: root.isAdminOnly ? qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName) : ""
+                tooltip.text: {
+                    if (root.tokensLoading) {
+                        return qsTr("Loading tokens...")
+                    }
+                    return root.isAdminOnly ? qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName) : ""
+                }
             }
         ]
 

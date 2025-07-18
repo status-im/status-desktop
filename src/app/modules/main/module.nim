@@ -326,6 +326,7 @@ method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
     result = self.createTokenItemImproved(tokenDto, communityTokenJsonItems)
   )
   self.view.model().setTokenItems(communityId, communityTokensItems)
+  self.view.model().setTokensLoading(communityId, false)
 
 proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto): SectionItem =
   var communityTokensItems: seq[TokenItem]
@@ -2205,6 +2206,7 @@ method loadMembersForSectionId*[T](self: Module[T], sectionId: string) =
   if community.memberRole == MemberRole.Owner or community.memberRole == MemberRole.TokenMaster:
     self.controller.getCommunityTokensDetailsAsync(community.id)
     self.controller.asyncGetRevealedAccountsForAllMembers(community.id)
+    self.view.model.setTokensLoading(sectionId, true)
 
   let memberItems = self.getAllCommunityMemberItems(community)
 

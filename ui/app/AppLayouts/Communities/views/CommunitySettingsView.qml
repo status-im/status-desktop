@@ -402,6 +402,7 @@ StatusSectionLayout {
                 communityName: root.community.name
                 communityLogo: root.community.image
                 communityColor: root.community.color
+                tokensLoading: root.community.tokensLoading
 
                 // User profile props
                 isOwner: root.isOwner
@@ -534,6 +535,7 @@ StatusSectionLayout {
                 // Owner and TMaster properties
                 isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
                 isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
+                tokensLoading: root.community.tokensLoading
 
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
