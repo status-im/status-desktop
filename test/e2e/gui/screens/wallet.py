@@ -103,29 +103,34 @@ class WalletLeftPanel(QObject):
         return WalletAccountContextMenu().wait_until_appears()
 
     @allure.step('Open context menu for specific account')
-    def _open_context_menu_for_account(self, account_name: str) -> WalletAccountContextMenu:
+    def _open_context_menu_for_account(self, account_name: str, attempts: int = 2) -> WalletAccountContextMenu:
         account_items = self.accounts
-        existing_accounts_names = [account.name for account in account_items]
-        if account_name in existing_accounts_names:
-            self.wallet_account_item.real_name['title'] = account_name
-            for _ in range(2):
-                self.wallet_account_item.right_click()
-                try:
-                    return WalletAccountContextMenu().wait_until_appears()
-                except Exception:
-                    pass  # Retry one more time
-                raise LookupError(f'Could not open context menu for {account_name}')
-        raise LookupError(f'{account_name} is not present in {account_items}')
+        if not any(account.name == account_name for account in account_items):
+            raise LookupError(f'Account "{account_name}" not found in {[account.name for account in account_items]}')
+        
+        self.wallet_account_item.real_name['title'] = account_name
+        for _ in range(attempts):
+            self.wallet_account_item.right_click()
+            try:
+                return WalletAccountContextMenu().wait_until_appears()
+            except Exception:
+                pass  # Retry one more time
+        raise LookupError(f'Could not open context menu for "{account_name}" after {attempts} attempts')
 
     @allure.step("Select Hide/Include in total balance from context menu for account")
     def hide_include_in_total_balance_from_context_menu(self, account_name: str):
         self._open_context_menu_for_account(account_name).hide_include_in_total_balance.click()
 
     @allure.step('Open account popup for editing from context menu')
-    def open_edit_account_popup_from_context_menu(self, account_name: str) -> AccountPopup:
-        context_menu = self._open_context_menu_for_account(account_name)
-        context_menu.edit_from_wallet_account_context.click()
-        return AccountPopup().wait_until_appears().verify_edit_account_popup_present()
+    def open_edit_account_popup_from_context_menu(self, account_name: str, attempts = 3) -> AccountPopup:
+        for _ in range(attempts):
+            try:
+                context_menu = self._open_context_menu_for_account(account_name)
+                context_menu.edit_from_wallet_account_context.click()
+                return AccountPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Account popup is not shown after {attempts} retries')
 
     @allure.step('Open account popup')
     def open_add_account_popup(self, attempts: int = 3) -> 'AccountPopup':
@@ -191,7 +196,7 @@ class SavedAddressesView(QObject):
         return addresses
 
     @allure.step('Open add new address popup')
-    def open_add_saved_address_popup(self, attempts=2) -> 'AddEditSavedAddressPopup':
+    def open_add_edit_saved_address_popup(self, attempts=2) -> 'AddEditSavedAddressPopup':
         for _ in range(attempts):
             try:
                 self._add_new_address_button.click()

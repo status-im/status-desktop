@@ -47,7 +47,7 @@ def test_manage_saved_address(main_screen: MainWindow, address: str):
             f"Toast message about editing saved address is not correct or not present. Current list of messages: {messages}"
 
     with step('Delete address with new name'):
-        wallet.left_panel.open_saved_addresses().open_context_menu_for_saved_address(new_name)
+        cofirmation = wallet.left_panel.open_saved_addresses().delete_saved_address(new_name)
 
     with step('Verify toast message when deleting saved address'):
         messages = main_screen.wait_for_notification()

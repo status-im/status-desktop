@@ -91,7 +91,7 @@ class BackUpYourSeedPhrasePopUp(QObject):
         self._seed_phrase_name_text_edit.wait_until_hidden()
 
     @allure.step('Generate seed phrase')
-    def generate_seed_phrase(self, name: str):
+    def back_up_seed_phrase(self, name: str):
         self.set_have_pen_and_paper(True).set_ready_to_write_seed_phrase(True).set_know_where_store_it(True)
         self.next().reveal_seed_phrase()
         seed_phrases = self.get_seed_phrases()
