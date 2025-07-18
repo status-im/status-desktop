@@ -32,16 +32,17 @@ StatusItemDelegate {
     property bool loading
     /** Input property representing index of token list **/
     property string indexString
-    /** Input property holding if token should be min window size mode **/
-    property bool isSmallWindow
     /** Input property holding if token is last item in the list **/
     property bool isLastItem
 
     QtObject {
         id: d
-        // Split into 4 different columns of equal width
+
+        // Split into 5 different columns of equal width
         readonly property int columnWidth:
-            (root.width - indexText.width - icon.width - nameSymbolBox.width - 28) / 4
+            (root.width - indexText.width - icon.width - Theme.xlPadding) /5
+        // Minimum width of a column
+        readonly property int minColumnWidth: 130
     }
 
     implicitHeight: 76
@@ -73,14 +74,14 @@ StatusItemDelegate {
                 id: indexText
 
                 objectName: "indexText"
-                Layout.preferredWidth: 52
+
+                Layout.preferredWidth: idxMetrics.advanceWidth
 
                 text: root.indexString
                 font.pixelSize: Theme.additionalTextSize
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
                 horizontalAlignment: Text.AlignHCenter
-                leftPadding: 0
                 loading: root.loading
             }
 
@@ -104,16 +105,16 @@ StatusItemDelegate {
             ColumnLayout {
                 id: nameSymbolBox
 
+                Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
                 Layout.leftMargin: 12
                 spacing: 0
 
-                StatusTextWithLoadingState {
-                    id: tokenNameText
 
+                StatusTextWithLoadingState {
                     objectName: "tokenNameText"
 
-                    // width by design
-                    Layout.preferredWidth: root.isSmallWindow ? 150: 340
+                    Layout.fillWidth: true
 
                     text: root.tokenName
                     font.weight: Font.Medium
@@ -126,7 +127,7 @@ StatusItemDelegate {
                 StatusTextWithLoadingState {
                     objectName: "tokenSymbolText"
 
-                    Layout.preferredWidth: tokenNameText.width
+                    Layout.fillWidth: true
 
                     text: root.tokenSymbol
                     customColor: Theme.palette.baseColor1
@@ -143,6 +144,7 @@ StatusItemDelegate {
                 objectName: "priceText"
 
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.price
                 font.weight: Font.Medium
@@ -158,6 +160,7 @@ StatusItemDelegate {
                 objectName: "changePct24HrText"
 
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.changePct24Hour
                 customColor: root.changePct24HourColor
@@ -174,6 +177,7 @@ StatusItemDelegate {
                 objectName: "volume24HrText"
 
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.volume24Hour
                 font.weight: Font.Medium
@@ -189,6 +193,7 @@ StatusItemDelegate {
                 objectName: "marketCapText"
 
                 Layout.preferredWidth: d.columnWidth
+                Layout.minimumWidth: d.minColumnWidth
 
                 text: root.marketCap
                 font.weight: Font.Medium
@@ -208,5 +213,11 @@ StatusItemDelegate {
             color: Theme.palette.baseColor2
             visible: root.isLastItem
         }
+    }
+
+    TextMetrics {
+        id: idxMetrics
+        font: indexText.font
+        text: "999" // Dummy text to calculate width
     }
 }
