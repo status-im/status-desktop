@@ -225,9 +225,9 @@ sudo dnf install qt6-qtbase-devel qt6-qtbase-private-devel qt6-qt5compat-devel q
 Set environment variables:
 
 ```powershell
-$env:QTPATH = "C:\Qt\6.9.0\6.9.0"
-$env:QTBASE = "C:\Qt\6.9.0"
-$env:QTDIR = "C:\Qt\6.9.0\msvc2017_64"
+$env:QTPATH = "C:\Qt\5.15.2\5.15.2"
+$env:QTBASE = "C:\Qt\5.15.2"
+$env:QTDIR = "C:\Qt\5.15.2\msvc2017_64"
 $env:GOPATH = "C:\Users\{your_username}\go\bin"
 $env:VCINSTALLDIR = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC"
 $env:VS160COMNTOOLS = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build"
@@ -242,7 +242,7 @@ C:\Users\{your_username}\scoop\apps\cmake\3.31.6\bin
 C:\Users\{your_username}\scoop\apps\mingw\15.1.0-rt_v12-rev0\bin
 С:\Users\{your_username}\go\bin
 C:\Program Files\Go\bin
-C:\Qt\6.9.0\msvc2019_64\bin
+C:\Qt\5.15.2\msvc2019_64\bin
 C:\protoc-30.2-win64\bin
 C:\Qt\Tools\Ninja
 C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin
