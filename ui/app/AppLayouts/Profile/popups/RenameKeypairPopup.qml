@@ -63,7 +63,6 @@ StatusModal {
         StatusInput {
             id: nameInput
             Layout.preferredWidth: parent.width
-            Layout.preferredHeight: 120
             topPadding: 8
             bottomPadding: 8
             label: qsTr("Key pair name")

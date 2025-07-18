@@ -229,7 +229,7 @@ SettingsContentBase {
                 stackContainer.currentIndex = networksViewIndex
             }
 
-            onGoToAccountView: {
+            onGoToAccountView: (account) => {
                 if (!!account && !!account.address) {
                     root.addressWasShownRequested(account.address)
                 }
@@ -243,22 +243,22 @@ SettingsContentBase {
             onGoToAccountOrderView: {
                 stackContainer.currentIndex = accountOrderViewIndex
             }
-            onRunRenameKeypairFlow: {
+            onRunRenameKeypairFlow: (model) => {
                 renameKeypairPopup.keyUid = model.keyPair.keyUid
                 renameKeypairPopup.name = model.keyPair.name
                 renameKeypairPopup.accounts = model.keyPair.accounts
                 renameKeypairPopup.active = true
             }
-            onRunRemoveKeypairFlow: {
+            onRunRemoveKeypairFlow: (model) => {
                 removeKeypairPopup.name = model.keyPair.name
                 removeKeypairPopup.keyUid = model.keyPair.keyUid
                 removeKeypairPopup.accounts= model.keyPair.accounts
                 removeKeypairPopup.active = true
             }
-            onRunMoveKeypairToKeycardFlow: {
+            onRunMoveKeypairToKeycardFlow: (model) => {
                 root.keycardStore.runSetupKeycardPopup(model.keyPair.keyUid)
             }
-            onRunStopUsingKeycardFlow: {
+            onRunStopUsingKeycardFlow: (model) => {
                 root.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
             }
             onGoToManageTokensView: {
