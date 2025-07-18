@@ -451,7 +451,7 @@ SplitView {
                 text: {
                     const stack = onboarding.stack
 
-                    // trigger change when only curret item changes on replace
+                    // trigger change when only current item changes on replace
                     stack.topLevelItem
 
                     return `Stack (${stack.totalDepth}): ${stackToText(stack)}`

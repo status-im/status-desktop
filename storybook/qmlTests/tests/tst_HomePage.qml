@@ -228,14 +228,14 @@ Item {
             const gridBtn = findChild(grid, "homeGridItemLoader_" + keyId).item
             tryVerify(() => !!gridBtn)
 
-            compatMouseMove(gridBtn)
+            mouseMove(gridBtn)
             waitForItemPolished(gridBtn)
 
             // pin
             const pinButton = findChild(gridBtn, "pinButton")
             if (data.tag === "pin button") {
                 verify(!!pinButton)
-                compatMouseMove(pinButton)
+                mouseMove(pinButton)
                 tryCompare(pinButton, "visible", true)
                 mouseClick(pinButton)
             } else {
@@ -280,7 +280,7 @@ Item {
 
             // unpin
             if (data.tag === "pin button") {
-                compatMouseMove(pinButton)
+                mouseMove(pinButton)
                 tryCompare(pinButton, "visible", true)
                 mouseClick(pinButton)
             } else {
@@ -320,13 +320,13 @@ Item {
             const gridBtn = findChild(grid, "homeGridItemLoader_" + keyId).item
             tryVerify(() => !!gridBtn)
 
-            compatMouseMove(gridBtn)
+            mouseMove(gridBtn)
             waitForItemPolished(gridBtn)
 
             // pin
             const pinButton = findChild(gridBtn, "pinButton")
             verify(!!pinButton)
-            compatMouseMove(pinButton)
+            mouseMove(pinButton)
             tryCompare(pinButton, "visible", true)
             mouseClick(pinButton)
 

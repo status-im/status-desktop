@@ -25,9 +25,4 @@ TestCase {
         mousePress(item, item.width/2, item.height/2, Qt.LeftButton, modifiers, Qt.styleHints.mousePressAndHoldInterval)
         mouseRelease(item, item.width/2, item.height/2, Qt.LeftButton, modifiers, Qt.styleHints.mousePressAndHoldInterval*2)
     }
-
-    // can be removed once we fully switch to Qt6
-    function compatMouseMove(item) {
-        mouseMove(item, item.width/2, item.height/2)
-    }
 }

@@ -50,7 +50,7 @@ StatusTextField {
         readonly property bool isEmpty: root.text === ""
     }
 
-    Keys.onPressed: {
+    Keys.onPressed: function(event) {
         switch (event.key) {
             case Qt.Key_Tab:
             case Qt.Key_Return:

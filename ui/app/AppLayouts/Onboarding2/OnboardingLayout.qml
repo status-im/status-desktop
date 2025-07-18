@@ -75,6 +75,7 @@ Page {
         property bool enableBiometrics
         property string seedphrase
         property string keyUid // Used in LoginWithLostKeycardSeedphrase
+        property url backupImportFileUrl
 
         // login screen state
         property string selectedProfileKeyId
@@ -85,6 +86,7 @@ Page {
             d.enableBiometrics = false
             d.seedphrase = ""
             d.keyUid = ""
+            d.backupImportFileUrl = ""
             d.selectedProfileKeyId = ""
         }
 
@@ -102,6 +104,7 @@ Page {
                 keycardPin: d.keycardPin,
                 seedphrase: d.seedphrase,
                 keyUid: d.keyUid,
+                backupImportFileUrl: d.backupImportFileUrl,
                 enableBiometrics: d.enableBiometrics
             }
 
@@ -177,6 +180,7 @@ Page {
         onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
         onLinkActivated: (link) => Qt.openUrlExternally(link)
         onExportKeysRequested: root.onboardingStore.exportRecoverKeys()
+        onImportLocalBackupRequested: (importFilePath) => d.backupImportFileUrl = importFilePath
         onFinished: (flow) => d.finishFlow(flow)
 
         onBiometricsRequested: (profileId) => {

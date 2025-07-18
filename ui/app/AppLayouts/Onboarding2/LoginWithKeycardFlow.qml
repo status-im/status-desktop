@@ -25,6 +25,7 @@ OnboardingStackView {
     signal unblockWithPukRequested
     signal createProfileWithEmptyKeycardRequested
     signal exportKeysRequested
+    signal importLocalBackupRequested(url importFilePath)
     signal finished
 
     initialItem: {
@@ -122,10 +123,25 @@ OnboardingStackView {
                     if (root.restoreKeysExportState !== Onboarding.ProgressState.Success)
                         return
 
+                    const doNext = () => {
+                        root.replace(importLocalBackupPage)
+                    }
+
                     Backpressure.debounce(page, root.keycardPinInfoPageDelay,
-                                          root.finished)()
+                                          doNext)()
                 }
             }
+        }
+    }
+
+    Component {
+        id: importLocalBackupPage
+        ImportLocalBackupPage {
+            onImportLocalBackupRequested: function(importFilePath) {
+                root.importLocalBackupRequested(importFilePath)
+                root.finished()
+            }
+            onSkipRequested: root.finished()
         }
     }
 }

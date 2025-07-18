@@ -168,7 +168,7 @@ Item {
                 root.doneInsertingWord(textToCheck);
             }
         }
-        onKeyPressed: {
+        onKeyPressed: function (event) {
             switch (input.edit.keyEvent) {
                 case Qt.Key_Tab:
                 case Qt.Key_Return:
