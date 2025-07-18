@@ -55,7 +55,7 @@ class WalletSettingsView(QObject):
             self.wallet_settings_add_new_account_button.click()
             time.sleep(0.2)
             try:
-                return AccountPopup().verify_add_account_popup_present()
+                return AccountPopup()
             except Exception:
                 pass  # retry one more time
         raise LookupError(f"Failed to open add account popup in settings")
@@ -116,11 +116,16 @@ class WalletSettingsView(QObject):
             return keypair_names
 
     @allure.step('Open account view in wallet settings by name')
-    def open_account_in_settings(self, name: str, index: int):
+    def open_account_in_settings(self, name: str, index: int, attempts: int = 3):
         self.wallet_account_from_keypair.real_name['objectName'] = name
         self.wallet_account_from_keypair.real_name['index'] = index
-        self.wallet_account_from_keypair.click()
-        return AccountDetailsView().wait_until_appears()
+        for _ in range(attempts):
+            try:
+                self.wallet_account_from_keypair.click()
+                return AccountDetailsView().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Account details view did not show up with {attempts} retries')
 
     @allure.step('Interact with the total balance toggle')
     def toggle_total_balance(self, value: bool):

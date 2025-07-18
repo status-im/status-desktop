@@ -3,6 +3,7 @@ import time
 import allure
 
 import driver
+from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.components.online_identifier import OnlineIdentifier
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -92,14 +93,18 @@ class HomeScreen(QObject):
             lambda: not self.has_grid_item_by_title(title), timeout_msec
         )
 
-    @allure.step('Open Communities Portal from home grid')
-    def open_communities_portal_from_grid(self) -> CommunitiesPortal:
-        """Navigate to Communities Portal from home grid"""
+    @allure.step('Open Communities Portal from home page')
+    def open_communities_portal_from_grid(self) -> 'CommunitiesPortal':
         self.click_grid_item_by_title("Communities")
         return CommunitiesPortal().wait_until_appears()
 
+    @allure.step('Back up seed phrase from home page')
+    def open_back_up_seed_popup_from_home_page(self) -> 'BackUpYourSeedPhrasePopUp':
+        self.click_grid_item_by_title("Back up recovery phrase")
+        return BackUpYourSeedPhrasePopUp().wait_until_appears()
+
     @allure.step('Open online identifier from home screen')
-    def open_online_identifier_from_home_screen(self, attempts: int = 3) -> OnlineIdentifier:
+    def open_online_identifier_from_home_screen(self, attempts: int = 3) -> 'OnlineIdentifier':
         for _ in range(attempts):
             try:
                 self.profile_button.click()

@@ -121,15 +121,13 @@ class AccountPopup(QObject):
 
     @allure.step('Click new master key item')
     def click_new_master_key(self, attempts: int = 2):
-        self._new_master_key_origin_item.click()
-        try:
-            AccountPopup().verify_add_account_popup_present()
-            return AddNewAccountPopup()
-        except AssertionError as err:
-            if attempts:
-                return self.click_new_master_key(attempts - 1)
-            else:
-                raise err
+        for _ in range(attempts):
+            try:
+                self._new_master_key_origin_item.click()
+                return AddNewAccountPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Add new account popup is not shown within {attempts} retries')
 
     @allure.step('Set new seed phrase for account')
     def set_origin_new_seed_phrase(self, value: str):
@@ -304,7 +302,7 @@ class AddNewAccountPopup(QObject):
     @allure.step('Generate new seed phrase')
     def generate_new_master_key(self, name: str):
         self._generate_master_key_button.click()
-        BackUpYourSeedPhrasePopUp().generate_seed_phrase(name)
+        BackUpYourSeedPhrasePopUp().back_up_seed_phrase(name)
 
     @allure.step('Get text of error')
     def get_already_added_error(self):
