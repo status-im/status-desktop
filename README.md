@@ -84,12 +84,14 @@ We welcome contributions from the community! To get started:
 
 ## 📚 Documentation
 
-- [User Help documentation](https://status.app/help)
-- [Installation Guide](https://status.app/help/getting-started#for-new-users)
-- [Building from Source](BUILDING.md)
-- [Architecture Docs](docs/architecture.md).
-- [Contributing Guide](CONTRIBUTING.md)
-- [You have an idea for a cool feature or improvement?](https://discuss.status.app/c/features/51)
+- [📘 User Help documentation](https://status.app/help)
+- [🛠️ Installation Guide](https://status.app/help/getting-started#for-new-users)
+- [🏗️ Building from Source](BUILDING.md)
+- [🏛️ Architecture Docs](docs/architecture.md)
+- [🤝 Contributing Guide](CONTRIBUTING.md)
+- [💡 You have an idea for a cool feature or improvement?](https://discuss.status.app/c/features/51)
+- [🗺️ Status Roadmap](/docs/roadmap.md)
+  - [🌟 Feature FURPS](/docs/FURPS)
 
 
 &nbsp;
