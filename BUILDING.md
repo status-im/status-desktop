@@ -104,17 +104,6 @@ Install required packages:
 sudo dnf install pcsc-lite-devel pcre-devel openssl-devel protobuf-devel protobuf-compiler
 ```
 
-If **OpenSSL 1.1** is not available:
-
-```bash
-sudo dnf install perl-FindBin perl-File-Compare perl-File-Copy perl-Pod-Html
-wget https://github.com/openssl/openssl/releases/download/OpenSSL_1_1_1w/openssl-1.1.1w.tar.gz
-tar xvf openssl-1.1.1w.tar.gz
-cd openssl-1.1.1w
-./config --prefix=$HOME/.local/lib/openssl1.1
-make && make install
-```
-
 Install **nvm** and Node.js as per the [Ubuntu instructions above](#ubuntu).
 
 
