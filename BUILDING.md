@@ -262,6 +262,17 @@ git clone https://github.com/status-im/status-desktop.git
 cd status-desktop
 ```
 
+Install some `status-go` dependencies:
+
+```bash
+make status-go-deps
+```
+
+Make sure you have `~/go/bin` in your `PATH`:
+```bash
+echo "export PATH=\"$HOME/go/bin:\$PATH\"" >> ~/.zshrc
+```
+
 Update all submodules and build the dependencies:
 
 ```bash
