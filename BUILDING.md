@@ -127,9 +127,14 @@ Install [Homebrew](https://brew.sh/) if not already installed.
 #### Install Required Packages
 
 ```bash
-brew install cmake pkg-config go@1.23 qt@5 jq nvm yarn protobuf fileicon
+brew install cmake pkg-config go@1.23 qt@5 protobuf 
 ```
 
+Install additional packages if you are planning to build DMG
+
+```bash
+brew install nvm yarn fileicon
+```
 
 #### Export GITHUB_USER and GITHUB_TOKEN environment variables
 
@@ -145,6 +150,9 @@ export GITHUB_USER=yourgithubname
 
 
 #### Install Node.js
+
+> [!TIP]
+> You can skip this step if not planning to build a DMG
 
 Create NVM's working directory:
 
@@ -176,6 +184,9 @@ brew install coreutils
 ```
 
 #### Install Python Dependencies
+
+> [!TIP]
+> You can skip this step if not planning to build a DMG
 
 If using Python ≥ 3.12:
 
