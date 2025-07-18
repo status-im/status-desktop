@@ -27,6 +27,7 @@ StackView {
     readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
     property bool isOwnerTokenDeployed: false
     property bool isTMasterTokenDeployed: false
+    property bool tokensLoading: false
 
     // Token models:
     required property var assetsModel
@@ -77,12 +78,12 @@ StackView {
 
         buttons: [
             StatusButton {
-
                 objectName: "addNewItemButton"
-
                 text: qsTr("New Airdrop")
-                enabled: !d.isAdminOnly && root.arePrivilegedTokensDeployed
+                interactive: !d.isAdminOnly && root.arePrivilegedTokensDeployed && !root.tokensLoading
+                loading: root.tokensLoading
                 onClicked: root.push(newAirdropView, StackView.Immediate)
+                tooltip.text: root.tokensLoading ? qsTr("Loading tokens...") : ""
             }
         ]
 
@@ -98,7 +99,7 @@ StackView {
             ]
             infoBoxVisible: d.isAdminOnly || (root.isPrivilegedTokenOwnerProfile && !root.arePrivilegedTokensDeployed)
             infoBoxTitle: qsTr("Get started")
-            infoBoxText: d.isAdminOnly ? qsTr("Token airdropping can only be performed by admins that hodl the Community’s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you)."):
+            infoBoxText: d.isAdminOnly ? qsTr("Token airdropping can only be performed by admins that hodl the Community's TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you)."):
                                          qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
             buttonText: qsTr("Mint Owner token")
             buttonVisible: root.isOwner

@@ -12,7 +12,7 @@ import ./models/discord_channels_model
 import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
-import app/modules/shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
+import app/modules/shared_models/[section_model, section_item, token_permissions_model, token_permission_item,
   token_list_item, token_list_model, token_criteria_item, token_criteria_model, token_permission_chat_list_model, keypair_model]
 import app/global/global_singleton
 import app/global/app_signals
@@ -180,25 +180,6 @@ method curatedCommunitiesLoadingFailed*(self: Module) =
   self.view.setCuratedCommunitiesLoading(false)
 
 method getCommunityItem(self: Module, community: CommunityDto): SectionItem =
-  # No need to set actual member items, since the community model only shows numbers
-  # Creating all the real items is very slow on app login
-  var memberItems: seq[MemberItem] = @[]
-  for member in community.members:
-    memberItems.add(MemberItem())
-
-  var bannedMembers: seq[MemberItem] = @[]
-  for memberId, communityMemberState in community.pendingAndBannedMembers:
-    bannedMembers.add(MemberItem())
-
-  let pendingMembers = community.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = MemberItem()
-    )
-  let declinedMemberItems = community.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = MemberItem()
-    )
-
-  memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
-
   return initSectionItem(
       community.id,
       SectionType.Community,
@@ -226,7 +207,8 @@ method getCommunityItem(self: Module, community: CommunityDto): SectionItem =
       community.permissions.access,
       community.permissions.ensOnly,
       community.muted,
-      members = memberItems,
+      # No need to add the members as this module's communities are only used for display purposes
+      joinedMembersCount = community.members.len,
       historyArchiveSupportEnabled = community.settings.historyArchiveSupportEnabled,
       encrypted = community.encrypted,
       communityTokens = @[],

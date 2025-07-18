@@ -192,7 +192,7 @@ QObject {
             readonly property bool hasNotification: model.hasNotification
             readonly property int notificationsCount: model.notificationsCount
 
-            readonly property int members: model.allMembers.ModelCount.count
+            readonly property int members: model.joinedMembersCount
             readonly property int activeMembers: model.activeMembersCount
 
             readonly property bool pending: model.spectated && !model.joined
@@ -200,7 +200,7 @@ QObject {
         }
 
         expectedRoles: ["id", "name", "image", "color", "bannerImageData", "hasNotification", "notificationsCount",
-            "allMembers", "activeMembersCount", "spectated", "joined", "amIBanned"]
+            "joinedMembersCount", "activeMembersCount", "spectated", "joined", "amIBanned"]
         exposedRoles: ["key", "id", "name", "icon", "color", "banner", "hasNotification", "notificationsCount",
             "members", "activeMembers", "pending", "banned"]
     }

@@ -36,6 +36,7 @@ type
     EnsOnly
     Muted
     MembersModel
+    JoinedMembersCount
     HistoryArchiveSupportEnabled
     PinMessageAllMembersEnabled
     Encrypted
@@ -46,6 +47,8 @@ type
     ShardIndex
     IsPendingOwnershipRequest
     ActiveMembersCount
+    MembersLoaded
+    TokensLoading
 
 QtObject:
   type
@@ -109,6 +112,7 @@ QtObject:
       ModelRole.EnsOnly.int:"ensOnly",
       ModelRole.Muted.int:"muted",
       ModelRole.MembersModel.int:"allMembers",
+      ModelRole.JoinedMembersCount.int:"joinedMembersCount",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
       ModelRole.Encrypted.int:"encrypted",
@@ -119,6 +123,8 @@ QtObject:
       ModelRole.ShardIndex.int:"shardIndex",
       ModelRole.IsPendingOwnershipRequest.int:"isPendingOwnershipRequest",
       ModelRole.ActiveMembersCount.int:"activeMembersCount",
+      ModelRole.MembersLoaded.int:"membersLoaded",
+      ModelRole.TokensLoading.int:"tokensLoading",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -186,6 +192,8 @@ QtObject:
       result = newQVariant(item.muted)
     of ModelRole.MembersModel:
       result = newQVariant(item.members)
+    of ModelRole.JoinedMembersCount:
+      result = newQVariant(item.joinedMembersCount)
     of ModelRole.HistoryArchiveSupportEnabled:
       result = newQVariant(item.historyArchiveSupportEnabled)
     of ModelRole.PinMessageAllMembersEnabled:
@@ -206,6 +214,10 @@ QtObject:
       result = newQVariant(item.isPendingOwnershipRequest)
     of ModelRole.ActiveMembersCount:
       result = newQVariant(item.activeMembersCount)
+    of ModelRole.MembersLoaded:
+      result = newQVariant(item.membersLoaded)
+    of ModelRole.TokensLoading:
+      result = newQVariant(item.tokensLoading)
 
   proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -323,6 +335,7 @@ QtObject:
     updateRoleWithValue(shardIndex, ShardIndex, item.shardIndex)
     updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
     updateRoleWithValue(activeMembersCount, ActiveMembersCount, item.activeMembersCount)
+    updateRoleWithValue(joinedMembersCount, JoinedMembersCount, item.joinedMembersCount)
 
     self.items[ind].members.updateToTheseItems(item.members.getItems())
 
@@ -552,6 +565,29 @@ QtObject:
       return
 
     self.items[index].communityTokens.setItems(communityTokensItems)
+
+  proc setMembersItems*(self: SectionModel, id: string, communityMembersItems: seq[MemberItem]) =
+    let index = self.getItemIndex(id)
+    if index == -1:
+      return
+
+    self.items[index].members.setItems(communityMembersItems)
+    self.items[index].membersLoaded = true
+
+    let dataIndex = self.createIndex(index, 0, nil)
+    defer: dataIndex.delete
+    self.dataChanged(dataIndex, dataIndex, @[ModelRole.MembersLoaded.int])
+
+  proc setTokensLoading*(self: SectionModel, id: string, value: bool) =
+    let index = self.getItemIndex(id)
+    if index == -1 or self.items[index].tokensLoading == value:
+      return
+
+    self.items[index].tokensLoading = value
+
+    let dataIndex = self.createIndex(index, 0, nil)
+    defer: dataIndex.delete
+    self.dataChanged(dataIndex, dataIndex, @[ModelRole.TokensLoading.int])
 
   proc addMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
     let i = self.getItemIndex(communityId)

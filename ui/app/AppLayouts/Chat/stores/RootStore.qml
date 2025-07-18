@@ -241,6 +241,10 @@ QtObject {
         return currentChatContentModule().amIChatAdmin()
     }
 
+    function loadMembersForSectionId(sectionId) {
+        root.mainModuleInst.loadMembersForSectionId(sectionId)
+    }
+
     function acceptContactRequest(pubKey, contactRequestId) {
         chatCommunitySectionModule.acceptContactRequest(pubKey, contactRequestId)
     }
