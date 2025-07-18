@@ -127,7 +127,7 @@ Install [Homebrew](https://brew.sh/) if not already installed.
 #### Install Required Packages
 
 ```bash
-brew install cmake pkg-config go@1.23 qt@5 protobuf 
+brew install cmake pkg-config go@1.23 qt protobuf 
 ```
 
 Install additional packages if you are planning to build DMG
@@ -199,22 +199,22 @@ python3 -m pip install setuptools --break-system-packages
 
 ### Windows & Linux
 
-Install **Qt 5.15.2** using the [Qt Online Installer](https://www.qt.io/download).
+Install **Qt 6.9.0** using the [Qt Online Installer](https://download.qt.io/official_releases/online_installers/).
 
 ### Linux (Alternative)
 
-You can use any newer 5.15.x version available in your system's package manager.
+You can use any newer 6.9.x version available in your system's package manager.
 
 #### Ubuntu
 
 ```bash
-sudo apt install qtbase5-dev qt5-qmake qtquickcontrols2-5-dev
+sudo apt install qt6-base-dev qt6-declarative-dev qt6-tools-dev qt6-multimedia-dev qt6-svg-dev qt6-webengine-dev
 ```
 
 #### Fedora
 
 ```bash
-sudo dnf install qt5-qtbase qt5-qtbase-devel qt5-qtquickcontrols
+sudo dnf install qt6-qtbase-devel qt6-qtbase-private-devel qt6-qt5compat-devel qt6-qtsvg-devel qt6-qtdeclarative-devel qt6-qtwebchannel-devel qt6-qtwebengine-devel qt6-qtwebsockets-devel
 ```
 
 
@@ -225,9 +225,9 @@ sudo dnf install qt5-qtbase qt5-qtbase-devel qt5-qtquickcontrols
 Set environment variables:
 
 ```powershell
-$env:QTPATH = "C:\Qt\5.15.2\5.15.2"
-$env:QTBASE = "C:\Qt\5.15.2"
-$env:QTDIR = "C:\Qt\5.15.2\msvc2017_64"
+$env:QTPATH = "C:\Qt\6.9.0\6.9.0"
+$env:QTBASE = "C:\Qt\6.9.0"
+$env:QTDIR = "C:\Qt\6.9.0\msvc2017_64"
 $env:GOPATH = "C:\Users\{your_username}\go\bin"
 $env:VCINSTALLDIR = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC"
 $env:VS160COMNTOOLS = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build"
@@ -242,7 +242,7 @@ C:\Users\{your_username}\scoop\apps\cmake\3.31.6\bin
 C:\Users\{your_username}\scoop\apps\mingw\15.1.0-rt_v12-rev0\bin
 С:\Users\{your_username}\go\bin
 C:\Program Files\Go\bin
-C:\Qt\5.15.2\msvc2019_64\bin
+C:\Qt\6.9.0\msvc2019_64\bin
 C:\protoc-30.2-win64\bin
 C:\Qt\Tools\Ninja
 C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin
@@ -256,7 +256,7 @@ If you installed Qt via your system's package manager, additional environment co
 
 Otherwise, set those envirionment variables:
 ```shell
-export QTDIR="/path/to/Qt/5.15.2/gcc_64"
+export QTDIR="/path/to/Qt/6.9.0/gcc_64"
 export PATH="${QTDIR}/bin:${PATH}"
 ```
 
@@ -307,7 +307,7 @@ make run
 Make sure your `QTDIR` and `PATH` are correctly set. You can also try:
 
 ```bash
-export QTDIR=/path/to/Qt/5.15.2/gcc_64
+export QTDIR=/path/to/Qt/6.9.0/gcc_64
 export PATH=$QTDIR/bin:$PATH
 ```
 
