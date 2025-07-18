@@ -68,26 +68,10 @@ proc setWakuV2LightClientEnabled*(self: Controller, enabled: bool) =
   self.delegate.onWakuV2LightClientSet()
 
 proc enableDeveloperFeatures*(self: Controller) =
-  discard self.settingsService.saveTelemetryServerUrl(DEFAULT_TELEMETRY_SERVER_URL)
   discard self.settingsService.saveAutoMessageEnabled(true)
   discard self.nodeConfigurationService.setLogLevel(LogLevel.DEBUG)
 
   quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-
-proc isTelemetryEnabled*(self: Controller): bool =
-  return self.settingsService.getTelemetryServerUrl().len > 0
-
-proc toggleTelemetry*(self: Controller) =
-  var value = ""
-  if(not self.isTelemetryEnabled()):
-    value = DEFAULT_TELEMETRY_SERVER_URL
-
-  if(not self.settingsService.saveTelemetryServerUrl(value)):
-    # in the future we may do a call from here to show a popup about this error
-    error "an error occurred, we couldn't toggle telemetry message"
-    return
-
-  self.delegate.onTelemetryToggled()
 
 proc toggleAutoMessage*(self: Controller) =
   let enabled = self.settingsService.autoMessageEnabled()
@@ -103,7 +87,7 @@ proc isAutoMessageEnabled*(self: Controller): bool =
 
 proc isDebugEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isDebugEnabled()
-  
+
 proc toggleDebug*(self: Controller) =
   var logLevel = LogLevel.DEBUG
   if(self.isDebugEnabled()):

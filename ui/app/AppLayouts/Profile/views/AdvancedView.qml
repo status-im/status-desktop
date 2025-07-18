@@ -320,7 +320,6 @@ SettingsContentBase {
                 text: qsTr("Full developer mode")
                 isEnabled: {
                     return !localAccountSensitiveSettings.downloadChannelMessagesEnabled ||
-                        !root.advancedStore.isTelemetryEnabled ||
                         !root.advancedStore.isDebugEnabled ||
                         !root.advancedStore.isAutoMessageEnabled
                 }
@@ -366,18 +365,6 @@ SettingsContentBase {
                 switchChecked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
                 onClicked: {
                     localAccountSensitiveSettings.downloadChannelMessagesEnabled = !localAccountSensitiveSettings.downloadChannelMessagesEnabled
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Telemetry")
-                isSwitch: true
-                switchChecked: root.advancedStore.isTelemetryEnabled
-                onClicked: {
-                    Global.openPopup(enableTelemetryConfirmationDialogComponent)
                 }
             }
 
@@ -499,25 +486,6 @@ SettingsContentBase {
                 onConfirmButtonClicked: {
                     localAccountSensitiveSettings.downloadChannelMessagesEnabled = true
                     Qt.callLater(root.advancedStore.enableDeveloperFeatures)
-                    close()
-                }
-                onCancelButtonClicked: {
-                    close()
-                }
-            }
-        }
-
-        Component {
-            id: enableTelemetryConfirmationDialogComponent
-            ConfirmationDialog {
-                property bool mode: false
-
-                id: confirmDialog
-                destroyOnClose: true
-                showCancelButton: true
-                confirmationText: qsTr("Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.")
-                onConfirmButtonClicked: {
-                    root.advancedStore.toggleTelemetry()
                     close()
                 }
                 onCancelButtonClicked: {
