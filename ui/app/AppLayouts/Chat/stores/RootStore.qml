@@ -51,12 +51,6 @@ QtObject {
     property CurrenciesStore currencyStore
     property NetworkConnectionStore networkConnectionStore
 
-    readonly property PermissionsStore permissionsStore: PermissionsStore {
-        activeSectionId: mainModuleInst.activeSection.id
-        activeChannelId: root.currentChatContentModule().chatDetails.id
-        chatCommunitySectionModuleInst: chatCommunitySectionModule
-    }
-
     // Unique instance for all the chat / channel related low-level UI components
     readonly property UsersStore usersStore: UsersStore {
         property var chatDetails: !!root.activeChatContentModule ? root.activeChatContentModule.chatDetails : null
@@ -168,24 +162,6 @@ QtObject {
         ]
     }
 
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
-    }
-
-    function prepareTokenModelForCommunityChat(publicKey, chatId) {
-        root.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
-    }
-
-    readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted &&
-                                                                    !root.chatCommunitySectionModule.requiresTokenPermissionToJoin
-
-    readonly property int communityMemberReevaluationStatus: root.chatCommunitySectionModule && root.chatCommunitySectionModule.communityMemberReevaluationStatus
-
-    readonly property bool requirementsCheckPending: root.communitiesModuleInst.requirementsCheckPending
-
-    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
-
     readonly property string overviewChartData: chatCommunitySectionModule.overviewChartData
 
     readonly property bool isUserAllowedToSendMessage: d.isUserAllowedToSendMessage
@@ -209,17 +185,9 @@ QtObject {
 
     property var privacyModule: profileSectionModule.privacyModule
 
-    readonly property bool permissionsCheckOngoing: chatCommunitySectionModule.permissionsCheckOngoing
-
-    readonly property bool ensCommunityPermissionsEnabled: localAccountSensitiveSettings.ensCommunityPermissionsEnabled
-
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
     signal communityAdded(string communityId)
-
-    signal communityAccessRequested(string communityId)
-
-    signal goToMembershipRequestsPage()
 
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
@@ -457,14 +425,6 @@ QtObject {
                 )
     }
 
-    function acceptRequestToJoinCommunity(requestId, communityId) {
-        chatCommunitySectionModule.acceptRequestToJoinCommunity(requestId, communityId)
-    }
-
-    function declineRequestToJoinCommunity(requestId, communityId) {
-        chatCommunitySectionModule.declineRequestToJoinCommunity(requestId, communityId)
-    }
-
     function removeCommunityChat(chatId) {
         chatCommunitySectionModule.removeCommunityChat(chatId)
     }
@@ -479,46 +439,6 @@ QtObject {
 
     function reorderCommunityChat(categoryId, chatId, to) {
         chatCommunitySectionModule.reorderCommunityChat(categoryId, chatId, to)
-    }
-
-    function spectateCommunity(id, ensName) {
-        return communitiesModuleInst.spectateCommunity(id, ensName)
-    }
-
-    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
-        communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
-    }
-
-    function signProfileKeypairAndAllNonKeycardKeypairs() {
-        communitiesModuleInst.signProfileKeypairAndAllNonKeycardKeypairs()
-    }
-
-    function signSharedAddressesForKeypair(keyUid) {
-        communitiesModuleInst.signSharedAddressesForKeypair(keyUid)
-    }
-
-    function joinCommunityOrEditSharedAddresses() {
-        communitiesModuleInst.joinCommunityOrEditSharedAddresses()
-    }
-
-    function cleanJoinEditCommunityData() {
-        communitiesModuleInst.cleanJoinEditCommunityData()
-    }
-
-    function userCanJoin(id) {
-        return communitiesModuleInst.userCanJoin(id)
-    }
-
-    function isUserMemberOfCommunity(id) {
-        return communitiesModuleInst.isUserMemberOfCommunity(id)
-    }
-
-    function isMyCommunityRequestPending(id) {
-        return communitiesModuleInst.isMyCommunityRequestPending(id)
-    }
-
-    function cancelPendingRequest(id: string) {
-        communitiesModuleInst.cancelRequestToJoinCommunity(id)
     }
 
     function getSectionNameById(id) {
@@ -651,24 +571,9 @@ QtObject {
           root.importingCommunityStateChanged(communityId, state, errorMsg)
       }
 
-      function onCommunityAccessRequested(communityId) {
-          root.communityAccessRequested(communityId)
-      }
-
       function onCommunityAdded(communityId) {
           root.communityAdded(communityId)
       }
-    }
-
-    readonly property Connections mainModuleInstConnections: Connections {
-        target: mainModuleInst
-        enabled: !!chatCommunitySectionModule
-        function onOpenCommunityMembershipRequestsView(sectionId: string) {
-            if(root.getMySectionId() !== sectionId)
-                return
-
-            root.goToMembershipRequestsPage()
-        }
     }
 
     readonly property QtObject _d: StatusQUtils.QObject {
@@ -742,10 +647,6 @@ QtObject {
             value: Utils.getContactDetailsAsJson(d.activeChatId, false)
             restoreMode: Binding.RestoreBindingOrValue
         }
-    }
-
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 
     function removeMemberFromGroupChat(publicKey) {

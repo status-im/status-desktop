@@ -19,6 +19,8 @@ import utils
 
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Profile.stores
+import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.stores.Messaging.Community as CommunityStores
 
 import "../views"
 import "../panels"
@@ -31,6 +33,7 @@ Popup {
     property ChatStores.RootStore store
     property PrivacyStore privacyStore
     property NotificationsStore notificationsStore
+    property MessagingStores.MessagingRootStore messagingRootStore
 
     onOpened: {
         Global.activityPopupOpened = true
@@ -241,11 +244,25 @@ Popup {
         id: membershipRequestNotificationComponent
 
         ActivityNotificationCommunityMembershipRequest {
+
+            property CommunityStores.CommunityRootStore communityRootStore:  root.messagingRootStore.createCommunityRootStore(this, notification.communityId)
+            readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
+                                                                                             communityRootStore.communityAccessStore : null
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: root.close()
+            onAcceptRequestToJoinCommunityRequested: {
+                if(communityAccessStore) {
+                    communityAccessStore.acceptRequestToJoinCommunityRequested(requestId, communityId)
+                }
+            }
+            onDeclineRequestToJoinCommunityRequested: {
+                if(communityAccessStore) {
+                    communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
+                }
+            }
         }
     }
     Component {

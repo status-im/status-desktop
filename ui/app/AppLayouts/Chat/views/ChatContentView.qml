@@ -53,6 +53,7 @@ ColumnLayout {
     property bool isBlocked: false
     property bool isUserAllowedToSendMessage: root.rootStore.isUserAllowedToSendMessage
     property bool stickersLoaded: false
+    property bool joined
 
     readonly property MessageStore messageStore: MessageStore {
         messageModule: chatContentModule ? chatContentModule.messagesModule : null
@@ -81,6 +82,9 @@ ColumnLayout {
     signal removeTrustStatusRequest(string pubKey)
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
+
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
 
     objectName: "chatContentViewColumn"
     spacing: 0
@@ -118,6 +122,7 @@ ColumnLayout {
             disabledTooltipText: root.disabledTooltipText
             areTestNetworksEnabled: root.areTestNetworksEnabled
             usersModel: root.usersModel
+            joined: root.joined
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
@@ -148,6 +153,9 @@ ColumnLayout {
             onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
             onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
             onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
+
+            // Community access related requests:
+            onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
         }
     }
 }

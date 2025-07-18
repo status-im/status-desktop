@@ -20,6 +20,8 @@ StatusListView {
 
     property AppLayoutsStores.RootStore rootStore
 
+    property var fnIsMyCommunityRequestPending: function(communityId) {}
+
     signal inviteFriends(var communityData)
 
     signal closeCommunityClicked(string communityId)
@@ -63,7 +65,7 @@ StatusListView {
         readonly property bool isOwner: model.memberRole === Constants.memberRole.owner
         readonly property bool isAdmin: model.memberRole === Constants.memberRole.admin
         readonly property bool isTokenMaster: model.memberRole === Constants.memberRole.tokenMaster
-        property bool isInvitationPending: root.rootStore.isMyCommunityRequestPending(model.id)
+        property bool isInvitationPending: root.fnIsMyCommunityRequestPending(model.id)
 
         components: [
             StatusFlatButton {
@@ -164,7 +166,7 @@ StatusListView {
                             moreMenu.close()
                             if (listItem.isInvitationPending) {
                                 root.cancelMembershipRequest(model.id)
-                                listItem.isInvitationPending = root.rootStore.isMyCommunityRequestPending(model.id)
+                                listItem.isInvitationPending = root.fnIsMyCommunityRequestPending(model.id)
                             } else if (listItem.isSpectator)
                                 root.closeCommunityClicked(model.id)
                             else

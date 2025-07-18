@@ -11,15 +11,8 @@ QtObject {
 
     required property string activeSectionId
     required property string activeChannelId
-    required property var chatCommunitySectionModuleInst
-
-    // all permissions model
-    readonly property var permissionsModel:
-        chatCommunitySectionModuleInst.permissionsModel
-
-    function setHideIfPermissionsNotMet(chatId, checked) {
-        //TODO: backend implementation
-    }
+    required property bool allTokenRequirementsMet
+    required property var permissionsModel
 
     readonly property var selectedChannelPermissionsModel: SortFilterProxyModel {
         id: selectedChannelPermissionsModel
@@ -97,20 +90,27 @@ QtObject {
 
     readonly property bool isOwner: false
 
-    readonly property bool allTokenRequirementsMet: chatCommunitySectionModuleInst.allTokenRequirementsMet
-
     readonly property QtObject _d: QtObject {
         id: d
         
         function createOrEdit(key, holdings, permissionType, isPrivate,
                               channels) {
-            root.chatCommunitySectionModuleInst.createOrEditCommunityTokenPermission(
+            root.createOrEditCommunityTokenPermission(
                         root.activeSectionId, key,
                         permissionType,
                         JSON.stringify(holdings),
                         channels.map(c => c.key).join(","),
                         isPrivate)
         }
+    }
+
+    signal createOrEditCommunityTokenPermission(string activeSection, string key,
+                                                int permissionType, var holdings,
+                                                var channels, bool isPrivate)
+    signal deleteCommunityTokenPermission(string activeSectionId, string key)
+
+    function setHideIfPermissionsNotMet(chatId, checked) {
+        //TODO: backend implementation
     }
 
     function createPermission(holdings, permissionType, isPrivate, channels) {
@@ -122,7 +122,6 @@ QtObject {
     }
 
     function removePermission(key) {
-        root.chatCommunitySectionModuleInst.deleteCommunityTokenPermission(
-                    root.activeSectionId, key)
+        root.deleteCommunityTokenPermission(root.activeSectionId, key)
     }
 }

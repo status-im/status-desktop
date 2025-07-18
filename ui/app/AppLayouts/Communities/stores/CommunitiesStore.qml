@@ -96,15 +96,6 @@ QtObject {
     }
 
     property var communitiesList: communitiesModuleInst.model
-    readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
-
-    function spectateCommunity(publicKey) {
-        root.communitiesModuleInst.spectateCommunity(publicKey, "");
-    }
-
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey);
-    }
 
     function getCommunityDetails(communityPubKey) {
         try {

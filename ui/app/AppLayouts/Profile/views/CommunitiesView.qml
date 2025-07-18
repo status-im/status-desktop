@@ -33,10 +33,12 @@ SettingsContentBase {
     required property CurrenciesStore currencyStore
 
     property var communitiesList
+    property var fnIsMyCommunityRequestPending: function(communityId) {}
 
     signal leaveCommunityRequest(string communityId)
     signal setCommunityMutedRequest(string communityId, int mutedType)
     signal inviteFriends(var communityData)
+    signal cancelPendingRequestRequested(string communityId)
 
     clip: true
 
@@ -189,6 +191,7 @@ SettingsContentBase {
 
         width: parent.width
         rootStore: root.rootStore
+        fnIsMyCommunityRequestPending: root.fnIsMyCommunityRequestPending
 
         model: SortFilterProxyModel {
             sourceModel: root.communitiesList
@@ -215,10 +218,10 @@ SettingsContentBase {
             root.inviteFriends(communityData)
         }
         onShowCommunityMembershipSetupDialog: {
-            Global.communityIntroPopupRequested(communityId, name, introMessage, imageSrc, root.rootStore.isMyCommunityRequestPending(communityId))
+            Global.communityIntroPopupRequested(communityId, name, introMessage, imageSrc, root.fnIsMyCommunityRequestPending(communityId))
         }
         onCancelMembershipRequest: {
-            root.rootStore.cancelPendingRequest(communityId)
+            root.cancelPendingRequestRequested(communityId)
         }
     }
 }
