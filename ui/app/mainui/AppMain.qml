@@ -992,7 +992,9 @@ Item {
         }
 
         function onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection = -1, data = {}) {
-            appMain.rootStore.setActiveSectionBySectionType(sectionType)
+            if (sectionType !== Constants.appSection.community) {
+                appMain.rootStore.setActiveSectionBySectionType(sectionType)
+            }
 
             if (sectionType === Constants.appSection.profile) {
                 profileLoader.settingsSubsection = subsection || Constants.settingsSubsection.profile
