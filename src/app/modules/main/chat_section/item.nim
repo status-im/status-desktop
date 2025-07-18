@@ -1,7 +1,6 @@
 import sequtils, sugar, stew/shims/strformat, json
 
 import ../../../../app_service/common/types
-import ../../../../app_service/service/contacts/dto/contacts
 
 import ../../shared_models/[color_hash_item, color_hash_model]
 

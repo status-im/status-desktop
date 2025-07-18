@@ -40,6 +40,14 @@ method onChatsLoaded*(self: AccessInterface,
   ) {.base.} =
   raise newException(ValueError, "No implementation available rip")
 
+method getChatItemFromChatDto*(
+    self: AccessInterface,
+    chatDto: ChatDto,
+    community: CommunityDto,
+    setChatAsActive: bool = true,
+    ): ChatItem {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

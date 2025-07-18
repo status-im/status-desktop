@@ -603,7 +603,7 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
 method chatsModel*(self: Module): chats_model.Model =
   return self.view.chatsModel()
 
-proc getChatItemFromChatDto(
+method getChatItemFromChatDto*(
     self: Module,
     chatDto: ChatDto,
     community: CommunityDto,

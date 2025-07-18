@@ -76,27 +76,24 @@ method delete*(self: Module) =
 method load*(self: Module, chatItem: ChatItem) =
   self.controller.init()
 
-  var chatName = chatItem.name
-  var chatImage = chatItem.icon
-  var isContact = false
-  var trustStatus = TrustStatus.Unknown
+  # var chatName = chatItem.name
+  # var chatImage = chatItem.icon
+  var isMutualContact = false
+  # var trustStatus = TrustStatus.Unknown
+  # var item = chatItem
   if chatItem.`type` == ChatType.OneToOne.int:
     let contactDto = self.controller.getContactById(self.controller.getMyChatId())
-    chatName = contactDto.userDefaultDisplayName()
-    isContact = contactDto.isContact
-    trustStatus = contactDto.trustStatus
-    if(contactDto.image.thumbnail.len > 0):
-      chatImage = contactDto.image.thumbnail
+    # chatName = contactDto.userDefaultDisplayName()
+    isMutualContact = contactDto.isContact
+    # trustStatus = contactDto.trustStatus
+    # if(contactDto.image.thumbnail.len > 0):
+    #   chatImage = contactDto.image.thumbnail
 
   self.usersModule.load()
 
   self.view.load()
-  self.view.chatDetails.setChatDetails(chatItem.id, chatItem.`type`, self.controller.belongsToCommunity(),
-    self.controller.isUsersListAvailable(), chatName, chatImage,
-    chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
-    chatItem.highlight, chatItem.muted, chatItem.position, trustStatus,
-    isContact, chatItem.blocked, chatItem.canPost, chatItem.canView, chatItem.canPostReactions,
-    chatItem.hideIfPermissionsNotMet, chatItem.missingEncryptionKey, chatItem.requiresPermissions)
+  self.view.chatDetails.setChatDetails(chatItem, self.controller.belongsToCommunity(),
+    self.controller.isUsersListAvailable(), isMutualContact)
   
   self.view.chatDetailsChanged()
 
@@ -343,40 +340,24 @@ method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificati
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
 
 method onChatUpdated*(self: Module, chatItem: ChatItem) =
-  if chatItem.`type` != ChatType.OneToOne.int:
-    self.view.chatDetails.setName(chatItem.name)
-    self.view.chatDetails.setIcon(chatItem.icon)
-  self.view.chatDetails.setDescription(chatItem.description)
-  self.view.chatDetails.setEmoji(chatItem.emoji)
-  self.view.chatDetails.setColor(chatItem.color)
-  self.view.chatDetails.setMuted(chatItem.muted)
-  self.view.chatDetails.setCanPost(chatItem.canPost)
-  self.view.chatDetails.setCanView(chatItem.canView)
-  self.view.chatDetails.setCanPostReactions(chatItem.canPostReactions)
-  self.view.chatDetails.setHideIfPermissionsNotMet(chat_item.hideIfPermissionsNotMet)
-  self.view.chatDetails.setMissingEncryptionKey(chat_item.missingEncryptionKey)
-  self.view.chatDetails.setRequiresPermissions(chat_item.requiresPermissions)
+  self.view.chatDetails.updateChatDetails(chatItem)
 
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()
 
 method onCommunityChannelEdited*(self: Module, chatDto: ChatDto) =
   # This is CommunityChat ChatDto
-  self.view.chatDetails.setDescription(chatDto.description)
-  self.view.chatDetails.setEmoji(chatDto.emoji)
-  self.view.chatDetails.setColor(chatDto.color)
-  self.view.chatDetails.setMuted(chatDto.muted)
-  self.view.chatDetails.setCanPost(chatDto.canPost)
-  self.view.chatDetails.setCanView(chatDto.canView)
-  self.view.chatDetails.setCanPostReactions(chatDto.canPostReactions)
-  self.view.chatDetails.setHideIfPermissionsNotMet(chatDto.hideIfPermissionsNotMet)
-  self.view.chatDetails.setName(chatDto.name)
-  self.view.chatDetails.setIcon(chatDto.icon)
-  self.view.chatDetails.setMissingEncryptionKey(chatDto.missingEncryptionKey)
+  let community = self.controller.getCommunityDetails()
+  let chatItem = self.delegate.getChatItemFromChatDto(chatDto, community)
 
+  var updateMembersList = false
   if self.view.chatDetails.getRequiresPermissions() != chatDto.tokenGated:
+    updateMembersList = true
+
+  self.view.chatDetails.updateChatDetails(chatItem)
+
+  if updateMembersList:
     # The channel permission status changed. Update the member list
-    self.view.chatDetails.setRequiresPermissions(chatDto.tokenGated)
     self.usersModule.updateMembersList()
 
   self.messagesModule.updateChatFetchMoreMessages()
