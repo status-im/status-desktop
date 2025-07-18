@@ -48,6 +48,7 @@ type
     IsPendingOwnershipRequest
     ActiveMembersCount
     MembersLoaded
+    TokensLoading
 
 QtObject:
   type
@@ -123,6 +124,7 @@ QtObject:
       ModelRole.IsPendingOwnershipRequest.int:"isPendingOwnershipRequest",
       ModelRole.ActiveMembersCount.int:"activeMembersCount",
       ModelRole.MembersLoaded.int:"membersLoaded",
+      ModelRole.TokensLoading.int:"tokensLoading",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -214,6 +216,8 @@ QtObject:
       result = newQVariant(item.activeMembersCount)
     of ModelRole.MembersLoaded:
       result = newQVariant(item.membersLoaded)
+    of ModelRole.TokensLoading:
+      result = newQVariant(item.tokensLoading)
 
   proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -573,6 +577,17 @@ QtObject:
     let dataIndex = self.createIndex(index, 0, nil)
     defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, @[ModelRole.MembersLoaded.int])
+
+  proc setTokensLoading*(self: SectionModel, id: string, value: bool) =
+    let index = self.getItemIndex(id)
+    if index == -1 or self.items[index].tokensLoading == value:
+      return
+
+    self.items[index].tokensLoading = value
+
+    let dataIndex = self.createIndex(index, 0, nil)
+    defer: dataIndex.delete
+    self.dataChanged(dataIndex, dataIndex, @[ModelRole.TokensLoading.int])
 
   proc addMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
     let i = self.getItemIndex(communityId)

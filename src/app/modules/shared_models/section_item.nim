@@ -61,6 +61,7 @@ type
     isPendingOwnershipRequest: bool
     activeMembersCount: int
     membersLoaded: bool
+    tokensLoading: bool
 
 proc initSectionItem*(
     id: string,
@@ -141,6 +142,7 @@ proc initSectionItem*(
   result.isPendingOwnershipRequest = isPendingOwnershipRequest
   result.activeMembersCount = activeMembersCount
   result.membersLoaded = false
+  result.tokensLoading = false
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -173,6 +175,8 @@ proc `$`*(self: SectionItem): string =
     access:{self.access},
     ensOnly:{self.ensOnly},
     muted:{self.muted},
+    membersLoaded:{self.membersLoaded},
+    tokensLoading:{self.tokensLoading},
     members:{self.membersModel},
     joinedMembersCount:{self.joinedMembersCount},
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
@@ -451,3 +455,9 @@ proc membersLoaded*(self: SectionItem): bool {.inline.} =
 
 proc `membersLoaded=`*(self: var SectionItem, value: bool) {.inline.} =
   self.membersLoaded = value
+
+proc tokensLoading*(self: SectionItem): bool {.inline.} =
+  self.tokensLoading
+
+proc `tokensLoading=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.tokensLoading = value
