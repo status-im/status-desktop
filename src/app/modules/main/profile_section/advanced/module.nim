@@ -75,17 +75,8 @@ method onWakuV2LightClientSet*(self: Module) =
   info "quit the app because of successful WakuV2 light client change"
   quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
-method isTelemetryEnabled*(self: Module): bool =
-  self.controller.isTelemetryEnabled()
-
 method enableDeveloperFeatures*(self: Module) =
   self.controller.enableDeveloperFeatures()
-
-method toggleTelemetry*(self: Module) =
-  self.controller.toggleTelemetry()
-
-method onTelemetryToggled*(self: Module) =
-  self.view.emitTelemetryEnabledSignal()
 
 method isAutoMessageEnabled*(self: Module): bool =
   self.controller.isAutoMessageEnabled()

@@ -30,7 +30,6 @@ const KEY_APPEARANCE* = "appearance"
 const KEY_USE_MAILSERVERS* = "use-mailservers?"
 const KEY_WALLET_ROOT_ADDRESS* = "wallet-root-address"
 const KEY_SEND_STATUS_UPDATES* = "send-status-updates?"
-const KEY_TELEMETRY_SERVER_URL* = "telemetry-server-url"
 const KEY_PINNED_MAILSERVERS* = "pinned-mailservers"
 const KEY_CURRENT_USER_STATUS* = "current-user-status"
 const KEY_RECENT_STICKERS* = "stickers/recent-stickers"
@@ -139,7 +138,6 @@ type
     useMailservers*: bool
     walletRootAddress*: string
     sendStatusUpdates*: bool
-    telemetryServerUrl*: string
     fleet*: string
     currentUserStatus*: CurrentUserStatus
     nodeConfig*: JsonNode
@@ -217,7 +215,6 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_USE_MAILSERVERS, result.useMailservers)
   discard jsonObj.getProp(KEY_WALLET_ROOT_ADDRESS, result.walletRootAddress)
   discard jsonObj.getProp(KEY_SEND_STATUS_UPDATES, result.sendStatusUpdates)
-  discard jsonObj.getProp(KEY_TELEMETRY_SERVER_URL, result.telemetryServerUrl)
   discard jsonObj.getProp(KEY_FLEET, result.fleet)
   discard jsonObj.getProp(KEY_AUTO_MESSAGE_ENABLED, result.autoMessageEnabled)
   discard jsonObj.getProp(KEY_GIF_RECENTS, result.gifRecents)
