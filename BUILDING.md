@@ -64,13 +64,6 @@ sudo apt update
 sudo apt install libpcsclite-dev libpcre3-dev build-essential mesa-common-dev libglu1-mesa-dev libssl-dev cmake jq libxcb-xinerama0 protobuf-compiler
 ```
 
-Install **libssl 1.1** (if not available in your distribution):
-
-```bash
-wget https://launchpad.net/~ubuntu-security-proposed/+archive/ubuntu/ppa/+build/23606713/+files/libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
-sudo dpkg -i libssl1.1_1.1.1l-1ubuntu1.3_amd64.deb
-```
-
 Install **Go 1.23**:
 
 Download and install from the [official website](https://go.dev/dl/).
@@ -104,17 +97,6 @@ Install required packages:
 sudo dnf install pcsc-lite-devel pcre-devel openssl-devel protobuf-devel protobuf-compiler
 ```
 
-If **OpenSSL 1.1** is not available:
-
-```bash
-sudo dnf install perl-FindBin perl-File-Compare perl-File-Copy perl-Pod-Html
-wget https://github.com/openssl/openssl/releases/download/OpenSSL_1_1_1w/openssl-1.1.1w.tar.gz
-tar xvf openssl-1.1.1w.tar.gz
-cd openssl-1.1.1w
-./config --prefix=$HOME/.local/lib/openssl1.1
-make && make install
-```
-
 Install **nvm** and Node.js as per the [Ubuntu instructions above](#ubuntu).
 
 
@@ -127,9 +109,14 @@ Install [Homebrew](https://brew.sh/) if not already installed.
 #### Install Required Packages
 
 ```bash
-brew install cmake pkg-config go@1.23 qt@5 jq nvm yarn protobuf
+brew install cmake pkg-config go@1.23 qt protobuf 
 ```
 
+Install additional packages if you are planning to build DMG
+
+```bash
+brew install nvm yarn fileicon
+```
 
 #### Export GITHUB_USER and GITHUB_TOKEN environment variables
 
@@ -145,6 +132,9 @@ export GITHUB_USER=yourgithubname
 
 
 #### Install Node.js
+
+> [!TIP]
+> You can skip this step if not planning to build a DMG
 
 Create NVM's working directory:
 
@@ -177,6 +167,9 @@ brew install coreutils
 
 #### Install Python Dependencies
 
+> [!TIP]
+> You can skip this step if not planning to build a DMG
+
 If using Python ≥ 3.12:
 
 ```bash
@@ -188,22 +181,22 @@ python3 -m pip install setuptools --break-system-packages
 
 ### Windows & Linux
 
-Install **Qt 5.15.2** using the [Qt Online Installer](https://www.qt.io/download).
+Install **Qt 6.9.0** using the [Qt Online Installer](https://download.qt.io/official_releases/online_installers/).
 
 ### Linux (Alternative)
 
-You can use any newer 5.15.x version available in your system's package manager.
+You can use any newer 6.9.x version available in your system's package manager.
 
 #### Ubuntu
 
 ```bash
-sudo apt install qtbase5-dev qt5-qmake qtquickcontrols2-5-dev
+sudo apt install qt6-base-dev qt6-declarative-dev qt6-tools-dev qt6-multimedia-dev qt6-svg-dev qt6-webengine-dev
 ```
 
 #### Fedora
 
 ```bash
-sudo dnf install qt5-qtbase qt5-qtbase-devel qt5-qtquickcontrols
+sudo dnf install qt6-qtbase-devel qt6-qtbase-private-devel qt6-qt5compat-devel qt6-qtsvg-devel qt6-qtdeclarative-devel qt6-qtwebchannel-devel qt6-qtwebengine-devel qt6-qtwebsockets-devel
 ```
 
 
@@ -243,9 +236,9 @@ C:\Users\{your_username}\AppData\Local\Programs\Microsoft VS Code\bin
 
 If you installed Qt via your system's package manager, additional environment configuration may not be necessary.
 
-Otherwise, set those envirionment variables:
+Otherwise, set those environment variables:
 ```shell
-export QTDIR="/path/to/Qt/5.15.2/gcc_64"
+export QTDIR="/path/to/Qt/6.9.0/gcc_64"
 export PATH="${QTDIR}/bin:${PATH}"
 ```
 
@@ -260,6 +253,17 @@ Clone the repository:
 ```bash
 git clone https://github.com/status-im/status-desktop.git
 cd status-desktop
+```
+
+Install some `status-go` dependencies:
+
+```bash
+make status-go-deps
+```
+
+Make sure you have `~/go/bin` in your `PATH`:
+```bash
+echo "export PATH=\"$HOME/go/bin:\$PATH\"" >> ~/.zshrc
 ```
 
 Update all submodules and build the dependencies:
@@ -285,7 +289,7 @@ make run
 Make sure your `QTDIR` and `PATH` are correctly set. You can also try:
 
 ```bash
-export QTDIR=/path/to/Qt/5.15.2/gcc_64
+export QTDIR=/path/to/Qt/6.9.0/gcc_64
 export PATH=$QTDIR/bin:$PATH
 ```
 

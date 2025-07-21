@@ -884,8 +884,6 @@ force-rebuild-status-go:
 
 run: $(RUN_TARGET)
 
-ICON_TOOL := node_modules/.bin/fileicon
-
 # Will only work at password login. Keycard login doesn't forward the configuration
 # STATUS_PORT ?= 30306
 # WAKUV2_PORT ?= 30307
@@ -906,7 +904,7 @@ run-macos: nim_status_client
 	cp status-dev.icns bin/StatusDev.app/Contents/Resources/
 	cd bin/StatusDev.app/Contents/MacOS && \
 		ln -fs ../../../nim_status_client ./
-	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
+	fileicon set bin/nim_status_client status-dev.icns
 	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
 	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
