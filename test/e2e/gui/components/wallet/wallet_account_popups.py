@@ -147,7 +147,8 @@ class AccountPopup(QObject):
         self._scroll.vertical_scroll_down(self._derivation_path_text_edit)
         if value in [_.value for _ in DerivationPathName]:
             self._derivation_path_combobox_button.click()
-            self._derivation_path_list_item.real_name['objectName'] = "AddAccountPopup-PreDefinedDerivationPath-" + value
+            self._derivation_path_list_item.real_name[
+                'objectName'] = "AddAccountPopup-PreDefinedDerivationPath-" + value
             self._derivation_path_list_item.click()
             # del self._derivation_path_list_item.real_name['title']
             self._address_combobox_button.click()
@@ -176,36 +177,39 @@ class AccountPopup(QObject):
 class EditAccountFromSettingsPopup(QObject):
     def __init__(self):
         super(EditAccountFromSettingsPopup, self).__init__(names.renameAccountModal)
-        self._change_name_button = Button(names.editWalletSettings_renameButton)
-        self._account_name_input = TextEdit(names.editWalletSettings_AccountNameInput)
-        self._emoji_selector = QObject(names.editWalletSettings_EmojiSelector)
-        self._color_radiobutton = QObject(names.editWalletSettings_ColorSelector)
-        self._emoji_item = QObject(names.editWalletSettings_EmojiItem)
+        self.change_name_button = Button(names.editWalletSettings_renameButton)
+        self.account_name_input = TextEdit(names.editWalletSettings_AccountNameInput)
+        self.emoji_selector = QObject(names.editWalletSettings_EmojiSelector)
+        self.color_radiobutton = QObject(names.editWalletSettings_ColorSelector)
+        self.emoji_item = QObject(names.editWalletSettings_EmojiItem)
 
-    @allure.step('Click Change name button')
-    def click_change_name_button(self):
-        self._change_name_button.click()
+    @allure.step('Edit account')
+    def edit_account(self, account_name):
+        self.type_in_account_name(account_name)
+        self.select_random_color_for_account()
+        self.select_random_emoji_for_account()
+        self.change_name_button.click()
 
     @allure.step('Type in name for account')
     def type_in_account_name(self, value: str):
-        self._account_name_input.text = value
+        self.account_name_input.text = value
         return self
 
     @allure.step('Select random color for account')
     def select_random_color_for_account(self):
-        if 'radioButtonColor' in self._color_radiobutton.real_name.keys():
-            del self._color_radiobutton.real_name['radioButtonColor']
-        colors = [str(item.radioButtonColor) for item in driver.findAllObjects(self._color_radiobutton.real_name)]
-        self._color_radiobutton.real_name['radioButtonColor'] = \
+        if 'radioButtonColor' in self.color_radiobutton.real_name.keys():
+            del self.color_radiobutton.real_name['radioButtonColor']
+        colors = [str(item.radioButtonColor) for item in driver.findAllObjects(self.color_radiobutton.real_name)]
+        self.color_radiobutton.real_name['radioButtonColor'] = \
             random.choice([color for color in colors if color != '#2a4af5'])  # exclude status default color
-        self._color_radiobutton.click()
+        self.color_radiobutton.click()
         return self
 
     @allure.step('Click emoji button')
     def select_random_emoji_for_account(self):
-        self._emoji_selector.click()
+        self.emoji_selector.click()
         EmojiPopup().wait_until_appears()
-        emojis = [str(item.objectName) for item in driver.findAllObjects(self._emoji_item.real_name)]
+        emojis = [str(item.objectName) for item in driver.findAllObjects(self.emoji_item.real_name)]
         value = ((random.choice(emojis)).split('_', 1))[1]
         EmojiPopup().wait_until_appears().select(value)
         return self
@@ -316,7 +320,6 @@ class GeneratedAddressesList(QObject):
         super().__init__(names.accountAddressSelectionModal)
         self.address_list_item = QObject(names.addAccountPopup_GeneratedAddress)
         self.paginator_page = QObject(names.page_StatusBaseButton)
-
 
     @allure.step('Select address in list')
     def select(self, index: int):
