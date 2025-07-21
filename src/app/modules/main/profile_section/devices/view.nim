@@ -138,3 +138,15 @@ QtObject:
 
   proc inputConnectionStringForBootstrapping*(self: View, connectionString: string) {.slot.} =
     self.delegate.inputConnectionStringForBootstrapping(connectionString)
+
+  proc pairDevice*(self: View, installationId: string): string {.slot.} =
+    let error = self.delegate.pairDevice(installationId)
+    if error.len == 0:
+      self.model.updateItemEnabled(installationId, true)
+    return error
+
+  proc unpairDevice*(self: View, installationId: string): string {.slot.} =
+    let error = self.delegate.unpairDevice(installationId)
+    if error.len == 0:
+      self.model.updateItemEnabled(installationId, false)
+    return error

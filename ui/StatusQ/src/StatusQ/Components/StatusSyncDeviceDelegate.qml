@@ -21,7 +21,8 @@ StatusListItem {
     property bool showOnlineBadge: !isCurrentDevice
 
     signal itemClicked
-    signal setupSyncingButtonClicked
+    signal pairRequested
+    signal unpairRequested
 
     title: root.deviceName || qsTr("Unknown device")
 
@@ -58,10 +59,19 @@ StatusListItem {
         StatusButton {
             anchors.verticalCenter: parent.verticalCenter
             visible: root.enabled && !root.deviceEnabled && !root.isCurrentDevice
-            text: qsTr("Setup syncing")
+            text: qsTr("Pair")
             size: StatusBaseButton.Size.Small
             onClicked: {
-                root.setupSyncingButtonClicked()
+                root.pairRequested()
+            }
+        },
+        StatusButton {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: root.enabled && root.deviceEnabled && !root.isCurrentDevice
+            text: qsTr("Unpair")
+            size: StatusBaseButton.Size.Small
+            onClicked: {
+                root.unpairRequested()
             }
         },
         StatusIcon {

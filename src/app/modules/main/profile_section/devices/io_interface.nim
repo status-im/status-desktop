@@ -64,3 +64,9 @@ method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionS
 
 method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method pairDevice*(self: AccessInterface, installationId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unpairDevice*(self: AccessInterface, installationId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

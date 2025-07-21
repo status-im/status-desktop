@@ -125,3 +125,9 @@ method inputConnectionStringForBootstrapping*(self: Module, connectionString: st
 
 method onLocalPairingStatusUpdate*(self: Module, status: LocalPairingStatus) =
   self.view.onLocalPairingStatusUpdate(status)
+
+method pairDevice*(self: Module, installationId: string): string =
+  return self.controller.pairDevice(installationId)
+
+method unpairDevice*(self: Module, installationId: string): string =
+  return self.controller.unpairDevice(installationId)
