@@ -654,7 +654,7 @@ ifndef IN_NIX_SHELL
 	echo -e "\033[92mFetching:\033[39m appimagetool"
 	rm -rf tmp/linux
 	mkdir -p tmp/linux/tools
-	wget -nv https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
+	wget -nv https://github.com/AppImage/appimagetool/releases/download/continuous/$(_APPIMAGE_TOOL)
 	mv $(_APPIMAGE_TOOL) $(APPIMAGE_TOOL)
 	chmod +x $(APPIMAGE_TOOL)
 endif
