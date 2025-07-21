@@ -391,3 +391,23 @@ QtObject:
       self.events.emit(SIGNAL_PAIRING_FALLBACK_COMPLETED, Args())
     except Exception as e:
       error "error: ", desription = e.msg
+
+  proc unpairDevice*(self: Service, installationId: string): string =
+    try:
+      let response = status_installations.unpairDevice(installationId)
+      if response.error != nil:
+        let e = Json.safeDecode($response.error, RpcError)
+        raise newException(CatchableError, e.message)
+    except Exception as e:
+      error "error in unpairDevice: ", desription = e.msg
+      return e.msg
+
+  proc pairDevice*(self: Service, installationId: string): string =
+    try:
+      let response = status_installations.pairDevice(installationId)
+      if response.error != nil:
+        let e = Json.safeDecode($response.error, RpcError)
+        raise newException(CatchableError, e.message)
+    except Exception as e:
+      error "error in pairDevice: ", desription = e.msg
+      return e.msg

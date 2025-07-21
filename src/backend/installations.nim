@@ -47,3 +47,11 @@ proc enableInstallationAndSync*(installationId: string): RpcResponse[JsonNode] =
     "installationId": installationId,
   }]
   result = callPrivateRPC("enableInstallationAndSync".prefix, payload)
+
+proc unpairDevice*(installationId: string): RpcResponse[JsonNode] =
+  let payload = %* [installationId]
+  result = callPrivateRPC("disableInstallation".prefix, payload)
+
+proc pairDevice*(installationId: string): RpcResponse[JsonNode] =
+  let payload = %* [installationId]
+  result = callPrivateRPC("enableInstallation".prefix, payload)

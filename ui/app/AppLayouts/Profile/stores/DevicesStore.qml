@@ -48,4 +48,12 @@ QtObject {
     function inputConnectionStringForBootstrapping(connectionString) {
         root.devicesModule.inputConnectionStringForBootstrapping(connectionString)
     }
+
+    function pairDevice(installationId) {
+        return root.devicesModule.pairDevice(installationId)
+    }
+
+    function unpairDevice(installationId) {
+        return root.devicesModule.unpairDevice(installationId)
+    }
 }

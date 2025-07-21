@@ -55,6 +55,18 @@ SettingsContentBase {
                                  })
             }
 
+            function setupPair(installationId) {
+                Global.openPopup(pairDeviceDialogComponent, {
+                                     "installationId": installationId
+                                 })
+            }
+
+            function setupUnpair(installationId) {
+                Global.openPopup(unpairDeviceDialogComponent, {
+                                     "installationId": installationId
+                                 })
+            }
+
             function setupSyncing() {
                 root.devicesStore.generateConnectionStringAndRunSetupSyncingPopup()
             }
@@ -128,14 +140,16 @@ SettingsContentBase {
                 deviceEnabled: model.enabled
                 timestamp: model.timestamp
                 isCurrentDevice: model.isCurrentDevice
-                onSetupSyncingButtonClicked: {
-                    d.setupSyncing()
+                onPairRequested: {
+                    d.setupPair(model.installationId)
+                }
+                onUnpairRequested: {
+                    d.setupUnpair(model.installationId)
                 }
                 onClicked: {
-                    if (deviceEnabled)
+                    if (deviceEnabled) {
                         d.personalizeDevice(model)
-                    else
-                        d.setupSyncing()
+                    }
                 }
             }
         }
@@ -296,6 +310,49 @@ SettingsContentBase {
                 destroyOnClose: true
                 devicesStore: root.devicesStore
                 profileStore: root.profileStore
+            }
+        }
+
+        Component {
+            id: pairDeviceDialogComponent
+            ConfirmationDialog {
+                property string installationId
+
+                id: pairDeviceDialog
+                destroyOnClose: true
+                headerSettings.title: qsTr("Pair Device")
+                confirmationText: qsTr("Are you sure you want to pair this device?")
+                confirmButtonLabel: qsTr("Pair")
+                btnType: "normal"
+                onConfirmButtonClicked: {
+                    const error = devicesStore.devicesModule.pairDevice(installationId)
+                    if (error) {
+                        pairDeviceDialog.confirmationText = qsTr("Error pairing device: %1").arg(error)
+                    } else {
+                        Global.closePopup()
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: unpairDeviceDialogComponent
+            ConfirmationDialog {
+                property string installationId
+
+                id: unpairDeviceDialog
+                destroyOnClose: true
+                headerSettings.title: qsTr("Unpair Device")
+                confirmationText: qsTr("Are you sure you want to unpair this device?")
+                confirmButtonLabel: qsTr("Unpair")
+                onConfirmButtonClicked: {
+                    const error = devicesStore.devicesModule.unpairDevice(installationId)
+                    if (error) {
+                        unpairDeviceDialog.confirmationText = qsTr("Error unpairing device: %1").arg(error)
+                    } else {
+                        Global.closePopup()
+                    }
+                }
             }
         }
 

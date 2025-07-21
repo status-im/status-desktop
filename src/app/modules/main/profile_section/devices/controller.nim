@@ -108,3 +108,9 @@ proc getConnectionStringForBootstrappingAnotherDevice*(self: Controller, passwor
 
 proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string) =
   self.devicesService.inputConnectionStringForBootstrapping(connectionString)
+
+proc pairDevice*(self: Controller, installationId: string): string =
+  return self.devicesService.pairDevice(installationId)
+
+proc unpairDevice*(self: Controller, installationId: string): string =
+  return self.devicesService.unpairDevice(installationId)

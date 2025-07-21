@@ -138,14 +138,27 @@ QtObject:
 
   proc updateItemName*(self: Model, installationId: string, name: string) =
     var i = self.findIndexByInstallationId(installationId)
-    if(i == -1):
+    if i == -1 or self.items[i].installation.metadata.name == name:
       return
+
+    self.items[i].installation.metadata.name = name
 
     let index = self.createIndex(i, 0, nil)
     defer: index.delete
 
-    self.items[i].installation.metadata.name = name
     self.dataChanged(index, index, @[ModelRole.Name.int])
+
+  proc updateItemEnabled*(self: Model, installationId: string, enabled: bool) =
+    var i = self.findIndexByInstallationId(installationId)
+    if i == -1 or self.items[i].installation.enabled == enabled:
+      return
+
+    self.items[i].installation.enabled = enabled
+
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+
+    self.dataChanged(index, index, @[ModelRole.Enabled.int])
 
   proc getIsDeviceSetup*(self: Model, installationId: string): bool =
     return anyIt(self.items, it.installation.id == installationId and it.name != "")
