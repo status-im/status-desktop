@@ -42,11 +42,10 @@ class MainLeftPanel(QObject):
         self.settings_button = Button(names.settingsGearButton)
         self.wallet_button = Button(names.mainWalletButton)
 
-    def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 2):
+    def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 3):
         for _ in range(attempts):
-            button.click()
-            time.sleep(0.2)
             try:
+                button.click()
                 return screen_class().wait_until_appears()
             except Exception:
                 pass  # Retry if attempts remain

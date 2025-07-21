@@ -50,48 +50,44 @@ class WalletSettingsView(QObject):
         self.rename_keypair_menu_item = QObject(settings_names.rename_keypair_StatusMenuItem)
 
     @allure.step('Open add account pop up in wallet settings')
-    def open_add_account_pop_up(self, attempts: int = 2) -> 'AccountPopup':
+    def open_add_account_pop_up(self, attempts: int = 3) -> 'AccountPopup':
         for _ in range(attempts):
-            self.wallet_settings_add_new_account_button.click()
-            time.sleep(0.2)
             try:
+                self.wallet_settings_add_new_account_button.click()
                 return AccountPopup()
             except Exception:
                 pass  # retry one more time
         raise LookupError(f"Failed to open add account popup in settings")
 
     @allure.step('Open saved addresses in wallet settings')
-    def open_saved_addresses(self, attempts: int = 2) -> 'SavedAddressesWalletSettings':
+    def open_saved_addresses(self, attempts: int = 3) -> 'SavedAddressesWalletSettings':
         for _ in range(attempts):
-            self.saved_addresses_button.click()
-            time.sleep(0.2)
             try:
+                self.saved_addresses_button.click()
                 return SavedAddressesWalletSettings().wait_until_appears()
             except Exception:
                 pass
         raise LookupError(f"Failed to open saved addresses popup in settings")
 
     @allure.step('Open networks in wallet settings')
-    def open_networks(self, attempts: int = 2) -> 'NetworkWalletSettings':
+    def open_networks(self, attempts: int = 3) -> 'NetworkWalletSettings':
         for _ in range(attempts):
-            self.wallet_network_button.click()
-            time.sleep(0.2)
             try:
+                self.wallet_network_button.click()
                 return NetworkWalletSettings().wait_until_appears()
             except Exception:
                 pass
         raise LookupError(f"Failed to open saved addresses popup in settings")
 
     @allure.step('Open manage tokens in wallet settings')
-    def open_manage_tokens(self, attempts: int = 2) -> 'ManageTokensSettingsView':
-        self.wallet_manage_tokens_button.click()
-        try:
-            return ManageTokensSettingsView().wait_until_appears()
-        except Exception as err:
-            if attempts:
-                return self.open_manage_tokens(attempts - 1)
-            else:
-                raise err
+    def open_manage_tokens(self, attempts: int = 3) -> 'ManageTokensSettingsView':
+        for _ in range(attempts):
+            try:
+                self.wallet_manage_tokens_button.click()
+                return ManageTokensSettingsView().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Manage tokens view did not show up after {attempts} retries')
 
     @allure.step('Open account order in wallet settings')
     def open_account_order(self, attempts: int = 2):
@@ -150,7 +146,7 @@ class WalletSettingsView(QObject):
 
 class AccountDetailsView(WalletSettingsView):
     def __init__(self):
-        super(AccountDetailsView, self).__init__()
+        super().__init__()
         self._back_button = Button(settings_names.main_toolBar_back_button)
         self._edit_account_button = Button(settings_names.walletAccountViewEditAccountButton)
         self._remove_account_button = Button(settings_names.walletAccountViewRemoveAccountButton)
@@ -171,18 +167,24 @@ class AccountDetailsView(WalletSettingsView):
         return self
 
     @allure.step('Click Edit button')
-    def click_edit_account_button(self):
-        self._edit_account_button.click()
-        return EditAccountFromSettingsPopup().wait_until_appears()
+    def open_edit_account_popup(self, attempts: int = 3):
+        for _ in range(attempts):
+            try:
+                self._edit_account_button.click()
+                return EditAccountFromSettingsPopup().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Edit account popup did not show up after {attempts} retries')
 
     @allure.step('Click Remove account button')
-    def click_remove_account_button(self):
-        self._remove_account_button.click()
-        return RemoveAccountWithConfirmation().wait_until_appears()
-
-    @allure.step('Check if Remove account button is visible')
-    def is_remove_account_button_visible(self):
-        return self._remove_account_button.is_visible
+    def open_remove_account_with_confirmation_popup(self, attempts: int = 3):
+        for _ in range(attempts):
+            try:
+                self._remove_account_button.click()
+                return RemoveAccountWithConfirmation().wait_until_appears()
+            except Exception:
+                pass
+        raise LookupError(f'Remove account popup did not show up after {attempts} retries')
 
     @allure.step('Get account name')
     def get_account_name_value(self):
