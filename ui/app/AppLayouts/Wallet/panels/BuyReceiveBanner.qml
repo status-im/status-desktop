@@ -29,8 +29,8 @@ Control {
             objectName: "buyCard"
             Layout.fillWidth: true
             Layout.preferredWidth: root.buyEnabled ? layout.width / layout.children.length : 0
-            title: qsTr("Ways to buy assets")
-            subTitle: qsTr("Via card or bank transfer")
+            title: qsTr("Ways to buy")
+            subTitle: qsTr("Via card or bank")
             image: Theme.png("wallet/wallet-green")
             closeEnabled: root.closeEnabled
             visible: Layout.preferredWidth > 0
@@ -51,8 +51,8 @@ Control {
             objectName: "receiveCard"
             Layout.fillWidth: true
             Layout.preferredWidth: root.receiveEnabled ? layout.width / layout.children.length : 0
-            title: qsTr("Receive assets")
-            subTitle: qsTr("Deposit to your Wallet address")
+            title: qsTr("Receive")
+            subTitle: qsTr("Deposit to your Wallet")
             image: Theme.png("wallet/flying-coin")
             closeEnabled: root.closeEnabled
             visible: Layout.preferredWidth > 0
