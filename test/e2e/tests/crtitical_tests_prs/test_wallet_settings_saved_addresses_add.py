@@ -39,7 +39,7 @@ def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str
             configs.timeouts.LOADING_LIST_TIMEOUT_MSEC), f'Address: {name} not found'
 
     with step('Verify toast message when adding saved address'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert f'{name} successfully added to your saved addresses' in messages, \
             f"Toast message about adding saved address is not correct or not present. \
                 Current list of messages: {messages}"

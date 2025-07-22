@@ -77,7 +77,7 @@ def test_delete_generated_account_from_wallet_settings(
         delete_confirmation_popup.remove_account_with_confirmation()
 
     with step('Verify toast message notification when removing account'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert f'"{account_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 

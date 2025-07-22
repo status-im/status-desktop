@@ -27,7 +27,7 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert f'"{wallet_account.name}" successfully added' in messages, \
             f"Toast message about adding account is not correct or not present. Current list of messages: {messages}"
 
@@ -46,7 +46,7 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
         wallet.left_panel.delete_account_from_context_menu(new_name).remove_button.click()
 
     with step('Verify toast message notification when removing account'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert f'"{new_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 

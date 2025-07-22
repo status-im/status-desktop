@@ -144,9 +144,9 @@ class WalletSettingsView(QObject):
         return RenameKeypairPopup().wait_until_appears()
 
 
-class AccountDetailsView(WalletSettingsView):
+class AccountDetailsView(QObject):
     def __init__(self):
-        super().__init__()
+        super().__init__(settings_names.settingsWallet_View)
         self._back_button = Button(settings_names.main_toolBar_back_button)
         self._edit_account_button = Button(settings_names.walletAccountViewEditAccountButton)
         self._remove_account_button = Button(settings_names.walletAccountViewRemoveAccountButton)

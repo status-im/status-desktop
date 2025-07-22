@@ -70,7 +70,7 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
         minted_tokens_view = MintedTokensView()
 
     with step('Verify toast messages about started minting process appears'):
-        toast_messages = main_window.wait_for_notification()
+        toast_messages = main_window.wait_for_toast_notifications()
         assert f'Minting Owner-{community.name} and TMaster-{community.name} tokens for {community.name} using Account 1' in toast_messages
 
     with step('Verify that status of both tokens'):

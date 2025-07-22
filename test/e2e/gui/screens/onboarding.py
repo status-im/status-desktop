@@ -217,6 +217,7 @@ class OnboardingImportSeedPhraseView(QObject):
                 driver.type(self.seed_phrase_input_text_edit.object, "<Return>")
             else:
                 self.seed_phrase_input_text_edit.text = word
+                time.sleep(0.2)
 
     def continue_import(self):
         self.continue_button.click()

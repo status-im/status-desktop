@@ -33,7 +33,7 @@ def test_plus_button_add_watched_address(main_screen: MainWindow, address: str):
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert f'"{wallet_account.name}" successfully added'in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
