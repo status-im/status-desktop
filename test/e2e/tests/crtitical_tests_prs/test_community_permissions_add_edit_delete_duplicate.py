@@ -40,7 +40,7 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
         permissions_settings.create_permission()
 
     with step('Check toast message for permission creation'):
-        toast_messages = main_screen.wait_for_notification()
+        toast_messages = main_screen.wait_for_toast_notifications()
         message = toast_messages[0]
         assert ToastMessages.CREATE_PERMISSION_TOAST.value in toast_messages, \
             f"Toast message is incorrect, current message is {message}"
@@ -99,7 +99,7 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Check toast message for edited permission'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert ToastMessages.UPDATE_PERMISSION_TOAST.value in messages, \
             f"Toast message is incorrect, current message is {message}"
 
@@ -111,7 +111,7 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
         assert driver.waitFor(lambda: PermissionsIntroView().is_visible)
 
     with step('Check toast message for deleted permission'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
             f"Toast message is incorrect, current message is {message}"
 

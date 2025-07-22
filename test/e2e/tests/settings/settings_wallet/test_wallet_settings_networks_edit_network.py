@@ -66,15 +66,15 @@ def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, networ
 
     with step('Verify toast message appears for reverting to defaults'):
         if network_tab == WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
-            assert len(main_screen.wait_for_notification()) == 1, \
+            assert len(main_screen.wait_for_toast_notifications()) == 1, \
                 f"Multiple toast messages appeared"
-            message = main_screen.wait_for_notification()[0]
+            message = main_screen.wait_for_toast_notifications()[0]
             assert message == WalletNetworkSettings.REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE.value, \
                 f"Toast message is incorrect, current message is {message}"
         elif network_tab == WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
-            assert len(main_screen.wait_for_notification()) == 1, \
+            assert len(main_screen.wait_for_toast_notifications()) == 1, \
                 f"Multiple toast messages appeared"
-            message = main_screen.wait_for_notification()[0]
+            message = main_screen.wait_for_toast_notifications()[0]
             assert message == WalletNetworkSettings.REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE.value, \
                 f"Toast message is incorrect, current message is {message}"
 

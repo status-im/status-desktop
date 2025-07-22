@@ -52,23 +52,23 @@ class MainLeftPanel(QObject):
         raise Exception(f"Failed to open {screen_class.__name__} after {attempts} attempts")
 
     @allure.step('Click Home button and open Home screen')
-    def open_home_screen(self, attempts: int = 2) -> HomeScreen:
+    def open_home_screen(self, attempts: int = 2) -> 'HomeScreen':
         return self._open_screen_from_left_nav(self.home_button, HomeScreen, attempts)
 
     @allure.step('Click Chat button and open Messages screen')
-    def open_messages_screen(self, attempts: int = 2) -> MessagesScreen:
+    def open_messages_screen(self, attempts: int = 2) -> 'MessagesScreen':
         return self._open_screen_from_left_nav(self.messages_button, MessagesScreen, attempts)
 
     @allure.step('Click Gear button and open Settings screen')
-    def open_settings(self, attempts: int = 2) -> SettingsScreen:
+    def open_settings(self, attempts: int = 2) -> 'SettingsScreen':
         return self._open_screen_from_left_nav(self.settings_button, SettingsScreen, attempts)
 
     @allure.step('Click Wallet button and open Wallet main screen')
-    def open_wallet(self, attempts: int = 2) -> WalletScreen:
+    def open_wallet(self, attempts: int = 2) -> 'WalletScreen':
         return self._open_screen_from_left_nav(self.wallet_button, WalletScreen, attempts)
 
     @allure.step('Click and open online identifier')
-    def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
+    def open_online_identifier(self, attempts: int = 2) -> 'OnlineIdentifier':
         return self._open_screen_from_left_nav(self.profile_button, OnlineIdentifier, attempts)
 
     @allure.step('Get communities names')
@@ -80,7 +80,7 @@ class MainLeftPanel(QObject):
         return community_names
 
     @allure.step('Create community')
-    def create_community(self, community_data: CommunityData) -> CommunityScreen:
+    def create_community(self, community_data: CommunityData) -> 'CommunityScreen':
         communities_portal = self.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
         assert isinstance(community_data, CommunityData)
@@ -182,14 +182,31 @@ class MainWindow(Window):
             return self.create_profile(user_account)
 
     @allure.step('Wait for notification and get text')
-    def wait_for_notification(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC) -> list[str]:
+    def wait_for_toast_notifications(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, settle_time: float = 0.2) -> list[str]:
         start_time = time.monotonic()
+        seen_messages = set()
+        last_new_time = start_time
 
         while time.monotonic() - start_time < timeout_sec:
             try:
-                return ToastMessage().get_toast_messages()
-            except LookupError as err:
-                LOG.info(f"Notification not found: {err}")
-                time.sleep(0.1)  # Small delay to prevent CPU overuse
+                current_toasts = set(ToastMessage().get_toast_messages())
+                new_toasts = current_toasts - seen_messages
+                if new_toasts:
+                    seen_messages.update(new_toasts)
+                    last_new_time = time.monotonic()
+            except LookupError:
+                pass  # No toasts at this moment
 
-        raise LookupError(f"Notifications were not found within the {timeout_sec} seconds period.")
+            # If we've seen new toasts recently, keep waiting
+            if time.monotonic() - last_new_time < settle_time:
+                time.sleep(0.1)
+                continue
+            else:
+                # No new toasts for 'settle_time', assume done
+                break
+
+        if not seen_messages:
+            raise LookupError(f"No notifications found within {timeout_sec} seconds.")
+        return list(seen_messages)
+
+

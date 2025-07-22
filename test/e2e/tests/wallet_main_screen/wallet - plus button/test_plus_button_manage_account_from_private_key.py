@@ -28,7 +28,7 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
             account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert f'"{wallet_account.name}" successfully added' in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -60,7 +60,7 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
         wallet.left_panel.delete_account_from_context_menu(new_name).remove_account_with_confirmation()
 
     with step('Verify toast message notification when removing account'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert f'"{new_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 

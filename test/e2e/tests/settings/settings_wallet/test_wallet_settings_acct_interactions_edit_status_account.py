@@ -7,7 +7,8 @@ import pytest
 from allure_commons._allure import step
 
 from constants.wallet import WalletNetworkSettings, WalletAccountSettings, DerivationPathValue
-from gui.main_window import MainWindow
+from gui.main_window import MainWindow, MainLeftPanel
+from gui.screens.settings_wallet import AccountDetailsView
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704433',
@@ -33,7 +34,7 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
 
     with step('Open Status account view in wallet settings'):
         status_account_index = 0
-        status_acc_view = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings('Account 1', status_account_index)
+        status_acc_view = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value, status_account_index)
 
     with step('Check the default values on the account details view for main account'):
         assert status_acc_view.get_account_name_value() == WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value, \
@@ -53,13 +54,13 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
         edit_acc_pop_up.edit_account(new_name)
 
     with step('Make sure Delete button is not present for Status account'):
-        time.sleep(2)  # to allow the UI to refresh
         assert not status_acc_view._remove_account_button.is_visible, \
             f"Delete button should not be present for Status account"
 
     with step('Check the new values appear on account details view for  main account'):
-        account_emoji_id_after = status_acc_view.get_account_emoji_id()
-        assert status_acc_view.get_account_name_value() == new_name, f"Account name has not been changed"
+        new_screen = AccountDetailsView().wait_until_appears()
+        account_emoji_id_after = new_screen.get_account_emoji_id()
+        assert new_screen.get_account_name_value() == new_name, f"Account name has not been changed"
         assert account_emoji_id_before != account_emoji_id_after, f"Account emoji has not been changed"
         current_color = status_acc_view.get_account_color_value()
         assert WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_COLOR.value != current_color, \

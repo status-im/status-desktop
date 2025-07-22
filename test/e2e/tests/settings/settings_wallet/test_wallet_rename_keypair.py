@@ -65,6 +65,6 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
         assert pk_new_name in settings.get_keypairs_names()
 
     with step('Verify toast message with successful renaming appears'):
-        messages = main_screen.wait_for_notification()
+        messages = main_screen.wait_for_toast_notifications()
         assert WalletRenameKeypair.WALLET_SUCCESSFUL_RENAMING.value + 'from "' + pk_name + '" to "' + pk_new_name + '"' in messages, \
             f"Toast message have not appeared"

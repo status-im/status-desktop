@@ -44,4 +44,4 @@ def test_wallet_send_nft(main_window, user_account, receiver_account_address, am
         authenticate_with_password(user_account)
 
     assert WalletTransactions.TRANSACTION_SENDING_TOAST_MESSAGE.value in ' '.join(
-        main_window.wait_for_notification())
+        main_window.wait_for_toast_notifications())
