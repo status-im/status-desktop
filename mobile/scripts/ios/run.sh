@@ -7,8 +7,8 @@
 set -euo pipefail
 
 CWD=$(realpath "$(dirname "$0")")
-APPID=${APPID:-im.status.Status-tablet}            # Bundle identifier of the app
 APP=${APP:-"$CWD/../../bin/Applications/Status-tablet.app"}  # Path to the .app bundle
+APPID=${APPID:-$(mdls -name kMDItemCFBundleIdentifier -raw "$APP")} # Bundle identifier of the app
 SIMULATOR_UDID=${SIMULATOR_UDID:-""}               # Specify to skip interactive selection
 IPHONE_SDK=${IPHONE_SDK:-iphonesimulator}  # Default to simulator if not set
 DEVICE_ID=${DEVICE_ID:-""}                # For physical device selection
