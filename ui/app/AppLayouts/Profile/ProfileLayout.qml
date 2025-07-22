@@ -475,8 +475,7 @@ StatusSectionLayout {
 
                 function getSpecificCommunityAccessStore(communityId: string) {
                     const communityRootStore = root.messagingRootStore.createCommunityRootStore(this, communityId)
-                    const communityAccessStore = communityRootStore ? communityRootStore.communityAccessStore : null
-                    return communityAccessStore
+                    return communityRootStore ? communityRootStore.communityAccessStore : null
                 }
 
                 implicitWidth: parent.width

@@ -4,7 +4,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import shared.stores 1.0
 
-QtObject {
+StatusQUtils.QObject {
     id: root
 
     // All logic from this store will be related to this particular communityId
@@ -39,7 +39,7 @@ QtObject {
     readonly property bool isMyCommunityRequestPending: d.communitiesModuleInst.isMyCommunityRequestPending(root.communityId)
 
     // Private property used to define context properties asignements and other private stuff.
-    readonly property QtObject _d: StatusQUtils.QObject {
+    QtObject {
         id: d
 
         readonly property var mainModuleInst: mainModule
