@@ -323,7 +323,6 @@ StackLayout {
             onCreatePermissionRequested: root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
             onRemovePermissionRequested: root.communityPermissionsStore.removePermission(key)
             onEditPermissionRequested: root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
-            onSetHideIfPermissionsNotMetRequested: root.communityPermissionsStore.setHideIfPermissionsNotMet(chatId, checked)
             onPrepareTokenModelForCommunityChat: root.communityAccessStore.prepareTokenModelForCommunityChat(communityId, chatId)
 
             // Community access related requests:

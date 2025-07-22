@@ -72,7 +72,6 @@ Item {
     signal createPermissionRequested(var holdings, int permissionType, bool isPrivate, var channels)
     signal removePermissionRequested(string key)
     signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
-    signal setHideIfPermissionsNotMetRequested(string chatId, bool checked)
     signal prepareTokenModelForCommunityChatRequested(string communityId, string chatId)
 
     QtObject {
@@ -617,9 +616,6 @@ Item {
                                                  permissions[i].channelsListModel,
                                                  permissions[i].isPrivate)
                 }
-            }
-            onSetHideIfPermissionsNotMet: function (checked) {
-                root.setHideIfPermissionsNotMetRequested(chatId, checked)
             }
             onDeleteCommunityChannel: {
                 Global.openPopup(deleteChatConfirmationDialog);
