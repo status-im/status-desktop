@@ -434,7 +434,9 @@ Item {
             onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
 
             // Community access related requests:
-            onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
+            onSpectateCommunityRequested: (communityId) => {
+                root.spectateCommunityRequested(communityId)
+            }
         }
         header: {
             if (!root.isContactBlocked && root.isOneToOne && root.rootStore.oneToOneChatContact) {

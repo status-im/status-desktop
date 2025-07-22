@@ -155,7 +155,9 @@ ColumnLayout {
             onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
 
             // Community access related requests:
-            onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
+            onSpectateCommunityRequested: (communityId) => {
+                root.spectateCommunityRequested(communityId)
+            }
         }
     }
 }

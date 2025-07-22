@@ -1027,7 +1027,9 @@ Loader {
                         store: root.rootStore
                         communityId: root.communityId
 
-                        onSpectateCommunityRequested: root.spectateCommunityRequested(communityId)
+                        onSpectateCommunityRequested: (communityId) => {
+                            root.spectateCommunityRequested(communityId)
+                        }
                     }
                 }
 

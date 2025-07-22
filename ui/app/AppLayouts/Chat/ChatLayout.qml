@@ -314,19 +314,37 @@ StackLayout {
             onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
 
             // Contacts related requests:
-            onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
-            onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
-            onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
-            onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
+            onChangeContactNicknameRequest: (pubKey, nickname, displayName, isEdit ) => {
+                root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+            }
+            onRemoveTrustStatusRequest: (pubKey) => {
+                root.removeTrustStatusRequest(pubKey)
+            }
+            onDismissContactRequest: (chatId, contactRequestId) => {
+                root.dismissContactRequest(chatId, contactRequestId)
+            }
+            onAcceptContactRequest: (chatId, contactRequestId) => {
+                root.acceptContactRequest(chatId, contactRequestId)
+            }
 
             // Permissions Related requests:
-            onCreatePermissionRequested: root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
-            onRemovePermissionRequested: root.communityPermissionsStore.removePermission(key)
-            onEditPermissionRequested: root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
-            onPrepareTokenModelForCommunityChat: root.communityAccessStore.prepareTokenModelForCommunityChat(communityId, chatId)
+            onCreatePermissionRequested: (holdings, permissionType, isPrivate, channels) => {
+                root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
+            }
+            onRemovePermissionRequested: (key) => {
+                root.communityPermissionsStore.removePermission(key)
+            }
+            onEditPermissionRequested: (key, holdings, permissionType, channels, isPrivate) => {
+                root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
+            }
+            onPrepareTokenModelForCommunityChat: (communityId, chatId) => {
+                root.communityAccessStore.prepareTokenModelForCommunityChat(communityId, chatId)
+            }
 
             // Community access related requests:
-            onSpectateCommunityRequested: root.communityAccessStore.spectateCommunity(communityId)
+            onSpectateCommunityRequested: (communityId) => {
+                root.communityAccessStore.spectateCommunity(communityId)
+            }
         }
     }
 
@@ -366,13 +384,23 @@ StackLayout {
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(community.id)
 
             // Permissions Related requests:
-            onCreatePermissionRequested: root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
-            onRemovePermissionRequested: root.communityPermissionsStore.removePermission(key)
-            onEditPermissionRequested: root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
+            onCreatePermissionRequested: (holdings, permissionType, isPrivate, channels) => {
+                root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
+            }
+            onRemovePermissionRequested: (key) => {
+                root.communityPermissionsStore.removePermission(key)
+            }
+            onEditPermissionRequested: (key, holdings, permissionType, channels, isPrivate) => {
+                root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
+            }
 
             // Communtiy access related requests:
-            onAcceptRequestToJoinCommunityRequested: root.communityAccessStore.acceptRequestToJoinCommunityRequested(requestId, communityId)
-            onDeclineRequestToJoinCommunityRequested: root.communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
+            onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
+                root.communityAccessStore.acceptRequestToJoinCommunityRequested(requestId, communityId)
+            }
+            onDeclineRequestToJoinCommunityRequested: (requestId, communityId) => {
+                root.communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
+            }
         }
     }
 

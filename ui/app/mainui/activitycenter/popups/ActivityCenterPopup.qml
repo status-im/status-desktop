@@ -253,12 +253,12 @@ Popup {
             store: root.store
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: root.close()
-            onAcceptRequestToJoinCommunityRequested: {
+            onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
                 if(communityAccessStore) {
                     communityAccessStore.acceptRequestToJoinCommunityRequested(requestId, communityId)
                 }
             }
-            onDeclineRequestToJoinCommunityRequested: {
+            onDeclineRequestToJoinCommunityRequested: (requestId, communityId) => {
                 if(communityAccessStore) {
                     communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
                 }
