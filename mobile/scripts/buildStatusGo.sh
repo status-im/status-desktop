@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 #Script designed to run in the context of the status-go repository
+set -ef pipefail
 set -o xtrace
 
 STATUS_GO=${STATUS_GO:-"../vendors/status-desktop/vendor/status-go"}
@@ -28,7 +29,7 @@ cd "$STATUS_GO"
 make generate V=3 SHELL=/bin/sh
 
 mkdir -p build/bin/statusgo-lib
-go run cmd/library/*.go > build/bin/statusgo-lib/main.go
+go run cmd/library/main.go cmd/library/const.go > build/bin/statusgo-lib/main.go
 
 GOFLAGS="" CGO_ENABLED=1 GOOS="$OS" GOARCH="$GOARCH" \
 	go build \

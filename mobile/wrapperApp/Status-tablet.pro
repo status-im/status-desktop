@@ -43,7 +43,7 @@ ios {
     QMAKE_INFO_PLIST = $$PWD/../ios/Info.plist
     QMAKE_IOS_DEPLOYMENT_TARGET=16.0
     QMAKE_TARGET_BUNDLE_PREFIX = im.status
-    QMAKE_APPLICATION_BUNDLE_NAME = tablet
+    QMAKE_BUNDLE = status$${QMAKE_BUNDLE_SUFFIX}
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
 
     LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen -lpcre
