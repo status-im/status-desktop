@@ -352,13 +352,13 @@ QtObject:
   QtProperty[QVariant] permissionsModel:
     read = getTokenPermissionsModel
 
-  proc createOrEditCommunityTokenPermission*(self: View, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: string, isPrivate: bool) {.slot.} =
+  proc createOrEditCommunityTokenPermission*(self: View, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: string, isPrivate: bool) {.slot.} =
 
     let chatIDs = channelIDs.split(',')
-    self.delegate.createOrEditCommunityTokenPermission(communityId, permissionId, permissionType, tokenCriteriaJson, chatIDs, isPrivate)
+    self.delegate.createOrEditCommunityTokenPermission(permissionId, permissionType, tokenCriteriaJson, chatIDs, isPrivate)
 
-  proc deleteCommunityTokenPermission*(self: View, communityId: string, permissionId: string) {.slot.} =
-    self.delegate.deleteCommunityTokenPermission(communityId, permissionId)
+  proc deleteCommunityTokenPermission*(self: View, permissionId: string) {.slot.} =
+    self.delegate.deleteCommunityTokenPermission(permissionId)
 
   proc requiresTokenPermissionToJoinChanged*(self: View) {.signal.}
 
