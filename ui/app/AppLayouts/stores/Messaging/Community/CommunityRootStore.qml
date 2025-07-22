@@ -4,22 +4,26 @@ import SortFilterProxyModel
 
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-QtObject {
+StatusQUtils.QObject {
     id: root
 
     required property var communityId
 
-    readonly property QtObject _d: StatusQUtils.QObject {
+    QtObject {
         id: d
 
         readonly property var mainModuleInst: mainModule
         readonly property var communitiesModuleInst: communitiesModule
 
         // Foreach `communityId` there will be the corresponding community module:
-        property var currentCommunityModule: d.getCurrentCommunityModule(root.communityId)
+        property var currentCommunityModule: {
+            return d.getCurrentCommunityModule(root.communityId)
+        }
 
         // Foreach `communityId` there will be the corresponding active chat content module:
-        property var currentChatContentModule: d.getChatContentModule(d.currentCommunityModule)
+        property var currentChatContentModule: {
+            return d.getChatContentModule(d.currentCommunityModule)
+        }
 
         // This is the community section details for this specific `communityId`
         readonly property var communityDetails: d.communityDetailsInstantiator.count ? d.communityDetailsInstantiator.objectAt(0) : null
@@ -82,10 +86,10 @@ QtObject {
         chatPermissionsCheckOngoing: !!d.currentChatContentModule ?
                                          d.currentChatContentModule.permissionsCheckOngoing : false
 
-        onAcceptRequestToJoinCommunityRequested: {
+        onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
             d.currentCommunityModule.acceptRequestToJoinCommunity(requestId, communityId)
         }
-        onDeclineRequestToJoinCommunityRequested: {
+        onDeclineRequestToJoinCommunityRequested: (requestId, communityId) => {
             d.currentCommunityModule.declineRequestToJoinCommunity(requestId, communityId)
         }
     }
@@ -95,10 +99,10 @@ QtObject {
         permissionsModel: d.currentCommunityModule ? d.currentCommunityModule.permissionsModel: null
         allTokenRequirementsMet: d.currentCommunityModule ? d.currentCommunityModule.allTokenRequirementsMet : false
 
-        onCreateOrEditCommunityTokenPermission: {
+        onCreateOrEditCommunityTokenPermission: (key, permissionType, holdings, channels, isPrivate) => {
             d.currentCommunityModule.createOrEditCommunityTokenPermission(key, permissionType, holdings, channels, isPrivate)
         }
-        onDeleteCommunityTokenPermission: {
+        onDeleteCommunityTokenPermission: (key) => {
             d.currentCommunityModule.deleteCommunityTokenPermission(key)
         }
     }
