@@ -96,12 +96,10 @@ QtObject {
         allTokenRequirementsMet: d.currentCommunityModule ? d.currentCommunityModule.allTokenRequirementsMet : false
 
         onCreateOrEditCommunityTokenPermission: {
-            d.currentCommunityModule.createOrEditCommunityTokenPermission(activeSection, key,
-                                                                          permissionType, holdings,
-                                                                          channels, isPrivate)
+            d.currentCommunityModule.createOrEditCommunityTokenPermission(key, permissionType, holdings, channels, isPrivate)
         }
         onDeleteCommunityTokenPermission: {
-            d.currentCommunityModule.deleteCommunityTokenPermission(activeSectionId, key)
+            d.currentCommunityModule.deleteCommunityTokenPermission(key)
         }
     }
 }

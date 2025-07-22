@@ -1483,7 +1483,7 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
     let status = toOnlineStatus(s.statusType)
     self.view.chatsModel().updateItemOnlineStatusById(s.publicKey, status)
 
-method createOrEditCommunityTokenPermission*(self: Module, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) =
+method createOrEditCommunityTokenPermission*(self: Module, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) =
 
   var tokenPermission = CommunityTokenPermissionDto()
   tokenPermission.id = permissionId
@@ -1504,6 +1504,7 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 
     let contractAddresses = self.controller.getContractAddressesForToken(tokenKey)
     if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
+      let communityId = self.controller.getMySectionId()
       if permissionId == "":
         self.onCommunityTokenPermissionCreationFailed(communityId)
         return
@@ -1514,10 +1515,10 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
     tokenCriteriaDto.contractAddresses = contractAddresses
     tokenPermission.tokenCriteria.add(tokenCriteriaDto)
 
-  self.controller.createOrEditCommunityTokenPermission(communityId, tokenPermission)
+  self.controller.createOrEditCommunityTokenPermission(tokenPermission)
 
-method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
-  self.controller.deleteCommunityTokenPermission(communityId, permissionId)
+method deleteCommunityTokenPermission*(self: Module, permissionId: string) =
+  self.controller.deleteCommunityTokenPermission(permissionId)
 
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)

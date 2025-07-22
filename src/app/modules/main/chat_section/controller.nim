@@ -722,11 +722,11 @@ proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
 
-proc createOrEditCommunityTokenPermission*(self: Controller, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  self.communityService.createOrEditCommunityTokenPermission(communityId, tokenPermission)
+proc createOrEditCommunityTokenPermission*(self: Controller, tokenPermission: CommunityTokenPermissionDto) =
+  self.communityService.createOrEditCommunityTokenPermission(self.sectionId, tokenPermission)
 
-proc deleteCommunityTokenPermission*(self: Controller, communityId: string, permissionId: string) =
-  self.communityService.deleteCommunityTokenPermission(communityId, permissionId)
+proc deleteCommunityTokenPermission*(self: Controller, permissionId: string) =
+  self.communityService.deleteCommunityTokenPermission(self.sectionId, permissionId)
 
 proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
   return self.walletAccountService.allAccountsTokenBalance(symbol)

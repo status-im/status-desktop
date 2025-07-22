@@ -337,10 +337,10 @@ method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUp
 method switchToChannel*(self: AccessInterface, channelName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createOrEditCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) {.base.} =
+method createOrEditCommunityTokenPermission*(self: AccessInterface, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string) {.base.} =
+method deleteCommunityTokenPermission*(self: AccessInterface, permissionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method collectCommunityMetricsMessagesTimestamps*(self: AccessInterface, intervals: string) {.base.} =

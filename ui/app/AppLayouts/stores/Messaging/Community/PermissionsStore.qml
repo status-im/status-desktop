@@ -20,7 +20,7 @@ QtObject {
 
         function filterPredicate(modelData) {
             return root.permissionsModel.belongsToChat(modelData.id, root.activeChannelId) &&
-                (modelData.tokenCriteriaMet || !modelData.isPrivate)
+                    (modelData.tokenCriteriaMet || !modelData.isPrivate)
         }
         filters: [
             FastExpressionFilter {
@@ -38,9 +38,9 @@ QtObject {
         sourceModel: root.permissionsModel
 
         function filterPredicate(modelData) {
-            return (modelData.permissionType == Constants.permissionType.read) && 
-                root.permissionsModel.belongsToChat(modelData.id, root.activeChannelId) &&
-                (modelData.tokenCriteriaMet || !modelData.isPrivate)
+            return (modelData.permissionType == Constants.permissionType.read) &&
+                    root.permissionsModel.belongsToChat(modelData.id, root.activeChannelId) &&
+                    (modelData.tokenCriteriaMet || !modelData.isPrivate)
         }
         filters: [
             FastExpressionFilter {
@@ -57,9 +57,9 @@ QtObject {
         id: viewAndPostPermissionsModel
         sourceModel: root.permissionsModel
         function filterPredicate(modelData) {
-            return (modelData.permissionType == Constants.permissionType.viewAndPost) && 
-                root.permissionsModel.belongsToChat(modelData.id, root.activeChannelId) &&
-                (modelData.tokenCriteriaMet || !modelData.isPrivate)
+            return (modelData.permissionType == Constants.permissionType.viewAndPost) &&
+                    root.permissionsModel.belongsToChat(modelData.id, root.activeChannelId) &&
+                    (modelData.tokenCriteriaMet || !modelData.isPrivate)
         }
         filters: [
             FastExpressionFilter {
@@ -90,38 +90,32 @@ QtObject {
 
     readonly property bool isOwner: false
 
-    readonly property QtObject _d: QtObject {
-        id: d
-        
-        function createOrEdit(key, holdings, permissionType, isPrivate,
-                              channels) {
-            root.createOrEditCommunityTokenPermission(
-                        root.activeSectionId, key,
-                        permissionType,
-                        JSON.stringify(holdings),
-                        channels.map(c => c.key).join(","),
-                        isPrivate)
-        }
-    }
-
-    signal createOrEditCommunityTokenPermission(string activeSection, string key,
-                                                int permissionType, var holdings,
-                                                var channels, bool isPrivate)
-    signal deleteCommunityTokenPermission(string activeSectionId, string key)
+    signal createOrEditCommunityTokenPermission(string key, int permissionType, var holdings, var channels, bool isPrivate)
+    signal deleteCommunityTokenPermission(string key)
 
     function setHideIfPermissionsNotMet(chatId, checked) {
         //TODO: backend implementation
     }
 
     function createPermission(holdings, permissionType, isPrivate, channels) {
-        d.createOrEdit("", holdings, permissionType, isPrivate, channels)
+        root.createOrEditCommunityTokenPermission(
+                    "",
+                    permissionType,
+                    JSON.stringify(holdings),
+                    channels.map(c => c.key).join(","),
+                    isPrivate)
     }
 
     function editPermission(key, holdings, permissionType, channels, isPrivate) {
-        d.createOrEdit(key, holdings, permissionType, isPrivate, channels)
+        root.createOrEditCommunityTokenPermission(
+                    key,
+                    permissionType,
+                    JSON.stringify(holdings),
+                    channels.map(c => c.key).join(","),
+                    isPrivate)
     }
 
     function removePermission(key) {
-        root.deleteCommunityTokenPermission(root.activeSectionId, key)
+        root.deleteCommunityTokenPermission(key)
     }
 }
