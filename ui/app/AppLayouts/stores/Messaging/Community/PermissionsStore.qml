@@ -93,10 +93,6 @@ QtObject {
     signal createOrEditCommunityTokenPermission(string key, int permissionType, var holdings, var channels, bool isPrivate)
     signal deleteCommunityTokenPermission(string key)
 
-    function setHideIfPermissionsNotMet(chatId, checked) {
-        //TODO: backend implementation
-    }
-
     function createPermission(holdings, permissionType, isPrivate, channels) {
         root.createOrEditCommunityTokenPermission(
                     "",

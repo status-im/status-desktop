@@ -157,7 +157,6 @@ StatusSectionLayout {
     signal createPermissionRequested(var holdings, int permissionType, bool isPrivate, var channels)
     signal removePermissionRequested(string key)
     signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
-    signal setHideIfPermissionsNotMetRequested(string chatId, bool checked)
     signal prepareTokenModelForCommunityChat(string communityId, string chatId)
 
     // Community access related requests:
@@ -421,7 +420,6 @@ StatusSectionLayout {
             onCreatePermissionRequested: root.createPermissionRequested(holdings, permissionType, isPrivate, channels)
             onRemovePermissionRequested: root.removePermissionRequested(key)
             onEditPermissionRequested: root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
-            onSetHideIfPermissionsNotMetRequested: root.setHideIfPermissionsNotMetRequested(chatId, checked)
             onPrepareTokenModelForCommunityChatRequested: root.prepareTokenModelForCommunityChat(communityId, chatId)
         }
     }
