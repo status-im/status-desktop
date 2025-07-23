@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import SortFilterProxyModel
+import QtModelsToolkit
 
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
@@ -26,26 +27,12 @@ StatusQUtils.QObject {
         }
 
         // This is the community section details for this specific `communityId`
-        readonly property var communityDetails: d.communityDetailsInstantiator.count ? d.communityDetailsInstantiator.objectAt(0) : null
+        readonly property var communityDetails: d.communityDetailsEntry.item
 
-        readonly property var communityDetailsInstantiator: Instantiator {
-            model: SortFilterProxyModel {
-                sourceModel: d.mainModuleInst.sectionsModel
-                filters: ValueFilter {
-                    roleName: "id"
-                    value: root.communityId
-                }
-            }
-            delegate: QtObject {
-                readonly property string id: model.id
-                readonly property int sectionType: model.sectionType
-                readonly property string name: model.name
-                readonly property string image: model.image
-                readonly property bool joined: model.joined
-                readonly property bool amIBanned: model.amIBanned
-                readonly property string introMessage: model.introMessage
-                // add others when needed..
-            }
+        readonly property ModelEntry communityDetailsEntry: ModelEntry {
+            key: "id"
+            sourceModel: d.mainModuleInst.sectionsModel
+            value: root.communityId
         }
 
         function getCurrentCommunityModule(communityId) {
