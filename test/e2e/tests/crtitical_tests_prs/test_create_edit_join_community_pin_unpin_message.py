@@ -121,13 +121,13 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
 
             # TODO: https://github.com/status-im/status-desktop/issues/18417
 
-            # with step('Verify community parameters in community settings screen'):
-            #     settings_screen = main_screen.left_panel.open_settings()
-            #     community_settings = settings_screen.left_panel.open_communities_settings()
-            #     community_info = community_settings.communities[0]
-            #     assert community_info.name == new_name
-            #     assert community_info.description == new_description
-            #     assert '1' in community_info.members
+            with step('Verify community parameters in community settings screen'):
+                settings_screen = main_screen.left_panel.open_settings()
+                community_settings = settings_screen.left_panel.open_communities_settings()
+                community_info = community_settings.communities[0]
+                assert community_info.name == new_name
+                assert community_info.description == new_description
+                assert '1' in community_info.members
 
             assert new_name in main_screen.left_panel.communities(), \
                 f'Community {new_name} should be present in the list of communities but it is not'

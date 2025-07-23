@@ -52,16 +52,16 @@ class MainLeftPanel(QObject):
         raise Exception(f"Failed to open {screen_class.__name__} after {attempts} attempts")
 
     @allure.step('Click Home button and open Home screen')
-    def open_home_screen(self, attempts: int = 2) -> 'HomeScreen':
-        return self._open_screen_from_left_nav(self.home_button, HomeScreen, attempts)
+    def open_home_screen(self) -> 'HomeScreen':
+        return self._open_screen_from_left_nav(self.home_button, HomeScreen)
 
     @allure.step('Click Chat button and open Messages screen')
     def open_messages_screen(self, attempts: int = 2) -> 'MessagesScreen':
         return self._open_screen_from_left_nav(self.messages_button, MessagesScreen, attempts)
 
     @allure.step('Click Gear button and open Settings screen')
-    def open_settings(self, attempts: int = 2) -> 'SettingsScreen':
-        return self._open_screen_from_left_nav(self.settings_button, SettingsScreen, attempts)
+    def open_settings(self) -> 'SettingsScreen':
+        return self._open_screen_from_left_nav(self.settings_button, SettingsScreen)
 
     @allure.step('Click Wallet button and open Wallet main screen')
     def open_wallet(self, attempts: int = 2) -> 'WalletScreen':
