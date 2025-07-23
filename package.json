@@ -7,7 +7,7 @@
     "create-dmg": "status-im/create-dmg#678fbd4"
   },
   "engines": {
-    "node": ">=10",
+    "node": ">=22",
     "npm": ">=7"
   },
   "dependencies": {
