@@ -3,7 +3,7 @@ import std/macros
 # Macro that simplifies checking and updating values in a model
 # IMPORTANT:
   # The model's items need to be in a `seq` called `items`
-  # A `seq[string]` named `roles` needs to exist
+  # A `seq[int]` named `roles` needs to exist
   # The index of the item being checked must be named `ind`
 macro updateRole*(propertyName: untyped, roleName: untyped): untyped =
   quote do:
