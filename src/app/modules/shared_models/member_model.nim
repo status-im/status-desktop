@@ -557,12 +557,6 @@ QtObject:
       if not found:
         result.add(pubkey)
 
-  proc isUserBanned*(self: Model, pubkey: string): bool = 
-    let ind = self.findIndexForMember(pubkey)
-    if ind == -1:
-      return false
-    return self.getMemberItemByIndex(ind).membershipRequestState == MembershipRequestState.Banned
-
   proc createMemberItemFromDtos*(
       contactDetails: ContactDetails,
       status: OnlineStatus,

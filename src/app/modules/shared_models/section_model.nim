@@ -203,7 +203,7 @@ QtObject:
     of ModelRole.CommunityTokensModel:
       result = newQVariant(item.communityTokens)
     of ModelRole.AmIBanned:
-      result = newQVariant(item.amIBanned)
+      result = newQVariant(item.isBanned)
     of ModelRole.PubsubTopic:
       result = newQVariant(item.pubsubTopic)
     of ModelRole.PubsubTopicKey:
@@ -540,7 +540,7 @@ QtObject:
           "canManageUsers": item.canManageUsers,
           "canRequestAccess": item.canRequestAccess,
           "isMember": item.isMember,
-          "amIBanned": item.amIBanned,
+          "amIBanned": item.isBanned,
           "access": item.access,
           "ensOnly": item.ensOnly,
           "nbMembers": item.members.getCount(),
@@ -602,3 +602,19 @@ QtObject:
       return
 
     self.items[i].members.removeItemById(memberId)
+
+  proc setIsBanned*(self: SectionModel, communityId: string, isBanned: bool) =
+    let ind = self.getItemIndex(communityId)
+    if ind == -1:
+      return
+
+    var roles: seq[int] = @[]
+
+    updateRole(isBanned, AmIBanned)
+
+    if roles.len == 0:
+      return
+
+    let dataIndex = self.createIndex(ind, 0, nil)
+    defer: dataIndex.delete
+    self.dataChanged(dataIndex, dataIndex, roles)

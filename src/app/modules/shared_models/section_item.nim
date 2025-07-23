@@ -3,8 +3,6 @@ import ./member_model, ./member_item
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
 
-import ../../global/global_singleton
-
 import ../../../app_service/common/types
 import ../../../app_service/service/community_tokens/community_collectible_owner
 
@@ -41,6 +39,7 @@ type
     active: bool
     enabled: bool
     isMember: bool
+    isBanned: bool
     joined: bool
     canJoin: bool
     spectated: bool
@@ -87,6 +86,7 @@ proc initSectionItem*(
     canManageUsers = false,
     canRequestAccess = false,
     isMember = false,
+    isBanned = false,
     access: int = 0,
     ensOnly = false,
     muted = false,
@@ -125,6 +125,7 @@ proc initSectionItem*(
   result.canManageUsers = canManageUsers
   result.canRequestAccess = canRequestAccess
   result.isMember = isMember
+  result.isBanned = isBanned
   result.access = access
   result.ensOnly = ensOnly
   result.muted = muted
@@ -172,6 +173,7 @@ proc `$`*(self: SectionItem): string =
     canManageUsers:{self.canManageUsers},
     canRequestAccess:{self.canRequestAccess},
     isMember:{self.isMember},
+    isBanned:{self.isBanned},
     access:{self.access},
     ensOnly:{self.ensOnly},
     muted:{self.muted},
@@ -324,6 +326,12 @@ proc isMember*(self: SectionItem): bool {.inline.} =
 proc `isMember=`*(self: var SectionItem, value: bool) {.inline.} =
   self.isMember = value
 
+proc isBanned*(self: SectionItem): bool {.inline.} =
+  self.isBanned
+
+proc `isBanned=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.isBanned = value
+
 proc access*(self: SectionItem): int {.inline.} =
   self.access
 
@@ -356,9 +364,6 @@ proc hasMember*(self: SectionItem, pubkey: string): bool =
 
 proc setOnlineStatusForMember*(self: SectionItem, pubKey: string, onlineStatus: OnlineStatus) =
   self.membersModel.setOnlineStatus(pubkey, onlineStatus)
-
-proc amIBanned*(self: SectionItem): bool {.inline.} =
-  return self.membersModel.isUserBanned(singletonInstance.userProfile.getPubKey())
 
 proc isPendingOwnershipRequest*(self: SectionItem): bool {.inline.} =
   self.isPendingOwnershipRequest
