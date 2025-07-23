@@ -596,26 +596,20 @@ Item {
             }
 
             onAddPermissions: function (permissions) {
-                for (var i = 0; i < permissions.length; i++) {
-                    root.createPermissionRequested(permissions[i].holdingsListModel,
-                                                   permissions[i].permissionType,
-                                                   permissions[i].isPrivate,
-                                                   permissions[i].channelsListModel)
-                }
+                permissions.forEach(p => root.createPermissionRequested(p.holdingsListModel,
+                                                                        p.permissionType,
+                                                                        p.isPrivate,
+                                                                        p.channelsListModel))
             }
             onRemovePermissions: function (permissions) {
-                for (var i = 0; i < permissions.length; i++) {
-                    root.removePermissionRequested(permissions[i].id)
-                }
+                permissions.forEach(p => root.removePermissionRequested(p.id))
             }
             onEditPermissions: function (permissions) {
-                for (var i = 0; i < permissions.length; i++) {
-                    root.editPermissionRequested(permissions[i].id,
-                                                 permissions[i].holdingsListModel,
-                                                 permissions[i].permissionType,
-                                                 permissions[i].channelsListModel,
-                                                 permissions[i].isPrivate)
-                }
+                permissions.forEach(p => root.editPermissionRequested(p.id,
+                                                                      p.holdingsListModel,
+                                                                      p.permissionType,
+                                                                      p.channelsListModel,
+                                                                      p.isPrivate))
             }
             onDeleteCommunityChannel: {
                 Global.openPopup(deleteChatConfirmationDialog);
