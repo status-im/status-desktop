@@ -62,12 +62,6 @@ SplitView {
                     name: "community-name"
                 })
 
-                rootStore: AppLayoutStores.RootStore {
-                    function communityHasMember(communityId, pubKey) {
-                        return false
-                    }
-                }
-
                 communitySectionModule: QtObject {
                     function shareCommunityToUsers(keys, message) {
                         logs.logEvent("communitySectionModule::shareCommunityToUsers",

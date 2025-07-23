@@ -591,12 +591,6 @@ QtObject:
   proc emitCommunityInfoRequestCompleted*(self: View, communityId: string, errorMsg: string) =
     self.communityInfoRequestCompleted(communityId, errorMsg)
 
-  proc isMemberOfCommunity*(self: View, communityId: string, pubKey: string): bool {.slot.} =
-    let sectionItem = self.model.getItemById(communityId)
-    if (section_item.id == ""):
-       return false
-    return sectionItem.hasMember(pubKey)
-
   proc removeFileListItem*(self: View, filePath: string) {.slot.} =
     var path = filePath
     if path.startsWith("file://"):

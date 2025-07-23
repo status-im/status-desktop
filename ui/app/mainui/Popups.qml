@@ -499,8 +499,6 @@ QtObject {
             id: inviteFriendsToCommunityPopup
 
             InviteFriendsToCommunityPopup {
-                rootStore: root.rootStore
-
                 contactsModel: root.mutualContactsModel
 
                 onClosed: destroy()

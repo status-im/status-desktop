@@ -254,11 +254,6 @@ QtObject {
                                               bannerJsonStr, encrypted);
     }
 
-    function communityHasMember(communityId, pubKey)
-    {
-        return communitiesModuleInst.isMemberOfCommunity(communityId, pubKey)
-    }
-
     function isMyCommunityRequestPending(id: string) {
         return communitiesModuleInst.isMyCommunityRequestPending(id)
     }
