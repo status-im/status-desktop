@@ -454,6 +454,8 @@ StatusSectionLayout {
         }
 
         Loader {
+            id: communitiesView
+            
             active: false
             asynchronous: true
             Layout.fillWidth: true
