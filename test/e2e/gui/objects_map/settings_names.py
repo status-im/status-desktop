@@ -26,7 +26,7 @@ settingsWalletOption = {"container": mainWindow_settingsList_SettingsList, "obje
 settingsSignOutQuitOption = {"container": LeftTabProfileMenu, "objectName": "17-ExtraMenuItem", "type": "StatusNavigationListItem", "visible": True}
 
 # Communities View
-mainWindow_CommunitiesView = {"container": statusDesktop_mainWindow, "type": "CommunitiesView", "unnamed": 1, "visible": True}
+mainWindow_CommunitiesView = {"container": statusDesktop_mainWindow, "id": "communitiesView", "type": "Loader", "unnamed": 1}
 mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": mainWindow_CommunitiesView, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 settingsContentBaseScrollView_listItem_StatusListItem = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "id": "listItem", "type": "StatusListItem", "unnamed": 1, "visible": True}
 
