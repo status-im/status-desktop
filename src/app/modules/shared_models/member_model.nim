@@ -208,6 +208,10 @@ QtObject:
     if ind != -1:
       return self.items[ind]
 
+  proc hasMember*(self: Model, pubKey: string): bool {.slot.} =
+    let ind = self.findIndexForMember(pubKey)
+    return ind != -1
+
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete

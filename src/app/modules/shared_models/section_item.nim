@@ -359,12 +359,6 @@ proc joinedMembersCount*(self: SectionItem): int {.inline.} =
 proc `joinedMembersCount=`*(self: var SectionItem, value: int) {.inline.} =
   self.joinedMembersCount = value
 
-proc hasMember*(self: SectionItem, pubkey: string): bool =
-  self.membersModel.isContactWithIdAdded(pubkey)
-
-proc setOnlineStatusForMember*(self: SectionItem, pubKey: string, onlineStatus: OnlineStatus) =
-  self.membersModel.setOnlineStatus(pubkey, onlineStatus)
-
 proc isPendingOwnershipRequest*(self: SectionItem): bool {.inline.} =
   self.isPendingOwnershipRequest
 
