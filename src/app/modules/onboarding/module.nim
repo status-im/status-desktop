@@ -98,11 +98,17 @@ method load*[T](self: Module[T]) =
     var items: seq[login_acc_item.Item]
     for i in 0..<openedAccounts.len:
       let acc = openedAccounts[i]
-      var thumbnailImage: string
-      var largeImage: string
-      acc.extractImages(thumbnailImage, largeImage)
-      items.add(login_acc_item.initItem(order = i, acc.name, icon = "", thumbnailImage, largeImage, acc.keyUid, acc.colorHash,
-        acc.colorId, acc.keycardPairing))
+      items.add(login_acc_item.initItem(
+        order = i,
+        acc.name,
+        icon = "",
+        acc.images.thumbnail,
+        acc.images.large,
+        acc.keyUid,
+        acc.colorHash,
+        acc.colorId,
+        acc.keycardPairing
+      ))
 
     self.view.setLoginAccountsModelItems(items)
 

@@ -459,18 +459,12 @@ proc buildAndRegisterUserProfile(self: AppController) =
   let currentUserStatus = self.settingsService.getCurrentUserStatus()
 
   let loggedInAccount = self.accountsService.getLoggedInAccount()
-  var thumbnail, large: string
-  for img in loggedInAccount.images:
-    if(img.imgType == "large"):
-      large = img.uri
-    elif(img.imgType == "thumbnail"):
-      thumbnail = img.uri
 
   singletonInstance.userProfile.setFixedData(alias, loggedInAccount.keyUid, pubKey, loggedInAccount.keycardPairing.len > 0)
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
-  singletonInstance.userProfile.setThumbnailImage(thumbnail)
-  singletonInstance.userProfile.setLargeImage(large)
+  singletonInstance.userProfile.setThumbnailImage(loggedInAccount.images.thumbnail)
+  singletonInstance.userProfile.setLargeImage(loggedInAccount.images.large)
   singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus.statusType.int)
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)

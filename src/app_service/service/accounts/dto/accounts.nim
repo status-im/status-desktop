@@ -2,45 +2,26 @@
 
 import json
 import ../../visual_identity/dto
+import app_service/service/contacts/dto/contacts
 
-include ../../../common/json_utils
-
-type
-  Image* = object
-    keyUid*: string
-    imgType*: string
-    uri*: string
-    width: int
-    height: int
-    fileSize: int
-    resizeTarget: int
+include app_service/common/json_utils
 
 type AccountDto* = object
   name*: string
   timestamp*: int64
   keycardPairing*: string
   keyUid*: string
-  images*: seq[Image]
+  images*: Images
   colorHash*: ColorHashDto
   colorId*: int
   kdfIterations*: int
 
 type WakuBackedUpProfileDto* = object
   displayName*: string
-  images*: seq[Image]
+  images*: Images
 
 proc isValid*(self: AccountDto): bool =
   result = self.name.len > 0 and self.keyUid.len > 0
-
-proc toImage*(jsonObj: JsonNode): Image =
-  result = Image()
-  discard jsonObj.getProp("keyUid", result.keyUid)
-  discard jsonObj.getProp("type", result.imgType)
-  discard jsonObj.getProp("uri", result.uri)
-  discard jsonObj.getProp("width", result.width)
-  discard jsonObj.getProp("height", result.height)
-  discard jsonObj.getProp("fileSize", result.fileSize)
-  discard jsonObj.getProp("resizeTarget", result.resizeTarget)
 
 proc toAccountDto*(jsonObj: JsonNode): AccountDto =
   result = AccountDto()
@@ -55,9 +36,8 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
     result.colorHash = toColorHashDto(jsonObj["colorHash"])
 
   var imagesObj: JsonNode
-  if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
-    for imgObj in imagesObj:
-      result.images.add(toImage(imgObj))
+  if jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray:
+    result.images = imagesObj.toImagesFromArray()
 
 proc contains*(accounts: seq[AccountDto], keyUid: string): bool =
   for account in accounts:
@@ -69,14 +49,6 @@ proc toWakuBackedUpProfileDto*(jsonObj: JsonNode): WakuBackedUpProfileDto =
   result = WakuBackedUpProfileDto()
   discard jsonObj.getProp("displayName", result.displayName)
 
-  var obj: JsonNode
-  if(jsonObj.getProp("images", obj) and obj.kind == JArray):
-    for imgObj in obj:
-      result.images.add(toImage(imgObj))
-
-proc extractImages*(account: AccountDto, thumbnailImage: var string, largeImage: var string) =
-  for img in account.images:
-    if(img.imgType == "thumbnail"):
-      thumbnailImage = img.uri
-    elif(img.imgType == "large"):
-      largeImage = img.uri
+  var imagesObj: JsonNode
+  if jsonObj.getProp("images", imagesObj):
+    result.images = toImages(imagesObj)
