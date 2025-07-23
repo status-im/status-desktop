@@ -10,6 +10,7 @@ from constants.wallet import WalletAddress, WalletNetworkSettings
 from helpers.onboarding_helper import open_create_profile_view, import_seed_and_log_in
 from helpers.settings_helper import enable_testnet_mode
 from helpers.wallet_helper import authenticate_with_password, open_send_modal_for_account
+from scripts.utils.generators import random_network
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704527',
@@ -20,7 +21,8 @@ from helpers.wallet_helper import authenticate_with_password, open_send_modal_fo
 @pytest.mark.parametrize('receiver_account_address, amount, asset, collectible', [
     pytest.param(WalletAddress.RECEIVER_ADDRESS.value, '0', 'ETH', '')
 ])
-def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, amount, asset, collectible):
+@pytest.mark.parametrize('network_name', [pytest.param(random_network())])
+def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, amount, asset, collectible, network_name):
 
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED,
@@ -40,7 +42,6 @@ def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, 
             main_window, account_name=WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value)
 
     with step('Select network'):
-        network_name = random.choice(['Arbitrum Sepolia', 'Optimism Sepolia', 'Base Sepolia', 'Status Network Sepolia'])
         send_popup.select_network(network_name)
 
     with step('Sign and send transaction to blockchain'):
