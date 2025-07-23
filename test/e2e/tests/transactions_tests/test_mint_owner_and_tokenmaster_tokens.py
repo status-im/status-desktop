@@ -13,12 +13,14 @@ from helpers.onboarding_helper import open_create_profile_view, import_seed_and_
 from helpers.settings_helper import enable_testnet_mode, enable_managing_communities_toggle
 from constants.community import MintOwnerTokensElements
 from gui.screens.community_settings_tokens import MintedTokensView
+from scripts.utils.generators import random_network
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.transaction
-def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
+@pytest.mark.parametrize('network_name', [pytest.param(random_network())])
+def test_mint_owner_and_tokenmaster_tokens(main_window, user_account, network_name):
 
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED,
@@ -50,7 +52,6 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
 
     with step('Select network'):
         # no Sepolia L1 because of high gas prices
-        network_name = random.choice(['Arbitrum Sepolia', 'Optimism Sepolia', 'Base Sepolia', 'Status Network Sepolia'])
         edit_owner_token_view.select_network(network_name)
 
     with step('Verify fees title and gas fees exist'):
