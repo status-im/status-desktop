@@ -263,7 +263,7 @@ class EditOwnerTokenView(QObject):
 
     @allure.step('Click mint button')
     def mint(self):
-        for _ in range(2):
+        for _ in range(3):
             try:
                 self._scroll.vertical_scroll_down(self._mint_button)
                 self._mint_button.click()

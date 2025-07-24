@@ -352,8 +352,8 @@ class NetworkWalletSettings(WalletSettingsView):
         return items_amount
 
     @allure.step('Switch testnet mode toggle')
-    def switch_testnet_mode_toggle(self) -> TestnetModePopup:
-        for _ in range(2):
+    def switch_testnet_mode_toggle(self) -> 'TestnetModePopup':
+        for _ in range(3):
             self.testnet_mode_toggle.click()
             try:
                 return TestnetModePopup().wait_until_appears()
