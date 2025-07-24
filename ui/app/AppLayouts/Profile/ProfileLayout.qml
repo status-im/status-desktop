@@ -419,6 +419,8 @@ StatusSectionLayout {
         }
 
         Loader {
+            id: advancedView
+
             active: false
             asynchronous: true
             sourceComponent: AdvancedView {

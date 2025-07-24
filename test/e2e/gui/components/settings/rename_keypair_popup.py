@@ -13,7 +13,6 @@ class RenameKeypairPopup(QObject):
         self.save_changes_button = Button(names.save_changes_rename_StatusButton)
         self.name_input = QObject(names.nameInput_StatusInput)
 
-
     @allure.step('Rename keypair')
     def rename_keypair(self, name):
         self.rename_text_edit.text = name

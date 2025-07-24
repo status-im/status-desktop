@@ -1,3 +1,5 @@
+import time
+
 import allure
 
 from gui.components.settings.confirm_switch_waku_mode_popup import SwitchWakuModePopup
@@ -19,18 +21,20 @@ class AdvancedSettingsView(QObject):
         self.relay_mode_button = Button(settings_names.settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton)
 
     @allure.step('Switch manage community on testnet option')
-    def enable_manage_communities_on_testnet_toggle(self):
-        for _ in range(2):
+    def enable_manage_communities_on_testnet_toggle(self, attempts: int = 3, wait_timeout: float = 1.0):
+        for _ in range(attempts):
             if not self.rpc_statistics_button.is_visible:
                 self.scroll.vertical_scroll_down(self.rpc_statistics_button)
-            if not self.manage_community_on_testnet_button.object.switchChecked:
-                try:
-                    self.manage_community_on_testnet_button.click()
-                    assert self.manage_community_on_testnet_button.object.switchChecked
-                    return
-                except AssertionError:
-                    pass  # Retry one more time
-        raise RuntimeError(f'Could not enable Manage communities on testnet toggle')
+
+            if self.manage_community_on_testnet_button.object.switchChecked:
+                return self
+
+            self.manage_community_on_testnet_button.click()
+            for _ in range(5):
+                if self.manage_community_on_testnet_button.object.switchChecked:
+                    return self
+                time.sleep(wait_timeout / 5)
+        raise RuntimeError('Could not enable Manage communities on testnet toggle')
 
     @allure.step('Switch waku mode')
     def switch_waku_mode(self, mode):
