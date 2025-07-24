@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Chat.panels
@@ -31,28 +32,29 @@ InlineSelectorPanel {
     suggestionsModel: SortFilterProxyModel {
         id: suggestionsModel
 
-        function searchPredicate(displayName, localNickname, nameAlias) {
-            return displayName.toLowerCase().includes(root.edit.text.toLowerCase()) ||
-                   localNickname.toLowerCase().includes(root.edit.text.toLowerCase()) ||
-                   (!displayName && nameAlias.toLowerCase().includes(root.edit.text.toLowerCase()))
-        }
-
         function notAMemberPredicate(pubKey) {
-            for(var i = 0; i < model.count; i++) {
-                var item = model.get(i)
-                if(item.pubKey === pubKey) return false
-            }
-            return true
+            return !ModelUtils.contains(model, "pubKey", pubKey)
         }
 
         filters: [
-            FastExpressionFilter {
+            AnyOf {
                 enabled: root.edit.text !== "" && root.pastedChatKey == ""
-                expression: {
-                    root.edit.text // ensure expression is reevaluated when edit.text changes
-                    return suggestionsModel.searchPredicate(model.displayName, model.localNickname, model.alias)
+                SearchFilter {
+                    roleName: "alias"
+                    searchPhrase: root.edit.text
                 }
-                expectedRoles: ["displayName", "localNickname", "alias"]
+                SearchFilter {
+                    roleName: "displayName"
+                    searchPhrase: root.edit.text
+                }
+                SearchFilter {
+                    roleName: "ensName"
+                    searchPhrase: root.edit.text
+                }
+                SearchFilter {
+                    roleName: "localNickname"
+                    searchPhrase: root.edit.text
+                }
             },
             FastExpressionFilter {
                 expression: {
