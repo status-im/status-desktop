@@ -9,10 +9,16 @@ import utils
 QtObject {
     id: root
 
+    // **
+    // ** Public API for UI region:
+    // **
+
     required property string activeSectionId
     required property string activeChannelId
     required property bool allTokenRequirementsMet
     required property var permissionsModel
+
+    readonly property bool isOwner: false
 
     readonly property var selectedChannelPermissionsModel: SortFilterProxyModel {
         id: selectedChannelPermissionsModel
@@ -88,8 +94,7 @@ QtObject {
         ]
     }
 
-    readonly property bool isOwner: false
-
+    // Meant to be called from the UI and connected to by slot in another parent store
     signal createOrEditCommunityTokenPermission(string key, int permissionType, var holdings, var channels, bool isPrivate)
     signal deleteCommunityTokenPermission(string key)
 
