@@ -1,6 +1,8 @@
+import logging
 import time
 
 import allure
+
 
 from constants.syncing import SyncingSettings
 from gui.components.authenticate_popup import AuthenticatePopup
@@ -10,6 +12,7 @@ from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 from gui.objects_map import settings_names
 
+LOG = logging.getLogger(__name__)
 
 class SyncingSettingsView(QObject):
 
@@ -42,7 +45,16 @@ class SyncingSettingsView(QObject):
         return SyncNewDevicePopup().wait_until_appears()
 
     @allure.step('Click setup syncing')
-    def click_setup_syncing(self):
-        time.sleep(0.5)
-        self._setup_syncing_button.click()
-        return AuthenticatePopup().wait_until_appears()
+    def click_setup_syncing(self, attempts: int = 3):
+        last_exception = None
+        for i in range(1, attempts+1):
+            try:
+                LOG.info(f'Attempt # {i} to open Authentication popup')
+                self._setup_syncing_button.click()
+                popup = AuthenticatePopup().wait_until_appears()
+                return popup
+            except Exception as e:
+                last_exception = e
+                LOG.info(f'Attempt # {i} to open Authentication popup failed with {e}')
+        raise LookupError(f'Could not open auth popup with {last_exception}')
+

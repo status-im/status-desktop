@@ -17,11 +17,6 @@ class AuthenticatePopup(QObject):
         self._primary_button = Button(names.sharedPopup_Primary_Button)
         self._close_button = Button(names.headerCloseButton_StatusFlatRoundButton)
 
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._authenticate_popup_content.wait_until_appears(timeout_msec)
-        return self
-
     @allure.step('Authenticate actions with password {0}')
     def authenticate(self, password: str):
         self._password_text_edit.type_text(password)

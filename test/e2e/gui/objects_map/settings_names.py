@@ -1,7 +1,7 @@
 from objectmaphelper import *
 from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
 
-mainWindow_ProfileLayout = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayoutLandscape", "type": "ContentItem", "visible": True}
+mainWindow_ProfileLayout = {"container": statusDesktop_mainWindow, "objectName": "profileStatusSectionLayout", "type": "ProfileLayout", "visible": True}
 mainWindow_StatusSectionLayout_ContentItem = {"container": mainWindow_ProfileLayout, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
 settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 settingsContentBaseScrollView_Flickable = {"container": settingsContentBase_ScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
@@ -45,7 +45,7 @@ always_show_radioButton_StatusRadioButton = {"container": settingsContentBase_Sc
 never_show_radioButton_StatusRadioButton = {"container": settingsContentBase_ScrollView, "objectName": "MessagingView_NeverShow_RadioButton", "type": "SettingsRadioButton", "visible": True}
 
 # Contacts View
-mainWindow_ContactsView = {"container": statusDesktop_mainWindow, "type": "ContactsView", "unnamed": 1, "visible": True}
+mainWindow_ContactsView = {"container": statusDesktop_mainWindow, "id": "contactsView", "type": "Loader", "unnamed": 1, "visible": True}
 mainWindow_Send_contact_request_to_chat_key_StatusButton = {"checkable": False, "container": mainWindow_ContactsView, "objectName": "ContactsView_ContactRequest_Button", "type": "StatusButton", "visible": True}
 contactsTabBar_Pending_Requests_StatusTabButton = {"container": mainWindow_ContactsView, "objectName": "ContactsView_PendingRequest_Button", "type": "StatusTabButton", "visible": True}
 settingsContentBaseScrollView_ContactListPanel = {"container": settingsContentBase_ScrollView, "objectName": "ContactListPanel_ListView", "type": "ContactsListPanel", "visible": True}
@@ -57,8 +57,9 @@ mainWindow_contactsTabBar_StatusTabBar = {"container": statusDesktop_mainWindow,
 contactsTabBar_Contacts_StatusTabButton = {"checkable": True, "container": mainWindow_contactsTabBar_StatusTabBar, "objectName": "ContactsView_Contacts_Button", "type": "StatusTabButton", "visible": True}
 settingsContentBaseScrollView_receivedRequests_ContactsListPanel = {"container": mainWindow_ContactsView, "objectName": "ContactsListPanel", "type": "ContactsListPanel", "visible": True}
 settingsContentBaseScrollView_mutualContacts_ContactsListPanel = {"container": mainWindow_ContactsView, "id": "mutualContacts", "type": "ContactsListPanel", "unnamed": 1, "visible": True}
-settingsContentBaseScrollView_Invite_friends_StatusButton = {"container": mainWindow_ContactsView, "type": "StatusButton", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_NoFriendsRectangle = {"container": mainWindow_ContactsView, "type": "NoFriendsRectangle", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_Invite_friends_StatusButton = {"container": mainWindow_ContactsView, "objectName": "inviteFriendsStatusButton", "type": "StatusButton", "visible": True}
+
 view_Profile_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "viewProfile_StatusItem", "type": "StatusMenuItem", "visible": True}
 verify_Identity_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "verifyIdentity_StatusItem", "type": "StatusMenuItem", "visible": True}
 respond_to_ID_Request_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "pendingIdentity_StatusItem", "type": "StatusMenuItem", "visible": True}

@@ -52,4 +52,4 @@ def test_cancel_setup_syncing(main_screen: MainWindow, user_account):
         sync_new_device_popup.close()
 
     with step('Verify that authenticate popup was closed and syncing settings view appears after closing'):
-        SyncingSettingsView().wait_until_appears()
+        assert SyncingSettingsView().is_visible

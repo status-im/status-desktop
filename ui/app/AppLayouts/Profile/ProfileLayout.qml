@@ -270,6 +270,8 @@ StatusSectionLayout {
         }
 
         Loader {
+            id: contactsView
+
             active: false
             asynchronous: true
             sourceComponent: ContactsView {
