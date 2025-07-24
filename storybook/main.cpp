@@ -1,45 +1,16 @@
+#include <QDirIterator>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlContext>
 #include <QQmlComponent>
+#include <QQmlContext>
 #include <QQuickStyle>
-#include <QDirIterator>
-
 #include <QtWebView>
 
-#include "cachecleaner.h"
-#include "directorieswatcher.h"
-#include "figmalinks.h"
-#include "pagesmodel.h"
-#include "sectionsdecoratormodel.h"
-#include "testsrunner.h"
-#include "systemutils.h"
+#include <Storybook/storybooksetup.h>
 
 #include <memory>
 
 #include <StatusQ/typesregistration.h>
-
-struct PagesModelInitialized : public PagesModel {
-    explicit PagesModelInitialized(QObject *parent = nullptr)
-        : PagesModel(QML_IMPORT_ROOT + QStringLiteral("/pages"), parent) {}
-};
-
-// Starting from Qt 6.8.3 it's necessary to add prefix when loading qml files
-// in order to make the hot reloading working as expected (https://bugreports.qt.io/browse/QTBUG-135448).
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QQmlAbstractUrlInterceptor>
-
-class HotReloadUrlInterceptor : public QQmlAbstractUrlInterceptor {
-    unsigned int counter = 0;
-
-    QUrl intercept(const QUrl &url, QQmlAbstractUrlInterceptor::DataType type) override {
-        if (type != QQmlAbstractUrlInterceptor::QmlFile)
-            return url;
-
-        return url.toString() + "#"+ QString::number(counter++);
-    }
-};
-#endif
 
 void loadContextPropertiesMocks(const char* storybookRoot, QQmlApplicationEngine& engine);
 
@@ -48,7 +19,8 @@ int main(int argc, char *argv[])
     bool hasExplicitStyleSet = false;
     for (size_t i = 1; i < argc; i++)
     {
-        if (qstrcmp(argv[i], "-style") == 0) { // Qt eats these standard/builtin args as soon as it sees them; so process before creating qApp instance
+        // Qt uses these standard/builtin args as soon as it sees them; so process before creating qApp instance
+        if (qstrcmp(argv[i], "-style") == 0) {
             hasExplicitStyleSet = true;
             break;
         }
@@ -57,9 +29,6 @@ int main(int argc, char *argv[])
     // Required by the WalletConnectSDK view
     QtWebView::initialize();
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
     QGuiApplication app(argc, argv);
@@ -83,17 +52,8 @@ int main(int argc, char *argv[])
     }
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    HotReloadUrlInterceptor interceptor;
-#endif
-
-    QQmlApplicationEngine engine;
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    engine.addUrlInterceptor(&interceptor);
-#endif
-
     const QStringList additionalImportPaths {
+        QStringLiteral("qrc:/"),
         STATUSQ_MODULE_IMPORT_PATH,
         QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
         QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
@@ -102,51 +62,18 @@ int main(int argc, char *argv[])
         QML_IMPORT_ROOT + QStringLiteral("/stubs")
     };
 
+    StorybookSetup::registerTypes(additionalImportPaths,
+                                  QML_IMPORT_ROOT + QStringLiteral("/pages"),
+                                  QCoreApplication::applicationDirPath() + QStringLiteral("/QmlTests"),
+                                  QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests"));
+
+
+    QQmlApplicationEngine engine;
+
     for (const auto& path : additionalImportPaths)
         engine.addImportPath(path);
 
-    engine.rootContext()->setContextProperty(QStringLiteral("pagesFolder"),
-                                             QML_IMPORT_ROOT + QStringLiteral("/pages"));
-
-    qmlRegisterType<PagesModelInitialized>("Storybook", 1, 0, "PagesModel");
-    qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
-    qmlRegisterUncreatableType<FigmaLinks>("Storybook", 1, 0, "FigmaLinks", {});
-
-    auto watcherFactory = [additionalImportPaths](QQmlEngine*, QJSEngine*) {
-        auto watcher = new DirectoriesWatcher();
-        watcher->addPaths(additionalImportPaths);
-
-        // Test path added here as a temporary solution. Ideally, tests should
-        // be observed separately.
-        watcher->addPaths({ QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests") });
-        return watcher;
-    };
-
-    qmlRegisterSingletonType<DirectoriesWatcher>(
-                "Storybook", 1, 0, "SourceWatcher", watcherFactory);
-
-    auto cleanerFactory = [](QQmlEngine* engine, QJSEngine*) {
-        return new CacheCleaner(engine);
-    };
-
-    qmlRegisterSingletonType<CacheCleaner>(
-                "Storybook", 1, 0, "CacheCleaner", cleanerFactory);
-
-    auto runnerFactory = [](QQmlEngine* engine, QJSEngine*) {
-        return new TestsRunner(
-                    QCoreApplication::applicationDirPath() + QStringLiteral("/QmlTests"),
-                    QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests"));
-
-    };
-
-    qmlRegisterSingletonType<TestsRunner>(
-                "Storybook", 1, 0, "TestsRunner", runnerFactory);
-
-    qmlRegisterSingletonType<SystemUtils>(
-                "Storybook", 1, 0, "SystemUtils", [](QQmlEngine*, QJSEngine*) {
-                    return new SystemUtils;
-                });
-
+    StorybookSetup::configureEngine(&engine, QML_IMPORT_ROOT + QStringLiteral("/pages"));
     registerStatusQTypes();
 
     loadContextPropertiesMocks(QML_IMPORT_ROOT, engine);

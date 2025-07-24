@@ -43,6 +43,15 @@ set(STATUSQ_BUILD_TESTS OFF)
 set(STATUSQ_STATIC_LIB ON)
 add_subdirectory(../ui/StatusQ StatusQ)
 
+include(FetchContent)
+FetchContent_Declare(
+  QmlStorybook
+
+  GIT_REPOSITORY https://github.com/status-im/QmlStorybook.git
+  GIT_TAG 4c81083311a8fd6d5d33157e814e902873f00fc2
+)
+FetchContent_MakeAvailable(QmlStorybook)
+
 file(GLOB_RECURSE CORE_QML_FILES
     "../ui/app/*.qml" "../ui/imports/*.qml"
     "../ui/app/*/qmldir" "../ui/imports/*/qmldir"
@@ -54,22 +63,6 @@ file(GLOB_RECURSE STORYBOOK_QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
     "src/*.qml" "src/qmldir")
 
 file(GLOB_RECURSE TEST_QML_FILES "qmlTests/*.qml")
-
-set(PROJECT_LIB "${PROJECT_NAME}Lib")
-
-add_library(${PROJECT_LIB}
-    cachecleaner.cpp cachecleaner.h
-    directorieswatcher.cpp directorieswatcher.h
-    directoryfileswatcher.cpp directoryfileswatcher.h
-    figmaio.cpp figmaio.h
-    figmalinks.cpp figmalinks.h
-    figmalinksmodel.cpp figmalinksmodel.h
-    modelutils.cpp modelutils.h
-    pagesmodel.h pagesmodel.cpp
-    sectionsdecoratormodel.cpp sectionsdecoratormodel.h
-    testsrunner.h testsrunner.cpp
-    systemutils.cpp systemutils.h
-)
 
 add_executable(
   ${PROJECT_NAME}
@@ -91,10 +84,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     )
 
 target_link_libraries(
-    ${PROJECT_LIB} PUBLIC Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2 Qt::WebView StatusQ)
-
-target_link_libraries(
-    ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
+    ${PROJECT_NAME} PRIVATE Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2
+    Qt::WebView StatusQ QmlStorybookLib)
 
 enable_testing()
 
@@ -104,7 +95,7 @@ add_executable(
 )
 
 target_link_libraries(
-    PagesValidator PUBLIC Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2 Qt::WebView StatusQ)
+    PagesValidator PUBLIC Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2 Qt::WebView StatusQ QmlStorybookLib)
 
 target_compile_definitions(PagesValidator PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
@@ -112,14 +103,6 @@ target_compile_definitions(PagesValidator PRIVATE
     )
 
 add_test(NAME PagesValidator COMMAND PagesValidator)
-
-add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp)
-target_link_libraries(SectionsDecoratorModelTest PRIVATE Qt::Test ${PROJECT_LIB})
-add_test(NAME SectionsDecoratorModelTest COMMAND SectionsDecoratorModelTest)
-
-add_executable(DirectoryFilesWatcherTest tests/tst_DirectoryFilesWatcher.cpp)
-target_link_libraries(DirectoryFilesWatcherTest PRIVATE Qt::Test ${PROJECT_LIB})
-add_test(NAME DirectoryFilesWatcherTest COMMAND DirectoryFilesWatcherTest)
 
 add_executable(QmlTests
     qmlTests/main.cpp
@@ -129,7 +112,9 @@ target_compile_definitions(QmlTests PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
         QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
-target_link_libraries(QmlTests PRIVATE Qt::QuickTest Qt::Qml ${PROJECT_LIB} SortFilterProxyModel)
+target_link_libraries(QmlTests PRIVATE
+  Qt::QuickTest Qt::Qml Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2
+  StatusQ SortFilterProxyModel QmlStorybookLib)
 add_test(NAME QmlTests COMMAND QmlTests -platform offscreen)
 
 set(OVERRIDE_STORE_PATHS_WITH_STUBS_IN_QTCREATOR OFF CACHE BOOL
@@ -143,6 +128,7 @@ list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/tests/qml")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/pages")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/mocks")
+list(APPEND QML_DIRS "${QML_STORYBOOK_QML_IMPORT_PATH}")
 
 if (OVERRIDE_STORE_PATHS_WITH_STUBS_IN_QTCREATOR)
   list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/stubs")

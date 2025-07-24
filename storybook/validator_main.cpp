@@ -7,6 +7,8 @@
 
 int main(int argc, char *argv[])
 {
+    Q_INIT_RESOURCE(storybook);
+
     QGuiApplication app(argc, argv);
     QGuiApplication::setOrganizationName(QStringLiteral("Status"));
     QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
@@ -18,6 +20,7 @@ int main(int argc, char *argv[])
                                                        QDir::Name);
 
     const QStringList additionalImportPaths{STATUSQ_MODULE_IMPORT_PATH,
+                                            QStringLiteral("qrc:/"),
                                             QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
                                             QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
                                             QML_IMPORT_ROOT + QStringLiteral("/src"),
