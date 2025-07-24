@@ -2,8 +2,14 @@ import QtQuick 2.15
 
 import AppLayouts.stores.Messaging.Community 1.0
 
-QtObject {
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
+StatusQUtils.QObject {
     id: root
+
+    // **
+    // ** Public API for UI region:
+    // **
 
     readonly property MessagingSettingsStore messagingSettingsStore: MessagingSettingsStore {}
 
@@ -19,7 +25,13 @@ QtObject {
         return store
     }
 
-    property Component communityRootStoreComponent: Component {
+    // **
+    // ** Stores' internal API region:
+    // **
+
+    Component {
+        id: communityRootStoreComponent
+
         CommunityRootStore {
             Component.onCompleted: console.log("Store created for", communityId)
             Component.onDestruction: console.log("Store for", communityId, "destroyed")

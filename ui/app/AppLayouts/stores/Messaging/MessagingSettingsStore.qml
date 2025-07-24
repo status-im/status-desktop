@@ -1,16 +1,14 @@
 import QtQuick 2.13
 import utils 1.0
 
-QtObject {
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
+StatusQUtils.QObject {
     id: root
 
-    readonly property QtObject _d: QtObject {
-        id: d
-        readonly property var profileSectionModuleInst: profileSectionModule
-        readonly property var privacyModule: d.profileSectionModuleInst.privacyModule
-        readonly property var syncModule: d.profileSectionModuleInst.syncModule
-        readonly property var wakuModule: d.profileSectionModuleInst.wakuModule
-    }
+    // **
+    // ** Public API for UI region:
+    // **
 
     readonly property var mailservers: d.syncModule.model
     readonly property var wakunodes: d.wakuModule.model
@@ -54,5 +52,17 @@ QtObject {
 
     function setUrlUnfurlingMode(value) {
         d.privacyModule.urlUnfurlingMode = value
+    }
+
+    // **
+    // ** Stores' internal API region:
+    // **
+
+    QtObject {
+        id: d
+        readonly property var profileSectionModuleInst: profileSectionModule
+        readonly property var privacyModule: d.profileSectionModuleInst.privacyModule
+        readonly property var syncModule: d.profileSectionModuleInst.syncModule
+        readonly property var wakuModule: d.profileSectionModuleInst.wakuModule
     }
 }

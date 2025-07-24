@@ -8,7 +8,54 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 StatusQUtils.QObject {
     id: root
 
+    // **
+    // ** Public API for UI region:
+    // **
+
+    // All logic from this store will be related to this particular communityId
     required property var communityId
+
+    readonly property CommunityAccessStore communityAccessStore: CommunityAccessStore {
+        communityId: root.communityId
+        isModuleReady: !!d.currentCommunityModule
+        joined: d.communityDetails ? d.communityDetails.joined : false
+        allChannelsAreHiddenBecauseNotPermitted: d.currentCommunityModule.allChannelsAreHiddenBecauseNotPermitted &&
+                                                 !d.currentCommunityModule.requiresTokenPermissionToJoin
+        communityMemberReevaluationStatus: d.currentCommunityModule &&
+                                           d.currentCommunityModule.communityMemberReevaluationStatus
+        spectatedPermissionsCheckOngoing: d.communitiesModuleInst.requirementsCheckPending
+        spectatedPermissionsModel: !!d.communitiesModuleInst.spectatedCommunityPermissionModel ?
+                                       d.communitiesModuleInst.spectatedCommunityPermissionModel : null
+        communityPermissionsCheckOngoing: !!d.currentCommunityModule ?
+                                              d.currentCommunityModule.permissionsCheckOngoing : false
+        chatPermissionsCheckOngoing: !!d.currentChatContentModule ?
+                                         d.currentChatContentModule.permissionsCheckOngoing : false
+
+        onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
+            d.currentCommunityModule.acceptRequestToJoinCommunity(requestId, communityId)
+        }
+        onDeclineRequestToJoinCommunityRequested: (requestId, communityId) => {
+            d.currentCommunityModule.declineRequestToJoinCommunity(requestId, communityId)
+        }
+    }
+
+    readonly property PermissionsStore communityPermissionsStore: PermissionsStore {
+        activeSectionId: d.mainModuleInst.activeSection.id
+        activeChannelId: d.currentChatContentModule ? d.currentChatContentModule.chatDetails.id : ""
+        permissionsModel: d.currentCommunityModule ? d.currentCommunityModule.permissionsModel: null
+        allTokenRequirementsMet: d.currentCommunityModule ? d.currentCommunityModule.allTokenRequirementsMet : false
+
+        onCreateOrEditCommunityTokenPermission: (key, permissionType, holdings, channels, isPrivate) => {
+            d.currentCommunityModule.createOrEditCommunityTokenPermission(key, permissionType, holdings, channels, isPrivate)
+        }
+        onDeleteCommunityTokenPermission: (key) => {
+            d.currentCommunityModule.deleteCommunityTokenPermission(key)
+        }
+    }
+
+    // **
+    // ** Stores' internal API region:
+    // **
 
     QtObject {
         id: d
@@ -54,43 +101,6 @@ StatusQUtils.QObject {
                 console.warn("No active item for chat content module")
             }
             return null
-        }
-    }
-
-    readonly property CommunityAccessStore communityAccessStore: CommunityAccessStore {
-        communityId: root.communityId
-        isModuleReady: !!d.currentCommunityModule
-        joined: d.communityDetails ? d.communityDetails.joined : false
-        allChannelsAreHiddenBecauseNotPermitted: d.currentCommunityModule.allChannelsAreHiddenBecauseNotPermitted &&
-                                                 !d.currentCommunityModule.requiresTokenPermissionToJoin
-        communityMemberReevaluationStatus: d.currentCommunityModule &&
-                                           d.currentCommunityModule.communityMemberReevaluationStatus
-        spectatedPermissionsCheckOngoing: d.communitiesModuleInst.requirementsCheckPending
-        spectatedPermissionsModel: !!d.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                                       d.communitiesModuleInst.spectatedCommunityPermissionModel : null
-        communityPermissionsCheckOngoing: !!d.currentCommunityModule ?
-                                              d.currentCommunityModule.permissionsCheckOngoing : false
-        chatPermissionsCheckOngoing: !!d.currentChatContentModule ?
-                                         d.currentChatContentModule.permissionsCheckOngoing : false
-
-        onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
-            d.currentCommunityModule.acceptRequestToJoinCommunity(requestId, communityId)
-        }
-        onDeclineRequestToJoinCommunityRequested: (requestId, communityId) => {
-            d.currentCommunityModule.declineRequestToJoinCommunity(requestId, communityId)
-        }
-    }
-    readonly property PermissionsStore communityPermissionsStore: PermissionsStore {
-        activeSectionId: d.mainModuleInst.activeSection.id
-        activeChannelId: d.currentChatContentModule ? d.currentChatContentModule.chatDetails.id : ""
-        permissionsModel: d.currentCommunityModule ? d.currentCommunityModule.permissionsModel: null
-        allTokenRequirementsMet: d.currentCommunityModule ? d.currentCommunityModule.allTokenRequirementsMet : false
-
-        onCreateOrEditCommunityTokenPermission: (key, permissionType, holdings, channels, isPrivate) => {
-            d.currentCommunityModule.createOrEditCommunityTokenPermission(key, permissionType, holdings, channels, isPrivate)
-        }
-        onDeleteCommunityTokenPermission: (key) => {
-            d.currentCommunityModule.deleteCommunityTokenPermission(key)
         }
     }
 }
