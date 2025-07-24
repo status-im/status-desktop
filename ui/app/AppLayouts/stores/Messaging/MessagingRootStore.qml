@@ -5,6 +5,10 @@ import AppLayouts.stores.Messaging.Community 1.0
 QtObject {
     id: root
 
+    // **
+    // ** Public API for UI region:
+    // **
+
     readonly property MessagingSettingsStore messagingSettingsStore: MessagingSettingsStore {}
 
     // Dynamic `CommunityRootStore` instance creation logic.
@@ -18,6 +22,10 @@ QtObject {
 
         return store
     }
+
+    // **
+    // ** Stores' internal API region:
+    // **
 
     property Component communityRootStoreComponent: Component {
         CommunityRootStore {

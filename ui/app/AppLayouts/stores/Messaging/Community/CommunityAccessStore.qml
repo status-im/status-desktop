@@ -7,16 +7,18 @@ import shared.stores 1.0
 StatusQUtils.QObject {
     id: root
 
+    // **
+    // ** Public API for UI region:
+    // **
+
     // All logic from this store will be related to this particular communityId
     required property var communityId
-
-    // Indicates whether the current community module is initialized and available.
-    required property bool isModuleReady
 
     // Whether the user has joined the community
     required property bool joined
 
     required property bool allChannelsAreHiddenBecauseNotPermitted
+
     required property int communityMemberReevaluationStatus
 
     // Validates temporal requirements when a user shares one or more addresses with the community.
@@ -38,43 +40,21 @@ StatusQUtils.QObject {
 
     readonly property bool isMyCommunityRequestPending: d.communitiesModuleInst.isMyCommunityRequestPending(root.communityId)
 
-    // Private property used to define context properties asignements and other private stuff.
-    QtObject {
-        id: d
-
-        readonly property var mainModuleInst: mainModule
-        readonly property var communitiesModuleInst: communitiesModule
-        readonly property var localAccountSensitiveSettingsInst: localAccountSensitiveSettings
-    }
-
+    // Meant to be connected to by slot in the UI
     signal communityAccessFailed(string communityId)
-
     signal allSharedAddressesSigned()
-
     signal communityMembershipNotificationReceived()
 
+    // Meant to be called from the UI and connected to by slot in another parent store
     signal acceptRequestToJoinCommunityRequested(string requestId, string communityId)
-
     signal declineRequestToJoinCommunityRequested(string requestId, string communityId)
 
     function spectateCommunity(communityId) {
         return d.communitiesModuleInst.spectateCommunity(communityId, "")
     }
 
-    function prepareTokenModelForCommunity(publicKey) {
-        d.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
-    }
-
-    function prepareTokenModelForCommunityChat(publicKey, chatId) {
-        d.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
-    }
-
     function updatePermissionsModel(communityId, sharedAddresses) {
         d.communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
-    }
-
-    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
-        d.communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
     }
 
     function signProfileKeypairAndAllNonKeycardKeypairs() {
@@ -95,6 +75,37 @@ StatusQUtils.QObject {
 
     function cancelPendingRequest(id: string) {
         d.communitiesModuleInst.cancelRequestToJoinCommunity(id)
+    }
+
+    // TO REVIEW: This seems a workaround and preparation should be transparent for the UI consumer. Should be indeed `@internal`
+    function prepareTokenModelForCommunity(publicKey) {
+        d.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
+    }
+
+    // TO REVIEW: This seems a workaround and preparation should be transparent for the UI consumer. Should be indeed `@internal`
+    function prepareTokenModelForCommunityChat(publicKey, chatId) {
+        d.communitiesModuleInst.prepareTokenModelForCommunityChat(publicKey, chatId)
+    }
+
+    // TO REVIEW: This seems a workaround and preparation should be transparent for the UI consumer. Should be indeed `@internal`
+    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
+        d.communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
+    }
+
+    // **
+    // ** Stores' internal API region:
+    // **
+
+    // Indicates whether the current community module is initialized and available.
+    required property bool isModuleReady
+
+    // Private property used to define context properties asignements and other private stuff.
+    QtObject {
+        id: d
+
+        readonly property var mainModuleInst: mainModule
+        readonly property var communitiesModuleInst: communitiesModule
+        readonly property var localAccountSensitiveSettingsInst: localAccountSensitiveSettings
     }
 
     readonly property Connections mainModuleInstConnections: Connections {
