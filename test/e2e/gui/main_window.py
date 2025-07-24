@@ -26,6 +26,7 @@ from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
 from gui.screens.home import HomeScreen
 from scripts.tools.image import Image
+from scripts.utils.decorators import open_with_retries
 
 LOG = logging.getLogger(__name__)
 
@@ -42,34 +43,30 @@ class MainLeftPanel(QObject):
         self.settings_button = Button(names.settingsGearButton)
         self.wallet_button = Button(names.mainWalletButton)
 
-    def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 3):
-        for _ in range(attempts):
-            try:
-                button.click()
-                return screen_class().wait_until_appears()
-            except Exception:
-                pass  # Retry if attempts remain
-        raise Exception(f"Failed to open {screen_class.__name__} after {attempts} attempts")
-
     @allure.step('Click Home button and open Home screen')
-    def open_home_screen(self) -> 'HomeScreen':
-        return self._open_screen_from_left_nav(self.home_button, HomeScreen)
+    @open_with_retries(HomeScreen)
+    def open_home_screen(self):
+        return self.home_button
 
     @allure.step('Click Chat button and open Messages screen')
-    def open_messages_screen(self, attempts: int = 2) -> 'MessagesScreen':
-        return self._open_screen_from_left_nav(self.messages_button, MessagesScreen, attempts)
+    @open_with_retries(MessagesScreen)
+    def open_messages_screen(self):
+        return self.messages_button
 
     @allure.step('Click Gear button and open Settings screen')
-    def open_settings(self) -> 'SettingsScreen':
-        return self._open_screen_from_left_nav(self.settings_button, SettingsScreen)
+    @open_with_retries(SettingsScreen)
+    def open_settings(self):
+        return self.settings_button
 
     @allure.step('Click Wallet button and open Wallet main screen')
-    def open_wallet(self, attempts: int = 2) -> 'WalletScreen':
-        return self._open_screen_from_left_nav(self.wallet_button, WalletScreen, attempts)
+    @open_with_retries(WalletScreen)
+    def open_wallet(self):
+        return self.wallet_button
 
     @allure.step('Click and open online identifier')
-    def open_online_identifier(self, attempts: int = 2) -> 'OnlineIdentifier':
-        return self._open_screen_from_left_nav(self.profile_button, OnlineIdentifier, attempts)
+    @open_with_retries(OnlineIdentifier)
+    def open_online_identifier(self):
+        return self.profile_button
 
     @allure.step('Get communities names')
     def communities(self) -> typing.List[str]:
@@ -105,8 +102,10 @@ class MainLeftPanel(QObject):
         return self.user_badge_color == constants.ColorCodes.GREEN.value
 
     @allure.step('Open community portal')
-    def open_communities_portal(self, attempts: int = 2) -> CommunitiesPortal:
-        for _ in range(attempts):
+    def open_communities_portal(self, attempts: int = 3) -> CommunitiesPortal:
+        last_exception = None
+        for _ in range(1, attempts+1):
+            LOG.info(f'Attempt # {_} top open Community portal')
             self.communities_portal_button.click()
             introduce_yourself_popup = IntroduceYourselfPopup()
             if introduce_yourself_popup.is_visible:
@@ -114,9 +113,11 @@ class MainLeftPanel(QObject):
             try:
                 portal = CommunitiesPortal().wait_until_appears()
                 return portal
-            except Exception:
-                pass  # Retry if attempts remain
-        raise Exception(f"Failed to open Communities Portal after {attempts} attempts")
+            except Exception as e:
+                last_exception = e
+                LOG.info(f'Failed to open Communities portal with {e}')
+                time.sleep(0.1)
+        raise Exception(f"Failed to open Communities Portal after {attempts} attempts with {last_exception}")
 
     def _get_community(self, name: str):
         community_names = []
@@ -157,7 +158,7 @@ class MainWindow(Window):
         splash_screen = create_password_view.create_password(user_account.password)
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
-        
+
         # Navigate from home to settings first
         # since we now struggle with 3 words names, I need to change display name first
         settings_screen = self.home.open_from_dock(DockButtons.SETTINGS.value)
@@ -182,7 +183,8 @@ class MainWindow(Window):
             return self.create_profile(user_account)
 
     @allure.step('Wait for notification and get text')
-    def wait_for_toast_notifications(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, settle_time: float = 0.2) -> list[str]:
+    def wait_for_toast_notifications(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC,
+                                     settle_time: float = 0.2) -> list[str]:
         start_time = time.monotonic()
         seen_messages = set()
         last_new_time = start_time
@@ -208,5 +210,3 @@ class MainWindow(Window):
         if not seen_messages:
             raise LookupError(f"No notifications found within {timeout_sec} seconds.")
         return list(seen_messages)
-
-

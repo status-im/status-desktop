@@ -1,4 +1,5 @@
 import logging
+import time
 from functools import wraps
 
 LOG = logging.getLogger(__name__)
@@ -35,3 +36,24 @@ def retry_settings(view_class, menu_item):
         return wrapper
 
     return open_popup_decorator
+
+
+def open_with_retries(screen_class, attempts: int = 3, delay: float = 0.5):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            last_exception = None
+            for attempt in range(1, attempts + 1):
+                try:
+                    LOG.info(f'Attempt #{attempt} to open {screen_class.__name__}')
+                    button = func(self, *args, **kwargs)
+                    button.click()
+                    popup = screen_class().wait_until_appears()
+                    return popup
+                except Exception as e:
+                    LOG.info(f'Failed to open {screen_class.__name__} with {e}')
+                    last_exception = e
+                    time.sleep(delay)
+            raise Exception(f"Failed to open {screen_class.__name__} after {attempts} attempts: {last_exception}")
+        return wrapper
+    return decorator

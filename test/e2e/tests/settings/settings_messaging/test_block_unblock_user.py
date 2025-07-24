@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pytest
 from allure_commons._allure import step
@@ -88,7 +90,7 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
             aut_two.attach()
             main_screen.prepare()
             contacts_settings = main_screen.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
-            assert contacts_settings.invite_friends_button.is_visible
+            assert contacts_settings.invite_friends_button.wait_until_appears().is_visible
             main_screen.hide()
 
         with step(

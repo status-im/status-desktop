@@ -29,6 +29,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
     }
     StatusButton {
+        objectName: "inviteFriendsStatusButton"
         text: qsTr("Invite friends")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: noContacts.bottom
