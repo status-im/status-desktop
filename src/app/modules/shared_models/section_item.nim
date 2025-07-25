@@ -20,6 +20,7 @@ type
     Swap,
     Market,
     Browser
+    ActivityCenter
 
 type
   SectionItem* = object

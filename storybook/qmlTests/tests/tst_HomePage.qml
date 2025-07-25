@@ -70,8 +70,6 @@ Item {
             }
 
             useNewDockIcons: false
-            hasUnseenACNotifications: true
-            aCNotificationCount: 3
 
             onItemActivated: function(key, sectionType, itemId) {
                 homePageAdaptor.setTimestamp(key, new Date().valueOf())
@@ -121,14 +119,6 @@ Item {
             verify(!!controlUnderTest)
             verify(controlUnderTest.width > 0)
             verify(controlUnderTest.height > 0)
-        }
-
-        function test_activityCenterButton() {
-            const btn = findChild(controlUnderTest, "homeACButton")
-            verify(!!btn)
-            dynamicSpy.setup(controlUnderTest, "notificationButtonClicked")
-            mouseClick(btn)
-            tryCompare(dynamicSpy, "count", 1)
         }
 
         function test_homePageProfileButton() {

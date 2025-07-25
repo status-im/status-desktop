@@ -35,7 +35,6 @@ StatusSectionLayout {
     property bool createCommunityBadgeVisible
 
     objectName: "communitiesPortalLayout"
-    onNotificationButtonClicked: Global.openActivityCenterPopup()
 
     onVisibleChanged: {
         if(visible)

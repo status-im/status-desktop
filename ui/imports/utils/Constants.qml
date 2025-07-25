@@ -339,6 +339,7 @@ QtObject {
         readonly property int swap: 8
         readonly property int market: 9
         readonly property int browser: 10
+        readonly property int activityCenter: 11
 
         readonly property int homePage: 0
         readonly property int dApp: 999
@@ -354,6 +355,7 @@ QtObject {
         readonly property int profile: 5
         readonly property int node: 6
         readonly property int market: 7
+        readonly property int activityCenter: 8
     }
 
     readonly property QtObject settingsSubsection: QtObject {

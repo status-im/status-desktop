@@ -51,6 +51,7 @@ import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.stores as AppStores
 import AppLayouts.stores.Messaging as MessagingStores
 import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.ActivityCenter
 import AppLayouts.ActivityCenter.stores
 import AppLayouts.ActivityCenter.popups
 
@@ -215,10 +216,6 @@ Item {
         function onActiveSectionChanged() {
             createChatView.opened = false
             profileLoader.settingsSubSubsection = -1
-        }
-
-        function onOpenActivityCenter() {
-            d.openActivityCenterPopup()
         }
 
         function onShowToastAccountAdded(name: string) {
@@ -824,22 +821,8 @@ Item {
     QtObject {
         id: d
 
-        property var activityCenterPopupObj: null
-
         readonly property int activeSectionType: appMain.rootStore.activeSectionType
-
-        function openActivityCenterPopup() {
-            if (!activityCenterPopupObj) {
-                activityCenterPopupObj = activityCenterPopupComponent.createObject(appMain)
-            }
-
-            if (activityCenterPopupObj.opened) {
-                activityCenterPopupObj.close()
-            } else {
-                activityCenterPopupObj.open()
-            }
-        }
-
+        
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
             homePageLoader.item.focusSearch()
@@ -960,10 +943,6 @@ Item {
 
         function onCloseCreateChatView() {
             createChatView.opened = false
-        }
-
-        function onOpenActivityCenterPopupRequested() {
-            d.openActivityCenterPopup()
         }
 
         function onOpenLink(link: string) {
@@ -1385,14 +1364,23 @@ Item {
         regularItemsModel: SortFilterProxyModel {
             sourceModel: appMain.rootStore.sectionsModel
             filters: [
-                RangeFilter {
-                    roleName: "sectionType"
-                    minimumValue: Constants.appSection.profile
-                    maximumValue: Constants.appSection.loadingSection
-                },
                 ValueFilter {
                     roleName: "enabled"
                     value: true
+                },
+                AnyOf {
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.profile
+                    }
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.activityCenter
+                    }
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.communitiesPortal
+                    }
                 }
             ]
         }
@@ -1725,6 +1713,8 @@ Item {
                             return Constants.appViewStackIndex.node
                         case Constants.appSection.market:
                             return Constants.appViewStackIndex.market
+                        case Constants.appSection.activityCenter:
+                            return Constants.appViewStackIndex.activityCenter
                         default:
                             // We should never end up here
                             console.error("AppMain: Unknown section type")
@@ -1785,8 +1775,6 @@ Item {
                             getLinkToProfileFn: appMain.contactsStore.getLinkToProfile
 
                             useNewDockIcons: false
-                            hasUnseenACNotifications: appMain.activityCenterStore.hasUnseenNotifications
-                            aCNotificationCount: appMain.activityCenterStore.unreadNotificationsCount
 
                             onItemActivated: function(key, sectionType, itemId) {
                                 homePageAdaptor.setTimestamp(key, new Date().valueOf())
@@ -1824,7 +1812,6 @@ Item {
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
 
-                            onNotificationButtonClicked: d.openActivityCenterPopup()
                             onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
                             onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
                         }
@@ -1961,8 +1948,6 @@ Item {
                             communitiesStore: appMain.communitiesStore
                             assetsModel: appMain.rootStore.globalAssetsModel
                             collectiblesModel: appMain.rootStore.globalCollectiblesModel
-                            notificationCount: appMain.activityCenterStore.unreadNotificationsCount
-                            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
                             createCommunityBadgeVisible: !appMain.communitiesStore.createCommunityPopupSeen
                         }
                     }
@@ -2035,8 +2020,6 @@ Item {
                             assetsStore: appMain.walletAssetsStore
                             currencyStore: appMain.currencyStore
                             tokensStore: appMain.tokensStore
-                            notificationCount: activityCenterStore.unreadNotificationsCount
-                            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
                             onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
                         }
                     }
@@ -2060,7 +2043,6 @@ Item {
                             navBar: appMain.navBar
                             isProduction: appMain.rootStore.isProduction
 
-                            activityCenterStore: appMain.activityCenterStore
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
                             aboutStore: appMain.aboutStore
@@ -2142,10 +2124,6 @@ Item {
                             objectName: "marketLayout"
                             navBar: appMain.navBar
 
-                            notificationCount: appMain.activityCenterStore.unreadNotificationsCount
-                            hasUnseenNotifications:  appMain.activityCenterStore.hasUnseenNotifications
-                            onNotificationButtonClicked: Global.openActivityCenterPopup()
-
                             tokensModel: appMain.marketStore.marketLeaderboardModel
                             totalTokensCount: appMain.marketStore.totalLeaderboardCount
                             loading: appMain.marketStore.marketLeaderboardLoading
@@ -2172,6 +2150,30 @@ Item {
                             }
                         }
                         onLoaded: item.resetView()
+                    }
+
+                    Loader {
+                        active: appView.currentIndex === Constants.appViewStackIndex.activityCenter
+                        asynchronous: true
+                        sourceComponent: ActivityCenterLayout {
+                            id: activityCenterPopup
+
+                            objectName: "activityCenterLayout"
+                            navBar: appMain.navBar
+
+                            store: ChatStores.RootStore {
+                                contactsStore: appMain.contactsStore
+                                currencyStore: appMain.currencyStore
+                                communityTokensStore: appMain.communityTokensStore
+                                emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                openCreateChat: createChatView.opened
+                                walletStore: WalletStores.RootStore
+                                isChatSectionModule: true
+                            }
+                            activityCenterStore: appMain.activityCenterStore
+                            privacyStore: appMain.privacyStore
+                            notificationsStore: appMain.notificationsStore
+                        }
                     }
 
                     Repeater {
@@ -2322,34 +2324,6 @@ Item {
                 }
             }
         } // ColumnLayout
-
-        Component {
-            id: activityCenterPopupComponent
-            ActivityCenterPopup {
-                id: activityCenterPopup
-                // TODO get screen size // Taken from old code top bar height was fixed there to 56
-                readonly property int _buttonSize: 56
-                readonly property bool isBottomSheet: Theme.portraitBreakpoint.width > parent.width
-
-                x: isBottomSheet ? 0 : parent.width - width - Theme.smallPadding
-                y: isBottomSheet ? parent.height - height : parent.y + _buttonSize
-                height: appView.height - _buttonSize * 2
-                width: isBottomSheet ? parent.width : implicitWidth
-                store: ChatStores.RootStore {
-                    contactsStore: appMain.contactsStore
-                    currencyStore: appMain.currencyStore
-                    communityTokensStore: appMain.communityTokensStore
-                    emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                    openCreateChat: createChatView.opened
-                    walletStore: WalletStores.RootStore
-                    isChatSectionModule: true
-                }
-                activityCenterStore: appMain.activityCenterStore
-                privacyStore: appMain.privacyStore
-                notificationsStore: appMain.notificationsStore
-                messagingRootStore: appMain.messagingRootStore
-            }
-        }
 
         Action {
             shortcut: "Ctrl+1"

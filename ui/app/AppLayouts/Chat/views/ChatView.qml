@@ -179,10 +179,6 @@ StatusSectionLayout {
         }
     }
 
-    onNotificationButtonClicked: Global.openActivityCenterPopup()
-    notificationCount: activityCenterStore.unreadNotificationsCount
-    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
-
     headerContent: Loader {
         visible: !root.allChannelsAreHiddenBecauseNotPermitted
         id: headerContentLoader

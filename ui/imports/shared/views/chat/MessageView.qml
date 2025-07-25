@@ -765,8 +765,7 @@ Loader {
                 bottomPadding: showHeader && d.nextMessageHasHeader ? Theme.halfPadding : 2
                 disableHover: root.disableHover ||
                               (delegate.hideQuickActions && !d.addReactionAllowed) ||
-                              (root.chatLogView && root.chatLogView.moving) ||
-                              Global.activityPopupOpened
+                              (root.chatLogView && root.chatLogView.moving)
 
                 disableEmojis: !d.addReactionAllowed
                 hideMessage: d.hideMessage

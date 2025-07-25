@@ -170,10 +170,7 @@ StackLayout {
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
             requestToJoinState: root.rootStore.chatCommunitySectionModule.requestToJoinState
-            notificationCount: activityCenterStore.unreadNotificationsCount
-            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             openCreateChat: rootStore.openCreateChat
-            onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRequestToJoinClicked: {
                 Global.communityIntroPopupRequested(joinCommunityView.communityId, sectionItemModel.name,
@@ -415,9 +412,6 @@ StackLayout {
             image: root.sectionItemModel.image
             membersCount: sectionItemModel.joinedMembersCount
             communityItemsModel: root.rootStore.communityItemsModel
-            notificationCount: activityCenterStore.unreadNotificationsCount
-            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
-            onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
         }
     }
@@ -434,9 +428,6 @@ StackLayout {
             image: root.sectionItemModel.image
             membersCount: sectionItemModel.joinedMembersCount
             communityItemsModel: root.rootStore.communityItemsModel
-            notificationCount: activityCenterStore.unreadNotificationsCount
-            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
-            onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
         }
     }

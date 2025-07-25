@@ -94,6 +94,11 @@ Rectangle {
             boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
         }
 
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
         Rectangle {
             id: secondSectionSeparator
 
@@ -101,7 +106,7 @@ Rectangle {
             Layout.preferredWidth: d.separatorWidth
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.directColor7
-            visible: topSectionListview.count || communityItemsListView.count
+            visible: true
         }
 
         ListView {
@@ -116,11 +121,6 @@ Rectangle {
             clip: true
             spacing: d.spacing
             boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
         }
 
         Loader {
