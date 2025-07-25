@@ -19,7 +19,8 @@ type
     CommunitiesPortal,
     LoadingSection,
     Swap,
-    Market
+    Market,
+    ActivityCenter
 
 type
   SectionItem* = object

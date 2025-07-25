@@ -1359,14 +1359,21 @@ Item {
         regularItemsModel: SortFilterProxyModel {
             sourceModel: appMain.rootStore.sectionsModel
             filters: [
-                RangeFilter {
+                /*RangeFilter {
                     roleName: "sectionType"
                     minimumValue: Constants.appSection.profile
                     maximumValue: Constants.appSection.loadingSection
-                },
+                },*/
                 ValueFilter {
                     roleName: "enabled"
                     value: true
+                },
+                FastExpressionFilter {
+                    expectedRoles: ["sectionType"]
+                    expression: {
+                        return model.sectionType === Constants.appSection.profile ||
+                                model.sectionType ===  Constants.appSection.activityCenter
+                    }
                 }
             ]
         }

@@ -746,6 +746,23 @@ method load*[T](
   if activeSectionId == nodeManagementSectionItem.id:
     activeSection = nodeManagementSectionItem
 
+  # Activity Center Section
+  let activityCenterSectionItem = initSectionItem(
+    ACTIVITYCENTER_SECTION_ID,
+    SectionType.ActivityCenter,
+    ACTIVITYCENTER_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    image = "",
+    icon = ACTIVITYCENTER_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
+  self.view.model().addItem(activityCenterSectionItem)
+
   # Profile Section
   let profileSettingsSectionItem = initSectionItem(
     SETTINGS_SECTION_ID,
