@@ -28,8 +28,7 @@ StatusQUtils.QObject {
                                        d.communitiesModuleInst.spectatedCommunityPermissionModel : null
         communityPermissionsCheckOngoing: !!d.currentCommunityModule ?
                                               d.currentCommunityModule.permissionsCheckOngoing : false
-        chatPermissionsCheckOngoing: !!d.currentChatContentModule ?
-                                         d.currentChatContentModule.permissionsCheckOngoing : false
+        chatPermissionsCheckOngoing: !!d.currentChannelItem ? d.currentChannelItem.permissionsCheckOngoing : false
 
         onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
             d.currentCommunityModule.acceptRequestToJoinCommunity(requestId, communityId)
@@ -41,7 +40,7 @@ StatusQUtils.QObject {
 
     readonly property PermissionsStore communityPermissionsStore: PermissionsStore {
         activeSectionId: d.mainModuleInst.activeSection.id
-        activeChannelId: d.currentChatContentModule ? d.currentChatContentModule.chatDetails.id : ""
+        activeChannelId: d.currentChannelItem ? d.currentChannelItem.id : ""
         permissionsModel: d.currentCommunityModule ? d.currentCommunityModule.permissionsModel: null
         allTokenRequirementsMet: d.currentCommunityModule ? d.currentCommunityModule.allTokenRequirementsMet : false
 
@@ -68,10 +67,8 @@ StatusQUtils.QObject {
             return d.getCurrentCommunityModule(root.communityId)
         }
 
-        // Foreach `communityId` there will be the corresponding active chat content module:
-        property var currentChatContentModule: {
-            return d.getChatContentModule(d.currentCommunityModule)
-        }
+        // This will contain the active channel content item:
+        property var currentChannelItem: d.currentCommunityModule ? d.currentCommunityModule.activeItem : null
 
         // This is the community section details for this specific `communityId`
         readonly property var communityDetails: d.communityDetailsEntry.item
@@ -89,18 +86,6 @@ StatusQUtils.QObject {
             }
             d.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityId)
             return d.mainModuleInst.getCommunitySectionModule()
-        }
-
-        function getChatContentModule(communityModule) {
-            if (communityModule && communityModule.activeItem) {
-                communityModule.prepareChatContentModuleForChatId(
-                    communityModule.activeItem.id
-                )
-                return communityModule.getChatContentModule()
-            } else {
-                console.warn("No active item for chat content module")
-            }
-            return null
         }
     }
 }
