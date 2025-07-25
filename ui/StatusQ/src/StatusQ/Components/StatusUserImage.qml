@@ -25,7 +25,7 @@ Loader {
     property color userColor
     property var colorHash: []
 
-    signal clicked()
+    signal clicked(var mouse)
 
     sourceComponent: StatusSmartIdenticon {
         name: root.name
@@ -78,9 +78,9 @@ Loader {
             sourceComponent: StatusMouseArea {
                 cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 hoverEnabled: !root.disabled
-                onClicked: {
+                onClicked: (mouse) => {
                     if (!root.disabled) {
-                        root.clicked()
+                        root.clicked(mouse)
                     }
                 }
             }

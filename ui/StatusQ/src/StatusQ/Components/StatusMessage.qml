@@ -242,7 +242,7 @@ Control {
                     imageHeight: root.messageDetails.sender.profileImage.assetSettings.height
                     ensVerified: root.messageDetails.sender.isEnsVerified
                     isBridgedAccount: root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage
-                    onClicked: root.profilePictureClicked(this, mouse)
+                    onClicked: (mouse) => root.profilePictureClicked(this, mouse)
                 }
 
                 ColumnLayout {
