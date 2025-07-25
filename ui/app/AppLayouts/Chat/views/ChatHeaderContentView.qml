@@ -14,7 +14,7 @@ import shared.views.chat
 import "../panels"
 import "../stores"
 
-Item {
+RowLayout {
     id: root
 
     property alias menuButton: menuButton
@@ -67,10 +67,7 @@ Item {
     Loader {
         id: loader
 
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: d.selectingMembers ? parent.right : actionButtons.left
+        Layout.fillWidth: true
 
         sourceComponent: d.selectingMembers ? membersSelector : statusChatInfoButton
     }
@@ -78,9 +75,7 @@ Item {
     RowLayout {
         id: actionButtons
 
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        Layout.fillHeight: true
 
         spacing: 8
         visible: !d.selectingMembers
@@ -256,14 +251,6 @@ Item {
                                 )
                 }
             }
-        }
-
-        Rectangle {
-            implicitWidth: 1
-            implicitHeight: 24
-            color: Theme.palette.directColor7
-            Layout.alignment: Qt.AlignVCenter
-            visible: (menuButton.visible || membersButton.visible || searchButton.visible)
         }
     }
 
