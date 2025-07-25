@@ -547,7 +547,7 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
   if self.chatsLoaded:
     self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
 
-    if (self.chatContentModules.contains(chatId)):
+    if self.chatContentModules.contains(chatId):
       self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
 
     if self.isCommunity:
@@ -1429,6 +1429,9 @@ method addOrUpdateChat(self: Module,
   if belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
     return
+
+  if not isSectionBuild:
+    self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount)
 
   if not self.chatsLoaded:
     return
