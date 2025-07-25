@@ -62,16 +62,28 @@ proc `$`*(self: ContactsDto): string =
     contactRequestState:{self.contactRequestState},
     )"""
 
-proc toImages(jsonObj: JsonNode): Images =
+proc toImages*(jsonObj: JsonNode): Images =
   result = Images()
 
   var largeObj: JsonNode
-  if(jsonObj.getProp("large", largeObj)):
+  if jsonObj.getProp("large", largeObj):
     discard largeObj.getProp("localUrl", result.large)
 
   var thumbnailObj: JsonNode
-  if(jsonObj.getProp("thumbnail", thumbnailObj)):
+  if jsonObj.getProp("thumbnail", thumbnailObj):
     discard thumbnailObj.getProp("localUrl", result.thumbnail)
+
+proc toImagesFromArray*(jsonObj: JsonNode): Images =
+  result = Images()
+
+  for image in jsonObj:
+    if image.kind == JObject:
+      var imgType: string
+      discard image.getProp("type", imgType)
+      if imgType == "large":
+        discard image.getProp("localUrl", result.large)
+      elif imgType == "thumbnail":
+        discard image.getProp("localUrl", result.thumbnail)
 
 proc toContactRequestState*(value: int): ContactRequestState =
   result = ContactRequestState.None
@@ -107,9 +119,9 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("trustStatus", trustStatusInt)
   result.trustStatus = trustStatusInt.toTrustStatus()
 
-  var imageObj: JsonNode
-  if(jsonObj.getProp("images", imageObj)):
-    result.image = toImages(imageObj)
+  var imagesObj: JsonNode
+  if jsonObj.getProp("images", imagesObj):
+    result.image = toImages(imagesObj)
 
   discard jsonObj.getProp("added", result.added)
   discard jsonObj.getProp("blocked", result.blocked)

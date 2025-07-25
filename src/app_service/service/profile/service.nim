@@ -3,14 +3,15 @@ import NimQml, json, chronicles, tables, sequtils
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton
 
-import ../../../app/core/signals/types
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import app/core/signals/types
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
 
-import ../../../backend/accounts as status_accounts
+import backend/accounts as status_accounts
 
 import ../accounts/dto/accounts
 import dto/profile_showcase_preferences
+import app_service/service/contacts/dto/contacts
 
 include async_tasks
 
@@ -42,41 +43,38 @@ QtObject:
     result.events = events
     result.settingsService = settingsService
 
-  proc updateProfileIdentityImages*(images: seq[Image])  =
-    for imageDto in images:
-      if(imageDto.imgType == "large"):
-        singletonInstance.userProfile.setLargeImage(imageDto.uri)
-      elif(imageDto.imgType == "thumbnail"):
-        singletonInstance.userProfile.setThumbnailImage(imageDto.uri)
+  proc updateProfileIdentityImages*(images: Images)  =
+    if images.large.len > 0:
+      singletonInstance.userProfile.setLargeImage(images.large)
+    if images.thumbnail.len > 0:
+      singletonInstance.userProfile.setThumbnailImage(images.thumbnail)
 
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
 
       # Handling account image changes
-      if (receivedData.identityImages.len > 0):
+      if receivedData.identityImages.thumbnail != "":
         updateProfileIdentityImages(receivedData.identityImages)
 
     self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
       let args = SettingsTextValueArgs(e)
       singletonInstance.userProfile.setDisplayName(args.value)
 
-  proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
+  proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): Images =
     try:
       let response = status_accounts.storeIdentityImage(address, image, aX, aY, bX, bY)
-      if(not response.error.isNil):
+      if not response.error.isNil:
         error "could not store identity images"
         return
-      if(response.result.kind != JArray):
+      if response.result.kind != JArray:
         error "error: ", procName="storeIdentityImage", errDesription = "response is not an array"
         return
-      if(response.result.len == 0):
+      if response.result.len == 0:
         error "error: array of stored images is empty"
         return
 
-      for img in response.result:
-        let imageDto = toImage(img)
-        result.add(imageDto)
+      result = response.result.toImagesFromArray()
 
       updateProfileIdentityImages(result)
     except Exception as e:

@@ -57,7 +57,8 @@ proc init*(self: Controller) =
     self.delegate.loadProfileShowcasePreferences(args.preferences)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): bool =
-  len(self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)) > 0
+  let images = self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
+  return images.large.len > 0 or images.thumbnail.len > 0
 
 proc deleteIdentityImage*(self: Controller, address: string): bool =
   self.profileService.deleteIdentityImage(address)
