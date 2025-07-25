@@ -134,11 +134,5 @@ method onMadeActive*(self: AccessInterface) {.base.} =
 method onMadeInactive*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setPermissionsCheckOngoing*(self: AccessInterface, value: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getPermissionsCheckOngoing*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method scrollToMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

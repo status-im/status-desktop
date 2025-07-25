@@ -426,11 +426,5 @@ method amIChatAdmin*(self: Module): bool =
     return communityDto.memberRole == MemberRole.Owner or
       communityDto.memberRole == MemberRole.Admin or communityDto.memberRole == MemberRole.TokenMaster
 
-method setPermissionsCheckOngoing*(self: Module, value: bool) =
-  self.view.setPermissionsCheckOngoing(value)
-
-method getPermissionsCheckOngoing*(self: Module): bool =
-  self.view.getPermissionsCheckOngoing()
-
 method scrollToMessage*(self: Module, messageId: string) =
   self.messagesModule.scrollToMessage(messageId)
