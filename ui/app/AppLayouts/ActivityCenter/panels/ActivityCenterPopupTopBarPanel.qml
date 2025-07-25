@@ -73,36 +73,6 @@ Item {
                 }
             }
         }
-
-        StatusBetaTag {
-            tooltipText: qsTr("Under construction.<br>More notification types to be coming soon.")
-        }
-
-        StatusFlatRoundButton {
-            id: markAllReadBtn
-            objectName: "markAllReadButton"
-            enabled: root.unreadNotificationsCount > 0
-            icon.name: "double-checkmark"
-            onClicked: root.markAllReadClicked()
-
-            StatusToolTip {
-                visible: markAllReadBtn.hovered
-                text: qsTr("Mark all as Read")
-            }
-        }
-
-        StatusFlatRoundButton {
-            id: hideReadNotificationsBtn
-            objectName: "hideReadNotificationsButton"
-            icon.name: root.hideReadNotifications ? "hide" : "show"
-            onClicked: root.showHideReadNotifications(!root.hideReadNotifications)
-
-            StatusToolTip {
-                visible: hideReadNotificationsBtn.hovered
-                offset: width / 4
-                text: root.hideReadNotifications ? qsTr("Show read notifications") : qsTr("Hide read notifications")
-            }
-        }
     }
 
     StatusBaseText {

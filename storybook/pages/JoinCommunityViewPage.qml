@@ -146,7 +146,6 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     logs.logEvent("JoinCommunityView::store.openCloseCreateChatView(): " + openCreateChat.toString())
                     openCreateChat = !openCreateChat
                 }
-                onNotificationButtonClicked: logs.logEvent("JoinCommunityView::onNotificationButtonClicked()")
                 onRequestToJoinClicked: logs.logEvent("JoinCommunityView::onRequestToJoinClicked()")
                 onInvitationPendingClicked: logs.logEvent("JoinCommunityView::onInvitationPendingClicked()")
             }

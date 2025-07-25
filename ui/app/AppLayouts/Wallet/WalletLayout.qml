@@ -277,10 +277,6 @@ Item {
         navBar: root.navBar
         anchors.fill: parent
         backButtonName: RootStore.backButtonName
-        notificationCount: activityCenterStore.unreadNotificationsCount
-        hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
-
-        onNotificationButtonClicked: Global.openActivityCenterPopup()
         onBackButtonClicked: {
             rightPanelStackView.currentItem.resetStack();
         }

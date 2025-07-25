@@ -34,10 +34,6 @@ import AppLayouts.Wallet.stores
 StatusSectionLayout {
     id: root
 
-    notificationCount: activityCenterStore.unreadNotificationsCount
-    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
-    onNotificationButtonClicked: Global.openActivityCenterPopup()
-
     property ChatStores.RootStore rootStore
     property var chatCommunitySectionModule
     required property TokensStore tokensStore

@@ -67,7 +67,6 @@ StatusSectionLayout {
     property SharedStores.UtilsStore utilsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property CommunitiesStore.CommunitiesStore communitiesStore
-    property ActivityCenterStore activityCenterStore
     property MessagingStores.MessagingSettingsStore messagingSettingsStore
     property AppLayoutsStores.ContactsStore contactsStore
     property AppLayoutsStores.RootStore globalStore
@@ -102,10 +101,6 @@ StatusSectionLayout {
     signal inviteFriends(var communityData)
 
     backButtonName: d.backButtonName
-    notificationCount: root.activityCenterStore.unreadNotificationsCount
-    hasUnseenNotifications: root.activityCenterStore.hasUnseenNotifications
-
-    onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
         switch (root.settingsSubsection) {
         case Constants.settingsSubsection.contacts:
