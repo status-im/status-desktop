@@ -4,12 +4,14 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import QtQml.Models
 
+import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
 import StatusQ.Popups.Dialog
 import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Layout
 
 import shared
 import shared.popups
@@ -22,11 +24,11 @@ import AppLayouts.Profile.stores
 import AppLayouts.stores.Messaging as MessagingStores
 import AppLayouts.stores.Messaging.Community as CommunityStores
 
-import "../views"
-import "../panels"
-import "../stores"
+import "views"
+import "panels"
+import "stores"
 
-Popup {
+StatusSectionLayout {
     id: root
 
     property ActivityCenterStore activityCenterStore
@@ -34,19 +36,6 @@ Popup {
     property PrivacyStore privacyStore
     property NotificationsStore notificationsStore
     property MessagingStores.MessagingRootStore messagingRootStore
-
-    onOpened: {
-        Global.activityPopupOpened = true
-    }
-    onClosed: {
-        Global.activityPopupOpened = false
-        Qt.callLater(activityCenterStore.markAsSeenActivityCenterNotifications)
-    }
-
-    implicitWidth: 560
-    padding: 0
-    modal: true
-    parent: Overlay.overlay
 
     QtObject {
         id: d
@@ -59,129 +48,174 @@ Popup {
 
         readonly property bool isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
         readonly property var notificationsSettings: root.notificationsStore.notificationsSettings
-    }
 
-    Overlay.modal: StatusMouseArea { // eat every event behind the popup
-        hoverEnabled: true
-        onPressed: (event) => {
-                       event.accept()
-                       root.close()
-                   }
-        onWheel: (event) => event.accepted = true
-    }
-
-    background: Rectangle {
-        color: Theme.palette.background
-        radius: Theme.radius
-        layer.enabled: true
-        layer.effect: DropShadow {
-            verticalOffset: 3
-            radius: Theme.radius
-            samples: 15
-            fast: true
-            cached: true
-            color: Theme.palette.dropShadow
+        // TODO: Review if it's really necessary to do this call later call or instead directly mark the notification as seen
+        // Now temporarily kept as it was done when closing the previous popup
+        function callLaterMarkAsSeen() {
+            Qt.callLater(activityCenterStore.markAsSeenActivityCenterNotifications)
         }
     }
 
-    ActivityCenterPopupTopBarPanel {
-        id: activityCenterTopBar
-        width: parent.width
-        unreadNotificationsCount: activityCenterStore.unreadNotificationsCount
-        hasAdmin: activityCenterStore.adminCount > 0
-        hasReplies: activityCenterStore.repliesCount > 0
-        hasMentions: activityCenterStore.mentionsCount > 0
-        hasContactRequests: activityCenterStore.contactRequestsCount > 0
-        hasMembership: activityCenterStore.membershipCount > 0
-        hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
-        activeGroup: activityCenterStore.activeNotificationGroup
-        onGroupTriggered: activityCenterStore.setActiveNotificationGroup(group)
-        onMarkAllReadClicked: activityCenterStore.markAllActivityCenterNotificationsRead()
-        onShowHideReadNotifications: activityCenterStore.setActivityCenterReadType(hideReadNotifications ?
-                                                                                       ActivityCenterStore.ActivityCenterReadType.Unread :
-                                                                                       ActivityCenterStore.ActivityCenterReadType.All)
-    }
+    leftPanel: ColumnLayout {
+        id: leftPanel
+        anchors.fill: parent
+        spacing: 0
 
-    StatusListView {
-        id: listView
+        // TODO: Create Header Component
+        RowLayout {
+            id: row
 
-        visible: !statusNewsNotificationDisabledLoader.active
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: activityCenterTopBar.bottom
-        anchors.bottom: parent.bottom
-        anchors.margins: Theme.smallPadding
-        spacing: 1
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.bigPadding
+            Layout.topMargin: Theme.padding
 
-        model: root.activityCenterStore.activityCenterNotifications
+            StatusNavigationPanelHeadline {
+                text: qsTr("Notifications")
+            }
 
-        onContentYChanged: d.loadMoreNotificationsIfScrollBelowThreshold()
+            // Filler
+            Item {
+                Layout.fillWidth: true
+            }
 
-        delegate: Loader {
-            width: listView.availableWidth
+            StatusBetaTag {
+                tooltipText: qsTr("Under construction.<br>More notification types to be coming soon.")
+                tooltipOrientation: StatusToolTip.Orientation.Bottom
+            }
 
-            property int filteredIndex: index
-            property var notification: model
+            StatusFlatRoundButton {
+                id: markAllReadBtn
+                objectName: "markAllReadButton"
+                enabled: activityCenterStore.unreadNotificationsCount > 0
+                icon.name: "double-checkmark"
+                onClicked: activityCenterStore.markAllActivityCenterNotificationsRead()
 
-            sourceComponent: {
-                switch (model.notificationType) {
-                case ActivityCenterStore.ActivityCenterNotificationType.Mention:
-                    return mentionNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.Reply:
-                    return replyNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
-                    return contactRequestNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
-                    return communityInvitationNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
-                    return membershipRequestNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
-                    return communityRequestNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
-                    return communityKickedNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.ContactRemoved:
-                    return contactRemovedComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
-                    return newKeypairFromPairedDeviceComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.CommunityTokenReceived:
-                case ActivityCenterStore.ActivityCenterNotificationType.FirstCommunityTokenReceived:
-                    return communityTokenReceivedComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
-                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipReceived:
-                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipLost:
-                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipFailed:
-                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
-                    return ownerTokenReceivedNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.ShareAccounts:
-                    return shareAccountsNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.CommunityBanned:
-                    return communityBannedNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.CommunityUnbanned:
-                    return communityUnbannedNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.NewPrivateGroupChat:
-                    return groupChatInvitationNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationReceived:
-                case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationCreated:
-                    return newDeviceDetectedComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFetching:
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingSuccess:
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingPartialFailure:
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFailure:
-                    return backupSyncingComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.ActivityCenterNotificationTypeNews:
-                    return newsMessageComponent
-                default:
-                    return null
+                StatusToolTip {
+                    visible: markAllReadBtn.hovered
+                    text: qsTr("Mark all as Read")
+                    orientation: StatusToolTip.Orientation.Bottom
+                }
+            }
+
+            StatusFlatRoundButton {
+                id: hideReadNotificationsBtn
+
+                property bool hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
+
+                objectName: "hideReadNotificationsButton"
+                icon.name: hideReadNotifications ? "hide" : "show"
+                onClicked: activityCenterStore.setActivityCenterReadType(!hideReadNotifications ?
+                                                                             ActivityCenterStore.ActivityCenterReadType.Unread :
+                                                                             ActivityCenterStore.ActivityCenterReadType.All)
+
+                StatusToolTip {
+                    visible: hideReadNotificationsBtn.hovered
+                    text: hideReadNotificationsBtn.hideReadNotifications ? qsTr("Show read notifications") : qsTr("Hide read notifications")
+                    orientation: StatusToolTip.Orientation.Bottom
+                }
+            }
+        }
+
+        ActivityCenterPopupTopBarPanel {
+            id: activityCenterTopBar
+
+            Layout.fillWidth: true
+            unreadNotificationsCount: activityCenterStore.unreadNotificationsCount
+            hasAdmin: activityCenterStore.adminCount > 0
+            hasReplies: activityCenterStore.repliesCount > 0
+            hasMentions: activityCenterStore.mentionsCount > 0
+            hasContactRequests: activityCenterStore.contactRequestsCount > 0
+            hasMembership: activityCenterStore.membershipCount > 0
+            hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
+            activeGroup: activityCenterStore.activeNotificationGroup
+            onGroupTriggered: activityCenterStore.setActiveNotificationGroup(group)
+            onMarkAllReadClicked: activityCenterStore.markAllActivityCenterNotificationsRead()
+            onShowHideReadNotifications: activityCenterStore.setActivityCenterReadType(hideReadNotifications ?
+                                                                                           ActivityCenterStore.ActivityCenterReadType.Unread :
+                                                                                           ActivityCenterStore.ActivityCenterReadType.All)
+        }
+
+        StatusListView {
+            id: listView
+
+            visible: !statusNewsNotificationDisabledLoader.active
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: Theme.smallPadding
+            spacing: 1
+
+            model: root.activityCenterStore.activityCenterNotifications
+
+            onContentYChanged: d.loadMoreNotificationsIfScrollBelowThreshold()
+
+            delegate: Loader {
+                width: listView.availableWidth
+
+                property int filteredIndex: index
+                property var notification: model
+
+                sourceComponent: {
+                    switch (model.notificationType) {
+                    case ActivityCenterStore.ActivityCenterNotificationType.Mention:
+                        return mentionNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.Reply:
+                        return replyNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
+                        return contactRequestNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
+                        return communityInvitationNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
+                        return membershipRequestNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
+                        return communityRequestNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
+                        return communityKickedNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRemoved:
+                        return contactRemovedComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
+                        return newKeypairFromPairedDeviceComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityTokenReceived:
+                    case ActivityCenterStore.ActivityCenterNotificationType.FirstCommunityTokenReceived:
+                        return communityTokenReceivedComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
+                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipReceived:
+                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipLost:
+                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipFailed:
+                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
+                        return ownerTokenReceivedNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.ShareAccounts:
+                        return shareAccountsNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityBanned:
+                        return communityBannedNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityUnbanned:
+                        return communityUnbannedNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.NewPrivateGroupChat:
+                        return groupChatInvitationNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationReceived:
+                    case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationCreated:
+                        return newDeviceDetectedComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFetching:
+                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingSuccess:
+                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingPartialFailure:
+                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFailure:
+                        return backupSyncingComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.ActivityCenterNotificationTypeNews:
+                        return newsMessageComponent
+                    default:
+                        return null
+                    }
                 }
             }
         }
     }
 
+    centerPanel: null // TODO: It will be updated with new designs
+
     // Placeholder for the status news when their settings are disbled
     Loader {
         id: statusNewsNotificationDisabledLoader
         active: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
-                 (!d.isStatusNewsViaRSSEnabled || d.notificationsSettings.notifSettingStatusNews === Constants.settingsSection.notifications.turnOffValue)
+                (!d.isStatusNewsViaRSSEnabled || d.notificationsSettings.notifSettingStatusNews === Constants.settingsSection.notifications.turnOffValue)
         anchors.centerIn: parent
         sourceComponent: newsDisabledPanel
     }
@@ -190,8 +224,8 @@ Popup {
     Loader {
         id: statusNewsNotificationEmptyState
         active: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
-                 !statusNewsNotificationDisabledLoader.active &&
-                 listView.count === 0
+                !statusNewsNotificationDisabledLoader.active &&
+                listView.count === 0
         anchors.centerIn: parent
         sourceComponent: newsEmptyPanel
     }
@@ -204,7 +238,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
     Component {
@@ -215,7 +249,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
     Component {
@@ -226,7 +260,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
     Component {
@@ -237,7 +271,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
     Component {
@@ -252,7 +286,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
             onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
                 if(communityAccessStore) {
                     communityAccessStore.acceptRequestToJoinCommunityRequested(requestId, communityId)
@@ -273,7 +307,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
     Component {
@@ -284,7 +318,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -297,7 +331,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -310,7 +344,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -322,7 +356,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -332,7 +366,7 @@ Popup {
         ActivityNotificationNewKeypairFromPairedDevice {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -352,7 +386,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
 
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(notification.communityId)
             onNavigateToCommunityClicked: root.store.setActiveCommunity(notification.communityId)
@@ -370,20 +404,20 @@ Popup {
             accountName: store.name
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
             onMoreDetailsClicked: {
                 switch (type) {
-                    case ActivityNotificationNewDevice.InstallationType.Received:
-                        Global.openPopup(pairDeviceDialog, {
-                            name: store.name,
-                            deviceId: notification.installationId
-                        });
-                        break;
-                    case ActivityNotificationNewDevice.InstallationType.Created:
-                        Global.openPopup(checkOtherDeviceDialog, {
-                            deviceId: notification.installationId
-                        });
-                        break;
+                case ActivityNotificationNewDevice.InstallationType.Received:
+                    Global.openPopup(pairDeviceDialog, {
+                                         name: store.name,
+                                         deviceId: notification.installationId
+                                     });
+                    break;
+                case ActivityNotificationNewDevice.InstallationType.Created:
+                    Global.openPopup(checkOtherDeviceDialog, {
+                                         deviceId: notification.installationId
+                                     });
+                    break;
                 }
             }
         }
@@ -414,14 +448,14 @@ Popup {
             store: root.store
             activityCenterStore: root.activityCenterStore
             onReadMoreClicked: {
-                root.close()
+                d.callLaterMarkAsSeen()
                 root.activityCenterStore.markActivityCenterNotificationRead(parent.notification)
                 Global.openNewsMessagePopupRequested(parent.notification, parent.notification.id)
                 // TODO figure out if we want the link
                 Global.addCentralizedMetricIfEnabled("news-info-opened", {"news-link": parent.notification.link})
 
             }
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -440,7 +474,7 @@ Popup {
 
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -459,7 +493,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
 
             onOpenShareAccountsClicked: {
                 Global.communityShareAddressesPopupRequested(notification.communityId, communityName, communityImage)
@@ -475,7 +509,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
 
@@ -501,7 +535,7 @@ Popup {
                 StatusBaseText {
                     Layout.fillWidth: true
                     text: qsTr("New device with %1 profile has been detected. You can see the device ID below and on your other device. Only confirm the request if the device ID matches.")
-                        .arg(name)
+                    .arg(name)
                     wrapMode: Text.WordWrap
                 }
                 StatusBaseText {
@@ -515,7 +549,7 @@ Popup {
 
             footer: StatusDialogFooter {
                 leftButtons: ObjectModel {
-                   StatusFlatButton {
+                    StatusFlatButton {
                         text: qsTr("Cancel")
                         onClicked: {
                             close()
@@ -579,7 +613,7 @@ Popup {
 
     Component {
         id: newsDisabledPanel
-        
+
         ColumnLayout {
             id: newsPanelLayout
 
@@ -647,8 +681,8 @@ Popup {
                 // If the mode is unread only, it means the user has seen all notifications
                 // If the mode is all, it means the user doesn't have any notifications
                 text: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread ?
-                    qsTr("You're all caught up") :
-                    qsTr("Your notifications will appear here")
+                          qsTr("You're all caught up") :
+                          qsTr("Your notifications will appear here")
                 horizontalAlignment: Text.AlignHCenter
                 color: Theme.palette.baseColor1
             }

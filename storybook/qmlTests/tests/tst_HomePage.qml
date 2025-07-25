@@ -69,8 +69,6 @@ Item {
             }
 
             useNewDockIcons: false
-            hasUnseenACNotifications: true
-            aCNotificationCount: 3
 
             onItemActivated: function(key, sectionType, itemId) {
                 homePageAdaptor.setTimestamp(key, new Date().valueOf())

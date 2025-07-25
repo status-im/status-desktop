@@ -20,9 +20,6 @@ import StatusQ.Core.Theme
     StatusSectionLayoutLandscape {
         id: root
 
-        notificationCount: 1
-        onNotificationButtonClicked: { showActivityCenter(); }
-
         headerContent: RowLayout {
             ...
         }
@@ -102,20 +99,6 @@ SplitView {
     property bool showHeader: true
 
     /*!
-        \qmlproperty alias StatusSectionLayout::notificationCount
-        This property holds a reference to the notificationCount property of the
-        header component.
-    */
-    property alias notificationCount: statusToolBar.notificationCount
-
-    /*!
-        \qmlproperty alias StatusSectionLayout::hasUnseenNotifications
-        This property holds a reference to the hasUnseenNotifications property of the
-        header component.
-    */
-    property alias hasUnseenNotifications: statusToolBar.hasUnseenNotifications
-
-    /*!
         \qmlproperty alias StatusSectionLayout::backButtonName
         This property holds a reference to the backButtonName property of the
         header component.
@@ -128,27 +111,14 @@ SplitView {
         the header component.
     */
     property Item headerContent
-    /*!
-        \qmlproperty alias StatusSectionLayout::notificationButton
-        This property holds a reference to the notification button of the header
-        component.
-    */
-    property alias notificationButton: statusToolBar.notificationButton
+
 
     /*!
         \qmlsignal
         This signal is emitted when the back button of the header component
         is pressed.
     */
-
     signal backButtonClicked()
-
-    /*!
-        \qmlsignal
-        This signal is emitted when the notification button of the header component
-        is pressed.
-    */
-    signal notificationButtonClicked()
 
     Control {
         id: navBarControl
@@ -201,9 +171,6 @@ SplitView {
                 }
                 onBackButtonClicked: {
                     root.backButtonClicked();
-                }
-                onNotificationButtonClicked: {
-                    root.notificationButtonClicked();
                 }
             }
             LayoutItemProxy {

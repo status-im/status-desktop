@@ -94,7 +94,6 @@ QtObject {
     signal playNotificationSound()
     signal mailserverWorking()
     signal mailserverNotWorking()
-    signal openActivityCenter()
 
     function displayEphemeralNotification(title: string, subTitle: string,
                                           image: string, icon: string,
@@ -133,10 +132,6 @@ QtObject {
 
         function onMailserverNotWorking() {
             root.mailserverNotWorking()
-        }
-
-        function onOpenActivityCenter() {
-            root.openActivityCenter()
         }
     }
     // End of Notifications related stuff
