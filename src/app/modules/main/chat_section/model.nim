@@ -43,6 +43,7 @@ type
     ShouldBeHiddenBecausePermissionsAreNotMet #this is a complex role which depends on other roles
                                               #(MemberRole , HideIfPermissionsNotMet, canPost and canView)
     MissingEncryptionKey
+    PermissionsCheckOngoing
 
 QtObject:
   type
@@ -144,6 +145,8 @@ QtObject:
       ModelRole.ViewersCanPostReactions.int:"viewersCanPostReactions",
       ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int:"shouldBeHiddenBecausePermissionsAreNotMet",
       ModelRole.MissingEncryptionKey.int:"missingEncryptionKey",
+      ModelRole.PermissionsCheckOngoing.int:"permissionsCheckOngoing",
+
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -229,6 +232,8 @@ QtObject:
       return newQVariant(self.itemShouldBeHiddenBecauseNotPermitted(item))
     of ModelRole.MissingEncryptionKey:
       return newQVariant(item.missingEncryptionKey)
+    of ModelRole.PermissionsCheckOngoing:
+      return newQVariant(item.permissionsCheckOngoing)
 
   proc getItemIdxById(items: seq[ChatItem], id: string): int =
     var idx = 0
@@ -758,3 +763,14 @@ QtObject:
       let modelIndex = self.createIndex(index, 0, nil)
       defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex, @[ModelRole.MissingEncryptionKey.int])
+
+  proc updatePermissionsCheckOngoing*(self: Model, id: string, permissionsCheckOngoing: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+
+    if self.items[index].permissionsCheckOngoing != permissionsCheckOngoing:
+      self.items[index].permissionsCheckOngoing = permissionsCheckOngoing
+      let modelIndex = self.createIndex(index, 0, nil)
+      defer: modelIndex.delete
+      self.dataChanged(modelIndex, modelIndex, @[ModelRole.PermissionsCheckOngoing.int])

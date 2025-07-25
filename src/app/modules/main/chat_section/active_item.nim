@@ -124,3 +124,12 @@ QtObject:
 
   QtProperty[int] position:
     read = getPosition
+
+  proc getPermissionsCheckOngoing(self: ActiveItem): bool {.slot.} =
+    if(self.item.isNil):
+      return false
+    return self.item.permissionsCheckOngoing
+
+  QtProperty[bool] permissionsCheckOngoing:
+    read = getPermissionsCheckOngoing
+  

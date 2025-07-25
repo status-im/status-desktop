@@ -14,7 +14,6 @@ QtObject:
       pinnedMessagesModelVariant: QVariant
       chatDetails: ChatDetails
       chatDetailsVariant: QVariant
-      permissionsCheckOngoing: bool
 
   proc chatDetailsChanged*(self:View) {.signal.}
 
@@ -138,18 +137,3 @@ QtObject:
 
   proc updateChatBlocked*(self: View, blocked: bool) =
     self.chatDetails.setBlocked(blocked)
-
-  proc getPermissionsCheckOngoing*(self: View): bool {.slot.} =
-    return self.permissionsCheckOngoing
-
-  proc permissionsCheckOngoingChanged*(self: View) {.signal.}
-
-  QtProperty[bool] permissionsCheckOngoing:
-    read = getPermissionsCheckOngoing
-    notify = permissionsCheckOngoingChanged
-
-  proc setPermissionsCheckOngoing*(self: View, value: bool) =
-    if (value == self.permissionsCheckOngoing):
-      return
-    self.permissionsCheckOngoing = value
-    self.permissionsCheckOngoingChanged()

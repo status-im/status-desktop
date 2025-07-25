@@ -43,6 +43,7 @@ type
     viewersCanPostReactions: bool
     hideIfPermissionsNotMet: bool
     missingEncryptionKey: bool
+    permissionsCheckOngoing: bool
 
 proc initChatItem*(
     id,
@@ -79,6 +80,7 @@ proc initChatItem*(
     viewersCanPostReactions = true,
     hideIfPermissionsNotMet: bool = false,
     missingEncryptionKey: bool = false,
+    permissionsCheckOngoing: bool = false,
     ): ChatItem =
   result = ChatItem()
   result.id = id
@@ -116,6 +118,7 @@ proc initChatItem*(
   result.viewersCanPostReactions = viewersCanPostReactions
   result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
   result.missingEncryptionKey = missingEncryptionKey
+  result.permissionsCheckOngoing = permissionsCheckOngoing
 
 proc `$`*(self: ChatItem): string =
   result = fmt"""chat_section/ChatItem(
@@ -151,6 +154,7 @@ proc `$`*(self: ChatItem): string =
     canPostReactions: {$self.canPostReactions},
     viewersCanPostReactions: {$self.viewersCanPostReactions},
     hideIfPermissionsNotMet: {$self.hideIfPermissionsNotMet},
+    permissionsCheckOngoing: {$self.permissionsCheckOngoing},
     ]"""
 
 proc toJsonNode*(self: ChatItem): JsonNode =
@@ -186,6 +190,7 @@ proc toJsonNode*(self: ChatItem): JsonNode =
     "canPostReactions": self.canPostReactions,
     "viewersCanPostReactions": self.viewersCanPostReactions,
     "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
+    "permissionsCheckOngoing": self.permissionsCheckOngoing,
   }
 
 proc delete*(self: ChatItem) =
@@ -388,3 +393,9 @@ proc missingEncryptionKey*(self: ChatItem): bool =
 
 proc `missingEncryptionKey=`*(self: var ChatItem, value: bool) =
   self.missingEncryptionKey = value
+
+proc permissionsCheckOngoing*(self: ChatItem): bool =
+  self.permissionsCheckOngoing
+
+proc `permissionsCheckOngoing=`*(self: var ChatItem, value: bool) =
+  self.permissionsCheckOngoing = value
