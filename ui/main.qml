@@ -1,11 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
-import QtQuick.Window
-import QtQml
 
 import utils
-import shared
 import shared.panels
 import shared.popups
 import shared.stores
@@ -21,9 +17,9 @@ import AppLayouts.Onboarding2.pages
 import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Backpressure
+import StatusQ.Platform
 
-StatusWindow {
+ApplicationWindow {
     id: applicationWindow
 
     property bool appIsReady: false
@@ -47,16 +43,12 @@ StatusWindow {
 
     objectName: "mainWindow"
     color: Theme.palette.background
-    title: {
-        // Set application settings
-        Qt.application.name = "Status Desktop"
-        Qt.application.displayName = qsTr("Status Desktop")
-        Qt.application.organization = "Status"
-        Qt.application.domain = "status.im"
-        Qt.application.version = aboutModule.getCurrentVersion()
-        return Qt.application.displayName
-    }
-    visible: true
+    title: Qt.application.displayName
+
+    // this is added so that the system toolbar integrated with client ui without a safe area on top
+    topPadding: 0
+    // These flgas integrate the systel titlebar into the client UI on macOS
+    flags: Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
 
     function updatePaddings() {
         if (applicationWindow.width < Theme.portraitBreakpoint.width) {
@@ -127,8 +119,6 @@ StatusWindow {
     QtObject {
         id: d
 
-        property int previousApplicationState: -1
-
         property var mockedKeycardControllerWindow
         function runMockedKeycardControllerWindow() {
             if (localAppSettings.displayMockedKeycardWindow()) {
@@ -149,6 +139,41 @@ StatusWindow {
                 }
             }
         }
+
+        readonly property bool macOSWindowed: Qt.platform.os === Constants.mac &&
+                                              applicationWindow.visibility !== Window.FullScreen
+
+        function restoreWindowState() {
+            switch(lastNonMinVisibility) {
+            case Window.Windowed:
+                applicationWindow.showNormal()
+                break
+            case Window.Maximized:
+                applicationWindow.showMaximized()
+                break
+            case Window.FullScreen:
+                applicationWindow.showFullScreen()
+                break
+            }
+        }
+
+        property int lastNonMinVisibility
+    }
+
+    // Save last visibility before minimize/hide so that we can bring the app in foreground in same visibility
+    onVisibilityChanged: {
+        if (applicationWindow.visibility !== Window.Minimized
+                && applicationWindow.visibility !== Window.Hidden) {
+            d.lastNonMinVisibility = applicationWindow.visibility
+        }
+    }
+
+    Binding {
+        target: Qt.application
+        property: "displayName"
+        value: d.macOSWindowed
+               ? ""
+               : qsTr("Status Desktop")
     }
 
     // Only set minimum width/height for desktop apps
@@ -167,18 +192,24 @@ StatusWindow {
 
     Action {
         shortcut: StandardKey.FullScreen
-        onTriggered: applicationWindow.toggleFullScreen()
+        onTriggered: {
+            if (applicationWindow.visibility === Window.FullScreen) {
+                applicationWindow.showNormal();
+            } else {
+                applicationWindow.showFullScreen();
+            }
+        }
     }
 
     Action {
         shortcut: "Ctrl+M"
-        onTriggered: applicationWindow.toggleMinimize()
+        onTriggered: applicationWindow.showMinimized()
     }
 
     Action {
         shortcut: StandardKey.Close
         onTriggered: {
-            applicationWindow.visible = false;
+            applicationWindow.hide()
         }
     }
 
@@ -207,42 +238,31 @@ StatusWindow {
         loader.sourceComponent = app
 
         d.runMockedKeycardControllerWindow()
-
-        startupOnboardingLoader.active = false
     }
 
-    //! Workaround for custom QQuickWindow
     Connections {
         target: applicationWindow
         function onClosing(close) {
-            if (Qt.platform.os === Constants.mac) {
-                loader.sourceComponent = undefined
-                close.accepted = true
-            } else {
-                if (loader.sourceComponent != app) {
-                    Qt.quit();
-                } else if (loader.sourceComponent == app) {
-                    if (localAccountSensitiveSettings.quitOnClose) {
-                        Qt.quit();
-                    } else {
-                        close.accepted = false
-                        applicationWindow.visible = false;
-                    }
+            // In case not logged in or loading, quit app
+            if (loader.sourceComponent != app) {
+                Qt.quit()
+            }
+            // In case user has set to close should quit app
+            else if (localAccountSensitiveSettings.quitOnClose) {
+                Qt.quit()
+            }
+            else {
+                close.accepted = false
+                /* In case of mac in fullscreen mode, hiding the window leads to black screen.
+                Hence we exit Fullscreen on system close and then the user can perform an actual
+                hide of the app */
+                if(applicationWindow.visibility === Window.FullScreen &&
+                        Qt.platform.os === Constants.mac) {
+                    applicationWindow.showNormal()
+                    return
                 }
+                applicationWindow.hide()
             }
-        }
-    }
-
-    // On MacOS, explicitely restore the window on activating
-    Connections {
-        target: Qt.application
-        enabled: Qt.platform.os === Constants.mac
-        function onStateChanged() {
-            if (Qt.application.state === d.previousApplicationState
-                && Qt.application.state === Qt.ApplicationActive) {
-                makeStatusAppActive()
-            }
-            d.previousApplicationState = Qt.application.state
         }
     }
 
@@ -266,13 +286,18 @@ StatusWindow {
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
         Global.addCentralizedMetricIfEnabled.connect(metricsStore.addCentralizedMetricIfEnabled)
+
+        // Set application settings
+        Qt.application.name = "Status Desktop"
+        Qt.application.organization = "Status"
+        Qt.application.domain = "status.im"
+        Qt.application.version = aboutModule.getCurrentVersion()
     }
 
     signal navigateTo(string path)
 
     function makeStatusAppActive() {
-        applicationWindow.restoreWindowState()
-        applicationWindow.visible = true
+        d.restoreWindowState()
         applicationWindow.raise()
         applicationWindow.requestActivate()
     }
@@ -299,11 +324,19 @@ StatusWindow {
 
     Loader {
         id: loader
+
         anchors.fill: parent
+        anchors.topMargin: Constants.isMobile ||
+                           Qt.platform.os === Constants.windows ?
+                               parent.SafeArea.margins.top : 0
+
         asynchronous: true
         opacity: active ? 1.0 : 0.0
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}
+        /* only unload splash screen once appmain is loaded else we see
+        an empty screen for a sec until it is laoded */
+        onLoaded: startupOnboardingLoader.active = false
     }
 
     Component {
@@ -338,7 +371,12 @@ StatusWindow {
 
     Loader {
         id: startupOnboardingLoader
+
         anchors.fill: parent
+        anchors.topMargin: Constants.isMobile ||
+                           Qt.platform.os === Constants.windows ?
+                               parent.SafeArea.margins.top : 0
+
         sourceComponent: onboardingV2
     }
 
@@ -459,33 +497,19 @@ StatusWindow {
         }
     }
 
-    MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 13
-
-        visible: Qt.platform.os === Constants.mac && applicationWindow.visibility !== Window.FullScreen
-
-        onClose: {
-            if (loader.sourceComponent != app) {
-                Qt.quit()
-                return
-            }
-
-            if (localAccountSensitiveSettings.quitOnClose) {
-                Qt.quit();
-                return
-            }
-
-            applicationWindow.visible = false;
+    // This is needed to enable the move window functionality on macOS when windowed
+    MouseArea {
+        enabled: d.macOSWindowed
+        height: applicationWindow.SafeArea.margins.top
+        width: parent.width
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
         }
+        preventStealing: true
+        propagateComposedEvents: true
+        onPressed: applicationWindow.startSystemMove()
 
-        onMinimised: {
-            applicationWindow.toggleMinimize()
-        }
-
-        onMaximized: {
-            applicationWindow.toggleFullScreen()
-        }
     }
 }

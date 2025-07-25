@@ -20,7 +20,9 @@ import SortFilterProxyModel
 
 import "demoapp/data"
 
-StatusWindow {
+import utils 1.0
+
+ApplicationWindow {
     id: rootWindow
 
     width: 1224
@@ -28,6 +30,9 @@ StatusWindow {
 
     visible: true
     title: qsTr("StatusQ Documentation App")
+    topPadding: 0
+    flags: Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
+
 
     property ThemePalette lightTheme: StatusLightTheme {}
     property ThemePalette darkTheme: StatusDarkTheme {}
@@ -550,26 +555,6 @@ StatusWindow {
         }
     }
 
-    StatusMacTrafficLights {
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 13
-
-        visible: Qt.platform.os == "osx"
-
-        onClose: {
-            rootWindow.close()
-        }
-
-        onMinimised: {
-            rootWindow.showMinimized()
-        }
-
-        onMaximized: {
-            rootWindow.toggleFullScreen()
-        }
-    }
-
     StatusWindowsTitleBar {
         anchors.top: parent.top
         width: parent.width
@@ -585,7 +570,7 @@ StatusWindow {
         }
 
         onMaximized: {
-            rootWindow.toggleFullScreen()
+            rootWindow.showFullScreen()
         }
     }
 
@@ -601,5 +586,20 @@ StatusWindow {
         property string selectedExample: ""
         property bool lightTheme: true
         property bool fillPage: false
+    }
+
+    MouseArea {
+        enabled: Qt.platform.os === Constants.mac && rootWindow.visibility !== Window.FullScreen
+        height: rootWindow.SafeArea.margins.top
+        width: parent.width
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+        }
+        preventStealing: true
+        propagateComposedEvents: true
+        onPressed: rootWindow.startSystemMove()
+
     }
 }
