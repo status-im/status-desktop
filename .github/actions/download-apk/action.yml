@@ -1,0 +1,83 @@
+name: 'Download APK'
+description: 'Downloads APK from various sources (GitHub artifacts, URLs, or LambdaTest)'
+
+inputs:
+  source_type:
+    description: 'APK source type'
+    required: true
+  source:
+    description: 'APK source (artifact name, URL, or lt://app_id)'  
+    required: true
+  build_run_id:
+    description: 'GitHub run ID for artifacts from other runs'
+    required: false
+  github_token:
+    description: 'GitHub token for artifact downloads'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  apk_path:
+    description: 'Path to downloaded APK file'
+    value: ${{ steps.set_output.outputs.apk_path }}
+  download_method:
+    description: 'Method used to acquire APK'
+    value: ${{ steps.set_output.outputs.download_method }}
+
+runs:
+  using: composite
+  steps:
+    - name: Create APK directory
+      shell: bash
+      run: mkdir -p ./apk/
+      
+    - name: Download from GitHub artifact (current naming)
+      if: inputs.source_type == 'github_artifact'
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.source }}
+        path: ./apk/
+        run-id: ${{ inputs.build_run_id }}
+        github-token: ${{ inputs.github_token }}
+      continue-on-error: true
+      id: download-current
+      
+    - name: Download from GitHub artifact (legacy naming)
+      if: inputs.source_type == 'github_artifact' && steps.download-current.outcome == 'failure'
+      uses: actions/download-artifact@v4
+      with:
+        name: Status-tablet
+        path: ./apk/
+        run-id: ${{ inputs.build_run_id }}
+        github-token: ${{ inputs.github_token }}
+      id: download-legacy
+      
+    - name: Download from URL
+      if: inputs.source_type == 'direct_url'
+      shell: bash
+      run: |
+        echo "Downloading APK from: ${{ inputs.source }}"
+        curl -L -o ./apk/Status-tablet.apk "${{ inputs.source }}"
+        
+    - name: Verify APK exists
+      if: inputs.source_type != 'lambdatest_app_id'
+      shell: bash
+      run: |
+        if [ ! -f "./apk/Status-tablet.apk" ]; then
+          echo "APK not found after download"
+          ls -la ./apk/ || echo "APK directory not found"
+          exit 1
+        fi
+        echo "APK ready: $(ls -lh ./apk/Status-tablet.apk)"
+        
+    - name: Set outputs
+      id: set_output
+      shell: bash
+      run: |
+        if [ "${{ inputs.source_type }}" = "lambdatest_app_id" ]; then
+          echo "apk_path=${{ inputs.source }}" >> $GITHUB_OUTPUT
+          echo "download_method=lambdatest_reference" >> $GITHUB_OUTPUT
+        else
+          echo "apk_path=$(pwd)/apk/Status-tablet.apk" >> $GITHUB_OUTPUT
+          echo "download_method=downloaded" >> $GITHUB_OUTPUT
+        fi 

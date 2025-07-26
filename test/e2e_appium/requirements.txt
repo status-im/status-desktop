@@ -1,0 +1,6 @@
+Appium-Python-Client==5.1.1
+pytest==7.4.3
+pytest-html==4.1.1
+PyYAML==6.0.1
+jsonschema==4.19.2
+requests==2.31.0

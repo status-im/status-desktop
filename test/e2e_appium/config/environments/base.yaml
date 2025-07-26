@@ -1,0 +1,32 @@
+metadata:
+  framework_version: "2.0.0"
+  supported_platforms: ["android", "ios"]
+
+device:
+  platform_name: "android"
+  platform_version: "14"
+  device_orientation: "landscape"
+
+timeouts:
+  default: 30
+  element_wait: 30
+  element_click: 10
+  element_find: 15
+
+logging:
+  level: "INFO"
+  enable_screenshots: true
+  enable_video_recording: true
+  enable_xml_report: true
+  enable_html_report: true
+  enable_junit_report: true
+  
+directories:
+  logs: "logs"
+  reports: "reports"
+  screenshots: "screenshots"
+
+test_execution:
+  retry_failed_tests: 1
+  parallel_workers: 1
+  test_timeout: 300 

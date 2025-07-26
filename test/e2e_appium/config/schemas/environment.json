@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["metadata", "device", "app", "timeouts"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["environment"],
+      "properties": {
+        "environment": {
+          "type": "string",
+          "enum": ["local", "lambdatest", "staging"]
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "required": ["name", "platform_name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "platform_name": {
+          "type": "string",
+          "enum": ["android", "ios"]
+        },
+        "platform_version": {
+          "type": "string"
+        }
+      }
+    },
+    "app": {
+      "type": "object",
+      "required": ["source_type"],
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": ["local_file", "cloud_upload", "url"]
+        }
+      }
+    },
+    "timeouts": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 300
+        },
+        "element_wait": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 300
+        }
+      }
+    }
+  }
+} 
