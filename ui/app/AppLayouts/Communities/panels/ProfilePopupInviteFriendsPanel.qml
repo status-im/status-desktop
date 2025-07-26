@@ -22,9 +22,8 @@ ColumnLayout {
 
     property string headerTitle: ""
 
-    property AppLayoutStores.RootStore rootStore
-
     property var contactsModel
+    property var membersModel
     property string communityId
 
     property var pubKeys: ([])
@@ -54,11 +53,8 @@ ColumnLayout {
     }
 
     ExistingContacts {
-        id: existingContacts
-
-        rootStore: root.rootStore
-
         contactsModel: root.contactsModel
+        membersModel: root.membersModel
         communityId: root.communityId
 
         hideCommunityMembers: true

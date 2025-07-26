@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import StatusQ
 import StatusQ.Core
 import StatusQ.Controls
 import StatusQ.Components
@@ -19,9 +20,8 @@ import SortFilterProxyModel
 Item {
     id: root
 
-    property AppLayoutStores.RootStore rootStore
-
     property var contactsModel
+    property var membersModel
     property string communityId
 
     property string filterText: ""
@@ -53,7 +53,7 @@ Item {
         model: SortFilterProxyModel {
             sourceModel: root.contactsModel
             filters: [
-                ExpressionFilter {
+                FastExpressionFilter {
                     expression: {
                         root.filterText
                         root.hideCommunityMembers
@@ -74,8 +74,9 @@ Item {
                             return false
 
                         return !root.hideCommunityMembers ||
-                               !root.rootStore.communityHasMember(root.communityId, model.pubKey)
+                               !root.membersModel.hasMember(model.pubKey)
                     }
+                    expectedRoles: [ "isContact", "isBlocked", "alias", "displayName", "ensName", "localNickname", "pubKey" ]
                 }
             ]
         }

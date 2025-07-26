@@ -16,8 +16,6 @@ import AppLayouts.Profile.stores as ProfileStores
 StatusStackModal {
     id: root
 
-    property AppLayoutStores.RootStore rootStore
-
     property var contactsModel
     property var community
     property var communitySectionModule
@@ -95,9 +93,9 @@ StatusStackModal {
 
     stackItems: [
         ProfilePopupInviteFriendsPanel {
-            rootStore: root.rootStore
 
             contactsModel: root.contactsModel
+            membersModel: root.communitySectionModule.membersModel
             communityId: root.community.id
 
             onPubKeysChanged: root.pubKeys = pubKeys

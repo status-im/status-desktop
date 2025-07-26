@@ -204,6 +204,7 @@ method getCommunityItem(self: Module, community: CommunityDto): SectionItem =
       community.canManageUsers,
       community.canRequestAccess,
       community.isMember,
+      isBanned = false,
       community.permissions.access,
       community.permissions.ensOnly,
       community.muted,

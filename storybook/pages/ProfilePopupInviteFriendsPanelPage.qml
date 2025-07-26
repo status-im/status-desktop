@@ -11,12 +11,6 @@ Item {
         ProfilePopupInviteFriendsPanel {
             communityId: "communityId"
 
-            rootStore: AppLayoutStores.RootStore {
-                function communityHasMember(communityId, pubKey) {
-                    return false
-                }
-            }
-
             contactsModel: ListModel {
                 Component.onCompleted: {
                     const keys = []

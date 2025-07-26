@@ -361,6 +361,10 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
 
+  var isBanned = false
+  if communityDetails.pendingAndBannedMembers.contains(singletonInstance.userProfile.getPubKey()):
+    isBanned = communityDetails.pendingAndBannedMembers[singletonInstance.userProfile.getPubKey()].toMembershipRequestState() == MembershipRequestState.Banned
+
   result = initSectionItem(
     communityDetails.id,
     sectionType = SectionType.Community,
@@ -385,6 +389,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.canManageUsers,
     communityDetails.canRequestAccess,
     communityDetails.isMember,
+    isBanned,
     communityDetails.permissions.access,
     communityDetails.permissions.ensOnly,
     communityDetails.muted,
@@ -896,6 +901,7 @@ method onChatsLoaded*[T](
     canJoin = true,
     canRequestAccess = true,
     isMember = true,
+    isBanned = false,
     muted = false,
   )
   items.add(personalChatSectionItem)
@@ -1597,10 +1603,12 @@ method onMembershipStateUpdated*[T](self: Module[T], communityId: string, member
   if myPublicKey == memberPubkey:
     case state:
       of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete:
+        self.view.model().setIsBanned(communityId, true)
         singletonInstance.globalEvents.showCommunityMemberBannedNotification(fmt "You've been banned from {communityDto.name}", "", communityId)
       of MembershipRequestState.Kicked:
         singletonInstance.globalEvents.showCommunityMemberKickedNotification(fmt "You were kicked from {communityDto.name}", "", communityId)
       of MembershipRequestState.Unbanned:
+        self.view.model().setIsBanned(communityId, false)
         singletonInstance.globalEvents.showCommunityMemberUnbannedNotification(fmt "You were unbanned from {communityDto.name}", "", communityId)
       else:
         discard
