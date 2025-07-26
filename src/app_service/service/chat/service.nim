@@ -182,22 +182,6 @@ QtObject:
         for clearedHistoryDto in receivedData.clearedHistories:
           self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: clearedHistoryDto.chatId))
 
-    self.events.on(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED) do(e: Args):
-      let args = LocalBackupImportArg(e)
-      if args.error.len > 0:
-        # The error will be shown in the UI, so we don't need to log it here
-        return
-
-      # If we have imported contacts from the local backup, we need to emit the contacts loaded signal
-      if args.response.hasKey("chats"):
-        try:
-          var chatDtos: seq[ChatDto] = @[]
-          for chat in args.response["chats"]:
-            chatDtos.add(chat.toChatDto())
-          self.parseChatsInMessengerResponse(chatDtos)
-        except Exception as e:
-          error "Error parsing chats from local backup import response: ", msg = e.msg
-
   proc asyncGetActiveChats*(self: Service) =
     let arg = AsyncGetActiveChatsTaskArg(
       tptr: asyncGetActiveChatsTask,

@@ -76,5 +76,8 @@ proc getUseMailservers*(self: Controller): bool =
 proc setUseMailservers*(self: Controller, value: bool): bool =
   return self.settingsService.toggleUseMailservers(value)
 
+proc performLocalBackup*(self: Controller): string =
+  return self.generalService.performLocalBackup()
+
 proc importLocalBackupFile*(self: Controller, filePath: string) =
   self.generalService.asyncImportLocalBackupFile(filePath)

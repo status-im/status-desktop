@@ -6,6 +6,7 @@ import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
 import ../../../constants as app_constants
 import ../../common/types
+import status_go
 
 from app_service/service/activity_center/service import SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED, ActivityCenterNotificationsArgs
 from app_service/service/activity_center/dto/notification import parseActivityCenterNotifications
@@ -129,6 +130,16 @@ QtObject:
     except Exception as e:
       error "error: ", procName="backupData", errName = e.name, errDesription = e.msg
 
+  proc performLocalBackup*(self: Service): string =
+    try:
+      let response =  status_go.performLocalBackup()
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj.hasKey("error") and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+    except Exception as e:
+      error "error: ", procName="performLocalBackup", errName = e.name, errDesription = e.msg
+      return e.msg
 
   proc asyncImportLocalBackupFile*(self: Service, filePath: string) =
     let arg = AsyncImportLocalBackupFileTaskArg(
@@ -146,8 +157,12 @@ QtObject:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
-      # TODO use tghe response to populate other services?
-      self.events.emit(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED, LocalBackupImportArg(error: "", response: rpcResponseObj["response"]["result"]))
+      let responseObj = rpcResponseObj["response"].getStr.parseJson
+
+      if (responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != ""):
+        raise newException(CatchableError, responseObj["error"].getStr)
+
+      self.events.emit(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED, LocalBackupImportArg(error: ""))
     except Exception as e:
       error "error:", procName="asyncImportLocalBackupFile", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED, LocalBackupImportArg(error: e.msg))
