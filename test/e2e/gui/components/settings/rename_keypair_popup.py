@@ -16,7 +16,7 @@ class RenameKeypairPopup(QObject):
     @allure.step('Rename keypair')
     def rename_keypair(self, name):
         self.rename_text_edit.text = name
-        self.save_changes_button.click()
+        self.save_changes_button.wait_until_appears().click()
         self.wait_until_hidden()
 
     @allure.step('Get error message')
