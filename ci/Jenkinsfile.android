@@ -1,0 +1,153 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+def isNightlyBuild = utils.isNightlyBuild()
+
+pipeline {
+  agent {
+    label "${getAgentLabels().join(' && ')} && qt-6.9.0 && go-1.23"
+  }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether release credentials are used.',
+      defaultValue: params.RELEASE ?: false
+    )
+    booleanParam(
+      name: 'INCLUDE_DEBUG_SYMBOLS',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.INCLUDE_DEBUG_SYMBOLS ?: false
+    )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0', '1', '2']
+    )
+    string(
+      name: 'NIMFLAGS',
+      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
+      defaultValue: "--colors:off --nimcache:${env.WORKSPACE_TMP}/nimcache"
+    )
+    booleanParam(
+      name: 'USE_MOCKED_KEYCARD_LIB',
+      description: 'Decides whether the mocked status-keycard-go library is built.',
+      defaultValue: false
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 30, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '1',
+    ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(
+      abortPrevious: isPRBuild
+    )
+  }
+
+  environment {
+    PLATFORM = "linux/${getArch()}"
+    /* Improve make performance */
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    /* Avoid weird bugs caused by stale cache. */
+    QML_DISABLE_DISK_CACHE = "true"
+    QTDIR = sh(script:"${env.QMAKE} -query QT_INSTALL_PREFIX", returnStdout: true).trim()
+    /* Control output the filename */
+    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION)}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION)}"
+    /* prevent sharing cache dir across different jobs */
+    GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
+    SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+  }
+
+  stages {
+    stage('Cleanup') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
+    stage('Deps') {
+      steps {
+        sh 'go install github.com/go-bindata/go-bindata/v3/go-bindata@latest'
+        sh 'go install go.uber.org/mock/mockgen@v0.4.0'
+        sh 'go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1'
+      }
+    }
+
+    stage('Build') {
+      steps {
+        sh 'make mobile-clean'
+        sh 'make mobile-build V=3 USE_SYSTEM_NIM=1'
+      }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            env.PKG_URL = s5cmd.upload('mobile/bin/android/qt6/Status-tablet.apk')
+            jenkins.setBuildDesc(AppImage: env.PKG_URL)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts('mobile/bin/android/qt6/Status-tablet.apk')
+          } }
+        }
+      }
+    }
+
+    stage('E2E') {
+      when { expression { utils.isPRBuild() } }
+      steps { script {
+        build(
+          job: 'status-desktop/e2e/prs',
+          wait: false,
+          parameters: jenkins.mapToParams([
+            GIT_REF: env.GIT_COMMIT,
+            BUILD_SOURCE: env.JOB_NAME,
+          ]),
+        )
+      } }
+    }
+  }
+  post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+    cleanup { sh './scripts/clean-git.sh' }
+  }
+}
+
+/* This allows us to use one Jenkinsfile and run
+ * jobs on different platforms based on job name. */
+def getAgentLabels() {
+    if (params.AGENT_LABEL) { return params.AGENT_LABEL }
+    /* We extract the name of the job from currentThread because
+     * before an agent is picket env is not available. */
+    def tokens = Thread.currentThread().getName().split('/')
+    def labels = []
+    /* Check if the job path contains any of the valid labels. */
+    ['linux', 'macos', 'x86_64', 'aarch64', 'arm64'].each {
+        if (tokens.contains(it)) { labels.add(it) }
+    }
+    return labels
+}
+
+def getArch() {
+    def tokens = Thread.currentThread().getName().split('/')
+    for (def arch in ['x86_64', 'aarch64']) {
+      if (tokens.contains(arch)) { return arch }
+    }
+}
