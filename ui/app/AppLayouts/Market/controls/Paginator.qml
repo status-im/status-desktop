@@ -39,7 +39,7 @@ Control {
     }
 
     contentItem: RowLayout {
-        spacing: 8
+        spacing: Theme.halfPadding
         StatusButton {
             objectName: "previousButton"
 

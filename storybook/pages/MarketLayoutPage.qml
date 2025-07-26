@@ -49,7 +49,7 @@ SplitView {
             }
             currentPage: -1
             onRequestLaunchSwap: console.warn("Request Launch Swap")
-            onFetchMarketTokens: {
+            onFetchMarketTokens: (pageNumber, pageSize) => {
                 console.warn("Fetch Market Tokens with PageSize: %1 and PageNumber:%2".arg(pageSize).arg(pageNumber))
                 filteredModel.startIndex = ((pageNumber - 1) * pageSize) + 1
                 filteredModel.endIndex = Math.min(pageNumber * pageSize, totalTokensCount)
