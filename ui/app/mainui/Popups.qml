@@ -27,6 +27,8 @@ import mainui.activitycenter.stores
 
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Chat.stores as ChatStores
+import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.stores.Messaging.Community as CommunityStores
 
 import shared.popups
 import shared.status
@@ -60,6 +62,8 @@ QtObject {
     property ActivityCenterStore activityCenterStore
     property ProfileStores.AboutStore aboutStore
     property ProfileStores.PrivacyStore privacyStore
+
+    property MessagingStores.MessagingRootStore messagingRootStore
 
     property var allContactsModel
     property var mutualContactsModel
@@ -628,10 +632,10 @@ QtObject {
                         return
                     }
                     callback(image,
-                            cropRect.x.toFixed(),
-                            cropRect.y.toFixed(),
-                            (cropRect.x + cropRect.width).toFixed(),
-                            (cropRect.y + cropRect.height).toFixed())
+                             cropRect.x.toFixed(),
+                             cropRect.y.toFixed(),
+                             (cropRect.x + cropRect.width).toFixed(),
+                             (cropRect.y + cropRect.height).toFixed())
                 }
                 onDone: destroy()
             }
@@ -744,16 +748,22 @@ QtObject {
         Component {
             id: importCommunitiesPopupComponent
             ImportCommunityPopup {
+                id: importPopup
+
+                property CommunityStores.CommunityRootStore communityRootStore: root.messagingRootStore.createCommunityRootStore(this, importPopup.communityId)
+                readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
+                                                                                                 communityRootStore.communityAccessStore : null
+
                 store: root.communitiesStore
                 utilsStore: root.utilsStore
                 onJoinCommunityRequested: function(communityId, communityDetails) {
                     close()
-                    communitiesStore.spectateCommunity(communityId)
+                    communityAccessStore.spectateCommunity(communityId)
                     openCommunityIntroPopup(communityId,
                                             communityDetails.name,
                                             communityDetails.introMessage,
                                             communityDetails.image,
-                                            root.rootStore.isMyCommunityRequestPending(communityId))
+                                            communityAccessStore.isMyCommunityRequestPending(communityId))
                 }
                 onClosed: destroy()
             }
@@ -765,7 +775,11 @@ QtObject {
             CommunityMembershipSetupDialog {
                 id: dialogRoot
 
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                property CommunityStores.CommunityRootStore communityRootStore: root.messagingRootStore.createCommunityRootStore(this, dialogRoot.communityId)
+                readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
+                                                                                                 communityRootStore.communityAccessStore : null
+
+                requirementsCheckPending: communityAccessStore ? communityAccessStore.spectatedPermissionsCheckOngoing : false
                 checkingPermissionToJoinInProgress: root.rootStore.checkingPermissionToJoinInProgress
                 joinPermissionsCheckCompletedWithoutErrors: root.rootStore.joinPermissionsCheckCompletedWithoutErrors
 
@@ -776,8 +790,11 @@ QtObject {
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(dialogRoot.communityId)
-                    return root.rootStore.permissionsModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareTokenModelForCommunity(dialogRoot.communityId)
+                        return communityAccessStore.spectatedPermissionsModel
+                    }
+                    return null
                 }
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
@@ -787,57 +804,62 @@ QtObject {
                 }
 
                 onPrepareForSigning: {
-                    root.rootStore.prepareKeypairsForSigning(dialogRoot.communityId, dialogRoot.name, sharedAddresses, airdropAddress, false)
-
-                    dialogRoot.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareKeypairsForSigning(dialogRoot.communityId, dialogRoot.name, sharedAddresses, airdropAddress, false)
+                        dialogRoot.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    }
                 }
 
                 onSignProfileKeypairAndAllNonKeycardKeypairs: {
-                    root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    if(communityAccessStore) {
+                        communityAccessStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    }
                 }
 
                 onSignSharedAddressesForKeypair: {
-                    root.rootStore.signSharedAddressesForKeypair(keyUid)
+                    if(communityAccessStore) {
+                        communityAccessStore.signSharedAddressesForKeypair(keyUid)
+                    }
                 }
 
                 onJoinCommunity: {
-                    root.rootStore.joinCommunityOrEditSharedAddresses()
+                    if(communityAccessStore) {
+                        communityAccessStore.joinCommunityOrEditSharedAddresses()
+                    }
                 }
 
                 onCancelMembershipRequest: {
-                    root.rootStore.cancelPendingRequest(dialogRoot.communityId)
-                }
-
-                Connections {
-                    target: root.communitiesStore.communitiesModuleInst
-                    function onCommunityAccessRequested(communityId: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        root.communitiesStore.spectateCommunity(communityId);
-                        dialogRoot.close();
-                    }
-                    function onCommunityAccessFailed(communityId: string, error: string) {
-                        if (communityId !== dialogRoot.communityId)
-                            return
-                        dialogRoot.close();
+                    if(communityAccessStore) {
+                        communityAccessStore.cancelPendingRequest(dialogRoot.communityId)
                     }
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
+                    if(communityAccessStore) {
+                        communityAccessStore.updatePermissionsModel(dialogRoot.communityId, sharedAddresses)
+                    }
                 }
 
                 onAboutToShow: { root.rootStore.communityKeyToImport = dialogRoot.communityId; }
 
                 onClosed: {
                     root.rootStore.communityKeyToImport = "";
-                    root.rootStore.cleanJoinEditCommunityData()
+                    if(communityAccessStore) {
+                        communityAccessStore.cleanJoinEditCommunityData()
+                    }
                 }
 
                 Connections {
-                    target: root.rootStore.communitiesModuleInst
+                    target: dialogRoot.communityAccessStore
+
+                    function onCommunityAccessFailed(communityId: string, error: string) {
+                        if (communityId !== dialogRoot.communityId)
+                            return
+                        dialogRoot.close();
+                    }
 
                     function onAllSharedAddressesSigned() {
+
                         if (dialogRoot.profileProvesOwnershipOfSelectedAddresses) {
                             dialogRoot.joinCommunity()
                             dialogRoot.close()
@@ -1001,11 +1023,16 @@ QtObject {
             CommunityMembershipSetupDialog {
                 id: editSharedAddressesPopup
 
+                // TODO: This will be replaced at some point to some combination of `CommunityStores` objects
                 readonly property ChatStores.RootStore chatStore: ChatStores.RootStore {
                     contactsStore: root.contactsStore
                     isChatSectionModule: false
                     communityId: editSharedAddressesPopup.communityId
                 }
+
+                property CommunityStores.CommunityRootStore communityRootStore:  root.messagingRootStore.createCommunityRootStore(this, editSharedAddressesPopup.communityId)
+                readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
+                                                                                                 communityRootStore.communityAccessStore : null
 
                 isEditMode: true
 
@@ -1015,7 +1042,7 @@ QtObject {
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
 
-                requirementsCheckPending: root.rootStore.requirementsCheckPending
+                requirementsCheckPending: communityAccessStore ? communityAccessStore.spectatedPermissionsCheckOngoing : false
                 checkingPermissionToJoinInProgress: root.rootStore.checkingPermissionToJoinInProgress
                 joinPermissionsCheckCompletedWithoutErrors: root.rootStore.joinPermissionsCheckCompletedWithoutErrors
 
@@ -1029,8 +1056,11 @@ QtObject {
                 walletCollectiblesModel: WalletStores.RootStore.collectiblesStore.allCollectiblesModel
 
                 permissionsModel: {
-                    root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
-                    return root.rootStore.permissionsModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
+                        return communityAccessStore.spectatedPermissionsModel
+                    }
+                    return null
                 }
                 assetsModel: chatStore.assetsModel
                 collectiblesModel: chatStore.collectiblesModel
@@ -1040,33 +1070,40 @@ QtObject {
                 }
 
                 onSharedAddressesUpdated: {
-                    root.rootStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                    if(communityAccessStore) {
+                        communityAccessStore.updatePermissionsModel(editSharedAddressesPopup.communityId, sharedAddresses)
+                    }
                 }
 
                 onPrepareForSigning: {
-                    root.rootStore.prepareKeypairsForSigning(editSharedAddressesPopup.communityId, "", sharedAddresses, airdropAddress, true)
-
-                    editSharedAddressesPopup.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    if(communityAccessStore) {
+                        communityAccessStore.prepareKeypairsForSigning(editSharedAddressesPopup.communityId, "", sharedAddresses, airdropAddress, true)
+                        editSharedAddressesPopup.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                    }
                 }
 
                 onSignProfileKeypairAndAllNonKeycardKeypairs: {
-                    root.rootStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    if(communityAccessStore) {
+                        communityAccessStore.signProfileKeypairAndAllNonKeycardKeypairs()
+                    }
                 }
 
                 onSignSharedAddressesForKeypair: {
-                    root.rootStore.signSharedAddressesForKeypair(keyUid)
+                    if(communityAccessStore) {
+                        communityAccessStore.signSharedAddressesForKeypair(keyUid)
+                    }
                 }
 
                 onEditRevealedAddresses: {
-                    root.rootStore.joinCommunityOrEditSharedAddresses()
+                    communityAccessStore.joinCommunityOrEditSharedAddresses()
                 }
 
                 onClosed: {
-                    root.rootStore.cleanJoinEditCommunityData()
+                    communityAccessStore.cleanJoinEditCommunityData()
                 }
 
                 Connections {
-                    target: root.rootStore.communitiesModuleInst
+                    target: editSharedAddressesPopup.communityAccessStore
 
                     function onAllSharedAddressesSigned() {
                         if (editSharedAddressesPopup.profileProvesOwnershipOfSelectedAddresses) {

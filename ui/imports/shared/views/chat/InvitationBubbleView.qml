@@ -23,6 +23,8 @@ Control {
     property ChatStores.RootStore store
     property string communityId
 
+    signal spectateCommunityRequested(string communityId)
+
     QtObject {
         id: d
 
@@ -208,7 +210,7 @@ Control {
                     if (d.communityJoined || d.communitySpectated) {
                         root.store.setActiveCommunity(communityId)
                     } else {
-                        root.store.spectateCommunity(communityId)
+                        root.spectateCommunityRequested(communityId)
                     }
                 }
             }

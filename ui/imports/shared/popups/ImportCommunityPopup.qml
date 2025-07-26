@@ -22,6 +22,7 @@ StatusDialog {
     property UtilsStore utilsStore
 
     property alias text: keyInput.text
+    property alias communityId: d.publicKey
 
     signal joinCommunityRequested(string communityId, var communityDetails)
 

@@ -86,6 +86,7 @@ Item {
     readonly property ProfileStores.EnsUsernamesStore ensUsernamesStore: rootStore.profileSectionStore.ensUsernamesStore
 
     // Messaging (just references from `rootStore`)
+    readonly property MessagingStores.MessagingRootStore messagingRootStore: rootStore.messagingRootStore
     readonly property MessagingStores.MessagingSettingsStore messagingSettingsStore: rootStore.messagingRootStore.messagingSettingsStore
 
     // Note: The following stores have not yet been refactored to follow the entry-point pattern via the main root store
@@ -901,6 +902,7 @@ Item {
         aboutStore: appMain.aboutStore
         contactsStore: appMain.contactsStore
         privacyStore: appMain.privacyStore
+        messagingRootStore: appMain.messagingRootStore
 
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -1998,6 +2000,7 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
+                                isChatView: true
                                 navBar: appMain.navBar
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.contactsStore
@@ -2161,6 +2164,7 @@ Item {
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
                             networksStore: appMain.networksStore
+                            messagingRootStore: appMain.messagingRootStore
 
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             keychain: appMain.keychain
@@ -2295,6 +2299,7 @@ Item {
                                     }
                                 }
                                 
+                                isChatView: false // This will be a community view
                                 navBar: appMain.navBar
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
@@ -2303,6 +2308,8 @@ Item {
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
+
+                                newCommnityStore: appMain.messagingRootStore.createCommunityRootStore(this, model.id)
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.contactsStore
                                     currencyStore: appMain.currencyStore
@@ -2418,6 +2425,7 @@ Item {
                 activityCenterStore: appMain.activityCenterStore
                 privacyStore: appMain.privacyStore
                 notificationsStore: appMain.notificationsStore
+                messagingRootStore: appMain.messagingRootStore
             }
         }
 

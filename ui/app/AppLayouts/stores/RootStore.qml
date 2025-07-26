@@ -217,15 +217,11 @@ QtObject {
 
     // Communities related properties and functions that shall be moved to `CommunitiesRootStore`
     property var communitiesModuleInst: communitiesModule // Should be removed and used only inside `CommunitiesRootStore` AND private, not accessible from outside components
-    readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
     readonly property bool checkingPermissionToJoinInProgress: communitiesModuleInst.checkingPermissionToJoinInProgress
     readonly property bool joinPermissionsCheckCompletedWithoutErrors: communitiesModuleInst.joinPermissionsCheckCompletedWithoutErrors
     readonly property bool channelsPermissionsCheckSuccessful: communitiesModuleInst.channelsPermissionsCheckSuccessful
 
     property string communityKeyToImport
-
-    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
-                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
 
     readonly property var myRevealedAddressesForCurrentCommunity: {
         try {
@@ -239,10 +235,6 @@ QtObject {
     }
     readonly property string myRevealedAirdropAddressForCurrentCommunity:
         root.communitiesModuleInst.myRevealedAirdropAddressForCurrentCommunity.toLowerCase()
-
-    function prepareTokenModelForCommunity(publicKey) {
-        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
-    }
 
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,
                              communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY,
@@ -259,40 +251,8 @@ QtObject {
         return communitiesModuleInst.isMemberOfCommunity(communityId, pubKey)
     }
 
-    function isMyCommunityRequestPending(id: string) {
-        return communitiesModuleInst.isMyCommunityRequestPending(id)
-    }
-
-    function cancelPendingRequest(id: string) {
-        communitiesModuleInst.cancelRequestToJoinCommunity(id)
-    }
-
     function setActiveCommunity(communityId) {
         internal.mainModuleInst.setActiveSectionById(communityId);
-    }
-
-    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
-        communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
-    }
-
-    function signProfileKeypairAndAllNonKeycardKeypairs() {
-        communitiesModuleInst.signProfileKeypairAndAllNonKeycardKeypairs()
-    }
-
-    function signSharedAddressesForKeypair(keyUid) {
-        communitiesModuleInst.signSharedAddressesForKeypair(keyUid)
-    }
-
-    function joinCommunityOrEditSharedAddresses() {
-        communitiesModuleInst.joinCommunityOrEditSharedAddresses()
-    }
-
-    function cleanJoinEditCommunityData() {
-        communitiesModuleInst.cleanJoinEditCommunityData()
-    }
-
-    function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 
     function promoteSelfToControlNode(communityId) {

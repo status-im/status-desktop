@@ -56,6 +56,7 @@ Item {
     property bool sendViaPersonalChatEnabled
     property string disabledTooltipText
     property bool paymentRequestFeatureEnabled
+    property bool joined
 
     // Unfurling related data:
     property bool gifUnfurlingEnabled
@@ -80,6 +81,9 @@ Item {
     signal removeTrustStatusRequest(string pubKey)
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
+
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
 
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
@@ -269,6 +273,7 @@ Item {
                         sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
                         disabledTooltipText: root.disabledTooltipText
                         areTestNetworksEnabled: root.areTestNetworksEnabled
+                        joined: root.joined
 
                         // Unfurling related data:
                         gifUnfurlingEnabled: root.gifUnfurlingEnabled
@@ -308,6 +313,12 @@ Item {
                         onAcceptContactRequest: (chatId, contactRequestId) => {
                             root.acceptContactRequest(chatId, contactRequestId)
                         }
+
+                        // Community access related requests:
+                        onSpectateCommunityRequested: (communityId) => {
+                            root.spectateCommunityRequested(communityId)
+                        }
+
                         Component.onCompleted: {
                             chatContentModule = d.getChatContentModule(model.itemId)
                             chatSectionModule = root.parentModule

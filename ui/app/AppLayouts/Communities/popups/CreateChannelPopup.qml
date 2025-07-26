@@ -78,7 +78,6 @@ StatusStackModal {
     signal addPermissions(var permissions)
     signal removePermissions(var permissions)
     signal editPermissions(var permissions)
-    signal setHideIfPermissionsNotMet(bool checked)
 
     width: 640
     leftPadding: 0
@@ -215,10 +214,6 @@ StatusStackModal {
                 if (removedPermissions.length > 0) {
                     root.removePermissions(removedPermissions);
                 }
-            }
-
-            if (root.hideIfPermissionsNotMet !== d.hideIfPermissionsNotMet) {
-                root.setHideIfPermissionsNotMet(d.hideIfPermissionsNotMet);
             }
 
             // TODO Open the channel once we have designs for it

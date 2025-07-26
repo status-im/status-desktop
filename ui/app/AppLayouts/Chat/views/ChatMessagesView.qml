@@ -52,6 +52,7 @@ Item {
     property bool isContactBlocked: false
     property bool isChatBlocked: false
     property bool isOneToOne: false
+    property bool joined
 
     property bool sendViaPersonalChatEnabled
     property string disabledTooltipText
@@ -75,6 +76,9 @@ Item {
     signal removeTrustStatusRequest(string pubKey)
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
+
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
 
     QtObject {
         id: d
@@ -312,7 +316,7 @@ Item {
             usersModel: root.usersModel
 
             isChatBlocked: root.isChatBlocked
-            joined: root.rootStore.joined
+            joined: root.joined
 
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
@@ -429,6 +433,10 @@ Item {
             onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
             onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
 
+            // Community access related requests:
+            onSpectateCommunityRequested: (communityId) => {
+                root.spectateCommunityRequested(communityId)
+            }
         }
         header: {
             if (!root.isContactBlocked && root.isOneToOne && root.rootStore.oneToOneChatContact) {

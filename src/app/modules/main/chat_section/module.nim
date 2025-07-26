@@ -241,6 +241,7 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         categoryOpened = not category.collapsed,
         hideIfPermissionsNotMet = false,
         missingEncryptionKey = false,
+        permissionsCheckOngoing = true,
       )
 
   if insertIntoModel:
@@ -722,7 +723,8 @@ proc getChatItemFromChatDto(
     canPostReactions = canPostReactions,
     viewersCanPostReactions = viewersCanPostReactions,
     hideIfPermissionsNotMet = hideIfPermissionsNotMet,
-    missingEncryptionKey = missingEncryptionKey
+    missingEncryptionKey = missingEncryptionKey,
+    permissionsCheckOngoing = true,
   )
 
 proc addNewChat(
@@ -1047,8 +1049,7 @@ proc updateChannelPermissionViewData*(
     self.updatePermissionsRequiredOnChat(communityChat)
     self.updateChatLocked(communityChat)
 
-  if self.chatContentModules.hasKey(chatId):
-    self.chatContentModules[chatId].setPermissionsCheckOngoing(false)
+  self.view.chatsModel().updatePermissionsCheckOngoing(chatId, false)
   self.refreshHiddenBecauseNotPermittedState()
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
@@ -1363,6 +1364,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       categoryId = "",
       hideIfPermissionsNotMet=false,
       missingEncryptionKey=false,
+      permissionsCheckOngoing=true,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
@@ -1389,6 +1391,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       categoryId,
       hideIfPermissionsNotMet=false,
       missingEncryptionKey=false,
+      permissionsCheckOngoing=true,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 
@@ -1483,7 +1486,7 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
     let status = toOnlineStatus(s.statusType)
     self.view.chatsModel().updateItemOnlineStatusById(s.publicKey, status)
 
-method createOrEditCommunityTokenPermission*(self: Module, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) =
+method createOrEditCommunityTokenPermission*(self: Module, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) =
 
   var tokenPermission = CommunityTokenPermissionDto()
   tokenPermission.id = permissionId
@@ -1504,6 +1507,7 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 
     let contractAddresses = self.controller.getContractAddressesForToken(tokenKey)
     if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
+      let communityId = self.controller.getMySectionId()
       if permissionId == "":
         self.onCommunityTokenPermissionCreationFailed(communityId)
         return
@@ -1514,10 +1518,10 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
     tokenCriteriaDto.contractAddresses = contractAddresses
     tokenPermission.tokenCriteria.add(tokenCriteriaDto)
 
-  self.controller.createOrEditCommunityTokenPermission(communityId, tokenPermission)
+  self.controller.createOrEditCommunityTokenPermission(tokenPermission)
 
-method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
-  self.controller.deleteCommunityTokenPermission(communityId, permissionId)
+method deleteCommunityTokenPermission*(self: Module, permissionId: string) =
+  self.controller.deleteCommunityTokenPermission(permissionId)
 
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)
@@ -1538,16 +1542,16 @@ method setPermissionsToJoinCheckOngoing*(self: Module, value: bool) =
   self.view.setPermissionsCheckOngoing(value)
 
 method getChannelsPermissionsCheckOngoing*(self: Module): bool =
-  for chatId, cModule in self.chatContentModules:
-    if self.view.chatsModel().getItemPermissionsRequired(chatId):
-      return cModule.getPermissionsCheckOngoing()
+  for id, chat_item in self.view.chatsModel().items():
+    if self.view.chatsModel().getItemPermissionsRequired(chat_item.id):
+      return chat_item.permissionsCheckOngoing
   return false
 
 method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
-  for chatId, cModule in self.chatContentModules:
-    if self.view.chatsModel().getItemPermissionsRequired(chatId):
-      cModule.setPermissionsCheckOngoing(true)
-
+  for id, chat_item in self.view.chatsModel().items():
+    if self.view.chatsModel().getItemPermissionsRequired(chat_item.id):
+      self.view.chatsModel().updatePermissionsCheckOngoing(chat_item.id, true)
+  
 method onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Module) =
   self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(true)
 

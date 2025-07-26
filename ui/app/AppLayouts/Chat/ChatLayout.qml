@@ -17,6 +17,9 @@ import AppLayouts.Communities.stores as CommunitiesStores
 import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.stores as WalletStore
+import AppLayouts.stores as AppLayoutStores
+import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.stores.Messaging.Community as CommunityStores
 
 import StatusQ
 import StatusQ.Core.Utils
@@ -27,9 +30,22 @@ import SortFilterProxyModel
 StackLayout {
     id: root
 
+    // NOTE: This `ChatLayout` is currently a view used for both `Chat` and `Communities` and the API is mixed between both cases.
+    // During the transition of refactoring the `ChatStores.RootStore` into `chat specific` or `community specific` stores, this flag
+    // will be used on this view to determine specific UI view flows in case of need so that it allows to identify if a certain store
+    // value is now separated between `chat` and `community` specific
+    required property bool isChatView
+
+    // WIP: It will be refactored step by step (now community permissions and community access logic is not part of this store)
     property ChatStores.RootStore rootStore
+
+    // WIP: This is the new store's structure, now used, `PermissionsStore` and `CommunityAccessStore`. More stores will be added in next steps
+    property CommunityStores.CommunityRootStore newCommnityStore
+    readonly property CommunityStores.CommunityAccessStore communityAccessStore: newCommnityStore.communityAccessStore
+    readonly property CommunityStores.PermissionsStore communityPermissionsStore: newCommnityStore.communityPermissionsStore
+
+    // Rest of stores references (to be reviewed)
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
-    readonly property SharedStores.PermissionsStore permissionsStore: rootStore.permissionsStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.TokensStore tokensStore
     required property SendStores.TransactionStore transactionStore
@@ -118,8 +134,8 @@ StackLayout {
     }
 
     Connections {
-        target: root.rootStore
-        function onGoToMembershipRequestsPage() {
+        target: root.communityAccessStore
+        function onCommunityMembershipNotificationReceived() {
             root.currentIndex = 1 // go to settings
             if (communitySettingsLoader.item) {
                 communitySettingsLoader.item.goTo(Constants.CommunitySettingsSections.Members, Constants.CommunityMembershipSubSections.MembershipRequests)
@@ -145,12 +161,12 @@ StackLayout {
                              sectionItemModel.memberRole === Constants.memberRole.admin ||
                              sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             communityItemsModel: root.rootStore.communityItemsModel
-            requirementsMet: root.permissionsStore.allTokenRequirementsMet
-            requirementsCheckPending: root.rootStore.permissionsCheckOngoing
+            requirementsMet: root.communityPermissionsStore.allTokenRequirementsMet
+            requirementsCheckPending: root.communityAccessStore.communityPermissionsCheckOngoing
             requiresRequest: !sectionItemModel.amIMember
-            communityHoldingsModel: root.permissionsStore.becomeMemberPermissionsModel
-            viewOnlyHoldingsModel: root.permissionsStore.viewOnlyPermissionsModel
-            viewAndPostHoldingsModel: root.permissionsStore.viewAndPostPermissionsModel
+            communityHoldingsModel: root.communityPermissionsStore.becomeMemberPermissionsModel
+            viewOnlyHoldingsModel: root.communityPermissionsStore.viewOnlyPermissionsModel
+            viewAndPostHoldingsModel: root.communityPermissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
             requestToJoinState: root.rootStore.chatCommunitySectionModule.requestToJoinState
@@ -200,7 +216,7 @@ StackLayout {
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
                              root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
-            hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
+            hasViewOnlyPermissions: root.communityPermissionsStore.viewOnlyPermissionsModel.count > 0
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
@@ -208,7 +224,7 @@ StackLayout {
             hasUnrestrictedViewOnlyPermission: {
                 viewOnlyUnrestrictedPermissionHelper.revision
 
-                const model = root.permissionsStore.viewOnlyPermissionsModel
+                const model = root.communityPermissionsStore.viewOnlyPermissionsModel
                 const count = model.rowCount()
 
                 for (let i = 0; i < count; i++) {
@@ -224,7 +240,7 @@ StackLayout {
             Instantiator {
                 id: viewOnlyUnrestrictedPermissionHelper
 
-                model: root.permissionsStore.viewOnlyPermissionsModel
+                model: root.communityPermissionsStore.viewOnlyPermissionsModel
 
                 property int revision: 0
 
@@ -238,18 +254,25 @@ StackLayout {
             }
 
             ModelChangeTracker {
-                model: root.permissionsStore.viewOnlyPermissionsModel
+                model: root.communityPermissionsStore.viewOnlyPermissionsModel
                 onRevisionChanged: viewOnlyUnrestrictedPermissionHelper.revision++
             }
 
-            hasViewAndPostPermissions: root.permissionsStore.viewAndPostPermissionsModel.count > 0
-            viewOnlyPermissionsModel: root.permissionsStore.viewOnlyPermissionsModel
-            viewAndPostPermissionsModel: root.permissionsStore.viewAndPostPermissionsModel
+            hasViewAndPostPermissions: root.communityPermissionsStore.viewAndPostPermissionsModel.count > 0
+            viewOnlyPermissionsModel: root.communityPermissionsStore.viewOnlyPermissionsModel
+            viewAndPostPermissionsModel: root.communityPermissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
             requestToJoinState: sectionItem.requestToJoinState
+            ensCommunityPermissionsEnabled: root.advancedStore.ensCommunityPermissionsEnabled
 
+            // Community access related data:
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+            allChannelsAreHiddenBecauseNotPermitted: root.communityAccessStore.allChannelsAreHiddenBecauseNotPermitted
+            communityMemberReevaluationStatus: root.communityAccessStore.communityMemberReevaluationStatus
+            spectatedPermissionsModel: root.communityAccessStore.spectatedPermissionsModel
+            chatPermissionsCheckOngoing: root.communityAccessStore.chatPermissionsCheckOngoing
+            joined: root.isChatView ? root.rootStore.joined : root.communityAccessStore.joined
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
@@ -291,10 +314,37 @@ StackLayout {
             onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
 
             // Contacts related requests:
-            onChangeContactNicknameRequest: root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
-            onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
-            onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
-            onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
+            onChangeContactNicknameRequest: (pubKey, nickname, displayName, isEdit ) => {
+                root.changeContactNicknameRequest(pubKey, nickname, displayName, isEdit)
+            }
+            onRemoveTrustStatusRequest: (pubKey) => {
+                root.removeTrustStatusRequest(pubKey)
+            }
+            onDismissContactRequest: (chatId, contactRequestId) => {
+                root.dismissContactRequest(chatId, contactRequestId)
+            }
+            onAcceptContactRequest: (chatId, contactRequestId) => {
+                root.acceptContactRequest(chatId, contactRequestId)
+            }
+
+            // Permissions Related requests:
+            onCreatePermissionRequested: (holdings, permissionType, isPrivate, channels) => {
+                root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
+            }
+            onRemovePermissionRequested: (key) => {
+                root.communityPermissionsStore.removePermission(key)
+            }
+            onEditPermissionRequested: (key, holdings, permissionType, channels, isPrivate) => {
+                root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
+            }
+            onPrepareTokenModelForCommunityChat: (communityId, chatId) => {
+                root.communityAccessStore.prepareTokenModelForCommunityChat(communityId, chatId)
+            }
+
+            // Community access related requests:
+            onSpectateCommunityRequested: (communityId) => {
+                root.communityAccessStore.spectateCommunity(communityId)
+            }
         }
     }
 
@@ -319,10 +369,12 @@ StackLayout {
             advancedStore: root.advancedStore
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+            ensCommunityPermissionsEnabled: root.advancedStore.ensCommunityPermissionsEnabled
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: root.sectionItemModel
             communitySettingsDisabled: root.communitySettingsDisabled
+            permissionsModel: root.communityPermissionsStore.permissionsModel
 
             onLoadMembersRequested: rootStore.loadMembersForSectionId(root.sectionItemModel.id)
 
@@ -330,6 +382,25 @@ StackLayout {
 
             onBackToCommunityClicked: root.currentIndex = 0
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(community.id)
+
+            // Permissions Related requests:
+            onCreatePermissionRequested: (holdings, permissionType, isPrivate, channels) => {
+                root.communityPermissionsStore.createPermission(holdings, permissionType, isPrivate, channels)
+            }
+            onRemovePermissionRequested: (key) => {
+                root.communityPermissionsStore.removePermission(key)
+            }
+            onEditPermissionRequested: (key, holdings, permissionType, channels, isPrivate) => {
+                root.communityPermissionsStore.editPermission(key, holdings, permissionType, channels, isPrivate)
+            }
+
+            // Communtiy access related requests:
+            onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
+                root.communityAccessStore.acceptRequestToJoinCommunityRequested(requestId, communityId)
+            }
+            onDeclineRequestToJoinCommunityRequested: (requestId, communityId) => {
+                root.communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
+            }
         }
     }
 

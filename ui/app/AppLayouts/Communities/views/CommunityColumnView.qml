@@ -49,6 +49,12 @@ Item {
 
     property int requestToJoinState: Constants.RequestToJoinState.None
 
+    // Community access related data:
+    property var spectatedPermissionsModel
+
+    // Settings related:
+    property bool ensCommunityPermissionsEnabled
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -61,6 +67,12 @@ Item {
     signal infoButtonClicked
     signal manageButtonClicked
     signal chatItemClicked(string id)
+
+    // Permissions Related requests:
+    signal createPermissionRequested(var holdings, int permissionType, bool isPrivate, var channels)
+    signal removePermissionRequested(string key)
+    signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
+    signal prepareTokenModelForCommunityChatRequested(string communityId, string chatId)
 
     QtObject {
         id: d
@@ -553,10 +565,10 @@ Item {
             communitiesStore: root.communitiesStore
             assetsModel: root.store.assetsModel
             collectiblesModel: root.store.collectiblesModel
-            ensCommunityPermissionsEnabled: root.store.ensCommunityPermissionsEnabled
+            ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
             permissionsModel: {
-                root.store.prepareTokenModelForCommunityChat(communityData.id, chatId)
-                return root.store.permissionsModel
+                root.prepareTokenModelForCommunityChatRequested(communityData.id, chatId)
+                return root.spectatedPermissionsModel
             }
             channelsModel: root.store.chatCommunitySectionModule.model
             emojiPopup: root.emojiPopup
@@ -584,29 +596,20 @@ Item {
             }
 
             onAddPermissions: function (permissions) {
-                for (var i = 0; i < permissions.length; i++) {
-                    root.store.permissionsStore.createPermission(permissions[i].holdingsListModel,
-                                                                permissions[i].permissionType,
-                                                                permissions[i].isPrivate,
-                                                                permissions[i].channelsListModel)
-                }
+                permissions.forEach(p => root.createPermissionRequested(p.holdingsListModel,
+                                                                        p.permissionType,
+                                                                        p.isPrivate,
+                                                                        p.channelsListModel))
             }
             onRemovePermissions: function (permissions) {
-                for (var i = 0; i < permissions.length; i++) {
-                    root.store.permissionsStore.removePermission(permissions[i].id)
-                }
+                permissions.forEach(p => root.removePermissionRequested(p.id))
             }
             onEditPermissions: function (permissions) {
-                for (var i = 0; i < permissions.length; i++) {
-                    root.store.permissionsStore.editPermission(permissions[i].id,
-                                                                permissions[i].holdingsListModel,
-                                                                permissions[i].permissionType,
-                                                                permissions[i].channelsListModel,
-                                                                permissions[i].isPrivate)
-                }
-            }
-            onSetHideIfPermissionsNotMet: function (checked) {
-                root.store.permissionsStore.setHideIfPermissionsNotMet(chatId, checked)
+                permissions.forEach(p => root.editPermissionRequested(p.id,
+                                                                      p.holdingsListModel,
+                                                                      p.permissionType,
+                                                                      p.channelsListModel,
+                                                                      p.isPrivate))
             }
             onDeleteCommunityChannel: {
                 Global.openPopup(deleteChatConfirmationDialog);

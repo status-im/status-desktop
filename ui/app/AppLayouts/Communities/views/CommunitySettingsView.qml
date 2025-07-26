@@ -56,6 +56,11 @@ StatusSectionLayout {
     readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: community.isControlNode
 
+    property var permissionsModel // holdings, permissionType, isPrivate, channels
+
+    // Settings related:
+    property bool ensCommunityPermissionsEnabled
+
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
     signal finaliseOwnershipClicked
@@ -73,6 +78,16 @@ StatusSectionLayout {
             }
         }
     }
+
+    // Permissions Related requests:
+    signal createPermissionRequested(var holdings, int permissionType, bool isPrivate, var channels)
+    signal removePermissionRequested(string key)
+    signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
+
+
+    // Community access requests:
+    signal acceptRequestToJoinCommunityRequested(string requestId, string communityId)
+    signal declineRequestToJoinCommunityRequested(string requestId, string communityId)
 
     readonly property string filteredSelectedTags: {
         let tagsArray = []
@@ -325,8 +340,8 @@ StatusSectionLayout {
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id, deleteAllMessages)
                 onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
-                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.community.id)
-                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)
+                onAcceptRequestToJoin: root.acceptRequestToJoinCommunityRequested(id, root.community.id)
+                onDeclineRequestToJoin: root.declineRequestToJoinCommunityRequested(id, root.community.id)
                 onViewMemberMessagesClicked: {
                     root.rootStore.loadCommunityMemberMessages(root.community.id, pubKey)
                     Global.openCommunityMemberMessagesPopupRequested(root.rootStore, root.chatCommunitySectionModule, pubKey, displayName)
@@ -344,10 +359,7 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
         
             sourceComponent: PermissionsSettingsPanel {
-                readonly property PermissionsStore permissionsStore:
-                    rootStore.permissionsStore
-
-                permissionsModel: permissionsStore.permissionsModel
+                permissionsModel: root.permissionsModel
 
                 // temporary solution to provide icons for assets, similar
                 // method is used in wallet (constructing filename from asset's
@@ -359,20 +371,18 @@ StatusSectionLayout {
                 collectiblesModel: rootStore.collectiblesModel
                 channelsModel: rootStore.chatCommunitySectionModule.model
 
-                ensCommunityPermissionsEnabled: rootStore.ensCommunityPermissionsEnabled
+                ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
 
                 communityDetails: d.communityDetails
 
                 onCreatePermissionRequested:
-                    permissionsStore.createPermission(holdings, permissionType,
-                                                    isPrivate, channels)
+                    root.createPermissionRequested(holdings, permissionType,isPrivate, channels)
 
                 onUpdatePermissionRequested:
-                    permissionsStore.editPermission(
-                        key, holdings, permissionType, channels, isPrivate)
+                    root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
 
                 onRemovePermissionRequested:
-                    permissionsStore.removePermission(key)
+                    root.removePermissionRequested(key)
 
                 onNavigateToMintTokenSettings: {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
@@ -750,7 +760,7 @@ StatusSectionLayout {
 
         NoPermissionsToJoinPopup {
             onRejectButtonClicked: {
-                root.rootStore.declineRequestToJoinCommunity(requestId, communityId)
+                root.declineRequestToJoinCommunityRequested(requestId, communityId)
                 close()
             }
             onClosed: destroy()

@@ -66,9 +66,12 @@ StatusSectionLayout {
     property bool hasViewAndPostPermissions: false
     property bool amIMember: false
     property bool amISectionAdmin: false
-    readonly property bool allChannelsAreHiddenBecauseNotPermitted: rootStore.allChannelsAreHiddenBecauseNotPermitted
+    property bool allChannelsAreHiddenBecauseNotPermitted: false
 
     property int requestToJoinState: Constants.RequestToJoinState.None
+
+    // Settings related:
+    property bool ensCommunityPermissionsEnabled
 
     property var viewOnlyPermissionsModel
     property var viewAndPostPermissionsModel
@@ -103,6 +106,12 @@ StatusSectionLayout {
         }
         return false
     }
+
+    // Community access related data:
+    property int communityMemberReevaluationStatus
+    property var spectatedPermissionsModel
+    property bool chatPermissionsCheckOngoing
+    property bool joined
 
     // Unfurling related data:
     property bool gifUnfurlingEnabled
@@ -143,6 +152,15 @@ StatusSectionLayout {
     signal removeTrustStatusRequest(string pubKey)
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
+
+    // Permissions Related requests:
+    signal createPermissionRequested(var holdings, int permissionType, bool isPrivate, var channels)
+    signal removePermissionRequested(string key)
+    signal editPermissionRequested(string key, var holdings, int permissionType, var channels, bool isPrivate)
+    signal prepareTokenModelForCommunityChat(string communityId, string chatId)
+
+    // Community access related requests:
+    signal spectateCommunityRequested(string communityId)
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -209,7 +227,7 @@ StatusSectionLayout {
         isAdmin: root.chatContentModule.amIChatAdmin()
 
         label: qsTr("Members")
-        communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
+        communityMemberReevaluationStatus: root.communityMemberReevaluationStatus
 
         usersModel: root.usersModel
 
@@ -299,6 +317,7 @@ StatusSectionLayout {
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
+            joined: root.joined
 
             // Unfurling related data:
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
@@ -325,6 +344,11 @@ StatusSectionLayout {
             onRemoveTrustStatusRequest: root.removeTrustStatusRequest(pubKey)
             onDismissContactRequest: root.dismissContactRequest(chatId, contactRequestId)
             onAcceptContactRequest: root.acceptContactRequest(chatId, contactRequestId)
+
+            // Community access related requests:
+            onSpectateCommunityRequested: (communityId) => {
+                root.spectateCommunityRequested(communityId)
+            }
         }
     }
 
@@ -345,7 +369,7 @@ StatusSectionLayout {
             requirementsMet: root.missingEncryptionKey ||
                              (root.canView && viewOnlyPermissionsModel.count > 0) ||
                              (root.canPost && viewAndPostPermissionsModel.count > 0)
-            requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
+            requirementsCheckPending: root.chatPermissionsCheckOngoing
             missingEncryptionKey: root.missingEncryptionKey
             onRequestToJoinClicked: root.requestToJoinClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
@@ -386,10 +410,19 @@ StatusSectionLayout {
             currencyStore: root.currencyStore
             emojiPopup: root.emojiPopup
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
+            ensCommunityPermissionsEnabled: root.ensCommunityPermissionsEnabled
+            spectatedPermissionsModel: root.spectatedPermissionsModel
+
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
             onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
             onChatItemClicked: (id) => root.goToNextPanel()
+
+            // Permissions Related requests:
+            onCreatePermissionRequested: root.createPermissionRequested(holdings, permissionType, isPrivate, channels)
+            onRemovePermissionRequested: root.removePermissionRequested(key)
+            onEditPermissionRequested: root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
+            onPrepareTokenModelForCommunityChatRequested: root.prepareTokenModelForCommunityChat(communityId, chatId)
         }
     }
 
