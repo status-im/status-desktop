@@ -81,6 +81,10 @@ ColumnLayout {
             return sortTable.map(x => x.seed).join(" ")
         }
 
+        function isWordAtPosition(word, pos) {
+            return mnemonicInput.some(entry => entry.pos === pos && entry.seed === word);
+        }
+
         function checkWordExistence(word, pos) {
             if (word !== "" && !ModelUtils.contains(d.seedPhrases_en, "seedWord", word)) {
                 const incorrectWordAtIndex = d.incorrectWordAtIndex
@@ -195,6 +199,11 @@ ColumnLayout {
         model: switchTabBar.currentItem.wordCount
 
         function addWord(pos, word, ignoreGoingNext = false) {
+
+            // if the word is already added at given pos, we return
+            if(d.isWordAtPosition(word, pos)) {
+                return
+            }
 
             const words = d.mnemonicInput
 
