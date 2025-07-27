@@ -105,7 +105,13 @@ StatusListItem {
             if (d.txType === Constants.TransactionType.Mint) {
                 value += modelData.amount + " "
             }
-            value += (modelData.nftName ? modelData.nftName : "#" + modelData.tokenID)
+            if (modelData.nftName) {
+                value += modelData.nftName
+            } else if (modelData.tokenID) {
+                value += "#" + modelData.tokenID
+            } else {
+                value += qsTr("Unknown NFT")
+            }
             return value
         } else if (!modelData.symbol && !!modelData.tokenAddress) {
             return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.tokenAddress, 4))
@@ -281,9 +287,14 @@ StatusListItem {
                 return qsTr("%1 to %2 in %3 on %4").arg(outTransactionValue).arg(inTransactionValue).arg(fromAddress).arg(networkName)
             return qsTr("%1 to %2 on %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
         case Constants.TransactionType.Bridge:
-            if (allAccounts)
-                return qsTr("%1 from %2 to %3 in %4").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
-            return qsTr("%1 from %2 to %3").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn)
+            if (allAccounts) {
+                if (networkNameIn)
+                    return qsTr("%1 from %2 to %3 in %4").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
+                return qsTr("%1 from %2 in %3").arg(outTransactionValue).arg(networkNameOut).arg(fromAddress)
+            }
+            if (networkNameIn)
+                return qsTr("%1 from %2 to %3").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn)
+            return qsTr("%1 from %2").arg(outTransactionValue).arg(networkNameOut)
         case Constants.TransactionType.ContractDeployment:
             const name = addressNameTo || addressNameFrom
             return qsTr("Via %1 on %2").arg(name).arg(networkName)
