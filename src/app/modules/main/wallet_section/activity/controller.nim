@@ -101,6 +101,10 @@ QtObject:
 
     let entries = self.backendToPresentation(res.activities)
 
+    echo "=== process response, activity entries:"
+    for entry in  entries:
+      echo "entry:", entry
+
     self.model.setEntries(entries, res.offset, res.hasMore)
 
     if res.offset == 0:
@@ -372,7 +376,7 @@ QtObject:
       # to get the token type. Perhaps also add an "UnknownCollectible" TokenType that includes
       # both ERC721 and ERC1155?
       collectibles.add(collectibleUidToActivityToken(uid, TokenType.ERC721))
-
+      
     self.currentActivityFilter.collectibles = collectibles
 
   # Depends on self.filterTokenCodes and self.chainIds, so should be called after updating them
