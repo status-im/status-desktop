@@ -30,7 +30,7 @@ import AppLayouts.Wallet.stores
 import AppLayouts.stores as AppLayoutsStores
 import AppLayouts.stores.Messaging as MessagingStores
 
-import mainui.activitycenter.stores
+import AppLayouts.ActivityCenter.stores
 
 import SortFilterProxyModel
 

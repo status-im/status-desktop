@@ -10,7 +10,7 @@ import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Core.Utils as CoreUtils
 
-import mainui.activitycenter.helpers
+import AppLayouts.ActivityCenter.helpers
 
 import shared
 import utils

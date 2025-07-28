@@ -23,7 +23,7 @@ import AppLayouts.Wallet.popups
 import AppLayouts.Wallet.adaptors
 import AppLayouts.Communities.stores
 import AppLayouts.Profile.helpers
-import mainui.activitycenter.stores
+import AppLayouts.ActivityCenter.stores
 
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Chat.stores as ChatStores
