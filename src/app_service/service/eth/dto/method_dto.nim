@@ -2,7 +2,7 @@ import
   strutils, options, json
 
 import
-  nimcrypto, web3/[encoding, ethtypes]
+  nimcrypto, web3/[encoding, eth_api_types]
 
 import ../../../../backend/eth as status_eth
 

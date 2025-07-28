@@ -2,7 +2,7 @@ import json, strutils, stint, app_service/common/safe_json_serialization, stew/s
 import Tables, sequtils
 
 import
-  web3/ethtypes
+  web3/eth_api_types
 
 import dtoV2
 import backend/network_types

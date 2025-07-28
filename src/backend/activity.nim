@@ -3,10 +3,12 @@ import json, app_service/common/safe_json_serialization
 import core, response_type
 import stint
 
-import web3/ethtypes as eth
+import web3/eth_api_types as eth
 import web3/conversions
 
 import app_service/common/types
+import app_service/common/conversion as common_conversion
+
 from gen import rpc
 import backend
 

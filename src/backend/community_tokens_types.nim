@@ -1,7 +1,8 @@
 import json
 include app_service/common/json_utils
+import app_service/common/conversion
 import web3/conversions
-import web3/ethtypes as eth
+import web3/eth_api_types as eth
 
 type
   # see protocol/communities/token/community_token.go PrivilegesLevel

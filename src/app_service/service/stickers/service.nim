@@ -3,7 +3,7 @@ import NimQml, Tables, json, sequtils, chronicles, strutils, sets, stint
 import app/core/[main]
 import app/core/tasks/[qt, threadpool]
 
-import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, app_service/common/safe_json_serialization
+import web3/conversions, stew/byteutils, nimcrypto, app_service/common/safe_json_serialization
 
 import backend/stickers as status_stickers
 import backend/chat as status_chat
@@ -29,6 +29,7 @@ logScope:
   topics = "stickers-service"
 
 type
+  TransactionArgs = transaction_service.TransactionArgs
   StickerPackLoadedArgs* = ref object of Args
     stickerPack*: StickerPackDto
     isInstalled*: bool

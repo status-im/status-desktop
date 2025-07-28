@@ -4,7 +4,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 
-import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto
+import web3/eth_api_types, web3/conversions, stew/byteutils, nimcrypto
 
 import ../../../backend/backend
 import ../../../backend/response_type

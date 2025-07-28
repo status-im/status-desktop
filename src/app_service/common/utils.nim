@@ -12,7 +12,7 @@ proc arrayContains*[T](arr: seq[T], value: T): bool =
   return arr.any(x => x == value)
 
 proc hashPassword*(password: string, lower: bool = true): string =
-  let hashed = "0x" & $keccak_256.digest(password)
+  let hashed = "0x" & $nimcrypto.keccak256.digest(password)
 
   if lower:
     return hashed.toLowerAscii()

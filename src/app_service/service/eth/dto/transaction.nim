@@ -1,5 +1,5 @@
 import strutils, json
-import web3/ethtypes, web3/conversions, options, stint
+import web3/eth_api_types, web3/conversions, options, stint
 import ../utils
 
 type
@@ -13,7 +13,7 @@ type
     value*: Option[Uint256]          # (optional) integer of the value sent with this transaction.
     data*: string                # the compiled code of a contract OR the hash of the invoked proc signature and encoded parameters. For details see Ethereum Contract ABI.
     input*: string
-    nonce*: Option[Nonce]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
+    nonce*: Option[Quantity]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
     txType*: string
 
     chainID*: Option[int]     # (optional) source chainID
@@ -72,24 +72,3 @@ proc `%`*(x: TransactionDataDto): JsonNode =
     result["tokenIdTo"] = %x.tokenIdTo.unsafeGet
   if x.slippagePercentage.isSome:
     result["slippagePercentage"] = %x.slippagePercentage.unsafeGet
-
-type TransactionBridgeDto* = object
-  bridgeName*: string
-  chainID*: int
-  transferTx*: TransactionDataDto
-  hopTx*: TransactionDataDto
-  cbridgeTx*: TransactionDataDto
-  eRC721TransferTx*: TransactionDataDto
-  eRC1155TransferTx*: TransactionDataDto
-  swapTx*: TransactionDataDto
-
-proc `%`*(x: TransactionBridgeDto): JsonNode =
-  result = newJobject()
-  result["bridgeName"] = %x.bridgeName
-  result["chainID"] = %x.chainID
-  result["transferTx"] = %x.transferTx
-  result["hopTx"] = %x.hopTx
-  result["cbridgeTx"] = %x.cbridgeTx
-  result["eRC721TransferTx"] = %x.eRC721TransferTx
-  result["eRC1155TransferTx"] = %x.eRC1155TransferTx
-  result["swapTx"] = %x.swapTx

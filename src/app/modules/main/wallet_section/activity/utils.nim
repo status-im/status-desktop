@@ -1,9 +1,9 @@
-import stint, chronicles
+import stint, chronicles, std/options
 
 import backend/collectibles_types as backend_collectibles
 import backend/activity as backend_activity
 import app_service/common/types
-import web3/ethtypes as eth
+import web3/eth_api_types as eth
 
 proc collectibleUidToActivityToken*(uid: string, tokenType: TokenType): backend_activity.Token =
   try:
