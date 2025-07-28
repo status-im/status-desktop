@@ -38,6 +38,7 @@ QtObject {
     required property ChatStores.RootStore rootChatStore
     required property SharedStores.CommunityTokensStore communityTokensStore
     required property ProfileStore profileStore
+    required property DevicesStore devicesStore
 
     // Utils:
     readonly property string checkmarkCircleAssetName: "checkmark-circle"
@@ -240,6 +241,24 @@ QtObject {
         function onTrustStatusRemoved(pubKey: string) {
             const displayName = SQUtils.ModelUtils.getByKey(root.contactsStore.contactsModel, "pubKey", pubKey, "preferredDisplayName")
             Global.displaySuccessToastMessage(qsTr("Trust mark removed for %1").arg(displayName))
+        }
+    }
+
+    readonly property Connections _devicesStoreConnections: Connections {
+        target: root.devicesStore
+
+        function onLocalBackupImportCompleted(success: bool) {
+            if (success) {
+                Global.displaySuccessToastMessage(qsTr("Local backup import completed"))
+            } else {
+                Global.displayToastMessage(qsTr("Local backup import failed"),
+                                       "",
+                                       root.warningAssetName,
+                                       false,
+                                        Constants.ephemeralNotificationType.danger,
+                                       "")
+            }
+            
         }
     }
 

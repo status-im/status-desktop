@@ -172,6 +172,7 @@ Item {
         rootChatStore: appMain.rootChatStore
         communityTokensStore: appMain.communityTokensStore
         profileStore: appMain.profileStore
+        devicesStore: appMain.devicesStore
 
         onSendRequested: popupRequestsHandler.sendModalHandler.openSend()
     }
@@ -890,7 +891,7 @@ Item {
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
         profileStore: appMain.profileStore
-        devicesStore: appMain.rootStore.devicesStore
+        devicesStore: appMain.devicesStore
         currencyStore: appMain.currencyStore
         walletAssetsStore: appMain.walletAssetsStore
         walletCollectiblesStore: appMain.walletCollectiblesStore
