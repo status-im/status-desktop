@@ -61,8 +61,8 @@ StatusWindow {
     }
     visible: true
 
-    // These flags integrate the system titlebar into the client UI on macOS
-    flags: Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
+    flags: Qt.platform.os === SQUtils.Utils.windows ? Qt.Window // extending the content in title is buggy on Windows
+              : Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
 
     function updatePaddings() {
         if (applicationWindow.width < Theme.portraitBreakpoint.width) {
@@ -267,7 +267,9 @@ StatusWindow {
         if (Qt.platform.os === SQUtils.Utils.android) {
             //First fix the safe area margins
             applicationWindow.visibility = Window.FullScreen
-            applicationWindow.visibility = Window.Windowed
+            Qt.callLater(() => {
+                applicationWindow.visibility = Window.Maximized
+            })
 
             //Then create a dummy header with the system accent color
             //Otherwise the system toolbar is invisible

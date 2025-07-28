@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Popups
@@ -157,7 +158,7 @@ SettingsContentBase {
         Rectangle {
             Layout.preferredWidth: root.contentWidth
             implicitHeight: col1.height + 2 * Theme.padding
-            visible: Qt.platform.os === Constants.mac
+            visible: Qt.platform.os === SQUtils.Utils.mac
             radius: Constants.settingsSection.radius
             color: Theme.palette.primaryColor3
 

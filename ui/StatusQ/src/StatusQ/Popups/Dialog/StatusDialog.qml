@@ -58,6 +58,23 @@ Dialog {
         d.windowHeight = Qt.binding(() => root.contentItem.Window? root.contentItem.Window.height : Screen.height)
     }
 
+    // For some reason the default exit transition will not work properly
+    // when the dialog is closed and using safe areas, so we define our own
+    // Test Android if you want to change this
+    exit: Transition {
+        id: exitTransition
+        NumberAnimation {
+            property: "opacity"; from: 1; to: 0
+            duration: Theme.AnimationDuration.Fast
+            easing.type: Easing.OutQuint
+        }
+        NumberAnimation {
+            property: "y"; from: root.y; to: root.parent.height
+            duration: Theme.AnimationDuration.Fast
+            easing.type: Easing.OutCubic
+        }
+    }
+
     enter: Transition {
         id: enterTransition
         ParallelAnimation {
@@ -79,6 +96,11 @@ Dialog {
 
     enabled: opened
 
+    // Binding positioning the content when there's no footer
+    Binding on bottomPadding {
+        when: root.bottomSheet && !enterTransition.running && (!footer || footer.height === 0 || !footer.visible)
+        value: padding + root.parent.SafeArea.margins.bottom
+    }
     Binding on width {
         when: root.bottomSheet
         value: d.windowWidth

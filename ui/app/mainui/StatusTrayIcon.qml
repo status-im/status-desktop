@@ -1,6 +1,7 @@
 import Qt.labs.platform
 
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import utils
 
@@ -14,15 +15,15 @@ SystemTrayIcon {
     visible: true
 
     icon.source: {
-        if (Qt.platform.os === Constants.windows) {
+        if (Qt.platform.os === SQUtils.Utils.windows) {
             return root.showRedDot ? Theme.svg("status-logo-white-windows-with-red-dot") : Theme.svg("status-logo-white-windows")
         }
         return root.showRedDot ? Theme.svg("status-logo-white-with-red-dot") : Theme.svg("status-logo-white")
     }
-    icon.mask: Qt.platform.os !== Constants.windows
+    icon.mask: Qt.platform.os !== SQUtils.Utils.windows
 
     onMessageClicked: {
-        if (Qt.platform.os === Constants.windows) {
+        if (Qt.platform.os === SQUtils.Utils.windows) {
             root.activateApp()
         }
     }

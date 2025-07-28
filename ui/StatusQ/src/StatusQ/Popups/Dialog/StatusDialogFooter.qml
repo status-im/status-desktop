@@ -18,8 +18,7 @@ Control {
 
     spacing: 5
     padding: 16
-    implicitHeight: layout.implicitHeight + padding * 2
-    implicitWidth: layout.implicitWidth + padding * 2
+    bottomPadding: padding + root.SafeArea.margins.bottom
 
     background: Rectangle {
         color: root.color
