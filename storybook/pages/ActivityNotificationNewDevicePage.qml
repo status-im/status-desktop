@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import mainui.activitycenter.views
-import mainui.activitycenter.stores
+import AppLayouts.ActivityCenter.views
+import AppLayouts.ActivityCenter.stores
 
 import Storybook
 

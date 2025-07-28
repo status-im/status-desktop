@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import mainui.activitycenter.views
+import AppLayouts.ActivityCenter.views
 import mainui
 
 import Storybook
