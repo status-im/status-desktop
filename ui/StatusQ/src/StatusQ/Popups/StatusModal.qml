@@ -193,8 +193,8 @@ StatusDialog {
     padding: 0
     topPadding: padding + headerImpl.height
     bottomPadding: padding + footerImpl.height
-    leftPadding: padding
-    rightPadding: padding
+    leftPadding: padding + root.SafeArea.margins.left
+    rightPadding: padding + root.SafeArea.margins.right
 
     header: Item {
         Spares.StatusModalHeader {
@@ -227,7 +227,12 @@ StatusDialog {
         }
     }
 
-    footer: Item {
+    footer: ToolBar {
+        background: Rectangle {
+            color: Theme.palette.statusModal.backgroundColor
+            implicitHeight: footerImpl.implicitHeight
+        }
+        position: ToolBar.Bottom
         Spares.StatusModalFooter {
             id: footerImpl
             anchors.bottom: parent.bottom

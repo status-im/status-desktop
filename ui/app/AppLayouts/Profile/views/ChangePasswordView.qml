@@ -13,6 +13,7 @@ import StatusQ
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Components
 import StatusQ.Popups
 import StatusQ.Popups.Dialog
@@ -69,7 +70,7 @@ SettingsContentBase {
     titleRowComponentLoader.sourceComponent: Item {
         implicitWidth: 226
         implicitHeight: 38
-        visible: (Qt.platform.os === Constants.mac)
+        visible: (Qt.platform.os === SQUtils.Utils.mac)
 
         property StatusSwitch switchItem: biometricsSwitch
         property StatusDialog popupItem: enableBiometricsPopup
