@@ -15,7 +15,7 @@ import app_service/service/keycardV2/service as keycard_serviceV2
 from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
 from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto, KeycardState
-import app/modules/onboarding/post_onboarding/[keycard_replacement_task, keycard_convert_account, save_biometrics_task]
+import app/modules/onboarding/post_onboarding/[keycard_replacement_task, keycard_convert_account, save_biometrics_task, local_backup_task]
 
 import models/login_account_item as login_acc_item
 
@@ -152,6 +152,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
     let keyUid = data["keyUid"].str
     let keycardInfo = self.view.getKeycardEvent().keycardInfo
     let saveBiometrics = data["enableBiometrics"].getBool
+    let backupImportFileUrl = data["backupImportFileUrl"].getStr
 
     var err = ""
 
@@ -237,6 +238,8 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
     if saveBiometrics:
       let credential = if pin.len > 0: pin else: password
       self.postLoginTasks.add(newSaveBiometricsTask(credential))
+    if backupImportFileUrl != "":
+      self.postLoginTasks.add(newLocalBackupTask(backupImportFileUrl))
 
     return err
   except Exception as e:
@@ -430,6 +433,9 @@ method getPostOnboardingTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
 method requestSaveBiometrics*[T](self: Module[T], account: string, credential: string) =
   self.view.saveBiometricsRequested(account, credential)
 
+method requestLocalBackup*[T](self: Module[T], backupImportFileUrl: string) =
+  self.controller.asyncImportLocalBackupFile(backupImportFileUrl)
+
 method requestDeleteBiometrics*[T](self: Module[T], account: string) =
   self.view.deleteBiometricsRequested(account)
 
@@ -441,6 +447,8 @@ proc runPostLoginTasks*[T](self: Module[T]) =
       KeycardConvertAccountTask(task).run(self.accountsService, self)
     of kPostOnboardingTaskSaveBiometrics:
       SaveBiometricsTask(task).run(self.accountsService, self)
+    of kPostOnboardingTaskLocalBackup:
+      LocalBackupTask(task).run(self)
     else:
       error "unknown post login task"
 

@@ -106,6 +106,9 @@ method requestSaveBiometrics*(self: AccessInterface, account: string, credential
 method requestDeleteBiometrics*(self: AccessInterface, account: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method requestLocalBackup*(self: AccessInterface, backupImportFileUrl: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
