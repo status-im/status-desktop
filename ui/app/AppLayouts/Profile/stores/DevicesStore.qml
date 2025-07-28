@@ -32,6 +32,16 @@ QtObject {
         readonly property var globalUtilsInst: globalUtils
     }
 
+    signal localBackupImportCompleted(bool success)
+
+    readonly property Connections syncModuleConnections: Connections {
+        target: root.syncModule
+
+        function onLocalBackupImportCompleted(success: bool) {
+            root.localBackupImportCompleted(success)
+        }
+    }
+
     function setBackupPath(path) {
         d.appSettingsInst.setBackupPath(path)
     }

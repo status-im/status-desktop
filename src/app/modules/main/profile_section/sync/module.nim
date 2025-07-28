@@ -109,5 +109,4 @@ method importLocalBackupFile*(self: Module, filePath: string) =
   self.controller.importLocalBackupFile(filePath)
 
 method onLocalBackupImportCompleted*(self: Module, error: string) =
-  self.view.setBackupImportState(BackupImportState.Completed)
-  self.view.setBackupImportError(error)
+  self.view.onLocalBackupImportCompleted(error)
