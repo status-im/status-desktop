@@ -266,3 +266,6 @@ proc storeMetadata*(self: Controller, name: string, paths: seq[string]) =
 
 proc storeMetadataAsync*(self: Controller, name: string, paths: seq[string]) =
   self.keycardServiceV2.asyncStoreMetadata(name, paths)
+
+proc asyncImportLocalBackupFile*(self: Controller, filePath: string) =
+  self.generalService.asyncImportLocalBackupFile(filePath)

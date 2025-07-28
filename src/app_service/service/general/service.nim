@@ -7,6 +7,7 @@ import app/core/tasks/[qt, threadpool]
 import ../../../constants as app_constants
 import ../../common/types
 import status_go
+import app/global/global_singleton
 
 from app_service/service/activity_center/service import SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED, ActivityCenterNotificationsArgs
 from app_service/service/activity_center/dto/notification import parseActivityCenterNotifications
@@ -142,11 +143,12 @@ QtObject:
       return e.msg
 
   proc asyncImportLocalBackupFile*(self: Service, filePath: string) =
+    let formattedFilePath = singletonInstance.utils.fromPathUri(filePath)
     let arg = AsyncImportLocalBackupFileTaskArg(
       tptr: asyncImportLocalBackupFileTask,
       vptr: cast[uint](self.vptr),
       slot: "onImportLocalBackupFileDone",
-      filePath: filePath
+      filePath: formattedFilePath
     )
     self.threadpool.start(arg)
 

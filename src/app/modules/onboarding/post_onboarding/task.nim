@@ -16,6 +16,9 @@ type PostOnboardingTaskKind* = enum
   # This task is scheduled in LoginWithLostKeycardSeedphrase to convert the keycard account to a regular account.
   kConvertKeycardAccountToRegular = 4
 
+  # This task is scheduled if the user provided a local backup file URL during onboarding.
+  kPostOnboardingTaskLocalBackup = 5
+
 type PostOnboardingTask* = ref object of RootObj
   kind*: PostOnboardingTaskKind
 

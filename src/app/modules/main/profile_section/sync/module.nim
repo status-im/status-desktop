@@ -3,7 +3,6 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
 
-import app/global/global_singleton
 import app/core/eventemitter
 import app_service/service/general/service as general_service
 import app_service/service/settings/service as settings_service
@@ -107,8 +106,7 @@ method performLocalBackup*(self: Module): string =
   return self.controller.performLocalBackup()
 
 method importLocalBackupFile*(self: Module, filePath: string) =
-  let formattedFilePath = singletonInstance.utils.fromPathUri(filePath)
-  self.controller.importLocalBackupFile(formattedFilePath)
+  self.controller.importLocalBackupFile(filePath)
 
 method onLocalBackupImportCompleted*(self: Module, error: string) =
   self.view.setBackupImportState(BackupImportState.Completed)
