@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import StatusQ.Controls
+import StatusQ.Core.Theme
+
 import AppLayouts.ActivityCenter.views
 
 import Storybook
@@ -9,46 +12,132 @@ import Storybook
 SplitView {
     id: root
 
-    orientation: Qt.Vertical
-
-    Logs { id: logs }
+    readonly property int leftPanelMaxWidth: 308 // It fits on mobile / portrait + desktop left panel
 
     QtObject {
         id: notificationMock
 
         property string id: "1"
-        property string title: "Swaps around the corner!"
-        property string description: "Status Desktop’s next release brings the app up-to-speed with Status Mobile. That means: SWAPS!"
-        property double timestamp: Date.now()
+        property string newsTitle: title.text
+        property string newsDescription: desc.text
+        property double timestamp: timestamp.text
         property double previousTimestamp: 0
-        property bool read: false
-        property bool dismissed: false
-        property bool accepted: false
+        property bool read: read.checked
+        property bool dismissed: dismissed.checked
+        property bool accepted: accepted.checked
     }
 
-    Item {
-        SplitView.fillHeight: true
+
+    SplitView {
+        orientation: Qt.Vertical
         SplitView.fillWidth: true
 
-        ActivityNotificationNewsMessage {
-            id: notification
+        Logs { id: logs }
 
-            anchors.centerIn: parent
-            width: 576
-            height: implicitHeight
 
-            notification: notificationMock
+        Rectangle {
+            SplitView.fillHeight: true
+            SplitView.fillWidth: true
 
-            onReadMoreClicked: logs.logEvent("ActivityNotificationNewsMessage::onReadMoreClicked")
+            ActivityNotificationNewsMessage {
+                id: notification
+
+                anchors.centerIn: parent
+                width: root.leftPanelMaxWidth
+                height: implicitHeight
+                backgroundColor: Theme.palette.primaryColor3
+
+                notification: notificationMock
+
+                onReadMoreClicked: logs.logEvent("ActivityNotificationNewsMessage::onReadMoreClicked")
+            }
+
         }
 
+        LogsAndControlsPanel {
+            SplitView.minimumHeight: 100
+            SplitView.preferredHeight: 160
+
+            logsView.logText: logs.logText
+
+        }
     }
 
-    LogsAndControlsPanel {
-        SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 160
+    Pane {
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
 
-        logsView.logText: logs.logText
+        ColumnLayout {
+            spacing: 8
+            width: parent.width
+
+            Label {
+                Layout.fillWidth: true
+                Layout.topMargin: 8
+                text: "Title:"
+                font.weight: Font.Bold
+            }
+
+            TextField {
+                id: title
+                Layout.fillWidth: true
+                text: "Swaps around the corner!"
+            }
+
+            Label {
+                Layout.topMargin: 8
+                Layout.fillWidth: true
+                text: "Description:"
+                font.weight: Font.Bold
+            }
+
+            TextField {
+                id: desc
+                Layout.fillWidth: true
+                text: "Status Desktop’s next release brings the app up-to-speed with Status Mobile. That means: SWAPS!"
+            }
+
+            Label {
+                Layout.topMargin: 8
+                Layout.fillWidth: true
+                text: "Timestamp:"
+                font.weight: Font.Bold
+            }
+
+            TextField {
+                id: timestamp
+                Layout.fillWidth: true
+                text: Date.now()
+            }
+
+            Label {
+                Layout.topMargin: 8
+                Layout.fillWidth: true
+                text: "Notification Status:"
+                font.weight: Font.Bold
+            }
+
+            ButtonGroup { id: read_dismissed_accepted }
+
+            RadioButton {
+                id: read
+                Layout.fillWidth: true
+                text: "Read"
+            }
+
+            RadioButton {
+                id: dismissed
+                Layout.fillWidth: true
+                text: "Dismissed"
+                checked: true
+            }
+
+            RadioButton {
+                id: accepted
+                Layout.fillWidth: true
+                text: "Accepted"
+            }
+        }
     }
 }
 

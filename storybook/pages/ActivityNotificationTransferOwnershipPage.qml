@@ -10,73 +10,89 @@ import Storybook
 SplitView {
     id: root
 
-    orientation: Qt.Vertical
+    readonly property int leftPanelMaxWidth: 308 // It fits on mobile / portrait + desktop left panel
 
-    Logs { id: logs }
-
-    QtObject {
-        id: notificationMock
-
-        property string id: "1"
-        property string communityId: "1"
-        property string sectionId: "1"
-        property int notificationType: 1
-        property int timestamp: Date.now()
-        property int previousTimestamp: 0
-        property bool read: false
-        property bool dismissed: false
-        property bool accepted: false
-    }
-
-    Item {
-        SplitView.fillHeight: true
+    SplitView {
+        orientation: Qt.Vertical
         SplitView.fillWidth: true
 
-        ActivityNotificationTransferOwnership {
-            id: notification
 
-            anchors.centerIn: parent
-            width: parent.width - 50
-            height: implicitHeight
+        Logs { id: logs }
 
-            type: ActivityNotificationTransferOwnership.OwnershipState.Pending
-            notification: notificationMock
-            communityName: communityNameText.text
-            communityColor: colorSwitch.checked ? "green" : "orange"
+        QtObject {
+            id: notificationMock
 
-            onFinaliseOwnershipClicked: logs.logEvent("ActivityNotificationOwnerTokenReceived::onFinaliseOwnershipClicked")
-            onNavigateToCommunityClicked: logs.logEvent("ActivityNotificationOwnerTokenReceived::onNavigateToCommunityClicked")
+            property string id: "1"
+            property string communityId: "1"
+            property string sectionId: "1"
+            property int notificationType: 1
+            property int timestamp: Date.now()
+            property int previousTimestamp: 0
+            property bool read: read.checked
+            property bool dismissed: dismissed.checked
+            property bool accepted: accepted.checked
         }
 
+        Item {
+            SplitView.fillHeight: true
+            SplitView.fillWidth: true
+
+            ActivityNotificationTransferOwnership {
+                id: notification
+
+                anchors.centerIn: parent
+                width: root.leftPanelMaxWidth
+                height: implicitHeight
+
+                type: ActivityNotificationTransferOwnership.OwnershipState.Pending
+                notification: notificationMock
+                communityName: communityNameText.text
+                communityColor: colorSwitch.checked ? "green" : "orange"
+                showFullTimestamp: showFullTimestamp.checked
+
+                onFinaliseOwnershipClicked: logs.logEvent("ActivityNotificationOwnerTokenReceived::onFinaliseOwnershipClicked")
+                onNavigateToCommunityClicked: logs.logEvent("ActivityNotificationOwnerTokenReceived::onNavigateToCommunityClicked")
+            }
+
+        }
+
+        LogsAndControlsPanel {
+            SplitView.minimumHeight: 100
+            SplitView.preferredHeight: 160
+
+            logsView.logText: logs.logText
+
+        }
     }
 
-    LogsAndControlsPanel {
-        SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 160
+    Pane {
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
 
-        logsView.logText: logs.logText
+        ColumnLayout {
+            spacing: 8
+            width: parent.width
 
-        Column {
-            Row {
-                Label {
-                    text: "Community Name: "
-                }
+            Label {
+                Layout.fillWidth: true
+                text: "Community Name: "
+                font.weight: Font.Bold
+            }
 
-                TextInput {
-                    id: communityNameText
-
-                    text: "Doodles"
-                }
+            TextField {
+                id: communityNameText
+                Layout.fillWidth: true
+                text: "Doodles"
             }
 
             Switch {
                 id: colorSwitch
-
+                Layout.fillWidth: true
                 text: "Orange OR Green"
                 checked: true
             }
 
-            Row {
+            ColumnLayout {
                 RadioButton {
                     text: "Pending"
                     checked: true
@@ -102,6 +118,46 @@ SplitView {
                     text: "No longer control node"
                     onCheckedChanged: if(checked) notification.type = ActivityNotificationTransferOwnership.OwnershipState.NoLongerControlNode
                 }
+            }
+
+            Label {
+                Layout.topMargin: 8
+                Layout.fillWidth: true
+                text: "Notification Status:"
+                font.weight: Font.Bold
+            }
+
+            ButtonGroup { id: read_dismissed_accepted }
+
+            RadioButton {
+                id: read
+                Layout.fillWidth: true
+                text: "Read"
+            }
+
+            RadioButton {
+                id: dismissed
+                Layout.fillWidth: true
+                text: "Dismissed"
+                checked: true
+            }
+
+            RadioButton {
+                id: accepted
+                Layout.fillWidth: true
+                text: "Accepted"
+            }
+
+            Label {
+                Layout.topMargin: 8
+                Layout.fillWidth: true
+                text: "Show full timestamp"
+                font.weight: Font.Bold
+            }
+
+            Switch {
+                id: showFullTimestamp
+                checked: false
             }
         }
     }

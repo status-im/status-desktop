@@ -11,6 +11,8 @@ SplitView {
 
     orientation: Qt.Vertical
 
+    readonly property int leftPanelMaxWidth: 308 // It fits on mobile / portrait + desktop left panel
+
     Logs { id: logs }
 
     QtObject {
@@ -22,9 +24,9 @@ SplitView {
         property int notificationType: 1
         property int timestamp: Date.now()
         property int previousTimestamp: 0
-        property bool read: false
-        property bool dismissed: false
-        property bool accepted: false
+        property bool read: read.checked
+        property bool dismissed: dismissed.checked
+        property bool accepted: accepted.checked
     }
 
     Item {
@@ -35,11 +37,11 @@ SplitView {
             id: notification
 
             anchors.centerIn: parent
-            width: parent.width - 50
+            width: root.leftPanelMaxWidth
             height: implicitHeight
 
             type: ActivityNotificationNewDevice.InstallationType.Received
-            accountName: "bob.eth"
+            accountName: accountName.text
             notification: notificationMock
 
             onMoreDetailsClicked: logs.logEvent("ActivityNotificationNewDevice::onMoreDetailsClicked")
@@ -53,7 +55,20 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        Column {
+        ColumnLayout {
+            RowLayout {
+                Label {
+                    Layout.topMargin: 8
+                    text: "Account name:"
+                    font.weight: Font.Bold
+                }
+
+                TextField {
+                    id: accountName
+                    Layout.fillWidth: true
+                    text: "bob.eth"
+                }
+            }
             Row {
                 RadioButton {
                     text: "Received"
@@ -64,6 +79,36 @@ SplitView {
                 RadioButton {
                     text: "Created"
                     onCheckedChanged: if(checked) notification.type = ActivityNotificationNewDevice.InstallationType.Created
+                }
+            }
+            RowLayout {
+
+                Label {
+                    Layout.topMargin: 8
+                    Layout.fillWidth: true
+                    text: "Notification Status:"
+                    font.weight: Font.Bold
+                }
+
+                ButtonGroup { id: read_dismissed_accepted }
+
+                RadioButton {
+                    id: read
+                    Layout.fillWidth: true
+                    text: "Read"
+                }
+
+                RadioButton {
+                    id: dismissed
+                    Layout.fillWidth: true
+                    text: "Dismissed"
+                    checked: true
+                }
+
+                RadioButton {
+                    id: accepted
+                    Layout.fillWidth: true
+                    text: "Accepted"
                 }
             }
         }

@@ -71,12 +71,32 @@ ActivityNotificationBase {
         onItemChanged: root.updateContactDetails()
     }
 
+    avatarComponent:  Item {
+        width: root.messageDetails.sender.profileImage.assetSettings.width
+        height: profileImage.height
+
+        StatusSmartIdenticon {
+            id: profileImage
+            name: root.messageDetails.sender.displayName
+            asset: root.messageDetails.sender.profileImage.assetSettings
+            ringSettings: root.messageDetails.sender.profileImage.ringSettings
+
+            StatusMouseArea {
+                anchors.fill: parent
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: root.openProfilePopup()
+            }
+        }
+    }
+
     bodyComponent: StatusMouseArea {
         implicitWidth: parent.width
         implicitHeight: messageView.implicitHeight
         hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
+            root.markActivityCenterNotificationReadRequested(notification.id)
             root.messageClicked()
         }
 

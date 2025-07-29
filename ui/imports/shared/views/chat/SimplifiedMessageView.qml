@@ -25,40 +25,20 @@ RowLayout {
 
     spacing: 8
 
-    Item {
-        Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
-        Layout.preferredHeight: profileImage.height
-        Layout.alignment: Qt.AlignTop
-        Layout.leftMargin: Theme.padding
-        Layout.topMargin: 2
-
-        StatusSmartIdenticon {
-            id: profileImage
-            name: root.messageDetails.sender.displayName
-            asset: root.messageDetails.sender.profileImage.assetSettings
-            ringSettings: root.messageDetails.sender.profileImage.ringSettings
-
-            StatusMouseArea {
-                anchors.fill: parent
-                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                onClicked: root.openProfilePopup()
-            }
-        }
-    }
-
     ColumnLayout {
         spacing: 2
         Layout.alignment: Qt.AlignTop
         Layout.fillWidth: true
 
         StatusMessageHeader {
+            Layout.fillWidth: true
             sender: root.messageDetails.sender
             amISender: root.messageDetails.amISender
             messageOriginInfo: root.messageDetails.messageOriginInfo
             tertiaryDetail: sender.isEnsVerified ? "" : root.messageDetails.sender.compressedPubKey
-            timestamp: root.timestamp
+            displayNamePixelSize: Theme.additionalTextSize
             onClicked: root.openProfilePopup()
+            clip: true
         }
 
         Loader {
@@ -73,11 +53,11 @@ RowLayout {
             StatusBaseText {
                 text: root.messageDetails.messageText
                 maximumLineCount: root.maximumLineCount
-                wrapMode: Text.Wrap
+                wrapMode: Text.WordWrap
                 elide: Text.ElideRight
-                font.pixelSize: Theme.primaryTextFontSize
+                font.pixelSize: Theme.additionalTextSize
                 Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: !root.messageBadgeComponent
+                Layout.fillWidth: true
             }
 
             Loader {
@@ -90,6 +70,13 @@ RowLayout {
                 Layout.fillWidth: !!root.messageBadgeComponent
             }
         }
+
+        StatusTimeStampLabel {
+            id: timestampText
+            verticalAlignment: Text.AlignVCenter
+            timestamp: root.timestamp
+        }
+
 
         Loader {
             active: root.messageDetails.contentType === Constants.messageContentType.imageType

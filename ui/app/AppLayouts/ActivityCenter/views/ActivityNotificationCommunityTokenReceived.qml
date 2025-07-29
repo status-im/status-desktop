@@ -91,7 +91,7 @@ ActivityNotificationBase {
             StatusMessageHeader {
                 Layout.fillWidth: true
                 displayNameLabel.text: d.title
-                timestamp: root.notification.timestamp
+                displayNamePixelSize: Theme.additionalTextSize
             }
 
             RowLayout {
@@ -100,10 +100,17 @@ ActivityNotificationBase {
                 StatusBaseText {
                     Layout.fillWidth: true
                     text: d.info
+                    font.pixelSize: Theme.additionalTextSize
                     font.italic: true
                     wrapMode: Text.WordWrap
                     color: Theme.palette.baseColor1
                 }
+            }
+
+            StatusTimeStampLabel {
+                id: timestampText
+                verticalAlignment: Text.AlignVCenter
+                timestamp: root.notification.timestamp
             }
         }
     }

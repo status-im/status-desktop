@@ -20,6 +20,8 @@ Badge {
     property int chatType: -1
     property string name: "channelName"
     property color textColor
+    property alias styledTextPixelSize: styledText.font.pixelSize
+
 
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 16
@@ -57,6 +59,7 @@ Badge {
         }
 
         StyledText {
+            id: styledText
             Layout.alignment: Qt.AlignVCenter
             text: StatusQUtils.Emoji.parse(StatusQUtils.Utils.filterXSS(name))
 

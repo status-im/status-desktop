@@ -17,6 +17,7 @@ import Storybook
 SplitView {
     id: root
 
+    readonly property int leftPanelMaxWidth: 308 // It fits on mobile / portrait + desktop left panel
     property bool utilsReady: false
 
     orientation: Qt.Vertical
@@ -31,12 +32,12 @@ SplitView {
         Loader {
             active: root.utilsReady
             anchors.centerIn: parent
-            width: parent.width - 50
+            width: root.leftPanelMaxWidth
             height: 80
 
             sourceComponent : ActivityNotificationCommunityMembershipRequest {
-                store: storeMock
                 notification: notificationMock
+                contactsModel: utilsMock.getContactDetailsAsJson()
             }
         }
     }
@@ -94,7 +95,6 @@ SplitView {
                 isSyncing: false,
                 removed: false,
                 trustStatus: Constants.trustStatus.unknown,
-                verificationStatus: Constants.verificationStatus.unverified,
             })
         }
 
