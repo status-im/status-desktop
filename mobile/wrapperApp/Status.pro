@@ -36,7 +36,7 @@ android {
                         $$PWD/../lib/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
 
     OTHER_FILES += \
-        android/src/im/status/app/SecureAndroidAuthentication.java
+        $$ANDROID_PACKAGE_SOURCE_DIR/src/app/status/mobile/SecureAndroidAuthentication.java
 }
 
 ios {

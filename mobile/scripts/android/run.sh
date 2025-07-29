@@ -2,7 +2,7 @@
 
 CWD=$(realpath `dirname $0`)
 APP=${APP:="$CWD/../bin/$OS/Status.apk"}
-APP_PACKAGE=${APP_PACKAGE:="im.status.app"}
+APP_PACKAGE=${APP_PACKAGE:="app.status.mobile"}
 ARCH=${ARCH:="arm64-v8a"}
 ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:=""}
 EMULATOR=${EMULATOR:="$ANDROID_SDK_ROOT/emulator/emulator"}
@@ -183,7 +183,7 @@ fi
 
 echo "App installed. Starting app"
 
-DEFAULT_ACTIVITY_NAME="${APP_PACKAGE}/im.status.app.StatusQtActivity"
+DEFAULT_ACTIVITY_NAME="${APP_PACKAGE}/app.status.mobile.StatusQtActivity"
 $ADB -s $ANDROID_SERIAL shell am start -a android.intent.action.MAIN -n $DEFAULT_ACTIVITY_NAME
 # wait for the app to start and then start logcat
 echo "Waiting for the app to start"

@@ -359,12 +359,12 @@ class BasePage:
             self.logger.debug(f"Coordinate tap failed: {e}")
             return False
 
-    def restart_app(self, app_package: str = "im.status.app") -> bool:
+    def restart_app(self, app_package: str = "app.status.mobile") -> bool:
         """Restart the app within the current session."""
         return self.app_lifecycle.restart_app(app_package)
 
     def restart_app_with_data_cleared(
-        self, app_package: str = "im.status.app"
+        self, app_package: str = "app.status.mobile"
     ) -> bool:
         """Restart the app with all app data cleared (fresh app state)."""
         return self.app_lifecycle.restart_app_with_data_cleared(app_package)

@@ -1,16 +1,17 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@v1.9.29'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
 def isNightlyBuild = utils.isNightlyBuild()
+def isReleaseBranch = (env.CHANGE_BRANCH ?: env.BRANCH_NAME)?.startsWith('release')
 
 pipeline {
   agent {
     /* Image with Ubuntu 22.04, QT 6.9.2, Android SDK/NDK, Go, and Nim */
     docker {
       label 'linuxcontainer'
-      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2-android'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.6-qt6.9.2-android'
       alwaysPull true
       args '--entrypoint="" ' +
            '--volume=/nix:/nix ' +
@@ -56,12 +57,13 @@ pipeline {
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     /* Control output the filename */
     APP_TYPE = "${utils.getAppType()}"
-    STATUS_APK_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'apk', arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
     PLATFORM = "android/arm64"
     QT_VERSION = "6.9.2"
     QT_ANDROID_PATH = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a"
     QMAKE = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a/bin/qmake"
-    STATUS_APK = "${WORKSPACE}/mobile/bin/android/qt6/Status.apk"
+    PACKAGE_TYPE = "${isReleaseBranch ? 'aab' : 'apk'}"
+    STATUS_ARTIFACT = "pkg/${utils.pkgFilename(ext: env.PACKAGE_TYPE, arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_BINARY = "${WORKSPACE}/mobile/bin/android/qt6/Status.${env.PACKAGE_TYPE}"
   }
 
   stages {
@@ -78,19 +80,19 @@ pipeline {
       }
     }
 
-    stage('Build Android APK') {
+    stage('Build Android') {
       steps {
         script {
-          linux.bundle(target='mobile-build', verbose=params.VERBOSE)
+          app.buildSignedAndroid(target='mobile-build PACKAGE_TYPE=' + env.PACKAGE_TYPE, verbose=params.VERBOSE)
         }
       }
     }
 
-    stage('Package APK') {
+    stage('Package') {
       steps {
         sh 'mkdir -p pkg'
-        sh "cp ${env.STATUS_APK} ${env.STATUS_APK_ARTIFACT}"
-        sh "ls -la ${env.STATUS_APK_ARTIFACT}"
+        sh "cp ${env.STATUS_BINARY} ${env.STATUS_ARTIFACT}"
+        sh "ls -la ${env.STATUS_ARTIFACT}"
       }
     }
 
@@ -99,14 +101,16 @@ pipeline {
         stage('Upload') {
           steps {
             script {
-              env.PKG_URL = s5cmd.upload(env.STATUS_APK_ARTIFACT)
-              jenkins.setBuildDesc(APK: env.PKG_URL)
+              env.PKG_URL = s5cmd.upload(env.STATUS_ARTIFACT)
+              jenkins.setBuildDesc([(env.PACKAGE_TYPE.toUpperCase()): env.PKG_URL])
             }
           }
         }
         stage('Archive') {
           steps {
-            archiveArtifacts env.STATUS_APK_ARTIFACT
+            script {
+              archiveArtifacts env.STATUS_ARTIFACT
+            }
           }
         }
       }

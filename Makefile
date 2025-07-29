@@ -903,8 +903,14 @@ mobile-run: deps-common
 
 mobile-build: USE_SYSTEM_NIM=1
 mobile-build: | deps-common
-	echo -e "\033[92mBuilding:\033[39m mobile app"
-	$(MAKE) -C mobile
+	echo -e "\033[92mBuilding:\033[39m mobile app ($(or $(PACKAGE_TYPE),default))"
+ifeq ($(PACKAGE_TYPE),aab)
+	$(MAKE) -C mobile aab
+else ifeq ($(PACKAGE_TYPE),apk)
+	$(MAKE) -C mobile apk
+else
+	$(MAKE) -C mobile all
+endif
 
 mobile-clean:
 	echo -e "\033[92mCleaning:\033[39m mobile app"

@@ -18,7 +18,7 @@ static void jni_nativeCredentialError(JNIEnv*, jobject, jint, jstring);
 static Keychain* s_keychain = nullptr;
 
 static constexpr const char* kJavaClass =
-    "im/status/app/SecureAndroidAuthentication";
+    "app/status/mobile/SecureAndroidAuthentication";
 
 // Get the singleton Java object, creating it if needed.
 // Never cache a raw jobject; pass the Context only for this call.
@@ -34,7 +34,7 @@ static QJniObject getJavaSingleton()
     QJniObject inst = QJniObject::callStaticObjectMethod(
         kJavaClass,
         "getInstance",
-        "(Landroid/content/Context;)Lim/status/app/SecureAndroidAuthentication;",
+        "(Landroid/content/Context;)Lapp/status/mobile/SecureAndroidAuthentication;",
         ctxObj.object<jobject>() // pass a fresh Context for this call only
         );
 

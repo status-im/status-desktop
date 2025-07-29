@@ -1,4 +1,4 @@
-package im.status.app;
+package app.status.mobile;
 
 import android.app.Activity;
 import android.os.Build;

@@ -1,4 +1,4 @@
-package im.status.app;
+package app.status.mobile;
 
 import org.qtproject.qt.android.bindings.QtActivity;
 import android.os.Build;

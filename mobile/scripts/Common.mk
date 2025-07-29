@@ -37,8 +37,19 @@ QRCODEGEN?=$(STATUS_DESKTOP)/vendor/QR-Code-generator/c
 # compile macros
 TARGET_PREFIX := Status
 
-TARGET_NAME := $(TARGET_PREFIX).$(shell if [ $(OS) = "ios" ]; then echo "app"; else echo "apk"; fi )
+# Default package type for Android builds
+PACKAGE_TYPE ?= apk
 
+# mobile app extension to be based on OS and PACKAGE_TYPE
+ifeq ($(OS),ios)
+EXTENSION := app
+else ifeq ($(OS),android)
+EXTENSION := $(PACKAGE_TYPE)
+else
+EXTENSION := apk
+endif
+
+TARGET_NAME := $(TARGET_PREFIX).$(EXTENSION)
 TARGET := $(BIN_PATH)/$(TARGET_NAME)
 
 # src files & obj files
