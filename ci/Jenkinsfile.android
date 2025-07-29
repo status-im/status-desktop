@@ -1,9 +1,10 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@sign-android-apk'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
 def isNightlyBuild = utils.isNightlyBuild()
+def isReleaseBranch = (env.CHANGE_BRANCH ?: env.BRANCH_NAME)?.startsWith('release')
 
 pipeline {
   agent {
@@ -56,12 +57,16 @@ pipeline {
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     /* Control output the filename */
     APP_TYPE = "${utils.getAppType()}"
-    STATUS_APK_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'apk', arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
     PLATFORM = "android/arm64"
     QT_VERSION = "6.9.2"
     QT_ANDROID_PATH = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a"
     QMAKE = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a/bin/qmake"
-    STATUS_APK = "${WORKSPACE}/mobile/bin/android/qt6/Status.apk"
+    PACKAGE_TYPE = "${isReleaseBranch ? 'aab' : 'apk'}"
+    STATUS_ARTIFACT = "pkg/${utils.pkgFilename(ext: env.PACKAGE_TYPE, arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_BINARY = "${WORKSPACE}/mobile/bin/android/qt6/Status.${env.PACKAGE_TYPE}"
+    BUILD_CMD = "${isReleaseBranch ? 'mobile-bundle' : 'mobile-build'}"
+    /* generate unique versionCode */
+    ORG_GRADLE_PROJECT_versionCode = sh(script: 'echo $(($(date +%s) / 60))', returnStdout: true).trim()
   }
 
   stages {
@@ -78,19 +83,19 @@ pipeline {
       }
     }
 
-    stage('Build Android APK') {
+    stage('Build Android') {
       steps {
         script {
-          linux.bundle(target='mobile-build', verbose=params.VERBOSE)
+          app.buildSignedAndroid(target=env.BUILD_CMD, verbose=params.VERBOSE)
         }
       }
     }
 
-    stage('Package APK') {
-      steps {
+    stage('Package') {
+      steps {    
         sh 'mkdir -p pkg'
-        sh "cp ${env.STATUS_APK} ${env.STATUS_APK_ARTIFACT}"
-        sh "ls -la ${env.STATUS_APK_ARTIFACT}"
+        sh "cp ${env.STATUS_BINARY} ${env.STATUS_ARTIFACT}"
+        sh "ls -la ${env.STATUS_ARTIFACT}"
       }
     }
 
@@ -99,14 +104,16 @@ pipeline {
         stage('Upload') {
           steps {
             script {
-              env.PKG_URL = s5cmd.upload(env.STATUS_APK_ARTIFACT)
-              jenkins.setBuildDesc(APK: env.PKG_URL)
+              env.PKG_URL = s5cmd.upload(env.STATUS_ARTIFACT)
+              jenkins.setBuildDesc([(env.PACKAGE_TYPE.toUpperCase()): env.PKG_URL])
             }
           }
         }
         stage('Archive') {
           steps {
-            archiveArtifacts env.STATUS_APK_ARTIFACT
+            script {
+              archiveArtifacts env.STATUS_ARTIFACT
+            }
           }
         }
       }

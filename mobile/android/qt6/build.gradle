@@ -3,6 +3,7 @@ buildscript {
         google()
         mavenCentral()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:8.8.0'
     }
@@ -22,6 +23,7 @@ configurations.all { config ->
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    //noinspection GradleDependency
     implementation 'androidx.core:core:1.16.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'
@@ -29,8 +31,22 @@ dependencies {
 }
 
 android {
+    /*******************************************************
+     * The following variables:
+     * - androidBuildToolsVersion,
+     * - androidCompileSdkVersion
+     * - qtAndroidDir - holds the path to qt android files
+     *                   needed to build any Qt application
+     *                   on Android.
+     * - qtGradlePluginType - whether to build an app or a library
+     *
+     * are defined in gradle.properties file. This file is
+     * updated by QtCreator and androiddeployqt tools.
+     * Changing them manually might break the compilation!
+     *******************************************************/
+
     namespace = androidPackageName
-    compileSdkVersion 35
+    compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
     ndkVersion = androidNdkVersion
 
@@ -44,7 +60,11 @@ android {
             renderscript.srcDirs = ['src']
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
-        }
+       }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.incremental = true
     }
 
     compileOptions {
@@ -56,6 +76,7 @@ android {
         abortOnError = false
     }
 
+    // Do not compress Qt binary resources file
     aaptOptions {
         noCompress 'rcc'
     }
@@ -65,5 +86,15 @@ android {
         minSdkVersion qtMinSdkVersion
         targetSdkVersion qtTargetSdkVersion
         ndk.abiFilters = qtTargetAbiList.split(",")
+    }
+
+    buildTypes {
+        release {
+            debuggable = false
+            minifyEnabled = false
+        }
+        debug {
+            debuggable = true
+        }
     }
 }

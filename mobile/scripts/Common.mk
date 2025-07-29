@@ -41,6 +41,11 @@ TARGET_NAME := $(TARGET_PREFIX).$(shell if [ $(OS) = "ios" ]; then echo "app"; e
 
 TARGET := $(BIN_PATH)/$(TARGET_NAME)
 
+# AAB target for Android release builds
+ifeq ($(OS),android)
+AAB_TARGET := $(BIN_PATH)/$(TARGET_PREFIX).aab
+endif
+
 # src files & obj files
 STATUS_DESKTOP_NIM_FILES := $(shell find $(STATUS_DESKTOP)/src -type f \( -iname '*.nim' -o -iname '*.nims' \))
 STATUS_DESKTOP_UI_FILES := $(shell find $(STATUS_DESKTOP)/ui -type f \( -iname 'qmldir' -o -iname '*.qml' -o -iname '*.qrc' \) -not -iname 'resources.qrc' -not -path '$(STATUS_DESKTOP)/ui/StatusQ/*')
