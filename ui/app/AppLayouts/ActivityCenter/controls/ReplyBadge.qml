@@ -25,8 +25,8 @@ Badge {
 
         anchors {
             fill: parent
-            leftMargin: 8
-            rightMargin: 8
+            leftMargin: Theme.halfPadding
+            rightMargin: Theme.halfPadding
             topMargin: 3
             bottomMargin: 3
         }
@@ -35,8 +35,8 @@ Badge {
 
         StatusIcon {
             source: Theme.svg("reply-small-arrow")
-            Layout.preferredWidth: 16
-            Layout.preferredHeight: 16
+            Layout.preferredWidth: Theme.padding
+            Layout.preferredHeight: Theme.padding
         }
 
         StatusBaseText {
@@ -45,7 +45,7 @@ Badge {
             wrapMode: Text.Wrap
             elide: Text.ElideRight
             font.pixelSize: Theme.additionalTextSize
-            Layout.maximumWidth: 300
+            Layout.maximumWidth: layout.width - Theme.halfPadding
             Layout.alignment: Qt.AlignVCenter
         }
     }

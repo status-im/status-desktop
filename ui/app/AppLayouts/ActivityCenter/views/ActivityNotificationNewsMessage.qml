@@ -13,56 +13,43 @@ ActivityNotificationBase {
 
     signal readMoreClicked
 
-    bodyComponent: RowLayout {
-        spacing: 8
+    avatarComponent: SVGImage {
+        source: Theme.png("status-logo-icon")
+        Layout.preferredWidth: 40
+        Layout.preferredHeight: 40
+        Layout.alignment: Qt.AlignTop
+        Layout.leftMargin: Theme.padding
+    }
 
-        SVGImage {
-            source: Theme.png("status-logo-icon")
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Theme.padding
+    bodyComponent: ColumnLayout {
+        spacing: Theme.smallPadding / 2
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: root.notification ? root.notification.newsTitle : ""
+            font.pixelSize: Theme.additionalTextSize
+            color: Theme.palette.directColor1
+            elide: Text.ElideRight
+            font.weight: Font.Medium
         }
 
-        ColumnLayout {
-            spacing: 2
-            Layout.alignment: Qt.AlignTop
+        StatusBaseText {
             Layout.fillWidth: true
+            Layout.maximumHeight: 50
+            text: root.notification ? root.notification.newsDescription : ""
+            font.pixelSize: Theme.additionalTextSize
+            wrapMode: Text.WordWrap
+            color: Theme.palette.directColor1
 
-            RowLayout {
-                Layout.maximumWidth: parent.width
-
-                StatusBaseText {
-                    text: root.notification ? root.notification.newsTitle : ""
-                    color: Theme.palette.baseColor1
-                    Layout.fillWidth: true
-                    elide: Text.ElideRight
-                    font.weight: Font.Medium
-                }
-
-                StatusTimeStampLabel {
-                    id: timestampLabel
-                    verticalAlignment: Text.AlignVCenter
-                    timestamp: root.notification ? root.notification.timestamp : 0
-                }
-            }
-            
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: root.notification ? root.notification.newsDescription : ""
-                wrapMode: Text.WordWrap
-                color: Theme.palette.baseColor1
-                Layout.maximumHeight: 44
-                elide: Text.ElideRight
-            }
+            elide: Text.ElideRight
         }
     }
 
-    ctaComponent: StatusFlatButton {
-        size: StatusBaseButton.Size.Small
-        text: qsTr("Read more")
-        onClicked: {
-            root.readMoreClicked()
-        }
+    ctaComponent: StatusLinkText {
+        text: qsTr("Learn more")
+        color: Theme.palette.primaryColor1
+        font.pixelSize: Theme.additionalTextSize
+        font.weight: Font.Normal
+        onClicked:  root.readMoreClicked()
     }
 }

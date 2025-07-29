@@ -1,4 +1,6 @@
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -10,82 +12,90 @@ import utils
 
 import AppLayouts.Chat.stores as ChatStores
 
-Item {
+Control {
     id: root
 
     /* required */ property int filteredIndex
-    /* required */ property var notification
+    required property var notification
 
+    property alias avatarComponent: avatarLoader.sourceComponent
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent
     property alias ctaComponent: ctaLoader.sourceComponent
 
-    signal closeActivityCenter()
-    signal markActivityCenterNotificationReadRequested(string notificationId)
-    signal markActivityCenterNotificationUnreadRequested(string notificationId)
+    property alias backgroundColor: backgroundItem.color
 
-    implicitHeight: Math.max(60, bodyLoader.height + bodyLoader.anchors.topMargin * 2 +
-                                 (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
-                                 (badgeLoader.item ? badgeLoader.height + Theme.smallPadding : 0))
+    signal closeActivityCenter() // TODO: to be removed
+    signal markActivityCenterNotificationReadRequested(string notificationId) // TODO: to be removed
+    signal markActivityCenterNotificationUnreadRequested(string notificationId) // TODO: to be removed
 
-    StatusDateGroupLabel {
-        id: dateGroupLabel
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.left: parent.left
-        messageTimestamp: notification ? notification.timestamp : 0
-        previousMessageTimestamp: !notification || filteredIndex === 0 || !notification.previousTimestamp ?
-                                        0 : notification.previousTimestamp
-        visible: text !== ""
-    }
+    implicitWidth: 308
 
-    Rectangle {
-        id: backgroundRect
-        anchors.fill: parent
-        anchors.topMargin: dateGroupLabel.visible ? dateGroupLabel.height : 0
+    background: Rectangle {
+        id: backgroundItem
         radius: 6
-        color: notification && !notification.read ? Theme.palette.primaryColor3 : "transparent"
+        color: mouse.containsMouse ? Theme.palette.primaryColor3 : "transparent"
+
         Behavior on color { ColorAnimation { duration: 200 } }
+
+        StatusBadge {
+            id: readBadge
+            visible: notification ? !notification.read : false
+            height: 8
+            width: height
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.rightMargin: Theme.halfPadding
+            anchors.topMargin: Theme.halfPadding
+        }
+
+        StatusMouseArea {
+            id: mouse
+            anchors.fill: parent
+            hoverEnabled: true
+        }
     }
 
-    Loader {
-        id: bodyLoader
-        anchors.top: dateGroupLabel.visible ? dateGroupLabel.bottom : parent.top
-        anchors.topMargin: Theme.smallPadding
-        anchors.right: ctaLoader.left
-        anchors.rightMargin: Theme.smallPadding
-        anchors.left: parent.left
-        clip: true
-    }
+    contentItem: RowLayout {
+        spacing: Theme.halfPadding
+        width: parent.width
 
-    Loader {
-        id: badgeLoader
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Theme.smallPadding
-        anchors.left: parent.left
-        anchors.leftMargin: 50 // TODO find a way to align with the text of the message
-    }
+        Loader {
+            id: avatarLoader
+            Layout.topMargin: Theme.padding
+            Layout.preferredWidth: 40
+            Layout.preferredHeight: 40
+            Layout.alignment: Qt.AlignTop
+            Layout.leftMargin: Theme.padding
+        }
 
-    Loader {
-        id: ctaLoader
-        anchors.verticalCenter: bodyLoader.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        ColumnLayout {
+            Layout.fillWidth: true
 
-        sourceComponent: StatusFlatRoundButton {
-            icon.width: 20
-            icon.height: 20
-            icon.name: "checkmark"
-            icon.color: notification && notification.read ? icon.disabledColor : Theme.palette.primaryColor1
-            tooltip.text: notification && notification.read ? qsTr("Mark as Unread") : qsTr("Mark as Read")
-            tooltip.orientation: StatusToolTip.Orientation.Left
-            tooltip.x: -tooltip.width - Theme.padding
-            tooltip.y: 4
-            onClicked: {
-                notification.read ?
-                    root.markActivityCenterNotificationUnreadRequested(root.notification.id) :
-                    root.markActivityCenterNotificationReadRequested(root.notification.id)
+            Loader {
+                id: bodyLoader
+                Layout.topMargin: Theme.padding
+                Layout.rightMargin: Theme.padding
+                Layout.fillWidth: true
+            }
+
+            Loader {
+                id: badgeLoader
+                Layout.maximumWidth: parent.width - Theme.padding
+            }
+
+            StatusTimeStampLabel {
+                Layout.bottomMargin: ctaLoader.active ? 0 : Theme.smallPadding
+                timestamp: root.notification.timestamp
+            }
+
+
+            Loader {
+                id: ctaLoader
+                Layout.topMargin: ctaLoader.active ? Theme.halfPadding : 0
+                Layout.bottomMargin: Theme.smallPadding
             }
         }
+
     }
 }

@@ -24,6 +24,7 @@ import AppLayouts.Profile.stores
 import AppLayouts.stores.Messaging as MessagingStores
 import AppLayouts.stores.Messaging.Community as CommunityStores
 import AppLayouts.stores
+import AppLayouts.ActivityCenter.helpers
 
 import "views"
 import "panels"
@@ -248,6 +249,7 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -265,6 +267,8 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onJumpToMessageRequested: (messageId) => { root.store.messageStore.messageModule.jumpToMessage(messageId) }
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -275,11 +279,23 @@ StatusSectionLayout {
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
 
+            onBlockContactRequested: (contactId, contactRequestId) => {
+                                         root.contactsStore.dismissContactRequest(contactId, contactRequestId)
+                                         root.contactsStore.blockContact(contactId)
+                                     }
+            onAcceptContactRequested: (contactId, contactRequestId) => {
+                                          root.contactsStore.acceptContactRequest(contactId, contactRequestId)
+                                      }
+
+            onDeclineContactRequested: (contactId, contactRequestId) => {
+                                           root.contactsStore.dismissContactRequest(contactId, contactRequestId)
+                                       }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -289,14 +305,18 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
 
             onSwitchToRequested: (sectionId, chatId, messageId) => {
                                root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
+
+            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(notification.message.communityId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                          root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                            root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -310,7 +330,9 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
+            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(communityId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
@@ -326,6 +348,7 @@ StatusSectionLayout {
                     communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
                 }
             }
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -408,6 +431,7 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
 
@@ -563,6 +587,7 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
+            group: root.store.getChatDetails(notification.chatId)
 
             onAcceptActivityCenterNotificationRequested: (notificationId) => {
                                                              root.activityCenterStore.acceptActivityCenterNotification(notificationId) }
@@ -574,6 +599,7 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
 

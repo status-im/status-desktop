@@ -43,7 +43,9 @@ ActivityNotificationMessage {
             communityName: community.name
             communityImage: community.image
             communityColor: community.color
+            communityLinkTextPixelSize: Theme.asideTextFontSize
             channelName: channel.name
+            channelLinkTextPixelSize: Theme.asideTextFontSize
 
             onCommunityNameClicked: {
                 root.setActiveCommunity(notification.message.communityId)
@@ -68,6 +70,7 @@ ActivityNotificationMessage {
             asset.name: group.icon
             asset.emoji: group.emoji
             asset.color: group.color
+            styledTextPixelSize: Theme.asideTextFontSize
 
             onChannelNameClicked: {
                 root.switchToRequested(notification.sectionId, notification.chatId, notification.message.id)

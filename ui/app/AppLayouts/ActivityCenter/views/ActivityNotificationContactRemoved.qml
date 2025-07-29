@@ -16,17 +16,13 @@ import "../popups"
 ActivityNotificationMessage {
     id: root
 
-    messageSubheaderComponent: StatusBaseText {
-        text: qsTr("Removed you as a contact")
-        font.italic: true
-        font.pixelSize: Theme.primaryTextFontSize
-        color: Theme.palette.baseColor1
-    }
-
-    ctaComponent: StatusFlatButton {
-        enabled: root.contactDetails && !root.contactDetails.added && !root.contactDetails.isContactRequestReceived
-        size: StatusBaseButton.Size.Small
+    contentHeaderAreaText: qsTr("Removed you as a contact")
+    ctaComponent: StatusLinkText {
+        visible: root.contactDetails && !root.contactDetails.added && !root.contactDetails.isContactRequestReceived
         text: qsTr("Send Contact Request")
+        color: Theme.palette.primaryColor1
+        font.pixelSize: Theme.additionalTextSize
+        font.weight: Font.Normal
         onClicked: Global.openContactRequestPopup(root.contactId, null)
     }
 }

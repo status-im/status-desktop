@@ -22,59 +22,46 @@ ActivityNotificationBase {
 
     signal setActiveCommunity(string communityId)
 
-    bodyComponent: RowLayout {
+    QtObject {
+        id: d
+
+        property color stateTextColor: root.banned ? Theme.palette.dangerColor1 :
+                                                     Theme.palette.successColor1
+    }
+
+    avatarComponent: StatusSmartIdenticon {
+        name: community ? community.name : ""
+        asset.color: community ? community.color : "black"
+        asset.name: community ? community.image : ""
+        asset.width: 40
+        asset.height: 40
+        asset.letterSize: width / 2.4
+        asset.isImage: true
+    }
+
+    bodyComponent: ColumnLayout {
         width: parent.width
-        height: 50
-
-        StatusSmartIdenticon {
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Theme.padding
-            Layout.topMargin: 2
-
-            asset {
-                width: 24
-                height: width
-                name: "communities"
-                color: root.banned ? "red" : "green"
-                bgWidth: 40
-                bgHeight: 40
-                bgColor: Theme.palette.getColor(asset.color, 0.1)
-            }
-        }
-
-        StatusBaseText {
-            text: root.banned ? qsTr("You were banned from") : qsTr("You've been unbanned from")
-            Layout.alignment: Qt.AlignVCenter
-            font.italic: true
-            color: Theme.palette.baseColor1
-        }
+        spacing: Theme.halfPadding
 
         CommunityBadge {
+            Layout.maximumWidth: parent.width
             communityName: community ? community.name : ""
             communityImage: community ? community.image : ""
             communityColor: community ? community.color : "black"
+            communityLinkTextColor: Theme.palette.directColor1
+            communityLinkTextPixelSize: Theme.additionalTextSize
+            communityLinkTextWeight: Font.Medium
             onCommunityNameClicked: root.setActiveCommunity(notification.communityId)
-            Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: 190
         }
 
-        Item {
-            Layout.fillWidth: true
-        }
-    }
-
-    ctaComponent: root.banned ? undefined : visitCommunityCta
-
-    Component {
-        id: visitCommunityCta
-        StatusLinkText {
-            text: qsTr("Visit Community")
-            onClicked: {
-                root.setActiveCommunity(notification.communityId)
-                root.closeActivityCenter()
-            }
+        StatusBaseText {
+            Layout.maximumWidth: parent.width
+            text: root.banned ? qsTr("You were <font color='%1'>banned</font> from community").arg(d.stateTextColor) :
+                                qsTr("You have been  <font color='%1'>unbanned</font> from community").arg(d.stateTextColor)
+            color: Theme.palette.directColor1
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+            font.pixelSize: Theme.additionalTextSize
         }
     }
 }

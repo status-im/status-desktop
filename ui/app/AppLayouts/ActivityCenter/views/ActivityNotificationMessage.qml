@@ -12,17 +12,19 @@ import utils
 ActivityNotificationBase {
     id: root
 
-    required property var contactsModel
+    property var contactsModel
 
     readonly property bool isOutgoingMessage: notification && notification.message && notification.message.amISender || false
     readonly property string contactId: notification ? isOutgoingMessage ? notification.chatId : notification.author : ""
     readonly property string contactName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
                                                                                     contactDetails.displayName, contactDetails.alias) : ""
+    property string contentHeaderAreaText: ""
 
     property var contactDetails: null
     property int maximumLineCount: 2
 
     signal messageClicked()
+    signal openProfilePopup(string contactId)
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {
         messageText: notification && notification.message ? notification.message.messageText : ""
@@ -52,11 +54,6 @@ ActivityNotificationBase {
     property Component messageSubheaderComponent: null
     property Component messageBadgeComponent: null
 
-    function openProfilePopup() {
-        closeActivityCenter()
-        Global.openProfilePopup(contactId)
-    }
-
     function updateContactDetails() {
         contactDetails = notification ? Utils.getContactDetailsAsJson(contactId, false) : null
     }
@@ -71,12 +68,32 @@ ActivityNotificationBase {
         onItemChanged: root.updateContactDetails()
     }
 
+    avatarComponent:  Item {
+        width: root.messageDetails.sender.profileImage.assetSettings.width
+        height: profileImage.height
+
+        StatusSmartIdenticon {
+            id: profileImage
+            name: root.messageDetails.sender.displayName
+            asset: root.messageDetails.sender.profileImage.assetSettings
+            ringSettings: root.messageDetails.sender.profileImage.ringSettings
+
+            StatusMouseArea {
+                anchors.fill: parent
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: root.openProfilePopup(contactId)
+            }
+        }
+    }
+
     bodyComponent: StatusMouseArea {
         implicitWidth: parent.width
         implicitHeight: messageView.implicitHeight
         hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
+            root.markActivityCenterNotificationReadRequested(notification.id)
             root.messageClicked()
         }
 
@@ -85,10 +102,8 @@ ActivityNotificationBase {
             width: parent.width
             maximumLineCount: root.maximumLineCount
             messageDetails: root.messageDetails
-            timestamp: notification ? notification.timestamp : 0
-            messageSubheaderComponent: root.messageSubheaderComponent
-            messageBadgeComponent: root.messageBadgeComponent
-            onOpenProfilePopup: root.openProfilePopup()
+            contentHeaderAreaText: root.contentHeaderAreaText
+            onOpenProfilePopup: root.openProfilePopup(contactId)
         }
     }
 }
