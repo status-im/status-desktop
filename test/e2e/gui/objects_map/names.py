@@ -1181,7 +1181,8 @@ activityCenterContactRequest = {"container": statusDesktop_mainWindow_overlay,
 save_changes_rename_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay,
                                     "objectName": "saveRenameKeypairChangesButton", "type": "StatusButton",
                                     "visible": True}
-nameInput_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "keypairInput", "type": "StatusInput", "visible": True}
+nameInput_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "nameInput", "type": "StatusInput",
+                         "unnamed": 1, "visible": True}
 
 # Link preview options popup
 linkPreviewCardMenu = {"container": statusDesktop_mainWindow_overlay, "objectName": "LinkPreviewSettingsCardMenu",
