@@ -449,7 +449,8 @@ cancel_StatusFlatButton_unblock = {"checkable": False, "container": statusDeskto
 """ Common """
 renameKeypairPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "RenameKeypairPopup",
                       "type": "PopupItem", "visible": True}
-edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "type": "TextEdit", "unnamed": 1, "visible": True}
+renameKeypairTextInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "keypairInput", "type": "StatusInput", "visible": True}
+edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "type": "TextEdit", "id": "edit", "unnamed": 1, "visible": True}
 
 # Select Color Popup
 communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWindow_overlay,

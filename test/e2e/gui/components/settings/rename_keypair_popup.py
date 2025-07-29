@@ -8,15 +8,17 @@ from gui.objects_map import names
 class RenameKeypairPopup(QObject):
 
     def __init__(self):
-        super(RenameKeypairPopup, self).__init__(names.renameKeypairPopup)
-        self.rename_text_edit = TextEdit(names.edit_TextEdit)
+        super().__init__(names.renameKeypairPopup)
+        self.rename_text_input = TextEdit(names.edit_TextEdit)
         self.save_changes_button = Button(names.save_changes_rename_StatusButton)
         self.name_input = QObject(names.nameInput_StatusInput)
 
     @allure.step('Rename keypair')
     def rename_keypair(self, name):
-        self.rename_text_edit.text = name
-        self.save_changes_button.wait_until_appears().click()
+        self.rename_text_input.clear()
+        self.rename_text_input.type_text(name)
+        assert self.save_changes_button.is_visible
+        self.save_changes_button.click()
         self.wait_until_hidden()
 
     @allure.step('Get error message')
