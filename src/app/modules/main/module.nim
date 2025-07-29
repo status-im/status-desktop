@@ -322,14 +322,14 @@ proc createTokenItemImproved[T](self: Module[T], tokenDto: CommunityTokenDto, co
 
 method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
     communityTokens: seq[CommunityTokenDto], communityTokenJsonItems: JsonNode) =
-  let communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
+  let communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): token_item.TokenItem =
     result = self.createTokenItemImproved(tokenDto, communityTokenJsonItems)
   )
   self.view.model().setTokenItems(communityId, communityTokensItems)
   self.view.model().setTokensLoading(communityId, false)
 
 proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto): SectionItem =
-  var communityTokensItems: seq[TokenItem]
+  var communityTokensItems: seq[token_item.TokenItem]
   var communityMembersAirdropAddress: Table[string, string]
 
   let existingCommunity = self.view.model().getItemById(communityDetails.id)
