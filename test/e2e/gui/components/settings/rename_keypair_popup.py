@@ -1,3 +1,5 @@
+import time
+
 import allure
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -15,6 +17,7 @@ class RenameKeypairPopup(QObject):
 
     @allure.step('Rename keypair')
     def rename_keypair(self, name):
+        time.sleep(3)
         self.rename_text_input.clear()
         self.rename_text_input.type_text(name)
         assert self.save_changes_button.is_visible
