@@ -23,6 +23,7 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Core.Backpressure
 import StatusQ.Core.Utils as SQUtils
+import StatusQ.Platform
 
 StatusWindow {
     id: applicationWindow
@@ -52,13 +53,16 @@ StatusWindow {
     title: {
         // Set application settings
         Qt.application.name = "Status Desktop"
-        Qt.application.displayName = qsTr("Status Desktop")
+        Qt.application.displayName = d.macOSWindowed ? "" : qsTr("Status Desktop")
         Qt.application.organization = "Status"
         Qt.application.domain = "status.im"
         Qt.application.version = aboutModule.getCurrentVersion()
         return Qt.application.displayName
     }
     visible: true
+
+    // These flags integrate the system titlebar into the client UI on macOS
+    flags: Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
 
     function updatePaddings() {
         if (applicationWindow.width < Theme.portraitBreakpoint.width) {
@@ -194,8 +198,8 @@ StatusWindow {
     //TODO remove direct backend access
     Connections {
         id: windowsOsNotificationsConnection
-        enabled: Qt.platform.os === Constants.windows
-        target: Qt.platform.os === Constants.windows && typeof mainModule !== "undefined" ? mainModule : null
+        enabled: Qt.platform.os === SQUtils.Utils.windows
+        target: Qt.platform.os === SQUtils.Utils.windows && typeof mainModule !== "undefined" ? mainModule : null
         function onDisplayWindowsOsNotification(title, message) {
             systemTray.showMessage(title, message)
         }
@@ -209,15 +213,13 @@ StatusWindow {
         loader.sourceComponent = app
 
         d.runMockedKeycardControllerWindow()
-
-        startupOnboardingLoader.active = false
     }
 
     //! Workaround for custom QQuickWindow
     Connections {
         target: applicationWindow
         function onClosing(close) {
-            if (Qt.platform.os === Constants.mac) {
+            if (Qt.platform.os === SQUtils.Utils.mac) {
                 loader.sourceComponent = undefined
                 close.accepted = true
             } else {
@@ -238,7 +240,7 @@ StatusWindow {
     // On MacOS, explicitely restore the window on activating
     Connections {
         target: Qt.application
-        enabled: Qt.platform.os === Constants.mac
+        enabled: Qt.platform.os === SQUtils.Utils.mac
         function onStateChanged() {
             if (Qt.application.state === d.previousApplicationState
                 && Qt.application.state === Qt.ApplicationActive) {
@@ -259,11 +261,27 @@ StatusWindow {
         }
     }
 
+    //TODO: Remove once qt 6.9.2 is available
+    //https://bugreports.qt.io/browse/QTBUG-135808
+    function applySafeAreaDirtyHack() {
+        if (Qt.platform.os === SQUtils.Utils.android) {
+            //First fix the safe area margins
+            applicationWindow.visibility = Window.FullScreen
+            applicationWindow.visibility = Window.Windowed
+
+            //Then create a dummy header with the system accent color
+            //Otherwise the system toolbar is invisible
+            macOSSafeAreaLoader.sourceComponent = androidHeaderComponent
+            macOSSafeAreaLoader.active = true
+        }
+    }
+
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
         Theme.changeTheme(Theme.Style.System)
 
+        applySafeAreaDirtyHack()
         restoreAppState()
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
@@ -304,11 +322,19 @@ StatusWindow {
 
     Loader {
         id: loader
+
         anchors.fill: parent
+        anchors.topMargin: Qt.platform.os === SQUtils.Utils.mac ? 0 : parent.SafeArea.margins.top 
+        anchors.bottomMargin: parent.SafeArea.margins.bottom
+        anchors.leftMargin: parent.SafeArea.margins.left
+        anchors.rightMargin: parent.SafeArea.margins.right
         asynchronous: true
         opacity: active ? 1.0 : 0.0
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}
+        /* only unload splash screen once appmain is loaded else we see
+        an empty screen for a sec until it is laoded */
+        onLoaded: startupOnboardingLoader.active = false
     }
 
     Component {
@@ -343,7 +369,12 @@ StatusWindow {
 
     Loader {
         id: startupOnboardingLoader
+
         anchors.fill: parent
+        anchors.topMargin: Qt.platform.os === SQUtils.Utils.mac ? 0 : parent.SafeArea.margins.top
+        anchors.leftMargin: parent.SafeArea.margins.left
+        anchors.rightMargin: parent.SafeArea.margins.right
+
         sourceComponent: onboardingV2
     }
 
@@ -370,7 +401,7 @@ StatusWindow {
             id: onboardingLayout
             objectName: "startupOnboardingLayout"
 
-            anchors.fill: parent
+            bottomPadding: applicationWindow.SafeArea.margins.bottom
 
             isKeycardEnabled: featureFlagsStore.keycardEnabled
             networkChecksEnabled: true
@@ -464,33 +495,63 @@ StatusWindow {
         }
     }
 
-    MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar
+    Loader {
+        id: macOSSafeAreaLoader
         anchors.left: parent.left
         anchors.top: parent.top
-        anchors.margins: 13
+        anchors.right: parent.right
+        height: active ? parent.SafeArea.margins.top : 0
+        active: Qt.platform.os === SQUtils.Utils.mac && applicationWindow.visibility !== Window.FullScreen
+        sourceComponent: macHeaderComponent
+    }
+    //TODO: Remove once qt 6.9.2 is available
+    //To verify before removing:
+    //Toolbar icons are visible on both mobile and tablet
+    //SafeArea is applied correctly
+    Component {
+        id: androidHeaderComponent
+        Rectangle {
+            SystemPalette { id: sysPalette; colorGroup: SystemPalette.Active }
+            color: sysPalette.accent
+        }
+    }
 
-        visible: Qt.platform.os === Constants.mac && applicationWindow.visibility !== Window.FullScreen
-
-        onClose: {
-            if (loader.sourceComponent != app) {
-                Qt.quit()
-                return
+    Component {
+        id: macHeaderComponent
+        MouseArea {
+            id: headerMouseArea
+            preventStealing: true
+            propagateComposedEvents: true
+            onPressed: {
+                applicationWindow.startSystemMove()
             }
 
-            if (localAccountSensitiveSettings.quitOnClose) {
-                Qt.quit();
-                return
+            MacTrafficLights {
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.margins: 13
+                onClose: {
+                    if (loader.sourceComponent != app) {
+                        Qt.quit()
+                        return
+                    }
+
+                    if (localAccountSensitiveSettings.quitOnClose) {
+                        Qt.quit();
+                        return
+                    }
+
+                    applicationWindow.visible = false;
+                }
+
+                onMinimised: {
+                    applicationWindow.toggleMinimize()
+                }
+
+                onMaximized: {
+                    applicationWindow.toggleFullScreen()
+                }
             }
-
-            applicationWindow.visible = false;
-        }
-
-        onMinimised: {
-            applicationWindow.toggleMinimize()
-        }
-
-        onMaximized: {
-            applicationWindow.toggleFullScreen()
         }
     }
 }
