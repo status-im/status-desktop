@@ -62,6 +62,8 @@ StatusModal {
 
         StatusInput {
             id: nameInput
+
+            objectName: "keypairInput"
             Layout.preferredWidth: parent.width
             topPadding: 8
             bottomPadding: 8
