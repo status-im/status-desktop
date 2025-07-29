@@ -1,5 +1,5 @@
 import json
-import web3/ethtypes
+import web3/eth_api_types
 import types
 
 template getProp(obj: JsonNode, prop: string, value: var typedesc[int]): bool {.redefine.} =

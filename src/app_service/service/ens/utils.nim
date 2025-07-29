@@ -105,7 +105,7 @@ proc buildTokenTransaction*(
   result.to = contractAddress.some
 
 proc label*(username:string): string =
-  var node:array[32, byte] = keccak_256.digest(username.toLower()).data
+  var node:array[32, byte] = nimcrypto.keccak256.digest(username.toLower()).data
   result = "0x" & node.toHex()
 
 proc getExpirationTime*(chainId: int, username: string): int =

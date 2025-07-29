@@ -1,6 +1,6 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, algorithm, sugar
 
-import web3/ethtypes
+import web3/eth_api_types
 import backend/backend as backend
 
 import app_service/service/network/service as network_service

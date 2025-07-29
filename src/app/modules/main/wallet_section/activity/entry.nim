@@ -1,4 +1,4 @@
-import NimQml, json, stew/shims/strformat, sequtils, strutils, chronicles, stint
+import NimQml, json, stew/shims/strformat, sequtils, strutils, chronicles, stint, options
 
 import backend/activity as backend
 import app/modules/shared_models/currency_amount
@@ -9,7 +9,7 @@ import app_service/service/currency/service
 
 import app/modules/shared/wallet_utils
 
-import web3/ethtypes as eth
+import web3/eth_api_types as eth
 
 import ./transaction_identities_model as txid
 
@@ -17,6 +17,8 @@ import ./transaction_identities_model as txid
 # not included in the metadata and needs to be
 # fetched from a different source.
 type
+  ChainId = backend.ChainId
+
   ExtraData* = object
     inAmount*: float64
     outAmount*: float64

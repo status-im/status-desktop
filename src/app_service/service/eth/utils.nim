@@ -2,11 +2,11 @@ import
   json, tables, sequtils, net
 import json, strutils, stew/shims/strformat, tables, chronicles, unicode, times
 import
+  stew/byteutils,
   json_serialization, chronicles, libp2p/[multihash, multicodec, cid], stint, nimcrypto
 from sugar import `=>`, `->`
 import stint
 from times import getTime, toUnix, nanosecond
-import web3/ethhexstrings
 
 import ../../common/conversion as common_conversion
 
@@ -95,7 +95,10 @@ proc validateTransactionInput*(from_addr, to_addr, assetAddress, value, gas, gas
     if assetAddress == "0x0000000000000000000000000000000000000000":  raise newException(ValueError, "assetAddress requires a valid token address")
 
   if data != "": # If data is being used
-    if not validate(HexDataStr(data)): raise newException(ValueError, "data should contain a valid hex string")
+    try:
+      discard hexToSeqByte(data)
+    except ValueError:
+      raise newException(ValueError, "data should contain a valid hex string")
 
 proc hex2Time*(hex: string): Time =
   # represents the time since 1970-01-01T00:00:00Z

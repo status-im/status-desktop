@@ -1,8 +1,8 @@
-import NimQml, Tables, strutils, stew/shims/strformat, sequtils, stint
+import NimQml, Tables, strutils, stew/shims/strformat, sequtils, stint, options
 import chronicles
 
 import ./collectibles_item
-import web3/ethtypes as eth
+import web3/eth_api_types as eth
 import backend/activity as backend_activity
 import app_service/common/types
 

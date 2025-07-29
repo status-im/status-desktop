@@ -8,7 +8,7 @@ import json, strutils, stint, app_service/common/safe_json_serialization, chroni
 import sequtils, sugar
 
 import
-  web3/ethtypes
+  web3/eth_api_types
 
 include  ../../common/json_utils
 import backend/network_types, ../token/dto

@@ -1,5 +1,6 @@
-import strutils, stew/shims/strformat, stint, chronicles
-from web3 import Address, fromHex
+import std/[json, strutils, strformat], stint, chronicles
+
+import web3/[conversions, eth_api_types]
 
 const CompressedKeyChars* = {'0'..'9', 'A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','v','w','x','y','z'}
 
@@ -20,8 +21,8 @@ proc decodeHexAddress*(strAddress: string): Address =
   var hexAddressValue: Address
   try:
     hexAddressValue = fromHex(Address, strAddress)
-  except Exception as e:
-    error "Error parsing address", msg = e.msg
+  except ValueError as e:
+    error "Error parsing address", msg = e.msg, strAddress
   return hexAddressValue
 
 proc isHexFormat*(strAddress: string): bool =
@@ -92,4 +93,15 @@ proc intToEnum*[T](intVal: int): T =
 
 proc startsWith0x*(value: string): bool =
   result = value.startsWith("0x")
+
+proc `%`*(v: Address): JsonNode =
+  %(v.to0xHex())
+
+proc `%`*(v: Quantity): JsonNode =
+  %($v)
+
+func fromJson*(n: JsonNode, argName: string, result: var Address) =
+  if n.kind != JString:
+    raise (ref ValueError)(msg: argName & " should be a string")
+  result = Address.fromHex(n.getStr())
 

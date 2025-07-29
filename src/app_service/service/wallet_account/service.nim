@@ -1,6 +1,6 @@
 import NimQml, Tables, json, sequtils, sugar, chronicles, stew/shims/strformat, stint
 import net, strutils, os, times, algorithm, options
-import web3/ethtypes
+import web3/eth_api_types
 
 import app/global/global_singleton
 
