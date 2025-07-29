@@ -28,6 +28,8 @@ Item {
     property int outgoingStatus: StatusMessage.OutgoingStatus.Unknown
     property bool showOutgointStatusLabel: false
 
+    property alias displayNamePixelSize: primaryDisplayName.font.pixelSize
+
     signal clicked(var sender)
     signal resendClicked()
 
@@ -148,6 +150,7 @@ Item {
 
         StatusTimeStampLabel {
             id: timestampText
+            visible: timestamp !== 0
             verticalAlignment: Text.AlignVCenter
             timestamp: root.timestamp
             showFullTimestamp: root.showFullTimestamp
