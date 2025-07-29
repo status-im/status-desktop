@@ -9,19 +9,19 @@ import StatusQ.Components
 import utils
 import shared.panels
 
-import AppLayouts.stores
+import AppLayouts.ActivityCenter.helpers
 
 Item {
     id: root
 
-    property int membershipStatus: ActivityCenterStore.ActivityCenterMembershipStatus.None
+    property int membershipStatus: ActivityCenterTypes.ActivityCenterMembershipStatus.None
     property bool ctaAllowed: !acceptedPending && !declinedPending
 
-    readonly property bool pending: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Pending
-    readonly property bool accepted: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted
-    readonly property bool declined: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Declined
-    readonly property bool acceptedPending: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.AcceptedPending
-    readonly property bool declinedPending: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.DeclinedPending
+    readonly property bool pending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Pending
+    readonly property bool accepted: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Accepted
+    readonly property bool declined: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Declined
+    readonly property bool acceptedPending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.AcceptedPending
+    readonly property bool declinedPending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.DeclinedPending
 
     signal acceptRequestToJoinCommunity()
     signal declineRequestToJoinCommunity()
@@ -32,9 +32,8 @@ Item {
     StatusBaseText {
         id: textItem
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.smallPadding
         visible: !pending
+        font.pixelSize: Theme.additionalTextSize
         text: {
             if (root.accepted) {
                 return qsTr("Accepted")
@@ -57,7 +56,6 @@ Item {
 
     RowLayout {
         id: buttons
-        anchors.centerIn: parent
         visible: pending || acceptedPending || declinedPending
         spacing: Theme.halfPadding
         StatusFlatButton {
@@ -66,6 +64,7 @@ Item {
             onClicked: root.acceptRequestToJoinCommunity()
             enabled: !root.acceptedPending
             text: root.acceptedPending ? qsTr("Accept pending") : ""
+            font.pixelSize: Theme.additionalTextSize
             verticalPadding: 4
             horizontalPadding: 4
             visible: root.ctaAllowed || !enabled
@@ -77,6 +76,7 @@ Item {
             onClicked: root.declineRequestToJoinCommunity()
             enabled: !root.declinedPending
             text: root.declinedPending ? qsTr("Reject pending") : ""
+            font.pixelSize: Theme.additionalTextSize
             verticalPadding: 4
             horizontalPadding: 4
             visible: root.ctaAllowed || !enabled

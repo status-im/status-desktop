@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import StatusQ.Core.Theme
+
 import AppLayouts.ActivityCenter.views
 import mainui
 
@@ -13,6 +15,8 @@ import shared.stores as SharedStores
 
 SplitView {
     id: root
+
+    readonly property int leftPanelMaxWidth: 308 // It fits on mobile / portrait + desktop left panel
 
     orientation: Qt.Vertical
 
@@ -33,7 +37,10 @@ SplitView {
     QtObject {
         id: notificationMock
 
-        property int timestamp: Date.now()
+        readonly property int timestamp: Date.now()
+        readonly property QtObject tokenData: QtObject {
+            readonly property string walletAddress: "0x01234"
+        }
     }
 
     QtObject {
@@ -63,116 +70,120 @@ SplitView {
         property string image: ModelsData.banners.status
     }
 
-    ColumnLayout {
+    RowLayout {
         SplitView.fillHeight: true
         SplitView.fillWidth: true
 
-        ActivityNotificationCommunityTokenReceived {
+        ColumnLayout {
 
-            Layout.fillWidth: true
-            Layout.margins: 16
+            ActivityNotificationCommunityTokenReceived {
 
-            // Community properties:
-            communityId: communityMock.id
-            communityName: communityMock.name
-            communityImage: communityMock.image
+                Layout.preferredWidth: root.leftPanelMaxWidth
+                Layout.margins: 16
 
-            // Notification type related properties:
-            isFirstTokenReceived: true
-            tokenType: root.assetType
+                // Community properties:
+                communityId: communityMock.id
+                communityName: communityMock.name
+                communityImage: communityMock.image
 
-            // Token related properties:
-            tokenAmount: assetMock.amount
-            tokenName: assetMock.name
-            tokenSymbol: assetMock.symbol
-            tokenImage: assetMock.image
+                // Notification type related properties:
+                isFirstTokenReceived: true
+                tokenType: root.assetType
 
-            // Wallet related:
-            walletAccountName: "My wallet"
-            txHash: "0x01231232"
+                // Token related properties:
+                tokenAmount: assetMock.amount
+                tokenName: assetMock.name
+                tokenSymbol: assetMock.symbol
+                tokenImage: assetMock.image
 
-            notification: notificationMock
+                // Wallet related:
+                walletAccountName: "My wallet"
+                txHash: "0x01231232"
+
+                notification: notificationMock
+            }
+
+            ActivityNotificationCommunityTokenReceived {
+
+                Layout.preferredWidth: root.leftPanelMaxWidth
+                Layout.margins: 16
+
+                // Community properties:
+                communityId: communityMock.id
+                communityName: communityMock.name
+                communityImage: communityMock.image
+
+                // Notification type related properties:
+                isFirstTokenReceived: false
+                tokenType: root.assetType
+
+                // Token related properties:
+                tokenAmount: assetMock.amount
+                tokenName: assetMock.name
+                tokenSymbol: assetMock.symbol
+                tokenImage: assetMock.image
+
+                // Wallet related:
+                walletAccountName: "My wallet 2"
+                txHash: "0x01231232"
+
+                notification: notificationMock
+            }
         }
+        ColumnLayout {
+            ActivityNotificationCommunityTokenReceived {
 
-        ActivityNotificationCommunityTokenReceived {
+                Layout.preferredWidth: root.leftPanelMaxWidth
+                Layout.margins: 16
 
-            Layout.fillWidth: true
-            Layout.margins: 16
+                // Community properties:
+                communityId: communityMock.id
+                communityName: communityMock.name
+                communityImage: communityMock.image
 
-            // Community properties:
-            communityId: communityMock.id
-            communityName: communityMock.name
-            communityImage: communityMock.image
+                // Notification type related properties:
+                isFirstTokenReceived: true
+                tokenType: root.assetType
 
-            // Notification type related properties:
-            isFirstTokenReceived: false
-            tokenType: root.assetType
+                // Token related properties:
+                tokenAmount: collectibleMock.amount
+                tokenName: collectibleMock.name
+                tokenSymbol: collectibleMock.symbol
+                tokenImage: collectibleMock.image
 
-            // Token related properties:
-            tokenAmount: assetMock.amount
-            tokenName: assetMock.name
-            tokenSymbol: assetMock.symbol
-            tokenImage: assetMock.image
+                // Wallet related:
+                walletAccountName: "The wallet account"
+                txHash: "0x01231232"
 
-            // Wallet related:
-            walletAccountName: "My wallet 2"
-            txHash: "0x01231232"
+                notification: notificationMock
+            }
 
-            notification: notificationMock
-        }
+            ActivityNotificationCommunityTokenReceived {
 
-        ActivityNotificationCommunityTokenReceived {
+                Layout.preferredWidth: root.leftPanelMaxWidth
+                Layout.margins: 16
 
-            Layout.fillWidth: true
-            Layout.margins: 16
+                // Community properties:
+                communityId: communityMock.id
+                communityName: communityMock.name
+                communityImage: communityMock.image
 
-            // Community properties:
-            communityId: communityMock.id
-            communityName: communityMock.name
-            communityImage: communityMock.image
+                // Notification type related properties:
+                isFirstTokenReceived: false
+                tokenType: root.collectibleType
 
-            // Notification type related properties:
-            isFirstTokenReceived: true
-            tokenType: root.assetType
+                // Token related properties:
+                tokenAmount: collectibleMock.amount
+                tokenName: collectibleMock.name
+                tokenSymbol: collectibleMock.symbol
+                tokenImage: collectibleMock.image
 
-            // Token related properties:
-            tokenAmount: collectibleMock.amount
-            tokenName: collectibleMock.name
-            tokenSymbol: collectibleMock.symbol
-            tokenImage: collectibleMock.image
+                // Wallet related:
+                walletAccountName: "Collectibles wallet"
+                txHash: "0x01231232"
 
-            // Wallet related:
-            walletAccountName: "The wallet account"
-            txHash: "0x01231232"
-
-            notification: notificationMock
-        }
-
-        ActivityNotificationCommunityTokenReceived {
-
-            Layout.fillWidth: true
-            Layout.margins: 16
-
-            // Community properties:
-            communityId: communityMock.id
-            communityName: communityMock.name
-            communityImage: communityMock.image
-
-            // Notification type related properties:
-            isFirstTokenReceived: false
-            tokenType: root.collectibleType
-
-            // Token related properties:
-            tokenAmount: collectibleMock.amount
-            tokenName: collectibleMock.name
-            tokenSymbol: collectibleMock.symbol
-            tokenImage: collectibleMock.image
-
-            // Wallet related:
-            walletAccountName: "Collectibles wallet"
-            txHash: "0x01231232"
-
-            notification: notificationMock
+                notification: notificationMock
+            }
         }
     }
 
@@ -185,6 +196,7 @@ SplitView {
 }
 
 // category: Activity Center
+// status: good
 // https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=18700%3A276619&mode=design&t=8r02XS6eFbmDWKa1-1
 // https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=20765%3A244315&mode=design&t=WV4rxtOEDUDl4aZ6-1
 // https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?type=design&node-id=20765%3A398956&mode=design&t=EGnLxrqE9kqaWGP4-1

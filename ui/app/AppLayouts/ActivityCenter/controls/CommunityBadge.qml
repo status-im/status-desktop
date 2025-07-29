@@ -20,8 +20,12 @@ Badge {
     property string communityImage
     property string communityName
     property string communityColor
+    property alias communityLinkTextPixelSize: communityLinkText.font.pixelSize
+    property alias communityLinkTextColor: communityLinkText.color
+    property alias communityLinkTextWeight: communityLinkText.font.weight
 
     property string channelName
+    property alias channelLinkTextPixelSize: channelLinkText.font.pixelSize
 
     signal communityNameClicked()
     signal channelNameClicked()
@@ -67,6 +71,7 @@ Badge {
             Layout.alignment: Qt.AlignVCenter
 
             StatusLinkText {
+                id: communityLinkText
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
                 text: root.communityName
@@ -82,6 +87,7 @@ Badge {
             }
 
             StatusLinkText {
+                id: channelLinkText
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
                 visible: root.channelName.length > 0

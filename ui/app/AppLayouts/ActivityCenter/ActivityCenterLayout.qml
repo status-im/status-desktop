@@ -24,6 +24,7 @@ import AppLayouts.Profile.stores
 import AppLayouts.stores.Messaging as MessagingStores
 import AppLayouts.stores.Messaging.Community as CommunityStores
 import AppLayouts.stores
+import AppLayouts.ActivityCenter.helpers
 
 import "views"
 import "panels"
@@ -157,50 +158,50 @@ StatusSectionLayout {
 
                 sourceComponent: {
                     switch (model.notificationType) {
-                    case ActivityCenterStore.ActivityCenterNotificationType.Mention:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.Mention:
                         return mentionNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.Reply:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.Reply:
                         return replyNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.ContactRequest:
                         return contactRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.CommunityInvitation:
                         return communityInvitationNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.CommunityMembershipRequest:
                         return membershipRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.CommunityRequest:
                         return communityRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.CommunityKicked:
                         return communityKickedNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRemoved:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.ContactRemoved:
                         return contactRemovedComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
                         return newKeypairFromPairedDeviceComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityTokenReceived:
-                    case ActivityCenterStore.ActivityCenterNotificationType.FirstCommunityTokenReceived:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.CommunityTokenReceived:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.FirstCommunityTokenReceived:
                         return communityTokenReceivedComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
-                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipReceived:
-                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipLost:
-                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipFailed:
-                    case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.OwnerTokenReceived:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipReceived:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipLost:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipFailed:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipDeclined:
                         return ownerTokenReceivedNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ShareAccounts:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.ShareAccounts:
                         return shareAccountsNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityBanned:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.CommunityBanned:
                         return communityBannedNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityUnbanned:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.CommunityUnbanned:
                         return communityUnbannedNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.NewPrivateGroupChat:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.NewPrivateGroupChat:
                         return groupChatInvitationNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationReceived:
-                    case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationCreated:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.NewInstallationReceived:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.NewInstallationCreated:
                         return newDeviceDetectedComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFetching:
-                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingSuccess:
-                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingPartialFailure:
-                    case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFailure:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingFetching:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingSuccess:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingPartialFailure:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingFailure:
                         return backupSyncingComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ActivityCenterNotificationTypeNews:
+                    case ActivityCenterTypes.ActivityCenterNotificationType.ActivityCenterNotificationTypeNews:
                         return newsMessageComponent
                     default:
                         return null
@@ -250,6 +251,7 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -267,6 +269,8 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onJumpToMessageRequested: (messageId) => { root.store.messageStore.messageModule.jumpToMessage(messageId) }
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -282,6 +286,7 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -291,14 +296,18 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
 
             onSwitchToRequested: (sectionId, chatId, messageId) => {
                                root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
+
+            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(notification.message.communityId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                          root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                            root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -312,7 +321,9 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
+            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(communityId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
@@ -328,6 +339,7 @@ StatusSectionLayout {
                     communityAccessStore.declineRequestToJoinCommunityRequested(requestId, communityId)
                 }
             }
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
     Component {
@@ -410,6 +422,7 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
 
@@ -588,6 +601,7 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
+            group: root.store.getChatDetails(notification.chatId)
 
             onAcceptActivityCenterNotificationRequested: (notificationId) => {
                                                              root.activityCenterStore.acceptActivityCenterNotification(notificationId) }
@@ -599,6 +613,7 @@ StatusSectionLayout {
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
                                                                  root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
+            onOpenProfilePopup: (contactId) => { Global.openProfilePopup(contactId) }
         }
     }
 

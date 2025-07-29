@@ -6,6 +6,8 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Components
 
+import  AppLayouts.ActivityCenter.controls
+
 import shared
 import shared.panels
 import utils
@@ -13,7 +15,7 @@ import utils
 import "../panels"
 import "../popups"
 
-import AppLayouts.stores
+import AppLayouts.ActivityCenter.helpers
 
 ActivityNotificationBase {
     id: root
@@ -30,19 +32,19 @@ ActivityNotificationBase {
         if(notification)
             switch(notification.notificationType){
 
-            case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
+            case ActivityCenterTypes.ActivityCenterNotificationType.OwnerTokenReceived:
                 return ActivityNotificationTransferOwnership.OwnershipState.Pending
 
-            case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
+            case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipDeclined:
                 return ActivityNotificationTransferOwnership.OwnershipState.Declined
 
-            case ActivityCenterStore.ActivityCenterNotificationType.OwnershipReceived:
+            case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipReceived:
                 return ActivityNotificationTransferOwnership.OwnershipState.Succeeded
 
-            case ActivityCenterStore.ActivityCenterNotificationType.OwnershipFailed:
+            case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipFailed:
                 return ActivityNotificationTransferOwnership.OwnershipState.Failed
 
-            case ActivityCenterStore.ActivityCenterNotificationType.OwnershipLost:
+            case ActivityCenterTypes.ActivityCenterNotificationType.OwnershipLost:
                 return ActivityNotificationTransferOwnership.OwnershipState.NoLongerControlNode
 
             }
@@ -71,56 +73,38 @@ ActivityNotificationBase {
         readonly property string crownAssetName: "crown"
     }
 
-    bodyComponent: RowLayout {
-        spacing: 8
-
-        StatusSmartIdenticon {
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Theme.padding
-            Layout.topMargin: 2
-
-            asset {
-                width: 24
-                height: width
-                name: d.assetName
-                color: d.assetColor
-                bgWidth: 40
-                bgHeight: 40
-                bgColor: d.assetBgColor
-            }
-        }
-
-        ColumnLayout {
-            spacing: 2
-            Layout.alignment: Qt.AlignTop
-            Layout.fillWidth: true
-
-            StatusMessageHeader {
-                Layout.fillWidth: true
-                displayNameLabel.text: d.title
-                timestamp: root.notification.timestamp
-            }
-
-            RowLayout {
-                spacing: Theme.padding
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: d.info
-                    font.italic: true
-                    wrapMode: Text.WordWrap
-                    color: Theme.palette.baseColor1
-                }
-
-                Loader { sourceComponent: d.actionSourceComponent }
-
-            }
+    avatarComponent: StatusSmartIdenticon {
+        asset {
+            width: 24
+            height: width
+            name: d.assetName
+            color: d.assetColor
+            bgWidth: 40
+            bgHeight: 40
+            bgColor: d.assetBgColor
         }
     }
 
-    ctaComponent: undefined
+    bodyComponent: ColumnLayout {
+        spacing: 2
+        width: parent.width
+
+        NotificationBaseHeaderRow {
+            Layout.fillWidth: true
+            primaryText: d.title
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: d.info
+            font.pixelSize: Theme.additionalTextSize
+            wrapMode: Text.Wrap
+            elide: Text.ElideRight
+            color: Theme.palette.directColor1
+        }
+    }
+
+    ctaComponent: Loader { sourceComponent: d.actionSourceComponent }
 
     states: [
         State {
@@ -133,7 +117,7 @@ ActivityNotificationBase {
                 assetColor: root.communityColor
                 assetBgColor: Theme.palette.getColor(d.assetColor, 0.1)
                 assetName: d.crownAssetName
-                actionSourceComponent: ctaFlatBtnComponent
+                actionSourceComponent: ctaLinkBtnComponent
             }
         },
         State {
@@ -159,7 +143,7 @@ ActivityNotificationBase {
                 assetColor: root.communityColor
                 assetBgColor: Theme.palette.getColor(d.assetColor, 0.1)
                 assetName: d.crownAssetName
-                actionSourceComponent: ctaFlatBtnComponent
+                actionSourceComponent: ctaLinkBtnComponent
             }
         },
         State {
@@ -172,7 +156,7 @@ ActivityNotificationBase {
                 assetColor: Theme.palette.dangerColor1
                 assetBgColor: Theme.palette.dangerColor3
                 assetName: "warning"
-                actionSourceComponent: ctaFlatBtnComponent
+                actionSourceComponent: ctaLinkBtnComponent
             }
         },
         State {
@@ -191,14 +175,16 @@ ActivityNotificationBase {
     ]
 
     Component {
-        id: ctaFlatBtnComponent
+        id: ctaLinkBtnComponent
 
-        StatusFlatButton {
-            size: StatusBaseButton.Size.Small
+        StatusLinkText {
             text: d.ctaText
+            color: Theme.palette.primaryColor1
+            font.pixelSize: Theme.additionalTextSize
+            font.weight: Font.Normal
             onClicked: {
                 if((root.type === ActivityNotificationTransferOwnership.OwnershipState.Pending) ||
-                   (root.type === ActivityNotificationTransferOwnership.OwnershipState.Failed))
+                        (root.type === ActivityNotificationTransferOwnership.OwnershipState.Failed))
                     root.finaliseOwnershipClicked()
                 else if(root.type === ActivityNotificationTransferOwnership.OwnershipState.Succeeded)
                     root.navigateToCommunityClicked()
@@ -213,7 +199,6 @@ ActivityNotificationBase {
             text: d.ctaText
             font.pixelSize: Theme.additionalTextSize
             color: Theme.palette.dangerColor1
-            padding: 10
         }
     }
 }

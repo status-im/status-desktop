@@ -9,7 +9,9 @@ import StatusQ.Components
 import shared
 import shared.panels
 import utils
-import AppLayouts.stores
+
+import  AppLayouts.ActivityCenter.controls
+import AppLayouts.ActivityCenter.helpers
 
 
 ActivityNotificationBase {
@@ -23,11 +25,11 @@ ActivityNotificationBase {
     function setType(notification) {
         if (notification) {
             switch (notification.notificationType) {
-                case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationReceived:
-                    return ActivityNotificationNewDevice.InstallationType.Received
+            case ActivityCenterTypes.ActivityCenterNotificationType.NewInstallationReceived:
+                return ActivityNotificationNewDevice.InstallationType.Received
 
-                case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationCreated:
-                    return ActivityNotificationNewDevice.InstallationType.Created
+            case ActivityCenterTypes.ActivityCenterNotificationType.NewInstallationCreated:
+                return ActivityNotificationNewDevice.InstallationType.Created
             }
         }
         return ActivityNotificationNewDevice.InstallationType.Unknown
@@ -52,59 +54,46 @@ ActivityNotificationBase {
         readonly property string desktopAssetName: "desktop"
     }
 
-    bodyComponent: RowLayout {
-        spacing: 8
-
-        StatusSmartIdenticon {
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Theme.padding
-            Layout.topMargin: 2
-
-            asset {
-                width: 24
-                height: width
-                name: d.assetName
-                color: d.assetColor
-                bgWidth: 40
-                bgHeight: 40
-                bgColor: d.assetBgColor
-            }
-        }
-
-        ColumnLayout {
-            spacing: 2
-            Layout.alignment: Qt.AlignTop
-            Layout.fillWidth: true
-
-            StatusMessageHeader {
-                Layout.fillWidth: true
-                displayNameLabel.text: d.title
-                timestamp: root.notification.timestamp
-            }
-
-            RowLayout {
-                spacing: Theme.padding
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: d.info
-                    font.italic: true
-                    wrapMode: Text.WordWrap
-                    color: Theme.palette.baseColor1
-                }
-            }
+    avatarComponent: StatusSmartIdenticon {
+        asset {
+            width: 24
+            height: width
+            name: d.assetName
+            color: d.assetColor
+            bgWidth: 40
+            bgHeight: 40
+            bgColor: d.assetBgColor
         }
     }
 
-    ctaComponent: StatusFlatButton {
-                    size: StatusBaseButton.Size.Small
-                    text: d.ctaText
-                    onClicked: {
-                        root.moreDetailsClicked()
-                    }
-                }
+    bodyComponent:
+        ColumnLayout {
+        spacing: 2
+        width: parent.width
+
+        NotificationBaseHeaderRow {
+            Layout.fillWidth: true
+            primaryText: d.title
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: d.info
+            font.pixelSize: Theme.additionalTextSize
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+            color: Theme.palette.directColor1
+            clip: true
+        }
+    }
+
+    ctaComponent: StatusLinkText {
+        text: d.ctaText
+        color: Theme.palette.primaryColor1
+        font.pixelSize: Theme.additionalTextSize
+        font.weight: Font.Normal
+        onClicked: root.moreDetailsClicked()
+    }
 
     states: [
         State {

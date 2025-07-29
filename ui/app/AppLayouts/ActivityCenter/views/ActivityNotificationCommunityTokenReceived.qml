@@ -9,6 +9,7 @@ import StatusQ.Components
 import utils
 
 import AppLayouts.Wallet
+import  AppLayouts.ActivityCenter.controls
 
 ActivityNotificationBase {
     id: root
@@ -65,52 +66,40 @@ ActivityNotificationBase {
         }
     }
 
-    bodyComponent: RowLayout {
-        spacing: 8
+    avatarComponent: StatusRoundedImage {
+        radius: root.isAssetType ? width / 2 : 8
+        width: 44
+        height: width
+        image.source: root.tokenImage
+        showLoadingIndicator: false
+        image.fillMode: Image.PreserveAspectCrop
+    }
 
-        StatusRoundedImage {
-            Layout.preferredWidth: 44
-            Layout.preferredHeight: 44
-            Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Theme.padding
-            Layout.topMargin: 2
+    bodyComponent: ColumnLayout {
+        spacing: 2
+        Layout.alignment: Qt.AlignTop
+        Layout.fillWidth: true
 
-            radius: root.isAssetType ? width / 2 : 8
-            width: 44
-            height: width
-            image.source: root.tokenImage
-            showLoadingIndicator: false
-            image.fillMode: Image.PreserveAspectCrop
+        NotificationBaseHeaderRow {
+            Layout.fillWidth: true
+            primaryText: d.title
         }
 
-        ColumnLayout {
-            spacing: 2
-            Layout.alignment: Qt.AlignTop
+        StatusBaseText {
             Layout.fillWidth: true
-
-            StatusMessageHeader {
-                Layout.fillWidth: true
-                displayNameLabel.text: d.title
-                timestamp: root.notification.timestamp
-            }
-
-            RowLayout {
-                spacing: Theme.padding
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: d.info
-                    font.italic: true
-                    wrapMode: Text.WordWrap
-                    color: Theme.palette.baseColor1
-                }
-            }
+            text: d.info
+            font.pixelSize: Theme.additionalTextSize
+            wrapMode: Text.WordWrap
+            color: Theme.palette.directColor1
+            clip: true
         }
     }
 
-    ctaComponent: StatusFlatButton {
-        size: StatusBaseButton.Size.Small
+    ctaComponent: StatusLinkText {
         text: d.ctaText
+        color: Theme.palette.primaryColor1
+        font.pixelSize: Theme.additionalTextSize
+        font.weight: Font.Normal
         onClicked: {
             root.closeActivityCenter()
             if(root.isFirstTokenReceived) {
@@ -128,7 +117,7 @@ ActivityNotificationBase {
                                                      WalletLayout.LeftPanelSelection.Address,
                                                      WalletLayout.RightPanelSelection.Activity,
                                                      {address: root.tokenData.walletAddress,
-                                                     txHash: root.txHash})
+                                                         txHash: root.txHash})
             }
         }
     }

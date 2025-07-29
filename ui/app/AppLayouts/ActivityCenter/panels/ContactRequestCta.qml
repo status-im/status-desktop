@@ -26,10 +26,9 @@ Item {
 
     StatusBaseText {
         id: textItem
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.smallPadding
+        anchors.left: parent.left
         visible: !buttons.visible
+        font.pixelSize: Theme.additionalTextSize
         text: {
             if (root.accepted) {
                 return qsTr("Accepted")

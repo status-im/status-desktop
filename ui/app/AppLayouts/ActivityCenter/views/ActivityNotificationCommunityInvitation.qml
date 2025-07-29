@@ -14,21 +14,20 @@ import "../controls"
 ActivityNotificationMessage {
     id: root
 
+    required property var community
+
     signal switchToRequested(string sectionId, string chatId, string messageId)
+    signal setActiveCommunityRequested(string communityId)
 
     badgeComponent: CommunityBadge {
         id: communityBadge
-
-        readonly property var community: notification ?
-                                    root.store.getCommunityDetailsAsJson(notification.message.communityId) :
-                                    null
 
         communityName: community ? community.name : ""
         communityImage: community ? community.image : ""
         communityColor: community ? community.color : "black"
 
         onCommunityNameClicked: {
-            root.store.setActiveCommunity(notification.message.communityId)
+            root.setActiveCommunityRequested(notification.message.communityId)
             root.closeActivityCenter()
         }
         onChannelNameClicked: {

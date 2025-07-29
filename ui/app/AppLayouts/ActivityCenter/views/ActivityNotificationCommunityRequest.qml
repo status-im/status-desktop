@@ -11,7 +11,7 @@ import shared.controls
 import utils
 
 import "../controls"
-import AppLayouts.stores
+import AppLayouts.ActivityCenter.helpers
 
 ActivityNotificationBase {
     id: root
@@ -20,76 +20,71 @@ ActivityNotificationBase {
 
     signal setActiveCommunity(string communityId)
 
-    bodyComponent: RowLayout {
+    QtObject {
+        id: d
+
+        property color stateTextColor: Theme.palette.directColor1
+        property string stateText: ""
+    }
+
+    avatarComponent: StatusSmartIdenticon {
+        name: community ? community.name : ""
+        asset.color: community ? community.color : "black"
+        asset.name: community ? community.image : ""
+        asset.width: 40
+        asset.height: 40
+        asset.letterSize: width / 2.4
+        asset.isImage: true
+    }
+
+    bodyComponent: ColumnLayout {
         width: parent.width
-        height: 50
-
-        StatusSmartIdenticon {
-            id: identicon
-            name: community ? community.name : ""
-            asset.color: community ? community.color : "black"
-            asset.name: community ? community.image : ""
-            asset.width: 40
-            asset.height: 40
-            asset.letterSize: width / 2.4
-            asset.isImage: true
-            Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: Theme.padding
-        }
-
-        StatusBaseText {
-            text: qsTr("Request to join")
-            color: Theme.palette.baseColor1
-            font.weight: Font.Medium
-            font.pixelSize: Theme.additionalTextSize
-            Layout.alignment: Qt.AlignVCenter
-        }
+        spacing: Theme.halfPadding
 
         CommunityBadge {
+            Layout.maximumWidth: parent.width
             communityName: community ? community.name : ""
             communityImage: community ? community.image : ""
             communityColor: community ? community.color : "black"
+            communityLinkTextColor: Theme.palette.directColor1
+            communityLinkTextPixelSize: Theme.additionalTextSize
+            communityLinkTextWeight: Font.Medium
             onCommunityNameClicked: root.setActiveCommunity(notification.communityId)
-            Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: 190
         }
 
         StatusBaseText {
-            text: {
-                if (!notification)
-                    return ""
-                if (notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Pending)
-                    return qsTr("pending")
-                if (notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted)
-                    return qsTr("accepted")
-                if (notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Declined)
-                    return qsTr("declined")
-                return ""
-            }
-            color: Theme.palette.baseColor1
-            font.weight: Font.Medium
+            text: qsTr("Request to join <font color='%1'>%2</font>").arg(d.stateTextColor).arg(d.stateText)
+            color: Theme.palette.directColor1
             font.pixelSize: Theme.additionalTextSize
-            Layout.alignment: Qt.AlignVCenter
-            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
         }
     }
 
-    ctaComponent: notification && notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted ?
-                        visitComponent : null
-
-    Component {
-        id: visitComponent
-
-        StyledTextEdit {
-            text: Utils.getLinkStyle(qsTr("Visit Community"), hoveredLink, Theme.palette.primaryColor1)
-            readOnly: true
-            textFormat: Text.RichText
-            color: Theme.palette.primaryColor1
-            font.pixelSize: Theme.additionalTextSize
-            onLinkActivated: {
-                root.setActiveCommunity(notification.communityId)
-                root.closeActivityCenter()
+    states: [
+        State {
+            when: notification.membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Pending
+            PropertyChanges {
+                target: d
+                stateText: qsTr("pending")
+                stateTextColor: Theme.palette.baseColor1
+            }
+        },
+        State {
+            when: notification.membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Accepted
+            PropertyChanges {
+                target: d
+                stateText: qsTr("accepted")
+                stateTextColor: Theme.palette.successColor1
+            }
+        },
+        State {
+            when: notification.membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Declined
+            PropertyChanges {
+                target: d
+                stateText: qsTr("declined")
+                stateTextColor: Theme.palette.dangerColor1
             }
         }
-    }
+    ]
 }

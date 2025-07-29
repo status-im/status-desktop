@@ -19,40 +19,37 @@ ActivityNotificationBase {
 
     signal setActiveCommunity(string communityId)
 
-    bodyComponent: RowLayout {
+    avatarComponent: StatusSmartIdenticon {
+        name: community ? community.name : ""
+        asset.name: community ? community.image : ""
+        asset.color: community ? community.color : "black"
+        asset.width: 40
+        asset.height: 40
+        asset.letterSize: width / 2.4
+        asset.isImage: true
+    }
+
+    bodyComponent: ColumnLayout {
+        spacing: Theme.halfPadding
         width: parent.width
-        height: 50
-
-        StatusSmartIdenticon {
-            id: identicon
-            name: community ? community.name : ""
-            asset.name: community ? community.image : ""
-            asset.color: community ? community.color : "black"
-            asset.width: 40
-            asset.height: 40
-            asset.letterSize: width / 2.4
-            asset.isImage: true
-            Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: Theme.padding
-        }
-
-        StatusBaseText {
-            text: qsTr("You were kicked from")
-            font.pixelSize: Theme.primaryTextFontSize
-            Layout.alignment: Qt.AlignVCenter
-        }
+        clip: true
 
         CommunityBadge {
+            Layout.maximumWidth: parent.width
             communityName: community ? community.name : ""
             communityImage: community ? community.image : ""
             communityColor: community ? community.color : "black"
+            communityLinkTextColor: Theme.palette.directColor1
+            communityLinkTextPixelSize: Theme.additionalTextSize
+            communityLinkTextWeight: Font.Medium
             onCommunityNameClicked: root.setActiveCommunity(notification.communityId)
-            Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: 190
         }
 
-        Item {
-            Layout.fillWidth: true
+        StatusBaseText {
+            text: qsTr("You were <font color='%1'>kicked</font> from community").arg(Theme.palette.dangerColor1)
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+            font.pixelSize: Theme.additionalTextSize
         }
     }
 }

@@ -10,7 +10,8 @@ import shared
 import shared.panels
 import utils
 
-import AppLayouts.stores
+import  AppLayouts.ActivityCenter.controls
+import AppLayouts.ActivityCenter.helpers
 
 
 ActivityNotificationBase {
@@ -23,14 +24,14 @@ ActivityNotificationBase {
     function setType(notification) {
         if (notification) {
             switch (notification.notificationType) {
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFetching:
-                    return ActivityNotificationProfileFetching.FetchingState.Fetching
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingSuccess:
-                    return ActivityNotificationProfileFetching.FetchingState.Success
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingPartialFailure:
-                    return ActivityNotificationProfileFetching.FetchingState.PartialFailure
-                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFailure:
-                    return ActivityNotificationProfileFetching.FetchingState.Failure
+            case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingFetching:
+                return ActivityNotificationProfileFetching.FetchingState.Fetching
+            case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingSuccess:
+                return ActivityNotificationProfileFetching.FetchingState.Success
+            case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingPartialFailure:
+                return ActivityNotificationProfileFetching.FetchingState.PartialFailure
+            case ActivityCenterTypes.ActivityCenterNotificationType.BackupSyncingFailure:
+                return ActivityNotificationProfileFetching.FetchingState.Failure
             }
         }
         return ActivityNotificationProfileFetching.FetchingState.Unknown
@@ -54,63 +55,47 @@ ActivityNotificationBase {
         property string badgeColor: ""
     }
 
-    bodyComponent: RowLayout {
-        spacing: 8
-
-        StatusSmartIdenticon {
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Theme.padding
-            Layout.topMargin: 2
-
-            asset {
-                width: 24
-                height: width
-                name: "download"
-                color: Theme.palette.primaryColor1
-                bgWidth: 40
-                bgHeight: 40
-                bgColor: Theme.palette.primaryColor3
-            }
-
-            bridgeBadge.visible: true
-            bridgeBadge.border.width: 2
-            bridgeBadge.color: d.badgeColor
-            bridgeBadge.image.source: Theme.svg(d.badgeName)
+    avatarComponent: StatusSmartIdenticon {
+        asset {
+            width: 24
+            height: width
+            name: "download"
+            color: Theme.palette.primaryColor1
+            bgWidth: 40
+            bgHeight: 40
+            bgColor: Theme.palette.primaryColor3
         }
 
-        ColumnLayout {
-            spacing: 2
-            Layout.alignment: Qt.AlignTop
+        bridgeBadge.visible: true
+        bridgeBadge.border.width: 2
+        bridgeBadge.color: d.badgeColor
+        bridgeBadge.image.source: Theme.svg(d.badgeName)
+    }
+    bodyComponent: ColumnLayout {
+        spacing: Theme.halfPadding
+        width: parent.width
+
+        NotificationBaseHeaderRow {
             Layout.fillWidth: true
+            Layout.maximumWidth: parent.width
+            primaryText: d.title
+        }
 
-            StatusMessageHeader {
-                Layout.fillWidth: true
-                displayNameLabel.text: d.title
-                timestamp: root.notification.timestamp
-            }
-
-            RowLayout {
-                spacing: Theme.padding
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: d.info
-                    font.italic: true
-                    wrapMode: Text.WordWrap
-                    color: Theme.palette.baseColor1
-                }
-            }
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: d.info
+            font.pixelSize: Theme.additionalTextSize
+            wrapMode: Text.WordWrap
+            color: Theme.palette.directColor1
         }
     }
 
-    ctaComponent: StatusFlatButton {
-        size: StatusBaseButton.Size.Small
+    ctaComponent: StatusLinkText {
         text: d.ctaText
-        onClicked: {
-            root.tryAgainClicked()
-        }
+        color: Theme.palette.primaryColor1
+        font.pixelSize: Theme.additionalTextSize
+        font.weight: Font.Normal
+        onClicked: root.tryAgainClicked()
     }
 
     states: [

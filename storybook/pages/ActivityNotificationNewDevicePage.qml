@@ -2,73 +2,59 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import StatusQ.Core.Theme
+
 import AppLayouts.ActivityCenter.views
+import AppLayouts.ActivityCenter.helpers
 
 import Storybook
 
-SplitView {
+ActivityNotificationBaseLayout {
     id: root
 
-    orientation: Qt.Vertical
+    property string accountName: "bob.eth"
 
-    Logs { id: logs }
+    showBaseEditorFields: false
+    communityEditorActive: false
+    contactEditorActive: false
+    activityNotificationComponent: ActivityNotificationNewDevice {
+        type: setType(notification)
+        accountName: root.accountName
+        notification: baseEditor.notificationBaseMock
 
-    QtObject {
-        id: notificationMock
-
-        property string id: "1"
-        property string communityId: "1"
-        property string sectionId: "1"
-        property int notificationType: 1
-        property int timestamp: Date.now()
-        property int previousTimestamp: 0
-        property bool read: false
-        property bool dismissed: false
-        property bool accepted: false
+        onMoreDetailsClicked: logs.logEvent("ActivityNotificationNewDevice::onMoreDetailsClicked")
     }
 
-    Item {
-        SplitView.fillHeight: true
-        SplitView.fillWidth: true
+    additionalEditorComponent: ColumnLayout {
+        RowLayout {
+            Label {
+                Layout.topMargin: 8
+                text: "Account name:"
+                font.weight: Font.Bold
+            }
 
-        ActivityNotificationNewDevice {
-            id: notification
+            TextField {
+                id: accountNameText
+                Layout.fillWidth: true
+                text: "bob.eth"
+                onTextChanged: root.accountName = text
 
-            anchors.centerIn: parent
-            width: parent.width - 50
-            height: implicitHeight
-
-            type: ActivityNotificationNewDevice.InstallationType.Received
-            accountName: "bob.eth"
-            notification: notificationMock
-
-            onMoreDetailsClicked: logs.logEvent("ActivityNotificationNewDevice::onMoreDetailsClicked")
-        }
-
-    }
-
-    LogsAndControlsPanel {
-        SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 160
-
-        logsView.logText: logs.logText
-
-        Column {
-            Row {
-                RadioButton {
-                    text: "Received"
-                    checked: true
-                    onCheckedChanged: if(checked) notification.type = ActivityNotificationNewDevice.InstallationType.Received
-                }
-
-                RadioButton {
-                    text: "Created"
-                    onCheckedChanged: if(checked) notification.type = ActivityNotificationNewDevice.InstallationType.Created
-                }
             }
         }
+        Row {
+            RadioButton {
+                text: "Received"
+                checked: true
+                onCheckedChanged: if(checked)  baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.NewInstallationReceived
+            }
+
+            RadioButton {
+                text: "Created"
+                onCheckedChanged: if(checked)  baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.NewInstallationCreated
+            }
+        }
+        Component.onCompleted: baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.NewInstallationReceived
     }
 }
-
 // category: Activity Center
-// https://www.figma.com/design/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=40765-355811&m=dev
+// status: good
