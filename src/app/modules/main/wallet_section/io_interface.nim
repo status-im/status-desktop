@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import ../../shared_models/currency_amount
 export CurrencyAmount
 

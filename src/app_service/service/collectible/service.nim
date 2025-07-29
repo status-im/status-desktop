@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils
+import nimqml, json, sequtils, chronicles, strutils
 
 import backend/collectibles as backend
 

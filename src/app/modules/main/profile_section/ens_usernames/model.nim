@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 
 type Item* = object
   ensUsername*: string

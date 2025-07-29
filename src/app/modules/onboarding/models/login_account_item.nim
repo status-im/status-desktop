@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import sequtils, sugar
 import ../../shared_models/[color_hash_item, color_hash_model]

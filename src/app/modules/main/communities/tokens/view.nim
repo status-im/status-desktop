@@ -1,4 +1,4 @@
-import NimQml, json, strutils, sequtils
+import nimqml, json, strutils, sequtils
 
 import ./io_interface as community_tokens_module_interface
 import app/modules/shared_models/currency_amount

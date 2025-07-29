@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles
+import nimqml, tables, chronicles
 
 import app/core/eventemitter
 import app/core/signals/types

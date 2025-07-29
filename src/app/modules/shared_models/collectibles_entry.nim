@@ -1,4 +1,4 @@
-import NimQml, json, stew/shims/strformat, sequtils, strutils, stint, strutils
+import nimqml, json, stew/shims/strformat, sequtils, strutils, stint, strutils
 import options
 
 import backend/collectibles as backend

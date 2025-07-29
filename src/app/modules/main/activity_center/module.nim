@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils
+import nimqml, tables, json, sequtils
 
 import ./io_interface, ./view, ./controller, ./token_data_item
 import ../io_interface as delegate_interface

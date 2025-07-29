@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ../../../shared_modules/keycard_popup/models/keycard_model
 

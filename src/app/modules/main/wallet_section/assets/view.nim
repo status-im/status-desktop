@@ -1,4 +1,4 @@
-import NimQml, json, strutils
+import nimqml, json, strutils
 
 import ./io_interface
 import ./grouped_account_assets_model as grouped_account_assets_model

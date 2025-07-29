@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, sequtils, chronicles
+import nimqml, tables, strutils, sequtils, chronicles
 
 import io_interface
 import view, controller

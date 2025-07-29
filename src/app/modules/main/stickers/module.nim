@@ -1,4 +1,4 @@
-import NimQml, Tables, sugar, sequtils
+import nimqml, tables, sugar, sequtils
 import ./io_interface, ./view, ./controller, ./item, ./models/sticker_pack_list
 import ../io_interface as delegate_interface
 import app/global/global_singleton

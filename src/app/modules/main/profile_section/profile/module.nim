@@ -1,4 +1,4 @@
-import NimQml, chronicles, strutils
+import nimqml, chronicles, strutils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface

@@ -1,4 +1,4 @@
-import Tables, NimQml
+import tables, nimqml
 
 import ../../../../app_service/service/accounts/dto/generated_accounts
 import ../../../../app_service/service/wallet_account/dto/derived_address_dto

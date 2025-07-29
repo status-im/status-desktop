@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import ../../../shared_models/message_model as pinned_msg_model
 import ../item as chat_item
 import ../../../../../app_service/common/types

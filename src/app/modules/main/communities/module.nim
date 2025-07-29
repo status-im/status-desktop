@@ -1,4 +1,4 @@
-import NimQml, strutils, sequtils, sugar, tables, stint, chronicles, json
+import nimqml, strutils, sequtils, sugar, tables, stint, chronicles, json
 
 import ./io_interface
 import ../io_interface as delegate_interface

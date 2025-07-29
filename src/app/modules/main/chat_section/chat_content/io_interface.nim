@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ../item as chat_item
 import app_service/service/message/dto/pinned_message

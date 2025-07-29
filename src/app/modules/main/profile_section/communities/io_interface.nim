@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

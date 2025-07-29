@@ -1,4 +1,4 @@
-import NimQml, json, chronicles
+import nimqml, json, chronicles
 
 import ../settings/service as settings_service
 import ../network/types

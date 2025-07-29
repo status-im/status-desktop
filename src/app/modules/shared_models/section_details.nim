@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import section_item
 
 QtObject:

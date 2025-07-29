@@ -1,4 +1,4 @@
-import NimQml, json
+import nimqml, json
 
 import ./activity/controller as activityc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc

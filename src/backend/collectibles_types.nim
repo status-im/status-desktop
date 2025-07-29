@@ -1,5 +1,5 @@
 import json, stew/shims/strformat, app_service/common/safe_json_serialization
-import stint, Tables, options, strutils
+import stint, tables, options, strutils
 import community_tokens_types
 
 include app_service/common/json_utils

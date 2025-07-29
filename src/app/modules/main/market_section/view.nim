@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import io_interface, market_leaderboard_model
 

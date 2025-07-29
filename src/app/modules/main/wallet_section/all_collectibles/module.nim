@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ./io_interface, ./view
 import  ./controller as all_collectibles_controller

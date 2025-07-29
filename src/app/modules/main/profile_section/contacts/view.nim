@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ../../../shared_models/[user_model]
 import ./io_interface

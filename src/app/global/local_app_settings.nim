@@ -1,4 +1,4 @@
-import NimQml, strutils, os
+import nimqml, strutils, os
 
 import constants
 

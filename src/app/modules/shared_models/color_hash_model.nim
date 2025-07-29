@@ -1,4 +1,4 @@
-import NimQml, Tables, json
+import nimqml, tables, json
 
 import color_hash_item
 

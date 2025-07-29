@@ -1,4 +1,4 @@
-import NimQml, json, strutils, sequtils
+import nimqml, json, strutils, sequtils
 
 import ./io_interface
 

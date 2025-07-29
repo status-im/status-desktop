@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import nimqml, chronicles
 
 import ../../../app/core/eventemitter
 

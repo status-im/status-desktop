@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, system, chronicles, uuids
+import nimqml, json, sequtils, system, chronicles, uuids
 
 import std/os
 

@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 import curated_community_item
 import ../../../shared_models/token_permission_item
 

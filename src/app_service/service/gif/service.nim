@@ -4,7 +4,7 @@ import os
 import uri
 import chronicles
 import sequtils
-import NimQml
+import nimqml
 
 import ../settings/service as settings_service
 import ../../../app/core/eventemitter

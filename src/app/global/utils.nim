@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, stew/shims/strformat, re, stint, httpclient, os
+import nimqml, strutils, uri, stew/shims/strformat, re, stint, httpclient, os
 import stew/byteutils
 import ./utils/qrcodegen
 

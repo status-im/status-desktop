@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 import token_list_item
 
 type

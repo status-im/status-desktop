@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, strutils, tables
+import nimqml, json, sequtils, strutils, tables
 
 import app_service/service/wallet_account/service as wallet_account_service
 import app/modules/shared_models/currency_amount

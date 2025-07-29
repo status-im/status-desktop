@@ -1,4 +1,4 @@
-import json, stew/shims/strformat, NimQml, chronicles
+import json, stew/shims/strformat, nimqml, chronicles
 include ../../../common/json_utils
 
 QtObject:

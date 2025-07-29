@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import item
 import ../../../../app_service/common/types
 

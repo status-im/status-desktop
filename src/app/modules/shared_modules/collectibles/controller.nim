@@ -1,5 +1,5 @@
-import NimQml, std/json, sequtils, sugar, strutils
-import stint, chronicles, Tables
+import nimqml, std/json, sequtils, sugar, strutils
+import stint, chronicles, tables
 
 import app/modules/shared_models/collectibles_entry
 import app/modules/shared_models/collectibles_model

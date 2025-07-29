@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, tables, sequtils
+import nimqml, json, chronicles, tables, sequtils
 
 import ../settings/service as settings_service
 import app/global/global_singleton

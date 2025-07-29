@@ -1,4 +1,4 @@
-import NimQml, Tables, stew/shims/strformat, json, sequtils, system
+import nimqml, tables, stew/shims/strformat, json, sequtils, system
 import ../../../../app_service/common/types
 import ../../../../app_service/service/chat/dto/chat
 import item

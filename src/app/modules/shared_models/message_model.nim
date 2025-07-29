@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sets, algorithm, sequtils, strutils, stew/shims/strformat, sugar
+import nimqml, tables, json, sets, algorithm, sequtils, strutils, stew/shims/strformat, sugar
 
 import message_item, message_reaction_item, message_transaction_parameters_item, contacts_utils
 

@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils
+import nimqml, tables, strutils
 
 import location_menu_item, location_menu_sub_item
 

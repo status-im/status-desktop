@@ -1,4 +1,4 @@
-import NimQml, Tables, json, os, chronicles, strutils, random, app_service/common/safe_json_serialization
+import nimqml, tables, json, os, chronicles, strutils, random, app_service/common/safe_json_serialization
 import app/global/feature_flags
 import app/global/global_singleton
 import app/core/eventemitter

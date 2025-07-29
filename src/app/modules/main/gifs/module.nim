@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller

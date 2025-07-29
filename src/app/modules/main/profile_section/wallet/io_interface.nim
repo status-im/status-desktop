@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import app/modules/shared_modules/keypair_import/module as keypair_import_module
 import app_service/service/devices/service as devices_service
 

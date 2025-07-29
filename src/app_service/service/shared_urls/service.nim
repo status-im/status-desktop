@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, strutils
+import nimqml, json, chronicles, strutils
 
 import ../../../backend/general as status_general
 import ../../../app/core/eventemitter

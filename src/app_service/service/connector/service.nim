@@ -1,4 +1,4 @@
-import NimQml, chronicles, json
+import nimqml, chronicles, json
 
 import backend/connector as status_go
 

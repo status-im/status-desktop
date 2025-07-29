@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, strutils, stint, chronicles
+import nimqml, tables, json, sequtils, strutils, stint, chronicles
 
 import ./io_interface, ./path_model, ./path_item
 import app_service/common/utils as common_utils

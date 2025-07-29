@@ -1,4 +1,4 @@
-import NimQml, json
+import nimqml, json
 import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
 import ../../../../../../app_service/service/chat/dto/chat

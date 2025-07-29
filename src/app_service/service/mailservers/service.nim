@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, strutils, system, uuids, chronicles, os
+import nimqml, tables, json, sequtils, strutils, system, uuids, chronicles, os
 
 import ./dto/mailserver as mailserver_dto
 import ../../../app/core/signals/types

@@ -1,4 +1,4 @@
-import Tables
+import tables
 import ./item
 
 import app_service/service/stickers/service as stickers_service

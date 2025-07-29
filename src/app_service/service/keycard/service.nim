@@ -1,4 +1,4 @@
-import NimQml, chronicles, os
+import nimqml, chronicles, os
 import app/global/feature_flags
 import constants
 import app/core/tasks/[qt, threadpool]

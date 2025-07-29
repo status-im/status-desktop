@@ -1,4 +1,4 @@
-import NimQml, tables, strutils, sequtils, json
+import nimqml, tables, strutils, sequtils, json
 
 type
   ShowcaseContactGenericItem* = object of RootObj

@@ -1,4 +1,4 @@
-import NimQml, os
+import nimqml, os
 
 import ../../constants
 

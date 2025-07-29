@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import io_interface
 import internal/[state, state_wrapper]
 import app/modules/shared_models/[keypair_model, derived_address_model]

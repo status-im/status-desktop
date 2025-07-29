@@ -1,4 +1,5 @@
-import json, times, stint, strutils, sugar, os, re, chronicles
+import std/[json, sugar, strutils]
+import stint, os, re, chronicles
 
 import nimcrypto
 import account_constants
@@ -83,12 +84,10 @@ proc intersectSeqs*[T](seq1, seq2: seq[T]): seq[T] =
       result.add(item)
 
 proc stringToUint256*(value: string): Uint256 =
-  var parsedValue = stint.u256(0)
   try:
-    parsedValue = value.parse(Uint256)
-  except Exception as e:
-    discard
-  return parsedValue
+    value.parse(Uint256)
+  except:
+    stint.u256(0)
 
 proc createHash*(signature: string): string =
   let signatureHex = if signature.startsWith("0x"): signature[2..^1] else: signature

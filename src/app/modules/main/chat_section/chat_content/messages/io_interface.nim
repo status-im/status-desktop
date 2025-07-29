@@ -1,4 +1,4 @@
-import NimQml, uuids
+import nimqml, uuids
 
 import ../../../../../../app_service/service/message/dto/[message, reaction, pinned_message]
 import ../../../../../../app_service/service/community/dto/community

@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, sets, stint
+import nimqml, tables, json, sequtils, chronicles, strutils, sets, stint
 
 import app/core/[main]
 import app/core/tasks/[qt, threadpool]

@@ -1,4 +1,4 @@
-import NimQml, strutils, chronicles
+import nimqml, strutils, chronicles
 import ../eventemitter
 
 import ../../global/app_signals

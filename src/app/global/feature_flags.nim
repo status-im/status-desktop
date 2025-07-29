@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import os, macros, strutils
 
 proc boolToEnv*(defaultValue: bool): string =

@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import chronicles, os, stew/shims/strformat, re
 
 import ../../../constants as main_constants

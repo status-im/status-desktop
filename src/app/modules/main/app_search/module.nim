@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import json, strutils, chronicles, sequtils, tables, std/algorithm
 import io_interface
 import ../io_interface as delegate_interface

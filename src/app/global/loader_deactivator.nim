@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import std/deques
 
 const MAX_CHATS_IN_MEMORY = 5

@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import chronicles, times, json
 
 import app/core/eventemitter

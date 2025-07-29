@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import ../../../../../app_service/service/contacts/dto/contacts as contacts
 import ../../../../../app_service/service/contacts/dto/status_update
 import app_service/common/types

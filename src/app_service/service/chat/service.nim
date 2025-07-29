@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, os, strutils, uuids, base64
+import nimqml, tables, json, sequtils, chronicles, os, strutils, uuids, base64
 import std/[times, os]
 
 import app/core/tasks/[qt, threadpool]

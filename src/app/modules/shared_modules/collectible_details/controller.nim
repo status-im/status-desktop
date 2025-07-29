@@ -1,4 +1,4 @@
-import NimQml, chronicles, std/json, sequtils, strutils
+import nimqml, chronicles, std/json, sequtils, strutils
 import stint
 
 import app/modules/shared_models/collectibles_entry

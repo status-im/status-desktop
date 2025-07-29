@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, chronicles
+import nimqml, sequtils, strutils, chronicles
 
 import ./io_interface, ./sources_of_tokens_model, ./flat_tokens_model, ./token_by_symbol_model
 

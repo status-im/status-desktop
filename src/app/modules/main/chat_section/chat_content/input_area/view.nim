@@ -1,4 +1,4 @@
-import NimQml, sets
+import nimqml, sets
 import ./io_interface
 import ./preserved_properties
 import ./urls_model

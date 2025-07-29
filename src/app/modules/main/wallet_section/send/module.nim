@@ -1,4 +1,4 @@
-import tables, NimQml, sequtils, sugar, stint, strutils, chronicles
+import tables, nimqml, sequtils, sugar, stint, strutils, chronicles
 
 import ./io_interface, ./view, ./controller, ./network_route_item, ./transaction_routes, ./suggested_route_item, ./suggested_route_model, ./gas_estimate_item, ./gas_fees_item, ./network_route_model
 import ../io_interface as delegate_interface

@@ -1,4 +1,4 @@
-import NimQml, tables
+import nimqml, tables
 
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../../app_service/service/message/dto/link_preview

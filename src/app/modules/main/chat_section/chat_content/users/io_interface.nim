@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/dto/[message]

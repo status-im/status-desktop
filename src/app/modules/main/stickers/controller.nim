@@ -1,4 +1,4 @@
-import Tables, uuids, stint
+import tables, uuids, stint
 
 import ./io_interface
 

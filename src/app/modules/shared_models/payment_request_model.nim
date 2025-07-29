@@ -1,4 +1,4 @@
-import NimQml, stew/shims/strformat, tables, sequtils
+import nimqml, stew/shims/strformat, tables, sequtils
 import ../../../app_service/service/message/dto/payment_request
 
 type

@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import nimqml, sequtils, sugar
 import io_interface
 import view, controller
 import ../../../../shared_models/[member_model, member_item]

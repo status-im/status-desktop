@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, strutils
+import nimqml, json, sequtils, strutils
 import model as chats_model
 import item, active_item
 import ../../shared_models/user_model as user_model

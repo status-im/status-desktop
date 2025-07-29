@@ -1,4 +1,4 @@
-import stint, Tables
+import stint, tables
 
 import backend/collectibles
 import app/core/tasks/qt

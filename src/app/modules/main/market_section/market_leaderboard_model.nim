@@ -1,4 +1,4 @@
-import NimQml, Tables, options
+import nimqml, tables, options
 
 import app_service/service/market/service as market_service
 

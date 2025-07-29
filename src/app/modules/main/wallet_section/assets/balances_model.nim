@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, sequtils, stint
+import nimqml, tables, strutils, sequtils, stint
 
 import ./io_interface
 

@@ -1,4 +1,4 @@
-import NimQml, json, strutils, chronicles
+import nimqml, json, strutils, chronicles
 
 
 import ../settings/service as settings_service

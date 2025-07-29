@@ -1,4 +1,4 @@
-import NimQml, sequtils, chronicles
+import nimqml, sequtils, chronicles
 
 import app_service/service/general/service as general_service
 import app_service/service/keychain/service as keychain_service

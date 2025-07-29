@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, times
+import nimqml, json, chronicles, times
 include ../../common/json_utils
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/global/global_singleton

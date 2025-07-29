@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ./io_interface
 from app/modules/shared_modules/keypair_import/module import ImportKeypairModuleMode

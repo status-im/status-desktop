@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ./gas_fees_item
 

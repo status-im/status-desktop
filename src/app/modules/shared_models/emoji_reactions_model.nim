@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 import emoji_reactions_item
 
 type

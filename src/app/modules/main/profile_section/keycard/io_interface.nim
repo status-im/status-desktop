@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import app_service/service/wallet_account/dto/keypair_dto
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
