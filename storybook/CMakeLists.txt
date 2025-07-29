@@ -139,5 +139,5 @@ set(QML_IMPORT_PATH "${QML_DIRS}" CACHE STRING "Qt Creator extra QML import path
 if (APPLE)
   find_library(AppKit AppKit)
   find_library(Foundation Foundation)
-  target_link_libraries(${PROJECT_LIB} PRIVATE ${AppKit} ${Foundation})
+  target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation})
 endif()
