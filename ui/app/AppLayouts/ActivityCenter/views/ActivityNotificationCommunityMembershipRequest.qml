@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Components
+import StatusQ.Controls
 
 import shared
 import shared.panels
@@ -12,46 +13,105 @@ import shared.views.chat
 
 import "../controls"
 import "../panels"
-import AppLayouts.stores
+import AppLayouts.ActivityCenter.helpers
 
 ActivityNotificationMessage {
     id: root
+
+    required property var community
+
 
     // Community access requests:
     signal acceptRequestToJoinCommunityRequested(string requestId, string communityId)
     signal declineRequestToJoinCommunityRequested(string requestId, string communityId)
 
+    signal setActiveCommunityRequested(string communityId)
+
+
+    QtObject {
+        id: d
+
+        readonly property int membershipStatus: notification && notification.membershipStatus ? notification.membershipStatus : ActivityCenterTypes.ActivityCenterMembershipStatus.None
+        readonly property bool pending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Pending
+        readonly property bool accepted: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Accepted
+        readonly property bool declined: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.Declined
+        readonly property bool acceptedPending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.AcceptedPending
+        readonly property bool declinedPending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.DeclinedPending
+
+        property color stateColorText: {
+            if (d.accepted) {
+                return Theme.palette.successColor1
+            }
+            if (d.declined) {
+                return Theme.palette.dangerColor1
+            }
+            return Theme.palette.baseColor1
+        }
+        property string stateText: {
+            if (d.accepted) {
+                return qsTr("accepted")
+            }
+            if (d.declined) {
+                return qsTr("declined")
+            }
+            if (d.acceptedPending) {
+                return qsTr("accepted pending")
+            }
+            if (d.declinedPending) {
+                return qsTr("declined pending")
+            }
+            return ""
+        }
+    }
+
     contactDetails: notification ? Utils.getContactDetailsAsJson(notification.author, false) : null
 
-    messageDetails.messageText: qsTr("Wants to join")
+    messageDetails.messageText: qsTr("Requested membership in your community <font color='%1'>%2</font>").arg(d.stateColorText).arg(d.stateText)
     messageDetails.sender.profileImage.name: contactDetails ? contactDetails.thumbnailImage : ""
     messageDetails.sender.profileImage.assetSettings.isImage: true
     messageDetails.sender.profileImage.pubkey: notification ? notification.author : ""
     messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification ? notification.author : "")
     messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification ? notification.author : "", contactDetails && contactDetails.ensVerified)
 
-    messageBadgeComponent: CommunityBadge {
-        readonly property var community: notification ?
-                            root.store.getCommunityDetailsAsJson(notification.communityId) :
-                            null
-
+    badgeComponent: CommunityBadge {
         communityName: community ? community.name : ""
         communityImage: community ? community.image : ""
         communityColor: community ? community.color : "black"
 
         onCommunityNameClicked: {
-            root.store.setActiveCommunity(notification.communityId)
+            root.setActiveCommunityRequested(notification.communityId)
             root.closeActivityCenter()
         }
-        Layout.maximumWidth: 190
+        Layout.maximumWidth: parent.width
     }
 
-    ctaComponent: MembershipCta {
-        membershipStatus: notification && notification.membershipStatus ? notification.membershipStatus : ActivityCenterStore.ActivityCenterMembershipStatus.None
-        onAcceptRequestToJoinCommunity: root.acceptRequestToJoinCommunityRequested(notification.id, notification.communityId)
-        onDeclineRequestToJoinCommunity: root.declineRequestToJoinCommunityRequested(notification.id, notification.communityId)
+    ctaComponent: d.pending ? ctaPendingComponent : undefined
+
+    Component {
+        id: ctaPendingComponent
         //TODO: Get backend value. If the membersip is in acceptedPending or declinedPending state, another user can't accept or decline the request
         //Only the user who requested can cancel the request
         //ctaAllowed: true
+
+        RowLayout {
+            spacing: Theme.halfPadding
+            StatusFlatButton {
+                icon.name: "checkmark-circle"
+                icon.color: Theme.palette.successColor1
+                onClicked: root.acceptRequestToJoinCommunityRequested(notification.id, notification.communityId)
+                font.pixelSize: Theme.additionalTextSize
+                verticalPadding: 4
+                horizontalPadding: 4
+            }
+
+            StatusFlatButton {
+                icon.name: "close-circle"
+                icon.color: Theme.palette.dangerColor1
+                onClicked: root.declineRequestToJoinCommunityRequested(notification.id, notification.communityId)
+                font.pixelSize: Theme.additionalTextSize
+                verticalPadding: 4
+                horizontalPadding: 4
+            }
+        }
     }
 }
