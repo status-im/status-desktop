@@ -1,4 +1,5 @@
-import nimqml, strutils, uri, stew/shims/strformat, re, stint, httpclient, os
+import nimqml
+import std/[strutils, httpclient, os, uri], stew/shims/strformat, regex, stint, os
 import stew/byteutils
 import ./utils/qrcodegen
 
@@ -157,4 +158,4 @@ QtObject:
       result = (conversion.startsWith0x(value) and conversion.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
 
   proc isBase64DataUrl*(str: string): bool =
-    return str.match(re"^data:.*;base64,")
+    return str.match(re2"^data:.*;base64,")

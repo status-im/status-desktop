@@ -86,3 +86,5 @@ when defined(gcc):
 # https://github.com/rui314/mold
 when findExe("mold").len > 0 and defined(linux):
   switch("passL", "-fuse-ld=mold")
+
+switch("define", "reRepRangeLimit=256")

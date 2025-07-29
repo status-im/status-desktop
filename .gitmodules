@@ -123,3 +123,9 @@
 [submodule "mobile/vendors/openssl"]
 	path = mobile/vendors/openssl
 	url = https://github.com/openssl/openssl
+[submodule "vendor/nim-regex"]
+	path = vendor/nim-regex
+	url = https://github.com/nitely/nim-regex
+[submodule "vendor/nim-unicodedb"]
+	path = vendor/nim-unicodedb
+	url = https://github.com/nitely/nim-unicodedb

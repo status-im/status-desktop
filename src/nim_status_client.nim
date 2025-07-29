@@ -1,4 +1,10 @@
-import nimqml, chronicles, os, stew/shims/strformat, strutils, times, checksums/md5, json, re
+import
+  std/[os, json, strutils, times],
+  nimqml,
+  chronicles,
+  stew/shims/strformat,
+  checksums/md5,
+  regex
 
 import status_go
 import app/core/main
@@ -108,7 +114,7 @@ proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, 
 
   if fileString != "" and text.startsWith(fileString):
     text = text[fileString.len..^1]              # Remove filepath
-    text = text.replace(re"[:0-9]+:\s*")  # Remove line, column, colons and space separator
+    text = text.replace(re2"[:0-9]+:\s*", "")  # Remove line, column, colons and space separator
 
   logScope:
     chroniclesLineNumbers = false

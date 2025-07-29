@@ -1,5 +1,5 @@
-import std/[json, sugar, strutils]
-import stint, os, re, chronicles
+import std/[json, os, sugar, strutils]
+import stint, regex, chronicles
 
 import nimcrypto
 import account_constants
@@ -64,7 +64,7 @@ proc validateLink*(link: string): bool =
   result = true
   if link.len() != 0:
     if not match(
-        link, re"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", 0):
+        link, re2"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"):
       error "Invalid social link", errDescription = link
       result = false
 
