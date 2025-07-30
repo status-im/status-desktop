@@ -20,7 +20,7 @@ QtObject:
     result.delegate = delegate
     result.searchResultModel = result_model.newModel()
     result.locationMenuModel = location_menu_model.newModel()
-    result.chatSearchModel = chat_search_model.newModel()
+    result.chatSearchModel = chat_search_model.newModel(delegate)
     result.chatSearchModelVariant = newQVariant(result.chatSearchModel)
 
   proc load*(self: View) =
@@ -66,12 +66,7 @@ QtObject:
   proc chatSearchModel*(self: View): chat_search_model.Model =
     return self.chatSearchModel
 
-  proc rebuildChatSearchModel*(self: View) {.slot.} =
-    self.delegate.rebuildChatSearchModel()
-
-  proc chatSearchModelChanged*(self: View) {.signal.}
   proc getChatSearchModel(self: View): QVariant {.slot.} =
     return self.chatSearchModelVariant
   QtProperty[QVariant] chatSearchModel:
     read = getChatSearchModel
-    notify = chatSearchModelChanged

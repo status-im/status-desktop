@@ -207,10 +207,6 @@ QtObject {
     }
     readonly property var chatSearchModel: internal.appSearchModuleInst.chatSearchModel
 
-    function rebuildChatSearchModel() {
-        internal.appSearchModuleInst.rebuildChatSearchModel()
-    }
-
     function setActiveSectionChat(sectionId, chatId) {
         internal.mainModuleInst.switchTo(sectionId, chatId)
     }
