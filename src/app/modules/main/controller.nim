@@ -20,7 +20,6 @@ import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/service as token_service
 import app_service/service/network/service as networks_service
-import app_service/service/visual_identity/service as procs_from_visual_identity_service
 import app_service/service/shared_urls/service as urls_service
 import app_service/service/network/network_item
 
@@ -548,9 +547,6 @@ proc getActiveSectionId*(self: Controller): string =
 proc setActiveSectionId*(self: Controller, sectionId: string) =
   self.activeSectionId = sectionId
 
-proc getAllChats*(self: Controller): seq[ChatDto] =
-  result = self.chatService.getAllChats()
-
 proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string, sectionIsMuted: bool):
     tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
   return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId, sectionIsMuted)
@@ -626,12 +622,6 @@ proc slowdownArchivesImport*(self:Controller) =
 
 proc speedupArchivesImport*(self:Controller) =
   communityService.speedupArchivesImport()
-
-proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
-  procs_from_visual_identity_service.colorHashOf(pubkey)
-
-proc getColorId*(self: Controller, pubkey: string): int =
-  procs_from_visual_identity_service.colorIdOf(pubkey)
 
 proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: string) =
   self.communityService.asyncGetRevealedAccountsForAllMembers(communityId)

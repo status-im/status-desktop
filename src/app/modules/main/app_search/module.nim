@@ -3,18 +3,17 @@ import json, strutils, chronicles, sequtils, tables, std/algorithm
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
-import location_menu_model, location_menu_item
-import location_menu_sub_item
-import result_model, result_item
+import ./models/[result_model, result_item, chat_search_item, chat_search_model, location_menu_model, location_menu_item, location_menu_sub_item]
 import ../../shared_models/message_item
+from ../../shared_models/section_item import SectionType
 
 import ../../../global/global_singleton
-import ../../../core/eventemitter
-import ../../../../app_service/service/contacts/service as contact_service
-import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/community/service as community_service
-import ../../../../app_service/service/message/service as message_service
-import ../../../../app_service/service/visual_identity/service as visual_identity
+import app/core/eventemitter
+import app_service/service/contacts/service as contact_service
+import app_service/service/chat/service as chat_service
+import app_service/service/community/service as community_service
+import app_service/service/message/service as message_service
+import app_service/service/visual_identity/service as visual_identity
 
 export io_interface
 
@@ -35,6 +34,7 @@ type
     viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
+    chatSearchModelBuilt: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service, messageService: message_service.Service):
@@ -46,6 +46,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.controller = controller.newController(result, events, contactsService, chatService, communityService,
   messageService)
   result.moduleLoaded = false
+  result.chatSearchModelBuilt = false
 
 method delete*(self: Module) =
   self.view.delete
@@ -338,3 +339,58 @@ method resultItemClicked*(self: Module, itemId: string) =
 method updateSearchLocationIfPointToChatWithId*(self: Module, chatId: string) =
   if self.controller.activeChatId() == chatId:
     self.controller.setSearchLocation(self.controller.activeSectionId(), "")
+
+method rebuildChatSearchModel*(self: Module) =
+  if self.chatSearchModelBuilt:
+    return
+
+  var items: seq[chat_search_item.Item] = @[]
+
+  let personalChatSectionId = self.delegate.getSectionId(SectionType.Chat)
+  let personalChatSectionName = self.delegate.getSectionName(personalChatSectionId)
+
+  for chat in self.controller.getAllChats():
+    let communityId = chat.communityId
+
+    # skip hidden chats
+    if chat.chatType == ChatType.CommunityChat and communityId != "":
+      let communityDto = self.controller.getCommunityById(communityId)
+      if communityDto.hasCommunityChat(chat.id):
+        let communityChat = communityDto.getCommunityChat(chat.id)
+        if communityChat.isHiddenChat:
+          continue
+      else:
+        continue
+
+    var chatName = chat.name
+    var chatImage = chat.icon
+    var colorHash: ColorHashDto = @[]
+    var colorId: int = 0
+    var sectionId = personalChatSectionId
+    var sectionName = personalChatSectionName
+    if chat.chatType == ChatType.OneToOne:
+      # TODO find a way to populate the chat with the contact details and use as single source of truth
+      let contactDetails = self.controller.getContactDetails(chat.id, skipBackendCalls = false)
+      chatName = contactDetails.defaultDisplayName
+      chatImage = contactDetails.icon
+      if not contactDetails.dto.ensVerified:
+        colorHash = self.controller.getColorHash(chat.id)
+      colorId = self.controller.getColorId(chat.id)
+    elif chat.chatType == ChatType.CommunityChat:
+      sectionId = communityId
+      sectionName = self.delegate.getSectionName(sectionId)
+    items.add(chat_search_item.initItem(
+      chat.id,
+      chatName,
+      chat.color,
+      colorId,
+      chatImage,
+      colorHash.toJson(),
+      sectionId,
+      sectionName,
+      chat.emoji,
+      chat.chatType.int
+    ))
+
+  self.view.chatSearchModel().setItems(items)
+  self.chatSearchModelBuilt = true
