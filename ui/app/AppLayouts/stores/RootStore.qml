@@ -29,6 +29,7 @@ QtObject {
         id: internal // Rename to `d` when cleanup done
 
         readonly property var mainModuleInst: mainModule
+        readonly property var appSearchModuleInst: internal.mainModuleInst.appSearchModule
     }
 
     // Here there should be all the ContextSpecificRootStore objects creation
@@ -202,12 +203,12 @@ QtObject {
 
     // Chat related properties and functions that shall be moved to `ChatRootStore`
     property AppSearchStore appSearchStore: AppSearchStore {
-        appSearchModule: internal.mainModuleInst.appSearchModule
+        appSearchModule: internal.appSearchModuleInst
     }
-    readonly property var chatSearchModel: internal.mainModuleInst.chatSearchModel
+    readonly property var chatSearchModel: internal.appSearchModuleInst.chatSearchModel
 
     function rebuildChatSearchModel() {
-        internal.mainModuleInst.rebuildChatSearchModel()
+        internal.appSearchModuleInst.rebuildChatSearchModel()
     }
 
     function setActiveSectionChat(sectionId, chatId) {
