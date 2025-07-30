@@ -3,16 +3,6 @@
 StatusWindow::StatusWindow(QWindow *parent)
     : QQuickWindow(parent)
 {
-    if (!windowStates().testFlag(Qt::WindowFullScreen))
-        removeTitleBar();
-
-    connect(this, &QQuickWindow::windowStateChanged, [&](Qt::WindowState windowState) {
-        if (windowState == Qt::WindowFullScreen) {
-            showTitleBar();
-        } else {
-            removeTitleBar();
-        }
-    });
 }
 
 void StatusWindow::restoreWindowState()
