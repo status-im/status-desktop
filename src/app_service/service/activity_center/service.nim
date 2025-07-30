@@ -1,4 +1,4 @@
-import nimqml, json, sequtils, chronicles, strutils, strutils, stint, sugar, tables, app_service/common/safe_json_serialization
+import nimqml, json, sequtils, chronicles, strutils, strutils, stint, sugar, tables, json_serialization
 
 import ../../../app/core/eventemitter
 import ../../../app/core/[main]

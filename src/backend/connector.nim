@@ -1,5 +1,5 @@
 import options
-import json, app_service/common/safe_json_serialization
+import json, json_serialization
 import core, response_type
 
 from gen import rpc

@@ -3,7 +3,7 @@ import nimqml, tables, json, sequtils, chronicles, strutils, sets, stint
 import app/core/[main]
 import app/core/tasks/[qt, threadpool]
 
-import web3/conversions, stew/byteutils, nimcrypto, app_service/common/safe_json_serialization
+import web3/conversions, stew/byteutils, nimcrypto, json_serialization
 
 import backend/stickers as status_stickers
 import backend/chat as status_chat
@@ -173,7 +173,7 @@ QtObject:
       self.updateStickersPack(args.sentTransaction.hash, args.status)
 
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
-    let stickersResult = Json.safeDecode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
+    let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
 
     if stickersResult.error != "":
       self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED, Args())
@@ -309,7 +309,7 @@ QtObject:
     self.threadpool.start(arg)
 
   proc onStickerPackInstalled*(self: Service, installedPackJson: string) {.slot.} =
-    let installedPack = Json.safeDecode(installedPackJson, tuple[packId: string, installed: bool])
+    let installedPack = Json.decode(installedPackJson, tuple[packId: string, installed: bool])
     if installedPack.installed:
       if self.marketStickerPacks.hasKey(installedPack.packId):
         self.marketStickerPacks[installedPack.packId].status = StickerPackStatus.Installed
@@ -352,7 +352,7 @@ QtObject:
       if errorString != "":
         raise newException(CatchableError, errorString)
 
-      let rpcResponse = Json.safeDecode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
       discard self.chatService.processMessengerResponse(rpcResponse)
     except Exception as e:
       error "Error sending sticker", msg = e.msg

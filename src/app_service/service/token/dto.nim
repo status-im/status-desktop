@@ -2,7 +2,7 @@ import json, stew/shims/strformat
 
 include app_service/common/json_utils
 
-import app_service/common/safe_json_serialization
+import json_serialization
 
 const WEEKLY_TIME_RANGE* = 0
 const MONTHLY_TIME_RANGE* = 1

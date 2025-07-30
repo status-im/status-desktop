@@ -1,10 +1,9 @@
-import
-  app_service/common/safe_json_serialization#, stint
+import json_serialization
 from eth/common/eth_types_json_serialization import writeValue, readValue
 
 export writeValue, readValue
 
-export safe_json_serialization
+export json_serialization
 
 type
   Task* = proc(arg: string): void {.gcsafe, nimcall.}
@@ -12,7 +11,7 @@ type
     tptr* {.dontSerialize.}: Task # Only used during task creation (don't access in tasks)
 
 proc decode*[T](arg: string): T =
-  Json.safeDecode(arg, T, allowUnknownFields = true)
+  Json.decode(arg, T, allowUnknownFields = true)
 
 proc encode*[T](arg: T): string =
   arg.toJson(typeAnnotations = true)
