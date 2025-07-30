@@ -14,4 +14,5 @@ public:
     Q_INVOKABLE void restartApplication() const;
     Q_INVOKABLE void downloadImageByUrl(const QUrl& url, const QString& path) const;
     Q_INVOKABLE void synthetizeRightClick(QQuickItem* item, qreal x, qreal y, Qt::KeyboardModifiers modifiers) const;
+    Q_INVOKABLE void androidMinimizeToBackground();
 };

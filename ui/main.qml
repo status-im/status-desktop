@@ -251,8 +251,12 @@ StatusWindow {
             }
         }
         function onClosing(close) {
+            // In case of android, we need to handle moveTaskToBackground explicitly
+            if (SQUtils.Utils.isAndroid) {
+                close.accepted = false
+                SystemUtils.androidMinimizeToBackground()
             // In case not logged in or loading, quit app
-            if (loader.sourceComponent != app) {
+            } else if (loader.sourceComponent != app) {
                 close.accepted = true
             }
             // In case user has set to close should quit app

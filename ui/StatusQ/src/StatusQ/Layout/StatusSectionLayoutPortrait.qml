@@ -148,6 +148,24 @@ SwipeView {
         id: d
         // Cache wrapper items removed from the swipe view
         property list<Item> items: []
+
+        function handleBackAction() {
+            if (!!root.backButtonName) {
+                root.backButtonClicked()
+                return
+            }
+
+            if (root.currentIndex > 0) {
+                root.currentIndex--
+            }
+        }
+    }
+
+    Keys.onPressed: function(e) {
+        if (e.key === Qt.Key_Back && root.currentIndex > 0) {
+            e.accepted = true
+            d.handleBackAction()
+        }
     }
 
     component BaseProxyPanel : Control {
@@ -261,13 +279,7 @@ SwipeView {
     component BaseToolBar: StatusToolBar {
         visible: root.showHeader
         backButtonVisible: root.currentIndex !== 0
-        onBackButtonClicked: {
-            if (!root.backButtonName) {
-                root.currentIndex = root.currentIndex - 1
-                return
-            }
-            root.backButtonClicked();
-        }
+        onBackButtonClicked: d.handleBackAction()
         onNotificationButtonClicked: {
             root.notificationButtonClicked();
         }
