@@ -17,7 +17,6 @@ Item {
 
     /* required */ property int filteredIndex
     /* required */ property var notification
-    /* required */ property ChatStores.RootStore store
     /* required */ property ActivityCenterStore activityCenterStore
 
     property alias bodyComponent: bodyLoader.sourceComponent

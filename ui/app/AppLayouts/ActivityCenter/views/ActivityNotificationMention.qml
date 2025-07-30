@@ -13,6 +13,11 @@ import "../controls"
 ActivityNotificationMessage {
     id: root
 
+    required property var community
+    required property var channel
+
+    signal setActiveCommunity(string communityId)
+
     badgeComponent: {
         if (!notification)
             return null
@@ -34,16 +39,13 @@ ActivityNotificationMessage {
         CommunityBadge {
             id: communityBadge
 
-            property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
-            property var channel: root.store.getChatDetails(notification.chatId)
-
             communityName: community.name
             communityImage: community.image
             communityColor: community.color
             channelName: channel.name
 
             onCommunityNameClicked: {
-                root.store.setActiveCommunity(notification.message.communityId)
+                root.setActiveCommunity(notification.message.communityId)
                 root.closeActivityCenter()
             }
             onChannelNameClicked: {
@@ -57,7 +59,7 @@ ActivityNotificationMessage {
         id: groupChatBadgeComponent
 
         ChannelBadge {
-            property var group: root.store.getChatDetails(notification.chatId)
+            property var group: root.channel
 
             chatType: notification.chatType
             name: group.name
