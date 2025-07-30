@@ -1,7 +1,7 @@
 import nimqml, tables, os, json, stew/shims/strformat, sequtils, strutils, times, std/options
 import app_service/common/safe_json_serialization, chronicles
 
-import ../../../app/global/global_singleton
+import app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
 import ./dto/login_request
@@ -9,16 +9,17 @@ import ./dto/restore_account_request
 
 from ../keycard/service import KeycardEvent, KeyDetails
 from ../keycardV2/dto import KeycardExportedKeysDto, KeyDetailsV2
-import ../../../backend/general as status_general
-import ../../../backend/core as status_core
-import ../../../backend/privacy as status_privacy
+import backend/general as status_general
+import backend/core as status_core
+import backend/privacy as status_privacy
 
-import ../../../app/core/eventemitter
-import ../../../app/core/signals/types
-import ../../../app/core/tasks/[qt, threadpool]
-import ../../../app/core/fleets/fleet_configuration
-import ../../common/[account_constants, utils]
-import ../../../constants as main_constants
+import app/core/eventemitter
+import app/core/signals/types
+import app/core/tasks/[qt, threadpool]
+import app/core/fleets/fleet_configuration
+import app_service/common/[account_constants, utils]
+from app_service/service/contacts/dto/contacts import Images
+import constants as main_constants
 
 export dto_accounts
 export dto_generated_accounts
@@ -88,7 +89,7 @@ QtObject:
     self.loggedInAccount = account
     self.setLocalAccountSettingsFile()
 
-  proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
+  proc updateLoggedInAccount*(self: Service, displayName: string, images: Images) =
     self.loggedInAccount.name = displayName
     self.loggedInAccount.images = images
     singletonInstance.localAccountSettings.setFileName(displayName)

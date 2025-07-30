@@ -2,16 +2,18 @@ import json, chronicles, tables
 
 import base
 
-import ../../../../app_service/service/message/dto/[message, pinned_message_update, reaction, removed_message]
-import ../../../../app_service/service/chat/dto/[chat]
-import ../../../../app_service/service/community/dto/[community]
-import ../../../../app_service/service/activity_center/dto/[notification]
-import ../../../../app_service/service/contacts/dto/[contacts, status_update]
-import ../../../../app_service/service/devices/dto/[installation]
-import ../../../../app_service/service/settings/dto/[settings]
-import ../../../../app_service/service/saved_address/dto as saved_address_dto
-import ../../../../app_service/service/wallet_account/dto/[keypair_dto]
-import ../../../../app_service/service/accounts/dto/[accounts]
+import app_service/service/message/dto/[message, pinned_message_update, reaction, removed_message]
+import app_service/service/chat/dto/[chat]
+import app_service/service/community/dto/[community]
+import app_service/service/activity_center/dto/[notification]
+import app_service/service/contacts/dto/[contacts, status_update]
+import app_service/service/devices/dto/[installation]
+import app_service/service/settings/dto/[settings]
+import app_service/service/saved_address/dto as saved_address_dto
+import app_service/service/wallet_account/dto/[keypair_dto]
+import app_service/service/accounts/dto/[accounts]
+
+include app_service/common/json_utils
 
 type MessageSignal* = ref object of Signal
   messages*: seq[MessageDto]
@@ -30,7 +32,7 @@ type MessageSignal* = ref object of Signal
   removedChats*: seq[string]
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
-  identityImages*: seq[Image]
+  identityImages*: contacts.Images
   clearedHistories*: seq[ClearedHistoryDto]
   savedAddresses*: seq[SavedAddressDto]
   keypairs*: seq[KeypairDto]
@@ -136,9 +138,9 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for jsonSettingsField in e["settings"]:
       signal.settings.add(jsonSettingsField.toSettingsFieldDto())
 
-  if e.contains("identityImages"):
-    for jsonSettingsField in e["identityImages"]:
-      signal.identityImages.add(jsonSettingsField.toImage())
+  var imagesObj: JsonNode
+  if e.getProp("identityImages", imagesObj):
+    signal.identityImages = contacts.toImages(imagesObj)
 
   if e.contains("savedAddresses"):
     for jsonSavedAddress in e["savedAddresses"]:

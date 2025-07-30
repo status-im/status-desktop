@@ -67,18 +67,6 @@ QtObject:
     except Exception as e:
       error "error: ", methodName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg
 
-  proc generateImages*(self: Service, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
-    try:
-      let response = status_general.generateImages(image, aX, aY, bX, bY)
-      if(response.result.kind != JArray):
-        error "error: ", procName="generateImages", errDesription = "response is not an array"
-        return
-
-      for img in response.result:
-        result.add(toImage(img))
-    except Exception as e:
-      error "error: ", procName="generateImages", errName = e.name, errDesription = e.msg
-
   proc runTimer(self: Service) =
     let arg = TimerTaskArg(
       tptr: timerTask,
