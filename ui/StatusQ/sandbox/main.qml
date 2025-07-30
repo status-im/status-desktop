@@ -550,26 +550,6 @@ StatusWindow {
         }
     }
 
-    StatusMacTrafficLights {
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.margins: 13
-
-        visible: Qt.platform.os == "osx"
-
-        onClose: {
-            rootWindow.close()
-        }
-
-        onMinimised: {
-            rootWindow.showMinimized()
-        }
-
-        onMaximized: {
-            rootWindow.toggleFullScreen()
-        }
-    }
-
     StatusWindowsTitleBar {
         anchors.top: parent.top
         width: parent.width

@@ -1,11 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
-import QtQuick.Window
-import QtQml
 
 import utils
-import shared
 import shared.panels
 import shared.popups
 import shared.stores
@@ -133,8 +129,6 @@ StatusWindow {
     QtObject {
         id: d
 
-        property int previousApplicationState: -1
-
         property var mockedKeycardControllerWindow
         function runMockedKeycardControllerWindow() {
             if (localAppSettings.displayMockedKeycardWindow()) {
@@ -155,6 +149,33 @@ StatusWindow {
                 }
             }
         }
+
+        readonly property bool macOSWindowed: Qt.platform.os === SQUtils.Utils.mac &&
+                                              applicationWindow.visibility !== Window.FullScreen
+
+        function restoreWindowState() {
+            switch(lastNonMinVisibility) {
+            case Window.Windowed:
+                applicationWindow.showNormal()
+                break
+            case Window.Maximized:
+                applicationWindow.showMaximized()
+                break
+            case Window.FullScreen:
+                applicationWindow.showFullScreen()
+                break
+            }
+        }
+
+        property int lastNonMinVisibility
+    }
+
+    Binding {
+        target: Qt.application
+        property: "displayName"
+        value: d.macOSWindowed
+               ? ""
+               : qsTr("Status Desktop")
     }
 
     // Only set minimum width/height for desktop apps
@@ -173,18 +194,24 @@ StatusWindow {
 
     Action {
         shortcut: StandardKey.FullScreen
-        onTriggered: applicationWindow.toggleFullScreen()
+        onTriggered: {
+            if (applicationWindow.visibility === Window.FullScreen) {
+                applicationWindow.showNormal();
+            } else {
+                applicationWindow.showFullScreen();
+            }
+        }
     }
 
     Action {
         shortcut: "Ctrl+M"
-        onTriggered: applicationWindow.toggleMinimize()
+        onTriggered: applicationWindow.showMinimized()
     }
 
     Action {
         shortcut: StandardKey.Close
         onTriggered: {
-            applicationWindow.visible = false;
+            applicationWindow.showMinimized()
         }
     }
 
@@ -215,38 +242,42 @@ StatusWindow {
         d.runMockedKeycardControllerWindow()
     }
 
-    //! Workaround for custom QQuickWindow
     Connections {
         target: applicationWindow
-        function onClosing(close) {
-            if (Qt.platform.os === SQUtils.Utils.mac) {
-                loader.sourceComponent = undefined
-                close.accepted = true
-            } else {
-                if (loader.sourceComponent != app) {
-                    Qt.quit();
-                } else if (loader.sourceComponent == app) {
-                    if (localAccountSensitiveSettings.quitOnClose) {
-                        Qt.quit();
-                    } else {
-                        close.accepted = false
-                        applicationWindow.visible = false;
-                    }
-                }
+        function onVisibilityChanged(visibility) {
+            if (applicationWindow.visibility !== Window.Minimized
+                        && applicationWindow.visibility !== Window.Hidden) {
+                d.lastNonMinVisibility = applicationWindow.visibility
             }
         }
-    }
-
-    // On MacOS, explicitely restore the window on activating
-    Connections {
-        target: Qt.application
-        enabled: Qt.platform.os === SQUtils.Utils.mac
-        function onStateChanged() {
-            if (Qt.application.state === d.previousApplicationState
-                && Qt.application.state === Qt.ApplicationActive) {
-                makeStatusAppActive()
+        function onClosing(close) {
+            // In case not logged in or loading, quit app
+            if (loader.sourceComponent != app) {
+                close.accepted = true
             }
-            d.previousApplicationState = Qt.application.state
+            // In case user has set to close should quit app
+            else if (localAccountSensitiveSettings.quitOnClose) {
+                close.accepted = true
+            }
+            else {
+                // The app is already minimized. The user really wants to quit the app
+                // The user really wants to quit the app
+                if (applicationWindow.visibility === Window.Minimized) {
+                    close.accepted = true
+                    return
+                }
+
+                close.accepted = false
+                /* In case of mac in fullscreen mode, hiding the window leads to black screen.
+                Hence we exit Fullscreen on system close and then the user can perform an actual
+                hide of the app */
+                if(applicationWindow.visibility === Window.FullScreen &&
+                        Qt.platform.os === SQUtils.Utils.mac) {
+                    applicationWindow.showNormal()
+                    return
+                }
+                applicationWindow.showMinimized()
+            }
         }
     }
 
@@ -296,8 +327,7 @@ StatusWindow {
     signal navigateTo(string path)
 
     function makeStatusAppActive() {
-        applicationWindow.restoreWindowState()
-        applicationWindow.visible = true
+        d.restoreWindowState()
         applicationWindow.raise()
         applicationWindow.requestActivate()
     }
@@ -522,37 +552,11 @@ StatusWindow {
         id: macHeaderComponent
         MouseArea {
             id: headerMouseArea
+            enabled: d.macOSWindowed
             preventStealing: true
             propagateComposedEvents: true
             onPressed: {
                 applicationWindow.startSystemMove()
-            }
-
-            MacTrafficLights {
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.margins: 13
-                onClose: {
-                    if (loader.sourceComponent != app) {
-                        Qt.quit()
-                        return
-                    }
-
-                    if (localAccountSensitiveSettings.quitOnClose) {
-                        Qt.quit();
-                        return
-                    }
-
-                    applicationWindow.visible = false;
-                }
-
-                onMinimised: {
-                    applicationWindow.toggleMinimize()
-                }
-
-                onMaximized: {
-                    applicationWindow.toggleFullScreen()
-                }
             }
         }
     }
