@@ -15,12 +15,13 @@ import "../controls"
 ActivityNotificationBase {
     id: root
 
+    required property var community
+
+    signal setActiveCommunity(string communityId)
+
     bodyComponent: RowLayout {
         width: parent.width
         height: 50
-        readonly property var community: notification ?
-                                root.store.getCommunityDetailsAsJson(notification.communityId) :
-                                null
 
         StatusSmartIdenticon {
             id: identicon
@@ -45,7 +46,7 @@ ActivityNotificationBase {
             communityName: community ? community.name : ""
             communityImage: community ? community.image : ""
             communityColor: community ? community.color : "black"
-            onCommunityNameClicked: root.store.setActiveCommunity(notification.communityId)
+            onCommunityNameClicked: root.setActiveCommunity(notification.communityId)
             Layout.alignment: Qt.AlignVCenter
             Layout.maximumWidth: 190
         }
