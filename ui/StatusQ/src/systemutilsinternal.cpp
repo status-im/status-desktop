@@ -8,6 +8,11 @@
 #include <QProcess>
 #include <QSaveFile>
 
+#ifdef Q_OS_ANDROID
+#include <QJniObject>
+#include <QtCore/qnativeinterface.h>
+#endif
+
 #include "ios_utils.h"
 
 SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
@@ -112,4 +117,14 @@ void SystemUtilsInternal::synthetizeRightClick(QQuickItem* item, qreal x, qreal 
     QCoreApplication::postEvent(item, leftClickRelease);
     QCoreApplication::postEvent(item, rightClickPress);
     QCoreApplication::postEvent(item, rightClickRelease);
+}
+
+void SystemUtilsInternal::androidMinimizeToBackground()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
+    if (activity.isValid()) {
+        activity.callMethod<jboolean>("moveTaskToBack", "(Z)Z", jboolean(true));
+    }
+#endif
 }
