@@ -1,4 +1,4 @@
-import json, app_service/common/safe_json_serialization, stew/shims/strformat
+import json, json_serialization, stew/shims/strformat
 
 type RpcProviderType* {.pure.} = enum
   EmbeddedProxy = "embedded-proxy"

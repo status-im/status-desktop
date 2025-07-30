@@ -1,5 +1,5 @@
 import json
-import "app_service/common/safe_json_serialization"
+import json_serialization
 from app/core/eventemitter import Args
 
 type

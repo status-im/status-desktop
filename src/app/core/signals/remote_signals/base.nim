@@ -1,4 +1,4 @@
-import app_service/common/safe_json_serialization
+import json_serialization
 import signal_type
 
 import ../../eventemitter

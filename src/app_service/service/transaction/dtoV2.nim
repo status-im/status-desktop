@@ -1,10 +1,10 @@
-# import json, app_service/common/safe_json_serialization, stint
+# import json, json_serialization, stint
 
 # import ../network/dto, ../token/dto
 
 # include  app_service/common/json_utils
 
-import json, strutils, stint, app_service/common/safe_json_serialization, chronicles
+import json, strutils, stint, json_serialization, chronicles
 import sequtils, sugar
 
 import
@@ -115,10 +115,10 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result = TransactionPathDtoV2()
   discard jsonObj.getProp("RouterInputParamsUuid", result.routerInputParamsUuid)
   discard jsonObj.getProp("ProcessorName", result.processorName)
-  result.fromChain = Json.safeDecode($jsonObj["FromChain"], NetworkDto, allowUnknownFields = true)
-  result.toChain = Json.safeDecode($jsonObj["ToChain"], NetworkDto, allowUnknownFields = true)
-  result.fromToken = Json.safeDecode($jsonObj["FromToken"], TokenDto, allowUnknownFields = true)
-  result.toToken = Json.safeDecode($jsonObj["ToToken"], TokenDto, allowUnknownFields = true)
+  result.fromChain = Json.decode($jsonObj["FromChain"], NetworkDto, allowUnknownFields = true)
+  result.toChain = Json.decode($jsonObj["ToChain"], NetworkDto, allowUnknownFields = true)
+  result.fromToken = Json.decode($jsonObj["FromToken"], TokenDto, allowUnknownFields = true)
+  result.toToken = Json.decode($jsonObj["ToToken"], TokenDto, allowUnknownFields = true)
   result.amountIn = stint.fromHex(UInt256, jsonObj{"AmountIn"}.getStr)
   discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
   result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
