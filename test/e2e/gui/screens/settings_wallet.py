@@ -161,11 +161,6 @@ class AccountDetailsView(QObject):
         self._wallet_account_stored = TextLabel(settings_names.walletAccountViewStored)
         self._wallet_preferred_networks = QObject(settings_names.walletAccountViewPreferredNetworks)
 
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._edit_account_button.wait_until_appears(timeout_msec)
-        return self
-
     @allure.step('Click Edit button')
     def open_edit_account_popup(self, attempts: int = 3):
         for _ in range(attempts):

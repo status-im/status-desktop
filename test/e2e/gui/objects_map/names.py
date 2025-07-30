@@ -797,9 +797,7 @@ editWalletSettings_renameButton = {"container": statusDesktop_mainWindow_overlay
                                    "objectName": "renameAccountModalSaveBtn", "type": "StatusButton"}
 editWalletSettings_AccountNameInput = {"container": statusDesktop_mainWindow_overlay,
                                        "objectName": "renameAccountNameInput", "type": "TextEdit", "visible": True}
-editWalletSettings_EmojiSelector = {"container": statusDesktop_mainWindow_overlay,
-                                    "objectName": "statusSmartIdenticonLetter", "type": "StatusLetterIdenticon",
-                                    "visible": True}
+editWalletSettings_EmojiSelector = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusRoundIcon", "type": "StatusRoundIcon", "visible": True}
 editWalletSettings_ColorSelector = {"container": statusDesktop_mainWindow_overlay, "type": "StatusColorRadioButton",
                                     "unnamed": 1, "visible": True}
 editWalletSettings_EmojiItem = {"container": statusDesktop_mainWindow_overlay,
