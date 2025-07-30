@@ -30,14 +30,23 @@ proc chatId*(self: Item): string =
 proc name*(self: Item): string =
   self.name
 
+proc `name=`*(self: Item, value: string) =
+  self.name = value
+
 proc color*(self: Item): string =
   self.color
+
+proc `color=`*(self: Item, value: string) =
+  self.color = value
 
 proc colorId*(self: Item): int =
   self.colorId
 
 proc icon*(self: Item): string =
   self.icon
+
+proc `icon=`*(self: Item, value: string) =
+  self.icon = value
 
 proc colorHash*(self: Item): string =
   self.colorHash
@@ -48,8 +57,14 @@ proc sectionId*(self: Item): string =
 proc sectionName*(self: Item): string =
   self.sectionName
 
+proc `sectionName=`*(self: Item, value: string) =
+  self.sectionName = value
+
 proc emoji*(self: Item): string =
   self.emoji
+
+proc `emoji=`*(self: Item, value: string) =
+  self.emoji = value
 
 proc chatType*(self: Item): int =
   self.chatType
