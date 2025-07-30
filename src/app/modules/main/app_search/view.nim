@@ -66,12 +66,10 @@ QtObject:
   proc chatSearchModel*(self: View): chat_search_model.Model =
     return self.chatSearchModel
 
-  proc rebuildChatSearchModel*(self: View) {.slot.} =
-    self.delegate.rebuildChatSearchModel()
+  proc buildChatSearchModel*(self: View) {.slot.} =
+    self.delegate.buildChatSearchModel()
 
-  proc chatSearchModelChanged*(self: View) {.signal.}
   proc getChatSearchModel(self: View): QVariant {.slot.} =
     return self.chatSearchModelVariant
   QtProperty[QVariant] chatSearchModel:
     read = getChatSearchModel
-    notify = chatSearchModelChanged

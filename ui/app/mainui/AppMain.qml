@@ -1858,7 +1858,7 @@ Item {
                         active: appMain.featureFlagsStore.homePageEnabled && appView.currentIndex === Constants.appViewStackIndex.homePage
 
                         onLoaded: {
-                            rootStore.rebuildChatSearchModel()
+                            rootStore.buildChatSearchModel()
                         }
 
                         sourceComponent: HomePage {
@@ -2523,7 +2523,7 @@ Item {
                 searchBoxPlaceholder: qsTr("Where do you want to go?")
                 model: rootStore.chatSearchModel
 
-                onAboutToShow: rootStore.rebuildChatSearchModel()
+                onAboutToShow: rootStore.buildChatSearchModel()
                 onSelected: {
                     rootStore.setActiveSectionChat(sectionId, chatId)
                     close()

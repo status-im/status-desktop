@@ -205,10 +205,10 @@ QtObject {
     property AppSearchStore appSearchStore: AppSearchStore {
         appSearchModule: internal.appSearchModuleInst
     }
-    property var chatSearchModel: internal.appSearchModuleInst.chatSearchModel
+    readonly property var chatSearchModel: internal.appSearchModuleInst.chatSearchModel
 
-    function rebuildChatSearchModel() {
-        internal.appSearchModuleInst.rebuildChatSearchModel()
+    function buildChatSearchModel() {
+        internal.appSearchModuleInst.buildChatSearchModel()
     }
 
     function setActiveSectionChat(sectionId, chatId) {

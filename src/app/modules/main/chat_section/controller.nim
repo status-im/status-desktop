@@ -356,6 +356,21 @@ proc init*(self: Controller) =
       if args.communityId == self.sectionId:
         self.delegate.updateCommunityMemberList(args.members)
 
+    self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
+      let args = CommunityRequestArgs(e)
+      if args.communityRequest.communityId == self.sectionId:
+        self.delegate.updateRequestToJoinState(RequestToJoinState.Requested)
+
+    self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
+      let args = community_service.CanceledCommunityRequestArgs(e)
+      if args.communityId == self.sectionId:
+        self.delegate.updateRequestToJoinState(RequestToJoinState.None)
+
+    self.events.on(SIGNAL_COMMUNITY_MEMBER_ALL_MESSAGES) do(e:Args):
+      var args = CommunityMemberMessagesArgs(e)
+      if args.communityId == self.sectionId:
+        self.delegate.onCommunityMemberMessagesLoaded(args.messages)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
@@ -399,11 +414,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED) do(e:Args):
     self.delegate.setLoadingHistoryMessagesInProgress(false)
 
-  self.events.on(SIGNAL_COMMUNITY_MEMBER_ALL_MESSAGES) do(e:Args):
-    var args = CommunityMemberMessagesArgs(e)
-    if args.communityId == self.sectionId:
-      self.delegate.onCommunityMemberMessagesLoaded(args.messages)
-
   self.events.on(SIGNAL_MESSAGES_DELETED) do(e:Args):
     var args = MessagesDeletedArgs(e)
     let isSectionEmpty = args.communityId == ""
@@ -412,16 +422,6 @@ proc init*(self: Controller) =
         if isSectionEmpty and not self.delegate.communityContainsChat(chatId):
           continue
         self.delegate.onCommunityMemberMessagesDeleted(messagesIds)
-
-  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
-    let args = CommunityRequestArgs(e)
-    if args.communityRequest.communityId == self.sectionId:
-      self.delegate.updateRequestToJoinState(RequestToJoinState.Requested)
-
-  self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
-    let args = community_service.CanceledCommunityRequestArgs(e)
-    if args.communityId == self.sectionId:
-      self.delegate.updateRequestToJoinState(RequestToJoinState.None)
 
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
