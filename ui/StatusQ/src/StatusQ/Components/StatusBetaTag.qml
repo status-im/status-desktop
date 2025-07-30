@@ -10,6 +10,7 @@ Rectangle {
     property color fgColor: Theme.palette.baseColor1
     property alias tooltipText: tip.text
     property alias cursorShape: hoverHandler.cursorShape
+    property alias tooltipOrientation: tip.orientation
 
     readonly property bool hovered: hoverHandler.hovered
 
