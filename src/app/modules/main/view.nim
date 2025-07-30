@@ -4,7 +4,6 @@ import app/modules/shared_models/section_model
 import app/modules/shared_models/section_item
 import app/modules/shared_models/section_details
 import io_interface
-import chat_search_model
 import ephemeral_notification_model
 from app_service/common/conversion import intToEnum
 from app_service/common/types import StatusType
@@ -20,8 +19,6 @@ QtObject:
       notificationAvailable: bool
       activeSection: SectionDetails
       activeSectionVariant: QVariant
-      chatSearchModel: chat_search_model.Model
-      chatSearchModelVariant: QVariant
       ephemeralNotificationModel: ephemeralNotification_model.Model
       ephemeralNotificationModelVariant: QVariant
       tmpCommunityId: string # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
@@ -42,8 +39,6 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.activeSection = newActiveSection()
     result.activeSectionVariant = newQVariant(result.activeSection)
-    result.chatSearchModel = chat_search_model.newModel()
-    result.chatSearchModelVariant = newQVariant(result.chatSearchModel)
     result.ephemeralNotificationModel = ephemeralNotification_model.newModel()
     result.ephemeralNotificationModelVariant = newQVariant(result.ephemeralNotificationModel)
 
@@ -80,21 +75,8 @@ QtObject:
     read = getModel
     notify = modelChanged
 
-  proc chatSearchModel*(self: View): chat_search_model.Model =
-    return self.chatSearchModel
-
-  proc rebuildChatSearchModel*(self: View) {.slot.} =
-    self.delegate.rebuildChatSearchModel()
-
   proc onNotificationsCountChanged*(self: View) {.slot.} =
     self.delegate.meMentionedCountChanged(self.model.allMentionsCount())
-
-  proc chatSearchModelChanged*(self: View) {.signal.}
-  proc getChatSearchModel(self: View): QVariant {.slot.} =
-    return self.chatSearchModelVariant
-  QtProperty[QVariant] chatSearchModel:
-    read = getChatSearchModel
-    notify = chatSearchModelChanged
 
   proc ephemeralNotificationModel*(self: View): ephemeralNotification_model.Model =
     return self.ephemeralNotificationModel

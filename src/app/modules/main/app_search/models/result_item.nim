@@ -1,6 +1,6 @@
 import stew/shims/strformat, sequtils, sugar
 
-import ../../shared_models/[color_hash_item, color_hash_model]
+import ../../../shared_models/[color_hash_item, color_hash_model]
 
 type Item* = object
   itemId: string

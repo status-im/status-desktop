@@ -167,3 +167,9 @@ proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
 
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
+
+proc getAllChats*(self: Controller): seq[ChatDto] =
+  result = self.chatService.getAllChats()
+
+proc getContactDetails*(self: Controller, contactId: string, skipBackendCalls: bool): ContactDetails =
+  return self.contactsService.getContactDetails(contactId, skipBackendCalls)
