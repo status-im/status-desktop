@@ -2238,6 +2238,7 @@ Item {
                             objectName: "activityCenterLayout"
                             navBar: appMain.navBar
 
+                            contactsStore: appMain.contactsStore
                             store: ChatStores.RootStore {
                                 contactsStore: appMain.contactsStore
                                 currencyStore: appMain.currencyStore

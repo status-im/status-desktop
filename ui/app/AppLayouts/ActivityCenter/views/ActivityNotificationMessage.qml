@@ -12,6 +12,8 @@ import utils
 ActivityNotificationBase {
     id: root
 
+    required property var contactsModel
+
     readonly property bool isOutgoingMessage: notification && notification.message && notification.message.amISender || false
     readonly property string contactId: notification ? isOutgoingMessage ? notification.chatId : notification.author : ""
     readonly property string contactName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
@@ -62,7 +64,7 @@ ActivityNotificationBase {
     onContactIdChanged: root.updateContactDetails()
 
     CoreUtils.ModelEntryChangeTracker {
-        model: root.store.contactsStore.contactsModel
+        model: root.contactsModel
         role: "pubKey"
         key: root.contactId
 
