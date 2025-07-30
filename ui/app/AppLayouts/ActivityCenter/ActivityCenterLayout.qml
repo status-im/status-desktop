@@ -23,6 +23,7 @@ import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Profile.stores
 import AppLayouts.stores.Messaging as MessagingStores
 import AppLayouts.stores.Messaging.Community as CommunityStores
+import AppLayouts.stores as AppStores
 
 import "views"
 import "panels"
@@ -31,6 +32,7 @@ import "stores"
 StatusSectionLayout {
     id: root
 
+    property AppStores.ContactsStore contactsStore
     property ActivityCenterStore activityCenterStore
     property ChatStores.RootStore store
     property PrivacyStore privacyStore
@@ -234,8 +236,12 @@ StatusSectionLayout {
         ActivityNotificationMention {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            contactsModel: root.contactsStore.contactsModel
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
+            channel: notification ? root.store.getChatDetails(notification.chatId) : null
+
+            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -245,8 +251,8 @@ StatusSectionLayout {
         ActivityNotificationReply {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            contactsModel: root.contactsStore.contactsModel
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -256,8 +262,8 @@ StatusSectionLayout {
         ActivityNotificationContactRequest {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            contactsModel: root.contactsStore.contactsModel
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -267,8 +273,8 @@ StatusSectionLayout {
         ActivityNotificationCommunityInvitation {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            contactsModel: root.contactsStore.contactsModel
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -282,8 +288,8 @@ StatusSectionLayout {
                                                                                              communityRootStore.communityAccessStore : null
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            contactsModel: root.contactsStore.contactsModel
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
                 if(communityAccessStore) {
@@ -303,8 +309,10 @@ StatusSectionLayout {
         ActivityNotificationCommunityRequest {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
+
+            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -314,8 +322,10 @@ StatusSectionLayout {
         ActivityNotificationCommunityKicked {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
+
+            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -327,7 +337,6 @@ StatusSectionLayout {
             banned: true
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
@@ -340,8 +349,10 @@ StatusSectionLayout {
             banned: false
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
+
+            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -352,8 +363,8 @@ StatusSectionLayout {
         ActivityNotificationContactRemoved {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            contactsModel: root.contactsStore.contactsModel
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -382,7 +393,6 @@ StatusSectionLayout {
 
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: d.callLaterMarkAsSeen()
 
@@ -400,7 +410,6 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             accountName: store.name
-            store: root.store
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onMoreDetailsClicked: {
@@ -426,7 +435,6 @@ StatusSectionLayout {
         ActivityNotificationNewsMessage {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
             onReadMoreClicked: {
                 d.callLaterMarkAsSeen()
@@ -451,10 +459,11 @@ StatusSectionLayout {
             communityName: community ? community.name : ""
             communityImage: community ? community.image : ""
 
-            store: root.store
-
             filteredIndex: parent.filteredIndex
             notification: parent.notification
+
+            walletAccountName: !!root.store && !isFirstTokenReceived ? root.store.walletStore.getNameForWalletAddress(tokenData.walletAddress) : ""
+
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -472,7 +481,6 @@ StatusSectionLayout {
 
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: d.callLaterMarkAsSeen()
 
@@ -488,8 +496,8 @@ StatusSectionLayout {
         ActivityNotificationUnknownGroupChatInvitation {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
             activityCenterStore: root.activityCenterStore
+            contactsModel: root.contactsStore.contactsModel
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -612,7 +620,7 @@ StatusSectionLayout {
                 Layout.maximumWidth: parent.width
 
                 text: newsPanelLayout.isEnableRSSNotificationPanelType ? qsTr("Enable RSS to receive Status News notifications") :
-                                                                         qsTr("Enable Status News notifications")
+                                                                          qsTr("Enable Status News notifications")
                 font.weight: Font.Bold
                 lineHeight: 1.2
                 horizontalAlignment: Text.AlignHCenter

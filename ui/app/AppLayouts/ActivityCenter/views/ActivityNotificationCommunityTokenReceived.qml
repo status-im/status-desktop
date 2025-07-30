@@ -13,7 +13,6 @@ import AppLayouts.Wallet
 ActivityNotificationBase {
     id: root
 
-    store: null
     property var community: null
 
     property var tokenData: root.notification.tokenData
@@ -47,7 +46,7 @@ ActivityNotificationBase {
 
     // Wallet related:
     property string txHash: root.tokenData.txHash
-    property string walletAccountName: !!root.store && !root.isFirstTokenReceived ? root.store.walletStore.getNameForWalletAddress(root.tokenData.walletAddress) : ""
+    required property string walletAccountName
 
     QtObject {
         id: d
