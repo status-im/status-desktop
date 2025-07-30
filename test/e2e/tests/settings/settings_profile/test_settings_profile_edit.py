@@ -5,14 +5,11 @@ from allure_commons._allure import step
 from constants import UserAccount
 from constants.dock_buttons import DockButtons
 from scripts.utils.generators import random_name_string
-from . import marks
 
 import constants
 from driver.aut import AUT
 from gui.components.changes_detected_popup import ChangesDetectedToastMessage
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703006',
@@ -21,6 +18,7 @@ pytestmark = marks
 @pytest.mark.parametrize('bio, links', [pytest.param('This is my bio', constants.social_links)])
 @pytest.mark.smoke
 # TODO: add clicking Preview button and check data there
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/18462')
 def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_account, bio, links):
     with step('Open profile settings and check name, bio and links'):
         profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()
