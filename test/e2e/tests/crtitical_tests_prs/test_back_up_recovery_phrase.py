@@ -3,12 +3,10 @@ import pytest
 from allure import step
 
 import constants
-import driver
 from constants.dock_buttons import DockButtons
 from driver.aut import AUT
 from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanner
 
-import configs.timeouts
 from gui.main_window import MainWindow
 
 
