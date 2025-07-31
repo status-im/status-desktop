@@ -260,6 +260,7 @@ Item {
             verify(!!helpUsImproveDetailsPopup)
             tryVerify( () => helpUsImproveDetailsPopup.opened)
             keyClick(Qt.Key_Escape) // close the popup
+            tryVerify( () => helpUsImproveDetailsPopup.exit ? !helpUsImproveDetailsPopup.exit.running : true)
 
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
             dynamicSpy.setup(page, "shareUsageDataRequested")
@@ -284,6 +285,7 @@ Item {
             verify(!!passwordDetailsPopup)
             tryVerify(() => passwordDetailsPopup.opened)
             keyClick(Qt.Key_Escape) // close the popup
+            tryVerify( () => passwordDetailsPopup.exit ? !passwordDetailsPopup.exit.running : true)
 
             const btnConfirmPassword = findChild(controlUnderTest, "btnConfirmPassword")
             verify(!!btnConfirmPassword)
@@ -824,6 +826,7 @@ Item {
             }
             tryCompare(btnContinue, "enabled", true)
             mouseClick(btnContinue)
+            tryVerify(() => loginWithSyncAckPopup.exit ? !loginWithSyncAckPopup.exit.running : true)
 
             // PAGE 4: Log in by syncing
             page = getCurrentPage(stack, LoginBySyncingPage)

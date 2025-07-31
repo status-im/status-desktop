@@ -1099,6 +1099,7 @@ Item {
 
             popup.close()
             verify(!popup.opened)
+            tryVerify(() => popup.exit ? !popup.exit.running : true)
             verify(!popup.visible)
         }
 
@@ -1144,6 +1145,7 @@ Item {
             compare(signRequestRejectedSpy.signalArguments[0][1], requestId, "expected requestId to be set")
 
             verify(!popup.opened)
+            tryVerify(() => popup.exit ? !popup.exit.running : true)
             verify(!popup.visible)
         }
 
@@ -1161,6 +1163,7 @@ Item {
             compare(signRequestAcceptedSpy.signalArguments[0][1], requestId, "expected requestId to be set")
 
             verify(!popup.opened)
+            tryVerify(() => popup.exit ? !popup.exit.running : true)
             verify(!popup.visible)
         }
 
@@ -1280,6 +1283,8 @@ Item {
             let dappConnectSelectPopup = dappConnectSelectLoader.item
             verify(!!dappConnectSelectPopup)
             tryVerify(() => dappConnectSelectPopup.opened)
+            tryVerify(() => dappConnectSelectPopup.enter ? !dappConnectSelectPopup.enter.running : true)
+
 
             const wcButton = findChild(controlUnderTest, "btnWalletConnect")
             verify(!!wcButton)
@@ -1288,6 +1293,7 @@ Item {
             compare(pairWithConnectorRequestedSpy.count, 1)
             compare(pairWithConnectorRequestedSpy.signalArguments[0][0], Constants.DAppConnectors.WalletConnect)
 
+            tryVerify(() => dappConnectSelectPopup.exit ? !dappConnectSelectPopup.exit.running : true)
             controlUnderTest.chooseConnector()
             waitForRendering(controlUnderTest.visualParent, 200)
             waitForItemPolished(controlUnderTest.visualParent, 200)
