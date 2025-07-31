@@ -12,7 +12,7 @@ import shared.views.chat
 
 import "../controls"
 import "../panels"
-import "../stores"
+import AppLayouts.stores
 
 ActivityNotificationMessage {
     id: root

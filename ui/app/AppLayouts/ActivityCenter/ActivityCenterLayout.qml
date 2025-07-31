@@ -23,16 +23,15 @@ import AppLayouts.Chat.stores as ChatStores
 import AppLayouts.Profile.stores
 import AppLayouts.stores.Messaging as MessagingStores
 import AppLayouts.stores.Messaging.Community as CommunityStores
-import AppLayouts.stores as AppStores
+import AppLayouts.stores
 
 import "views"
 import "panels"
-import "stores"
 
 StatusSectionLayout {
     id: root
 
-    property AppStores.ContactsStore contactsStore
+    property ContactsStore contactsStore
     property ActivityCenterStore activityCenterStore
     property ChatStores.RootStore store
     property PrivacyStore privacyStore

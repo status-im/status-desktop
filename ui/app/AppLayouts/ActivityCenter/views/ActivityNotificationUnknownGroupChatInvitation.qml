@@ -11,7 +11,8 @@ import utils
 
 import "../controls"
 import "../panels"
-import "../stores"
+
+import AppLayouts.stores
 
 ActivityNotificationMessage {
     id: root

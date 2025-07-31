@@ -51,7 +51,6 @@ import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.stores as AppStores
 import AppLayouts.stores.Messaging as MessagingStores
 import AppLayouts.Browser.stores as BrowserStores
-import AppLayouts.ActivityCenter.stores as ActivityCenterStores
 import AppLayouts.ActivityCenter
 import AppLayouts.ActivityCenter.popups
 
@@ -72,7 +71,7 @@ Item {
 
     // Global cross-domain stores (just references from `rootStore`)
     readonly property AppStores.ContactsStore contactsStore: rootStore.contactsStore
-    readonly property ActivityCenterStores.ActivityCenterStore activityCenterStore: rootStore.activityCenterStore
+    readonly property AppStores.ActivityCenterStore activityCenterStore: rootStore.activityCenterStore
 
     // Settings (just references from `rootStore`)
     readonly property ProfileStores.AboutStore aboutStore: rootStore.profileSectionStore.aboutStore
