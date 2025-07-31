@@ -191,12 +191,13 @@ StatusDialog {
     width: 480
 
     padding: 0
-    topPadding: padding + headerImpl.height
-    bottomPadding: padding + footerImpl.height
-    leftPadding: padding + root.SafeArea.margins.left
-    rightPadding: padding + root.SafeArea.margins.right
 
-    header: Item {
+    header: ToolBar {
+        position: ToolBar.Top
+        background: Rectangle {
+            color: Theme.palette.statusModal.backgroundColor
+            implicitHeight: headerImpl.implicitHeight
+        }
         Spares.StatusModalHeader {
             id: headerImpl
             anchors.top: parent.top
