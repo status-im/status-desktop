@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eof pipefail
 
-# This script is used to fetch HomeBrew bottles for PCRE and OpenSSL.
+# This script is used to fetch HomeBrew bottles for OpenSSL.
 
 trap "echo 'Failed to download bottle. Check your authentication token and network connection.'" EXIT ERR INT QUIT
 

@@ -18,7 +18,7 @@ function install_build_dependencies {
   apt install -yq git wget build-essential \
     cmake extra-cmake-modules pkg-config protoc-gen-go \
     mesa-common-dev unixodbc-dev libpq-dev libglu1-mesa-dev libpcsclite-dev \
-    libpcre3-dev libssl-dev libpulse-mainloop-glib0 libxkbcommon-x11-dev
+    libssl-dev libpulse-mainloop-glib0 libxkbcommon-x11-dev
 }
 
 function install_release_dependencies {
