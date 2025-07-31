@@ -77,14 +77,11 @@ int main(int argc, char *argv[])
     registerStatusQTypes();
 
     loadContextPropertiesMocks(QML_IMPORT_ROOT, engine);
-#ifdef Q_OS_WIN
-    const QUrl url(QUrl::fromLocalFile(QML_IMPORT_ROOT + QStringLiteral("/main.qml")));
-#else
-    const QUrl url(QML_IMPORT_ROOT + QStringLiteral("/main.qml"));
-#endif
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-        if (!obj && url == objUrl)
+
+    const QUrl url("qrc:/main.qml");
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
+                     &app, [url](const QUrl &objUrl) {
+        if (url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
 
@@ -95,12 +92,7 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     qInfo() << "Storybook started, Qt runtime version:" << qVersion() << "; built against version:" << QLibraryInfo::version().toString() <<
-        "installed in:"
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            << QLibraryInfo::path(QLibraryInfo::PrefixPath)
-#else
-            << QLibraryInfo::location(QLibraryInfo::PrefixPath)
-#endif
+        "installed in:" << QLibraryInfo::path(QLibraryInfo::PrefixPath)
             << "; QQC style:" << QQuickStyle::name();
 
     return QGuiApplication::exec();

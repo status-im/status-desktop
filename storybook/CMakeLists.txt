@@ -41,6 +41,11 @@ set(STATUSQ_BUILD_SANDBOX OFF)
 set(STATUSQ_BUILD_SANITY_CHECKER OFF)
 set(STATUSQ_BUILD_TESTS OFF)
 set(STATUSQ_STATIC_LIB ON)
+
+if(ANDROID)
+  set(STATUSQ_SHADOW_BUILD ON)
+endif()
+
 add_subdirectory(../ui/StatusQ StatusQ)
 
 include(FetchContent)
@@ -64,8 +69,8 @@ file(GLOB_RECURSE STORYBOOK_QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
 
 file(GLOB_RECURSE TEST_QML_FILES "qmlTests/*.qml")
 
-add_executable(
-  ${PROJECT_NAME}
+qt_add_executable(
+  ${PROJECT_NAME} MANUAL_FINALIZATION
   main.cpp
   main.qml
   ${CORE_QML_FILES}
@@ -74,6 +79,7 @@ add_executable(
   README.md
    # Require for loading WalletConnect SDK;
    # TODO #14696: remove this dependency
+   resources.qrc
    storybook-resources.qrc
 )
 
@@ -141,3 +147,6 @@ if (APPLE)
   find_library(Foundation Foundation)
   target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation})
 endif()
+
+qt_import_qml_plugins(${PROJECT_NAME})
+qt_finalize_executable(${PROJECT_NAME})
