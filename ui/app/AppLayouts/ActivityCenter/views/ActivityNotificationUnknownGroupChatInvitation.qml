@@ -16,6 +16,9 @@ import "../stores"
 ActivityNotificationMessage {
     id: root
 
+    signal acceptActivityCenterNotificationRequested(string notificationId)
+    signal dismissActivityCenterNotificationRequested(string notificationId)
+
     messageDetails.messageText: qsTr("Invitation to an unknown group")
 
     badgeComponent: ChannelBadge {
@@ -37,7 +40,7 @@ ActivityNotificationMessage {
                           else
                               return ActivityCenterStore.ActivityCenterMembershipStatus.Pending
 
-        onAcceptRequestToJoinCommunity: activityCenterStore.acceptActivityCenterNotification(notification)
-        onDeclineRequestToJoinCommunity: activityCenterStore.dismissActivityCenterNotification(notification)
+        onAcceptRequestToJoinCommunity: root.acceptActivityCenterNotificationRequested(notification.id)
+        onDeclineRequestToJoinCommunity: root.dismissActivityCenterNotificationRequestedstring(notification.id)
     }
 }

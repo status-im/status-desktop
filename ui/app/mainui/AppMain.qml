@@ -50,8 +50,8 @@ import AppLayouts.Wallet.popups.dapps as DAppsPopups
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.stores as AppStores
 import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.ActivityCenter.stores as ActivityCenterStores
 import AppLayouts.ActivityCenter
-import AppLayouts.ActivityCenter.stores
 import AppLayouts.ActivityCenter.popups
 
 import mainui.adaptors
@@ -73,6 +73,7 @@ Item {
 
     // Global cross-domain stores (just references from `rootStore`)
     readonly property AppStores.ContactsStore contactsStore: rootStore.contactsStore
+    readonly property ActivityCenterStores.ActivityCenterStore activityCenterStore: rootStore.activityCenterStore
 
     // Settings (just references from `rootStore`)
     readonly property ProfileStores.AboutStore aboutStore: rootStore.profileSectionStore.aboutStore
@@ -108,7 +109,6 @@ Item {
         networkConnectionStore: appMain.networkConnectionStore
     }
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
-    property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore {
         networksStore: appMain.networksStore
     }

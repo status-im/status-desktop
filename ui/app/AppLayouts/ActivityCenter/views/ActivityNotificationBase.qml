@@ -17,13 +17,14 @@ Item {
 
     /* required */ property int filteredIndex
     /* required */ property var notification
-    /* required */ property ActivityCenterStore activityCenterStore
 
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent
     property alias ctaComponent: ctaLoader.sourceComponent
 
     signal closeActivityCenter()
+    signal markActivityCenterNotificationReadRequested(string notificationId)
+    signal markActivityCenterNotificationUnreadRequested(string notificationId)
 
     implicitHeight: Math.max(60, bodyLoader.height + bodyLoader.anchors.topMargin * 2 +
                                  (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
@@ -84,8 +85,8 @@ Item {
             tooltip.y: 4
             onClicked: {
                 notification.read ?
-                    root.activityCenterStore.markActivityCenterNotificationUnread(root.notification) :
-                    root.activityCenterStore.markActivityCenterNotificationRead(root.notification)
+                    root.markActivityCenterNotificationUnreadRequested(root.notification.id) :
+                    root.markActivityCenterNotificationReadRequested(root.notification.id)
             }
         }
     }

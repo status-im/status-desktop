@@ -13,6 +13,8 @@ import "../controls"
 ActivityNotificationMessage {
     id: root
 
+    signal switchToRequested(string sectionId, string chatId, string messageId)
+
     function badgeTextFromRepliedMessageContent(message) {
         switch (message.contentType) {
         case Constants.messageContentType.stickerType:
@@ -33,14 +35,14 @@ ActivityNotificationMessage {
     badgeComponent: ReplyBadge {
         repliedMessageContent: notification ? badgeTextFromRepliedMessageContent(notification.repliedMessage) : ""
         onReplyClicked: {
-            root.activityCenterStore.switchTo(notification)
+            root.switchToRequested(notification.sectionId, notification.chatId, notification.message.id)
             root.closeActivityCenter()
             root.store.messageStore.messageModule.jumpToMessage(model.id)
         }
     }
 
     onMessageClicked: {
-        root.activityCenterStore.switchTo(notification)
+        root.switchToRequested(notification.sectionId, notification.chatId, notification.message.id)
         root.closeActivityCenter()
     }
 }
