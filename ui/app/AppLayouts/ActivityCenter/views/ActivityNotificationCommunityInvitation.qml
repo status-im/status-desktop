@@ -14,6 +14,8 @@ import "../controls"
 ActivityNotificationMessage {
     id: root
 
+    signal switchToRequested(string sectionId, string chatId, string messageId)
+
     badgeComponent: CommunityBadge {
         id: communityBadge
 
@@ -30,7 +32,7 @@ ActivityNotificationMessage {
             root.closeActivityCenter()
         }
         onChannelNameClicked: {
-            root.activityCenterStore.switchTo(notification)
+            root.switchToRequested(notification.sectionId, notification.chatId, notification.message.id)
             root.closeActivityCenter()
         }
     }

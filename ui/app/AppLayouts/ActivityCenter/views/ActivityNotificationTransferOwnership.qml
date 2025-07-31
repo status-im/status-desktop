@@ -20,6 +20,7 @@ ActivityNotificationBase {
     required property string communityName
     required property string communityColor
     required property int type // Possible values [OwnershipState]
+    property bool showFullTimestamp: false
 
     signal finaliseOwnershipClicked
     signal navigateToCommunityClicked

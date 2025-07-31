@@ -236,12 +236,18 @@ StatusSectionLayout {
         ActivityNotificationMention {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             contactsModel: root.contactsStore.contactsModel
             community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
             channel: notification ? root.store.getChatDetails(notification.chatId) : null
 
-            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onSetActiveCommunity: (communityId) => {
+                                      root.store.setActiveCommunity(communityId) }
+            onSwitchToRequested: (sectionId, chatId, messageId) => {
+                                     root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -251,8 +257,14 @@ StatusSectionLayout {
         ActivityNotificationReply {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             contactsModel: root.contactsStore.contactsModel
+
+            onSwitchToRequested: (sectionId, chatId, messageId) => {
+                                     root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -262,8 +274,12 @@ StatusSectionLayout {
         ActivityNotificationContactRequest {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             contactsModel: root.contactsStore.contactsModel
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -273,8 +289,14 @@ StatusSectionLayout {
         ActivityNotificationCommunityInvitation {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             contactsModel: root.contactsStore.contactsModel
+
+            onSwitchToRequested: (sectionId, chatId, messageId) => {
+                               root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                         root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                           root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -288,8 +310,12 @@ StatusSectionLayout {
                                                                                              communityRootStore.communityAccessStore : null
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             contactsModel: root.contactsStore.contactsModel
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onAcceptRequestToJoinCommunityRequested: (requestId, communityId) => {
                 if(communityAccessStore) {
@@ -309,10 +335,13 @@ StatusSectionLayout {
         ActivityNotificationCommunityRequest {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
             onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -322,10 +351,13 @@ StatusSectionLayout {
         ActivityNotificationCommunityKicked {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
             onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -337,7 +369,11 @@ StatusSectionLayout {
             banned: true
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -349,10 +385,13 @@ StatusSectionLayout {
             banned: false
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
             onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -363,8 +402,12 @@ StatusSectionLayout {
         ActivityNotificationContactRemoved {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             contactsModel: root.contactsStore.contactsModel
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -375,6 +418,11 @@ StatusSectionLayout {
         ActivityNotificationNewKeypairFromPairedDevice {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -393,9 +441,12 @@ StatusSectionLayout {
 
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: d.callLaterMarkAsSeen()
 
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
+            onCloseActivityCenter: d.callLaterMarkAsSeen()
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(notification.communityId)
             onNavigateToCommunityClicked: root.store.setActiveCommunity(notification.communityId)
         }
@@ -410,7 +461,11 @@ StatusSectionLayout {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             accountName: store.name
-            activityCenterStore: root.activityCenterStore
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
             onMoreDetailsClicked: {
                 switch (type) {
@@ -435,15 +490,19 @@ StatusSectionLayout {
         ActivityNotificationNewsMessage {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
+
             onReadMoreClicked: {
                 d.callLaterMarkAsSeen()
-                root.activityCenterStore.markActivityCenterNotificationRead(parent.notification)
+                root.activityCenterStore.markActivityCenterNotificationRead(parent.notification.id)
                 Global.openNewsMessagePopupRequested(parent.notification, parent.notification.id)
                 // TODO figure out if we want the link
                 Global.addCentralizedMetricIfEnabled("news-info-opened", {"news-link": parent.notification.link})
 
             }
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -464,6 +523,10 @@ StatusSectionLayout {
 
             walletAccountName: !!root.store && !isFirstTokenReceived ? root.store.walletStore.getNameForWalletAddress(tokenData.walletAddress) : ""
 
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
@@ -481,7 +544,11 @@ StatusSectionLayout {
 
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
 
             onOpenShareAccountsClicked: {
@@ -496,8 +563,17 @@ StatusSectionLayout {
         ActivityNotificationUnknownGroupChatInvitation {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            activityCenterStore: root.activityCenterStore
             contactsModel: root.contactsStore.contactsModel
+
+            onAcceptActivityCenterNotificationRequested: (notificationId) => {
+                                                             root.activityCenterStore.acceptActivityCenterNotification(notificationId) }
+            onDismissActivityCenterNotificationRequested: (notificationId) => {
+                                                              root.activityCenterStore.dismissActivityCenterNotification(notificationId) }
+
+            onMarkActivityCenterNotificationReadRequested: (notificationId) => {
+                                                               root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
+            onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
+                                                                 root.activityCenterStore.markActivityCenterNotificationUnread(notificationId) }
             onCloseActivityCenter: d.callLaterMarkAsSeen()
         }
     }
