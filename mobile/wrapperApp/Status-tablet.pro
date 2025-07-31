@@ -32,7 +32,6 @@ android {
                         $$PWD/../lib/android/$$LIB_PREFIX/libcrypto_3.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libnim_status_client.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libpcre.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libstatus.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
 }
@@ -46,7 +45,7 @@ ios {
     QMAKE_BUNDLE = status$${QMAKE_BUNDLE_SUFFIX}
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
 
-    LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen -lpcre
+    LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
 }
 
 DESTDIR=$$PWD/../bin/$$LIB_PREFIX
