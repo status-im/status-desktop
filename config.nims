@@ -24,7 +24,6 @@ if hostOS == "macosx":
   # statically link these libs
   switch("passL", "bottles/openssl@3/lib/libcrypto.a")
   switch("passL", "bottles/openssl@3/lib/libssl.a")
-  switch("passL", "bottles/pcre/lib/libpcre.a")
   # https://code.videolan.org/videolan/VLCKit/-/issues/232
   switch("passL", "-Wl,-no_compact_unwind")
   # set the minimum supported macOS version to 13.0

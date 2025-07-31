@@ -141,7 +141,7 @@ endif
 
 ifeq ($(mkspecs),macx)
 BOTTLES_DIR := $(shell pwd)/bottles
-BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@3 pcre)
+BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@3)
 ifeq ($(QT_ARCH),arm64)
 # keep in sync with MACOSX_DEPLOYMENT_TARGET
 	BOTTLE_MACOS_VERSION := 'arm64_ventura'
@@ -795,16 +795,6 @@ notarize-macos: export MACOS_BUNDLE_ID ?= im.status.ethereum.desktop
 notarize-macos:
 	scripts/notarize-macos-pkg.sh $(STATUS_CLIENT_DMG)
 
-NIM_WINDOWS_PREBUILT_DLLS ?= tmp/windows/tools/pcre.dll
-
-$(NIM_WINDOWS_PREBUILT_DLLS):
-	echo -e "\033[92mFetching:\033[39m prebuilt DLLs from nim-lang.org"
-	rm -rf tmp/windows
-	mkdir -p tmp/windows/tools
-	cd tmp/windows/tools && \
-	wget -nv https://nim-lang.org/download/dlls.zip && \
-	unzip dlls.zip
-
 nim_windows_launcher: | deps
 	$(ENV_SCRIPT) nim c -d:debug --outdir:./bin --passL:"-static-libgcc -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive" src/nim_windows_launcher.nim
 
@@ -814,7 +804,7 @@ STATUS_CLIENT_7Z ?= pkg/Status.7z
 $(STATUS_CLIENT_EXE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_EXE): INSTALLER_OUTPUT := pkg
-$(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
+$(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_launcher
 	rm -rf pkg/*.exe tmp/windows/dist
 	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
@@ -909,9 +899,9 @@ run-macos: nim_status_client
 	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
 run-windows: STATUS_RC_FILE = status-dev.rc
-run-windows: compile_windows_resources nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
+run-windows: compile_windows_resources nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
-	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
+	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(PATH)" \
 	./bin/nim_status_client.exe $(ARGS)
 
 NIM_TEST_FILES := $(wildcard test/nim/*.nim)
