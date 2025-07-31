@@ -9,7 +9,7 @@ import StatusQ.Components
 import utils
 import shared.panels
 
-import "../stores"
+import AppLayouts.stores
 
 Item {
     id: root
