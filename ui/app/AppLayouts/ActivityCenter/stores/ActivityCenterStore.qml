@@ -90,20 +90,20 @@ QtObject {
         root.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
     }
 
-    function markActivityCenterNotificationRead(notification) {
-        root.activityCenterModuleInst.markActivityCenterNotificationRead(notification.id)
+    function markActivityCenterNotificationRead(notificationId) {
+        root.activityCenterModuleInst.markActivityCenterNotificationRead(notificationId)
     }
 
-    function markActivityCenterNotificationUnread(notification) {
-        root.activityCenterModuleInst.markActivityCenterNotificationUnread(notification.id)
+    function markActivityCenterNotificationUnread(notificationId) {
+        root.activityCenterModuleInst.markActivityCenterNotificationUnread(notificationId)
     }
 
     function markAsSeenActivityCenterNotifications() {
         root.activityCenterModuleInst.markAsSeenActivityCenterNotifications()
     }
 
-    function switchTo(notification) {
-        root.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.message.id)
+    function switchTo(sectionId, chatId, messageId) {
+        root.activityCenterModuleInst.switchTo(sectionId, chatId, messageId)
     }
 
     function setActiveNotificationGroup(group) {
@@ -118,12 +118,12 @@ QtObject {
         root.activityCenterModuleInst.fetchActivityCenterNotifications()
     }
 
-    function acceptActivityCenterNotification(notification) {
-        root.activityCenterModuleInst.acceptActivityCenterNotification(notification.id)
+    function acceptActivityCenterNotification(notificationId) {
+        root.activityCenterModuleInst.acceptActivityCenterNotification(notificationId)
     }
 
-    function dismissActivityCenterNotification(notification) {
-        root.activityCenterModuleInst.dismissActivityCenterNotification(notification.id)
+    function dismissActivityCenterNotification(notificationId) {
+        root.activityCenterModuleInst.dismissActivityCenterNotification(notificationId)
     }
 
     function enableInstallationAndSync(installationId) {
