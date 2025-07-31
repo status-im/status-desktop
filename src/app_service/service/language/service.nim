@@ -1,5 +1,5 @@
 import nimqml
-import chronicles, os, stew/shims/strformat, re
+import chronicles, os, stew/shims/strformat, regex
 
 import ../../../constants as main_constants
 import ../../../app/global/global_singleton
@@ -31,9 +31,8 @@ proc newService*(events: EventEmitter): Service =
   result.shouldRetranslate = false
 
 proc obtainLanguages(dir: string): seq[string] =
-  let localeRe = re".*qml_(.*).qm"
   for file in walkFiles dir & "/*.qm":
-    if file =~ localeRe:
+    match file, rex".*qml_(.*).qm":
       result.add(matches[0])
 
 proc currentLanguage*(): string =
