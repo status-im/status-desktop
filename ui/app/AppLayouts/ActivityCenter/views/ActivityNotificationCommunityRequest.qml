@@ -11,7 +11,7 @@ import shared.controls
 import utils
 
 import "../controls"
-import "../stores"
+import AppLayouts.stores
 
 ActivityNotificationBase {
     id: root

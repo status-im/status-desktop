@@ -10,7 +10,7 @@ import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Popups
 
-import "../stores"
+import AppLayouts.stores
 
 Item {
     id: root

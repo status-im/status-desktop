@@ -9,7 +9,8 @@ import StatusQ.Components
 import shared
 import shared.panels
 import utils
-import AppLayouts.ActivityCenter.stores
+
+import AppLayouts.stores
 
 
 ActivityNotificationBase {

@@ -10,8 +10,6 @@ import utils
 
 import AppLayouts.Chat.stores as ChatStores
 
-import AppLayouts.ActivityCenter.stores
-
 Item {
     id: root
 
