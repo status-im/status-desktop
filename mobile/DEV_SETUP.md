@@ -144,7 +144,6 @@ The build system uses several environment variables to control the build process
 - DOtherSide
 - OpenSSL
 - QRCodeGen
-- PCRE
 - Nim Status Client
 
 ### Build Targets

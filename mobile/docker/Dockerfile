@@ -24,7 +24,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
     git make build-essential pkg-config extra-cmake-modules gcc-9 g++-9 \
     libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
     zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev unixodbc-dev libpq-dev \
-    libncurses5-dev libncursesw5-dev libpcre3-dev libnss3 \
+    libncurses5-dev libncursesw5-dev libnss3 \
     gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
     gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa libpulse-mainloop-glib0 \
     gstreamer1.0-pulseaudio libgstreamer-plugins-base1.0-0 \
