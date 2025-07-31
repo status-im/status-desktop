@@ -1,4 +1,4 @@
-import NimQml, json, strutils
+import nimqml, json, strutils
 import io_interface
 import ../../../core/signals/types
 

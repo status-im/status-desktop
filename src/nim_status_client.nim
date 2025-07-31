@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, stew/shims/strformat, strutils, times, checksums/md5, json, re
+import nimqml, chronicles, os, stew/shims/strformat, strutils, times, checksums/md5, json, re
 
 import status_go
 import app/core/main
@@ -52,7 +52,7 @@ proc prepareLogging() =
   # Outputs logs in the node tab
   when compiles(defaultChroniclesStream.output.writer):
     defaultChroniclesStream.output.writer =
-      proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [Defect].} =
+      proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [].} =
         try:
           if signalsManagerQObjPointer != nil:
             signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveChroniclesLogEvent")

@@ -1,4 +1,4 @@
-import NimQml, json, strutils
+import nimqml, json, strutils
 
 import ./models/[sticker_list, sticker_pack_list]
 import ./io_interface, ./item

@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils
+import nimqml, tables, sequtils
 
 import ../../../../app_service/service/gif/dto
 

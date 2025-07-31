@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 
 import item
 

@@ -1,4 +1,4 @@
-import NimQml, chronicles, times, json, uuids
+import nimqml, chronicles, times, json, uuids
 import strutils
 
 import backend/wallet_connect as status_go

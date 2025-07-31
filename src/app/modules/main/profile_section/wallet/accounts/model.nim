@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, sequtils, stew/shims/strformat
+import nimqml, tables, strutils, sequtils, stew/shims/strformat
 
 import ../../../../shared_models/wallet_account_item
 

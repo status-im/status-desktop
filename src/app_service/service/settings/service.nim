@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, strutils, sequtils, tables, times
+import nimqml, chronicles, json, strutils, sequtils, tables, times
 
 import app/core/eventemitter
 import app/core/fleets/fleet_configuration

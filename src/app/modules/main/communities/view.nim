@@ -1,4 +1,4 @@
-import NimQml, json, strutils, sequtils
+import nimqml, json, strutils, sequtils
 
 import ./io_interface
 import ../../shared_models/[section_model, section_item, token_list_model, token_list_item,

@@ -59,7 +59,7 @@ proc `%`*(stuint256: Stuint[256]): JsonNode =
   newJString($stuint256)
 
 proc readValue*(reader: var JsonReader, value: var Stuint[256])
-               {.raises: [IOError, SerializationError, Defect].} =
+               {.raises: [IOError, SerializationError].} =
   try:
     let strVal = reader.readValue(string)
     value = strVal.parse(Stuint[256])

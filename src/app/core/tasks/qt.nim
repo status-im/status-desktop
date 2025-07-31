@@ -1,5 +1,5 @@
 import # vendor libs
-  NimQml, json_serialization
+  nimqml, json_serialization
 
 import # status-desktop libs
   ./common

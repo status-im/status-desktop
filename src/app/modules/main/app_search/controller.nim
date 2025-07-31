@@ -1,4 +1,4 @@
-import Tables, chronicles
+import tables, chronicles
 import io_interface
 
 import ../../../global/app_signals

@@ -1,4 +1,4 @@
-import json, stew/shims/strformat, chronicles, Tables
+import json, stew/shims/strformat, chronicles, tables
 include ../../../common/json_utils
 
 type 

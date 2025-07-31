@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, strutils, stint, sugar, chronicles
+import nimqml, tables, json, sequtils, strutils, stint, sugar, chronicles
 import web3/eth_api_types, stew/byteutils, nimcrypto, app_service/common/safe_json_serialization
 
 import app/core/eventemitter

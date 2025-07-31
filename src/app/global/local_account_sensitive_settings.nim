@@ -1,4 +1,4 @@
-import NimQml, os, json, chronicles
+import nimqml, os, json, chronicles
 
 import ../../constants
 

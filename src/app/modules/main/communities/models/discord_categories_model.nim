@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 import discord_category_item
 
 type

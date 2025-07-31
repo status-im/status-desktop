@@ -1,4 +1,4 @@
-import NimQml, chronicles, std/json, sequtils, strutils, options
+import nimqml, chronicles, std/json, sequtils, strutils, options
 import tables
 
 import app/core/eventemitter

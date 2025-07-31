@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 import item
 
 import ../../../../../app_service/service/settings/dto/settings

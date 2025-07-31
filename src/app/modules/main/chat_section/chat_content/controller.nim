@@ -1,4 +1,4 @@
-import NimQml, tables, json
+import nimqml, tables, json
 import io_interface
 
 import ../../../../../app_service/service/settings/service as settings_service

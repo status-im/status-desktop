@@ -1,4 +1,4 @@
-import json, options, chronicles, Tables
+import json, options, chronicles, tables
 
 import base
 import signal_type

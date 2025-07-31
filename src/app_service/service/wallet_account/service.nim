@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, sugar, chronicles, stew/shims/strformat, stint
+import nimqml, tables, json, sequtils, sugar, chronicles, stew/shims/strformat, stint
 import net, strutils, os, times, algorithm, options
 import web3/eth_api_types
 

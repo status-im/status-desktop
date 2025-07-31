@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils
+import nimqml, tables, strutils
 
 import login_account_item
 

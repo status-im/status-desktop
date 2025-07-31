@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import io_interface, states
 from app_service/service/keycardV2/dto import KeycardEventDto
 from app_service/service/devices/dto/local_pairing_status import LocalPairingState

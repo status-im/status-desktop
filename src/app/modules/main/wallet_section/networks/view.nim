@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils
+import nimqml, sequtils, strutils
 
 import ./io_interface, ./model, ./rpc_providers_model
 

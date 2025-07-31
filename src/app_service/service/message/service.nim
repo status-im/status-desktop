@@ -1,4 +1,4 @@
-import NimQml, tables, json, re, sequtils, stew/shims/strformat, strutils, chronicles, times, oids, uuids
+import nimqml, tables, json, re, sequtils, stew/shims/strformat, strutils, chronicles, times, oids, uuids
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types

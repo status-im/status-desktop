@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import
   eventemitter,
   ./fleets/fleet_configuration,

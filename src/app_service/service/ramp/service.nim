@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, chronicles, json
+import nimqml, sequtils, sugar, chronicles, json
 
 import app/core/[main]
 import app/core/signals/types

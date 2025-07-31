@@ -1,4 +1,4 @@
-import NimQml, json, chronicles
+import nimqml, json, chronicles
 
 import ../../global/app_signals
 import ../../global/global_singleton

@@ -1,4 +1,4 @@
-import NimQml, os, json, chronicles
+import nimqml, os, json, chronicles
 
 import backend/mailservers as status_mailservers
 import backend/general as status_general

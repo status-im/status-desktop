@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, stew/shims/strformat, sequtils
+import nimqml, tables, strutils, stew/shims/strformat, sequtils
 
 import backend/backend
 

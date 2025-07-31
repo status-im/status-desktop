@@ -1,4 +1,4 @@
-import NimQml, strutils
+import nimqml, strutils
 
 import ./io_interface
 import app/modules/shared/wallet_utils

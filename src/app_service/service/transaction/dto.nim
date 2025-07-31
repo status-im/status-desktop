@@ -1,5 +1,5 @@
 import json, strutils, stint, app_service/common/safe_json_serialization, stew/shims/strformat
-import Tables, sequtils
+import tables, sequtils
 
 import
   web3/eth_api_types

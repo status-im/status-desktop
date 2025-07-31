@@ -1,4 +1,4 @@
-import Tables, json, options, tables, strutils, times, chronicles
+import tables, json, options, tables, strutils, times, chronicles
 import ../../stickers/dto/stickers
 
 include ../../../common/json_utils

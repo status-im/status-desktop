@@ -1,4 +1,4 @@
-import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, times, std/options
+import nimqml, tables, os, json, stew/shims/strformat, sequtils, strutils, times, std/options
 import app_service/common/safe_json_serialization, chronicles
 
 import ../../../app/global/global_singleton

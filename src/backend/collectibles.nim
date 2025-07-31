@@ -1,5 +1,5 @@
 import json, stew/shims/strformat
-import stint, Tables, strutils
+import stint, tables, strutils
 import core
 import response_type, collectibles_types
 

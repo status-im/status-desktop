@@ -1,4 +1,4 @@
-import NimQml, tables
+import nimqml, tables
 import app/core/eventemitter
 from app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
 

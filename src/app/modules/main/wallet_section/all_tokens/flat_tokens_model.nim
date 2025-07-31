@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils
+import nimqml, tables, strutils
 
 import ./io_interface, ./market_details_item
 

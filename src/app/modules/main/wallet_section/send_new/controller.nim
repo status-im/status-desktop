@@ -1,4 +1,4 @@
-import Tables
+import tables
 import uuids, chronicles
 
 import io_interface

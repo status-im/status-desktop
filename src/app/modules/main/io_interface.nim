@@ -1,4 +1,4 @@
-import NimQml, stint, json
+import nimqml, stint, json
 
 import app_service/service/settings/service as settings_service
 import app_service/service/node_configuration/service as node_configuration_service

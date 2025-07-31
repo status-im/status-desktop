@@ -1,4 +1,4 @@
-import Tables
+import tables
 import uuids, chronicles
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service

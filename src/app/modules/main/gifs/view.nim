@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import ./io_interface
 import ./gif_column_model
 import ../../../../app_service/service/gif/dto

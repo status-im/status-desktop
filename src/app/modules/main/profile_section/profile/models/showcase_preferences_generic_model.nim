@@ -1,4 +1,4 @@
-import NimQml, tables, strutils, sequtils, json
+import nimqml, tables, strutils, sequtils, json
 
 import app_service/service/profile/dto/profile_showcase_preferences
 

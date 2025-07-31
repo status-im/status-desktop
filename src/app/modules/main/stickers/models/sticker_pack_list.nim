@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils, sugar
+import nimqml, tables, sequtils, sugar
 import ./sticker_list
 import ../io_interface, ../item
 # TODO remove those uses of services stuff

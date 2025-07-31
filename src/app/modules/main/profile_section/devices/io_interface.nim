@@ -1,4 +1,4 @@
-import NimQml, tables
+import nimqml, tables
 import app_service/service/devices/service
 from app_service/service/keycard/service import KeyDetails
 

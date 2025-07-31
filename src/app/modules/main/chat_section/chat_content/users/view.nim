@@ -1,4 +1,4 @@
-import NimQml, sequtils, sets, strutils
+import nimqml, sequtils, sets, strutils
 import ../../../../shared_models/[member_model]
 import io_interface
 

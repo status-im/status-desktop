@@ -1,4 +1,4 @@
-import NimQml, json
+import nimqml, json
 
 # import ./controller_interface
 import ./io_interface

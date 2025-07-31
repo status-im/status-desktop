@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import app/global/global_singleton
 import app/core/eventemitter

@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 import discord_import_error_item, discord_import_errors_model
 import discord_import_task_item as taskItem 
 import ../../../../../app_service/service/community/dto/community

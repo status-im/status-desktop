@@ -1,6 +1,6 @@
-import Tables, json, chronicles, strutils
-import stew/shims/strformat, sets, options
-import chronicles, libp2p/[multihash, multicodec, cid]
+import std/[json, options, strutils]
+import stew/shims/strformat
+import chronicles
 import nimcrypto, stint
 import ../../common/conversion as common_conversion
 import ../eth/dto/transaction as eth_transaction_dto

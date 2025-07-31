@@ -1,4 +1,4 @@
-import NimQml, tables, strutils, sequtils, json
+import nimqml, tables, strutils, sequtils, json
 
 type
   ShowcasePreferencesSocialLinkItem* = object of RootObj

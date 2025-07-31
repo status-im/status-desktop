@@ -1,4 +1,4 @@
-import NimQml, json, sugar, sequtils
+import nimqml, json, sugar, sequtils
 import ../io_interface as delegate_interface
 
 import app/global/global_singleton

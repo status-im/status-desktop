@@ -1,4 +1,4 @@
-import NimQml, chronicles, strutils, sequtils, json
+import nimqml, chronicles, strutils, sequtils, json
 
 import dto
 

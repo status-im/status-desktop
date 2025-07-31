@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import nimqml, chronicles
 
 import io_interface, view, controller, json
 import ../../../shared_models/user_item

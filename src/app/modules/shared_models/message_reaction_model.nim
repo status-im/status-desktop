@@ -1,4 +1,4 @@
-import NimQml, Tables, json, strutils, stew/shims/strformat
+import nimqml, tables, json, strutils, stew/shims/strformat
 
 import message_reaction_item
 
@@ -67,7 +67,7 @@ QtObject:
     of ModelRole.NumberOfReactions:
       result = newQVariant(item.numberOfReactions)
     of ModelRole.JsonArrayOfUsersReactedWithThisEmoji:
-      # Would be good if we could return QVariant of array (seq) here, but it's not supported in our NimQml,
+      # Would be good if we could return QVariant of array (seq) here, but it's not supported in our nimqml,
       # because of that we're returning json array as a string.
       result = newQVariant($item.jsonArrayOfUsersReactedWithThisEmoji)
 

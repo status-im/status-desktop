@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, sugar, tables
+import nimqml, json, sequtils, sugar, tables
 
 import ./io_interface, ./view, ./controller
 import ./item as wallet_accounts_item

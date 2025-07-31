@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, strutils, sequtils
+import nimqml, chronicles, json, strutils, sequtils
 import chronicles
 
 import io_interface, states

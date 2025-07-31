@@ -1,4 +1,4 @@
-import Tables
+import tables
 import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
 import app_service/service/transaction/router_transactions_dto

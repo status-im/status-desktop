@@ -1,6 +1,6 @@
 {.used.}
 
-import Tables, json
+import tables, json
 
 import ../../../common/account_constants
 

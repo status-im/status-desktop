@@ -1,4 +1,4 @@
-import Tables
+import tables
 
 import io_interface
 

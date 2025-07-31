@@ -1,9 +1,4 @@
-import tables, strutils, stint, macros
-import
-  web3/[encoding, eth_api_types], stew/byteutils, nimcrypto, json_serialization, chronicles
-import json, tables, app_service/common/safe_json_serialization
-
-include  ../../../common/json_utils
+import stint, web3/[encoding, eth_api_types]
 
 type
   Transfer* = object

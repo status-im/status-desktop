@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import result_model, location_menu_model
 import io_interface
 

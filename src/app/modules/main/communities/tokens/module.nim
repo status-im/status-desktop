@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import tables, json, sequtils, sugar, stint, strutils, chronicles
 
 import app_service/service/wallet_account/service as wallet_account_service

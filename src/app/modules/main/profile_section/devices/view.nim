@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import io_interface, model
 import ../../../../../app_service/service/devices/service
 

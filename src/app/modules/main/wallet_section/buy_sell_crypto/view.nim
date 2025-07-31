@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 import options
 
 import ./model

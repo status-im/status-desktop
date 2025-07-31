@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils
+import nimqml, tables, sequtils
 
 import ./io_interface, ./balances_model
 

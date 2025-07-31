@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import nimqml, chronicles
 
 import ./io_interface as io_interface
 import ./controller, ./view

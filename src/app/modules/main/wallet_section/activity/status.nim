@@ -1,4 +1,4 @@
-import NimQml, std/json, sequtils, strutils, times
+import nimqml, std/json, sequtils, strutils, times
 import atomics
 
 import app/core/signals/types

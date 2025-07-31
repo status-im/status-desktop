@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ../../constants as main_constants
 import local_account_settings

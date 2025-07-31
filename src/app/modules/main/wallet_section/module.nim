@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, sequtils, strutils, sugar
+import nimqml, json, chronicles, sequtils, strutils, sugar
 
 import ./controller, ./view, ./filter
 import ./io_interface as io_interface

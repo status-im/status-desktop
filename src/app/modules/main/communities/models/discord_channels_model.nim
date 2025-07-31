@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils
+import nimqml, tables, strutils
 import discord_channel_item
 
 type

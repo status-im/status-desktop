@@ -1,4 +1,4 @@
-import NimQml, chronicles, Tables, strutils, sequtils, json
+import nimqml, chronicles, tables, strutils, sequtils, json
 
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter

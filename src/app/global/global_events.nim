@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 QtObject:
   type GlobalEvents* = ref object of QObject

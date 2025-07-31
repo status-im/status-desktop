@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 import ./io_interface
 import ./network_connection_item

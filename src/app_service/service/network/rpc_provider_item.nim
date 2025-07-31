@@ -1,4 +1,4 @@
-import NimQml, stew/shims/strformat
+import nimqml, stew/shims/strformat
 
 import backend/network_types
 

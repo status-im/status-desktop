@@ -1,4 +1,4 @@
-import NimQml
+import nimqml
 
 QtObject:
   type GasEstimateItem* = ref object of QObject

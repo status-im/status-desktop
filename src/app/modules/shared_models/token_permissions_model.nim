@@ -1,4 +1,4 @@
-import NimQml, Tables
+import nimqml, tables
 import token_permission_item
 import token_permission_chat_list_item
 import token_permission_chat_list_model
