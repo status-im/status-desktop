@@ -3,9 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import UserAccount
-from constants.dock_buttons import DockButtons
 from scripts.utils.generators import random_password_string
-from gui.components.change_password_popup import ChangePasswordPopup
 
 from driver.aut import AUT
 from gui.main_window import MainWindow
