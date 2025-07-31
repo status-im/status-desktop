@@ -36,7 +36,8 @@ FEATURE_FLAGS="FLAG_DAPPS_ENABLED=0 FLAG_CONNECTOR_ENABLED=0 FLAG_KEYCARD_ENABLE
 # build status-client with feature flags
 env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c "${PLATFORM_SPECIFIC[@]}" --outdir:./bin -d:DESKTOP_VERSION="$DESKTOP_VERSION" -d:STATUSGO_VERSION="$STATUSGO_VERSION" -d:GIT_COMMIT="$(git log --pretty=format:'%h' -n 1)" -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \
     --mm:refc \
-    --opt:speed \
+    --opt:size \
+    -d:lto \
     --cc:clang \
     --cpu:"$CARCH" \
     --noMain:on \
