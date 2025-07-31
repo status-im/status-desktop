@@ -17,6 +17,7 @@ ActivityNotificationMessage {
     required property var channel
 
     signal setActiveCommunity(string communityId)
+    signal switchToRequested(string sectionId, string chatId, string messageId)
 
     badgeComponent: {
         if (!notification)
@@ -49,7 +50,7 @@ ActivityNotificationMessage {
                 root.closeActivityCenter()
             }
             onChannelNameClicked: {
-                root.activityCenterStore.switchTo(notification)
+                root.switchToRequested(notification.sectionId, notification.chatId, notification.message.id)
                 root.closeActivityCenter()
             }
         }
@@ -69,14 +70,14 @@ ActivityNotificationMessage {
             asset.color: group.color
 
             onChannelNameClicked: {
-                root.activityCenterStore.switchTo(notification)
+                root.switchToRequested(notification.sectionId, notification.chatId, notification.message.id)
                 root.closeActivityCenter()
             }
         }
     }
 
     onMessageClicked: {
-        root.activityCenterStore.switchTo(notification)
+        root.switchToRequested(notification.sectionId, notification.chatId, notification.message.id)
         root.closeActivityCenter()
     }
 }
