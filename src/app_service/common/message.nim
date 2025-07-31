@@ -1,11 +1,13 @@
-import sequtils, strutils, sugar, re
+import sequtils, strutils, sugar, regex
 import ../service/contacts/dto/contacts
 from conversion import SystemTagMapping
 
 
 proc replacePubKeysWithDisplayNames*(allKnownContacts: seq[ContactsDto], message: string): string =
-  let pubKeyPattern = re(r"(@0x[a-f0-9]+)", flags = {reStudy, reIgnoreCase})
-  let pubKeys = findAll(message, pubKeyPattern)
+  const pubKeyPattern = re2(r"(@0x[a-f0-9]+)", flags = {regexCaseless})
+  var pubKeys = newSeq[string]()
+  for m in findAll(message, pubKeyPattern):
+    pubKeys.add message[m.boundaries]
   var updatedMessage = message
 
   for pair in SystemTagMapping:
@@ -20,13 +22,19 @@ proc replacePubKeysWithDisplayNames*(allKnownContacts: seq[ContactsDto], message
   return updatedMessage
 
 proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: string): string =
-  let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
-  let ensPattern = re(r"(@\w+((\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
-  let namePattern = re(r"(@\w+)", flags = {reStudy, reIgnoreCase})
+  const aliasPattern = re2(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {regexCaseless})
+  const ensPattern = re2(r"(@\w+((\.stateofus)?\.eth))", flags = {regexCaseless})
+  const namePattern = re2(r"(@\w+)", flags = {regexCaseless})
 
-  let aliasMentions = findAll(message, aliasPattern)
-  let ensMentions = findAll(message, ensPattern)
-  let nameMentions = findAll(message, namePattern)
+  var aliasMentions = newSeq[string]()
+  for m in findAll(message, aliasPattern):
+    aliasMentions.add message[m.boundaries]
+  var ensMentions = newSeq[string]()
+  for m in findAll(message, ensPattern):
+    ensMentions.add message[m.boundaries]
+  var nameMentions = newSeq[string]()
+  for m in findAll(message, namePattern):
+    nameMentions.add message[m.boundaries]
   var updatedMessage = message
 
   # replace system tag with system ID

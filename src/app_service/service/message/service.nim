@@ -1,4 +1,4 @@
-import nimqml, tables, json, re, sequtils, stew/shims/strformat, strutils, chronicles, times, oids, uuids
+import nimqml, tables, json, regex, sequtils, stew/shims/strformat, strutils, chronicles, times, oids, uuids
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
@@ -36,7 +36,6 @@ export reaction_dto
 logScope:
   topics = "messages-service"
 
-let NEW_LINE = re"\n|\r" #must be defined as let, not const
 const MESSAGES_PER_PAGE* = 20
 const MESSAGES_PER_PAGE_MAX* = 40
 const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
