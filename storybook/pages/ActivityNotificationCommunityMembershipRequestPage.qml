@@ -7,7 +7,6 @@ import QtQuick.Layouts
 import StatusQ.Core.Theme
 
 import AppLayouts.ActivityCenter.views
-import AppLayouts.ActivityCenter.stores
 
 import AppLayouts.Chat.stores as ChatStores
 

@@ -12,7 +12,6 @@ import utils
 
 import "../panels"
 import "../popups"
-import "../stores"
 
 ActivityNotificationMessage {
     id: root

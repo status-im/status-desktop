@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import AppLayouts.ActivityCenter.views
-import AppLayouts.ActivityCenter.stores
 
 import Storybook
 
