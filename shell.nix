@@ -30,7 +30,7 @@ in pkgs.mkShell {
     libglvnd # TODO: Qt 5.15.2 fix, review after upgrade
     cmake_3_19 gnumake pkg-config gnugrep qtCustom
     go_1_22 go-bindata mockgen protobuf3_20 protoc-gen-go
-    pcre nss pcsclite extra-cmake-modules
+    nss pcsclite extra-cmake-modules
     xorg.libxcb xorg.libX11 libxkbcommon
   ] ++ (with gst_all_1; [
     gst-libav gstreamer
