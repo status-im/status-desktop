@@ -1,3 +1,4 @@
+import QtCore
 import QtQuick
 import QtQml
 
@@ -55,7 +56,7 @@ QtObject {
     property var ownAccounts
     property var collectibles
 
-    readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
+    readonly property bool isFirstShowcaseInteraction: appMainLocalSettings.isFirstShowcaseInteraction
 
     // TODO: Review if this model shoud come from `CommunitiesStore` or in a more appropriate domain
     readonly property var communitiesList: SortFilterProxyModel {
@@ -86,6 +87,11 @@ QtObject {
             collectiblesSourceModel: root.collectibles
             collectiblesShowcaseModel: root.showcasePreferencesCollectiblesModel
             socialLinksSourceModel: root.showcasePreferencesSocialLinksModel
+        }
+        Settings {
+            id: appMainLocalSettings
+            category: "AppMainLocalSettings_%1".arg(root.pubKey)
+            property bool isFirstShowcaseInteraction: true
         }
     }
 
@@ -140,7 +146,7 @@ QtObject {
     }
 
     function setIsFirstShowcaseInteraction() {
-        root.profileModule.setIsFirstShowcaseInteraction()
+        appMainLocalSettings.isFirstShowcaseInteraction = false
     }
 
     onUserDeclinedBackupBannerChanged: {

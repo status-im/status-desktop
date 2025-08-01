@@ -81,9 +81,6 @@ method getProfileShowcaseSocialLinksLimit*(self: Module): int =
 method getProfileShowcaseEntriesLimit*(self: Module): int =
   return self.controller.getProfileShowcaseEntriesLimit()
 
-method setIsFirstShowcaseInteraction(self: Module) =
-  singletonInstance.localAccountSettings.setIsFirstShowcaseInteraction(false)
-
 proc storeIdentityImage*(self: Module, identityImage: IdentityImage): bool =
   let keyUid = singletonInstance.userProfile.getKeyUid()
   let image = singletonInstance.utils.fromPathUri(identityImage.source)
