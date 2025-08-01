@@ -43,7 +43,7 @@ Item {
                 return "";
 
             if (root.messageDetails.contentType === StatusMessage.ContentType.Emoji && !root.isEdited)
-                return Emoji.parse(root.messageDetails.messageText, Emoji.size.middle, Emoji.format.png);
+                return Emoji.parse(root.messageDetails.messageText, Emoji.size.middle);
 
             let formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText, root.linkAddressAndEnsName);
 

@@ -19,22 +19,20 @@ QtObject {
         "png": "png",
         "svg": "svg"
     }
-    readonly property string base: Qt.resolvedUrl("../../../assets/twemoji/")
+    readonly property string base: Qt.resolvedUrl("../../../assets/twemoji/svg/")
     property var emojiJSON: EmojiJSON
 
     readonly property StatusEmojiModel emojiModel: StatusEmojiModel {
         emojiJson: EmojiJSON.emoji_json
     }
 
-    function parse(text, renderSize = size.small, renderFormat = format.svg) {
+    function parse(text, renderSize = size.small) {
         const renderSizes = renderSize.split("x");
         if (!renderSize.includes("x") || renderSizes.length !== 2) {
             throw new Error("Invalid value for 'renderSize' parameter: ", renderSize);
         }
-
-        const path = renderFormat === format.svg ? "svg/" : "72x72/"
-        Twemoji.twemoji.base = base + path
-        Twemoji.twemoji.ext = `.${renderFormat}`
+        Twemoji.twemoji.base = base
+        Twemoji.twemoji.ext = `.svg`
 
         return Twemoji.twemoji.parse(text, {
             callback: (iconId, options) => {
