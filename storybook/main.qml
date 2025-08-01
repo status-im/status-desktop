@@ -5,6 +5,11 @@ import QtQuick.Controls.Universal
 import StatusQ.Core.Theme
 import Storybook
 
+// Dummy imports to satisfy androiddeployqt according to
+// https://doc.qt.io/qt-6/android-deploy-qt-tool.html#dependencies-detection
+import QtQuick.Dialogs
+import QtMultimedia
+
 ApplicationWindow {
     width: 1450
     height: 840
