@@ -53,9 +53,6 @@ method getProfileShowcaseEntriesLimit*(self: AccessInterface): int {.base.} =
 method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setIsFirstShowcaseInteraction*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method loadProfileShowcasePreferences*(self: AccessInterface, preferences: ProfileShowcasePreferencesDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
