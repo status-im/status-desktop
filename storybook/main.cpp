@@ -7,6 +7,7 @@
 #include <QtWebView>
 
 #include <Storybook/storybooksetup.h>
+#include <Storybook/qmlfilesserver.h>
 
 #include <memory>
 
@@ -43,7 +44,26 @@ int main(int argc, char *argv[])
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();
     cmdParser.addPositionalArgument(QStringLiteral("page"), QStringLiteral("Open the given page on startup"));
+
+#ifdef ANDROID
+    static constexpr auto defaultMode = "remote";
+#else
+    static constexpr auto defaultMode = "local";
+#endif
+
+    QCommandLineOption modeOption(QStringList() << QStringLiteral("m") << QStringLiteral("mode"),
+                                  QStringLiteral("mode (local or remote)"),
+                                  QStringLiteral("mode"), defaultMode);
+
+    cmdParser.addOption(modeOption);
     cmdParser.process(app.arguments());
+
+    const QString mode = cmdParser.value(modeOption);
+
+    if (mode != QStringLiteral("local") && mode != QStringLiteral("remote")) {
+        qWarning() << "Invalid mode, use 'local' or 'remote'";
+        return 0;
+    }
 
     qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", QByteArrayLiteral("1"));
     auto chromiumFlags = qgetenv("QTWEBENGINE_CHROMIUM_FLAGS");
@@ -52,28 +72,38 @@ int main(int argc, char *argv[])
     }
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags);
 
-    const QStringList additionalImportPaths {
-        QStringLiteral("qrc:/"),
-        STATUSQ_MODULE_IMPORT_PATH,
-        QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
-        QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
-        QML_IMPORT_ROOT + QStringLiteral("/src"),
-        QML_IMPORT_ROOT + QStringLiteral("/pages"),
-        QML_IMPORT_ROOT + QStringLiteral("/stubs")
-    };
+    QStringList additionalImportPaths;
+    additionalImportPaths << QStringLiteral("qrc:/");
 
-    StorybookSetup::registerTypes(additionalImportPaths,
-                                  QML_IMPORT_ROOT + QStringLiteral("/pages"),
-                                  QCoreApplication::applicationDirPath() + QStringLiteral("/QmlTests"),
-                                  QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests"));
+    if (mode == QStringLiteral("local")) {
+        additionalImportPaths << QStringList {
+            STATUSQ_MODULE_IMPORT_PATH,
+            QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
+            QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
+            QML_IMPORT_ROOT + QStringLiteral("/src"),
+            QML_IMPORT_ROOT + QStringLiteral("/pages"),
+            QML_IMPORT_ROOT + QStringLiteral("/stubs"),
+        };
 
+        StorybookSetup::registerTypesLocal(
+            additionalImportPaths,
+            QML_IMPORT_ROOT + QStringLiteral("/pages"),
+            QCoreApplication::applicationDirPath() + QStringLiteral("/QmlTests"),
+            QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests"));
+    } else {
+        additionalImportPaths << QStringLiteral("http://localhost:8080/0");
+
+        StorybookSetup::registerTypesRemote(QUrl("http://localhost:8080/version"),
+                                            QUrl("http://localhost:8080/pages"),
+                                            QUrl("http://localhost:8080"));
+    }
 
     QQmlApplicationEngine engine;
 
     for (const auto& path : additionalImportPaths)
         engine.addImportPath(path);
 
-    StorybookSetup::configureEngine(&engine, QML_IMPORT_ROOT + QStringLiteral("/pages"));
+    StorybookSetup::configureEngine(&engine, mode == QStringLiteral("local"));
     registerStatusQTypes();
 
     loadContextPropertiesMocks(QML_IMPORT_ROOT, engine);
@@ -88,6 +118,20 @@ int main(int argc, char *argv[])
     const auto args = cmdParser.positionalArguments();
     if (!args.isEmpty())
         engine.setInitialProperties({{QStringLiteral("currentPage"), args.constFirst()}});
+
+    if (mode == QStringLiteral("remote")) {
+        auto server = new QmlFilesServer({
+            STATUSQ_MODULE_IMPORT_PATH,
+            // stubs first to give precedence over real stores
+            QML_IMPORT_ROOT + QStringLiteral("/stubs"),
+            QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
+            QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
+            QML_IMPORT_ROOT + QStringLiteral("/src"),
+            QML_IMPORT_ROOT + QStringLiteral("/pages"),
+        }, QML_IMPORT_ROOT + QStringLiteral("/pages"), true, &engine);
+
+        server->start(8080);
+    }
 
     engine.load(url);
 
