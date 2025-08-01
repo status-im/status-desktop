@@ -42,10 +42,6 @@ set(STATUSQ_BUILD_SANITY_CHECKER OFF)
 set(STATUSQ_BUILD_TESTS OFF)
 set(STATUSQ_STATIC_LIB ON)
 
-if(ANDROID)
-  set(STATUSQ_SHADOW_BUILD ON)
-endif()
-
 add_subdirectory(../ui/StatusQ StatusQ)
 
 include(FetchContent)
@@ -53,7 +49,7 @@ FetchContent_Declare(
   QmlStorybook
 
   GIT_REPOSITORY https://github.com/status-im/QmlStorybook.git
-  GIT_TAG 4c81083311a8fd6d5d33157e814e902873f00fc2
+  GIT_TAG 9f580944e929ca70247703d1f2a7237005437374
 )
 FetchContent_MakeAvailable(QmlStorybook)
 
