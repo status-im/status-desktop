@@ -1,6 +1,6 @@
 import json, stew/shims/strformat, sequtils, sugar
 import base_item
-import ../../shared_models/[color_hash_item, color_hash_model]
+import ../../../shared_models/[color_hash_item, color_hash_model]
 
 export base_item
 

@@ -60,6 +60,31 @@ proc init*(self: Controller) =
     let args = MessagesArgs(e)
     self.delegate.onSearchMessagesDone(args.messages)
 
+  self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
+    var args = ChatUpdateArgs(e)
+    self.delegate.updateChatItems(args.chats)
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    let args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
+
+  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
+    let args = CommunitiesArgs(e)
+    for community in args.communities:
+      self.delegate.communityEdited(community)
+
+  self.events.on(SIGNAL_CHAT_CREATED) do(e: Args):
+    var args = CreatedChatArgs(e)
+    self.delegate.chatAdded(args.chat)
+
+  self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
+    let args = CommunityChatArgs(e)
+    self.delegate.chatAdded(args.chat)
+
+  self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
+    let args = CommunityChatIdArgs(e)
+    self.delegate.chatRemoved(args.chatId)
+
 proc activeSectionId*(self: Controller): string =
   return self.activeSectionId
 
@@ -167,3 +192,9 @@ proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
 
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
+
+proc getAllChats*(self: Controller): seq[ChatDto] =
+  result = self.chatService.getAllChats()
+
+proc getContactDetails*(self: Controller, contactId: string, skipBackendCalls: bool): ContactDetails =
+  return self.contactsService.getContactDetails(contactId, skipBackendCalls)

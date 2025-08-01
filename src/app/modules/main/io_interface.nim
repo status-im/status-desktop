@@ -296,9 +296,6 @@ method communityDataImported*(self: AccessInterface, community: CommunityDto) {.
 method resolveENS*(self: AccessInterface, ensName: string, uuid: string, reason: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method rebuildChatSearchModel*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method switchTo*(self: AccessInterface, sectionId, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -462,6 +459,12 @@ method contactUpdated*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method loadMembersForSectionId*(self: AccessInterface, sectionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSectionId*(self: AccessInterface, sectionType: SectionType): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSectionName*(self: AccessInterface, sectionId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

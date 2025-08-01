@@ -1,8 +1,8 @@
 import nimqml, tables, json, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, strutils
 
-import io_interface, view, controller, chat_search_item, chat_search_model
+import io_interface, view, controller
 import ephemeral_notification_item, ephemeral_notification_model
-import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details, contacts_utils, color_hash_item, color_hash_model]
+import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details, contacts_utils, color_hash_item]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/global/app_sections_config
 import app/global/app_signals
@@ -63,7 +63,6 @@ import app_service/service/general/service as general_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/shared_urls/service as urls_service
 import app_service/service/network_connection/service as network_connection_service
-import app_service/service/visual_identity/service as procs_from_visual_identity_service
 import app_service/common/types
 import app_service/common/utils as common_utils
 import app_service/service/network/network_item
@@ -1200,52 +1199,6 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
 
   return self.chatSectionModules[communityId].getModuleAsVariant()
 
-method rebuildChatSearchModel*[T](self: Module[T]) =
-  var items: seq[chat_search_item.Item] = @[]
-  for chat in self.controller.getAllChats():
-    let communityId = chat.communityId
-
-    # skip hidden chats
-    if chat.chatType == ChatType.CommunityChat and communityId != "":
-      let communityDto = self.controller.getCommunityById(communityId)
-      if communityDto.hasCommunityChat(chat.id):
-        let communityChat = communityDto.getCommunityChat(chat.id)
-        if communityChat.isHiddenChat:
-          continue
-      else:
-        continue
-
-    var chatName = chat.name
-    var chatImage = chat.icon
-    var colorHash: ColorHashDto = @[]
-    var colorId: int = 0
-    var sectionId = self.view.model().getItemBySectionType(SectionType.Chat).id()
-    var sectionName = self.view.model().getItemBySectionType(SectionType.Chat).name()
-    if chat.chatType == ChatType.OneToOne:
-      let contactDetails = self.controller.getContactDetails(chat.id, skipBackendCalls = false)
-      chatName = contactDetails.defaultDisplayName
-      chatImage = contactDetails.icon
-      if not contactDetails.dto.ensVerified:
-        colorHash = self.controller.getColorHash(chat.id)
-      colorId = self.controller.getColorId(chat.id)
-    elif chat.chatType == ChatType.CommunityChat:
-      sectionId = communityId
-      sectionName = self.view.model().getItemById(sectionId).name()
-    items.add(chat_search_item.initItem(
-      chat.id,
-      chatName,
-      chat.color,
-      colorId,
-      chatImage,
-      colorHash.toJson(),
-      sectionId,
-      sectionName,
-      chat.emoji,
-      chat.chatType.int
-    ))
-
-  self.view.chatSearchModel().setItems(items)
-
 method switchTo*[T](self: Module[T], sectionId, chatId: string) =
   self.controller.switchTo(sectionId, chatId, "")
 
@@ -2219,5 +2172,11 @@ method loadMembersForSectionId*[T](self: Module[T], sectionId: string) =
   let memberItems = self.getAllCommunityMemberItems(community)
 
   self.view.model.setMembersItems(sectionId, memberItems)
+
+method getSectionId*[T](self: Module[T], sectionType: SectionType): string =
+  return self.view.model().getItemBySectionType(sectionType).id()
+
+method getSectionName*[T](self: Module[T], sectionId: string): string =
+  return self.view.model().getItemById(sectionId).name()
 
 {.pop.}

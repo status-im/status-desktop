@@ -1,5 +1,6 @@
 import nimqml, tables
 import chat_search_item
+import ../../../shared_models/model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -28,10 +29,41 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc getItemIndexById*(self: Model, chatId: string): int =
+    for i, item in self.items:
+      if item.chatId == chatId:
+        return i
+    return -1
+
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
+
+  proc addItem*(self: Model, item: Item) =
+    if self.getItemIndexById(item.chatId) != -1:
+      return  # Item already exists, do not add it again
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
+
+  proc removeItemByIndex*(self: Model, index: int) =
+    if index < 0 or index >= self.items.len:
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginRemoveRows(parentModelIndex, index, index)
+    self.items.delete(index)
+    self.endRemoveRows()
+
+  proc removeItemById*(self: Model, chatId: string) =
+    let index = self.getItemIndexById(chatId)
+    if index == -1:
+      return
+    self.removeItemByIndex(index)
 
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
@@ -79,3 +111,44 @@ QtObject:
         result = newQVariant(item.emoji)
       of ModelRole.ChatType:
         result = newQVariant(item.chatType)
+
+  proc updateChatItem*(self:Model, chatId, name, color, icon, emoji: string) =
+    let ind = self.getItemIndexById(chatId)
+    if ind == -1:
+      return
+
+    var roles: seq[int] = @[]
+
+    updateRole(name, Name)
+    updateRole(color, Color)
+    updateRole(icon, Icon)
+    updateRole(emoji, Emoji)
+
+    if roles.len == 0:
+      return
+
+    let modelIndex = self.createIndex(ind, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, roles)
+
+  proc updateSectionNameOnChatItem*(self:Model, chatId, sectionName: string) =
+    let ind = self.getItemIndexById(chatId)
+    if ind == -1:
+      return
+
+    var roles: seq[int] = @[]
+
+    updateRole(sectionName, SectionName)
+
+    if roles.len == 0:
+      return
+
+    let modelIndex = self.createIndex(ind, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, roles)
+
+  proc updateSectionNameOnChats*(self:Model, sectionId, sectionName: string) =
+    for item in self.items:
+      if item.sectionId == sectionId:
+        self.updateSectionNameOnChatItem(item.chatId, sectionName)
+

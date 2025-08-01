@@ -1,6 +1,8 @@
 import nimqml
 
-import ../../../../app_service/service/message/dto/message
+import app_service/service/message/dto/message
+import app_service/service/chat/service
+import app_service/service/community/service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -43,3 +45,21 @@ method resultItemClicked*(self: AccessInterface, itemId: string) {.base.} =
 
 method updateSearchLocationIfPointToChatWithId*(self: AccessInterface, chatId: string) {.base.} =
     raise newException(ValueError, "No implementation available")
+
+method buildChatSearchModel*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateChatItems*(self: AccessInterface, updatedChats: seq[ChatDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactUpdated*(self: AccessInterface, contactId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method chatAdded*(self: AccessInterface, chat: ChatDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method chatRemoved*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
