@@ -550,25 +550,6 @@ StatusWindow {
         }
     }
 
-    StatusWindowsTitleBar {
-        anchors.top: parent.top
-        width: parent.width
-
-        visible: Qt.platform.os == "windows"
-
-        onClose: {
-            rootWindow.close()
-        }
-
-        onMinimised: {
-            rootWindow.showMinimized()
-        }
-
-        onMaximized: {
-            rootWindow.toggleFullScreen()
-        }
-    }
-
     Settings {
         id: storeSettings
 
