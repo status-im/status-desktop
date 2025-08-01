@@ -221,7 +221,7 @@ Control {
                 leftPadding: 0
                 background: null
 
-                inputMethodHints: Qt.ImhDigitsOnly | Qt.ImhFormattedNumbersOnly
+                inputMethodHints: Qt.ImhFormattedNumbersOnly | Qt.ImhNoPredictiveText
 
                 readOnly: !root.interactive
 
