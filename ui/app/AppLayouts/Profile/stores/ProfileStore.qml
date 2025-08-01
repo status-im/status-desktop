@@ -24,7 +24,7 @@ QtObject {
     property string preferredName: userProfile.preferredName
     property string profileLargeImage: userProfile.largeImage
     property string icon: userProfile.icon
-    property bool userDeclinedBackupBanner: Global.appIsReady? localAccountSensitiveSettings.userDeclinedBackupBanner : false
+    readonly property bool userDeclinedBackupBanner: Global.appIsReady? localAccountSensitiveSettings.userDeclinedBackupBanner : false
     readonly property string keyUid: userProfile.keyUid
     readonly property bool isKeycardUser: userProfile.isKeycardUser
     readonly property int currentUserStatus: userProfile.currentUserStatus
@@ -143,9 +143,7 @@ QtObject {
         root.profileModule.setIsFirstShowcaseInteraction()
     }
 
-    onUserDeclinedBackupBannerChanged: {
-        if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
-            localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
-        }
+    function setUserDeclinedBackupBanner(value = true) {
+        localAccountSensitiveSettings.userDeclinedBackupBanner = value
     }
 }
