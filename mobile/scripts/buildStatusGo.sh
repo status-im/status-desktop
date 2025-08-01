@@ -31,7 +31,7 @@ make generate V=3 SHELL=/bin/sh
 mkdir -p build/bin/statusgo-lib
 go run cmd/library/main.go cmd/library/const.go > build/bin/statusgo-lib/main.go
 
-GOFLAGS="" CGO_ENABLED=1 GOOS="$OS" GOARCH="$GOARCH" \
+GOFLAGS="" CGO_CFLAGS="-Os -flto" CGO_LDFLAGS="-Os -flto" CGO_ENABLED=1 GOOS="$OS" GOARCH="$GOARCH" \
 	go build \
 		-buildmode="$BUILD_MODE" \
 		-tags 'gowaku_no_rln nowatchdog disable_torrent' \
