@@ -61,7 +61,7 @@ Install required packages:
 
 ```bash
 sudo apt update
-sudo apt install libpcsclite-dev libpcre3-dev build-essential mesa-common-dev libglu1-mesa-dev libssl-dev cmake jq libxcb-xinerama0 protobuf-compiler
+sudo apt install libpcsclite-dev build-essential mesa-common-dev libglu1-mesa-dev libssl-dev cmake jq libxcb-xinerama0 protobuf-compiler
 ```
 
 Install **Go 1.23**:
