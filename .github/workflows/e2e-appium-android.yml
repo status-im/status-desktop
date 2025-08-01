@@ -1,0 +1,92 @@
+name: E2E Appium Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      apk_source_type:
+        description: 'APK source type'
+        required: true
+        default: 'github_artifact'
+        type: choice
+        options:
+          - 'github_artifact'
+          - 'direct_url'
+          - 'lambdatest_app_id'
+      
+      apk_source:
+        description: 'APK source (artifact name, URL, or lt://app_id)'
+        required: true
+        type: string
+        default: 'Status-tablet-x86_64'
+      
+      build_run_id:
+        description: 'GitHub run ID (for artifacts from other runs)'
+        required: false
+        type: string
+        
+      test_selection_type:
+        description: 'Test selection method'
+        required: true
+        default: 'marker'
+        type: choice
+        options:
+          - 'marker'
+          - 'specific_test'
+          - 'test_file'
+          - 'custom'
+      
+      test_target:
+        description: 'Test target'
+        required: true
+        default: 'onboarding'
+        type: string
+        
+      test_environment:
+        description: 'Test environment'
+        required: false
+        default: 'lambdatest'
+        type: choice
+        options:
+          - lambdatest
+          - local
+          
+      device_config:
+        description: 'Device configuration'
+        required: false
+        default: 'default'
+        type: choice
+        options:
+          - 'default'      # Galaxy Tab S8
+          - 'pixel_tablet' # Google Pixel Tablet
+          - 'galaxy_tab_a' # Samsung Galaxy Tab A
+          
+      parallel_execution:
+        description: 'Enable parallel test execution'
+        required: false
+        default: false
+        type: boolean
+        
+      enable_github_reporting:
+        description: 'Enable GitHub native test reporting'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display inputs
+        run: |
+          echo "Workflow dispatch started"
+          echo "Inputs received:"
+          echo "  APK Source Type: ${{ inputs.apk_source_type }}"
+          echo "  APK Source: ${{ inputs.apk_source }}"
+          echo "  Build Run ID: ${{ inputs.build_run_id }}"
+          echo "  Test Selection: ${{ inputs.test_selection_type }}"
+          echo "  Test Target: ${{ inputs.test_target }}"
+          echo "  Environment: ${{ inputs.test_environment }}"
+          echo "  Device: ${{ inputs.device_config }}"
+          echo "  Parallel: ${{ inputs.parallel_execution }}"
+          echo "  GitHub Reporting: ${{ inputs.enable_github_reporting }}"
+          
