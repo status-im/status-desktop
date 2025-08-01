@@ -1,33 +1,11 @@
 <RCC>
     <qresource prefix="/assets/png">
-        <file>collectibles/Anniversary.png</file>
-        <file>collectibles/CryptoKitties.png</file>
-        <file>collectibles/CryptoPunks.png</file>
-        <file>collectibles/Doodles.png</file>
-        <file>collectibles/Dragonerum.png</file>
-        <file>collectibles/ethermons.png</file>
-        <file>collectibles/FriendsBenefits.png</file>
-        <file>collectibles/Furbeard.png</file>
-        <file>collectibles/FurbeardBig.png</file>
-        <file>collectibles/HappyMeow.png</file>
-        <file>collectibles/HappyMeowBig.png</file>
-        <file>collectibles/kudos.png</file>
-        <file>collectibles/Magicat.png</file>
-        <file>collectibles/MagicatBig.png</file>
-        <file>collectibles/MANA-token-icon.png</file>
-        <file>collectibles/P2PCrypto.png</file>
-        <file>collectibles/SNT.png</file>
-        <file>collectibles/Socks.png</file>
-        <file>collectibles/StatusPunks.png</file>
-        <file>collectibles/SuperRare.png</file>
-        <file>collectibles/placeholders/kitty.png</file>
         <file>community/airdrops8_1.png</file>
         <file>community/mint2_1.png</file>
         <file>community/permissions2_3.png</file>
         <file>ens/ens-header-dark@2x.png</file>
         <file>ens/ens-header-light@2x.png</file>
         <file>chat/chat@2x.png</file>
-        <file>chat/chat@3x.png</file>
         <file>chat/wave.png</file>
         <file>chat/request_payment_banner.png</file>
         <file>keycard/authenticate.png</file>
@@ -43,7 +21,6 @@
         <file>keycard/enter-pin-4.png</file>
         <file>keycard/enter-pin-5.png</file>
         <file>keycard/enter-pin-6.png</file>
-        <file>keycard/keycard-new.png</file>
         <file>keycard/keycard-security.png</file>
         <file>keycard/plain-error.png</file>
         <file>keycard/card_insert/img-0.png</file>
@@ -122,53 +99,6 @@
         <file>keycard/card_removed/img-27.png</file>
         <file>keycard/card_removed/img-28.png</file>
         <file>keycard/card_removed/img-29.png</file>
-        <file>keycard/error/img-0.png</file>
-        <file>keycard/error/img-1.png</file>
-        <file>keycard/error/img-2.png</file>
-        <file>keycard/error/img-3.png</file>
-        <file>keycard/error/img-4.png</file>
-        <file>keycard/error/img-5.png</file>
-        <file>keycard/error/img-6.png</file>
-        <file>keycard/error/img-7.png</file>
-        <file>keycard/error/img-8.png</file>
-        <file>keycard/error/img-9.png</file>
-        <file>keycard/error/img-10.png</file>
-        <file>keycard/error/img-11.png</file>
-        <file>keycard/error/img-12.png</file>
-        <file>keycard/error/img-13.png</file>
-        <file>keycard/error/img-14.png</file>
-        <file>keycard/error/img-15.png</file>
-        <file>keycard/error/img-16.png</file>
-        <file>keycard/error/img-17.png</file>
-        <file>keycard/error/img-18.png</file>
-        <file>keycard/error/img-19.png</file>
-        <file>keycard/error/img-20.png</file>
-        <file>keycard/error/img-21.png</file>
-        <file>keycard/error/img-22.png</file>
-        <file>keycard/error/img-23.png</file>
-        <file>keycard/error/img-24.png</file>
-        <file>keycard/error/img-25.png</file>
-        <file>keycard/error/img-26.png</file>
-        <file>keycard/error/img-27.png</file>
-        <file>keycard/error/img-28.png</file>
-        <file>keycard/error/img-29.png</file>
-        <file>keycard/error/img-30.png</file>
-        <file>keycard/error/img-31.png</file>
-        <file>keycard/error/img-32.png</file>
-        <file>keycard/error/img-33.png</file>
-        <file>keycard/error/img-34.png</file>
-        <file>keycard/error/img-35.png</file>
-        <file>keycard/plain_error/img-0.png</file>
-        <file>keycard/plain_error/img-1.png</file>
-        <file>keycard/plain_error/img-2.png</file>
-        <file>keycard/plain_error/img-3.png</file>
-        <file>keycard/plain_error/img-4.png</file>
-        <file>keycard/plain_error/img-5.png</file>
-        <file>keycard/plain_error/img-6.png</file>
-        <file>keycard/plain_error/img-7.png</file>
-        <file>keycard/plain_error/img-8.png</file>
-        <file>keycard/plain_error/img-9.png</file>
-        <file>keycard/plain_error/img-10.png</file>
         <file>keycard/strong_error/img-0.png</file>
         <file>keycard/strong_error/img-1.png</file>
         <file>keycard/strong_error/img-2.png</file>
@@ -319,12 +249,7 @@
         <file>keycard/warning/img-54.png</file>
         <file>keycard/warning/img-55.png</file>
         <file>onboarding/avatar.png</file>
-        <file>onboarding/fingerprint@2x.png</file>
-        <file>onboarding/fingerprint@3x.png</file>
         <file>onboarding/keys.png</file>
-        <file>onboarding/notifications@2x.png</file>
-        <file>onboarding/notifications@3x.png</file>
-        <file>onboarding/profile_fetching_in_progress.png</file>
         <file>onboarding/seed-phrase.png</file>
         <file>onboarding/welcome.png</file>
         <file>onboarding/status_totebag_artwork_1.png</file>
@@ -340,7 +265,6 @@
         <file>onboarding/status_keycard_multiple.png</file>
         <file>onboarding/status_keycard_adding_keypair.png</file>
         <file>onboarding/status_keycard_adding_keypair_success.png</file>
-        <file>onboarding/status_keycard_adding_keypair_failed.png</file>
         <file>onboarding/status_seedphrase.png</file>
         <file>onboarding/status_sync.png</file>
         <file>onboarding/status_sync_progress.png</file>
@@ -361,9 +285,7 @@
         <file>onRampProviders/moonPay.png</file>
         <file>onRampProviders/ramp.png</file>
         <file>profile/gradient.png</file>
-        <file>profile/gradient2x.png</file>
         <file>settings/communities.png</file>
-        <file>settings/communities@2x.png</file>
         <file>swap/paraswap.png</file>
         <file>tokens/0-native.png</file>
         <file>tokens/0-native@2x.png</file>
@@ -997,9 +919,7 @@
         <file>status-logo.png</file>
         <file>status-logo-circle.png</file>
         <file>status-logo-dev-circle.png</file>
-        <file>status-logo-dev-round-rect.png</file>
         <file>status-logo-icon.png</file>
-        <file>status-logo-round-rect.png</file>
         <file>status-preparing.png</file>
         <file>unfurling-image.png</file>
     </qresource>
