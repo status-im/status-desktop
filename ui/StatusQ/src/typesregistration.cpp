@@ -94,7 +94,6 @@ void registerStatusQTypes() {
     Q_INIT_RESOURCE(img);
     Q_INIT_RESOURCE(png);
     Q_INIT_RESOURCE(twemoji);
-    Q_INIT_RESOURCE(twemoji_big);
     Q_INIT_RESOURCE(twemoji_svg);
 #endif
 

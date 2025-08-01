@@ -103,7 +103,6 @@ if (${STATUSQ_SHADOW_BUILD})
         src/assets/img/img.qrc
         src/assets/png/png.qrc
         src/assets/twemoji/twemoji.qrc
-        src/assets/twemoji/twemoji-big.qrc
         src/assets/twemoji/twemoji-svg.qrc)
     if (${STATUSQ_STATIC_LIB})
         # randlib would complain about the generated .o files. Generate cpp files instead.
