@@ -235,7 +235,6 @@
         <file>StatusQ/Layout/StatusSectionLayoutPortrait.qml</file>
         <file>StatusQ/Layout/qmldir</file>
         <file>StatusQ/Platform/StatusMacNotification.qml</file>
-        <file>StatusQ/Platform/StatusWindowsTitleBar.qml</file>
         <file>StatusQ/Platform/qmldir</file>
         <file>StatusQ/Popups/Dialog/StatusDialog.qml</file>
         <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
