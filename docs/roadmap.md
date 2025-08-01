@@ -17,34 +17,35 @@ gantt
     excludes    weekends
     dateFormat  YYYY-MM-DD
 
-    Backend refactor        :2025-06-01, 90d
+    Backend refactor        :2025-06-01, 100d
 
-    2.35 release :milestone, m235, 2025-07-21, 1d
+    2.35 release :milestone, m235, 2025-08-11, 1d
 
     section 2.35
     Qt6 migration           :2025-06-01, 26d
     Tablet build            :t1, 2025-06-08, 31d
     Jump to screen (shell)  :2025-06-01, 24d
-    User data local backups :lb1, 2025-06-16, 25d
+    User data local backups :lb1, 2025-06-16, 34d
     Memory improvements     :mi1, 2025-07-01, 30d
 
-    2.36 release            :milestone, m236, 2025-09-08, 1d
+    2.36 release            :milestone, m236, 2025-09-29, 1d
 
     section 2.36
     Mobile build            :2025-06-09, 60d
-    Privacy Mode            :after m235, 25d
-    Dapp Browser            :after t1, 35d
-    Messages local backups  :after lb1, 18d
+    Privacy Mode            :after m235, 29d
+    Dapp Browser            :after m235, 35d
+    Messages local backups  :mlb, after lb1, 25d
 
-    2.37 release             :milestone, m237, 2025-10-27, 1d
+    2.37 release             :milestone, m237, 2025-11-17, 1d
 
     section 2.37
-    UI Modularization           :2025-08-04, 60d
+    UI Modularization           :2025-09-04, 50d
     Improve user support        :after m236, 20d
-    RLN                         :2025-08-04, 55d
-    News Feed on Waku           :after mi1, 25d
-    File sending over Codex     :2025-09-01, 30d
-    Keycard Shell integration   :2025-09-01, 25d
+    RLN                         :2025-09-01, 55d
+    News Feed on Waku           :after mlb,  20d
+    File sending over Codex     :after m236, 34d
+    Keycard Shell integration   :after m236, 25d
+
 
 ```
 
