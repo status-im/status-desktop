@@ -2000,6 +2000,7 @@ Item {
                             navBar: appMain.navBar
                             isProduction: appMain.rootStore.isProduction
 
+                            activityCenterStore: appMain.activityCenterStore
                             sharedRootStore: appMain.sharedRootStore
                             utilsStore: appMain.utilsStore
                             aboutStore: appMain.aboutStore

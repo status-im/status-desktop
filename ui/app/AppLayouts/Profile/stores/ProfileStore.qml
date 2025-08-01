@@ -55,8 +55,6 @@ QtObject {
     property var ownAccounts
     property var collectibles
 
-    readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
-
     // TODO: Review if this model shoud come from `CommunitiesStore` or in a more appropriate domain
     readonly property var communitiesList: SortFilterProxyModel {
         sourceModel: root.sectionsModel
@@ -137,10 +135,6 @@ QtObject {
 
     function requestProfileShowcasePreferences() {
         root.profileModule.requestProfileShowcasePreferences()
-    }
-
-    function setIsFirstShowcaseInteraction() {
-        root.profileModule.setIsFirstShowcaseInteraction()
     }
 
     function setUserDeclinedBackupBanner(value = true) {

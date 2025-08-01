@@ -1,3 +1,4 @@
+import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -259,6 +260,12 @@ SettingsContentBase {
         }
     }
 
+    Settings {
+        id: appMainLocalSettings
+        category: "AppMainLocalSettings_%1".arg(root.profileStore.pubKey)
+        property bool isFirstShowcaseInteraction: true
+    }
+
     StackLayout {
         id: stackLayout
 
@@ -267,8 +274,8 @@ SettingsContentBase {
         currentIndex: profileTabBar.currentIndex
 
         onCurrentIndexChanged: {
-            if(root.profileStore.isFirstShowcaseInteraction && currentIndex !== MyProfileView.TabIndex.Identity) {
-                root.profileStore.setIsFirstShowcaseInteraction()
+            if(appMainLocalSettings.isFirstShowcaseInteraction && currentIndex !== MyProfileView.TabIndex.Identity) {
+                appMainLocalSettings.isFirstShowcaseInteraction = false
                 Global.openPopup(profileShowcaseInfoPopup)
             }
         }

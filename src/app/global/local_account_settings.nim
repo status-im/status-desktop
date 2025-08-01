@@ -5,8 +5,6 @@ import ../../constants
 # Local Account Settings keys:
 const LS_KEY_STORE_TO_KEYCHAIN* = "storeToKeychain"
 const DEFAULT_STORE_TO_KEYCHAIN = "notNow"
-const LS_KEY_IS_FIRST_SHOWCASE_INTERACTION* = "isFirstShowcaseInteraction"
-const DEFAULT_IS_FIRST_SHOWCASE_INTERACTION = true
 # Local Account Settings values:
 const LS_VALUE_STORE* = "store"
 const LS_VALUE_NOT_NOW* = "notNow"
@@ -68,23 +66,3 @@ QtObject:
     read = getStoreToKeychainValue
     write = setStoreToKeychainValue
     notify = storeToKeychainValueChanged
-
-  proc isFirstShowcaseInteractionChanged*(self: LocalAccountSettings) {.signal.}
-
-  proc getIsFirstShowcaseInteraction*(self: LocalAccountSettings): bool {.slot.} =
-    if self.settings.isNil:
-        return DEFAULT_IS_FIRST_SHOWCASE_INTERACTION
-    
-    self.settings.value(LS_KEY_IS_FIRST_SHOWCASE_INTERACTION, newQVariant(DEFAULT_IS_FIRST_SHOWCASE_INTERACTION)).boolVal
-
-  proc setIsFirstShowcaseInteraction*(self: LocalAccountSettings, value: bool) =
-    if(self.settings.isNil):
-      return
-
-    self.settings.setValue(LS_KEY_IS_FIRST_SHOWCASE_INTERACTION, newQVariant(value))
-    self.isFirstShowcaseInteractionChanged()
-
-  QtProperty[bool] isFirstShowcaseInteraction:
-    read = getIsFirstShowcaseInteraction
-    write = setIsFirstShowcaseInteraction
-    notify = isFirstShowcaseInteractionChanged
