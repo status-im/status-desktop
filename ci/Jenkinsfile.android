@@ -1,0 +1,204 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+def isNightlyBuild = utils.isNightlyBuild()
+
+pipeline {
+  agent {
+    /* Image with Ubuntu 22.04, QT 6.9.0, Android SDK/NDK, Go, and Nim */
+    docker {
+      label 'linux'
+      image 'statusteam/nim-status-client-build:1.0.7-qt6.9.0-android'
+      args '-v /tmp:/tmp'
+    }
+  }
+
+  parameters {
+    choice(
+      name: 'ARCHITECTURE',
+      description: 'Target Android architecture',
+      choices: ['arm64', 'x86_64']
+    )
+    string(
+      name: 'QT_VERSION',
+      description: 'Qt version to use',
+      defaultValue: '6.9.0'
+    )
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether release credentials are used.',
+      defaultValue: params.RELEASE ?: false
+    )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0', '1', '2', '3']
+    )
+    string(
+      name: 'NIMFLAGS',
+      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
+      defaultValue: "--colors:off --nimcache:${env.WORKSPACE_TMP}/nimcache"
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 45, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(
+      abortPrevious: isPRBuild
+    )
+    disableRestartFromStage()
+  }
+
+  environment {
+    PLATFORM = "android/${params.ARCHITECTURE}"
+    /* Android specific environment */
+    ARCH = "${params.ARCHITECTURE}"
+    USE_SYSTEM_NIM = "1"
+    /* Qt paths based on architecture */
+    QT_ANDROID_PATH = "${getQtAndroidPath(params.ARCHITECTURE)}"
+    QT_HOST_PATH = "/opt/qt/6.9.0/gcc_64"
+    PKG_CONFIG_PATH = "${getQtAndroidPath(params.ARCHITECTURE)}/lib/pkgconfig"
+    /* Android SDK/NDK paths */
+    ANDROID_SDK_ROOT = "/opt/android-sdk"
+    ANDROID_NDK_ROOT = "/opt/android-sdk/ndk/26.1.10909125"
+    ANDROID_SDK_HOME = "/opt/android-sdk"
+    ANDROID_NDK_HOME = "/opt/android-sdk/ndk/26.1.10909125"
+    JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64"
+    /* Improve make performance */
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    /* Control output filename */
+    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    STATUS_APK = "mobile/bin/android/qt6/Status-tablet.apk"
+    STATUS_APK_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'apk', arch: params.ARCHITECTURE, version: env.VERSION)}"
+    /* prevent sharing cache dir across different jobs */
+    GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
+    SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+    /* Ensure tools are in PATH */
+    PATH = "${env.QT_ANDROID_PATH}/bin:${env.QT_HOST_PATH}/bin:${env.QT_HOST_PATH}/libexec:${env.QT_ANDROID_PATH}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/local/go/bin:/home/developer/go/bin:/opt/android-sdk/cmdline-tools/latest/bin:/usr/local/bin:/usr/bin:/bin"
+  }
+
+  stages {
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
+
+    stage('Environment Check') {
+      steps {
+        sh '''
+          echo "=== Environment Verification ==="
+          echo "Architecture: ${ARCH}"
+          echo "Qt Android Path: ${QT_ANDROID_PATH}"
+          echo "Qt Host Path: ${QT_HOST_PATH}"
+          echo "Android SDK: ${ANDROID_SDK_ROOT}"
+          echo "Android NDK: ${ANDROID_NDK_ROOT}"
+          echo ""
+          echo "=== Tool Versions ==="
+          nim --version | head -1 || echo "Nim not found"
+          go version || echo "Go not found"
+          qmake -query QT_VERSION || echo "qmake not found"
+          echo ""
+          echo "=== PATH Check ==="
+          echo "PATH: ${PATH}"
+          which nim || echo "nim not in PATH"
+          which go || echo "go not in PATH"
+          which qmake || echo "qmake not in PATH"
+        '''
+      }
+    }
+
+    stage('Deps') {
+      steps {
+        sh 'make update'
+        sh 'make deps'
+      }
+    }
+
+    stage('Clean Mobile') {
+      steps {
+        sh 'make mobile-clean'
+      }
+    }
+
+    stage('Build Android APK') {
+      steps {
+        sh 'make mobile-build USE_SYSTEM_NIM=1 V=${VERBOSE}'
+      }
+    }
+
+    stage('Package APK') {
+      steps {
+        script {
+          /* Create package directory */
+          sh 'mkdir -p pkg'
+          /* Copy and rename APK with proper naming */
+          sh "cp ${env.STATUS_APK} ${env.STATUS_APK_ARTIFACT}"
+          /* Verify APK was created */
+          sh "ls -la ${env.STATUS_APK_ARTIFACT}"
+          sh "file ${env.STATUS_APK_ARTIFACT}"
+        }
+      }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps {
+            script {
+              env.PKG_URL = s5cmd.upload(env.STATUS_APK_ARTIFACT)
+              jenkins.setBuildDesc(APK: env.PKG_URL)
+            }
+          }
+        }
+        stage('Archive') {
+          steps {
+            script {
+              archiveArtifacts("${env.STATUS_APK_ARTIFACT}")
+              /* Also archive the original APK for debugging */
+              archiveArtifacts("${env.STATUS_APK}")
+            }
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      script {
+        /* Clean up large build artifacts to save space */
+        sh '''
+          rm -rf mobile/build/android/qt6/.gradle || true
+          rm -rf ${WORKSPACE_TMP}/nimcache || true
+          rm -rf ${GO_GENERATE_FAST_DIR} || true
+        '''
+      }
+    }
+      success { script { github.notifyPR(true) } }
+      failure { script { github.notifyPR(false) } }
+      cleanup { sh './scripts/clean-git.sh' }
+  }
+}
+
+def getQtAndroidPath(architecture) {
+  switch(architecture) {
+    case 'arm64':
+      return '/opt/qt/6.9.0/android_arm64_v8a'
+    case 'x86_64':
+      return '/opt/qt/6.9.0/android_x86_64'
+  }
+}
