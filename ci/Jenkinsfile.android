@@ -1,0 +1,128 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+def isNightlyBuild = utils.isNightlyBuild()
+
+pipeline {
+  agent {
+    /* Image with Ubuntu 22.04, QT 6.9.0, Android SDK/NDK, Go, and Nim */
+    docker {
+      label 'linux'
+      image 'statusteam/nim-status-client-build:1.0.11-qt6.9.0-android'
+      alwaysPull true
+    }
+  }
+
+  parameters {
+    choice(
+      name: 'ARCH',
+      description: 'Target architecture',
+      choices: ['arm64', 'x86_64']
+    )
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether release credentials are used.',
+      defaultValue: params.RELEASE ?: false
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 45, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(abortPrevious: isPRBuild)
+    disableRestartFromStage()
+  }
+
+  environment {
+    USE_SYSTEM_NIM = "1"
+    GOCACHE = "/tmp/go-cache"
+    GOMODCACHE = "/tmp/go-mod-cache"
+    GOTMPDIR = "/tmp"
+    STATUS_APK_ARTIFACT = "pkg/Status-tablet-${BUILD_NUMBER}.apk"
+  }
+
+  stages {
+    stage('Prepare') {
+      steps {
+        sh 'git submodule update --init --recursive'
+        script {
+          def qtPath = getQtAndroidPath(params.ARCH)
+          env.QT_ANDROID_PATH = qtPath
+          env.STATUS_APK = "/home/jenkins/workspace/status-desktop/systems/android/${params.ARCH}/package/mobile/bin/android/qt6/Status-tablet.apk"
+
+          echo "Building for architecture: ${params.ARCH}"
+          echo "Qt Android path: ${qtPath}"
+        }
+      }
+    }
+
+    stage('Build Android APK') {
+      steps {
+        sh """
+          export ARCH="${params.ARCH}"
+          export PKG_CONFIG_PATH="${env.QT_ANDROID_PATH}/lib/pkgconfig"
+          export PATH="${env.QT_ANDROID_PATH}/bin:/opt/qt/6.9.0/gcc_64/bin:/opt/qt/6.9.0/gcc_64/libexec:${env.QT_ANDROID_PATH}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:${env.PATH}"
+          make -j${utils.getProcCount()} mobile-build V=3 USE_SYSTEM_NIM=1
+        """
+      }
+    }
+
+    stage('Package APK') {
+      steps {
+        sh """
+          mkdir -p pkg
+          cp '${env.STATUS_APK}' '${env.STATUS_APK_ARTIFACT}'
+          ls -la '${env.STATUS_APK_ARTIFACT}'
+        """
+        echo "APK packaged: ${env.STATUS_APK_ARTIFACT}"
+      }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps {
+            script {
+              env.PKG_URL = s5cmd.upload(env.STATUS_APK_ARTIFACT)
+              jenkins.setBuildDesc(APK: env.PKG_URL)
+            }
+          }
+        }
+        stage('Archive') {
+          steps {
+            archiveArtifacts env.STATUS_APK_ARTIFACT
+          }
+        }
+      }
+    }
+  }
+
+  post {
+      success { script { github.notifyPR(true) } }
+      failure { script { github.notifyPR(false) } }
+      cleanup { sh './scripts/clean-git.sh' }
+  }
+}
+
+def getQtAndroidPath(architecture) {
+  switch(architecture) {
+    case 'arm64':
+      return '/opt/qt/6.9.0/android_arm64_v8a'
+    case 'x86_64':
+      return '/opt/qt/6.9.0/android_x86_64'
+    default:
+      return '/opt/qt/6.9.0/android_arm64_v8a'
+  }
+}
