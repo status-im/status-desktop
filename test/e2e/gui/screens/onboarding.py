@@ -157,26 +157,27 @@ class SyncResultView(OnboardingView):
 
     def __init__(self):
         super(SyncResultView, self).__init__(onboarding_names.mainWindow_SyncDeviceResult)
-        self._sync_result = QObject(onboarding_names.mainWindow_SyncDeviceResult)
-        self._sign_in_button = Button(onboarding_names.mainWindow_Sign_in_StatusButton)
-        self._synced_text_item = QObject(onboarding_names.synced_StatusBaseText)
+        self.sync_result = QObject(onboarding_names.mainWindow_SyncDeviceResult)
+        self.sign_in_button = Button(onboarding_names.mainWindow_Sign_in_StatusButton)
+        self.synced_text_item = QObject(onboarding_names.synced_StatusBaseText)
+        self.done_button = Button(onboarding_names.doneButton)
 
     @property
     @allure.step('Get device synced notifications')
     def device_synced_notifications(self) -> typing.List:
         device_synced_notifications = []
-        for obj in driver.findAllObjects(self._synced_text_item.real_name):
+        for obj in driver.findAllObjects(self.synced_text_item.real_name):
             device_synced_notifications.append(str(obj.text))
         return device_synced_notifications
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = 10000):
-        self._sign_in_button.wait_until_appears(timeout_msec)
+        self.sign_in_button.wait_until_appears(timeout_msec)
         return self
 
     @allure.step('Sign in')
     def sign_in(self, attempts: int = 2):
-        self._sign_in_button.click()
+        self.sign_in_button.click()
         try:
             return SplashScreen().wait_until_appears()
         except:

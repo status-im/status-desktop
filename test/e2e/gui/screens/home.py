@@ -13,6 +13,9 @@ from gui.screens.community_portal import CommunitiesPortal
 from gui.screens.market import MarketScreen
 from gui.screens.messages import MessagesScreen
 from gui.screens.settings import SettingsScreen
+from gui.screens.settings_messaging import MessagingSettingsView
+from gui.screens.settings_profile import ProfileSettingsView
+from gui.screens.settings_syncing import SyncingSettingsView
 from gui.screens.wallet import WalletScreen
 
 
@@ -92,6 +95,21 @@ class HomeScreen(QObject):
         return driver.waitFor(
             lambda: not self.has_grid_item_by_title(title), timeout_msec
         )
+
+    @allure.step('Open Messaging settings view from home page')
+    def open_messaging_settings_from_grid(self) -> 'MessagingSettingsView':
+        self.click_grid_item_by_title("Messaging")
+        return MessagingSettingsView().wait_until_appears()
+    
+    @allure.step('Open Syncing settings from home page')
+    def open_syncing_settings_from_grid(self) -> 'SyncingSettingsView':
+        self.click_grid_item_by_title("Syncing")
+        return SyncingSettingsView().wait_until_appears()
+
+    @allure.step('Open Profile settings from home page')
+    def open_profile_settings_from_grid(self) -> 'ProfileSettingsView':
+        self.click_grid_item_by_title("Profile")
+        return ProfileSettingsView().wait_until_appears()
 
     @allure.step('Open Communities Portal from home page')
     def open_communities_portal_from_grid(self) -> 'CommunitiesPortal':

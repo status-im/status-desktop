@@ -106,6 +106,7 @@ mainWindow_SyncingDeviceView_found = {"container": statusDesktop_mainWindow, "ty
 mainWindow_SyncingDeviceView_synced = {"container": statusDesktop_mainWindow, "type": "SyncingDeviceView", "unnamed": 1, "visible": True}
 mainWindow_SyncDeviceResult = {"container": statusDesktop_mainWindow, "type": "SyncDeviceResult", "unnamed": 1, "visible": True}
 synced_StatusBaseText = {"container": statusDesktop_mainWindow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+doneButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncAnewDeviceNextButton", "type": "StatusButton", "visible": True}
 mainWindow_Sign_in_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "text": "Sign in", "type": "StatusButton", "unnamed": 1, "visible": True}
 sync_text_item = {"container": statusDesktop_mainWindow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
