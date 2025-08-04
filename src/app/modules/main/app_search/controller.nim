@@ -85,6 +85,16 @@ proc init*(self: Controller) =
     let args = CommunityChatIdArgs(e)
     self.delegate.chatRemoved(args.chatId)
 
+  self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
+    let args = MessageSendingSuccess(e)
+    self.delegate.updateLastMessage(args.chat.id, args.chat.communityId, args.chat.chatType, args.chat.lastMessage)
+
+  self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
+    let args = MessagesArgs(e)
+    if args.messages.len == 0:
+      return
+    self.delegate.updateLastMessage(args.chatId, args.sectionId, args.chatType, args.messages[0])
+
 proc activeSectionId*(self: Controller): string =
   return self.activeSectionId
 
@@ -198,3 +208,6 @@ proc getAllChats*(self: Controller): seq[ChatDto] =
 
 proc getContactDetails*(self: Controller, contactId: string, skipBackendCalls: bool): ContactDetails =
   return self.contactsService.getContactDetails(contactId, skipBackendCalls)
+
+proc getMessagesParsedPlainText*(self: Controller, message: MessageDto, communityChats: seq[ChatDto]): string =
+  return self.messageService.getMessagesParsedPlainText(message, communityChats)

@@ -13,10 +13,11 @@ HomePageGridItem {
     property int chatType: Constants.chatType.unknown
     property int onlineStatus: Constants.onlineStatus.unknown
     property string lastMessageText
+    property string sectionName
 
     sectionType: Constants.appSection.chat
     subtitle: chatType === Constants.chatType.privateGroupChat ? qsTr("Group Chat")
-                                                               : chatType === Constants.chatType.communityChat ? qsTr("Community Chat")
+                                                               : chatType === Constants.chatType.communityChat ? qsTr("%1 Community").arg(root.sectionName)
                                                                                                                : qsTr("Chat")
     color: Qt.lighter(root.icon.color, 1.33)
 
