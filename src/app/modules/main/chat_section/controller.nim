@@ -716,6 +716,9 @@ proc reorderCommunityChat*(self: Controller, categoryId: string, chatId: string,
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
   return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
+proc getMessagesParsedPlainText*(self: Controller, message: MessageDto, communityChats: seq[ChatDto]): string =
+  return self.messageService.getMessagesParsedPlainText(message, communityChats)
+
 proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
   procs_from_visual_identity_service.colorHashOf(pubkey)
 

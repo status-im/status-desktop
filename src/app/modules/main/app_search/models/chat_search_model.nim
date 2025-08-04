@@ -14,10 +14,11 @@ type
     SectionName
     Emoji
     ChatType
+    LastMessageText
 
 QtObject:
   type Model* = ref object of QAbstractListModel
-    items: seq[Item]
+    items: seq[ChatSearchItem]
 
   proc setup(self: Model) =
     self.QAbstractListModel.setup
@@ -35,14 +36,14 @@ QtObject:
         return i
     return -1
 
-  proc setItems*(self: Model, items: seq[Item]) =
+  proc setItems*(self: Model, items: seq[ChatSearchItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
 
-  proc addItem*(self: Model, item: Item) =
+  proc addItem*(self: Model, item: ChatSearchItem) =
     if self.getItemIndexById(item.chatId) != -1:
-      return  # Item already exists, do not add it again
+      return  # ChatSearchItem already exists, do not add it again
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
@@ -80,6 +81,7 @@ QtObject:
       ModelRole.SectionName.int:"sectionName",
       ModelRole.Emoji.int:"emoji",
       ModelRole.ChatType.int:"chatType",
+      ModelRole.LastMessageText.int:"lastMessageText",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -111,6 +113,8 @@ QtObject:
         result = newQVariant(item.emoji)
       of ModelRole.ChatType:
         result = newQVariant(item.chatType)
+      of ModelRole.LastMessageText:
+        result = newQVariant(item.lastMessageText)
 
   proc updateChatItem*(self:Model, chatId, name, color, icon, emoji: string) =
     let ind = self.getItemIndexById(chatId)
@@ -139,6 +143,22 @@ QtObject:
     var roles: seq[int] = @[]
 
     updateRole(sectionName, SectionName)
+
+    if roles.len == 0:
+      return
+
+    let modelIndex = self.createIndex(ind, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, roles)
+
+  proc updateLastMessageTextOnChatItem*(self:Model, chatId, lastMessageText: string) =
+    let ind = self.getItemIndexById(chatId)
+    if ind == -1:
+      return
+
+    var roles: seq[int] = @[]
+
+    updateRole(lastMessageText, LastMessageText)
 
     if roles.len == 0:
       return

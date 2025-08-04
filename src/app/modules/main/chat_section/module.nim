@@ -348,16 +348,6 @@ proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
 proc showPermissionUpdateNotification(self: Module, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto): bool =
   return tokenPermission.state == TokenPermissionState.Approved and (community.isControlNode or not tokenPermission.isPrivate) and community.isMember
 
-# Parses the message and returns the plain text representation of it.
-# If the message is a sticker or an image with no text, it returns "🖼️".
-proc getMessagesParsedPlainText(self: Module, message: MessageDto, communityChats: seq[ChatDto]): string =
-  let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
-  result = singletonInstance.utils.plainText(renderedMessageText)
-  if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(result) == 0):
-    result = "🖼️"
-  if message.contentType == ContentType.BridgeMessage:
-    result = message.bridgeMessage.content
-
 method load*(self: Module, buildChats: bool = false) =
   self.controller.init()
   if buildChats:
@@ -568,7 +558,7 @@ method updateLastMessage*(self: Module, chatId: string, lastMessageTimestamp: in
     communityChats = community.chats
   self.view.chatsModel().updateLastMessageOnItemById(
     chatId,
-    self.getMessagesParsedPlainText(lastMessage, communityChats),
+    self.controller.getMessagesParsedPlainText(lastMessage, communityChats),
     lastMessageTimestamp,
   )
 
@@ -701,7 +691,7 @@ proc getChatItemFromChatDto(
     chatDto.chatType.int,
     memberRole,
     chatDto.timestamp.int,
-    self.getMessagesParsedPlainText(chatDto.lastMessage, community.chats),
+    self.controller.getMessagesParsedPlainText(chatDto.lastMessage, community.chats),
     hasNotification,
     notificationsCount,
     chatDto.muted,
@@ -1219,7 +1209,7 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     else:
       self.controller.getContactDetails(message.`from`).defaultDisplayName
 
-  let plainText = self.getMessagesParsedPlainText(message, community.chats)
+  let plainText = self.controller.getMessagesParsedPlainText(message, community.chats)
 
   var notificationTitle = senderDisplayName
 

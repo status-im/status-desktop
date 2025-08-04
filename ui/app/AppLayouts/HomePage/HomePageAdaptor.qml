@@ -276,11 +276,12 @@ QObject {
             readonly property string id: model.chatId
             readonly property string name: model.name
             readonly property string icon: model.icon || model.emoji
+            readonly property string lastMessageText: model.lastMessageText
             readonly property color color: model.color || Utils.colorForColorId(model.colorId)
         }
 
-        expectedRoles: ["sectionId", "chatId", "chatType", "name", "sectionName", "emoji", "icon", "color", "colorId"]
-        exposedRoles: ["key", "id", "name", "icon", "color"]
+        expectedRoles: ["sectionId", "chatId", "chatType", "name", "sectionName", "emoji", "icon", "color", "colorId", "lastMessageText"]
+        exposedRoles: ["key", "id", "name", "icon", "color", "lastMessageText"]
     }
 
     ObjectProxyModel {

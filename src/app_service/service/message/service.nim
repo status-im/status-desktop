@@ -1117,6 +1117,17 @@ proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText], community
         result = result & "<code>" & escape_html(parsedText.literal) & "</code>"
     result = result.strip()
 
+# Parses the message and returns the plain text representation of it.
+# If the message is a sticker or an image with no text, it returns "🖼️".
+proc getMessagesParsedPlainText*(self: Service, message: MessageDto, communityChats: seq[ChatDto]): string =
+  if message.contentType == ContentType.BridgeMessage:
+    return message.bridgeMessage.content
+  if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(message.text) == 0):
+    return "🖼️"
+
+  let renderedMessageText = self.getRenderedText(message.parsedText, communityChats)
+  return singletonInstance.utils.plainText(renderedMessageText)
+
 proc deleteMessage*(self: Service, messageId: string) =
   try:
     let response = status_go.deleteMessageAndSend(messageId)
