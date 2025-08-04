@@ -411,23 +411,6 @@ QtObject {
         readonly property int loginInfoHeight2: 44
         readonly property int loginInfoHeight3: 66
         readonly property int radius: 8
-        readonly property QtObject profileFetching: QtObject {
-            readonly property int    timeout: 120 * 1000 //2 mins in milliseconds
-            readonly property int    titleFontSize: Theme.fontSize22
-            readonly property int    entityFontSize: Theme.primaryTextFontSize
-            readonly property int    entityProgressFontSize: Theme.tertiaryTextFontSize
-            readonly property string imgInProgress: "onboarding/profile_fetching_in_progress"
-
-            readonly property QtObject entity: QtObject {
-                readonly property string profile: "profile"
-                readonly property string contacts: "contacts"
-                readonly property string communities: "communities"
-                readonly property string settings: "settings"
-                readonly property string keypairs: "keypairs"
-                readonly property string watchOnlyAccounts: "watchOnlyAccounts"
-            }
-        }
-
         readonly property int defaultPinAttempts: 3
         readonly property int defaultPukAttempts: 5
     }
