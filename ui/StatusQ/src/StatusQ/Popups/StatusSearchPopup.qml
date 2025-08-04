@@ -12,7 +12,7 @@ import StatusQ.Popups
 StatusModal {
     id: root
     width: 700
-    height: !!searchResults && searchResults.count >= 0 && searchText !== "" ? 560 : 122
+    height: !!searchResults && searchResults.count >= 0 && searchText !== "" ? 560 : 200
     showHeader: false
     showFooter: false
 
@@ -20,7 +20,7 @@ StatusModal {
     property string noResultsLabel: qsTr("No results")
     property string defaultSearchLocationText: qsTr("Anywhere")
     property bool loading: false
-    property Menu searchOptionsPopupMenu: Menu { }
+    property var searchOptionsPopupMenu: Menu { }
     property var searchResults: [ ]
     property var searchSelectionButton
     // This function is called to know if the popup accepts clicks in the title
@@ -108,7 +108,7 @@ StatusModal {
                         color: Theme.palette.directColor9
                     }
 
-                    Keys.onPressed: {
+                    Keys.onPressed: function (event) {
                         if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
                             event.accepted = true
                     }
