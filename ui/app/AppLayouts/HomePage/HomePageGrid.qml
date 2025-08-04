@@ -215,11 +215,10 @@ StatusScrollView {
                     hasNotification: model.hasNotification ?? false
                     notificationsCount: model.notificationsCount ?? 0
                     pinned: model.pinned
+                    sectionName: model.sectionName ?? ""
                     lastMessageText: {
                         if (!!model.lastMessageText)
                             return model.lastMessageText
-                        if (model.sectionType === -1 && model.chatType === Constants.chatType.communityChat)
-                            return model.sectionName
                         return ""
                     }
 

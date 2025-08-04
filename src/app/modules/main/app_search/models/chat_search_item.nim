@@ -1,5 +1,5 @@
 type
-  Item* = ref object
+  ChatSearchItem* = ref object
     chatId: string
     name: string
     color: string
@@ -10,9 +10,10 @@ type
     colorHash: string
     emoji: string
     chatType: int
+    lastMessageText: string
 
-proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, sectionId, sectionName, emoji: string, chatType: int): Item =
-  result = Item()
+proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, sectionId, sectionName, emoji: string, chatType: int, lastMessageText: string): ChatSearchItem =
+  result = ChatSearchItem()
   result.chatId = chatId
   result.name = name
   result.color = color
@@ -23,48 +24,55 @@ proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, secti
   result.sectionName = sectionName
   result.emoji = emoji
   result.chatType = chatType
+  result.lastMessageText = lastMessageText
 
-proc chatId*(self: Item): string =
+proc chatId*(self: ChatSearchItem): string =
   self.chatId
 
-proc name*(self: Item): string =
+proc name*(self: ChatSearchItem): string =
   self.name
 
-proc `name=`*(self: Item, value: string) =
+proc `name=`*(self: ChatSearchItem, value: string) =
   self.name = value
 
-proc color*(self: Item): string =
+proc color*(self: ChatSearchItem): string =
   self.color
 
-proc `color=`*(self: Item, value: string) =
+proc `color=`*(self: ChatSearchItem, value: string) =
   self.color = value
 
-proc colorId*(self: Item): int =
+proc colorId*(self: ChatSearchItem): int =
   self.colorId
 
-proc icon*(self: Item): string =
+proc icon*(self: ChatSearchItem): string =
   self.icon
 
-proc `icon=`*(self: Item, value: string) =
+proc `icon=`*(self: ChatSearchItem, value: string) =
   self.icon = value
 
-proc colorHash*(self: Item): string =
+proc colorHash*(self: ChatSearchItem): string =
   self.colorHash
 
-proc sectionId*(self: Item): string =
+proc sectionId*(self: ChatSearchItem): string =
   self.sectionId
 
-proc sectionName*(self: Item): string =
+proc sectionName*(self: ChatSearchItem): string =
   self.sectionName
 
-proc `sectionName=`*(self: Item, value: string) =
+proc `sectionName=`*(self: ChatSearchItem, value: string) =
   self.sectionName = value
 
-proc emoji*(self: Item): string =
+proc emoji*(self: ChatSearchItem): string =
   self.emoji
 
-proc `emoji=`*(self: Item, value: string) =
+proc `emoji=`*(self: ChatSearchItem, value: string) =
   self.emoji = value
 
-proc chatType*(self: Item): int =
+proc lastMessageText*(self: ChatSearchItem): string =
+  self.lastMessageText
+
+proc `lastMessageText=`*(self: ChatSearchItem, value: string) =
+  self.lastMessageText = value
+
+proc chatType*(self: ChatSearchItem): int =
   self.chatType

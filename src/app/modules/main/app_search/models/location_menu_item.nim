@@ -6,7 +6,7 @@ type
   Item* = ref object of BaseItem
     subItems: SubModel
 
-proc initItem*(value, text, image, icon, iconColor: string = ""): Item =
+proc initItem*(value, text, image, icon: string, iconColor: string = ""): Item =
   result = Item()
   result.setup(value, text, image, icon, iconColor)
   result.subItems = newSubModel()

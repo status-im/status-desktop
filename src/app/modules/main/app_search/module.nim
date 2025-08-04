@@ -340,7 +340,9 @@ method updateSearchLocationIfPointToChatWithId*(self: Module, chatId: string) =
   if self.controller.activeChatId() == chatId:
     self.controller.setSearchLocation(self.controller.activeSectionId(), "")
 
-proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, personalChatSectionName: string): chat_search_item.Item =
+proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, personalChatSectionName: string): ChatSearchItem =
+  var communityChats: seq[ChatDto] = @[]
+
   # skip hidden chats
   if chat.chatType == ChatType.CommunityChat and chat.communityId != "":
     let communityDto = self.controller.getCommunityById(chat.communityId)
@@ -350,6 +352,8 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
         return nil
     else:
       return nil
+
+    communityChats = communityDto.chats
 
   var chatName = chat.name
   var chatImage = chat.icon
@@ -378,11 +382,12 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
     sectionId,
     sectionName,
     chat.emoji,
-    chat.chatType.int
+    chat.chatType.int,
+    lastMessageText = self.controller.getMessagesParsedPlainText(chat.lastMessage, communityChats),
   )
 
 method buildChatSearchModel*(self: Module) =
-  var items: seq[chat_search_item.Item] = @[]
+  var items: seq[ChatSearchItem] = @[]
 
   let personalChatSectionId = self.delegate.getSectionId(SectionType.Chat)
   let personalChatSectionName = self.delegate.getSectionName(personalChatSectionId)
@@ -441,3 +446,14 @@ method chatAdded*(self: Module, chat: ChatDto) =
 
 method chatRemoved*(self: Module, chatId: string) =
   self.view.chatSearchModel().removeItemById(chatId)
+
+method updateLastMessage*(self: Module, chatId, communityId: string, chatType: ChatType, lastMessage: MessageDto) =
+  var communityChats: seq[ChatDto] = @[]
+  if chatType == ChatType.CommunityChat and communityId != "":
+    let communityDto = self.controller.getCommunityById(communityId)
+    communityChats = communityDto.chats
+
+  self.view.chatSearchModel().updateLastMessageTextOnChatItem(
+    chatId,
+    self.controller.getMessagesParsedPlainText(lastMessage, communityChats)
+  )
