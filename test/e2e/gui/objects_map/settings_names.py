@@ -38,6 +38,8 @@ settings_StatusFlatButton = {"type": "StatusFlatButton", "unnamed": 1, "visible"
 
 # Messaging View
 mainWindow_MessagingView = {"container": statusDesktop_mainWindow, "type": "MessagingView", "unnamed": 1, "visible": True}
+allowNewContactRequestsSection = {"container": statusDesktop_mainWindow, "id": "allowNewContactRequest", "type": "StatusListItem", "unnamed": 1, "visible": True}
+allowNewContactRequestsSectionToggle = {"checkable": True, "container": allowNewContactRequestsSection, "id": "switch3", "type": "StatusSwitch", "unnamed": 1, "visible": True}
 contactsListItem_btn_StatusContactRequestsIndicatorListItem = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_ContactsListItem_btn", "type": "StatusContactRequestsIndicatorListItem"}
 settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 always_ask_radioButton_StatusRadioButton = {"container": settingsContentBase_ScrollView, "objectName": "MessagingView_AlwaysAsk_RadioButton", "type": "SettingsRadioButton", "visible": True}
@@ -170,6 +172,7 @@ settings_Setup_Syncing_StatusButton = {"container": settingsContentBase_ScrollVi
 settings_Backup_Data_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncBackupDataButton", "type": "StatusButton", "visible": True}
 settings_Sync_New_Device_Header = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceTextLabel", "type": "StatusBaseText", "visible": True}
 settings_Sync_New_Device_SubTitle = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceSubTitleTextLabel", "type": "StatusBaseText", "visible": True}
+unpairButton = {"container": settingsContentBase_ScrollView, "objectName": "unpairStatusButton", "type": "StatusButton", "visible": True}
 
 #Sing out and quit View
 signOutDialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmationDialog", "type": "PopupItem", "visible": True}

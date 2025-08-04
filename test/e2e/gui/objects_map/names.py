@@ -587,6 +587,7 @@ confirmationDialog = {"container": statusDesktop_mainWindow_overlay, "objectName
                       "type": "PopupItem", "visible": True}
 confirmationDeleteMessagePopup = {"container": statusDesktop_mainWindow_overlay,
                                   "objectName": "DeleteMessageConfirmationPopup", "type": "PopupItem", "visible": True}
+unpairButton =  {"container": statusDesktop_mainWindow_overlay, "id": "confirmButton", "type": "StatusButton", "unnamed": 1, "visible": True}
 
 # Authenticate Popup
 authenticatePopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "KeycardPopup", "type": "PopupItem",

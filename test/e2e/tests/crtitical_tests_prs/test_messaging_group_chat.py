@@ -207,7 +207,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 messages_screen.group_chat.close_link_preview_popup().confirm_sending_message()
 
             with step('Change preview settings to always show previews in messaging settings'):
-                main_window.left_panel.open_settings().left_panel.open_messaging_settings().click_always_show()
+                main_window.left_panel.open_settings().left_panel.open_messaging_settings().always_show_button.click()
                 main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(group_chat_new_name)
 
             with step(f'Paste external link again'):

@@ -13,6 +13,7 @@ from gui.components.settings.unblock_user_popup import UnblockUserPopup
 from gui.components.settings.verify_identity_popup import VerifyIdentityPopup
 
 from gui.elements.button import Button
+from gui.elements.check_box import CheckBox
 from gui.elements.list import List
 from gui.objects_map import settings_names
 from gui.screens.messages import MessagesScreen
@@ -24,19 +25,21 @@ class MessagingSettingsView(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_MessagingView)
-        self._contacts_button = Button(settings_names.contactsListItem_btn_StatusContactRequestsIndicatorListItem)
-        self._always_ask_button = Button(settings_names.always_ask_radioButton_StatusRadioButton)
-        self._always_show_button = Button(settings_names.always_show_radioButton_StatusRadioButton)
-        self._never_ask_button = Button(settings_names.never_show_radioButton_StatusRadioButton)
+        self.contacts_button = Button(settings_names.contactsListItem_btn_StatusContactRequestsIndicatorListItem)
+        self.always_ask_button = Button(settings_names.always_ask_radioButton_StatusRadioButton)
+        self.always_show_button = Button(settings_names.always_show_radioButton_StatusRadioButton)
+        self.never_ask_button = Button(settings_names.never_show_radioButton_StatusRadioButton)
+        self.allow_contact_requests_section = QObject(settings_names.allowNewContactRequestsSection)
+        self.allow_contact_requests_toggle = CheckBox(settings_names.allowNewContactRequestsSectionToggle)
 
     @allure.step('Open contacts settings')
     def open_contacts_settings(self) -> 'ContactsSettingsView':
-        self._contacts_button.click()
+        self.contacts_button.click()
         return ContactsSettingsView()
 
-    @allure.step('Choose always show previews from website links preview options')
-    def click_always_show(self):
-        self._always_show_button.click()
+    @allure.step('Switch allow new contact requests toggle')
+    def switch_allow_contact_requests_toggle(self, value: bool):
+        self.allow_contact_requests_toggle.set(value)
 
 
 class ContactItem:

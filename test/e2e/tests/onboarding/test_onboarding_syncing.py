@@ -42,10 +42,10 @@ def test_wrong_sync_code(sync_screen, wrong_sync_code):
 def test_cancel_setup_syncing(main_screen: MainWindow, user_account):
     with step('Open syncing settings'):
         sync_settings_view = main_screen.left_panel.open_settings().left_panel.open_syncing_settings()
-        sync_settings_view.is_instructions_header_present()
-        sync_settings_view.is_instructions_subtitle_present()
-        if configs.DEV_BUILD:
-            sync_settings_view.is_backup_button_present()
+        assert sync_settings_view.sync_new_device_instructions_header.text \
+               == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_HEADER.value, f"Sync a new device title is incorrect"
+        assert sync_settings_view.sync_new_device_instructions_subtitle.text \
+               == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_SUBTITLE.value, f"Sync a new device subtitle is incorrect"
 
     with step('Click setup syncing and close authenticate popup'):
         sync_new_device_popup = sync_settings_view.open_sync_new_device_popup(user_account.password)
