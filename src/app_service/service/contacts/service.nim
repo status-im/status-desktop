@@ -642,7 +642,7 @@ QtObject:
       else:
         let responseError = rpcResponseObj{"response"}{"error"}
         if responseError.kind != JNull:
-          error = Json.safeDecode($responseError, RpcError).message
+          error = Json.decode($responseError, RpcError).message
 
       if len(error) != 0:
         error "error requesting contact info", msg = error, publicKey

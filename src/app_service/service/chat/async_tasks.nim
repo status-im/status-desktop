@@ -116,7 +116,7 @@ type
 const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSendImagesTaskArg](argEncoded)
   try:
-    var images = Json.safeDecode(arg.imagePathsJson, seq[string])
+    var images = Json.decode(arg.imagePathsJson, seq[string])
     var imagePaths: seq[string] = @[]
     var tempPaths: seq[string] = @[]
 

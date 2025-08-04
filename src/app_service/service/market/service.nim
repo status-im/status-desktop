@@ -5,7 +5,7 @@ import app/core/signals/types
 import backend/backend as backend
 
 import app_service/service/settings/service as settings_service
-import app_service/common/safe_json_serialization
+import json_serialization
 
 import service_items
 
@@ -75,7 +75,7 @@ QtObject:
 
   proc handleLeaderboardPageLoaded(self: Service, data: WalletSignal) =
     try:
-      let leaderboardData = Json  .safeDecode($data.message, LeaderboardPage, allowUnknownFields = true)
+      let leaderboardData = Json.decode($data.message, LeaderboardPage, allowUnknownFields = true)
       if self.currentPage == leaderboardData.page:
         self.leaderboardPageLoading = false
         self.totalLeaderboardCount = leaderboardData.totalCount
@@ -86,7 +86,7 @@ QtObject:
 
   proc handlePageDataUpdated(self: Service, data: WalletSignal) =
     try:
-      let leaderboardData = Json.safeDecode($data.message, LeaderboardPage, allowUnknownFields = true)
+      let leaderboardData = Json.decode($data.message, LeaderboardPage, allowUnknownFields = true)
       if self.currentPage == leaderboardData.page and
           self.settingsService.getCurrency() == leaderboardData.currency:
 
@@ -106,7 +106,7 @@ QtObject:
 
   proc handlePricesUpdated(self: Service, data: WalletSignal) =
     try:
-      let leaderboardPricesUpdate = Json.safeDecode($data.message, LeaderboardPagePrices, allowUnknownFields = true)
+      let leaderboardPricesUpdate = Json.decode($data.message, LeaderboardPagePrices, allowUnknownFields = true)
       if self.currentPage == leaderboardPricesUpdate.page and
           self.settingsService.getCurrency() == leaderboardPricesUpdate.currency:
 

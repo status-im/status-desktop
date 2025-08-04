@@ -1,5 +1,5 @@
 import options, chronicles
-import json, app_service/common/safe_json_serialization
+import json, json_serialization
 import core, response_type
 
 from gen import rpc
@@ -60,7 +60,7 @@ proc getDapps*(validAtEpoch: int64, testChains: bool): string =
   try:
     let params = %*[validAtEpoch, testChains]
     let rpcResRaw = callPrivateRPCNoDecode("wallet_getWalletConnectDapps", params)
-    let rpcRes = Json.safeDecode(rpcResRaw, RpcResponse[JsonNode])
+    let rpcRes = Json.decode(rpcResRaw, RpcResponse[JsonNode])
     if(not rpcRes.error.isNil):
       return ""
 

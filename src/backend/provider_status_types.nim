@@ -2,7 +2,7 @@ import json, strutils, stew/shims/strformat, tables
 
 include app_service/common/json_utils
 
-import app_service/common/safe_json_serialization
+import json_serialization
 #export safe_json_serialization
 #import json_serialization/std/tables as ser_tables # Needed to serialize tables inside objects
 

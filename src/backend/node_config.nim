@@ -1,4 +1,4 @@
-import json, app_service/common/safe_json_serialization, chronicles
+import json, json_serialization, chronicles
 import ./core
 import ./response_type
 import ../app_service/common/utils
@@ -23,7 +23,7 @@ proc switchFleet*(fleet: string, nodeConfig: JsonNode): RpcResponse[JsonNode] =
   try:
     info "switching fleet", fleet
     let response = status_go.switchFleet(fleet, $nodeConfig)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "switchFleet", exception=e.msg
     raise newException(RpcException, e.msg)

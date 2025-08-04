@@ -1,5 +1,5 @@
 import nimqml, tables, os, json, stew/shims/strformat, sequtils, strutils, times, std/options
-import app_service/common/safe_json_serialization, chronicles
+import json_serialization, chronicles
 
 import app/global/global_singleton
 import ./dto/accounts as dto_accounts
@@ -522,7 +522,7 @@ QtObject:
   proc onConvertRegularProfileKeypairToKeycard*(self: Service, response: string) {.slot.} =
     var result = false
     try:
-      let rpcResponse = Json.safeDecode(response, RpcResponse[JsonNode])
+      let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
       if(rpcResponse.result.contains("error")):
         let errMsg = rpcResponse.result["error"].getStr
         if(errMsg.len == 0):
@@ -550,7 +550,7 @@ QtObject:
   proc onConvertKeycardProfileKeypairToRegular*(self: Service, response: string) {.slot.} =
     var result = false
     try:
-      let rpcResponse = Json.safeDecode(response, RpcResponse[JsonNode])
+      let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
       if(rpcResponse.result.contains("error")):
         let errMsg = rpcResponse.result["error"].getStr
         if(errMsg.len == 0):

@@ -1,7 +1,7 @@
 import nimqml, tables, json, sequtils, std/sets, std/algorithm, stew/shims/strformat, strutils, chronicles, sugar, times
 import json_serialization/std/tables as ser_tables # Needed to serialize tables inside objects
 
-import app_service/common/safe_json_serialization
+import json_serialization
 import ./dto/community as community_dto
 import ./dto/sign_params as sign_params_dto
 import ../community_tokens/dto/community_token as community_token_dto
@@ -891,7 +891,7 @@ QtObject:
       let response = status_go.isDisplayNameDupeOfCommunityMember(displayName)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error scanning communities for member name: " & error.message)
 
       if response.result.kind != JNull:
@@ -1022,7 +1022,7 @@ QtObject:
       let response = status_go.spectateCommunity(communityId)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error joining community: " & error.message)
 
       if response.result == nil or response.result.kind == JNull:
@@ -1071,7 +1071,7 @@ QtObject:
       let response = status_go.leaveCommunity(communityId)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error leaving community: " & error.message)
 
       if response.result == nil or response.result.kind == JNull:
@@ -1129,7 +1129,7 @@ QtObject:
         fromTimestamp)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error importing discord community: " & error.message)
 
     except Exception as e:
@@ -1157,7 +1157,7 @@ QtObject:
           fromTimestamp)
 
         if response.error != nil:
-          let error = Json.safeDecode($response.error, RpcError)
+          let error = Json.decode($response.error, RpcError)
           raise newException(RpcException, "Error importing discord channel: " & error.message)
 
       except Exception as e:
@@ -1199,7 +1199,7 @@ QtObject:
         $bannerJson)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
@@ -1259,7 +1259,7 @@ QtObject:
         pinMessageAllMembersEnabled)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error editing community: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
@@ -1288,7 +1288,7 @@ QtObject:
         viewersCanPostReactions, hideIfPermissionsNotMet)
 
       if not response.error.isNil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community channel: " & error.message)
 
       if response.result.isNil or response.result.kind == JNull:
@@ -1341,7 +1341,7 @@ QtObject:
       )
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error editing community channel: " & error.message)
 
       if response.result.isNil or response.result.kind == JNull:
@@ -1379,7 +1379,7 @@ QtObject:
         position)
 
       if not response.error.isNil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error reordering community channel: " & error.message)
 
       if response.result.isNil or response.result.kind == JNull:
@@ -1420,7 +1420,7 @@ QtObject:
     try:
       let response = status_go.deleteCommunityChat(communityId, chatId)
       if not response.error.isNil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error deleting community chat: " & error.message)
 
       if response.result.isNil or response.result.kind == JNull:
@@ -1443,7 +1443,7 @@ QtObject:
     try:
       let response = status_go.createCommunityCategory(communityId, name, channels)
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community category: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
@@ -1491,7 +1491,7 @@ QtObject:
         raise newException(CatchableError, rpcResponseObj["error"].getStr)
 
       if rpcResponseObj["response"]{"error"}.kind != JNull:
-        let error = Json.safeDecode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
         raise newException(RpcException, error.message)
     except Exception as e:
       error "Error toggling collapsed community category", msg = e.msg
@@ -1505,7 +1505,7 @@ QtObject:
     try:
       let response = status_go.editCommunityCategory(communityId, categoryId, name, channels)
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community category: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
@@ -1544,7 +1544,7 @@ QtObject:
       let response = status_go.deleteCommunityCategory(communityId, categoryId)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error deleting community category: " & error.message)
 
       # Update communities objects
@@ -1579,7 +1579,7 @@ QtObject:
         position)
 
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error reordering community category: " & error.message)
 
       let updatedCommunity = response.result["communities"][0].toCommunityDto()
@@ -1725,7 +1725,7 @@ QtObject:
       if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
-      let rpcResponse = Json.safeDecode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
       checkAndEmitACNotificationsFromResponse(self.events, rpcResponse.result{"activityCenterNotifications"})
 
       if not self.processRequestsToJoinCommunity(rpcResponse.result):
@@ -1817,7 +1817,7 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED,
         CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
 
-      let rpcResponse = Json.safeDecode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
       checkAndEmitACNotificationsFromResponse(self.events, rpcResponse.result{"activityCenterNotifications"})
 
     except Exception as e:
@@ -1919,7 +1919,7 @@ QtObject:
     try:
       let response = status_go.speedupArchivesImport()
       if (response.error != nil):
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, fmt"err: {error.message}")
     except Exception as e:
       error "Error speeding up archives import: ", msg = e.msg
@@ -1928,7 +1928,7 @@ QtObject:
     try:
       let response = status_go.slowdownArchivesImport()
       if (response.error != nil):
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, fmt"err: {error.message}")
     except Exception as e:
       error "Error slowing down archives import: ", msg = e.msg
@@ -2127,7 +2127,7 @@ QtObject:
         raise newException(RpcException, rpcResponseObj["error"].getStr)
 
       if rpcResponseObj["response"]{"error"}.kind != JNull:
-        let error = Json.safeDecode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
         raise newException(RpcException, error.message)
 
       let memberPubkey = rpcResponseObj{"pubKey"}.getStr()
@@ -2317,7 +2317,7 @@ QtObject:
         raise newException(RpcException, rpcResponseObj["error"].getStr)
 
       if rpcResponseObj["response"]{"error"}.kind != JNull:
-        let error = Json.safeDecode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
         raise newException(RpcException, error.message)
 
       let revealedAccounts = rpcResponseObj["response"]["result"].toRevealedAccounts()
@@ -2347,7 +2347,7 @@ QtObject:
         raise newException(RpcException, rpcResponseObj["error"].getStr)
 
       if rpcResponseObj["response"]{"error"}.kind != JNull:
-        let error = Json.safeDecode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
         raise newException(RpcException, error.message)
 
       let revealedAccounts = rpcResponseObj["response"]["result"].toMembersRevealedAccounts
@@ -2394,7 +2394,7 @@ QtObject:
       if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
-      let rpcResponse = Json.safeDecode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
       let community = rpcResponse.result["communities"][0].toCommunityDto()
 
       self.handleCommunityUpdates(@[community], @[], @[])
@@ -2408,7 +2408,7 @@ QtObject:
     try:
       let response = status_go.promoteSelfToControlNode(communityId)
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, error.message)
 
       if response.result == nil or response.result.kind == JNull or response.result["communities"].kind == JNull or
@@ -2442,7 +2442,7 @@ QtObject:
     try:
       let response = status_go.markAllReadInCommunity(communityId)
       if response.error != nil:
-        let error = Json.safeDecode($response.error, RpcError)
+        let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, error.message)
 
       self.chatService.parseChatResponseAndEmit(response)

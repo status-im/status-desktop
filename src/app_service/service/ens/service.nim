@@ -1,5 +1,5 @@
 import nimqml, tables, json, sequtils, strutils, stint, sugar, chronicles
-import web3/eth_api_types, stew/byteutils, nimcrypto, app_service/common/safe_json_serialization
+import web3/eth_api_types, stew/byteutils, nimcrypto, json_serialization
 
 import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
