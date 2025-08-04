@@ -57,6 +57,8 @@ StatusListItem {
 
     components: [
         StatusButton {
+            objectName: "pairStatusButton"
+
             anchors.verticalCenter: parent.verticalCenter
             visible: root.enabled && !root.deviceEnabled && !root.isCurrentDevice
             text: qsTr("Pair")
@@ -66,6 +68,8 @@ StatusListItem {
             }
         },
         StatusButton {
+            objectName: "unpairStatusButton"
+
             anchors.verticalCenter: parent.verticalCenter
             visible: root.enabled && root.deviceEnabled && !root.isCurrentDevice
             text: qsTr("Unpair")
