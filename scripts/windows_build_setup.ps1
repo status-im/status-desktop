@@ -40,7 +40,7 @@ function Install-Dependencies {
     scoop install --global `
         7zip git dos2unix findutils `
         wget rcedit inno-setup `
-        make gcc
+        make gcc openssl-lts
 }
 
 function Install-Qt-SDK {
@@ -90,6 +90,7 @@ You might also have to include the following paths in your `$PATH:
 export PATH=`"$env:USERPROFILE/go/bin:`$PATH`"
 export PATH=`"/c/BuildTools/MSBuild/Current/Bin:`$PATH`"
 export PATH=`"/c/BuildTools/VC/Tools/MSVC/14.44.35207/bin:`$PATH`"
+export PATH=`"/c/ProgramData/scoop/apps/openssl-lts/current/bin:`$PATH`"
 export PATH=`"/c/ProgramData/scoop/apps/inno-setup/current:`$PATH`"
 "@
 }

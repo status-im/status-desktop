@@ -223,6 +223,7 @@ endif
 
 ifeq ($(mkspecs),win32)
  COMMON_CMAKE_CONFIG_PARAMS += -A x64
+ NIM_PARAMS += -d:sslVersion=3-x64
 endif
 
 ifeq ($(mkspecs),macx)
@@ -816,8 +817,10 @@ $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_la
 	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	rcedit $(OUTPUT)/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	cp $(DOTHERSIDE_LIBFILE) $(STATUSGO) $(STATUSKEYCARDGO) $(STATUSQ_INSTALL_PATH)/StatusQ/* $(OUTPUT)/bin/
-	cp "$(shell which libgcc_s_seh-1.dll)" $(OUTPUT)/bin/
+	cp "$(shell which libgcc_s_seh-1.dll)"  $(OUTPUT)/bin/
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
+	cp "$(shell which libcrypto-3-x64.dll)" $(OUTPUT)/bin/
+	cp "$(shell which libssl-3-x64.dll)"    $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
 	windeployqt --compiler-runtime --qmldir ui --release \
 		tmp/windows/dist/Status/bin/DOtherSide.dll
