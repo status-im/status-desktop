@@ -204,7 +204,7 @@ QtObject {
     property AppSearchStore appSearchStore: AppSearchStore {
         appSearchModule: internal.mainModuleInst.appSearchModule
     }
-    property var chatSearchModel: internal.mainModuleInst.chatSearchModel
+    readonly property var chatSearchModel: internal.mainModuleInst.chatSearchModel
 
     function rebuildChatSearchModel() {
         internal.mainModuleInst.rebuildChatSearchModel()

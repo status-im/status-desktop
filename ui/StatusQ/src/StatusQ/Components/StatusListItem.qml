@@ -133,7 +133,7 @@ Rectangle {
         }
         return Theme.palette.statusListItem.backgroundColor
     }
-    radius: 8
+    radius: Theme.radius
 
     onComponentsChanged: {
         if (components.length) {

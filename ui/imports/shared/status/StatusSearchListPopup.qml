@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 
 import StatusQ.Components
 import StatusQ.Controls
@@ -12,7 +11,7 @@ import StatusQ.Core.Utils
 import SortFilterProxyModel
 import utils
 
-Popup {
+StatusDropdown {
     id: root
 
     anchors.centerIn: Overlay.overlay
@@ -26,21 +25,6 @@ Popup {
 
     signal selected(string sectionId, string chatId)
 
-    background: Rectangle {
-        radius: Theme.radius
-        color: Theme.palette.background
-        border.color: Theme.palette.border
-        layer.enabled: true
-        layer.effect: DropShadow {
-            verticalOffset: 3
-            radius: 8
-            samples: 15
-            fast: true
-            cached: true
-            color: "#22000000"
-        }
-    }
-
     ColumnLayout {
         anchors.fill: parent
 
@@ -51,36 +35,17 @@ Popup {
             placeholderText: root.searchBoxPlaceholder
             input.asset.name: "search"
 
-            function goToNextAvailableIndex(up) {
-                var currentIndex = listView.currentIndex
-                for (var i = 0; i < listView.count; i++) {
-                    currentIndex = up ? (currentIndex === 0 ? listView.count - 1 : currentIndex - 1)
-                                      : (currentIndex === listView.count - 1 ? 0 : currentIndex + 1)
-                    listView.currentIndex = currentIndex
-                    if (listView.currentItem.visible) {
-                        return
-                    }
-                }
-                listView.currentIndex = 0
-            }
-
-            Keys.onReleased: {
+            onKeyPressed: function(event) {
                 listView.selectByHover = false
 
                 if (event.key === Qt.Key_Down) {
-                    searchBox.goToNextAvailableIndex(false)
-                }
-                if (event.key === Qt.Key_Up) {
-                    searchBox.goToNextAvailableIndex(true)
-                }
-                if (event.key === Qt.Key_Escape) {
-                    return root.close()
-                }
-                if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
-                    return listView.currentItem.selectThisItem()
-                }
-                if (!listView.currentItem.visible) {
-                    goToNextAvailableIndex(false)
+                    listView.incrementCurrentIndex()
+                } else if (event.key === Qt.Key_Up) {
+                    listView.decrementCurrentIndex()
+                } else if (event.key === Qt.Key_Escape) {
+                    root.close()
+                } else if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+                    listView.currentItem.selectThisItem()
                 }
             }
 
@@ -96,6 +61,8 @@ Popup {
             property bool selectByHover: false
 
             highlightMoveDuration: 200
+            highlightFollowsCurrentItem: true
+            keyNavigationWraps: true
 
             model: SortFilterProxyModel {
                 sourceModel: root.model

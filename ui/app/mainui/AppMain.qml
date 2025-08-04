@@ -2345,12 +2345,12 @@ Item {
             }
         }
 
-        Action {
-            shortcut: "Ctrl+K"
-            onTriggered: {
+        Shortcut {
+            sequence: "Ctrl+K"
+            context: Qt.ApplicationShortcut
+            onActivated: {
                 if (homePageLoader.active)
                     return
-                // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
                 if (!channelPickerLoader.active)
                     channelPickerLoader.active = true
 
@@ -2362,10 +2362,10 @@ Item {
                 }
             }
         }
-        Action {
-            shortcut: "Ctrl+F"
-            onTriggered: {
-                // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
+        Shortcut {
+            sequence: "Ctrl+F"
+            context: Qt.ApplicationShortcut
+            onActivated: {
                 if (appSearch.active) {
                     appSearch.closeSearchPopup()
                 } else {
@@ -2383,7 +2383,7 @@ Item {
                 model: rootStore.chatSearchModel
 
                 onAboutToShow: rootStore.rebuildChatSearchModel()
-                onSelected: {
+                onSelected: function (sectionId, chatId) {
                     rootStore.setActiveSectionChat(sectionId, chatId)
                     close()
                 }
