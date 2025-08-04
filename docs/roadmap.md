@@ -35,6 +35,8 @@ gantt
     Privacy Mode            :after m235, 29d
     Dapp Browser            :after m235, 35d
     Messages local backups  :mlb, after lb1, 25d
+    External Activity fetching :2025-07-28, 25d
+    Token List Improvements  :2025-08-11, 25d
 
     2.37 release             :milestone, m237, 2025-11-17, 1d
 
@@ -45,7 +47,6 @@ gantt
     News Feed on Waku           :after mlb,  20d
     File sending over Codex     :after m236, 34d
     Keycard Shell integration   :after m236, 25d
-
 
 ```
 
@@ -66,18 +67,16 @@ Release Epic: https://github.com/status-im/status-desktop/issues/17966
   - In Progress ⏳ 🟩🟩🟩🟩🟨 91%
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
   - [FURPS](/docs/FURPS/tablet-build.md)
-  - In Progress ⏳ 🟩🟩🟩🟩⬜ 80%
+  - In Progress ⏳ 🟩🟩🟩🟩⬜ 86% (+6)
 - [Jump to screen (Shell)](https://github.com/status-im/status-desktop/issues/17971)
   - [FURPS](/docs/FURPS/jump-to-screen-shell.md)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
 - [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
   - [FURPS](/docs/FURPS/local-user-backups.md)
-  - In Progress ⏳ 🟩🟩🟩🟩⬜ 88% (+33%)
+  - In Progress ⏳ 🟩🟩🟩🟩🟨 96% (+8%)
 - [Memory and Performance improvements](https://github.com/status-im/status-desktop/issues/18296)
   - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
-  - In Progress ⏳ 🟩🟩🟨⬜⬜ 50% (+11%)
-- [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
-  - In Progress ⏳
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 60% (+10%)
 
 ### 2.36
 
@@ -89,12 +88,16 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
   - Progress is also inherited from the Tablet Epic above
-  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17% (+8%)
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 23% (+6%)
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
+  - In Progress ⏳ (analysis and design phase)
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
+- [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
+  - In Progress ⏳
 - Ethereum Follow Protocol
+- Improve Token List and Support custom tokens
 
 ### 2.37
 
@@ -102,7 +105,7 @@ Not all Epics are created yet as it's too early to know exactly what will be wor
 
 - [UI modularization](https://github.com/status-im/status-desktop/issues/17872)
   - [FURPS](/docs/FURPS/ui-modularization.md)
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 25%
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 26% (+1%)
 - Improve User support
 - RLN
   - Dependant on the Chat SDK being (partialy) implemented and integrated as part of the Backend refactor.
