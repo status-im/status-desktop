@@ -102,5 +102,9 @@ QtObject {
             return ""
         return ensUsernamesModule.removeEnsUsername(chainId, ensUsername)
     }
+
+    function getEnsnameResolverAddress(ensUsername) {
+        return ensUsernamesModule.ensnameResolverAddress(ensUsername)
+    }
 }
 

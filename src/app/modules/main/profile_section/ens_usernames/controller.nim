@@ -45,7 +45,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED) do(e:Args):
     let args = EnsUsernameAvailabilityArgs(e)
-    self.delegate.ensUsernameAvailabilityChecked(args.availabilityStatus)
+    self.delegate.ensUsernameAvailabilityChecked(args.availabilityStatus, args.ownerAddress)
 
   self.events.on(SIGNAL_ENS_USERNAME_DETAILS_FETCHED) do(e:Args):
     let args = EnsUsernameDetailsArgs(e)
@@ -120,3 +120,6 @@ proc getPriceBySymbol*(self: Controller, crypto: string): float64 =
 
 proc getStatusTokenKey*(self: Controller): string =
   return self.tokenService.getStatusTokenKey()
+
+proc ensnameResolverAddress*(self: Controller, ensUsername: string): string =
+  return self.ensService.ensnameResolverAddress(ensUsername)

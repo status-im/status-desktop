@@ -21,6 +21,7 @@ import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/settings/service as settings_service
 import app_service/service/eth/utils as eth_utils
+import app_service/service/ens/utils as ens_utils
 import ./dto as transaction_dto
 import ./dtoV2
 import ./dto_conversion
@@ -391,9 +392,14 @@ QtObject:
       amountInHex = "0x" & eth_utils.stripLeadingZeros(bigAmountIn.toHex)
       amountOutHex = "0x" & eth_utils.stripLeadingZeros(bigAmountOut.toHex)
 
+    # convert to mutable add status domain if no domain is added
+    var mutableParamsTable = extraParamsTable
+    if  extraParamsTable.hasKey(ExtraKeyUsername):
+      mutableParamsTable[ExtraKeyUsername] = ens_utils.addDomain(mutableParamsTable[ExtraKeyUsername])
+
     try:
       let err = wallet.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
-        tokenIsOwnerToken, toToken, fromChainID, toChainID, slippagePercentage, extraParamsTable)
+        tokenIsOwnerToken, toToken, fromChainID, toChainID, slippagePercentage, mutableParamsTable)
       if err.len > 0:
         raise newException(CatchableError, "err fetching the best route: " & err)
     except CatchableError as e:

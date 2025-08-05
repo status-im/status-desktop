@@ -37,7 +37,8 @@ type
     UNKNOWN
 
 proc addDomain*(username: string): string =
-  if username.endsWith(ETH_DOMAIN):
+  if username.endsWith(ETH_DOMAIN) or
+    username.endsWith(STATUS_DOMAIN):
     return username
   else:
     return username & STATUS_DOMAIN

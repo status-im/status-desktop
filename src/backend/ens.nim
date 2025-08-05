@@ -45,4 +45,7 @@ proc price*(chainId: int): RpcResponse[JsonNode] =
 
 proc resourceURL*(chainId: int, username: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, username]
-  return core.callPrivateRPC("ens_resourceURL", payload)
+
+proc resolver*(chainId: int, username: string): RpcResponse[JsonNode] =
+  let payload = %* [chainId, username]
+  return core.callPrivateRPC("ens_resolver", payload)
