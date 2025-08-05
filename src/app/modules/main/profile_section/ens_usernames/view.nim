@@ -40,9 +40,9 @@ QtObject:
   proc getEnsRegistry(self: View): string {.slot.} =
     return ENS_REGISTRY
 
-  proc usernameAvailabilityChecked(self: View, availabilityStatus: string) {.signal.}
-  proc sendUsernameAvailabilityCheckedSignal*(self: View, availabilityStatus: string) =
-    self.usernameAvailabilityChecked(availabilityStatus)
+  proc usernameAvailabilityChecked(self: View, availabilityStatus: string, ownerAddress: string) {.signal.}
+  proc sendUsernameAvailabilityCheckedSignal*(self: View, availabilityStatus: string, ownerAddress: string) =
+    self.usernameAvailabilityChecked(availabilityStatus, ownerAddress)
 
   proc checkEnsUsernameAvailability*(self: View, desiredEnsUsername: string, statusDomain: bool) {.slot.} =
     self.delegate.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
@@ -102,3 +102,6 @@ QtObject:
 
   proc setPrefferedEnsUsername*(self: View, ensUsername: string) {.slot.} =
     self.delegate.setPrefferedEnsUsername(ensUsername)
+
+  proc ensnameResolverAddress*(self: View, ensUsername: string): string {.slot.} =
+    return self.delegate.ensnameResolverAddress(ensUsername)

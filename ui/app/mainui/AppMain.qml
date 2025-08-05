@@ -2041,7 +2041,7 @@ Item {
                             
                             onAddressWasShownRequested: WalletStores.RootStore.addressWasShown(address)
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
-                            onConnectUsernameRequested: popupRequestsHandler.sendModalHandler.connectUsername(ensName)
+                            onConnectUsernameRequested:(ensName, ownerAddress) => popupRequestsHandler.sendModalHandler.connectUsername(ensName, ownerAddress)
                             onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
                             onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
 

@@ -90,7 +90,7 @@ StatusSectionLayout {
     required property int fontSize // Theme.FontSize.xxx
     
     signal addressWasShownRequested(string address)
-    signal connectUsernameRequested(string ensName)
+    signal connectUsernameRequested(string ensName, string ownerAddress)
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
 
@@ -307,7 +307,7 @@ StatusSectionLayout {
                 contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
-                onConnectUsernameRequested: root.connectUsernameRequested(ensName)
+                onConnectUsernameRequested: (ensName, ownerAddress) => root.connectUsernameRequested(ensName, ownerAddress)
                 onRegisterUsernameRequested: root.registerUsernameRequested(ensName)
                 onReleaseUsernameRequested: root.releaseUsernameRequested(ensName, senderAddress, chainId)
             }
