@@ -5,33 +5,36 @@
 
 #include <StatusQ/typesregistration.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(storybook);
 
     QGuiApplication app(argc, argv);
-    QGuiApplication::setOrganizationName(QStringLiteral("Status"));
-    QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
+    QGuiApplication::setOrganizationName(u"Status"_s);
+    QGuiApplication::setOrganizationDomain(u"status.im"_s);
 
-    const QString pagesPath = QML_IMPORT_ROOT + QStringLiteral("/pages");
+    const QString pagesPath = QML_IMPORT_ROOT u"/pages"_s;
     QDir pagesDir(pagesPath);
-    const QFileInfoList files = pagesDir.entryInfoList({QStringLiteral("*Page.qml")},
+    const QFileInfoList files = pagesDir.entryInfoList({u"*Page.qml"_s},
                                                        QDir::Files,
                                                        QDir::Name);
 
     const QStringList additionalImportPaths{STATUSQ_MODULE_IMPORT_PATH,
-                                            QStringLiteral("qrc:/"),
-                                            QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
-                                            QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
-                                            QML_IMPORT_ROOT + QStringLiteral("/src"),
-                                            QML_IMPORT_ROOT + QStringLiteral("/stubs")};
+                                            u"qrc:/"_s,
+                                            QML_IMPORT_ROOT u"/../ui/app"_s,
+                                            QML_IMPORT_ROOT u"/../ui/imports"_s,
+                                            QML_IMPORT_ROOT u"/src"_s,
+                                            QML_IMPORT_ROOT u"/stubs"_s};
 
     int errorCount = 0;
     QStringList warnings;
     QStringList failedPages;
 
-    qInfo() << ">>> StoryBook page verification started; Qt runtime version:" << qVersion() <<
-        "; built against version:" << QLibraryInfo::version().toString();
+    qInfo() << ">>> StoryBook page verification started; Qt runtime version:"
+            << qVersion() << "; built against version:"
+            << QLibraryInfo::version().toString();
 
     registerStatusQTypes();
     
@@ -44,7 +47,8 @@ int main(int argc, char *argv[])
         for (const auto &path : additionalImportPaths)
             engine.addImportPath(path);
 
-        QObject::connect(&engine, &QQmlApplicationEngine::warnings, &app, [&warnings](const QList<QQmlError> &qmlWarnings) {
+        QObject::connect(&engine, &QQmlApplicationEngine::warnings, &app,
+                         [&warnings](const QList<QQmlError> &qmlWarnings) {
             for (const auto &qmlWarning: qmlWarnings)
                 warnings.append(qmlWarning.toString());
         });
