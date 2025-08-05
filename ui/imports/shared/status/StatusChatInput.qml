@@ -1117,7 +1117,7 @@ Rectangle {
                     id: boldAction
                     wrapper: "**"
                     icon.name: "bold"
-                    text: qsTr("Bold")
+                    text: qsTr("Bold (%1)").arg(StatusQUtils.StringUtils.shortcutToText(shortcut))
                     selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                     onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
                                         : wrapSelection(wrapper)
@@ -1128,7 +1128,7 @@ Rectangle {
                     id: italicAction
                     wrapper: "*"
                     icon.name: "italic"
-                    text: qsTr("Italic")
+                    text: qsTr("Italic (%1)").arg(StatusQUtils.StringUtils.shortcutToText(shortcut))
                     selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                     checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
                     onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
@@ -1140,7 +1140,7 @@ Rectangle {
                     id: strikethruAction
                     wrapper: "~~"
                     icon.name: "strikethrough"
-                    text: qsTr("Strikethrough")
+                    text: qsTr("Strikethrough (%1)").arg(StatusQUtils.StringUtils.shortcutToText(shortcut))
                     selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                     onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
                                         : wrapSelection(wrapper)
@@ -1154,7 +1154,7 @@ Rectangle {
 
                     wrapper: multilineSelection ? "```" : "`"
                     icon.name: "code"
-                    text: qsTr("Code")
+                    text: qsTr("Code (%1)").arg(StatusQUtils.StringUtils.shortcutToText(shortcut))
                     selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
                     onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
                                         : wrapSelection(wrapper)
@@ -1165,7 +1165,7 @@ Rectangle {
                     id: quoteAction
                     wrapper: "> "
                     icon.name: "quote"
-                    text: qsTr("Quote")
+                    text: qsTr("Quote (%1)").arg(StatusQUtils.StringUtils.shortcutToText(shortcut))
                     checked: messageInputField.selectedText && isSelectedLinePrefixedBy(messageInputField.selectionStart, wrapper)
                     onToggled: !checked ? unprefixSelectedLine(wrapper) : prefixSelectedLine(wrapper)
                     shortcut: "Ctrl+Shift+Q"

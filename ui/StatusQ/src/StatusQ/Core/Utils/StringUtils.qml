@@ -20,4 +20,8 @@ QtObject {
     function plainText(htmlFragment) {
         return Internal.StringUtils.plainText(htmlFragment)
     }
+
+    function shortcutToText(shortcut) {
+        return Internal.StringUtils.shortcutToText(shortcut)
+    }
 }
