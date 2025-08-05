@@ -13,6 +13,8 @@
 
 #include <StatusQ/typesregistration.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 void loadContextPropertiesMocks(const char* storybookRoot, QQmlApplicationEngine& engine);
 
 int main(int argc, char *argv[])
@@ -20,7 +22,8 @@ int main(int argc, char *argv[])
     bool hasExplicitStyleSet = false;
     for (size_t i = 1; i < argc; i++)
     {
-        // Qt uses these standard/builtin args as soon as it sees them; so process before creating qApp instance
+        // Qt uses these standard/builtin args as soon as it sees them;
+        // so process before creating qApp instance
         if (qstrcmp(argv[i], "-style") == 0) {
             hasExplicitStyleSet = true;
             break;
@@ -33,17 +36,18 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
     QGuiApplication app(argc, argv);
-    QGuiApplication::setOrganizationName(QStringLiteral("Status"));
-    QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
-    QGuiApplication::setApplicationName(QStringLiteral("Status Desktop Storybook"));
-    QGuiApplication::setApplicationDisplayName(QStringLiteral("%1 [Qt %2]").arg(QGuiApplication::applicationName(), qVersion()));
+    QGuiApplication::setOrganizationName(u"Status"_s);
+    QGuiApplication::setOrganizationDomain(u"status.im"_s);
+    QGuiApplication::setApplicationName(u"Status Desktop Storybook"_s);
+    QGuiApplication::setApplicationDisplayName(u"%1 [Qt %2]"_s.arg(
+        QGuiApplication::applicationName(), qVersion()));
 
     if (!hasExplicitStyleSet)
-        QQuickStyle::setStyle(QStringLiteral("Universal")); // only used as a basic style for SB itself
+        QQuickStyle::setStyle(u"Universal"_s); // only used as a basic style for SB itself
 
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();
-    cmdParser.addPositionalArgument(QStringLiteral("page"), QStringLiteral("Open the given page on startup"));
+    cmdParser.addPositionalArgument(u"page"_s, u"Open the given page on startup"_s);
 
 #ifdef ANDROID
     static constexpr auto defaultMode = "remote";
@@ -51,16 +55,16 @@ int main(int argc, char *argv[])
     static constexpr auto defaultMode = "local";
 #endif
 
-    QCommandLineOption modeOption(QStringList() << QStringLiteral("m") << QStringLiteral("mode"),
-                                  QStringLiteral("mode (local or remote)"),
-                                  QStringLiteral("mode"), defaultMode);
+    QCommandLineOption modeOption(QStringList() << u"m"_s << u"mode"_s,
+                                  u"mode (local or remote)"_s,
+                                  u"mode"_s, defaultMode);
 
     cmdParser.addOption(modeOption);
     cmdParser.process(app.arguments());
 
     const QString mode = cmdParser.value(modeOption);
 
-    if (mode != QStringLiteral("local") && mode != QStringLiteral("remote")) {
+    if (mode != u"local"_s && mode != u"remote"_s) {
         qWarning() << "Invalid mode, use 'local' or 'remote'";
         return 0;
     }
@@ -73,37 +77,37 @@ int main(int argc, char *argv[])
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags);
 
     QStringList additionalImportPaths;
-    additionalImportPaths << QStringLiteral("qrc:/");
+    additionalImportPaths << u"qrc:/"_s;
 
-    if (mode == QStringLiteral("local")) {
+    if (mode == u"local"_s) {
         additionalImportPaths << QStringList {
             STATUSQ_MODULE_IMPORT_PATH,
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
-            QML_IMPORT_ROOT + QStringLiteral("/src"),
-            QML_IMPORT_ROOT + QStringLiteral("/pages"),
-            QML_IMPORT_ROOT + QStringLiteral("/stubs"),
+            QML_IMPORT_ROOT u"/../ui/app"_s,
+            QML_IMPORT_ROOT u"/../ui/imports"_s,
+            QML_IMPORT_ROOT u"/src"_s,
+            QML_IMPORT_ROOT u"/pages"_s,
+            QML_IMPORT_ROOT u"/stubs"_s,
         };
 
         StorybookSetup::registerTypesLocal(
             additionalImportPaths,
-            QML_IMPORT_ROOT + QStringLiteral("/pages"),
-            QCoreApplication::applicationDirPath() + QStringLiteral("/QmlTests"),
-            QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests"));
+            QML_IMPORT_ROOT u"/pages"_s,
+            QCoreApplication::applicationDirPath() + u"/QmlTests"_s,
+            QML_IMPORT_ROOT u"/qmlTests/tests"_s);
     } else {
-        additionalImportPaths << QStringLiteral("http://localhost:8080/0");
+        additionalImportPaths << u"http://localhost:8080/0"_s;
 
-        StorybookSetup::registerTypesRemote(QUrl("http://localhost:8080/version"),
-                                            QUrl("http://localhost:8080/pages"),
-                                            QUrl("http://localhost:8080"));
+        StorybookSetup::registerTypesRemote(QUrl(u"http://localhost:8080/version"_s),
+                                            QUrl(u"http://localhost:8080/pages"_s),
+                                            QUrl(u"http://localhost:8080"_s));
     }
 
     QQmlApplicationEngine engine;
 
-    for (const auto& path : additionalImportPaths)
+    for (auto& path : std::as_const(additionalImportPaths))
         engine.addImportPath(path);
 
-    StorybookSetup::configureEngine(&engine, mode == QStringLiteral("local"));
+    StorybookSetup::configureEngine(&engine, mode == u"local"_s);
     registerStatusQTypes();
 
     loadContextPropertiesMocks(QML_IMPORT_ROOT, engine);
@@ -117,37 +121,38 @@ int main(int argc, char *argv[])
 
     const auto args = cmdParser.positionalArguments();
     if (!args.isEmpty())
-        engine.setInitialProperties({{QStringLiteral("currentPage"), args.constFirst()}});
+        engine.setInitialProperties({{u"currentPage"_s, args.constFirst()}});
 
-    if (mode == QStringLiteral("remote")) {
+    if (mode == u"remote"_s) {
         auto server = new QmlFilesServer({
             STATUSQ_MODULE_IMPORT_PATH,
             // stubs first to give precedence over real stores
-            QML_IMPORT_ROOT + QStringLiteral("/stubs"),
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
-            QML_IMPORT_ROOT + QStringLiteral("/src"),
-            QML_IMPORT_ROOT + QStringLiteral("/pages"),
-        }, QML_IMPORT_ROOT + QStringLiteral("/pages"), true, &engine);
+            QML_IMPORT_ROOT u"/stubs"_s,
+            QML_IMPORT_ROOT u"/../ui/app"_s,
+            QML_IMPORT_ROOT u"/../ui/imports"_s,
+            QML_IMPORT_ROOT u"/src"_s,
+            QML_IMPORT_ROOT u"/pages"_s,
+        }, QML_IMPORT_ROOT u"/pages"_s, true, &engine);
 
         server->start(8080);
     }
 
     engine.load(url);
 
-    qInfo() << "Storybook started, Qt runtime version:" << qVersion() << "; built against version:" << QLibraryInfo::version().toString() <<
-        "installed in:" << QLibraryInfo::path(QLibraryInfo::PrefixPath)
+    qInfo() << "Storybook started, Qt runtime version:" << qVersion()
+            << "; built against version:" << QLibraryInfo::version().toString()
+            << "installed in:" << QLibraryInfo::path(QLibraryInfo::PrefixPath)
             << "; QQC style:" << QQuickStyle::name();
 
     return QGuiApplication::exec();
 }
 
 void loadContextPropertiesMocks(const char* storybookRoot, QQmlApplicationEngine& engine) {
-    QDirIterator it(QML_IMPORT_ROOT + QStringLiteral("/stubs/nim/sectionmocks"), QDirIterator::Subdirectories);
+    QDirIterator it(QML_IMPORT_ROOT u"/stubs/nim/sectionmocks"_s, QDirIterator::Subdirectories);
 
     while (it.hasNext()) {
         it.next();
-        if (it.fileInfo().isFile() && it.fileInfo().suffix() == QStringLiteral("qml")) {
+        if (it.fileInfo().isFile() && it.fileInfo().suffix() == u"qml"_s) {
             auto component = std::make_unique<QQmlComponent>(&engine, QUrl::fromLocalFile(it.filePath()));
             if (component->status() != QQmlComponent::Ready) {
                 qWarning() << "Failed to load mock for" << it.filePath() << component->errorString();

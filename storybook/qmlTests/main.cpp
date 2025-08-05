@@ -3,6 +3,8 @@
 
 #include <StatusQ/typesregistration.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 class Setup : public QObject
 {
     Q_OBJECT
@@ -11,19 +13,19 @@ public slots:
     void qmlEngineAvailable(QQmlEngine *engine) {
         Q_INIT_RESOURCE(storybook);
 
-        QGuiApplication::setOrganizationName(QStringLiteral("Status"));
-        QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
+        QGuiApplication::setOrganizationName(u"Status"_s);
+        QGuiApplication::setOrganizationDomain(u"status.im"_s);
 
-        qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", QByteArrayLiteral("1"));
+        qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1"_ba);
         
         const QStringList additionalImportPaths {
             STATUSQ_MODULE_IMPORT_PATH,
-            QStringLiteral("qrc:/"),
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/StatusQ/tests/qml"),
-            QML_IMPORT_ROOT + QStringLiteral("/stubs"),
-            QML_IMPORT_ROOT + QStringLiteral("/src")
+            u"qrc:/"_s,
+            QML_IMPORT_ROOT u"/../ui/app"_s,
+            QML_IMPORT_ROOT u"/../ui/imports"_s,
+            QML_IMPORT_ROOT u"/../ui/StatusQ/tests/qml"_s,
+            QML_IMPORT_ROOT u"/stubs"_s,
+            QML_IMPORT_ROOT u"/src"_s
         };
 
         for (const auto& path : additionalImportPaths)
