@@ -90,8 +90,8 @@ method getModuleAsVariant*(self: Module): QVariant =
 method checkEnsUsernameAvailability*(self: Module, desiredEnsUsername: string, statusDomain: bool) =
   self.controller.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
 
-method ensUsernameAvailabilityChecked*(self: Module, availabilityStatus: string) =
-  self.view.sendUsernameAvailabilityCheckedSignal(availabilityStatus)
+method ensUsernameAvailabilityChecked*(self: Module, availabilityStatus: string, ownerAddress: string) =
+  self.view.sendUsernameAvailabilityCheckedSignal(availabilityStatus, ownerAddress)
 
 method numOfPendingEnsUsernames*(self: Module): int =
   return self.controller.getMyPendingEnsUsernames().len
@@ -204,3 +204,6 @@ method getStatusTokenKey*(self: Module): string =
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)
+
+method ensnameResolverAddress*(self: Module, ensUsername: string): string =
+  return self.controller.ensnameResolverAddress(ensUsername)
