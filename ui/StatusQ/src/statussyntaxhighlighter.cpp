@@ -77,6 +77,18 @@ void StatusSyntaxHighlighter::buildRules()
         //ITALIC
     }
 
+    if (m_features & StatusSyntaxHighlighter::SingleLineBoldItalic)
+    {
+        //BOLD & ITALIC
+        singleLineBoldItalicFormat.setFontWeight(QFont::Bold);
+        singleLineBoldItalicFormat.setFontItalic(true);
+        rule.id = StatusSyntaxHighlighter::SingleLineBoldItalic;
+        rule.pattern = QRegularExpression(QStringLiteral("(\\*\\*\\*(.*?)\\*\\*\\*)|(\\_\\_\\_(.*?)\\_\\_\\_)"));
+        rule.format = singleLineBoldItalicFormat;
+        highlightingRules.append(rule);
+        //BOLD & ITALIC
+    }
+
     if (m_features & StatusSyntaxHighlighter::SingleLineStrikeThrough)
     {
         //STRIKETHROUGH
@@ -92,6 +104,7 @@ void StatusSyntaxHighlighter::buildRules()
     {
         //CODE (`foo`)
         codeFormat.setFontFamilies({ QStringLiteral("Roboto Mono") });
+        codeFormat.setFontFixedPitch(true);
         codeFormat.setBackground(m_codeBackgroundColor);
         codeFormat.setForeground(m_codeForegroundColor);
         rule.id = StatusSyntaxHighlighter::Code;
@@ -142,7 +155,7 @@ void StatusSyntaxHighlighter::highlightBlock(const QString& text)
 {
     for(const HighlightingRule& rule : std::as_const(highlightingRules))
     {
-        if(rule.pattern.pattern() == QStringLiteral("")) continue;
+        if(rule.pattern.pattern().isEmpty()) continue;
 
         QRegularExpressionMatchIterator matchIterator =
             rule.pattern.globalMatch(text, 0, rule.matchType);

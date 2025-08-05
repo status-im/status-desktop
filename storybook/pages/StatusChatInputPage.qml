@@ -209,13 +209,16 @@ SplitView {
             TabBar {
                 id: bar
                 TabButton {
+                    width: implicitWidth
                     text: "Attachments"
                 }
                 TabButton {
+                    width: implicitWidth
                     text: "Users"
                 }
                 TabButton {
-                    text: "payment\nrequest"
+                    width: implicitWidth
+                    text: "Payment request"
                 }
             }
 
@@ -361,6 +364,6 @@ SplitView {
 }
 
 // category: Components
-// status: decent
+// status: good
 // https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Messenger----Desktop-Legacy?node-id=4360-175&m=dev
 // https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Messenger----Desktop-Legacy?node-id=25492-31491&m=dev

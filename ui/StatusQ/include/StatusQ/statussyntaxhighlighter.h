@@ -36,12 +36,13 @@ public:
         None = 0,
         SingleLineBold = 1 << 0,
         SingleLineItalic = 1 << 1,
-        Code = 1 << 2,
-        CodeBlock = 1 << 3,
-        SingleLineStrikeThrough = 1 << 4,
-        Hyperlink = 1 << 5,
-        HighlightedHyperlink = 1 << 6,
-        All = SingleLineBold | SingleLineItalic | Code | CodeBlock | SingleLineStrikeThrough | Hyperlink | HighlightedHyperlink
+        SingleLineBoldItalic = 1 << 2,
+        Code = 1 << 3,
+        CodeBlock = 1 << 4,
+        SingleLineStrikeThrough = 1 << 5,
+        Hyperlink = 1 << 6,
+        HighlightedHyperlink = 1 << 7,
+        All = SingleLineBold | SingleLineItalic | SingleLineBoldItalic | Code | CodeBlock | SingleLineStrikeThrough | Hyperlink | HighlightedHyperlink
     };
     Q_DECLARE_FLAGS(Features, FeatureFlags)
     Q_FLAG(Features)
@@ -115,6 +116,7 @@ private:
 
     QTextCharFormat singlelineBoldFormat;
     QTextCharFormat singleLineItalicFormat;
+    QTextCharFormat singleLineBoldItalicFormat;
     QTextCharFormat codeFormat;
     QTextCharFormat singleLineStrikeThroughFormat;
     QTextCharFormat hyperlinkFormat;
