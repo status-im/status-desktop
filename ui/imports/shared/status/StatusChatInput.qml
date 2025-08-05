@@ -1137,17 +1137,6 @@ Rectangle {
                     enabled: textFormatMenu.visible
                 }
                 StatusChatInputTextFormationAction {
-                    id: underlineAction
-                    wrapper: "_"
-                    icon.name: "underline"
-                    text: qsTr("Underline")
-                    selectedTextWithFormationChars: d.getSelectedTextWithFormationChars(messageInputField)
-                    onToggled: !checked ? unwrapSelection(wrapper, d.getSelectedTextWithFormationChars(messageInputField))
-                                        : wrapSelection(wrapper)
-                    shortcut: StandardKey.Underline
-                    enabled: textFormatMenu.visible
-                }
-                StatusChatInputTextFormationAction {
                     id: strikethruAction
                     wrapper: "~~"
                     icon.name: "strikethrough"
