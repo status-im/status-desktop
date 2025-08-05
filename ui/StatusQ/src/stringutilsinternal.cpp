@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QKeySequence>
 #include <QUrl>
 #include <QTextDocumentFragment>
 
@@ -48,4 +49,20 @@ QString StringUtilsInternal::extractDomainFromLink(const QString& link) const
 QString StringUtilsInternal::plainText(const QString& htmlFragment) const
 {
     return QTextDocumentFragment::fromHtml(htmlFragment).toPlainText();
+}
+
+static QKeySequence variantToKeySequence(const QVariant &var)
+{
+    if (var.metaType().id() == QMetaType::Int)
+        return QKeySequence(static_cast<QKeySequence::StandardKey>(var.toInt()));
+    return QKeySequence::fromString(var.toString());
+}
+
+QString StringUtilsInternal::shortcutToText(const QVariant &shortcut)
+{
+    const auto seq = variantToKeySequence(shortcut);
+
+    if (seq.isEmpty())
+        return {};
+    return seq.toString();
 }

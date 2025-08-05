@@ -17,4 +17,6 @@ public:
     Q_INVOKABLE QString extractDomainFromLink(const QString& link) const;
 
     Q_INVOKABLE QString plainText(const QString& htmlFragment) const;
+
+    Q_INVOKABLE QString shortcutToText(const QVariant &shortcut);
 };
