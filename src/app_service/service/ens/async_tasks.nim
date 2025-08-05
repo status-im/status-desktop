@@ -35,7 +35,8 @@ proc checkEnsAvailabilityTask(argEncoded: string) {.gcsafe, nimcall.} =
         availability = ENS_AVAILABILITY_STATUS_TAKEN
 
     arg.finish(%*{
-      "availability": availability
+      "availability": availability,
+      "ownerAddress": ownerAddr
     })
   except Exception as e:
     arg.finish(%*{

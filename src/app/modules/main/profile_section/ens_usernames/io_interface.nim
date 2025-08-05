@@ -15,7 +15,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method ensUsernameAvailabilityChecked*(self: AccessInterface, availabilityStatus: string) {.base.} =
+method ensUsernameAvailabilityChecked*(self: AccessInterface, availabilityStatus: string, ownerAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onDetailsForEnsUsername*(self: AccessInterface, chainId: int, ensUsername: string, address: string, pubkey: string,
@@ -71,4 +71,7 @@ method getStatusTokenKey*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPrefferedEnsUsername*(self: AccessInterface, ensUsername: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method ensnameResolverAddress*(self: AccessInterface, ensUsername: string): string {.base.} =
   raise newException(ValueError, "No implementation available")

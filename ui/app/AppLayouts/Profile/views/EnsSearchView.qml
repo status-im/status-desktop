@@ -24,7 +24,8 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property int profileContentWidth
 
-    signal connectUsername(string username)
+    signal backBtnClicked()
+    signal connectUsername(string username, string ownerAddress)
     signal continueClicked(string output, string username)
 
     property string validationMessage: ""
@@ -32,6 +33,7 @@ Item {
     property bool isStatus: true
     property bool loading: false
     property string ensStatus: ""
+    property string ensOwnerAddress: ""
 
     property var validateENS: Backpressure.debounce(root, 500, function (ensName, isStatus){
         root.ensUsernamesStore.checkEnsUsernameAvailability(ensName, isStatus)
@@ -120,11 +122,12 @@ Item {
 
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
-                function onUsernameAvailabilityChecked(availabilityStatus: string) {
+                function onUsernameAvailabilityChecked(availabilityStatus: string, ownerAddress: string) {
                     if(!validate(ensUsername.text)) return;
                     valid = false;
                     loading = false;
                     ensStatus = availabilityStatus;
+                    ensOwnerAddress = ownerAddress
                     switch(availabilityStatus){
                         case "available":
                         case "owned":
@@ -170,7 +173,7 @@ Item {
                 }
 
                 if(ensStatus === Constants.ens_connected_dkey || ensStatus === Constants.ens_owned){
-                    root.connectUsername(ensUsername.text)
+                    root.connectUsername(ensUsername.text, root.ensOwnerAddress)
                 }
             }
         }
@@ -239,6 +242,14 @@ Item {
             anchors.topMargin: Theme.bigPadding
             color: Theme.palette.directColor1
         }
+    }
+
+    StatusQControls.StatusButton {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Theme.padding
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: qsTr("Back")
+        onClicked: root.backBtnClicked()
     }
 }
 

@@ -118,6 +118,10 @@ QtObject {
             root.rootStore.resolveENS(ensName, uuid)
         }
 
+        fnGetEnsnameResolverAddress: function(ensName) {
+            return  root.ensUsernamesStore.getEnsnameResolverAddress(ensName)
+        }
+
         fnGetDetailedCollectible: function(chainId, contractAddress, tokenId) {
             root.walletCollectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
         }
