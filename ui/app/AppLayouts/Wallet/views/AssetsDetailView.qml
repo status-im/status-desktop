@@ -39,10 +39,6 @@ Item {
     onNetworkFiltersChanged: d.forceRefreshBalanceStore = true
     /*required*/ property string address: ""
 
-    TokenBalanceHistoryData {
-        id: balanceData
-    }
-
     TokenMarketValuesData {
         id: marketValueData
     }
@@ -126,8 +122,7 @@ Item {
     }
 
     enum GraphType {
-        Price = 0,
-        Balance
+        Price = 0
     }
 
     StatusScrollView {
@@ -180,7 +175,6 @@ Item {
 
                     graphsModel: [
                         {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price, visible: !d.isCommunityAsset},
-                        {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance, visible: true},
                     ]
                     defaultTimeRangeIndexShown: ChartDataBase.TimeRange.All
                     timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel
@@ -189,23 +183,13 @@ Item {
                                                 graphDetail.selectedGraphType = privateIdentifier
                                             }
 
-                                            if(graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance) {
-                                                graphDetail.updateBalanceStore()
-                                            }
-
                                             if(!isTimeRange) {
-                                                graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? marketValueData : balanceData
+                                                graphDetail.selectedStore = marketValueData
                                             }
 
                                             chart.refresh()
                                         }
 
-                    readonly property var dateToShortLabel: function (value) {
-                        const range = balanceData.timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                        return range === ChartDataBase.TimeRange.Weekly || range === ChartDataBase.TimeRange.Monthly ?
-                                    LocaleUtils.getDayMonth(value) :
-                                    LocaleUtils.getMonthYear(value)
-                    }
                     chart.type: 'line'
                     chart.labels: root.tokensStore.marketHistoryIsLoading ? [] : graphDetail.labelsData
                     chart.datasets: {
@@ -242,15 +226,6 @@ Item {
                             //},
                             //pan:{enabled:true,mode:'x'},
                             tooltips: {
-                                format: {
-                                    enabled: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance,
-                                    callback: function (value) {
-                                        return graphDetail.dateToShortLabel(value)
-                                    },
-                                    valueCallback: function(value) {
-                                        return root.currencyStore.formatCurrencyAmount(value, root.currencyStore.currentCurrency)
-                                    }
-                                },
                                 intersect: false,
                                 displayColors: false,
                                 callbacks: {
@@ -260,9 +235,6 @@ Item {
                                             label += ': ';
                                         }
 
-                                        if (graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance)
-                                            return label + tooltipItem.yLabel // already formatted in tooltips.value.callback
-
                                         const value = root.currencyStore.formatCurrencyAmount(
                                                         tooltipItem.yLabel, root.currencyStore.currentCurrency)
 
@@ -271,12 +243,6 @@ Item {
                                 }
                             },
                             scales: {
-                                labelFormat: {
-                                    callback: function (value) {
-                                        return graphDetail.dateToShortLabel(value)
-                                    },
-                                    enabled: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance,
-                                },
                                 xAxes: [{
                                         id: 'x-axis-1',
                                         position: 'bottom',
@@ -333,35 +299,6 @@ Item {
                         active: root.tokensStore.marketHistoryIsLoading
                     }
 
-                    function updateBalanceStore() {
-                        let selectedTimeRangeEnum = balanceData.timeRangeStrToEnum(graphDetail.selectedTimeRange)
-
-                        let currencySymbol = root.currencyStore.currentCurrency
-
-                        if(!balanceData.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum) || d.forceRefreshBalanceStore) {
-                            root.tokensStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
-                        }
-                    }
-
-                    Connections {
-                        target: balanceData
-                        function onNewDataReady(address, tokenSymbol, currencySymbol, timeRange) {
-                            d.forceRefreshBalanceStore = false
-                            if (timeRange === balanceData.timeRangeStrToEnum(graphDetail.selectedTimeRange)) {
-                                chart.refresh()
-                            }
-                        }
-                    }
-
-                    Connections {
-                        target: root
-                        function onAddressChanged() { graphDetail.updateBalanceStore() }
-                    }
-
-                    Connections {
-                        target: d
-                        function onSymbolChanged() { if (d.symbol) graphDetail.updateBalanceStore() }
-                    }
                 }
             }
 
