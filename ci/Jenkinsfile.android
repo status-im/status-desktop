@@ -74,6 +74,7 @@ pipeline {
           export ARCH="${params.ARCH}"
           export PKG_CONFIG_PATH="${env.QT_ANDROID_PATH}/lib/pkgconfig"
           export PATH="${env.QT_ANDROID_PATH}/bin:/opt/qt/6.9.1/gcc_64/bin:/opt/qt/6.9.1/gcc_64/libexec:${env.QT_ANDROID_PATH}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:${env.PATH}"
+          make mobile-clean
           make -j${utils.getProcCount()} mobile-build V=3 USE_SYSTEM_NIM=1
         """
       }
