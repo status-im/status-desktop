@@ -1,7 +1,7 @@
 # BUILD STAGE - image for build tools and source compilation
 FROM ubuntu:22.04 AS builder
 
-ARG QT_VERSION="6.9.0"
+ARG QT_VERSION="6.9.1"
 ARG GOLANG_VERSION="1.23.10"
 ARG PROTOC_VERSION="3.20.0"
 ARG ANDROID_BUILD_TOOLS="35.0.0"
@@ -158,7 +158,7 @@ RUN set -e \
 # RUNTIME STAGE - image with runtime dependencies
 FROM ubuntu:22.04 AS runtime
 
-ARG QT_VERSION="6.9.0"
+ARG QT_VERSION="6.9.1"
 ARG GOLANG_VERSION="1.23.10"
 ARG NDK_VERSION="27.2.12479018"
 
@@ -173,9 +173,6 @@ ENV ANDROID_NDK_ROOT="/opt/android-sdk/ndk/${NDK_VERSION}"
 ENV ANDROID_SDK_HOME="/opt/android-sdk"
 ENV ANDROID_NDK_HOME="/opt/android-sdk/ndk/${NDK_VERSION}"
 ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
-# debug: may fix qml linking issues
-ENV QML_IMPORT_PATH="/opt/qt/${QT_VERSION}/android_arm64_v8a/qml:/opt/qt/${QT_VERSION}/gcc_64/qml"
-ENV QML2_IMPORT_PATH="/opt/qt/${QT_VERSION}/android_arm64_v8a/qml:/opt/qt/${QT_VERSION}/gcc_64/qml"
 
 # Create jenkins user with same UID/GID as builder stage
 RUN groupadd -g 1001 jenkins && useradd -r -g jenkins -m -d /home/jenkins -s /bin/bash -u 1001 jenkins

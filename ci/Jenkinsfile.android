@@ -7,10 +7,10 @@ def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
   agent {
-    /* Image with Ubuntu 22.04, QT 6.9.0, Android SDK/NDK, Go, and Nim */
+    /* Image with Ubuntu 22.04, QT 6.9.1, Android SDK/NDK, Go, and Nim */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.0.11-qt6.9.0-android'
+      image 'statusteam/nim-status-client-build:1.0.0-qt6.9.1-android'
       alwaysPull true
     }
   }
@@ -73,7 +73,7 @@ pipeline {
         sh """
           export ARCH="${params.ARCH}"
           export PKG_CONFIG_PATH="${env.QT_ANDROID_PATH}/lib/pkgconfig"
-          export PATH="${env.QT_ANDROID_PATH}/bin:/opt/qt/6.9.0/gcc_64/bin:/opt/qt/6.9.0/gcc_64/libexec:${env.QT_ANDROID_PATH}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:${env.PATH}"
+          export PATH="${env.QT_ANDROID_PATH}/bin:/opt/qt/6.9.1/gcc_64/bin:/opt/qt/6.9.1/gcc_64/libexec:${env.QT_ANDROID_PATH}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:${env.PATH}"
           make -j${utils.getProcCount()} mobile-build V=3 USE_SYSTEM_NIM=1
         """
       }
@@ -119,10 +119,10 @@ pipeline {
 def getQtAndroidPath(architecture) {
   switch(architecture) {
     case 'arm64':
-      return '/opt/qt/6.9.0/android_arm64_v8a'
+      return '/opt/qt/6.9.1/android_arm64_v8a'
     case 'x86_64':
-      return '/opt/qt/6.9.0/android_x86_64'
+      return '/opt/qt/6.9.1/android_x86_64'
     default:
-      return '/opt/qt/6.9.0/android_arm64_v8a'
+      return '/opt/qt/6.9.1/android_arm64_v8a'
   }
 }
