@@ -56,10 +56,10 @@ TextArea {
     */
     property bool valid: true
 
-    leftPadding: 16
-    rightPadding: 16
-    topPadding: 10
-    bottomPadding: 10
+    leftPadding: Theme.padding
+    rightPadding: Theme.padding
+    topPadding: Theme.smallPadding
+    bottomPadding: Theme.smallPadding
 
     color: Theme.palette.directColor1
     selectedTextColor: color
@@ -79,7 +79,7 @@ TextArea {
     KeyNavigation.priority: KeyNavigation.BeforeItem
 
     background: Rectangle {
-        radius: 8
+        radius: Theme.radius
         color: root.readOnly ? "transparent" : root.enabled ? Theme.palette.baseColor2 : Theme.palette.baseColor4
         border.width: 1
         border.color: {
