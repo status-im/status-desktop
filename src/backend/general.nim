@@ -1,4 +1,4 @@
-import json, strutils, app_service/common/safe_json_serialization, chronicles
+import json, strutils, json_serialization, chronicles
 import core, ../app_service/common/utils
 import response_type
 
@@ -12,7 +12,7 @@ logScope:
 proc validateMnemonic*(mnemonic: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.validateMnemonic(mnemonic.strip())
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
     error "error doing rpc request", methodName = "validateMnemonic", exception=e.msg
@@ -25,7 +25,7 @@ proc startMessenger*(): RpcResponse[JsonNode] =
 proc logout*(): RpcResponse[JsonNode] =
   try:
     let response = status_go.logout()
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error logging out", methodName = "logout", exception=e.msg
     raise newException(RpcException, e.msg)
@@ -54,7 +54,7 @@ proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcRe
   let params = %* {"password": password, "userInputs": userInputs}
   try:
     let response = status_go.getPasswordStrengthScore($(params))
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error", methodName = "getPasswordStrengthScore", exception=e.msg
     raise newException(RpcException, e.msg)

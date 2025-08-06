@@ -1,4 +1,4 @@
-import json, app_service/common/safe_json_serialization
+import json, json_serialization
 import base
 
 import backend/provider_status_types

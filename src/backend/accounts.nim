@@ -1,4 +1,4 @@
-import json, app_service/common/safe_json_serialization, chronicles, strutils, std/os
+import json, json_serialization, chronicles, strutils, std/os
 import ./core, ../app_service/common/utils
 import ../app_service/service/wallet_account/dto/account_dto
 import ../app_service/service/accounts/dto/login_request
@@ -195,7 +195,7 @@ proc generateAlias*(publicKey: string): RpcResponse[JsonNode] =
 
 proc isAlias*(value: string): bool =
   let response = status_go.isAlias(value)
-  let r = Json.safeDecode(response, JsonNode)
+  let r = Json.decode(response, JsonNode)
   return r["result"].getBool()
 
 proc getRandomMnemonic*(): RpcResponse[JsonNode] =
@@ -232,7 +232,7 @@ proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths
 
   try:
     let response = status_go.createAccountFromMnemonicAndDeriveAccountsForPaths($payload)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "createAccountFromMnemonicAndDeriveAccountsForPaths", exception=e.msg
     raise newException(RpcException, e.msg)
@@ -252,7 +252,7 @@ proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
   let payload = %* {"privateKey": privateKey}
   try:
     let response = status_go.createAccountFromPrivateKey($payload)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "createAccountFromPrivateKey", exception=e.msg
     raise newException(RpcException, e.msg)
@@ -299,7 +299,7 @@ proc createAccountAndLogin*(request: CreateAccountRequest): RpcResponse[JsonNode
   try:
     let payload = request.toJson()
     let response = status_go.createAccountAndLogin($payload)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
     error "error doing rpc request", methodName = "createAccountAndLogin", exception=e.msg
@@ -309,7 +309,7 @@ proc restoreAccountAndLogin*(request: RestoreAccountRequest): RpcResponse[JsonNo
   try:
     let payload = request.toJson()
     let response = status_go.restoreAccountAndLogin($payload)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
     error "error doing rpc request", methodName = "restoreAccountAndLogin", exception=e.msg
@@ -319,7 +319,7 @@ proc convertRegularProfileKeypairToKeycard*(account: JsonNode, settings: JsonNod
   RpcResponse[JsonNode] =
   try:
     let response = status_go.convertToKeycardAccount($account, $settings, keycardUid, password, newPassword)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "convertRegularProfileKeypairToKeycard", exception=e.msg
     raise newException(RpcException, e.msg)
@@ -328,7 +328,7 @@ proc convertKeycardProfileKeypairToRegular*(mnemonic: string, currPassword: stri
   RpcResponse[JsonNode] =
   try:
     let response = status_go.convertToRegularAccount(mnemonic, currPassword, newPassword)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "convertKeycardProfileKeypairToRegular", exception=e.msg
     raise newException(RpcException, e.msg)
@@ -337,7 +337,7 @@ proc loginAccount*(request: LoginAccountRequest): RpcResponse[JsonNode] =
   try:
     let payload = request.toJson()
     let response = status_go.loginAccount($payload)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
     error "loginAccount failed", exception=e.msg
@@ -347,7 +347,7 @@ proc verifyAccountPassword*(address: string, hashedPassword: string):
   RpcResponse[JsonNode] =
   try:
     let response = status_go.verifyAccountPassword(address, hashedPassword)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
     error "error doing rpc request", methodName = "verifyAccountPassword", exception=e.msg
@@ -357,7 +357,7 @@ proc verifyDatabasePassword*(keyuid: string, hashedPassword: string):
   RpcResponse[JsonNode] =
   try:
     let response = status_go.verifyDatabasePassword(keyuid, hashedPassword)
-    result.result = Json.safeDecode(response, JsonNode)
+    result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
     error "error doing rpc request", methodName = "verifyDatabasePassword", exception=e.msg
