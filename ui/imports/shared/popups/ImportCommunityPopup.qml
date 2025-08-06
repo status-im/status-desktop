@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
 import QtQml.Models
 
 import utils
@@ -137,18 +136,17 @@ StatusDialog {
     StatusScrollView {
         id: scrollContent
         anchors.fill: parent
-        anchors.leftMargin: Theme.halfPadding
-        contentWidth: (root.width-Theme.bigPadding-Theme.padding)
+        contentWidth: availableWidth
         padding: 0
 
         ColumnLayout {
-            width: (scrollContent.width-Theme.padding)
+            width: scrollContent.availableWidth
             spacing: Theme.halfPadding
 
             StatusBaseText {
                 id: infoText1
                 Layout.fillWidth: true
-                text: qsTr("Enter the public key of the community you wish to access")
+                text: qsTr("Enter the public key of, or a link to the community you wish to access")
                 wrapMode: Text.WordWrap
                 font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
@@ -165,9 +163,8 @@ StatusDialog {
                 Layout.preferredHeight: 108
                 StatusTextArea {
                     id: keyInput
-                    anchors.fill: parent
-                    placeholderText: "zQ3..."
-                    wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
+                    placeholderText: qsTr("Link or (compressed) public key...")
+                    wrapMode: TextEdit.Wrap
                     onTextChanged: d.importErrorMessage = ""
                 }
             }

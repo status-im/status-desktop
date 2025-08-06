@@ -119,7 +119,7 @@ SplitView {
 
         function requestCommunityInfo(communityId) {
             // Dynamically create a timer to be able to simulate overlapping requests
-            let timer = Qt.createQmlObject("import QtQuick 2.0; Timer {}", root)
+            let timer = Qt.createQmlObject("import QtQml; Timer {}", root)
             timer.interval = 1000
             timer.repeat = false
             timer.triggered.connect(() => {
@@ -173,7 +173,6 @@ SplitView {
             anchors.fill: parent
 
             sourceComponent: ImportCommunityPopup {
-                anchors.centerIn: parent
                 modal: false
                 closePolicy: Popup.NoAutoClose
                 destroyOnClose: false
@@ -295,3 +294,4 @@ SplitView {
 }
 
 // category: Popups
+// status: good
