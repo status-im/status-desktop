@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import StatusQ.Core.Theme
 
@@ -27,12 +27,12 @@ Item {
     property alias assetsModel: profilePreview.assetsModel
     property alias collectiblesModel: profilePreview.collectiblesModel
 
-    implicitHeight: profilePreview.implicitHeight 
-                        + layout.anchors.topMargin 
+    implicitHeight: profilePreview.implicitHeight
+                        + layout.anchors.topMargin
                         + layout.anchors.bottomMargin
 
-    implicitWidth: profilePreview.implicitWidth 
-                        + layout.anchors.leftMargin 
+    implicitWidth: profilePreview.implicitWidth
+                        + layout.anchors.leftMargin
                         + layout.anchors.rightMargin
 
     function reload() {

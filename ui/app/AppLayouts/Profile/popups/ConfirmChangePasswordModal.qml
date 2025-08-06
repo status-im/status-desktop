@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQml.Models
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import utils
 import shared
