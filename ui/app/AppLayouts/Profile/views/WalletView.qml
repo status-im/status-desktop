@@ -2,7 +2,7 @@ import QtCore
 import QtQml
 import QtQuick
 
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import QtQuick.Controls
 import QtQuick.Layouts
 

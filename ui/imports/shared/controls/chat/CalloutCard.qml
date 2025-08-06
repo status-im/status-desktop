@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core.Theme
 

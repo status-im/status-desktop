@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml.Models
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core
 import StatusQ.Controls
@@ -30,7 +30,7 @@ StatusDialog {
 
     readonly property alias amountToBurn: d.amountToBurn
     readonly property alias selectedAccountAddress: d.accountAddress
-
+    
     // Fees related properties:
     property string feeText
     property string feeErrorText: ""

@@ -1,7 +1,7 @@
 import QtCore
 import QtQuick
 
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQml.Models
 import QtQuick.Controls

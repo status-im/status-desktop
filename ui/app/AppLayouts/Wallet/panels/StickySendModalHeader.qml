@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core.Theme
 import StatusQ.Popups.Dialog

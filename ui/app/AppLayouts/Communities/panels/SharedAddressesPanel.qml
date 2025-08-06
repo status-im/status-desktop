@@ -2,7 +2,7 @@ import QtQuick
 import QtQml.Models
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ
 import StatusQ.Core

@@ -3,7 +3,7 @@ import QtQml
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ
 import StatusQ.Core
@@ -107,9 +107,9 @@ StatusComboBox {
                     filters: FastExpressionFilter {
                         expression: {
                             root.selection
-                            return root.selection.includes(model.chainId)
-                        }
-                        expectedRoles: ["chainId"]
+                            return root.selection.includes(model.chainId) 
+                        } 
+                        expectedRoles: ["chainId"] 
                     }
                 }
                 delegate: StatusRoundedImage {

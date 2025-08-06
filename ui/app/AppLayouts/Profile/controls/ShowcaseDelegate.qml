@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 import QtQml
 
 import StatusQ.Controls
@@ -37,7 +37,7 @@ StatusDraggableListItem {
         icon.name: ProfileUtils.visibilityIcon(showcaseVisibility)
         icon.color: Theme.palette.primaryColor1
         checked: root.showcaseVisibility === showcaseVisibility
-
+        
         enabled: root.showcaseMaxVisibility >= showcaseVisibility
     }
 

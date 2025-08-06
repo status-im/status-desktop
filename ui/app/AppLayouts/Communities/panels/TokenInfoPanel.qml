@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -76,7 +76,7 @@ Control {
                 source: image
                 maskSource: parent
             }
-        }
+        }        
 
         // Special artwork representation for `Owner and Master Token` tokens:
         PrivilegedTokenArtworkPanel {

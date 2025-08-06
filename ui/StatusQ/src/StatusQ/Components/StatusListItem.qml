@@ -5,7 +5,7 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Controls
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import "private"
 

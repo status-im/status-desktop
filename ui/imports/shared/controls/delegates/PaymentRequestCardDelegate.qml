@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Window
 import StatusQ.Core
 
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core.Theme
 import StatusQ.Components

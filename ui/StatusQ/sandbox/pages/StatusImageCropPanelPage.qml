@@ -7,7 +7,7 @@ import QtQml
 import StatusQ.Controls
 import StatusQ.Components
 
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 import StatusQ.Components
 import StatusQ.Controls
