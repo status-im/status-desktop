@@ -2,7 +2,27 @@
 
 For regular usage of **Storybook** it's enough to open `status-desktop/storybook/CMakeLists.txt` in QtCreator. Please **`do not use StoryBook.pro`** which is intended for WebAssembly builds. Please make sure that selected run target is `Storybook`.
 
+Storybook may run in two modes (configurable by `-m`/`--mode` command line argument):
+- **local** - in this mode local filesystem is observed directly and when change detected the page is unloaded, qml cache is cleaned and page is loaded again
+- **remote** - in this mode the both change detection and qml files access is done via http server. It allows exposing local source code to remote devices
+
+On desktop both modes work basically in the same way from the user perspective.
+
+In order to run Storybook it's necessary to use remote mode:
+- connect device
+- start Storybook locally in remote mode
+- set up reverse proxy (`adb reverse tcp:8080 tcp:8080`)
+- run the Storybook on the device
+
+For convenience the setup of reverse proxy can be easily added to the config
+in QtCreator as a deployment step (`Custom Process Step`).
+
+
 # Building Storybook with Webassembly and Qt 5.14
+
+> [!WARNING]
+> Both support for Webassembly and the instruction below are not maintained and
+> won't work out of the box. Please use the standard build/deploy method.
 
 ## Configuring the environment
 ### Install Emscripten v1.38.27
