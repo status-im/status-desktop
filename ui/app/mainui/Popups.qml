@@ -1391,7 +1391,7 @@ QtObject {
 
             NewsMessagePopup {
                 activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
-                onLinkClicked: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
+                onLinkClicked: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
             }
         },
         Component {
