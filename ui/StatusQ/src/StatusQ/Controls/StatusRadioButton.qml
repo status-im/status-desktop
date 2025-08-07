@@ -21,7 +21,7 @@ RadioButton {
         Large
     }
 
-    opacity: enabled ? 1.0 : 0.3
+    opacity: enabled ? 1.0 : Theme.disabledOpacity
     font.family: Theme.baseFont.name
     font.pixelSize: Theme.primaryTextFontSize
 
@@ -51,5 +51,8 @@ RadioButton {
         rightPadding: root.indicator && root.mirrored ? root.indicator.width + root.spacing : 0
         visible: !!text
         wrapMode: Text.Wrap
+    }
+    HoverHandler {
+        cursorShape: hovered ? Qt.PointingHandCursor : undefined
     }
 }

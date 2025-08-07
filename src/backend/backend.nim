@@ -15,6 +15,37 @@ type
     decimals* {.serializedFieldName("decimals").}: int
     color* {.serializedFieldName("color").}: string
 
+  Bookmark* = ref object of RootObj
+    name* {.serializedFieldName("name").}: string
+    url* {.serializedFieldName("url").}: string
+    imageUrl* {.serializedFieldName("imageUrl").}: string
+    removed* {.serializedFieldName("removed").}: bool
+    deletedAt* {.serializedFieldName("deletedAt").}: int
+
+  Permission* = ref object of RootObj
+    dapp* {.serializedFieldName("dapp").}: string
+    address* {.serializedFieldName("address").}: string
+    permissions* {.serializedFieldName("permissions").}: seq[string]
+
+  Network* = ref object of RootObj
+    chainId* {.serializedFieldName("chainId").}: int
+    nativeCurrencyDecimals* {.serializedFieldName("nativeCurrencyDecimals").}: int
+    layer* {.serializedFieldName("layer").}: int
+    chainName* {.serializedFieldName("chainName").}: string
+    rpcURL* {.serializedFieldName("rpcUrl").}: string
+    originalRpcURL* {.serializedFieldName("originalRpcUrl").}: string
+    fallbackURL* {.serializedFieldName("fallbackUrl").}: string
+    originalFallbackURL* {.serializedFieldName("originalFallbackURL").}: string
+    blockExplorerURL* {.serializedFieldName("blockExplorerUrl").}: string
+    iconURL* {.serializedFieldName("iconUrl").}: string
+    nativeCurrencyName* {.serializedFieldName("nativeCurrencyName").}: string
+    nativeCurrencySymbol* {.serializedFieldName("nativeCurrencySymbol").}: string
+    isTest* {.serializedFieldName("isTest").}: bool
+    enabled* {.serializedFieldName("enabled").}: bool
+    chainColor* {.serializedFieldName("chainColor").}: string
+    shortName* {.serializedFieldName("shortName").}: string
+    relatedChainID* {.serializedFieldName("relatedChainID").}: int
+
   ActivityCenterNotificationsRequest* = ref object of RootObj
     cursor* {.serializedFieldName("cursor").}: string
     limit* {.serializedFieldName("limit").}: int
@@ -151,6 +182,19 @@ rpc(hasUnseenActivityCenterNotifications, "wakuext"):
 rpc(markAsSeenActivityCenterNotifications, "wakuext"):
   discard
 
+rpc(getBookmarks, "browsers"):
+  discard
+
+rpc(storeBookmark, "browsers"):
+  bookmark: Bookmark
+
+rpc(updateBookmark, "browsers"):
+  originalUrl: string
+  bookmark: Bookmark
+
+rpc(deleteBookmark, "browsers"):
+  url: string
+
 rpc(setTenorAPIKey, "gif"):
   key: string
 
@@ -168,6 +212,16 @@ rpc(getRecentGifs, "gif"):
 
 rpc(getFavoriteGifs, "gif"):
   discard
+
+rpc(getDappPermissions, "permissions"):
+  discard
+
+rpc(addDappPermissions, "permissions"):
+  permission: Permission
+
+rpc(deleteDappPermissionsByNameAndAddress, "permissions"):
+  dapp: string
+  address: string
 
 rpc(fetchMarketValues, "wallet"):
   symbols: seq[string]

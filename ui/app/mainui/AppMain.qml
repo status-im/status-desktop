@@ -6,6 +6,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml.Models
 
+import AppLayouts.Browser
 import AppLayouts.Wallet
 import AppLayouts.Node
 import AppLayouts.Chat
@@ -49,6 +50,7 @@ import AppLayouts.Wallet.popups.dapps as DAppsPopups
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.stores as AppStores
 import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.Browser.stores as BrowserStores
 
 import mainui.adaptors
 import mainui.activitycenter.stores
@@ -909,15 +911,15 @@ Item {
 
         isDevBuild: !appMain.rootStore.isProduction
 
-        onOpenExternalLink: globalConns.onOpenLink(link)
-        onSaveDomainToUnfurledWhitelist: {
+        onOpenExternalLink: (link) => globalConns.onOpenLink(link)
+        onSaveDomainToUnfurledWhitelist: function(domain) {
             const whitelistedHostnames = appMainLocalSettings.whitelistedUnfurledDomains || []
             if (!whitelistedHostnames.includes(domain)) {
                 whitelistedHostnames.push(domain)
                 appMainLocalSettings.whitelistedUnfurledDomains = whitelistedHostnames
             }
         }
-        onTransferOwnershipRequested: popupRequestsHandler.sendModalHandler.transferOwnership(tokenId, senderAddress)
+        onTransferOwnershipRequested: (tokenId, senderAddress) => popupRequestsHandler.sendModalHandler.transferOwnership(tokenId, senderAddress)
     }
 
     HandlersManager {
@@ -946,6 +948,11 @@ Item {
         id: globalConns
         target: Global
 
+        function onOpenLinkInBrowser(link: string) {
+            changeAppSectionBySectionId(Constants.appSection.browser)
+            Qt.callLater(() => browserLayoutContainer.item.openUrlInNewTab(link));
+        }
+
         function onOpenCreateChatView() {
             createChatView.opened = true
         }
@@ -961,7 +968,17 @@ Item {
         function onOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = SQUtils.StringUtils.plainText(link)
-            Qt.openUrlExternally(link)
+
+            if (appMain.rootStore.showBrowserSelector) {
+                popups.openChooseBrowserPopup(link)
+            } else {
+                if (appMain.rootStore.openLinksInStatus) {
+                    globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
+                    globalConns.onOpenLinkInBrowser(link)
+                } else {
+                    Qt.openUrlExternally(link)
+                }
+            }
         }
 
         function onOpenLinkWithConfirmation(link: string, domain: string) {
@@ -1217,6 +1234,11 @@ Item {
                     ValueFilter {
                         roleName: "sectionType"
                         value: Constants.appSection.chat
+                    }
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.browser
+                        enabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
                     }
                 },
                 ValueFilter {
@@ -1689,6 +1711,8 @@ Item {
                             return Constants.appViewStackIndex.wallet
                         case Constants.appSection.profile:
                             return Constants.appViewStackIndex.profile
+                        case Constants.appSection.browser:
+                            return Constants.appViewStackIndex.browser
                         case Constants.appSection.node:
                             return Constants.appViewStackIndex.node
                         case Constants.appSection.market:
@@ -1731,6 +1755,7 @@ Item {
 
                                 showEnabledSectionsOnly: true
                                 marketEnabled: appMain.featureFlagsStore.marketEnabled
+                                browserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
 
                                 syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
                                 messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
@@ -1920,7 +1945,7 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.communitiesPortal
                         asynchronous: true
-                        CommunitiesPortalLayout {
+                        sourceComponent: CommunitiesPortalLayout {
                             anchors.fill: parent
                             createCommunityEnabled: !SQUtils.Utils.isMobile
                             navBar: appMain.navBar
@@ -1972,6 +1997,37 @@ Item {
                         }
                         onLoaded: {
                             item.resetView()
+                        }
+                    }
+
+                    Loader {
+                        id: browserLayoutContainer
+
+                        asynchronous: true
+                        Binding on active {
+                            when: appView.currentIndex === Constants.appViewStackIndex.browser
+                            value: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
+                            restoreMode: Binding.RestoreNone
+                        }
+
+                        sourceComponent: BrowserLayout {
+                            id: browserLayout
+                            navBar: appMain.navBar
+                            bookmarksStore: BrowserStores.BookmarksStore {}
+                            downloadsStore: BrowserStores.DownloadsStore {}
+                            browserRootStore: BrowserStores.BrowserRootStore {}
+                            browserWalletStore: BrowserStores.BrowserWalletStore {}
+                            web3ProviderStore: BrowserStores.Web3ProviderStore {
+                                dappBrowserAccountAddress: browserLayout.browserWalletStore.dappBrowserAccount.address
+                            }
+
+                            transactionStore: appMain.transactionStore
+                            assetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
+                            tokensStore: appMain.tokensStore
+                            notificationCount: activityCenterStore.unreadNotificationsCount
+                            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+                            onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
                         }
                     }
 
@@ -2029,6 +2085,7 @@ Item {
                             pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
+                            isBrowserEnabled: featureFlagsStore.browserEnabled
 
                             theme: appMainLocalSettings.theme
                             fontSize: appMainLocalSettings.fontSize
