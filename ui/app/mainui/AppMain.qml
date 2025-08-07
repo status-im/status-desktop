@@ -64,9 +64,7 @@ Item {
     // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
         localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
-        onOpenUrl: {
-            Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
-        }
+        onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
     }
 
     // Global cross-domain stores (just references from `rootStore`)
@@ -1355,7 +1353,7 @@ Item {
                         icon.name: communityContextMenu.isSpectator ? "close-circle" : "arrow-left"
                         type: StatusAction.Type.Danger
                         onTriggered: communityContextMenu.isSpectator ? communityContextMenu.chatCommunitySectionModule.leaveCommunity()
-                                                                        : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
+                                                                      : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
                     }
                 }
             }
