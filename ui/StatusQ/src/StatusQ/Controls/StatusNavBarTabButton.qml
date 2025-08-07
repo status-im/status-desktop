@@ -57,7 +57,7 @@ StatusIconTabButton {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
+        onClicked: function(mouse) {
             if (mouse.button === Qt.RightButton) {
                 if (!!popupMenuSlot.sourceComponent && !popupMenuSlot.active)
                     popupMenuSlot.active = true

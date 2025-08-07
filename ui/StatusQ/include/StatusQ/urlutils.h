@@ -19,6 +19,8 @@ public:
     Q_INVOKABLE QString convertUrlToLocalPath(const QString& url) const;
     Q_INVOKABLE QStringList convertUrlsToLocalPaths(const QStringList& urls) const;
 
+    Q_INVOKABLE QUrl urlFromUserInput(const QString& input) const;
+
 private:
     QMimeDatabase m_mimeDb;
 

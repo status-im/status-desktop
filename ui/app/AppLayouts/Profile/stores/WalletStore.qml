@@ -16,6 +16,7 @@ QtObject {
     property var collectibles: _jointCollectiblesBySymbolModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
+    readonly property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
     readonly property bool isWalletEnabled: Global.appIsReady ?
                                                 mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true

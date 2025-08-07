@@ -34,7 +34,7 @@ class SettingsLeftPanel(QObject):
         self.settings_section_template.click()
 
     @allure.step('Choose back up seed phrase in settings')
-    @retry_settings(BackUpYourSeedPhrasePopUp, '18-MenuItem')
+    @retry_settings(BackUpYourSeedPhrasePopUp, '19-MenuItem')
     def open_back_up_seed_phrase(self) -> 'BackUpYourSeedPhrasePopUp':
         return BackUpYourSeedPhrasePopUp().wait_until_appears()
 
@@ -69,12 +69,12 @@ class SettingsLeftPanel(QObject):
         return SyncingSettingsView().wait_until_appears()
 
     @allure.step('Choose sign out and quit in settings')
-    @retry_settings(SignOutPopup, '17-MenuItem')
+    @retry_settings(SignOutPopup, '18-MenuItem')
     def open_sign_out_and_quit(self) -> 'SignOutPopup':
         return SignOutPopup().wait_until_appears()
 
     @allure.step('Open keycard settings')
-    @retry_settings(KeycardSettingsView, '13-MenuItem')
+    @retry_settings(KeycardSettingsView, '14-MenuItem')
     def open_keycard_settings(self) -> 'KeycardSettingsView':
         return KeycardSettingsView().wait_until_appears()
 
@@ -84,10 +84,9 @@ class SettingsLeftPanel(QObject):
         return ENSSettingsView().wait_until_appears()
 
     @allure.step('Open advanced settings')
-    @retry_settings(AdvancedSettingsView, '10-MenuItem')
+    @retry_settings(AdvancedSettingsView, '11-MenuItem')
     def open_advanced_settings(self) -> 'AdvancedSettingsView':
         return AdvancedSettingsView().wait_until_appears()
-
 
 class SettingsScreen(QObject):
 

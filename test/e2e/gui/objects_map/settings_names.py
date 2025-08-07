@@ -21,7 +21,7 @@ scrollView_MenuItem_StatusNavigationListItem = {"container": mainWindow_scrollVi
 
 
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
-settingsBackUpSeedPhraseOption = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "18-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
+settingsBackUpSeedPhraseOption = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "19-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
 settingsWalletOption = {"container": mainWindow_settingsList_SettingsList, "objectName": "5-MenuItem", "type": "StatusNavigationListItem", "visible": True}
 settingsSignOutQuitOption = {"container": LeftTabProfileMenu, "objectName": "17-ExtraMenuItem", "type": "StatusNavigationListItem", "visible": True}
 

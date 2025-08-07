@@ -27,6 +27,9 @@ SortFilterProxyModel {
     // Determines if wallet-related entries should be included
     property bool showWalletEntries
 
+    // Determines if browser-related entries should be included
+    property bool showBrowserEntries
+
     // Determines if back up seed phrase entry should be included
     property bool showBackUpSeed
 
@@ -104,6 +107,13 @@ SortFilterProxyModel {
             icon: "wallet",
             group: root.appsGroupTitle,
             isExperimental: false
+        },
+        {
+            subsection: Constants.settingsSubsection.browserSettings,
+            text: qsTr("Browser"),
+            icon: "browser",
+            group: root.appsGroupTitle,
+            isExperimental: true
         },
         {
             subsection: Constants.settingsSubsection.communitiesSettings,
@@ -194,6 +204,8 @@ SortFilterProxyModel {
                     case Constants.settingsSubsection.ensUsernames:
                     case Constants.settingsSubsection.wallet:
                         return root.showWalletEntries
+                    case Constants.settingsSubsection.browser:
+                        return root.showBrowserEntries
                     case Constants.settingsSubsection.backUpSeed:
                         return root.showBackUpSeed
                     case Constants.settingsSubsection.keycard:

@@ -48,7 +48,7 @@ qint64 UrlUtils::getFileSize(const QUrl& url)
 }
 
 QString UrlUtils::convertUrlToLocalPath(const QString &url) const {
-    const auto localFileOrUrl = QUrl::fromUserInput(url); // accept both "file:/foo/bar" and "/foo/bar"
+    const auto localFileOrUrl = urlFromUserInput(url); // accept both "file:/foo/bar" and "/foo/bar"
     if (localFileOrUrl.isLocalFile()) {
         #ifdef Q_OS_IOS
         return resolveIOSPhotoAsset(localFileOrUrl.toLocalFile());
@@ -66,4 +66,9 @@ QStringList UrlUtils::convertUrlsToLocalPaths(const QStringList &urls) const {
             result << localPath;
     }
     return result;
+}
+
+QUrl UrlUtils::urlFromUserInput(const QString &input) const
+{
+    return QUrl::fromUserInput(input);
 }

@@ -140,6 +140,23 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                text: qsTr("Web/dApp Browser")
+                isSwitch: true
+                switchChecked: localAccountSensitiveSettings.isBrowserEnabled
+                onClicked: {
+                    if (!localAccountSensitiveSettings.isBrowserEnabled) {
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.browser
+                        confirmationPopup.open()
+                    } else {
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.browser)
+                    }
+                }
+            }
+
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Node Management")
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.nodeManagementEnabled
