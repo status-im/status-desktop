@@ -1,0 +1,5 @@
+BrowserRootStore 1.0 BrowserRootStore.qml
+BrowserWalletStore 1.0 BrowserWalletStore.qml
+Web3ProviderStore 1.0 Web3ProviderStore.qml
+BookmarksStore 1.0 BookmarksStore.qml
+DownloadsStore 1.0 DownloadsStore.qml

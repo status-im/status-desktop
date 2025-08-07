@@ -14,6 +14,8 @@ const LSS_KEY_NODE_MANAGEMENT_ENABLED* = "nodeManagementEnabled"
 const DEFAULT_NODE_MANAGEMENT_ENABLED = false
 const LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED* = "ensCommunityPermissionsEnabled"
 const DEFAULT_COMMUNITY_PERMISSIONS_ENABLED = false
+const LSS_KEY_IS_BROWSER_ENABLED* = "isExperimentalBrowserEnabled"
+const DEFAULT_IS_BROWSER_ENABLED = true
 const LSS_KEY_SHOW_ONLINE_USERS* = "showOnlineUsers"
 const DEFAULT_SHOW_ONLINE_USERS = true
 const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
@@ -34,6 +36,18 @@ const LSS_KEY_ACTIVE_SECTION* = "activeSection"
 const DEFAULT_ACTIVE_SECTION = ""
 const LAST_SECTION_CHAT = "LastSectionChat"
 const DEFAULT_ACTIVE_CHAT = ""
+const LSS_KEY_SHOW_BROWSER_SELECTOR* = "showBrowserSelector"
+const DEFAULT_SHOW_BROWSER_SELECTOR = true
+const LSS_KEY_OPEN_LINKS_IN_STATUS* = "openLinksInStatus"
+const DEFAULT_OPEN_LINKS_IN_STATUS = true
+const LSS_KEY_SHOULD_SHOW_FAVORITES_BAR* = "shouldShowFavoritesBar"
+const DEFAULT_SHOULD_SHOW_FAVORITES_BAR = true
+const LSS_KEY_BROWSER_HOMEPAGE* = "browserHomepage"
+const DEFAULT_BROWSER_HOMEPAGE = ""
+const LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE* = "shouldShowBrowserSearchEngine"
+const DEFAULT_SHOULD_SHOW_BROWSER_SEARCH_ENGINE = 3 #browserSearchEngineDuckDuckGo from qml
+const LSS_KEY_USE_BROWSER_ETHEREUM_EXPLORER* = "useBrowserEthereumExplorer"
+const DEFAULT_USE_BROWSER_ETHEREUM_EXPLORER = 1 #browserEthereumExplorerEtherscan from qml
 const LSS_KEY_AUTO_LOAD_IMAGES* = "autoLoadImages"
 const DEFAULT_AUTO_LOAD_IMAGES = true
 const LSS_KEY_JAVA_SCRIPT_ENABLED* = "javaScriptEnabled"
@@ -204,6 +218,18 @@ QtObject:
     write = setNodeManagementEnabled
     notify = nodeManagementEnabledChanged
 
+  proc isBrowserEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getIsBrowserEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_IS_BROWSER_ENABLED, newQVariant(DEFAULT_IS_BROWSER_ENABLED))
+  proc setIsBrowserEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_IS_BROWSER_ENABLED, newQVariant(value)):
+      self.isBrowserEnabledChanged()
+
+  QtProperty[bool] isBrowserEnabled:
+    read = getIsBrowserEnabled
+    write = setIsBrowserEnabled
+    notify = isBrowserEnabledChanged
+
   proc ensCommunityPermissionsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getEnsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(DEFAULT_COMMUNITY_PERMISSIONS_ENABLED))
@@ -317,6 +343,83 @@ QtObject:
     read = getActiveSection
     write = setActiveSection
     notify = activeSectionChanged
+
+  proc showBrowserSelectorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getShowBrowserSelector*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_SHOW_BROWSER_SELECTOR, newQVariant(DEFAULT_SHOW_BROWSER_SELECTOR))
+  proc setShowBrowserSelector*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_SHOW_BROWSER_SELECTOR, newQVariant(value)):
+      self.showBrowserSelectorChanged()
+
+  QtProperty[bool] showBrowserSelector:
+    read = getShowBrowserSelector
+    write = setShowBrowserSelector
+    notify = showBrowserSelectorChanged
+
+
+  proc openLinksInStatusChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getOpenLinksInStatus*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_OPEN_LINKS_IN_STATUS, newQVariant(DEFAULT_OPEN_LINKS_IN_STATUS))
+  proc setOpenLinksInStatus*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_OPEN_LINKS_IN_STATUS, newQVariant(value)):
+      self.openLinksInStatusChanged()
+
+  QtProperty[bool] openLinksInStatus:
+    read = getOpenLinksInStatus
+    write = setOpenLinksInStatus
+    notify = openLinksInStatusChanged
+
+
+  proc shouldShowFavoritesBarChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getShouldShowFavoritesBar*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_SHOULD_SHOW_FAVORITES_BAR, newQVariant(DEFAULT_SHOULD_SHOW_FAVORITES_BAR))
+  proc setShouldShowFavoritesBar*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_SHOULD_SHOW_FAVORITES_BAR, newQVariant(value)):
+      self.shouldShowFavoritesBarChanged()
+
+  QtProperty[bool] shouldShowFavoritesBar:
+    read = getShouldShowFavoritesBar
+    write = setShouldShowFavoritesBar
+    notify = shouldShowFavoritesBarChanged
+
+
+  proc browserHomepageChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getBrowserHomepage*(self: LocalAccountSensitiveSettings): string {.slot.} =
+    getSettingsProp[string](self, LSS_KEY_BROWSER_HOMEPAGE, newQVariant(DEFAULT_BROWSER_HOMEPAGE))
+  proc setBrowserHomepage*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
+    setSettingsProp(self, LSS_KEY_BROWSER_HOMEPAGE, newQVariant(value)):
+      self.browserHomepageChanged()
+
+  QtProperty[string] browserHomepage:
+    read = getBrowserHomepage
+    write = setBrowserHomepage
+    notify = browserHomepageChanged
+
+
+  proc shouldShowBrowserSearchEngineChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getShouldShowBrowserSearchEngine*(self: LocalAccountSensitiveSettings): int {.slot.} =
+    getSettingsProp[int](self, LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE, newQVariant(DEFAULT_SHOULD_SHOW_BROWSER_SEARCH_ENGINE))
+  proc setShouldShowBrowserSearchEngine*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
+    setSettingsProp(self, LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE, newQVariant(value)):
+      self.shouldShowBrowserSearchEngineChanged()
+
+  QtProperty[int] shouldShowBrowserSearchEngine:
+    read = getShouldShowBrowserSearchEngine
+    write = setShouldShowBrowserSearchEngine
+    notify = shouldShowBrowserSearchEngineChanged
+
+
+  proc useBrowserEthereumExplorerChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getUseBrowserEthereumExplorer*(self: LocalAccountSensitiveSettings): int {.slot.} =
+    getSettingsProp[int](self, LSS_KEY_USE_BROWSER_ETHEREUM_EXPLORER, newQVariant(DEFAULT_USE_BROWSER_ETHEREUM_EXPLORER))
+  proc setUseBrowserEthereumExplorer*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
+    setSettingsProp(self, LSS_KEY_USE_BROWSER_ETHEREUM_EXPLORER, newQVariant(value)):
+      self.useBrowserEthereumExplorerChanged()
+
+  QtProperty[int] useBrowserEthereumExplorer:
+    read = getUseBrowserEthereumExplorer
+    write = setUseBrowserEthereumExplorer
+    notify = useBrowserEthereumExplorerChanged
 
 
   proc autoLoadImagesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -511,6 +614,7 @@ QtObject:
       of LSS_KEY_PROFILE_SPLIT_VIEW: self.profileSplitViewChanged()
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
       of LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED: self.ensCommunityPermissionsEnabledChanged()
+      of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
       of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN: self.neverAskAboutUnfurlingAgainChanged()
@@ -519,6 +623,12 @@ QtObject:
       of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING: self.showDeleteMessageWarningChanged()
       of LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED: self.downloadChannelMessagesEnabledChanged()
       of LSS_KEY_ACTIVE_SECTION: self.activeSectionChanged()
+      of LSS_KEY_SHOW_BROWSER_SELECTOR: self.showBrowserSelectorChanged()
+      of LSS_KEY_OPEN_LINKS_IN_STATUS: self.openLinksInStatusChanged()
+      of LSS_KEY_SHOULD_SHOW_FAVORITES_BAR: self.shouldShowFavoritesBarChanged()
+      of LSS_KEY_BROWSER_HOMEPAGE: self.browserHomepageChanged()
+      of LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE: self.shouldShowBrowserSearchEngineChanged()
+      of LSS_KEY_USE_BROWSER_ETHEREUM_EXPLORER: self.useBrowserEthereumExplorerChanged()
       of LSS_KEY_AUTO_LOAD_IMAGES: self.autoLoadImagesChanged()
       of LSS_KEY_JAVA_SCRIPT_ENABLED: self.javaScriptEnabledChanged()
       of LSS_KEY_ERROR_PAGE_ENABLED: self.errorPageEnabledChanged()

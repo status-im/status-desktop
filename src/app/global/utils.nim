@@ -49,9 +49,6 @@ QtObject:
   proc generateAlias*(self: Utils, publicKey: string): string {.slot.} =
     return generateAlias(publicKey)
 
-  proc urlFromUserInput*(self: Utils, input: string): string {.slot.} =
-    result = url_fromUserInput(input)
-
   proc eth2Hex*(self: Utils, eth: float): string {.slot.} =
     return "0x" & conversion.eth2Wei(eth, 18).toHex()
 

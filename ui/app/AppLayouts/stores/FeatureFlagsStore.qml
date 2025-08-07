@@ -3,6 +3,7 @@ import QtQml
 QtObject {
     property bool connectorEnabled
     property bool dappsEnabled
+    property bool browserEnabled
     property bool swapEnabled
     property bool sendViaPersonalChatEnabled
     property bool paymentRequestEnabled

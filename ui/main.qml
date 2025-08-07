@@ -31,6 +31,7 @@ StatusWindow {
 
         connectorEnabled: featureFlags ? featureFlags.connectorEnabled : false
         dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
+        browserEnabled: featureFlags ? featureFlags.browserEnabled : false
         swapEnabled: featureFlags ? featureFlags.swapEnabled : false
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
         paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
@@ -206,13 +207,6 @@ StatusWindow {
     Action {
         shortcut: "Ctrl+M"
         onTriggered: applicationWindow.showMinimized()
-    }
-
-    Action {
-        shortcut: StandardKey.Close
-        onTriggered: {
-            applicationWindow.showMinimized()
-        }
     }
 
     Action {
