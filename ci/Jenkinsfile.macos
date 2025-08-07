@@ -41,6 +41,11 @@ pipeline {
       description: 'Select app entitlements. Squish requires extra entitlements.',
       choices: ['resources/Entitlements.plist', 'resources/Entitlements_squish.plist']
     )
+    string(
+      name: 'USE_NWAKU',
+      description: 'Whether to build with nwaku or not',
+      defaultValue: params.USE_NWAKU ?: getNWakuMode(),
+    )
   }
 
   options {
@@ -108,7 +113,7 @@ pipeline {
 
     stage('status-go') {
       steps {
-        sh 'make status-go'
+        sh "USE_NWAKU=${params.USE_NWAKU} make status-go"
       }
     }
 
@@ -168,4 +173,14 @@ def getArch() {
     for (def arch in ['x86_64', 'aarch64']) {
       if (tokens.contains(arch)) { return arch }
     }
+}
+
+/* We extract the name of the job from currentThread because
+ * before an agent is picked env is not available. */
+def getJobPathTokens() {
+    return Thread.currentThread().getName().split('/')
+}
+
+def getNWakuMode() {
+    return (params.USE_NWAKU || getJobPathTokens().contains('package-nwaku')) ? "true" : "false"
 }
