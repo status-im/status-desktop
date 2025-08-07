@@ -41,6 +41,11 @@ pipeline {
       description: 'Select app entitlements. Squish requires extra entitlements.',
       choices: ['resources/Entitlements.plist', 'resources/Entitlements_squish.plist']
     )
+    booleanParam(
+      name: 'USE_NWAKU',
+      description: 'Whether to build with nwaku or not',
+      defaultValue: params.USE_NWAKU ?: getNWakuMode(),
+    )
   }
 
   options {
@@ -83,6 +88,7 @@ pipeline {
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+    USE_NWAKU = "${params.USE_NWAKU}"
   }
 
   stages {
@@ -108,12 +114,14 @@ pipeline {
 
     stage('status-go') {
       steps {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         sh 'make status-go'
       }
     }
 
     stage('Package') {
       steps { script {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         macos.bundle('pkg-macos')
       } }
     }
@@ -168,4 +176,14 @@ def getArch() {
     for (def arch in ['x86_64', 'aarch64']) {
       if (tokens.contains(arch)) { return arch }
     }
+}
+
+/* We extract the name of the job from currentThread because
+ * before an agent is picked env is not available. */
+def getJobPathTokens() {
+    return Thread.currentThread().getName().split('/')
+}
+
+def getNWakuMode() {
+    return getJobPathTokens().contains('package-nwaku')
 }

@@ -10,7 +10,7 @@ pipeline {
     /* Image with Ubuntu 22.04 and QT 6.9.0 */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:2.0.4-qt6.9.0'
+      image 'statusteam/nim-status-client-build:2.0.3-qt6.9.0'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
@@ -41,6 +41,11 @@ pipeline {
       name: 'USE_MOCKED_KEYCARD_LIB',
       description: 'Decides whether the mocked status-keycard-go library is built.',
       defaultValue: false
+    )
+    booleanParam(
+      name: 'USE_NWAKU',
+      description: 'Whether to build with nwaku or not',
+      defaultValue: params.USE_NWAKU ?: getNWakuMode(),
     )
   }
 
@@ -76,6 +81,7 @@ pipeline {
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+    USE_NWAKU = "${params.USE_NWAKU}"
   }
 
   stages {
@@ -93,12 +99,14 @@ pipeline {
 
     stage('status-go') {
       steps {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         sh 'make status-go'
       }
     }
 
     stage('Package') {
       steps { script {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         linux.bundle('tgz-linux')
       } }
     }
@@ -145,4 +153,13 @@ def getArch() {
   for (def arch in ['x86_64', 'aarch64']) {
     if (tokens.contains(arch)) { return arch }
   }
+}
+/* We extract the name of the job from currentThread because
+ * before an agent is picked env is not available. */
+def getJobPathTokens() {
+    return Thread.currentThread().getName().split('/')
+}
+
+def getNWakuMode() {
+    return getJobPathTokens().contains('package-nwaku')
 }

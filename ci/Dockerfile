@@ -158,6 +158,10 @@ RUN sudo groupadd -g 1001 jenkins \
 USER jenkins
 ENV HOME="/home/jenkins"
 
+# Rust is needed for nwaku builds
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="${HOME}/.cargo/bin:${PATH}"
+
 # Access to tools installed by Go.
 ENV PATH="${HOME}/go/bin:${PATH}"
 
