@@ -150,6 +150,7 @@ StatusSectionLayout {
         id: settingsEntriesModel
 
         showWalletEntries: root.walletStore.isWalletEnabled
+        showBrowserEntries: root.advancedStore.browserMenuItemEnabled
         showBackUpSeed: !root.privacyStore.mnemonicBackedUp
         isKeycardEnabled: root.isKeycardEnabled
 
@@ -424,6 +425,19 @@ StatusSectionLayout {
                 onBackupPathSet: function(path) {
                     root.devicesStore.setBackupPath(path)
                 }
+            }
+        }
+
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: BrowserView {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+
+                accountSettings: localAccountSensitiveSettings
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.browserSettings)
+                contentWidth: d.contentWidth
             }
         }
 

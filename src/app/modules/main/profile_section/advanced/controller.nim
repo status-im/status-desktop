@@ -118,6 +118,9 @@ proc toggleCommunitiesPortalSection*(self: Controller) =
 proc toggleWalletSection*(self: Controller) =
   self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Wallet))
 
+proc toggleBrowserSection*(self: Controller) =
+  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Browser))
+
 proc toggleCommunitySection*(self: Controller) =
   self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Community))
 
