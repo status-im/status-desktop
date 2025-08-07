@@ -460,7 +460,7 @@ StatusSectionLayout {
                 qtRuntimeVersion: SystemUtils.qtRuntimeVersion()
 
                 onCheckForUpdates: root.aboutStore.checkForUpdates()
-                onOpenLink: Global.openLink(url)
+                onOpenLink: (url) => Global.openLink(url)
             }
         }
 
