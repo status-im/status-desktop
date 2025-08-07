@@ -49,7 +49,7 @@ function install_qt {
   pip install aqtinstall
   aqt install-qt linux desktop ${QT_VERSION} linux_gcc_64 -m qtwebchannel \
   qtwebview qtwebsockets qt5compat \
-  qtmultimedia qtwebengine qtpositioning \
+  qtmultimedia qtwebengine qtpositioning qthttpserver \
   qtserialport qtshadertools qtimageformats qtscxml -O ${QT_INSTALL_DIR}
 }
 
