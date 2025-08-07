@@ -1,12 +1,11 @@
 import nimqml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, model, item
+import view, controller
 
 import app/core/eventemitter
 import app_service/service/general/service as general_service
 import app_service/service/settings/service as settings_service
-import app_service/service/mailservers/service as mailservers_service
 import app_service/service/node_configuration/service as node_configuration_service
 
 export io_interface
@@ -27,15 +26,13 @@ proc newModule*(
     events: EventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
-    mailserversService: mailservers_service.Service,
     generalService: general_service.Service,
   ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService,
-    mailserversService, generalService)
+  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService, generalService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -50,50 +47,12 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-proc initModel(self: Module) =
-  var items: seq[Item]
-  let allMailservers = self.controller.getAllMailservers()
-  for ms in allMailservers:
-    let item = initItem(ms.name, ms.nodeAddress)
-    items.add(item)
-
-  self.view.model().addItems(items)
-
 method viewDidLoad*(self: Module) =
-  self.initModel()
   self.moduleLoaded = true
   self.delegate.syncModuleDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
-
-method isAutomaticSelection*(self: Module): bool =
-  return self.controller.getPinnedMailserverId().len == 0
-
-method onActiveMailserverChanged*(self: Module) =
-  self.view.onActiveMailserverSet()
-
-method onPinnedMailserverChanged*(self: Module) =
-  self.view.onPinnedMailserverSet()
-
-method setPinnedMailserverId*(self: Module, mailserverID: string) =
-  self.controller.setPinnedMailserverId(mailserverID)
-
-method getPinnedMailserverId*(self: Module): string =
-  return self.controller.getPinnedMailserverId()
-
-method getActiveMailserverId*(self: Module): string =
-  let res = self.controller.getActiveMailserverId()
-  return res
-
-method saveNewMailserver*(self: Module, name: string, nodeAddress: string) =
-  self.controller.saveNewMailserver(name, nodeAddress)
-
-  let item = initItem(name, nodeAddress)
-  self.view.model().addItem(item)
-
-method enableAutomaticSelection*(self: Module, value: bool) =
-  self.controller.enableAutomaticSelection(value)
 
 method getUseMailservers*(self: Module): bool =
   return self.controller.getUseMailservers()

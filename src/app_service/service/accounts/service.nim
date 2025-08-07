@@ -16,7 +16,6 @@ import backend/privacy as status_privacy
 import app/core/eventemitter
 import app/core/signals/types
 import app/core/tasks/[qt, threadpool]
-import app/core/fleets/fleet_configuration
 import app_service/common/[account_constants, utils]
 from app_service/service/contacts/dto/contacts import Images
 import constants as main_constants
@@ -58,7 +57,6 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    fleetConfiguration: FleetConfiguration
     accounts: seq[AccountDto]
     loggedInAccount: AccountDto
     tmpAccount: AccountDto
@@ -69,12 +67,11 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, fleetConfiguration: FleetConfiguration): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.fleetConfiguration = fleetConfiguration
 
   proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000)
 
@@ -199,6 +196,7 @@ QtObject:
         kdfIterations: KDF_ITERATIONS,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
         logLevel: some(main_constants.getStatusGoLogLevel()),
+        wakuV2Fleet: main_constants.WAKU_FLEET,
         wakuV2LightClient: isMobilePlatform(),
         wakuV2EnableMissingMessageVerification: true,
         wakuV2EnableStoreConfirmationForMessagesSent: true,

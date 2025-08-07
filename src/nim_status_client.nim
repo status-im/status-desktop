@@ -30,8 +30,6 @@ when defined(windows):
 logScope:
   topics = "status-app"
 
-const fleetJson = staticRead("../fleets.json")
-
 var signalsManagerQObjPointer: pointer
 
 proc isExperimental(): string =
@@ -170,7 +168,7 @@ proc mainProc() =
   let openUri = determineOpenUri()
   let statusAppIconPath = determineStatusAppIconPath()
 
-  let statusFoundation = newStatusFoundation(fleetJson)
+  let statusFoundation = newStatusFoundation()
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
   # Required by the WalletConnectSDK view right after creating the QGuiApplication instance
   initializeWebView()

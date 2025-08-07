@@ -244,9 +244,6 @@ proc getContactById*(self: Controller, contactId: string): ContactsDto =
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactService.getContactDetails(contactId)
 
-proc getCurrentFleet*(self: Controller): string =
-  return self.nodeConfigurationService.getFleetAsString()
-
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
   return self.messageService.getRenderedText(parsedTextArray, communityChats)
 

@@ -158,11 +158,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
-  result.settingsService, statusFoundation.events)
+  result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
-  result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    statusFoundation.fleetConfiguration)
+  result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
@@ -216,7 +214,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.devicesService = devices_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.accountsService, result.walletAccountService)
   result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
+    result.settingsService, result.nodeConfigurationService)
   result.nodeService = node_service.newService(statusFoundation.events, result.settingsService, result.nodeConfigurationService)
   result.gifService = gif_service.newService(result.settingsService, statusFoundation.events, statusFoundation.threadpool)
   result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,

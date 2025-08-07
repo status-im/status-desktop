@@ -1,7 +1,7 @@
 import nimqml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, model, item
+import view, controller
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
@@ -43,24 +43,15 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-proc initModel(self: Module) =
-  var items: seq[Item]
-  let allWakuNodes = self.controller.getAllWakuNodes()
-  for w in allWakuNodes:
-    let item = initItem(w)
-    items.add(item)
-
-  self.view.model().addItems(items)
-
 method viewDidLoad*(self: Module) =
-  self.initModel()
   self.moduleLoaded = true
   self.delegate.wakuModuleDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method saveNewWakuNode*(self: Module, nodeAddress: string) =
-  if self.controller.saveNewWakuNode(nodeAddress):
-    let item = initItem(nodeAddress)
-    self.view.model().addItem(item)
+method getActiveMailserver*(self: Module): string =
+  return self.view.getActiveMailserver()
+
+method onActiveMailserverChanged*(self: Module, activeMailserverId: string) =
+  self.view.onActiveMailserverChanged(activeMailserverId)

@@ -64,8 +64,3 @@ QtObject:
     self.items.add(items)
     self.endInsertRows()
 
-  proc getNameForNodeAddress*(self: Model, nodeAddress: string): string =
-    for i in self.items:
-      if (i.nodeAddress == nodeAddress):
-        return i.name
-    return ""

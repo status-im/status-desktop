@@ -120,9 +120,6 @@ QtObject:
     read = getChatDetails
     notify = chatDetailsChanged
 
-  proc getCurrentFleet*(self: View): string {.slot.} =
-    self.delegate.getCurrentFleet()
-
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 

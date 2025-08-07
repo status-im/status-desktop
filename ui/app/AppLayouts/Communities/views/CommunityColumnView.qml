@@ -335,7 +335,6 @@ Item {
                             return
                         }
 
-                        currentFleet = root.communitySectionModule.getCurrentFleet()
                         isCommunityChat = root.communitySectionModule.isCommunity()
                         amIChatAdmin = root.isSectionAdmin
                         chatId = obj.itemId

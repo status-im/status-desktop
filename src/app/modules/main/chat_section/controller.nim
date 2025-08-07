@@ -539,9 +539,6 @@ proc requestMoreMessages*(self: Controller, chatId: string) =
 proc clearChatHistory*(self: Controller, chatId: string) =
   self.chatService.clearChatHistory(chatId)
 
-proc getCurrentFleet*(self: Controller): string =
-  return self.nodeConfigurationService.getFleetAsString()
-
 proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactService.getContactsByGroup(group)
 

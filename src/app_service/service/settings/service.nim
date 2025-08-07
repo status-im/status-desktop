@@ -1,7 +1,6 @@
 import nimqml, chronicles, json, strutils, sequtils, tables, times
 
 import app/core/eventemitter
-import app/core/fleets/fleet_configuration
 import app/core/signals/types
 import app_service/common/types as common_types
 import backend/mailservers as status_mailservers
@@ -18,7 +17,6 @@ export stickers_dto
 
 # Default values:
 const DEFAULT_CURRENCY* = "USD"
-const DEFAULT_FLEET* = Fleet.StatusProd
 
 # Signals:
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
@@ -412,59 +410,8 @@ QtObject:
   proc getFleetAsString*(self: Service): string =
     result = self.settings.fleet
 
-  proc getFleet*(self: Service): Fleet =
-    let fleetAsString = self.getFleetAsString()
-    return fleetFromString(fleetAsString)
-
   proc getCurrentUserStatus*(self: Service): CurrentUserStatus =
     self.settings.currentUserStatus
-
-  proc getPinnedMailserverId*(self: Service, fleet: Fleet): string =
-    case fleet
-    of Fleet.WakuSandbox:
-      return self.settings.pinnedMailserver.wakuSandbox
-    of Fleet.WakuTest:
-      return self.settings.pinnedMailserver.wakuTest
-    of Fleet.StatusProd:
-      return self.settings.pinnedMailserver.statusProd
-    of Fleet.StatusStaging:
-      return self.settings.pinnedMailserver.statusStaging
-    else:
-      return ""
-
-  proc setPinnedMailserverId*(self: Service, mailserverID: string, fleet: Fleet): bool =
-    if fleet == Fleet.Undefined:
-      return false
-    var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
-    newMailserverJsonObj[$fleet] = %* mailserverID
-
-    try:
-      let response = status_mailservers.setPinnedMailservers(newMailserverJsonObj)
-      if not response.error.isNil:
-        error "error saving pinned mailserver: ", errDescription = response.error.message
-        return false
-
-      case fleet
-      of Fleet.WakuSandbox:
-        self.settings.pinnedMailserver.wakuSandbox = mailserverID
-      of Fleet.WakuTest:
-        self.settings.pinnedMailserver.wakuTest = mailserverID
-      of Fleet.StatusProd:
-        self.settings.pinnedMailserver.statusProd = mailserverID
-      of Fleet.StatusStaging:
-        self.settings.pinnedMailserver.statusStaging = mailserverID
-      else:
-        return false
-    except Exception as e:
-      let errDesription = e.msg
-      error "saving pinned mailserver error: ", errDesription
-      return false
-
-    self.events.emit(SIGNAL_PINNED_MAILSERVER_CHANGED, Args())
-    return true
-
-  proc unpinMailserver*(self: Service, fleet: Fleet): bool =
-    return self.setPinnedMailserverId("", fleet)
 
   proc saveAutoMessageEnabled*(self: Service, value: bool): bool =
     if(self.saveSetting(KEY_AUTO_MESSAGE_ENABLED, value)):

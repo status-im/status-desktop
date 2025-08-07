@@ -14,7 +14,6 @@ import utils
 StatusMenu {
     id: root
 
-    property string currentFleet: ""
     property bool isCommunityChat: false
     property bool amIChatAdmin: false
     property string chatId: ""

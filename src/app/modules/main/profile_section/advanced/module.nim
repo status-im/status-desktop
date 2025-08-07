@@ -56,7 +56,7 @@ method getFleet*(self: Module): string =
   return self.controller.getFleet()
 
 method setFleet*(self: Module, fleet: string) =
-  self.controller.changeFleetTo(fleet)
+  self.controller.setFleet(fleet)
 
 method onFleetSet*(self: Module) =
   info "quit the app because of successful fleet change"

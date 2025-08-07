@@ -42,51 +42,6 @@ QtObject:
     read = getModel
     notify = modelChanged
 
-  proc isAutomaticSelection(self: View): bool {.slot.} =
-    return self.delegate.isAutomaticSelection()
-
-  QtProperty[bool] automaticSelection:
-    read = isAutomaticSelection
-    notify = pinnedMailserverIdChanged
-
-  proc activeMailserverIdChanged*(self: View) {.signal.}
-
-  proc getActiveMailserverId(self: View): string {.slot.} =
-    let res =  self.delegate.getActiveMailserverId()
-    return res
-
-  QtProperty[string] activeMailserverId:
-    read = getActiveMailserverId
-    notify = activeMailserverIdChanged
-
-  proc onActiveMailserverSet*(self: View) =
-    self.activeMailserverIdChanged()
-
-  proc pinnedMailserverIdChanged*(self: View) {.signal.}
-
-  proc getPinnedMailserverId(self: View): string {.slot.} =
-    let res = self.delegate.getPinnedMailserverId()
-    return res
-
-  QtProperty[string] pinnedMailserverId:
-    read = getPinnedMailserverId
-    write = setPinnedMailserverId
-    notify = pinnedMailserverIdChanged
-
-  proc setPinnedMailserverId(self: View, mailserverID: string) {.slot.} =
-    if mailserverID == self.getPinnedMailserverId():
-      return
-    self.delegate.setPinnedMailserverId(mailserverID)
-
-  proc onPinnedMailserverSet*(self: View) =
-    self.pinnedMailserverIdChanged()
-
-  proc saveNewMailserver(self: View, name: string, address: string) {.slot.} =
-    self.delegate.saveNewMailserver(name, address)
-
-  proc enableAutomaticSelection(self: View, value: bool) {.slot.} =
-    self.delegate.enableAutomaticSelection(value)
-
   proc useMailserversChanged*(self: View) {.signal.}
 
   proc getUseMailservers*(self: View): bool {.slot.} =

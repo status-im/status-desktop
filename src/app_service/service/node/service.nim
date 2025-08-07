@@ -4,7 +4,6 @@ import ../settings/service as settings_service
 import ../node_configuration/service as node_configuration_service
 
 import ../../../app/core/eventemitter
-import ../../../app/core/fleets/fleet_configuration
 import ../../../backend/node as status_node
 
 logScope:

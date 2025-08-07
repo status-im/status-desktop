@@ -200,19 +200,6 @@ SettingsContentBase {
                 onClicked: root.advancedStore.toggleWakuV2ShardedCommunities()
             }
 
-             StatusListItem {
-                 anchors.left: parent.left
-                 anchors.right: parent.right
-                 title: qsTr("Waku Nodes")
-                 components: [
-                     StatusIcon {
-                         icon: "next"
-                         color: Theme.palette.baseColor1
-                     }
-                 ]
-                 onClicked: Global.openPopup(wakuNodesModalComponent)
-             }
-
             Row {
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -291,15 +278,6 @@ SettingsContentBase {
                         color: Theme.palette.baseColor1
                     }
                 ]
-                onClicked: Global.openPopup(wakuStoreModalComponent)
-            }
-
-            Component {
-                id: wakuStoreModalComponent
-                WakuStoreModal {
-                    messagingSettingsStore: root.messagingSettingsStore
-                    advancedStore: root.advancedStore
-                }
             }
 
             StatusSectionHeadline {
@@ -466,14 +444,6 @@ SettingsContentBase {
         FleetsModal {
             id: fleetModal
             advancedStore: root.advancedStore
-        }
-
-        Component {
-            id: wakuNodesModalComponent
-            WakuNodesModal {
-                messagingSettingsStore: root.messagingSettingsStore
-                advancedStore: root.advancedStore
-            }
         }
 
         Component {
