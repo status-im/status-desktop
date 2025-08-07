@@ -4,7 +4,6 @@ import io_interface
 import ../../../../core/eventemitter
 import app_service/service/general/service as general_service
 import app_service/service/settings/service as settings_service
-import app_service/service/mailservers/service as mailservers_service
 import app_service/service/node_configuration/service as node_configuration_service
 import app_service/common/types
 
@@ -17,7 +16,6 @@ type
     events: EventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
-    mailserversService: mailservers_service.Service
     generalService: general_service.Service
 
 proc newController*(
@@ -25,7 +23,6 @@ proc newController*(
     events: EventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
-    mailserversService: mailservers_service.Service,
     generalService: general_service.Service,
   ): Controller =
   result = Controller()
@@ -33,42 +30,15 @@ proc newController*(
   result.events = events
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
-  result.mailserversService = mailserversService
   result.generalService = generalService
 
 proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e: Args):
-    self.delegate.onActiveMailserverChanged()
-
-  self.events.on(SIGNAL_PINNED_MAILSERVER_CHANGED) do(e: Args):
-    self.delegate.onPinnedMailserverChanged()
-
   self.events.on(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED) do(e: Args):
     let args = LocalBackupImportArg(e)
     self.delegate.onLocalBackupImportCompleted(args.error)
-
-proc getAllMailservers*(self: Controller): seq[tuple[name: string, nodeAddress: string]] =
-  return self.mailserversService.getAllMailservers()
-
-proc getPinnedMailserverId*(self: Controller): string =
-  let fleet = self.nodeConfigurationService.getFleet()
-  self.settingsService.getPinnedMailserverId(fleet)
-
-proc setPinnedMailserverId*(self: Controller, mailserverID: string) =
-  let fleet = self.nodeConfigurationService.getFleet()
-  discard self.settingsService.setPinnedMailserverId(mailserverID, fleet)
-
-proc getActiveMailserverId*(self: Controller): string =
-  return self.mailserversService.getActiveMailserverId()
-
-proc saveNewMailserver*(self: Controller, name: string, nodeAddress: string) =
-  discard self.mailserversService.saveMailserver(name, nodeAddress)
-
-proc enableAutomaticSelection*(self: Controller, value: bool) =
-  self.mailserversService.enableAutomaticSelection(value)
 
 proc getUseMailservers*(self: Controller): bool =
   return self.settingsService.getUseMailservers()

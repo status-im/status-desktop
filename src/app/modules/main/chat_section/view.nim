@@ -183,9 +183,6 @@ QtObject:
   proc clearChatHistory*(self: View, chatId: string) {.slot.} =
     self.delegate.clearChatHistory(chatId)
 
-  proc getCurrentFleet*(self: View): string {.slot.} =
-    self.delegate.getCurrentFleet()
-
   proc acceptContactRequest*(self: View, publicKey: string, contactRequestId: string) {.slot.} =
     self.delegate.acceptContactRequest(publicKey, contactRequestId)
 

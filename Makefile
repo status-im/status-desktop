@@ -24,8 +24,6 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	clean \
 	compile-translations \
 	deps \
-	fleets-remove \
-	fleets-update \
 	nim_status_client \
 	nim_windows_launcher \
 	pkg \
@@ -510,15 +508,6 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
-FLEETS_FILE := ./fleets.json
-$(FLEETS_FILE):
-	echo -e $(BUILD_MSG) "Getting latest $(FLEETS_FILE)"
-	curl -s https://fleets.status.im/ > $(FLEETS_FILE)
-
-fleets-remove:
-	rm -f $(FLEETS_FILE)
-
-fleets-update: fleets-remove $(FLEETS_FILE)
 
 # When modifying files that are not tracked in UI_SOURCES (see below),
 # e.g. ui/shared/img/*.svg, REBUILD_UI=true can be supplied to `make` to ensure
@@ -616,7 +605,7 @@ $(NIM_STATUS_CLIENT): update-qmake-previous
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS_FILE) rcc compile-translations deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--mm:refc \

@@ -154,7 +154,6 @@ Item {
                             return
                         }
 
-                        currentFleet = root.chatSectionModule.getCurrentFleet()
                         isCommunityChat = root.chatSectionModule.isCommunity()
                         amIChatAdmin = obj.memberRole === Constants.memberRole.owner ||
                                 obj.memberRole === Constants.memberRole.admin ||

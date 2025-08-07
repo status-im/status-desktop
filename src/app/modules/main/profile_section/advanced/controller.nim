@@ -35,10 +35,10 @@ proc init*(self: Controller) =
   discard
 
 proc getFleet*(self: Controller): string =
-  return self.nodeConfigurationService.getFleetAsString()
+  return self.settingsService.getFleetAsString()
 
-proc changeFleetTo*(self: Controller, fleet: string) =
-  if (not self.nodeConfigurationService.setFleet(fleet)):
+proc setFleet*(self: Controller, fleet: string) =
+  if not self.settingsService.saveFleet(fleet):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't set fleet"
     return

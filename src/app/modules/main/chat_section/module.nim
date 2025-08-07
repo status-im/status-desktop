@@ -1120,9 +1120,6 @@ method requestMoreMessages*(self: Module, chatId: string) =
 method clearChatHistory*(self: Module, chatId: string) =
   self.controller.clearChatHistory(chatId)
 
-method getCurrentFleet*(self: Module): string =
-  return self.controller.getCurrentFleet()
-
 method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
   self.controller.acceptContactRequest(publicKey, contactRequestId)
 

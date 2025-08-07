@@ -7,22 +7,6 @@ export response_type
 logScope:
   topics = "mailserver"
 
-proc saveMailserver*(id: string, name: string, enode: string, fleet: string):
-  RpcResponse[JsonNode] =
-  let payload = %* [{
-      "id": id,
-      "name": name,
-      "address": enode,
-      "fleet": fleet
-    }]
-  result = core.callPrivateRPC("mailservers_addMailserver", payload)
-
-proc getMailservers*(): RpcResponse[JsonNode] =
-  result = core.callPrivateRPC("mailservers_getMailservers")
-
-proc setPinnedMailservers*(mailservers: JsonNode): RpcResponse[JsonNode] =
-  result = core.callPrivateRPC("setPinnedMailservers".prefix, %*[ mailservers ])
-
 proc toggleUseMailservers*(value: bool): RpcResponse[JsonNode] =
   result = core.callPrivateRPC("toggleUseMailservers".prefix, %*[ value ])
 

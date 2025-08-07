@@ -1,21 +1,12 @@
-import nimqml, tables, json, sequtils, strutils, system, uuids, chronicles, os
+import nimqml, tables, json, sequtils, strutils, system, chronicles
 
 import ./dto/mailserver as mailserver_dto
 import ../../../app/core/signals/types
-import ../../../app/core/fleets/fleet_configuration
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../settings/service as settings_service
 import ../node_configuration/service as node_configuration_service
 import ../../../backend/mailservers as status_mailservers
-
-# allow runtime override via environment variable; core contributors can set a
-# mailserver id in this way for local development or test
-let MAILSERVER_ID = $getEnv("MAILSERVER")
-
-# allow runtime override via environment variable. core contributors can set a
-# specific peer to set for testing messaging and mailserver functionality with squish.
-let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
 
 logScope:
   topics = "mailservers-service"
@@ -80,51 +71,25 @@ QtObject:
     threadpool: ThreadPool
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
-    fleetConfiguration: FleetConfiguration
-    activeMailserverData: ActiveMailserverChangedArgs
 
   # Forward declaration:
   proc doConnect(self: Service)
-  proc initMailservers(self: Service)
-  proc fetchMailservers(self: Service)
-  proc saveMailserver*(self: Service, name: string, nodeAddress: string): string
 
   proc delete*(self: Service) =
     self.QObject.delete
 
   proc newService*(events: EventEmitter, threadpool: ThreadPool,
     settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service,
-    fleetConfiguration: FleetConfiguration): Service =
+    nodeConfigurationService: node_configuration_service.Service): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settingsService
     result.nodeConfigurationService = nodeConfigurationService
-    result.fleetConfiguration = fleetConfiguration
-    result.activeMailserverData = ActiveMailserverChangedArgs(nodeAddress: "", nodeId: "")
 
   proc init*(self: Service) =
     self.doConnect()
-    self.initMailservers()
-    self.fetchMailservers()
-
-    let fleet = self.nodeConfigurationService.getFleet()
-    if TEST_PEER_ENR != "":
-      var found = false
-      for mailserver in self.mailservers:
-        if mailserver.nodeAddress == TEST_PEER_ENR:
-          found = true
-          break
-      if not found:
-        let mailserverName = "Test Mailserver"
-        self.mailservers.add((name: mailserverName, nodeAddress: TEST_PEER_ENR))
-        let mailserverID = self.saveMailserver(mailserverName, TEST_PEER_ENR)
-        discard self.settingsService.setPinnedMailserverId(mailserverId, fleet)
-
-    if MAILSERVER_ID != "":
-      discard self.settingsService.setPinnedMailserverId(MAILSERVER_ID, fleet)
 
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
@@ -149,17 +114,9 @@ QtObject:
       let address = receivedData.address
       let id = receivedData.id
 
-      if address == "":
-        info "removing active mailserver"
-      else:
-        info "active mailserver changed", node=address, id = id
-      self.activeMailserverData = ActiveMailserverChangedArgs(nodeAddress: address, nodeId: id)
-      self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, self.activeMailserverData)
-
-    self.events.on(SignalType.MailserverAvailable.event) do(e: Args):
-      info "mailserver available"
-      let data = MailserverAvailableArgs()
-      self.events.emit(SIGNAL_MAILSERVER_AVAILABLE, data)
+      info "active mailserver changed", node=address, id = id
+      let activeMailserverData = ActiveMailserverChangedArgs(nodeAddress: address, nodeId: id)
+      self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, activeMailserverData)
 
     self.events.on(SignalType.MailserverNotWorking.event) do(e: Args):
       info "mailserver not working"
@@ -174,70 +131,3 @@ QtObject:
       let h = HistoryRequestCompletedSignal(e)
       info "history request completed"
       self.events.emit(SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED, Args())
-
-    self.events.on(SignalType.HistoryRequestFailed.event) do(e: Args):
-      let h = HistoryRequestFailedSignal(e)
-      info "history request failed", requestId=h.requestId, peerId=h.peerId, errorMessage=h.errorMessage
-
-    self.events.on(SignalType.HistoryRequestSuccess.event) do(e: Args):
-      let h = HistoryRequestSuccessSignal(e)
-      info "history request success", requestId=h.requestId, peerId=h.peerId
-
-  proc initMailservers(self: Service) =
-    let fleet = self.nodeConfigurationService.getFleet()
-    let mailservers = self.fleetConfiguration.getMailservers(fleet)
-
-    for (name, nodeAddress) in mailservers.pairs():
-      info "initMailservers", topics="mailserver-interaction", name, nodeAddress
-      self.mailservers.add((name: name, nodeAddress: nodeAddress))
-
-  proc getActiveMailserverId*(self: Service): string =
-    return self.activeMailserverData.nodeId
-
-  proc fetchMailservers(self: Service) =
-    try:
-      let response = status_mailservers.getMailservers()
-      info "fetch mailservers", topics="mailserver-interaction", rpc_proc="mailservers_getMailservers", response
-
-      for el in response.result.getElems():
-        let dto = el.toMailserverDto()
-        self.mailservers.add((name: dto.name, nodeAddress: dto.address))
-
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return
-
-  proc getAllMailservers*(self: Service): seq[tuple[name: string, nodeAddress: string]] =
-    return self.mailservers
-
-  proc saveMailserver*(self: Service, name: string, nodeAddress: string): string =
-    try:
-      let fleet = self.nodeConfigurationService.getFleetAsString()
-      let id = $genUUID()
-
-      let response = status_mailservers.saveMailserver(id, name, nodeAddress, fleet)
-      info "save mailserver", topics="mailserver-interaction", rpc_proc="mailservers_addMailserver", response
-      # once we have more info from `status-go` we may emit a signal from here and
-      # update view or display an error accordingly
-
-      return id
-
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return ""
-
-  proc enableAutomaticSelection*(self: Service, value: bool) =
-    if value:
-      let fleet = self.nodeConfigurationService.getFleet()
-      discard self.settingsService.unpinMailserver(fleet)
-    else:
-      discard # TODO: handle pin mailservers in status-go (in progress)
-      #let mailserverWorker = self.marathon[MailserverWorker().name]
-      #let task = GetActiveMailserverTaskArg(
-      #    `proc`: "getActiveMailserver",
-      #    vptr: cast[uint](self.vptr),
-      #    slot: "onActiveMailserverResult"
-      #  )
-      #mailserverWorker.start(task)

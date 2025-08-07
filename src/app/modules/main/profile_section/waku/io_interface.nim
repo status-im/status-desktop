@@ -18,8 +18,8 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isAutomaticSelection*(self: AccessInterface): bool {.base.} =
+method getActiveMailserver*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveNewWakuNode*(self: AccessInterface, nodeAddress: string) {.base.} =
+method onActiveMailserverChanged*(self: AccessInterface, activeMailserverId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

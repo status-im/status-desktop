@@ -312,9 +312,6 @@ method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, 
   else:
     error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReactionFromOthers"
 
-method getCurrentFleet*(self: Module): string =
-  return self.controller.getCurrentFleet()
-
 method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.pinnedModel().modelContactUpdateIterator(contactId):

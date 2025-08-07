@@ -4,6 +4,7 @@ import io_interface
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
+import ../../../../../app_service/service/mailservers/service as mailservers_service
 
 logScope:
   topics = "profile-section-waku-module-controller"
@@ -29,10 +30,7 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  discard
+  self.events.on(mailservers_service.SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e: Args):
+    let args = mailservers_service.ActiveMailserverChangedArgs(e)
+    self.delegate.onActiveMailserverChanged(args.nodeId)
 
-proc getAllWakuNodes*(self: Controller): seq[string] =
-  return self.nodeConfigurationService.getAllWakuNodes()
-
-proc saveNewWakuNode*(self: Controller, nodeAddress: string): bool =
-  return self.nodeConfigurationService.saveNewWakuNode(nodeAddress)

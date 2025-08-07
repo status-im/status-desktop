@@ -163,7 +163,6 @@ Item {
                         console.debug("error on open chat context menu handler - chat content module is not set")
                         return
                     }
-                    currentFleet = chatContentModule.getCurrentFleet()
                     isCommunityChat = chatContentModule.chatDetails.belongsToCommunity
                     amIChatAdmin = chatContentModule.amIChatAdmin()
                     chatId = chatContentModule.chatDetails.id

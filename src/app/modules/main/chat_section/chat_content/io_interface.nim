@@ -116,9 +116,6 @@ method clearChatHistory*(self: AccessInterface) {.base.} =
 method leaveChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCurrentFleet*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method amIChatAdmin*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

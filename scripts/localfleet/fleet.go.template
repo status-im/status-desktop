@@ -1,8 +1,0 @@
-package mailservers
-
-func DefaultMailservers() []Mailserver {
-
-	return []Mailserver{
-%MAILSERVER_LIST%
-	}
-}
