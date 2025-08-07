@@ -84,6 +84,8 @@ let
   KEYCARD_LOGS_ENABLED* = if defined(production): false else: true
   METRICS_ENABLED* = desktopConfig.metricsEnabled
   METRICS_ADDRESS* = desktopConfig.metricsAddress
+  WAKU_FLEET* = desktopConfig.wakuFleet
+  WAKU_FLEETS_CONFIG* = desktopConfig.wakuFleetsConfig
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:

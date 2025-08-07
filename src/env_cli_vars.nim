@@ -305,6 +305,16 @@ type StatusDesktopConfig = object
     desc: "Determines if the fleet selection UI is enabled"
     name: "ENABLE_FLEET_SELECTION"
     abbr: "enable-fleet-selection" .}: bool
+  wakuFleet* {.
+    defaultValue: ""
+    desc: "Sets Waku fleet name to use"
+    name: "WAKU_FLEET"
+    abbr: "waku-fleet" .}: string
+  wakuFleetsConfig* {.
+    defaultValue: ""
+    desc: "Sets Waku fleets config file path"
+    name: "WAKU_FLEETS_CONFIG"
+    abbr: "waku-fleets-config" .}: string
   displayMockedKeycardWindow* {.
     defaultValue: false
     desc: "Determines if the app should use mocked keycard"
