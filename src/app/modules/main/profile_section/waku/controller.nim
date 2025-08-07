@@ -31,7 +31,6 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
   self.events.on(mailservers_service.SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e: Args):
-    warn "<<< on SIGNAL_ACTIVE_MAILSERVER_CHANGED"
     let args = mailservers_service.ActiveMailserverChangedArgs(e)
     self.delegate.onActiveMailserverChanged(args.nodeId)
 
