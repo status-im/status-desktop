@@ -8,7 +8,7 @@ pipeline {
   agent {
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:2.0.2-qt6.9.0'
+      image 'statusteam/nim-status-client-build:2.0.4-qt6.9.0'
     }
   }
 
