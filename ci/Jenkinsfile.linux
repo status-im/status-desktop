@@ -126,7 +126,7 @@ pipeline {
     }
 
     stage('E2E') {
-      when { expression { utils.isPRBuild() } }
+      when { expression { utils.isPRBuild() && params.NWAKU != "true" } }
       steps { script {
         build(
           job: 'status-desktop/e2e/prs',
