@@ -65,41 +65,35 @@ proc addAccount*(password, name, address, path, publicKey, keyUid, accountType, 
   ]
   return core.callPrivateRPC("accounts_addAccount", payload)
 
-## Adds a new keypair and creates a Keystore file if password is provided, otherwise it only creates a new keypair. Notifies paired devices.
-proc addKeypair*(password, keyUid, keypairName, keypairType, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]):
-  RpcResponse[JsonNode] =
-  var kpJson = %* {
-    "key-uid": keyUid,
-    "name": keypairName,
-    "type": keypairType,
-    "derived-from": rootWalletMasterKey,
-    "last-used-derivation-index": 0, #when adding new keypair it's always 0
-    #"synced-from": "", present on the status-go side, used for synchronization, no need to set it here
-    #"clock": 0, we leave this empty, set on the status-go side
-    "accounts": []
-  }
+proc addKeypairViaPrivateKey*(privateKey, password, name: string, accountCreationDetails: AccountCreationDetails): RpcResponse[JsonNode] =
+  let payload = %* [privateKey, password, name, accountCreationDetails]
+  return core.callPrivateRPC("accounts_addKeypairViaPrivateKey", payload)
 
-  for acc in accounts:
-    kpJson["accounts"].add(
-      %*{
-          "address": acc.address,
-          "key-uid": keyUid,
-          "wallet": false, #this refers to the default wallet account and it's set at the moment of Status chat account creation, cannot be changed later
-          "chat": false, #this refers to Status chat account, set when the Status account is created, cannot be changed later
-          "type": acc.walletType,
-          "path": acc.path,
-          "public-key": acc.publicKey,
-          "name": acc.name,
-          "emoji": acc.emoji,
-          "colorId": acc.colorId,
-          "hidden": acc.hideFromTotalBalance
-          #"clock" we leave this empty, set on the status-go side
-          #"removed" present on the status-go side, used for synchronization, no need to set it here
-        }
+proc addKeypairViaSeedPhrase*(seedPhrase, password, name: string, accountCreationDetails: AccountCreationDetails): RpcResponse[JsonNode] =
+  let payload = %* [seedPhrase, password, name, accountCreationDetails]
+  return core.callPrivateRPC("accounts_addKeypairViaSeedPhrase", payload)
+
+proc addKeypairStoredToKeycard*(keyUID, masterAddress, name: string, walletAccounts: seq[WalletAccountDto]): RpcResponse[JsonNode] =
+  var accountsJson: JsonNode = %* []
+  for acc in walletAccounts:
+    accountsJson.add(%*{
+        "address": acc.address,
+        "key-uid": acc.keyUID,
+        "wallet": acc.isWallet,
+        "chat": acc.isChat,
+        "type": acc.walletType,
+        "path": acc.path,
+        "public-key": acc.publicKey,
+        "name": acc.name,
+        "emoji": acc.emoji,
+        "colorId": acc.colorId,
+        "hidden": acc.hideFromTotalBalance
+        # other fields are set on the status-go side
+      }
     )
 
-  let payload = %* [password, kpJson]
-  return core.callPrivateRPC("accounts_addKeypair", payload)
+  let payload = %* [keyUID, masterAddress, name, accountsJson]
+  return core.callPrivateRPC("accounts_addKeypairStoredToKeycard", payload)
 
 ## Adds a new account without creating a Keystore file and notifies paired devices
 proc addAccountWithoutKeystoreFileCreation*(name, address, path, publicKey, keyUid, accountType, colorId, emoji: string, hideFromTotalBalance: bool):
@@ -127,7 +121,7 @@ proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType,
       #"removed" present on the status-go side, used for synchronization, no need to set it here
     }
   ]
-  return core.callPrivateRPC("accounts_saveAccount", payload)
+  return core.callPrivateRPC("accounts_updateAccount", payload)
 
 proc decompressPk*(publicKey: string): RpcResponse[string] =
   discard
@@ -202,12 +196,6 @@ proc getRandomMnemonic*(): RpcResponse[JsonNode] =
   let payload = %* []
   return core.callPrivateRPC("accounts_getRandomMnemonic", payload)
 
-## Imports a new mnemonic and creates local keystore file.
-proc importMnemonic*(mnemonic, password: string):
-  RpcResponse[JsonNode] =
-  let payload = %* [mnemonic, password]
-  return core.callPrivateRPC("accounts_importMnemonic", payload)
-
 proc makeSeedPhraseKeypairFullyOperable*(mnemonic, password: string):
   RpcResponse[JsonNode] =
   let payload = %* [mnemonic, password]
@@ -236,12 +224,6 @@ proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths
   except RpcException as e:
     error "error doing rpc request", methodName = "createAccountFromMnemonicAndDeriveAccountsForPaths", exception=e.msg
     raise newException(RpcException, e.msg)
-
-## Imports a new private key and creates local keystore file.
-proc importPrivateKey*(privateKey, password: string):
-  RpcResponse[JsonNode] =
-  let payload = %* [privateKey, password]
-  return core.callPrivateRPC("accounts_importPrivateKey", payload)
 
 proc makePrivateKeyKeypairFullyOperable*(privateKey, password: string):
   RpcResponse[JsonNode] =

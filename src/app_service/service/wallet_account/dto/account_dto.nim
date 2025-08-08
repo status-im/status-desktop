@@ -36,6 +36,12 @@ type
     position*: int
     hideFromTotalBalance*: bool
 
+type AccountCreationDetails* = object
+  name*: string
+  path*: string
+  emoji*: string
+  colorId*: string
+
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
   discard jsonObj.getProp("name", result.name)
@@ -55,7 +61,13 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("createdAt", result.createdAt)
   discard jsonObj.getProp("position", result.position)
   discard jsonObj.getProp("hidden", result.hideFromTotalBalance)
-  result.assetsLoading = true
+
+proc toAccountCreationDetails*(jsonObj: JsonNode): AccountCreationDetails =
+  result = AccountCreationDetails()
+  discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("path", result.path)
+  discard jsonObj.getProp("emoji", result.emoji)
+  discard jsonObj.getProp("colorId", result.colorId)
 
 proc `$`*(self: WalletAccountDto): string =
   result = fmt"""WalletAccountDto[

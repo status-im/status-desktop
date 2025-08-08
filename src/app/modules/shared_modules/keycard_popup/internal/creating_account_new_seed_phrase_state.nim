@@ -55,8 +55,7 @@ proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Co
       colorId: account.getColorId(),
       emoji: account.getEmoji()
     ))
-  return controller.addNewSeedPhraseKeypair(
-    seedPhrase = "",
+  return controller.addNewKeycardStoredKeypair(
     keyUid = kpForProcessing.getKeyUid(),
     keypairName = kpForProcessing.getName(),
     rootWalletMasterKey = kpForProcessing.getDerivedFrom(),
