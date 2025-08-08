@@ -50,5 +50,5 @@ proc toWakuBackedUpProfileDto*(jsonObj: JsonNode): WakuBackedUpProfileDto =
   discard jsonObj.getProp("displayName", result.displayName)
 
   var imagesObj: JsonNode
-  if jsonObj.getProp("images", imagesObj):
-    result.images = toImages(imagesObj)
+  if jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray:
+    result.images = imagesObj.toImagesFromArray()
