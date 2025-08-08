@@ -24,7 +24,7 @@ QtObject {
         owner.Component.onDestruction.connect(cleanup)
 
         const obj = Qt.createQmlObject(
-                    'import QtQuick 2.15; Timer { '
+                    'import QtQml; Timer { '
                     + 'running: false; repeat: false; '
                     + `interval: ${timeout}}`,
                     root, "setTimeout")
