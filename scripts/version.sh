@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-git describe --tags
+echo "$(git describe --tags)${USE_NWAKU:+-nwaku-experimental}"
