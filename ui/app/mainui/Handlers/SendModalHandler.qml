@@ -120,6 +120,12 @@ QtObject {
     /** required signal to receive resolved ens name address **/
     signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
 
+    /** required function to get ensname's resolver address
+      used to set public key
+    - ensName      [string] - ensName to be resolved
+    **/
+    required property var fnGetEnsnameResolverAddress
+
     /** curently selected fiat currency symbol **/
     required property string currentCurrency
     /** required function to format currency amount to locale string
@@ -171,14 +177,17 @@ QtObject {
         }
     }
 
-    function connectUsername(ensName) {
+    function connectUsername(ensName, ownerAddress) {
+        let resolverAddress = root.fnGetEnsnameResolverAddress(ensName)
+        resolverAddress = !!resolverAddress ? resolverAddress : root.ensRegisteredAddress
         let params = {}
         if (root.simpleSendEnabled) {
             params = {
                 sendType: Constants.SendType.ENSSetPubKey,
+                selectedAccountAddress: ownerAddress,
                 selectedTokenKey: Constants.ethToken ,
                 selectedRawAmount: "0",
-                selectedRecipientAddress: root.ensRegisteredAddress,
+                selectedRecipientAddress: resolverAddress,
                 interactive: false,
                 publicKey: root.myPublicKey,
                 ensName: ensName
@@ -189,7 +198,7 @@ QtObject {
                 preSelectedHoldingID: Constants.ethToken ,
                 preSelectedHoldingType: Constants.TokenType.Native,
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0),
-                preSelectedRecipient: root.ensRegisteredAddress,
+                preSelectedRecipient: resolverAddress,
                 interactive: false,
                 publicKey: root.myPublicKey,
                 ensName: ensName

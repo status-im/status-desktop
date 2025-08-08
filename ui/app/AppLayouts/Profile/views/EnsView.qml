@@ -42,7 +42,7 @@ Item {
     signal goToWelcome();
     signal goToList();
 
-    signal connectUsernameRequested(string ensName)
+    signal connectUsernameRequested(string ensName, string ownerAddress)
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
 
@@ -100,6 +100,10 @@ Item {
             DSM.SignalTransition {
                 targetState: ensConnectedState
                 signal: done
+            }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: back
             }
         }
 
@@ -246,6 +250,8 @@ Item {
             ensUsernamesStore: ensView.ensUsernamesStore
             profileContentWidth: ensView.profileContentWidth
 
+            onBackBtnClicked: back()
+
             onContinueClicked: {
                 if(output === "connected"){
                     connect(username)
@@ -255,9 +261,9 @@ Item {
                 }
             }
 
-            onConnectUsername: {
+            onConnectUsername: (username, ownerAddress) => {
                 ensView.selectedUsername = username
-                ensView.connectUsernameRequested(ensView.selectedUsername)
+                ensView.connectUsernameRequested(ensView.selectedUsername, ownerAddress)
             }
 
             Connections {

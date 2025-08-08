@@ -37,6 +37,7 @@ type
   TransactionArgs = transaction_service.TransactionArgs
   EnsUsernameAvailabilityArgs* = ref object of Args
     availabilityStatus*: string
+    ownerAddress*: string
 
   EnsUsernameDetailsArgs* = ref object of Args
     chainId*: int
@@ -273,8 +274,10 @@ QtObject:
         raise newException(CatchableError, responseObj{"error"}.getStr)
 
       var availablilityStatus: string
+      var ownerAddress: string
       discard responseObj.getProp("availability", availablilityStatus)
-      let data = EnsUsernameAvailabilityArgs(availabilityStatus: availablilityStatus)
+      discard responseObj.getProp("ownerAddress", ownerAddress)
+      let data = EnsUsernameAvailabilityArgs(availabilityStatus: availablilityStatus, ownerAddress: ownerAddress)
       self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, data)
     except Exception as e:
       error "error: ", procName="onEnsUsernameAvailabilityChecked", msg = e.msg
@@ -343,6 +346,17 @@ QtObject:
 
   proc extractCoordinates(self: Service, pubkey: string):tuple[x: string, y:string] =
     result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
+
+  proc ensnameResolverAddress*(self: Service, username: string): (string) =
+    try:
+      let usernameWithDomain = ens_utils.addDomain(username)
+      let res = status_ens.resolver(self.getChainId(), usernameWithDomain)
+      if res.error != nil:
+        raise newException(ValueError, res.error.message)
+      return res.result.getStr
+    except Exception as e:
+      error "Error getting ENS resolver address", err=e.msg
+      return ""
 
   proc getEnsRegisteredAddress*(self: Service): string =
     try:
