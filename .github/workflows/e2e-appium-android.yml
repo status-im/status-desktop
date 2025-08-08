@@ -1,0 +1,361 @@
+name: E2E Appium Android
+
+permissions:
+  actions: read
+  contents: read
+  checks: write
+  pull-requests: write
+  statuses: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      apk_source_type:
+        description: 'APK source type'
+        required: true
+        default: 'github_artifact'
+        type: choice
+        options:
+          - 'github_artifact'
+          - 'direct_url'
+          - 'lambdatest_app_id'
+      
+      apk_source:
+        description: 'APK source (artifact name, URL, or lt://app_id)'
+        required: true
+        type: string
+        default: 'Status-tablet-x86_64'
+      
+      build_run_id:
+        description: 'GitHub run ID (for artifacts from other runs)'
+        required: false
+        type: string
+        
+      test_selection_type:
+        description: 'Test selection method'
+        required: true
+        default: 'marker'
+        type: choice
+        options:
+          - 'marker'
+          - 'specific_test'
+          - 'test_file'
+          - 'custom'
+      
+      test_target:
+        description: 'Test target'
+        required: true
+        default: 'onboarding'
+        type: string
+        
+      test_environment:
+        description: 'Test environment'
+        required: false
+        default: 'lambdatest'
+        type: choice
+        options:
+          - lambdatest
+          - local
+          
+      device_config:
+        description: 'Device configuration'
+        required: false
+        default: 'default'
+        type: choice
+        options:
+          - 'default'      # Galaxy Tab S8
+          - 'pixel_tablet' # Google Pixel Tablet
+          - 'galaxy_tab_a' # Samsung Galaxy Tab A
+          
+      parallel_execution:
+        description: 'Enable parallel test execution'
+        required: false
+        default: false
+        type: boolean
+        
+      enable_github_reporting:
+        description: 'Enable GitHub native test reporting'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  validate-inputs:
+    runs-on: ubuntu-latest
+    outputs:
+      pytest_args: ${{ steps.build_args.outputs.pytest_args }}
+      apk_ready: ${{ steps.validate.outputs.apk_ready }}
+      artifact_name: ${{ steps.build_args.outputs.artifact_name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Python for validation
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          
+      - name: Install validation dependencies
+        run: pip install jsonschema
+        
+      - name: Validate workflow inputs
+        run: |
+          python -c "
+          import json, jsonschema, sys
+          
+          # Load schema
+          with open('test/e2e_appium/config/workflow_schema.json') as f:
+              schema = json.load(f)
+          
+          # Build input data
+          inputs = {
+              'apk_source_type': '${{ inputs.apk_source_type }}',
+              'apk_source': '${{ inputs.apk_source }}',
+              'build_run_id': '${{ inputs.build_run_id }}' if '${{ inputs.build_run_id }}' else None,
+              'test_selection_type': '${{ inputs.test_selection_type }}',
+              'test_target': '${{ inputs.test_target }}',
+              'test_environment': '${{ inputs.test_environment }}',
+              'device_config': '${{ inputs.device_config }}',
+              'parallel_execution': '${{ inputs.parallel_execution }}' == 'true',
+              'enable_github_reporting': '${{ inputs.enable_github_reporting }}' == 'true'
+          }
+          
+          try:
+              jsonschema.validate(inputs, schema)
+              print('✅ Input validation passed')
+          except jsonschema.ValidationError as e:
+              print(f'❌ Input validation failed: {e.message}')
+              sys.exit(1)
+          "
+          
+      - name: Build pytest arguments
+        id: build_args
+        run: |
+          case "${{ inputs.test_selection_type }}" in
+            "marker")
+              PYTEST_ARGS="-m ${{ inputs.test_target }}"
+              ;;
+            "specific_test")
+              PYTEST_ARGS="tests/${{ inputs.test_target }}"
+              ;;
+            "test_file")
+              PYTEST_ARGS="tests/${{ inputs.test_target }}.py"
+              ;;
+            "custom")
+              PYTEST_ARGS="${{ inputs.test_target }}"
+              ;;
+          esac
+          
+          # Use timestamp for unique artifact naming
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          ARTIFACT_NAME="e2e-results-${TIMESTAMP}-${{ inputs.test_target }}-${{ inputs.device_config }}"
+          
+          echo "pytest_args=$PYTEST_ARGS" >> $GITHUB_OUTPUT
+          echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+          echo "Test command: pytest $PYTEST_ARGS"
+          
+      - name: Validate APK source
+        id: validate
+        run: |
+          case "${{ inputs.apk_source_type }}" in
+            "github_artifact")
+              echo "Will download GitHub artifact: ${{ inputs.apk_source }}"
+              echo "apk_ready=artifact" >> $GITHUB_OUTPUT
+              ;;
+            "direct_url")
+              echo "Will download APK from URL: ${{ inputs.apk_source }}"
+              echo "apk_ready=url" >> $GITHUB_OUTPUT
+              ;;
+            "lambdatest_app_id")
+              echo "Will use pre-uploaded LambdaTest app: ${{ inputs.apk_source }}"
+              echo "apk_ready=uploaded" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  e2e-test:
+    needs: validate-inputs
+    runs-on: ubuntu-latest
+    timeout-minutes: 60  # TODO: Load from config
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          
+      - name: Install dependencies
+        working-directory: test/e2e_appium
+        run: |
+          pip install -r requirements.txt
+          if [ "${{ inputs.parallel_execution }}" = "true" ]; then
+            pip install pytest-xdist
+          fi
+          
+      - name: Download APK
+        uses: ./.github/actions/download-apk
+        with:
+          source_type: ${{ inputs.apk_source_type }}
+          source: ${{ inputs.apk_source }}
+          build_run_id: ${{ inputs.build_run_id }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        id: download-apk
+          
+      - name: Upload APK to LambdaTest
+        if: inputs.test_environment == 'lambdatest' && steps.download-apk.outputs.download_method == 'downloaded'
+        id: upload-lt
+        working-directory: test/e2e_appium
+        env:
+          LT_USERNAME: ${{ secrets.LT_USERNAME }}
+          LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
+        run: |
+          python scripts/upload_apk_to_lambdatest.py \
+            --apk-path "${{ steps.download-apk.outputs.apk_path }}" \
+            --app-name "Status-E2E-${{ inputs.test_target }}-${{ github.run_number }}"
+            
+      - name: Setup environment variables
+        run: |
+          # Determine app path/URL based on download method and environment
+          if [ "${{ steps.download-apk.outputs.download_method }}" = "lambdatest_reference" ]; then
+            echo "STATUS_APP_URL=${{ steps.download-apk.outputs.apk_path }}" >> $GITHUB_ENV
+          elif [ "${{ inputs.test_environment }}" = "lambdatest" ]; then
+            echo "STATUS_APP_URL=${{ steps.upload-lt.outputs.app_url }}" >> $GITHUB_ENV
+          else
+            echo "LOCAL_APP_PATH=${{ steps.download-apk.outputs.apk_path }}" >> $GITHUB_ENV
+          fi
+          
+          # Set device name from configuration
+          case "${{ inputs.device_config }}" in
+            "pixel_tablet")
+              echo "DEVICE_NAME=Google Pixel Tablet" >> $GITHUB_ENV
+              ;;
+            "galaxy_tab_a")
+              echo "DEVICE_NAME=Samsung Galaxy Tab A8" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "DEVICE_NAME=Samsung Galaxy Tab S8" >> $GITHUB_ENV
+              ;;
+          esac
+          
+      - name: Run E2E tests
+        id: test-execution
+        working-directory: test/e2e_appium
+        env:
+          LT_USERNAME: ${{ secrets.LT_USERNAME }}
+          LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
+          STATUS_APP_URL: ${{ env.STATUS_APP_URL }}
+          LOCAL_APP_PATH: ${{ env.LOCAL_APP_PATH }}
+          DEVICE_NAME: ${{ env.DEVICE_NAME }}
+        run: |
+          mkdir -p report screenshots logs
+          
+          PYTEST_CMD="python -m pytest ${{ needs.validate-inputs.outputs.pytest_args }}"
+          PYTEST_CMD="$PYTEST_CMD --env=${{ inputs.test_environment }} -v"
+          PYTEST_CMD="$PYTEST_CMD --html=report/e2e-results.html --self-contained-html"
+          PYTEST_CMD="$PYTEST_CMD --junitxml=report/junit-e2e.xml"
+          
+          if [ "${{ inputs.parallel_execution }}" = "true" ]; then
+            PYTEST_CMD="$PYTEST_CMD -n auto"
+          fi
+          
+          echo "Running: $PYTEST_CMD"
+          $PYTEST_CMD
+          
+      - name: Generate test summary
+        if: always()
+        working-directory: test/e2e_appium
+        run: |
+          python scripts/generate_test_summary.py \
+            --junit-xml report/junit-e2e.xml \
+            --output report/summary.md \
+            --apk-source-type "${{ inputs.apk_source_type }}" \
+            --apk-source "${{ inputs.apk_source }}" \
+            --test-selection-type "${{ inputs.test_selection_type }}" \
+            --test-target "${{ inputs.test_target }}" \
+            --test-environment "${{ inputs.test_environment }}" \
+            --device-name "${{ env.DEVICE_NAME }}" \
+            --parallel-execution "${{ inputs.parallel_execution }}" \
+            --pytest-args "${{ needs.validate-inputs.outputs.pytest_args }}" \
+            --build-run-id "${{ inputs.build_run_id }}" \
+            --repo-url "https://github.com/${{ github.repository }}"
+          
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          cat report/summary.md >> $GITHUB_STEP_SUMMARY
+          
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.validate-inputs.outputs.artifact_name }}
+          path: |
+            test/e2e_appium/report/**/*
+            test/e2e_appium/screenshots/**/*
+            test/e2e_appium/logs/**/*
+          retention-days: 30  # TODO: Load from config
+          if-no-files-found: warn
+          
+      - name: Publish test results to GitHub
+        if: always() && inputs.enable_github_reporting
+        uses: dorny/test-reporter@v1
+        with:
+          name: 'E2E Test Results (${{ inputs.test_target }})'
+          path: 'test/e2e_appium/report/junit-e2e.xml'
+          reporter: java-junit
+          fail-on-error: false
+        continue-on-error: true
+        id: github-reporting
+        
+      - name: Handle reporting fallback
+        if: always() && inputs.enable_github_reporting && steps.github-reporting.outcome == 'failure'
+        run: |
+          echo "GitHub test reporting failed - results available in artifacts"
+          echo "Download '${{ needs.validate-inputs.outputs.artifact_name }}' artifact for detailed HTML report"
+          
+      - name: Comment test results on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'test/e2e_appium/report/summary.md';
+            
+            if (fs.existsSync(path)) {
+              const summary = fs.readFileSync(path, 'utf8');
+              
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: summary
+              });
+            }
+        continue-on-error: true
+          
+      - name: Setup Node.js for commit status
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: test/e2e_appium/package.json
+          
+      - name: Install Node.js dependencies
+        if: always()
+        working-directory: test/e2e_appium
+        run: npm install
+        
+      - name: Set commit status
+        if: always()
+        working-directory: test/e2e_appium
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/commit_status_manager.js \
+            "${{ steps.test-execution.outcome }}" \
+            "${{ inputs.apk_source_type }}" \
+            "${{ inputs.build_run_id }}"
+        continue-on-error: true 

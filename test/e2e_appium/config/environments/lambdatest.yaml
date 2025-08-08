@@ -1,0 +1,34 @@
+extends: "base.yaml"
+
+metadata:
+  environment: "lambdatest"
+  description: "LambdaTest cloud environment"
+
+device:
+  name: "Galaxy Tab S8"
+
+appium:
+  server_url: "https://mobile-hub.lambdatest.com/wd/hub"
+  
+app:
+  source_type: "cloud_upload"
+  app_id_template: "${STATUS_APP_URL}"
+
+lambdatest:
+  build_name_template: "Status E2E Tests - ${BUILD_NUMBER:-${TIMESTAMP}}"
+  test_name_template: "${TEST_NAME:-Automated Test}"
+  project: "Status E2E_Appium"
+  idle_timeout: 600
+
+capabilities:
+  "lt:options":
+    w3c: true
+    appiumVersion: "2.16.2"
+    devicelog: true
+    visual: true
+    video: true
+    isRealMobile: false
+    deviceOrientation: "landscape"
+    network: false
+  "appium:options":
+    automationName: "UiAutomator2" 
