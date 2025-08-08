@@ -342,9 +342,9 @@ proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool,
     error "error: ", procName="addWalletAccount", errName=e.name, errDesription=e.msg
     return e.msg
 
-## Mandatory fields for account: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
+## Mandatory fields for account: `path`, `name`, `emoji`, `colorId`
 proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPasswordHashing: bool,
-  keyUid, keypairName, rootWalletMasterKey: string, account: WalletAccountDto): string =
+  keypairName: string, accountCreationDetails: AccountCreationDetails): string =
   if password.len == 0:
     let err = "for adding new private key account, password must be provided"
     error "error", err
@@ -353,11 +353,7 @@ proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPas
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
   try:
-    var response = status_go_accounts.importPrivateKey(privateKey, finalPassword)
-    if not response.error.isNil:
-      error "status-go error importing private key", procName="addNewPrivateKeyKeypair", errCode=response.error.code, errDesription=response.error.message
-      return response.error.message
-    response = status_go_accounts.addKeypair(finalPassword, keyUid, keypairName, KeypairTypeKey, rootWalletMasterKey, @[account])
+    var response = status_go_accounts.addKeypairViaPrivateKey(privateKey, finalPassword, keypairName, accountCreationDetails)
     if not response.error.isNil:
       error "status-go error adding keypair", procName="addNewPrivateKeyKeypair", errCode=response.error.code, errDesription=response.error.message
       return response.error.message
@@ -386,27 +382,36 @@ proc makePrivateKeyKeypairFullyOperable*(self: Service, keyUid, privateKey, pass
     error "error: ", procName="makePrivateKeyKeypairFullyOperable", errName=e.name, errDesription=e.msg
     return e.msg
 
-## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
+## Mandatory fields for all accounts are `path`, `name`, `emoji`, `colorId`
 proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool,
-  keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
+  keypairName: string, accountCreationDetails: AccountCreationDetails): string =
   var finalPassword = password
   if password.len > 0 and doPasswordHashing:
     finalPassword = utils.hashPassword(password)
   try:
-    if seedPhrase.len > 0 and password.len > 0:
-      let response = status_go_accounts.importMnemonic(seedPhrase, finalPassword)
-      if not response.error.isNil:
-        error "status-go error importing private key", procName="addNewSeedPhraseKeypair", errCode=response.error.code, errDesription=response.error.message
-        return response.error.message
-    let response = status_go_accounts.addKeypair(finalPassword, keyUid, keypairName, KeypairTypeSeed, rootWalletMasterKey, accounts)
+    var response = status_go_accounts.addKeypairViaSeedPhrase(seedPhrase, finalPassword, keypairName, accountCreationDetails)
     if not response.error.isNil:
       error "status-go error adding keypair", procName="addNewSeedPhraseKeypair", errCode=response.error.code, errDesription=response.error.message
       return response.error.message
+
+    self.addNewKeypairsAccountsToLocalStoreAndNotify()
+    return ""
+  except Exception as e:
+    error "error: ", procName="addNewSeedPhraseKeypair", errName=e.name, errDesription=e.msg
+    return e.msg
+
+proc addNewKeycardStoredKeypair*(self: Service, keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
+  try:
+    var response = status_go_accounts.addKeypairStoredToKeycard(keyUid, rootWalletMasterKey, keypairName, accounts)
+    if not response.error.isNil:
+      error "status-go error adding keypair", procName="addNewKeycardStoredKeypair", errCode=response.error.code, errDesription=response.error.message
+      return response.error.message
+
     for i in 0 ..< accounts.len:
       self.addNewKeypairsAccountsToLocalStoreAndNotify()
     return ""
   except Exception as e:
-    error "error: ", procName="addNewSeedPhraseKeypair", errName=e.name, errDesription=e.msg
+    error "error: ", procName="addNewKeycardStoredKeypair", errName=e.name, errDesription=e.msg
     return e.msg
 
 proc makeSeedPhraseKeypairFullyOperable*(self: Service, keyUid, mnemonic, password: string, doPasswordHashing: bool): string =

@@ -738,12 +738,11 @@ proc updateKeycardUid*(self: Controller, keyUid: string, keycardUid: string) =
       self.tmpKeycardUid = keycardUid
       info "update keycard uid failed", oldKeycardUid=self.tmpKeycardUid, newKeycardUid=keycardUid
 
-proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName, rootWalletMasterKey: string,
+proc addNewKeycardStoredKeypair*(self: Controller, keyUid, keypairName, rootWalletMasterKey: string,
   accounts: seq[WalletAccountDto]): bool =
-  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password = "", doPasswordHashing = false, keyUid,
-    keypairName, rootWalletMasterKey, accounts)
+  let err = self.walletAccountService.addNewKeycardStoredKeypair(keyUid, keypairName, rootWalletMasterKey, accounts)
   if err.len > 0:
-    info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid
+    info "adding new keypair from keycard failed", keypairName=keypairName, keyUid=keyUid
     return false
   return true
 
