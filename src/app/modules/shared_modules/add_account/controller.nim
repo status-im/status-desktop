@@ -179,29 +179,29 @@ proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: 
     return false
   return true
 
-proc addNewPrivateKeyKeypair*(self: Controller, privateKey: string, doPasswordHashing: bool, keyUid, keypairName,
-  rootWalletMasterKey: string, account: WalletAccountDto): bool =
+proc addNewPrivateKeyKeypair*(self: Controller, privateKey: string, doPasswordHashing: bool,
+  keypairName: string, accountCreationDetails: AccountCreationDetails): bool =
   let password = self.getPassword() # password must not be empty in this context
   if password.len == 0:
-    info "cannot create keystore file if provided password is empty", keypairName=keypairName, keyUid=keyUid
+    info "cannot create keystore file if provided password is empty", keypairName=keypairName
     return false
-  let err = self.walletAccountService.addNewPrivateKeyKeypair(privateKey, password, doPasswordHashing, keyUid,
-    keyPairName, rootWalletMasterKey, account)
+  let err = self.walletAccountService.addNewPrivateKeyKeypair(privateKey, password, doPasswordHashing, keypairName,
+    accountCreationDetails)
   if err.len > 0:
-    info "adding new keypair from private key failed", keypairName=keypairName, keyUid=keyUid
+    info "adding new keypair from private key failed", keypairName=keypairName
     return false
   return true
 
-proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase: string, doPasswordHashing: bool, keyUid, keypairName,
-  rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): bool =
+proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase: string, doPasswordHashing: bool, keypairName: string,
+  accountCreationDetails: AccountCreationDetails): bool =
   let password = self.getPassword() # password must not be empty in this context
   if password.len == 0:
-    info "cannot create keystore file if provided password is empty", keypairName=keypairName, keyUid=keyUid
+    info "cannot create keystore file if provided password is empty", keypairName=keypairName
     return false
-  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password, doPasswordHashing, keyUid,
-    keypairName, rootWalletMasterKey, accounts)
+  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password, doPasswordHashing, keypairName,
+    accountCreationDetails)
   if err.len > 0:
-    info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid
+    info "adding new keypair from seed phrase failed", keypairName=keypairName
     return false
   return true
 
