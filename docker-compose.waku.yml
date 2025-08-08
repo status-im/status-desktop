@@ -1,0 +1,67 @@
+services:
+  boot-1:
+    image: wakuorg/nwaku:v0.34.0
+    entrypoint: [
+      "/usr/bin/wakunode",
+      "--discv5-discovery=true",
+      "--discv5-enr-auto-update=True",
+      "--discv5-udp-port=9000",
+      "--cluster-id=16",
+      # Docker DNS server
+      "--dns-addrs-name-server=127.0.0.11",
+      "--dns4-domain-name=boot-1",
+      "--filter=true",
+      "--keep-alive=true",
+      "--lightpush=true",
+      "--log-level=DEBUG",
+      "--max-connections=18000",
+      "--nodekey=697b008f979c8ae38c1e4e0b9bc3712dd39e2355f49eaf6c63d92f7edd13704d",
+      "--peer-exchange=true",
+      "--relay=true",
+#      "--rest-address=0.0.0.0",
+#      "--rest-admin",
+      "--shard=32",
+      "--shard=64",
+      "--staticnode=/dns4/store/tcp/60002/p2p/16Uiu2HAm4y9o3GARfphq8jN1wsVhezCHPMmRuekHCCKJ1EsgzVBi",
+      "--storenode=/dns4/store/tcp/60002/p2p/16Uiu2HAm4y9o3GARfphq8jN1wsVhezCHPMmRuekHCCKJ1EsgzVBi",
+      "--tcp-port=60001",
+      "--nat=extip:127.0.0.1",
+    ]
+    depends_on:
+      - store
+    ports:
+      - "60001:60001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -X GET -H 'Content-Type: application/json' http://127.0.0.1:8645 || exit 0"]
+
+  store:
+    image: wakuorg/nwaku:v0.34.0
+    entrypoint: [
+      "/usr/bin/wakunode",
+      "--discv5-discovery=true",
+      "--discv5-enr-auto-update=True",
+      "--discv5-udp-port=9000",
+      "--cluster-id=16",
+      # Docker DNS server
+      "--dns-addrs-name-server=127.0.0.11",
+      "--dns4-domain-name=store",
+      "--keep-alive=true",
+      "--log-level=DEBUG",
+      "--max-connections=18000",
+      "--nodekey=ba4e531d4ef543fabd838ef4e731d35dfa4deceea8f4a5992ad7f29764c70035",
+      "--peer-exchange=false",
+      "--relay=true",
+#      "--rest-address=0.0.0.0",
+#      "--rest-admin",
+      "--shard=32",
+      "--shard=64",
+      "--staticnode=/dns4/boot-1/tcp/60001/p2p/16Uiu2HAmMgYeJrjruJGCgL96aaP2nf85PGsRVkXLyhG2joJMH4pH",
+      "--store=true",
+      "--tcp-port=60002",
+      "--nat=extip:127.0.0.1",
+    ]
+    ports:
+      - "60002:60002"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -X GET -H 'Content-Type: application/json' http://127.0.0.1:8645 || exit 0"]
+
