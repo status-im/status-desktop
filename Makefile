@@ -604,6 +604,7 @@ ifeq ($(QMAKE_CHANGED),yes)
 $(NIM_STATUS_CLIENT): update-qmake-previous
 endif
 
+#test
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
