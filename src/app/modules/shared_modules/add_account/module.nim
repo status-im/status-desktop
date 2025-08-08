@@ -624,14 +624,8 @@ proc doAddAccount[T](self: Module[T]) =
       success = self.controller.addNewPrivateKeyKeypair(
         privateKey = self.controller.getGeneratedAccount().privateKey,
         doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser(),
-        keyUid = keyUid,
         keypairName = keypairName,
-        rootWalletMasterKey = rootWalletMasterKey,
-        account = WalletAccountDto(
-            address: address,
-            keyUid: keyUid,
-            publicKey: publicKey,
-            walletType: accountType,
+        accountCreationDetails = AccountCreationDetails(
             path: path,
             name: self.view.getAccountName(),
             colorId: self.view.getSelectedColorId(),
@@ -644,19 +638,13 @@ proc doAddAccount[T](self: Module[T]) =
       success = self.controller.addNewSeedPhraseKeypair(
         seedPhrase = self.controller.getSeedPhrase(),
         doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser(),
-        keyUid = keyUid,
         keypairName = keypairName,
-        rootWalletMasterKey = rootWalletMasterKey,
-        accounts = @[WalletAccountDto(
-            address: address,
-            keyUid: keyUid,
-            publicKey: publicKey,
-            walletType: accountType,
+        accountCreationDetails = AccountCreationDetails(
             path: path,
             name: self.view.getAccountName(),
             colorId: self.view.getSelectedColorId(),
             emoji: self.view.getSelectedEmoji()
-          )]
+          )
         )
       if not success:
         error "failed to store new seed phrase account", address=selectedAddrItem.getAddress()
