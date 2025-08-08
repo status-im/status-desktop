@@ -50,7 +50,7 @@ FetchContent_Declare(
   QmlStorybook
 
   GIT_REPOSITORY https://github.com/status-im/QmlStorybook.git
-  GIT_TAG 9f580944e929ca70247703d1f2a7237005437374
+  GIT_TAG 153f6886825deb7c6baf2a3cf2fc475ab8f466f9
 )
 FetchContent_MakeAvailable(QmlStorybook)
 
@@ -89,6 +89,19 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 target_link_libraries(
     ${PROJECT_NAME} PRIVATE Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2
     Qt::WebView StatusQ QmlStorybookLib)
+
+add_executable(
+  QmlFilesServer
+  qmlfilesserver_main.cpp
+)
+
+target_compile_definitions(QmlFilesServer PRIVATE
+        QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+    )
+
+target_link_libraries(
+    QmlFilesServer PUBLIC Qt::Core QmlStorybookLib)
 
 enable_testing()
 
