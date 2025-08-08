@@ -25,6 +25,12 @@ else
         --passL="-L$LIB_DIR" --passL="-lstatus" --passL="-lStatusQ$LIB_SUFFIX" --passL="-lDOtherSide$LIB_SUFFIX" --passL="-lqrcodegen" --passL="-lqzxing" --passL="-lssl_3" --passL="-lcrypto_3" -d:taskpool)
 fi
 
+if [ -n "$USE_QML_SERVER" ]; then
+  QML_SERVER_DEFINES="-d:USE_QML_SERVER=$USE_QML_SERVER"
+else
+  QML_SERVER_DEFINES=""
+fi
+
 echo "Building status-client for $ARCH using compiler: $CC"
 
 cd "$STATUS_DESKTOP"
@@ -34,7 +40,7 @@ cd "$STATUS_DESKTOP"
 FEATURE_FLAGS="FLAG_DAPPS_ENABLED=0 FLAG_CONNECTOR_ENABLED=0 FLAG_KEYCARD_ENABLED=0 FLAG_SINGLE_STATUS_INSTANCE_ENABLED=0"
 
 # build status-client with feature flags
-env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c "${PLATFORM_SPECIFIC[@]}" --outdir:./bin -d:DESKTOP_VERSION="$DESKTOP_VERSION" -d:STATUSGO_VERSION="$STATUSGO_VERSION" -d:GIT_COMMIT="$(git log --pretty=format:'%h' -n 1)" -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \
+env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c "${PLATFORM_SPECIFIC[@]}" --outdir:./bin "${PLATFORM_SPECIFIC[@]}" "${QML_SERVER_DEFINES}" -d:DESKTOP_VERSION="$DESKTOP_VERSION" -d:STATUSGO_VERSION="$STATUSGO_VERSION" -d:GIT_COMMIT="$(git log --pretty=format:'%h' -n 1)" -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \
     --mm:refc \
     --opt:size \
     -d:lto \

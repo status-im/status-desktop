@@ -80,7 +80,7 @@ clean: clean-status-go clean-statusq clean-dotherside clean-openssl clean-qrcode
 .PHONY: run
 run: makedir $(TARGET)
 	@echo "Running"
-	@APP=$(TARGET) QT_MAJOR=$(QT_MAJOR) $(RUN_SCRIPT)
+	@APP=$(TARGET) QT_MAJOR=$(QT_MAJOR) USE_QML_SERVER=$(USE_QML_SERVER) $(RUN_SCRIPT)
 
 .PHONY: clean-status-go
 clean-status-go:

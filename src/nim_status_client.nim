@@ -205,9 +205,14 @@ proc mainProc() =
   prepareLogging()
   installMessageHandler(logHandlerCallback)
 
-  singletonInstance.engine.addImportPath("qrc:/")
-  singletonInstance.engine.addImportPath("qrc:/./imports")
-  singletonInstance.engine.addImportPath("qrc:/./app");
+  when defined(USE_QML_SERVER):
+    const QmlServerPort = staticRead($USE_QML_SERVER)
+    singletonInstance.engine.addImportPath("http://localhost:8081");
+  else:
+    singletonInstance.engine.addImportPath("qrc:/")
+    singletonInstance.engine.addImportPath("qrc:/./imports")
+    singletonInstance.engine.addImportPath("qrc:/./app");
+
   singletonInstance.engine.setNetworkAccessManagerFactory(networkAccessFactory)
   singletonInstance.engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
   singletonInstance.engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))

@@ -49,9 +49,9 @@ include(FetchContent)
 FetchContent_Declare(
   QmlStorybook
 
-  SOURCE_DIR /home/michalc/workspace/QmlStorybook
-  # GIT_REPOSITORY https://github.com/status-im/QmlStorybook.git
-  # GIT_TAG 9f580944e929ca70247703d1f2a7237005437374
+  #SOURCE_DIR /home/michalc/workspace/QmlStorybook
+  GIT_REPOSITORY https://github.com/status-im/QmlStorybook.git
+  GIT_TAG a3c703dd7091161ba61a93f559372293e08f7d05
 )
 FetchContent_MakeAvailable(QmlStorybook)
 
