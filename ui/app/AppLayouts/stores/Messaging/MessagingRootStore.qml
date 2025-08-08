@@ -1,8 +1,8 @@
-import QtQuick 2.15
+import QtQuick
 
-import AppLayouts.stores.Messaging.Community 1.0
+import AppLayouts.stores.Messaging.Community
 
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Utils as StatusQUtils
 
 StatusQUtils.QObject {
     id: root
