@@ -7,17 +7,16 @@ import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Components.private
 
+import  AppLayouts.ActivityCenter.controls
+
 import shared
 import utils
 
 RowLayout {
     id: root
 
-    property double timestamp: 0
     property int maximumLineCount: 5
-
-    property Component messageSubheaderComponent: null
-    property Component messageBadgeComponent: null
+    property alias contentHeaderAreaText: contentHeaderArea.text
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
 
@@ -25,70 +24,58 @@ RowLayout {
 
     spacing: 8
 
-    Item {
-        Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
-        Layout.preferredHeight: profileImage.height
-        Layout.alignment: Qt.AlignTop
-        Layout.leftMargin: Theme.padding
-        Layout.topMargin: 2
-
-        StatusSmartIdenticon {
-            id: profileImage
-            name: root.messageDetails.sender.displayName
-            asset: root.messageDetails.sender.profileImage.assetSettings
-            ringSettings: root.messageDetails.sender.profileImage.ringSettings
-
-            StatusMouseArea {
-                anchors.fill: parent
-                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                onClicked: root.openProfilePopup()
-            }
-        }
-    }
-
     ColumnLayout {
         spacing: 2
         Layout.alignment: Qt.AlignTop
         Layout.fillWidth: true
 
-        StatusMessageHeader {
-            sender: root.messageDetails.sender
-            amISender: root.messageDetails.amISender
-            messageOriginInfo: root.messageDetails.messageOriginInfo
-            tertiaryDetail: sender.isEnsVerified ? "" : root.messageDetails.sender.compressedPubKey
-            timestamp: root.timestamp
-            onClicked: root.openProfilePopup()
-        }
-
-        Loader {
-            sourceComponent: root.messageSubheaderComponent
-            Layout.fillWidth: true
-        }
-
-        RowLayout {
-            spacing: 2
+        NotificationBaseHeaderRow {
             Layout.fillWidth: true
 
-            StatusBaseText {
-                text: root.messageDetails.messageText
-                maximumLineCount: root.maximumLineCount
-                wrapMode: Text.Wrap
-                elide: Text.ElideRight
-                font.pixelSize: Theme.primaryTextFontSize
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: !root.messageBadgeComponent
-            }
+            property bool amISender: root.messageDetails.amISender
+            property var sender: root.messageDetails.sender
+            property string messageOriginInfo: root.messageDetails.messageOriginInfo
 
-            Loader {
-                sourceComponent: root.messageBadgeComponent
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillHeight: true
-            }
+            primaryText: amISender ? qsTr("You") : CoreUtils.Emoji.parse(sender.displayName)
+            primaryTextClickable: true
+            primarySideText: messageOriginInfo
+            iconsRowComponent: !amISender ? iconsRow : undefined
+            secondaryText: !amISender ? sender.secondaryName : ""
+            tertiaryText: !amISender &&
+                          messageOriginInfo === "" &&
+                          sender.isEnsVerified ?  "" : sender.compressedPubKey
 
-            Item {
-                Layout.fillWidth: !!root.messageBadgeComponent
+            onPrimaryTextClicked: root.openProfilePopup()
+
+            Component {
+                id: iconsRow
+                StatusContactVerificationIcons {
+                    isContact: root.messageDetails.sender.isContact
+                    trustIndicator: root.messageDetails.sender.trustIndicator
+                }
             }
+        }
+
+        StatusBaseText {
+            id: contentHeaderArea
+            Layout.fillWidth: true
+            Layout.preferredHeight: !text ? 0 : implicitHeight
+            maximumLineCount: root.maximumLineCount
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+            font.pixelSize: Theme.additionalTextSize
+            font.italic: true
+        }
+
+        StatusBaseText {
+            id: contentArea
+            Layout.fillWidth: true
+            Layout.preferredHeight: !text ? 0 : implicitHeight
+            text: root.messageDetails.messageText
+            maximumLineCount: root.maximumLineCount
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+            font.pixelSize: Theme.additionalTextSize
         }
 
         Loader {

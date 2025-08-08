@@ -81,8 +81,6 @@ SplitView {
         }
 
         useNewDockIcons: ctrlNewIcons.checked
-        hasUnseenACNotifications: ctrlHasNotifications.checked
-        aCNotificationCount: ctrlNotificationsCount.value
 
         onItemActivated: function(key, sectionType, itemId) {
             homePageAdaptor.setTimestamp(key, new Date().valueOf())
@@ -99,10 +97,6 @@ SplitView {
         onDappDisconnectRequested: function(dappUrl) {
             logs.logEvent("onDappDisconnectRequested", ["dappUrl"], arguments)
             console.info("!!! DAPP DISCONNECT:", dappUrl)
-        }
-
-        onNotificationButtonClicked: {
-            logs.logEvent("onNotificationButtonClicked") // <- openActivityCenterPopup()
         }
         onSetCurrentUserStatusRequested: function (status) {
             profileStore.currentUserStatus = status
@@ -175,20 +169,6 @@ SplitView {
                     text: "Show dApps"
                     checked: true
                     enabled: !ctrlShowAllEntries.checked
-                }
-            }
-            RowLayout {
-                Switch {
-                    id: ctrlHasNotifications
-                    text: "Has unseen notifications"
-                }
-                Label { text: "  Count:" }
-                SpinBox {
-                    id: ctrlNotificationsCount
-                    from: 0
-                    to: 100
-                    value: 0
-                    enabled: ctrlHasNotifications.checked
                 }
             }
             Button {

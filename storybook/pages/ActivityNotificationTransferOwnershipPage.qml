@@ -1,112 +1,75 @@
 import QtQuick
-
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import mainui.activitycenter.views
-import mainui.activitycenter.stores
+import StatusQ.Core.Theme
+
+import AppLayouts.ActivityCenter.views
+import AppLayouts.ActivityCenter.helpers
 
 import Storybook
 
-SplitView {
+import utils
+
+ActivityNotificationBaseLayout {
     id: root
 
-    orientation: Qt.Vertical
+    property bool showFullTimestamp
 
-    Logs { id: logs }
+    showBaseEditorFields: false
+    communityEditorActive: true
+    contactEditorActive: false
+    activityNotificationComponent: ActivityNotificationTransferOwnership {
+        notification: baseEditor.notificationBaseMock
+        type: setType(notification)
+        communityName: communityEditor.communityMock.name
+        communityColor:  communityEditor.communityMock.color
+        showFullTimestamp: root.showFullTimestamp
 
-    QtObject {
-        id: notificationMock
-
-        property string id: "1"
-        property string communityId: "1"
-        property string sectionId: "1"
-        property int notificationType: 1
-        property int timestamp: Date.now()
-        property int previousTimestamp: 0
-        property bool read: false
-        property bool dismissed: false
-        property bool accepted: false
+        onFinaliseOwnershipClicked: logs.logEvent("ActivityNotificationTransferOwnership::onFinaliseOwnershipClicked")
+        onNavigateToCommunityClicked: logs.logEvent("ActivityNotificationTransferOwnership::onNavigateToCommunityClicked")
+        onCloseActivityCenter: logs.logEvent("ActivityNotificationTransferOwnership::onCloseActivityCenter")
     }
 
-    Item {
-        SplitView.fillHeight: true
-        SplitView.fillWidth: true
+    additionalEditorComponent: ColumnLayout {
+        ColumnLayout {
+            RadioButton {
+                text: "Pending"
+                checked: true
+                onCheckedChanged: if(checked) baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.OwnerTokenReceived
+            }
 
-        ActivityNotificationTransferOwnership {
-            id: notification
+            RadioButton {
+                text: "Declined"
+                onCheckedChanged: if(checked) baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.OwnershipDeclined
+            }
 
-            anchors.centerIn: parent
-            width: parent.width - 50
-            height: implicitHeight
+            RadioButton {
+                text: "Succeded"
+                onCheckedChanged: if(checked) baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.OwnershipReceived
+            }
 
-            type: ActivityNotificationTransferOwnership.OwnershipState.Pending
-            notification: notificationMock
-            communityName: communityNameText.text
-            communityColor: colorSwitch.checked ? "green" : "orange"
+            RadioButton {
+                text: "Failed"
+                onCheckedChanged: if(checked) baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.OwnershipFailed
+            }
 
-            onFinaliseOwnershipClicked: logs.logEvent("ActivityNotificationOwnerTokenReceived::onFinaliseOwnershipClicked")
-            onNavigateToCommunityClicked: logs.logEvent("ActivityNotificationOwnerTokenReceived::onNavigateToCommunityClicked")
-        }
-
-    }
-
-    LogsAndControlsPanel {
-        SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 160
-
-        logsView.logText: logs.logText
-
-        Column {
-            Row {
-                Label {
-                    text: "Community Name: "
-                }
-
-                TextInput {
-                    id: communityNameText
-
-                    text: "Doodles"
-                }
+            RadioButton {
+                text: "No longer control node"
+                onCheckedChanged: if(checked) baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.OwnershipLost
             }
 
             Switch {
-                id: colorSwitch
-
-                text: "Orange OR Green"
-                checked: true
-            }
-
-            Row {
-                RadioButton {
-                    text: "Pending"
-                    checked: true
-                    onCheckedChanged: if(checked) notification.type = ActivityNotificationTransferOwnership.OwnershipState.Pending
-                }
-
-                RadioButton {
-                    text: "Declined"
-                    onCheckedChanged: if(checked) notification.type = ActivityNotificationTransferOwnership.OwnershipState.Declined
-                }
-
-                RadioButton {
-                    text: "Succeded"
-                    onCheckedChanged: if(checked) notification.type = ActivityNotificationTransferOwnership.OwnershipState.Succeeded
-                }
-
-                RadioButton {
-                    text: "Failed"
-                    onCheckedChanged: if(checked) notification.type = ActivityNotificationTransferOwnership.OwnershipState.Failed
-                }
-
-                RadioButton {
-                    text: "No longer control node"
-                    onCheckedChanged: if(checked) notification.type = ActivityNotificationTransferOwnership.OwnershipState.NoLongerControlNode
-                }
+                text: "Show full timestamp"
+                checked: root.showFullTimestamp
+                onCheckedChanged: root.showFullTimestamp = checked
             }
         }
-    }
-}
 
+    }
+
+    Component.onCompleted: baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.OwnerTokenReceived
+}
 // category: Activity Center
+// status: good
 // https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86911&mode=design&t=LuuR3YcDBwDkWIBw-1
