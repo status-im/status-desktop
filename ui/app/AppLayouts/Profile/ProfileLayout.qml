@@ -150,6 +150,7 @@ StatusSectionLayout {
         id: settingsEntriesModel
 
         showWalletEntries: root.walletStore.isWalletEnabled
+        showBrowserEntries: root.advancedStore.browserMenuItemEnabled
         showBackUpSeed: !root.privacyStore.mnemonicBackedUp
         isKeycardEnabled: root.isKeycardEnabled
 
@@ -428,6 +429,19 @@ StatusSectionLayout {
         }
 
         Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: BrowserView {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+
+                accountSettings: localAccountSensitiveSettings
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.browserSettings)
+                contentWidth: d.contentWidth
+            }
+        }
+
+        Loader {
             id: advancedView
 
             active: false
@@ -460,7 +474,7 @@ StatusSectionLayout {
                 qtRuntimeVersion: SystemUtils.qtRuntimeVersion()
 
                 onCheckForUpdates: root.aboutStore.checkForUpdates()
-                onOpenLink: Global.openLink(url)
+                onOpenLink: (url) => Global.openLink(url)
             }
         }
 

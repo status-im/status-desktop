@@ -12,6 +12,7 @@ type
     Wallet,
     Chat,
     Community,
+    Browser,
     ProfileSettings,
     NodeManagement,
     CommunitiesPortal,
