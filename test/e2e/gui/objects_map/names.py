@@ -53,6 +53,7 @@ communitiesPortalButton = {"container": communitiesSettingsNavBarList, "objectNa
                            "type": "StatusNavBarTabButton", "visible": True}
 settingsGearButton = {"container": communitiesSettingsNavBarList, "objectName": "Settings-navbar",
                       "type": "StatusNavBarTabButton", "visible": True}
+activityCenterButton = {"container": communitiesSettingsNavBarList, "objectName": "Activity Center-navbar", "type": "StatusNavBarTabButton", "visible": True}
 
 # Online identifier
 onlineIdentifierButton = {"container": mainWindow_LeftPanelNavBar, "objectName": "statusProfileNavBarTabButton",

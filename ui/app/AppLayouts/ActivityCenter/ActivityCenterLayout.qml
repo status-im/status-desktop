@@ -59,6 +59,9 @@ StatusSectionLayout {
     }
 
     leftPanel: ColumnLayout {
+
+        objectName: "activityCenterLeftPanel"
+
         id: leftPanel
         anchors.fill: parent
         spacing: 0

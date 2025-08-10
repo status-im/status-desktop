@@ -10,6 +10,7 @@ import driver
 from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
 from constants import UserAccount, CommunityData, Color
 from constants.dock_buttons import DockButtons
+from gui.components.activity_center import ActivityCenter
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.toast_message import ToastMessage
@@ -42,6 +43,12 @@ class MainLeftPanel(QObject):
         self.community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
         self.settings_button = Button(names.settingsGearButton)
         self.wallet_button = Button(names.mainWalletButton)
+        self.activity_center_button = Button(names.activityCenterButton)
+
+    @allure.step('Click notifications button and open activity center')
+    @open_with_retries(ActivityCenter)
+    def open_activity_center(self):
+        return self.activity_center_button
 
     @allure.step('Click Home button and open Home screen')
     @open_with_retries(HomeScreen)
