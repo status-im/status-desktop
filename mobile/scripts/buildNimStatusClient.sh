@@ -25,6 +25,12 @@ else
         --passL="-L$LIB_DIR" --passL="-lstatus" --passL="-lStatusQ$LIB_SUFFIX" --passL="-lDOtherSide$LIB_SUFFIX" --passL="-lqrcodegen" --passL="-lqzxing" --passL="-lssl_3" --passL="-lcrypto_3" -d:taskpool)
 fi
 
+if [ -n "$USE_QML_SERVER" ]; then
+  QML_SERVER_DEFINES="-d:USE_QML_SERVER=$USE_QML_SERVER"
+else
+  QML_SERVER_DEFINES=""
+fi
+
 echo "Building status-client for $ARCH using compiler: $CC"
 
 cd "$STATUS_DESKTOP"
