@@ -59,10 +59,10 @@ class ActivityCenter(QObject):
 
     def __init__(self):
         super().__init__(activity_center_names.activityCenterLeftPanel)
-        self.activity_center_button = Scroll(names.activityCenterStatusFlatButton)
+        self.activity_center_button = Button(activity_center_names.activityCenterGroupButton)
         self.activity_center_contact_request = QObject(activity_center_names.activityCenterContactRequest)
         self.scroll = Scroll(activity_center_names.activityCenterScrollView)
-        self.navigation_button = Button(activity_center_names.activityCenterNavigationButton)
+        self.navigation_button_next = Button(activity_center_names.activityCenterNavigationButton)
 
     @property
     @allure.step('Get contact items')
@@ -78,7 +78,7 @@ class ActivityCenter(QObject):
         while not self.activity_center_button.is_visible:
             if time.monotonic() - started_at > 5:
                 raise TimeoutError(f'Activity center button with text "{text}" not found after {5} seconds')
-            self.navigation_button.click()
+            self.navigation_button_next.click()
         self.activity_center_button.click()
         return self
 

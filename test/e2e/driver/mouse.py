@@ -43,6 +43,7 @@ def press_and_move(
     squish.mouseRelease(mouse)
     time.sleep(1)
 
+
 def scroll(
         obj,
         x: int,
