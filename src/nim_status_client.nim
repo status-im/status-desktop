@@ -174,8 +174,13 @@ proc mainProc() =
   initializeWebView()
   enableHDPI(uiScaleFilePath)
   tryEnableThreadedRenderer()
+  prepareLogging()
+  installMessageHandler(logHandlerCallback)
 
   let imageCert = imageServerTLSCert()
+  echo "Installing self-signed certificate for image server"
+  echo "Certificate: ", imageCert
+  echo "===================================================="
   installSelfSignedCertificate(imageCert)
 
   let app = newQGuiApplication()
@@ -201,9 +206,6 @@ proc mainProc() =
 
   if not main_constants.IS_MACOS:
     app.icon(app.applicationDirPath & statusAppIconPath)
-
-  prepareLogging()
-  installMessageHandler(logHandlerCallback)
 
   singletonInstance.engine.addImportPath("qrc:/")
   singletonInstance.engine.addImportPath("qrc:/./imports")
