@@ -26,7 +26,7 @@ if [[ "${OS}" == "android" ]]; then
     echo "Building for Android 35"
     ANDROID_PLATFORM=android-35
 
-    qmake "$CWD/../wrapperApp/Status-tablet.pro" CONFIG+=device CONFIG+=release -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
+    qmake "$CWD/../wrapperApp/Status-tablet.pro" CONFIG+=device CONFIG+=release -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" -after
 
     # Build the app
     make -j"$(nproc)" apk_install_target
