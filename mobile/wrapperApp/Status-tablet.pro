@@ -19,12 +19,12 @@ QML_IMPORT_PATH += $$PWD/../../ui/imports \
                    $$PWD/../../ui/StatusQ/src
 
 QMLPATHS += $$QML_IMPORT_PATH
-LIB_PREFIX = qt$$QT_MAJOR_VERSION
+LIB_PREFIX = qt$$QT_MAJOR_VERSION/$$(APP_VARIANT)
 
 android {
     message("cofiguring for android $${QT_ARCH}, $$(ANDROID_ABI)")
     
-    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/$$LIB_PREFIX
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/qt$$QT_MAJOR_VERSION
 
     LIBS += -L$$PWD/../lib/android/$$LIB_PREFIX -lnim_status_client
     ANDROID_EXTRA_LIBS += \
