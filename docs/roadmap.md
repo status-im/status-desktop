@@ -60,23 +60,23 @@ Release Epic: https://github.com/status-im/status-desktop/issues/17966
   - Runs parallel to other features and doesn't need to be shipped to any particular milestones
   - No API changes are expected until the Chat SDK is integrated
   - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
-  - In Progress ⏳ 20% 🟩⬜⬜⬜⬜ (estimated progress as not all subtasks are created)
+  - In Progress ⏳ 22% 🟩⬜⬜⬜⬜ (+2%) (estimated progress as not all subtasks are created)
 - [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
   - No provided FURPS at the moment
     - This is about maintaing the same level of quality as with QT5 but with QT6 instead.
-  - In Progress ⏳ 🟩🟩🟩🟩🟨 91%
+  - In Progress ⏳ 🟩🟩🟩🟩🟨 92% (+1%)
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
   - [FURPS](/docs/FURPS/tablet-build.md)
-  - In Progress ⏳ 🟩🟩🟩🟩⬜ 86% (+6)
+  - In Progress ⏳ 🟩🟩🟩🟩⬜ 86%
 - [Jump to screen (Shell)](https://github.com/status-im/status-desktop/issues/17971)
   - [FURPS](/docs/FURPS/jump-to-screen-shell.md)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
 - [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
   - [FURPS](/docs/FURPS/local-user-backups.md)
-  - In Progress ⏳ 🟩🟩🟩🟩🟨 96% (+8%)
+  - Done ✅ 🟩🟩🟩🟩🟩 100% (+4%)
 - [Memory and Performance improvements](https://github.com/status-im/status-desktop/issues/18296)
   - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
-  - In Progress ⏳ 🟩🟩🟩⬜⬜ 60% (+10%)
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 65% (+5%)
 
 ### 2.36
 
@@ -88,12 +88,15 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
   - Progress is also inherited from the Tablet Epic above
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 23% (+6%)
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 26% (+3%)
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
   - In Progress ⏳ (analysis and design phase)
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
+  - In Progress ⏳ 🟨⬜⬜⬜⬜ 10% (+10%)
+- [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
+  - In Progress ⏳ ⬜⬜⬜⬜⬜ 8% (+8%)
 - [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
   - In Progress ⏳
 - Ethereum Follow Protocol
