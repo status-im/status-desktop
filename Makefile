@@ -796,7 +796,7 @@ $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_EXE): INSTALLER_OUTPUT := pkg
 $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_launcher
 	rm -rf pkg/*.exe tmp/windows/dist
-	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n
+	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n $(OUTPUT)/bin/plugins/tls
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
 	cp status.ico status.png resources.rcc $(OUTPUT)/resources/
 	cp bin/i18n/* $(OUTPUT)/resources/i18n
@@ -815,6 +815,7 @@ $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_la
 		tmp/windows/dist/Status/bin/DOtherSide.dll
 	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
 	cp status.iss $(OUTPUT)/status.iss
+	cp $(QT_INSTALL_PREFIX)/plugins/tls/qopensslbackend.dll $(OUTPUT)/bin/plugins/tls/
 # if WINDOWS_CODESIGN_PFX_PATH is not set then DLLs, EXEs are not signed
 ifdef WINDOWS_CODESIGN_PFX_PATH
 	scripts/sign-windows-bin.sh ./tmp/windows/dist/Status
