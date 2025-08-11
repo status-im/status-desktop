@@ -1,6 +1,6 @@
 import nimqml
 import json, strutils
-import chronicles
+import chronicles, json_serialization
 import app/core/eventemitter
 
 import app/core/signals/types
