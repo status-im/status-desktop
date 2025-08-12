@@ -10,7 +10,6 @@ QtObject:
       items: seq[string]
 
   proc delete(self: PermissionsModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: PermissionsModel) =
