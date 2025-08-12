@@ -1349,7 +1349,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   ## If includeDetails is true, additional details are calculated, like color hash and that results in higher CPU usage,
   ## that's why by default it is false and we should set it to true only when we really need it.
   if includeDetails:
-    contactDetails = self.controller.getContactDetails(publicKey, skipBackendCalls = false)
+    contactDetails = self.controller.getContactDetails(publicKey)
   else:
     contactDetails.dto = self.controller.getContact(publicKey)
 
@@ -2075,7 +2075,7 @@ proc createMemberItem[T](
     role: MemberRole,
     airdropAddress: string = "",
     ): MemberItem =
-  let contactDetails = self.controller.getContactDetails(memberId, skipBackendCalls = true)
+  let contactDetails = self.controller.getContactDetails(memberId)
   let status = self.controller.getStatusForContactWithId(memberId)
   return createMemberItemFromDtos(
     contactDetails,
@@ -2087,7 +2087,7 @@ proc createMemberItem[T](
   )
 
 method contactUpdated*[T](self: Module[T], contactId: string) =
-  let contactDetails = self.controller.getContactDetails(contactId, skipBackendCalls = false)
+  let contactDetails = self.controller.getContactDetails(contactId)
   self.view.model().updateMemberItemInSections(
     pubKey = contactId,
     displayName = contactDetails.dto.displayName,

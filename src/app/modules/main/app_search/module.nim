@@ -363,7 +363,7 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
   var sectionName = personalChatSectionName
   if chat.chatType == ChatType.OneToOne:
     # TODO find a way to populate the chat with the contact details and use as single source of truth
-    let contactDetails = self.controller.getContactDetails(chat.id, skipBackendCalls = false)
+    let contactDetails = self.controller.getContactDetails(chat.id)
     chatName = contactDetails.defaultDisplayName
     chatImage = contactDetails.icon
     if not contactDetails.dto.ensVerified:
@@ -428,7 +428,7 @@ method updateChatItems*(self: Module, updatedChats: seq[ChatDto]) =
     self.view.chatSearchModel().updateChatItem(chat.id, chat.name, chat.color, chat.icon, chat.emoji)
 
 method contactUpdated*(self: Module, contactId: string) =
-  let contactDetails = self.controller.getContactDetails(contactId, skipBackendCalls = false)
+  let contactDetails = self.controller.getContactDetails(contactId)
   self.view.chatSearchModel().updateChatItem(contactId, contactDetails.defaultDisplayName, color = "",
     contactDetails.icon, emoji = "")
 
