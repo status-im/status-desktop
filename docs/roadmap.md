@@ -114,6 +114,6 @@ Not all Epics are created yet as it's too early to know exactly what will be wor
   - Dependant on the Chat SDK being (partialy) implemented and integrated as part of the Backend refactor.
 - News Feed on Waku
 - File sending over Codex
-  - Dependant on Codex being available in Light mode for mobile and having a C library.
+  - [FURPS](/docs/FURPS/status-using-codex.md)
 - Keycard Shell Integration
 
