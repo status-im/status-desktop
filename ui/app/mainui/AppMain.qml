@@ -1457,8 +1457,8 @@ Item {
                 Layout.fillWidth: true
 
                 // apply left/right margins when we remove the window titlebar
-                Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.Window.SafeArea.margins.left : 0
-                Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.Window.SafeArea.margins.right : 0
+                Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.left : 0
+                Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.right : 0
 
                 Layout.maximumHeight: implicitHeight
                 spacing: 1
