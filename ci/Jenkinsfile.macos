@@ -68,7 +68,7 @@ pipeline {
   }
 
   environment {
-    PLATFORM = "macos/${getArch()}"
+    PLATFORM = "linux/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     QT_VERSION="6.9.0"
