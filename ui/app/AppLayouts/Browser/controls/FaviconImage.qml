@@ -3,7 +3,6 @@ import QtQuick
 import StatusQ.Core.Theme
 
 import shared
-import utils
 
 Image {
     id: faviconImage
