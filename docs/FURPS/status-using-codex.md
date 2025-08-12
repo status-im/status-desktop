@@ -6,7 +6,6 @@
 
 - Data stored via Codex must remain **available for at least 30 days**
 - Content must be **accessible even if the original uploader is offline**
-- Must support **protocol compatibility across 2 minor versions**
 - Mobile clients must be able to **send/receive files without running full nodes** (light mode)
 
 ### Usability
@@ -18,21 +17,25 @@
 ### Reliability
 
 - Ensure file availability regardless of sender being offline or unresponsive
-- Codex must provide **redundancy** such that no single node is responsible for keeping the data available
-- Content must be **verifiable** via hash or signature
-- Integration must handle network failures without data loss
-
+- Codex must provide a reliability of 99.99% the data will be available when **some** nodes are offline
+- Resumable uploads and downloads must be supported
 
 ### Performance
 
 - Desktop Codex nodes must not exceed:
-  - **200MB RAM**
-  - **10% CPU**
+  - while actively storing and/or sending:
+    - **1000MB RAM**
+    - **20% CPU**
+  - while idle:
+    - **100MB RAM**
+    - **5% CPU**
 - Storage limits must be **configurable** for Desktop nodes (e.g., maximum disk space used).
 - Mobile clients must use **minimal resources**
 
 ### Supportability
 
+- Must support a migration path so that there is never a breaking change in between consecutive versions of Status
+  - eg: v0.1.0 works with v0.2.0. v0.2.0 works with v0.3.0, However, it is ok if v0.1.0 does **not** work with v0.3.0
 - [nice to have] Codex should expose a **stable API through a C library** to enable integration with Status backend services
 - Provide **clear documentation** for embedding Codex into Status:
   - Build instructions
