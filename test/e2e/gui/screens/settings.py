@@ -49,7 +49,7 @@ class SettingsLeftPanel(QObject):
         return MessagingSettingsView().wait_until_appears()
 
     @allure.step('Open communities settings')
-    @retry_settings(CommunitiesSettingsView, '12-MenuItem')
+    @retry_settings(CommunitiesSettingsView, '13-MenuItem')
     def open_communities_settings(self) -> 'CommunitiesSettingsView':
         return CommunitiesSettingsView().wait_until_appears()
 
