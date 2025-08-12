@@ -557,11 +557,12 @@ StatusWindow {
         MouseArea {
             id: headerMouseArea
             enabled: d.macOSWindowed
-            preventStealing: true
             propagateComposedEvents: true
             onPressed: {
                 applicationWindow.startSystemMove()
+                mouse.accepted = false
             }
+
         }
     }
 }
