@@ -71,6 +71,9 @@ pipeline {
     PLATFORM = "macos/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=2"
+    /* Use Xcode clang instead of Homebrew */
+    CC = "/usr/bin/clang"
+    CXX = "/usr/bin/clang++"
     QT_VERSION="6.9.0"
     QMAKE = "/Users/admin/${QT_VERSION}/macos/bin/qmake"
     /* QMAKE = sh(script: "which qmake", returnStdout: true).trim() */
