@@ -138,6 +138,15 @@ FocusScope {
             }
 
             contentItem: RowLayout {
+                StatusIcon {
+                    Layout.preferredWidth: 13
+                    Layout.preferredHeight: 13
+                    opacity: tabButton.checked || tabButton.hovered ? 1 : Theme.disabledOpacity
+                    Behavior on opacity {OpacityAnimator {duration: Theme.AnimationDuration.Fast}}
+                    sourceSize: Qt.size(width, height)
+                    icon: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).icon.toString().replace("image://favicon/", "")
+                                                              : "globe"
+                }
                 StatusBaseText {
                     Layout.fillWidth: true
                     elide: Qt.ElideRight
