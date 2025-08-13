@@ -268,15 +268,14 @@ ColumnLayout {
                 name: "balance"
                 expression: {
                     d.addrFilters
-                    return d.getBalance(model.ownership, d.addrFilters)
+                    return 1
                 }
                 expectedRoles: ["ownership"]
             },
             FastExpressionRole {
                 name: "lastTxTimestamp"
                 expression: {
-                    d.addrFilters
-                    return d.getLatestTimestamp(model.ownership, d.addrFilters)
+                    return 1
                 }
                 expectedRoles: ["ownership"]
             }
@@ -321,12 +320,12 @@ ColumnLayout {
                 }
                 enabled: d.isCustomView
                 expectedRoles: ["symbol"]
-            },
-            RoleSorter {
-                roleName: cmbTokenOrder.currentSortRoleName
-                sortOrder: cmbTokenOrder.currentSortOrder
-                enabled: !d.isCustomView
             }
+//            RoleSorter {
+//                roleName: cmbTokenOrder.currentSortRoleName
+//                sortOrder: cmbTokenOrder.currentSortOrder
+//                enabled: !d.isCustomView
+//            }
         ]
     }
 
@@ -357,7 +356,7 @@ ColumnLayout {
                             name: "balance"
                             expression: {
                                 d.addrFilters
-                                return d.getBalance(model.ownership, d.addrFilters)
+                                return 0
                             }
                             expectedRoles: ["ownership"]
                         }
