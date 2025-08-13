@@ -459,6 +459,12 @@ StatusDialog {
 
         readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.selectedChainId)
 
+        readonly property bool marketDataNotAvailable: d.selectedAssetEntryValid &&
+                                                      d.selectedAssetEntry.item &&
+                                                      d.selectedAssetEntry.item.marketDetails &&
+                                                      d.selectedAssetEntry.item.marketDetails.currencyPrice &&
+                                                      (!d.selectedAssetEntry.item.marketDetails.currencyPrice.amount ||
+                                                       d.selectedAssetEntry.item.marketDetails.currencyPrice.amount === 0)
 
         readonly property var selectedNetworkEntry: ModelEntry {
             sourceModel: root.networksModel
@@ -628,6 +634,7 @@ StatusDialog {
                     Layout.fillWidth: true
 
                     interactive: root.interactive
+                    fiatInputInteractive: root.interactive && !d.marketDataNotAvailable
                     dividerVisible: true
                     bottomTextLoading: root.routesLoading
 
@@ -638,9 +645,8 @@ StatusDialog {
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:
                                         d.selectedCryptoTokenSymbol
-                    price: !!d.selectedAssetEntryValid &&
-                           !!d.selectedAssetEntry.item.marketDetails ?
-                               d.selectedAssetEntry.item.marketDetails.currencyPrice.amount : 1
+                    price: d.marketDataNotAvailable ? 1 :
+                               d.selectedAssetEntry.item.marketDetails.currencyPrice.amount
                     multiplierIndex: !!d.selectedAssetEntryValid &&
                                      !!d.selectedAssetEntry.item.decimals ?
                                          d.selectedAssetEntry.item.decimals : 0
