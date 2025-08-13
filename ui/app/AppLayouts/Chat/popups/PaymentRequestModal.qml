@@ -181,7 +181,6 @@ StatusDialog {
                 active: accountSelector.control.down || accountSelector.control.hovered
             }
 
-            popup.verticalPadding: 0
             popup.width: accountSelector.width
             control.contentItem: WalletAccountListItem {
                 readonly property var account: accountSelector.currentAccount

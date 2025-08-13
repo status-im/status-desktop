@@ -26,9 +26,9 @@ StatusDropdown {
 
     signal emojiSelected(string emoji, bool atCu, string hexcode)
 
-    modal: false
     width: 360
     padding: 0
+    closePolicy: Popup.CloseOnEscape | (root.bottomSheet ? Popup.CloseOnPressOutside: Popup.CloseOnPressOutsideParent)
 
     function addEmoji(hexcode) {
         const extensionIndex = hexcode.lastIndexOf('.');
@@ -206,6 +206,7 @@ StatusDropdown {
         StatusGridView {
             id: emojiGrid
             Layout.fillWidth: true
+            Layout.preferredHeight: root.bottomSheet ? root.availableHeight: 0
             Layout.fillHeight: true
             Layout.leftMargin: d.headerMargin
 
