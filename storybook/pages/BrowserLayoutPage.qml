@@ -24,6 +24,7 @@ Item {
     BrowserLayout {
         id: browserLayout
         anchors.fill: parent
+        userUID: "0xdeadbeef"
         transactionStore: TransactionStore {}
         assetsStore: WalletAssetsStore {}
         currencyStore: CurrenciesStore {}
