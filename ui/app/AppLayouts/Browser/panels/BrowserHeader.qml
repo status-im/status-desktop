@@ -70,7 +70,7 @@ Rectangle {
                 } else
                     goBack()
             }
-            onPressAndHold: {
+            onPressAndHold: function(mouse) {
                 if (canGoBack) {
                     openHistoryPopup(backButton.x, backButton.y + backButton.height)
                 }
@@ -95,7 +95,7 @@ Rectangle {
                 } else
                     goForward()
             }
-            onPressAndHold: {
+            onPressAndHold: function(mouse) {
                 if (canGoForward) {
                     openHistoryPopup(forwardButton.x, forwardButton.y + forwardButton.height)
                 }

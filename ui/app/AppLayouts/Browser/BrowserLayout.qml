@@ -30,6 +30,8 @@ import "panels"
 StatusSectionLayout {
     id: root
 
+    required property string userUID
+
     required property TransactionStore transactionStore
     required property var assetsStore
     required property var currencyStore
@@ -103,7 +105,7 @@ StatusSectionLayout {
         })
 
         property QtObject defaultProfile: WebEngineProfile {
-            storageName: "Profile"
+            storageName: "Profile_%1".arg(root.userUID)
             offTheRecord: false
             httpUserAgent: {
                 if (localAccountSensitiveSettings.compatibilityMode) {
@@ -117,6 +119,7 @@ StatusSectionLayout {
         }
 
         property QtObject otrProfile: WebEngineProfile {
+            storageName: "IncognitoProfile_%1".arg(root.userUID)
             offTheRecord: true
             persistentCookiesPolicy: WebEngineProfile.NoPersistentCookies
             httpUserAgent: _internal.defaultProfile.httpUserAgent
