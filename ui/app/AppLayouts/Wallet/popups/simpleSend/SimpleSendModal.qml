@@ -768,6 +768,7 @@ StatusDialog {
                         fiatFees: root.estimatedFiatFees
                         loading: root.routesLoading && root.allValuesFilledCorrectly
                         error: d.errNotEnoughEth
+                        marketDataNotAvailable: d.marketDataNotAvailable
                         networkName: !!d.selectedNetworkEntry.item && d.selectedNetworkEntry.available ?
                                          d.selectedNetworkEntry.item.chainName: ""
                     }
@@ -789,7 +790,7 @@ StatusDialog {
         width: root.width
 
         estimatedTime: root.estimatedTime
-        estimatedFees: root.estimatedFiatFees
+        estimatedFees: d.marketDataNotAvailable ? root.estimatedCryptoFees : root.estimatedFiatFees
 
         blurSource: scrollView.contentItem
         blurSourceRect: Qt.rect(0, scrollView.height, width, height)
