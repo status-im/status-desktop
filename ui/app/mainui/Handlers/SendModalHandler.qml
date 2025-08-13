@@ -445,6 +445,7 @@ QtObject {
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
+            marketDataNotAvailable: handler.marketDataNotAvailable
 
             onOpened: {
                 if(isValidParameter(root.simpleSendParams.interactive)) {
@@ -576,6 +577,16 @@ QtObject {
                 property var fetchedPathModel
 
                 signal refreshTxSettings()
+
+                readonly property bool marketDataNotAvailable: {
+                    const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                    const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
+                    return !!nativeToken &&
+                           !!nativeToken.marketDetails &&
+                           !!nativeToken.marketDetails.currencyPrice &&
+                           (!nativeToken.marketDetails.currencyPrice.amount ||
+                            nativeToken.marketDetails.currencyPrice.amount === 0)
+                }
 
                 readonly property string extraParamsJson: {
                     if (!!simpleSendModal.stickersPackId) {
@@ -762,11 +773,17 @@ QtObject {
                         const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
                         let nativeTokenFiatValue = !!nativeToken ? nativeToken.marketDetails.currencyPrice.amount: 1
                         let totalFees = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, value)
-                        let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()
-                        const totalFeesInGwei = Math.round(SQUtils.AmountsArithmetic.toNumber(SQUtils.AmountsArithmetic.fromString(value), 9))
-                        simpleSendModal.estimatedGWEIFees = root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")
+
                         simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), nativeTokenSymbol)
-                        simpleSendModal.estimatedFiatFees = totalFeesInFiat
+
+			// Use GWEI fees as fiat fees when market data is not available
+                        if (handler.marketDataNotAvailable) {
+                            const totalFeesInGwei = Math.round(SQUtils.AmountsArithmetic.toNumber(SQUtils.AmountsArithmetic.fromString(value), 9))
+                            simpleSendModal.estimatedFiatFees = root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")
+                        } else {
+                            let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()
+                            simpleSendModal.estimatedFiatFees = totalFeesInFiat
+                        }
                     }
                 }
 
@@ -1074,10 +1091,16 @@ QtObject {
                     }
 
                     fiatFees: {
-                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                        const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
-                        const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
-                        return root.fnFormatCurrencyAmount(feeTokenPrice*decimalTotalFees, root.currentCurrency).toString()
+                        // Use GWEI fees when market data is not available
+                        if (handler.marketDataNotAvailable) {
+                            const totalFeesInGwei = Math.round(decimalTotalFees * 1000000000)
+                            return root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")
+                        } else {
+                            const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                            const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
+                            const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
+                            return root.fnFormatCurrencyAmount(feeTokenPrice*decimalTotalFees, root.currentCurrency).toString()
+                        }
                     }
 
                     cryptoFees: {
