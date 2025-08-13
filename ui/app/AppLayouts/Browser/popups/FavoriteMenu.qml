@@ -10,10 +10,10 @@ StatusMenu {
 
     required property BrowserStores.BookmarksStore bookmarksStore
 
-    property var openInNewTab: function () {}
     property string url
     property var currentFavorite: root.bookmarksStore.getCurrentFavorite(url)
 
+    signal openInNewTab(url url)
     signal editFavoriteTriggered()
 
     StatusAction {
@@ -31,7 +31,7 @@ StatusMenu {
         icon.name: "edit"
         onTriggered: {
             // Force reloading current favorite as it could have been modified when edited:
-            root.currentFavorite = root.bookmarksStore.getCurrentFavorite(url)
+            root.currentFavorite = root.bookmarksStore.getCurrentFavorite(root.url)
             editFavoriteTriggered()
         }
     }

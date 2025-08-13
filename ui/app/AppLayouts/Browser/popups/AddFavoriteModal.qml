@@ -1,6 +1,8 @@
 import QtQuick
 import Qt5Compat.GraphicalEffects
 
+import StatusQ
+import StatusQ.Core.Utils
 import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Controls.Validators
@@ -11,16 +13,16 @@ import utils
 
 import AppLayouts.Browser.stores as BrowserStores
 
-// TODO: replace with StatusModal
+// TODO: replace with StatusDialog
 ModalPopup {
     id: root
+
+    required property BrowserStores.BookmarksStore bookmarksStore
 
     property string ogUrl: ""
     property string ogName: ""
     property bool modifiyModal: false
     property bool toolbarMode: false
-
-    required property BrowserStores.BookmarksStore bookmarksStore
 
     width: toolbarMode ? 345 : 480
     height: toolbarMode ? 400 : 480
@@ -71,7 +73,7 @@ ModalPopup {
     title: modifiyModal ?
                toolbarMode ?
                    qsTr("Favourite added") :
-                   qsTr("Edit")
+                   qsTr("Edit favourite")
                : qsTr("Add favourite")
 
     Column {
@@ -90,16 +92,16 @@ ModalPopup {
                 borderColor: Theme.palette.primaryColor1
                 size: StatusBaseButton.Size.Tiny
                 text: qsTr("Paste")
+                visible: ClipboardUtils.hasText && Utils.isURL(ClipboardUtils.text)
                 onClicked: {
                     text = qsTr("Pasted")
-                    urlInput.input.edit.paste()
+                    urlInput.text = ClipboardUtils.text
                 }
             }
             validators: [
-                StatusUrlValidator {
-                    errorMessage: qsTr("Please enter a valid URL")
-                }
+                StatusUrlValidator {}
             ]
+            validationMode: StatusInput.ValidationMode.Always
         }
 
         StatusInput {
@@ -117,6 +119,7 @@ ModalPopup {
                     minLength: 1
                 }
             ]
+            validationMode: StatusInput.ValidationMode.Always
         }
     }
 
@@ -146,7 +149,7 @@ ModalPopup {
                       qsTr("Done") :
                       qsTr("Add")
             anchors.bottom: parent.bottom
-            enabled: nameInput.valid && !!nameInput.text && urlInput.valid && !!urlInput.text
+            enabled: nameInput.valid && urlInput.valid
             onClicked: {
                 if (!root.modifiyModal) {
                     // remove "add favorite" button at the end, add new bookmark, add "add favorite" button back

@@ -12,7 +12,7 @@ import shared.popups
 
 import utils
 
-// TODO: replace with StatusModal
+// TODO: replace with StatusDialog
 ModalPopup {
     id: root
     property QtObject request
