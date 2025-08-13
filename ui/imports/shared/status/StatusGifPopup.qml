@@ -16,7 +16,7 @@ import shared.controls
 
 import "./StatusGifPopup"
 
-Popup {
+StatusDropdown {
     id: root
 
     property bool gifUnfurlingEnabled
@@ -59,7 +59,6 @@ Popup {
 
     signal gifSelected(var event, var url)
 
-    modal: false
     width: 360
 
     background: Rectangle {
@@ -95,11 +94,12 @@ Popup {
 
     padding: 0
 
-    Item {
-        anchors.fill: parent
+    contentItem: Item {
+        implicitWidth: parent.width
+        implicitHeight: childrenRect.height
 
         ColumnLayout {
-            anchors.fill: parent
+            width: parent.width
             spacing: 0
 
             Item {
@@ -208,22 +208,22 @@ Popup {
             anchors.fill: parent
             visible: confirmationPopupLoader.active
         }
-    }
 
-    Loader {
-        id: confirmationPopupLoader
+        Loader {
+            id: confirmationPopupLoader
 
-        anchors.centerIn: parent
+            anchors.centerIn: parent
 
-        sourceComponent: ConfirmationPopup {
-            visible: true
+            sourceComponent: ConfirmationPopup {
+                visible: true
 
-            onEnableGifsRequested: {
-                root.setGifUnfurlingEnabled(true)
-                root.getTrendingsGifs()
+                onEnableGifsRequested: {
+                    root.setGifUnfurlingEnabled(true)
+                    root.getTrendingsGifs()
+                }
             }
+            active: !root.gifUnfurlingEnabled
         }
-        active: !root.gifUnfurlingEnabled
     }
 
     Component {

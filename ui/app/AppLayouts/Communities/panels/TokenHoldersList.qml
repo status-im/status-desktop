@@ -225,7 +225,7 @@ Item {
                         size: StatusComboBox.Size.Small
                         type: StatusComboBox.Type.Secondary
                         delegate: StatusItemDelegate {
-                            width: combo.control.width
+                            width: parent.width
                             centerTextHorizontally: true
                             highlighted: combo.control.highlightedIndex === index
                             font: combo.control.font

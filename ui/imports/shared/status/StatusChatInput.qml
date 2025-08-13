@@ -176,13 +176,12 @@ Rectangle {
 
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
-                when: d.emojiPopupOpened
+                when: d.emojiPopupOpened && !emojiPopup.bottomSheet
 
                 PropertyChanges {
                     target: emojiPopup
 
                     parent: emojiBtn
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                     x: d.emojiPopupPosition.x
                     y: d.emojiPopupPosition.y
                 }
@@ -190,13 +189,12 @@ Rectangle {
         }
         readonly property StateGroup stickersPopupTakeover: StateGroup {
             states: State {
-                when: d.stickersPopupOpened
+                when: d.stickersPopupOpened && !stickersPopup.bottomSheet
 
                 PropertyChanges {
                     target: stickersPopup
 
                     parent: stickersBtn
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                     x: d.stickersPopupPosition.x
                     y: d.stickersPopupPosition.y
                 }

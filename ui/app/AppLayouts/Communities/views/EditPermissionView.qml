@@ -339,8 +339,10 @@ StatusScrollView {
 
             addButton.onClicked: {
                 dropdown.parent = tokensSelector.addButton
-                dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
-                dropdown.y = 0
+                if (!dropdown.bottomSheet) {
+                    dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
+                    dropdown.y = 0
+                }
                 dropdown.open()
 
                 editedIndex = -1
