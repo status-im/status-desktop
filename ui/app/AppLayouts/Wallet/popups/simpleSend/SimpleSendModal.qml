@@ -142,6 +142,8 @@ StatusDialog {
     property string estimatedFiatFees
     /** input property to set estimated fees in crypto **/
     property string estimatedCryptoFees
+    /** input property to set estimated fees in gwei **/
+    property string estimatedGWEIFees
     /** input property to set router error title **/
     property string routerError: ""
     /** input property to set router error details **/
@@ -765,10 +767,9 @@ StatusDialog {
                         Layout.fillWidth: true
 
                         cryptoFees: root.estimatedCryptoFees
-                        fiatFees: root.estimatedFiatFees
+                        fiatFees: d.marketDataNotAvailable ? root.estimatedGWEIFees : root.estimatedFiatFees
                         loading: root.routesLoading && root.allValuesFilledCorrectly
                         error: d.errNotEnoughEth
-                        marketDataNotAvailable: d.marketDataNotAvailable
                         networkName: !!d.selectedNetworkEntry.item && d.selectedNetworkEntry.available ?
                                          d.selectedNetworkEntry.item.chainName: ""
                     }
@@ -790,7 +791,7 @@ StatusDialog {
         width: root.width
 
         estimatedTime: root.estimatedTime
-        estimatedFees: d.marketDataNotAvailable ? root.estimatedCryptoFees : root.estimatedFiatFees
+        estimatedFees: d.marketDataNotAvailable ? root.estimatedGWEIFees : root.estimatedFiatFees
 
         blurSource: scrollView.contentItem
         blurSourceRect: Qt.rect(0, scrollView.height, width, height)
