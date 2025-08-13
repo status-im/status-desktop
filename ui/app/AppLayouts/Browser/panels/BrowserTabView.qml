@@ -156,6 +156,14 @@ FocusScope {
                     Behavior on color {ColorAnimation {duration: Theme.AnimationDuration.Fast}}
                     text: tabButton.tabTitle
                 }
+                StatusIcon {
+                    Layout.preferredWidth: 13
+                    Layout.preferredHeight: 13
+                    opacity: tabButton.checked || tabButton.hovered ? 1 : Theme.disabledOpacity
+                    Behavior on opacity {OpacityAnimator {duration: Theme.AnimationDuration.Fast}}
+                    icon: "hide"
+                    visible: root.getTab(tabButton.TabBar.index).profile.offTheRecord
+                }
                 StatusFlatButton {
                     Layout.alignment: Qt.AlignRight
                     size: StatusBaseButton.Size.XSmall
