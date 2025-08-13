@@ -132,7 +132,7 @@ StatusDialog {
             readonly property bool ready: valid && !empty
 
             multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
-            price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
+            cryptoPrice: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
 
             formatFiat: amount => root.formatCurrencyAmount(
                             amount, root.currentCurrency)

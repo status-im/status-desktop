@@ -645,7 +645,7 @@ StatusDialog {
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:
                                         d.selectedCryptoTokenSymbol
-                    price: d.marketDataNotAvailable ? 0 :
+                    cryptoPrice: d.marketDataNotAvailable ? 0 :
                                d.selectedAssetEntry.item.marketDetails.currencyPrice.amount
                     multiplierIndex: !!d.selectedAssetEntryValid &&
                                      !!d.selectedAssetEntry.item.decimals ?
@@ -673,7 +673,7 @@ StatusDialog {
                         id: maxButton
 
                         formattedValue: {
-                            let maxSafeValue = amountToSend.fiatMode ? d.maxSafeCryptoValue * amountToSend.price : d.maxSafeCryptoValue
+                            let maxSafeValue = amountToSend.fiatMode ? d.maxSafeCryptoValue * amountToSend.cryptoPrice : d.maxSafeCryptoValue
                             return root.fnFormatCurrencyAmount(
                                         maxSafeValue,
                                         amountToSend.selectedSymbol,
