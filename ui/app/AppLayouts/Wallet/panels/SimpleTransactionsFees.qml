@@ -18,8 +18,6 @@ Control {
     property bool loading
     /** property to set error state in the fees component **/
     property bool error
-    /** property to indicate if market data is not available **/
-    property bool marketDataNotAvailable
     property string networkName
 
     QtObject {
@@ -92,15 +90,13 @@ Control {
 
             Layout.alignment: Qt.AlignRight
 
-            loading: root.loading || (!root.fiatFees && !root.marketDataNotAvailable) || (root.marketDataNotAvailable && !root.cryptoFees)
+            loading: root.loading || !root.fiatFees
             customColor: root.error ? Theme.palette.dangerColor1:
                                       Theme.palette.baseColor1
             lineHeightMode: Text.FixedHeight
             lineHeight: 22
 
-            text: root.marketDataNotAvailable ? 
-                    (!!root.cryptoFees ? root.cryptoFees : d.loadingText) :
-                    (!!root.fiatFees ? root.fiatFees : d.loadingText)
+            text: !!root.fiatFees ? root.fiatFees: d.loadingText
         }
     }
 }

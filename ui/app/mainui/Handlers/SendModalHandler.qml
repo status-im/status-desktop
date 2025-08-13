@@ -763,6 +763,8 @@ QtObject {
                         let nativeTokenFiatValue = !!nativeToken ? nativeToken.marketDetails.currencyPrice.amount: 1
                         let totalFees = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, value)
                         let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()
+                        const totalFeesInGwei = Math.round(SQUtils.AmountsArithmetic.toNumber(SQUtils.AmountsArithmetic.fromString(value), 9))
+                        simpleSendModal.estimatedGWEIFees = root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")
                         simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), nativeTokenSymbol)
                         simpleSendModal.estimatedFiatFees = totalFeesInFiat
                     }
