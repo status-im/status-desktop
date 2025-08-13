@@ -150,6 +150,8 @@ StatusDialog {
     property string routerErrorDetails: ""
     /** input property to set router error code **/
     property string routerErrorCode
+    /** input property to indicate if market data is not available **/
+    property bool marketDataNotAvailable
 
     /** property to set currently selected send type **/
     property int sendType: Constants.SendType.Transfer
@@ -461,13 +463,6 @@ StatusDialog {
 
         readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.selectedChainId)
 
-        readonly property bool marketDataNotAvailable: d.selectedAssetEntryValid &&
-                                                      d.selectedAssetEntry.item &&
-                                                      d.selectedAssetEntry.item.marketDetails &&
-                                                      d.selectedAssetEntry.item.marketDetails.currencyPrice &&
-                                                      (!d.selectedAssetEntry.item.marketDetails.currencyPrice.amount ||
-                                                       d.selectedAssetEntry.item.marketDetails.currencyPrice.amount === 0)
-
         readonly property var selectedNetworkEntry: ModelEntry {
             sourceModel: root.networksModel
             key: "chainId"
@@ -636,7 +631,7 @@ StatusDialog {
                     Layout.fillWidth: true
 
                     interactive: root.interactive
-                    fiatInputInteractive: root.interactive && !d.marketDataNotAvailable
+                    fiatInputInteractive: root.interactive && !root.marketDataNotAvailable
                     dividerVisible: true
                     bottomTextLoading: root.routesLoading
 
@@ -647,7 +642,7 @@ StatusDialog {
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:
                                         d.selectedCryptoTokenSymbol
-                    cryptoPrice: d.marketDataNotAvailable ? 0 :
+                    cryptoPrice: root.marketDataNotAvailable ? 0 :
                                d.selectedAssetEntry.item.marketDetails.currencyPrice.amount
                     multiplierIndex: !!d.selectedAssetEntryValid &&
                                      !!d.selectedAssetEntry.item.decimals ?
@@ -767,7 +762,7 @@ StatusDialog {
                         Layout.fillWidth: true
 
                         cryptoFees: root.estimatedCryptoFees
-                        fiatFees: d.marketDataNotAvailable ? root.estimatedGWEIFees : root.estimatedFiatFees
+                        fiatFees: root.estimatedFiatFees
                         loading: root.routesLoading && root.allValuesFilledCorrectly
                         error: d.errNotEnoughEth
                         networkName: !!d.selectedNetworkEntry.item && d.selectedNetworkEntry.available ?
@@ -791,7 +786,7 @@ StatusDialog {
         width: root.width
 
         estimatedTime: root.estimatedTime
-        estimatedFees: d.marketDataNotAvailable ? root.estimatedGWEIFees : root.estimatedFiatFees
+        estimatedFees: root.estimatedFiatFees
 
         blurSource: scrollView.contentItem
         blurSourceRect: Qt.rect(0, scrollView.height, width, height)
