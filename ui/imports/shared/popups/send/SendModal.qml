@@ -608,7 +608,7 @@ StatusDialog {
                             && !!holdingSelector.selectedItem.decimals
                             ? holdingSelector.selectedItem.decimals : 0
 
-                        price: d.isSelectedHoldingValidAsset
+                        cryptoPrice: d.isSelectedHoldingValidAsset
                                ? (d.selectedHolding ?
                                       d.selectedHolding.marketDetails.currencyPrice.amount : 1)
                                : 1

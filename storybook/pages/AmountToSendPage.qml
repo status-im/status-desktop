@@ -31,7 +31,7 @@ SplitView {
             caption: captionField.text
 
             decimalPoint: decimalPointRadioButton.checked ? "." : ","
-            price: parseFloat(priceTextField.text)
+            cryptoPrice: parseFloat(priceTextField.text)
 
             multiplierIndex: multiplierIndexSpinBox.value
 
