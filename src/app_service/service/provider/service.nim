@@ -1,4 +1,4 @@
-import NimQml, json, chronicles
+import nimqml, json, chronicles
 
 import ../../../backend/provider as status_go_provider
 import ../../../app/core/eventemitter

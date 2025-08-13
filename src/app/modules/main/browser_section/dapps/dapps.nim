@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, stew/shims/strformat, json
+import nimqml, tables, strutils, stew/shims/strformat, json
 import ./item
 
 type
