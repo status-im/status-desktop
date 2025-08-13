@@ -2012,6 +2012,7 @@ Item {
 
                         sourceComponent: BrowserLayout {
                             id: browserLayout
+                            userUID: appMain.profileStore.pubKey
                             navBar: appMain.navBar
                             bookmarksStore: BrowserStores.BookmarksStore {}
                             downloadsStore: BrowserStores.DownloadsStore {}
