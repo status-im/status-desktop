@@ -281,7 +281,7 @@ StatusSectionLayout {
             Component.onCompleted: {
                 _internal.defaultProfile.downloadRequested.connect(_internal.onDownloadRequested);
                 _internal.otrProfile.downloadRequested.connect(_internal.onDownloadRequested);
-                var tab = createEmptyTab(_internal.defaultProfile);
+                var tab = createEmptyTab(_internal.defaultProfile, true);
                 // For Devs: Uncomment the next line if you want to use the simpledapp on first load
                 // tab.url = root.web3ProviderStore.determineRealURL("https://simpledapp.eth");
             }
