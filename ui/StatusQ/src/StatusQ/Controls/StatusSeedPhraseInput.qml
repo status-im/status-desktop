@@ -218,6 +218,10 @@ Item {
         leftPadding: 0
         rightPadding: 0
 
+        // On mobile, force popup to remain a dropdown instead of a bottom sheet.
+        // Reason: a bottom sheet would be hidden behind the on-screen keyboard.
+        bottomSheetEnabled: false
+
         visible: ((filteredList.count > 0) && seedWordInput.input.edit.activeFocus)
 
         StatusListView {
