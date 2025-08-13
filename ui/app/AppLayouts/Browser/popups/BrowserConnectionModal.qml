@@ -15,6 +15,7 @@ import AppLayouts.Browser.stores as BrowserStores
 
 import "../controls"
 
+// TODO: replace with StatusDialog
 StatusModal {
     id: root
 

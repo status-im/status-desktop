@@ -225,7 +225,7 @@ StatusSectionLayout {
             anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
             z: 52
             favoriteComponent: favoritesBar
-            currentFavorite: _internal.currentWebView && root.bookmarksStore.getCurrentFavorite(_internal.currentWebView.url)
+            currentFavorite: _internal.currentWebView ? root.bookmarksStore.getCurrentFavorite(_internal.currentWebView.url) : null
             dappBrowserAccName: root.browserWalletStore.dappBrowserAccount.name
             dappBrowserAccIcon: Utils.getColorForId(root.browserWalletStore.dappBrowserAccount.colorId)
             settingMenu: settingsMenu
@@ -244,10 +244,10 @@ StatusSectionLayout {
                                  {
                                      x: xPos - 30,
                                      y: browserHeader.y + browserHeader.height + 4,
-                                     modifiyModal: browserHeader.currentFavorite,
+                                     modifiyModal: !!browserHeader.currentFavorite,
                                      toolbarMode: true,
-                                     ogUrl: browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url,
-                                     ogName: browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title
+                                     ogUrl: !!browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url,
+                                     ogName: !!browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title
                                  })
             }
             onLaunchInBrowser: function(url) {
@@ -323,9 +323,7 @@ StatusSectionLayout {
         FavoriteMenu {
             id: favoriteMenu
             bookmarksStore: root.bookmarksStore
-            openInNewTab: function (url) {
-                root.openUrlInNewTab(url)
-            }
+            onOpenInNewTab: (url) => root.openUrlInNewTab(url)
             onEditFavoriteTriggered: {
                 Global.openPopup(addFavoriteModal, {
                                      modifiyModal: true,
@@ -377,7 +375,7 @@ StatusSectionLayout {
         BrowserSettingsMenu {
             id: settingsMenu
             x: parent.width - width
-            y: browserHeader.y + (localAccountSensitiveSettings.shouldShowFavoritesBar ? browserHeader.height - 38 : browserHeader.height)
+            y: browserHeader.y + browserHeader.height
             isIncognito: _internal.currentWebView && _internal.currentWebView.profile === _internal.otrProfile
             onAddNewTab: _internal.addNewTab()
             onGoIncognito: function (checked) {
@@ -505,10 +503,9 @@ StatusSectionLayout {
         FavoritesBar {
             bookmarkModel: root.bookmarksStore.bookmarksModel
             favoritesMenu: favoriteMenu
-            setAsCurrentWebUrl:  function(url) {
-                _internal.currentWebView.url = _internal.determineRealURL(url)
-            }
-            addFavModal: function() {
+            onSetAsCurrentWebUrl: (url) => _internal.currentWebView.url = _internal.determineRealURL(url)
+            onOpenInNewTab: (url) => root.openUrlInNewTab(url)
+            onAddFavModalRequested: {
                 Global.openPopup(addFavoriteModal, {toolbarMode: true,
                                      ogUrl: browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url,
                                      ogName: browserHeader.currentFavorite ? browserHeader.currentFavorite.name : _internal.currentWebView.title})
