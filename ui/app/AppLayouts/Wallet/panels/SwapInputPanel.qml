@@ -276,8 +276,8 @@ Control {
                 markAsInvalid: (root.swapSide === SwapInputPanel.SwapSide.Pay && (balanceExceeded || d.maxInputBalance === 0)) || (!!text && !valid)
                 fiatInputInteractive: root.fiatInputInteractive
                 multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 18
-                cryptoPrice: d.isSelectedHoldingValidAsset ? (!!d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1)
-                                                     : 1
+                cryptoPrice: d.isSelectedHoldingValidAsset ? (!!d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 0)
+                                                     : 0
                 formatFiat: amount => root.currencyStore.formatCurrencyAmount(amount, root.currencyStore.currentCurrency)
                 formatBalance: amount => root.currencyStore.formatCurrencyAmount(amount, d.inputSymbol)
 
