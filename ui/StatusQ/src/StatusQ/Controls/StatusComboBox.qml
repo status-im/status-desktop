@@ -140,17 +140,19 @@ Item {
                 }
             }
 
-            popup: Popup {
+            popup: StatusDropdown {
+                id: dropdown
+
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 y: comboBox.height + 4
 
                 implicitWidth: comboBox.width
                 height: Math.min(implicitContentHeight + topPadding + bottomPadding,
                                  comboBox.Window.height - topMargin - bottomMargin)
-                margins: 8
+                margins: dropdown.bottomSheet ? 0 : 8
 
                 padding: 1
-                verticalPadding: 8
+                verticalPadding: dropdown.bottomSheet ? 0 : 8
 
                 background: Rectangle {
                     color: Theme.palette.statusSelect.menuItemBackgroundColor

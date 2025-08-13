@@ -285,7 +285,6 @@ ColumnLayout {
         id: renameAccountModalComponent
         RenameAccontModal {
             account: root.account
-            anchors.centerIn: parent
             onClosed: destroy()
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup

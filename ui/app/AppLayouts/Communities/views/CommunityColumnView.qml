@@ -623,7 +623,6 @@ Item {
     Component {
         id: createCategoryPopup
         CreateCategoryPopup {
-            anchors.centerIn: parent
             store: root.store
             onClosed: {
                 destroy()
