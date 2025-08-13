@@ -1,4 +1,4 @@
-import NimQml, sequtils
+import nimqml, sequtils
 
 import ./io_interface
 import ../../../shared_models/currency_amount

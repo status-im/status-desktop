@@ -1,4 +1,4 @@
-import NimQml, strutils
+import nimqml, strutils
 
 import ./io_interface
 
