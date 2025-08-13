@@ -116,6 +116,7 @@ FocusScope {
     function removeView(index) {
         if (tabBar.count > 1) {
             tabBar.removeItem(tabBar.itemAt(index));
+            tabLayout.children[index].stop();
             tabLayout.children[index].destroy();
         } else {
             createEmptyTab(currentWebEngineProfile, true)

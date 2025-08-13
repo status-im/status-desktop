@@ -66,7 +66,7 @@ Item {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
+        onClicked: function(mouse) {
             if (mouse.button === Qt.RightButton) {
                 root.rightClicked(mouse)
             } else {

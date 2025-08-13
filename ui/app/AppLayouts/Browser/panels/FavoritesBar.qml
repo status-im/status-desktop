@@ -14,8 +14,10 @@ RowLayout {
     property alias bookmarkModel: bookmarkList.model
 
     property var favoritesMenu
-    property var setAsCurrentWebUrl: function(url){}
-    property var addFavModal: function(){}
+
+    signal addFavModalRequested()
+    signal setAsCurrentWebUrl(url url)
+    signal openInNewTab(url url)
 
     spacing: 0
     height: 38
@@ -28,8 +30,8 @@ RowLayout {
         Layout.fillHeight: true
         delegate: StatusFlatButton {
             id: favoriteBtn
-            height: 32
-            icon.source: imageUrl
+            size: StatusBaseButton.Size.Small
+            icon.source: model.imageUrl
             icon.width: 24
             icon.height: 24
             // Limit long named tabs. StatusFlatButton is not well-behaved control
@@ -38,16 +40,18 @@ RowLayout {
 
             MouseArea {
                 anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                hoverEnabled: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                cursorShape: containsMouse ? Qt.PointingHandCursor : undefined
                 z: 51
                 onClicked: function (mouse) {
-                    const isAddBookmarkButton = url === Constants.newBookmark
+                    const isAddBookmarkButton = model.url === Constants.newBookmark
                     if (mouse.button === Qt.RightButton && isAddBookmarkButton) {
                         return
                     }
 
                     if (mouse.button === Qt.RightButton) {
-                        favoritesMenu.url = url
+                        favoritesMenu.url = model.url
                         favoritesMenu.x = favoriteBtn.x + mouse.x
                         favoritesMenu.y = Qt.binding(function () {return mouse.y + favoritesMenu.height})
                         favoritesMenu.open()
@@ -55,11 +59,14 @@ RowLayout {
                     }
 
                     if (isAddBookmarkButton) {
-                        addFavModal()
+                        favoritesBar.addFavModalRequested()
                         return
                     }
 
-                    setAsCurrentWebUrl(url)
+                    if (mouse.button === Qt.LeftButton)
+                        favoritesBar.setAsCurrentWebUrl(model.url)
+                    else if (mouse.button === Qt.MiddleButton)
+                        favoritesBar.openInNewTab(model.url)
                 }
             }
         }
