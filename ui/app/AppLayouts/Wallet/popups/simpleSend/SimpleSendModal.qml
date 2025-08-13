@@ -645,7 +645,7 @@ StatusDialog {
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:
                                         d.selectedCryptoTokenSymbol
-                    price: d.marketDataNotAvailable ? 1 :
+                    price: d.marketDataNotAvailable ? 0 :
                                d.selectedAssetEntry.item.marketDetails.currencyPrice.amount
                     multiplierIndex: !!d.selectedAssetEntryValid &&
                                      !!d.selectedAssetEntry.item.decimals ?
