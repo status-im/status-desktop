@@ -304,6 +304,9 @@ Control {
                 Layout.preferredWidth: contentWidth
 
                 text: {
+                    if (!d.fiatMode && root.price === 0) {
+                        return ""
+                    }
                     const divisor = SQUtils.AmountsArithmetic.fromExponent(
                                       d.fiatMode ? root.multiplierIndex
                                                  : root.fiatDecimalPlaces)
