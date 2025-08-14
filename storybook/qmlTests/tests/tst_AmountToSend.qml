@@ -106,7 +106,7 @@ Item {
             const textField = findChild(amountToSend, "amountToSend_textField")
             const mouseArea = findChild(amountToSend, "amountToSend_mouseArea")
 
-            amountToSend.price = 0.5
+            amountToSend.cryptoPrice = 0.5
             amountToSend.multiplierIndex = 3
 
             mouseClick(mouseArea)
@@ -141,7 +141,7 @@ Item {
             const textField = findChild(amountToSend, "amountToSend_textField")
             const mouseArea = findChild(amountToSend, "amountToSend_mouseArea")
 
-            amountToSend.price = 0.5
+            amountToSend.cryptoPrice = 0.5
             amountToSend.multiplierIndex = 3
 
             amountToSend.setValue("10.5")
@@ -159,7 +159,7 @@ Item {
 
             mouseClick(mouseArea)
             compare(amountToSend.fiatMode, true)
-            amountToSend.price = 0.124
+            amountToSend.cryptoPrice = 0.124
             amountToSend.setValue("1")
             compare(textField.text, "1.00")
 

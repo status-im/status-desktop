@@ -371,7 +371,7 @@ Item {
                     tryCompare(controlUnderTest, "value", maxTagButton.maxSafeValue)
                     verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
                     compare(bottomItemText.text,  d.adaptor.currencyStore.formatCurrencyAmount(
-                                maxTagButton.maxSafeValue * amountToSendInput.price, d.adaptor.currencyStore.currentCurrency))
+                                maxTagButton.maxSafeValue * amountToSendInput.cryptoPrice, d.adaptor.currencyStore.currentCurrency))
                 }
                 amountToSendInput.clear()
             }
@@ -433,7 +433,7 @@ Item {
                     waitForItemPolished(controlUnderTest)
 
                     compare(amountToSendInput.text, "5.42")
-                    const marketPrice = amountToSendInput.price
+                    const marketPrice = amountToSendInput.cryptoPrice
                     tryCompare(bottomItemText, "text", d.adaptor.formatCurrencyAmount(
                                     numberTested * marketPrice,
                                     d.adaptor.currencyStore.currentCurrency))
