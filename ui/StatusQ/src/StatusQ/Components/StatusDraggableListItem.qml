@@ -222,6 +222,12 @@ AbstractButton {
     */
     property bool changeColorOnDragActive: dragActive
 
+    /*!
+       \qmlproperty bool StatusDraggableListItem::showDragHandle
+       This property holds if drag handle is visible when component is draggable
+    */
+    property bool showDragHandle: true
+
     Drag.dragType: Drag.Automatic
     Drag.hotSpot.x: dragHandler.mouseX
     Drag.hotSpot.y: dragHandler.mouseY
@@ -320,7 +326,7 @@ AbstractButton {
             Layout.preferredWidth: 20
             Layout.preferredHeight: 20
             icon: "justify"
-            visible: root.draggable && !root.customizable
+            visible: root.draggable && root.showDragHandle
             color: root.dragEnabled ? Theme.palette.baseColor1 : Theme.palette.baseColor2
         }
 
