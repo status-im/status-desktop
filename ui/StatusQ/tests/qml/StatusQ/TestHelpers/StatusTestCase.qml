@@ -4,8 +4,7 @@ import QtQml
 /*!
     \qmltype StatusTestCase
     \inherits TestCase
-    \inqmlmodule StatusQ.Core
-    \since StatusQ.Core 0.1
+    \inqmlmodule StatusQ.TestHelpers
     \brief Represents a basic Status unit test case with some added goodies.
 */
 TestCase {

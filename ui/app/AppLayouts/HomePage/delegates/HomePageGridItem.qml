@@ -123,6 +123,7 @@ AbstractButton {
                 HoverHandler {
                     id: titleTextHHandler
                     enabled: parent.truncated
+                    cursorShape: hovered ? Qt.PointingHandCursor : undefined
                 }
                 StatusToolTip {
                     visible: titleTextHHandler.hovered

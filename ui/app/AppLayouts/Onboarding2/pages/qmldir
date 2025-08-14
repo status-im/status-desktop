@@ -1,5 +1,5 @@
-BackupSeedphraseAcks 1.0 BackupSeedphraseAcks.qml
 BackupSeedphraseIntro 1.0 BackupSeedphraseIntro.qml
+BackupSeedphraseKeepOrDelete 1.0 BackupSeedphraseKeepOrDelete.qml
 BackupSeedphraseOutro 1.0 BackupSeedphraseOutro.qml
 BackupSeedphraseReveal 1.0 BackupSeedphraseReveal.qml
 BackupSeedphraseVerify 1.0 BackupSeedphraseVerify.qml

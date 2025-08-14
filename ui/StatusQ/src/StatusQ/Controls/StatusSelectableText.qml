@@ -86,7 +86,7 @@ Item {
                     }
                 }
 
-                onLinkActivated: statusSelectableText.linkActivated(link)
+                onLinkActivated: (link) => statusSelectableText.linkActivated(link)
 
                 text: "<style>a:link { color: " + (!!hoveredLink ? statusSelectableText.hoveredLinkColor : statusSelectableText.defaultLinkColor) + "; }</style>" + statusSelectableText.text
             }

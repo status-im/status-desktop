@@ -547,7 +547,14 @@ QtObject {
         Component {
             id: backupSeedModalComponent
             BackupSeedModal {
-                privacyStore: root.privacyStore
+                mnemonic: root.privacyStore.getMnemonic()
+                onBackupSeedphraseFinished: function(removeSeedphrase) {
+                    if (removeSeedphrase)
+                        root.privacyStore.removeMnemonic()
+                    root.profileStore.setUserDeclinedBackupBanner() // remove the banner
+                    Global.displaySuccessToastMessage(removeSeedphrase ? qsTr("Recovery phrase permanently removed from Status application storage")
+                                                                       : qsTr("You backed up your recovery phrase. Access it in Settings"))
+                }
                 onClosed: destroy()
             }
         },

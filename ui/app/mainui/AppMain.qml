@@ -1438,8 +1438,15 @@ Item {
                 readonly property bool displayCreateCommunityBadge: model.sectionType === Constants.appSection.communitiesPortal && !appMain.communitiesStore.createCommunityPopupSeen
                 badge.value: model.notificationsCount
                 badge.visible: {
-                    if (model.sectionType === Constants.appSection.profile && contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) // pending contact request
-                        return true
+                    if (model.sectionType === Constants.appSection.profile) {
+                        if (contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) // pending contact request
+                            return true
+                        if (!appMain.privacyStore.mnemonicBackedUp && !appMain.profileStore.userDeclinedBackupBanner) // seedphrase not backed up (removed)
+                            return true
+                        if (appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount > 0) // sync entries
+                            return true
+                        return false
+                    }
                     if (displayCreateCommunityBadge) // create new community badge
                         return true
                     return model.hasNotification // Otherwise, use the value coming from the model
@@ -1759,7 +1766,8 @@ Item {
 
                                 syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
                                 messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
-                                showBackUpSeed: !appMain.profileStore.userDeclinedBackupBanner && !appMain.privacyStore.mnemonicBackedUp
+                                showBackUpSeed: !appMain.privacyStore.mnemonicBackedUp
+                                backUpSeedBadgeCount: appMain.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
 
                                 searchPhrase: homePage.searchPhrase
 
