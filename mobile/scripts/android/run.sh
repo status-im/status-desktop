@@ -2,6 +2,7 @@
 
 CWD=$(realpath `dirname $0`)
 APP=${APP:="$CWD/../bin/$OS/Status-tablet.apk"}
+APP_PACKAGE=${APP_PACKAGE:="im.status.tablet"}
 ARCH=${ARCH:="arm64-v8a"}
 ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:=""}
 EMULATOR=${EMULATOR:="$ANDROID_SDK_ROOT/emulator/emulator"}
@@ -157,7 +158,7 @@ if [ $? -ne 0 ]; then
     if [[ "$confirm" =~ ^[Yy] ]]; then
         echo
         echo "→ Uninstalling existing app…"
-        $ADB -s $ANDROID_SERIAL uninstall im.status.tablet
+        $ADB -s $ANDROID_SERIAL uninstall $APP_PACKAGE
         if [ $? -ne 0 ]; then
             echo "❌ Uninstall failed (perhaps it wasn’t installed?). Continuing with install…"
         fi
@@ -182,12 +183,12 @@ fi
 
 echo "App installed. Starting app"
 
-DEFAULT_ACTIVITY_NAME="im.status.tablet/org.qtproject.qt.android.bindings.QtActivity"
+DEFAULT_ACTIVITY_NAME="${APP_PACKAGE}/org.qtproject.qt.android.bindings.QtActivity"
 $ADB -s $ANDROID_SERIAL shell am start -a android.intent.action.MAIN -n $DEFAULT_ACTIVITY_NAME
 # wait for the app to start and then start logcat
 echo "Waiting for the app to start"
 while true; do
-    PID=$($ADB -s $ANDROID_SERIAL shell pidof im.status.tablet | tr -d '\r')
+    PID=$($ADB -s $ANDROID_SERIAL shell pidof $APP_PACKAGE | tr -d '\r')
     if [ -n "$PID" ]; then
         echo "App started with PID: $PID"
         break

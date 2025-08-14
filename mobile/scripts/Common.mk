@@ -9,11 +9,19 @@ ifeq ($(V), 0)
   HANDLE_OUTPUT := >/dev/null 2>&1
 endif
 
+# compile macros
+ifeq ($(USE_QML_SERVER),)
+  export APP_VARIANT := default
+else
+  export APP_VARIANT := qmlserver-$(USE_QML_SERVER)
+endif
+
 # path macros
 ROOT_DIR := $(STATUS_DESKTOP)/mobile
-BIN_PATH := $(ROOT_DIR)/bin/$(OS)/qt$(QT_MAJOR)
-LIB_PATH := $(ROOT_DIR)/lib/$(OS)/qt$(QT_MAJOR)
-BUILD_PATH := $(ROOT_DIR)/build/$(OS)/qt$(QT_MAJOR)
+BIN_PATH := $(ROOT_DIR)/bin/$(OS)/qt$(QT_MAJOR)/$(APP_VARIANT)
+LIB_PATH := $(ROOT_DIR)/lib/$(OS)/qt$(QT_MAJOR)/$(APP_VARIANT)
+BUILD_PATH := $(ROOT_DIR)/build/$(OS)/qt$(QT_MAJOR)/$(APP_VARIANT)
+
 SCRIPTS_PATH := $(ROOT_DIR)/scripts
 
 export LIB_DIR=$(LIB_PATH)
@@ -26,10 +34,9 @@ DOTHERSIDE?=$(STATUS_DESKTOP)/vendor/DOtherSide
 OPENSSL?=$(ROOT_DIR)/vendors/openssl
 QRCODEGEN?=$(STATUS_DESKTOP)/vendor/QR-Code-generator/c
 
-project_name := Status-tablet
-
 # compile macros
 TARGET_PREFIX := Status-tablet
+
 TARGET_NAME := $(TARGET_PREFIX).$(shell if [ $(OS) = "ios" ]; then echo "app"; else echo "apk"; fi )
 
 TARGET := $(BIN_PATH)/$(TARGET_NAME)
