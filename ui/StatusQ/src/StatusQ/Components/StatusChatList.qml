@@ -107,6 +107,7 @@ Item {
                 topInset: 0
                 bottomInset: 0
                 customizable: true
+                showDragHandler: false
                 Drag.keys: chatListDelegate.keys
                 onClicked: function(mouse) {
                     if (draggableItem.isCategory) {
