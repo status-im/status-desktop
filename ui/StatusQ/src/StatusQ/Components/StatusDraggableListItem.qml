@@ -148,11 +148,6 @@ AbstractButton {
        This property holds whether this item can be dragged (and whether the drag handle is displayed)
     */
     property bool dragEnabled: draggable
-    /*!
-       \qmlproperty bool StatusDraggableListItem::customizable
-       This property holds whether this item can be customized
-    */
-    property bool customizable: false
 
     property bool highlighted // NB: compat with ItemDelegate
 
@@ -228,6 +223,12 @@ AbstractButton {
     */
     property bool showDragHandler: true
 
+    /*!
+       \qmlproperty bool StatusDraggableListItem::drawBackground
+       This property holds if background is rendered
+    */
+    property bool drawBackground: true
+
     Drag.dragType: Drag.Automatic
     Drag.hotSpot.x: dragHandler.mouseX
     Drag.hotSpot.y: dragHandler.mouseY
@@ -278,10 +279,10 @@ AbstractButton {
 
     background: Rectangle {
         implicitHeight: 76 // ProfileUtils.defaultDelegateHeight
-        color: root.changeColorOnDragActive && !root.customizable? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
-        border.width: root.customizable ? 0 : 1
+        color: root.changeColorOnDragActive && root.drawBackground ? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
+        border.width: root.drawBackground ? 1 : 0
         border.color: Theme.palette.baseColor2
-        radius: root.customizable ? 0 : Theme.radius
+        radius: root.drawBackground ? Theme.radius : 0
     }
 
     // inset to simulate spacing
