@@ -952,5 +952,36 @@ Item {
             sendModalHeader.assetSelected("ETH")
         }
 
+        function test_marketDataNotAvailable_behavior() {
+            verify(!!controlUnderTest)
+            controlUnderTest.open()
+            tryVerify(() => controlUnderTest.opened)
+
+            const amountToSend = findChild(controlUnderTest, "amountToSend")
+            verify(!!amountToSend)
+
+            // Test case 1: When marketDataNotAvailable is true
+            controlUnderTest.marketDataNotAvailable = true
+
+            // Verify fiat input is disabled
+            verify(!amountToSend.fiatInputInteractive, "Fiat input should be disabled when marketDataNotAvailable is true")
+
+            // Verify cryptoPrice is set to 0
+            compare(amountToSend.cryptoPrice, 0, "cryptoPrice should be 0 when marketDataNotAvailable is true")
+
+            // Ensure we're in crypto mode (not fiat mode) to test secondary value hiding
+            if (amountToSend.fiatMode) {
+                // Click to switch to crypto mode if currently in fiat mode
+                const mouseArea = findChild(amountToSend, "amountToSend_mouseArea")
+                verify(!!mouseArea)
+                mouseArea.clicked()
+            }
+
+            // Verify secondary value is hidden when cryptoPrice is 0 in crypto mode
+            const bottomItemText = findChild(amountToSend, "bottomItemText")
+            verify(!!bottomItemText)
+            compare(bottomItemText.text, "", "Secondary value should be empty when cryptoPrice is 0 in crypto mode")
+        }
+
     }
 }
