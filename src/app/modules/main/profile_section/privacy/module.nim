@@ -81,9 +81,6 @@ method removeMnemonic*(self: Module) =
 method mnemonicWasShown*(self: Module) =
   self.controller.mnemonicWasShown()
 
-method getMnemonicWordAtIndex*(self: Module, index: int): string =
-  return self.controller.getMnemonicWordAtIndex(index)
-
 method getMessagesFromContactsOnly*(self: Module): bool =
   return self.controller.getMessagesFromContactsOnly()
 

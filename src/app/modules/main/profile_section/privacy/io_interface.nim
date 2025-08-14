@@ -37,9 +37,6 @@ method removeMnemonic*(self: AccessInterface) {.base.} =
 method mnemonicWasShown*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getMnemonicWordAtIndex*(self: AccessInterface, index: int): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 # Controller Delegate Interface
 method mnemonicBackedUp*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

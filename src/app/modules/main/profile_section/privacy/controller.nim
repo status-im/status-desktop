@@ -92,9 +92,6 @@ proc removeMnemonic*(self: Controller) =
 proc mnemonicWasShown*(self: Controller) =
   self.settingsService.mnemonicWasShown()
 
-proc getMnemonicWordAtIndex*(self: Controller, index: int): string =
-  return self.privacyService.getMnemonicWordAtIndex(index)
-
 proc getMessagesFromContactsOnly*(self: Controller): bool =
   return self.settingsService.getMessagesFromContactsOnly()
 
