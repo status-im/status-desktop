@@ -1,6 +1,17 @@
 FROM statusteam/nim-status-client-build:2.0.2-qt6.9.0
 
-RUN apt update -yq && apt install -yq --no-install-recommends --fix-missing  \
+USER root
+
+RUN apt-get update && apt-get install -yq --no-install-recommends --fix-missing \
+    sudo \
+    curl wget gnupg ca-certificates lsb-release python3-pip python3-venv \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+    && echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+    https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    | tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    && apt-get update && apt-get install -y \
+    docker-ce-cli docker-compose-plugin \
     cmake protoc-gen-go \
     mesa-common-dev libglu1-mesa-dev libpcsclite-dev \
     xvfb fluxbox libxft-dev xclip xsel nautilus \
@@ -45,6 +56,8 @@ RUN curl -L "https://status-misc.ams3.digitaloceanspaces.com/squish/${SQUISH_INS
   /tmp/${SQUISH_INSTALLER} unattended=1 python=3 targetdir=${SQUISH_INSTALL_DIR} licensekey=${SQUISH_LICENSE_KEY} && \
   rm /tmp/${SQUISH_INSTALLER}
 
-  LABEL maintainer="marko@status.im"
-  LABEL source="https://github.com/status-im/status-desktop"
-  LABEL description="Build image for the Status Desktop e2e tests with Squish and Qt."
+USER jenkins
+
+LABEL maintainer="marko@status.im"
+LABEL source="https://github.com/status-im/status-desktop"
+LABEL description="Build image for the Status Desktop e2e tests with Squish and Qt."

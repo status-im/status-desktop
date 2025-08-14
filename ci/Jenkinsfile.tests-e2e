@@ -9,7 +9,7 @@ pipeline {
       label 'container'
       image 'statusteam/e2e-desktop:1.0.0-qt6.9.0'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
-      args '--entrypoint="" --network host --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
+      args '--entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock --network host --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
   }
 
