@@ -15,11 +15,10 @@ OnboardingPage {
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
-            width: Math.min(400, root.availableWidth)
+            width: Math.min(420, root.availableWidth)
             spacing: 20
 
             StatusImage {
-                id: image
                 Layout.preferredWidth: 296
                 Layout.preferredHeight: 260
                 Layout.alignment: Qt.AlignHCenter
@@ -29,7 +28,7 @@ OnboardingPage {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("Backup your recovery phrase")
+                text: qsTr("Your recovery phrase has been created")
                 font.pixelSize: Theme.fontSize22
                 font.bold: true
                 wrapMode: Text.WordWrap

@@ -293,9 +293,6 @@ proc init*(self: Controller) =
     var args = ResolvedContactArgs(e)
     self.delegate.resolvedENS(args.pubkey, args.address, args.uuid, args.reason)
 
-  self.events.on(SIGNAL_MNEMONIC_REMOVED) do(e: Args):
-    self.delegate.mnemonicBackedUp()
-
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     var args = ActiveSectionChatArgs(e)
     self.activeSectionId = args.sectionId

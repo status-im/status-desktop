@@ -102,15 +102,7 @@ OnboardingStackView {
         id: backupSeedIntroPage
 
         BackupSeedphraseIntro {
-            onBackupSeedphraseRequested: root.push(backupSeedAcksPage)
-        }
-    }
-
-    Component {
-        id: backupSeedAcksPage
-
-        BackupSeedphraseAcks {
-            onBackupSeedphraseContinue: root.push(backupSeedRevealPage)
+            onBackupSeedphraseRequested: root.push(backupSeedRevealPage)
         }
     }
 

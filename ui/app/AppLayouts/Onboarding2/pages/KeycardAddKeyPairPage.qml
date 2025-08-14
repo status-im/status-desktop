@@ -10,7 +10,7 @@ OnboardingPage {
 
     property bool inProgress
 
-    title: qsTr("Adding key pair to Keycard")
+    title: qsTr("Creating key pair on Keycard")
 
     StateGroup {
         states: State {
@@ -30,17 +30,15 @@ OnboardingPage {
             }
             PropertyChanges {
                 target: subImageText
-                text: qsTr("You will now require this Keycard to log into Status\nand transact with accounts derived from this key pair")
+                text: qsTr("You will now require this Keycard to log into Status and transact with accounts derived from this key pair")
             }
         }
     }
 
     contentItem: Item {
         ColumnLayout {
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.centerIn: parent
+            width: Math.min(440, root.availableWidth)
             spacing: Theme.halfPadding
 
             Loader {
@@ -92,7 +90,7 @@ OnboardingPage {
 
                 Layout.fillWidth: true
 
-                text: qsTr("Please keep the Keycard plugged in until the migration\nis complete")
+                text: qsTr("A key pair is your shareable public address and a secret private key that controls your wallet. Your key pair is being generated on your Keycard — keep it plugged in until the process completes.")
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
