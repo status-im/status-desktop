@@ -13,8 +13,8 @@ ItemDelegate {
     property int cursorShape: Qt.PointingHandCursor
     property color highlightColor: Theme.palette.statusMenu.hoverBackgroundColor
 
-    padding: 8
-    spacing: 8
+    padding: Theme.halfPadding
+    spacing: Theme.halfPadding
 
     icon.width: 16
     icon.height: 16
@@ -55,10 +55,7 @@ ItemDelegate {
         radius: root.radius
     }
 
-    MouseArea {
-        // NOTE The hover handler would break control's hover in some corner cases, hence mouse area is used
-        hoverEnabled: true
-        cursorShape: root.cursorShape
-        propagateComposedEvents: true
+    HoverHandler {
+        cursorShape: hovered ? root.cursorShape : undefined
     }
 }
