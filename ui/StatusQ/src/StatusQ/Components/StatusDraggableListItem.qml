@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core
+import StatusQ.Core.Utils
 import StatusQ.Core.Theme
 
 /*!
@@ -303,6 +304,16 @@ AbstractButton {
     icon.width: 20
     icon.height: 20
 
+    StatusMouseArea {
+        anchors.fill: parent
+
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+        onClicked: (mouse) => {
+            root.clicked(mouse)
+        }
+    }
+
     // Qt6: use a TapHandler with a regular contentItem, and derive again from ItemDelegate
     StatusMouseArea {
         id: dragHandler
@@ -313,16 +324,16 @@ AbstractButton {
         drag.target: root.dragEnabled ? root : null
         drag.axis: root.dragAxis
         preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
+        propagateComposedEvents: true // handle mouse click from MouseArea below
+
         cursorShape: {
             if (!root.enabled)
                 return undefined
             if (root.dragEnabled)
                 return root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         }
+
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: (mouse) => {
-            root.clicked(mouse)
-        }
     }
 
     RowLayout {
