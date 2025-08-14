@@ -43,6 +43,26 @@ class MainLeftPanel(QObject):
         self.settings_button = Button(names.settingsGearButton)
         self.wallet_button = Button(names.mainWalletButton)
 
+    @allure.step('Click Wallet button and record load time until WalletScreen is visible')
+    def open_wallet_and_record_load_time(self):
+        start_time = time.time()
+        self.wallet_button.click()
+        wallet_screen = WalletScreen()
+        check_interval = 0.1  # Check every 100ms for better precision
+        
+        while True:
+            try:
+                if wallet_screen.is_visible:
+                    LOG.info('WalletScreen: is visible')
+                    break
+            except Exception as e:
+                LOG.debug("Exception during visibility check: %s", e)
+            time.sleep(check_interval)
+        
+        load_time = time.time() - start_time
+        LOG.info(f'Wallet loaded in {load_time:.3f} seconds')
+        return wallet_screen, load_time
+
     @allure.step('Click Home button and open Home screen')
     @open_with_retries(HomeScreen)
     def open_home_screen(self):
@@ -104,7 +124,7 @@ class MainLeftPanel(QObject):
     @allure.step('Open community portal')
     def open_communities_portal(self, attempts: int = 3) -> CommunitiesPortal:
         last_exception = None
-        for _ in range(1, attempts+1):
+        for _ in range(1, attempts + 1):
             LOG.info(f'Attempt # {_} top open Community portal')
             self.communities_portal_button.click()
             introduce_yourself_popup = IntroduceYourselfPopup()

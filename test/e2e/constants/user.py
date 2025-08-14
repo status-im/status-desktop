@@ -80,6 +80,9 @@ user_account_two = UserAccount('athletic', '0000000000', [
 
 community_member = UserAccount('member', '1111111111', [None], None)
 
+wallet_load = UserAccount('wallet_load', '1111111111', [None], None)
+wallet_load_alex = UserAccount('wallet_load_alex', '1111111111', [None], None)
+
 
 @dataclass
 class WalletAccount:
@@ -98,7 +101,6 @@ class RandomWalletAccount(WalletAccount):
 
 
 wallet_account_list_item = namedtuple('WalletAccountListItem', ['name', 'icon_color', 'icon_emoji', 'object'])
-
 
 wallet_account = namedtuple('PrivateKeyAddressPair', ['private_key', 'wallet_address'])
 private_key_address_pair_1 = wallet_account('2daa36a3abe381a9c01610bf10fda272fbc1b8a22179a39f782c512346e3e470',
