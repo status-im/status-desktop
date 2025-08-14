@@ -31,24 +31,25 @@ import StatusQ.Core
 */
 
 MouseArea {
-    id: root
-    onPressAndHold: (mouse) => {
-        if (mouse.button === Qt.LeftButton) {
-            SystemUtils.synthetizeRightClick(root, mouse.x, mouse.y, mouse.modifiers)
-        }
-    }
+   id: root
+   onPressAndHold: (mouse) => {
+      // On Android the reported button is randomly LeftButton or NoButton
+      if (mouse.button === Qt.LeftButton || mouse.button === Qt.NoButton) {
+         SystemUtils.synthetizeRightClick(root, mouse.x, mouse.y, mouse.modifiers)
+      }
+   }
 
-    Loader {
-        id: tapLoader
-        anchors.fill: parent
-        active: root.acceptedButtons === Qt.RightButton
-        sourceComponent: TapHandler {
-            gesturePolicy: TapHandler.ReleaseWithinBounds // exclusive grab on press
-            acceptedButtons: Qt.LeftButton
-            acceptedDevices: PointerDevice.TouchScreen
-            onLongPressed: () => {
-                SystemUtils.synthetizeRightClick(root, point.position.x, point.position.y, point.modifiers)
-            }
-        }
-    }
+   Loader {
+      id: tapLoader
+      anchors.fill: parent
+      active: root.acceptedButtons === Qt.RightButton
+      sourceComponent: TapHandler {
+         gesturePolicy: TapHandler.ReleaseWithinBounds // exclusive grab on press
+         acceptedButtons: Qt.LeftButton
+         acceptedDevices: PointerDevice.TouchScreen
+         onLongPressed: () => {
+            SystemUtils.synthetizeRightClick(root, point.position.x, point.position.y, point.modifiers)
+         }
+      }
+   }
 }
