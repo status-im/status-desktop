@@ -54,7 +54,7 @@ QtObject {
         return (match && match.length >= 2) ? match[1] : undefined;
     }
     function svgImage(unicode) {
-        return `${base}/svg/${unicode}.svg`
+        return `${base}/${unicode}.svg`
     }
     function iconId(text) {
         if (!text) return
