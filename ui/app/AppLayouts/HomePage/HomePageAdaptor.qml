@@ -29,6 +29,7 @@ QObject {
     required property int syncingBadgeCount
     required property int messagingBadgeCount
     required property bool showBackUpSeed
+    required property int backUpSeedBadgeCount
 
     // internal settings
     required property string profileId
@@ -221,6 +222,7 @@ QObject {
             syncingBadgeCount: root.syncingBadgeCount
             messagingBadgeCount: root.messagingBadgeCount
             showBackUpSeed: root.showBackUpSeed
+            backUpSeedBadgeCount: root.backUpSeedBadgeCount
             showSubSubSections: true
         }
         delegate: QtObject {

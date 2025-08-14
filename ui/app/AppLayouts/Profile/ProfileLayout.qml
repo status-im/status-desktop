@@ -153,6 +153,7 @@ StatusSectionLayout {
         showWalletEntries: root.walletStore.isWalletEnabled
         showBrowserEntries: root.isBrowserEnabled
         showBackUpSeed: !root.privacyStore.mnemonicBackedUp
+        backUpSeedBadgeCount: root.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
         isKeycardEnabled: root.isKeycardEnabled
 
         syncingBadgeCount: root.devicesStore.devicesModel.count -

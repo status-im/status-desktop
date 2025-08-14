@@ -22,19 +22,11 @@ OnboardingPage {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("Backup your recovery phrase")
+                text: qsTr("Confirm backup")
                 font.pixelSize: Theme.fontSize22
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
-            }
-
-            StepIndicator {
-                Layout.fillWidth: true
-                spacing: Theme.halfPadding
-                currentStep: 3
-                totalSteps: 3
-                caption: qsTr("Store your phrase offline")
             }
 
             StatusBaseText {

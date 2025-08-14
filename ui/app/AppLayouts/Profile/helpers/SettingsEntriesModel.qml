@@ -33,6 +33,9 @@ SortFilterProxyModel {
     // Determines if back up seed phrase entry should be included
     property bool showBackUpSeed
 
+    // Badge count for the back up seed phrase entry
+    property int backUpSeedBadgeCount: 0
+
     // Determines if keycard-related entries should be included
     property bool isKeycardEnabled: true
 
@@ -52,7 +55,7 @@ SortFilterProxyModel {
     readonly property var entries: [
         {
             subsection: Constants.settingsSubsection.backUpSeed,
-            text: qsTr("Back up recovery phrase"),
+            text: root.backUpSeedBadgeCount ? qsTr("Back up recovery phrase") : qsTr("Recovery phrase"),
             icon: "seed-phrase",
             isExperimental: false
         },
@@ -220,7 +223,7 @@ SortFilterProxyModel {
             readonly property int badgeCount: {
                 switch (model.subsection) {
                     case Constants.settingsSubsection.backUpSeed:
-                        return root.showBackUpSeed
+                        return root.backUpSeedBadgeCount
                     case Constants.settingsSubsection.syncingSettings:
                         return root.syncingBadgeCount
                     case Constants.settingsSubsection.messaging:

@@ -132,7 +132,6 @@ type
 {.push warning[Deprecated]: off.}
 
 # Forward declaration
-method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
 proc checkIfWeHaveNotifications[T](self: Module[T])
@@ -797,7 +796,7 @@ method load*[T](
     image = "",
     icon = SETTINGS_SECTION_ICON,
     color = "",
-    hasNotification = self.calculateProfileSectionHasNotification(),
+    hasNotification = false, # deferred to QML
     notificationsCount = 0,
     active = false,
     enabled = true,
@@ -1624,15 +1623,6 @@ method onMembershipStateUpdated*[T](self: Module[T], communityId: string, member
         self.view.emitCommunityMemberStatusEphemeralNotification(communityDto.name, contactName, state.int)
       else:
         discard
-
-method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
-  return not self.controller.isMnemonicBackedUp()
-
-method mnemonicBackedUp*[T](self: Module[T]) =
-  self.view.model().updateNotifications(
-    SETTINGS_SECTION_ID,
-    self.calculateProfileSectionHasNotification(),
-    notificationsCount = 0)
 
 method displayWindowsOsNotification*[T](self: Module[T], title: string,
     message: string) =

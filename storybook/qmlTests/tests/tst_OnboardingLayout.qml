@@ -495,20 +495,7 @@ Item {
             verify(!!btnBackupSeedphrase)
             mouseClick(btnBackupSeedphrase)
 
-            // PAGE 8: Backup your recovery phrase (ack checkboxes)
-            page = getCurrentPage(stack, BackupSeedphraseAcks)
-            let btnContinue = findChild(page, "btnContinue")
-            verify(!!btnContinue)
-            compare(btnContinue.enabled, false)
-            for (let ack of ["ack1", "ack2", "ack3", "ack4"]) {
-                const cb = findChild(page, ack)
-                verify(!!cb)
-                mouseClick(cb)
-            }
-            tryCompare(btnContinue, "enabled", true)
-            mouseClick(btnContinue)
-
-            // PAGE 9: Backup your recovery phrase (seedphrase reveal) - step 1
+            // PAGE 8: Backup your recovery phrase (seedphrase reveal) - step 1
             page = getCurrentPage(stack, BackupSeedphraseReveal)
             const seedGrid = findChild(page, "seedGrid")
             verify(!!seedGrid)
@@ -523,9 +510,9 @@ Item {
             compare(btnConfirm.enabled, true)
             mouseClick(btnConfirm)
 
-            // PAGE 10: Backup your recovery phrase (seedphrase verification) - step 2
+            // PAGE 9: Backup your recovery phrase (seedphrase verification) - step 2
             page = getCurrentPage(stack, BackupSeedphraseVerify)
-            btnContinue = findChild(page, "btnContinue")
+            let btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, false)
             const mnemonicWords = page.verificationWordsMap.map((entry) => entry.seedWord)
@@ -539,7 +526,7 @@ Item {
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
 
-            // PAGE 11: Backup your recovery phrase (outro) - step 3
+            // PAGE 10: Backup your recovery phrase (outro) - step 3
             page = getCurrentPage(stack, BackupSeedphraseOutro)
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
@@ -552,12 +539,12 @@ Item {
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
 
-            // PAGE 12: Adding key pair to Keycard
+            // PAGE 11: Adding key pair to Keycard
             page = getCurrentPage(stack, KeycardAddKeyPairDelayedPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
 
-            // PAGE 13: Enable Biometrics
+            // PAGE 12: Enable Biometrics
             if (data.biometrics) {
                 dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)

@@ -49,6 +49,7 @@ SplitView {
             syncingBadgeCount: 2
             messagingBadgeCount: 4
             showBackUpSeed: true
+            backUpSeedBadgeCount: 1
 
             searchPhrase: homePage.searchPhrase
 

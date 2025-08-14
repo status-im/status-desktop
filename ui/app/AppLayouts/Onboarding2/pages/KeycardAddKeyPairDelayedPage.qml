@@ -6,7 +6,7 @@ import AppLayouts.Onboarding.enums
 /*!
    \qmltype KeycardAddKeyPairDelayedPage
    \inherits KeycardAddKeyPairPage
-   \brief It wraps KeycardAddKeyPairPaget and controls it using addKeyPairState
+   \brief It wraps KeycardAddKeyPairPage and controls it using addKeyPairState
     property and adding minimal times of displaying particular states.
 */
 KeycardAddKeyPairPage {
