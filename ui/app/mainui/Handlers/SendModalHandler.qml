@@ -1091,7 +1091,7 @@ QtObject {
                     }
 
                     fiatFees: {
-                        // Use GWEI fees when market data is not available
+			// Use GWEI fees when market data is not available
                         if (handler.marketDataNotAvailable) {
                             const totalFeesInGwei = Math.round(decimalTotalFees * 1000000000)
                             return root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")

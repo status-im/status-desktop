@@ -142,8 +142,6 @@ StatusDialog {
     property string estimatedFiatFees
     /** input property to set estimated fees in crypto **/
     property string estimatedCryptoFees
-    /** input property to set estimated fees in gwei **/
-    property string estimatedGWEIFees
     /** input property to set router error title **/
     property string routerError: ""
     /** input property to set router error details **/
