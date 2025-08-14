@@ -224,6 +224,13 @@ AbstractButton {
     property bool showDragHandler: true
 
     /*!
+       \qmlproperty bool StatusDraggableListItem::dragByHandlerOnly
+       This property holds if drag is activated only via drag handler (true) or
+       the whole area of the delegate (false)
+    */
+    property bool dragByHandlerOnly: false
+
+    /*!
        \qmlproperty bool StatusDraggableListItem::drawBackground
        This property holds if background is rendered
     */
@@ -299,6 +306,9 @@ AbstractButton {
     // Qt6: use a TapHandler with a regular contentItem, and derive again from ItemDelegate
     StatusMouseArea {
         id: dragHandler
+
+        parent: dragByHandlerOnly ? dragHandlerIcon : root
+
         anchors.fill: parent
         drag.target: root.dragEnabled ? root : null
         drag.axis: root.dragAxis
@@ -324,6 +334,8 @@ AbstractButton {
         spacing: root.spacing
 
         StatusIcon {
+            id: dragHandlerIcon
+
             Layout.preferredWidth: 20
             Layout.preferredHeight: 20
             icon: "justify"
