@@ -106,7 +106,9 @@ Item {
                 spacing: 0
                 topInset: 0
                 bottomInset: 0
-                showDragHandler: false
+                showDragHandler: Utils.isMobile
+                dragByHandlerOnly: Utils.isMobile
+
                 drawBackground: false
                 Drag.keys: chatListDelegate.keys
                 onClicked: function(mouse) {

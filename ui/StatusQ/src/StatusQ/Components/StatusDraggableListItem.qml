@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core
+import StatusQ.Core.Utils
 import StatusQ.Core.Theme
 
 /*!
@@ -308,6 +309,7 @@ AbstractButton {
         id: dragHandler
 
         parent: dragByHandlerOnly ? dragHandlerIcon : root
+        enabled: root.dragEnabled || !Utils.isMobile
 
         anchors.fill: parent
         drag.target: root.dragEnabled ? root : null
@@ -319,7 +321,24 @@ AbstractButton {
             if (root.dragEnabled)
                 return root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         }
+
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+        onClicked: (mouse) => {
+            if (Utils.isMobile)
+                mouse.accepted = false
+            else
+                root.clicked(mouse)
+        }
+    }
+
+    StatusMouseArea {
+        anchors.fill: parent
+
+        enabled: Utils.isMobile
+
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
         onClicked: (mouse) => {
             root.clicked(mouse)
         }
