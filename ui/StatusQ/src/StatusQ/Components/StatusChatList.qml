@@ -106,9 +106,13 @@ Item {
                 spacing: 0
                 topInset: 0
                 bottomInset: 0
-                showDragHandle: false
+
+                showDragHandle: Utils.isMobile
+                dragByHandleOnly: Utils.isMobile
                 drawBackgroundBorder: false
+
                 Drag.keys: chatListDelegate.keys
+
                 onClicked: function(mouse) {
                     if (draggableItem.isCategory) {
                         statusChatListCategoryItem.clicked(mouse);
