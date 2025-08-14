@@ -86,17 +86,18 @@ Item {
                 image.source: model.imageUrl ?? ""
                 TapHandler {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onSingleTapped: {
-                        if ((eventPoint.event.button === Qt.LeftButton) && (model.communityId !== "")) {
+                    onSingleTapped: function (eventPoint, button) {
+                        if ((button === Qt.LeftButton) && (model.communityId !== "")) {
                             root.visitCommunity(model)
                         } else {
-                            if (eventPoint.event.button === Qt.LeftButton) {
+                            if (button === Qt.LeftButton) {
                                 delegateItem.openCollectibleURL()
                             } else {
                                 Global.openMenu(delegatesActionsMenu, collectibleImage, { communityId: model.communityId, url: getCollectibleURL()});
                             }
                         }
                     }
+                    onLongPressed: Global.openMenu(delegatesActionsMenu, collectibleImage, { communityId: model.communityId, url: getCollectibleURL()});
                 }
             }
 
