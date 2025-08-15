@@ -32,7 +32,7 @@ Item {
         width: 300
         textRole: "name"
         valueRole: "value"
-        model: Onboarding.getModelFromEnum("ProgressState")
+        model: Onboarding.getModelFromEnum("LocalPairingState")
     }
 }
 

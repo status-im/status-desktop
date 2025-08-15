@@ -16,6 +16,11 @@ OnboardingPage {
     id: root
 
     required property string mnemonic
+    property bool popupMode
+
+    property alias seedphraseRevealed: d.seedphraseRevealed
+
+    title: qsTr("Show recovery phrase")
 
     signal backupSeedphraseConfirmed()
 
@@ -33,19 +38,19 @@ OnboardingPage {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("Backup your recovery phrase")
+                text: root.title
+                visible: !root.popupMode
                 font.pixelSize: Theme.fontSize22
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            StepIndicator {
+            StatusBaseText {
                 Layout.fillWidth: true
-                spacing: Theme.halfPadding
-                currentStep: 1
-                totalSteps: 3
-                caption: qsTr("Write down your 12-word recovery phrase to keep offline")
+                text: qsTr("A 12-word phrase that gives full access to your funds and is the only way to recover them.")
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignHCenter
             }
 
             Item {
@@ -111,15 +116,16 @@ OnboardingPage {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("Anyone who sees this will have access to your funds.")
-                color: Theme.palette.dangerColor1
+                text: qsTr("Never share your recovery phrase. If someone asks for it, they’re likely trying to scam you.\n\nTo backup you recovery phrase, write it down and store it securely in a safe place.")
+                font.pixelSize: Theme.additionalTextSize
+                font.weight: Font.Medium
                 wrapMode: Text.WordWrap
-                horizontalAlignment: Qt.AlignHCenter
             }
 
             StatusButton {
                 objectName: "btnConfirm"
                 Layout.alignment: Qt.AlignHCenter
+                visible: !root.popupMode
                 text: qsTr("Confirm recovery phrase")
                 enabled: d.seedphraseRevealed
                 onClicked: {

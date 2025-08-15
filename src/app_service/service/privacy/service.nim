@@ -138,21 +138,6 @@ QtObject:
   proc mnemonicWasShown*(self: Service) =
     self.settingsService.mnemonicWasShown()
 
-  proc getMnemonicWordAtIndex*(self: Service, index: int): string =
-    let mnemonic = self.settingsService.getMnemonic()
-    if(mnemonic.len == 0):
-      let msg = "tyring to get a word on index " & $(index) & " from an empty mnemonic"
-      error "error: ", procName="getMnemonicWordAtIndex", errDesription = msg
-      return
-
-    let mnemonics = mnemonic.split(" ")
-    if(index < 0 or index >= mnemonics.len):
-      let msg = "tyring to get a word on index " & $(index) & " but mnemonic contains " & $(mnemonics.len) & " words"
-      error "error: ", procName="getMnemonicWordAtIndex", errDesription = msg
-      return
-
-    return mnemonics[index]
-
   proc validatePassword*(self: Service, password: string): bool =
     try:
       let defaultAccount = self.getDefaultAccount()
