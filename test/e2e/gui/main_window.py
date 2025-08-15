@@ -63,6 +63,28 @@ class MainLeftPanel(QObject):
         LOG.info(f'Wallet loaded in {load_time:.3f} seconds')
         return wallet_screen, load_time
 
+    @allure.step('Click Wallet button and record load time until WalletScreen is visible')
+    def open_wallet_and_log_load_time_for_total_balance(self):
+        start_time = time.time()
+        self.wallet_button.click()
+        wallet_screen = WalletScreen()
+        check_interval = 0.1  # Check every 100ms for better precision
+
+        while True:
+            try:
+                balance_text = wallet_screen.left_panel.all_accounts_balance.object.text
+                balance_value = float(balance_text.replace(',', '.'))
+                if balance_value > 0:
+                    LOG.info('Total balance: is visible')
+                    break
+            except Exception as e:
+                LOG.debug("Exception during visibility check: %s", e)
+            time.sleep(check_interval)
+
+        load_time = time.time() - start_time
+        LOG.info(f'Total balance loaded in {load_time:.3f} seconds')
+        return wallet_screen, load_time
+
     @allure.step('Click Home button and open Home screen')
     @open_with_retries(HomeScreen)
     def open_home_screen(self):
