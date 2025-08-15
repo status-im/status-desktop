@@ -44,10 +44,10 @@ QtObject {
         CommunityUnbanned = 22,
         NewInstallationReceived = 23,
         NewInstallationCreated = 24,
-        BackupSyncingFetching = 25,
-        BackupSyncingSuccess = 26,
-        BackupSyncingPartialFailure = 27,
-        BackupSyncingFailure = 28,
+        BackupSyncingFetching = 25, // Deprecated
+        BackupSyncingSuccess = 26, // Deprecated
+        BackupSyncingPartialFailure = 27, // Deprecated
+        BackupSyncingFailure = 28, // Deprecated
         ActivityCenterNotificationTypeNews = 29
     }
 
@@ -128,9 +128,5 @@ QtObject {
 
     function enableInstallationAndSync(installationId) {
         root.activityCenterModuleInst.enableInstallationAndSync(installationId)
-    }
-
-    function tryFetchingAgain() {
-        root.activityCenterModuleInst.tryFetchingAgain()
     }
 }

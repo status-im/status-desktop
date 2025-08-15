@@ -170,7 +170,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password,
           mnemonic,
-          recoverAccount = false,
           keycardInstanceUID = "",
         )
       of OnboardingFlow.CreateProfileWithKeycardNewSeedphrase:
@@ -178,7 +177,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           mnemonic,
-          recoverAccount = false,
           keycardInstanceUID = keycardInfo.instanceUID,
         )
       of OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase:
@@ -186,7 +184,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           mnemonic,
-          recoverAccount = false,
           keycardInstanceUID = keycardInfo.instanceUID,
         )
 
@@ -195,7 +192,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password,
           mnemonic,
-          recoverAccount = true,
           keycardInstanceUID = "",
         )
       of OnboardingFlow.LoginWithSyncing:
@@ -210,7 +206,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           keycardInfo.keyUID,
           keycardInfo.instanceUID,
           self.exportedKeys,
-          recoverAccount = true
         )
       of OnboardingFlow.LoginWithLostKeycardSeedphrase:
         # 1. Schedule `convertToRegularAccount` for post-onboarding

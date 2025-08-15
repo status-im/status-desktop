@@ -305,6 +305,3 @@ method setActivityGroupCounters*(self: Module, counters: Table[ActivityCenterGro
 
 method enableInstallationAndSync*(self: Module, installationId: string) =
   self.controller.enableInstallationAndSync(installationId)
-
-method tryFetchingAgain*(self: Module) =
-  self.controller.tryFetchingAgain()

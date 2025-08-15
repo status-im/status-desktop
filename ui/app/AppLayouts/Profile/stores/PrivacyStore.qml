@@ -41,10 +41,6 @@ QtObject {
         root.privacyModule.tryRemoveFromKeyChain()
     }
 
-    function backupData() {
-        return root.privacyModule.backupData()
-    }
-
     function mnemonicWasShown() {
         root.privacyModule.mnemonicWasShown()
     }
