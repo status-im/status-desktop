@@ -38,9 +38,9 @@ QtObject {
         localBackupEnabled: root.localBackupEnabled
     }
     readonly property ContactsStore contactsStore: ContactsStore {}
+    readonly property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
 
     // readonly property ChatStores.RootStore rootChatStore: ChatStores.RootStore { ... }
-    // readonly property ActivityCenterStore activityCenterStore: ActivityCenterStore { ... }
     // readonly property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore { ... }
     // + all the rest of stores now created on `AppMain`
 
@@ -95,7 +95,6 @@ QtObject {
     signal playNotificationSound()
     signal mailserverWorking()
     signal mailserverNotWorking()
-    signal openActivityCenter()
 
     function displayEphemeralNotification(title: string, subTitle: string,
                                           image: string, icon: string,
@@ -134,10 +133,6 @@ QtObject {
 
         function onMailserverNotWorking() {
             root.mailserverNotWorking()
-        }
-
-        function onOpenActivityCenter() {
-            root.openActivityCenter()
         }
     }
     // End of Notifications related stuff

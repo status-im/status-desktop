@@ -20,9 +20,6 @@ import StatusQ.Core.Theme
     StatusSectionLayoutPortrait {
         id: root
 
-        notificationCount: 1
-        onNotificationButtonClicked: { showActivityCenter(); }
-
         headerContent: RowLayout {
             ...
         }
@@ -97,20 +94,6 @@ SwipeView {
     property bool showHeader: true
 
     /*!
-        \qmlproperty alias StatusSectionLayout::notificationCount
-        This property holds a reference to the notificationCount property of the
-        header component.
-    */
-    property alias notificationCount: statusToolBar.notificationCount
-
-    /*!
-        \qmlproperty alias StatusSectionLayout::hasUnseenNotifications
-        This property holds a reference to the hasUnseenNotifications property of the
-        header component.
-    */
-    property alias hasUnseenNotifications: statusToolBar.hasUnseenNotifications
-
-    /*!
         \qmlproperty alias StatusSectionLayout::backButtonName
         This property holds a reference to the backButtonName property of the
         header component.
@@ -123,12 +106,7 @@ SwipeView {
         the header component.
     */
     property Item headerContent
-    /*!
-        \qmlproperty alias StatusSectionLayout::notificationButton
-        This property holds a reference to the notification button of the header
-        component.
-    */
-    property alias notificationButton: statusToolBar.notificationButton
+
 
     /*!
         \qmlsignal
@@ -136,13 +114,6 @@ SwipeView {
         is pressed.
     */
     signal backButtonClicked()
-
-    /*!
-        \qmlsignal
-        This signal is emitted when the notification button of the header component
-        is pressed.
-    */
-    signal notificationButtonClicked()
 
     QtObject {
         id: d
@@ -279,9 +250,6 @@ SwipeView {
     component BaseToolBar: StatusToolBar {
         visible: root.showHeader
         backButtonVisible: root.currentIndex !== 0
-        onBackButtonClicked: d.handleBackAction()
-        onNotificationButtonClicked: {
-            root.notificationButtonClicked();
-        }
+        onBackButtonClicked: d.handleBackAction() 
     }
 }

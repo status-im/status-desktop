@@ -20,9 +20,6 @@ import StatusQ.Core.Theme
     StatusSectionLayout {
         id: root
 
-        notificationCount: 1
-        onNotificationButtonClicked: { showActivityCenter(); }
-
         headerContent: RowLayout {
             ...
         }
@@ -102,20 +99,6 @@ LayoutChooser {
     property bool showHeader: true
 
     /*!
-        \qmlproperty int StatusSectionLayout::notificationCount
-        This property holds a reference to the notificationCount property of the
-        header component.
-    */
-    property int notificationCount
-
-    /*!
-        \qmlproperty bool StatusSectionLayout::hasUnseenNotifications
-        This property holds a reference to the hasUnseenNotifications property of the
-        header component.
-    */
-    property bool hasUnseenNotifications
-
-    /*!
         \qmlproperty string StatusSectionLayout::backButtonName
         This property holds a reference to the backButtonName property of the
         header component.
@@ -128,12 +111,6 @@ LayoutChooser {
         the header component.
     */
     property Item headerContent
-    /*!
-        \qmlproperty Item StatusSectionLayout::notificationButton
-        This property holds a reference to the notification button of the header
-        component.
-    */
-    property Item notificationButton
 
     /*!
         \qmlsignal
@@ -143,12 +120,6 @@ LayoutChooser {
 
     signal backButtonClicked()
 
-    /*!
-        \qmlsignal
-        This signal is emitted when the notification button of the header component
-        is pressed.
-    */
-    signal notificationButtonClicked()
     /*!
         \qmlmethod StatusSectionLayout::goToNextPanel()
         This method is used to focus the panel that needs to be active.
@@ -187,11 +158,8 @@ LayoutChooser {
         rightPanelWidth: root.rightPanelWidth
         showHeader: root.showHeader
         backButtonName: root.backButtonName
-        hasUnseenNotifications: root.hasUnseenNotifications
-        notificationCount: root.notificationCount
         headerContent: root.headerContent
 
-        onNotificationButtonClicked: root.notificationButtonClicked()
         onBackButtonClicked: root.backButtonClicked()
     }
 
@@ -208,11 +176,8 @@ LayoutChooser {
         rightPanelWidth: root.rightPanelWidth
         showHeader: root.showHeader
         backButtonName: root.backButtonName
-        hasUnseenNotifications: root.hasUnseenNotifications
-        notificationCount: root.notificationCount
         headerContent: root.headerContent
 
-        onNotificationButtonClicked: root.notificationButtonClicked()
         onBackButtonClicked: root.backButtonClicked()
     }
 }

@@ -7,6 +7,8 @@ import StatusQ.Core.Theme
 Button {
     id: root
 
+    objectName: "navigationButton_" + (navigateForward ? "next" : "previous")
+
     property color gradientColor: Theme.palette.statusAppLayout.backgroundColor
     property bool navigateForward: false
 

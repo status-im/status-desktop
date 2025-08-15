@@ -9,14 +9,10 @@ ToolBar {
     id: root
 
     property string backButtonName: ""
-    property int notificationCount: 0
-    property bool hasUnseenNotifications: false
     property Item headerContent
-    property alias notificationButton: notificationButton
     property bool backButtonVisible: !!backButtonName
 
     signal backButtonClicked()
-    signal notificationButtonClicked()
 
     objectName: "statusToolBar"
     leftPadding: 4
@@ -43,18 +39,6 @@ ToolBar {
             Layout.leftMargin: 8
             background: null
             contentItem: (!!headerContent) ? headerContent : null
-        }
-
-        Item {
-            Layout.fillWidth: !headerContent
-        }
-
-        StatusActivityCenterButton {
-            id: notificationButton
-            Layout.leftMargin: 8
-            unreadNotificationsCount: root.notificationCount
-            hasUnseenNotifications: root.hasUnseenNotifications
-            onClicked: root.notificationButtonClicked()
         }
     }
 }

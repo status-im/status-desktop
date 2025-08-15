@@ -437,6 +437,8 @@ QtObject {
             return qsTr("dApp")
         case Constants.appSection.homePage:
             return "%1 (%2)".arg(qsTr("Home Page")).arg(additionalTextFunction(sectionType))
+        case Constants.appSection.activityCenter:
+            return qsTr("Activity Center")
         default:
             return fallback
         }
