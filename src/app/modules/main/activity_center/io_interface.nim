@@ -113,6 +113,3 @@ method setActivityGroupCounters*(self: AccessInterface, counters: Table[Activity
 
 method enableInstallationAndSync*(self: AccessInterface, installationId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method tryFetchingAgain*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
