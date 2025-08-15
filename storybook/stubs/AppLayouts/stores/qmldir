@@ -1,3 +1,2 @@
 RootStore 1.0 RootStore.qml
 ContactsStore 1.0 ContactsStore.qml
-CloneModel 1.0 ../../../../ui/app/AppLayouts/stores/CloneModel.qml

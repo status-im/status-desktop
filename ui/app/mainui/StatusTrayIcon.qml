@@ -45,7 +45,7 @@ SystemTrayIcon {
         }
     }
 
-    onActivated: {
+    onActivated: function(reason) {
         if (reason !== SystemTrayIcon.Context) {
             root.activateApp()
         }

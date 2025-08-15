@@ -26,6 +26,7 @@ const DEFAULT_FLAG_LOCAL_BACKUP_ENABLED = true
 
 # Compile time feature flags
 const DEFAULT_FLAG_DAPPS_ENABLED  = true
+const DEFAULT_FLAG_BROWSER_ENABLED = true
 const DEFAULT_FLAG_CONNECTOR_ENABLED  = true
 const DEFAULT_FLAG_KEYCARD_ENABLED = true
 const DEFAULT_FLAG_THREADPOOL_ENABLED = true
@@ -41,6 +42,7 @@ featureFlag("HOMEPAGE_ENABLED",               DEFAULT_FLAG_HOMEPAGE_ENABLED)
 featureFlag("LOCAL_BACKUP_ENABLED",           DEFAULT_FLAG_LOCAL_BACKUP_ENABLED)
 
 featureFlag("DAPPS_ENABLED",                  DEFAULT_FLAG_DAPPS_ENABLED, true)
+featureFlag("BROWSER_ENABLED",                DEFAULT_FLAG_BROWSER_ENABLED, true)
 featureFlag("CONNECTOR_ENABLED",              DEFAULT_FLAG_CONNECTOR_ENABLED, true)
 featureFlag("KEYCARD_ENABLED",                DEFAULT_FLAG_KEYCARD_ENABLED, true)
 featureFlag("THREADPOOL_ENABLED",             DEFAULT_FLAG_THREADPOOL_ENABLED, true)
@@ -78,6 +80,7 @@ macro featureGuard*(flag: static bool, n: varargs[untyped]): untyped =
 QtObject:
   type FeatureFlags* = ref object of QObject
     dappsEnabled: bool
+    browserEnabled: bool
     swapEnabled: bool
     connectorEnabled: bool
     sendViaPersonalChatEnabled: bool
@@ -91,6 +94,7 @@ QtObject:
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
     self.dappsEnabled = DAPPS_ENABLED
+    self.browserEnabled = BROWSER_ENABLED
     self.swapEnabled = SWAP_ENABLED
     self.connectorEnabled = CONNECTOR_ENABLED
     self.sendViaPersonalChatEnabled = SEND_VIA_PERSONAL_CHAT_ENABLED
@@ -113,6 +117,12 @@ QtObject:
 
   QtProperty[bool] dappsEnabled:
     read = getDappsEnabled
+
+  proc getBrowserEnabled*(self: FeatureFlags): bool {.slot.} =
+    return self.dappsEnabled
+
+  QtProperty[bool] browserEnabled:
+    read = getBrowserEnabled
 
   proc getSwapEnabled*(self: FeatureFlags): bool {.slot.} =
     return self.swapEnabled

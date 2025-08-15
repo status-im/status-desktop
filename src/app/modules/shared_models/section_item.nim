@@ -7,6 +7,7 @@ import ../../../app_service/common/types
 import ../../../app_service/service/community_tokens/community_collectible_owner
 
 type
+  # has to match Constants.appSection
   SectionType* {.pure.} = enum
     HomePage = 0,
     Wallet,
@@ -17,7 +18,8 @@ type
     CommunitiesPortal,
     LoadingSection,
     Swap,
-    Market
+    Market,
+    Browser
 
 type
   SectionItem* = object

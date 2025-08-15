@@ -35,6 +35,21 @@ ListModel {
         notificationsCount: 0
     },
     {
+        id: "id10",
+        sectionType: Constants.appSection.browser,
+        icon: "browser",
+        image: "",
+        bannerImageData: "",
+        color: "",
+        name: "Browser",
+        description: "",
+        allMembers: [],
+        activeMembersCount: 0,
+        enabled: true,
+        hasNotification: false,
+        notificationsCount: 0
+    },
+    {
         id: "id3",
         sectionType: Constants.appSection.profile,
         icon: "settings",
