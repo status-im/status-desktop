@@ -106,7 +106,10 @@ Item {
                 spacing: 0
                 topInset: 0
                 bottomInset: 0
-                customizable: true
+                showDragHandler: Utils.isMobile
+                dragByHandlerOnly: Utils.isMobile
+
+                drawBackground: false
                 Drag.keys: chatListDelegate.keys
                 onClicked: function(mouse) {
                     if (draggableItem.isCategory) {

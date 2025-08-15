@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core
+import StatusQ.Core.Utils
 import StatusQ.Core.Theme
 
 /*!
@@ -148,11 +149,6 @@ AbstractButton {
        This property holds whether this item can be dragged (and whether the drag handle is displayed)
     */
     property bool dragEnabled: draggable
-    /*!
-       \qmlproperty bool StatusDraggableListItem::customizable
-       This property holds whether this item can be customized
-    */
-    property bool customizable: false
 
     property bool highlighted // NB: compat with ItemDelegate
 
@@ -222,6 +218,25 @@ AbstractButton {
     */
     property bool changeColorOnDragActive: dragActive
 
+    /*!
+       \qmlproperty bool StatusDraggableListItem::showDragHandler
+       This property holds if drag handler is visible when component is draggable
+    */
+    property bool showDragHandler: true
+
+    /*!
+       \qmlproperty bool StatusDraggableListItem::dragByHandlerOnly
+       This property holds if drag is activated only via drag handler (true) or
+       the whole area of the delegate (false)
+    */
+    property bool dragByHandlerOnly: false
+
+    /*!
+       \qmlproperty bool StatusDraggableListItem::drawBackground
+       This property holds if background is rendered
+    */
+    property bool drawBackground: true
+
     Drag.dragType: Drag.Automatic
     Drag.hotSpot.x: dragHandler.mouseX
     Drag.hotSpot.y: dragHandler.mouseY
@@ -272,10 +287,10 @@ AbstractButton {
 
     background: Rectangle {
         implicitHeight: 76 // ProfileUtils.defaultDelegateHeight
-        color: root.changeColorOnDragActive && !root.customizable? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
-        border.width: root.customizable ? 0 : 1
+        color: root.changeColorOnDragActive && root.drawBackground ? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
+        border.width: root.drawBackground ? 1 : 0
         border.color: Theme.palette.baseColor2
-        radius: root.customizable ? 0 : Theme.radius
+        radius: root.drawBackground ? Theme.radius : 0
     }
 
     // inset to simulate spacing
@@ -292,6 +307,10 @@ AbstractButton {
     // Qt6: use a TapHandler with a regular contentItem, and derive again from ItemDelegate
     StatusMouseArea {
         id: dragHandler
+
+        parent: dragByHandlerOnly ? dragHandlerIcon : root
+        enabled: root.dragEnabled || !Utils.isMobile
+
         anchors.fill: parent
         drag.target: root.dragEnabled ? root : null
         drag.axis: root.dragAxis
@@ -302,7 +321,24 @@ AbstractButton {
             if (root.dragEnabled)
                 return root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         }
+
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+        onClicked: (mouse) => {
+            if (Utils.isMobile)
+                mouse.accepted = false
+            else
+                root.clicked(mouse)
+        }
+    }
+
+    StatusMouseArea {
+        anchors.fill: parent
+
+        enabled: Utils.isMobile
+
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
         onClicked: (mouse) => {
             root.clicked(mouse)
         }
@@ -317,10 +353,12 @@ AbstractButton {
         spacing: root.spacing
 
         StatusIcon {
+            id: dragHandlerIcon
+
             Layout.preferredWidth: 20
             Layout.preferredHeight: 20
             icon: "justify"
-            visible: root.draggable && !root.customizable
+            visible: root.draggable && root.showDragHandler
             color: root.dragEnabled ? Theme.palette.baseColor1 : Theme.palette.baseColor2
         }
 
