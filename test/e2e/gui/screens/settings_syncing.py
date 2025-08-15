@@ -18,7 +18,6 @@ class SyncingSettingsView(QObject):
     def __init__(self):
         super().__init__(settings_names.mainWindow_SyncingView)
         self.setup_syncing_button = Button(settings_names.settings_Setup_Syncing_StatusButton)
-        self.backup_data_button = Button(settings_names.settings_Backup_Data_StatusButton)
         self.sync_new_device_instructions_header = TextLabel(settings_names.settings_Sync_New_Device_Header)
         self.sync_new_device_instructions_subtitle = TextLabel(settings_names.settings_Sync_New_Device_SubTitle)
         self.unpair_button = Button(settings_names.unpairButton)
