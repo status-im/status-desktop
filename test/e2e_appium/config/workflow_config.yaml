@@ -1,0 +1,35 @@
+workflow:
+  timeout_minutes: 60
+  python_version: '3.11'
+  artifact_retention_days: 30
+  
+test_execution:
+  default_environment: 'lambdatest'
+  supported_environments: ['lambdatest', 'local']
+  parallel_workers_auto: true
+  pytest_options:
+    verbose: true
+    capture: 'no'  # Show output in real-time
+    tb_style: 'short'
+    
+device_configs:
+  default:
+    name: 'Samsung Galaxy Tab S8'
+    platform_version: '14'
+  pixel_tablet:
+    name: 'Google Pixel Tablet'
+    platform_version: '14'
+  galaxy_tab_a:
+    name: 'Samsung Galaxy Tab A8'
+    platform_version: '13'
+    
+apk_validation:
+  required_architecture: 'x86_64'
+  max_size_mb: 200
+  allowed_extensions: ['.apk']
+  
+reporting:
+  context_name: 'e2e/appium-android'
+  html_report_name: 'e2e-results.html'
+  junit_report_name: 'junit-e2e.xml'
+  summary_report_name: 'summary.md' 
