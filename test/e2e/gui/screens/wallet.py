@@ -45,7 +45,7 @@ class WalletLeftPanel(QObject):
         self.wallet_account_item = QObject(wallet_names.walletAccount_StatusListItem)
         self.add_account_button = Button(wallet_names.mainWallet_Add_Account_Button)
         self.all_accounts_button = Button(wallet_names.mainWallet_All_Accounts_Button)
-        self.all_accounts_balance = TextLabel(wallet_names.mainWallet_All_Accounts_Balance)
+        self.all_accounts_balance = QObject(wallet_names.mainWallet_All_Accounts_Balance)
 
     @property
     @allure.step('Build and return list of wallet accounts on wallet main screen')
