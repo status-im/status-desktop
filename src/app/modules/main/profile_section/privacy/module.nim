@@ -122,9 +122,6 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
   let credential = if pin.len > 0: pin else: password
   self.view.requestSaveBiometrics(keyUid, credential)
 
-method backupData*(self: Module): int64 =
-  return self.controller.backupData()
-
 method onUrlUnfurlingModeUpdated*(self: Module, mode: int) =
   self.view.emitUrlUnfurlingModeUpdated(mode)
 

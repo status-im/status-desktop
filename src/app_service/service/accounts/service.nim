@@ -241,7 +241,6 @@ QtObject:
   proc importAccountAndLogin*(self: Service,
     mnemonic: string,
     password: string,
-    recoverAccount: bool,
     displayName: string,
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
@@ -250,7 +249,6 @@ QtObject:
 
     var request = RestoreAccountRequest(
       mnemonic: mnemonic,
-      fetchBackup: recoverAccount,
       createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
@@ -260,7 +258,6 @@ QtObject:
   # TODO remove this function when the old keycard service is removed
   proc restoreKeycardAccountAndLogin*(self: Service,
     keycardData: KeycardEvent,
-    recoverAccount: bool,
     displayName: string,
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
@@ -281,7 +278,6 @@ QtObject:
 
     var request = RestoreAccountRequest(
       keycard: keycard,
-      fetchBackup: recoverAccount,
       createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
@@ -292,7 +288,6 @@ QtObject:
     keyUid: string,
     instanceUid: string,
     keycardKeys: KeycardExportedKeysDto,
-    recoverAccount: bool,
     ): string =
 
     let keycard = KeycardData(
@@ -310,7 +305,6 @@ QtObject:
 
     var request = RestoreAccountRequest(
       keycard: keycard,
-      fetchBackup: recoverAccount,
       createAccountRequest: buildCreateAccountRequest(
         password = "",
         displayName = "",

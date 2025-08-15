@@ -59,11 +59,6 @@ proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcRe
     error "error", methodName = "getPasswordStrengthScore", exception=e.msg
     raise newException(RpcException, e.msg)
 
-
-proc backupData*(): RpcResponse[JsonNode] =
-  let payload = %* []
-  result = callPrivateRPC("backupData".prefix, payload)
-
 proc importLocalBackupFile*(filePath: string): RpcResponse[JsonNode] =
   let payload = %* [filePath]
   result = callPrivateRPC("importLocalBackupFile".prefix, payload)
