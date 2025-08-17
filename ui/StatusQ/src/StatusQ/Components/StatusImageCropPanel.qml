@@ -48,7 +48,7 @@ Item {
     */
     property bool interactive: true
     /*!
-        \qmlproperty bool StatusImageCrop::margins
+        \qmlproperty int StatusImageCrop::margins
         Space to keep around the control borders and crop area
     */
     property int margins: 10
@@ -224,7 +224,7 @@ Item {
                 onMouseXChanged: (mouse) => updateDrag(Qt.point(mouse.x, mouse.y))
                 onMouseYChanged: (mouse) => updateDrag(Qt.point(mouse.x, mouse.y))
 
-                onWheel: {
+                onWheel: function (wheel) {
                     const delta = wheel.angleDelta.y / 120
                     cropEditor.setCropRect(cropEditor.getZoomRect(cropEditor.zoomScale + delta * root.scrollZoomFactor))
                 }
