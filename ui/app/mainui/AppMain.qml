@@ -2006,7 +2006,7 @@ Item {
                         asynchronous: true
                         Binding on active {
                             when: appView.currentIndex === Constants.appViewStackIndex.browser
-                            value: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
+                            value: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled && !localAppSettings.testEnvironment
                             restoreMode: Binding.RestoreNone
                         }
 
