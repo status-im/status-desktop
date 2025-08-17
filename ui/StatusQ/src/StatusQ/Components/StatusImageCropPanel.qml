@@ -269,8 +269,7 @@ Item {
                 from: cropEditor.minZoomScale
                 to: cropEditor.maxZoomScale
                 value: cropEditor.zoomScale
-                live: false
-                onMoved: cropEditor.setCropRect(cropEditor.getZoomRect(valueAt(visualPosition)))
+                onMoved: cropEditor.setCropRect(cropEditor.getZoomRect(valueAt(position)))
             }
             StatusIcon {
                 icon: "add-circle"
