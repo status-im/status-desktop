@@ -1,5 +1,5 @@
 # QT Installation Image --------------------------------------------------------
-FROM carlonluca/qt-dev:6.9.0
+FROM statusteam/nim-status-client-build:1.0.0-qt6.9.0-android
 
 ENV PATH=/opt/qt/6.9.0/android_arm64_v8a/bin:${PATH}
 ENV ARCH=arm64
@@ -37,7 +37,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
     --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
  && apt-get -qq clean
 
-    
+
 # Installing Golang
 RUN GOLANG_SHA256="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252092" \
  && GOLANG_TARBALL="go1.22.10.linux-amd64.tar.gz" \
