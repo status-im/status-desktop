@@ -1,0 +1,184 @@
+pipeline {
+    agent {
+        label 'linux && x86_64 && qt-builder'
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+        timestamps()
+        timeout(time: 12, unit: 'HOURS')
+    }
+
+    parameters {
+        string(
+            name: 'QT_VERSION',
+            defaultValue: '6.9.0',
+            description: 'Qt version to build'
+        )
+        string(
+            name: 'DOCKER_TAG',
+            defaultValue: '1.0.0-qt6.9.0-android',
+            description: 'Docker image tag for the final image'
+        )
+        booleanParam(
+            name: 'PUSH_TO_DOCKERHUB',
+            defaultValue: true,
+            description: 'Push the final image to DockerHub'
+        )
+        booleanParam(
+            name: 'BUILD_QT_FROM_SOURCE',
+            defaultValue: true,
+            description: 'Build Qt from source (takes several hours)'
+        )
+    }
+
+    environment {
+        DOCKER_REGISTRY = 'statusteam'
+        DOCKER_IMAGE_BASE = 'nim-status-client-build'
+        QT_BUILD_DIR = "${WORKSPACE}/ci/docker/qt-build"
+    }
+
+    stages {
+        stage('Prepare') {
+            steps {
+                script {
+                    // Clean workspace
+                    sh 'rm -rf qt_export qt-src'
+                    sh 'mkdir -p qt_export'
+
+                    // Set executable permissions on scripts
+                    sh 'chmod +x ${QT_BUILD_DIR}/scripts/*.sh'
+                }
+            }
+        }
+
+        stage('AppImage Builder') {
+            steps {
+                script {
+                    echo "Building AppImage Builder image..."
+                    sh """
+                        cd ${QT_BUILD_DIR}/appimage-builder
+                        docker build -t ${DOCKER_REGISTRY}/appimage-builder:noble .
+                    """
+                }
+            }
+        }
+
+        stage('Qt Dev Base') {
+            steps {
+                script {
+                    echo "Building Qt Dev Base image..."
+                    sh """
+                        cd ${QT_BUILD_DIR}/base
+                        docker build \
+                            --build-arg TARGETARCH=amd64 \
+                            -t ${DOCKER_REGISTRY}/qt-dev-base:noble-17-35-27.2.12479018 .
+                    """
+                }
+            }
+        }
+
+        stage('Qt Android') {
+            when {
+                expression { params.BUILD_QT_FROM_SOURCE == true }
+            }
+            agent {
+                docker {
+                    label 'linux && qt-builder'
+                    image "${DOCKER_REGISTRY}/qt-dev-base:noble-17-35-27.2.12479018"
+                    args "-u root -v ${WORKSPACE}/qt_export:/root/export -v ${WORKSPACE}/ci/docker/qt-build/scripts:/root/scripts"
+                }
+            }
+            steps {
+                script {
+                    echo "Building Qt ${params.QT_VERSION} for Android..."
+                    sh """
+                        chmod +x /root/scripts/build_qt_android.sh /root/scripts/build_qt_desktop.sh
+                        cd /root
+                        /root/scripts/build_qt_android.sh
+                    """
+                }
+            }
+        }
+
+        stage('Build Qt CI Image') {
+            steps {
+                script {
+                    echo "Building final Qt Docker image..."
+                    sh """
+                        cd ${QT_BUILD_DIR}/qt
+                        cp -r ${WORKSPACE}/qt_export .
+                        docker build \
+                            --build-arg QTVER=${params.QT_VERSION} \
+                            -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} .
+                    """
+                }
+            }
+        }
+
+        stage('Test Image') {
+            steps {
+                script {
+                    echo "Testing the built image..."
+                    sh """
+                        docker run --rm \
+                            ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
+                            "qmake --version"
+
+                        docker run --rm \
+                            ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
+                            "ls -la /opt/qt/${params.QT_VERSION}/"
+                    """
+                }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            when {
+                expression { params.PUSH_TO_DOCKERHUB == true }
+            }
+            steps {
+                script {
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'dockerhub-statusteam-bot',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_PASS'
+                        )
+                    ]) {
+                        sh """
+                            echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
+                            docker logout
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            script {
+                def message = """
+                Qt Build Successful!
+                - Qt Version: ${params.QT_VERSION}
+                - Docker Tag: ${params.DOCKER_TAG}
+                - Image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
+                """
+            }
+        }
+        failure {
+            script {
+                def message = """
+                Qt Build Failed!
+                - Qt Version: ${params.QT_VERSION}
+                - Build URL: ${BUILD_URL}
+                """
+            }
+        }
+    }
+}
