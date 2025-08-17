@@ -85,7 +85,7 @@ pipeline {
     QT_QPA_PLATFORM = "linuxfb"
 
     /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
-    /* STATUS_RUNTIME_TEST_MODE = 'True' */
+    STATUS_RUNTIME_TEST_MODE = 1
 
     /* Logging rules let you enable or disable logging for categories */
     QT_LOGGING_RULES = '*.warning=true'
