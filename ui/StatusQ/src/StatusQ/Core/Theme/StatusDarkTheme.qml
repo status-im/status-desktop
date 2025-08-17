@@ -68,6 +68,7 @@ ThemePalette {
 
     dropShadow: getColor('black', 0.08)
     dropShadow2: getColor('blue8', 0.02)
+    dropShadow3: getColor('blue8', 0.05) // suitable for MultiEffect
 
     statusFloatingButtonHighlight: getColor('blue4', 0.3)
 
