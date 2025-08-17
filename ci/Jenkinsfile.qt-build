@@ -116,22 +116,60 @@ pipeline {
             }
         }
 
-        stage('Test Image') {
+        stage('Build Enhanced Runtime Image') {
             steps {
                 script {
-                    echo "Testing the built image..."
+                    echo "Building enhanced runtime image with Nim and all tooling..."
                     sh """
-                        docker run --rm \
-                            ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
-                            "qmake --version"
-
-                        docker run --rm \
-                            ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
-                            "ls -la /opt/qt/${params.QT_VERSION}/"
+                        cd ${QT_BUILD_DIR}/nim-runtime
+                        docker build \
+                            --build-arg GOLANG_VERSION=1.23.10 \
+                            --build-arg NIM_VERSION=2.0.12 \
+                            --build-arg NIX_VERSION=2.24.11 \
+                            -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci .
                     """
                 }
             }
         }
+
+        stage('Test Images') {
+            parallel {
+                stage('Test Qt Base Image') {
+                    steps {
+                        script {
+                            echo "Testing the Qt base image..."
+                            sh """
+                                docker run --rm \
+                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
+                                    "qmake --version"
+
+                                docker run --rm \
+                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
+                                    "ls -la /opt/qt/${params.QT_VERSION}/"
+                            """
+                        }
+                    }
+                }
+
+                stage('Test Complete Image') {
+                    steps {
+                        script {
+                            echo "Testing the image with nim/go tooling..."
+                            sh """
+                                docker run --rm \
+                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci \
+                                    "qmake --version && nim --version && go version && echo 'All tools working!'"
+
+                                docker run --rm \
+                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci \
+                                    "ls -la /home/jenkins/openssl-output/arm64-v8a/lib/"
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
 
         stage('Push to DockerHub') {
             when {
@@ -149,6 +187,7 @@ pipeline {
                         sh """
                             echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
                             docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
+                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci
                             docker logout
                         """
                     }
@@ -167,7 +206,8 @@ pipeline {
                 Qt Build Successful!
                 - Qt Version: ${params.QT_VERSION}
                 - Docker Tag: ${params.DOCKER_TAG}
-                - Image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
+                - Base Image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
+                - Complete Image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci
                 """
             }
         }

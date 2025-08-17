@@ -11,8 +11,10 @@ LABEL base.image="statusteam/nim-status-client-build:1.0.0-qt6.9.0-android"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Create jenkins user with specific UID/GID for compatibility
 RUN groupadd -g 1001 jenkins && useradd -r -g jenkins -m -d /home/jenkins -s /bin/bash -u 1001 jenkins
 
+# Install additional runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
@@ -41,6 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /tmp/* \
     && rm -rf /var/tmp/*
 
+# Configure locales
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
@@ -49,8 +52,10 @@ ENV LC_ALL=en_US.UTF-8
 # Give jenkins sudo access
 RUN echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+# Create nix directory
 RUN mkdir /nix && chown jenkins:jenkins /nix
 
+# Install/Update Golang to the version we need
 RUN GOLANG_SHA256="535f9f81802499f2a7dbfa70abb8fda3793725fcc29460f719815f6e10b5fd60" \
     && GOLANG_TARBALL="go${GOLANG_VERSION}.linux-amd64.tar.gz" \
     && rm -rf /usr/local/go \
@@ -67,15 +72,18 @@ RUN /usr/local/go/bin/go install github.com/go-bindata/go-bindata/v3/go-bindata@
     && /usr/local/go/bin/go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1 \
     && cp /root/go/bin/* /usr/local/bin/ 2>/dev/null || true
 
+# Configure Qt library path
 RUN echo "/opt/qt/6.9.0/gcc_64/lib" > /etc/ld.so.conf.d/qt.conf \
     && ldconfig
 
+# Create missing Qt Android directory for compatibility
 RUN mkdir -p /opt/qt/6.9.0/android_arm64_v8a/lib/pkgconfig
 
 # Switch to jenkins user for user-specific installations
 USER jenkins
 WORKDIR /home/jenkins
 
+# Build OpenSSL for Android arm64-v8a
 RUN set -e \
     && git clone --depth 1 --branch openssl-3.0.15 https://github.com/openssl/openssl.git \
     && mkdir -p openssl-output/arm64-v8a \
@@ -94,28 +102,37 @@ RUN set -e \
     && make clean \
     && echo "OpenSSL build completed"
 
+# Install Nim
 RUN curl https://nim-lang.org/choosenim/init.sh -sSf | sh -s -- -y \
     && /home/jenkins/.nimble/bin/choosenim ${NIM_VERSION}
 
+# Install Nix
 RUN curl -s https://nixos.org/releases/nix/nix-${NIX_VERSION}/install | sh -s -- --no-daemon
 
+# Install Go tools for jenkins user as well
 RUN /usr/local/go/bin/go install github.com/go-bindata/go-bindata/v3/go-bindata@latest \
     && /usr/local/go/bin/go install go.uber.org/mock/mockgen@v0.4.0
 
+# Switch back to root to create system-wide symlinks
 USER root
 
+# Create symlinks for Nim tools
 RUN ln -sf /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/nim /usr/local/bin/nim \
     && ln -sf /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/nimble /usr/local/bin/nimble \
     && ln -sf /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/choosenim /usr/local/bin/choosenim \
     && chmod 755 /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin/* \
     && chown -R root:root /home/jenkins/.choosenim/toolchains/nim-${NIM_VERSION}/bin
 
+# Set comprehensive PATH with all tools
 ENV PATH="/opt/qt/6.9.0/gcc_64/bin:/opt/qt/6.9.0/android_arm64_v8a/bin:/usr/local/go/bin:/home/jenkins/go/bin:/opt/qt/6.9.0/gcc_64/libexec:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/home/jenkins/.nix-profile/bin:/usr/local/bin:${PATH}"
+
+# Set Qt and OpenSSL environment variables
 ENV QT_HOST_PATH="/opt/qt/6.9.0/gcc_64/"
 ENV QT_PLUGIN_PATH="/opt/qt/6.9.0/gcc_64/plugins"
 ENV OPENSSL_LIB_DIR="/home/jenkins/openssl-output/arm64-v8a/lib"
 ENV OPENSSL_INC_DIR="/home/jenkins/openssl-output/arm64-v8a/include"
 
+# Switch back to jenkins user as default
 USER jenkins
 WORKDIR /home/jenkins
 
