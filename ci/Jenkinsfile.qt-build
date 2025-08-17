@@ -1,0 +1,98 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+pipeline {
+  agent {
+    label 'linux && x86_64 && qt-builder'
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+    timestamps()
+    timeout(time: 12, unit: 'HOURS')
+  }
+
+  parameters {
+    string(
+      name: 'QT_VERSION',
+      defaultValue: '6.9.0',
+      description: 'Qt version to build'
+    )
+    string(
+      name: 'DOCKER_TAG',
+      defaultValue: '1.0.3-qt6.9.0-android',
+      description: 'Docker image tag for the final image'
+    )
+    booleanParam(
+      name: 'PUSH_TO_DOCKERHUB',
+      defaultValue: true,
+      description: 'Push the final image to DockerHub'
+    )
+  }
+
+  environment {
+    DOCKER_REGISTRY = 'statusteam'
+    DOCKER_IMAGE_BASE = 'nim-status-client-build'
+    MOBILE_BUILD_DIR = "${WORKSPACE}/mobile/docker"
+  }
+
+  stages {
+    stage('Build Docker Images') {
+      steps {
+        script {
+          dir("${MOBILE_BUILD_DIR}") {
+            image = docker.build(
+              "${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}",
+              "--build-arg QTVER=${params.QT_VERSION} " +
+              "--build-arg TARGETARCH=amd64 " +
+              "--build-arg JAVA_VERSION=17 " +
+              "--build-arg ANDROID_API_LEVEL=35 " +
+              "--build-arg ANDROID_NDK_VERSION=27.2.12479018 " +
+              "--build-arg GOLANG_VERSION=1.23.10 " +
+              "--build-arg NIM_VERSION=2.0.12 " +
+              "--build-arg NIX_VERSION=2.24.11 " +
+              "--target mobile-build ."
+            )
+          }
+        }
+      }
+    }
+
+    stage('Test Images') {
+      parallel {
+        stage('Test Mobile Build Image') {
+          steps {
+            script {
+              image.inside('--entrypoint=""') {
+                sh "qmake --version"
+                sh "nim --version"
+                sh "go version"
+                sh "protoc --version"
+                sh "java -version"
+                sh "ls -la /opt/qt/${params.QT_VERSION}/"
+              }
+            }
+          }
+        }
+
+      }
+    }
+
+    stage('Push to DockerHub') {
+      when {
+        expression { params.PUSH_TO_DOCKERHUB == true }
+      }
+      steps {
+        script {
+          image.push()
+        }
+      }
+    }
+  }
+
+  post {
+    always { cleanWs() }
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+  }
+}

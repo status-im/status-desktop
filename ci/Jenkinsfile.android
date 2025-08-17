@@ -1,0 +1,95 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+def isNightlyBuild = utils.isNightlyBuild()
+
+pipeline {
+  agent {
+    /* Image with Ubuntu 22.04, QT 6.9.0, Android SDK/NDK, Go, and Nim */
+    docker {
+      label 'linux'
+      image 'statusteam/nim-status-client-build:1.0.3-qt6.9.0-android'
+      alwaysPull true
+    }
+  }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether release credentials are used.',
+      defaultValue: params.RELEASE ?: false
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 45, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(abortPrevious: isPRBuild)
+    disableRestartFromStage()
+  }
+
+  environment {
+    USE_SYSTEM_NIM = "1"
+    GOCACHE = "${env.WORKSPACE_TMP}/go-cache"
+    GOMODCACHE = "${env.WORKSPACE_TMP}/go-mod-cache"
+    GOTMPDIR = "${env.WORKSPACE_TMP}"
+    STATUS_APK_ARTIFACT = "pkg/Status-tablet-${BUILD_NUMBER}.apk"
+    PLATFORM = "android/arm64"
+    QT_ANDROID_PATH = "/opt/qt/6.9.0/android_arm64_v8a"
+    STATUS_APK = "${WORKSPACE}/mobile/bin/android/qt6/Status-tablet.apk"
+  }
+
+  stages {
+
+    stage('Build Android APK') {
+      steps {
+        sh "make -j${utils.getProcCount()} mobile-build V=3 USE_SYSTEM_NIM=1"
+      }
+    }
+
+    stage('Package APK') {
+      steps {
+        sh 'mkdir -p pkg'
+        sh "cp ${env.STATUS_APK} ${env.STATUS_APK_ARTIFACT}"
+        sh "ls -la ${env.STATUS_APK_ARTIFACT}"
+      }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps {
+            script {
+              env.PKG_URL = s5cmd.upload(env.STATUS_APK_ARTIFACT)
+              jenkins.setBuildDesc(APK: env.PKG_URL)
+            }
+          }
+        }
+        stage('Archive') {
+          steps {
+            archiveArtifacts env.STATUS_APK_ARTIFACT
+          }
+        }
+      }
+    }
+  }
+
+  post {
+      success { script { github.notifyPR(true) } }
+      failure { script { github.notifyPR(false) } }
+      cleanup { sh './scripts/clean-git.sh' }
+  }
+}
+
