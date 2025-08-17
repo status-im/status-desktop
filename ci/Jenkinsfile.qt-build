@@ -1,0 +1,161 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+pipeline {
+    agent {
+        label 'linux && x86_64 && qt-builder'
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+        timestamps()
+        timeout(time: 12, unit: 'HOURS')
+    }
+
+    parameters {
+        string(
+            name: 'QT_VERSION',
+            defaultValue: '6.9.0',
+            description: 'Qt version to build'
+        )
+        string(
+            name: 'DOCKER_TAG',
+            defaultValue: '1.0.2-qt6.9.0-android',
+            description: 'Docker image tag for the final image'
+        )
+        booleanParam(
+            name: 'PUSH_TO_DOCKERHUB',
+            defaultValue: true,
+            description: 'Push the final image to DockerHub'
+        )
+        booleanParam(
+            name: 'BUILD_QT_FROM_SOURCE',
+            defaultValue: true,
+            description: 'Build Qt from source (takes several hours)'
+        )
+    }
+
+    environment {
+        DOCKER_REGISTRY = 'statusteam'
+        DOCKER_IMAGE_BASE = 'nim-status-client-build'
+        MOBILE_BUILD_DIR = "${WORKSPACE}/mobile/docker"
+    }
+
+    stages {
+
+        stage('Build Qt from Source') {
+            when {
+                expression { params.BUILD_QT_FROM_SOURCE == true }
+            }
+            steps {
+                script {
+                    // Build qt-dev-base stage for Qt source compilation
+                    dir("${MOBILE_BUILD_DIR}") {
+                        def qtDevImage = "${DOCKER_REGISTRY}/qt-dev-base-temp:${BUILD_ID}"
+                        sh """
+                            docker build \
+                                --target qt-dev-base \
+                                --build-arg TARGETARCH=amd64 \
+                                --build-arg JAVA_VERSION=17 \
+                                --build-arg ANDROID_API_LEVEL=35 \
+                                --build-arg ANDROID_NDK_VERSION=27.2.12479018 \
+                                -t ${qtDevImage} .
+                        """
+
+                        // Run Qt build in the container
+                        docker.image(qtDevImage).inside("-u root -v ${WORKSPACE}/qt_export:/root/export -v ${WORKSPACE}/scripts:/root/scripts") {
+                            dir('/root') {
+                                sh "/root/scripts/build_qt_android.sh"
+                            }
+                        }
+
+                        // Clean up temp image
+                        sh "docker rmi ${qtDevImage} || true"
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    dir("${MOBILE_BUILD_DIR}") {
+                        // Copy Qt exports if they exist
+                        sh """
+                            if [ -d ${WORKSPACE}/qt_export ]; then
+                                cp -r ${WORKSPACE}/qt_export .
+                            fi
+                        """
+
+                        // Build final mobile-build stage
+                        sh """
+                            docker build \
+                                --build-arg QTVER=${params.QT_VERSION} \
+                                --build-arg TARGETARCH=amd64 \
+                                --build-arg JAVA_VERSION=17 \
+                                --build-arg ANDROID_API_LEVEL=35 \
+                                --build-arg ANDROID_NDK_VERSION=27.2.12479018 \
+                                --build-arg GOLANG_VERSION=1.23.10 \
+                                --build-arg NIM_VERSION=2.0.12 \
+                                --build-arg NIX_VERSION=2.24.11 \
+                                --target mobile-build \
+                                -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} .
+                        """
+
+                        // Clean up qt_export copy
+                        sh "rm -rf qt_export || true"
+                    }
+                }
+            }
+        }
+
+        stage('Test Images') {
+            parallel {
+                stage('Test Mobile Build Image') {
+                    steps {
+                        script {
+                            def testImage = "${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}"
+                            docker.image(testImage).inside('--entrypoint=""') {
+                                sh "qmake --version || echo 'qmake not found'"
+                                sh "nim --version"
+                                sh "go version"
+                                sh "protoc --version"
+                                sh "java -version"
+                                sh "ls -la /opt/qt/${params.QT_VERSION}/ || echo 'Qt directory not found'"
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        stage('Push to DockerHub') {
+            when {
+                expression { params.PUSH_TO_DOCKERHUB == true }
+            }
+            steps {
+                script {
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'dockerhub-statusteam-bot',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_PASS'
+                        )
+                    ]) {
+                        sh """
+                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
+                            docker logout
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always { cleanWs() }
+        success { script { github.notifyPR(true) } }
+        failure { script { github.notifyPR(false) } }
+    }
+}
