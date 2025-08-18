@@ -98,6 +98,9 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+        /* Clean Nim cache to prevent compilation errors */
+        sh 'rm -rf ${WORKSPACE_TMP}/nimcache'
+        sh 'rm -rf ~/.cache/nim'
       }
     }
     stage('Deps') {
