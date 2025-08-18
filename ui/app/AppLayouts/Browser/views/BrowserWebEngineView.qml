@@ -76,8 +76,7 @@ WebEngineView {
             break;
         }
 
-        print("Render process exited with code " + exitCode + " " + status);
-        reloadTimer.running = true;
+        console.warn("Render process exited with code " + exitCode + " " + status);
     }
 
     onSelectClientCertificate: function(selection) {
@@ -167,13 +166,5 @@ WebEngineView {
                 }
             }
         }
-    }
-
-    Timer {
-        id: reloadTimer
-        interval: 0
-        running: false
-        repeat: false
-        onTriggered: currentWebView.reload()
     }
 }
