@@ -26,11 +26,6 @@ pipeline {
       description: 'Level of verbosity based on nimbus-build-system setup.',
       choices: ['0', '1', '2']
     )
-    string(
-      name: 'NIMFLAGS',
-      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
-      defaultValue: "--colors:off --nimcache:${env.WORKSPACE_TMP}/nimcache"
-    )
     booleanParam(
       name: 'USE_MOCKED_KEYCARD_LIB',
       description: 'Decides whether the mocked status-keycard-go library is built.',
@@ -89,6 +84,8 @@ pipeline {
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
     USE_NWAKU = "${params.USE_NWAKU}"
+    /* Redirect Nim's cache to workspace to avoid cache corruption across builds */
+    NIMFLAGS = "--colors:off --nimcache:${env.WORKSPACE_TMP}/nimcache"
   }
 
   stages {
