@@ -37,6 +37,7 @@ for FILE in ${FOUND_FILES}; do
     FILES_TO_SIGN+=("${FILE}")
 done
 
+set -x
 if [[ "${RELEASE:-false}" == "true" ]]; then
     echo "Using DigiCert KeyLocker for release signing..."
 
@@ -49,7 +50,8 @@ if [[ "${RELEASE:-false}" == "true" ]]; then
     export SM_HOST='https://clientauth.one.digicert.com'
 
     # Sign with DigiCert KeyLocker
-    "${SIGNTOOL}" sign -v -debug -td SHA256 -fd SHA256 \
+    "${SIGNTOOL}" sign /v \
+        -td SHA256 -fd SHA256 \
         -sha1 "${WINDOWS_DIGICERT_CERT_FINGERPRINT}" \
         -tr "${WINDOWS_CODESIGN_TIMESTAMP_URL}" \
         "${FILES_TO_SIGN[@]}"
@@ -61,7 +63,8 @@ else
     must_get_env WINDOWS_CODESIGN_PFX_PATH
 
     # Sign with development self-signed certificate
-    "${SIGNTOOL}" sign -v -debug -td SHA256 -fd SHA256 \
+    "${SIGNTOOL}" sign /v \
+        -td SHA256 -fd SHA256 \
         -p "${WINDOWS_CODESIGN_PASSWORD}" \
         -f "${WINDOWS_CODESIGN_PFX_PATH}" \
         -tr "${WINDOWS_CODESIGN_TIMESTAMP_URL}" \
