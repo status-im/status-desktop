@@ -38,8 +38,8 @@ proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): se
 proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
   return self.walletAccountService.isKeycardAccount(account)
 
-proc deleteAccount*(self: Controller, address: string) =
-  self.walletAccountService.deleteAccount(address)
+proc deleteAccount*(self: Controller, address: string, password: string) =
+  self.walletAccountService.deleteAccount(address, password)
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
   return self.networkService.getEnabledChainIds()

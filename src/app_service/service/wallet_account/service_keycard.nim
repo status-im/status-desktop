@@ -1,10 +1,10 @@
-  proc addKeycardOrAccountsAsync*(self: Service, keycard: KeycardDto, accountsComingFromKeycard: bool = false) =
+  proc addKeycardOrAccountsAsync*(self: Service, keycard: KeycardDto, password: string) =
     let arg = SaveOrUpdateKeycardTaskArg(
       tptr: saveOrUpdateKeycardTask,
       vptr: cast[uint](self.vptr),
       slot: "onKeycardAdded",
       keycard: keycard,
-      accountsComingFromKeycard: accountsComingFromKeycard
+      password: password
     )
     self.threadpool.start(arg)
 
@@ -37,7 +37,7 @@ proc onKeycardAdded*(self: Service, response: string) {.slot.} =
     error "error handilng migrated keycard response", errDesription=e.msg
   self.emitAddKeycardAddAccountsChange(success, keycard)
 
-proc addKeycardOrAccounts*(self: Service, keycard: KeycardDto, accountsComingFromKeycard: bool = false): bool =
+proc addKeycardOrAccounts*(self: Service, keycard: KeycardDto, password: string): bool =
   var success = false
   try:
     let response = backend.saveOrUpdateKeycard(
@@ -49,7 +49,7 @@ proc addKeycardOrAccounts*(self: Service, keycard: KeycardDto, accountsComingFro
         "accounts-addresses": keycard.accountsAddresses,
         # "position": - no need to set it here, cause it is fully maintained by the status-go
       },
-      accountsComingFromKeycard
+      password
       )
     success = responseHasNoErrors("addKeycardOrAccounts", response)
   except Exception as e:

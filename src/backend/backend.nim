@@ -232,7 +232,7 @@ rpc(fetchTokenDetails, "wallet"):
 
 rpc(saveOrUpdateKeycard, "accounts"):
   keycard: JsonNode
-  accountsComingFromKeycard: bool
+  password: string
 
 rpc(deleteKeycardAccounts, "accounts"):
   keycardUid: string
