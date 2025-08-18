@@ -34,12 +34,12 @@ proc getKeypairByKeyUid*(keyUid: string): RpcResponse[JsonNode] =
   let payload = %* [keyUid]
   return core.callPrivateRPC("accounts_getKeypairByKeyUID", payload)
 
-proc deleteAccount*(address: string): RpcResponse[JsonNode] =
-  let payload = %* [address]
+proc deleteAccount*(address: string, password: string): RpcResponse[JsonNode] =
+  let payload = %* [address, password]
   return core.callPrivateRPC("accounts_deleteAccount", payload)
 
-proc deleteKeypair*(keyUid: string): RpcResponse[JsonNode] =
-  let payload = %* [keyUid]
+proc deleteKeypair*(keyUid: string, password: string): RpcResponse[JsonNode] =
+  let payload = %* [keyUid, password]
   return core.callPrivateRPC("accounts_deleteKeypair", payload)
 
 ## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account. Notifies paired devices.
@@ -205,6 +205,11 @@ proc makePartiallyOperableAccoutsFullyOperable*(password: string):
   RpcResponse[JsonNode] =
   let payload = %* [password]
   return core.callPrivateRPC("accounts_makePartiallyOperableAccoutsFullyOperable", payload)
+
+proc cleanKeystoreFiles*(password: string):
+  RpcResponse[JsonNode] =
+  let payload = %* [password]
+  return core.callPrivateRPC("accounts_cleanKeystoreFiles", payload)
 
 proc migrateNonProfileKeycardKeypairToApp*(mnemonic: string, password: string):
   RpcResponse[JsonNode] =

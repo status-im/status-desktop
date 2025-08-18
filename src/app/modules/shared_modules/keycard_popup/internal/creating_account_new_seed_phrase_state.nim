@@ -69,7 +69,7 @@ proc doMigration(self: CreatingAccountNewSeedPhraseState, controller: Controller
     keycardLocked: false,
     accountsAddresses: self.addresses,
     keyUid: kpForProcessing.getKeyUid())
-  controller.addKeycardOrAccounts(kpDto, accountsComingFromKeycard = true)
+  controller.addKeycardOrAccounts(kpDto, password = "")
 
 proc runStoreMetadataFlow(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
   let kpForProcessing = controller.getKeyPairForProcessing()

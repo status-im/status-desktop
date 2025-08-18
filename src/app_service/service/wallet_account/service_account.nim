@@ -189,8 +189,9 @@ proc init*(self: Service) =
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.buildAllTokens(self.getWalletAddresses(), store = true)
 
-  self.events.on(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS) do(e: Args):
-    let args = ImportAccountsArgs(e)
+  self.events.on(SIGNAL_PASSWORD_PROVIDED) do(e: Args):
+    let args = AuthenticationArgs(e)
+    self.cleanKeystoreFiles(args.password)
     self.importPartiallyOperableAccounts(args.keyUid, args.password)
 
 proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = true) =
@@ -451,6 +452,20 @@ proc makePartiallyOperableAccoutsFullyOperable(self: Service, password: string, 
   except Exception as e:
     error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
 
+proc cleanKeystoreFiles(self: Service, password: string) =
+  if password.len == 0:
+    error "for making partially operable accounts a fully operable, password must be provided"
+    return
+  var finalPassword = password
+  if not singletonInstance.userProfile.getIsKeycardUser():
+    finalPassword = utils.hashPassword(password)
+  try:
+    var response = status_go_accounts.cleanKeystoreFiles(finalPassword)
+    if not response.error.isNil:
+      error "status-go error", procName="cleanKeystoreFiles", errCode=response.error.code, errDesription=response.error.message
+  except Exception as e:
+    error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
+
 proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.} =
   var data = KeycardArgs(
     success: false,
@@ -517,9 +532,12 @@ proc getRandomMnemonic*(self: Service): string =
     error "error: ", procName="getRandomMnemonic", errName=e.name, errDesription=e.msg
     return ""
 
-proc deleteAccount*(self: Service, address: string) =
+proc deleteAccount*(self: Service, address: string, password: string) =
   try:
-    let response = status_go_accounts.deleteAccount(address)
+    var finalPassword = password
+    if not singletonInstance.userProfile.getIsKeycardUser():
+      finalPassword = utils.hashPassword(password)
+    let response = status_go_accounts.deleteAccount(address, finalPassword)
     if not response.error.isNil:
       error "status-go error", procName="deleteAccount", errCode=response.error.code, errDesription=response.error.message
       return
@@ -527,13 +545,16 @@ proc deleteAccount*(self: Service, address: string) =
   except Exception as e:
     error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg
 
-proc deleteKeypair*(self: Service, keyUid: string) =
+proc deleteKeypair*(self: Service, keyUid: string, password: string) =
   try:
     let kp = self.getKeypairByKeyUid(keyUid)
     if kp.isNil:
       error "there is no known keypair", keyUid=keyUid, procName="deleteKeypair"
       return
-    let response = status_go_accounts.deleteKeypair(keyUid)
+    var finalPassword = password
+    if not singletonInstance.userProfile.getIsKeycardUser():
+      finalPassword = utils.hashPassword(password)
+    let response = status_go_accounts.deleteKeypair(keyUid, finalPassword)
     if not response.error.isNil:
       error "status-go error", procName="deleteKeypair", errCode=response.error.code, errDesription=response.error.message
       return

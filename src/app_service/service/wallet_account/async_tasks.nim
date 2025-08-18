@@ -98,7 +98,7 @@ proc prepareTokensTask(argEncoded: string) {.gcsafe, nimcall.} =
 type
   SaveOrUpdateKeycardTaskArg* = ref object of QObjectTaskArg
     keycard: KeycardDto
-    accountsComingFromKeycard: bool
+    password: string
 
 proc saveOrUpdateKeycardTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SaveOrUpdateKeycardTaskArg](argEncoded)
@@ -116,7 +116,7 @@ proc saveOrUpdateKeycardTask*(argEncoded: string) {.gcsafe, nimcall.} =
         "accounts-addresses": arg.keycard.accountsAddresses,
         # "position": - no need to set it here, cause it is fully maintained by the status-go
       },
-      arg.accountsComingFromKeycard
+      arg.password
       )
     let success = responseHasNoErrors("saveOrUpdateKeycard", response)
     responseJson["success"] = %* success

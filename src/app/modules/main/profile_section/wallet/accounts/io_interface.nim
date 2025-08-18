@@ -16,10 +16,10 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method syncKeycard*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteAccount*(self: AccessInterface, address: string) {.base.} =
+method deleteAccount*(self: AccessInterface, address: string, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteKeypair*(self: AccessInterface, keyUid: string) {.base.} =
+method deleteKeypair*(self: AccessInterface, keyUid: string, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =

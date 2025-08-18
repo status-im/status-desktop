@@ -303,7 +303,7 @@ proc syncAppAndKeycardState[T](self: Module[T]) =
     keycardLocked: false,
     accountsAddresses: addressesToStore,
     keyUid: kcEvent.keycardInfo.keyUID)
-  self.controller.addKeycardOrAccounts(kcDto, accountsComingFromKeycard = true)
+  self.controller.addKeycardOrAccounts(kcDto, password = "")
 
 proc finishAppLoading2[T](self: Module[T]) =
 

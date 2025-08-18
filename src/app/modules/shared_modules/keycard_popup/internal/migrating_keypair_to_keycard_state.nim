@@ -22,7 +22,8 @@ proc delete*(self: MigratingKeypairToKeycardState) =
 
 proc doMigration(self: MigratingKeypairToKeycardState, controller: Controller) =
   let selectedKeyPairDto = controller.getSelectedKeyPairDto()
-  controller.addKeycardOrAccounts(selectedKeyPairDto)
+  let password = controller.getPassword()
+  controller.addKeycardOrAccounts(selectedKeyPairDto, password)
 
 proc runStoreMetadataFlow(self: MigratingKeypairToKeycardState, controller: Controller) =
   let selectedKeyPairDto = controller.getSelectedKeyPairDto()

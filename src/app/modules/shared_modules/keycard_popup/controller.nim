@@ -684,12 +684,12 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Controller, address: 
     return (0.0, true)
   return self.walletAccountService.getOrFetchBalanceForAddressInPreferredCurrency(address)
 
-proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto, accountsComingFromKeycard: bool = false) =
+proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto, password: string) =
   if not serviceApplicable(self.walletAccountService):
     return
   if not serviceApplicable(self.accountsService):
     return
-  self.walletAccountService.addKeycardOrAccountsAsync(keyPair, accountsComingFromKeycard)
+  self.walletAccountService.addKeycardOrAccountsAsync(keyPair, password)
 
 proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
   if not serviceApplicable(self.walletAccountService):

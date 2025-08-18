@@ -42,6 +42,8 @@ ColumnLayout {
 
     QtObject {
         id: d
+        readonly property string removeAccountIdentifier: "profile-remove-account"
+
         readonly property bool watchOnlyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly: false
         readonly property bool privateKeyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.privateKeyImport: false
         readonly property bool seedImport: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.seedImport: false
@@ -273,10 +275,30 @@ ColumnLayout {
             emoji: !!root.account ? root.account.emoji : ""
             color: !!root.account ? Utils.getColorForId(root.account.colorId) : ""
 
-            onRemoveAccount: {
-                root.walletStore.deleteAccount(root.account.address)
+            function doDeletion(password) {
+                root.walletStore.deleteAccount(root.account.address, password)
                 close()
                 root.goBack()
+            }
+
+            onRemoveAccount: {
+                if (d.watchOnlyAccount) {
+                    confirmationPopup.doDeletion("")
+                    return
+                }
+                root.walletStore.authenticateLoggedInUser(d.removeAccountIdentifier)
+            }
+
+            Connections {
+                target: root.walletStore
+                enabled: confirmationPopup.visible
+
+                function onLoggedInUserAuthenticated(requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) {
+                    if (d.removeAccountIdentifier !== requestedBy || password === "") {
+                        return
+                    }
+                    confirmationPopup.doDeletion(password)
+                }
             }
         }
     }

@@ -58,7 +58,7 @@ proc refreshWalletAccountsBalances(self: Module, addresses: seq[string]) =
   for walletAccount in walletAccounts:
     let currencyBalance = self.controller.getTotalCurrencyBalance(walletAccount.address, self.filterChainIds)
     self.view.updateBalance(walletAccount.address, currencyAmountToItem(currencyBalance, currencyFormat), walletAccount.assetsLoading or marketValuesLoading)
-  
+
 proc refreshAllWalletAccountsBalances(self: Module) =
   self.refreshWalletAccountsBalances(@[])
 
@@ -138,8 +138,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
-method deleteAccount*(self: Module, address: string) =
-  self.controller.deleteAccount(address)
+method deleteAccount*(self: Module, address: string, password: string) =
+  self.controller.deleteAccount(address, password)
 
 method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
   self.controller.updateAccount(address, accountName, colorId, emoji)

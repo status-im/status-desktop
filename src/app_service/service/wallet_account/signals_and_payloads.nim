@@ -2,7 +2,7 @@
 # Special signal emitted by main module and handled in wallet account service
 #################################################
 
-const SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS* = "importPartiallyOperableAccounts"
+const SIGNAL_PASSWORD_PROVIDED* = "passwordProvided"
 
 #################################################
 # Signals emitted by wallet account service
@@ -43,7 +43,7 @@ const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
 # Payload sent via above defined signals
 #################################################
 
-type ImportAccountsArgs* = ref object of Args
+type AuthenticationArgs* = ref object of Args
   keyUid*: string
   password*: string
 

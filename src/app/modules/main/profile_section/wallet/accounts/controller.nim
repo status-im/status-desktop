@@ -33,11 +33,11 @@ proc moveAccountFinally*(self: Controller, fromPosition: int, toPosition: int) =
 proc renameKeypair*(self: Controller, keyUid: string, name: string) =
   self.walletAccountService.updateKeypairName(keyUid, name)
 
-proc deleteAccount*(self: Controller, address: string) =
-  self.walletAccountService.deleteAccount(address)
+proc deleteAccount*(self: Controller, address: string, password: string) =
+  self.walletAccountService.deleteAccount(address, password)
 
-proc deleteKeypair*(self: Controller, keyUid: string) =
-  self.walletAccountService.deleteKeypair(keyUid)
+proc deleteKeypair*(self: Controller, keyUid: string, password: string) =
+  self.walletAccountService.deleteKeypair(keyUid, password)
 
 proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)

@@ -203,11 +203,11 @@ method updateAccount*(self: Module, address: string, accountName: string, colorI
 method moveAccountFinally*(self: Module, fromPosition: int, toPosition: int) =
   self.controller.moveAccountFinally(fromPosition, toPosition)
 
-method deleteAccount*(self: Module, address: string) =
-  self.controller.deleteAccount(address)
+method deleteAccount*(self: Module, address: string, password: string) =
+  self.controller.deleteAccount(address, password)
 
-method deleteKeypair*(self: Module, keyUid: string) =
-  self.controller.deleteKeypair(keyUid)
+method deleteKeypair*(self: Module, keyUid: string, password: string) =
+  self.controller.deleteKeypair(keyUid, password)
 
 method renameKeypair*(self: Module, keyUid: string, name: string) =
   self.controller.renameKeypair(keyUid, name)

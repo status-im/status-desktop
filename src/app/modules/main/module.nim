@@ -359,7 +359,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     else:
       # If the number of joined members is the same, we can use the existing members
       members = existingCommunity.members.getItems()
-    
+
     # If there are tokens already in the model, we should keep the existing community tokens, until
     # getCommunityTokensDetailsAsync will trigger onCommunityTokensDetailsLoaded
     if not existingCommunity.communityTokens.isNil:
@@ -2223,5 +2223,12 @@ method getSectionId*[T](self: Module[T], sectionType: SectionType): string =
 
 method getSectionName*[T](self: Module[T], sectionId: string): string =
   return self.view.model().getItemById(sectionId).name()
+
+method authenticateLoggedInUser*[T](self: Module[T], requestedBy: string) =
+  self.controller.authenticateLoggedInUser(requestedBy)
+
+method onLoggedInUserAuthenticated*[T](self: Module[T], requestedBy: string, password: string, pin: string, keyUid: string,
+  keycardUid: string) =
+  self.view.emitLoggedInUserAuthenticated(requestedBy, password, pin, keyUid, keycardUid)
 
 {.pop.}

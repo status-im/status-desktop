@@ -45,7 +45,10 @@ Rectangle {
 
     QtObject {
         id: d
+
         property bool loaded: false
+
+        readonly property string removeAccountIdentifier: "wallet-section-remove-account"
     }
 
     Loader {
@@ -137,13 +140,33 @@ Rectangle {
             emoji: removeAccountConfirmation.emoji
             color: Utils.getColorForId(removeAccountConfirmation.colorId)
 
+            function doDeletion(password) {
+                close()
+                RootStore.deleteAccount(removeAccountConfirmation.accountAddress, password)
+            }
+
             onClosed: {
                 removeAccountConfirmation.active = false
             }
 
             onRemoveAccount: {
-                close()
-                RootStore.deleteAccount(address)
+                if (removeAccountConfirmation.accountType === Constants.watchWalletType) {
+                    doDeletion("")
+                    return
+                }
+                RootStore.authenticateLoggedInUser(d.removeAccountIdentifier)
+            }
+
+            Connections {
+                target: RootStore
+                enabled: removeAccountConfirmation.active
+
+                function onLoggedInUserAuthenticated(requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) {
+                    if (d.removeAccountIdentifier !== requestedBy || password === "") {
+                        return
+                    }
+                    doDeletion(password)
+                }
             }
         }
 
