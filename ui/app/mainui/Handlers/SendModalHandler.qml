@@ -924,6 +924,17 @@ QtObject {
                         if (!rawFee) {
                             return ""
                         }
+
+                        // Use GWEI when market data is not available
+                        if (handler.marketDataNotAvailable) {
+                            const gweiValue = SQUtils.AmountsArithmetic.div(
+                                SQUtils.AmountsArithmetic.fromString(rawFee),
+                                SQUtils.AmountsArithmetic.fromNumber(1e9)
+                            )
+                            const roundedGwei = Math.round(SQUtils.AmountsArithmetic.toNumber(gweiValue))
+                            return root.fnFormatCurrencyAmount(roundedGwei.toString(), "GWEI").toString()
+                        }
+
                         const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
                         const decimalFee = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawFee)
                         const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
