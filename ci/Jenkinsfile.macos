@@ -7,7 +7,7 @@ def isPRBuild = utils.isPRBuild()
 pipeline {
   /* This way we run the same Jenkinsfile on different platforms. */
   agent {
-    label "${getAgentLabels().join(' && ')} && qt-6.9.0 && go-1.23 && xcode-16.2"
+    label "macm2-01"
   }
 
   parameters {
@@ -70,7 +70,10 @@ pipeline {
   environment {
     PLATFORM = "macos/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
     /* Improve make performance */
-    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j4 V=2"
+    /* Use Xcode clang instead of Homebrew */
+    CC = "/usr/bin/clang"
+    CXX = "/usr/bin/clang++"
     QT_VERSION="6.9.0"
     QMAKE = "/Users/admin/${QT_VERSION}/macos/bin/qmake"
     /* QMAKE = sh(script: "which qmake", returnStdout: true).trim() */
@@ -89,12 +92,17 @@ pipeline {
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
     USE_NWAKU = "${params.USE_NWAKU}"
+    /* Redirect Nim's cache to workspace to avoid cache corruption across builds */
+    XDG_CACHE_HOME = "${env.WORKSPACE_TMP}"
   }
 
   stages {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+        /* Clean Nim cache to prevent compilation errors */
+        sh 'rm -rf ${WORKSPACE_TMP}/nimcache'
+        sh 'rm -rf ~/.cache/nim'
       }
     }
     stage('Deps') {
