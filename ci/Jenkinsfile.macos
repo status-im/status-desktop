@@ -92,6 +92,8 @@ pipeline {
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
     USE_NWAKU = "${params.USE_NWAKU}"
+    /* Redirect Nim's cache to workspace to avoid cache corruption across builds */
+    XDG_CACHE_HOME = "${env.WORKSPACE_TMP}"
   }
 
   stages {
