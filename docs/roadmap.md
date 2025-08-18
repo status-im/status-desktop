@@ -1,11 +1,16 @@
 # Status Roadmap
 
 ## Table of Contents
-- [2025 H2](#2025-h2)
-  - [Gantt Chart](#gantt-chart)
-  - [2.35](#235)
-  - [2.36](#236)
-  - [2.37](#237)
+- [Status Roadmap](#status-roadmap)
+  - [Table of Contents](#table-of-contents)
+  - [2025 H2](#2025-h2)
+    - [Gantt Chart](#gantt-chart)
+    - [2.35](#235)
+      - [Features](#features)
+    - [2.36](#236)
+      - [Features](#features-1)
+    - [2.37](#237)
+      - [Features](#features-2)
 
 ## 2025 H2
 
@@ -54,17 +59,17 @@ gantt
 
 Release Epic: https://github.com/status-im/status-desktop/issues/17966
 
-#### Features:
+#### Features
 
 - [Backend refactor](https://github.com/status-im/status-go/issues/6435) 
   - Runs parallel to other features and doesn't need to be shipped to any particular milestones
   - No API changes are expected until the Chat SDK is integrated
   - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
-  - In Progress ⏳ 22% 🟩⬜⬜⬜⬜ (+2%) (estimated progress as not all subtasks are created)
+  - In Progress ⏳ 23% 🟩⬜⬜⬜⬜ (+1%) (estimated progress as not all subtasks are created)
 - [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
   - No provided FURPS at the moment
     - This is about maintaing the same level of quality as with QT5 but with QT6 instead.
-  - In Progress ⏳ 🟩🟩🟩🟩🟨 92% (+1%)
+  - In Progress ⏳ 🟩🟩🟩🟩🟨 92%
 - [Tablet Build](https://github.com/status-im/status-desktop/issues/17941)
   - [FURPS](/docs/FURPS/tablet-build.md)
   - In Progress ⏳ 🟩🟩🟩🟩⬜ 86%
@@ -76,35 +81,42 @@ Release Epic: https://github.com/status-im/status-desktop/issues/17966
   - Done ✅ 🟩🟩🟩🟩🟩 100% (+4%)
 - [Memory and Performance improvements](https://github.com/status-im/status-desktop/issues/18296)
   - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
-  - In Progress ⏳ 🟩🟩🟩⬜⬜ 65% (+5%)
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 57%
 
 ### 2.36
 
 Release Epic: https://github.com/status-im/status-desktop/issues/18029
 
-
-### Features:
+#### Features
 
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
   - Progress is also inherited from the Tablet Epic above
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 26% (+3%)
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 26%
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
   - In Progress ⏳ (analysis and design phase)
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
-  - In Progress ⏳ 🟨⬜⬜⬜⬜ 10% (+10%)
+  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17% (+7%)
+- [Local Backup finishing touches](https://github.com/status-im/status-desktop/issues/18583)
+  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17% (+17%)
 - [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
-  - In Progress ⏳ ⬜⬜⬜⬜⬜ 8% (+8%)
+  - In Progress ⏳ ⬜⬜⬜⬜⬜ 8%
 - [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
   - In Progress ⏳
+- [Translation initiative](https://github.com/status-im/status-desktop/issues/18293)
+  - In Progress ⏳ 🟩🟨⬜⬜⬜ 33%
 - Ethereum Follow Protocol
 - Improve Token List and Support custom tokens
 
 ### 2.37
 
-Not all Epics are created yet as it's too early to know exactly what will be worked on. The taks listed below are estimates of what could bring value.
+Release Epic: https://github.com/status-im/status-desktop/issues/18528
+
+Not all Epics are created yet as it's too early to know exactly what will be worked on. The tasks listed below are estimates of what could bring value.
+
+#### Features
 
 - [UI modularization](https://github.com/status-im/status-desktop/issues/17872)
   - [FURPS](/docs/FURPS/ui-modularization.md)
