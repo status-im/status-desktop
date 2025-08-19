@@ -114,8 +114,6 @@ SettingsContentBase {
                     return l
                 }
 
-                // Maybe we need to redo `StatusListItem` to display identicon ring, but that's not in Figma design for now.
-                ringSettings.ringSpecModel: model.type === Constants.settingsSection.exemptions.oneToOneChat ? Utils.getColorHashAsJson(model.itemId) : undefined
                 asset: StatusAssetSettings {
                     name: model.image
                     isImage: !!model.image && model.image !== ""

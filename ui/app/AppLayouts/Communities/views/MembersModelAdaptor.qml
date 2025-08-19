@@ -23,7 +23,6 @@ QObject {
         alias                           [string]    - generated 3 word name
         icon                            [string]    - thumbnail image of the user
         colorId                         [string]    - generated color ID for the user's profile
-        colorHash                       [string]    - generated color hash for the user's profile
         onlineStatus                    [int]       - the online status of the member
         isContact                       [bool]      - whether the user is a mutual contact or not
         isVerified                      [bool]      - wheter the user has been marked as verified or not

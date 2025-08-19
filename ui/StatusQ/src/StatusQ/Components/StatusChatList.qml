@@ -211,7 +211,6 @@ Item {
                         asset.bgWidth: iconWidth
                         asset.bgHeight: iconHeight
 
-                        ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
                         onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
                         sensor.enabled: draggableItem.dragActive
                         dragged: draggableItem.dragActive

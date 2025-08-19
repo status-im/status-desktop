@@ -10,7 +10,6 @@ type
     ThumbnailImage
     LargeImage
     KeyUid
-    ColorHash
     ColorId
     KeycardPairing
     KeycardCreatedAccount
@@ -48,7 +47,6 @@ QtObject:
       ModelRole.ThumbnailImage.int:"thumbnailImage",
       ModelRole.LargeImage.int:"largeImage",
       ModelRole.KeyUid.int:"keyUid",
-      ModelRole.ColorHash.int:"colorHash",
       ModelRole.ColorId.int:"colorId",
       ModelRole.KeycardPairing.int:"keycardPairing",
       ModelRole.KeycardCreatedAccount.int:"keycardCreatedAccount"
@@ -77,8 +75,6 @@ QtObject:
       result = newQVariant(item.getLargeImage())
     of ModelRole.KeyUid:
       result = newQVariant(item.getKeyUid())
-    of ModelRole.ColorHash:
-      result = newQVariant(item.getColorHash())
     of ModelRole.ColorId:
       result = newQVariant(item.getColorId())
     of ModelRole.KeycardPairing:

@@ -47,7 +47,6 @@ SQUtils.QObject {
                         preferredDisplayName: "everyone"
                         icon: ""
                         colorId: 0
-                        colorHash: []
                         usesDefaultName: false
                     }
                 }

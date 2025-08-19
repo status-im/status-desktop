@@ -25,10 +25,6 @@ ListModel {
             icon: ModelsData.icons.cryptPunks,
             colorId: 7,
             isEnsVerified: false,
-            colorHash: [
-                { colorId: 0, segmentLength: 2 },
-                { colorId: 17, segmentLength: 2}
-            ],
             isAwaitingAddress: false,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.unknown
@@ -52,10 +48,6 @@ ListModel {
             icon: "",
             colorId: 9,
             isEnsVerified: false,
-            colorHash: [
-                { colorId: 0, segmentLength: 1 },
-                { colorId: 19, segmentLength: 2 }
-            ],
             isAwaitingAddress: false,
             memberRole: Constants.memberRole.owner,
             trustStatus: Constants.trustStatus.unknown
@@ -78,10 +70,6 @@ ListModel {
             icon: ModelsData.icons.dragonereum,
             colorId: 4,
             isEnsVerified: false,
-            colorHash: [
-                { colorId: 7, segmentLength: 3 },
-                { colorId: 12, segmentLength: 1 }
-            ],
             isAwaitingAddress: false,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.untrustworthy
@@ -104,10 +92,6 @@ ListModel {
             icon: "",
             colorId: 5,
             isEnsVerified: false,
-            colorHash: [
-                { colorId: 7, segmentLength: 3 },
-                { colorId: 12, segmentLength: 1 }
-            ],
             isAwaitingAddress: false,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.untrustworthy
@@ -131,7 +115,6 @@ ListModel {
             icon: "",
             colorId: 3,
             isEnsVerified: true,
-            colorHash: [],
             isAwaitingAddress: false,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.untrustworthy
@@ -154,7 +137,6 @@ ListModel {
             icon: "",
             colorId: 7,
             isEnsVerified: true,
-            colorHash: [],
             isAwaitingAddress: true,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.trusted

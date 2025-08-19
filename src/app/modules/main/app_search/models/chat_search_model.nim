@@ -10,7 +10,6 @@ type
     Color
     ColorId
     Icon
-    ColorHash
     SectionId
     SectionName
     Emoji
@@ -83,7 +82,6 @@ QtObject:
       ModelRole.Color.int:"color",
       ModelRole.ColorId.int:"colorId",
       ModelRole.Icon.int:"icon",
-      ModelRole.ColorHash.int:"colorHash",
       ModelRole.SectionId.int:"sectionId",
       ModelRole.SectionName.int:"sectionName",
       ModelRole.Emoji.int:"emoji",
@@ -110,8 +108,6 @@ QtObject:
         result = newQVariant(item.colorId)
       of ModelRole.Icon:
         result = newQVariant(item.icon)
-      of ModelRole.ColorHash:
-        result = newQVariant(item.colorHash)
       of ModelRole.SectionId:
         result = newQVariant(item.sectionId)
       of ModelRole.SectionName:

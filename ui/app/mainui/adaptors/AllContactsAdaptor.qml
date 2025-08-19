@@ -27,7 +27,6 @@ QObject {
     property bool selfUsesDefaultName
     property string selfIcon
     property int selfColorId
-    property var selfColorHash
     property int selfOnlineStatus
     property string selfThumbnailImage
     property string selfLargeImage
@@ -38,7 +37,7 @@ QObject {
 
         expectedRoles: [
             "pubKey", "displayName", "ensName", "isEnsVerified", "localNickname", "usesDefaultName",
-            "alias", "icon", "colorId", "colorHash", "onlineStatus",
+            "alias", "icon", "colorId", "onlineStatus",
             "isContact", "isCurrentUser", "isVerified", "isUntrustworthy",
             "isBlocked", "contactRequestState", "preferredDisplayName",
             "lastUpdated", "lastUpdatedLocally", "thumbnailImage", "largeImage",
@@ -70,7 +69,6 @@ QObject {
                         readonly property bool usesDefaultName: root.selfUsesDefaultName
                         readonly property string icon: root.selfIcon
                         readonly property int colorId: root.selfColorId
-                        readonly property var colorHash: root.selfColorHash
                         readonly property int onlineStatus: root.selfOnlineStatus
                         readonly property bool isContact: false
                         readonly property bool isCurrentUser: true

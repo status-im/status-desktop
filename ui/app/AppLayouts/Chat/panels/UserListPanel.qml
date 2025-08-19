@@ -136,7 +136,6 @@ Item {
                 icon.name: model.icon
                 icon.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus
-                colorHash: model.colorHash
 
                 onClicked: Global.openProfilePopup(model.pubKey)
                 onRightClicked: {
@@ -148,7 +147,6 @@ Item {
                         pubKey: model.pubKey,
                         compressedPubKey: model.compressedPubKey,
                         emojiHash: JSON.parse(model.emojiHash),
-                        colorHash: model.colorHash,
                         colorId: model.colorId,
                         displayName: model.preferredDisplayName,
                         userIcon: model.icon,

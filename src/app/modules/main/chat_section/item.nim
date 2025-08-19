@@ -1,9 +1,7 @@
-import sequtils, sugar, stew/shims/strformat, json
+import stew/shims/strformat, json
 
 import ../../../../app_service/common/types
 import ../../../../app_service/service/contacts/dto/contacts
-
-import ../../shared_models/[color_hash_item, color_hash_model]
 
 const CATEGORY_TYPE* = -1
 
@@ -18,7 +16,6 @@ type
     color: string
     colorId: int # only for oneToOne sections
     emoji: string
-    colorHash: color_hash_model.Model
     description: string
     lastMessageTimestamp: int
     hasUnreadMessages: bool
@@ -66,7 +63,6 @@ proc initChatItem*(
     categoryId: string = "",
     categoryPosition: int = -1,
     colorId: int = 0,
-    colorHash: seq[ColorHashSegment] = @[],
     highlight: bool = false,
     categoryOpened: bool = true,
     trustStatus: TrustStatus = TrustStatus.Unknown,
@@ -91,8 +87,6 @@ proc initChatItem*(
   result.color = color
   result.colorId = colorId
   result.emoji = emoji
-  result.colorHash = color_hash_model.newModel()
-  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
   result.description = description
   result.`type` = `type`
   result.lastMessageTimestamp = lastMessageTimestamp
@@ -234,9 +228,6 @@ proc emoji*(self: ChatItem): string =
 
 proc `emoji=`*(self: var ChatItem, value: string) =
   self.emoji = value
-
-proc colorHash*(self: ChatItem): color_hash_model.Model =
-  self.colorHash
 
 proc description*(self: ChatItem): string =
   self.description

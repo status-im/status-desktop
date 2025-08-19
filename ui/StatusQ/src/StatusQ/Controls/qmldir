@@ -28,7 +28,6 @@ StatusFlatRoundButton 0.1 StatusFlatRoundButton.qml
 StatusIconSwitch 0.1 StatusIconSwitch.qml
 StatusIconTabButton 0.1 StatusIconTabButton.qml
 StatusIconTextButton 0.1 StatusIconTextButton.qml
-StatusIdenticonRing 0.1 StatusIdenticonRing.qml
 StatusImageCrop 0.1 StatusImageCrop.qml
 StatusImageSelector 0.1 StatusImageSelector.qml
 StatusInput 0.1 StatusInput.qml

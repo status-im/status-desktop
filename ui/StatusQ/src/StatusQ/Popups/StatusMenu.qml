@@ -59,11 +59,6 @@ Menu {
 
     property StatusFontSettings fontSettings: StatusFontSettings {}
 
-    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        ringPxSize: root.assetSettings.ringPxSize
-        distinctiveColors: Theme.palette.identiconRingColors
-    }
-
     property bool hideDisabledItems: true
 
     property var openHandler

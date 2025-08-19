@@ -119,12 +119,6 @@ ItemDelegate {
     property alias components: componentsRow.children
 
     /*!
-       \qmlproperty var StatusMemberListItem::colorHash
-       This property holds the color hash of the member represented.
-    */
-    property var colorHash: []
-
-    /*!
         \qmlsignal rightClicked
         This signal is emitted when the StatusMemberListItem is right clicked.
     */
@@ -191,7 +185,6 @@ ItemDelegate {
         StatusUserImage {
             name: root.nickName || root.userName
             usesDefaultName: root.usesDefaultName
-            colorHash: root.colorHash
             userColor: root.icon.color
             image: root.icon.name
             interactive: false

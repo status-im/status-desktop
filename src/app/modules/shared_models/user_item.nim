@@ -33,7 +33,6 @@ type
     alias: string
     icon: string
     colorId: int
-    colorHash: string
     onlineStatus: OnlineStatus
     isContact: bool
     isBlocked: bool
@@ -60,7 +59,6 @@ proc setup*(self: UserItem,
   alias: string,
   icon: string,
   colorId: int,
-  colorHash: string,
   onlineStatus: OnlineStatus,
   isContact: bool,
   isBlocked: bool,
@@ -86,7 +84,6 @@ proc setup*(self: UserItem,
   self.alias = alias
   self.icon = icon
   self.colorId = colorId
-  self.colorHash = colorHash
   self.onlineStatus = onlineStatus
   self.isContact = isContact
   self.isBlocked = isBlocked
@@ -119,7 +116,6 @@ proc initUserItem*(
     alias: string,
     icon: string,
     colorId: int,
-    colorHash: string = "",
     onlineStatus: OnlineStatus,
     isContact: bool,
     isBlocked: bool,
@@ -146,7 +142,6 @@ proc initUserItem*(
     alias = alias,
     icon = icon,
     colorId = colorId,
-    colorHash = colorHash,
     onlineStatus = onlineStatus,
     isContact = isContact,
     isBlocked = isBlocked,
@@ -175,7 +170,6 @@ proc `$`*(self: UserItem): string =
     alias: {self.alias},
     icon: {self.icon},
     colorId: {self.colorId},
-    colorHash: {self.colorHash},
     onlineStatus: {$self.onlineStatus.int},
     isContact: {self.isContact},
     isBlocked: {self.isBlocked},
@@ -248,12 +242,6 @@ proc colorId*(self: UserItem): int {.inline.} =
 
 proc `colorId=`*(self: UserItem, value: int) {.inline.} =
   self.colorId = value
-
-proc colorHash*(self: UserItem): string {.inline.} =
-  if not self.isEnsVerified: self.colorHash else: ""
-
-proc `colorHash=`*(self: UserItem, value: string) {.inline.} =
-  self.colorHash = value
 
 proc onlineStatus*(self: UserItem): OnlineStatus {.inline.} =
   self.onlineStatus

@@ -268,11 +268,6 @@ SplitView {
             }
 
             ColorFlow {
-                title: "Identicon ring colors"
-                model: Theme.palette.identiconRingColors
-            }
-
-            ColorFlow {
                 title: "Status colors"
                 model: StatusColors.colors
             }

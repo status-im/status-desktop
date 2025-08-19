@@ -276,7 +276,6 @@ Item {
                     pubKey: model.pubKey,
                     compressedPubKey: model.compressedPubKey,
                     emojiHash: JSON.parse(model.emojiHash),
-                    colorHash: model.colorHash,
                     colorId: model.colorId,
                     displayName: memberItem.title || model.displayName,
                     userIcon: model.icon,

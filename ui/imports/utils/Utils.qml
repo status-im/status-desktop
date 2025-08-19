@@ -960,7 +960,6 @@ QtObject {
             icon: "",
             isCurrentUser: "",
             colorId: "",
-            colorHash: [],
             displayName: "",
             publicKey: publicKey,
             compressedPubKey: "",
@@ -1006,17 +1005,6 @@ QtObject {
         if (!mainModuleInst)
             return false
         return mainModuleInst.isEnsVerified(publicKey)
-    }
-
-    function getColorHashAsJson(publicKey, skipEnsVerification=false) {
-        if (publicKey === "" || !isChatKey(publicKey))
-            return
-        if (skipEnsVerification) // we know already the user is ENS verified -> no color ring
-            return
-        if (isEnsVerified(publicKey)) // ENS verified -> no color ring
-            return
-        let jsonObj = globalUtilsInst.getColorHashAsJson(publicKey)
-        return JSON.parse(jsonObj)
     }
 
     function colorIdForPubkey(publicKey) {

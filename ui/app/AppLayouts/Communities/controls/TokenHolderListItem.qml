@@ -182,7 +182,6 @@ ItemDelegate {
             status: root.onlineStatus
             icon.name: root.iconName
             icon.color: Utils.colorForPubkey(root.pubKey)
-            colorHash: Utils.getColorHashAsJson(root.pubKey)
         }
     }
 
