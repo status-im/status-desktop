@@ -149,7 +149,6 @@ Item {
         selfUsesDefaultName: appMain.profileStore.usesDefaultName
         selfIcon: appMain.profileStore.icon
         selfColorId: appMain.profileStore.colorId
-        selfColorHash: appMain.profileStore.colorHash
         selfOnlineStatus: appMain.profileStore.currentUserStatus
         selfThumbnailImage: appMain.profileStore.thumbnailImage
         selfLargeImage: appMain.profileStore.largeImage
@@ -1397,7 +1396,6 @@ Item {
             isEnsVerified: !!appMain.profileStore.preferredName
             iconSource: appMain.profileStore.icon
             colorId: appMain.profileStore.colorId
-            colorHash: appMain.profileStore.colorHash
             currentUserStatus: appMain.profileStore.currentUserStatus
 
             getEmojiHashFn: appMain.utilsStore.getEmojiHash
@@ -2782,7 +2780,6 @@ Item {
             destroyOnClose: true
             pubKey: appMain.profileStore.compressedPubKey
             colorId: appMain.profileStore.colorId
-            colorHash: appMain.profileStore.colorHash
             onClosed: appMainLocalSettings.introduceYourselfPopupSeen = true
             onAccepted: Global.changeAppSectionBySectionType(Constants.appSection.profile)
         }

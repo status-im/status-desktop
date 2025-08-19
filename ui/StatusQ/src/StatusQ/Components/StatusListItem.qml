@@ -73,12 +73,6 @@ Rectangle {
         imgIsIdenticon: false
     }
 
-    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        initalAngleRad: 0
-        ringPxSize: 1.5
-        distinctiveColors: Theme.palette.identiconRingColors
-    }
-
     property alias sensor: sensor
     property alias badge: statusListItemBadge
     property alias statusListItemIcon: iconOrImage
@@ -171,7 +165,6 @@ Rectangle {
                     !!root.asset.name ||
                     !!root.asset.emoji) && !root.showLoadingIndicator)
             badge.border.color: root.color
-            ringSettings: root.ringSettings
             loading: root.loading
 
             onClicked: root.iconClicked(mouse)

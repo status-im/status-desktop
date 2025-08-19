@@ -34,7 +34,6 @@ QObject {
         usesDefaultName: entry.usesDefaultName ?? false
         icon: entry.icon ?? ""
         colorId: entry.colorId ?? 0
-        colorHash: entry.colorHash ?? []
         onlineStatus: entry.onlineStatus ?? Constants.onlineStatus.inactive
         isContact: entry.isContact ?? false
         isCurrentUser: entry.isCurrentUser ?? false

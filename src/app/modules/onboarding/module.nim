@@ -105,7 +105,6 @@ method load*[T](self: Module[T]) =
         acc.images.thumbnail,
         acc.images.large,
         acc.keyUid,
-        acc.colorHash,
         acc.colorId,
         acc.keycardPairing
       ))

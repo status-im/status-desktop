@@ -91,8 +91,6 @@ QtObject {
 
     property var userCustomizationColors: []
 
-    property var identiconRingColors: []
-
     property color blockProgressBarColor
 
     // Style compat

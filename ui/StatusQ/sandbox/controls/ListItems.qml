@@ -518,17 +518,6 @@ ColumnLayout {
                       nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
         asset.imgIsIdenticon: true
         status: 1 // FIXME: use enum
-        ringSettings.ringSpecModel:
-            ListModel {
-                ListElement {colorId: 13; segmentLength: 5}
-                ListElement {colorId: 31; segmentLength: 5}
-                ListElement {colorId: 10; segmentLength: 1}
-                ListElement {colorId: 2; segmentLength: 5}
-                ListElement {colorId: 26; segmentLength: 2}
-                ListElement {colorId: 19; segmentLength: 4}
-                ListElement {colorId: 28; segmentLength: 3}
-            }
-        ringSettings.distinctiveColors: Theme.palette.identiconRingColors
     }
 
     StatusMemberListItem {

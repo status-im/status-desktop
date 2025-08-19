@@ -15,7 +15,7 @@ import SortFilterProxyModel
 Control {
     id: root
 
-    // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, colorHash:var, order:int, keycardCreatedAccount:bool}]
+    // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, order:int, keycardCreatedAccount:bool}]
     required property var model
     required property bool currentKeycardLocked
 
@@ -58,7 +58,6 @@ Control {
 
                     label: currentEntry.item.username
                     image: currentEntry.item.thumbnailImage
-                    colorHash: currentEntry.item.colorHash
                     colorId: currentEntry.item.colorId
                     keycardCreatedAccount: currentEntry.item.keycardCreatedAccount
                     keycardLocked: root.currentKeycardLocked
@@ -124,7 +123,6 @@ Control {
                     label: model.username
                     image: model.thumbnailImage
                     colorId: model.colorId
-                    colorHash: model.colorHash
                     keycardCreatedAccount: model.keycardCreatedAccount
                     onClicked: {
                         dropdown.close()

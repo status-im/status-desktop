@@ -223,7 +223,6 @@ Pane {
                 usesDefaultName: contactDetails.usesDefaultName
                 image: contactDetails.largeImage
                 userColor: Utils.colorForColorId(contactDetails.colorId)
-                colorHash: contactDetails.colorHash
 
                 interactive: false
                 imageWidth: 90

@@ -12,7 +12,6 @@ QtObject {
             icon: ""
             emoji: ""
             isIdenticon: false
-            colorHash: []
             color: "blue"
             description: ""
             type: StatusChatListItem.Type.PublicChat
@@ -31,7 +30,6 @@ QtObject {
             icon: ""
             emoji: ""
             isIdenticon: false
-            colorHash: []
             color: "red"
             description: ""
             type: StatusChatListItem.Type.PublicChat
@@ -51,7 +49,6 @@ QtObject {
                           nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             emoji: ""
             isIdenticon: true
-            colorHash: []
             color: "green"
             description: ""
             type: StatusChatListItem.Type.OneToOneChat
@@ -70,7 +67,6 @@ QtObject {
             icon: ""
             emoji: ""
             isIdenticon: false
-            colorHash: []
             color: "purple"
             description: ""
             type: StatusChatListItem.Type.OneToOneChat
@@ -89,7 +85,6 @@ QtObject {
             icon: ""
             emoji: ""
             isIdenticon: false
-            colorHash: []
             color: "orange"
             description: ""
             type: StatusChatListItem.Type.OneToOneChat
@@ -108,7 +103,6 @@ QtObject {
             icon: ""
             emoji: ""
             isIdenticon: false
-            colorHash: []
             color: "green"
             description: ""
             type: StatusChatListItem.Type.PublicChat

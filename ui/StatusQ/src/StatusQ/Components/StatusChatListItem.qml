@@ -29,7 +29,6 @@ Rectangle {
         emoji: ""
         charactersLen: root.type === StatusChatListItem.Type.OneToOneChat ? 2 : 1
     }
-    property alias ringSettings: identicon.ringSettings
     property int type: StatusChatListItem.Type.Unknown0
     property bool highlighted: false
     property bool highlightWhenCreated: false

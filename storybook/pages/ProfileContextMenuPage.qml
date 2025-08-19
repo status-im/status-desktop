@@ -43,14 +43,6 @@ SplitView {
             chatType: chatTypeSelector.currentValue
             isAdmin: isAdminCheckBox.checked
 
-            colorHash: [
-                { segmentLength: 3, colorId: 11 },
-                { segmentLength: 5, colorId: 9  },
-                { segmentLength: 1, colorId: 26 },
-                { segmentLength: 2, colorId: 19 },
-                { segmentLength: 5, colorId: 17 }
-            ]
-
             colorId: colorIdSpinBox.value
 
             onOpenProfileClicked: logs.logEvent("Open profile clicked")

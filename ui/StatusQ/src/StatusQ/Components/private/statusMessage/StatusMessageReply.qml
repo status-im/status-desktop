@@ -74,7 +74,6 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         name: replyDetails.sender.displayName
                         asset: replyDetails.sender.profileImage.assetSettings
-                        ringSettings: replyDetails.sender.profileImage.ringSettings
                         StatusMouseArea {
                             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                             acceptedButtons: Qt.LeftButton | Qt.RightButton

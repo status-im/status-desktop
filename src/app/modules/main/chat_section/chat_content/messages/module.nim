@@ -211,13 +211,11 @@ proc createChatIdentifierItem(self: Module): Item =
   var chatName = chatDto.name
   var smallImage = ""
   var chatIcon = ""
-  var senderColorHash = ""
   var senderIsAdded = false
   if chatDto.chatType == ChatType.OneToOne:
     let sender = self.controller.getContactDetails(chatDto.id)
     senderIsAdded = sender.dto.added
     (chatName, smallImage, chatIcon) = self.controller.getOneToOneChatNameAndImage()
-    senderColorHash = sender.colorHash
 
   result = message_model.createMessageItemFromDtos(
     message = MessageDto(
@@ -230,7 +228,6 @@ proc createChatIdentifierItem(self: Module): Item =
     sender = ContactDetails(
     defaultDisplayName: chatName,
     icon: chatIcon,
-    colorHash: senderColorHash,
     dto: ContactsDto(
       id: chatDto.id,
       added: senderIsAdded,
@@ -439,7 +436,6 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderUsesDefaultName = resolveUsesDefaultName(updatedContact.dto.localNickname, updatedContact.dto.name, updatedContact.dto.displayName)
       item.senderOptionalName = updatedContact.optionalName
       item.senderIcon = updatedContact.icon
-      item.senderColorHash = updatedContact.colorHash
       item.senderIsAdded = updatedContact.dto.added
       item.senderTrustStatus = updatedContact.dto.trustStatus
       item.senderEnsVerified = updatedContact.dto.ensVerified

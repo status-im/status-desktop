@@ -177,15 +177,6 @@ SplitView {
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
             }
         }
-        readonly property var colorHash: ListModel {
-            ListElement { colorId: 13; segmentLength: 5 }
-            ListElement { colorId: 31; segmentLength: 5 }
-            ListElement { colorId: 10; segmentLength: 1 }
-            ListElement { colorId: 2; segmentLength: 5 }
-            ListElement { colorId: 26; segmentLength: 2 }
-            ListElement { colorId: 19; segmentLength: 4 }
-            ListElement { colorId: 28; segmentLength: 3 }
-        }
     }
 
     SplitView {
@@ -226,7 +217,6 @@ SplitView {
                         sender.profileImage {
                             name: model.profileImage || ""
                             colorId: index
-                            colorHash: d.colorHash
                         }
                         album: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum : []
                         albumCount: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum.length : 0
@@ -239,7 +229,6 @@ SplitView {
                             width: 20
                             height: 20
                             name: ModelsData.icons.dribble
-                            colorHash: d.colorHash
                         }
                         messageText: ModelsData.descriptions.mediumLoremIpsum
                     }

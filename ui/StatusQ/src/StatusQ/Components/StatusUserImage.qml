@@ -13,7 +13,6 @@ Loader {
     property string name
     property bool usesDefaultName: false
     property string image
-    property bool showRing: !ensVerified && !root.isBridgedAccount
     property bool interactive: true
     property bool disabled: false
     property bool ensVerified: false
@@ -23,7 +22,6 @@ Loader {
     property int onlineStatus: -1
 
     property color userColor
-    property var colorHash: []
 
     signal clicked(var mouse)
 
@@ -48,9 +46,6 @@ Loader {
             bgHeight: isContactIcon ? root.imageHeight : 0
             bgColor: isContactIcon ? root.userColor : "transparent"
             isImage: !!root.image
-        }
-        ringSettings {
-            ringSpecModel: root.showRing ? root.colorHash : undefined
         }
         loading: root.loading
 
