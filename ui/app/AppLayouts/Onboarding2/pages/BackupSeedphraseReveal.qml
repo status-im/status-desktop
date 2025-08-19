@@ -87,6 +87,7 @@ OnboardingPage {
                                     font: idxMetrics.font
                                 }
                                 StatusBaseText {
+                                    objectName: "seedWordText_" + (index+1)
                                     Layout.fillWidth: true
                                     text: modelData
                                 }

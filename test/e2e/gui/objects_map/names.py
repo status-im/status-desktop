@@ -105,12 +105,9 @@ not_Now_StatusButton = {"checkable": False, "container": statusDesktop_mainWindo
                         "unnamed": 1, "visible": True}
 confirm_Seed_Phrase_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay,
                                     "objectName": "BackupSeedModal_nextButton", "type": "StatusButton", "visible": True}
-backup_seed_phrase_popup_StatusSeedPhraseInput_placeholder = {"container": statusDesktop_mainWindow_overlay,
-                                                              "objectName": "ConfirmSeedPhrasePanel_StatusSeedPhraseInput_%WORD_NO%",
-                                                              "type": "StatusSeedPhraseInput", "visible": True}
-reveal_seed_phrase_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay,
-                                   "objectName": "ConfirmSeedPhrasePanel_RevealSeedPhraseButton",
-                                   "type": "StatusButton", "visible": True}
+seedGridItem = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("seedWordText*"), "type": "StatusBaseText", "visible": True}
+reveal_recovery_phrase_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "btnReveal", "type": "StatusButton", "visible": True}
+iVeBackedUpPhraseButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 blur_GaussianBlur = {"container": statusDesktop_mainWindow_overlay, "id": "blur", "type": "GaussianBlur", "unnamed": 1,
                      "visible": True}
 confirmSeedPhrasePanel_StatusSeedPhraseInput = {"container": statusDesktop_mainWindow_overlay,
@@ -122,6 +119,7 @@ confirmFirstWord_inputText = {"container": confirmFirstWord, "objectName": "Back
                               "type": "TextEdit", "visible": True}
 continue_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay,
                          "objectName": "BackupSeedModal_nextButton", "type": "StatusButton", "visible": True}
+
 confirmSecondWord = {"container": statusDesktop_mainWindow_overlay,
                      "objectName": "BackupSeedModal_BackupSeedStepBase_confirmSecondWord", "type": "BackupSeedStepBase",
                      "visible": True}
@@ -134,6 +132,15 @@ completeAndDeleteSeedPhraseButton = {"container": statusDesktop_mainWindow_overl
                                      "objectName": "BackupSeedModal_completeAndDeleteSeedPhraseButton",
                                      "type": "StatusButton", "visible": True}
 
+"""Confirm recovery phrase modal"""
+confirmRecoveryPhraseModal = {"container": statusDesktop_mainWindow_overlay, "type": "BackupSeedphraseVerify", "unnamed": 1, "visible": True}
+seedInput = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("seedInput_*"), "type": "SeedphraseVerifyInput", "visible": True}
+continueButton = {"container": statusDesktop_mainWindow_overlay, "text": "Continue", "type": "StatusButton", "unnamed": 1, "visible": True}
+
+"""Keep or delete recovery phrase"""
+keepOrDeleteRecoveryPhraseModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal", "type": "PopupItem", "visible": True}
+removeSeedCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "cbRemove", "type": "StatusCheckBox", "visible": True}
+doneButton = {"container": statusDesktop_mainWindow_overlay, "text": "Done", "type": "StatusButton", "unnamed": 1, "visible": True}
 # Send Contact Request Popup
 contactRequest_ChatKey_Input = {"container": statusDesktop_mainWindow_overlay,
                                 "objectName": "SendContactRequestModal_ChatKey_Input", "type": "TextEdit"}
