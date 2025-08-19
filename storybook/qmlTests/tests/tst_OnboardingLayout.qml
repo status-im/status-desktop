@@ -516,13 +516,17 @@ Item {
             verify(!!btnContinue)
             compare(btnContinue.enabled, false)
             const mnemonicWords = page.verificationWordsMap.map((entry) => entry.seedWord)
-            for (let i = 0; i < page.countToVerify; i++) {
-                const seedInput = findChild(page, "seedInput_%1".arg(i))
+            const mnemonicIndexes = page.verificationWordsMap.map((entry) => entry.seedWordNumber - 1)
+            var mnemonicWordIndex = 0;
+            for (const index of mnemonicIndexes) {
+                const seedInput = findChild(page, "seedInput_%1".arg(index))
                 verify(!!seedInput)
                 mouseClick(seedInput)
-                keyClickSequence(mnemonicWords[i])
+                keyClickSequence(mnemonicWords[mnemonicWordIndex])
                 keyClick(Qt.Key_Tab)
+                mnemonicWordIndex++;
             }
+
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
 

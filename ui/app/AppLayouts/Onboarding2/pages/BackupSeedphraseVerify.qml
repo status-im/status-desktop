@@ -32,7 +32,7 @@ OnboardingPage {
     QtObject {
         id: d
         readonly property var seedSuggestions: BIP39_en {} // [{seedWord:string}, ...]
-        readonly property var verificationWordsMap: { // [{wordNumber:int, word:string}, ...]
+        readonly property var verificationWordsMap: { // [{seedWordNumber:int, seedWord:string}, ...]
             const words = Utils.splitWords(root.mnemonic)
             const randomIndexes = SQUtils.Utils.nSamples(root.countToVerify, words.length)
             return randomIndexes.map(i => ({
@@ -96,7 +96,7 @@ OnboardingPage {
                         }
                         SeedphraseVerifyInput {
                             readonly property int seedWordIndex: modelData.seedWordNumber - 1 // 0 based idx in the mnemonic
-                            objectName: "seedInput_%1".arg(modelData.seedWordNumber - 1)
+                            objectName: "seedInput_%1".arg(seedWordIndex)
                             Layout.fillWidth: true
                             id: seedInput
                             valid: text === modelData.seedWord
