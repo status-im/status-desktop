@@ -96,7 +96,7 @@ OnboardingPage {
                         }
                         SeedphraseVerifyInput {
                             readonly property int seedWordIndex: modelData.seedWordNumber - 1 // 0 based idx in the mnemonic
-                            objectName: "seedInput_%1".arg(index)
+                            objectName: "seedInput_%1".arg(modelData.seedWordNumber - 1)
                             Layout.fillWidth: true
                             id: seedInput
                             valid: text === modelData.seedWord
