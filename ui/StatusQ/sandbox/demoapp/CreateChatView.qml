@@ -31,21 +31,6 @@ Page {
             toLabelText: qsTr("To: ")
             warningText: qsTr("USER LIMIT REACHED")
             listLabel: qsTr("Contacts")
-            // ringSpecModelGetter: function(pubKey) {
-            //     //for simulation purposes only, in real app
-            //     //this would be Utils.getColorHashAsJson(pubKey)
-            //     var index = -1;
-            //     if (!!contactsModel) {
-            //         for (var i = 0; i < contactsModel.count; i++) {
-            //             if (contactsModel.get(i).pubKey === pubKey) {
-            //                 index = i;
-            //             }
-            //         }
-            //         return contactsModel.get(index).ringSpecModel;
-            //     } else {
-            //         return null;
-            //     }
-            // }
             compressedKeyGetter: function(pubKey) {
                 //for simulation purposes only, in real app
                 //this would be utilsStore.getCompressedPk(pubKey);

@@ -26,7 +26,6 @@ StatusMenu {
     property int chatType: Constants.chatType.unknown
     property bool isAdmin: false
     property var emojiHash: []
-    property var colorHash: []
     property int colorId
 
     signal openProfileClicked
@@ -52,7 +51,6 @@ StatusMenu {
         usesDefaultName: root.usesDefaultName
         compressedPubKey: root.compressedPubKey
         emojiHash: root.emojiHash
-        colorHash: root.colorHash
         colorId: root.colorId
         icon: root.userIcon
         trustStatus: root.profileType === Constants.profileType.regular ? root.trustStatus : Constants.trustStatus.unknown

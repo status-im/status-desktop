@@ -57,12 +57,6 @@ StatusListItem {
         bgColor: root.keycardLocked? Theme.palette.dangerColor3 : Theme.palette.primaryColor3
     }
 
-    ringSettings {
-        ringSpecModel: root.keyPairType === Constants.keycard.keyPairType.profile?
-                           Utils.getColorHashAsJson(d.myPublicKey) : []
-        ringPxSize: Math.max(asset.width / 24.0)
-    }
-
     tagsModel: root.keyPairAccounts
 
     tagsDelegate: StatusListItemTag {

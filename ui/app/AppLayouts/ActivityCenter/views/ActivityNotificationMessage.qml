@@ -43,7 +43,6 @@ ActivityNotificationBase {
             name: contactDetails ? contactDetails.thumbnailImage : ""
             pubkey: contactId
             colorId: Utils.colorIdForPubkey(contactId)
-            colorHash: Utils.getColorHashAsJson(contactId, sender.isEnsVerified)
         }
         contentType: notification && notification.message ? notification.message.contentType : StatusMessage.ContentType.Unknown
         album: notification && notification.message ? notification.message.albumMessageImages.split(" ") : []

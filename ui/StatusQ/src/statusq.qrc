@@ -121,7 +121,6 @@
         <file>StatusQ/Controls/StatusIconSwitch.qml</file>
         <file>StatusQ/Controls/StatusIconTabButton.qml</file>
         <file>StatusQ/Controls/StatusIconTextButton.qml</file>
-        <file>StatusQ/Controls/StatusIdenticonRing.qml</file>
         <file>StatusQ/Controls/StatusImageCrop.qml</file>
         <file>StatusQ/Controls/StatusImageSelector.qml</file>
         <file>StatusQ/Controls/StatusInput.qml</file>
@@ -183,7 +182,6 @@
         <file>StatusQ/Core/StatusGridView.qml</file>
         <file>StatusQ/Core/StatusIcon.qml</file>
         <file>StatusQ/Core/StatusIconWithTooltip.qml</file>
-        <file>StatusQ/Core/StatusIdenticonRingSettings.qml</file>
         <file>StatusQ/Core/StatusListView.qml</file>
         <file>StatusQ/Core/StatusModalHeaderSettings.qml</file>
         <file>StatusQ/Core/StatusMouseArea.qml</file>

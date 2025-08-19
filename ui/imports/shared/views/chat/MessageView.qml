@@ -56,8 +56,6 @@ Loader {
     property string senderOptionalName: ""
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
-    //TODO: provide the sender color hash from nim model in case of ContactVerificationRequest, OngoingContactVerificationRequest or PinnedMessagesPopup
-    property var senderColorHash:  senderId != "" ? Utils.getColorHashAsJson(senderId, senderIsEnsVerified) : ""
     property bool amISender: false
     property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin
     property bool senderIsAdded: false
@@ -101,7 +99,6 @@ Loader {
     property string quotedMessageAuthorDetailsThumbnailImage: ""
     property bool quotedMessageAuthorDetailsEnsVerified: false
     property bool quotedMessageAuthorDetailsIsContact: false
-    property var quotedMessageAuthorDetailsColorHash
 
     property var album: []
     property int albumCount: 0
@@ -136,7 +133,6 @@ Loader {
     property string deletedBy: ""
     property string deletedByContactDisplayName: ""
     property string deletedByContactIcon: ""
-    property string deletedByContactColorHash: ""
 
     property bool shouldRepeatHeader: d.shouldRepeatHeader
 
@@ -202,7 +198,6 @@ Loader {
             compressedPubKey: contactDetails.compressedPubKey,
             displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
-            colorHash: isReply ? quotedMessageAuthorDetailsColorHash : root.senderColorHash,
             colorId: Utils.colorIdForPubkey(pubKey),
             trustStatus: contactDetails.trustStatus,
             ensVerified: contactDetails.ensVerified,
@@ -611,8 +606,6 @@ Loader {
                         name: root.deletedByContactIcon || ""
                         pubkey: root.deletedBy
                         colorId: deletedMessage.colorId
-                        colorHash: root.deletedByContactColorHash
-                        showRing: true
                     }
                 }
 
@@ -641,7 +634,6 @@ Loader {
                     visible: true
                     name: root.deletedByContactDisplayName
                     asset: deletedMessage.messageDetails.sender.profileImage.assetSettings
-                    ringSettings: deletedMessage.messageDetails.sender.profileImage.ringSettings
                 }
 
                 StatusBaseText {
@@ -892,8 +884,6 @@ Loader {
                         name: root.senderIcon || ""
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
-                        colorHash: root.senderColorHash
-                        showRing: !root.isDiscordMessage && !root.senderIsEnsVerified && !root.isBridgeMessage
                     }
                     sender.badgeImage: Theme.svg("discord-bridge")
                 }
@@ -942,10 +932,8 @@ Loader {
                         height: 20
                         name: quotedMessageAuthorDetailsThumbnailImage
                         assetSettings.isImage: quotedMessageAuthorDetailsThumbnailImage
-                        showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified && (root.quotedMessageContentType !== Constants.messageContentType.bridgeMessageType)
                         pubkey: sender.id
                         colorId: Utils.colorIdForPubkey(sender.id)
-                        colorHash: quotedMessageAuthorDetailsColorHash
                     }
                 }
 

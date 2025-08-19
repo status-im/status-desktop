@@ -10,11 +10,9 @@ QtObject {
 
     property string name
     property string pubkey
-    property bool showRing: true
     property bool interactive: true
 
     property int colorId // TODO: default value Utils.colorIdForPubkey(pubkey)
-    property var colorHash // TODO: default value Utils.getColorHashAsJson(pubkey)
 
     property StatusAssetSettings assetSettings: StatusAssetSettings {
         width: root.width
@@ -24,12 +22,5 @@ QtObject {
         imgIsIdenticon: root.isIdenticon
         color: Theme.palette.userCustomizationColors[root.colorId]
         charactersLen: 2
-    }
-
-    readonly property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        initalAngleRad: 0
-        ringPxSize: root.assetSettings.ringPxSize
-        ringSpecModel: root.showRing ? root.colorHash : undefined
-        distinctiveColors: Theme.palette.identiconRingColors
     }
 }

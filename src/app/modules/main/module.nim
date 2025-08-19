@@ -2,7 +2,7 @@ import nimqml, tables, json, sequtils, stew/shims/strformat, marshal, times, chr
 
 import io_interface, view, controller
 import ephemeral_notification_item, ephemeral_notification_model
-import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details, contacts_utils, color_hash_item]
+import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details, contacts_utils]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/global/app_sections_config
 import app/global/app_signals
@@ -1438,7 +1438,6 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "icon": contactDetails.icon,
     "isCurrentUser": contactDetails.isCurrentUser,
     "colorId": contactDetails.colorId,
-    "colorHash": contactDetails.colorHash,
     # contact dto props
     "displayName": contactDetails.dto.displayName,
     "publicKey": contactDetails.dto.id,

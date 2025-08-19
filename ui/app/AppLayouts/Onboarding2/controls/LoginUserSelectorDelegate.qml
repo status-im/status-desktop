@@ -16,7 +16,6 @@ ItemDelegate {
 
     property string label
     property int colorId
-    property var colorHash
     property string image
     property bool keycardCreatedAccount
     property bool keycardLocked
@@ -55,7 +54,6 @@ ItemDelegate {
                 usesDefaultName: !root.image
                 image: root.image
                 userColor: Utils.colorForColorId(root.colorId)
-                colorHash: root.colorHash
                 imageHeight: Constants.onboarding.userImageHeight
                 imageWidth: Constants.onboarding.userImageWidth
             }

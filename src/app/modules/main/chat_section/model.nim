@@ -14,7 +14,6 @@ type
     Color
     ColorId
     Emoji
-    ColorHash
     Description
     Type
     LastMessageTimestamp
@@ -117,7 +116,6 @@ QtObject:
       ModelRole.Color.int:"color",
       ModelRole.ColorId.int:"colorId",
       ModelRole.Emoji.int:"emoji",
-      ModelRole.ColorHash.int:"colorHash",
       ModelRole.Description.int:"description",
       ModelRole.Type.int:"type",
       ModelRole.LastMessageTimestamp.int:"lastMessageTimestamp",
@@ -176,8 +174,6 @@ QtObject:
       result = newQVariant(item.colorId)
     of ModelRole.Emoji:
       result = newQVariant(item.emoji)
-    of ModelRole.ColorHash:
-      result = newQVariant(item.colorHash)
     of ModelRole.Description:
       result = newQVariant(item.description)
     of ModelRole.Type:

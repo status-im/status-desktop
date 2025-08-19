@@ -7,19 +7,17 @@ type
     icon: string
     sectionId: string
     sectionName: string
-    colorHash: string
     emoji: string
     chatType: int
     lastMessageText: string
 
-proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, sectionId, sectionName, emoji: string, chatType: int, lastMessageText: string): ChatSearchItem =
+proc initItem*(chatId, name, color: string, colorId: int, icon, sectionId, sectionName, emoji: string, chatType: int, lastMessageText: string): ChatSearchItem =
   result = ChatSearchItem()
   result.chatId = chatId
   result.name = name
   result.color = color
   result.colorId = colorId
   result.icon = icon
-  result.colorHash = colorHash
   result.sectionId = sectionId
   result.sectionName = sectionName
   result.emoji = emoji
@@ -49,9 +47,6 @@ proc icon*(self: ChatSearchItem): string =
 
 proc `icon=`*(self: ChatSearchItem, value: string) =
   self.icon = value
-
-proc colorHash*(self: ChatSearchItem): string =
-  self.colorHash
 
 proc sectionId*(self: ChatSearchItem): string =
   self.sectionId

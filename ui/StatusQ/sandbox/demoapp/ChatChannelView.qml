@@ -43,15 +43,6 @@ ListView {
                 pubkey: model.senderId
                 name: model.profileImage || ""
                 colorId: 1
-                colorHash: ListModel {
-                    ListElement { colorId: 13; segmentLength: 5 }
-                    ListElement { colorId: 31; segmentLength: 5 }
-                    ListElement { colorId: 10; segmentLength: 1 }
-                    ListElement { colorId: 2; segmentLength: 5 }
-                    ListElement { colorId: 26; segmentLength: 2 }
-                    ListElement { colorId: 19; segmentLength: 4 }
-                    ListElement { colorId: 28; segmentLength: 3 }
-                }
             }
 
             messageText: model.message
@@ -68,15 +59,6 @@ ListView {
                 name: model.isReply ? model.replyProfileImage: ""
                 pubkey: model.replySenderId
                 colorId: 1
-                colorHash: ListModel {
-                    ListElement { colorId: 13; segmentLength: 5 }
-                    ListElement { colorId: 31; segmentLength: 5 }
-                    ListElement { colorId: 10; segmentLength: 1 }
-                    ListElement { colorId: 2; segmentLength: 5 }
-                    ListElement { colorId: 26; segmentLength: 2 }
-                    ListElement { colorId: 19; segmentLength: 4 }
-                    ListElement { colorId: 28; segmentLength: 3 }
-                }
             }
             messageText:  model.isReply ? model.replyMessageText: ""
             contentType: model.replyContentType

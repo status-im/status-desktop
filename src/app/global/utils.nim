@@ -110,12 +110,6 @@ QtObject:
       pk = self.getDecompressedPk(publicKey)
     procs_from_visual_identity_service.getEmojiHashAsJson(pk)
 
-  proc getColorHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
-    var pk = publicKey
-    if self.isCompressedPubKey(publicKey):
-      pk = self.getDecompressedPk(publicKey)
-    procs_from_visual_identity_service.getColorHashAsJson(pk)
-
   proc getColorId*(self: Utils, publicKey: string): int {.slot.} =
     var pk = publicKey
     if self.isCompressedPubKey(publicKey):

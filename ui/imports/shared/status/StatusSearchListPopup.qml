@@ -106,7 +106,6 @@ StatusDropdown {
                 asset.emoji: model ? model.emoji : ""
                 asset.charactersLen: 2
                 asset.letterSize: asset._twoLettersSize
-                ringSettings.ringSpecModel: model ? model.colorHash : undefined
 
                 StatusMouseArea {
                     anchors.fill: parent

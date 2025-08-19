@@ -28,27 +28,7 @@ StatusMenu {
                               string iconName,
                               string iconColor,
                               bool isUserIcon,
-                              int colorId,
-                              string colorHash)
-
-    function processTriggeredMenuItem(title,
-                                      parentImageSource,
-                                      parentIsIdenticon,
-                                      parentIconName,
-                                      parentIdenticonColoe) {
-        root.resetSearchSelection()
-        let menuItem = root.menuAt(root.currentIndex)
-
-        root.setSearchSelection(menuItem.title,
-                           "",
-                           menuItem.parentImageSource,
-                           menuItem.parentIsIdenticon,
-                           menuItem.parentIconName,
-                           menuItem.parentIdenticonColor)
-
-        //TODO fix error "QML StatusMenu: cannot find any window to open popup in."
-        root.dismiss()
-    }
+                              int colorId)
 
     StatusAction {
         text: qsTr("Anywhere")
@@ -84,8 +64,7 @@ StatusMenu {
                                                 assetSettings.name,
                                                 assetSettings.color,
                                                 model.isUserIcon,
-                                                model.colorId,
-                                                JSON.stringify(model.colorHash))
+                                                model.colorId)
                         root.itemClicked(model.value, "")
                     }
                 }
@@ -144,7 +123,6 @@ StatusMenu {
                             assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
                             assetSettings.bgColor: model.iconColor
                             assetSettings.charactersLen: model.isUserIcon ? 2 : 1
-                            ringSettings.ringSpecModel: model.colorHash
 
                             onTriggered: {
                                 root.resetSearchSelection()
@@ -156,8 +134,7 @@ StatusMenu {
                                                             model.iconName,
                                                             model.iconColor,
                                                             model.isUserIcon,
-                                                            model.colorId,
-                                                            JSON.stringify(model.colorHash))
+                                                            model.colorId)
                                 } else {
                                     root.setSearchSelection(menuLoader.parentTitleText,
                                                             model.text,
@@ -166,8 +143,7 @@ StatusMenu {
                                                             menuLoader.parentIconName,
                                                             menuLoader.parentIdenticonColor,
                                                             "",
-                                                            -1,
-                                                            "")
+                                                            -1)
                                 }
                                 root.itemClicked(subMenuDelegate.parentValue, value)
                                 root.dismiss()

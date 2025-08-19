@@ -29,11 +29,6 @@ Item {
                             onlineStatus: 1,
                             pubKey: key,
                             compressedKey: "zx3sh" + key,
-                            colorHash: [
-                                { colorId: i, segmentLength: i % 5 },
-                                { colorId: i + 5, segmentLength: 3 },
-                                { colorId: 19, segmentLength: 2 }
-                            ]
                         })
                     }
                 }

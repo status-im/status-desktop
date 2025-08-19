@@ -42,12 +42,6 @@ StatusSelect {
             bgColor: "transparent"
         }
 
-        ringSettings {
-            ringSpecModel: root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.profile?
-                               Utils.getColorHashAsJson(root.userProfilePublicKey) : []
-            ringPxSize: Math.max(asset.width / 24.0)
-        }
-
         tagsModel : root.selectedOrigin.accounts
 
         tagsDelegate: StatusListItemTag {
@@ -104,11 +98,6 @@ StatusSelect {
             charactersLen: 2
             isLetterIdenticon: !menu.isHeader && !model.keyPair.icon && !asset.name.toString()
             bgColor: "transparent"
-        }
-
-        ringSettings {
-            ringSpecModel: menu.isProfileKeypair? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
-            ringPxSize: Math.max(asset.width / 24.0)
         }
 
         tagsModel: menu.isHeader || menu.isOption? [] : model.keyPair.accounts

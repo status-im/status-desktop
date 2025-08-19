@@ -17,7 +17,6 @@ import AppLayouts.Onboarding2.pages
 import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Backpressure
 import StatusQ.Core.Utils as SQUtils
 import StatusQ.Platform
 
@@ -457,7 +456,7 @@ StatusWindow {
 
             keychain: appKeychain
 
-            onFinished: (flow, data) => {
+            onFinished: function(flow, data) {
                 const error = onboardingStore.finishOnboardingFlow(flow, data)
 
                 if (error !== "") {
@@ -482,7 +481,7 @@ StatusWindow {
                 onboardingStore.loginRequested(keyUid, method, data)
             }
 
-            onShareUsageDataRequested: {
+            onShareUsageDataRequested: function(enabled) {
                 applicationWindow.metricsStore.toggleCentralizedMetrics(enabled)
                 if (enabled) {
                     Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: Constants.metricsEnablePlacement.onboarding})

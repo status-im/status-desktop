@@ -13,7 +13,6 @@ import app_service/service/contacts/service as contact_service
 import app_service/service/chat/service as chat_service
 import app_service/service/community/service as community_service
 import app_service/service/message/service as message_service
-import app_service/service/visual_identity/service as visual_identity
 
 export io_interface
 
@@ -77,12 +76,10 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
     
     var chatName = chatDto.name
     var chatImage = chatDto.icon
-    var colorHash: ColorHashDto = @[]
     var colorId: int = 0
     let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
     if isOneToOneChat:
       (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
-      colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
     elif chatDto.chatType == ChatType.CommunityChat:
       if chatDto.categoryId != "":
@@ -108,7 +105,6 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
       chatDto.position,
       chatDto.timestamp.int,
       colorId,
-      colorHash,
     )
     result.add(subItem)
 
@@ -216,12 +212,10 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
 
       var chatName = chatDto.name
       var chatImage = chatDto.icon
-      var colorHash: ColorHashDto = @[]
       var colorId: int = 0
       let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
       if(isOneToOneChat):
         (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
-        colorHash = self.controller.getColorHash(chatDto.id)
         colorId = self.controller.getColorId(chatDto.id)
 
       var rawChatName = chatName
@@ -244,8 +238,7 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
           chatDto.color,
           false,
           isOneToOneChat,
-          colorId,
-          colorHash)
+          colorId)
 
         self.controller.addResultItemDetails(chatDto.id, sectionId, chatDto.id)
         result.add(item)
@@ -304,7 +297,6 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
     let communityChats = self.controller.getCommunityById(chatDto.communityId).chats
 
     let renderedMessageText = self.controller.getRenderedText(m.parsedText, communityChats)
-    let colorHash = self.controller.getColorHash(m.`from`)
     let colorId = self.controller.getColorId(m.`from`)
 
     if(chatDto.communityId.len == 0):
@@ -314,7 +306,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, "", chatImage,
-        chatDto.color, false, true, colorId, colorHash)
+        chatDto.color, false, true, colorId)
 
       self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
         chatDto.id, m.id)
@@ -325,7 +317,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, community.name,
-        channelName, community.images.thumbnail, community.color, false, true, colorId, colorHash)
+        channelName, community.images.thumbnail, community.color, false, true, colorId)
 
       self.controller.addResultItemDetails(m.id, chatDto.communityId, chatDto.id, m.id)
       items.add(item)
@@ -357,7 +349,6 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
 
   var chatName = chat.name
   var chatImage = chat.icon
-  var colorHash: ColorHashDto = @[]
   var colorId: int = 0
   var sectionId = personalChatSectionId
   var sectionName = personalChatSectionName
@@ -366,8 +357,6 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
     let contactDetails = self.controller.getContactDetails(chat.id)
     chatName = contactDetails.defaultDisplayName
     chatImage = contactDetails.icon
-    if not contactDetails.dto.ensVerified:
-      colorHash = self.controller.getColorHash(chat.id)
     colorId = self.controller.getColorId(chat.id)
   elif chat.chatType == ChatType.CommunityChat:
     sectionId = chat.communityId
@@ -378,7 +367,6 @@ proc createChatSearchItem(self: Module, chat: ChatDto, personalChatSectionId, pe
     chat.color,
     colorId,
     chatImage,
-    colorHash.toJson(),
     sectionId,
     sectionName,
     chat.emoji,
