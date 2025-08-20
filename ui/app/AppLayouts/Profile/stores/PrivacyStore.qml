@@ -44,4 +44,12 @@ QtObject {
     function mnemonicWasShown() {
         root.privacyModule.mnemonicWasShown()
     }
+
+    readonly property bool thirdpartyServicesEnabled: appSettings.thirdpartyServicesEnabled
+    function toggleThirdpartyServicesEnabled() {
+        appSettings.thirdpartyServicesEnabled = !appSettings.thirdpartyServicesEnabled
+        Global.displaySuccessToastMessage(appSettings.thirdpartyServicesEnabled ?
+                                          qsTr("Third-party services successfully enabled"):
+                                          qsTr("Third-party services successfully disabled"))
+    }
 }
