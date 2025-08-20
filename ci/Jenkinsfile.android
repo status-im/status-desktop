@@ -42,9 +42,9 @@ pipeline {
 
   environment {
     USE_SYSTEM_NIM = "1"
-    GOCACHE = "/tmp/go-cache"
-    GOMODCACHE = "/tmp/go-mod-cache"
-    GOTMPDIR = "/tmp"
+    GOCACHE = "${env.WORKSPACE_TMP}/go-cache"
+    GOMODCACHE = "${env.WORKSPACE_TMP}/go-mod-cache"
+    GOTMPDIR = "${env.WORKSPACE_TMP}/go-tmp-dir"
     STATUS_APK_ARTIFACT = "pkg/Status-tablet-${BUILD_NUMBER}.apk"
     PLATFORM = "android/arm64"
     QT_ANDROID_PATH = "/opt/qt/6.9.0/android_arm64_v8a"
@@ -55,8 +55,6 @@ pipeline {
     stage('Prepare') {
       steps {
         sh 'git submodule update --init --recursive'
-        echo "Building for architecture: arm64"
-        echo "Qt Android path: ${env.QT_ANDROID_PATH}"
       }
     }
 
@@ -81,7 +79,6 @@ pipeline {
           cp '${env.STATUS_APK}' '${env.STATUS_APK_ARTIFACT}'
           ls -la '${env.STATUS_APK_ARTIFACT}'
         """
-        echo "APK packaged: ${env.STATUS_APK_ARTIFACT}"
       }
     }
 

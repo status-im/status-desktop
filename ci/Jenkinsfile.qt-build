@@ -39,27 +39,13 @@ pipeline {
     }
 
     stages {
-        stage('Prepare') {
-            steps {
-                script {
-                    // Clean workspace
-                    sh 'rm -rf qt_export qt-src'
-                    sh 'mkdir -p qt_export'
-
-                    // Set executable permissions on scripts
-                    sh 'chmod +x ${QT_BUILD_DIR}/scripts/*.sh'
-                }
-            }
-        }
 
         stage('AppImage Builder') {
             steps {
                 script {
-                    echo "Building AppImage Builder image..."
-                    sh """
-                        cd ${QT_BUILD_DIR}/appimage-builder
-                        docker build -t ${DOCKER_REGISTRY}/appimage-builder:noble .
-                    """
+                    dir("${QT_BUILD_DIR}/appimage-builder") {
+                        sh "docker build -t ${DOCKER_REGISTRY}/appimage-builder:noble ."
+                    }
                 }
             }
         }
@@ -67,13 +53,17 @@ pipeline {
         stage('Qt Dev Base') {
             steps {
                 script {
-                    echo "Building Qt Dev Base image..."
-                    sh """
-                        cd ${QT_BUILD_DIR}/base
-                        docker build \
-                            --build-arg TARGETARCH=amd64 \
-                            -t ${DOCKER_REGISTRY}/qt-dev-base:noble-17-35-27.2.12479018 .
-                    """
+                    dir("${QT_BUILD_DIR}/base") {
+                        sh """
+                            docker build \
+                                --build-arg TARGETARCH=amd64 \
+                                --build-arg JAVA_VERSION=17 \
+                                --build-arg ANDROID_API_LEVEL=35 \
+                                --build-arg ANDROID_NDK_VERSION=27.2.12479018 \
+                                -t ${DOCKER_REGISTRY}/qt-dev-base:noble-17-35-27.2.12479018 .
+                        """
+                        // noble-17-35-27.2.12479018 = Ubuntu Noble (24.04) + Java 17 + Android API 35 + NDK 27.2.12479018
+                    }
                 }
             }
         }
@@ -91,9 +81,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Building Qt ${params.QT_VERSION} for Android..."
                     sh """
-                        chmod +x /root/scripts/build_qt_android.sh /root/scripts/build_qt_desktop.sh
                         cd /root
                         /root/scripts/build_qt_android.sh
                     """
@@ -104,30 +92,30 @@ pipeline {
         stage('Build Qt CI Image') {
             steps {
                 script {
-                    echo "Building final Qt Docker image..."
-                    sh """
-                        cd ${QT_BUILD_DIR}/qt
-                        cp -r ${WORKSPACE}/qt_export .
-                        docker build \
-                            --build-arg QTVER=${params.QT_VERSION} \
-                            -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} .
-                    """
+                    dir("${QT_BUILD_DIR}/qt") {
+                        sh """
+                            cp -r ${WORKSPACE}/qt_export .
+                            docker build \
+                                --build-arg QTVER=${params.QT_VERSION} \
+                                -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} .
+                        """
+                    }
                 }
             }
         }
 
-        stage('Build Enhanced Runtime Image') {
+        stage('Build Final Runtime Image') {
             steps {
                 script {
-                    echo "Building enhanced runtime image with Nim and all tooling..."
-                    sh """
-                        cd ${QT_BUILD_DIR}/nim-runtime
-                        docker build \
-                            --build-arg GOLANG_VERSION=1.23.10 \
-                            --build-arg NIM_VERSION=2.0.12 \
-                            --build-arg NIX_VERSION=2.24.11 \
-                            -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci .
-                    """
+                    dir("${QT_BUILD_DIR}/nim-runtime") {
+                        sh """
+                            docker build \
+                                --build-arg GOLANG_VERSION=1.23.10 \
+                                --build-arg NIM_VERSION=2.0.12 \
+                                --build-arg NIX_VERSION=2.24.11 \
+                                -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci .
+                        """
+                    }
                 }
             }
         }
@@ -135,37 +123,23 @@ pipeline {
         stage('Test Images') {
             parallel {
                 stage('Test Qt Base Image') {
-                    steps {
-                        script {
-                            echo "Testing the Qt base image..."
-                            sh """
-                                docker run --rm \
-                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
-                                    "qmake --version"
-
-                                docker run --rm \
-                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} \
-                                    "ls -la /opt/qt/${params.QT_VERSION}/"
-                            """
+                    steps { script {
+                        image.inside('--entrypoint=""') { c ->
+                            sh "qmake --version"
+                            sh "ls -la /opt/qt/${params.QT_VERSION}/"
                         }
-                    }
+                    } }
                 }
 
                 stage('Test Complete Image') {
-                    steps {
-                        script {
-                            echo "Testing the image with nim/go tooling..."
-                            sh """
-                                docker run --rm \
-                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci \
-                                    "qmake --version && nim --version && go version && echo 'All tools working!'"
-
-                                docker run --rm \
-                                    ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci \
-                                    "ls -la /home/jenkins/openssl-output/arm64-v8a/lib/"
-                            """
+                    steps { script {
+                        image.inside('--entrypoint=""') { c ->
+                            sh "qmake --version"
+                            sh "nim --version"
+                            sh "go version"
+                            sh "ls -la /home/jenkins/openssl-output/arm64-v8a/lib/"
                         }
-                    }
+                    } }
                 }
             }
         }
@@ -197,28 +171,8 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
-        }
-        success {
-            script {
-                def message = """
-                Qt Build Successful!
-                - Qt Version: ${params.QT_VERSION}
-                - Docker Tag: ${params.DOCKER_TAG}
-                - Base Image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
-                - Complete Image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci
-                """
-            }
-        }
-        failure {
-            script {
-                def message = """
-                Qt Build Failed!
-                - Qt Version: ${params.QT_VERSION}
-                - Build URL: ${BUILD_URL}
-                """
-            }
-        }
+        always { cleanWs() }
+        success { script { github.notifyPR(true) } }
+        failure { script { github.notifyPR(false) } }
     }
 }

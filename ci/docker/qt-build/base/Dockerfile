@@ -29,33 +29,36 @@ RUN \
 # webengine
 RUN apt-get install zlib1g-dev libcurl4-openssl-dev libwebpdemux2 -y
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV ANDROID_SDK_ROOT=/opt/android-sdk
-
 ARG TARGETARCH
+ARG JAVA_VERSION=17
+ARG ANDROID_API_LEVEL=35
+ARG ANDROID_NDK_VERSION=27.2.12479018
+
+ENV JAVA_HOME=/usr/lib/jvm/java-${JAVA_VERSION}-openjdk-amd64
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV ANDROID_NDK_ROOT=/opt/android-sdk/ndk/${ANDROID_NDK_VERSION}
 
 RUN \
     if [ "$TARGETARCH" != "arm64" ]; then \
         export DEBIAN_FRONTEND=noninteractive \
- &&     export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 \
+ &&     export JAVA_HOME=/usr/lib/jvm/java-${JAVA_VERSION}-openjdk-amd64 \
  &&     apt-get update \
  &&     apt-get install -y git git-lfs ccache \
- &&     apt-get install -y openjdk-17-jdk google-android-cmdline-tools-13.0-installer; \
+ &&     apt-get install -y openjdk-${JAVA_VERSION}-jdk google-android-cmdline-tools-13.0-installer; \
    fi
 
 # Android
 RUN \
     if [ "$TARGETARCH" != "arm64" ]; then \
         export DEBIAN_FRONTEND=noninteractive \
- &&     export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 \
- &&     yes | sdkmanager --sdk_root=/opt/android-sdk "platforms;android-35" "platform-tools" "build-tools;35.0.0" \
+ &&     export JAVA_HOME=/usr/lib/jvm/java-${JAVA_VERSION}-openjdk-amd64 \
+ &&     yes | sdkmanager --sdk_root=/opt/android-sdk "platforms;android-${ANDROID_API_LEVEL}" "platform-tools" "build-tools;${ANDROID_API_LEVEL}.0.0" \
  &&     export ANDROID_SDK_ROOT=/opt/android-sdk \
- &&     yes | sdkmanager --sdk_root=/opt/android-sdk "ndk;27.2.12479018" \
- &&     export ANDROID_NDK_ROOT=/opt/android-sdk/ndk/27.2.12479018 \
+ &&     yes | sdkmanager --sdk_root=/opt/android-sdk "ndk;${ANDROID_NDK_VERSION}" \
+ &&     export ANDROID_NDK_ROOT=/opt/android-sdk/ndk/${ANDROID_NDK_VERSION} \
  &&     yes | sdkmanager --licenses; \
     fi
 
-ENV ANDROID_NDK_ROOT=/opt/android-sdk/ndk/27.2.12479018
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
