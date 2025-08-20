@@ -25,7 +25,7 @@ proc decodeHexAddress*(strAddress: string): Address =
     error "Error parsing address", msg = e.msg, strAddress
   return hexAddressValue
 
-proc isHexFormat*(strAddress: string): bool =
+proc isAddress*(strAddress: string): bool =
   try:
     discard decodeHexAddress(strAddress)
   except:
