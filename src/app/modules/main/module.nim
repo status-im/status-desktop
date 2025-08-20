@@ -688,6 +688,8 @@ method load*[T](
       enabled = true,
     )
     self.view.model().addItem(homePageSectionItem)
+    if activeSectionId == homePageSectionItem.id:
+      activeSection = homePageSectionItem
 
   # Communities Portal Section
   let communitiesPortalSectionItem = initSectionItem(
@@ -828,8 +830,9 @@ method load*[T](
   self.marketModule.load()
 
   # If the home page is enabled, we default to it as the opening section
-  if homePageEnabled:
-    activeSection = homePageSectionItem
+  # (disabled for 2.35 as per https://github.com/status-im/status-desktop/issues/18664, revisit after)
+  #if homePageEnabled:
+  #  activeSection = homePageSectionItem
 
   # Set active section on app start
   # If section is empty or profile wait until chats are loaded
@@ -944,8 +947,8 @@ method onChatsLoaded*[T](
 
   self.events.emit(SIGNAL_MAIN_LOADED, Args())
 
-  # Set active section if it is one of the channel sections and the home page is not enabled
-  if not singletonInstance.featureFlags().getHomePageEnabled() and not activeSection.isEmpty():
+  # Set active section if it is one of the channel sections
+  if not activeSection.isEmpty():
     self.setActiveSection(activeSection)
 
   self.view.sectionsLoaded()
