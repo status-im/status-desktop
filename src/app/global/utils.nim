@@ -1,5 +1,5 @@
 import nimqml
-import std/[strutils, httpclient, os, uri], stew/shims/strformat, regex, stint, os
+import std/[strutils, httpclient, os, uri], stew/shims/strformat, regex, stint
 import stew/byteutils
 import ./utils/qrcodegen
 
@@ -154,8 +154,11 @@ QtObject:
     except:
       return false
 
+  proc isHexFormat*(self: Utils, value: string): bool {.slot.} =
+    return value.match(re2"^0x[0-9a-fA-F]+$")
+
   proc isChatKey*(self: Utils, value: string): bool {.slot.} =
-      result = (conversion.startsWith0x(value) and conversion.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
+    result = (conversion.startsWith0x(value) and self.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
 
   proc isBase64DataUrl*(str: string): bool =
     return str.match(re2"(?i)^data:[^,]*;base64,[A-Za-z0-9+/=]+$")
