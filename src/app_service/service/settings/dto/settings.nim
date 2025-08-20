@@ -58,6 +58,7 @@ const KEY_NEWS_FEED_ENABLED* = "news-feed-enabled?"
 const KEY_NEWS_NOTIFICATIONS_ENABLED* = "news-notifications-enabled?"
 const KEY_NEWS_RSS_ENABLED* = "news-rss-enabled?"
 const KEY_BACKUP_PATH* = "backup-path"
+const KEY_THIRDPARTY_SERVICES_ENABLED* = "thirdparty_services_enabled"
 
 # Notifications Settings Values
 const VALUE_NOTIF_SEND_ALERTS* = "SendAlerts"
@@ -172,6 +173,7 @@ type
     urlUnfurlingMode*: UrlUnfurlingMode
     autoRefreshTokens*: bool
     lastTokensUpdate*: int64
+    thirdpartyServicesEnabled*: bool
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
@@ -231,6 +233,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
   discard jsonObj.getProp(KEY_AUTO_REFRESH_TOKENS, result.autoRefreshTokens)
   discard jsonObj.getProp(KEY_BACKUP_PATH, result.backupPath)
+  discard jsonObj.getProp(KEY_THIRDPARTY_SERVICES_ENABLED, result.thirdpartyServicesEnabled)
 
   var lastTokensUpdate: string
   discard jsonObj.getProp(KEY_LAST_TOKENS_UPDATE, lastTokensUpdate)

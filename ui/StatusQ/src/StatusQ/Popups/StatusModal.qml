@@ -194,8 +194,7 @@ StatusDialog {
 
     header: ToolBar {
         position: ToolBar.Top
-        background: Rectangle {
-            color: Theme.palette.statusModal.backgroundColor
+        background: StatusDialogBackground {
             implicitHeight: headerImpl.implicitHeight
         }
         Spares.StatusModalHeader {
@@ -229,8 +228,7 @@ StatusDialog {
     }
 
     footer: ToolBar {
-        background: Rectangle {
-            color: Theme.palette.statusModal.backgroundColor
+        background: StatusDialogBackground {
             implicitHeight: footerImpl.implicitHeight
         }
         position: ToolBar.Bottom

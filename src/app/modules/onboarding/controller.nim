@@ -162,15 +162,17 @@ proc validateLocalPairingConnectionString*(self: Controller, connectionString: s
 proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string) =
   self.devicesService.inputConnectionStringForBootstrapping(connectionString)
 
-proc createAccountAndLogin*(self: Controller, password: string): string =
+proc createAccountAndLogin*(self: Controller, password: string, thirdpartyServicesEnabled: bool): string =
   return self.accountsService.createAccountAndLogin(
     password,
     displayName = "",
     imagePath = "",
     ImageCropRectangle(),
+    thirdpartyServicesEnabled,
   )
 
-proc restoreAccountAndLogin*(self: Controller, password, mnemonic: string, recoverAccount: bool, keycardInstanceUID: string): string =
+proc restoreAccountAndLogin*(self: Controller, password, mnemonic: string, recoverAccount: bool,
+  keycardInstanceUID: string, thirdpartyServicesEnabled: bool): string =
   return self.accountsService.importAccountAndLogin(
     mnemonic,
     password,
@@ -179,14 +181,17 @@ proc restoreAccountAndLogin*(self: Controller, password, mnemonic: string, recov
     imagePath = "",
     ImageCropRectangle(),
     keycardInstanceUID,
+    thirdpartyServicesEnabled,
   )
 
-proc restoreKeycardAccountAndLogin*(self: Controller, keyUid, instanceUid: string, keycardKeys: KeycardExportedKeysDto, recoverAccount: bool): string =
+proc restoreKeycardAccountAndLogin*(self: Controller, keyUid, instanceUid: string,
+  keycardKeys: KeycardExportedKeysDto, recoverAccount: bool, thirdpartyServicesEnabled: bool): string =
   return self.accountsService.restoreKeycardAccountAndLoginV2(
     keyUid,
     instanceUid,
     keycardKeys,
     recoverAccount,
+    thirdpartyServicesEnabled,
   )
 
 proc setLoggedInAccount*(self: Controller, account: AccountDto) =
