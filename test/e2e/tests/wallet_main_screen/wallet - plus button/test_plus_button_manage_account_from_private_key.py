@@ -57,7 +57,9 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
             f'Account with {new_name} is not displayed even it should be'
 
     with step('Delete wallet account'):
-        wallet.left_panel.delete_account_from_context_menu(new_name).remove_account_with_confirmation()
+        auth_modal = wallet.left_panel.delete_account_from_context_menu(new_name).remove_account_with_confirmation()
+        auth_modal.authenticate(user_account.password)
+
 
     with step('Verify toast message notification when removing account'):
         messages = main_screen.wait_for_toast_notifications()

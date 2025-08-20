@@ -1,3 +1,4 @@
+from gui.components.authenticate_popup import AuthenticatePopup
 from gui.objects_map import names
 from gui.screens.settings_wallet import *
 from gui.elements.button import Button
@@ -23,4 +24,5 @@ class RemoveAccountWithConfirmation(QObject):
     def remove_account_with_confirmation(self):
         self.remove_confirmation_agreement_checkbox.set(True)
         self.remove_confirmation_confirm_button.click()
+        return AuthenticatePopup()
 
