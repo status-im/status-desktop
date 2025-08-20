@@ -6,7 +6,13 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label 'linux && x86_64 && qt-6.9.0'
+    /* Image with Ubuntu 22.04 and QT 6.9.0 */
+    docker {
+      label 'linuxcontainer'
+      image 'statusteam/e2e-desktop:1.0.0-qt6.9.0'
+      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
+      args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
+    }
   }
 
   parameters {
@@ -135,6 +141,6 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup { cleanWs(disableDeferredWipeout: true) }
+    cleanup { cleanWs() }
   }
 }
