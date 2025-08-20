@@ -778,7 +778,7 @@ QtObject {
 
                         // Use GWEI fees as fiat fees when market data is not available
                         if (handler.marketDataNotAvailable) {
-                            const totalFeesInGwei = SQUtils.AmountsArithmetic.toNumber(SQUtils.AmountsArithmetic.fromString(value).round(0), 9)
+                            const totalFeesInGwei = Math.round(SQUtils.AmountsArithmetic.toNumber(SQUtils.AmountsArithmetic.fromString(value), 9))
                             simpleSendModal.estimatedFiatFees = root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")
                         } else {
                             let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()

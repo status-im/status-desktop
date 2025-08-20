@@ -29,9 +29,7 @@ QtObject {
     readonly property var blockchainNetworksDown: root.allBlockchainNetworksDown.filter(chainId => ModelUtils.contains(root.networksStore.activeNetworks, "chainId", chainId))
     readonly property bool atleastOneBlockchainNetworkAvailable: root.blockchainNetworksDown.length < root.activeNetworksCount
 
-    readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
-                                        (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
-                                        !networkConnectionModule.marketValuesNetworkConnection.completelyDown)
+    readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline && !networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable)
     readonly property string sendBuyBridgeToolTipText: !isOnline ? qsTr("Requires internet connection") :
                                                         noBlockchainAndMarketConnectionAndNoCache ?
                                                         qsTr("Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable") :
