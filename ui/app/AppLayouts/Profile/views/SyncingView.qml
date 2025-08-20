@@ -421,9 +421,7 @@ SettingsContentBase {
             title: qsTr("Select your backup file")
             nameFilters: [qsTr("Supported backup formats (%1)").arg("*.bkp")]
             selectMultiple: false
-            onAccepted: {
-                root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
-            }
+            onAccepted: root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
         }
 
         StatusFolderDialog {

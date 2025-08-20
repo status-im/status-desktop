@@ -29,7 +29,10 @@ QtObject:
     result.setup
 
   proc fromPathUri*(self: Utils, path: string): string {.slot.} =
-    result = uri.decodeUrl(replace(path, "file://", ""), decodePlus=false)
+    var formattedPath = replace(path, "file://", "")
+    # Sometimes the original path only contains `file:` without the `//`
+    formattedPath = replace(formattedPath, "file:", "")
+    result = uri.decodeUrl(formattedPath, decodePlus=false)
     if defined(windows):
       # Windows doesn't work with paths starting with a slash
       result.removePrefix('/')
