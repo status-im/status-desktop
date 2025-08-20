@@ -39,6 +39,7 @@ StatusWindow {
         marketEnabled: featureFlags ? featureFlags.marketEnabled : false
         homePageEnabled: featureFlags ? featureFlags.homePageEnabled : false
         localBackupEnabled: featureFlags ? featureFlags.localBackupEnabled : false
+        privacyModeFeatureEnabled: featureFlags ? featureFlags.privacyModeFeatureEnabled : false
     }
 
     property MetricsStore metricsStore: MetricsStore {}
@@ -455,6 +456,8 @@ StatusWindow {
             }
 
             keychain: appKeychain
+
+            privacyModeFeatureEnabled: applicationWindow.featureFlagsStore.privacyModeFeatureEnabled
 
             onFinished: function(flow, data) {
                 const error = onboardingStore.finishOnboardingFlow(flow, data)

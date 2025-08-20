@@ -1109,3 +1109,30 @@ QtObject:
   QtProperty[string] backupPath:
     read = getBackupPath
     notify = backupPathChanged
+
+  proc thirdpartyServicesEnabledChanged*(self: Service) {.signal.}
+
+  proc getThirdpartyServicesEnabled*(self: Service): bool {.slot.} =
+    try:
+      let response = status_settings.thirdpartyServicesEnabled()
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+      return response.result.getBool
+    except Exception as e:
+      let errDesription = e.msg
+      error "reading thirdpartyServicesEnabled setting error: ", errDesription
+
+  proc setThirdpartyServicesEnabled*(self: Service, value: bool) {.slot.} =
+    try:
+      if self.saveSetting(KEY_THIRDPARTY_SERVICES_ENABLED, value):
+        self.settings.thirdpartyServicesEnabled = value
+        self.thirdpartyServicesEnabledChanged()
+      else:
+        raise newException(RpcException, "Failed to save ThirdpartyServicesEnabled setting")
+    except Exception as e:
+      error "error: ", procName="setThirdpartyServicesEnabled", errName = e.name, errDesription = e.msg
+
+  QtProperty[bool] thirdpartyServicesEnabled:
+    read = getThirdpartyServicesEnabled
+    write = setThirdpartyServicesEnabled
+    notify = thirdpartyServicesEnabledChanged

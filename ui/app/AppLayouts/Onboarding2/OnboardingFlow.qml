@@ -11,6 +11,9 @@ import AppLayouts.Onboarding.enums
 
 import QtModelsToolkit
 
+import shared.popups
+import utils
+
 OnboardingStackView {
     id: root
 
@@ -64,6 +67,11 @@ OnboardingStackView {
 
     signal finished(int flow)
 
+    // Thirdparty services
+    required property bool privacyModeFeatureEnabled
+    required property bool thirdpartyServicesEnabled
+    signal toggleThirdpartyServicesEnabledRequested()
+
     function restart() {
         replace(null, loginAccountsModel.ModelCount.empty ? welcomePage : loginScreenComponent)
     }
@@ -116,6 +124,10 @@ OnboardingStackView {
         function handleKeycardFailedState() {
             root.replace(root.get(1), errorPage)
         }
+
+        function openThirdpartyServicesPopup() {
+            thirdpartyServicesPopup.createObject(root).open()
+        }
     }
 
     Connections {
@@ -161,11 +173,15 @@ OnboardingStackView {
         id: welcomePage
 
         WelcomePage {
+            privacyModeFeatureEnabled: root.privacyModeFeatureEnabled
+            thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
+
             onCreateProfileRequested: startWithProxy(createProfilePage)
             onLoginRequested: startWithProxy(loginPage)
 
             onPrivacyPolicyRequested: d.openPrivacyPolicyPopup()
             onTermsOfUseRequested: d.openTermsOfUsePopup()
+            onOpenThirdpartyServicesInfoPopupRequested: d.openThirdpartyServicesPopup()
         }
     }
 
@@ -538,4 +554,15 @@ OnboardingStackView {
         }
     }
 
+    Component {
+        id: thirdpartyServicesPopup
+
+        ThirdpartyServicesPopup {
+            thirdPartyServicesEnabled: root.thirdpartyServicesEnabled
+
+            onToggleThirdpartyServicesEnabledRequested: root.toggleThirdpartyServicesEnabledRequested()
+            onOpenDiscussPageRequested: Qt.openUrlExternally(Constants.statusDiscussPageUrl)
+            onOpenThirdpartyServicesArticleRequested: Qt.openUrlExternally(Constants.statusThirdpartyServicesArticle)
+        }
+    }
 }
