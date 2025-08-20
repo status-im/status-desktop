@@ -158,4 +158,4 @@ QtObject:
       result = (conversion.startsWith0x(value) and conversion.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
 
   proc isBase64DataUrl*(str: string): bool =
-    return str.match(re2"^data:.*;base64,")
+    return str.match(re2"(?i)^data:[^,]*;base64,[A-Za-z0-9+/=]+$")
