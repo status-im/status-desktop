@@ -32,6 +32,12 @@ Control {
         searchableAssetsPanel.highlightedKey = ""
     }
 
+    QtObject {
+        id: d
+        readonly property int windowHeight: !!contentItem.Window.window ? contentItem.Window.window.height: 0
+        readonly property int bottomPadding: 60
+    }
+
     contentItem: TokenSelectorButton {
         id: button
 
@@ -52,6 +58,7 @@ Control {
         x: root.width - width
 
         width: 448
+        height: Math.min(implicitHeight, d.windowHeight - button.mapToItem(null, 0, button.height).y - d.bottomPadding)
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         padding: 0
