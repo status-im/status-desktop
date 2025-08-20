@@ -107,6 +107,9 @@ QtObject:
   proc shareUserUrlWithENS*(self: View, pubkey: string): string {.slot.} =
     return self.delegate.shareUserUrlWithENS(pubkey)
 
+  proc populateContactDetails*(self: View, publicKey: string) {.slot.} =
+    self.delegate.addOrUpdateContactItem(publicKey)
+
   proc requestContactInfo*(self: View, publicKey: string) {.slot.} =
     self.delegate.requestContactInfo(publicKey)
 

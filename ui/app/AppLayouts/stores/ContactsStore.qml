@@ -161,4 +161,8 @@ QtObject {
     function getLinkToProfile(publicKey) {
         return d.contactsModuleInst.shareUserUrlWithData(publicKey)
     }
+
+    function populateContactDetails(publicKey) {
+        return d.contactsModuleInst.populateContactDetails(publicKey)
+    }
 }

@@ -155,7 +155,7 @@ QtObject:
     return value.match(re2"^0x[0-9a-fA-F]+$")
 
   proc isChatKey*(self: Utils, value: string): bool {.slot.} =
-    result = (conversion.startsWith0x(value) and self.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
+    result = (self.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
 
   proc isBase64DataUrl*(str: string): bool =
     return str.match(re2"^data:.*;base64,")
