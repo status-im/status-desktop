@@ -42,9 +42,9 @@ pipeline {
 
   environment {
     USE_SYSTEM_NIM = "1"
-    GOCACHE = "${env.WORKSPACE_TMP}/go-cache"
-    GOMODCACHE = "${env.WORKSPACE_TMP}/go-mod-cache"
-    GOTMPDIR = "${env.WORKSPACE_TMP}/go-tmp-dir"
+    GOCACHE = "/tmp/go-cache"
+    GOMODCACHE = "/tmp/go-mod-cache"
+    GOTMPDIR = "/tmp"
     STATUS_APK_ARTIFACT = "pkg/Status-tablet-${BUILD_NUMBER}.apk"
     PLATFORM = "android/arm64"
     QT_ANDROID_PATH = "/opt/qt/6.9.0/android_arm64_v8a"
