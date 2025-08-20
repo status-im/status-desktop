@@ -212,6 +212,7 @@ Item {
 
             const delegateIndex = ModelUtils.indexOf(assetSelectorList.model, "symbol", "STT")
 
+            assetSelectorList.positionViewAtIndex(delegateIndex, ListView.Center)
             const sttDelegate = assetSelectorList.itemAtIndex(delegateIndex)
             verify(!!sttDelegate)
             mouseClick(sttDelegate)
@@ -351,6 +352,7 @@ Item {
                 let modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
                 mouseClick(holdingSelector)
                 waitForRendering(assetSelectorList)
+                assetSelectorList.positionViewAtIndex(i, ListView.Center)
 
                 const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
                 verify(!!delToTest)
