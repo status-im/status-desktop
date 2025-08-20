@@ -205,6 +205,13 @@ QtObject:
 
     return -1
 
+  proc hasUser*(self: Model, pubKey: string): bool {.slot.} =
+    for i in 0 ..< self.items.len:
+      if self.items[i].pubKey == pubKey:
+        return true
+
+    return false
+
   proc addItem*(self: Model, item: UserItem) =
     let ind = self.findIndexByPubKey(item.pubKey)
     if ind != -1:

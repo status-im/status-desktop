@@ -36,6 +36,10 @@ QObject {
     readonly property ConcatModel allContactsModel: ConcatModel {
         id: concatModel
 
+        function hasUser(pubKey) {
+            return  pubKey === root.selfPubKey || contactsModel.hasUser(pubKey)
+        }
+
         expectedRoles: [
             "pubKey", "displayName", "ensName", "isEnsVerified", "localNickname", "usesDefaultName",
             "alias", "icon", "colorId", "colorHash", "onlineStatus",
