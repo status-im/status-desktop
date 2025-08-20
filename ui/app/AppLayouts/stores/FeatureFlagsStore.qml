@@ -12,4 +12,5 @@ QtObject {
     property bool marketEnabled
     property bool homePageEnabled
     property bool localBackupEnabled
+    property bool privacyModeFeatureEnabled
 }

@@ -926,6 +926,7 @@ Item {
         tokensStore: appMain.tokensStore
         rootChatStore: appMain.rootChatStore
         ensUsernamesStore: appMain.ensUsernamesStore
+        privacyStore: appMain.privacyStore
     }
 
     Connections {
@@ -2079,6 +2080,7 @@ Item {
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
                             isBrowserEnabled: featureFlagsStore.browserEnabled
+                            privacyModeFeatureEnabled: featureFlagsStore.privacyModeFeatureEnabled
 
                             theme: appMainLocalSettings.theme
                             fontSize: appMainLocalSettings.fontSize
@@ -2103,6 +2105,8 @@ Item {
                             onInviteFriends: Global.openInviteFriendsToCommunityPopup(communityData,
                                                                                       appMain.communitiesStore.communitiesProfileModule,
                                                                                       null)
+                            onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                            onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
                         }
                         onLoaded: {
                             item.settingsSubsection = profileLoader.settingsSubsection

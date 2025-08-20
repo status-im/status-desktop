@@ -40,6 +40,7 @@ QtObject {
     required property ChatStores.RootStore rootChatStore
 
     required property ProfileStores.EnsUsernamesStore ensUsernamesStore
+    required property ProfileStores.PrivacyStore privacyStore
 
     readonly property SwapModalHandler swapModalHandler: SwapModalHandler {
 
@@ -155,5 +156,14 @@ QtObject {
     readonly property StatusGifPopupHandler statusGifPopupHandler: StatusGifPopupHandler {
         gifStore: sharedRootStore.gifStore
         gifUnfurlingEnabled: sharedRootStore.gifUnfurlingEnabled
+    }
+
+    readonly property ThirdpartyServicesPopupHandler thirdpartyServicesPopupHandler: ThirdpartyServicesPopupHandler {
+        popupParent: root.popupParent
+        thirdPartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
+
+        onToggleThirdpartyServicesEnabledRequested: root.privacyStore.toggleThirdpartyServicesEnabledRequested()
+        onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+        onOpenThirdpartyServicesArticleRequested: Global.openLinkWithConfirmation(Constants.statusThirdpartyServicesArticle, SQUtils.StringUtils.extractDomainFromLink(Constants.statusThirdpartyServicesArticle))
     }
 }

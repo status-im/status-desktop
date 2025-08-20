@@ -49,6 +49,9 @@ type
 
     keycardInstanceUID*: string
     keycardPairingDataFile*: string
+
+    thirdpartyServicesEnabled*: bool
+
     apiConfig*: APIConfig
 
 proc toJson*(self: CreateAccountRequest): JsonNode =
@@ -74,6 +77,7 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "apiConfig": self.apiConfig,
     "wakuV2EnableStoreConfirmationForMessagesSent": self.wakuV2EnableStoreConfirmationForMessagesSent,
     "wakuV2EnableMissingMessageVerification": self.wakuV2EnableMissingMessageVerification,
+    "thirdpartyServicesEnabled": self.thirdpartyServicesEnabled,
   }
 
   if self.logLevel.isSome():

@@ -75,6 +75,7 @@ StatusSectionLayout {
 
     property bool isKeycardEnabled: true
     property bool isBrowserEnabled: true
+    required property bool privacyModeFeatureEnabled
 
     property var mutualContactsModel
     property var blockedContactsModel
@@ -97,6 +98,9 @@ StatusSectionLayout {
     signal leaveCommunityRequest(string communityId)
     signal setCommunityMutedRequest(string communityId, int mutedType)
     signal inviteFriends(var communityData)
+
+    signal openThirdpartyServicesInfoPopupRequested()
+    signal openDiscussPageRequested()
 
     backButtonName: d.backButtonName
     onBackButtonClicked: {
@@ -580,6 +584,8 @@ StatusSectionLayout {
             sourceComponent: PrivacyAndSecurityView {
                 isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
                 isCentralizedMetricsEnabled: root.isCentralizedMetricsEnabled
+                thirdpartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
+                privacyModeFeatureEnabled: root.privacyModeFeatureEnabled
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -589,6 +595,8 @@ StatusSectionLayout {
                 onSetNewsRSSEnabledRequested: function (isStatusNewsViaRSSEnabled) {
                     root.privacyStore.setNewsRSSEnabled(isStatusNewsViaRSSEnabled)
                 }
+                onOpenThirdpartyServicesInfoPopupRequested: root.openThirdpartyServicesInfoPopupRequested()
+                onOpenDiscussPageRequested: root.openDiscussPageRequested()
             }
         }
     }

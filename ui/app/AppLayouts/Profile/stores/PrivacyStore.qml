@@ -10,11 +10,13 @@ QtObject {
     readonly property bool mnemonicBackedUp: privacyModule.mnemonicBackedUp
     readonly property string keyUid: userProfile.keyUid
 
+    readonly property var appSettingsInst: appSettings
+
     // The following properties wrap Privacy and Security View related properties:
-    readonly property bool isStatusNewsViaRSSEnabled: appSettings.newsRSSEnabled
+    readonly property bool isStatusNewsViaRSSEnabled: appSettingsInst.newsRSSEnabled
 
     function setNewsRSSEnabled(isStatusNewsViaRSSEnabled) {
-        appSettings.newsRSSEnabled = isStatusNewsViaRSSEnabled
+        appSettingsInst.newsRSSEnabled = isStatusNewsViaRSSEnabled
     }
 
     function changePassword(password, newPassword) {
@@ -43,5 +45,13 @@ QtObject {
 
     function mnemonicWasShown() {
         root.privacyModule.mnemonicWasShown()
+    }
+
+    readonly property bool thirdpartyServicesEnabled: appSettingsInst.thirdpartyServicesEnabled
+    function toggleThirdpartyServicesEnabledRequested() {
+        appSettingsInst.thirdpartyServicesEnabled = !appSettingsInst.thirdpartyServicesEnabled
+        Global.displaySuccessToastMessage(appSettingsInst.thirdpartyServicesEnabled ?
+                                          qsTr("Third-party services successfully enabled"):
+                                          qsTr("Third-party services successfully disabled"))
     }
 }

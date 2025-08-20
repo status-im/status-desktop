@@ -20,6 +20,7 @@ Page {
 
     required property OnboardingStore onboardingStore
     required property Keychain keychain
+    required property bool privacyModeFeatureEnabled
 
     property bool isKeycardEnabled: true
 
@@ -80,6 +81,8 @@ Page {
         // login screen state
         property string selectedProfileKeyId
 
+        property bool thirdpartyServicesEnabled: true
+
         function resetState() {
             d.password = ""
             d.keycardPin = ""
@@ -88,6 +91,7 @@ Page {
             d.keyUid = ""
             d.backupImportFileUrl = ""
             d.selectedProfileKeyId = ""
+            d.thirdpartyServicesEnabled = true
         }
 
         readonly property var settings: Settings { /* https://bugreports.qt.io/browse/QTBUG-135039 */
@@ -105,7 +109,8 @@ Page {
                 seedphrase: d.seedphrase,
                 keyUid: d.keyUid,
                 backupImportFileUrl: d.backupImportFileUrl,
-                enableBiometrics: d.enableBiometrics
+                enableBiometrics: d.enableBiometrics,
+                thirdpartyServicesEnabled: d.thirdpartyServicesEnabled
             }
 
             root.finished(flow, data)
@@ -196,6 +201,12 @@ Page {
         onDismissBiometricsRequested: {
             if (root.keychain.loading)
                 root.keychain.cancelActiveRequest()
+        }
+
+        privacyModeFeatureEnabled: root.privacyModeFeatureEnabled
+        thirdpartyServicesEnabled: d.thirdpartyServicesEnabled
+        onToggleThirdpartyServicesEnabledRequested: {
+            d.thirdpartyServicesEnabled = !d.thirdpartyServicesEnabled
         }
     }
 

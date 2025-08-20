@@ -15,13 +15,15 @@ import utils
 OnboardingPage {
     id: root
 
-    title: qsTr("Welcome to Status")
+    required property bool privacyModeFeatureEnabled
+    required property bool thirdpartyServicesEnabled
 
     signal createProfileRequested()
     signal loginRequested()
 
     signal privacyPolicyRequested()
     signal termsOfUseRequested()
+    signal openThirdpartyServicesInfoPopupRequested()
 
     readonly property bool isPortrait: root.width < root.height && root.width <= root.implicitWidth
 
@@ -45,6 +47,8 @@ OnboardingPage {
             }
         }
     }
+
+    title: qsTr("Welcome to Status")
 
     contentItem: GridLayout {
         rows: root.isPortrait ? 2 : 1
@@ -132,6 +136,34 @@ OnboardingPage {
                         text: qsTr("Log in")
                         isOutline: true
                         onClicked: root.loginRequested()
+                    }
+                    StatusBaseText {
+                        objectName: "thirdPartyServices"
+                        Layout.fillWidth: true
+                        Layout.topMargin: Theme.halfPadding
+                        Layout.bottomMargin: Theme.halfPadding
+                        text: qsTr("Third-party services %1").arg(
+                                  Utils.getStyledLink(root.thirdpartyServicesEnabled ? qsTr("enabled"): qsTr("disabled"),
+                                                      "#",
+                                                      hoveredLink,
+                                                      Theme.palette.primaryColor1,
+                                                      Theme.palette.primaryColor1,
+                                                      false))
+                        textFormat: Text.RichText
+                        font.pixelSize: Theme.tertiaryTextFontSize
+                        lineHeightMode: Text.FixedHeight
+                        lineHeight: 16
+                        wrapMode: Text.WordWrap
+                        color: Theme.palette.baseColor1
+                        horizontalAlignment: Text.AlignHCenter
+                        onLinkActivated: root.openThirdpartyServicesInfoPopupRequested()
+
+                        HoverHandler {
+                            // Qt CSS doesn't support custom cursor shape
+                            cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
+                        }
+
+                        visible: root.privacyModeFeatureEnabled
                     }
                     StatusBaseText {
                         objectName: "approvalLinks"

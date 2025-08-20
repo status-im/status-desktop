@@ -183,6 +183,8 @@ SplitView {
         keychain: keychain
         isKeycardEnabled: ctrlKeycard.checked
 
+        privacyModeFeatureEnabled: ctryPrivacyModelEnabled.checked
+
         onFinished: function(flow, data) {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
             logs.logEvent("onFinished", ["flow", "data"], arguments)
@@ -458,6 +460,12 @@ SplitView {
                 Switch {
                     id: ctrlKeycard
                     text: "Keycard enabled"
+                    checked: true
+                }
+
+                Switch {
+                    id: ctryPrivacyModelEnabled
+                    text: "Privacy Mode Feature Enabled"
                     checked: true
                 }
 
