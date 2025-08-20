@@ -363,7 +363,6 @@ QtObject:
       isCurrentUser = false,
     )
     self.addContact(contact)
-    self.events.emit(SIGNAL_CONTACT_UPDATED, ContactArgs(contactId: pubkey))
     return contact
 
   proc getContactById*(self: Service, id: string): ContactsDto =

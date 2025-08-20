@@ -1,7 +1,7 @@
 import stew/shims/strformat
 import app/global/global_singleton
-import ../../../app_service/common/types
-import ../../../app_service/service/contacts/dto/contacts
+import app_service/common/types
+import app_service/service/contacts/dto/contacts
 
 type
   ContactRequest* {.pure.} = enum
@@ -105,7 +105,8 @@ proc setup*(self: UserItem,
   # Setup emojiHash:
   if pubKey == "" or not singletonInstance.utils.isChatKey(pubKey):
     self.emojiHash = ""
-  self.emojiHash = singletonInstance.utils.getEmojiHashAsJson(pubKey)
+  else:
+    self.emojiHash = singletonInstance.utils.getEmojiHashAsJson(pubKey)
 
 # FIXME: remove defaults
 # TODO: #14964
