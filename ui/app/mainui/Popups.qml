@@ -582,6 +582,9 @@ QtObject {
                     id: contactModelEntry
                     publicKey: profilePopup.publicKey
                     contactsModel: root.allContactsModel
+                    onPopulateContactDetailsRequested: {
+                        root.contactsStore.populateContactDetails(profilePopup.publicKey)
+                    }
                 }
 
                 contactDetails: contactModelEntry.contactDetails
