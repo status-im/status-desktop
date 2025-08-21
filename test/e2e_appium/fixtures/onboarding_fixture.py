@@ -6,11 +6,13 @@ used across multiple test suites. It follows the Page Object Model pattern and
 provides flexible configuration options.
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, Dict, Any
-import pytest
+import random
 import time
+from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Optional, Dict, Any
+
+import pytest
 
 from pages.onboarding import (
     WelcomePage,
@@ -47,7 +49,6 @@ class OnboardingConfig:
     # Seed phrase import options
     use_seed_phrase: bool = False
     seed_phrase: Optional[str] = None
-    seed_phrase_autocomplete: bool = False
 
     # Test context
     test_environment: str = "e2e_test"
@@ -67,7 +68,6 @@ class OnboardingFlow:
         self.config = config or OnboardingConfig()
         self.logger = logger or get_logger("onboarding_flow")
 
-        # Initialize page objects
         self.welcome_page = WelcomePage(self.driver)
         self.analytics_page = AnalyticsPage(self.driver)
         self.create_profile_page = CreateProfilePage(self.driver)
@@ -76,12 +76,10 @@ class OnboardingFlow:
         self.loading_page = SplashScreen(self.driver)
         self.main_app_page = MainAppPage(self.driver)
 
-        # Track execution state
         self.current_step = "initialization"
         self.start_time = datetime.now()
         self.step_results = {}
 
-        # Generate test user if not provided
         self.test_user = self._create_test_user()
 
     def _create_test_user(self) -> User:
@@ -90,7 +88,6 @@ class OnboardingFlow:
         if self.config.custom_user_data:
             return User.from_test_data(self.config.custom_user_data)
 
-        # Create user with custom overrides
         display_name = (
             self.config.custom_display_name
             or f"E2E_User_{datetime.now().strftime('%H%M%S')}"
@@ -127,31 +124,22 @@ class OnboardingFlow:
         )
 
         try:
-            # Step 1: Welcome Screen
             self._execute_welcome_step()
 
-            # Step 2: Analytics Screen (conditionally skip)
             if not self.config.skip_analytics:
                 self._execute_analytics_step()
             else:
                 self._execute_analytics_skip_step()
 
-            # Step 3a: Create Profile Screen OR Step 3b: Seed Phrase Import
             if self.config.use_seed_phrase:
-                # Seed phrase import flow
                 self._execute_seed_phrase_import_step()
             else:
-                # New profile creation flow
                 if not self.config.skip_profile_creation:
                     self._execute_create_profile_step()
 
-            # Step 4: Password Creation
             self._execute_password_step()
-
-            # Step 5: Loading Screen
             self._execute_loading_step()
 
-            # Step 6: Main App Verification
             if self.config.verify_main_app:
                 self._execute_main_app_verification()
 
@@ -177,21 +165,18 @@ class OnboardingFlow:
         self.current_step = "welcome_screen"
         self.logger.info("Step 1: Welcome Screen")
 
-        # Wait for screen to be fully loaded before activating accessibility
-        # Wait for app to be visually ready (look for any UI elements)
         max_wait = 10
         for attempt in range(max_wait):
             try:
-                # Check if any UI elements are present (even without accessibility)
                 elements = self.main_app_page.driver.find_elements("xpath", "//*")
                 if len(elements) > 5:  # Basic UI structure loaded
                     break
                 time.sleep(1)
             except Exception:
                 time.sleep(1)
-        
+
         try:
-            self.main_app_page.driver.tap([(500, 300)])  
+            self.main_app_page.driver.tap([(500, 300)])
             time.sleep(1)
         except Exception:
             pass  # Non-critical if tap fails
@@ -221,7 +206,6 @@ class OnboardingFlow:
                 "Analytics screen should be displayed"
             )
 
-        # Interact with analytics consent (accept sharing)
         self.analytics_page.accept_analytics_sharing()
 
         self.step_results["analytics_screen"] = {
@@ -270,6 +254,43 @@ class OnboardingFlow:
 
         if self.config.take_screenshots:
             self._take_screenshot("profile_created")
+
+    def _execute_seed_phrase_import_step(self):
+        """Execute seed phrase recovery flow step"""
+        self.current_step = "seed_phrase_import"
+        self.logger.info("Step 3: Seed Phrase Import")
+
+        if self.config.validate_each_step:
+            assert self.create_profile_page.is_screen_displayed(), (
+                "Create profile screen should be displayed before seed import"
+            )
+
+        opened = self.create_profile_page.click_use_recovery_phrase()
+        assert opened, "Should be able to open 'Use a recovery phrase' flow"
+
+        if self.config.validate_each_step:
+            assert self.seed_phrase_page.is_screen_displayed(), (
+                "Seed phrase input screen should be displayed"
+            )
+
+        phrase = self.config.seed_phrase or generate_seed_phrase()
+
+        imported = self.seed_phrase_page.import_seed_phrase(phrase)
+        assert imported, "Seed phrase import should complete"
+        try:
+            # type: ignore[attr-defined]
+            self.test_user.seed_phrase = phrase  # optional detail
+        except Exception:
+            pass
+
+        self.step_results["seed_phrase_import"] = {
+            "success": True,
+            "word_count": len(phrase.split()),
+            "timestamp": datetime.now(),
+        }
+
+        if self.config.take_screenshots:
+            self._take_screenshot("seed_phrase_import_completed")
 
     def _execute_password_step(self):
         """Execute password creation step"""
@@ -368,8 +389,6 @@ class OnboardingFlow:
         }
 
 
-
-
 class OnboardingFlowError(Exception):
     """Custom exception for onboarding flow failures"""
 
@@ -388,14 +407,7 @@ def onboarding_config():
     return OnboardingConfig()
 
 
-@pytest.fixture(scope="function")
-def custom_onboarding_config():
-    """Factory fixture for creating custom onboarding configurations"""
 
-    def _create_config(**kwargs) -> OnboardingConfig:
-        return OnboardingConfig(**kwargs)
-
-    return _create_config
 
 
 @pytest.fixture(scope="function")
@@ -423,35 +435,27 @@ def onboarded_user(request, test_environment):
             assert user_data['display_name'] is not None
     """
 
-    # Get driver from test instance if available, otherwise create new one
     if hasattr(request.instance, "driver"):
         driver = request.instance.driver
         logger = getattr(request.instance, "logger", get_logger("onboarding_fixture"))
     else:
-        # Create temporary driver for fixture-only usage
         from core import SessionManager
 
         session_manager = SessionManager(test_environment)
         driver = session_manager.get_driver()
         logger = get_logger("onboarding_fixture")
 
-    # Get configuration from test markers or use default
     config = OnboardingConfig()
-
-    # Check for custom config in test markers
     for marker in request.node.iter_markers():
         if marker.name == "onboarding_config":
             config = OnboardingConfig(**marker.kwargs)
             break
 
-    # Execute onboarding flow
     onboarding_flow = OnboardingFlow(driver, config, logger)
 
     try:
         result = onboarding_flow.execute_complete_flow()
         logger.info("✅ Onboarding fixture completed successfully")
-
-        # Store result for access in tests
         request.node.onboarding_result = result
 
         return result
@@ -461,53 +465,14 @@ def onboarded_user(request, test_environment):
         raise
 
 
-@pytest.fixture(scope="function")
-def onboarding_flow_factory(test_environment):
-    """
-    Factory fixture for creating OnboardingFlow instances with custom configuration.
 
-    This fixture provides more control for tests that need to customize the onboarding process.
 
-    Usage:
-        def test_custom_onboarding(onboarding_flow_factory):
-            config = OnboardingConfig(skip_analytics=False, custom_display_name="CustomUser")
-            flow = onboarding_flow_factory(config)
-            result = flow.execute_complete_flow()
-    """
-
-    def _create_flow(config: OnboardingConfig, driver=None) -> OnboardingFlow:
-        if driver is None:
-            from core import SessionManager
-
-            session_manager = SessionManager(test_environment)
-            driver = session_manager.get_driver()
-
-        logger = get_logger("onboarding_flow_factory")
-        return OnboardingFlow(driver, config, logger)
-
-    return _create_flow
 
 
 # Additional fixtures for better integration with existing patterns
 
 
-@pytest.fixture(scope="function")
-def user_account():
-    """
-    User account fixture similar to e2e pattern for consistency.
 
-    Creates user account data compatible with existing framework patterns.
-    """
-    from models.user_model import User, UserProfile
-    from datetime import datetime
-
-    # Create consistent user account similar to e2e pattern
-    profile = UserProfile(
-        display_name=f"E2EUser_{datetime.now().strftime('%H%M%S')}",
-        bio="E2E test user created by fixture",
-    )
-
-    return User(profile=profile, password="TestPassword123!", environment="e2e_test")
 
 
 @pytest.fixture(scope="function")
@@ -520,11 +485,15 @@ def onboarded_app(request, test_environment):
         object exposes:
             - onboarding_result (dict): same structure as returned by onboarded_user
             - user_data (dict): convenience alias for onboarding_result['user_data']
+            - create_profile_method (str): method used ("password" or "seed_phrase")
 
-    Default behavior:
-        - skip_analytics=True unless overridden with @pytest.mark.onboarding_config
+    Profile Creation Methods:
+        - "password": Force password-based profile creation
+        - "seed_phrase": Force seed phrase import
+        - "random" or omitted: 50/50 random selection (default)
 
     Usage:
+        @pytest.mark.onboarding_config(create_profile_method="seed_phrase")
         def test_feature(onboarded_app):
             app = onboarded_app
             assert app.is_main_app_loaded()
@@ -532,7 +501,6 @@ def onboarded_app(request, test_environment):
     from core import SessionManager
     from pages.onboarding import MainAppPage
 
-    # Get driver from test instance if available
     if hasattr(request.instance, "driver"):
         driver = request.instance.driver
         logger = getattr(request.instance, "logger", get_logger("onboarded_app"))
@@ -541,120 +509,45 @@ def onboarded_app(request, test_environment):
         driver = session_manager.get_driver()
         logger = get_logger("onboarded_app")
 
-    # Get configuration from markers
-    config = OnboardingConfig()
+    config_kwargs = {}
     for marker in request.node.iter_markers():
         if marker.name == "onboarding_config":
-            config = OnboardingConfig(**marker.kwargs)
+            config_kwargs = marker.kwargs
             break
 
-    # Execute onboarding
+    method = config_kwargs.get("create_profile_method", "random")
+
+    if method == "random":
+        use_seed_phrase = random.choice([True, False])
+    elif method == "seed_phrase":
+        use_seed_phrase = True
+    elif method == "password":
+        use_seed_phrase = False
+    else:
+        raise ValueError(
+            f"Invalid create_profile_method: {method}. Use 'password', 'seed_phrase', or 'random'"
+        )
+
+    config_kwargs["use_seed_phrase"] = use_seed_phrase
+    if use_seed_phrase and "seed_phrase" not in config_kwargs:
+        config_kwargs["seed_phrase"] = generate_seed_phrase()
+
+    config_kwargs.pop("create_profile_method", None)
+
+    config = OnboardingConfig(**config_kwargs)
+
     onboarding_flow = OnboardingFlow(driver, config, logger)
     result = onboarding_flow.execute_complete_flow()
 
     if not result["success"]:
         raise OnboardingFlowError("Failed to prepare onboarded app", results=result)
 
-    # Return main app page ready for testing
     main_app = MainAppPage(driver)
-
-    # Store onboarding result for access in tests
     main_app.onboarding_result = result
     main_app.user_data = result["user_data"]
+    main_app.create_profile_method = "seed_phrase" if use_seed_phrase else "password"
 
     return main_app
 
 
-@pytest.fixture(scope="function")
-def multiple_onboarded_users(request, test_environment):
-    """
-    Factory fixture for creating multiple onboarded users.
 
-    Addresses the appium pattern of multiple device testing.
-
-    Usage:
-        def test_multi_user(multiple_onboarded_users):
-            users = multiple_onboarded_users(count=2, config=OnboardingConfig(...))
-            user1, user2 = users
-    """
-
-    def _create_multiple_users(count: int = 2, config: OnboardingConfig = None):
-        """
-        Create multiple onboarded users for multi-device testing.
-
-        Note: This is a simplified version. Real multi-device testing
-        would require separate driver instances and proper coordination.
-        """
-        users = []
-        base_config = config or OnboardingConfig()
-
-        for i in range(count):
-            # Create unique config for each user
-            user_config = OnboardingConfig(
-                custom_display_name=f"{base_config.custom_display_name or 'MultiUser'}_{i + 1}",
-                skip_analytics=base_config.skip_analytics,
-                validate_each_step=base_config.validate_each_step,
-                test_metadata={**base_config.test_metadata, "user_index": i + 1},
-            )
-
-            # This would need actual driver management for real multi-device
-            # For now, just return user data
-            flow = OnboardingFlow(None, user_config, get_logger(f"multi_user_{i + 1}"))
-            user_data = flow._create_test_user()
-            users.append(user_data.to_test_data())
-
-        return users
-
-    return _create_multiple_users
-
-
-# Seed Phrase Generation Fixtures
-
-
-@pytest.fixture(scope="function")
-def generated_seed_phrase():
-    """Generate a random seed phrase for testing.
-
-    Returns:
-        A valid BIP39 seed phrase (12, 18, or 24 words).
-    """
-    return generate_seed_phrase()
-
-
-@pytest.fixture(scope="function")
-def generated_12_word_seed_phrase():
-    """Generate a 12-word seed phrase for testing.
-
-    Returns:
-        A valid 12-word BIP39 seed phrase.
-    """
-    return generate_seed_phrase(12)
-
-
-@pytest.fixture(scope="function")
-def generated_24_word_seed_phrase():
-    """Generate a 24-word seed phrase for testing.
-
-    Returns:
-        A valid 24-word BIP39 seed phrase.
-    """
-    return generate_seed_phrase(24)
-
-
-@pytest.fixture(scope="function")
-def onboarding_config_with_seed_phrase(generated_seed_phrase):
-    """Create onboarding config that uses a generated seed phrase.
-
-    Args:
-        generated_seed_phrase: Automatically injected seed phrase fixture.
-
-    Returns:
-        OnboardingConfig configured for seed phrase import.
-    """
-    return OnboardingConfig(
-        use_seed_phrase=True,
-        seed_phrase=generated_seed_phrase,
-        seed_phrase_autocomplete=False,
-        validate_each_step=True,
-        take_screenshots=False,
-    )

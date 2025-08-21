@@ -8,7 +8,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from config import get_logger, log_element_action
+from config import log_element_action
 from core import EnvironmentSwitcher
 
 
@@ -34,7 +34,9 @@ class BasePage:
 
         self.wait = WebDriverWait(driver, element_wait_timeout)
 
-        self.logger = logging.getLogger(self.__class__.__module__ + '.' + self.__class__.__name__)
+        self.logger = logging.getLogger(
+            self.__class__.__module__ + "." + self.__class__.__name__
+        )
 
     def _create_wait(self, timeout: Optional[int], config_key: str) -> WebDriverWait:
         """Create WebDriverWait with timeout from parameter or YAML config."""
@@ -46,14 +48,14 @@ class BasePage:
 
     def find_element(self, locator, timeout: Optional[int] = None):
         """Find element with configurable timeout.
-        
+
         Args:
             locator: Element locator tuple
             timeout: Override timeout (uses YAML element_wait config if None)
-            
+
         Returns:
             WebElement instance
-            
+
         Raises:
             TimeoutException: If element not found within timeout
         """
@@ -73,11 +75,11 @@ class BasePage:
 
     def click_element(self, locator, timeout: Optional[int] = None):
         """Click element with configurable timeout.
-        
+
         Args:
             locator: Element locator tuple
             timeout: Override timeout (uses YAML element_click config if None)
-            
+
         Returns:
             bool: True if click successful, False otherwise
         """
@@ -168,7 +170,7 @@ class BasePage:
 
     def wait_for_element(self, locator, timeout: Optional[int] = None):
         """Wait for element presence with configurable timeout.
-        
+
         Args:
             locator: Element locator tuple
             timeout: Override timeout (uses YAML element_wait config if None)
@@ -248,7 +250,9 @@ class BasePage:
             self.logger.error(f"Error ensuring element visibility: {e}")
             return False
 
-    def qt_safe_input(self, locator, text: str, timeout: Optional[int] = None, max_retries: int = 3) -> bool:
+    def qt_safe_input(
+        self, locator, text: str, timeout: Optional[int] = None, max_retries: int = 3
+    ) -> bool:
         """Qt/QML-safe text input with proper waiting and retry logic"""
 
         for attempt in range(max_retries):
@@ -296,7 +300,9 @@ class BasePage:
                 return False
 
         try:
-            wait = WebDriverWait(self.driver, timeout)  # Keep direct usage for custom condition
+            wait = WebDriverWait(
+                self.driver, timeout
+            )  # Keep direct usage for custom condition
             wait.until(field_is_ready)
             return True
         except Exception:
@@ -355,3 +361,47 @@ class BasePage:
                 return True
 
         return True  # Always return True to not block the flow
+
+    def long_press_element(self, element, duration: int = 800) -> bool:
+        """Perform long-press gesture on element to trigger context menu.
+
+        Args:
+            element: WebElement to long-press
+            duration: Long-press duration in milliseconds
+
+        Returns:
+            bool: True if long-press successful, False otherwise
+        """
+        try:
+            self.driver.execute_script(
+                "mobile: longClickGesture",
+                {"elementId": element.id, "duration": duration},
+            )
+            self.logger.debug(f"Long-press performed (duration: {duration}ms)")
+            return True
+        except Exception as e:
+            self.logger.debug(f"Long-press gesture failed: {e}")
+            return False
+
+    def tap_coordinate_relative(self, element, x_offset: int, y_offset: int) -> bool:
+        """Tap at coordinates relative to element position.
+
+        Args:
+            element: Reference element for coordinate calculation
+            x_offset: X offset from element's left edge (can be negative)
+            y_offset: Y offset from element's top edge (can be negative)
+
+        Returns:
+            bool: True if tap successful, False otherwise
+        """
+        try:
+            rect = element.rect
+            x = int(rect["x"] + x_offset)
+            y = int(max(0, rect["y"] + y_offset))
+
+            self.driver.execute_script("mobile: clickGesture", {"x": x, "y": y})
+            self.logger.debug(f"Coordinate tap at ({x}, {y}) relative to element")
+            return True
+        except Exception as e:
+            self.logger.debug(f"Coordinate tap failed: {e}")
+            return False

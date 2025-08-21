@@ -12,7 +12,9 @@ from tests.base_test import BaseTest, lambdatest_reporting
 class TestOnboardingFlow(BaseTest):
     """Test class for onboarding flow functionality"""
 
-    @pytest.mark.smoke
+    @pytest.mark.skip(
+        reason="Needs refactored, currently duplicates create_with_password_lands_on_main_app"
+    )
     @pytest.mark.onboarding
     @pytest.mark.e2e
     @lambdatest_reporting
@@ -30,14 +32,12 @@ class TestOnboardingFlow(BaseTest):
 
         result = onboarded_user
 
-        # Validate results
         assert result["success"], "Onboarding flow should complete successfully"
         assert "user_data" in result, "Result should contain user data"
         assert result["user_data"]["display_name"] == "E2E_TestUser", (
             "Should use custom display name"
         )
 
-        # Validate all expected steps were completed
         expected_steps = [
             "welcome_screen",
             "analytics_screen",
@@ -49,15 +49,41 @@ class TestOnboardingFlow(BaseTest):
 
         for step in expected_steps:
             assert step in completed_steps, f"Step '{step}' should be completed"
-        # Validate analytics action matches config
+
         assert result["step_results"]["analytics_screen"]["action"] == "skipped"
 
         self.logger.info("Complete onboarding flow test with fixture passed!")
 
     @pytest.mark.onboarding
     @lambdatest_reporting
-    @pytest.mark.onboarding_config(custom_display_name="E2E_TestUser")
-    def test_onboarding_lands_on_main_app(self, onboarded_app):
+    @pytest.mark.onboarding_config(
+        custom_display_name="E2E_TestUser",
+        validate_each_step=True,
+        create_profile_method="password",
+    )
+    def test_onboarding_create_with_password_lands_on_main_app(self, onboarded_app):
         app = onboarded_app
         assert app.is_main_app_loaded()
         assert app.user_data["display_name"] == "E2E_TestUser"
+
+    @pytest.mark.onboarding
+    @lambdatest_reporting
+    @pytest.mark.onboarding_config(
+        custom_display_name="E2E_TestUser",
+        validate_each_step=True,
+        create_profile_method="seed_phrase",
+    )
+    def test_onboarding_create_with_seed_lands_on_main_app(self, onboarded_app):
+        app = onboarded_app
+        assert app.is_main_app_loaded()
+
+    @pytest.mark.onboarding
+    @lambdatest_reporting
+    @pytest.mark.onboarding_config(
+        custom_display_name="E2E_TestUser",
+        validate_each_step=True,
+        create_profile_method="random",
+    )
+    def test_onboarding_create_random_lands_on_main_app(self, onboarded_app):
+        app = onboarded_app
+        assert app.is_main_app_loaded()
