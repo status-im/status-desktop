@@ -92,6 +92,14 @@ pipeline {
 
     /* Set to a non-zero value to make Qt print out diagnostic information about the each (C++) plugin it tries to load. */
     /* QT_DEBUG_PLUGINS = 0 */
+
+    /* Hack fix for params not being set in job on first run */
+    BUILD_SOURCE =      "${params.BUILD_SOURCE}"
+    TEST_NAME =         "${params.TEST_NAME}"
+    TEST_SCOPE_FLAG =   "${params.TEST_SCOPE_FLAG}"
+    TESTRAIL_RUN_NAME = "${params.TESTRAIL_RUN_NAME}"
+    LOG_LEVEL =         "${params.LOG_LEVEL}"
+
   }
 
   stages {
@@ -273,4 +281,4 @@ def getDefaultTestScopeFlag() {
   }
 }
 
-def getTestStageTimeout() { TEST_SCOPE_FLAG == '-m=critical' ? 30 : 120 }
+def getTestStageTimeout() { params.TEST_SCOPE_FLAG == '-m=critical' ? 30 : 120 }

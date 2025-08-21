@@ -52,6 +52,10 @@ pipeline {
     QML_DISABLE_DISK_CACHE = "true"
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib"
+    /* Hack fix for params not being set in job on first run */
+    NIMFLAGS = "${params.NIMFLAGS}"
+    /* FIXME: figure out why NIMFLAGS are not respected */
+    XDG_CACHE_HOME = "${env.WORKSPACE_TMP}/.cache"
   }
 
   stages {

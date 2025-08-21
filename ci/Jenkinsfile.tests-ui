@@ -41,6 +41,8 @@ pipeline {
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/6.9.0/gcc_64"
     PATH = "${env.QTDIR}/bin:${env.PATH}"
+    /* Hack fix for params not being set in job on first run */
+    VERBOSE = "${params.VERBOSE}"
   }
 
   stages {
