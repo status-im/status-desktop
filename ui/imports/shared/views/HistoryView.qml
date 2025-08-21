@@ -356,9 +356,9 @@ ColumnLayout {
                 showAllAccounts: root.showAllAccounts
                 displayValues: root.displayValues
                 community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
-                onClicked: {
+                onClicked: function(itemId, mouse) {
                     if (mouse.button === Qt.RightButton) {
-                        txContextMenu.createObject(this, { modelData }).popup(mouse)
+                        txContextMenu.createObject(this, { modelData }).popup(mouse.x, mouse.y)
                     }
                 }
             }
