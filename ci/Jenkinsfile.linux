@@ -78,7 +78,6 @@ pipeline {
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
     /* Hack fix for params not being set in job on first run */
     NIMFLAGS =               "${params.NIMFLAGS}"
-    USE_NWAKU =              "${params.USE_NWAKU}"
     ENTITLEMENTS =           "${params.ENTITLEMENTS}"
     RELEASE =                "${params.RELEASE}"
     INCLUDE_DEBUG_SYMBOLS =  "${params.INCLUDE_DEBUG_SYMBOLS}"
