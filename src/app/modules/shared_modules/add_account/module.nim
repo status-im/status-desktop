@@ -361,6 +361,11 @@ proc setItemForSelectedOrigin[T](self: Module[T], item: KeyPairItem) =
     error "provided item cannot be set as selected origin", keyUid=item.getKeyUid()
     return
 
+  let selectedOrigin = self.view.getSelectedOrigin()
+  if selectedOrigin.getKeyUid() != item.getKeyUid():
+    self.view.derivedAddressModel().reset()
+    self.view.setSelectedDerivedAddress(newDerivedAddressItem())
+
   self.view.setSelectedOrigin(item)
 
   if item.getKeyUid() == Label_OptionAddWatchOnlyAcc:
