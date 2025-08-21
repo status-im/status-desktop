@@ -41,11 +41,6 @@ pipeline {
       description: 'Select app entitlements. Squish requires extra entitlements.',
       choices: ['resources/Entitlements.plist', 'resources/Entitlements_squish.plist']
     )
-    string(
-      name: 'NIMFLAGS',
-      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
-      defaultValue: "--colors:off --nimcache:${env.WORKSPACE_TMP}/nimcache"
-    )
   }
 
   options {
