@@ -68,7 +68,7 @@ Item {
                 property double decimalTotalGasAmount: {
                     let maxFees = modelData.gasFees.maxFeePerGasM
                     let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
-                    return root.getGasNativeCryptoValue(gasPrice , modelData.gasAmount)
+                    return root.getGasNativeCryptoValue(gasPrice, modelData.gasAmount, modelData.fromNetwork)
                 }
 
                 property double totalGasAmountFiat: root.getFiatValue(decimalTotalGasAmount, gasSymbol) + root.getFiatValue(decimalTotalGasAmountL1, gasSymbol)

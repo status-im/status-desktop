@@ -855,7 +855,7 @@ QtObject {
 
     function getGasDecimalValue(chainID, gasValue, gasLimit) {
         let rawValue = nativeTokenGasToRaw(chainID, gasValue)
-        rawValue = StatusQUtils.AmountsArithmetic.times(rawValue, StatusQUtils.AmountsArithmetic.fromNumber(1, gasLimit))
+        rawValue = StatusQUtils.AmountsArithmetic.times(rawValue, StatusQUtils.AmountsArithmetic.fromNumber(gasLimit))
         return nativeTokenRawToDecimal(chainID, rawValue)
     }
     
