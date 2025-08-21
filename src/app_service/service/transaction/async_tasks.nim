@@ -36,3 +36,19 @@ proc fetchDecodedTxDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
   except Exception as e:
     error "Error decoding tx input", message = e.msg
   arg.finish(data)
+
+type
+  ReevaluateRouterPathTaskArg* = ref object of QObjectTaskArg
+    uuid: string
+    pathName: string
+    chainId: int
+    isApprovalTx: bool
+
+proc reevaluateRouterPathTask*(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[ReevaluateRouterPathTaskArg](argEncoded)
+  try:
+    let err = wallet.reevaluateRouterPath(arg.uuid, arg.pathName, arg.chainId, arg.isApprovalTx)
+    if err.len > 0:
+      raise newException(CatchableError, err)
+  except CatchableError as e:
+    error "reevaluateRouterPath", exception=e.msg
