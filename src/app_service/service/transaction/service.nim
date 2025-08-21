@@ -543,10 +543,12 @@ proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatur
   return ""
 
 proc reevaluateRouterPath*(self: Service, uuid: string, pathName: string, chainId: int, isApprovalTx: bool): string =
-  try:
-    let err = wallet.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
-    if err.len > 0:
-      raise newException(CatchableError, err)
-  except CatchableError as e:
-    error "reevaluateRouterPath", exception=e.msg
-    return e.msg
+  let arg = ReevaluateRouterPathTaskArg(
+    tptr: reevaluateRouterPathTask,
+    vptr: cast[uint](self.vptr),
+    uuid: uuid,
+    pathName: pathName,
+    chainId: chainId,
+    isApprovalTx: isApprovalTx,
+  )
+  self.threadpool.start(arg)
