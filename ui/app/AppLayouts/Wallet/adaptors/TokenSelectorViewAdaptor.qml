@@ -87,6 +87,10 @@ QObject {
 
         sorters: [
             RoleSorter {
+                roleName: "sectionName"
+                ascendingOrder: false
+            },
+            RoleSorter {
                 roleName: "currencyBalance"
                 ascendingOrder: false
             },
