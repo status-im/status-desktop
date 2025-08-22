@@ -61,7 +61,7 @@ Item {
                 }
                 property double decimalTotalGasAmountL1: {
                     const l1FeeInGWei = modelData.gasFees.l1GasFee
-                    const l1FeeInEth = Utils.getGasDecimalValue(modelData.fromNetwork, l1FeeInGWei, modelData.gasAmount)
+                    const l1FeeInEth = Utils.calculateGasCost(modelData.fromNetwork, l1FeeInGWei, modelData.gasAmount)
                     return l1FeeInEth
                 }
 

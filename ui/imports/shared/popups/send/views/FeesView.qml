@@ -72,7 +72,7 @@ Rectangle {
                 id: gasSelector
                 width: parent.width
                 getGasNativeCryptoValue: function(gasPrice, gasAmount, chainId) {
-                    return Utils.getGasDecimalValue(chainId, gasPrice, gasAmount)
+                    return Utils.calculateGasCost(chainId, gasPrice, gasAmount)
                 }
                 getFiatValue: root.currencyStore.getFiatValue
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
