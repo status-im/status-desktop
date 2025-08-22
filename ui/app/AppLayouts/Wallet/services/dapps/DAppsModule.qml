@@ -192,7 +192,7 @@ SQUtils.QObject {
             root.dappsMetrics.logConnectionProposalAccepted(dappUrl, approvedChainIds, connectorId)
         }
 
-        function rejectAndLog() {
+        function rejectAndLog(key) {
             const dappUrl = dappConnections.getDAppUrl(key)
             const connectorId = dappConnections.getConnectorId(key)
             dappConnections.reject(key)
