@@ -35,9 +35,8 @@ QtObject {
             return qsTr("Requires internet connection")
         }
 
-	const blockchainDown = networkConnectionModule.blockchainNetworkConnection.completelyDown
-	if (blockchainDown ||
-	   !blockchainDown && !atleastOneBlockchainNetworkAvailable) {
+        const blockchainDown = networkConnectionModule.blockchainNetworkConnection.completelyDown
+        if (blockchainDown || !atleastOneBlockchainNetworkAvailable) {
             return qsTr("Requires Pocket Network(POKT) or Infura, both of which are currently unavailable")
         }
         return ""
