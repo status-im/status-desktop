@@ -22,7 +22,7 @@ def test_wallet_loading_time(main_screen, user_data, user_account, tmp_path):
     os.environ['STATUS_RUNTIME_TEST_MODE'] = 'True'  # to omit banners
 
     with step('Open wallet after login'):
-        main_screen.home.open_from_dock(DockButtons.WALLET.value)
+        main_screen.left_panel.open_wallet()
 
     load_times = []
     report_lines = []

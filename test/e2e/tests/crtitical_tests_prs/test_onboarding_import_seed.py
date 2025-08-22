@@ -32,7 +32,7 @@ def test_import_and_reimport_random_seed(
             import_seed_and_log_in(create_your_profile_view, seed_phrase, user_account)
 
     with step('Verify that restored account reveals correct status wallet address'):
-        profile = main_window.home.open_from_dock(DockButtons.SETTINGS.value).left_panel.open_profile_settings()
+        profile = main_window.left_panel.open_settings().left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
 

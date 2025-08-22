@@ -75,11 +75,9 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
             SplashScreen().wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
 
             with step('Verify user details are the same with user in first instance'):
-                home = HomeScreen()
-                online_identifier = home.open_online_identifier_from_home_screen()
+                online_identifier = main_window.left_panel.open_online_identifier()
                 assert online_identifier.get_user_name == user.name, \
                     f'Name in online identifier and display name do not match'
-                main_window.home.click()
                 main_window.hide()
 
         with step(f'Open first instance {aut_one.aut_id} and verify it is synced, click done'):
@@ -90,6 +88,7 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
                 lambda: 'Device synced!' in sync_device_found.device_synced_notifications, 23000)
             assert user.name in sync_device_found.device_synced_notifications
             sync_device_found.done_button.click()
+
         # TODO: https://github.com/status-im/status-desktop/issues/18680
         # with step('Change Allow contact requests toggle state to OFF'):
         #     home = main_window.left_panel.open_home_screen()
@@ -129,3 +128,4 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
         #     assert driver.waitFor(
         #         lambda: not msg_stngs.allow_contact_requests_toggle.object.checked, 15000), \
         #         f'Toggle state should remain unchecked becase devices are not paired'
+

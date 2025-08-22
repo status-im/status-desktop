@@ -179,9 +179,9 @@ class MainWindow(Window):
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
 
-        # Navigate from home to settings first
         # since we now struggle with 3 words names, I need to change display name first
-        settings_screen = self.home.open_from_dock(DockButtons.SETTINGS.value)
+        left_panel = MainLeftPanel()
+        settings_screen = left_panel.open_settings()
         profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
