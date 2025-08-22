@@ -30,15 +30,18 @@ QtObject {
     readonly property bool atleastOneBlockchainNetworkAvailable: root.blockchainNetworksDown.length < root.activeNetworksCount
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline && !networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable)
-    readonly property string sendBuyBridgeToolTipText: !isOnline ? qsTr("Requires internet connection") :
-                                                        noBlockchainAndMarketConnectionAndNoCache ?
-                                                        qsTr("Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable") :
-                                                        networkConnectionModule.blockchainNetworkConnection.completelyDown ||
-                                                        (!networkConnectionModule.blockchainNetworkConnection.completelyDown &&
-                                                        !atleastOneBlockchainNetworkAvailable) ?
-                                                        qsTr("Requires Pocket Network(POKT) or Infura, both of which are currently unavailable") :
-                                                        networkConnectionModule.marketValuesNetworkConnection.completelyDown ?
-                                                        qsTr("Requires CryptoCompare or CoinGecko, both of which are currently unavailable"): ""
+    readonly property string sendBuyBridgeToolTipText: {
+        if (!isOnline) {
+            return qsTr("Requires internet connection")
+        }
+
+	const blockchainDown = networkConnectionModule.blockchainNetworkConnection.completelyDown
+	if (blockchainDown ||
+	   !blockchainDown && !atleastOneBlockchainNetworkAvailable) {
+            return qsTr("Requires Pocket Network(POKT) or Infura, both of which are currently unavailable")
+        }
+        return ""
+    }
 
     readonly property bool notOnlineWithNoCache: !isOnline && !balanceCache && !marketValuesCache
     readonly property string notOnlineWithNoCacheText: qsTr("Internet connection lost. Data could not be retrieved.")
