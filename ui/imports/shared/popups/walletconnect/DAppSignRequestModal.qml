@@ -35,6 +35,7 @@ SignTransactionModalBase {
     required property string networkIconPath
     // Fees
     required property string fiatFees
+    required property string fiatSymbol
     required property string cryptoFees
     required property string nativeTokenSymbol
     required property string estimatedTime
@@ -101,7 +102,7 @@ SignTransactionModalBase {
                     id: maxFees
                     Layout.fillWidth: true
                     objectName: "footerFiatFeesText"
-                    text: formatBigNumber(root.fiatFees, root.currentCurrency)
+                    text: formatBigNumber(root.fiatFees, root.fiatSymbol)
                     loading: root.feesLoading && root.hasFees
                     elide: Qt.ElideMiddle
                     Binding on text {
@@ -112,7 +113,7 @@ SignTransactionModalBase {
                         value: !root.hasFees || root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
                     }
 
-                    onTextChanged: {
+                    onTextChanged: function(text) {
                         if (text === "" || loading) {
                             return
                         }
@@ -142,7 +143,7 @@ SignTransactionModalBase {
                     text: root.estimatedTime
                     loading: root.estimatedTimeLoading
 
-                    onTextChanged: {
+                    onTextChanged: function(text) {
                         if (text === "" || loading) {
                             return
                         }
@@ -210,7 +211,7 @@ SignTransactionModalBase {
                     id: fiatFees
                     objectName: "fiatFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: formatBigNumber(root.fiatFees, root.currentCurrency)
+                    text: formatBigNumber(root.fiatFees, root.fiatSymbol)
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Theme.additionalTextSize
                     loading: root.feesLoading
@@ -218,7 +219,7 @@ SignTransactionModalBase {
                     Binding on customColor {
                         value: root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
                     }
-                    onTextChanged: {
+                    onTextChanged: function(text) {
                         if (text === "" || loading) {
                             return
                         }
@@ -244,7 +245,7 @@ SignTransactionModalBase {
                     Binding on customColor {
                         value: root.enoughFundsForFees ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
                     }
-                    onTextChanged: {
+                    onTextChanged: function(text) {
                         if (text === "" || loading) {
                             return
                         }
