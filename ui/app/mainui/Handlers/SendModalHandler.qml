@@ -580,12 +580,9 @@ QtObject {
 
                 readonly property bool marketDataNotAvailable: {
                     const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                    const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
-                    return !!nativeToken &&
-                           !!nativeToken.marketDetails &&
-                           !!nativeToken.marketDetails.currencyPrice &&
-                           (!nativeToken.marketDetails.currencyPrice.amount ||
-                            nativeToken.marketDetails.currencyPrice.amount === 0)
+		    const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
+		    const price = nativeToken?.marketDetails?.currencyPrice
+		    return !!price && (price.amount == null || price.amount === 0)
                 }
 
                 readonly property string extraParamsJson: {
