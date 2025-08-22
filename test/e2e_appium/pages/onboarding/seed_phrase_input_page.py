@@ -118,22 +118,4 @@ class SeedPhraseInputPage(BasePage):
         except Exception:
             pass
 
-        time.sleep(1)
-
-        if not self.is_continue_button_enabled():
-            self.logger.info(
-                "Continue not enabled yet; attempting to reveal and re-check"
-            )
-            self.ensure_element_visible(self.locators.CONTINUE_BUTTON)
-            time.sleep(0.3)
-            if not self.is_continue_button_enabled():
-                self.logger.error(
-                    "Continue button is not enabled - seed phrase may be invalid"
-                )
-                return False
-
-        if not self.click_continue():
-            return False
-
-        self.logger.info("✅ Seed phrase import completed successfully")
-        return True
+        return self.click_continue()
