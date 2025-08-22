@@ -46,7 +46,7 @@ QtObject {
         return formatCurrencyAmount(decimalBalance, symbol, options)
     }
 
-    function formatBigNumber(number: string, symbol: string, noSymbolOption: bool) {
+    function formatBigNumber(number: string, symbol: string, noSymbolOption: bool): string  {
         if (!number)
             return "N/A"
         if (!symbol)

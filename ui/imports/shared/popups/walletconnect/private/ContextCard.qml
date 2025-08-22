@@ -88,7 +88,7 @@ Rectangle {
                 control.hoverEnabled: false
                 StatusMouseArea {
                     anchors.fill: parent
-                    onPressed: mouse.accepted = true
+                    onPressed: (mouse) => {mouse.accepted = true}
                 }
             }
         }

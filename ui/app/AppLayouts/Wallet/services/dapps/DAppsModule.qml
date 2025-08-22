@@ -346,6 +346,7 @@ SQUtils.QObject {
         dappsModel: root.dappsModel
         feesBroker: feesBroker
 
+        fiatSymbol: root.currenciesStore.currentCurrency
         getFiatValue: (value, currency) => {
             return root.currenciesStore.getFiatValue(value, currency)
         }
@@ -390,6 +391,7 @@ SQUtils.QObject {
         dappsModel: root.dappsModel
         feesBroker: feesBroker
 
+        fiatSymbol: root.currenciesStore.currentCurrency
         getFiatValue: (value, currency) => {
             return root.currenciesStore.getFiatValue(value, currency)
         }
