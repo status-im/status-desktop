@@ -145,12 +145,18 @@ StatusDialog {
                 connectionAttempted: d.connectionAttempted
                 accountsModel: d.accountsProxy
                 chainsModel: root.flatNetworks
-                chainSelection: d.selectedChains
 
-                onChainSelectionChanged: {
-                    if (d.selectedChains !== chainSelection) {
-                        d.selectedChains = chainSelection
-                    }
+                Binding on chainSelection {
+                    value: allChainIdsAggregator.value
+                }
+
+                FunctionAggregator {
+                    id: allChainIdsAggregator
+                    model: root.flatNetworks
+                    initialValue: []
+                    roleName: "chainId"
+
+                    aggregateFunction: (aggr, value) => [...aggr, value]
                 }
             }
 
@@ -224,15 +230,7 @@ StatusDialog {
             sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
         }
 
-        property var selectedChains: allChainIdsAggregator.value
-
-        readonly property FunctionAggregator allChainIdsAggregator: FunctionAggregator {
-            model: root.flatNetworks
-            initialValue: []
-            roleName: "chainId"
-
-            aggregateFunction: (aggr, value) => [...aggr, value]
-        }
+        readonly property var selectedChains: contextCard.chainSelection
 
         property int connectionStatus: root.notConnectedStatus
         readonly property bool connectionSuccessful: d.connectionStatus === root.connectionSuccessfulStatus

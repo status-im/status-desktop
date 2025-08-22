@@ -44,8 +44,10 @@ SQUtils.QObject {
         id: feesBroker
         store: root.store
     }
+    // Symbol of the currency used to perform crypto -> fiat conversions
+    required property string fiatSymbol
     // Function to transform the eth value to fiat
-    property var getFiatValue: (maxFeesEthStr, token /*Constants.ethToken*/) => console.error("getFiatValue not implemented")
+    property var getFiatValue: (maxFeesEthStr, token) => console.error("getFiatValue not implemented")
 
     // Signals
     /// Signal emitted when a session request is accepted
@@ -87,14 +89,15 @@ SQUtils.QObject {
 
         SessionRequestWithAuth {
             id: request
-            property string nativeTokenSymbol: Utils.getNativeTokenSymbol(request.chainId)
             store: root.store
             estimatedTimeCategory: feesSubscriber.estimatedTimeResponse
             feesInfo: feesSubscriber.feesInfo
             haveEnoughFunds: d.hasEnoughBalance(request.chainId, request.accountAddress, request.value, request.nativeTokenSymbol)
-            haveEnoughFees: haveEnoughFunds && d.hasEnoughBalance(request.chainId, request.accountAddress, request.ethMaxFees, request.nativeTokenSymbol)
-            ethMaxFees: feesSubscriber.maxEthFee ? SQUtils.AmountsArithmetic.div(feesSubscriber.maxEthFee, SQUtils.AmountsArithmetic.fromNumber(1, 9)) : null
-            fiatMaxFees: ethMaxFees ? SQUtils.AmountsArithmetic.fromString(root.getFiatValue(ethMaxFees.toString(), request.nativeTokenSymbol)) : null
+            haveEnoughFees: haveEnoughFunds && d.hasEnoughBalance(request.chainId, request.accountAddress, request.nativeTokenMaxFees, request.nativeTokenSymbol)
+            nativeTokenSymbol: Utils.getNativeTokenSymbol(request.chainId)
+            nativeTokenMaxFees: feesSubscriber.maxEthFee ? SQUtils.AmountsArithmetic.div(feesSubscriber.maxEthFee, SQUtils.AmountsArithmetic.fromNumber(1, 9)) : null
+            fiatSymbol: root.fiatSymbol
+            fiatMaxFees: nativeTokenMaxFees ? SQUtils.AmountsArithmetic.fromString(root.getFiatValue(nativeTokenMaxFees.toString(), request.nativeTokenSymbol)) : null
             function signedHandler(topic, id, data) {
                 if (topic != request.topic || id != request.requestId) {
                     return

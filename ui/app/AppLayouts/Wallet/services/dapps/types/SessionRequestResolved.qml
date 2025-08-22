@@ -41,7 +41,9 @@ QObject {
     property bool haveEnoughFees: false
 
     property var /* Big */ fiatMaxFees
-    property var /* Big */ ethMaxFees
+    property string fiatSymbol
+    property var /* Big */ nativeTokenMaxFees
+    property string nativeTokenSymbol
     property var feesInfo
     property var /* Big */ value
 
