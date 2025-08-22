@@ -2845,7 +2845,7 @@ Item {
                 walletConnectEnabled: featureFlagsStore.dappsEnabled
                 connectorEnabled: featureFlagsStore.connectorEnabled
 
-                formatBigNumber: (number, symbol, noSymbolOption) => WalletStores.RootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+                formatBigNumber: (number, symbol, noSymbolOption) => appMain.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
                 onDisconnectRequested: (connectionId) => dAppsService.disconnectDapp(connectionId)
                 onPairingRequested: (uri) => dAppsService.pair(uri)
@@ -2879,8 +2879,8 @@ Item {
 
             // DAppsModule provides the middleware for the dapps
             dappsModule: DAppsModule {
-                currenciesStore: WalletStores.RootStore.currencyStore
-                groupedAccountAssetsModel: WalletStores.RootStore.walletAssetsStore.groupedAccountAssetsModel
+                currenciesStore: appMain.currencyStore
+                groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
                 dappsMetrics: dappMetrics
                 networksModel: SortFilterProxyModel {

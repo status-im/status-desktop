@@ -127,6 +127,7 @@ Item {
                 }
             }
             requests: SessionRequestsModel {}
+            fiatSymbol: "USD"
             getFiatValue: (balance, cryptoSymbol) => {
                 return parseFloat(balance)
             }

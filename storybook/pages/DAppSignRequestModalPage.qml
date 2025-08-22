@@ -42,6 +42,7 @@ SplitView {
 
 
             fiatFees: fiatFees.text
+            fiatSymbol: "USD"
             cryptoFees: "0.001"
             nativeTokenSymbol: "ETH"
             estimatedTime: "3-5 minutes"
