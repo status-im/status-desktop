@@ -34,6 +34,6 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
                                                password=new_password))
 
     with step('Verify that the user logged in correctly'):
-        online_identifier = main_screen.home.open_online_identifier_from_home_screen()
+        online_identifier = main_screen.left_panel.open_online_identifier()
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_account.name
