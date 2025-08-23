@@ -34,6 +34,7 @@ SKIP_JENKINS=0
 MAXIMUM_UNMOUNTING_ATTEMPTS=3
 SIGNATURE=""
 NOTARIZE=""
+PREBUILT_DS_STORE=""
 
 function pure_version() {
 	echo "$CDMG_VERSION"
@@ -126,6 +127,8 @@ Options:
       execute hdiutil with sandbox compatibility and do not bless (not supported for APFS disk images)
   --skip-jenkins
       skip Finder-prettifying AppleScript, useful in Sandbox and non-GUI environments
+  --ds-store <file>
+      use a pre-built .DS_Store file instead of running AppleScript (for CI environments)
   --version
 	    show create-dmg version number
   -h, --help
@@ -260,6 +263,9 @@ while [[ "${1:0:1}" = "-" ]]; do
 		--skip-jenkins)
 			SKIP_JENKINS=1
 			shift;;
+		--ds-store)
+			PREBUILT_DS_STORE="$2"
+			shift; shift;;
 		-*)
 			echo "Unknown option: $1. Run 'create-dmg --help' for help."
 			exit 1;;
@@ -475,7 +481,17 @@ VOLUME_NAME=$(basename $MOUNT_DIR)
 
 # Run AppleScript to do all the Finder cosmetic stuff
 APPLESCRIPT_FILE=$(mktemp -t createdmg.tmp.XXXXXXXXXX)
-if [[ $SANDBOX_SAFE -eq 1 ]]; then
+
+if [[ -n "$PREBUILT_DS_STORE" ]]; then
+	echo "Using pre-built .DS_Store file: $PREBUILT_DS_STORE"
+	if [[ -f "$PREBUILT_DS_STORE" ]]; then
+		cp "$PREBUILT_DS_STORE" "${MOUNT_DIR}/.DS_Store"
+		echo "Successfully copied pre-built .DS_Store to DMG"
+	else
+		echo >&2 "ERROR: Pre-built .DS_Store file not found: $PREBUILT_DS_STORE"
+		exit 1
+	fi
+elif [[ $SANDBOX_SAFE -eq 1 ]]; then
 	echo "Skipping Finder-prettifying AppleScript because we are in Sandbox..."
 else
 	if [[ $SKIP_JENKINS -eq 0 ]]; then
@@ -490,7 +506,7 @@ else
 			| perl -pe "s/HIDING_CLAUSE/$HIDING_CLAUSE/" \
 			> "$APPLESCRIPT_FILE"
 
-		# pause to workaround occasional "Can’t get disk" (-1728) issues
+		# pause to workaround occasional "Can't get disk" (-1728) issues
 		ERROR_1728_WORKAROUND_SLEEP_INTERVAL=2
 		echo "Will sleep for $ERROR_1728_WORKAROUND_SLEEP_INTERVAL seconds to workaround occasions \"Can't get disk (-1728)\" issues..."
 		sleep $ERROR_1728_WORKAROUND_SLEEP_INTERVAL
@@ -500,9 +516,7 @@ else
 			# Okay, we're cool
 			true
 		else
-			echo >&2 "Failed running AppleScript"
-			hdiutil_detach_retry "${DEV_NAME}"
-			exit 64
+			echo >&2 "Failed running AppleScript - continuing without Finder prettification"
 		fi
 		echo "Done running the AppleScript..."
 		sleep 4
@@ -555,6 +569,14 @@ else
 	hdiutil convert ${HDIUTIL_VERBOSITY} "${DMG_TEMP_NAME}" -format ${FORMAT} ${IMAGEKEY} -encryption AES-${AESBITS} -stdinpass -o "${DMG_DIR}/${DMG_NAME}"
 fi
 rm -f "${DMG_TEMP_NAME}"
+
+echo "Removing extended attributes from DMG..."
+# Remove all extended attributes, especially com.apple.FinderInfo which blocks code signing
+xattr -cr "${DMG_DIR}/${DMG_NAME}" 2>/dev/null || true
+if xattr "${DMG_DIR}/${DMG_NAME}" 2>/dev/null | grep -q "com.apple.FinderInfo"; then
+	echo "Warning: com.apple.FinderInfo still present, attempting force removal..."
+	xattr -d com.apple.FinderInfo "${DMG_DIR}/${DMG_NAME}" 2>/dev/null || true
+fi
 
 # Adding EULA resources
 if [[ -n "${EULA_RSRC}" && "${EULA_RSRC}" != "-null-" ]]; then

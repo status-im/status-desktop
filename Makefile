@@ -761,11 +761,21 @@ ifdef MACOS_CODESIGN_IDENT
 endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
+	BG="resources/dmg-background-status.png" ; \
 	scripts/create-dmg/create-dmg \
-		--skip-jenkins \
+		--volname "Status" \
+		--window-pos 200 120 \
+		--window-size 900 520 \
+		--background "$$BG" \
+		--icon-size 128 \
+		--text-size 13 \
+		--icon "Status.app" 180 260 \
+		--hide-extension "Status.app" \
+		--app-drop-link 720 260 \
+		--ds-store "resources/dmg.DS_Store" \
+		--format UDZO \
 		pkg/Status.dmg \
-		$(MACOS_OUTER_BUNDLE) || true
-	# We ignore failure above create-dmg can't skip signing.
+		$(MACOS_OUTER_BUNDLE) || true	# We ignore failure above create-dmg can't skip signing.
 	# It is just not signed, hence the next command should succeed.
 	mv "`ls pkg/*.dmg`" $(STATUS_CLIENT_DMG)
 
