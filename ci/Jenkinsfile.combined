@@ -55,7 +55,7 @@ pipeline {
               steps {
                 script {
                   linux_e2e = build(
-                    job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
+                    job: 'status-desktop/systems/linux/x86_64/tests-e2e',
                     parameters: jenkins.mapToParams([
                       BUILD_SOURCE:       linux_x86_64.fullProjectName,
                       TESTRAIL_RUN_NAME:  utils.pkgFilename(),
