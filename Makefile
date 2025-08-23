@@ -758,7 +758,6 @@ endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
 	scripts/create-dmg/create-dmg \
-		--skip-jenkins \
 		pkg/Status.dmg \
 		$(MACOS_OUTER_BUNDLE) || true
 	# We ignore failure above create-dmg can't skip signing.
