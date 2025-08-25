@@ -9,14 +9,8 @@ from .onboarding_fixture import (
     OnboardingFlow,
     OnboardingFlowError,
     onboarding_config,
-    custom_onboarding_config,
     onboarded_user,
-    onboarding_flow_factory,
-    # Seed phrase generation fixtures
-    generated_seed_phrase,
-    generated_12_word_seed_phrase,
-    generated_24_word_seed_phrase,
-    onboarding_config_with_seed_phrase,
+    onboarded_app,
 )
 
 # Import and re-export fixtures from modular system
@@ -29,12 +23,6 @@ __all__ = [
     "OnboardingFlow",
     "OnboardingFlowError",
     "onboarding_config",
-    "custom_onboarding_config",
     "onboarded_user",
-    "onboarding_flow_factory",
-    # Seed phrase generation fixtures
-    "generated_seed_phrase",
-    "generated_12_word_seed_phrase",
-    "generated_24_word_seed_phrase",
-    "onboarding_config_with_seed_phrase",
+    "onboarded_app",
 ]
