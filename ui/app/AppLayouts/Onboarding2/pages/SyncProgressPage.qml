@@ -95,10 +95,6 @@ OnboardingPage {
                 target: loginWithSeedphraseButton
                 visible: true
             }
-            PropertyChanges {
-                target: loginAnywayButton
-                visible: true
-            }
         }
     ]
 
@@ -178,16 +174,6 @@ OnboardingPage {
                 visible: false
                 isOutline: true
                 onClicked: root.loginWithSeedphraseRequested()
-            }
-
-            StatusButton {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: 240
-                id: loginAnywayButton
-                text: qsTr("Log in anyway")
-                visible: false
-                isOutline: true
-                onClicked: root.loginToAppRequested()
             }
         }
     }
