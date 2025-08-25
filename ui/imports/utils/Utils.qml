@@ -851,10 +851,10 @@ QtObject {
                                        StatusQUtils.AmountsArithmetic.fromNumber(1, rawDecimals - gasDecimals))
     }
 
-    function getGasDecimalValue(chainID, gasValue, gasLimit) {
-        let rawValue = nativeTokenGasToRaw(chainID, gasValue)
-        rawValue = StatusQUtils.AmountsArithmetic.times(rawValue, StatusQUtils.AmountsArithmetic.fromNumber(1, gasLimit))
-        return nativeTokenRawToDecimal(chainID, rawValue)
+    function calculateGasCost(chainID, gasPriceInGasUnit, gasAmount) {
+        let rawGasPrice = nativeTokenGasToRaw(chainID, gasPriceInGasUnit)
+        rawGasPrice = StatusQUtils.AmountsArithmetic.times(rawGasPrice, StatusQUtils.AmountsArithmetic.fromNumber(gasAmount))
+        return nativeTokenRawToDecimal(chainID, rawGasPrice)
     }
     
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this

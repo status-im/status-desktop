@@ -61,14 +61,14 @@ Item {
                 }
                 property double decimalTotalGasAmountL1: {
                     const l1FeeInGWei = modelData.gasFees.l1GasFee
-                    const l1FeeInEth = Utils.getGasDecimalValue(modelData.fromNetwork, l1FeeInGWei, modelData.gasAmount)
+                    const l1FeeInEth = Utils.calculateGasCost(modelData.fromNetwork, l1FeeInGWei, modelData.gasAmount)
                     return l1FeeInEth
                 }
 
                 property double decimalTotalGasAmount: {
                     let maxFees = modelData.gasFees.maxFeePerGasM
                     let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
-                    return root.getGasNativeCryptoValue(gasPrice , modelData.gasAmount)
+                    return root.getGasNativeCryptoValue(gasPrice, modelData.gasAmount, modelData.fromNetwork)
                 }
 
                 property double totalGasAmountFiat: root.getFiatValue(decimalTotalGasAmount, gasSymbol) + root.getFiatValue(decimalTotalGasAmountL1, gasSymbol)
