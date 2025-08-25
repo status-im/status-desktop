@@ -57,7 +57,7 @@ Item {
             asset.bgHeight: 32
             asset.isImage: false
             subTitle: model.url
-            onClicked: {
+            onClicked: mouse => {
                 if (mouse.button === Qt.RightButton) {
                     Global.openMenu(delegatesActionsMenu, this, { url: model.url });
                 }

@@ -81,8 +81,8 @@ Item {
                     icon.name: "more"
                     icon.color: (hovered || d.menuOpened) ? Theme.palette.directColor1 : Theme.palette.baseColor1
                     highlighted: d.menuOpened
-                    onClicked: {
-                        Global.openMenu(delegatesActionsMenu, this, { 
+                    onClicked: mouse => {
+                        Global.openMenu(delegatesActionsMenu, accountInfoDelegate, { 
                             x: moreButton.x, 
                             y : moreButton.y, 
                             accountAddress: model.address,
@@ -93,7 +93,7 @@ Item {
                     onHoveredChanged: accountInfoDelegate.highlight = hovered
                 }
             }
-            onClicked: {
+            onClicked: mouse => {
                 if (mouse.button === Qt.RightButton) {
                     Global.openMenu(delegatesActionsMenu, this, {
                         accountAddress: model.address,
@@ -119,7 +119,7 @@ Item {
             StatusSuccessAction {
                 id: copyAddressAction
                 successText: qsTr("Copied")
-                text: qsTr("Copy adress")
+                text: qsTr("Copy address")
                 icon.name: "copy"
                 onTriggered: {
                     root.copyToClipboard(accountAddress)
@@ -152,7 +152,7 @@ Item {
             BlockchainExplorersMenu {
                 id: blockchainExplorersMenu
                 flatNetworks: root.networksStore.activeNetworks
-                onNetworkClicked: {
+                onNetworkClicked: (shortname, isTestnet) => {
                     let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, contextMenu.accountAddress);
                     Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
                 }
