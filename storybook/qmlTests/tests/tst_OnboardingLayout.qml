@@ -840,8 +840,8 @@ Item {
 
             // PAGE 5: Profile sync in progress
             page = getCurrentPage(stack, SyncProgressPage)
-            tryCompare(page, "syncState", Onboarding.ProgressState.InProgress)
-            page.syncState = Onboarding.ProgressState.Success // SIMULATION
+            tryCompare(page, "syncState", Onboarding.LocalPairingState.Transferring)
+            page.syncState = Onboarding.LocalPairingState.Finished // SIMULATION
             const btnLogin2 = findChild(page, "btnLogin") // TODO test other flows/buttons here as well
             verify(!!btnLogin2)
             compare(btnLogin2.enabled, true)
