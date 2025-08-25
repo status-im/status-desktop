@@ -500,10 +500,6 @@ Pane {
                         width: implicitWidth
                         text: qsTr("Collectibles")
                     }
-                    // StatusTabButton {
-                    //     width: implicitWidth
-                    //     text: qsTr("Assets")
-                    // }
                     StatusTabButton {
                         width: implicitWidth
                         text: qsTr("Web")
@@ -526,7 +522,6 @@ Pane {
                     accountsModel: root.showcaseAccountsModel
                     collectiblesModel: root.showcaseCollectiblesModel
                     socialLinksModel: root.showcaseSocialLinksModel
-                    // assetsModel: root.showcaseAssetsModel
 
                     walletStore: root.walletStore
                     networksStore: root.networksStore
