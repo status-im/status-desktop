@@ -62,6 +62,7 @@ Control {
             asset.bgWidth: visible ? 16 : 0
             asset.color: Theme.palette.directColor1
             visible: !!asset.name
+            asynchronous: true
         }
         StatusBaseText {
             id: tagPrimaryLabel
