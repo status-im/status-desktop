@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -61,16 +61,17 @@ Slider {
         implicitWidth: root.handleSize
         implicitHeight: root.handleSize
         radius: root.handleSize / 2
+
         layer.enabled: true
-        layer.effect: DropShadow {
-            width: parent.width
-            height: parent.height
-            visible: true
-            verticalOffset: 2
-            samples: 15
-            fast: true
-            cached: true
-            color: Theme.palette.dropShadow
+        layer.effect: MultiEffect {
+            autoPaddingEnabled: true
+            shadowEnabled: true
+            shadowVerticalOffset: 2
+            shadowColor: Theme.palette.dropShadow3
         }
+    }
+
+    HoverHandler {
+        cursorShape: root.pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
     }
 }

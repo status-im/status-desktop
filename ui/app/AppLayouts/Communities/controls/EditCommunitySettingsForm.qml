@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import utils
 
+import StatusQ.Core.Theme
 import StatusQ.Popups
 
 import AppLayouts.Communities.controls
@@ -55,7 +56,7 @@ Control {
     }
 
     contentItem: ColumnLayout {
-        spacing: 16
+        spacing: Theme.padding
 
         NameInput {
             id: nameInput

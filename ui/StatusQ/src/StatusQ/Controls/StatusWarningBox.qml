@@ -49,7 +49,7 @@ Control {
     */
     property color iconColor: "transparent"
     /*!
-        \qmlproperty var StatusWarningBox::iconAlignment
+        \qmlproperty int StatusWarningBox::iconAlignment
         This property allows setting the position of the icon inside the warning box component.
     */
     property int iconAlignment: Qt.AlignTop

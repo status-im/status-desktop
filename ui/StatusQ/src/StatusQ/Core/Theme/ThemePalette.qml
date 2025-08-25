@@ -16,6 +16,7 @@ QtObject {
 
     property color dropShadow
     property color dropShadow2
+    property color dropShadow3 // suitable for MultiEffect
     property color backdropColor: getColor('black', 0.4)
 
     property color baseColor1
