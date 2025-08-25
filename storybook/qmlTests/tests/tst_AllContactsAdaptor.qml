@@ -49,7 +49,6 @@ Item {
             contactDetails.selfAlias = "Alias"
             contactDetails.selfIcon = "Icon"
             contactDetails.selfColorId = 42
-            contactDetails.selfColorHash = "Color hash"
             contactDetails.selfOnlineStatus = Constants.onlineStatus.online
             contactDetails.selfThumbnailImage = "Thumbnail image"
             contactDetails.selfLargeImage = "Large image"
@@ -58,7 +57,6 @@ Item {
             compare(ModelUtils.get(model, 0).displayName, "Display name")
             compare(ModelUtils.get(model, 0).alias, "Alias")
             compare(ModelUtils.get(model, 0).bio, "Bio")
-            compare(ModelUtils.get(model, 0).colorHash, "Color hash")
             compare(ModelUtils.get(model, 0).colorId, 42)
             compare(ModelUtils.get(model, 0).contactRequestState, Constants.ContactRequestState.None)
             compare(ModelUtils.get(model, 0).displayName, "Display name")
@@ -109,7 +107,6 @@ Item {
 
             verify(roleNames.includes("alias"))
             verify(roleNames.includes("bio"))
-            verify(roleNames.includes("colorHash"))
             verify(roleNames.includes("colorId"))
             verify(roleNames.includes("contactRequestState"))
             verify(roleNames.includes("displayName"))

@@ -32,10 +32,6 @@ StatusListItem {
         }
         return Theme.palette.transparent
     }
-    ringSettings {
-        ringSpecModel: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
-        ringPxSize: Math.max(asset.width / 24.0)
-    }
     tagsModel: !!root.keyPair? root.keyPair.accounts: []
     tagsDelegate: StatusListItemTag {
         bgColor: !!model.account.colorId ? Utils.getColorForId(model.account.colorId): ""

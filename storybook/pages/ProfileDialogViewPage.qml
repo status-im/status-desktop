@@ -141,9 +141,6 @@ SplitView {
 
                             isBlocked: isBlockedCheckBox.checked
 
-                            colorHash: [{colorId: 0, segmentLength: 1},
-                                        {colorId: 4, segmentLength: 2}]
-
                             colorId: colorIdSpinBox.value
 
                         }

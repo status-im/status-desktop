@@ -1,6 +1,4 @@
-import stew/shims/strformat, sequtils, sugar
-
-import ../../../shared_models/[color_hash_item, color_hash_model]
+import stew/shims/strformat
 
 type Item* = object
   itemId: string
@@ -18,11 +16,10 @@ type Item* = object
   badgeIsLetterIdenticon: bool
   isUserIcon: bool
   colorId: int
-  colorHash: color_hash_model.Model
 
 proc initItem*(itemId, content, time, titleId, title, sectionName: string, image, color,
   badgePrimaryText, badgeSecondaryText, badgeImage, badgeIconColor: string, badgeIsLetterIdenticon: bool, 
-  isUserIcon: bool = false, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[]):
+  isUserIcon: bool = false, colorId: int = 0):
   Item =
 
   result.itemId = itemId
@@ -40,8 +37,6 @@ proc initItem*(itemId, content, time, titleId, title, sectionName: string, image
   result.badgeIsLetterIdenticon = badgeIsLetterIdenticon
   result.isUserIcon = isUserIcon
   result.colorId = colorId
-  result.colorHash = color_hash_model.newModel()
-  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
 
 proc `$`*(self: Item): string =
   result = "SearchResultItem("
@@ -104,6 +99,3 @@ proc isUserIcon*(self: Item): bool =
 
 proc colorId*(self: Item): int =
   return self.colorId
-
-proc colorHash*(self: Item): color_hash_model.Model =
-  return self.colorHash

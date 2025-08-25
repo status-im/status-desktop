@@ -52,10 +52,6 @@ Rectangle {
             subTitle: Utils.getKeypairLocation(root.keyPair, false)
             statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
             color: Theme.palette.transparent
-            ringSettings {
-                ringSpecModel: d.isProfileKeypair ? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
-                ringPxSize: Math.max(asset.width / 24.0)
-            }
             asset {
                 width: !!root.keyPair && keyPair.icon? Theme.bigPadding : 40
                 height: !!root.keyPair && keyPair.icon? Theme.bigPadding : 40

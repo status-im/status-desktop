@@ -46,7 +46,6 @@ Item {
             icon.height: 40
             color: "transparent"
             icon.color: Utils.colorForColorId(model.colorId)
-            colorHash: model.colorHash
 
             hoverEnabled: false
         }

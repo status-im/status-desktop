@@ -48,7 +48,6 @@ StatusDialog {
             StatusUserImage {
                 name: root.mainDisplayName
                 usesDefaultName: contactDetails.usesDefaultName
-                colorHash: contactDetails.colorHash
                 userColor: Utils.colorForColorId(contactDetails.colorId)
                 image: contactDetails.largeImage
                 interactive: false

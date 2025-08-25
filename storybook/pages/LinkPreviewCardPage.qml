@@ -23,11 +23,6 @@ SplitView {
     QtObject {
         function getColorId(publicKey) { return 4 }
 
-        function getColorHashAsJson(publicKey) {
-            return JSON.stringify([{4: 0, segmentLength: 1},
-                                   {5: 19, segmentLength: 2}])
-        }
-
         Component.onCompleted: {
             Utils.globalUtilsInst = this
             root.globalUtilsReady = true

@@ -332,7 +332,6 @@ Item {
             senderOptionalName: model.senderOptionalName
             senderIsEnsVerified: model.senderEnsVerified
             senderIcon: model.senderIcon
-            senderColorHash: model.senderColorHash
             senderIsAdded: model.senderIsAdded
             senderTrustStatus: model.senderTrustStatus
             compressedKey: model.compressedKey
@@ -359,7 +358,6 @@ Item {
             deletedBy: model.deletedBy
             deletedByContactDisplayName: model.deletedByContactDisplayName
             deletedByContactIcon: model.deletedByContactIcon
-            deletedByContactColorHash: model.deletedByContactColorHash
             linkPreviewModel: model.linkPreviewModel
             links: model.links
             paymentRequestModel: model.paymentRequestModel
@@ -375,7 +373,6 @@ Item {
             quotedMessageAuthorDetailsThumbnailImage: model.quotedMessageAuthorThumbnailImage
             quotedMessageAuthorDetailsEnsVerified: model.quotedMessageAuthorEnsVerified
             quotedMessageAuthorDetailsIsContact: model.quotedMessageAuthorIsContact
-            quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
             quotedMessageAlbumMessageImages: model.quotedMessageAlbumMessageImages.split(" ")
             quotedMessageAlbumImagesCount: model.quotedMessageAlbumImagesCount
             bridgeName: model.bridgeName

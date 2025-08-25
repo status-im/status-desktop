@@ -132,7 +132,6 @@ SettingsContentBase {
         readonly property ContactDetails liveContactDetails: ContactDetails {
             publicKey: root.profileStore.pubKey
             colorId: root.profileStore.colorId
-            colorHash: root.profileStore.colorHash
             onlineStatus: root.profileStore.currentUserStatus
             isCurrentUser: true
             displayName: descriptionPanel.displayName.text || root.profileStore.name
@@ -298,7 +297,6 @@ SettingsContentBase {
                 pubkeyVisible: false
                 emojiHashVisible: false
                 editImageButtonVisible: true
-                colorHash: root.profileStore.colorHash
                 colorId: root.profileStore.colorId
             }
 

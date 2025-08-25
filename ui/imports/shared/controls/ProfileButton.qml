@@ -19,7 +19,6 @@ StatusNavBarTabButton {
     required property bool isEnsVerified
     required property string iconSource
     required property int colorId
-    required property var colorHash
     required property int currentUserStatus
 
     property var getLinkToProfileFn: function(pubKey) { console.error("IMPLEMENT ME"); return "" }
@@ -37,7 +36,6 @@ StatusNavBarTabButton {
     identicon.asset.width: width
     identicon.asset.height: height
     identicon.asset.useAcronymForLetterIdenticon: true
-    identicon.ringSettings.ringSpecModel: root.colorHash
 
     identicon.asset.name: {
         if (identicon.asset.isImage) {
@@ -89,7 +87,6 @@ StatusNavBarTabButton {
 
         compressedPubKey: root.compressedPubKey
         emojiHash: root.getEmojiHashFn(root.pubKey)
-        colorHash: root.colorHash
         colorId: root.colorId
         name: root.name
         headerIcon: root.iconSource

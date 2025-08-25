@@ -234,7 +234,6 @@ Control {
                     visible: active
                     name: root.messageDetails.sender.displayName
                     usesDefaultName: root.messageDetails.sender.usesDefaultName
-                    colorHash: root.messageDetails.sender.profileImage.colorHash
                     userColor: root.messageDetails.sender.profileImage.assetSettings.color
                     image: root.messageDetails.sender.profileImage.assetSettings.name
                     interactive: true

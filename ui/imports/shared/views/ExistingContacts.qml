@@ -95,7 +95,6 @@ Item {
             icon.width: 40
             icon.height: 40
             icon.color: Utils.colorForColorId(model.colorId)
-            colorHash: model.colorHash
 
             onClicked: {
                 root.contactClicked(model);

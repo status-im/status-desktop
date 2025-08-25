@@ -2418,41 +2418,6 @@ from "%1" to "%2"</translation>
     </message>
 </context>
 <context>
-    <name>BackupSeedphraseAcks</name>
-    <message>
-        <source>Backup your recovery phrase</source>
-        <translation>Backup your recovery phrase</translation>
-    </message>
-    <message>
-        <source>Store your recovery phrase in a secure location so you never lose access to your funds.</source>
-        <translation>Store your recovery phrase in a secure location so you never lose access to your funds.</translation>
-    </message>
-    <message>
-        <source>Backup checklist:</source>
-        <translation>Backup checklist:</translation>
-    </message>
-    <message>
-        <source>I have a pen and paper</source>
-        <translation>I have a pen and paper</translation>
-    </message>
-    <message>
-        <source>I am ready to write down my recovery phrase</source>
-        <translation>I am ready to write down my recovery phrase</translation>
-    </message>
-    <message>
-        <source>I know where I&#8217;ll store it</source>
-        <translation>I know where I&#8217;ll store it</translation>
-    </message>
-    <message>
-        <source>I know I can only reveal it once</source>
-        <translation>I know I can only reveal it once</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <translation>Continue</translation>
-    </message>
-</context>
-<context>
     <name>BackupSeedphraseIntro</name>
     <message>
         <source>Backup your recovery phrase</source>

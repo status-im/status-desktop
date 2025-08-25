@@ -303,9 +303,6 @@ QtObject:
     result.isCurrentUser = isCurrentUser
     result.dto = contactDto
 
-    if not contactDto.ensVerified:
-      result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(contactDto.id)
-
   proc getContactDetails*(self: Service, id: string): ContactDetails =
     var pubkey = id
 

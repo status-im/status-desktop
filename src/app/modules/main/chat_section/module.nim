@@ -31,7 +31,6 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
-import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../../app/core/signals/types
 
@@ -608,7 +607,6 @@ proc getChatItemFromChatDto(
   var chatImage = chatDto.icon
   var blocked = false
   var usesDefaultName = false
-  var colorHash: ColorHashDto = @[]
   var colorId: int = 0
   var onlineStatus = OnlineStatus.Inactive
   var categoryPosition = -1
@@ -623,8 +621,6 @@ proc getChatItemFromChatDto(
     )
     chatImage = contactDetails.icon
     blocked = contactDetails.dto.isBlocked()
-    if not contactDetails.dto.ensVerified:
-      colorHash = self.controller.getColorHash(chatDto.id)
     colorId = self.controller.getColorId(chatDto.id)
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
 
@@ -701,7 +697,6 @@ proc getChatItemFromChatDto(
     chatDto.categoryId,
     categoryPosition,
     colorId,
-    colorHash,
     chatDto.highlight,
     categoryOpened,
     onlineStatus = onlineStatus,

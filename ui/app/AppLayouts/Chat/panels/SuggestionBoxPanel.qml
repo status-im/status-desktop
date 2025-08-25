@@ -147,7 +147,6 @@ Rectangle {
 
                 name: model.preferredDisplayName
                 usesDefaultName: model.usesDefaultName
-                colorHash: model.colorHash
                 userColor: Utils.colorForColorId(model.colorId)
                 image: model.icon
                 interactive: false

@@ -42,9 +42,6 @@ QtObject {
     property int imgStatus
     property bool imgIsIdenticon: false
 
-    // ring settings hints
-    readonly property real ringPxSize: Math.max(1.5, root.width / 24.0)
-
     function isImgSrc(name) {
         return name.toLowerCase().startsWith("data:image") ||
                name.toLowerCase().startsWith("http://") ||

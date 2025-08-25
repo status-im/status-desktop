@@ -10,7 +10,6 @@ QtObject {
     property bool usesDefaultName
     property string icon
     property int colorId
-    property var colorHash
     property int onlineStatus
     property bool isContact
     property bool isCurrentUser

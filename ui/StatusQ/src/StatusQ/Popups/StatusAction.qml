@@ -29,12 +29,6 @@ Action {
 
     property StatusFontSettings fontSettings: StatusFontSettings {}
 
-    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        initalAngleRad: 0
-        ringPxSize: root.assetSettings.ringPxSize
-        distinctiveColors: Theme.palette.identiconRingColors
-    }
-
     icon.color: {
         if (!root.enabled)
             return Theme.palette.baseColor1

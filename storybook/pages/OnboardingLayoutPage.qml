@@ -334,29 +334,6 @@ SplitView {
                 }
             }
         }
-
-        Button {
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.margins: 10
-
-            visible: onboarding.currentPage instanceof BackupSeedphraseAcks
-
-            text: "Paste seed phrase verification"
-            focusPolicy: Qt.NoFocus
-            onClicked: {
-                for (let i = 1;; i++) {
-                    const checkBox = StorybookUtils.findChild(
-                                       onboarding.currentPage,
-                                       `ack${i}`)
-
-                    if (checkBox === null)
-                        break
-
-                    checkBox.checked = true
-                }
-            }
-        }
     }
 
     KeychainMock {

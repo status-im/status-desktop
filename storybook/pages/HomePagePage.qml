@@ -67,7 +67,6 @@ SplitView {
             readonly property string name: "John Roe"
             readonly property string icon: ModelsData.icons.rarible
             readonly property int colorId: 7
-            readonly property var colorHash: [{colorId: 7, segmentLength: 1}, {colorId: 6, segmentLength: 2}]
             readonly property bool usesDefaultName: false
             property int currentUserStatus: Constants.currentUserStatus.automatic
         }

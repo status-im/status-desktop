@@ -26,6 +26,5 @@ StatusMemberListItem {
     icon.name: model.thumbnailImage || model.icon
     icon.color: Utils.colorForColorId(model.colorId)
     status: model.onlineStatus
-    colorHash: model.colorHash
     color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
 }

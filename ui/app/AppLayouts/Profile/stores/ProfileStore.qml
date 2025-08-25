@@ -31,7 +31,6 @@ QtObject {
     readonly property var thumbnailImage: userProfile.thumbnailImage
     readonly property var largeImage: userProfile.largeImage
     readonly property int colorId: Utils.colorIdForPubkey(root.pubKey)
-    readonly property var colorHash: Utils.getColorHashAsJson(root.pubKey)
 
     readonly property string bio: profileModule.bio
     readonly property string socialLinksJson: profileModule.socialLinksJson
