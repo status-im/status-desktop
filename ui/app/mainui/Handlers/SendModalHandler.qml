@@ -580,9 +580,9 @@ QtObject {
 
                 readonly property bool marketDataNotAvailable: {
                     const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-		    const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
-		    const price = nativeToken?.marketDetails?.currencyPrice
-		    return !!price && (price.amount == null || price.amount === 0)
+                    const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
+		            const price = nativeToken?.marketDetails?.currencyPrice
+		            return !!price && (price.amount == null || price.amount === 0)
                 }
 
                 readonly property string extraParamsJson: {
@@ -775,8 +775,9 @@ QtObject {
 
                         // Use GWEI fees as fiat fees when market data is not available
                         if (handler.marketDataNotAvailable) {
-                            const totalFeesInGwei = Math.round(SQUtils.AmountsArithmetic.toNumber(SQUtils.AmountsArithmetic.fromString(value), 9))
-                            simpleSendModal.estimatedFiatFees = root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")
+                            const totalFeesInGwei = SQUtils.AmountsArithmetic.round( Utils.nativeTokenRawToGas(simpleSendModal.selectedChainId, value), 0)
+                            const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
+                            simpleSendModal.estimatedFiatFees = totalFeesInGwei.toString() + " " + feeSymbol
                         } else {
                             let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()
                             simpleSendModal.estimatedFiatFees = totalFeesInFiat
@@ -924,12 +925,9 @@ QtObject {
 
                         // Use GWEI when market data is not available
                         if (handler.marketDataNotAvailable) {
-                            const gweiValue = SQUtils.AmountsArithmetic.div(
-                                SQUtils.AmountsArithmetic.fromString(rawFee),
-                                SQUtils.AmountsArithmetic.fromNumber(1e9)
-                            )
-                            const roundedGwei = SQUtils.AmountsArithmetic.toNumber(gweiValue.round(0))
-                            return root.fnFormatCurrencyAmount(roundedGwei.toString(), "GWEI").toString()
+                            const roundedGwei = SQUtils.AmountsArithmetic.round( Utils.nativeTokenRawToGas(simpleSendModal.selectedChainId, rawFee), 0)
+                            const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
+                            return roundedGwei.toString() + " " + feeSymbol
                         }
 
                         const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
@@ -1099,10 +1097,10 @@ QtObject {
                     }
 
                     fiatFees: {
-			// Use GWEI fees when market data is not available
                         if (handler.marketDataNotAvailable) {
-                            const totalFeesInGwei = Math.round(decimalTotalFees * 1000000000)
-                            return root.fnFormatCurrencyAmount(totalFeesInGwei.toString(), "GWEI")
+                            const totalFeesInGwei = SQUtils.AmountsArithmetic.round( Utils.nativeTokenDecimalToGas(simpleSendModal.selectedChainId, decimalTotalFees), 0)
+                            const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
+                            return totalFeesInGwei.toString() + " " + feeSymbol
                         } else {
                             const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
                             const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
