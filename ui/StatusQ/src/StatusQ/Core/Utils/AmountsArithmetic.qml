@@ -163,4 +163,16 @@ QtObject {
         console.assert(amount2 instanceof Big.Big)
         return amount1.cmp(amount2)
     }
+
+    /*!
+      \qmlmethod AmountsArithmetic::round(amount, decimalPlaces = 0)
+      \brief Returns a Big number rounded to the specified decimal places.
+
+      If decimalPlaces is not specified, rounds to 0 decimal places (integer).
+     */
+    function round(amount, decimalPlaces = 0) {
+        console.assert(amount instanceof Big.Big)
+        console.assert(Number.isInteger(decimalPlaces))
+        return amount.round(decimalPlaces)
+    }
 }
