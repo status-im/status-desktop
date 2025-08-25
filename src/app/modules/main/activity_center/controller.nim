@@ -178,6 +178,3 @@ proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
 
 proc enableInstallationAndSync*(self: Controller, installationId: string) =
   self.devicesService.enableInstallationAndSync(installationId)
-
-proc tryFetchingAgain*(self: Controller) =
-  self.generalService.asyncFetchWakuBackupMessages()

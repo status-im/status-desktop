@@ -1,6 +1,5 @@
 import nimqml, os, json, chronicles
 
-import backend/mailservers as status_mailservers
 import backend/general as status_general
 import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
@@ -88,36 +87,6 @@ QtObject:
       self.events.emit(SIGNAL_GENERAL_TIMEOUT, Args())
     else:
       self.runTimer()
-
-  proc asyncFetchWakuBackupMessages*(self: Service) =
-    let arg = AsyncFetchBackupWakuMessagesTaskArg(
-      tptr: asyncFetchWakuBackupMessagesTask,
-      vptr: cast[uint](self.vptr),
-      slot: "onFetchWakuBackupMessagesDone",
-    )
-    self.threadpool.start(arg)
-
-  proc onFetchWakuBackupMessagesDone(self: Service, response: string) {.slot.} =
-    try:
-      let rpcResponseObj = response.parseJson
-
-      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
-
-      if rpcResponseObj["response"]["result"].contains("activityCenterNotifications"):
-        let notifications = JsonNode(%{"notifications": rpcResponseObj["response"]["result"]["activityCenterNotifications"]})
-        let activityCenterNotificationsTuple = parseActivityCenterNotifications(notifications)
-        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_RECEIVED,
-          ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
-    except Exception as e:
-      error "error:", procName="asyncFetchWakuBackupMessages", errName = e.name, errDesription = e.msg
-
-  proc backupData*(self: Service): int64 =
-    try:
-      let response =  status_general.backupData()
-      return response.result.getInt
-    except Exception as e:
-      error "error: ", procName="backupData", errName = e.name, errDesription = e.msg
 
   proc performLocalBackup*(self: Service): string =
     try:

@@ -94,8 +94,5 @@ QtObject:
   proc requestSaveBiometrics*(self: View, keyUid: string, credential: string) =
     self.saveBiometricsRequested(keyUid, credential)
     
-  proc backupData*(self: View): int {.slot.} =
-    return self.delegate.backupData().int
-  
   proc emitUrlUnfurlingModeUpdated*(self: View, mode: int) =
     self.urlUnfurlingModeChanged()

@@ -170,23 +170,21 @@ proc createAccountAndLogin*(self: Controller, password: string): string =
     ImageCropRectangle(),
   )
 
-proc restoreAccountAndLogin*(self: Controller, password, mnemonic: string, recoverAccount: bool, keycardInstanceUID: string): string =
+proc restoreAccountAndLogin*(self: Controller, password, mnemonic: string, keycardInstanceUID: string): string =
   return self.accountsService.importAccountAndLogin(
     mnemonic,
     password,
-    recoverAccount,
     displayName = "",
     imagePath = "",
     ImageCropRectangle(),
     keycardInstanceUID,
   )
 
-proc restoreKeycardAccountAndLogin*(self: Controller, keyUid, instanceUid: string, keycardKeys: KeycardExportedKeysDto, recoverAccount: bool): string =
+proc restoreKeycardAccountAndLogin*(self: Controller, keyUid, instanceUid: string, keycardKeys: KeycardExportedKeysDto): string =
   return self.accountsService.restoreKeycardAccountAndLoginV2(
     keyUid,
     instanceUid,
     keycardKeys,
-    recoverAccount,
   )
 
 proc setLoggedInAccount*(self: Controller, account: AccountDto) =

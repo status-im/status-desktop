@@ -139,6 +139,3 @@ proc authenticateLoggedInUser*(self: Controller) =
   if singletonInstance.userProfile.getIsKeycardUser():
     data.keyUid = singletonInstance.userProfile.getKeyUid()
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
-
-proc backupData*(self: Controller): int64 =
-  return self.generalService.backupData()
