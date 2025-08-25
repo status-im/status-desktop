@@ -335,8 +335,9 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
     self.onAccountLoginError(err2)
     return
 
-  if self.localPairingStatus != nil and self.localPairingStatus.installation != nil and self.localPairingStatus.installation.id != "":
-    # We tried to login by pairing, so finilize the process
+  if self.localPairingStatus != nil and self.localPairingStatus.installation != nil and
+      self.localPairingStatus.installation.id != "" and self.localPairingStatus.state == LocalPairingState.Error:
+    # We tried to login by pairing, so finalize the process
     self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)
 
   # Run any available post-login tasks
