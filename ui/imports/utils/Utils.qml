@@ -853,8 +853,8 @@ QtObject {
                                        StatusQUtils.AmountsArithmetic.fromNumber(1, rawDecimals - gasDecimals))
     }
 
-    function calculateGasCost(chainID, gasPriceInGwei, gasAmount) {
-        let rawGasPrice = nativeTokenGasToRaw(chainID, gasPriceInGwei)
+    function calculateGasCost(chainID, gasPriceInGasUnit, gasAmount) {
+        let rawGasPrice = nativeTokenGasToRaw(chainID, gasPriceInGasUnit)
         rawGasPrice = StatusQUtils.AmountsArithmetic.times(rawGasPrice, StatusQUtils.AmountsArithmetic.fromNumber(gasAmount))
         return nativeTokenRawToDecimal(chainID, rawGasPrice)
     }
