@@ -1,0 +1,178 @@
+pipeline {
+    agent {
+        label 'linux && x86_64 && qt-builder'
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+        timestamps()
+        timeout(time: 12, unit: 'HOURS')
+    }
+
+    parameters {
+        string(
+            name: 'QT_VERSION',
+            defaultValue: '6.9.0',
+            description: 'Qt version to build'
+        )
+        string(
+            name: 'DOCKER_TAG',
+            defaultValue: '1.0.0-qt6.9.0-android',
+            description: 'Docker image tag for the final image'
+        )
+        booleanParam(
+            name: 'PUSH_TO_DOCKERHUB',
+            defaultValue: true,
+            description: 'Push the final image to DockerHub'
+        )
+        booleanParam(
+            name: 'BUILD_QT_FROM_SOURCE',
+            defaultValue: true,
+            description: 'Build Qt from source (takes several hours)'
+        )
+    }
+
+    environment {
+        DOCKER_REGISTRY = 'statusteam'
+        DOCKER_IMAGE_BASE = 'nim-status-client-build'
+        QT_BUILD_DIR = "${WORKSPACE}/ci/docker/qt-build"
+    }
+
+    stages {
+
+        stage('AppImage Builder') {
+            steps {
+                script {
+                    dir("${QT_BUILD_DIR}/appimage-builder") {
+                        sh "docker build -t ${DOCKER_REGISTRY}/appimage-builder:noble ."
+                    }
+                }
+            }
+        }
+
+        stage('Qt Dev Base') {
+            steps {
+                script {
+                    dir("${QT_BUILD_DIR}/base") {
+                        sh """
+                            docker build \
+                                --build-arg TARGETARCH=amd64 \
+                                --build-arg JAVA_VERSION=17 \
+                                --build-arg ANDROID_API_LEVEL=35 \
+                                --build-arg ANDROID_NDK_VERSION=27.2.12479018 \
+                                -t ${DOCKER_REGISTRY}/qt-dev-base:noble-17-35-27.2.12479018 .
+                        """
+                        // noble-17-35-27.2.12479018 = Ubuntu Noble (24.04) + Java 17 + Android API 35 + NDK 27.2.12479018
+                    }
+                }
+            }
+        }
+
+        stage('Qt Android') {
+            when {
+                expression { params.BUILD_QT_FROM_SOURCE == true }
+            }
+            agent {
+                docker {
+                    label 'linux && qt-builder'
+                    image "${DOCKER_REGISTRY}/qt-dev-base:noble-17-35-27.2.12479018"
+                    args "-u root -v ${WORKSPACE}/qt_export:/root/export -v ${WORKSPACE}/ci/docker/qt-build/scripts:/root/scripts"
+                }
+            }
+            steps {
+                script {
+                    sh """
+                        cd /root
+                        /root/scripts/build_qt_android.sh
+                    """
+                }
+            }
+        }
+
+        stage('Build Qt CI Image') {
+            steps {
+                script {
+                    dir("${QT_BUILD_DIR}/qt") {
+                        sh """
+                            cp -r ${WORKSPACE}/qt_export .
+                            docker build \
+                                --build-arg QTVER=${params.QT_VERSION} \
+                                -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG} .
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build Final Runtime Image') {
+            steps {
+                script {
+                    dir("${QT_BUILD_DIR}/nim-runtime") {
+                        sh """
+                            docker build \
+                                --build-arg GOLANG_VERSION=1.23.10 \
+                                --build-arg NIM_VERSION=2.0.12 \
+                                --build-arg NIX_VERSION=2.24.11 \
+                                -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci .
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Test Images') {
+            parallel {
+                stage('Test Qt Base Image') {
+                    steps { script {
+                        image.inside('--entrypoint=""') { c ->
+                            sh "qmake --version"
+                            sh "ls -la /opt/qt/${params.QT_VERSION}/"
+                        }
+                    } }
+                }
+
+                stage('Test Complete Image') {
+                    steps { script {
+                        image.inside('--entrypoint=""') { c ->
+                            sh "qmake --version"
+                            sh "nim --version"
+                            sh "go version"
+                            sh "ls -la /home/jenkins/openssl-output/arm64-v8a/lib/"
+                        }
+                    } }
+                }
+            }
+        }
+
+
+        stage('Push to DockerHub') {
+            when {
+                expression { params.PUSH_TO_DOCKERHUB == true }
+            }
+            steps {
+                script {
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'dockerhub-statusteam-bot',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_PASS'
+                        )
+                    ]) {
+                        sh """
+                            echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}
+                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}-ci
+                            docker logout
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always { cleanWs() }
+        success { script { github.notifyPR(true) } }
+        failure { script { github.notifyPR(false) } }
+    }
+}
