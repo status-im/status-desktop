@@ -7,7 +7,13 @@ def isPRBuild = utils.isPRBuild()
 def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
-  agent { label 'linux && x86_64 && nix-2.24' }
+  agent {
+    docker {
+      label 'linuxcontainer'
+      image 'nixos/nix:2.28.4'
+      args '-v /nix:/nix -e NIX_REMOTE=daemon'
+    }
+  }
 
   parameters {
     booleanParam(
