@@ -1,6 +1,5 @@
 import json
 import ./core, ./response_type
-from ./gen import rpc
 
 export response_type
 
