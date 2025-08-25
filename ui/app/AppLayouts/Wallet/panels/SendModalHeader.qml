@@ -153,8 +153,6 @@ RowLayout {
 
         Layout.alignment: Qt.AlignTop
 
-        control.popup.y: networkFilter.height
-
         flatNetworks: root.networksModel
 
         multiSelection: false

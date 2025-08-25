@@ -28,9 +28,6 @@ StatusComboBox {
     control.enabled: !d.oneItem
     control.padding: d.padding
     control.spacing: d.padding
-    control.popup.y: 0
-    control.popup.padding: 0
-    control.popup.verticalPadding: 0
     control.textRole: "name"
     control.currentIndex: 0
     control.indicator.visible: !d.oneItem
@@ -154,7 +151,7 @@ StatusComboBox {
                 ? d.infinitySymbol
                 : d.amountText(model.amount, model.multiplierIndex)
 
-        width: root.width
+        width: parent.width
         height: root.height
         horizontalPadding: d.padding
 

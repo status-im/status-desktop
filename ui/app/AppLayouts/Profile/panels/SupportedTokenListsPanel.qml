@@ -69,31 +69,32 @@ StatusListView {
             required property string version
             required property int tokensCount
 
-            readonly property TokenListPopup popup: TokenListPopup {
-                parent: root
-
-                sourceImage: delegate.image
-                sourceUrl: delegate.source
-                sourceVersion: delegate.version
-                updatedAt: delegate.updatedAt
-                tokensCount: delegate.tokensCount
-
-                title: delegate.name
-
-                tokensListModel: SortFilterProxyModel {
-                    sourceModel: root.tokensListModel
-
-                    // Filter by source
-                    filters: RegExpFilter {
-                        roleName: "sources"
-                        pattern: "\;" + keyFilter.value + "\;"
-                    }
-                }
-
-                onLinkClicked: (link) => Global.openLink(link)
-                onClosed: keyFilter.value = ""
-            }
             Component.onCompleted: popup.open()
         }
+    }
+
+    TokenListPopup {
+        id: popup
+
+        sourceImage: delegate.image
+        sourceUrl: delegate.source
+        sourceVersion: delegate.version
+        updatedAt: delegate.updatedAt
+        tokensCount: delegate.tokensCount
+
+        title: delegate.name
+
+        tokensListModel: SortFilterProxyModel {
+            sourceModel: root.tokensListModel
+
+            // Filter by source
+            filters: RegExpFilter {
+                roleName: "sources"
+                pattern: "\;" + keyFilter.value + "\;"
+            }
+        }
+
+        onLinkClicked: (link) => Global.openLink(link)
+        onClosed: keyFilter.value = ""
     }
 }
