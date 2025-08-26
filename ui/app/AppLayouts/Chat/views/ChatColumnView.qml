@@ -334,6 +334,22 @@ Item {
             Layout.margins: Theme.smallPadding
             Layout.preferredHeight: chatInputItem.height
 
+            Button {
+                text: "PNG"
+                onClicked: {
+                    const sampleBase64Image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAACXBIWXMAAAsTAAALEwEAmpwYAAACPklEQVR4nO2W18oiQRCF5/3fwIg5BwyIihcGzGJ21NF6llpOQQ+GhV3WX4fFuijG6Xi+UzXdWkTE3xSW1wIUmBSYFZgUmBWYFJgVmL4gLK8FKDApMCswKTArMCkwKzB9QVheC1BgUmBWYFJgVmD6EPD1en276Ff2sP51Yrvd5nA4zJvNRt4dx+FKpcKBQEDae73eS1CHw4Gj0SjX63W3bTabSZvf7+dcLse2bX8GeDqdyqaTyeTOgEgkIgYMh0P2+Xy8XC6fMgNjzPvt78dxmUyGs9msm83T6cTBYFD22e/30l8qld4PbNu2ZLDT6dy1w3mIMe+pVIobjcbdmNFoJELP57OIxhxTIbfRbDal73g8um39fl+AjUnj8VhMhRFvBS6Xy5JdQCOjg8FAsoA2/Dbj4H6xWHyaDxPS6bQAdbvdp/71eu2uD0CsASiYGYvF7sYBGM+3Adu2LZsguxCBJ8QhW38LjLEAgXhk+rG/VqtJ32634+12K8bAJE+AV6uVbGJKzRiwWCxEzG1JJ5PJp5I2ZYwDDX2mvG/HFAqFu3kwIJ/Pi5kfL2nHcdzvF7CtVotDoZBbco+HFgx6/IZvT2/Mf8wQ1o7H45Jd9GFNU1GeHFrz+VwEASiRSMi7MaNarb58LZl1AIfAtXS5XJ6uJZzguLreDkx/uPx/6o8H1nnHHtZPiPufwvJagAKTArMCkwKzApMCswLTF4TltQAFJgVmBSYFZgUmBWYFpi8Iy2sBCkwKzApMCswKTL8H/gVFqyCrEwqrrgAAAABJRU5ErkJggg=="
+                    chatInput.selectImageString(sampleBase64Image)
+                }
+            }
+
+            Button {
+                text: "JPEG"
+                onClicked: {
+                    const sampleBase64Image = "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAyADIDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAMEBQEH/8QAIxAAAwACAgICAgMAAAAAAAAAAAECAxEEIRIxBVETFSJBcf/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD3wAAAAAAAAAACC+VjjO8T8vKZ8qrxfjK79v0vROZ/M+OXK5HnTxzOmnUxrI05a06367Ascfl4c8XUU0o7rzTnS1tPv+iTLmx4sWTJVfxxrda70VuNw7xzmeXKqyZImPKZ0kkml0999s7j4MYeFfGwqXD9TlnyX+P7A7fyGCFH5PyQ6W9VDTlb1t/S39lsyf1NLG4nNKnJLjIlHSl1vU99e2jWAAAAAAAAAAAAAAAAAAAAAAAAA//Z"
+                    chatInput.selectImageString(sampleBase64Image)
+                }
+            }
+
             Item {
                 id: chatInputItem
                 Layout.fillWidth: true
