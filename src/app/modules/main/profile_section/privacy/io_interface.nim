@@ -56,9 +56,6 @@ method urlUnfurlingMode*(self: AccessInterface): int {.base.} =
 method setUrlUnfurlingMode*(self: AccessInterface, value: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method validatePassword*(self: AccessInterface, password: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getPasswordStrengthScore*(self: AccessInterface, password: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -331,26 +331,6 @@ proc loginAccount*(request: LoginAccountRequest): RpcResponse[JsonNode] =
     error "loginAccount failed", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc verifyAccountPassword*(address: string, hashedPassword: string):
-  RpcResponse[JsonNode] =
-  try:
-    let response = status_go.verifyAccountPassword(address, hashedPassword)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "verifyAccountPassword", exception=e.msg
-    raise newException(RpcException, e.msg)
-
-proc verifyDatabasePassword*(keyuid: string, hashedPassword: string):
-  RpcResponse[JsonNode] =
-  try:
-    let response = status_go.verifyDatabasePassword(keyuid, hashedPassword)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "verifyDatabasePassword", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int):
   RpcResponse[JsonNode] =
   let payload = %* [keyUID, imagePath, aX, aY, bX, bY]

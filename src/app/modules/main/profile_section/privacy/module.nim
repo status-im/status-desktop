@@ -94,9 +94,6 @@ method urlUnfurlingMode*(self: Module): int =
 method setUrlUnfurlingMode*(self: Module, value: int) =
   self.controller.setUrlUnfurlingMode(value)
 
-method validatePassword*(self: Module, password: string): bool =
-  self.controller.validatePassword(password)
-
 method getPasswordStrengthScore*(self: Module, password: string): int =
   return self.controller.getPasswordStrengthScore(password, singletonInstance.userProfile.getUsername())
 
