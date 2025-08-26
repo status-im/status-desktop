@@ -30,7 +30,7 @@ proc delete*(self: Controller) =
   discard
 
 proc buildAllTokens*(self: Controller, addresses: seq[string]) =
-  self.walletAccountService.buildAllTokens(addresses, store = true)
+  self.walletAccountService.buildAllTokens(addresses, forceRefresh = false)
 
 proc init*(self: Controller) =
   let walletAddresses = self.walletAccountService.getWalletAddresses()

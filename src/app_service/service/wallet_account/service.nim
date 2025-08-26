@@ -1,5 +1,5 @@
 import nimqml, tables, json, sequtils, sugar, chronicles, stew/shims/strformat, stint
-import net, strutils, os, times, algorithm, options
+import net, strutils, os, times, algorithm, options, sets
 import web3/eth_api_types
 
 import app/global/global_singleton
@@ -48,9 +48,11 @@ QtObject:
     groupedAccountsTokensTable: Table[string, GroupedTokenItem]
     groupedAccountsTokensList: seq[GroupedTokenItem]
     hasBalanceCache: bool
+    fetchingBalancesInProgress: bool
+    addressesWaitingForBalanceToFetch: seq[string]
 
   # Forward declaration
-  proc buildAllTokens*(self: Service, accounts: seq[string], store: bool)
+  proc buildAllTokens*(self: Service, accounts: seq[string], forceRefresh: bool)
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc updateAccountsPositions(self: Service)

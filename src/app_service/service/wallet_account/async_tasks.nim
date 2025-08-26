@@ -75,18 +75,16 @@ proc fetchDetailsForAddressTask*(argEncoded: string) {.gcsafe, nimcall.} =
 type
   BuildTokensTaskArg = ref object of QObjectTaskArg
     accounts: seq[string]
-    storeResult: bool
+    forceRefresh: bool
 
 proc prepareTokensTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
   var output = %*{
-    "result": "",
-    "storeResult": false
+    "result": ""
   }
   try:
-    let response = backend.fetchOrGetCachedWalletBalances(arg.accounts, false) # TODO: think should we need to use arg.storeResult or not and if yes, is it everywhere set proprely
+    let response = backend.fetchOrGetCachedWalletBalances(arg.accounts, arg.forceRefresh)
     output["result"] = response.result
-    output["storeResult"] = %* arg.storeResult
   except Exception as e:
     let err = fmt"Error getting wallet tokens"
   arg.finish(output)
