@@ -870,10 +870,6 @@ QtObject {
         return true
     }
 
-    function isBase64DataUrl(str) {
-        return /^data:.*;base64,/.test(str);
-    }
-
     function toBase64(buffer) {
         const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         const bufferView = new Uint8Array(buffer);
