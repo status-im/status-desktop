@@ -160,5 +160,11 @@ QtObject:
   proc isChatKey*(self: Utils, value: string): bool {.slot.} =
     result = (self.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
 
+  # Check if a string is a valid Base64 data URL
+  # This function is to be used in async tasks
   proc isBase64DataUrl*(str: string): bool =
     return str.match(re2"(?i)^data:[^,]*;base64,[A-Za-z0-9+/=]+$")
+
+  # This function is to be used in QML
+  proc isBase64DataUrl*(self: Utils, str: string): bool {.slot.} =
+    return isBase64DataUrl(str)
