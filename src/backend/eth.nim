@@ -4,9 +4,6 @@ from ./gen import rpc
 
 export response_type
 
-proc getAccounts*(): RpcResponse[JsonNode] =
-  return core.callPrivateRPC("eth_accounts")
-
 proc getBlockByNumber*(chainId: int, blockNumber: string, fullTransactionObject = false): RpcResponse[JsonNode] =
   let payload = %* [blockNumber, fullTransactionObject]
   return core.callPrivateRPCWithChainId("eth_getBlockByNumber", chainId, payload)

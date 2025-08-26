@@ -20,9 +20,6 @@ proc hashPassword*(password: string, lower: bool = true): string =
 
   return hashed
 
-proc hashedPasswordToUpperCase*(hashedPassword: string): string =
-  return "0x" & hashedPassword[2 .. ^1].toUpperAscii()
-
 proc prefix*(methodName: string): string =
   result = "wakuext_" & methodName
 

@@ -106,9 +106,6 @@ proc setUrlUnfurlingMode*(self: Controller, value: int) =
   if not self.settingsService.saveUrlUnfurlingMode(mode):
     error "failed to save url unfurling mode setting", value
 
-proc validatePassword*(self: Controller, password: string): bool =
-  return self.privacyService.validatePassword(password)
-
 proc getPasswordStrengthScore*(self: Controller, password, userName: string): int =
   return self.generalService.getPasswordStrengthScore(password, userName)
 

@@ -70,9 +70,6 @@ QtObject:
     write = setUrlUnfurlingMode
     notify = urlUnfurlingModeChanged
 
-  proc validatePassword*(self: View, password: string): bool {.slot.} =
-    self.delegate.validatePassword(password)
-
   proc getPasswordStrengthScore*(self: View, password: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password)
 
