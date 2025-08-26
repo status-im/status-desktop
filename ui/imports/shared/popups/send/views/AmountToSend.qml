@@ -186,7 +186,7 @@ Control {
                         SQUtils.AmountsArithmetic.times(
                             SQUtils.AmountsArithmetic.fromString(inputDelocalized),
                             multiplier),
-                        SQUtils.AmountsArithmetic.fromNumber(price)).toFixed()
+                        SQUtils.AmountsArithmetic.fromNumber(price)).toFixed(0)
         }
     }
 
