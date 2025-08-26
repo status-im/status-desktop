@@ -684,6 +684,11 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Controller, address: 
     return (0.0, true)
   return self.walletAccountService.getOrFetchBalanceForAddressInPreferredCurrency(address)
 
+proc buildAllTokens*(self: Controller, addresses: seq[string], forceRefresh: bool) =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  self.walletAccountService.buildAllTokens(addresses, forceRefresh)
+
 proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto, accountsComingFromKeycard: bool = false) =
   if not serviceApplicable(self.walletAccountService):
     return
