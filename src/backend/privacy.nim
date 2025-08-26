@@ -11,7 +11,12 @@ logScope:
 proc changeDatabasePassword*(keyUID: string, oldHashedPassword: string, newHashedPassword: string): RpcResponse[JsonNode]
   =
   try:
-    let response = status_go.changeDatabasePassword(keyUID, oldHashedPassword, newHashedPassword)
+    let request = %* {
+      "keyUID": keyUID,
+      "oldPassword": oldHashedPassword,
+      "newPassword": newHashedPassword,
+    }
+    let response = status_go.changeDatabasePasswordV2($request)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error", methodName = "changeDatabasePassword", exception=e.msg
