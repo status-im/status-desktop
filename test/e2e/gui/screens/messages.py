@@ -447,14 +447,18 @@ class ChatMessagesView(QObject):
         self.send_message()
 
     @allure.step('Send image to chat')
-    def send_image_to_chat(self, path):
-        self.choose_image(path)
+    def send_image_to_chat(self, path_or_base64):
+        self.choose_image(path_or_base64)
         self.send_message()
 
     @allure.step('Choose image')
-    def choose_image(self, path):
-        fileuri = pathlib.Path(str(path)).as_uri()
-        self._chat_input.object.selectImageString(fileuri)
+    def choose_image(self, path_or_base64):
+        # check if input is base64 or path
+        if isinstance(path_or_base64, str) and path_or_base64.startswith('data:image/'):
+            self._chat_input.object.selectImageString(path_or_base64)  # if base64, pass as is
+        else:
+            fileuri = pathlib.Path(str(path_or_base64)).as_uri()  # if path, convert to path uri
+            self._chat_input.object.selectImageString(fileuri)
 
     @allure.step('Confirm sending message')
     def send_message(self):
