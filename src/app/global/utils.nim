@@ -12,6 +12,9 @@ include ../../app_service/service/accounts/utils
 
 const URL_STATUS_OK* = "200 OK"
 
+proc isBase64DataUrl*(str: string): bool {.slot.} =
+  return str.match(re2"(?i)^data:[^,]*;base64,[A-Za-z0-9+/=]+$")
+
 QtObject:
   type Utils* = ref object of QObject
 
@@ -160,5 +163,5 @@ QtObject:
   proc isChatKey*(self: Utils, value: string): bool {.slot.} =
     result = (self.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
 
-  proc isBase64DataUrl*(str: string): bool =
-    return str.match(re2"(?i)^data:[^,]*;base64,[A-Za-z0-9+/=]+$")
+  proc isBase64DataUrl*(self: Utils, str: string): bool {.slot.} =
+    return isBase64DataUrl(str)

@@ -871,7 +871,7 @@ QtObject {
     }
 
     function isBase64DataUrl(str) {
-        return /^data:.*;base64,/.test(str);
+        return globalUtilsInst.isBase64DataUrl(str)
     }
 
     function toBase64(buffer) {
