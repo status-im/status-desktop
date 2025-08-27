@@ -59,6 +59,10 @@ QtObject:
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
 
+      # Track initial fetch state
+      waitingForInitialFetch: bool
+      initialFetchCompleted: bool
+
   proc setup(self: Controller) =
     self.QObject.setup
 
@@ -101,9 +105,6 @@ QtObject:
 
     let entries = self.backendToPresentation(res.activities)
 
-    echo "=== process response, activity entries:"
-    for entry in  entries:
-      echo "entry:", entry
 
     self.model.setEntries(entries, res.offset, res.hasMore)
 
@@ -308,6 +309,13 @@ QtObject:
         error "Error converting activity entries: ", code = e.msg
     )
 
+    self.eventsHandler.onInitialFetchComplete(proc (jsonObj: JsonNode) =
+      self.initialFetchCompleted = true
+      if self.waitingForInitialFetch:
+        self.waitingForInitialFetch = false
+        self.newFilterSession()
+    )
+
   proc newController*(currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       savedAddressService: saved_address_service.Service,
@@ -509,8 +517,16 @@ QtObject:
     self.setFilterAddresses(addresses)
     self.setFilterChains(chainIds, allChainsEnabled)
 
-    # Every change of chains and addresses have to start a new session to get incremental updates when filter is cleared
-    self.newFilterSession()
+    # Check if this is the first time (no existing session) and if initial fetch is done
+    if not self.eventsHandler.hasSessionId():
+      if self.initialFetchCompleted:
+        self.newFilterSession()
+      else:
+        self.waitingForInitialFetch = true
+        # Don't create session yet, wait for initial fetch complete event
+    else:
+      # Every change of chains and addresses have to start a new session to get incremental updates when filter is cleared
+      self.newFilterSession()
 
   proc noLimitTimestamp*(self: Controller): int {.slot.} =
     return backend_activity.noLimitTimestampForPeriod
