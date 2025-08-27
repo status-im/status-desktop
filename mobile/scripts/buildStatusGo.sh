@@ -29,6 +29,8 @@ cd "$STATUS_GO"
 
 if [[ "$OS" == "android" ]]; then
 	echo "Generating android SDS bindings"
+	export ANDROID_TARGET=28
+	export ANDROID_NDK_HOME="/opt/android-sdk/ndk/27.2.12479018/"
 	make generate-sds-android V=3 SHELL=/bin/sh
 fi
 
