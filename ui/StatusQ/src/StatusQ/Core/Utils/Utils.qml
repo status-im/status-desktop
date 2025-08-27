@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQuick
+import StatusQ.Core
 import StatusQ.Core.Theme
 import "./xss.js" as XSS
 
@@ -321,5 +322,18 @@ QtObject {
             set.add(~~(Math.random() * totalCount))
         }
         return [...set].sort((a, b) => a - b)
+    }
+
+    function formatAccessibleName(defaultName, testId) {
+        const content = (defaultName || "").toString().trim()
+        const tid = (testId || "").toString().trim()
+        
+        if (!TestConfig.testMode || tid.length === 0) {
+            return content
+        }
+        
+        const tidSuffix = " [tid:" + tid + "]"
+        
+        return content.length > 0 ? (content + tidSuffix) : tidSuffix
     }
 }
