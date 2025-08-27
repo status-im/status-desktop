@@ -18,6 +18,14 @@ on:
           - 'arm'
           - 'x86_64'
           - 'x86'
+      testmode:
+        description: 'Enable QML test hooks (passed to CMake STATUSQ_TESTMODE) for Appium builds'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 jobs:
   android-build:
@@ -44,6 +52,7 @@ jobs:
           echo "ARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=${{ steps.qt-paths.outputs.qt-android-path }}/lib/pkgconfig" >> $GITHUB_ENV
           echo "USE_SYSTEM_NIM=1" >> $GITHUB_ENV
+          echo "TESTMODE=${{ inputs.testmode }}" >> $GITHUB_ENV
           echo "${{ steps.qt-paths.outputs.qt-android-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/libexec:${{ steps.qt-paths.outputs.qt-android-path }}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
@@ -81,4 +90,3 @@ jobs:
         with:
           name: Status-tablet
           path: mobile/bin/android/qt6/Status-tablet.apk
-
