@@ -158,12 +158,6 @@ QtObject:
   QtProperty[QVariant] tmpActivityController1:
     read = getTmpActivityController1
 
-  proc getLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
-    return self.delegate.getLatestBlockNumber(chainId)
-
-  proc getEstimatedLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
-    return self.delegate.getEstimatedLatestBlockNumber(chainId)
-
   proc fetchDecodedTxData*(self: View, txHash: string, data: string) {.slot.}   =
     self.delegate.fetchDecodedTxData(txHash, data)
 

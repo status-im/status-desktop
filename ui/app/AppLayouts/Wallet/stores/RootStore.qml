@@ -199,16 +199,6 @@ QtObject {
         return walletSection.canProfileProveOwnershipOfProvidedAddresses(JSON.stringify(addresses))
     }
 
-    function getLatestBlockNumber(chainId) {
-        // NOTE returns hex
-        return walletSection.getLatestBlockNumber(chainId)
-    }
-
-    function getEstimatedLatestBlockNumber(chainId) {
-        // NOTE returns decimal
-        return walletSection.getEstimatedLatestBlockNumber(chainId)
-    }
-
     function setFilterAddress(address) {
         walletSection.setFilterAddress(address)
     }

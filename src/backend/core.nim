@@ -2,11 +2,17 @@ import json, stew/shims/strformat, chronicles
 import status_go
 import response_type
 import json_serialization
+import std/atomics
 
 export response_type
 
 logScope:
   topics = "rpc"
+
+var requestId*: Atomic[int]
+
+proc nextRequestId(): int =
+  return requestId.fetchAdd(1)
 
 ## we guard majority db calls which may occure during Profile KeyPair migration
 ## (if there is a need we can guard other non rpc calls as well in the same way)
@@ -55,6 +61,7 @@ proc callPrivateRPCWithChainId*(
 ): RpcResponse[JsonNode] {.raises: [RpcException].} =
   let inputJSON = %* {
     "jsonrpc": "2.0",
+    "id": nextRequestId(),
     "method": methodName,
     "chainId": chainId,
     "params": %payload
@@ -66,6 +73,7 @@ proc callPrivateRPC*(
 ): RpcResponse[JsonNode] {.raises: [RpcException].} =
   let inputJSON = %* {
     "jsonrpc": "2.0",
+    "id": nextRequestId(),
     "method": methodName,
     "params": %payload
   }
@@ -76,6 +84,7 @@ proc callPrivateRPCNoDecode*(
 ): string {.raises: [RpcException].} =
   let inputJSON = %* {
     "jsonrpc": "2.0",
+    "id": nextRequestId(),
     "method": methodName,
     "params": %payload
   }
