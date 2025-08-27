@@ -26,6 +26,12 @@ fi
 echo "Building status-go for $ARCH using compiler: $CC"
 
 cd "$STATUS_GO"
+
+if [[ "$OS" == "android" ]]; then
+	echo "Generating android SDS bindings"
+	make generate-sds-android V=3 SHELL=/bin/sh
+fi
+
 make generate V=3 SHELL=/bin/sh
 
 mkdir -p build/bin/statusgo-lib
