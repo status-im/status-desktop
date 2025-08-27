@@ -43,6 +43,9 @@ import StatusQ.Core.Utils
 Item {
     id: root
 
+    Accessible.role: Accessible.TextField
+    Accessible.name: Utils.formatAccessibleName(placeholderText, objectName)
+
     /*!
         \qmlproperty bool StatusBaseInput::multiline
         This property indicates whether the StatusBaseInput allows multiline text. Default value is false.
