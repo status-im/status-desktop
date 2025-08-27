@@ -312,8 +312,13 @@ class CreateChatView(QObject):
 
     @allure.step('Select contact in the list')
     def select_contact(self, contact: str):
-        assert driver.waitFor(
-            lambda: contact in self.contact_names), f'Contact: {contact} was not found in {self.contact_names}'
+        try:
+            driver.waitFor(
+                lambda: contact in self.contact_names,
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+            )
+        except Exception:
+            raise LookupError(f'Contact: {contact} was not found in {self.contact_names}')
         self._create_chat_contacts_list.select(contact, 'userName')
 
     @allure.step('Create chat by adding contacts from contact list')
