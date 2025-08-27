@@ -3,6 +3,7 @@ import QtQuick
 import StatusQ.Components
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 /*!
     \qmltype SettingsList
@@ -38,6 +39,7 @@ StatusListView {
 
         width: ListView.view.availableWidth
         title: model.text
+        Accessible.name: Utils.formatAccessibleName(title, objectName)
         asset.name: model.icon
         selected: root.currenctSubsection === model.subsection
         badge.value: model.badgeCount
