@@ -105,8 +105,7 @@ QtObject:
       var data = WalletSignal(e)
       case data.eventType:
         of "wallet-market-status-changed":
-          if self.nodeService.isConnected():
-            self.updateSimpleStatus(MARKET, getIsDown(data.message), data.at)
+          self.updateSimpleStatus(MARKET, getIsDown(data.message), data.at)
         of "wallet-collectible-status-changed":
           if self.nodeService.isConnected():
             let website = COLLECTIBLES

@@ -934,6 +934,7 @@ Item {
         sharedRootStore: appMain.sharedRootStore
         currencyStore: appMain.currencyStore
         networksStore: appMain.networksStore
+        networkConnectionStore: appMain.networkConnectionStore
         walletRootStore: WalletStores.RootStore
         walletAssetsStore: appMain.walletAssetsStore
         transactionStore: appMain.transactionStore
