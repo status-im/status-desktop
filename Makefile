@@ -908,7 +908,7 @@ mobile-run: deps-common
 
 mobile-build: | deps-common
 	echo -e "\033[92mBuilding:\033[39m mobile app"
-	$(MAKE) -C mobile
+	$(MAKE) -C mobile V=3
 
 mobile-clean:
 	echo -e "\033[92mCleaning:\033[39m mobile app"
