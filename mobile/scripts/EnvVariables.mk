@@ -93,6 +93,8 @@ else
     export LIB_EXT := .so
 endif
 
+export GOOS=$(shell go env GOHOSTOS)
+export GOARCH=$(shell go env GOHOSTARCH)
 
 # Verify tools are installed
 QMAKE := $(shell which qmake)
