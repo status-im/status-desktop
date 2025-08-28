@@ -1,7 +1,7 @@
 #include "StatusQ/systemutilsinternal.h"
 
-#include <QCoreApplication>
 #include <QDir>
+#include <QGuiApplication>
 #include <QMimeDatabase>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -127,4 +127,14 @@ void SystemUtilsInternal::androidMinimizeToBackground()
         activity.callMethod<jboolean>("moveTaskToBack", "(Z)Z", jboolean(true));
     }
 #endif
+}
+
+Qt::KeyboardModifiers SystemUtilsInternal::queryKeyboardModifiers()
+{
+    return QGuiApplication::queryKeyboardModifiers();
+}
+
+Qt::MouseButtons SystemUtilsInternal::mouseButtons()
+{
+    return QGuiApplication::mouseButtons();
 }
