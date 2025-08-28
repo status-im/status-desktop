@@ -15,9 +15,34 @@
 
 #include "ios_utils.h"
 
+class QuitFilter : public QObject
+{
+    Q_OBJECT
+
+public:
+    using QObject::QObject;
+
+    bool eventFilter(QObject* obj, QEvent* ev)
+    {
+        if (ev->type() == QEvent::Quit)
+            emit quit(ev->spontaneous());
+
+        return false;
+    }
+
+signals:
+    void quit(bool spontaneous);
+};
+
 SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
     : QObject{parent}
-{}
+{
+    auto app = QCoreApplication::instance();
+    auto filter = new QuitFilter(this);
+    app->installEventFilter(filter);
+
+    QObject::connect(filter, &QuitFilter::quit, this, &SystemUtilsInternal::quit);
+}
 
 QString SystemUtilsInternal::qtRuntimeVersion() const {
     return qVersion();
@@ -138,3 +163,5 @@ Qt::MouseButtons SystemUtilsInternal::mouseButtons()
 {
     return QGuiApplication::mouseButtons();
 }
+
+#include "systemutilsinternal.moc"
