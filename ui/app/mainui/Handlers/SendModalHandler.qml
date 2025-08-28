@@ -30,6 +30,7 @@ QtObject {
     required property WalletStores.CollectiblesStore walletCollectiblesStore
     required property WalletStores.TransactionStoreNew transactionStoreNew
     required property SharedStores.NetworksStore networksStore
+    required property SharedStores.NetworkConnectionStore networkConnectionStore
 
     /** for ens flows **/
     required property string myPublicKey
@@ -579,10 +580,12 @@ QtObject {
                 signal refreshTxSettings()
 
                 readonly property bool marketDataNotAvailable: {
+                    if (root.networkConnectionStore.networkConnectionModuleInst.marketValuesNetworkConnection.completelyDown)
+                        return true
                     const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
                     const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
-		            const price = nativeToken?.marketDetails?.currencyPrice
-		            return !!price && (price.amount == null || price.amount === 0)
+                    const price = nativeToken?.marketDetails?.currencyPrice
+                    return !!price && (price.amount == null || price.amount === 0)
                 }
 
                 readonly property string extraParamsJson: {
