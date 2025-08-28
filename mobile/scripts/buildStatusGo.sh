@@ -32,9 +32,9 @@ if [[ "$OS" == "android" ]]; then
 	export ANDROID_TARGET=28
 	export ANDROID_NDK_HOME="/opt/android-sdk/ndk/27.2.12479018/"
 	make generate-sds-android V=3 SHELL=/bin/sh
-else
-	make generate V=3 SHELL=/bin/sh
 fi
+
+make generate V=3 SHELL=/bin/sh
 
 mkdir -p build/bin/statusgo-lib
 GOOS=$(shell go env GOHOSTOS) GOARCH=$(shell go env GOHOSTARCH) \
