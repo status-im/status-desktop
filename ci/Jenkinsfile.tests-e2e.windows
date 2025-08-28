@@ -117,8 +117,11 @@ pipeline {
 
     stage('Deps') {
       steps { script { dir('test/e2e') {
-        sh "python310 -m venv ${VIRTUAL_ENV}"
-        sh 'pip3 install -r requirements.txt'
+          bat """
+            python310 -m venv ${VIRTUAL_ENV}
+            ${VIRTUAL_ENV}\\Scripts\\python.exe -m pip install --upgrade pip
+            ${VIRTUAL_ENV}\\Scripts\\python.exe -m pip install -r requirements.txt
+          """
       } } }
     }
 
