@@ -77,6 +77,7 @@ ifeq ($(OS), ios)
     export LIBRARY_PATH:=${SDKROOT}/usr/lib:${LIBRARY_PATH}
     export LIB_EXT := .a
 else
+    export GOOS=android
     export ANDROID_API
     export AR=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-ar
     export AS=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}-x86_64/bin/llvm-as
@@ -85,6 +86,7 @@ else
 
     ifeq ($(ARCH), arm64)
         export ANDROID_ABI=arm64-v8a
+        export GOARCH=arm64
     else ifeq ($(ARCH), arm)
         export ANDROID_ABI=armeabi-v7a
     else
