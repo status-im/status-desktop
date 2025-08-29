@@ -22,7 +22,7 @@ QMLPATHS += $$QML_IMPORT_PATH
 LIB_PREFIX = qt$$QT_MAJOR_VERSION/$$(APP_VARIANT)
 
 android {
-    message("cofiguring for android $${QT_ARCH}, $$(ANDROID_ABI)")
+    message("configuring for android $${QT_ARCH}, $$(ANDROID_ABI)")
     
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/qt$$QT_MAJOR_VERSION
 
