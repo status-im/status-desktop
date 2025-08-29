@@ -32,7 +32,6 @@
        \li \l{StatusSelect}
        \li \l{StatusBaseInput}
        \li \l{StatusIconTextButton}
-       \li \l{StatusIdenticonRing}
        \li \l{StatusInput}
        \li \l{StatusImageSelector}
        \li \l{StatusItemPicker}

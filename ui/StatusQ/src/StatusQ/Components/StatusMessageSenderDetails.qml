@@ -19,7 +19,6 @@ QtObject {
 
     property StatusProfileImageSettings profileImage: StatusProfileImageSettings {
         pubkey: root.id
-        showRing: !root.isEnsVerified
         width: 40
         height: 40
     }

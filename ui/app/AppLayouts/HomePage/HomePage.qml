@@ -191,7 +191,6 @@ Control {
             isEnsVerified: !!root.profileStore.preferredName
             iconSource: root.profileStore.icon
             colorId: root.profileStore.colorId
-            colorHash: root.profileStore.colorHash
             currentUserStatus: root.profileStore.currentUserStatus
             usesDefaultName: root.profileStore.usesDefaultName
 

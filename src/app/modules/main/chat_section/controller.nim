@@ -716,9 +716,6 @@ proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], commun
 proc getMessagesParsedPlainText*(self: Controller, message: MessageDto, communityChats: seq[ChatDto]): string =
   return self.messageService.getMessagesParsedPlainText(message, communityChats)
 
-proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
-  procs_from_visual_identity_service.colorHashOf(pubkey)
-
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
 

@@ -31,7 +31,7 @@ OnboardingPage {
     required property int keycardRemainingPinAttempts
     required property int keycardRemainingPukAttempts
 
-    // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, colorHash:var, order:int, keycardCreatedAccount:bool}]
+    // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, order:int, keycardCreatedAccount:bool}]
     required property var loginAccountsModel
 
     // allows to set if currently selected account can be logged in using biometrics

@@ -1,6 +1,5 @@
-import json, stew/shims/strformat, sequtils, sugar
+import json, stew/shims/strformat
 import base_item
-import ../../../shared_models/[color_hash_item, color_hash_model]
 
 export base_item
 
@@ -9,7 +8,6 @@ type
     isUserIcon: bool
     isImage: bool
     colorId: int
-    colorHash: color_hash_model.Model
     position: int
     lastMessageTimestamp: int
 
@@ -24,7 +22,6 @@ proc initSubItem*(
     position: int,
     lastMessageTimestamp: int,
     colorId: int = 0,
-    colorHash: seq[ColorHashSegment] = @[]
   ): SubItem =
   result = SubItem()
   result.setup(value, text, image, icon, iconColor)
@@ -33,8 +30,6 @@ proc initSubItem*(
   result.position = position
   result.lastMessageTimestamp = lastMessageTimestamp
   result.colorId = colorId
-  result.colorHash = color_hash_model.newModel()
-  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
 
 proc `$`*(self: SubItem): string =
   result = fmt"""SearchMenuSubItem(
@@ -61,7 +56,6 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "isUserIcon": self.isUserIcon,
     "isImage": self.isImage,
     "colorId": self.colorId,
-    "colorHash": self.colorHash.toJson()
   }
 
 proc position*(self: SubItem): int =
@@ -78,6 +72,3 @@ proc isImage*(self: SubItem): bool =
 
 proc colorId*(self: SubItem): int =
   return self.colorId
-
-proc colorHash*(self: SubItem): color_hash_model.Model =
-  return self.colorHash

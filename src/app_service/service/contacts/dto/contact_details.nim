@@ -11,5 +11,4 @@ type
     icon*: string
     isCurrentUser*: bool
     colorId*: int
-    colorHash*: string
     dto*: ContactsDto

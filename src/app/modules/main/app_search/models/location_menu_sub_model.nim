@@ -14,7 +14,6 @@ type
     Position
     LastMessageTimestamp
     ColorId
-    ColorHash
 
 QtObject:
   type
@@ -61,7 +60,6 @@ QtObject:
       SubModelRole.Position.int:"position",
       SubModelRole.LastMessageTimestamp.int:"lastMessageTimestamp",
       SubModelRole.ColorId.int:"colorId",
-      SubModelRole.ColorHash.int:"colorHash"
     }.toTable
 
   method data(self: SubModel, index: QModelIndex, role: int): QVariant =
@@ -95,8 +93,6 @@ QtObject:
       result = newQVariant(item.lastMessageTimestamp)
     of SubModelRole.ColorId:
       result = newQVariant(item.colorId)
-    of SubModelRole.ColorHash:
-      result = newQVariant(item.colorHash)
 
   proc setItems*(self: SubModel, items: seq[SubItem]) =
     self.beginResetModel()

@@ -172,7 +172,6 @@ Item {
                                        "isVerified": entry.isVerified,
                                        "isUntrustworthy": entry.isUntrustworthy,
                                        "isContact": entry.isContact,
-                                       "ringSpecModel": entry.ringSpecModel,
                                        "icon": entry.icon,
                                        "isImage": entry.isImage,
                                        "onlineStatus": entry.onlineStatus,
@@ -412,7 +411,6 @@ Item {
                 icon.name: model.icon
                 icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.pubKey)]
                 status: model.onlineStatus
-                colorHash: model.colorHash
                 color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
                 onClicked: {
                     root.insertTag(model.displayName, model.pubKey, model.isAdmin, model.isAdmin ? "crown" : "");

@@ -70,10 +70,6 @@ StatusDialog {
                         interactive: false
                         imageWidth: 78
                         imageHeight: 78
-
-                        // show a hardcoded white ring
-                        showRing: true
-                        colorHash: JSON.stringify([{colorId: 4, segmentLength: 32}])
                     }
 
                     StatusMouseArea {

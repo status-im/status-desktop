@@ -19,7 +19,6 @@ type
     BadgeIsLetterIdenticon
     IsUserIcon
     ColorId
-    ColorHash
 
 QtObject:
   type
@@ -69,7 +68,6 @@ QtObject:
       ModelRole.BadgeIsLetterIdenticon.int:"badgeIsLetterIdenticon",
       ModelRole.IsUserIcon.int:"isUserIcon",
       ModelRole.ColorId.int:"colorId",
-      ModelRole.ColorHash.int:"colorHash"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -113,8 +111,6 @@ QtObject:
       result = newQVariant(item.isUserIcon)
     of ModelRole.ColorId:
       result = newQVariant(item.colorId)
-    of ModelRole.ColorHash:
-      result = newQVariant(item.colorHash)
 
   proc add*(self: Model, item: Item) =
     let modelIndex = newQModelIndex()

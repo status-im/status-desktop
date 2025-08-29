@@ -72,8 +72,7 @@ Item {
                                             iconName,
                                             iconColor,
                                             isUserIcon,
-                                            colorId,
-                                            colorHash)
+                                            colorId)
         }
     }
 
@@ -139,8 +138,7 @@ Item {
                                                    obj.subLocation.iconName,
                                                    obj.subLocation.identiconColor,
                                                    obj.subLocation.isUserIcon,
-                                                   obj.subLocation.colorId,
-                                                   obj.subLocation.colorHash)
+                                                   obj.subLocation.colorId)
 
                     root.store.setSearchLocation(obj.location.value, obj.subLocation.value)
                 } else {

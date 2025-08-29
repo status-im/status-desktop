@@ -19,7 +19,6 @@ Item {
     property string userDisplayName
     property bool usesDefaultName
     property int userColorId
-    property var userColorHash
     property string userPublicKey
     property string userImage
     property string installationId
@@ -51,7 +50,6 @@ Item {
             name: root.userDisplayName
             usesDefaultName: root.usesDefaultName
             userColor: Utils.colorForColorId(root.userColorId)
-            colorHash: root.userColorHash
             image: root.userImage
             interactive: false
             imageWidth: 80

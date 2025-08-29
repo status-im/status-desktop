@@ -23,7 +23,6 @@ type
     UsesDefaultName
     SenderOptionalName
     SenderIcon
-    SenderColorHash
     AmISender
     SenderIsAdded
     Seen
@@ -49,7 +48,6 @@ type
     DeletedBy
     DeletedByContactDisplayName
     DeletedByContactIcon
-    DeletedByContactColorHash
     Links
     LinkPreviewModel
     EmojiReactionsModel
@@ -70,7 +68,6 @@ type
     QuotedMessageAuthorThumbnailImage
     QuotedMessageAuthorEnsVerified
     QuotedMessageAuthorIsContact
-    QuotedMessageAuthorColorHash
     QuotedMessageAlbumMessageImages
     QuotedMessageAlbumImagesCount
     AlbumMessageImages
@@ -133,7 +130,6 @@ QtObject:
       ModelRole.UsesDefaultName.int:"usesDefaultName",
       ModelRole.SenderOptionalName.int:"senderOptionalName",
       ModelRole.SenderIcon.int:"senderIcon",
-      ModelRole.SenderColorHash.int:"senderColorHash",
       ModelRole.AmISender.int:"amISender",
       ModelRole.SenderIsAdded.int:"senderIsAdded",
       ModelRole.Seen.int:"seen",
@@ -160,7 +156,6 @@ QtObject:
       ModelRole.DeletedBy.int: "deletedBy",
       ModelRole.DeletedByContactDisplayName.int: "deletedByContactDisplayName",
       ModelRole.DeletedByContactIcon.int: "deletedByContactIcon",
-      ModelRole.DeletedByContactColorHash.int: "deletedByContactColorHash",
       ModelRole.Links.int: "links",
       ModelRole.LinkPreviewModel.int: "linkPreviewModel",
       ModelRole.EmojiReactionsModel.int: "emojiReactionsModel",
@@ -179,7 +174,6 @@ QtObject:
       ModelRole.QuotedMessageAuthorThumbnailImage.int: "quotedMessageAuthorThumbnailImage",
       ModelRole.QuotedMessageAuthorEnsVerified.int: "quotedMessageAuthorEnsVerified",
       ModelRole.QuotedMessageAuthorIsContact.int: "quotedMessageAuthorIsContact",
-      ModelRole.QuotedMessageAuthorColorHash.int: "quotedMessageAuthorColorHash",
       ModelRole.QuotedMessageAlbumMessageImages.int: "quotedMessageAlbumMessageImages",
       ModelRole.QuotedMessageAlbumImagesCount.int: "quotedMessageAlbumImagesCount",
       ModelRole.AlbumMessageImages.int: "albumMessageImages",
@@ -254,8 +248,6 @@ QtObject:
       result = newQVariant(item.senderOptionalName)
     of ModelRole.SenderIcon:
       result = newQVariant(item.senderIcon)
-    of ModelRole.SenderColorHash:
-      result = newQVariant(item.senderColorHash)
     of ModelRole.AmISender:
       result = newQVariant(item.amISender)
     of ModelRole.SenderIsAdded:
@@ -288,8 +280,6 @@ QtObject:
       result = newQVariant(item.quotedMessageAuthorDetails.dto.ensVerified)
     of ModelRole.QuotedMessageAuthorIsContact:
       result = newQVariant(item.quotedMessageAuthorDetails.dto.isContact())
-    of ModelRole.QuotedMessageAuthorColorHash:
-      result = newQVariant(item.quotedMessageAuthorDetails.colorHash)
     of ModelRole.QuotedMessageAlbumMessageImages:
       result = newQVariant(item.quotedMessageAlbumMessageImages.join(" "))
     of ModelRole.QuotedMessageAlbumImagesCount:
@@ -334,8 +324,6 @@ QtObject:
       result = newQVariant(item.deletedByContactDetails.dto.userDefaultDisplayName())
     of ModelRole.DeletedByContactIcon:
       result = newQVariant(item.deletedByContactDetails.dto.image.thumbnail)
-    of ModelRole.DeletedByContactColorHash:
-      result = newQVariant(item.deletedByContactDetails.colorHash)
     of ModelRole.Links:
       result = newQVariant(item.links.join(" "))
     of ModelRole.LinkPreviewModel:
@@ -534,7 +522,6 @@ QtObject:
       ModelRole.DeletedBy.int,
       ModelRole.DeletedByContactDisplayName.int,
       ModelRole.DeletedByContactIcon.int,
-      ModelRole.DeletedByContactColorHash.int,
     ])
 
     self.updateMessagesWhenQuotedMessageDeleted(messageId)
@@ -647,7 +634,6 @@ QtObject:
           ModelRole.SenderOptionalName.int,
           ModelRole.UsesDefaultName.int,
           ModelRole.SenderIcon.int,
-          ModelRole.SenderColorHash.int,
           ModelRole.SenderIsAdded.int,
           ModelRole.SenderTrustStatus.int,
           ModelRole.SenderEnsVerified.int]
@@ -661,8 +647,7 @@ QtObject:
           ModelRole.QuotedMessageAuthorDisplayName.int,
           ModelRole.QuotedMessageAuthorThumbnailImage.int,
           ModelRole.QuotedMessageAuthorEnsVerified.int,
-          ModelRole.QuotedMessageAuthorIsContact.int,
-          ModelRole.QuotedMessageAuthorColorHash.int])
+          ModelRole.QuotedMessageAuthorIsContact.int])
 
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)
@@ -907,7 +892,6 @@ QtObject:
       sender.optionalName,
       senderUsesDefaultName = resolveUsesDefaultName(sender.dto.localNickname, sender.dto.name, sender.dto.displayName),
       sender.icon,
-      sender.colorHash,
       (isCurrentUser and message.contentType != ContentType.DiscordMessage),
       sender.dto.added,
       message.outgoingStatus,

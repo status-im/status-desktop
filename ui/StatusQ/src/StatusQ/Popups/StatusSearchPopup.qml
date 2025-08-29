@@ -42,8 +42,7 @@ StatusModal {
                                 iconName = "",
                                 iconColor = "",
                                 isUserIcon = false,
-                                colorId = 0,
-                                colorHash = "") {
+                                colorId = 0) {
         searchSelectionButton.primaryText = text
         searchSelectionButton.secondaryText = secondaryText
         searchSelectionButton.asset.imgIsIdenticon = isIdenticon
@@ -52,7 +51,6 @@ StatusModal {
         searchSelectionButton.asset.color = isUserIcon ? Theme.palette.userCustomizationColors[colorId] : iconColor
         searchSelectionButton.asset.isLetterIdenticon = !iconName && !imageSource
         searchSelectionButton.asset.charactersLen = isUserIcon ? 2 : 1
-        searchSelectionButton.ringSettings.ringSpecModel = !!colorHash ? JSON.parse(colorHash) : {}
     }
 
     function resetSearchSelection() {
@@ -138,8 +136,6 @@ StatusModal {
                         letterSize: charactersLen > 1 ? 8 : 11
                         imgIsIdenticon: false
                     }
-
-                    property alias ringSettings: identicon.ringSettings
 
                     anchors.left: parent.left
                     anchors.leftMargin: 16
@@ -290,7 +286,6 @@ StatusModal {
                         badge.asset.name: model.badgeImage
                         badge.asset.isLetterIdenticon: model.badgeIsLetterIdenticon
                         badge.asset.color: model.badgeIconColor
-                        ringSettings.ringSpecModel: model.colorHash
 
                         onClicked: {
                             root.resultItemClicked(itemId)

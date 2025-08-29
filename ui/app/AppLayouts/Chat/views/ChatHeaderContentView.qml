@@ -297,8 +297,6 @@ Item {
             asset.name: assetName
             asset.isImage: chatContentModule && chatContentModule.chatDetails.icon !== ""
             asset.isLetterIdenticon: chatContentModule && chatContentModule.chatDetails.icon === ""
-            ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
-                                            Utils.getColorHashAsJson(chatContentModule.chatDetails.id) : ""
             asset.color: chatContentModule?
                             chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
                                 Utils.colorForPubkey(chatContentModule.chatDetails.id)

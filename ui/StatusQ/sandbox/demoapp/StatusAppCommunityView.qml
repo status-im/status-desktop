@@ -127,8 +127,7 @@ StatusSectionLayout {
                                                iconName,
                                                iconColor,
                                                isUserIcon,
-                                               colorId,
-                                               colorHash)
+                                               colorId)
             }
         }
     }

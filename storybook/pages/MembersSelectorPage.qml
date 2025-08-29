@@ -20,11 +20,6 @@ SplitView {
     property bool mainModuleReady: false
 
     QtObject {
-        function getColorHashAsJson(publicKey) {
-            return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                   {colorId: 19, segmentLength: 2}])
-        }
-
         function getColorId(publicKey) {
             return Math.floor(Math.random() * 10)
         }

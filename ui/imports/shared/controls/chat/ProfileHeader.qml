@@ -34,7 +34,6 @@ Item {
     property bool isCurrentUser
     property bool userIsEnsVerified
     property rect cropRect
-    property var colorHash: []
     property int colorId
 
     property int imageSize: ProfileHeader.ImageSize.Compact
@@ -122,7 +121,6 @@ Item {
                 objectName: "ProfileHeader_userImage"
                 name: root.displayName
                 usesDefaultName: root.usesDefaultName
-                colorHash: root.colorHash
                 userColor: Utils.colorForColorId(root.colorId)
                 image: root.previewIcon
                 interactive: false

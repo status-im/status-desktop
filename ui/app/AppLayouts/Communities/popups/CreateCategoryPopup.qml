@@ -141,7 +141,6 @@ StatusModal {
                             asset.imgIsIdenticon: false
                             asset.name: model.icon
                             asset.isImage: !!model.icon
-                            ringSettings.ringSpecModel: model.colorHash
                             asset.isLetterIdenticon: true
                             asset.bgColor: model.color
                             onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked

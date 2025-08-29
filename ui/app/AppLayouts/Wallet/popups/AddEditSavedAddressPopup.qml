@@ -309,8 +309,7 @@ StatusModal {
                                             icon: contact.icon,
                                             emoji: "",
                                             color: Utils.colorForColorId(contact.colorId),
-                                            onlineStatus: contact.onlineStatus,
-                                            colorHash: contact.colorHash
+                                            onlineStatus: contact.onlineStatus
                                         })
 
                 }
@@ -533,7 +532,6 @@ StatusModal {
                                                             Theme.palette.successColor1
                                                           : Theme.palette.baseColor1
                         statusListItemIcon.hoverEnabled: false
-                        ringSettings.ringSpecModel: model.type === AddEditSavedAddressPopup.CardType.Contact? model.colorHash : ""
 
                         asset {
                             width: 40

@@ -73,13 +73,6 @@ MenuItem {
                                                              ? root.action.fontSettings
                                                              : d.defaultFontSettings
 
-        readonly property StatusIdenticonRingSettings ringSettings: d.isStatusSubMenu
-                                                                    ? root.subMenu.ringSettings
-                                                                    : d.isStatusAction
-                                                                      ? root.action.ringSettings
-                                                                      : d.defaultRingSettings
-
-
         readonly property StatusAssetSettings defaultAssetSettings: StatusAssetSettings {
             width: 18
             height: 18
@@ -99,11 +92,6 @@ MenuItem {
             bold: false
             italic: false
         }
-
-        readonly property StatusIdenticonRingSettings defaultRingSettings: StatusIdenticonRingSettings {
-            ringPxSize: d.assetSettings.ringPxSize
-            distinctiveColors: Theme.palette.identiconRingColors
-        }
     }
 
     indicator: Item {
@@ -121,7 +109,6 @@ MenuItem {
             active: parent.visible
             name: root.text
             asset: d.assetSettings
-            ringSettings: d.ringSettings
         }
     }
 

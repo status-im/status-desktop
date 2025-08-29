@@ -37,7 +37,6 @@ Column {
             isImage: true
             charactersLen: root.chatType === Constants.chatType.oneToOne ? 2 : 1
         }
-        ringSettings.ringSpecModel: root.chatType === Constants.chatType.oneToOne ? Utils.getColorHashAsJson(root.chatId) : undefined
     }
 
     StyledText {
