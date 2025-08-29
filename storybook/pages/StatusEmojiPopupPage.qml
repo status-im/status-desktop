@@ -49,7 +49,6 @@ SplitView {
             height: 440
             visible: true
             modal: false
-            anchors.centerIn: parent
             settings: settings
             emojiModel: StatusQUtils.Emoji.emojiModel
             onEmojiSelected: (emoji) => d.lastSelectedEmoji = emoji
