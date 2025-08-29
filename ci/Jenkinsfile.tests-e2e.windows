@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.9.16'
 pipeline {
 
   agent {
-    label 'windows && x86_64 && qt-6.9.0 && go-1.23 && windows-04'
+    label 'windows-t && windows-04'
   }
 
   parameters {
@@ -63,9 +63,8 @@ pipeline {
   environment {
     PLATFORM = 'tests/e2e'
 
-    SQUISH_DIR = 'C:/squish-runner-9.0.1-qt-6.9'
-    PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
-    LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
+    SQUISH_DIR = 'C:\\squish-runner-9.0.1-qt-6.9'
+    PYTHONPATH = "${SQUISH_DIR}\\lib;${SQUISH_DIR}\\bin;${SQUISH_DIR}\\lib\\python;${PYTHONPATH}"
 
     /* To stop e2e tests using port 8545 */
     STATUS_RUNTIME_HTTP_API = 'False'
@@ -119,8 +118,8 @@ pipeline {
       steps { script { dir('test/e2e') {
           bat """
             python310 -m venv ${VIRTUAL_ENV}
-            ${VIRTUAL_ENV}\\Scripts\\python.exe -m pip install --upgrade pip
-            ${VIRTUAL_ENV}\\Scripts\\python.exe -m pip install -r requirements.txt
+            python310 -m pip install --upgrade pip
+            python310 -m pip install -r requirements.txt
           """
       } } }
     }
@@ -158,7 +157,7 @@ pipeline {
     stage('Unpack') {
       steps { timeout(5) { script { dir('test/e2e') {
         sh 'mkdir aut'
-        sh "7z x '${utils.findFile('pkg/*tar.gz')}' -o'./aut'"
+        sh "7z x '${utils.findFile('pkg/*.7z')}' -o'./aut'"
         env.AUT_PATH = utils.findFile('aut/Status/*.exe').replace('\\','/')
       } } } }
     }
@@ -183,11 +182,9 @@ pipeline {
                   ln -sf _local.ci.py _local.py || cp _local.ci.py _local.py
                   popd
 
-                  # Run tests
-                  ${VIRTUAL_ENV}\\Scripts\\python.exe -m pytest -m "not keycard" -v --reruns=1 --timeout=300 ${flagStr} `
-                    --disable-warnings `
-                    --alluredir=./allure-results `
-                    -o timeout_func_only=true
+                """
+                bat"""
+                  python310 -m pytest -m "not keycard" -v --reruns=1 --timeout=300 ${flagStr} --disable-warnings --alluredir=./allure-results -o timeout_func_only=true
                 """
               }
             }
@@ -199,7 +196,7 @@ pipeline {
 
   post {
     always { script { dir('test/e2e') {
-      archiveArtifacts('aut/*.log')
+      archiveArtifacts('aut/Status/*.txt')
 
       /* Needed to categorize types of errors and add environment section in allure report. */
       sh 'cp ext/allure_files/categories.json allure-results'
