@@ -754,7 +754,7 @@ QtObject {
 
     // Is given ChainID a testnet
     function isChainIDTestnet(chainID) {
-        switch (chainID) {
+        switch (+chainID) {
             case Constants.chains.mainnetChainId:
             case Constants.chains.arbitrumChainId:
             case Constants.chains.optimismChainId:
@@ -766,7 +766,7 @@ QtObject {
     }
 
     function isL1Chain(chainID) {
-        switch (chainID) {
+        switch (+chainID) {
             case Constants.chains.mainnetChainId:
             case Constants.chains.sepoliaChainId:
             case Constants.chains.binanceSmartChainMainnetChainId:
@@ -778,7 +778,7 @@ QtObject {
 
     // Get NativeTokenSymbol for ChainID
     function getNativeTokenSymbol(chainID) {
-        switch (chainID) {
+        switch (+chainID) {
             case Constants.chains.binanceSmartChainMainnetChainId:
             case Constants.chains.binanceSmartChainTestnetChainId:
                 return Constants.bnbToken
