@@ -1213,6 +1213,8 @@ Item {
         visible: !homePageLoader.active
         width: visible ? implicitWidth : 0
 
+        thirdpartyServicesDisabled: d.thirdPartyServicesDisbaled
+
         topSectionModel: SortFilterProxyModel {
             sourceModel: appMain.rootStore.sectionsModel
             filters: [

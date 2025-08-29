@@ -11,6 +11,8 @@ Rectangle {
     id: root
     objectName: "statusAppNavBar"
 
+    required property bool thirdpartyServicesDisabled
+
     property alias topSectionModel: topSectionListview.model
     property alias topSectionDelegate: topSectionListview.delegate
 
@@ -27,7 +29,8 @@ Rectangle {
 
     implicitWidth: 78
 
-    color: Theme.palette.statusAppNavBar.backgroundColor
+    color: root.thirdpartyServicesDisabled ?
+               Theme.palette.customisationColors.purple : Theme.palette.statusAppNavBar.backgroundColor
 
     QtObject {
         id: d
