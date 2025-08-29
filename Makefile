@@ -475,10 +475,19 @@ export STATUSGO_LIBDIR
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
+ifeq ($(filter $(mkspecs),android ios),$(mkspecs))
+	$(MAKE) -C vendor/status-go statusgo-mobile-library SHELL=/bin/sh \
+		OS=$(OS) \
+		ARCH=$(ARCH) \
+		IPHONE_SDK=$(IPHONE_SDK) \
+		IOS_TARGET=$(IOS_TARGET) \
+		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
+else
 	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
 		SENTRY_CONTEXT_NAME="status-desktop" \
 		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
 		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
+endif
 
 status-go: $(STATUSGO)
 
@@ -906,7 +915,7 @@ mobile-run: deps-common
 	echo -e "\033[92mRunning:\033[39m mobile app"
 	$(MAKE) -C mobile run
 
-mobile-build: | deps-common
+mobile-build: | deps-common status-go
 	echo -e "\033[92mBuilding:\033[39m mobile app"
 	$(MAKE) -C mobile
 
