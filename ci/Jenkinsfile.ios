@@ -70,7 +70,13 @@ pipeline {
   }
 
   stages {
-    
+
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
+
     stage('Fetch submodules') {
       steps {
         sh 'git submodule update --init --recursive'
@@ -113,7 +119,7 @@ pipeline {
           }
         }
       }
-    }   
+    }
   }
 
   post {

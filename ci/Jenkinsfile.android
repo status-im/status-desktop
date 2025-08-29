@@ -63,7 +63,13 @@ pipeline {
   }
 
   stages {
-    
+
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
+
     stage('Fetch submodules') {
       steps {
         sh 'git submodule update --init --recursive'
@@ -71,7 +77,7 @@ pipeline {
     }
 
     stage('Build Android APK') {
-      steps { 
+      steps {
         script {
           linux.bundle(target='mobile-build', verbose=params.VERBOSE)
         }
