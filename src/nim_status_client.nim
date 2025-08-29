@@ -54,14 +54,19 @@ proc determineStatusAppIconPath(): string =
 
 proc prepareLogging() =
   # Outputs logs in the node tab
-  when compiles(defaultChroniclesStream.output.writer):
-    defaultChroniclesStream.output.writer =
-      proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [].} =
-        try:
-          if signalsManagerQObjPointer != nil:
-            signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveChroniclesLogEvent")
-        except:
-          logLoggingFailure(cstring(msg), getCurrentException())
+  for output in defaultChroniclesStream.outputs.fields():
+    when output is DynamicOutput:
+      output.writer =
+        proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [].} =
+          try:
+            if signalsManagerQObjPointer != nil:
+              signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveChroniclesLogEvent")
+          except:
+            logLoggingFailure(cstring(msg), getCurrentException())
+    elif output is FileOutput:
+      let formattedDate = now().format("yyyyMMdd'_'HHmmss")
+      let logFile = fmt"app_{formattedDate}.log"
+      discard output.open(LOGDIR & logFile, fmAppend)
 
   let defaultLogLvl = if defined(production): chronicles.LogLevel.INFO else: chronicles.LogLevel.DEBUG
   # default log level can be overriden by LOG_LEVEL env parameter
@@ -69,10 +74,6 @@ proc prepareLogging() =
                except: defaultLogLvl
 
   setLogLevel(logLvl)
-
-  let formattedDate = now().format("yyyyMMdd'_'HHmmss")
-  let logFile = fmt"app_{formattedDate}.log"
-  discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
 proc setupRemoteSignalsHandling() =
   # Please note that this must use the `cdecl` calling convention because

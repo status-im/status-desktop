@@ -1,5 +1,3 @@
-import strutils
-
 type
   SeedPhraseEnterWordsState* = ref object of State
 
