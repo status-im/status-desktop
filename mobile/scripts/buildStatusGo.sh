@@ -32,7 +32,7 @@ if [[ "$OS" == "android" ]]; then
 	export ANDROID_TARGET=28
 	export ANDROID_NDK_HOME="/opt/android-sdk/ndk/27.2.12479018/"
 	make generate-sds-android V=3 SHELL=/bin/sh
-	cp $STATUS_GO/vendor/github.com/waku-org/sds-go-bindings/sds/third_party/nim-sds/build/libsds.so "$LIB_DIR/libsds.$LIB_EXT"
+	cp $STATUS_GO/vendor/github.com/waku-org/sds-go-bindings/third_party/nim-sds/build/libsds.so "$LIB_DIR/libsds.$LIB_EXT"
 fi
 
 make generate V=3 SHELL=/bin/sh
