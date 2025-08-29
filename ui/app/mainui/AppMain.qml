@@ -856,6 +856,9 @@ Item {
             }
             return username
         }
+
+        readonly property bool thirdPartyServicesDisbaled: featureFlagsStore.privacyModeFeatureEnabled &&
+                                                           !appMain.privacyStore.thirdpartyServicesEnabled
     }
 
     Settings {
@@ -1970,39 +1973,59 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.wallet
                         asynchronous: true
-                        sourceComponent: WalletLayout {
-                            objectName: "walletLayoutReal"
-                            navBar: appMain.navBar
-                            sharedRootStore: appMain.sharedRootStore
-                            store: appMain.rootStore
-                            contactsStore: appMain.contactsStore
-                            communitiesStore: appMain.communitiesStore
-                            transactionStore: appMain.transactionStore
-                            emojiPopup: statusEmojiPopup.item
-                            networkConnectionStore: appMain.networkConnectionStore
-                            networksStore: appMain.networksStore
-                            appMainVisible: appMain.visible
-                            swapEnabled: featureFlagsStore.swapEnabled
-                            dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
-                            dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
-                            dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-                            isKeycardEnabled: featureFlagsStore.keycardEnabled
-                            onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
-                            onDappConnectRequested: () => {
-                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
-                                dAppsServiceLoader.dappConnectRequested()
+                        sourceComponent: d.thirdPartyServicesDisbaled ? walletPrivacyWall: walletLayout
+
+                        Component {
+                            id: walletPrivacyWall
+
+                            WalletPrivacyWall {
+                                navBar: appMain.navBar
+
+                                onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                                onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
+                                                                Constants.statusDiscussPageUrl,
+                                                                SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                                onNotificationButtonClicked: Global.openActivityCenterPopup()
                             }
-                            onDappDisconnectRequested: (dappUrl) => {
-                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
-                                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                        }
+
+                        Component {
+                            id: walletLayout
+
+                            WalletLayout {
+                                objectName: "walletLayoutReal"
+                                navBar: appMain.navBar
+                                sharedRootStore: appMain.sharedRootStore
+                                store: appMain.rootStore
+                                contactsStore: appMain.contactsStore
+                                communitiesStore: appMain.communitiesStore
+                                transactionStore: appMain.transactionStore
+                                emojiPopup: statusEmojiPopup.item
+                                networkConnectionStore: appMain.networkConnectionStore
+                                networksStore: appMain.networksStore
+                                appMainVisible: appMain.visible
+                                swapEnabled: featureFlagsStore.swapEnabled
+                                dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
+                                dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
+                                dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+                                isKeycardEnabled: featureFlagsStore.keycardEnabled
+                                onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
+                                onDappConnectRequested: () => {
+                                                            dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
+                                                            dAppsServiceLoader.dappConnectRequested()
+                                                        }
+                                onDappDisconnectRequested: (dappUrl) => {
+                                                               dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                                                               dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                                                           }
+                                onSendTokenRequested: (senderAddress, tokenId, tokenType) => {
+                                                          popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                                                      }
+                                onBridgeTokenRequested: (tokenId, tokenType) => {
+                                                            popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
+                                                        }
+                                onOpenSwapModalRequested: popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                             }
-                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => {
-                                                      popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
-                                                  }
-                            onBridgeTokenRequested: (tokenId, tokenType) => {
-                                                        popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
-                                                    }
-                            onOpenSwapModalRequested: popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                         }
                         onLoaded: {
                             item.resetView()
@@ -2141,37 +2164,58 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.market
                         asynchronous: true
-                        sourceComponent: MarketLayout {
-                            objectName: "marketLayout"
-                            navBar: appMain.navBar
+                        sourceComponent: d.thirdPartyServicesDisbaled ? marketPrivacyWall : marketLayout
 
-                            notificationCount: appMain.activityCenterStore.unreadNotificationsCount
-                            hasUnseenNotifications:  appMain.activityCenterStore.hasUnseenNotifications
-                            onNotificationButtonClicked: Global.openActivityCenterPopup()
+                        Component {
+                            id: marketPrivacyWall
 
-                            tokensModel: appMain.marketStore.marketLeaderboardModel
-                            totalTokensCount: appMain.marketStore.totalLeaderboardCount
-                            loading: appMain.marketStore.marketLeaderboardLoading
-                            currencySymbol: {
-                                const symbol = SQUtils.ModelUtils.getByKey(
-                                                appMain.currencyStore.currenciesModel,
-                                                "shortName",
-                                                appMain.currencyStore.currentCurrency,
-                                                "symbol")
-                                return !!symbol ? symbol: ""
+                            MarketPrivacyWall {
+                                navBar: appMain.navBar
+
+                                onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                                onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
+                                                                Constants.statusDiscussPageUrl,
+                                                                SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                                onNotificationButtonClicked: Global.openActivityCenterPopup()
                             }
-                            fnFormatCurrencyAmount: function(amount, options) {
-                                return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
-                            }
-                            currentPage: appMain.marketStore.currentPage
-                            onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
-                            onFetchMarketTokens: (pageNumber, pageSize) => {
-                                                     appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
-                                                 }
                         }
+
+                        Component {
+                            id: marketLayout
+
+                            MarketLayout {
+                                objectName: "marketLayout"
+                                navBar: appMain.navBar
+
+                                notificationCount: appMain.activityCenterStore.unreadNotificationsCount
+                                hasUnseenNotifications:  appMain.activityCenterStore.hasUnseenNotifications
+                                onNotificationButtonClicked: Global.openActivityCenterPopup()
+
+                                tokensModel: appMain.marketStore.marketLeaderboardModel
+                                totalTokensCount: appMain.marketStore.totalLeaderboardCount
+                                loading: appMain.marketStore.marketLeaderboardLoading
+                                currencySymbol: {
+                                    const symbol = SQUtils.ModelUtils.getByKey(
+                                                     appMain.currencyStore.currenciesModel,
+                                                     "shortName",
+                                                     appMain.currencyStore.currentCurrency,
+                                                     "symbol")
+                                    return !!symbol ? symbol: ""
+                                }
+                                fnFormatCurrencyAmount: function(amount, options) {
+                                    return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
+                                }
+                                currentPage: appMain.marketStore.currentPage
+                                onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
+                                onFetchMarketTokens: (pageNumber, pageSize) => {
+                                                         appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
+                                                     }
+                            }
+                        }
+
                         onActiveChanged: {
-                            if(!active) {
-                               appMain.marketStore.unsubscribeFromUpdates()
+                            if(!active && !d.thirdPartyServicesDisbaled) {
+                                appMain.marketStore.unsubscribeFromUpdates()
                             }
                         }
                         onLoaded: item.resetView()
