@@ -66,6 +66,8 @@ Item {
     // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
         localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
+        thirdpartyServicesEnabled: appMain.featureFlagsStore.privacyModeFeatureEnabled &&
+                                   appMain.privacyStore.thirdpartyServicesEnabled
         onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
     }
 
@@ -839,9 +841,6 @@ Item {
             }
             return username
         }
-
-        readonly property bool thirdPartyServicesDisbaled: featureFlagsStore.privacyModeFeatureEnabled &&
-                                                           !appMain.privacyStore.thirdpartyServicesEnabled
     }
 
     Settings {
@@ -1195,6 +1194,8 @@ Item {
     property Item navBar: StatusAppNavBar {
         visible: !homePageLoader.active
         width: visible ? implicitWidth : 0
+
+        thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
 
         topSectionModel: SortFilterProxyModel {
             sourceModel: appMain.rootStore.sectionsModel
@@ -1956,12 +1957,12 @@ Item {
                     }
                 }
 
-                Loader {
-                    active: appView.currentIndex === Constants.appViewStackIndex.wallet
-                    asynchronous: true
-                    sourceComponent: d.thirdPartyServicesDisbaled ? walletPrivacyWall: walletLayout
+                    Loader {
+                        active: appView.currentIndex === Constants.appViewStackIndex.wallet
+                        asynchronous: true
+                        sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? walletLayout: walletPrivacyWall
 
-                    Component {
+                        Component {
                             id: walletPrivacyWall
 
                             WalletPrivacyWall {
@@ -1971,36 +1972,46 @@ Item {
                                 onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
                                                                 Constants.statusDiscussPageUrl,
                                                                 SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
-                                onNotificationButtonClicked: Global.openActivityCenterPopup()
                             }
-                    }
+                        }
 
+                        Component {
+                            id: walletLayout
 
-
-                Component {
-                	id: walletLayout
-
-			WalletLayout {
-                        objectName: "walletLayoutReal"
-                        navBar: appMain.navBar
-                        sharedRootStore: appMain.sharedRootStore
-                        store: appMain.rootStore
-                        contactsStore: appMain.contactsStore
-                        communitiesStore: appMain.communitiesStore
-                        transactionStore: appMain.transactionStore
-                        emojiPopup: statusEmojiPopup.item
-                        networkConnectionStore: appMain.networkConnectionStore
-                        networksStore: appMain.networksStore
-                        appMainVisible: appMain.visible
-                        swapEnabled: featureFlagsStore.swapEnabled
-                        dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
-                        dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
-                        dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-                        isKeycardEnabled: featureFlagsStore.keycardEnabled
-                        onDappListRequested: dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
-                        onDappConnectRequested: {
-                            dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
-                            dAppsServiceLoader.dappConnectRequested()
+                            WalletLayout {
+                                objectName: "walletLayoutReal"
+                                navBar: appMain.navBar
+                                sharedRootStore: appMain.sharedRootStore
+                                store: appMain.rootStore
+                                contactsStore: appMain.contactsStore
+                                communitiesStore: appMain.communitiesStore
+                                transactionStore: appMain.transactionStore
+                                emojiPopup: statusEmojiPopup.item
+                                networkConnectionStore: appMain.networkConnectionStore
+                                networksStore: appMain.networksStore
+                                appMainVisible: appMain.visible
+                                swapEnabled: featureFlagsStore.swapEnabled
+                                dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
+                                dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
+                                dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+                                isKeycardEnabled: featureFlagsStore.keycardEnabled
+                                onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
+                                onDappConnectRequested: () => {
+                                                            dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
+                                                            dAppsServiceLoader.dappConnectRequested()
+                                                        }
+                                onDappDisconnectRequested: (dappUrl) => {
+                                                               dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                                                               dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                                                           }
+                                onSendTokenRequested: (senderAddress, tokenId, tokenType) => {
+                                                          popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                                                      }
+                                onBridgeTokenRequested: (tokenId, tokenType) => {
+                                                            popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
+                                                        }
+                                onOpenSwapModalRequested: popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
+                            }
                         }
                         onDappDisconnectRequested: function(dappUrl) {
                             dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
@@ -2141,10 +2152,12 @@ Item {
                     }
                 }
 
-                Loader {
-                    active: appView.currentIndex === Constants.appViewStackIndex.market
-                    asynchronous: true
-                       sourceComponent: d.thirdPartyServicesDisbaled ? marketPrivacyWall : marketLayout
+==== BASE ====
+                    Loader {
+                        active: appView.currentIndex === Constants.appViewStackIndex.market
+                        asynchronous: true
+                        sourceComponent: d.thirdPartyServicesDisbaled ? marketPrivacyWall : marketLayout
+==== BASE ====
 
                         Component {
                             id: marketPrivacyWall
@@ -2156,7 +2169,6 @@ Item {
                                 onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
                                                                 Constants.statusDiscussPageUrl,
                                                                 SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
-                                onNotificationButtonClicked: Global.openActivityCenterPopup()
                             }
                         }
 
@@ -2190,7 +2202,7 @@ Item {
                         }
 
                         onActiveChanged: {
-                            if(!active && !d.thirdPartyServicesDisbaled) {
+                            if(!active && appMain.rootStore.thirdpartyServicesEnabled) {
                                 appMain.marketStore.unsubscribeFromUpdates()
                             }
                         }

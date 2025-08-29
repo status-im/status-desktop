@@ -15,6 +15,8 @@ StatusSectionLayout {
     centerPanel: PrivacyWallCarousel {
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        infoText: qsTr("Enable third-party services for market features to work.")
         model: ListModel {
             ListElement {
                 primary: qsTr("Real-time token data")
