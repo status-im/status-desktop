@@ -158,7 +158,7 @@ pipeline {
       steps { timeout(5) { script { dir('test/e2e') {
         sh 'mkdir aut'
         sh "7z x '${utils.findFile('pkg/*.7z')}' -o'./aut'"
-        env.AUT_PATH = utils.findFile('aut/Status/*.exe').replace('\\','/')
+        env.AUT_PATH = utils.findFile('aut/Status/bin/Status.exe').replace('\\','/')
       } } } }
     }
 
@@ -196,7 +196,7 @@ pipeline {
 
   post {
     always { script { dir('test/e2e') {
-      archiveArtifacts('aut/Status/*.txt')
+      archiveArtifacts('aut/Status/bin/*.txt')
 
       /* Needed to categorize types of errors and add environment section in allure report. */
       sh 'cp ext/allure_files/categories.json allure-results'
