@@ -1573,7 +1573,7 @@ Item {
                                 if(chainIdsDown.length > 2) {
                                     return qsTr("POKT & Infura down for <a href='#'>multiple chains </a>. Token balances for those chains cannot be retrieved.")
                                 }
-                                else if(chainIdsDown.length === 1) {
+                                else if(chainIdsDown.length === 1 && withCache) {
                                     return qsTr("POKT & Infura down for %1. %1 token balances are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
                                 }
                                 else {
