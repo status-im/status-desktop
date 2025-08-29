@@ -6,12 +6,14 @@ import sys
 import os
 from datetime import datetime
 from pathlib import Path
+
+# Ensure the test/e2e_appium package is importable regardless of CWD
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent  # .../test/e2e_appium
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from config import get_config
-
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
-
-
 
 
 def run_command(cmd, description):
@@ -50,7 +52,7 @@ def main():
     parser.add_argument(
         "--category",
         "-c",
-        choices=["smoke", "tablet", "critical", "all"],
+        choices=["smoke", "tablet", "critical", "onboarding", "all"],
         default="smoke",
         help="Test category to run (default: smoke)",
     )
@@ -153,9 +155,9 @@ def main():
             html_file = reports_dir / f"pytest_report_{timestamp}.html"
             cmd.extend(["--html", str(html_file), "--self-contained-html"])
 
-        if "test/e2e_appium/tests" in cmd:
-            cmd.remove("test/e2e_appium/tests")
-        cmd.append("test/e2e_appium/tests")
+        # Always run tests from an absolute path so CWD doesn't matter
+        tests_dir = PROJECT_ROOT / "tests"
+        cmd.append(str(tests_dir))
 
         print("=" * 60)
         print("🎯 E2E TEST RUNNER")
