@@ -4,12 +4,19 @@ import QtQuick.Layouts
 
 import shared.panels
 
+import Storybook
+
 SplitView {
     id: root
 
+    Logs { id: logs }
+
     PrivacyWallCarousel {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        SplitView.fillWidth: true
+        SplitView.fillHeight: true
+
+        infoText: qsTr("Enable third-party services for wallet features to work.")
+
         model: ListModel {
             ListElement {
                 primary: qsTr("Portfolio view for your tokens")
@@ -33,8 +40,17 @@ SplitView {
             }
         }
 
-        onEnableThirdpartyServicesRequested: console.warn("Enable third party services requested")
-        onOpenDiscussPageRequested: console.warn("Open discuss page requested")
+        onEnableThirdpartyServicesRequested: logs.logEvent("Enable third party services requested")
+        onOpenDiscussPageRequested: logs.logEvent("Open discuss page requested")
+    }
+
+    LogsAndControlsPanel {
+        id: logsAndControlsPanel
+
+        SplitView.minimumHeight: 100
+        SplitView.preferredHeight: 200
+
+        logsView.logText: logs.logText
     }
 }
 

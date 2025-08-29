@@ -66,6 +66,8 @@ Item {
     // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
         localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
+        thirdpartyServicesEnabled: appMain.featureFlagsStore.privacyModeFeatureEnabled &&
+                                   appMain.privacyStore.thirdpartyServicesEnabled
         onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
     }
 
@@ -839,9 +841,6 @@ Item {
             }
             return username
         }
-
-        readonly property bool thirdPartyServicesDisbaled: featureFlagsStore.privacyModeFeatureEnabled &&
-                                                           !appMain.privacyStore.thirdpartyServicesEnabled
     }
 
     Settings {
@@ -1195,6 +1194,8 @@ Item {
     property Item navBar: StatusAppNavBar {
         visible: !homePageLoader.active
         width: visible ? implicitWidth : 0
+
+        thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
 
         topSectionModel: SortFilterProxyModel {
             sourceModel: appMain.rootStore.sectionsModel
@@ -1960,7 +1961,7 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.wallet
                         asynchronous: true
-                        sourceComponent: d.thirdPartyServicesDisbaled ? walletPrivacyWall: walletLayout
+                        sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? walletLayout: walletPrivacyWall
 
                         Component {
                             id: walletPrivacyWall
@@ -1972,7 +1973,6 @@ Item {
                                 onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
                                                                 Constants.statusDiscussPageUrl,
                                                                 SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
-                                onNotificationButtonClicked: Global.openActivityCenterPopup()
                             }
                         }
 
@@ -2144,7 +2144,7 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.market
                         asynchronous: true
-                        sourceComponent: d.thirdPartyServicesDisbaled ? marketPrivacyWall : marketLayout
+                        sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? marketLayout: marketPrivacyWall
 
                         Component {
                             id: marketPrivacyWall
@@ -2156,7 +2156,6 @@ Item {
                                 onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
                                                                 Constants.statusDiscussPageUrl,
                                                                 SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
-                                onNotificationButtonClicked: Global.openActivityCenterPopup()
                             }
                         }
 
@@ -2190,7 +2189,7 @@ Item {
                         }
 
                         onActiveChanged: {
-                            if(!active && !d.thirdPartyServicesDisbaled) {
+                            if(!active && appMain.rootStore.thirdpartyServicesEnabled) {
                                 appMain.marketStore.unsubscribeFromUpdates()
                             }
                         }

@@ -3,13 +3,28 @@ import QtQuick.Controls
 
 import AppLayouts.Wallet
 
+import Storybook
+
 SplitView {
     id: root
 
+    Logs { id: logs }
+
     WalletPrivacyWall {
-        onOpenThirdpartyServicesInfoPopupRequested: console.warn("Enable third party services requested")
-        onOpenDiscussPageRequested: console.warn("Open discuss page requested")
-        onNotificationButtonClicked: console.warn("Open notification center requested")
+        SplitView.fillWidth: true
+        SplitView.fillHeight: true
+
+        onOpenThirdpartyServicesInfoPopupRequested: logs.logEvent("Enable third party services requested")
+        onOpenDiscussPageRequested: logs.logEvent("Open discuss page requested")
+    }
+
+    LogsAndControlsPanel {
+        id: logsAndControlsPanel
+
+        SplitView.minimumHeight: 100
+        SplitView.preferredHeight: 200
+
+        logsView.logText: logs.logText
     }
 }
 

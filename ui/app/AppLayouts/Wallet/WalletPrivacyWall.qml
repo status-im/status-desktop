@@ -15,6 +15,8 @@ StatusSectionLayout {
     centerPanel: PrivacyWallCarousel {
         Layout.fillWidth: true
         Layout.fillHeight: true
+
+        infoText: qsTr("Enable third-party services for wallet features to work.")
         model: ListModel {
             ListElement {
                 primary: qsTr("Portfolio view for your tokens")
@@ -27,7 +29,7 @@ StatusSectionLayout {
                 image: "wallet/placeholders/swapView"
             }
             ListElement {
-                header: qsTr("Organize collectibles your way")
+                primary: qsTr("Organize collectibles your way")
                 secondary: qsTr("Search, filter, and sort your collectibles exactly how you want")
                 image: "wallet/placeholders/collectiblesView"
             }

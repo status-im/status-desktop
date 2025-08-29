@@ -24,6 +24,10 @@ QtObject {
     readonly property int activeSectionType: internal.mainModuleInst.activeSection.sectionType
     property bool localBackupEnabled: false
 
+    // TODO: Once RootStore initializes all stores, initialize this property here instead.
+    // For now, it's set during initialization in AppMain.qml.
+    property bool thirdpartyServicesEnabled
+
     // Here define the needed properties that access to `Context Properties`:
     readonly property QtObject _internal: QtObject{
         id: internal // Rename to `d` when cleanup done
