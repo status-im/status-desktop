@@ -33,6 +33,7 @@ android {
                         $$PWD/../lib/$$LIB_PREFIX/libnim_status_client.so \
                         $$PWD/../lib/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
                         $$PWD/../lib/$$LIB_PREFIX/libstatus.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libsds.so \
                         $$PWD/../lib/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
 }
 

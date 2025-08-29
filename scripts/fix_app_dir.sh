@@ -10,7 +10,8 @@ if [[ ! -z "${IN_NIX_SHELL}" ]]; then
 
 	patchelf --set-rpath '$ORIGIN' \
 		"${APP_DIR}/usr/lib/libcom_err.so.3" \
-		"${APP_DIR}/usr/lib/libstatus.so"
+		"${APP_DIR}/usr/lib/libstatus.so" \
+		"${APP_DIR}/usr/lib/libsds.so"
 
 	patchelf --set-rpath '$ORIGIN/../' \
 		"${APP_DIR}"/usr/lib/gstreamer-1.0/* \
