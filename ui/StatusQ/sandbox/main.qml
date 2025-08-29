@@ -70,6 +70,7 @@ StatusWindow {
         leftPanel: StatusAppNavBar {
             height: rootWindow.height
 
+            thirdpartyServicesDisabled: false
             regularItemsModel: Models.mainAppSectionsModel
             regularItemDelegate: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter

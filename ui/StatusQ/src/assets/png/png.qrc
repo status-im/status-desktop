@@ -924,5 +924,11 @@
         <file>status-logo-icon.png</file>
         <file>status-preparing.png</file>
         <file>unfurling-image.png</file>
+        <file>wallet/placeholders/buyView.png</file>
+        <file>wallet/placeholders/swapView.png</file>
+        <file>wallet/placeholders/collectiblesView.png</file>
+        <file>wallet/placeholders/mainView.png</file>
+        <file>market/tradeCenter.png</file>
+        <file>market/swap.png</file>
     </qresource>
 </RCC>
