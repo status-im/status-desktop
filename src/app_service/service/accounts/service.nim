@@ -205,17 +205,20 @@ QtObject:
         apiConfig: defaultApiConfig(),
       )
 
-  proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+  proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string,
+    imageCropRectangle: ImageCropRectangle, thirdpartyServicesEnabled: bool): CreateAccountRequest =
     var request = defaultCreateAccountRequest()
     request.password = hashPassword(password)
     request.displayName = displayName
     request.imagePath = imagePath
     request.imageCropRectangle = imageCropRectangle
+    request.thirdpartyServicesEnabled = thirdpartyServicesEnabled
     return request
 
-  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
+  proc createAccountAndLogin*(self: Service, password: string, displayName: string,
+    imagePath: string, imageCropRectangle: ImageCropRectangle, thirdpartyServicesEnabled: bool): string =
     try:
-      let request = buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
+      let request = buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle, thirdpartyServicesEnabled)
       let response = status_account.createAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -241,11 +244,12 @@ QtObject:
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
     keycardInstanceUID: string = "",
+    thirdpartyServicesEnabled: bool
   ): string =
 
     var request = RestoreAccountRequest(
       mnemonic: mnemonic,
-      createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle, thirdpartyServicesEnabled),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
 
@@ -257,6 +261,7 @@ QtObject:
     displayName: string,
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
+    thirdpartyServicesEnabled: bool
     ): string =
 
     let keycard = KeycardData(
@@ -274,7 +279,7 @@ QtObject:
 
     var request = RestoreAccountRequest(
       keycard: keycard,
-      createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle, thirdpartyServicesEnabled),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
 
@@ -284,6 +289,7 @@ QtObject:
     keyUid: string,
     instanceUid: string,
     keycardKeys: KeycardExportedKeysDto,
+    thirdpartyServicesEnabled: bool
     ): string =
 
     let keycard = KeycardData(
@@ -305,7 +311,8 @@ QtObject:
         password = "",
         displayName = "",
         imagePath = "",
-        imageCropRectangle = ImageCropRectangle()
+        imageCropRectangle = ImageCropRectangle(),
+        thirdpartyServicesEnabled
       ),
     )
     request.createAccountRequest.keycardInstanceUID = instanceUid
