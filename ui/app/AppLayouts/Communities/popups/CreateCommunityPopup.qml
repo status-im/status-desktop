@@ -37,7 +37,6 @@ StatusStackModal {
 
     nextButton: StatusButton {
         objectName: "createCommunityNextBtn"
-        font.weight: Font.Medium
         text: typeof currentItem.nextButtonText !== "undefined" ? currentItem.nextButtonText : qsTr("Next")
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         loading: root.store.discordDataExtractionInProgress
@@ -52,7 +51,6 @@ StatusStackModal {
 
     finishButton: StatusButton {
         objectName: "createCommunityFinalBtn"
-        font.weight: Font.Medium
         text: root.isDiscordImport ? qsTr("Start Discord import") : qsTr("Create Community")
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         onClicked: {
@@ -64,7 +62,6 @@ StatusStackModal {
     }
 
     readonly property var clearFilesButton: StatusButton {
-        font.weight: Font.Medium
         text: qsTr("Clear all")
         type: StatusBaseButton.Type.Danger
         visible: root.currentItem.objectName === "discordFileListView" // no better way to address the current item in the stack :/
@@ -161,7 +158,7 @@ StatusStackModal {
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
                         text: qsTr("Export your Discord JSON data using %1").arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter/releases/tag/2.40.4'>DiscordChatExporter</a>")
-                        onLinkActivated: Global.openLink(link)
+                        onLinkActivated: link => Global.openLink(link)
                         HoverHandler {
                             id: handler1
                         }
@@ -175,7 +172,7 @@ StatusStackModal {
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
                         text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'>documentation</a> if you have any queries")
-                        onLinkActivated: Global.openLink(link)
+                        onLinkActivated: link => Global.openLink(link)
                         HoverHandler {
                             id: handler2
                         }

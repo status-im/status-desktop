@@ -55,7 +55,7 @@ Control {
         Repeater {
             Layout.topMargin: 4
             model: root.errorTags
-            onItemAdded: {
+            onItemAdded: function(index, item) {
                 item.Layout.fillHeight = true
                 item.Layout.fillWidth = true
             }
@@ -79,7 +79,7 @@ Control {
 
             Repeater {
                 model: root.leftButtons
-                onItemAdded: (index, item) => {
+                onItemAdded: function(index, item) {
                     item.Layout.fillHeight = true
                     item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
                 }
@@ -91,7 +91,7 @@ Control {
 
             Repeater {
                 model: root.rightButtons
-                onItemAdded: (index, item) => {
+                onItemAdded: function(index, item) {
                     item.Layout.fillHeight = true
                     item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
                 }

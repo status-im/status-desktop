@@ -180,9 +180,9 @@ Rectangle {
             } // Indicator
         } // Loader
 
-        onClicked: statusRoundButton.clicked(mouse)
-        onPressed: statusRoundButton.pressed(mouse)
-        onReleased: statusRoundButton.released(mouse)
-        onPressAndHold: statusRoundButton.pressAndHold(mouse)
+        onClicked: mouse => statusRoundButton.clicked(mouse)
+        onPressed: mouse => statusRoundButton.pressed(mouse)
+        onReleased: mouse => statusRoundButton.released(mouse)
+        onPressAndHold: mouse => statusRoundButton.pressAndHold(mouse)
     } // Sensor
 } // Rectangle

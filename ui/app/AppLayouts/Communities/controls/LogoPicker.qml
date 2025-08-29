@@ -24,7 +24,7 @@ Item {
 
     readonly property bool hasSelectedImage: localAppSettings.testEnvironment ? true : editor.userSelectedImage
 
-    implicitHeight: layout.childrenRect.height
+    implicitHeight: layout.implicitHeight
 
     function validate() {
         editor.isError = !hasSelectedImage

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls // for the Popup.xxx enums
 import QtQuick.Layouts
 import QtQml.Models
 
