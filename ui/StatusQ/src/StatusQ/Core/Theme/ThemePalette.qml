@@ -226,6 +226,8 @@ QtObject {
         customisationColors.camel
     ]
 
+    readonly property color privacyModeColor: customisationColors.purple
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha

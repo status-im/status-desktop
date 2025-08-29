@@ -15,6 +15,8 @@ Control {
 
     // [{primary:string, secondary:string, image:string}]
     required property var model
+    // info text
+    required property string infoText
 
     signal openDiscussPageRequested()
     signal enableThirdpartyServicesRequested()
@@ -82,14 +84,14 @@ Control {
             font.pixelSize: Theme.additionalTextSize
             wrapMode: Text.WordWrap
 
-            text: qsTr("Enable third-party services for wallet features to work.")
+            text: root.infoText
         }
 
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
 
             type: StatusBaseButton.Type.Primary
-            normalColor: Theme.palette.customisationColors.purple
+            normalColor: Theme.palette.privacyModeColor
             textColor: Theme.palette.white
 
             text: qsTr("Enable third-party services")
