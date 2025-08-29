@@ -50,7 +50,6 @@ SQUtils.QObject {
     SQUtils.SubscriptionBroker {
         id: broker
 
-        active: Qt.application.state === Qt.ApplicationActive
         onRequest: (topic) => { return d.computeFees(topic) }
     }
 
