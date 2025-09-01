@@ -21,6 +21,7 @@ import backend/accounts as status_go_accounts
 import backend/backend as backend
 import backend/network as status_go_network
 import backend/eth as status_go_eth
+import backend/collectibles
 import constants as main_constants
 
 
