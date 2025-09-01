@@ -39,7 +39,7 @@ RUN tar -xJf /tmp/pcsc.tar.xz -C /pcsc --strip-components=1
 
 WORKDIR /pcsc
 
-RUN meson setup builddir -Dpolkit=false -Dlibsystemd=false -Dserial=false -Dipcdir=/pcscd/run
+RUN meson setup builddir -Dpolkit=false -Dlibsystemd=false -Dserial=false -Dipcdir=/tmp/pcscd/run
 RUN cd builddir && ninja
 RUN cp builddir/pcsclite.h src/PCSC
 
