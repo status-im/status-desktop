@@ -91,7 +91,7 @@ class ToolBar(QObject):
         self.confirm_button = Button(messaging_names.statusToolBar_Confirm_StatusButton)
         self.status_button = Button(messaging_names.statusToolBar_Cancel_StatusButton)
         self.contact_tag = QObject(messaging_names.statusToolBar_StatusTagItem)
-        self.notifications_button = Button(messaging_names.statusToolBar_notificationButton_StatusActivityCenterButton)
+
 
     @allure.step('Remove member by clicking close icon on member tag')
     def click_contact_close_icon(self, member):
@@ -101,11 +101,6 @@ class ToolBar(QObject):
                     if getattr(child, 'objectName', '') == 'close-icon':
                         driver.mouseClick(child)
                         break
-
-    @allure.step('Open activity center')
-    def open_activity_center(self):
-        self.notifications_button.click()
-        return ActivityCenter().wait_until_appears()
 
     @allure.step('Open Pinned messages popup')
     def open_pinned_messages_popup(self):

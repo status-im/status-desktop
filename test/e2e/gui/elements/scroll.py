@@ -26,3 +26,11 @@ class Scroll(QObject):
             driver.mouse.scroll(self.object, self.object.width / 2, self.object.height / 2, 0, 30, 1, 0.1)
             if time.monotonic() - started_at > timeout_sec:
                 raise LookupError(f'Object not found: {element}')
+
+    @allure.step('Scroll horizontal right to object {1}')
+    def horizontal_scroll_right(self, element: QObject, timeout_sec: int = 5):
+        started_at = time.monotonic()
+        while not element.is_visible:
+            driver.mouse.scroll(self.object, self.object.width / 2, self.object.height / 2, 30, 0, 1, 0.1)
+            if time.monotonic() - started_at > timeout_sec:
+                raise LookupError(f'Object not found: {element}')
