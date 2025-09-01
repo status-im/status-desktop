@@ -52,10 +52,9 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
             with step(f'User {user_two.name}, accept contact request from {user_one.name} via activity center'):
                 aut_two.attach()
                 main_screen.prepare()
-                activity_center = ToolBar().open_activity_center()
+                activity_center = main_screen.left_panel.open_activity_center()
                 request = activity_center.find_contact_request_in_list(user_one.name, timeout)
-                activity_center.click_activity_center_button(
-                    'Contact requests').accept_contact_request(request)
+                activity_center.accept_contact_request(request)
                 main_screen.left_panel.click()
                 main_screen.hide()
 
