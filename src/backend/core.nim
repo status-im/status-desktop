@@ -56,18 +56,6 @@ proc makePrivateRpcCallNoDecode*(
   debug "NewBE_callPrivateRPCNoDecode", rpc_method=methodName
   status_go.callPrivateRPC($inputJSON)
 
-proc callPrivateRPCWithChainId*(
-  methodName: string, chainId: int, payload = %* []
-): RpcResponse[JsonNode] {.raises: [RpcException].} =
-  let inputJSON = %* {
-    "jsonrpc": "2.0",
-    "id": nextRequestId(),
-    "method": methodName,
-    "chainId": chainId,
-    "params": %payload
-  }
-  return makePrivateRpcCall(methodName, inputJSON)
-
 proc callPrivateRPC*(
   methodName: string, payload = %* []
 ): RpcResponse[JsonNode] {.raises: [RpcException].} =
