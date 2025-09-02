@@ -83,7 +83,7 @@ proc asyncEstimateGasTask(argsEncoded: string) {.gcsafe, nimcall.} =
         if tx.hasKey("value"):
             transaction["value"] = tx["value"]
 
-        let response = eth.estimateGas(arg.chainId, %* [transaction])
+        let response = eth.estimateGas(arg.chainId, transaction)
         result["estimatedGas"] = response.result
         arg.finish(result)
     except Exception as e:

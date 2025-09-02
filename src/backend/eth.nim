@@ -3,8 +3,9 @@ import ./core, ./response_type
 
 export response_type
 
-proc estimateGas*(chainId: int, payload = %* []): RpcResponse[JsonNode] =
-  core.callPrivateRPCWithChainId("eth_estimateGas", chainId, payload)
+proc estimateGas*(chainId: int, transaction: JsonNode): RpcResponse[JsonNode] =
+  let params = %* [chainId, transaction]
+  core.callPrivateRPC("eth_estimateGas", params)
 
 proc suggestedFees*(chainId: int): RpcResponse[JsonNode] =
   let payload = %* [chainId]
