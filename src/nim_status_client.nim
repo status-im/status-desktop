@@ -27,6 +27,23 @@ when defined(macosx) and defined(arm64):
 when defined(windows):
     {.link: "../status.o".}
 
+when defined(USE_QML_SERVER):
+  # get the host OS and localhost IP
+  # the host OS is the OS that compiles the app, not the OS that runs the app
+  const USE_QML_SERVER{.strdefine.} = "8081"
+  const isWindows = gorgeEx("wmic os get Caption").exitCode == 0
+  const isMacOS = gorge("sw_vers -productName") == "macOS"
+  const localhost = staticExec(
+    when isWindows:
+      "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias (Get-NetConnectionProfile).InterfaceAlias).IPAddress\""
+    elif isMacOS:
+      "ipconfig getifaddr en0"
+    else:
+      "hostname -I | cut -d' ' -f1"
+  ).strip()
+
+  const remoteImportPath = "http://" & localhost & ":" & USE_QML_SERVER
+
 logScope:
   topics = "status-app"
 
@@ -207,9 +224,6 @@ proc mainProc() =
   installMessageHandler(logHandlerCallback)
 
   when defined(USE_QML_SERVER):
-    const USE_QML_SERVER{.strdefine.} = "8081"
-    const remoteImportPath = "http://localhost:" & USE_QML_SERVER
-
     echo "Setting remote import path: ", remoteImportPath
     singletonInstance.engine.addImportPath(remoteImportPath);
   else:
