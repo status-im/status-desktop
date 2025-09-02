@@ -21,8 +21,8 @@ ActivityNotificationBaseLayout {
         community: communityEditor.communityMock
         banned: root.isBanned
 
-        onSetActiveCommunity: (communityId) =>
-                              logs.logEvent("ActivityNotificationCommunityBanUnban::onSetActiveCommunity - " + communityId)
+        onSetActiveCommunityRequested: (communityId) =>
+                                       logs.logEvent("ActivityNotificationCommunityBanUnban::onSetActiveCommunity - " + communityId)
     }
 
     additionalEditorComponent: ColumnLayout {

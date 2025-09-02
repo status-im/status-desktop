@@ -38,7 +38,7 @@ ActivityNotificationMessage {
         readonly property bool acceptedPending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.AcceptedPending
         readonly property bool declinedPending: membershipStatus === ActivityCenterTypes.ActivityCenterMembershipStatus.DeclinedPending
 
-        property color stateColorText: {
+        readonly property color stateColorText: {
             if (d.accepted) {
                 return Theme.palette.successColor1
             }
@@ -47,7 +47,7 @@ ActivityNotificationMessage {
             }
             return Theme.palette.baseColor1
         }
-        property string stateText: {
+        readonly property string stateText: {
             if (d.accepted) {
                 return qsTr("accepted")
             }
@@ -71,7 +71,6 @@ ActivityNotificationMessage {
     messageDetails.sender.profileImage.assetSettings.isImage: true
     messageDetails.sender.profileImage.pubkey: notification ? notification.author : ""
     messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification ? notification.author : "")
-    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification ? notification.author : "", contactDetails && contactDetails.ensVerified)
 
     badgeComponent: CommunityBadge {
         communityName: community ? community.name : ""

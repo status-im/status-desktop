@@ -34,7 +34,7 @@ Control {
     background: Rectangle {
         id: backgroundItem
         radius: 6
-        color: mouse.containsMouse ? Theme.palette.primaryColor3 : "transparent"
+        color: mouse.containsMouse ? Theme.palette.primaryColor3 : Theme.palette.transparent
 
         Behavior on color { ColorAnimation { duration: 200 } }
 

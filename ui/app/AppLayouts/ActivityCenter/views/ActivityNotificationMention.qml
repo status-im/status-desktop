@@ -16,7 +16,7 @@ ActivityNotificationMessage {
     required property var community
     required property var channel
 
-    signal setActiveCommunity(string communityId)
+    signal setActiveCommunityRequested(string communityId)
     signal switchToRequested(string sectionId, string chatId, string messageId)
 
     badgeComponent: {
@@ -48,7 +48,7 @@ ActivityNotificationMessage {
             channelLinkTextPixelSize: Theme.asideTextFontSize
 
             onCommunityNameClicked: {
-                root.setActiveCommunity(notification.message.communityId)
+                root.setActiveCommunityRequested(notification.message.communityId)
                 root.closeActivityCenter()
             }
             onChannelNameClicked: {

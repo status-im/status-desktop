@@ -1,8 +1,5 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
-import QtQml.Models
 
 import StatusQ.Components
 import StatusQ.Controls
@@ -32,12 +29,12 @@ import "panels"
 StatusSectionLayout {
     id: root
 
-    property ContactsStore contactsStore
-    property ActivityCenterStore activityCenterStore
-    property ChatStores.RootStore store
-    property PrivacyStore privacyStore
-    property NotificationsStore notificationsStore
-    property MessagingStores.MessagingRootStore messagingRootStore
+    required property ContactsStore contactsStore
+    required property ActivityCenterStore activityCenterStore
+    required property ChatStores.RootStore store
+    required property PrivacyStore privacyStore
+    required property NotificationsStore notificationsStore
+    required property MessagingStores.MessagingRootStore messagingRootStore
 
     QtObject {
         id: d
@@ -145,7 +142,7 @@ StatusSectionLayout {
 
             visible: !statusNewsNotificationDisabledLoader.active
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.fillHeight: count !== 0
             Layout.margins: Theme.smallPadding
             spacing: 1
 
@@ -207,28 +204,30 @@ StatusSectionLayout {
                 }
             }
         }
+
+        // Placeholder for the status news when their settings are disabled
+        // OR Placeholder for the status news when they are all seen or there are no notifications
+        Loader {
+            id: statusNewsNotificationDisabledLoader
+
+            readonly property bool newsDisabledBySettings: !d.isStatusNewsViaRSSEnabled ||
+                                                           d.notificationsSettings.notifSettingStatusNews === Constants.settingsSection.notifications.turnOffValue
+
+            Layout.fillWidth: true
+            Layout.margins: Theme.padding
+
+            active: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
+                    (newsDisabledBySettings || listView.count === 0)
+            sourceComponent: newsDisabledBySettings ? newsDisabledPanel : newsEmptyPanel
+        }
+
+        // Filler
+        Item {
+            Layout.fillHeight: statusNewsNotificationDisabledLoader.active || listView.count === 0
+        }
     }
 
     centerPanel: null // TODO: It will be updated with new designs
-
-    // Placeholder for the status news when their settings are disbled
-    Loader {
-        id: statusNewsNotificationDisabledLoader
-        active: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
-                (!d.isStatusNewsViaRSSEnabled || d.notificationsSettings.notifSettingStatusNews === Constants.settingsSection.notifications.turnOffValue)
-        anchors.centerIn: parent
-        sourceComponent: newsDisabledPanel
-    }
-
-    // Placeholder for the status news when they are all seen or there are no notifications
-    Loader {
-        id: statusNewsNotificationEmptyState
-        active: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
-                !statusNewsNotificationDisabledLoader.active &&
-                listView.count === 0
-        anchors.centerIn: parent
-        sourceComponent: newsEmptyPanel
-    }
 
     Component {
         id: mentionNotificationComponent
@@ -240,7 +239,7 @@ StatusSectionLayout {
             community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
             channel: notification ? root.store.getChatDetails(notification.chatId) : null
 
-            onSetActiveCommunity: (communityId) => {
+            onSetActiveCommunityRequested: (communityId) => {
                                       root.store.setActiveCommunity(communityId) }
             onSwitchToRequested: (sectionId, chatId, messageId) => {
                                      root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
@@ -359,7 +358,7 @@ StatusSectionLayout {
             notification: parent.notification
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
-            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(communityId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
@@ -375,7 +374,7 @@ StatusSectionLayout {
             notification: parent.notification
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
-            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(communityId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
@@ -409,7 +408,7 @@ StatusSectionLayout {
             notification: parent.notification
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
-            onSetActiveCommunity: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(communityId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {
@@ -762,20 +761,14 @@ StatusSectionLayout {
     Component {
         id: newsEmptyPanel
 
-        Item {
-            anchors.fill: parent
-
-            StatusBaseText {
-                anchors.centerIn: parent
-
-                // If the mode is unread only, it means the user has seen all notifications
-                // If the mode is all, it means the user doesn't have any notifications
-                text: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread ?
-                          qsTr("You're all caught up") :
-                          qsTr("Your notifications will appear here")
-                horizontalAlignment: Text.AlignHCenter
-                color: Theme.palette.baseColor1
-            }
+        StatusBaseText {
+            // If the mode is unread only, it means the user has seen all notifications
+            // If the mode is all, it means the user doesn't have any notifications
+            text: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread ?
+                      qsTr("You're all caught up") :
+                      qsTr("Your notifications will appear here")
+            horizontalAlignment: Text.AlignHCenter
+            color: Theme.palette.baseColor1
         }
     }
 }

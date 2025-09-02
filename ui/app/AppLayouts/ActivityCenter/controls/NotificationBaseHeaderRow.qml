@@ -4,9 +4,10 @@ import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils
 import StatusQ.Components
 import StatusQ.Controls
+
+import utils
 
 Control {
     id: root
@@ -91,7 +92,7 @@ Control {
                 visible: text
                 elide: Text.ElideMiddle
                 color: Theme.palette.baseColor1
-                text: Utils.elideText(root.tertiaryText, 3, 6)
+                text: Utils.getElidedPk(root.tertiaryText)
             }
         }
 

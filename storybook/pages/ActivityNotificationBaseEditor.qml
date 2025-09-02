@@ -7,7 +7,7 @@ ColumnLayout {
     id: root
 
     spacing: 8
-    width: parent.width
+    implicitWidth: parent.width
 
     property bool showBaseEditorFields: true
 

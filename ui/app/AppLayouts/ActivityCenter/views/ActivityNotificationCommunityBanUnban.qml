@@ -20,12 +20,12 @@ ActivityNotificationBase {
 
     required property var community
 
-    signal setActiveCommunity(string communityId)
+    signal setActiveCommunityRequested(string communityId)
 
     QtObject {
         id: d
 
-        property color stateTextColor: root.banned ? Theme.palette.dangerColor1 :
+        readonly property color stateTextColor: root.banned ? Theme.palette.dangerColor1 :
                                                      Theme.palette.successColor1
     }
 
@@ -51,7 +51,7 @@ ActivityNotificationBase {
             communityLinkTextColor: Theme.palette.directColor1
             communityLinkTextPixelSize: Theme.additionalTextSize
             communityLinkTextWeight: Font.Medium
-            onCommunityNameClicked: root.setActiveCommunity(notification.communityId)
+            onCommunityNameClicked: root.setActiveCommunityRequested(notification.communityId)
         }
 
         StatusBaseText {

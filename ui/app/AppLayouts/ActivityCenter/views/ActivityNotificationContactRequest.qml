@@ -29,7 +29,7 @@ ActivityNotificationMessage {
     QtObject {
         id: d
 
-        property color stateColorText: {
+        readonly property color stateColorText: {
             if (root.accepted) {
                 return Theme.palette.successColor1
             }
@@ -38,7 +38,7 @@ ActivityNotificationMessage {
             }
             return Theme.palette.baseColor1
         }
-        property string stateText: {
+        readonly property string stateText: {
             if (root.accepted) {
                 return qsTr("accepted")
             }
