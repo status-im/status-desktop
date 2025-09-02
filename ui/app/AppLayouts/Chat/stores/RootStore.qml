@@ -262,7 +262,7 @@ QtObject {
 
         if (fileUrlsAndSources.length > 0) {
             let convertedImagePaths = fileUrlsAndSources.map((file) => {
-                if (Utils.isBase64DataUrl(file)) {
+                if (isBase64DataUrl(file)) {
                     // No need to convert base64 data URLs, they are already in the correct format
                     return file
                 } else {
@@ -552,6 +552,10 @@ QtObject {
 
     function getWei2Eth(wei) {
         return globalUtilsInst.wei2Eth(wei,18)
+    }
+
+    function isBase64DataUrl(str) {
+        return globalUtilsInst.isBase64DataUrl(str)
     }
 
     function getEtherscanTxLink() {

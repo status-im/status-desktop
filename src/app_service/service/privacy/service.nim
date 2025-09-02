@@ -7,7 +7,6 @@ import ../accounts/service as accounts_service
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
-import ../../../backend/eth as status_eth
 import ../../../backend/privacy as status_privacy
 
 import ../../common/utils as common_utils
@@ -46,22 +45,6 @@ QtObject:
   proc init*(self: Service) =
     discard
 
-  proc getDefaultAccount(self: Service): string =
-    try:
-      let response = status_eth.getAccounts()
-
-      if(response.result.kind != JArray):
-        error "error: ", procName="getDefaultAccount", errDesription = "response is not an array"
-        return
-
-      for acc in response.result:
-        # the first account is considered as the default one
-        return acc.getStr
-
-      return ""
-    except Exception as e:
-      error "error: ", procName="getDefaultAccount", errName = e.name, errDesription = e.msg
-
   proc onChangeDatabasePasswordResponse(self: Service, responseStr: string) {.slot.} =
     var data = OperationSuccessArgs(success: false, errorMsg: "")
     try:
@@ -94,21 +77,6 @@ QtObject:
 
   proc changePassword*(self: Service, password: string, newPassword: string) =
     try:
-      var data = OperationSuccessArgs(success: false, errorMsg: "")
-
-      let defaultAccount = self.getDefaultAccount()
-      if(defaultAccount.len == 0):
-        error "error: ", procName="changePassword", errDesription = "default eth account is empty"
-        self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
-        return
-
-      let isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
-      if not isPasswordOk:
-        data.errorMsg = "Incorrect current password"
-        error "error: ", procName="changePassword", errDesription = "password cannnot be verified"
-        self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
-        return
-
       let loggedInAccount = self.accountsService.getLoggedInAccount()
       let arg = ChangeDatabasePasswordTaskArg(
         tptr: changeDatabasePasswordTask,
@@ -137,36 +105,3 @@ QtObject:
 
   proc mnemonicWasShown*(self: Service) =
     self.settingsService.mnemonicWasShown()
-
-  proc getMnemonicWordAtIndex*(self: Service, index: int): string =
-    let mnemonic = self.settingsService.getMnemonic()
-    if(mnemonic.len == 0):
-      let msg = "tyring to get a word on index " & $(index) & " from an empty mnemonic"
-      error "error: ", procName="getMnemonicWordAtIndex", errDesription = msg
-      return
-
-    let mnemonics = mnemonic.split(" ")
-    if(index < 0 or index >= mnemonics.len):
-      let msg = "tyring to get a word on index " & $(index) & " but mnemonic contains " & $(mnemonics.len) & " words"
-      error "error: ", procName="getMnemonicWordAtIndex", errDesription = msg
-      return
-
-    return mnemonics[index]
-
-  proc validatePassword*(self: Service, password: string): bool =
-    try:
-      let defaultAccount = self.getDefaultAccount()
-
-      if(defaultAccount.len == 0):
-        error "error: ", procName="validatePassword", errDesription = "default eth account is empty"
-        return false
-
-      let isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
-      if not isPasswordOk:
-        error "error: ", procName="validatePassword", errDesription = "password cannnot be verified"
-        return false
-
-      return true
-    except Exception as e:
-      error "error: ", procName="validatePassword", errName = e.name, errDesription = e.msg
-      return false

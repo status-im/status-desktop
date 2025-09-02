@@ -29,11 +29,13 @@ QObject {
     required property int syncingBadgeCount
     required property int messagingBadgeCount
     required property bool showBackUpSeed
+    required property int backUpSeedBadgeCount
 
     // internal settings
     required property string profileId
     property bool showEnabledSectionsOnly
     property bool marketEnabled: true
+    property bool browserEnabled: true
 
     property bool showCommunities: true
     property bool showSettings: true
@@ -114,6 +116,12 @@ QObject {
             ValueFilter {
                 roleName: "sectionType"
                 value: Constants.appSection.community
+                inverted: true
+            },
+            ValueFilter {
+                roleName: "sectionType"
+                value: Constants.appSection.browser
+                enabled: !root.browserEnabled
                 inverted: true
             },
             ValueFilter {
@@ -210,9 +218,11 @@ QObject {
 
         sourceModel: SettingsEntriesModel {
             showWalletEntries: true
+            showBrowserEntries: root.browserEnabled
             syncingBadgeCount: root.syncingBadgeCount
             messagingBadgeCount: root.messagingBadgeCount
             showBackUpSeed: root.showBackUpSeed
+            backUpSeedBadgeCount: root.backUpSeedBadgeCount
             showSubSubSections: true
         }
         delegate: QtObject {

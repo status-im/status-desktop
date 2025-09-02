@@ -1,5 +1,5 @@
 import nimqml, tables, json, sequtils, sugar, chronicles, stew/shims/strformat, stint
-import net, strutils, os, times, algorithm, options
+import net, strutils, os, times, algorithm, options, sets
 import web3/eth_api_types
 
 import app/global/global_singleton
@@ -21,6 +21,7 @@ import backend/accounts as status_go_accounts
 import backend/backend as backend
 import backend/network as status_go_network
 import backend/eth as status_go_eth
+import backend/collectibles
 import constants as main_constants
 
 
@@ -48,13 +49,16 @@ QtObject:
     groupedAccountsTokensTable: Table[string, GroupedTokenItem]
     groupedAccountsTokensList: seq[GroupedTokenItem]
     hasBalanceCache: bool
+    fetchingBalancesInProgress: bool
+    addressesWaitingForBalanceToFetch: seq[string]
 
   # Forward declaration
-  proc buildAllTokens*(self: Service, accounts: seq[string], store: bool)
+  proc buildAllTokens*(self: Service, accounts: seq[string], forceRefresh: bool)
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc updateAccountsPositions(self: Service)
   proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: string)
+  proc cleanKeystoreFiles(self: Service, password: string)
   proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64
   proc fetchENSNamesForAddressesAsync(self: Service, addresses: seq[string], chainId: int)
   # All slots defined in included files have to be forward declared

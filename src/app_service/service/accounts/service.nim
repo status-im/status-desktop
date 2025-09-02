@@ -59,8 +59,6 @@ QtObject:
     threadpool: ThreadPool
     accounts: seq[AccountDto]
     loggedInAccount: AccountDto
-    tmpAccount: AccountDto
-    tmpHashedPassword: string
 
   proc restoreAccountAndLogin(self: Service, request: RestoreAccountRequest): string
 
@@ -72,8 +70,6 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-
-  proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000)
 
   proc setLocalAccountSettingsFile(self: Service) =
     if self.loggedInAccount.isValid():
@@ -158,14 +154,7 @@ QtObject:
       openseaApiKey: OPENSEA_API_KEY_RESOLVED,
       raribleMainnetApiKey: RARIBLE_MAINNET_API_KEY_RESOLVED,
       raribleTestnetApiKey: RARIBLE_TESTNET_API_KEY_RESOLVED,
-      alchemyEthereumMainnetToken: ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
-      alchemyEthereumSepoliaToken: ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
-      alchemyArbitrumMainnetToken: ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
-      alchemyArbitrumSepoliaToken: ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
-      alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
-      alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
-      alchemyBaseMainnetToken: ALCHEMY_BASE_MAINNET_TOKEN_RESOLVED,
-      alchemyBaseSepoliaToken: ALCHEMY_BASE_SEPOLIA_TOKEN_RESOLVED,
+      alchemyApiKey: ALCHEMY_API_KEY_RESOLVED,
       statusProxyStageName: STATUS_PROXY_STAGE_NAME_RESOLVED,
       statusProxyMarketUser: STATUS_PROXY_USER_RESOLVED,
       statusProxyMarketPassword: STATUS_PROXY_PASSWORD_RESOLVED,
@@ -241,7 +230,6 @@ QtObject:
   proc importAccountAndLogin*(self: Service,
     mnemonic: string,
     password: string,
-    recoverAccount: bool,
     displayName: string,
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
@@ -250,7 +238,6 @@ QtObject:
 
     var request = RestoreAccountRequest(
       mnemonic: mnemonic,
-      fetchBackup: recoverAccount,
       createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
@@ -260,7 +247,6 @@ QtObject:
   # TODO remove this function when the old keycard service is removed
   proc restoreKeycardAccountAndLogin*(self: Service,
     keycardData: KeycardEvent,
-    recoverAccount: bool,
     displayName: string,
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
@@ -281,7 +267,6 @@ QtObject:
 
     var request = RestoreAccountRequest(
       keycard: keycard,
-      fetchBackup: recoverAccount,
       createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
@@ -292,7 +277,6 @@ QtObject:
     keyUid: string,
     instanceUid: string,
     keycardKeys: KeycardExportedKeysDto,
-    recoverAccount: bool,
     ): string =
 
     let keycard = KeycardData(
@@ -310,7 +294,6 @@ QtObject:
 
     var request = RestoreAccountRequest(
       keycard: keycard,
-      fetchBackup: recoverAccount,
       createAccountRequest: buildCreateAccountRequest(
         password = "",
         displayName = "",
@@ -398,32 +381,6 @@ QtObject:
       data.error = e.msg
     self.events.emit(SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED, data)
 
-  proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
-    try:
-      let response = status_account.verifyAccountPassword(account, utils.hashPassword(password))
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
-          return true
-        else:
-          error "error: ", procName="verifyAccountPassword", errDesription = errMsg
-      return false
-    except Exception as e:
-      error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
-
-  proc verifyDatabasePassword*(self: Service, keyuid: string, hashedPassword: string): bool =
-    try:
-      let response = status_account.verifyDatabasePassword(keyuid, hashedPassword)
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
-          return true
-        else:
-          error "error: ", procName="verifyDatabasePassword", errDesription = errMsg
-      return false
-    except Exception as e:
-      error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
-
   proc doLogin(self: Service, account: AccountDto, passwordHash: string, chatPrivateKey: string = "", mnemonic: string = "") =
     var request = LoginAccountRequest(
       keyUid: account.keyUid,
@@ -451,46 +408,11 @@ QtObject:
 
   proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "", mnemonic: string = "") =
     try:
-      if mnemonic == "":
-        let oldHashedPassword = hashedPasswordToUpperCase(hashedPassword)
-        if self.verifyDatabasePassword(account.keyUid, oldHashedPassword):
-          self.scheduleReencrpytion(account, hashedPassword, timeout = 1000)
-          return
-
       self.doLogin(account, hashedPassword, chatPrivateKey, mnemonic)
 
     except Exception as e:
       error "login failed", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
-
-  proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000) =
-    debug "database reencryption scheduled"
-
-    # Save tmp properties so that we can login after the timer
-    self.tmpAccount = account
-    self.tmpHashedPassword = hashedPassword
-
-    let arg = TimerTaskArg(
-      tptr: timerTask,
-      vptr: cast[uint](self.vptr),
-      slot: "onWaitForReencryptionTimeout",
-      timeoutInMilliseconds: timeout
-    )
-    self.threadpool.start(arg)
-
-  proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
-    debug "starting database reencryption"
-
-    # Reencryption (can freeze and take up to 30 minutes)
-    let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
-    discard status_privacy.changeDatabasePassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
-
-    # Normal login after reencryption
-    self.doLogin(self.tmpAccount, self.tmpHashedPassword)
-
-    # Clear out the temp properties
-    self.tmpAccount = AccountDto()
-    self.tmpHashedPassword = ""
 
   proc convertRegularProfileKeypairToKeycard*(self: Service, keycardUid, currentPassword: string, newPassword: string) =
     var accountDataJson = %* {

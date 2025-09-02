@@ -719,12 +719,6 @@ ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_TARBALL)
 endif
 
-DMG_TOOL := node_modules/.bin/create-dmg
-
-$(DMG_TOOL):
-	echo -e "\033[92mInstalling:\033[39m create-dmg"
-	yarn install
-
 MACOS_OUTER_BUNDLE := tmp/macos/dist/Status.app
 MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app
 
@@ -732,7 +726,7 @@ STATUS_CLIENT_DMG ?= pkg/Status.dmg
 
 $(STATUS_CLIENT_DMG): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_DMG): ENTITLEMENTS ?= resources/Entitlements.plist
-$(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
+$(STATUS_CLIENT_DMG): nim_status_client
 	rm -rf tmp/macos pkg/*.dmg
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/Resources
@@ -763,16 +757,11 @@ ifdef MACOS_CODESIGN_IDENT
 endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
-	# See: https://github.com/sindresorhus/create-dmg#dmg-icon
-	# GraphicsMagick must be installed for create-dmg to make the custom
-	# DMG icon based on app icon, but should otherwise work without it
-	npx create-dmg \
-		--identity="NOBODY" \
-		$(MACOS_OUTER_BUNDLE) \
-		pkg || true
+	scripts/create-dmg/create-dmg \
+		--skip-jenkins \
+		pkg/Status.dmg \
+		$(MACOS_OUTER_BUNDLE) || true
 	# We ignore failure above create-dmg can't skip signing.
-	# To work around that a dummy identity - 'NOBODY' - is specified.
-	# This causes non-zero exit code despite DMG being created.
 	# It is just not signed, hence the next command should succeed.
 	mv "`ls pkg/*.dmg`" $(STATUS_CLIENT_DMG)
 
@@ -796,7 +785,7 @@ $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_EXE): INSTALLER_OUTPUT := pkg
 $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_launcher
 	rm -rf pkg/*.exe tmp/windows/dist
-	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n
+	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n $(OUTPUT)/bin/plugins/tls
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
 	cp status.ico status.png resources.rcc $(OUTPUT)/resources/
 	cp bin/i18n/* $(OUTPUT)/resources/i18n
@@ -815,6 +804,7 @@ $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_la
 		tmp/windows/dist/Status/bin/DOtherSide.dll
 	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
 	cp status.iss $(OUTPUT)/status.iss
+	cp $(QT_INSTALL_PREFIX)/plugins/tls/qopensslbackend.dll $(OUTPUT)/bin/plugins/tls/
 # if WINDOWS_CODESIGN_PFX_PATH is not set then DLLs, EXEs are not signed
 ifdef WINDOWS_CODESIGN_PFX_PATH
 	scripts/sign-windows-bin.sh ./tmp/windows/dist/Status

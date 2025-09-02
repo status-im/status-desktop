@@ -84,6 +84,7 @@ QtObject {
         Global.openInviteFriendsToCommunityByIdPopup.connect(openInviteFriendsToCommunityByIdPopup)
         Global.openContactRequestPopup.connect(openContactRequestPopup)
         Global.openReviewContactRequestPopup.connect(openReviewContactRequestPopup)
+        Global.openChooseBrowserPopup.connect(openChooseBrowserPopup)
         Global.openDownloadModalRequested.connect(openDownloadModal)
         Global.openImagePopup.connect(openImagePopup)
         Global.openVideoPopup.connect(openVideoPopup)
@@ -149,6 +150,10 @@ QtObject {
     function closePopup() {
         if (!!root.currentPopup)
             root.currentPopup.close();
+    }
+
+    function openChooseBrowserPopup(link: string) {
+        openPopup(chooseBrowserPopupComponent, {link: link})
     }
 
     function openDownloadModal(available: bool, version: string, url: string) {
@@ -542,7 +547,14 @@ QtObject {
         Component {
             id: backupSeedModalComponent
             BackupSeedModal {
-                privacyStore: root.privacyStore
+                mnemonic: root.privacyStore.getMnemonic()
+                onBackupSeedphraseFinished: function(removeSeedphrase) {
+                    if (removeSeedphrase)
+                        root.privacyStore.removeMnemonic()
+                    root.profileStore.setUserDeclinedBackupBanner() // remove the banner
+                    Global.displaySuccessToastMessage(removeSeedphrase ? qsTr("Recovery phrase permanently removed from Status application storage")
+                                                                       : qsTr("You backed up your recovery phrase. Access it in Settings"))
+                }
                 onClosed: destroy()
             }
         },
@@ -582,6 +594,9 @@ QtObject {
                     id: contactModelEntry
                     publicKey: profilePopup.publicKey
                     contactsModel: root.allContactsModel
+                    onPopulateContactDetailsRequested: {
+                        root.contactsStore.populateContactDetails(profilePopup.publicKey)
+                    }
                 }
 
                 contactDetails: contactModelEntry.contactDetails
@@ -636,6 +651,13 @@ QtObject {
                              (cropRect.y + cropRect.height).toFixed())
                 }
                 onDone: destroy()
+            }
+        },
+
+        Component {
+            id: chooseBrowserPopupComponent
+            ChooseBrowserPopup {
+                onClosed: destroy()
             }
         },
 
@@ -1391,7 +1413,7 @@ QtObject {
 
             NewsMessagePopup {
                 activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
-                onLinkClicked: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
+                onLinkClicked: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
             }
         },
         Component {

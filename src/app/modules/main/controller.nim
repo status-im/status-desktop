@@ -1,4 +1,4 @@
-import chronicles, stint
+import chronicles, stint, strutils
 import app/global/global_singleton
 import app/global/app_signals
 import app/core/signals/types as signal_types
@@ -31,6 +31,7 @@ import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 logScope:
   topics = "main-module-controller"
 
+const UNIQUE_MAIN_MODULE_AUTHENTICATE_INTERNAL_IDENTIFIER* = "MainModule-Internal-"
 const UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER* = "MainModule-AuthenticateKeypair"
 const UNIQUE_MAIN_MODULE_SIGNING_DATA_IDENTIFIER* = "MainModule-SigningData"
 const UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER* = "MainModule-KeycardSyncPurpose"
@@ -293,9 +294,6 @@ proc init*(self: Controller) =
     var args = ResolvedContactArgs(e)
     self.delegate.resolvedENS(args.pubkey, args.address, args.uuid, args.reason)
 
-  self.events.on(SIGNAL_MNEMONIC_REMOVED) do(e: Args):
-    self.delegate.mnemonicBackedUp()
-
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     var args = ActiveSectionChatArgs(e)
     self.activeSectionId = args.sectionId
@@ -469,17 +467,23 @@ proc init*(self: Controller) =
         return
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER and
       self.authenticateUserFlowRequestedBy.len > 0:
+        var requestedBy = self.authenticateUserFlowRequestedBy
+        self.authenticateUserFlowRequestedBy = ""
         self.delegate.onSharedKeycarModuleForAuthenticationOrSigningTerminated(args.lastStepInTheCurrentFlow)
-        let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
+        let data = SharedKeycarModuleArgs(uniqueIdentifier: requestedBy,
           password: args.password,
           pin: args.pin,
           keyUid: args.keyUid,
           keycardUid: args.keycardUid,
           additinalPathsDetails: args.additinalPathsDetails)
-        self.authenticateUserFlowRequestedBy = ""
-        ## Whenever user provides a password/pin we need to make all partially operable accounts (if any exists) a fully operable.
-        self.events.emit(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS, ImportAccountsArgs(keyUid: data.keyUid, password: data.password))
+        ## Whenever user provides a password/pin we need to make some global checks.
+        self.events.emit(SIGNAL_PASSWORD_PROVIDED, AuthenticationArgs(keyUid: data.keyUid, password: data.password))
         self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
+        if requestedBy.startsWith(UNIQUE_MAIN_MODULE_AUTHENTICATE_INTERNAL_IDENTIFIER):
+          requestedBy = requestedBy.split(UNIQUE_MAIN_MODULE_AUTHENTICATE_INTERNAL_IDENTIFIER)[1]
+          self.delegate.onLoggedInUserAuthenticated(requestedBy, args.password, args.pin, args.keyUid, args.keycardUid)
+          return
+        return
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
     let args = SharedKeycarModuleBaseArgs(e)
@@ -538,6 +542,11 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_LOGGEDIN_USER_NAME_CHANGED) do(e: Args):
     self.delegate.contactUpdated(singletonInstance.userProfile.getPubKey())
 
+proc authenticateLoggedInUser*(self: Controller, requestedBy: string) =
+    let loggedInUserKeyUid = singletonInstance.userProfile.getKeyUid()
+    self.authenticateUserFlowRequestedBy = UNIQUE_MAIN_MODULE_AUTHENTICATE_INTERNAL_IDENTIFIER & requestedBy
+    self.delegate.runAuthenticationOrSigningPopup(keycard_shared_module.FlowType.Authentication, loggedInUserKeyUid, @[])
+
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 
@@ -565,8 +574,8 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-proc getContactDetails*(self: Controller, contactId: string, skipBackendCalls: bool): ContactDetails =
-  return self.contactsService.getContactDetails(contactId, skipBackendCalls)
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
+  return self.contactsService.getContactDetails(contactId)
 
 proc resolveENS*(self: Controller, ensName: string, uuid: string = "", reason: string = "") =
   self.contactsService.resolveENS(ensName, uuid, reason)

@@ -21,7 +21,7 @@ scrollView_MenuItem_StatusNavigationListItem = {"container": mainWindow_scrollVi
 
 
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
-settingsBackUpSeedPhraseOption = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "18-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
+settingsBackUpSeedPhraseOption = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "19-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
 settingsWalletOption = {"container": mainWindow_settingsList_SettingsList, "objectName": "5-MenuItem", "type": "StatusNavigationListItem", "visible": True}
 settingsSignOutQuitOption = {"container": LeftTabProfileMenu, "objectName": "17-ExtraMenuItem", "type": "StatusNavigationListItem", "visible": True}
 
@@ -169,7 +169,6 @@ mainWindow_PasswordView = {"container": statusDesktop_mainWindow, "type": "Chang
 mainWindow_SyncingView = {"container": statusDesktop_mainWindow, "type": "SyncingView", "unnamed": 1, "visible": True}
 syncingInstructionsLayout = {"container": settingsContentBase_ScrollView, "id": "instructionsLayout", "type": "ColumnLayout", "unnamed": 1, "visible": True}
 settings_Setup_Syncing_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncingStatusButton", "type": "StatusButton", "visible": True}
-settings_Backup_Data_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncBackupDataButton", "type": "StatusButton", "visible": True}
 settings_Sync_New_Device_Header = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceTextLabel", "type": "StatusBaseText", "visible": True}
 settings_Sync_New_Device_SubTitle = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceSubTitleTextLabel", "type": "StatusBaseText", "visible": True}
 unpairButton = {"container": settingsContentBase_ScrollView, "objectName": "unpairStatusButton", "type": "StatusButton", "visible": True}

@@ -123,6 +123,9 @@ SettingsContentBase {
 
     readonly property var priv: QtObject {
         id: priv
+
+        readonly property string removeKeypairIdentifier: "profile-remove-keypair"
+
         readonly property bool isManageTokensSubsection: root.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
                                                          root.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
                                                          root.settingsSubSubsection === Constants.walletSettingsSubsection.manageHidden ||
@@ -498,11 +501,22 @@ SettingsContentBase {
                 relatedAccounts: removeKeypairPopup.accounts
                 onClosed: removeKeypairPopup.active = false
                 onConfirmClicked: {
-                    root.walletStore.deleteKeypair(removeKeypairPopup.keyUid)
-                    removeKeypairPopup.active = false
+                    root.walletStore.authenticateLoggedInUser(priv.removeKeypairIdentifier)
                 }
             }
-            onLoaded: removeKeypairPopup.item.open()
+
+            onLoaded: {
+                const loggedInUserAuthenticated = (requestedBy, password, pin, keyUid, keycardUid) => {
+                    if (priv.removeKeypairIdentifier !== requestedBy || password === "") {
+                        return
+                    }
+                    root.walletStore.deleteKeypair(removeKeypairPopup.keyUid, password)
+                    removeKeypairPopup.active = false
+                }
+
+                root.walletStore.loggedInUserAuthenticated.connect(loggedInUserAuthenticated)
+                removeKeypairPopup.item.open()
+            }
         }
 
         Connections {

@@ -170,7 +170,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password,
           mnemonic,
-          recoverAccount = false,
           keycardInstanceUID = "",
         )
       of OnboardingFlow.CreateProfileWithKeycardNewSeedphrase:
@@ -178,7 +177,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           mnemonic,
-          recoverAccount = false,
           keycardInstanceUID = keycardInfo.instanceUID,
         )
       of OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase:
@@ -186,7 +184,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           mnemonic,
-          recoverAccount = false,
           keycardInstanceUID = keycardInfo.instanceUID,
         )
 
@@ -195,7 +192,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         err = self.controller.restoreAccountAndLogin(
           password,
           mnemonic,
-          recoverAccount = true,
           keycardInstanceUID = "",
         )
       of OnboardingFlow.LoginWithSyncing:
@@ -210,7 +206,6 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           keycardInfo.keyUID,
           keycardInfo.instanceUID,
           self.exportedKeys,
-          recoverAccount = true
         )
       of OnboardingFlow.LoginWithLostKeycardSeedphrase:
         # 1. Schedule `convertToRegularAccount` for post-onboarding
@@ -303,7 +298,7 @@ proc syncAppAndKeycardState[T](self: Module[T]) =
     keycardLocked: false,
     accountsAddresses: addressesToStore,
     keyUid: kcEvent.keycardInfo.keyUID)
-  self.controller.addKeycardOrAccounts(kcDto, accountsComingFromKeycard = true)
+  self.controller.addKeycardOrAccounts(kcDto, password = "")
 
 proc finishAppLoading2[T](self: Module[T]) =
 
@@ -340,8 +335,9 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
     self.onAccountLoginError(err2)
     return
 
-  if self.localPairingStatus != nil and self.localPairingStatus.installation != nil and self.localPairingStatus.installation.id != "":
-    # We tried to login by pairing, so finilize the process
+  if self.localPairingStatus != nil and self.localPairingStatus.installation != nil and
+      self.localPairingStatus.installation.id != "" and self.localPairingStatus.state == LocalPairingState.Error:
+    # We tried to login by pairing, so finalize the process
     self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)
 
   # Run any available post-login tasks

@@ -212,6 +212,7 @@ Item {
 
             const delegateIndex = ModelUtils.indexOf(assetSelectorList.model, "symbol", "STT")
 
+            assetSelectorList.positionViewAtIndex(delegateIndex, ListView.Center)
             const sttDelegate = assetSelectorList.itemAtIndex(delegateIndex)
             verify(!!sttDelegate)
             mouseClick(sttDelegate)
@@ -351,6 +352,7 @@ Item {
                 let modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
                 mouseClick(holdingSelector)
                 waitForRendering(assetSelectorList)
+                assetSelectorList.positionViewAtIndex(i, ListView.Center)
 
                 const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
                 verify(!!delToTest)
@@ -371,7 +373,7 @@ Item {
                     tryCompare(controlUnderTest, "value", maxTagButton.maxSafeValue)
                     verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
                     compare(bottomItemText.text,  d.adaptor.currencyStore.formatCurrencyAmount(
-                                maxTagButton.maxSafeValue * amountToSendInput.price, d.adaptor.currencyStore.currentCurrency))
+                                maxTagButton.maxSafeValue * amountToSendInput.cryptoPrice, d.adaptor.currencyStore.currentCurrency))
                 }
                 amountToSendInput.clear()
             }
@@ -433,7 +435,7 @@ Item {
                     waitForItemPolished(controlUnderTest)
 
                     compare(amountToSendInput.text, "5.42")
-                    const marketPrice = amountToSendInput.price
+                    const marketPrice = amountToSendInput.cryptoPrice
                     tryCompare(bottomItemText, "text", d.adaptor.formatCurrencyAmount(
                                     numberTested * marketPrice,
                                     d.adaptor.currencyStore.currentCurrency))

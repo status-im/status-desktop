@@ -148,6 +148,8 @@ StatusDialog {
     property string routerErrorDetails: ""
     /** input property to set router error code **/
     property string routerErrorCode
+    /** input property to indicate if market data is not available **/
+    property bool marketDataNotAvailable
 
     /** property to set currently selected send type **/
     property int sendType: Constants.SendType.Transfer
@@ -459,7 +461,6 @@ StatusDialog {
 
         readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.selectedChainId)
 
-
         readonly property var selectedNetworkEntry: ModelEntry {
             sourceModel: root.networksModel
             key: "chainId"
@@ -628,6 +629,7 @@ StatusDialog {
                     Layout.fillWidth: true
 
                     interactive: root.interactive
+                    fiatInputInteractive: root.interactive && !root.marketDataNotAvailable
                     dividerVisible: true
                     bottomTextLoading: root.routesLoading
 
@@ -638,9 +640,8 @@ StatusDialog {
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:
                                         d.selectedCryptoTokenSymbol
-                    price: !!d.selectedAssetEntryValid &&
-                           !!d.selectedAssetEntry.item.marketDetails ?
-                               d.selectedAssetEntry.item.marketDetails.currencyPrice.amount : 1
+                    cryptoPrice: root.marketDataNotAvailable ? 0 :
+                               d.selectedAssetEntry.item.marketDetails.currencyPrice.amount
                     multiplierIndex: !!d.selectedAssetEntryValid &&
                                      !!d.selectedAssetEntry.item.decimals ?
                                          d.selectedAssetEntry.item.decimals : 0
@@ -667,7 +668,7 @@ StatusDialog {
                         id: maxButton
 
                         formattedValue: {
-                            let maxSafeValue = amountToSend.fiatMode ? d.maxSafeCryptoValue * amountToSend.price : d.maxSafeCryptoValue
+                            let maxSafeValue = amountToSend.fiatMode ? d.maxSafeCryptoValue * amountToSend.cryptoPrice : d.maxSafeCryptoValue
                             return root.fnFormatCurrencyAmount(
                                         maxSafeValue,
                                         amountToSend.selectedSymbol,

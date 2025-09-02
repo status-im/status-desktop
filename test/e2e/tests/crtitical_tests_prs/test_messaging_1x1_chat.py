@@ -11,6 +11,7 @@ from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_
     LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
 from constants.messaging import Messaging
 from constants.wallet import WalletAddress
+from ext.test_files.base64_images import BASE_64_IMAGE_JPEG
 from gui.screens.messages import MessagesScreen
 
 import configs.testpath
@@ -31,7 +32,9 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     messages_screen = MessagesScreen()
     emoji = 'sunglasses'
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-    path = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
+    local_picture = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
+    picture = random.choice([BASE_64_IMAGE_JPEG, local_picture])
+
     EMOJI_PATHES = [HEART_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, LAUGHING_EMOJI_PATH,
                     SAD_EMOJI_PATH, ANGRY_EMOJI_PATH]
 
@@ -171,7 +174,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             assert '😎' in message_object.text
 
         with step(f'User {user_two.name} send image to {user_one.name} and verify it was sent'):
-            messages_screen.group_chat.send_image_to_chat(str(path))
+            messages_screen.group_chat.send_image_to_chat(str(picture))
             message_object = messages_screen.chat.messages(0)[0]
             assert message_object.image_message.visible, \
                 f"Message text is not found in the last message"

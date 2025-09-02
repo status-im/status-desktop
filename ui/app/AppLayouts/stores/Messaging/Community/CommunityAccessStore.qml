@@ -1,8 +1,8 @@
-import QtQuick 2.13
+import QtQuick
 
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Utils as StatusQUtils
 
-import shared.stores 1.0
+import shared.stores
 
 StatusQUtils.QObject {
     id: root

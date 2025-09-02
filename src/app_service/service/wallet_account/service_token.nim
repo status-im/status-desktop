@@ -5,13 +5,18 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   var accountAddresses: seq[string] = @[]
   var accountTokens: seq[GroupedTokenItem] = @[]
   defer:
+    self.fetchingBalancesInProgress = false
     let timestamp = getTime().toUnix()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens, timestamp: timestamp))
+
+    if self.addressesWaitingForBalanceToFetch.len > 0:
+      let addressesToFetch = self.addressesWaitingForBalanceToFetch
+      self.addressesWaitingForBalanceToFetch = @[]
+      self.buildAllTokens(addressesToFetch, forceRefresh = true)
+
   try:
     let responseObj = response.parseJson
-    var storeResult: bool
     var resultObj: JsonNode
-    discard responseObj.getProp("storeResult", storeResult)
     discard responseObj.getProp("result", resultObj)
 
     var groupedAccountsTokensBalances = self.groupedAccountsTokensTable
@@ -74,28 +79,35 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
         # set assetsLoading to false once the tokens are loaded
         self.updateAssetsLoadingState(accountAddress, false)
         accountTokens = toSeq(groupedAccountsTokensBalances.values)
-    if storeResult and not allTokensHaveError:
+    if not allTokensHaveError:
       self.hasBalanceCache = true
       self.groupedAccountsTokensTable = groupedAccountsTokensBalances
       self.groupedAccountsTokensList = accountTokens
   except Exception as e:
     error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
-proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
+proc buildAllTokens*(self: Service, accounts: seq[string], forceRefresh: bool) =
   if not main_constants.WALLET_ENABLED or
     accounts.len == 0:
       return
+
+  if self.fetchingBalancesInProgress:
+    self.addressesWaitingForBalanceToFetch.add(accounts)
+    return
+
+  self.fetchingBalancesInProgress = true
 
   # set assetsLoading to true as the tokens are being loaded
   for waddress in accounts:
     self.updateAssetsLoadingState(waddress, true)
 
+  var uniqueAddresses: HashSet[string] = toHashSet(accounts)
   let arg = BuildTokensTaskArg(
     tptr: prepareTokensTask,
     vptr: cast[uint](self.vptr),
     slot: "onAllTokensBuilt",
-    accounts: accounts,
-    storeResult: store
+    accounts: toSeq(uniqueAddresses),
+    forceRefresh: forceRefresh
   )
   self.threadpool.start(arg)
 
@@ -137,7 +149,6 @@ proc getCurrency*(self: Service): string =
 proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: string): tuple[balance: float64, fetched: bool] =
   let acc = self.getAccountByAddress(address)
   if acc.isNil:
-    self.buildAllTokens(@[address], store = false)
     result.balance = 0.0
     result.fetched = false
     return
@@ -172,7 +183,13 @@ proc reloadAccountTokens*(self: Service) =
     error "error restartWalletReloadTimer: ", errDesription
 
   let addresses = self.getWalletAddresses()
-  self.buildAllTokens(addresses, store = true)
+  self.buildAllTokens(addresses, forceRefresh = true)
+  
+  try:
+    discard collectibles.refetchOwnedCollectibles()
+  except Exception as e:
+    let errDesription = e.msg
+    error "error refetchOwnedCollectibles: ", errDesription
 
 proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
   return self.currencyService.parseCurrencyValueByTokensKey(tokensKey, amountInt)

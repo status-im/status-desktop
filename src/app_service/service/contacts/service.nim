@@ -111,7 +111,7 @@ QtObject:
   proc getContactById*(self: Service, id: string): ContactsDto
   proc saveContact(self: Service, contact: ContactsDto)
   proc requestContactInfo*(self: Service, pubkey: string)
-  proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false, skipBackendCalls: bool = false): ContactDetails
+  proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false): ContactDetails
   proc parseContactsResponse*(self: Service, contacts: JsonNode, fromBackup: bool = false)
 
   proc delete*(self: Service) =
@@ -293,28 +293,27 @@ QtObject:
     if(contactDto.image.large.len > 0):
       result.largeImage = contactDto.image.large
 
-  proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false, skipBackendCalls: bool = false): ContactDetails =
+  proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false): ContactDetails =
     result = ContactDetails()
     let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(contactDto)
     result.defaultDisplayName = name
     result.optionalName = optionalName
     result.icon = icon
-    if not skipBackendCalls:
-      result.colorId = procs_from_visual_identity_service.colorIdOf(contactDto.id)
+    result.colorId = procs_from_visual_identity_service.colorIdOf(contactDto.id)
     result.isCurrentUser = isCurrentUser
     result.dto = contactDto
 
-    if not contactDto.ensVerified and not skipBackendCalls:
+    if not contactDto.ensVerified:
       result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(contactDto.id)
 
-  proc getContactDetails*(self: Service, id: string, skipBackendCalls: bool = false): ContactDetails =
+  proc getContactDetails*(self: Service, id: string): ContactDetails =
     var pubkey = id
 
     if service_conversion.isCompressedPubKey(id):
       pubkey = status_accounts.decompressPk(id).result
 
     if len(pubkey) == 0:
-        return
+      return
 
     ## Returns contact details based on passed id (public key)
     ## If we don't have stored contact localy or in the db then we create it based on public key.
@@ -339,7 +338,6 @@ QtObject:
           bio: self.settingsService.getBio(),
         ),
         isCurrentUser = true,
-        skipBackendCalls,
       )
 
     if not pubkey.startsWith("0x"):
@@ -355,7 +353,7 @@ QtObject:
     let contact = self.constructContactDetails(
       ContactsDto(
         id: pubkey,
-        alias: if skipBackendCalls: "" else: self.generateAlias(pubkey),
+        alias: self.generateAlias(pubkey),
         ensVerified: false,
         added: false,
         blocked: false,
@@ -363,7 +361,6 @@ QtObject:
         trustStatus: TrustStatus.Unknown,
       ),
       isCurrentUser = false,
-      skipBackendCalls,
     )
     self.addContact(contact)
     return contact

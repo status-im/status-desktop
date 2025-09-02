@@ -1,9 +1,9 @@
-import QtQuick 2.15
+import QtQuick
 
 import SortFilterProxyModel
 import QtModelsToolkit
 
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Utils as StatusQUtils
 
 StatusQUtils.QObject {
     id: root

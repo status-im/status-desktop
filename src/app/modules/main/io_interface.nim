@@ -42,6 +42,13 @@ method load*(
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method authenticateLoggedInUser*(self: AccessInterface, requestedBy: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onLoggedInUserAuthenticated*(self: AccessInterface, requestedBy: string, password: string, pin: string, keyUid: string,
+  keycardUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getAppNetwork*(self: AccessInterface): NetworkItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -67,6 +74,9 @@ method profileSectionDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method walletSectionDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method browserSectionDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method networkConnectionModuleDidLoad*(self: AccessInterface) {.base.} =
@@ -200,9 +210,6 @@ method communityLeft*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method resolvedENS*(self: AccessInterface, publicKey: string, address: string, uuid: string, reason: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method mnemonicBackedUp*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method osNotificationClicked*(self: AccessInterface, details: NotificationDetails) {.base.} =

@@ -116,6 +116,8 @@ QtObject {
     signal savedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string)
     signal savedAddressDeleted(name: string, address: string, errorMsg: string)
 
+    signal loggedInUserAuthenticated(string requestedBy, string password, string pin, string keyUid, string keycardUid)
+
     property QtObject _d: QtObject {
         id: d
 
@@ -150,6 +152,18 @@ QtObject {
                 }
             }
         }
+
+        readonly property Connections mainModuleConnections: Connections {
+            target: d.mainModuleInst
+
+            function onLoggedInUserAuthenticated(requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) {
+                root.loggedInUserAuthenticated(requestedBy, password, pin, keyUid, keycardUid)
+            }
+        }
+    }
+
+    function authenticateLoggedInUser(requestedBy) {
+        d.mainModuleInst.authenticateLoggedInUser(requestedBy)
     }
 
     function resetCurrentViewedHolding(type) {
@@ -185,16 +199,6 @@ QtObject {
         return walletSection.canProfileProveOwnershipOfProvidedAddresses(JSON.stringify(addresses))
     }
 
-    function getLatestBlockNumber(chainId) {
-        // NOTE returns hex
-        return walletSection.getLatestBlockNumber(chainId)
-    }
-
-    function getEstimatedLatestBlockNumber(chainId) {
-        // NOTE returns decimal
-        return walletSection.getEstimatedLatestBlockNumber(chainId)
-    }
-
     function setFilterAddress(address) {
         walletSection.setFilterAddress(address)
     }
@@ -203,8 +207,8 @@ QtObject {
         walletSectionInst.setFilterAllAddresses()
     }
 
-    function deleteAccount(address) {
-        return walletSectionAccounts.deleteAccount(address)
+    function deleteAccount(address, password) {
+        return walletSectionAccounts.deleteAccount(address, password)
     }
 
     function getQrCode(address) {

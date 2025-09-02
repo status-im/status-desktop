@@ -6,6 +6,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml.Models
 
+import AppLayouts.Browser
 import AppLayouts.Wallet
 import AppLayouts.Node
 import AppLayouts.Chat
@@ -49,6 +50,7 @@ import AppLayouts.Wallet.popups.dapps as DAppsPopups
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.stores as AppStores
 import AppLayouts.stores.Messaging as MessagingStores
+import AppLayouts.Browser.stores as BrowserStores
 
 import mainui.adaptors
 import mainui.activitycenter.stores
@@ -64,9 +66,7 @@ Item {
     // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
         localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
-        onOpenUrl: {
-            Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
-        }
+        onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
     }
 
     // Global cross-domain stores (just references from `rootStore`)
@@ -911,15 +911,15 @@ Item {
 
         isDevBuild: !appMain.rootStore.isProduction
 
-        onOpenExternalLink: globalConns.onOpenLink(link)
-        onSaveDomainToUnfurledWhitelist: {
+        onOpenExternalLink: (link) => globalConns.onOpenLink(link)
+        onSaveDomainToUnfurledWhitelist: function(domain) {
             const whitelistedHostnames = appMainLocalSettings.whitelistedUnfurledDomains || []
             if (!whitelistedHostnames.includes(domain)) {
                 whitelistedHostnames.push(domain)
                 appMainLocalSettings.whitelistedUnfurledDomains = whitelistedHostnames
             }
         }
-        onTransferOwnershipRequested: popupRequestsHandler.sendModalHandler.transferOwnership(tokenId, senderAddress)
+        onTransferOwnershipRequested: (tokenId, senderAddress) => popupRequestsHandler.sendModalHandler.transferOwnership(tokenId, senderAddress)
     }
 
     HandlersManager {
@@ -934,6 +934,7 @@ Item {
         sharedRootStore: appMain.sharedRootStore
         currencyStore: appMain.currencyStore
         networksStore: appMain.networksStore
+        networkConnectionStore: appMain.networkConnectionStore
         walletRootStore: WalletStores.RootStore
         walletAssetsStore: appMain.walletAssetsStore
         transactionStore: appMain.transactionStore
@@ -947,6 +948,11 @@ Item {
     Connections {
         id: globalConns
         target: Global
+
+        function onOpenLinkInBrowser(link: string) {
+            changeAppSectionBySectionId(Constants.appSection.browser)
+            Qt.callLater(() => browserLayoutContainer.item.openUrlInNewTab(link));
+        }
 
         function onOpenCreateChatView() {
             createChatView.opened = true
@@ -963,7 +969,17 @@ Item {
         function onOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = SQUtils.StringUtils.plainText(link)
-            Qt.openUrlExternally(link)
+
+            if (appMain.rootStore.showBrowserSelector) {
+                popups.openChooseBrowserPopup(link)
+            } else {
+                if (appMain.rootStore.openLinksInStatus) {
+                    globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
+                    globalConns.onOpenLinkInBrowser(link)
+                } else {
+                    Qt.openUrlExternally(link)
+                }
+            }
         }
 
         function onOpenLinkWithConfirmation(link: string, domain: string) {
@@ -1220,6 +1236,11 @@ Item {
                         roleName: "sectionType"
                         value: Constants.appSection.chat
                     }
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.browser
+                        enabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
+                    }
                 },
                 ValueFilter {
                     roleName: "enabled"
@@ -1355,7 +1376,7 @@ Item {
                         icon.name: communityContextMenu.isSpectator ? "close-circle" : "arrow-left"
                         type: StatusAction.Type.Danger
                         onTriggered: communityContextMenu.isSpectator ? communityContextMenu.chatCommunitySectionModule.leaveCommunity()
-                                                                        : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
+                                                                      : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
                     }
                 }
             }
@@ -1418,8 +1439,15 @@ Item {
                 readonly property bool displayCreateCommunityBadge: model.sectionType === Constants.appSection.communitiesPortal && !appMain.communitiesStore.createCommunityPopupSeen
                 badge.value: model.notificationsCount
                 badge.visible: {
-                    if (model.sectionType === Constants.appSection.profile && contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) // pending contact request
-                        return true
+                    if (model.sectionType === Constants.appSection.profile) {
+                        if (contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) // pending contact request
+                            return true
+                        if (!appMain.privacyStore.mnemonicBackedUp && !appMain.profileStore.userDeclinedBackupBanner) // seedphrase not backed up (removed)
+                            return true
+                        if (appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount > 0) // sync entries
+                            return true
+                        return false
+                    }
                     if (displayCreateCommunityBadge) // create new community badge
                         return true
                     return model.hasNotification // Otherwise, use the value coming from the model
@@ -1457,8 +1485,8 @@ Item {
                 Layout.fillWidth: true
 
                 // apply left/right margins when we remove the window titlebar
-                Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.Window.SafeArea.margins.left : 0
-                Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.Window.SafeArea.margins.right : 0
+                Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.left : 0
+                Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.right : 0
 
                 Layout.maximumHeight: implicitHeight
                 spacing: 1
@@ -1691,6 +1719,8 @@ Item {
                             return Constants.appViewStackIndex.wallet
                         case Constants.appSection.profile:
                             return Constants.appViewStackIndex.profile
+                        case Constants.appSection.browser:
+                            return Constants.appViewStackIndex.browser
                         case Constants.appSection.node:
                             return Constants.appViewStackIndex.node
                         case Constants.appSection.market:
@@ -1733,10 +1763,12 @@ Item {
 
                                 showEnabledSectionsOnly: true
                                 marketEnabled: appMain.featureFlagsStore.marketEnabled
+                                browserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
 
                                 syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
                                 messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
-                                showBackUpSeed: !appMain.profileStore.userDeclinedBackupBanner && !appMain.privacyStore.mnemonicBackedUp
+                                showBackUpSeed: !appMain.privacyStore.mnemonicBackedUp
+                                backUpSeedBadgeCount: appMain.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
 
                                 searchPhrase: homePage.searchPhrase
 
@@ -1922,7 +1954,7 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.communitiesPortal
                         asynchronous: true
-                        CommunitiesPortalLayout {
+                        sourceComponent: CommunitiesPortalLayout {
                             anchors.fill: parent
                             createCommunityEnabled: !SQUtils.Utils.isMobile
                             navBar: appMain.navBar
@@ -1974,6 +2006,38 @@ Item {
                         }
                         onLoaded: {
                             item.resetView()
+                        }
+                    }
+
+                    Loader {
+                        id: browserLayoutContainer
+
+                        asynchronous: true
+                        Binding on active {
+                            when: appView.currentIndex === Constants.appViewStackIndex.browser
+                            value: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled && !localAppSettings.testEnvironment
+                            restoreMode: Binding.RestoreNone
+                        }
+
+                        sourceComponent: BrowserLayout {
+                            id: browserLayout
+                            userUID: appMain.profileStore.pubKey
+                            navBar: appMain.navBar
+                            bookmarksStore: BrowserStores.BookmarksStore {}
+                            downloadsStore: BrowserStores.DownloadsStore {}
+                            browserRootStore: BrowserStores.BrowserRootStore {}
+                            browserWalletStore: BrowserStores.BrowserWalletStore {}
+                            web3ProviderStore: BrowserStores.Web3ProviderStore {
+                                dappBrowserAccountAddress: browserLayout.browserWalletStore.dappBrowserAccount.address
+                            }
+
+                            transactionStore: appMain.transactionStore
+                            assetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
+                            tokensStore: appMain.tokensStore
+                            notificationCount: activityCenterStore.unreadNotificationsCount
+                            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+                            onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
                         }
                     }
 
@@ -2031,6 +2095,7 @@ Item {
                             pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
+                            isBrowserEnabled: featureFlagsStore.browserEnabled
 
                             theme: appMainLocalSettings.theme
                             fontSize: appMainLocalSettings.fontSize
@@ -2781,7 +2846,7 @@ Item {
                 walletConnectEnabled: featureFlagsStore.dappsEnabled
                 connectorEnabled: featureFlagsStore.connectorEnabled
 
-                formatBigNumber: (number, symbol, noSymbolOption) => WalletStores.RootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+                formatBigNumber: (number, symbol, noSymbolOption) => appMain.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
                 onDisconnectRequested: (connectionId) => dAppsService.disconnectDapp(connectionId)
                 onPairingRequested: (uri) => dAppsService.pair(uri)
@@ -2815,8 +2880,8 @@ Item {
 
             // DAppsModule provides the middleware for the dapps
             dappsModule: DAppsModule {
-                currenciesStore: WalletStores.RootStore.currencyStore
-                groupedAccountAssetsModel: WalletStores.RootStore.walletAssetsStore.groupedAccountAssetsModel
+                currenciesStore: appMain.currencyStore
+                groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
                 dappsMetrics: dappMetrics
                 networksModel: SortFilterProxyModel {

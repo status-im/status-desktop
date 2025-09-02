@@ -91,12 +91,6 @@ method onAddAccountModuleLoaded*(self: AccessInterface) {.base.} =
 method destroyAddAccountPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getEstimatedLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method fetchDecodedTxData*(self: AccessInterface, txHash: string, data: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

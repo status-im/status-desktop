@@ -92,9 +92,6 @@ proc removeMnemonic*(self: Controller) =
 proc mnemonicWasShown*(self: Controller) =
   self.settingsService.mnemonicWasShown()
 
-proc getMnemonicWordAtIndex*(self: Controller, index: int): string =
-  return self.privacyService.getMnemonicWordAtIndex(index)
-
 proc getMessagesFromContactsOnly*(self: Controller): bool =
   return self.settingsService.getMessagesFromContactsOnly()
 
@@ -108,9 +105,6 @@ proc setUrlUnfurlingMode*(self: Controller, value: int) =
   let mode = toUrlUnfurlingMode(value)
   if not self.settingsService.saveUrlUnfurlingMode(mode):
     error "failed to save url unfurling mode setting", value
-
-proc validatePassword*(self: Controller, password: string): bool =
-  return self.privacyService.validatePassword(password)
 
 proc getPasswordStrengthScore*(self: Controller, password, userName: string): int =
   return self.generalService.getPasswordStrengthScore(password, userName)
@@ -142,6 +136,3 @@ proc authenticateLoggedInUser*(self: Controller) =
   if singletonInstance.userProfile.getIsKeycardUser():
     data.keyUid = singletonInstance.userProfile.getKeyUid()
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
-
-proc backupData*(self: Controller): int64 =
-  return self.generalService.backupData()

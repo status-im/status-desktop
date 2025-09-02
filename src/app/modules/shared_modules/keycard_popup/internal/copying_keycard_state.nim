@@ -18,7 +18,7 @@ proc buildKeypairAndAddToMigratedKeypairs(self: CopyingKeycardState, controller:
     keycardLocked: false,
     keyUid: controller.getKeyPairForProcessing().getKeyUid(),
     accountsAddresses: addresses)
-  controller.addKeycardOrAccounts(keycardDto, accountsComingFromKeycard = true)
+  controller.addKeycardOrAccounts(keycardDto, password = "")
 
 proc runStoreMetadataFlow(self: CopyingKeycardState, controller: Controller) =
   let cardMetadata = controller.getMetadataForKeycardCopy()

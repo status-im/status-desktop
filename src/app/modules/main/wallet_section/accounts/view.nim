@@ -44,7 +44,7 @@ QtObject:
 
   proc updateBalance*(self: View, address: string, balance: CurrencyAmount, assetsLoading: bool) =
     self.accounts.updateBalance(address, balance, assetsLoading)
-    
+
   proc onAccountRemoved*(self: View, address: string) =
     self.accounts.deleteAccount(address)
 
@@ -54,8 +54,8 @@ QtObject:
   proc updateAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) =
     self.accounts.updateAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
 
-  proc deleteAccount*(self: View, address: string) {.slot.} =
-    self.delegate.deleteAccount(address)
+  proc deleteAccount*(self: View, address: string, password: string) {.slot.} =
+    self.delegate.deleteAccount(address, password)
 
   proc updateAccount(self: View, address: string, accountName: string, colorId: string, emoji: string) {.slot.} =
     self.delegate.updateAccount(address, accountName, colorId, emoji)

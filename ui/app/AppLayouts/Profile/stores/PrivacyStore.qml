@@ -29,10 +29,6 @@ QtObject {
         root.privacyModule.removeMnemonic()
     }
 
-    function getMnemonicWordAtIndex(index) {
-        return root.privacyModule.getMnemonicWordAtIndex(index)
-    }
-
     function validatePassword(password) {
         return root.privacyModule.validatePassword(password)
     }
@@ -43,10 +39,6 @@ QtObject {
 
     function tryRemoveFromKeyChain() {
         root.privacyModule.tryRemoveFromKeyChain()
-    }
-
-    function backupData() {
-        return root.privacyModule.backupData()
     }
 
     function mnemonicWasShown() {

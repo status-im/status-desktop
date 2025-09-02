@@ -81,9 +81,6 @@ method removeMnemonic*(self: Module) =
 method mnemonicWasShown*(self: Module) =
   self.controller.mnemonicWasShown()
 
-method getMnemonicWordAtIndex*(self: Module, index: int): string =
-  return self.controller.getMnemonicWordAtIndex(index)
-
 method getMessagesFromContactsOnly*(self: Module): bool =
   return self.controller.getMessagesFromContactsOnly()
 
@@ -96,9 +93,6 @@ method urlUnfurlingMode*(self: Module): int =
 
 method setUrlUnfurlingMode*(self: Module, value: int) =
   self.controller.setUrlUnfurlingMode(value)
-
-method validatePassword*(self: Module, password: string): bool =
-  self.controller.validatePassword(password)
 
 method getPasswordStrengthScore*(self: Module, password: string): int =
   return self.controller.getPasswordStrengthScore(password, singletonInstance.userProfile.getUsername())
@@ -124,9 +118,6 @@ method tryRemoveFromKeyChain*(self: Module) =
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
   let credential = if pin.len > 0: pin else: password
   self.view.requestSaveBiometrics(keyUid, credential)
-
-method backupData*(self: Module): int64 =
-  return self.controller.backupData()
 
 method onUrlUnfurlingModeUpdated*(self: Module, mode: int) =
   self.view.emitUrlUnfurlingModeUpdated(mode)

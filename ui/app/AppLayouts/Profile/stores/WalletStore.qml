@@ -16,6 +16,7 @@ QtObject {
     property var collectibles: _jointCollectiblesBySymbolModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
+    readonly property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
     readonly property bool isWalletEnabled: Global.appIsReady ?
                                                 mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
@@ -87,12 +88,31 @@ QtObject {
 
     property string userProfilePublicKey: userProfile.pubKey
 
-    function deleteAccount(address) {
-        return accountsModule.deleteAccount(address)
+    signal loggedInUserAuthenticated(string requestedBy, string password, string pin, string keyUid, string keycardUid)
+
+    property QtObject d: QtObject {
+
+        readonly property var mainModuleInst: mainModule
     }
 
-    function deleteKeypair(keyUid) {
-        return accountsModule.deleteKeypair(keyUid)
+    readonly property Connections mainModuleConnections: Connections {
+        target: d.mainModuleInst
+
+        function onLoggedInUserAuthenticated(requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) {
+            root.loggedInUserAuthenticated(requestedBy, password, pin, keyUid, keycardUid)
+        }
+    }
+
+    function authenticateLoggedInUser(requestedBy) {
+        d.mainModuleInst.authenticateLoggedInUser(requestedBy)
+    }
+
+    function deleteAccount(address, password) {
+        return accountsModule.deleteAccount(address, password)
+    }
+
+    function deleteKeypair(keyUid, password) {
+        return accountsModule.deleteKeypair(keyUid, password)
     }
 
     function updateAccount(address, accountName, colorId, emoji) {

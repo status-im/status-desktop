@@ -41,6 +41,7 @@ Rectangle {
     property alias hovered: sensor.containsMouse
     property alias tooltip: statusToolTip
     property alias backgroundHoverColor: backgroundSettings.hoverColor
+    readonly property alias sensor: sensor
 
     property bool highlighted: false
 

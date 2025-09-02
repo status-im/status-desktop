@@ -30,6 +30,7 @@ QtObject {
     required property WalletStores.CollectiblesStore walletCollectiblesStore
     required property WalletStores.TransactionStoreNew transactionStoreNew
     required property SharedStores.NetworksStore networksStore
+    required property SharedStores.NetworkConnectionStore networkConnectionStore
 
     /** for ens flows **/
     required property string myPublicKey
@@ -445,6 +446,7 @@ QtObject {
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
+            marketDataNotAvailable: handler.marketDataNotAvailable
 
             onOpened: {
                 if(isValidParameter(root.simpleSendParams.interactive)) {
@@ -576,6 +578,15 @@ QtObject {
                 property var fetchedPathModel
 
                 signal refreshTxSettings()
+
+                readonly property bool marketDataNotAvailable: {
+                    if (root.networkConnectionStore.networkConnectionModuleInst.marketValuesNetworkConnection.completelyDown)
+                        return true
+                    const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                    const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
+                    const price = nativeToken?.marketDetails?.currencyPrice
+                    return !!price && (price.amount == null || price.amount === 0)
+                }
 
                 readonly property string extraParamsJson: {
                     if (!!simpleSendModal.stickersPackId) {
@@ -762,9 +773,18 @@ QtObject {
                         const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
                         let nativeTokenFiatValue = !!nativeToken ? nativeToken.marketDetails.currencyPrice.amount: 1
                         let totalFees = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, value)
-                        let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()
+
                         simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), nativeTokenSymbol)
-                        simpleSendModal.estimatedFiatFees = totalFeesInFiat
+
+                        // Use GWEI fees as fiat fees when market data is not available
+                        if (handler.marketDataNotAvailable) {
+                            const totalFeesInGwei = SQUtils.AmountsArithmetic.round( Utils.nativeTokenRawToGas(simpleSendModal.selectedChainId, value), 0)
+                            const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
+                            simpleSendModal.estimatedFiatFees = totalFeesInGwei.toString() + " " + feeSymbol
+                        } else {
+                            let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()
+                            simpleSendModal.estimatedFiatFees = totalFeesInFiat
+                        }
                     }
                 }
 
@@ -905,6 +925,14 @@ QtObject {
                         if (!rawFee) {
                             return ""
                         }
+
+                        // Use GWEI when market data is not available
+                        if (handler.marketDataNotAvailable) {
+                            const roundedGwei = SQUtils.AmountsArithmetic.round( Utils.nativeTokenRawToGas(simpleSendModal.selectedChainId, rawFee), 0)
+                            const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
+                            return roundedGwei.toString() + " " + feeSymbol
+                        }
+
                         const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
                         const decimalFee = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawFee)
                         const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
@@ -1072,10 +1100,16 @@ QtObject {
                     }
 
                     fiatFees: {
-                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                        const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
-                        const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
-                        return root.fnFormatCurrencyAmount(feeTokenPrice*decimalTotalFees, root.currentCurrency).toString()
+                        if (handler.marketDataNotAvailable) {
+                            const totalFeesInGwei = SQUtils.AmountsArithmetic.round( Utils.nativeTokenDecimalToGas(simpleSendModal.selectedChainId, decimalTotalFees), 0)
+                            const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
+                            return totalFeesInGwei.toString() + " " + feeSymbol
+                        } else {
+                            const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                            const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
+                            const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
+                            return root.fnFormatCurrencyAmount(feeTokenPrice*decimalTotalFees, root.currentCurrency).toString()
+                        }
                     }
 
                     cryptoFees: {

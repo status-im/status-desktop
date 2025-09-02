@@ -129,6 +129,11 @@ Dialog {
         value: 0
     }
 
+    Binding on margins {
+        when: root.bottomSheet
+        value: -1
+    }
+
     parent: Overlay.overlay
 
     modal: true

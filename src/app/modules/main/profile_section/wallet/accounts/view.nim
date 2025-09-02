@@ -94,11 +94,11 @@ QtObject:
     self.keyPairModel.onHideFromTotalBalanceUpdated(keyUid, address, hideFromTotalBalance)
     self.refreshSelectedAccount()
 
-  proc deleteAccount*(self: View, address: string) {.slot.} =
-    self.delegate.deleteAccount(address)
+  proc deleteAccount*(self: View, address: string, password: string) {.slot.} =
+    self.delegate.deleteAccount(address, password)
 
-  proc deleteKeypair*(self: View, keyUid: string) {.slot.} =
-    self.delegate.deleteKeypair(keyUid)
+  proc deleteKeypair*(self: View, keyUid: string, password: string) {.slot.} =
+    self.delegate.deleteKeypair(keyUid, password)
 
   proc keyPairModel*(self: View): KeyPairModel =
     return self.keyPairModel

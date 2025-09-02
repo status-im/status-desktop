@@ -12,6 +12,8 @@ QtObject {
     signal openPinnedMessagesPopupRequested(var store, var messageStore, var pinnedMessagesModel, string messageToPin, string chatId)
     signal openCommunityProfilePopupRequested(var store, var community, var chatCommunitySectionModule)
 
+    signal openLinkInBrowser(string link)
+    signal openChooseBrowserPopup(string link)
     signal openCreateChatView()
     signal closeCreateChatView()
 

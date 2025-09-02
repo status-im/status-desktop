@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/assets/png">
+        <file>browser/compass.png</file>
+        <file>browser/chooseBrowserImage@2x.png</file>
         <file>community/airdrops8_1.png</file>
         <file>community/mint2_1.png</file>
         <file>community/permissions2_3.png</file>

@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Components
+import StatusQ.Core.Utils as SQUtils
 
 import utils
 
@@ -25,6 +26,9 @@ Item {
     property alias closeBtnVisible: closeImg.visible
     property string iconName
     property bool delay: true
+
+    // extra margin that can be used to avoid overlapping with window buttons
+    property int extraInnerLeftMargin: Qt.platform.os === SQUtils.Utils.mac ? 60 : 0
 
     signal clicked()
     signal closeClicked()
@@ -141,12 +145,18 @@ Item {
 
             spacing: Theme.halfPadding
             anchors.fill: parent
-            anchors.leftMargin: Theme.halfPadding
+            anchors.leftMargin: Theme.halfPadding + root.extraInnerLeftMargin
             anchors.rightMargin: Theme.halfPadding
+
+            Item {
+                Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 1
+            }
 
             StatusRoundIcon {
                 Layout.preferredHeight: 16
                 Layout.preferredWidth: 16
+
                 visible: !!root.iconName
                 asset.name: root.iconName
                 asset.bgColor: Theme.palette.indirectColor1
@@ -154,8 +164,11 @@ Item {
             }
 
             StatusBaseText {
-                objectName: "bannerText"
                 Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 0
+
+                objectName: "bannerText"
+
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
                 text: root.text
@@ -167,6 +180,11 @@ Item {
                 HoverHandler {
                     cursorShape: hovered && parent.hoveredLink ? Qt.PointingHandCursor : undefined
                 }
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 1
             }
 
             StatusBaseText {
@@ -230,8 +248,8 @@ Item {
             StatusIcon {
                 id: closeImg
                 objectName: "closeButton"
-                height: 20
-                width: 20
+                Layout.preferredWidth: 20
+                Layout.preferredHeight: 20
                 icon: "close-circle"
                 color: Theme.palette.indirectColor1
                 opacity: closeButtonMouseArea.containsMouse ? 1 : 0.7

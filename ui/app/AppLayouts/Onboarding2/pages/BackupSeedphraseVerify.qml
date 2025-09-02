@@ -20,14 +20,19 @@ OnboardingPage {
 
     required property string mnemonic
     required property int countToVerify
+    property bool popupMode
+
     readonly property var verificationWordsMap: d.verificationWordsMap
+    readonly property bool allValid: seedRepeater.allValid
 
     signal backupSeedphraseVerified()
+
+    title: qsTr("Confirm recovery phrase")
 
     QtObject {
         id: d
         readonly property var seedSuggestions: BIP39_en {} // [{seedWord:string}, ...]
-        readonly property var verificationWordsMap: { // [{wordNumber:int, word:string}, ...]
+        readonly property var verificationWordsMap: { // [{seedWordNumber:int, seedWord:string}, ...]
             const words = Utils.splitWords(root.mnemonic)
             const randomIndexes = SQUtils.Utils.nSamples(root.countToVerify, words.length)
             return randomIndexes.map(i => ({
@@ -45,19 +50,18 @@ OnboardingPage {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("Backup your recovery phrase")
+                text: root.title
+                visible: !root.popupMode
                 font.pixelSize: Theme.fontSize22
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            StepIndicator {
+            StatusBaseText {
                 Layout.fillWidth: true
-                spacing: Theme.halfPadding
-                currentStep: 2
-                totalSteps: 3
-                caption: qsTr("Confirm the following words from your recovery phrase...")
+                text: qsTr("Confirm these words from your recovery phrase...")
+                wrapMode: Text.WordWrap
             }
 
             ColumnLayout {
@@ -92,7 +96,7 @@ OnboardingPage {
                         }
                         SeedphraseVerifyInput {
                             readonly property int seedWordIndex: modelData.seedWordNumber - 1 // 0 based idx in the mnemonic
-                            objectName: "seedInput_%1".arg(index)
+                            objectName: "seedInput_%1".arg(seedWordIndex)
                             Layout.fillWidth: true
                             id: seedInput
                             valid: text === modelData.seedWord
@@ -136,6 +140,7 @@ OnboardingPage {
             StatusButton {
                 objectName: "btnContinue"
                 Layout.alignment: Qt.AlignHCenter
+                visible: !root.popupMode
                 text: qsTr("Continue")
                 enabled: seedRepeater.allValid
                 onClicked: root.backupSeedphraseVerified()

@@ -475,12 +475,6 @@ method getAddAccountModule*(self: Module): QVariant =
 method onAddAccountModuleLoaded*(self: Module) =
   self.view.emitDisplayAddAccountPopup()
 
-method getLatestBlockNumber*(self: Module, chainId: int): string =
-  return self.transactionService.getLatestBlockNumber(chainId)
-
-method getEstimatedLatestBlockNumber*(self: Module, chainId: int): string =
-  return self.transactionService.getEstimatedLatestBlockNumber(chainId)
-
 method fetchDecodedTxData*(self: Module, txHash: string, data: string) =
   self.transactionService.fetchDecodedTxData(txHash, data)
 

@@ -34,6 +34,7 @@ class WalletScreen(QObject):
     def __init__(self):
         super().__init__(wallet_names.mainWindow_WalletLayout)
         self.left_panel: WalletLeftPanel = WalletLeftPanel()
+        self.main_wallet_layout = QObject(wallet_names.mainWindow_WalletLayout)
 
 
 class WalletLeftPanel(QObject):

@@ -39,7 +39,7 @@ RUN tar -xJf /tmp/pcsc.tar.xz -C /pcsc --strip-components=1
 
 WORKDIR /pcsc
 
-RUN meson setup builddir -Dpolkit=false -Dlibsystemd=false -Dserial=false -Dipcdir=/pcscd/run
+RUN meson setup builddir -Dpolkit=false -Dlibsystemd=false -Dserial=false -Dipcdir=/tmp/pcscd/run
 RUN cd builddir && ninja
 RUN cp builddir/pcsclite.h src/PCSC
 
@@ -157,6 +157,10 @@ RUN sudo groupadd -g 1001 jenkins \
  && sudo useradd --create-home -u 1001 -g 1001 jenkins
 USER jenkins
 ENV HOME="/home/jenkins"
+
+# Rust is needed for nwaku builds
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="${HOME}/.cargo/bin:${PATH}"
 
 # Access to tools installed by Go.
 ENV PATH="${HOME}/go/bin:${PATH}"

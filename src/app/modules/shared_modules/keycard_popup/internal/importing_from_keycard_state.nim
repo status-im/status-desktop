@@ -25,8 +25,7 @@ proc addAccountsToWallet(self: ImportingFromKeycardState, controller: Controller
       colorId: account.getColorId(),
       emoji: account.getEmoji()
     ))
-  return controller.addNewSeedPhraseKeypair(
-    seedPhrase = "",
+  return controller.addNewKeycardStoredKeypair(
     keyUid = kpForProcessing.getKeyUid(),
     keypairName = kpForProcessing.getName(),
     rootWalletMasterKey = kpForProcessing.getDerivedFrom(),
@@ -40,7 +39,7 @@ proc doMigration(self: ImportingFromKeycardState, controller: Controller) =
     keycardLocked: false,
     accountsAddresses: self.addresses,
     keyUid: kpForProcessing.getKeyUid())
-  controller.addKeycardOrAccounts(kpDto, accountsComingFromKeycard = true)
+  controller.addKeycardOrAccounts(kpDto, password = "")
 
 method getNextPrimaryState*(self: ImportingFromKeycardState, controller: Controller): State =
   if self.flowType == FlowType.ImportFromKeycard:

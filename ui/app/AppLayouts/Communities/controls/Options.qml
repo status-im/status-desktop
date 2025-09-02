@@ -28,30 +28,16 @@ ColumnLayout {
         readonly property string aboutPermissionsLink: Constants.statusHelpLinkPrefix + "communities/set-up-your-community-permissions"
     }
 
-    ColumnLayout {
+    StatusCheckBox {
+        id: requestToJoinToggle
         Layout.fillWidth: true
-        spacing: 4
-
-        StatusCheckBox {
-            id: requestToJoinToggle
-            Layout.fillWidth: true
-            Layout.preferredHeight: d.optionHeight
-            Layout.alignment: Qt.AlignVCenter
-            text: qsTr("Request to join required")
-            leftSide: false
-            padding: 0
-            spacing: 0
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            Layout.rightMargin: 64
-            visible: requestToJoinToggle.checked
-            wrapMode: Text.WordWrap
-            text: qsTr("Warning: Only token gated communities (or token gated channels inside non-token gated community) are encrypted")
-            font.pixelSize: Theme.tertiaryTextFontSize
-            color: Theme.palette.warningColor1
-        }
+        Layout.topMargin: Theme.padding
+        Layout.preferredHeight: d.optionHeight
+        text: checked ? qsTr("Request to join required") + "<br><font size='-1' color='%1'>".arg(Theme.palette.warningColor1) +
+                        qsTr("Warning: Only token gated communities (or token gated channels inside non-token gated community) are encrypted") + "</font>"
+                      : qsTr("Request to join required")
+        leftSide: false
+        padding: 0
     }
 
     Item {
@@ -80,7 +66,7 @@ ColumnLayout {
                     textColor: Theme.palette.directColor5
                     textHoverColor: Theme.palette.primaryColor1
                     icon.name: "info"
-                    onClicked: Global.openPopup(messageHistoryInfoPopupComponent)
+                    onClicked: messageHistoryInfoPopupComponent.createObject(root).open()
                 }
 
                 StatusBaseText {
@@ -122,14 +108,13 @@ ColumnLayout {
         text: qsTr("You can token-gate your community and channels anytime after creation using existing tokens or by minting new ones in the community admin area.")
         extraContentComponent: RowLayout {
             spacing: 0
-            StatusSelectableText {
+            StatusLinkText {
                 Layout.fillWidth: true
-                defaultLinkColor: Theme.palette.primaryColor1
-                hoveredLinkColor: Theme.palette.primaryColor1
-                text: "<p><a style='text-decoration:none' href=' '>%1</a></p>".arg(qsTr("Learn more about token-gating"))
-
-                onLinkActivated: Global.openLinkWithConfirmation(d.aboutPermissionsLink,
-                                                                 StatusQUtils.StringUtils.extractDomainFromLink(d.aboutPermissionsLink))
+                text: qsTr("Learn more about token-gating")
+                font.pixelSize: Theme.primaryTextFontSize
+                normalColor: linkColor
+                onClicked: Global.openLinkWithConfirmation(d.aboutPermissionsLink,
+                                                           StatusQUtils.StringUtils.extractDomainFromLink(d.aboutPermissionsLink))
             }
 
             StatusIcon {
@@ -155,6 +140,7 @@ ColumnLayout {
 
         EnableFullMessageHistoryPopup {
             onAccepted: Global.openLinkWithConfirmation(d.aboutHistoryServiceLink, StatusQUtils.StringUtils.extractDomainFromLink(d.aboutHistoryServiceLink))
+            onClosed: destroy()
         }
     }
 }

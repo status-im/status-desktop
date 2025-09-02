@@ -1,5 +1,5 @@
 import nimqml
-import std/[strutils, httpclient, os, uri], stew/shims/strformat, regex, stint, os
+import std/[strutils, httpclient, os, uri], stew/shims/strformat, regex, stint
 import stew/byteutils
 import ./utils/qrcodegen
 
@@ -29,7 +29,10 @@ QtObject:
     result.setup
 
   proc fromPathUri*(self: Utils, path: string): string {.slot.} =
-    result = uri.decodeUrl(replace(path, "file://", ""), decodePlus=false)
+    var formattedPath = replace(path, "file://", "")
+    # Sometimes the original path only contains `file:` without the `//`
+    formattedPath = replace(formattedPath, "file:", "")
+    result = uri.decodeUrl(formattedPath, decodePlus=false)
     if defined(windows):
       # Windows doesn't work with paths starting with a slash
       result.removePrefix('/')
@@ -48,9 +51,6 @@ QtObject:
 
   proc generateAlias*(self: Utils, publicKey: string): string {.slot.} =
     return generateAlias(publicKey)
-
-  proc urlFromUserInput*(self: Utils, input: string): string {.slot.} =
-    result = url_fromUserInput(input)
 
   proc eth2Hex*(self: Utils, eth: float): string {.slot.} =
     return "0x" & conversion.eth2Wei(eth, 18).toHex()
@@ -154,8 +154,17 @@ QtObject:
     except:
       return false
 
-  proc isChatKey*(self: Utils, value: string): bool {.slot.} =
-      result = (conversion.startsWith0x(value) and conversion.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
+  proc isHexFormat*(self: Utils, value: string): bool {.slot.} =
+    return value.match(re2"^0x[0-9a-fA-F]+$")
 
+  proc isChatKey*(self: Utils, value: string): bool {.slot.} =
+    result = (self.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
+
+  # Check if a string is a valid Base64 data URL
+  # This function is to be used in async tasks
   proc isBase64DataUrl*(str: string): bool =
-    return str.match(re2"^data:.*;base64,")
+    return str.match(re2"(?i)^data:[^,]*;base64,[A-Za-z0-9+/=]+$")
+
+  # This function is to be used in QML
+  proc isBase64DataUrl*(self: Utils, str: string): bool {.slot.} =
+    return isBase64DataUrl(str)

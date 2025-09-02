@@ -65,7 +65,7 @@ def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: Ma
         main_screen.authorize_user(user_account)
 
     with step('Add second generated wallet account'):
-        wallet = main_screen.home.open_from_dock(DockButtons.WALLET.value)
+        wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name2).save_changes()
 
@@ -82,7 +82,8 @@ def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: Ma
             f'Account with {name2} is not displayed even it should be'
 
     with step('Delete wallet account with agreement'):
-        wallet.left_panel.delete_account_from_context_menu(new_name).remove_account_with_confirmation()
+        auth_modal = wallet.left_panel.delete_account_from_context_menu(new_name).remove_account_with_confirmation()
+        auth_modal.authenticate(user_account.password)
 
     with step('Verify toast message notification when removing account'):
         messages = main_screen.wait_for_toast_notifications()

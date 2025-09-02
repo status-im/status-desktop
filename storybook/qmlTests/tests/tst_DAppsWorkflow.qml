@@ -492,7 +492,7 @@ Item {
             verify(!!request, "expected request to be found")
             compare(request.fiatMaxFees.toFixed(), data.expect.fee, "expected fiatMaxFees to be set")
             // storybook's CurrenciesStore mock up getFiatValue returns the balance
-            compare(request.ethMaxFees, data.expect.fee, "expected ethMaxFees to be set")
+            compare(request.nativeTokenMaxFees, data.expect.fee, "expected nativeTokenMaxFees to be set")
             verify(request.haveEnoughFunds, "expected haveEnoughFunds to be set")
             compare(request.haveEnoughFees, data.expect.haveEnoughForFees, "expected haveEnoughForFees to be set")
             verify(!!request.feesInfo, "expected feesInfo to be set")

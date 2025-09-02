@@ -419,6 +419,8 @@ QtObject {
             return qsTr("Messages")
         case Constants.appSection.wallet:
             return qsTr("Wallet")
+        case Constants.appSection.browser:
+            return qsTr("Browser")
         case Constants.appSection.profile:
             return qsTr("Settings")
         case Constants.appSection.node:
@@ -851,10 +853,10 @@ QtObject {
                                        StatusQUtils.AmountsArithmetic.fromNumber(1, rawDecimals - gasDecimals))
     }
 
-    function getGasDecimalValue(chainID, gasValue, gasLimit) {
-        let rawValue = nativeTokenGasToRaw(chainID, gasValue)
-        rawValue = StatusQUtils.AmountsArithmetic.times(rawValue, StatusQUtils.AmountsArithmetic.fromNumber(1, gasLimit))
-        return nativeTokenRawToDecimal(chainID, rawValue)
+    function calculateGasCost(chainID, gasPriceInGasUnit, gasAmount) {
+        let rawGasPrice = nativeTokenGasToRaw(chainID, gasPriceInGasUnit)
+        rawGasPrice = StatusQUtils.AmountsArithmetic.times(rawGasPrice, StatusQUtils.AmountsArithmetic.fromNumber(gasAmount))
+        return nativeTokenRawToDecimal(chainID, rawGasPrice)
     }
     
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
@@ -866,10 +868,6 @@ QtObject {
         // TODO: Analyse and implement
         // #15331
         return true
-    }
-
-    function isBase64DataUrl(str) {
-        return /^data:.*;base64,/.test(str);
     }
 
     function toBase64(buffer) {

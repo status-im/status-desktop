@@ -194,7 +194,7 @@ Item {
             ImageCropWorkflow {
                 id: imageCropWorkflow
 
-                onImageCropped: {
+                onImageCropped: function (image, cropRect) {
                     croppedPreview.source = image
                     croppedPreview.setCropRect(cropRect)
                     root.userSelectedImage = true
@@ -208,7 +208,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            visible: root.state == d.backgroundComponentState
+            visible: root.state === d.backgroundComponentState
 
             sourceComponent: root.backgroundComponent
         }

@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@v1.9.27'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -42,6 +42,11 @@ pipeline {
       description: 'Decides whether the mocked status-keycard-go library is built.',
       defaultValue: false
     )
+    booleanParam(
+      name: 'USE_NWAKU',
+      description: 'Whether to build with nwaku or not',
+      defaultValue: params.USE_NWAKU ?: getNWakuMode(),
+    )
   }
 
   options {
@@ -64,7 +69,7 @@ pipeline {
   }
 
   environment {
-    PLATFORM = "linux/${getArch()}"
+    PLATFORM = "linux/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
@@ -76,6 +81,16 @@ pipeline {
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+    /* Hack fix for params not being set in job on first run */
+    NIMFLAGS =               "${params.NIMFLAGS}"
+    USE_NWAKU =              "${params.USE_NWAKU}"
+    ENTITLEMENTS =           "${params.ENTITLEMENTS}"
+    RELEASE =                "${params.RELEASE}"
+    INCLUDE_DEBUG_SYMBOLS =  "${params.INCLUDE_DEBUG_SYMBOLS}"
+    VERBOSE =                "${params.VERBOSE}"
+    USE_MOCKED_KEYCARD_LIB = "${params.USE_MOCKED_KEYCARD_LIB}"
+    /* FIXME: figure out why NIMFLAGS are not respected */
+    XDG_CACHE_HOME = "${env.WORKSPACE_TMP}"
   }
 
   stages {
@@ -93,12 +108,14 @@ pipeline {
 
     stage('status-go') {
       steps {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         sh 'make status-go'
       }
     }
 
     stage('Package') {
       steps { script {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         linux.bundle('tgz-linux')
       } }
     }
@@ -120,7 +137,7 @@ pipeline {
     }
 
     stage('E2E') {
-      when { expression { utils.isPRBuild() } }
+      when { expression { utils.isPRBuild() && !params.USE_NWAKU } }
       steps { script {
         build(
           job: 'status-desktop/e2e/prs',
@@ -145,4 +162,13 @@ def getArch() {
   for (def arch in ['x86_64', 'aarch64']) {
     if (tokens.contains(arch)) { return arch }
   }
+}
+/* We extract the name of the job from currentThread because
+ * before an agent is picked env is not available. */
+def getJobPathTokens() {
+    return Thread.currentThread().getName().split('/')
+}
+
+def getNWakuMode() {
+    return getJobPathTokens().contains('package-nwaku')
 }

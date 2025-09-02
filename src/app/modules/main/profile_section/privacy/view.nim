@@ -44,9 +44,6 @@ QtObject:
   proc mnemonicWasShown*(self: View) {.slot.} =
     self.delegate.mnemonicWasShown()
 
-  proc getMnemonicWordAtIndex*(self: View, index: int): string {.slot.} =
-    return self.delegate.getMnemonicWordAtIndex(index)
-
   proc messagesFromContactsOnlyChanged*(self: View) {.signal.}
   proc getMessagesFromContactsOnly(self: View): bool {.slot.} =
     return self.delegate.getMessagesFromContactsOnly()
@@ -73,9 +70,6 @@ QtObject:
     write = setUrlUnfurlingMode
     notify = urlUnfurlingModeChanged
 
-  proc validatePassword*(self: View, password: string): bool {.slot.} =
-    self.delegate.validatePassword(password)
-
   proc getPasswordStrengthScore*(self: View, password: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password)
 
@@ -97,8 +91,5 @@ QtObject:
   proc requestSaveBiometrics*(self: View, keyUid: string, credential: string) =
     self.saveBiometricsRequested(keyUid, credential)
     
-  proc backupData*(self: View): int {.slot.} =
-    return self.delegate.backupData().int
-  
   proc emitUrlUnfurlingModeUpdated*(self: View, mode: int) =
     self.urlUnfurlingModeChanged()

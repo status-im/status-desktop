@@ -684,12 +684,17 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Controller, address: 
     return (0.0, true)
   return self.walletAccountService.getOrFetchBalanceForAddressInPreferredCurrency(address)
 
-proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto, accountsComingFromKeycard: bool = false) =
+proc buildAllTokens*(self: Controller, addresses: seq[string], forceRefresh: bool) =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  self.walletAccountService.buildAllTokens(addresses, forceRefresh)
+
+proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto, password: string) =
   if not serviceApplicable(self.walletAccountService):
     return
   if not serviceApplicable(self.accountsService):
     return
-  self.walletAccountService.addKeycardOrAccountsAsync(keyPair, accountsComingFromKeycard)
+  self.walletAccountService.addKeycardOrAccountsAsync(keyPair, password)
 
 proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
   if not serviceApplicable(self.walletAccountService):
@@ -738,12 +743,11 @@ proc updateKeycardUid*(self: Controller, keyUid: string, keycardUid: string) =
       self.tmpKeycardUid = keycardUid
       info "update keycard uid failed", oldKeycardUid=self.tmpKeycardUid, newKeycardUid=keycardUid
 
-proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName, rootWalletMasterKey: string,
+proc addNewKeycardStoredKeypair*(self: Controller, keyUid, keypairName, rootWalletMasterKey: string,
   accounts: seq[WalletAccountDto]): bool =
-  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password = "", doPasswordHashing = false, keyUid,
-    keypairName, rootWalletMasterKey, accounts)
+  let err = self.walletAccountService.addNewKeycardStoredKeypair(keyUid, keypairName, rootWalletMasterKey, accounts)
   if err.len > 0:
-    info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid
+    info "adding new keypair from keycard failed", keypairName=keypairName, keyUid=keyUid
     return false
   return true
 

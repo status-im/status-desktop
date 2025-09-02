@@ -7,14 +7,12 @@ type
   RestoreAccountRequest* = object
     mnemonic*: string
     keycard*: KeycardData
-    fetchBackup*: bool
     createAccountRequest*: CreateAccountRequest
 
 proc toJson*(self: RestoreAccountRequest): JsonNode =
 
   result = %*{
     "mnemonic": self.mnemonic,
-    "fetchBackup": self.fetchBackup,
   }
 
   if self.keycard != nil:

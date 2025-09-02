@@ -55,8 +55,7 @@ proc addAccountsToWallet(self: CreatingAccountOldSeedPhraseState, controller: Co
       colorId: account.getColorId(),
       emoji: account.getEmoji()
     ))
-  return controller.addNewSeedPhraseKeypair(
-    seedPhrase = "",
+  return controller.addNewKeycardStoredKeypair(
     keyUid = kpForProcessing.getKeyUid(),
     keypairName = kpForProcessing.getName(),
     rootWalletMasterKey = kpForProcessing.getDerivedFrom(),
@@ -70,7 +69,7 @@ proc doMigration(self: CreatingAccountOldSeedPhraseState, controller: Controller
     keycardLocked: false,
     accountsAddresses: self.addresses,
     keyUid: kpForProcessing.getKeyUid())
-  controller.addKeycardOrAccounts(kpDto, accountsComingFromKeycard = true)
+  controller.addKeycardOrAccounts(kpDto, password = "")
 
 proc runStoreMetadataFlow(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
   let kpForProcessing = controller.getKeyPairForProcessing()

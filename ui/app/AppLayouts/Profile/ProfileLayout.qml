@@ -77,6 +77,7 @@ StatusSectionLayout {
     required property Keychain keychain
 
     property bool isKeycardEnabled: true
+    property bool isBrowserEnabled: true
 
     property var mutualContactsModel
     property var blockedContactsModel
@@ -150,7 +151,9 @@ StatusSectionLayout {
         id: settingsEntriesModel
 
         showWalletEntries: root.walletStore.isWalletEnabled
+        showBrowserEntries: root.isBrowserEnabled
         showBackUpSeed: !root.privacyStore.mnemonicBackedUp
+        backUpSeedBadgeCount: root.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
         isKeycardEnabled: root.isKeycardEnabled
 
         syncingBadgeCount: root.devicesStore.devicesModel.count -
@@ -428,6 +431,19 @@ StatusSectionLayout {
         }
 
         Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: BrowserView {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+
+                accountSettings: localAccountSensitiveSettings
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.browserSettings)
+                contentWidth: d.contentWidth
+            }
+        }
+
+        Loader {
             id: advancedView
 
             active: false
@@ -460,7 +476,7 @@ StatusSectionLayout {
                 qtRuntimeVersion: SystemUtils.qtRuntimeVersion()
 
                 onCheckForUpdates: root.aboutStore.checkForUpdates()
-                onOpenLink: Global.openLink(url)
+                onOpenLink: (url) => Global.openLink(url)
             }
         }
 

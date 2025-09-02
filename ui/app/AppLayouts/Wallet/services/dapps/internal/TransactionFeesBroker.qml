@@ -51,7 +51,7 @@ SQUtils.QObject {
         id: broker
 
         active: Qt.application.state === Qt.ApplicationActive
-        onRequest: d.computeFees(topic)
+        onRequest: (topic) => { return d.computeFees(topic) }
     }
 
     SQUtils.QObject {

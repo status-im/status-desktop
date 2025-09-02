@@ -25,6 +25,9 @@ cp bin/i18n/* "${APP_DIR}/usr/i18n"
 cp vendor/status-go/build/bin/libstatus.so "${APP_DIR}/usr/lib/"
 cp vendor/status-go/build/bin/libstatus.so.0 "${APP_DIR}/usr/lib/"
 cp "${STATUSKEYCARDGO}" "${APP_DIR}/usr/lib/"
+if [ "${USE_NWAKU}" = "true" ]; then
+  cp vendor/status-go/vendor/github.com/waku-org/waku-go-bindings/third_party/nwaku/build/libwaku.so "${APP_DIR}/usr/lib/"
+fi
 cp "${FCITX5_QT}" "${APP_DIR}/usr/plugins/platforminputcontexts/"
 
 # Copy dependencies, which linuxdeployqt can't manage from nix store or system (FHS)

@@ -3,10 +3,8 @@ import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Popups
-
 
 Rectangle {
     id: root
@@ -15,7 +13,7 @@ Rectangle {
     property list<StatusBaseButton> rightButtons
     property bool showFooter: true
 
-    radius: 8
+    radius: Theme.radius
 
     color: Theme.palette.statusModal.backgroundColor
 
@@ -45,20 +43,20 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 16
-        anchors.rightMargin: 18
+        anchors.leftMargin: Theme.padding
+        anchors.rightMargin: Theme.padding
 
         RowLayout {
             id: leftButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             visible: root.showFooter
 
-            spacing: 16
+            spacing: Theme.padding
         }
 
         Item {
             Layout.fillWidth: true
-            Layout.minimumWidth: 16
+            Layout.minimumWidth: Theme.padding
         }
 
         RowLayout {
@@ -66,7 +64,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
             visible: root.showFooter
 
-            spacing: 16
+            spacing: Theme.padding
         }
     }
 

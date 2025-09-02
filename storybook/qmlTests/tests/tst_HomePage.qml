@@ -28,6 +28,7 @@ Item {
         syncingBadgeCount: 2
         messagingBadgeCount: 4
         showBackUpSeed: true
+        backUpSeedBadgeCount: 1
 
         searchPhrase: controlUnderTest ? controlUnderTest.searchPhrase : ""
 
@@ -221,7 +222,7 @@ Item {
         }
 
         function test_pin_unpin_from_grid(data) {
-            const keyId = "4;11" // Settings/About
+            const keyId = "4;12" // Settings/About
 
             const grid = findChild(controlUnderTest, "homeGrid")
             verify(!!grid)
@@ -313,7 +314,7 @@ Item {
         }
 
         function test_pin_from_grid_unpin_from_dock() {
-            const keyId = "4;11" // Settings/About
+            const keyId = "4;12" // Settings/About
 
             const grid = findChild(controlUnderTest, "homeGrid")
             verify(!!grid)

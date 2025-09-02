@@ -43,6 +43,26 @@ class MainLeftPanel(QObject):
         self.settings_button = Button(names.settingsGearButton)
         self.wallet_button = Button(names.mainWalletButton)
 
+    @allure.step('Click Wallet button and record load time until WalletScreen is visible')
+    def open_wallet_and_record_load_time(self):
+        start_time = time.time()
+        self.wallet_button.click()
+        wallet_screen = WalletScreen()
+        check_interval = 0.1  # Check every 100ms for better precision
+        
+        while True:
+            try:
+                if wallet_screen.is_visible:
+                    LOG.info('WalletScreen: is visible')
+                    break
+            except Exception as e:
+                LOG.debug("Exception during visibility check: %s", e)
+            time.sleep(check_interval)
+        
+        load_time = time.time() - start_time
+        LOG.info(f'Wallet loaded in {load_time:.3f} seconds')
+        return wallet_screen, load_time
+
     @allure.step('Click Home button and open Home screen')
     @open_with_retries(HomeScreen)
     def open_home_screen(self):
@@ -104,7 +124,7 @@ class MainLeftPanel(QObject):
     @allure.step('Open community portal')
     def open_communities_portal(self, attempts: int = 3) -> CommunitiesPortal:
         last_exception = None
-        for _ in range(1, attempts+1):
+        for _ in range(1, attempts + 1):
             LOG.info(f'Attempt # {_} top open Community portal')
             self.communities_portal_button.click()
             introduce_yourself_popup = IntroduceYourselfPopup()
@@ -159,9 +179,9 @@ class MainWindow(Window):
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
 
-        # Navigate from home to settings first
         # since we now struggle with 3 words names, I need to change display name first
-        settings_screen = self.home.open_from_dock(DockButtons.SETTINGS.value)
+        left_panel = MainLeftPanel()
+        settings_screen = left_panel.open_settings()
         profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()

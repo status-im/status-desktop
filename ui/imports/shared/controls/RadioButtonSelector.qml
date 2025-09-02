@@ -1,13 +1,8 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
 import StatusQ.Components
 import StatusQ.Controls
-
-import utils
-
-import "../popups"
 
 StatusListItem {
     id: root
@@ -28,4 +23,3 @@ StatusListItem {
         }
     ]
 }
-

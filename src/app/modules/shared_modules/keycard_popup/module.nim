@@ -307,7 +307,7 @@ proc handleKeycardSyncing[T](self: Module[T]) =
           if accountsToRemove.len > 0:
             self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
           if kpDto.accountsAddresses.len > 0:
-            self.controller.addKeycardOrAccounts(kpDto, accountsComingFromKeycard = true)
+            self.controller.addKeycardOrAccounts(kpDto, password = "")
           # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
           # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
           if activeValidPathsToStoreToAKeycard.len > 0:
@@ -723,6 +723,7 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
       result.item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon,
         balance = newCurrencyAmount(), balanceFetched = true, operability = acc.operable))
   # handle unknown accounts
+  var addressesToFetchBalanceFor: seq[string] = @[]
   var unknownAccountNumber = 0
   for cardAcc in cardMetadata.walletAccounts:
     var found = false
@@ -732,12 +733,15 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
         break
     if not found:
       let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(cardAcc.address)
+      if not balanceFetched:
+        addressesToFetchBalanceFor.add(cardAcc.address)
       result.knownKeyPair = false
       unknownAccountNumber.inc
       let currencyFormat = self.controller.getCurrencyFormat(self.controller.getCurrency())
       let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknownAccountNumber
       result.item.addAccount(newKeyPairAccountItem(name, cardAcc.path, cardAcc.address, pubKey = cardAcc.publicKey,
         emoji = "", colorId = "undefined", icon = "wallet", currencyAmountToItem(balance, currencyFormat), balanceFetched))
+  self.controller.buildAllTokens(addressesToFetchBalanceFor, forceRefresh = true)
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)

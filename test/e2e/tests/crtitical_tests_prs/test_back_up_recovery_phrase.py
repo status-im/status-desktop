@@ -40,11 +40,15 @@ def test_back_up_recovery_phrase_sign_out(
         share_profile_popup.close()
         main_screen.left_panel.click()
 
-    with step('CLick Back up seed card in home page and back up seed'):
+    with step('Click Back up seed card in home page and back up seed'):
         home = main_screen.left_panel.open_home_screen()
         assert not BackUpSeedPhraseBanner().back_up_seed_banner.exists, "Back up seed banner should not be seen on home page"
         back_up_seed_modal = home.open_back_up_seed_popup_from_home_page()
-        back_up_seed_modal.back_up_seed_phrase()
+        back_up_seed_modal.back_up_seed_phrase_and_delete()
+
+    with step('Verify notification after removing seed phrase'):
+        messages = main_screen.wait_for_toast_notifications()
+        assert f'Recovery phrase permanently removed from Status application storage' in messages, f'Messages: {messages}'
 
     with step('Go to settings screen from dock and check back up seed phrase banner is not shown there'):
         settings = home.open_from_dock(DockButtons.SETTINGS.value)

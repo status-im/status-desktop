@@ -110,7 +110,7 @@ Item {
         }
 
         function test_withNoSectionsModel() {
-            const model = createTemporaryQmlObject("import QtQuick 2.15; ListModel {}", root)
+            const model = createTemporaryQmlObject("import QtQml.Models; ListModel {}", root)
             const control = createTemporaryObject(panelCmp, root, { model })
 
             model.append(control.assetsData.map(

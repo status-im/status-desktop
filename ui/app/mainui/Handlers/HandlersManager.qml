@@ -28,6 +28,7 @@ QtObject {
     required property SharedStores.RootStore sharedRootStore
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
+    required property SharedStores.NetworkConnectionStore networkConnectionStore
     required property SharedSendStores.TransactionStore transactionStore
 
     required property var/*TODO: Apply strong typing onces its no longer a singleton*/ walletRootStore
@@ -81,6 +82,7 @@ QtObject {
         walletCollectiblesStore: root.walletCollectiblesStore
         transactionStoreNew: root.transactionStoreNew
         networksStore: root.networksStore
+        networkConnectionStore: root.networkConnectionStore
 
         // for ens flows
         ensRegisteredAddress: root.ensUsernamesStore.getEnsRegisteredAddress()

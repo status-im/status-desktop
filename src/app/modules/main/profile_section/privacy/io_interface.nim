@@ -37,9 +37,6 @@ method removeMnemonic*(self: AccessInterface) {.base.} =
 method mnemonicWasShown*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getMnemonicWordAtIndex*(self: AccessInterface, index: int): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 # Controller Delegate Interface
 method mnemonicBackedUp*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -59,9 +56,6 @@ method urlUnfurlingMode*(self: AccessInterface): int {.base.} =
 method setUrlUnfurlingMode*(self: AccessInterface, value: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method validatePassword*(self: AccessInterface, password: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getPasswordStrengthScore*(self: AccessInterface, password: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -78,9 +72,6 @@ method tryRemoveFromKeyChain*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method backupData*(self: AccessInterface): int64 {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUrlUnfurlingModeUpdated*(self: AccessInterface, mode: int) {.base.} =

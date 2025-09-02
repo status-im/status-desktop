@@ -51,7 +51,7 @@ Control {
     property int multiplierIndex: 18
 
     /* Price of one unit of given cryptocurrency (e.g. price for 1 ETH) */
-    property real price: 1.0
+    property real cryptoPrice: 1.0
 
     property alias caption: captionText.text
     property bool interactive: true
@@ -168,7 +168,7 @@ Control {
         }
 
         readonly property string secondaryValue: {
-            const price = isNaN(root.price) ? 0 : root.price
+            const price = isNaN(root.cryptoPrice) ? 0 : root.cryptoPrice
 
             if (!d.fiatMode)
                 return SQUtils.AmountsArithmetic.times(
@@ -186,7 +186,7 @@ Control {
                         SQUtils.AmountsArithmetic.times(
                             SQUtils.AmountsArithmetic.fromString(inputDelocalized),
                             multiplier),
-                        SQUtils.AmountsArithmetic.fromNumber(price)).toFixed()
+                        SQUtils.AmountsArithmetic.fromNumber(price)).toFixed(0)
         }
     }
 
@@ -304,6 +304,9 @@ Control {
                 Layout.preferredWidth: contentWidth
 
                 text: {
+                    if (!d.fiatMode && root.cryptoPrice === 0) {
+                        return ""
+                    }
                     const divisor = SQUtils.AmountsArithmetic.fromExponent(
                                       d.fiatMode ? root.multiplierIndex
                                                  : root.fiatDecimalPlaces)

@@ -392,7 +392,7 @@ QtObject:
     self.delegate.addressWasShown(address)
 
   proc newsFeedEphemeralNotification*(self:View, newsTitle: string, notificationId: string) {.signal.}
-  
+
   proc communityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string, membershipState: int) {.signal.}
 
   proc emitCommunityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string,
@@ -411,3 +411,10 @@ QtObject:
 
   proc loadMembersForSectionId*(self: View, communityId: string) {.slot.} =
     self.delegate.loadMembersForSectionId(communityId)
+
+  proc authenticateLoggedInUser*(self: View, requestedBy: string) {.slot.} =
+    self.delegate.authenticateLoggedInUser(requestedBy)
+
+  proc loggedInUserAuthenticated(self: View, requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) {.signal.}
+  proc emitLoggedInUserAuthenticated*(self: View, requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) =
+    self.loggedInUserAuthenticated(requestedBy, password, pin, keyUid, keycardUid)

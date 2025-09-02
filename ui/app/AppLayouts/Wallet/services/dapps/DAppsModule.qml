@@ -192,7 +192,7 @@ SQUtils.QObject {
             root.dappsMetrics.logConnectionProposalAccepted(dappUrl, approvedChainIds, connectorId)
         }
 
-        function rejectAndLog() {
+        function rejectAndLog(key) {
             const dappUrl = dappConnections.getDAppUrl(key)
             const connectorId = dappConnections.getConnectorId(key)
             dappConnections.reject(key)
@@ -346,6 +346,7 @@ SQUtils.QObject {
         dappsModel: root.dappsModel
         feesBroker: feesBroker
 
+        fiatSymbol: root.currenciesStore.currentCurrency
         getFiatValue: (value, currency) => {
             return root.currenciesStore.getFiatValue(value, currency)
         }
@@ -390,6 +391,7 @@ SQUtils.QObject {
         dappsModel: root.dappsModel
         feesBroker: feesBroker
 
+        fiatSymbol: root.currenciesStore.currentCurrency
         getFiatValue: (value, currency) => {
             return root.currenciesStore.getFiatValue(value, currency)
         }

@@ -74,7 +74,8 @@ def test_delete_generated_account_from_wallet_settings(
 
     with step('Delete generated account'):
         delete_confirmation_popup = acc_view.open_remove_account_with_confirmation_popup()
-        delete_confirmation_popup.remove_account_with_confirmation()
+        auth_modal = delete_confirmation_popup.remove_account_with_confirmation()
+        auth_modal.authenticate(user_account.password)
 
     with step('Verify toast message notification when removing account'):
         messages = main_screen.wait_for_toast_notifications()

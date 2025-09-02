@@ -14,6 +14,7 @@ import chat_section/model as chat_model
 import chat_section/item as chat_item
 import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module
+import browser_section/module as browser_section_module
 import profile_section/module as profile_section_module
 import app_search/module as app_search_module
 import stickers/module as stickers_module
@@ -40,6 +41,9 @@ import app_service/service/currency/service as currency_service
 import app_service/service/ramp/service as ramp_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/bookmarks/service as bookmark_service
+import app_service/service/dapp_permissions/service as dapp_permissions_service
+import app_service/service/provider/service as provider_service
 import app_service/service/profile/service as profile_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/accounts/utils as accounts_utils
@@ -104,6 +108,7 @@ type
     stickersService: stickers_service.Service
     communityTokensService: community_tokens_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
+    browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
     gifsModule: gifs_module.AccessInterface
@@ -127,7 +132,6 @@ type
 {.push warning[Deprecated]: off.}
 
 # Forward declaration
-method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
 proc checkIfWeHaveNotifications[T](self: Module[T])
@@ -150,12 +154,15 @@ proc newModule*[T](
   rampService: ramp_service.Service,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.Service,
+  bookmarkService: bookmark_service.Service,
   profileService: profile_service.Service,
   settingsService: settings_service.Service,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
+  dappPermissionsService: dapp_permissions_service.Service,
   languageService: language_service.Service,
   privacyService: privacy_service.Service,
+  providerService: provider_service.Service,
   stickersService: stickers_service.Service,
   activityCenterService: activity_center_service.Service,
   savedAddressService: saved_address_service.Service,
@@ -225,6 +232,11 @@ proc newModule*[T](
     keycardService, nodeService, networkConnectionService, devicesService,
     communityTokensService, threadpool
   )
+  result.browserSectionModule = browser_section_module.newModule(
+    result, events, bookmarkService, settingsService, networkService,
+    dappPermissionsService, providerService, walletAccountService,
+    tokenService, currencyService
+  )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
@@ -256,6 +268,7 @@ method delete*[T](self: Module[T]) =
     cModule.delete
   self.chatSectionModules.clear
   self.walletSectionModule.delete
+  self.browserSectionModule.delete
   self.appSearchModule.delete
   self.nodeSectionModule.delete
   if not self.keycardSharedModuleForAuthenticationOrSigning.isNil:
@@ -346,7 +359,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     else:
       # If the number of joined members is the same, we can use the existing members
       members = existingCommunity.members.getItems()
-    
+
     # If there are tokens already in the model, we should keep the existing community tokens, until
     # getCommunityTokensDetailsAsync will trigger onCommunityTokensDetailsLoaded
     if not existingCommunity.communityTokens.isNil:
@@ -688,6 +701,8 @@ method load*[T](
       enabled = true,
     )
     self.view.model().addItem(homePageSectionItem)
+    if activeSectionId == homePageSectionItem.id:
+      activeSection = homePageSectionItem
 
   # Communities Portal Section
   let communitiesPortalSectionItem = initSectionItem(
@@ -729,6 +744,27 @@ method load*[T](
   if activeSectionId == walletSectionItem.id:
     activeSection = walletSectionItem
 
+  # Browser Section
+  let browserSectionItem = initSectionItem(
+    BROWSER_SECTION_ID,
+    SectionType.Browser,
+    BROWSER_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = BROWSER_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled(),
+  )
+  self.view.model().addItem(browserSectionItem)
+  if activeSectionId == browserSectionItem.id:
+    activeSection = browserSectionItem
+
   # Node Management Section
   let nodeManagementSectionItem = initSectionItem(
     NODEMANAGEMENT_SECTION_ID,
@@ -762,7 +798,7 @@ method load*[T](
     image = "",
     icon = SETTINGS_SECTION_ICON,
     color = "",
-    hasNotification = self.calculateProfileSectionHasNotification(),
+    hasNotification = false, # deferred to QML
     notificationsCount = 0,
     active = false,
     enabled = true,
@@ -814,6 +850,7 @@ method load*[T](
     if activeSectionId == swapSectionItem.id:
       activeSection = swapSectionItem
 
+  self.browserSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
   self.gifsModule.load()
@@ -828,8 +865,9 @@ method load*[T](
   self.marketModule.load()
 
   # If the home page is enabled, we default to it as the opening section
-  if homePageEnabled:
-    activeSection = homePageSectionItem
+  # (disabled for 2.35 as per https://github.com/status-im/status-desktop/issues/18664, revisit after)
+  #if homePageEnabled:
+  #  activeSection = homePageSectionItem
 
   # Set active section on app start
   # If section is empty or profile wait until chats are loaded
@@ -944,8 +982,8 @@ method onChatsLoaded*[T](
 
   self.events.emit(SIGNAL_MAIN_LOADED, Args())
 
-  # Set active section if it is one of the channel sections and the home page is not enabled
-  if not singletonInstance.featureFlags().getHomePageEnabled() and not activeSection.isEmpty():
+  # Set active section if it is one of the channel sections
+  if not activeSection.isEmpty():
     self.setActiveSection(activeSection)
 
   self.view.sectionsLoaded()
@@ -1041,6 +1079,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if (not self.walletSectionModule.isLoaded()):
     return
 
+  if(not self.browserSectionModule.isLoaded()):
+    return
+
   if(not self.nodeSectionModule.isLoaded()):
     return
 
@@ -1093,6 +1134,9 @@ method communitiesModuleDidLoad*[T](self: Module[T]) =
 #  self.checkIfModuleDidLoad()
 
 method walletSectionDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method browserSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method profileSectionDidLoad*[T](self: Module[T]) =
@@ -1153,6 +1197,8 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
   case sectionId:
     of COMMUNITIESPORTAL_SECTION_ID:
       self.communitiesModule.onActivated()
+    of BROWSER_SECTION_ID:
+      self.browserSectionModule.onActivated()
 
   # If metrics are enabled, send a navigation event
   var sectionIdToSend = sectionId
@@ -1178,7 +1224,11 @@ proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, availa
     self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
-  if (sectionType == SectionType.NodeManagement):
+  if (sectionType == SectionType.Browser):
+    let enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()
+    self.setSectionAvailability(sectionType, not enabled)
+    singletonInstance.localAccountSensitiveSettings.setIsBrowserEnabled(not enabled)
+  elif (sectionType == SectionType.NodeManagement):
     let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
@@ -1349,7 +1399,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   ## If includeDetails is true, additional details are calculated, like color hash and that results in higher CPU usage,
   ## that's why by default it is false and we should set it to true only when we really need it.
   if includeDetails:
-    contactDetails = self.controller.getContactDetails(publicKey, skipBackendCalls = false)
+    contactDetails = self.controller.getContactDetails(publicKey)
   else:
     contactDetails.dto = self.controller.getContact(publicKey)
 
@@ -1576,15 +1626,6 @@ method onMembershipStateUpdated*[T](self: Module[T], communityId: string, member
         self.view.emitCommunityMemberStatusEphemeralNotification(communityDto.name, contactName, state.int)
       else:
         discard
-
-method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
-  return not self.controller.isMnemonicBackedUp()
-
-method mnemonicBackedUp*[T](self: Module[T]) =
-  self.view.model().updateNotifications(
-    SETTINGS_SECTION_ID,
-    self.calculateProfileSectionHasNotification(),
-    notificationsCount = 0)
 
 method displayWindowsOsNotification*[T](self: Module[T], title: string,
     message: string) =
@@ -1851,8 +1892,15 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
 
       self.controller.switchTo(communityId, chatId, "")
 
+    elif action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled():
+      let item = self.view.model().getItemById(BROWSER_SECTION_ID)
+      self.setActiveSection(item)
+      self.browserSectionModule.openUrl(url)
+
     else:
       return
+
+
 
 ################################################################################
 ## keycard shared module - authentication/sign purpose
@@ -2075,7 +2123,7 @@ proc createMemberItem[T](
     role: MemberRole,
     airdropAddress: string = "",
     ): MemberItem =
-  let contactDetails = self.controller.getContactDetails(memberId, skipBackendCalls = true)
+  let contactDetails = self.controller.getContactDetails(memberId)
   let status = self.controller.getStatusForContactWithId(memberId)
   return createMemberItemFromDtos(
     contactDetails,
@@ -2087,7 +2135,7 @@ proc createMemberItem[T](
   )
 
 method contactUpdated*[T](self: Module[T], contactId: string) =
-  let contactDetails = self.controller.getContactDetails(contactId, skipBackendCalls = false)
+  let contactDetails = self.controller.getContactDetails(contactId)
   self.view.model().updateMemberItemInSections(
     pubKey = contactId,
     displayName = contactDetails.dto.displayName,
@@ -2178,5 +2226,12 @@ method getSectionId*[T](self: Module[T], sectionType: SectionType): string =
 
 method getSectionName*[T](self: Module[T], sectionId: string): string =
   return self.view.model().getItemById(sectionId).name()
+
+method authenticateLoggedInUser*[T](self: Module[T], requestedBy: string) =
+  self.controller.authenticateLoggedInUser(requestedBy)
+
+method onLoggedInUserAuthenticated*[T](self: Module[T], requestedBy: string, password: string, pin: string, keyUid: string,
+  keycardUid: string) =
+  self.view.emitLoggedInUserAuthenticated(requestedBy, password, pin, keyUid, keycardUid)
 
 {.pop.}

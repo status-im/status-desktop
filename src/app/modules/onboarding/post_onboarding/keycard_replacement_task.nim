@@ -47,7 +47,7 @@ proc run*(self: KeycardReplacementTask,
     keyUid: self.keyUid,
     accountsAddresses: accountsAddresses
   )
-  discard walletAccountService.addKeycardOrAccounts(keycard, accountsComingFromKeycard = true)
+  discard walletAccountService.addKeycardOrAccounts(keycard, password = "")
 
   # FIXME: store metadata to a Keycard - https://github.com/status-im/status-desktop/issues/17128
   # let accountsPathsToStore = keypair.accounts.filter(acc => not acc.isChat).map(acc => acc.path)

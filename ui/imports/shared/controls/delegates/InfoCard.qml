@@ -25,7 +25,6 @@ Control {
     property alias rightSideButtons: rightSideButtonsLoader.sourceComponent
     signal clicked(var mouse)
     signal communityTagClicked(var mouse)
-    
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: 32
@@ -34,15 +33,13 @@ Control {
     }
 
     background: Rectangle {
-        id: background
         anchors.fill: parent
         color: Theme.palette.background
         radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.baseColor2
-        layer.enabled: mouseArea.containsMouse || root.highlight
+        layer.enabled: sensor.hovered || root.highlight
         layer.effect: DropShadow {
-            source: background
             horizontalOffset: 0
             verticalOffset: 2
             radius: 16
@@ -52,15 +49,16 @@ Control {
         }
     }
 
+    HoverHandler {
+        id: sensor
+    }
+
     contentItem: Item {
         StatusMouseArea {
-            id: mouseArea
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton|Qt.RightButton
             hoverEnabled: true
-            onClicked: {
-                root.clicked(mouse);
-            }
+            onClicked: mouse => root.clicked(mouse)
         }
         ColumnLayout {
             id: titleColumn
@@ -124,9 +122,7 @@ Control {
                 asset.height: 20
                 StatusMouseArea {
                     anchors.fill: parent
-                    onClicked: {
-                        root.communityTagClicked(mouse);
-                    }
+                    onClicked: mouse => root.communityTagClicked(mouse)
                 }
             }
         }

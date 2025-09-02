@@ -96,8 +96,7 @@ Control {
             lineHeightMode: Text.FixedHeight
             lineHeight: 22
 
-            text: !!root.fiatFees ? root.fiatFees:
-                                   d.loadingText
+            text: !!root.fiatFees ? root.fiatFees: d.loadingText
         }
     }
 }

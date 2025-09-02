@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@v1.9.27'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -26,11 +26,6 @@ pipeline {
       description: 'Level of verbosity based on nimbus-build-system setup.',
       choices: ['0', '1', '2']
     )
-    string(
-      name: 'NIMFLAGS',
-      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
-      defaultValue: "--colors:off --nimcache:${env.WORKSPACE_TMP}/nimcache"
-    )
     booleanParam(
       name: 'USE_MOCKED_KEYCARD_LIB',
       description: 'Decides whether the mocked status-keycard-go library is built.',
@@ -40,6 +35,16 @@ pipeline {
       name: 'ENTITLEMENTS',
       description: 'Select app entitlements. Squish requires extra entitlements.',
       choices: ['resources/Entitlements.plist', 'resources/Entitlements_squish.plist']
+    )
+    booleanParam(
+      name: 'USE_NWAKU',
+      description: 'Whether to build with nwaku or not',
+      defaultValue: params.USE_NWAKU ?: getNWakuMode(),
+    )
+    string(
+      name: 'NIMFLAGS',
+      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
+      defaultValue: "--colors:off --nimcache:${env.WORKSPACE_TMP}/nimcache"
     )
   }
 
@@ -63,7 +68,7 @@ pipeline {
   }
 
   environment {
-    PLATFORM = "macos/${getArch()}"
+    PLATFORM = "macos/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     QT_VERSION="6.9.0"
@@ -83,6 +88,16 @@ pipeline {
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+    /* Hack fix for params not being set in job on first run */
+    NIMFLAGS =               "${params.NIMFLAGS}"
+    USE_NWAKU =              "${params.USE_NWAKU}"
+    ENTITLEMENTS =           "${params.ENTITLEMENTS}"
+    RELEASE =                "${params.RELEASE}"
+    INCLUDE_DEBUG_SYMBOLS =  "${params.INCLUDE_DEBUG_SYMBOLS}"
+    VERBOSE =                "${params.VERBOSE}"
+    USE_MOCKED_KEYCARD_LIB = "${params.USE_MOCKED_KEYCARD_LIB}"
+    /* FIXME: figure out why NIMFLAGS are not respected */
+    XDG_CACHE_HOME = "${env.WORKSPACE_TMP}/.cache"
   }
 
   stages {
@@ -108,12 +123,14 @@ pipeline {
 
     stage('status-go') {
       steps {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         sh 'make status-go'
       }
     }
 
     stage('Package') {
       steps { script {
+        sh "echo USE_NWAKU is ${USE_NWAKU}"
         macos.bundle('pkg-macos')
       } }
     }
@@ -168,4 +185,14 @@ def getArch() {
     for (def arch in ['x86_64', 'aarch64']) {
       if (tokens.contains(arch)) { return arch }
     }
+}
+
+/* We extract the name of the job from currentThread because
+ * before an agent is picked env is not available. */
+def getJobPathTokens() {
+    return Thread.currentThread().getName().split('/')
+}
+
+def getNWakuMode() {
+    return getJobPathTokens().contains('package-nwaku')
 }

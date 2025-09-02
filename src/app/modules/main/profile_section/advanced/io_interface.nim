@@ -84,6 +84,9 @@ method toggleCommunitiesPortalSection*(self: AccessInterface) {.base.} =
 method toggleWalletSection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method toggleBrowserSection*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method toggleCommunitySection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

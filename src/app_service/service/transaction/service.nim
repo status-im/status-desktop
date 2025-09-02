@@ -493,20 +493,6 @@ QtObject:
       error "Error estimating transaction time", message = e.msg
       return 0
 
-  proc getLatestBlockNumber*(self: Service, chainId: int): string =
-    try:
-      let response = eth.getBlockByNumber(chainId, "latest")
-      return response.result{"number"}.getStr
-    except Exception as e:
-      error "Error getting latest block number", message = e.msg
-
-  proc getEstimatedLatestBlockNumber*(self: Service, chainId: int): string =
-    try:
-      return $eth.getEstimatedLatestBlockNumber(chainId).result
-    except Exception as e:
-      error "Error getting estimated latest block number", message = e.msg
-      return ""
-
 proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
   var signMsgRes: JsonNode
   let err = wallet.signMessage(signMsgRes,
@@ -543,10 +529,12 @@ proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatur
   return ""
 
 proc reevaluateRouterPath*(self: Service, uuid: string, pathName: string, chainId: int, isApprovalTx: bool): string =
-  try:
-    let err = wallet.reevaluateRouterPath(uuid, pathName, chainId, isApprovalTx)
-    if err.len > 0:
-      raise newException(CatchableError, err)
-  except CatchableError as e:
-    error "reevaluateRouterPath", exception=e.msg
-    return e.msg
+  let arg = ReevaluateRouterPathTaskArg(
+    tptr: reevaluateRouterPathTask,
+    vptr: cast[uint](self.vptr),
+    uuid: uuid,
+    pathName: pathName,
+    chainId: chainId,
+    isApprovalTx: isApprovalTx,
+  )
+  self.threadpool.start(arg)

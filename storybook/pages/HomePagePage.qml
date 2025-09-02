@@ -44,10 +44,12 @@ SplitView {
 
             showEnabledSectionsOnly: ctrlShowEnabledSectionsOnly.checked
             marketEnabled: ctrlMarketEnabled.checked
+            browserEnabled: ctrlBrowserEnabled.checked
 
             syncingBadgeCount: 2
             messagingBadgeCount: 4
             showBackUpSeed: true
+            backUpSeedBadgeCount: 1
 
             searchPhrase: homePage.searchPhrase
 
@@ -114,8 +116,8 @@ SplitView {
     }
 
     LogsAndControlsPanel {
-        SplitView.minimumHeight: 300
-        SplitView.preferredHeight: 300
+        SplitView.minimumHeight: 320
+        SplitView.preferredHeight: 320
         SplitView.fillWidth: true
 
         logsView.logText: logs.logText
@@ -132,6 +134,11 @@ SplitView {
             Switch {
                 id: ctrlMarketEnabled
                 text: "Market enabled"
+                checked: true
+            }
+            Switch {
+                id: ctrlBrowserEnabled
+                text: "Browser enabled"
                 checked: true
             }
             RowLayout {
