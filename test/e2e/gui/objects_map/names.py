@@ -173,8 +173,6 @@ userContextMenu_CopyLinkToProfile = {"container": statusDesktop_mainWindow_overl
                                      "visible": True}
 userLabel_StyledText = {"container": statusDesktop_mainWindow_overlay, "type": "StyledText", "unnamed": 1,
                         "visible": True}
-o_StatusIdenticonRing = {"container": statusDesktop_mainWindow_overlay, "type": "StatusIdenticonRing", "unnamed": 1,
-                         "visible": True}
 
 # My Profile Popup (online identifier)
 ProfileDialogView = {"container": statusDesktop_mainWindow_overlay, "id": "profileView", "type": "ProfileDialogView",
