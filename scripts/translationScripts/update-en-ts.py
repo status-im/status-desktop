@@ -27,13 +27,13 @@ def fixupTranslations(enTsFile: str):
 if __name__ == "__main__":
     # full base TS file (has to come first as we're targetting the same language)
     basefile = "../../ui/i18n/qml_base.ts"
-    p = subprocess.run(['lupdate', '../../ui/nim-status-client.pro', '-locations', 'none', '-source-language', 'en', '-no-obsolete', '-ts', basefile],
+    p = subprocess.run(['lupdate', '../../ui/nim-status-client.pro', '-locations', 'none', '-source-language', 'en', '-no-obsolete', '-target-language', 'en', '-ts', basefile],
                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True, text=True)
     print(p.stdout)
     fixupTranslations(basefile)
 
     # EN "translation" file, plurals only
     enfile = "../../ui/i18n/qml_en.ts"
-    p = subprocess.run(['lupdate', '../../ui/nim-status-client.pro', '-locations', 'none', '-source-language', 'en', '-pluralonly', '-no-obsolete', '-target-language', 'en_GB', '-ts', enfile],
+    p = subprocess.run(['lupdate', '../../ui/nim-status-client.pro', '-locations', 'none', '-source-language', 'en', '-pluralonly', '-no-obsolete', '-target-language', 'en', '-ts', enfile],
                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True, text=True)
     print(p.stdout)
