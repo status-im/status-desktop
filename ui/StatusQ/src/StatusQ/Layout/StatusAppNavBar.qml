@@ -106,7 +106,6 @@ Rectangle {
             Layout.preferredWidth: d.separatorWidth
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.directColor7
-            visible: true
         }
 
         ListView {

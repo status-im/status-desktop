@@ -17,7 +17,7 @@ ActivityNotificationBaseLayout {
         community: communityEditor.communityMock
         notification: baseEditor.notificationBaseMock
 
-        onSetActiveCommunity: (communityId) =>
+        onSetActiveCommunityRequested: (communityId) =>
                                        logs.logEvent("ActivityNotificationCommunityKicked::onSetActiveCommunityRequested - " + communityId)
     }
 }

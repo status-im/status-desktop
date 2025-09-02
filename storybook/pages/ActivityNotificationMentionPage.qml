@@ -48,7 +48,7 @@ ActivityNotificationBaseLayout {
             readonly property string color: root.groupColorBlue ? "lightblue" : "yellow"
         }
 
-        onSetActiveCommunity: (communityId) => {
+        onSetActiveCommunityRequested: (communityId) => {
                                   logs.logEvent("ActivityNotificationMention::onSetActiveCommunity: " + communityId) }
         onSwitchToRequested: (sectionId, chatId, messageId) => {
                                  logs.logEvent("ActivityNotificationMention::onSwitchToRequested",

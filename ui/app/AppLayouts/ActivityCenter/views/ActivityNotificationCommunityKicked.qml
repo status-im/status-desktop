@@ -17,7 +17,7 @@ ActivityNotificationBase {
 
     required property var community
 
-    signal setActiveCommunity(string communityId)
+    signal setActiveCommunityRequested(string communityId)
 
     avatarComponent: StatusSmartIdenticon {
         name: community ? community.name : ""
@@ -42,7 +42,7 @@ ActivityNotificationBase {
             communityLinkTextColor: Theme.palette.directColor1
             communityLinkTextPixelSize: Theme.additionalTextSize
             communityLinkTextWeight: Font.Medium
-            onCommunityNameClicked: root.setActiveCommunity(notification.communityId)
+            onCommunityNameClicked: root.setActiveCommunityRequested(notification.communityId)
         }
 
         StatusBaseText {

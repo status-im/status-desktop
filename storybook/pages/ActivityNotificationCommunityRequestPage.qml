@@ -48,8 +48,8 @@ ActivityNotificationBaseLayout {
             }
         }
 
-        onSetActiveCommunity: (communityId) =>
-                              logs.logEvent("ActivityNotificationCommunityRequest::onSetActiveCommunityRequested - " + communityId)
+        onSetActiveCommunityRequested: (communityId) =>
+                                       logs.logEvent("ActivityNotificationCommunityRequest::onSetActiveCommunityRequested - " + communityId)
     }
 
     additionalEditorComponent: ColumnLayout {
