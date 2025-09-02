@@ -1,4 +1,4 @@
-<TS version="2.1" sourcelanguage="en">
+<TS version="2.1" language="en" sourcelanguage="en">
 <context>
     <name />
     <message>
@@ -226,37 +226,6 @@
     <message>
         <source>Remove account</source>
         <translation>Remove account</translation>
-    </message>
-</context>
-<context>
-    <name>Acknowledgements</name>
-    <message>
-        <source>Secure Your Assets and Funds</source>
-        <translation>Secure Your Assets and Funds</translation>
-    </message>
-    <message>
-        <source>Your recovery phrase is a 12-word passcode to your funds.</source>
-        <translation>Your recovery phrase is a 12-word passcode to your funds.</translation>
-    </message>
-    <message>
-        <source>Your recovery phrase cannot be recovered if lost. Therefore, you &lt;b&gt;must&lt;/b&gt; back it up. The simplest way is to &lt;b&gt;write it down offline and store it somewhere secure.&lt;/b&gt;</source>
-        <translation>Your recovery phrase cannot be recovered if lost. Therefore, you &lt;b&gt;must&lt;/b&gt; back it up. The simplest way is to &lt;b&gt;write it down offline and store it somewhere secure.&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>I have a pen and paper</source>
-        <translation>I have a pen and paper</translation>
-    </message>
-    <message>
-        <source>I am ready to write down my recovery phrase</source>
-        <translation>I am ready to write down my recovery phrase</translation>
-    </message>
-    <message>
-        <source>I know where I&#8217;ll store it</source>
-        <translation>I know where I&#8217;ll store it</translation>
-    </message>
-    <message>
-        <source>You can only complete this process once. Status will not store your recovery phrase and can never help you recover it.</source>
-        <translation>You can only complete this process once. Status will not store your recovery phrase and can never help you recover it.</translation>
     </message>
 </context>
 <context>
@@ -670,33 +639,6 @@
     </message>
 </context>
 <context>
-    <name>ActivityNotificationProfileFetching</name>
-    <message>
-        <source>Fetching profile details</source>
-        <translation>Fetching profile details</translation>
-    </message>
-    <message>
-        <source>Fetching all data may take some time</source>
-        <translation>Fetching all data may take some time</translation>
-    </message>
-    <message>
-        <source>Profile details fetched successfully</source>
-        <translation>Profile details fetched successfully</translation>
-    </message>
-    <message>
-        <source>Some profile details could not be fetched</source>
-        <translation>Some profile details could not be fetched</translation>
-    </message>
-    <message>
-        <source>Try again</source>
-        <translation>Try again</translation>
-    </message>
-    <message>
-        <source>Profile details could not be fetched</source>
-        <translation>Profile details could not be fetched</translation>
-    </message>
-</context>
-<context>
     <name>ActivityNotificationReply</name>
     <message>
         <source>sticker</source>
@@ -1031,6 +973,65 @@
     </message>
 </context>
 <context>
+    <name>AddFavoriteModal</name>
+    <message>
+        <source>Favourite added</source>
+        <translation>Favourite added</translation>
+    </message>
+    <message>
+        <source>Edit favourite</source>
+        <translation>Edit favourite</translation>
+    </message>
+    <message>
+        <source>Add favourite</source>
+        <translation>Add favourite</translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <translation>URL</translation>
+    </message>
+    <message>
+        <source>Paste URL</source>
+        <translation>Paste URL</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Paste</translation>
+    </message>
+    <message>
+        <source>Pasted</source>
+        <translation>Pasted</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>Name of the website</source>
+        <translation>Name of the website</translation>
+    </message>
+    <message>
+        <source>Please enter a name</source>
+        <translation>Please enter a name</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>Done</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Add</translation>
+    </message>
+    <message>
+        <source>Add Favourite</source>
+        <translation>Add Favourite</translation>
+    </message>
+</context>
+<context>
     <name>AddMoreAccountsLink</name>
     <message>
         <source>Add accounts to showcase</source>
@@ -1097,64 +1098,6 @@
     </message>
 </context>
 <context>
-    <name>AddWakuNodeModal</name>
-    <message>
-        <source>Waku nodes</source>
-        <translation>Waku nodes</translation>
-    </message>
-    <message>
-        <source>Node multiaddress or DNS Discovery address</source>
-        <translation>Node multiaddress or DNS Discovery address</translation>
-    </message>
-    <message>
-        <source>You need to enter a value</source>
-        <translation>You need to enter a value</translation>
-    </message>
-    <message>
-        <source>Value should start with '/' or 'enr:'</source>
-        <translation>Value should start with '/' or 'enr:'</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>Save</translation>
-    </message>
-</context>
-<context>
-    <name>AddWakuStoreModal</name>
-    <message>
-        <source>Waku nodes</source>
-        <translation>Waku nodes</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <source>Specify a name</source>
-        <translation>Specify a name</translation>
-    </message>
-    <message>
-        <source>You need to enter a name</source>
-        <translation>You need to enter a name</translation>
-    </message>
-    <message>
-        <source>Storenode multiaddress</source>
-        <translation>Storenode multiaddress</translation>
-    </message>
-    <message>
-        <source>You need to enter the storenode multiaddress</source>
-        <translation>You need to enter the storenode multiaddress</translation>
-    </message>
-    <message>
-        <source>Multiaddress must start with a "/"</source>
-        <translation>Multiaddress must start with a "/"</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>Save</translation>
-    </message>
-</context>
-<context>
     <name>AddressDetails</name>
     <message>
         <source>Already added</source>
@@ -1194,6 +1137,7 @@
         <source>%n valid address(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
@@ -1201,11 +1145,13 @@
         <comment>invalid addresses, where "addresses" is implicit</comment>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>%n invalid address(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -1249,6 +1195,10 @@
         <translation>Experimental features</translation>
     </message>
     <message>
+        <source>Web/dApp Browser</source>
+        <translation>Web/dApp Browser</translation>
+    </message>
+    <message>
         <source>Node Management</source>
         <translation>Node Management</translation>
     </message>
@@ -1267,10 +1217,6 @@
     <message>
         <source>Enable creation of sharded communities</source>
         <translation>Enable creation of sharded communities</translation>
-    </message>
-    <message>
-        <source>Waku Nodes</source>
-        <translation>Waku Nodes</translation>
     </message>
     <message>
         <source>The account will be logged out. When you login again, the selected mode will be enabled</source>
@@ -1325,10 +1271,6 @@
         <translation>Download messages</translation>
     </message>
     <message>
-        <source>Telemetry</source>
-        <translation>Telemetry</translation>
-    </message>
-    <message>
         <source>Debug</source>
         <translation>Debug</translation>
     </message>
@@ -1363,10 +1305,6 @@
     <message>
         <source>Are you sure you want to enable all the developer features? The app will be restarted.</source>
         <translation>Are you sure you want to enable all the developer features? The app will be restarted.</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.</source>
-        <translation>Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.</translation>
     </message>
     <message>
         <source>Are you sure you want to enable auto message? You need to restart the app for this change to take effect.</source>
@@ -1440,6 +1378,7 @@
         <source>%n recipient(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
 </context>
@@ -1470,6 +1409,10 @@
         <translation>New Airdrop</translation>
     </message>
     <message>
+        <source>Loading tokens...</source>
+        <translation>Loading tokens...</translation>
+    </message>
+    <message>
         <source>Airdrop community tokens</source>
         <translation>Airdrop community tokens</translation>
     </message>
@@ -1494,8 +1437,8 @@
         <translation>Get started</translation>
     </message>
     <message>
-        <source>Token airdropping can only be performed by admins that hodl the Community&#8217;s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</source>
-        <translation>Token airdropping can only be performed by admins that hodl the Community&#8217;s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</translation>
+        <source>Token airdropping can only be performed by admins that hodl the Community's TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</source>
+        <translation>Token airdropping can only be performed by admins that hodl the Community's TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</translation>
     </message>
     <message>
         <source>In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.</source>
@@ -1530,6 +1473,7 @@
     <message numerus="yes">
         <source>Max %n decimal place(s) for this asset</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -1596,6 +1540,7 @@ from "%1" to "%2"</translation>
     <message numerus="yes">
         <source>%n key pair(s) successfully imported</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -1948,22 +1893,6 @@ from "%1" to "%2"</translation>
         <translation>Leave Community</translation>
     </message>
     <message>
-        <source>Testnet mode enabled. All balances, transactions and dApp interactions will be on testnets.</source>
-        <translation>Testnet mode enabled. All balances, transactions and dApp interactions will be on testnets.</translation>
-    </message>
-    <message>
-        <source>Turn off</source>
-        <translation>Turn off</translation>
-    </message>
-    <message>
-        <source>Secure your recovery phrase</source>
-        <translation>Secure your recovery phrase</translation>
-    </message>
-    <message>
-        <source>Back up now</source>
-        <translation>Back up now</translation>
-    </message>
-    <message>
         <source>The import of &#8216;%1&#8217; from Discord to Status was stopped: &lt;a href='#'&gt;Critical issues found&lt;/a&gt;</source>
         <translation>The import of &#8216;%1&#8217; from Discord to Status was stopped: &lt;a href='#'&gt;Critical issues found&lt;/a&gt;</translation>
     </message>
@@ -1978,6 +1907,7 @@ from "%1" to "%2"</translation>
     <message numerus="yes">
         <source>%n issue(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -2006,36 +1936,8 @@ from "%1" to "%2"</translation>
         <translation>Visit your Community</translation>
     </message>
     <message>
-        <source>Downloading message history archives, DO NOT CLOSE THE APP until this banner disappears.</source>
-        <translation>Downloading message history archives, DO NOT CLOSE THE APP until this banner disappears.</translation>
-    </message>
-    <message>
         <source>Can not connect to store node. Retrying automatically</source>
         <translation>Can not connect to store node. Retrying automatically</translation>
-    </message>
-    <message>
-        <source>You are back online</source>
-        <translation>You are back online</translation>
-    </message>
-    <message>
-        <source>Internet connection lost. Reconnect to ensure everything is up to date.</source>
-        <translation>Internet connection lost. Reconnect to ensure everything is up to date.</translation>
-    </message>
-    <message>
-        <source>A new version of Status (%1) is available</source>
-        <translation>A new version of Status (%1) is available</translation>
-    </message>
-    <message>
-        <source>Your version is up to date</source>
-        <translation>Your version is up to date</translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation>Update</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Close</translation>
     </message>
     <message>
         <source>Pocket Network (POKT) &amp; Infura are currently both unavailable for %1. Balances for those chains are as of %2.</source>
@@ -2273,10 +2175,6 @@ from "%1" to "%2"</translation>
         <translation>Price</translation>
     </message>
     <message>
-        <source>Balance</source>
-        <translation>Balance</translation>
-    </message>
-    <message>
         <source>Market Cap</source>
         <translation>Market Cap</translation>
     </message>
@@ -2365,98 +2263,25 @@ from "%1" to "%2"</translation>
     </message>
 </context>
 <context>
-    <name>BackUpCommuntyBannerPanel</name>
-    <message>
-        <source>Back up community key</source>
-        <translation>Back up community key</translation>
-    </message>
-    <message>
-        <source>Back up</source>
-        <translation>Back up</translation>
-    </message>
-</context>
-<context>
     <name>BackupSeedModal</name>
     <message>
-        <source>Not Now</source>
-        <translation>Not Now</translation>
-    </message>
-    <message>
-        <source>Back up your recovery phrase</source>
-        <translation>Back up your recovery phrase</translation>
-    </message>
-    <message>
-        <source>Confirm Recovery Phrase</source>
-        <translation>Confirm Recovery Phrase</translation>
+        <source>I've backed up phrase</source>
+        <translation>I've backed up phrase</translation>
     </message>
     <message>
         <source>Continue</source>
         <translation>Continue</translation>
     </message>
     <message>
-        <source>Complete &amp; Delete My Recovery Phrase</source>
-        <translation>Complete &amp; Delete My Recovery Phrase</translation>
-    </message>
-    <message>
-        <source>Confirm word #%1 of your recovery phrase</source>
-        <translation>Confirm word #%1 of your recovery phrase</translation>
-    </message>
-</context>
-<context>
-    <name>BackupSeedStepBase</name>
-    <message>
-        <source>Word #%1</source>
-        <translation>Word #%1</translation>
-    </message>
-    <message>
-        <source>Enter word</source>
-        <translation>Enter word</translation>
-    </message>
-    <message>
-        <source>Wrong word</source>
-        <translation>Wrong word</translation>
-    </message>
-</context>
-<context>
-    <name>BackupSeedphraseAcks</name>
-    <message>
-        <source>Backup your recovery phrase</source>
-        <translation>Backup your recovery phrase</translation>
-    </message>
-    <message>
-        <source>Store your recovery phrase in a secure location so you never lose access to your funds.</source>
-        <translation>Store your recovery phrase in a secure location so you never lose access to your funds.</translation>
-    </message>
-    <message>
-        <source>Backup checklist:</source>
-        <translation>Backup checklist:</translation>
-    </message>
-    <message>
-        <source>I have a pen and paper</source>
-        <translation>I have a pen and paper</translation>
-    </message>
-    <message>
-        <source>I am ready to write down my recovery phrase</source>
-        <translation>I am ready to write down my recovery phrase</translation>
-    </message>
-    <message>
-        <source>I know where I&#8217;ll store it</source>
-        <translation>I know where I&#8217;ll store it</translation>
-    </message>
-    <message>
-        <source>I know I can only reveal it once</source>
-        <translation>I know I can only reveal it once</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <translation>Continue</translation>
+        <source>Done</source>
+        <translation>Done</translation>
     </message>
 </context>
 <context>
     <name>BackupSeedphraseIntro</name>
     <message>
-        <source>Backup your recovery phrase</source>
-        <translation>Backup your recovery phrase</translation>
+        <source>Your recovery phrase has been created</source>
+        <translation>Your recovery phrase has been created</translation>
     </message>
     <message>
         <source>Your recovery phrase is a 12 word passcode to your funds that cannot be recovered if lost. Write it down offline and store it somewhere secure.</source>
@@ -2468,14 +2293,25 @@ from "%1" to "%2"</translation>
     </message>
 </context>
 <context>
-    <name>BackupSeedphraseOutro</name>
+    <name>BackupSeedphraseKeepOrDelete</name>
     <message>
-        <source>Backup your recovery phrase</source>
-        <translation>Backup your recovery phrase</translation>
+        <source>Keep or delete recovery phrase</source>
+        <translation>Keep or delete recovery phrase</translation>
     </message>
     <message>
-        <source>Store your phrase offline</source>
-        <translation>Store your phrase offline</translation>
+        <source>Decide whether you want to keep the recovery phrase in your Status app for future access or remove it permanently.</source>
+        <translation>Decide whether you want to keep the recovery phrase in your Status app for future access or remove it permanently.</translation>
+    </message>
+    <message>
+        <source>Permanently remove your recovery phrase from the Status app &#8212; you will not be able to view it again</source>
+        <translation>Permanently remove your recovery phrase from the Status app &#8212; you will not be able to view it again</translation>
+    </message>
+</context>
+<context>
+    <name>BackupSeedphraseOutro</name>
+    <message>
+        <source>Confirm backup</source>
+        <translation>Confirm backup</translation>
     </message>
     <message>
         <source>Ensure you have written down your recovery phrase and have a safe place to keep it. Remember, anyone who has your recovery phrase has access to your funds.</source>
@@ -2493,20 +2329,24 @@ from "%1" to "%2"</translation>
 <context>
     <name>BackupSeedphraseReveal</name>
     <message>
-        <source>Backup your recovery phrase</source>
-        <translation>Backup your recovery phrase</translation>
+        <source>Show recovery phrase</source>
+        <translation>Show recovery phrase</translation>
     </message>
     <message>
-        <source>Write down your 12-word recovery phrase to keep offline</source>
-        <translation>Write down your 12-word recovery phrase to keep offline</translation>
+        <source>A 12-word phrase that gives full access to your funds and is the only way to recover them.</source>
+        <translation>A 12-word phrase that gives full access to your funds and is the only way to recover them.</translation>
     </message>
     <message>
         <source>Reveal recovery phrase</source>
         <translation>Reveal recovery phrase</translation>
     </message>
     <message>
-        <source>Anyone who sees this will have access to your funds.</source>
-        <translation>Anyone who sees this will have access to your funds.</translation>
+        <source>Never share your recovery phrase. If someone asks for it, they&#8217;re likely trying to scam you.
+
+To backup you recovery phrase, write it down and store it securely in a safe place.</source>
+        <translation>Never share your recovery phrase. If someone asks for it, they&#8217;re likely trying to scam you.
+
+To backup you recovery phrase, write it down and store it securely in a safe place.</translation>
     </message>
     <message>
         <source>Confirm recovery phrase</source>
@@ -2516,12 +2356,12 @@ from "%1" to "%2"</translation>
 <context>
     <name>BackupSeedphraseVerify</name>
     <message>
-        <source>Backup your recovery phrase</source>
-        <translation>Backup your recovery phrase</translation>
+        <source>Confirm recovery phrase</source>
+        <translation>Confirm recovery phrase</translation>
     </message>
     <message>
-        <source>Confirm the following words from your recovery phrase...</source>
-        <translation>Confirm the following words from your recovery phrase...</translation>
+        <source>Confirm these words from your recovery phrase...</source>
+        <translation>Confirm these words from your recovery phrase...</translation>
     </message>
     <message>
         <source>Empty</source>
@@ -2620,6 +2460,180 @@ from "%1" to "%2"</translation>
     </message>
 </context>
 <context>
+    <name>BrowserConnectionModal</name>
+    <message>
+        <source>'%1' would like to connect to</source>
+        <translation>'%1' would like to connect to</translation>
+    </message>
+    <message>
+        <source>Allowing authorizes this DApp to retrieve your wallet address and enable Web3</source>
+        <translation>Allowing authorizes this DApp to retrieve your wallet address and enable Web3</translation>
+    </message>
+    <message>
+        <source>Granting access authorizes this DApp to retrieve your chat key</source>
+        <translation>Granting access authorizes this DApp to retrieve your chat key</translation>
+    </message>
+    <message>
+        <source>Unknown permission: %1</source>
+        <translation>Unknown permission: %1</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation>Deny</translation>
+    </message>
+    <message>
+        <source>Allow</source>
+        <translation>Allow</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserHeader</name>
+    <message>
+        <source>Enter URL</source>
+        <translation>Enter URL</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserLayout</name>
+    <message>
+        <source>Error sending the transaction</source>
+        <translation>Error sending the transaction</translation>
+    </message>
+    <message>
+        <source>Error signing message</source>
+        <translation>Error signing message</translation>
+    </message>
+    <message>
+        <source>Transaction pending...</source>
+        <translation>Transaction pending...</translation>
+    </message>
+    <message>
+        <source>View on etherscan</source>
+        <translation>View on etherscan</translation>
+    </message>
+    <message>
+        <source>Server's certificate not trusted</source>
+        <translation>Server's certificate not trusted</translation>
+    </message>
+    <message>
+        <source>Do you wish to continue?</source>
+        <translation>Do you wish to continue?</translation>
+    </message>
+    <message>
+        <source>If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.
+Do you wish to override the security check and continue?</source>
+        <translation>If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.
+Do you wish to override the security check and continue?</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserSettingsMenu</name>
+    <message>
+        <source>New Tab</source>
+        <translation>New Tab</translation>
+    </message>
+    <message>
+        <source>Exit Incognito mode</source>
+        <translation>Exit Incognito mode</translation>
+    </message>
+    <message>
+        <source>Go Incognito</source>
+        <translation>Go Incognito</translation>
+    </message>
+    <message>
+        <source>Zoom In</source>
+        <translation>Zoom In</translation>
+    </message>
+    <message>
+        <source>Zoom Out</source>
+        <translation>Zoom Out</translation>
+    </message>
+    <message>
+        <source>Zoom Fit</source>
+        <translation>Zoom Fit</translation>
+    </message>
+    <message>
+        <source>Find</source>
+        <translation>Find</translation>
+    </message>
+    <message>
+        <source>Compatibility mode</source>
+        <translation>Compatibility mode</translation>
+    </message>
+    <message>
+        <source>Developer Tools</source>
+        <translation>Developer Tools</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Settings</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserTabView</name>
+    <message>
+        <source>Start Page</source>
+        <translation>Start Page</translation>
+    </message>
+    <message>
+        <source>New Tab</source>
+        <translation>New Tab</translation>
+    </message>
+    <message>
+        <source>Downloads Page</source>
+        <translation>Downloads Page</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserView</name>
+    <message>
+        <source>Search engine used in the address bar</source>
+        <translation>Search engine used in the address bar</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>None</translation>
+    </message>
+    <message>
+        <source>Show Favorites Bar</source>
+        <translation>Show Favorites Bar</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserWalletMenu</name>
+    <message>
+        <source>Mainnet</source>
+        <translation>Mainnet</translation>
+    </message>
+    <message>
+        <source>Ropsten</source>
+        <translation>Ropsten</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Unknown</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Disconnect</translation>
+    </message>
+    <message>
+        <source>Assets</source>
+        <translation>Assets</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <translation>History</translation>
+    </message>
+</context>
+<context>
+    <name>BrowserWebEngineView</name>
+    <message>
+        <source>Add Favourite</source>
+        <translation>Add Favourite</translation>
+    </message>
+</context>
+<context>
     <name>BurnTokensPopup</name>
     <message>
         <source>Burn %1 token on %2</source>
@@ -2628,6 +2642,7 @@ from "%1" to "%2"</translation>
     <message numerus="yes">
         <source>How many of %1&#8217;s remaining %Ln %2 token(s) would you like to burn?</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -2709,20 +2724,20 @@ from "%1" to "%2"</translation>
 <context>
     <name>BuyReceiveBanner</name>
     <message>
-        <source>Ways to buy assets</source>
-        <translation>Ways to buy assets</translation>
+        <source>Ways to buy</source>
+        <translation>Ways to buy</translation>
     </message>
     <message>
-        <source>Via card or bank transfer</source>
-        <translation>Via card or bank transfer</translation>
+        <source>Via card or bank</source>
+        <translation>Via card or bank</translation>
     </message>
     <message>
-        <source>Receive assets</source>
-        <translation>Receive assets</translation>
+        <source>Receive</source>
+        <translation>Receive</translation>
     </message>
     <message>
-        <source>Deposit to your Wallet address</source>
-        <translation>Deposit to your Wallet address</translation>
+        <source>Deposit to your Wallet</source>
+        <translation>Deposit to your Wallet</translation>
     </message>
 </context>
 <context>
@@ -3041,6 +3056,7 @@ from "%1" to "%2"</translation>
         <source>%n member(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
 </context>
@@ -3101,6 +3117,25 @@ from "%1" to "%2"</translation>
     <message>
         <source>Loading chats...</source>
         <translation>Loading chats...</translation>
+    </message>
+</context>
+<context>
+    <name>ChooseBrowserPopup</name>
+    <message>
+        <source>Choose browser</source>
+        <translation>Choose browser</translation>
+    </message>
+    <message>
+        <source>Open in Status</source>
+        <translation>Open in Status</translation>
+    </message>
+    <message>
+        <source>Open in my default browser</source>
+        <translation>Open in my default browser</translation>
+    </message>
+    <message>
+        <source>Remember my choice. To override it, go to Settings.</source>
+        <translation>Remember my choice. To override it, go to Settings.</translation>
     </message>
 </context>
 <context>
@@ -3339,6 +3374,7 @@ file format</translation>
         <source>%n member(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -3368,6 +3404,7 @@ file format</translation>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -3612,6 +3649,7 @@ file format</translation>
         <source>%n message(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -3656,6 +3694,7 @@ file format</translation>
     <message numerus="yes">
         <source>Share %n address(s) to join</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -3703,6 +3742,7 @@ file format</translation>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -3936,46 +3976,6 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
 </context>
 <context>
-    <name>ConfirmSeedPhrasePanel</name>
-    <message>
-        <source>Write down your 12-word recovery phrase to keep offline</source>
-        <translation>Write down your 12-word recovery phrase to keep offline</translation>
-    </message>
-    <message>
-        <source>Reveal recovery phrase</source>
-        <translation>Reveal recovery phrase</translation>
-    </message>
-    <message>
-        <source>The next screen contains your recovery phrase.
-&lt;b&gt;Anyone&lt;/b&gt; who sees it can use it to access to your funds.</source>
-        <translation>The next screen contains your recovery phrase.
-&lt;b&gt;Anyone&lt;/b&gt; who sees it can use it to access to your funds.</translation>
-    </message>
-</context>
-<context>
-    <name>ConfirmStoringSeedPhrasePanel</name>
-    <message>
-        <source>Complete back up</source>
-        <translation>Complete back up</translation>
-    </message>
-    <message>
-        <source>Store Your Phrase Offline and Complete Your Back Up</source>
-        <translation>Store Your Phrase Offline and Complete Your Back Up</translation>
-    </message>
-    <message>
-        <source>By completing this process, you will remove your recovery phrase from this application&#8217;s storage. This makes your funds more secure.</source>
-        <translation>By completing this process, you will remove your recovery phrase from this application&#8217;s storage. This makes your funds more secure.</translation>
-    </message>
-    <message>
-        <source>You will remain logged in, and your recovery phrase will be entirely in your hands.</source>
-        <translation>You will remain logged in, and your recovery phrase will be entirely in your hands.</translation>
-    </message>
-    <message>
-        <source>I acknowledge that Status will not be able to show me my recovery phrase again.</source>
-        <translation>I acknowledge that Status will not be able to show me my recovery phrase again.</translation>
-    </message>
-</context>
-<context>
     <name>ConfirmationDialog</name>
     <message>
         <source>Confirm</source>
@@ -4071,6 +4071,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <message numerus="yes">
         <source>Key pair must be at least %n character(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -4482,6 +4483,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <source>%n&#8201;min(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -4492,6 +4494,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <message numerus="yes">
         <source>%n&#8201;sec(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -4608,6 +4611,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <message numerus="yes">
         <source>Validate %n file(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -5525,6 +5529,17 @@ Remember your password and don't share it with anyone.</translation>
     </message>
 </context>
 <context>
+    <name>DefaultDAppExplorerView</name>
+    <message>
+        <source>Default DApp explorer</source>
+        <translation>Default DApp explorer</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>None</translation>
+    </message>
+</context>
+<context>
     <name>DeleteMessageConfirmationPopup</name>
     <message>
         <source>Confirm deleting this message</source>
@@ -5702,6 +5717,10 @@ Remember your password and don't share it with anyone.</translation>
     <message>
         <source>Your cryptographic key pair encrypts all of your messages which can only be unlocked by the intended recipient</source>
         <translation>Your cryptographic key pair encrypts all of your messages which can only be unlocked by the intended recipient</translation>
+    </message>
+    <message>
+        <source>Status&#8217; Web3 browser requires all DApps to ask permission before connecting to your wallet</source>
+        <translation>Status&#8217; Web3 browser requires all DApps to ask permission before connecting to your wallet</translation>
     </message>
     <message>
         <source>Your non-custodial wallet gives you full control over your funds without the use of a server</source>
@@ -5941,6 +5960,7 @@ Remember your password and don't share it with anyone.</translation>
         <source>%n more issue(s) downloading assets</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -5958,6 +5978,7 @@ Remember your password and don't share it with anyone.</translation>
     <message numerus="yes">
         <source>&#8216;%1&#8217; was imported with %n issue(s).</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -6051,11 +6072,13 @@ Remember your password and don't share it with anyone.</translation>
         <source>Display Names must be at least %n character(s) long</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>Display Names can&#8217;t be longer than %n character(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -6088,6 +6111,44 @@ Remember your password and don't share it with anyone.</translation>
     </message>
 </context>
 <context>
+    <name>DownloadBar</name>
+    <message>
+        <source>Cancelled</source>
+        <translation>Cancelled</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translation>Paused</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>Show All</translation>
+    </message>
+</context>
+<context>
+    <name>DownloadMenu</name>
+    <message>
+        <source>Open</source>
+        <translation>Open</translation>
+    </message>
+    <message>
+        <source>Show in folder</source>
+        <translation>Show in folder</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation>Pause</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translation>Resume</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
+    </message>
+</context>
+<context>
     <name>DownloadPage</name>
     <message>
         <source>Thanks for using Status</source>
@@ -6104,6 +6165,21 @@ Remember your password and don't share it with anyone.</translation>
     <message>
         <source>Get Status %1</source>
         <translation>Get Status %1</translation>
+    </message>
+</context>
+<context>
+    <name>DownloadView</name>
+    <message>
+        <source>Cancelled</source>
+        <translation>Cancelled</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translation>Paused</translation>
+    </message>
+    <message>
+        <source>Downloaded files will appear here.</source>
+        <translation>Downloaded files will appear here.</translation>
     </message>
 </context>
 <context>
@@ -6174,11 +6250,13 @@ Remember your password and don't share it with anyone.</translation>
         <source>Sign transaction - Airdrop %n token(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>to %n recipient(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -6950,6 +7028,10 @@ Remember your password and don't share it with anyone.</translation>
         <source>I own a name on another domain</source>
         <translation>I own a name on another domain</translation>
     </message>
+    <message>
+        <source>Back</source>
+        <translation>Back</translation>
+    </message>
 </context>
 <context>
     <name>EnsTermsAndConditionsView</name>
@@ -7128,6 +7210,7 @@ Please add it and try again.</translation>
         <source>Key pair name must be at least %n character(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -7254,6 +7337,7 @@ Please add it and try again.</translation>
         <source>Key pair name must be at least %n character(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -7274,6 +7358,7 @@ Please add it and try again.</translation>
     <message numerus="yes">
         <source>%n word(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -7304,6 +7389,7 @@ Please add it and try again.</translation>
     <message numerus="yes">
         <source>Key pair name must be at least %n character(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -7567,6 +7653,21 @@ Please add it and try again.</translation>
     <message>
         <source>Mint collectible</source>
         <translation>Mint collectible</translation>
+    </message>
+</context>
+<context>
+    <name>FavoriteMenu</name>
+    <message>
+        <source>Open in new Tab</source>
+        <translation>Open in new Tab</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Remove</translation>
     </message>
 </context>
 <context>
@@ -7999,6 +8100,33 @@ L2 fee: %2</translation>
     </message>
 </context>
 <context>
+    <name>GlobalBanner</name>
+    <message>
+        <source>You are back online</source>
+        <translation>You are back online</translation>
+    </message>
+    <message>
+        <source>Internet connection lost. Reconnect to ensure everything is up to date.</source>
+        <translation>Internet connection lost. Reconnect to ensure everything is up to date.</translation>
+    </message>
+    <message>
+        <source>Testnet mode enabled. All balances, transactions and dApp interactions will be on testnets.</source>
+        <translation>Testnet mode enabled. All balances, transactions and dApp interactions will be on testnets.</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Turn off</translation>
+    </message>
+    <message>
+        <source>Secure your recovery phrase</source>
+        <translation>Secure your recovery phrase</translation>
+    </message>
+    <message>
+        <source>Back up now</source>
+        <translation>Back up now</translation>
+    </message>
+</context>
+<context>
     <name>HelpUsImproveStatusPage</name>
     <message>
         <source>Help us improve Status</source>
@@ -8169,6 +8297,87 @@ L2 fee: %2</translation>
     </message>
 </context>
 <context>
+    <name>HomePage</name>
+    <message>
+        <source>Jump to a community, chat, account or a dApp...</source>
+        <translation>Jump to a community, chat, account or a dApp...</translation>
+    </message>
+</context>
+<context>
+    <name>HomePageDockButton</name>
+    <message>
+        <source>Unpin</source>
+        <translation>Unpin</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Disconnect</translation>
+    </message>
+</context>
+<context>
+    <name>HomePageGridChatItem</name>
+    <message>
+        <source>Group Chat</source>
+        <translation>Group Chat</translation>
+    </message>
+    <message>
+        <source>%1 Community</source>
+        <translation>%1 Community</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+</context>
+<context>
+    <name>HomePageGridCommunityItem</name>
+    <message>
+        <source>Pending</source>
+        <translation>Pending</translation>
+    </message>
+    <message>
+        <source>Banned</source>
+        <translation>Banned</translation>
+    </message>
+</context>
+<context>
+    <name>HomePageGridDAppItem</name>
+    <message>
+        <source>Disconnect</source>
+        <translation>Disconnect</translation>
+    </message>
+</context>
+<context>
+    <name>HomePageGridItem</name>
+    <message>
+        <source>Unpin</source>
+        <translation>Unpin</translation>
+    </message>
+    <message>
+        <source>Pin</source>
+        <translation>Pin</translation>
+    </message>
+</context>
+<context>
+    <name>HomePageView</name>
+    <message>
+        <source>Homepage</source>
+        <translation>Homepage</translation>
+    </message>
+    <message>
+        <source>System default</source>
+        <translation>System default</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Other</translation>
+    </message>
+    <message>
+        <source>Example: duckduckgo.com</source>
+        <translation>Example: duckduckgo.com</translation>
+    </message>
+</context>
+<context>
     <name>ImageContextMenu</name>
     <message>
         <source>Copy GIF</source>
@@ -8237,16 +8446,21 @@ L2 fee: %2</translation>
         <translation>Join</translation>
     </message>
     <message>
-        <source>Enter the public key of the community you wish to access</source>
-        <translation>Enter the public key of the community you wish to access</translation>
+        <source>Enter the public key of, or a link to the community you wish to access</source>
+        <translation>Enter the public key of, or a link to the community you wish to access</translation>
     </message>
     <message>
         <source>Community key</source>
         <translation>Community key</translation>
     </message>
+    <message>
+        <source>Link or (compressed) public key...</source>
+        <translation>Link or (compressed) public key...</translation>
+    </message>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -8298,6 +8512,33 @@ L2 fee: %2</translation>
     </message>
 </context>
 <context>
+    <name>ImportLocalBackupPage</name>
+    <message>
+        <source>Import local backup</source>
+        <translation>Import local backup</translation>
+    </message>
+    <message>
+        <source>Here you can select a local file from your computer and import your previously backed up contacts, etc...</source>
+        <translation>Here you can select a local file from your computer and import your previously backed up contacts, etc...</translation>
+    </message>
+    <message>
+        <source>You can skip this step and do it anytime later under Settings &gt; Syncing</source>
+        <translation>You can skip this step and do it anytime later under Settings &gt; Syncing</translation>
+    </message>
+    <message>
+        <source>Import from file...</source>
+        <translation>Import from file...</translation>
+    </message>
+    <message>
+        <source>Skip</source>
+        <translation>Skip</translation>
+    </message>
+    <message>
+        <source>Backup files (%1)</source>
+        <translation>Backup files (%1)</translation>
+    </message>
+</context>
+<context>
     <name>InDropdown</name>
     <message>
         <source>Community</source>
@@ -8322,6 +8563,7 @@ L2 fee: %2</translation>
     <message numerus="yes">
         <source>Add %n channel(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -8423,6 +8665,7 @@ L2 fee: %2</translation>
         <source>%n member(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -8463,6 +8706,7 @@ L2 fee: %2</translation>
         <source>Send %n invite(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
 </context>
@@ -8472,11 +8716,13 @@ L2 fee: %2</translation>
         <source>%n warning(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>%n error(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -8484,7 +8730,19 @@ L2 fee: %2</translation>
         <source>%n message(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
+    </message>
+</context>
+<context>
+    <name>JSDialogWindow</name>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
     </message>
 </context>
 <context>
@@ -8582,24 +8840,20 @@ L2 fee: %2</translation>
 <context>
     <name>KeycardAddKeyPairPage</name>
     <message>
-        <source>Adding key pair to Keycard</source>
-        <translation>Adding key pair to Keycard</translation>
+        <source>Creating key pair on Keycard</source>
+        <translation>Creating key pair on Keycard</translation>
     </message>
     <message>
         <source>Key pair added to Keycard</source>
         <translation>Key pair added to Keycard</translation>
     </message>
     <message>
-        <source>You will now require this Keycard to log into Status
-and transact with accounts derived from this key pair</source>
-        <translation>You will now require this Keycard to log into Status
-and transact with accounts derived from this key pair</translation>
+        <source>You will now require this Keycard to log into Status and transact with accounts derived from this key pair</source>
+        <translation>You will now require this Keycard to log into Status and transact with accounts derived from this key pair</translation>
     </message>
     <message>
-        <source>Please keep the Keycard plugged in until the migration
-is complete</source>
-        <translation>Please keep the Keycard plugged in until the migration
-is complete</translation>
+        <source>A key pair is your shareable public address and a secret private key that controls your wallet. Your key pair is being generated on your Keycard &#8212; keep it plugged in until the process completes.</source>
+        <translation>A key pair is your shareable public address and a secret private key that controls your wallet. Your key pair is being generated on your Keycard &#8212; keep it plugged in until the process completes.</translation>
     </message>
 </context>
 <context>
@@ -8695,6 +8949,7 @@ Are you sure you want to do this?</translation>
         <source>%n attempt(s) remaining</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -8711,6 +8966,7 @@ Are you sure you want to do this?</translation>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -9411,6 +9667,7 @@ access to your funds.</translation>
         <source>%n attempt(s) remaining</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -9725,6 +9982,7 @@ access to your funds.</translation>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -10053,11 +10311,13 @@ to load</translation>
         <source>%n year(s) ago</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>%n month(s) ago</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -10065,17 +10325,20 @@ to load</translation>
         <source>%n week(s) ago</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>%n day(s) ago</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>%n hour(s) ago</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -10084,12 +10347,14 @@ to load</translation>
         <comment>x minute(s) ago</comment>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>%n sec(s) ago</source>
         <comment>x second(s) ago</comment>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -10154,6 +10419,7 @@ to load</translation>
     <message numerus="yes">
         <source>PIN incorrect. %n attempt(s) remaining.</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -10330,6 +10596,7 @@ to load</translation>
         <source>Account name must be at least %n character(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -10414,6 +10681,7 @@ to load</translation>
     <message numerus="yes">
         <source>%n key pair(s) require import to use on this device</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -10880,6 +11148,7 @@ to load</translation>
         <source>Add %n member(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -10907,6 +11176,7 @@ to load</translation>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -11273,6 +11543,10 @@ to load</translation>
         <translation>Mint token</translation>
     </message>
     <message>
+        <source>Loading tokens...</source>
+        <translation>Loading tokens...</translation>
+    </message>
+    <message>
         <source>In order to mint, you must hodl the TokenMaster token for %1</source>
         <translation>In order to mint, you must hodl the TokenMaster token for %1</translation>
     </message>
@@ -11320,6 +11594,7 @@ to load</translation>
         <source>Remotely destruct %n token(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -11341,6 +11616,7 @@ to load</translation>
     <message numerus="yes">
         <source>Remotely destruct %Ln %1 token(s) on %2</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -11746,16 +12022,8 @@ to load</translation>
         <translation>Requires internet connection</translation>
     </message>
     <message>
-        <source>Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable</source>
-        <translation>Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable</translation>
-    </message>
-    <message>
         <source>Requires Pocket Network(POKT) or Infura, both of which are currently unavailable</source>
         <translation>Requires Pocket Network(POKT) or Infura, both of which are currently unavailable</translation>
-    </message>
-    <message>
-        <source>Requires CryptoCompare or CoinGecko, both of which are currently unavailable</source>
-        <translation>Requires CryptoCompare or CoinGecko, both of which are currently unavailable</translation>
     </message>
     <message>
         <source>Internet connection lost. Data could not be retrieved.</source>
@@ -11968,6 +12236,7 @@ to load</translation>
         <source>%n missed message(s) since %1</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -12004,6 +12273,7 @@ to load</translation>
     <message numerus="yes">
         <source>Nicknames must be at least %n character(s) long</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -12585,6 +12855,7 @@ to load</translation>
         <source>Minimum %n character(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -12598,6 +12869,7 @@ to load</translation>
     <message numerus="yes">
         <source>Maximum %n character(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -12778,11 +13050,13 @@ to load</translation>
         <source>%L1% of the %Ln community member(s) with known addresses will qualify for this permission.</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>The addresses of %Ln community member(s) are unknown.</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -13026,6 +13300,7 @@ to load</translation>
         <source>%n message(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -13086,6 +13361,14 @@ to load</translation>
     <message>
         <source>Contact request ignored</source>
         <translation>Contact request ignored</translation>
+    </message>
+    <message>
+        <source>Recovery phrase permanently removed from Status application storage</source>
+        <translation>Recovery phrase permanently removed from Status application storage</translation>
+    </message>
+    <message>
+        <source>You backed up your recovery phrase. Access it in Settings</source>
+        <translation>You backed up your recovery phrase. Access it in Settings</translation>
     </message>
     <message>
         <source>Profile Picture</source>
@@ -13303,6 +13586,7 @@ to load</translation>
     <message numerus="yes">
         <source>Bio can't be longer than %n character(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -13558,8 +13842,8 @@ to load</translation>
         <translation>Copied</translation>
     </message>
     <message>
-        <source>Copy adress</source>
-        <translation>Copy adress</translation>
+        <source>Copy address</source>
+        <translation>Copy address</translation>
     </message>
     <message>
         <source>Show address QR</source>
@@ -14062,6 +14346,7 @@ to load</translation>
         <source>Remotely destruct %n token(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
 </context>
@@ -14205,6 +14490,7 @@ to load</translation>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -14502,6 +14788,17 @@ to load</translation>
     <message>
         <source>Search</source>
         <translation>Search</translation>
+    </message>
+</context>
+<context>
+    <name>SearchEngineModal</name>
+    <message>
+        <source>Search engine</source>
+        <translation>Search engine</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>None</translation>
     </message>
 </context>
 <context>
@@ -14957,6 +15254,10 @@ to load</translation>
         <translation>Back up recovery phrase</translation>
     </message>
     <message>
+        <source>Recovery phrase</source>
+        <translation>Recovery phrase</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profile</translation>
     </message>
@@ -14995,6 +15296,10 @@ to load</translation>
     <message>
         <source>Wallet</source>
         <translation>Wallet</translation>
+    </message>
+    <message>
+        <source>Browser</source>
+        <translation>Browser</translation>
     </message>
     <message>
         <source>Communities</source>
@@ -15139,6 +15444,7 @@ to load</translation>
         <source>Reveal %n address(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -15148,6 +15454,7 @@ to load</translation>
     <message numerus="yes">
         <source>Share %n address(s) to join</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -15221,11 +15528,13 @@ to load</translation>
         <source>Share %n address(s) to join</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message numerus="yes">
         <source>To share %n address(s) with &lt;b&gt;%1&lt;/b&gt;, authenticate the associated key pairs...</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -15252,68 +15561,6 @@ to load</translation>
     <message>
         <source>The following key pairs will be authenticated via &#8220;%1&#8221; key pair</source>
         <translation>The following key pairs will be authenticated via &#8220;%1&#8221; key pair</translation>
-    </message>
-</context>
-<context>
-    <name>ShellContainer</name>
-    <message>
-        <source>Jump to a community, chat, account or a dApp...</source>
-        <translation>Jump to a community, chat, account or a dApp...</translation>
-    </message>
-</context>
-<context>
-    <name>ShellDockButton</name>
-    <message>
-        <source>Unpin</source>
-        <translation>Unpin</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Disconnect</translation>
-    </message>
-</context>
-<context>
-    <name>ShellGridChatItem</name>
-    <message>
-        <source>Group Chat</source>
-        <translation>Group Chat</translation>
-    </message>
-    <message>
-        <source>Community Chat</source>
-        <translation>Community Chat</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Chat</translation>
-    </message>
-</context>
-<context>
-    <name>ShellGridCommunityItem</name>
-    <message>
-        <source>Pending</source>
-        <translation>Pending</translation>
-    </message>
-    <message>
-        <source>Banned</source>
-        <translation>Banned</translation>
-    </message>
-</context>
-<context>
-    <name>ShellGridDAppItem</name>
-    <message>
-        <source>Disconnect</source>
-        <translation>Disconnect</translation>
-    </message>
-</context>
-<context>
-    <name>ShellGridItem</name>
-    <message>
-        <source>Unpin</source>
-        <translation>Unpin</translation>
-    </message>
-    <message>
-        <source>Pin</source>
-        <translation>Pin</translation>
     </message>
 </context>
 <context>
@@ -15361,6 +15608,37 @@ to load</translation>
     <message>
         <source>Copied</source>
         <translation>Copied</translation>
+    </message>
+</context>
+<context>
+    <name>SignMessageModal</name>
+    <message>
+        <source>Signature request</source>
+        <translation>Signature request</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>From</translation>
+    </message>
+    <message>
+        <source>Data</source>
+        <translation>Data</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Message</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Reject</translation>
+    </message>
+    <message>
+        <source>Sign</source>
+        <translation>Sign</translation>
+    </message>
+    <message>
+        <source>Sign with password</source>
+        <translation>Sign with password</translation>
     </message>
 </context>
 <context>
@@ -15659,6 +15937,7 @@ to load</translation>
         <source>You can only upload %n image(s) at a time</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
 </context>
@@ -15678,6 +15957,7 @@ to load</translation>
     <message numerus="yes">
         <source>%Ln pinned message(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -15716,31 +15996,28 @@ to load</translation>
         <source>Maximum message character count is %n</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
-        <source>Bold</source>
-        <translation>Bold</translation>
+        <source>Bold (%1)</source>
+        <translation>Bold (%1)</translation>
     </message>
     <message>
-        <source>Italic</source>
-        <translation>Italic</translation>
+        <source>Italic (%1)</source>
+        <translation>Italic (%1)</translation>
     </message>
     <message>
-        <source>Underline</source>
-        <translation>Underline</translation>
+        <source>Strikethrough (%1)</source>
+        <translation>Strikethrough (%1)</translation>
     </message>
     <message>
-        <source>Strikethrough</source>
-        <translation>Strikethrough</translation>
+        <source>Code (%1)</source>
+        <translation>Code (%1)</translation>
     </message>
     <message>
-        <source>Code</source>
-        <translation>Code</translation>
-    </message>
-    <message>
-        <source>Quote</source>
-        <translation>Quote</translation>
+        <source>Quote (%1)</source>
+        <translation>Quote (%1)</translation>
     </message>
     <message>
         <source>Send message</source>
@@ -16212,6 +16489,7 @@ to load</translation>
         <source>The value must be at least %n character(s).</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
 </context>
@@ -16404,6 +16682,7 @@ access to your webcam</translation>
         <source>Online %n minute(s) ago</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -16419,8 +16698,12 @@ access to your webcam</translation>
         <translation>Last online: %1</translation>
     </message>
     <message>
-        <source>Setup syncing</source>
-        <translation>Setup syncing</translation>
+        <source>Pair</source>
+        <translation>Pair</translation>
+    </message>
+    <message>
+        <source>Unpair</source>
+        <translation>Unpair</translation>
     </message>
 </context>
 <context>
@@ -16497,6 +16780,7 @@ access to your webcam</translation>
         <source>%n day(s) until finality</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -16526,31 +16810,11 @@ access to your webcam</translation>
     </message>
 </context>
 <context>
-    <name>StatusWindowsTitleBar</name>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-</context>
-<context>
-    <name>StepIndicator</name>
-    <message>
-        <source>Step %1 of %2</source>
-        <translation>Step %1 of %2</translation>
-    </message>
-</context>
-<context>
-    <name>SubheaderTabBar</name>
-    <message>
-        <source>Step %1 of %2</source>
-        <translation>Step %1 of %2</translation>
-    </message>
-</context>
-<context>
     <name>SupportedTokenListsPanel</name>
     <message numerus="yes">
         <source>%n token(s) &#183; Last updated %1</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -16837,10 +17101,6 @@ access to your webcam</translation>
         <source>Log in via recovery phrase</source>
         <translation>Log in via recovery phrase</translation>
     </message>
-    <message>
-        <source>Log in anyway</source>
-        <translation>Log in anyway</translation>
-    </message>
 </context>
 <context>
     <name>SyncingCodeInstructions</name>
@@ -16997,8 +17257,68 @@ access to your webcam</translation>
         <translation>How to get a sync code</translation>
     </message>
     <message>
-        <source>Backup Data</source>
-        <translation>Backup Data</translation>
+        <source>Directory of the local backup files</source>
+        <translation>Directory of the local backup files</translation>
+    </message>
+    <message>
+        <source>Backup Data Locally</source>
+        <translation>Backup Data Locally</translation>
+    </message>
+    <message>
+        <source>Import Local Backup File</source>
+        <translation>Import Local Backup File</translation>
+    </message>
+    <message>
+        <source>Success importing local data</source>
+        <translation>Success importing local data</translation>
+    </message>
+    <message>
+        <source>Error importing backup file: %1</source>
+        <translation>Error importing backup file: %1</translation>
+    </message>
+    <message>
+        <source>Pair Device</source>
+        <translation>Pair Device</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to pair this device?</source>
+        <translation>Are you sure you want to pair this device?</translation>
+    </message>
+    <message>
+        <source>Pair</source>
+        <translation>Pair</translation>
+    </message>
+    <message>
+        <source>Error pairing device: %1</source>
+        <translation>Error pairing device: %1</translation>
+    </message>
+    <message>
+        <source>Unpair Device</source>
+        <translation>Unpair Device</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to unpair this device?</source>
+        <translation>Are you sure you want to unpair this device?</translation>
+    </message>
+    <message>
+        <source>Unpair</source>
+        <translation>Unpair</translation>
+    </message>
+    <message>
+        <source>Error unpairing device: %1</source>
+        <translation>Error unpairing device: %1</translation>
+    </message>
+    <message>
+        <source>Select your backup file</source>
+        <translation>Select your backup file</translation>
+    </message>
+    <message>
+        <source>Supported backup formats (%1)</source>
+        <translation>Supported backup formats (%1)</translation>
+    </message>
+    <message>
+        <source>Select your backup directory</source>
+        <translation>Select your backup directory</translation>
     </message>
 </context>
 <context>
@@ -17118,6 +17438,14 @@ access to your webcam</translation>
         <source>Trust mark removed for %1</source>
         <translation>Trust mark removed for %1</translation>
     </message>
+    <message>
+        <source>Local backup import completed</source>
+        <translation>Local backup import completed</translation>
+    </message>
+    <message>
+        <source>Local backup import failed</source>
+        <translation>Local backup import failed</translation>
+    </message>
 </context>
 <context>
     <name>TokenCategories</name>
@@ -17224,6 +17552,7 @@ access to your webcam</translation>
     <message numerus="yes">
         <source>%n token(s)</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -17772,6 +18101,37 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
+    <name>TransactionSigner</name>
+    <message>
+        <source>You need to enter a password</source>
+        <translation>You need to enter a password</translation>
+    </message>
+    <message>
+        <source>Password needs to be 6 characters or more</source>
+        <translation>Password needs to be 6 characters or more</translation>
+    </message>
+    <message>
+        <source>Signing phrase</source>
+        <translation>Signing phrase</translation>
+    </message>
+    <message>
+        <source>Signing phrase is a 3 word combination that is displayed when you entered the wallet on this device for the first time.</source>
+        <translation>Signing phrase is a 3 word combination that is displayed when you entered the wallet on this device for the first time.</translation>
+    </message>
+    <message>
+        <source>Enter the password you use to unlock this device</source>
+        <translation>Enter the password you use to unlock this device</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>Password</translation>
+    </message>
+    <message>
+        <source>Enter password</source>
+        <translation>Enter password</translation>
+    </message>
+</context>
+<context>
     <name>TransferOwnershipAlertPopup</name>
     <message>
         <source>Transfer ownership of %1</source>
@@ -17949,6 +18309,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <source>%n word(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -17958,6 +18319,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message numerus="yes">
         <source>Password needs to be %n character(s) or more</source>
         <translation type="unfinished">
+            <numerusform />
             <numerusform />
         </translation>
     </message>
@@ -17981,6 +18343,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <source>The PIN must be exactly %n digit(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -17999,6 +18362,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <source>The %1 cannot exceed %n character(s)</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -18013,6 +18377,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <source>Value has to be at least %n character(s) long</source>
         <translation type="unfinished">
             <numerusform />
+            <numerusform />
         </translation>
     </message>
     <message>
@@ -18022,6 +18387,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Wallet</source>
         <translation>Wallet</translation>
+    </message>
+    <message>
+        <source>Browser</source>
+        <translation>Browser</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -18056,8 +18425,8 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation>dApp</translation>
     </message>
     <message>
-        <source>Shell</source>
-        <translation>Shell</translation>
+        <source>Home Page</source>
+        <translation>Home Page</translation>
     </message>
     <message>
         <source>Add new user</source>
@@ -18185,48 +18554,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Paste</source>
         <translation>Paste</translation>
-    </message>
-</context>
-<context>
-    <name>WakuNodesModal</name>
-    <message>
-        <source>Waku nodes</source>
-        <translation>Waku nodes</translation>
-    </message>
-    <message>
-        <source>Node %1</source>
-        <translation>Node %1</translation>
-    </message>
-    <message>
-        <source>Add a new node</source>
-        <translation>Add a new node</translation>
-    </message>
-</context>
-<context>
-    <name>WakuStoreModal</name>
-    <message>
-        <source>History Nodes</source>
-        <translation>History Nodes</translation>
-    </message>
-    <message>
-        <source>Use Waku nodes</source>
-        <translation>Use Waku nodes</translation>
-    </message>
-    <message>
-        <source>Select node automatically</source>
-        <translation>Select node automatically</translation>
-    </message>
-    <message>
-        <source>Waku Nodes</source>
-        <translation>Waku Nodes</translation>
-    </message>
-    <message>
-        <source>Node %1</source>
-        <translation>Node %1</translation>
-    </message>
-    <message>
-        <source>Add a new node</source>
-        <translation>Add a new node</translation>
     </message>
 </context>
 <context>
