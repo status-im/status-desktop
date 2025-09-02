@@ -39,7 +39,8 @@ class OnboardingWelcomeToStatusView(QObject):
     @allure.step('Open Create your profile view')
     def open_create_your_profile_view(self) -> 'CreateYourProfileViewOnboarding':
         self.create_profile_button.click()
-        HelpUsImproveStatusView().not_now_button.click()
+        LOG.info('I clicked profile button')
+        HelpUsImproveStatusView().not_now_button.wait_until_appears(timeout_msec=30000).click()
         return CreateYourProfileViewOnboarding().wait_until_appears()
 
     @allure.step('Open Sign by syncing form')
