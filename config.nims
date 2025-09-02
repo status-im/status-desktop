@@ -50,6 +50,10 @@ else:
 
 --define:chronicles_line_numbers # useful when debugging=
 switch("define", "chronicles_timestamps=RfcUtcTime")
+switch("define", "chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors]")
+switch("define", "chronicles_runtime_filtering=on")
+switch("define", "chronicles_default_output_device=dynamic")
+switch("define", "chronicles_log_level=trace")
 
 switch("passC", "-fno-omit-frame-pointer")
 switch("passL", "-fno-omit-frame-pointer")

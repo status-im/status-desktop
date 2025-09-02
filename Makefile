@@ -554,8 +554,6 @@ ifeq ($(shell test $(KDF_ITERATIONS) -gt 0; echo $$?),0)
   NIM_PARAMS += -d:KDF_ITERATIONS:"$(KDF_ITERATIONS)"
 endif
 
-NIM_PARAMS += -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=dynamic -d:chronicles_log_level=trace
-
 RESOURCES_LAYOUT ?= -d:development
 
 # When modifying files that are not tracked in NIM_SOURCES (see below),
