@@ -53,7 +53,6 @@ StatusDialog {
                 interactive: false
                 imageWidth: 60
                 imageHeight: 60
-                ensVerified: contactDetails.ensVerified
                 onlineStatus: contactDetails.onlineStatus
                 loading: root.loadingContactDetails
             }

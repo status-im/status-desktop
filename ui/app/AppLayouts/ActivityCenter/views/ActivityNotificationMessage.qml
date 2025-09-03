@@ -75,7 +75,6 @@ ActivityNotificationBase {
             id: profileImage
             name: root.messageDetails.sender.displayName
             asset: root.messageDetails.sender.profileImage.assetSettings
-            ringSettings: root.messageDetails.sender.profileImage.ringSettings
 
             StatusMouseArea {
                 anchors.fill: parent

@@ -16,7 +16,6 @@ StatusNavBarTabButton {
     required property string usesDefaultName
     required property string pubKey
     required property string compressedPubKey
-    required property bool isEnsVerified
     required property string iconSource
     required property int colorId
     required property int currentUserStatus
@@ -90,7 +89,6 @@ StatusNavBarTabButton {
         colorId: root.colorId
         name: root.name
         headerIcon: root.iconSource
-        isEnsVerified: root.isEnsVerified
         usesDefaultName: root.usesDefaultName
 
         currentUserStatus: root.currentUserStatus

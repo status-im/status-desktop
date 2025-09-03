@@ -222,6 +222,8 @@ QtObject {
         return true
     }
 
+    readonly property bool isOnline: mainModule.isOnline
+
     function resendMessage(messageId) {
         if(!messageModule)
             return

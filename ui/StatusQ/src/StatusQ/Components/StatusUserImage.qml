@@ -15,7 +15,6 @@ Loader {
     property string image
     property bool interactive: true
     property bool disabled: false
-    property bool ensVerified: false
     property bool loading: false
     property bool isBridgedAccount: false
     // TODO replace this with booleans since we do not have access to Constants

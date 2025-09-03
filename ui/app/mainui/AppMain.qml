@@ -1393,7 +1393,6 @@ Item {
             usesDefaultName: appMain.profileStore.usesDefaultName
             pubKey: appMain.profileStore.pubKey
             compressedPubKey: appMain.profileStore.compressedPubKey
-            isEnsVerified: !!appMain.profileStore.preferredName
             iconSource: appMain.profileStore.icon
             colorId: appMain.profileStore.colorId
             currentUserStatus: appMain.profileStore.currentUserStatus

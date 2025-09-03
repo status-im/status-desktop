@@ -72,7 +72,6 @@ CalloutCard {
                     interactive: false
                     imageWidth: 58
                     imageHeight: imageWidth
-                    ensVerified: root.userData.ensVerified
                     name: root.userData.name
                     image: root.userData.image
                     userColor: Utils.colorForPubkey(root.userData.publicKey)

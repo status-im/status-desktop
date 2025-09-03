@@ -984,7 +984,7 @@ Loader {
                         senderColorId: Utils.colorIdForPubkey(root.senderId)
                         paymentRequestModel: root.paymentRequestModel
                         playAnimations: root.Window.active && root.messageStore.isChatActive
-                        isOnline: root.rootStore.isOnline
+                        isOnline: root.messageStore.isOnline
                         highlightLink: delegate.hoveredLink
                         areTestNetworksEnabled: root.areTestNetworksEnabled
                         formatBalance: root.formatBalance
