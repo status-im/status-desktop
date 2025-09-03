@@ -32,7 +32,6 @@ Item {
     property bool isContact: false
     property bool isBlocked
     property bool isCurrentUser
-    property bool userIsEnsVerified
     property rect cropRect
     property int colorId
 
@@ -126,7 +125,6 @@ Item {
                 interactive: false
                 imageWidth: d.getSize(36, 64, 170)
                 imageHeight: imageWidth
-                ensVerified: root.userIsEnsVerified
                 loading: root.loading
                 onlineStatus: root.onlineStatus
                 isBridgedAccount: root.isBridgedAccount

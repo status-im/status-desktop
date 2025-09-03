@@ -15,8 +15,6 @@ StatusMenu {
     property alias colorId: header.colorId
     property alias usesDefaultName: header.usesDefaultName
 
-    property alias isEnsVerified: header.userIsEnsVerified
-
     // Constants.currentUserStatus
     property int currentUserStatus
 

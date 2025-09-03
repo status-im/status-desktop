@@ -239,7 +239,6 @@ Control {
                     interactive: true
                     imageWidth: root.messageDetails.sender.profileImage.assetSettings.width
                     imageHeight: root.messageDetails.sender.profileImage.assetSettings.height
-                    ensVerified: root.messageDetails.sender.isEnsVerified
                     isBridgedAccount: root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage
                     onClicked: (mouse) => root.profilePictureClicked(this, mouse)
                 }

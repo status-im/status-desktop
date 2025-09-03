@@ -227,7 +227,6 @@ Pane {
                 interactive: false
                 imageWidth: 90
                 imageHeight: imageWidth
-                ensVerified: contactDetails.ensVerified
 
                 Binding on onlineStatus {
                     value: contactDetails.onlineStatus

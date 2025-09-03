@@ -173,7 +173,6 @@ Control {
             name: root.profileStore.name
             pubKey: root.profileStore.pubKey
             compressedPubKey: root.profileStore.compressedPubKey
-            isEnsVerified: !!root.profileStore.preferredName
             iconSource: root.profileStore.icon
             colorId: root.profileStore.colorId
             currentUserStatus: root.profileStore.currentUserStatus

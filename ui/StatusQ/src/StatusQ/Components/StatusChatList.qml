@@ -24,8 +24,6 @@ Item {
     property alias popupMenu: popupMenuSlot.sourceComponent
     property alias categoryPopupMenu: categoryPopupMenuSlot.sourceComponent
 
-    property var isEnsVerified: function(pubKey) { return false }
-
     signal chatItemSelected(string categoryId, string id)
     signal chatItemClicked(string id)
     signal chatItemUnmuted(string id)
