@@ -1,3 +1,4 @@
+import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -6,6 +7,8 @@ import Storybook
 
 import mainui
 import utils
+
+import StatusQ
 
 import AppLayouts.stores as AppLayoutStores
 import AppLayouts.Profile.views
@@ -35,10 +38,10 @@ SplitView {
 
         isProduction: ctrlIsProduction.checked
         localBackupEnabled: localBackupEnabledSwitch.checked
-        backupPath: "file:///home/dev/status-desktop/backups"
-        toFileUri: function(path) {return path}
+        backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
         onBackupPathSet: function(path) {
-            logs.logEvent("SyncingView::onBackupPathSet", path)
+            logs.logEvent("SyncingView::onBackupPathSet", ["path"], arguments)
+            backupPath = path
         }
         advancedStore: ProfileStores.AdvancedStore {
             readonly property bool isDebugEnabled: ctrlDebugEnabled.checked
@@ -46,17 +49,34 @@ SplitView {
 
         devicesStore: ProfileStores.DevicesStore {
             function generateConnectionStringAndRunSetupSyncingPopup() {
-                logs.logEvent("devicesStore::generateConnectionStringAndRunSetupSyncingPopup()")
+                logs.logEvent("devicesStore::generateConnectionStringAndRunSetupSyncingPopup")
             }
 
             function setInstallationName(installationId, name) {
                 logs.logEvent("devicesStore::setInstallationName", ["installationId", "name"], arguments)
             }
 
+            function performLocalBackup() {
+                logs.logEvent("devicesStore::performLocalBackup")
+            }
+
+            function importLocalBackupFile(filePath) {
+                logs.logEvent("devicesStore::importLocalBackupFile", ["filePath"], arguments)
+            }
+
+            function toFileUri(path) {
+                return UrlUtils.urlFromUserInput(path)
+            }
+
             readonly property bool isDeviceSetup: ctrlDevicesLoaded.checked
             readonly property var devicesModule: QtObject {
                 readonly property bool devicesLoading: ctrlDevicesLoading.checked
                 readonly property bool devicesLoadingError: ctrlDevicesLoadingError.checked
+
+                function pairDevice(installationId) {
+                    logs.logEvent("devicesStore::devicesModule::pairDevice", ["installationId"], arguments)
+                }
+                signal openPopupWithConnectionStringSignal(string rawConnectionString)
             }
             readonly property var devicesModel: ListModel {
                 ListElement {
@@ -70,7 +90,7 @@ SplitView {
                 ListElement {
                     name: "Device 2"
                     deviceType: "windows"
-                    timestamp: 123456789123
+                    timestamp: 1234567891232142423
                     isCurrentDevice: false
                     enabled: false
                     installationId: "b"
@@ -98,6 +118,13 @@ SplitView {
                     isCurrentDevice: false
                     enabled: true
                     installationId: "e"
+                }
+                ListElement {
+                    name: "Device 6 (no timestamp)"
+                    deviceType: "desktop"
+                    isCurrentDevice: false
+                    enabled: false
+                    installationId: "f"
                 }
             }
         }
@@ -147,5 +174,5 @@ SplitView {
 }
 
 // category: Views
-
+// status: good
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=1592-128606&mode=design&t=1xZLPCet6yRCZCuz-0

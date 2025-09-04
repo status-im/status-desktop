@@ -37,7 +37,6 @@ SettingsContentBase {
     required property bool isProduction
     required property bool localBackupEnabled
     required property url backupPath
-    required property var toFileUri // Function to convert a file path to a file URI
 
     signal backupPathSet(url path)
 
@@ -50,7 +49,7 @@ SettingsContentBase {
             id: d
 
             readonly property var instructionsModel: [
-                qsTr("Verify your login with password or KeyCard"),
+                qsTr("Verify your login with password or Keycard"),
                 qsTr("Reveal a temporary QR and Sync Code") + "*",
                 qsTr("Share that information with your new device"),
             ]

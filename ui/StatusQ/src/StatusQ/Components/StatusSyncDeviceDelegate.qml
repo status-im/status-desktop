@@ -6,8 +6,6 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Components
-import StatusQ.Popups
-import StatusQ.Popups.Dialog
 import StatusQ.Core.Utils
 
 StatusListItem {
@@ -34,6 +32,9 @@ StatusListItem {
     subTitle: {
         if (root.isCurrentDevice)
             return qsTr("This device")
+
+        if (root.timestamp <= 0)
+            return qsTr("Never seen online")
 
         if (d.onlineNow)
             return qsTr("Online now")
