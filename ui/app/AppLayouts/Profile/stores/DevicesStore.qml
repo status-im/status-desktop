@@ -93,6 +93,7 @@ QtObject {
     function importLocalBackupFile(filePath: string) {
         root.syncModule.importLocalBackupFile(filePath)
     }
+
     function performLocalBackup() {
         let error = root.syncModule.performLocalBackup()
         console.log("Performing local backup, error:", error)
