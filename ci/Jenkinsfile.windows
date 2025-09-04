@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.27'
+library 'status-jenkins-lib@refactor-common-secrets'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -96,12 +96,12 @@ pipeline {
   }
 
   stages {
-    stage('Cleanup Workspace') {
+    stage('Clean') {
       steps {
         sh './scripts/clean-git.sh'
       }
     }
-    stage('Fetch submodules') {
+    stage('Submodules') {
       steps {
         sh 'git submodule update --init --recursive'
       }
@@ -113,7 +113,7 @@ pipeline {
       }
     }
 
-    stage('status-go') {
+    stage('Status-go') {
       steps {
         sh 'make status-go'
       }
@@ -125,7 +125,25 @@ pipeline {
       } }
     }
 
-    stage('Parallel Upload') {
+    stage('Audit') {
+      steps { script {
+        sh "7z x ${env.STATUS_CLIENT_7Z} -o${env.WORKSPACE_TMP}/extracted"
+
+        def exeName = sh(
+          script: "basename ${env.STATUS_CLIENT_EXE}",
+          returnStdout: true
+        ).trim()
+
+        desktop.withCommonCredentials([]) {
+          sh(
+            script: "${env.WORKSPACE_TMP}/extracted/${exeName} --verify-credentials"
+          )
+        }
+
+      } }
+    }
+
+    stage('Publish') {
       /* Uploads on Windows are slow. */
       parallel {
         stage('Upload 7Z') {
