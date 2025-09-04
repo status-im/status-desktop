@@ -20,14 +20,46 @@ export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
 # warning: needs to be same as ipcdir in ci/Dockerfile
 # https://salsa.debian.org/rousseau/PCSC/-/blob/master/meson.options?ref_type=heads#L36
 PCSCD_RUN_DIR="/tmp/pcscd/run"
+PCSCD_PIDFILE="/tmp/pcscd/pcscd.pid"
+
+mkdir -p "$(dirname "$PCSCD_PIDFILE")"
+
+# Kill any orphan pcscd from previous runs using saved PID
+if [ -f "$PCSCD_PIDFILE" ]; then
+  OLD_PID=$(cat "$PCSCD_PIDFILE" 2>/dev/null)
+  if [ -n "$OLD_PID" ] && kill -0 "$OLD_PID" 2>/dev/null; then
+    echo "Killing orphan pcscd process $OLD_PID"
+    kill -9 "$OLD_PID" 2>/dev/null || true
+    sleep 0.2
+  fi
+  rm -f "$PCSCD_PIDFILE"
+fi
+
+# kill any pcscd processes by name as fallback
+pkill -9 pcscd 2>/dev/null || true
+sleep 0.1
+
 rm -rf "${PCSCD_RUN_DIR}"
 mkdir -p "${PCSCD_RUN_DIR}"
-echo "starting pcscd with ${APPDIR}/usr/bin/pcscd -f &"
-"${APPDIR}/usr/bin/pcscd" -f &
+
+cleanup_pcscd() {
+  if [ -n "$PCSCD_PID" ] && kill -0 "$PCSCD_PID" 2>/dev/null; then
+    echo "Killing pcscd process $PCSCD_PID"
+    kill "$PCSCD_PID" 2>/dev/null
+    wait "$PCSCD_PID" 2>/dev/null
+  fi
+  rm -f "$PCSCD_PIDFILE"
+}
+
+trap cleanup_pcscd EXIT TERM INT
+
+echo "starting pcscd with ${APPDIR}/usr/bin/pcscd --foreground --auto-exit &"
+"${APPDIR}/usr/bin/pcscd" --foreground --auto-exit &
+PCSCD_PID=$!
+echo "$PCSCD_PID" >"$PCSCD_PIDFILE"
 
 DEFAULT_LANG=en_US.UTF-8
-if [[ "$LANG" == "C.UTF-8" ]]
-then
+if [[ "$LANG" == "C.UTF-8" ]]; then
   export LANG=$DEFAULT_LANG
 fi
 
