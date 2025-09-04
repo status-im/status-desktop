@@ -22,8 +22,8 @@ export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
 PCSCD_RUN_DIR="/tmp/pcscd/run"
 rm -rf "${PCSCD_RUN_DIR}"
 mkdir -p "${PCSCD_RUN_DIR}"
-echo "starting pcscd with ${APPDIR}/usr/bin/pcscd -f &"
-"${APPDIR}/usr/bin/pcscd" -f &
+echo "starting pcscd with ${APPDIR}/usr/bin/pcscd --foreground --auto-exit &"
+"${APPDIR}/usr/bin/pcscd" --foreground --auto-exit &
 
 DEFAULT_LANG=en_US.UTF-8
 if [[ "$LANG" == "C.UTF-8" ]]
