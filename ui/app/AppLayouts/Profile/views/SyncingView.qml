@@ -10,6 +10,7 @@ import StatusQ.Components
 import StatusQ.Popups
 import StatusQ.Popups.Dialog
 import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Core.Backpressure
 
 import utils
 
@@ -300,7 +301,22 @@ SettingsContentBase {
             visible: root.localBackupEnabled
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Backup Data Locally")
-            onClicked : root.devicesStore.performLocalBackup()
+            asset.emoji: {
+                if (root.devicesStore.backupDataState !== Constants.BackupImportState.Completed) {
+                    return ""
+                }
+                if (root.devicesStore.backupDataError) {
+                    return "❌"
+                }
+                return "✅"
+            }
+            loading: root.devicesStore.backupDataState === Constants.BackupImportState.InProgress
+            onClicked : {
+                root.devicesStore.performLocalBackup()
+                Backpressure.debounce(this, 5000, () => {
+                    root.devicesStore.resetBackupDataState()
+                })()
+            }
         }
 
         StatusButton {
