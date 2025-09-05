@@ -26,20 +26,25 @@ if [[ "${OS}" == "android" ]]; then
     echo "Building for Android 35"
     ANDROID_PLATFORM=android-35
 
-    qmake "$CWD/../wrapperApp/Status-tablet.pro" CONFIG+=device CONFIG+=release -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" -after
+    QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
+    QMAKE_BIN="${QMAKE:-qmake}"
+    "$QMAKE_BIN" "$CWD/../wrapperApp/Status-tablet.pro" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" -after
 
     # Build the app
     make -j"$(nproc)" apk_install_target
 
     # call androiddeployqt
     androiddeployqt --input "$BUILD_DIR/android-Status-tablet-deployment-settings.json" --output "$BUILD_DIR/android-build" --apk "$BUILD_DIR/android-build/Status-tablet.apk" --android-platform "$ANDROID_PLATFORM"
+   
+    ANDROID_OUTPUT_DIR="bin/android/qt6"
+    BIN_DIR_ANDROID=${BIN_DIR:-"$CWD/$ANDROID_OUTPUT_DIR"}
+    mkdir -p "$BIN_DIR_ANDROID"
+    cp ./android-build/Status-tablet.apk "$BIN_DIR_ANDROID/Status-tablet.apk"
 
-    mkdir -p "$BIN_DIR"
-    cp ./android-build/Status-tablet.apk "$BIN_DIR/Status-tablet.apk"
-
-    echo "Build succeeded. APK is available at $BIN_DIR/Status-tablet.apk"
+    echo "Build succeeded. APK is available at $BIN_DIR_ANDROID/Status-tablet.apk"
 else
-    qmake "$CWD/../wrapperApp/Status-tablet.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
+    QMAKE_BIN="${QMAKE:-qmake}"
+    "$QMAKE_BIN" "$CWD/../wrapperApp/Status-tablet.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
     # Compile resources
     xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_STYLE=Automatic | xcbeautify
     # Compile the app
