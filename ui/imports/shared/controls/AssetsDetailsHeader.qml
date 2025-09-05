@@ -109,50 +109,50 @@ Control {
                 InformationTag {
                     id: communityTag
                 }
-                Repeater {
-                    id: chainRepeater
-                    Layout.alignment: Qt.AlignRight
-                    model: root.networksModel
-                    delegate: InformationTag {
-                        readonly property double aggregatedbalance: balancesAggregator.value/(10 ** root.decimals)
-                        SortFilterProxyModel {
-                            id: filteredBalances
-                            sourceModel: root.balances
-                            filters: [
-                                ValueFilter {
-                                    roleName: "chainId"
-                                    value: model.chainId
-                                },
-                                ValueFilter {
-                                    roleName: "account"
-                                    value: root.address.toLowerCase()
-                                    enabled: !!root.address
-                                }
-                            ]
-                        }
-                        SumAggregator {
-                            id: balancesAggregator
-                            model: filteredBalances
-                            roleName: "balance"
-                        }
-                        tagPrimaryLabel.text: root.formatBalance(aggregatedbalance)
-                        tagPrimaryLabel.color: model.chainColor
-                        asset.name: Theme.svg(model.iconUrl)
-                        asset.isImage: true
-                        loading: root.isLoading
-                        visible: balancesAggregator.value > 0
-                        rightComponent: StatusFlatRoundButton {
-                            width: visible ? 14 : 0
-                            height: visible ? 14 : 0
-                            icon.width: 14
-                            icon.height: 14
-                            icon.name: "tiny/warning"
-                            icon.color: Theme.palette.dangerColor1
-                            tooltip.text: root.errorTooltipText
-                            visible: !!root.errorTooltipText
-                        }
-                    }
-                }
+//                Repeater {
+//                    id: chainRepeater
+//                    Layout.alignment: Qt.AlignRight
+//                    model: root.networksModel
+//                    delegate: InformationTag {
+//                        readonly property double aggregatedbalance: balancesAggregator.value/(10 ** root.decimals)
+//                        SortFilterProxyModel {
+//                            id: filteredBalances
+//                            sourceModel: root.balances
+//                            filters: [
+//                                ValueFilter {
+//                                    roleName: "chainId"
+//                                    value: model.chainId
+//                                },
+//                                ValueFilter {
+//                                    roleName: "account"
+//                                    value: root.address.toLowerCase()
+//                                    enabled: !!root.address
+//                                }
+//                            ]
+//                        }
+//                        SumAggregator {
+//                            id: balancesAggregator
+//                            model: filteredBalances
+//                            roleName: "balance"
+//                        }
+//                        tagPrimaryLabel.text: root.formatBalance(aggregatedbalance)
+//                        tagPrimaryLabel.color: model.chainColor
+//                        asset.name: Theme.svg(model.iconUrl)
+//                        asset.isImage: true
+//                        loading: root.isLoading
+//                        visible: balancesAggregator.value > 0
+//                        rightComponent: StatusFlatRoundButton {
+//                            width: visible ? 14 : 0
+//                            height: visible ? 14 : 0
+//                            icon.width: 14
+//                            icon.height: 14
+//                            icon.name: "tiny/warning"
+//                            icon.color: Theme.palette.dangerColor1
+//                            tooltip.text: root.errorTooltipText
+//                            visible: !!root.errorTooltipText
+//                        }
+//                    }
+//                }
             }
         }
     }
