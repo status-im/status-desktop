@@ -19,9 +19,9 @@ else
 fi
 
 if [[ "$OS" == "ios" ]]; then
-    PLATFORM_SPECIFIC=(--app:staticlib -d:ios --os:ios -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors])
+    PLATFORM_SPECIFIC=(--app:staticlib -d:ios --os:ios)
 else
-    PLATFORM_SPECIFIC=(--app:lib --os:android -d:android -d:androidNDK -d:chronicles_sinks=textlines[syslog],textlines[nocolors,dynamic],textlines[file,nocolors] \
+    PLATFORM_SPECIFIC=(--app:lib --os:android -d:android -d:androidNDK \
         --passL="-L$LIB_DIR" --passL="-lstatus" --passL="-lStatusQ$LIB_SUFFIX" --passL="-lDOtherSide$LIB_SUFFIX" --passL="-lqrcodegen" --passL="-lqzxing" --passL="-lssl_3" --passL="-lcrypto_3" -d:taskpool)
 fi
 
