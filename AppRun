@@ -20,8 +20,20 @@ export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
 PCSCD_RUN_DIR="/tmp/pcscd/run"
 rm -rf "${PCSCD_RUN_DIR}"
 mkdir -p "${PCSCD_RUN_DIR}"
-echo "starting pcscd with ${APPDIR}/usr/bin/pcscd -f &"
-"${APPDIR}/usr/bin/pcscd" -f &
+
+cleanup_pcscd() {
+  if [ -n "$PCSCD_PID" ] && kill -0 "$PCSCD_PID" 2>/dev/null; then
+    echo "Killing pcscd process $PCSCD_PID"
+    kill "$PCSCD_PID" 2>/dev/null
+    wait "$PCSCD_PID" 2>/dev/null
+  fi
+}
+
+trap cleanup_pcscd EXIT TERM INT
+
+echo "starting pcscd with ${APPDIR}/usr/bin/pcscd --foreground --auto-exit &"
+"${APPDIR}/usr/bin/pcscd" --foreground --auto-exit &
+PCSCD_PID=$!
 
 DEFAULT_LANG=en_US.UTF-8
 if [[ "$LANG" == "C.UTF-8" ]]
