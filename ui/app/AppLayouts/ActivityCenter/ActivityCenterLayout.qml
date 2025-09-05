@@ -358,7 +358,10 @@ StatusSectionLayout {
             notification: parent.notification
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
-            onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(communityId) }
+            onSetActiveCommunityRequested: (notificationId, communityId) => {
+                root.store.setActiveCommunity(communityId)
+                root.activityCenterStore.markActivityCenterNotificationRead(notificationId)
+            }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
             onMarkActivityCenterNotificationUnreadRequested: (notificationId) => {

@@ -48,7 +48,7 @@ ActivityNotificationBaseLayout {
             }
         }
 
-        onSetActiveCommunityRequested: (communityId) =>
+        onSetActiveCommunityRequested: (notificationId, communityId) =>
                                        logs.logEvent("ActivityNotificationCommunityRequest::onSetActiveCommunityRequested - " + communityId)
     }
 
