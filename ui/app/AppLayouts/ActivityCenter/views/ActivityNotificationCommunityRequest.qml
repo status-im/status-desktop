@@ -18,7 +18,7 @@ ActivityNotificationBase {
 
     required property var community
 
-    signal setActiveCommunityRequested(string communityId)
+    signal setActiveCommunityRequested(string notificationId, string communityId)
 
     QtObject {
         id: d
@@ -49,7 +49,7 @@ ActivityNotificationBase {
             communityLinkTextColor: Theme.palette.directColor1
             communityLinkTextPixelSize: Theme.additionalTextSize
             communityLinkTextWeight: Font.Medium
-            onCommunityNameClicked: root.setActiveCommunityRequested(notification.communityId)
+            onCommunityNameClicked: root.setActiveCommunityRequested(notification.id, notification.communityId)
         }
 
         StatusBaseText {
