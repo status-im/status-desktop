@@ -820,6 +820,8 @@ Item {
         id: d
 
         readonly property int activeSectionType: appMain.rootStore.activeSectionType
+
+        readonly property bool isBrowserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
         
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
@@ -946,6 +948,9 @@ Item {
         function onOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = SQUtils.StringUtils.plainText(link)
+
+            if (!d.isBrowserEnabled)
+                return Qt.openUrlExternally(link)
 
             if (appMain.rootStore.showBrowserSelector) {
                 popups.openChooseBrowserPopup(link)
@@ -1216,7 +1221,7 @@ Item {
                     ValueFilter {
                         roleName: "sectionType"
                         value: Constants.appSection.browser
-                        enabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
+                        enabled: d.isBrowserEnabled
                     }
                 },
                 ValueFilter {
@@ -1749,7 +1754,7 @@ Item {
 
                                 showEnabledSectionsOnly: true
                                 marketEnabled: appMain.featureFlagsStore.marketEnabled
-                                browserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
+                                browserEnabled: d.isBrowserEnabled
 
                                 syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
                                 messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
@@ -1996,7 +2001,7 @@ Item {
                         asynchronous: true
                         Binding on active {
                             when: appView.currentIndex === Constants.appViewStackIndex.browser
-                            value: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled && !localAppSettings.testEnvironment
+                            value: d.isBrowserEnabled && !localAppSettings.testEnvironment
                             restoreMode: Binding.RestoreNone
                         }
 
