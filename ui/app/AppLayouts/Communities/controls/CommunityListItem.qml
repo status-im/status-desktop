@@ -3,6 +3,7 @@ import QtQuick
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core
+import StatusQ.Core.Theme
 
 StatusListItem {
     property alias checked: checkBox.checked
