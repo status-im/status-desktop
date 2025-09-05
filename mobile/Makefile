@@ -86,16 +86,19 @@ run: makedir $(TARGET)
 clean-status-go:
 	@rm -f $(STATUS_GO_LIB)
 	@rm -rf $(STATUS_GO)/build
+	@make -C $(STATUS_DESKTOP) status-go-clean
 
 .PHONY: clean-statusq
 clean-statusq:
 	@rm -f $(STATUS_Q_LIB)
 	@rm -rf $(STATUSQ)/build
+	@make -C $(STATUS_DESKTOP) statusq-clean
 
 .PHONY: clean-dotherside
 clean-dotherside:
 	@rm -f $(DOTHERSIDE_LIB)
 	@rm -rf $(DOTHERSIDE)/build
+	@make -C $(STATUS_DESKTOP) dotherside-clean
 
 .PHONY: clean-openssl
 clean-openssl:
@@ -110,7 +113,6 @@ clean-qrcodegen:
 clean-nim-status-client:
 	@rm -f $(NIM_STATUS_CLIENT_LIB)
 	@rm -rf $(STATUS_DESKTOP)/nimcache
-	@make -C $(STATUS_DESKTOP) clean
 
 .PHONY: clean-status-desktop-rcc
 clean-status-desktop-rcc:
