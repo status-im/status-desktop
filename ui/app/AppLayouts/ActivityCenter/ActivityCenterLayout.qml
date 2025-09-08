@@ -153,7 +153,6 @@ StatusSectionLayout {
             delegate: Loader {
                 width: listView.availableWidth
 
-                property int filteredIndex: index
                 property var notification: model
 
                 sourceComponent: {
@@ -233,7 +232,6 @@ StatusSectionLayout {
         id: mentionNotificationComponent
 
         ActivityNotificationMention {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
             community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
@@ -255,7 +253,6 @@ StatusSectionLayout {
         id: replyNotificationComponent
 
         ActivityNotificationReply {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
 
@@ -274,7 +271,6 @@ StatusSectionLayout {
         id: contactRequestNotificationComponent
 
         ActivityNotificationContactRequest {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
 
@@ -301,7 +297,6 @@ StatusSectionLayout {
         id: communityInvitationNotificationComponent
 
         ActivityNotificationCommunityInvitation {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
             community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
@@ -326,7 +321,6 @@ StatusSectionLayout {
             property CommunityStores.CommunityRootStore communityRootStore:  root.messagingRootStore.createCommunityRootStore(this, notification.communityId)
             readonly property CommunityStores.CommunityAccessStore communityAccessStore: communityRootStore ?
                                                                                              communityRootStore.communityAccessStore : null
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
@@ -354,7 +348,6 @@ StatusSectionLayout {
         id: communityRequestNotificationComponent
 
         ActivityNotificationCommunityRequest {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
@@ -373,7 +366,6 @@ StatusSectionLayout {
         id: communityKickedNotificationComponent
 
         ActivityNotificationCommunityKicked {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
@@ -391,7 +383,6 @@ StatusSectionLayout {
 
         ActivityNotificationCommunityBanUnban {
             banned: true
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
 
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
@@ -407,7 +398,6 @@ StatusSectionLayout {
 
         ActivityNotificationCommunityBanUnban {
             banned: false
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             community: notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
@@ -424,7 +414,6 @@ StatusSectionLayout {
         id: contactRemovedComponent
 
         ActivityNotificationContactRemoved {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
 
@@ -441,7 +430,6 @@ StatusSectionLayout {
         id: newKeypairFromPairedDeviceComponent
 
         ActivityNotificationNewKeypairFromPairedDevice {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
 
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
@@ -464,7 +452,6 @@ StatusSectionLayout {
             communityName: community ? community.name : ""
             communityColor: community ? community.color : Theme.palette.directColor1
 
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
 
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
@@ -483,7 +470,6 @@ StatusSectionLayout {
         ActivityNotificationNewDevice {
             type: setType(notification)
 
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             accountName: store.name
 
@@ -513,7 +499,6 @@ StatusSectionLayout {
     Component {
         id: newsMessageComponent
         ActivityNotificationNewsMessage {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
 
             onReadMoreClicked: {
@@ -543,7 +528,6 @@ StatusSectionLayout {
             communityName: community ? community.name : ""
             communityImage: community ? community.image : ""
 
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
 
             walletAccountName: !!root.store && !isFirstTokenReceived ? root.store.walletStore.getNameForWalletAddress(tokenData.walletAddress) : ""
@@ -567,7 +551,6 @@ StatusSectionLayout {
             communityColor: community ? community.color : "transparent"
             communityImage: community ? community.image : ""
 
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
 
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
@@ -586,7 +569,6 @@ StatusSectionLayout {
         id: groupChatInvitationNotificationComponent
 
         ActivityNotificationUnknownGroupChatInvitation {
-            filteredIndex: parent.filteredIndex
             notification: parent.notification
             contactsModel: root.contactsStore.contactsModel
             group: root.store.getChatDetails(notification.chatId)
