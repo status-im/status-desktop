@@ -678,7 +678,7 @@ method load*[T](
 
   # Default to Wallet section if no active section is set or if the active section is the settings section
   # or if the active section is the home page section but home page is not enabled
-  if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID or
+  if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID or activeSectionId == ACTIVITYCENTER_SECTION_ID or
     (activeSectionId == HOMEPAGE_SECTION_ID and not homePageEnabled):
     activeSectionId = WALLET_SECTION_ID
 
@@ -889,8 +889,8 @@ method load*[T](
   #  activeSection = homePageSectionItem
 
   # Set active section on app start
-  # If section is empty or profile wait until chats are loaded
-  if not activeSection.isEmpty() and activeSection.sectionType != SectionType.ProfileSettings:
+  # If section is empty wait until chats are loaded
+  if not activeSection.isEmpty():
     self.setActiveSection(activeSection)
 
 proc isEverythingLoaded[T](self: Module[T]): bool =
