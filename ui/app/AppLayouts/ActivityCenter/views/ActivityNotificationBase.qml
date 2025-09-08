@@ -15,7 +15,6 @@ import AppLayouts.Chat.stores as ChatStores
 Control {
     id: root
 
-    /* required */ property int filteredIndex
     required property var notification
 
     property alias avatarComponent: avatarLoader.sourceComponent
