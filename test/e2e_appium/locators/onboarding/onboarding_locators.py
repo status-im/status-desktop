@@ -1,11 +1,10 @@
-"""
-Onboarding screen locators for Status Desktop tablet E2E tests.
-"""
-
 from ..base_locators import BaseLocators
 
 
 class OnboardingLocators(BaseLocators):
+    
+    # TODO: Remove fallback locators and replace with accessibility_id/tid
+    
     # Welcome Screen Locators
     WELCOME_TEXT = BaseLocators.accessibility_id("Welcome to Status")
     WELCOME_TEXT_FALLBACK = BaseLocators.content_desc_contains("Welcome")
@@ -55,25 +54,20 @@ class OnboardingLocators(BaseLocators):
     # Dynamic Locators
     @classmethod
     def get_step_screen(cls, step_name: str) -> tuple:
-        """Get screen locator for specific onboarding step"""
         return cls.accessibility_id(f"{step_name}_screen")
 
     @classmethod
     def get_input_field(cls, field_name: str) -> tuple:
-        """Get input field locator by name"""
         return cls.accessibility_id(f"{field_name}_input")
 
     @classmethod
     def get_error_message(cls, field_name: str) -> tuple:
-        """Get error message locator for specific field"""
         return cls.accessibility_id(f"{field_name}_error")
 
     @classmethod
     def get_button_by_text(cls, button_text: str) -> tuple:
-        """Get button locator by text"""
         return cls.button_with_text(button_text)
 
     @classmethod
     def get_screen_element(cls, element_name: str) -> tuple:
-        """Get any screen element by name"""
         return cls.accessibility_id(element_name)
