@@ -97,14 +97,14 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
   - In Progress ⏳ 🟩🟩🟨⬜⬜ 53%
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
-  - In Progress ⏳ 🟩🟨⬜⬜⬜ 35%
+  - In Progress ⏳ 🟩🟨⬜⬜⬜ 38%
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
   - In Progress ⏳ 🟨⬜⬜⬜⬜ 17%
 - [Local Backup finishing touches](https://github.com/status-im/status-desktop/issues/18583)
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 25%
+  - In Progress ⏳ 🟩🟨⬜⬜⬜ 38%
 - [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
-  - In Progress ⏳ ⬜⬜⬜⬜⬜ 8%
+  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17%
 - [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
   - In Progress ⏳
 - [Translation initiative](https://github.com/status-im/status-desktop/issues/18293)
