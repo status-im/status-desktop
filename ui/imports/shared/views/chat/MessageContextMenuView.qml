@@ -84,7 +84,9 @@ StatusMenu {
         text: qsTr("Copy message")
         icon.name: "copy"
         onTriggered: root.copyToClipboard(root.unparsedText)
-        enabled: root.messageContentType === Constants.messageContentType.messageType && replyToMenuItem.enabled
+        enabled: (root.messageContentType === Constants.messageContentType.messageType ||
+                (root.messageContentType === Constants.messageContentType.imageType && root.unparsedText != "")) &&
+                replyToMenuItem.enabled
     }
 
     StatusAction {
