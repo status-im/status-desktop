@@ -53,6 +53,8 @@ StatusSectionLayout {
         function callLaterMarkAsSeen() {
             Qt.callLater(activityCenterStore.markAsSeenActivityCenterNotifications)
         }
+
+        readonly property int rightMargin: 12 // scrollbar width minus margins
     }
 
     leftPanel: ColumnLayout {
@@ -68,7 +70,8 @@ StatusSectionLayout {
             id: row
 
             Layout.fillWidth: true
-            Layout.leftMargin: Theme.bigPadding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: d.rightMargin
             Layout.topMargin: Theme.padding
 
             StatusNavigationPanelHeadline {
@@ -143,7 +146,7 @@ StatusSectionLayout {
             visible: !statusNewsNotificationDisabledLoader.active
             Layout.fillWidth: true
             Layout.fillHeight: count !== 0
-            Layout.margins: Theme.smallPadding
+            Layout.leftMargin: d.rightMargin
             spacing: 1
 
             model: root.activityCenterStore.activityCenterNotifications
@@ -151,7 +154,7 @@ StatusSectionLayout {
             onContentYChanged: d.loadMoreNotificationsIfScrollBelowThreshold()
 
             delegate: Loader {
-                width: listView.availableWidth
+                width: ListView.view.width - d.rightMargin
 
                 property var notification: model
 
