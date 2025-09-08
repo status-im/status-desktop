@@ -35,7 +35,7 @@ when defined(USE_QML_SERVER):
   const isMacOS = gorge("sw_vers -productName") == "macOS"
   const localhost = staticExec(
     when isWindows:
-      "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias (Get-NetConnectionProfile).InterfaceAlias).IPAddress\""
+      "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias (Get-NetConnectionProfile).InterfaceAlias | Where-Object { $_.IPAddress -notlike '169.*' } | Select-Object -First 1).IPAddress\""
     elif isMacOS:
       "ipconfig getifaddr en0"
     else:
