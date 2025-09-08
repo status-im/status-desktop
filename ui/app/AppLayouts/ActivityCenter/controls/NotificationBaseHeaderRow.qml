@@ -32,7 +32,7 @@ Control {
             maximumLineCount: 3
             color: Theme.palette.directColor1
             font.pixelSize: Theme.additionalTextSize
-            font.weight: Font.Middle
+            font.weight: Font.Medium
             wrapMode: Text.WordWrap
             enabled: root.primaryTextClickable
             font.underline: containsMouse && enabled
