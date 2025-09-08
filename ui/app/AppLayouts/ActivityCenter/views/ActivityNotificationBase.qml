@@ -34,7 +34,7 @@ Control {
     background: Rectangle {
         id: backgroundItem
         radius: 6
-        color: mouse.containsMouse ? Theme.palette.primaryColor3 : Theme.palette.transparent
+        color: root.hovered ? Theme.palette.primaryColor3 : Theme.palette.transparent
 
         Behavior on color { ColorAnimation { duration: 200 } }
 
@@ -47,12 +47,6 @@ Control {
             anchors.top: parent.top
             anchors.rightMargin: Theme.halfPadding
             anchors.topMargin: Theme.halfPadding
-        }
-
-        StatusMouseArea {
-            id: mouse
-            anchors.fill: parent
-            hoverEnabled: true
         }
     }
 
@@ -96,6 +90,5 @@ Control {
                 Layout.bottomMargin: Theme.smallPadding
             }
         }
-
     }
 }
