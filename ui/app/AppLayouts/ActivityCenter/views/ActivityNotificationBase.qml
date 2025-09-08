@@ -80,9 +80,8 @@ Control {
 
             StatusTimeStampLabel {
                 Layout.bottomMargin: ctaLoader.active ? 0 : Theme.smallPadding
-                timestamp: root.notification.timestamp
+                timestamp: root.notification?.timestamp ?? 0
             }
-
 
             Loader {
                 id: ctaLoader
