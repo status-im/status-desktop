@@ -1,7 +1,7 @@
 import os
 import re
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
 from pathlib import Path
 
 
@@ -22,6 +22,7 @@ class EnvironmentConfig:
     directories: Dict[str, str]
     logging_config: Dict[str, Any]
     lambdatest_config: Dict[str, Any] = None
+    available_devices: Optional[List[Dict[str, Any]]] = None
 
     def validate(self) -> None:
         if self.environment == "local":
@@ -33,8 +34,10 @@ class EnvironmentConfig:
         app_path = self.app_source.get("path_template", "")
         resolved_path = self._resolve_template(app_path)
 
-        if resolved_path and not Path(resolved_path).exists():
-            raise ConfigurationError(f"Local app not found: {resolved_path}")
+        # Only enforce path existence if one is provided; otherwise assume appPackage/appActivity launch
+        if resolved_path:
+            if not Path(resolved_path).exists():
+                raise ConfigurationError(f"Local app not found: {resolved_path}")
 
         try:
             import requests
@@ -127,7 +130,10 @@ class EnvironmentConfig:
             }
 
             if self.environment == "local":
-                base_caps["app"] = self.get_resolved_app_path()
+                app_path = self.get_resolved_app_path()
+                if app_path:
+                    base_caps["app"] = app_path  # Use APK if provided
+                # If no app path resolved, rely on provided appPackage/appActivity
 
             base_caps.update(self.capabilities)
             return base_caps
