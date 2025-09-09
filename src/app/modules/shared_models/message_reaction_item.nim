@@ -18,6 +18,7 @@ type
 type
   MessageReactionItem* = object
     emojiId: EmojiId
+    emoji: string
     didIReactWithThisEmoji: bool
     reactions: seq[ReactionDetails]
 
@@ -27,8 +28,9 @@ proc toEmojiIdAsEnum*(emojiId: int, emojiIdAsEnum: var EmojiId): bool =
     return true
   return false
 
-proc initMessageReactionItem*(emojiId: EmojiId): MessageReactionItem =
+proc initMessageReactionItem*(emojiId: EmojiId, emoji: string): MessageReactionItem =
   result.emojiId = emojiId
+  result.emoji = emoji
   result.didIReactWithThisEmoji = false
 
 proc `$`*(self: MessageReactionItem): string =
@@ -39,6 +41,7 @@ proc `$`*(self: MessageReactionItem): string =
 
   result = fmt"""MessageReactionItem(
     emojiId: {self.emojiId},
+    emoji: {self.emoji},
     didIReactWithThisEmoji: {self.didIReactWithThisEmoji},
     reactionsCount: {self.reactions.len},
     reactions: {reactions}
@@ -46,6 +49,9 @@ proc `$`*(self: MessageReactionItem): string =
 
 proc emojiId*(self: MessageReactionItem): EmojiId {.inline.} =
   self.emojiId
+
+proc emoji*(self: MessageReactionItem): string {.inline.} =
+  self.emoji
 
 proc didIReactWithThisEmoji*(self: MessageReactionItem): bool {.inline.} =
   self.didIReactWithThisEmoji

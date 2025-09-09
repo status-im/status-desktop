@@ -20,6 +20,10 @@ proc addReaction*(chatId: string, messageId: string, emojiId: int): RpcResponse[
   let payload = %* [chatId, messageId, emojiId]
   result = callPrivateRPC("sendEmojiReaction".prefix, payload)
 
+proc addReactionV2*(chatId: string, messageId: string, emoji: string): RpcResponse[JsonNode] =
+  let payload = %* [chatId, messageId, emoji]
+  result = callPrivateRPC("sendEmojiReactionV2".prefix, payload)
+
 proc removeReaction*(reactionId: string): RpcResponse[JsonNode] =
   let payload = %* [reactionId]
   result = callPrivateRPC("sendEmojiReactionRetraction".prefix, payload)

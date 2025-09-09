@@ -5,6 +5,7 @@ import message_reaction_item
 type
   ModelRole {.pure.} = enum
     EmojiId = UserRole + 1
+    Emoji
     DidIReactWithThisEmoji
     NumberOfReactions
     JsonArrayOfUsersReactedWithThisEmoji
@@ -44,6 +45,7 @@ QtObject:
   method roleNames(self: MessageReactionModel): Table[int, string] =
     {
       ModelRole.EmojiId.int:"emojiId",
+      ModelRole.Emoji.int:"emoji",
       ModelRole.DidIReactWithThisEmoji.int:"didIReactWithThisEmoji",
       ModelRole.NumberOfReactions.int:"numberOfReactions",
       ModelRole.JsonArrayOfUsersReactedWithThisEmoji.int: "jsonArrayOfUsersReactedWithThisEmoji"
@@ -62,6 +64,8 @@ QtObject:
     case enumRole:
     of ModelRole.EmojiId:
       result = newQVariant(item.emojiId.int)
+    of ModelRole.Emoji:
+      result = newQVariant(item.emoji)
     of ModelRole.DidIReactWithThisEmoji:
       result = newQVariant(item.didIReactWithThisEmoji)
     of ModelRole.NumberOfReactions:
@@ -119,7 +123,7 @@ QtObject:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
 
-      var item = initMessageReactionItem(emojiId)
+      var item = initMessageReactionItem(emojiId, "")
       item.addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
       let position = self.findPositionForTheItemWithEmojiId(emojiId) # Model should maintain items based on the emoji id.
 
