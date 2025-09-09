@@ -25,8 +25,7 @@ Item {
         StatusImageCrop {
             anchors.fill: parent
 
-            // TODO: generate test image and break the sandbox dependency
-            source: `${Qt.resolvedUrl(".")}../../sandbox/demoapp/data/logo-test-image.png`
+            source: `${Qt.resolvedUrl(".")}../../src/assets/png/status-preparing.png`
             windowStyle: StatusImageCrop.WindowStyle.Rectangular
             Component.onCompleted: setCropRect(Qt.rect(10, 0, sourceSize.width - 20, sourceSize.height))
         }
@@ -40,8 +39,6 @@ Item {
     }
 
     TestCase {
-        id: qmlWarningsTest
-
         name: "StatusImageCrop-CheckQmlWarnings"
 
         when: windowShown
@@ -80,8 +77,7 @@ Item {
     StatusImageCrop {
         id: testControl
 
-        // TODO: generate test image and break the sandbox dependency
-        source: `${Qt.resolvedUrl(".")}../../sandbox/demoapp/data/logo-test-image.png`
+        source: `${Qt.resolvedUrl(".")}../../src/assets/png/status-preparing.png`
         windowStyle: StatusImageCrop.WindowStyle.Rectangular
         Component.onCompleted: setCropRect(Qt.rect(10, 0, sourceSize.width - 20, sourceSize.height))
     }

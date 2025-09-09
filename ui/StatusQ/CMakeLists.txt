@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.19)
 
 project(StatusQ)
 
-option(STATUSQ_BUILD_SANDBOX "Enable to build StatusQ Sandbox application" ON)
 option(STATUSQ_BUILD_SANITY_CHECKER "Enable to build StatusQ Sanity Checker application" ON)
 option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
 option(STATUSQ_STATIC_LIB "Enable to build StatusQ as a static library" OFF)
@@ -63,7 +62,7 @@ if (NOT DEFINED STATUSQ_SHADOW_BUILD)
     #   When OFF:
     #     - no resources are compiled, it's expected to use QML/JS sources
     #
-    #   STATUSQ_SHADOW_BUILD mode is created for sandbox/storybook hot reloading
+    #   STATUSQ_SHADOW_BUILD mode is created for storybook hot reloading
     #   without copying all qml files to build directory.
     #
     #   It's expected for the app to add ${STATUSQ_MODULE_IMPORT_PATH} to
@@ -233,10 +232,6 @@ set(QML_IMPORT_PATH
         CACHE STRING "")
 
 ### Add other subdirectories
-
-if (${STATUSQ_BUILD_SANDBOX})
-    add_subdirectory(sandbox)
-endif ()
 
 if (${STATUSQ_BUILD_SANITY_CHECKER})
     add_subdirectory(sanity_checker)
