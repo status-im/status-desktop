@@ -7,11 +7,12 @@ from .config import setup_logging, log_test_start, log_test_end
 from .config.logging_config import get_logger
 from .core import EnvironmentSwitcher
 from .utils.lambdatest_reporter import LambdaTestReporter
+from .utils.screenshot import save_screenshot, save_page_source
 
 
 # Expose fixture modules without star imports
 pytest_plugins = [
-    "fixtures.onboarding_fixture",
+    # "fixtures.onboarding_fixture",  # Disabled - using BaseAppReadyTest instead
 ]
 
 
@@ -160,6 +161,51 @@ def pytest_runtest_makereport(item, call):
         except Exception as e:
             logger = get_logger("session")
             logger.error(f"Failed to report test result to LambdaTest: {e}")
+
+    # Get screenshot and page source artifacts
+    try:
+        if getattr(rep, "failed", False) and not getattr(item, "_failure_artifacts_saved", False):
+            driver = None
+            try:
+                if hasattr(item, "instance") and hasattr(item.instance, "driver"):
+                    driver = item.instance.driver
+            except Exception:
+                driver = None
+
+            if driver:
+                # Resolve screenshots directory from environment config; fallback to 'screenshots'
+                try:
+                    env_name = os.getenv("CURRENT_TEST_ENVIRONMENT", "lambdatest")
+                    switcher = EnvironmentSwitcher()
+                    env_config = switcher.switch_to(env_name)
+                    screenshots_dir = env_config.directories.get("screenshots", "screenshots")
+                except Exception:
+                    screenshots_dir = "screenshots"
+
+                test_id = getattr(item, "name", "test") + (f"__{rep.when}" if getattr(rep, "when", None) else "")
+
+                s_path = None
+                x_path = None
+                try:
+                    s_path = save_screenshot(driver, str(screenshots_dir), f"FAILED_{test_id}")
+                except Exception:
+                    pass
+                try:
+                    x_path = save_page_source(driver, str(screenshots_dir), f"FAILED_{test_id}")
+                except Exception:
+                    pass
+
+                log = get_logger("conftest")
+                if s_path:
+                    log.info(f"Saved failure screenshot: {s_path}")
+                if x_path:
+                    log.info(f"Saved failure page source: {x_path}")
+
+                setattr(item, "_failure_artifacts_saved", True)
+    except Exception as e:
+        log = get_logger("conftest")
+        log.warning(f"Artifact capture failed: {e}")
+
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     if not _logging_setup:
