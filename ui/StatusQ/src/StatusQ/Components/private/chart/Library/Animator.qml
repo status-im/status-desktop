@@ -4,7 +4,7 @@ QtObject {
     id: root
     property double chartAnimationProgress: 0.1
     property int chartAnimationDuration: 500
-    property var animationEasingType: Easing.InOutExpo
+    property int animationEasingType: Easing.InOutExpo
 
     property var _requests: []
 
