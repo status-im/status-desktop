@@ -51,6 +51,11 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
+      }
+    }
     stage('Build StatusQ Tests') {
       steps {
         sh 'make statusq-tests'

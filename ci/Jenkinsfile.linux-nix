@@ -86,6 +86,11 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
+      }
+    }
     stage('Deps') {
       steps { script {
         nix.shell('make update', pure: true)

@@ -38,6 +38,11 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
+      }
+    }
     stage('Build') {
       parallel {
         stage('Linux/x86_64 and E2E') {
