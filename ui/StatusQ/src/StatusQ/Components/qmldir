@@ -67,3 +67,4 @@ StatusToolBar 0.1 StatusToolBar.qml
 StatusUserImage 0.1 StatusUserImage.qml
 StatusVideo 0.1 StatusVideo.qml
 WebEngineLoader 0.1 WebEngineLoader.qml
+StatusLoadingPageIndicator 0.1 StatusLoadingPageIndicator.qml
