@@ -47,4 +47,3 @@ TokenDelegate 1.0 TokenDelegate.qml
 TransactionDelegate 1.0 TransactionDelegate.qml
 TransactionDetailsHeader.qml 1.0 TransactionDetailsHeader.qml
 WalletAccountListItem 1.0 WalletAccountListItem.qml
-LoadingPageIndicator 1.0 LoadingPageIndicator.qml

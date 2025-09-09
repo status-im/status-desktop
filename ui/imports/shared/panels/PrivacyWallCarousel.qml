@@ -4,9 +4,8 @@ import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Controls
+import StatusQ.Components
 import StatusQ.Core.Theme
-
-import shared.controls
 
 import utils
 
@@ -68,7 +67,7 @@ Control {
             source: Theme.png(root.model.get(pageIndicator.currentIndex).image)
         }
 
-        LoadingPageIndicator {
+        StatusLoadingPageIndicator {
             id: pageIndicator
 
             Layout.alignment: Qt.AlignHCenter
