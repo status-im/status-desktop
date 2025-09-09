@@ -302,7 +302,6 @@ $(STATUSQ_CMAKE_CACHE): | check-qt-dir
 	cmake \
 		-DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
 		-DCMAKE_BUILD_TYPE=$(COMMON_CMAKE_BUILD_TYPE) \
-		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=OFF \
 		$(COMMON_CMAKE_CONFIG_PARAMS) \
@@ -335,7 +334,6 @@ statusq-clean:
 statusq-sanity-checker:
 	echo -e "\033[92mConfiguring:\033[39m StatusQ SanityChecker"
 	cmake \
-		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=ON \
 		-DSTATUSQ_BUILD_TESTS=OFF \
 		$(COMMON_CMAKE_CONFIG_PARAMS) \
@@ -355,7 +353,6 @@ run-statusq-sanity-checker: statusq-sanity-checker
 statusq-tests:
 	echo -e "\033[92mConfiguring:\033[39m StatusQ Unit Tests"
 	cmake \
-		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=ON \
 		-DSTATUSQ_SHADOW_BUILD=OFF \

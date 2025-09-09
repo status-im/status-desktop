@@ -2,8 +2,6 @@
     <qresource prefix="/">
         <file>StatusQ/Components/LoadingComponent.qml</file>
         <file>StatusQ/Components/LoadingErrorComponent.qml</file>
-        <file>StatusQ/Components/StatusAddress.qml</file>
-        <file>StatusQ/Components/StatusAddressPanel.qml</file>
         <file>StatusQ/Components/StatusAnimatedImage.qml</file>
         <file>StatusQ/Components/StatusBadge.qml</file>
         <file>StatusQ/Components/StatusBetaTag.qml</file>
@@ -28,7 +26,6 @@
         <file>StatusQ/Components/StatusDotsLoadingIndicator.qml</file>
         <file>StatusQ/Components/StatusDraggableListItem.qml</file>
         <file>StatusQ/Components/StatusEmoji.qml</file>
-        <file>StatusQ/Components/StatusExpandableItem.qml</file>
         <file>StatusQ/Components/StatusFlowSelector.qml</file>
         <file>StatusQ/Components/StatusGroupBox.qml</file>
         <file>StatusQ/Components/StatusImage.qml</file>
@@ -68,7 +65,6 @@
         <file>StatusQ/Components/StatusToolBar.qml</file>
         <file>StatusQ/Components/StatusUserImage.qml</file>
         <file>StatusQ/Components/StatusVideo.qml</file>
-        <file>StatusQ/Components/StatusWizardStepper.qml</file>
         <file>StatusQ/Components/WebEngineLoader.qml</file>
         <file>StatusQ/Components/private/LoadingDotItem.qml</file>
         <file>StatusQ/Components/private/StatusComboboxBackground.qml</file>
@@ -110,7 +106,6 @@
         <file>StatusQ/Controls/StatusClearButton.qml</file>
         <file>StatusQ/Controls/StatusColorAnimation.qml</file>
         <file>StatusQ/Controls/StatusColorRadioButton.qml</file>
-        <file>StatusQ/Controls/StatusColorSelector.qml</file>
         <file>StatusQ/Controls/StatusColorSelectorGrid.qml</file>
         <file>StatusQ/Controls/StatusComboBox.qml</file>
         <file>StatusQ/Controls/StatusCommunityTag.qml</file>
@@ -154,8 +149,6 @@
         <file>StatusQ/Controls/StatusTextWithLoadingState.qml</file>
         <file>StatusQ/Controls/StatusTokenInlineSelector.qml</file>
         <file>StatusQ/Controls/StatusToolTip.qml</file>
-        <file>StatusQ/Controls/StatusWalletColorButton.qml</file>
-        <file>StatusQ/Controls/StatusWalletColorSelect.qml</file>
         <file>StatusQ/Controls/StatusWarningBox.qml</file>
         <file>StatusQ/Controls/Validators/StatusAddressOrEnsValidator.qml</file>
         <file>StatusQ/Controls/Validators/StatusAddressValidator.qml</file>
