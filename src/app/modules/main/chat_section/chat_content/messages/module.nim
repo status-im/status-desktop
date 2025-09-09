@@ -326,18 +326,31 @@ method loadMoreMessages*(self: Module) =
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
   var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let item = self.view.model().getItemWithMessageId(messageId)
-    if(item.isNil):
-      return
-    let myPublicKey = singletonInstance.userProfile.getPubKey()
-    if(item.shouldAddReaction(emojiIdAsEnum, myPublicKey)):
-      self.controller.addReaction(messageId, emojiId)
-    else:
-      let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
-      self.controller.removeReaction(messageId, emojiId, reactionId)
-  else:
+  if not message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum):
     error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReaction"
+    return
+
+  let item = self.view.model().getItemWithMessageId(messageId)
+  if item.isNil:
+    return
+
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  if item.shouldAddReaction(emojiIdAsEnum, myPublicKey):
+    # TODO remove this conversion when the new popup is hooked and sends emoji string directly
+    # Convert emoji type to string for the new addReaction method
+    var emoji = ""
+    case emojiIdAsEnum:
+    of EmojiId.Heart: emoji = "❤️"
+    of EmojiId.Thumbsup: emoji = "👍"
+    of EmojiId.Thumbsdown: emoji = "👎"
+    of EmojiId.Laughing: emoji = "😂"
+    of EmojiId.Cry: emoji = "😢"
+    of EmojiId.Angry: emoji = "😠"
+
+    self.controller.addReaction(messageId, emojiId, emoji)
+  else:
+    let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
+    self.controller.removeReaction(messageId, emojiId, reactionId)
 
 method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
   var emojiIdAsEnum: EmojiId

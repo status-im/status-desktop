@@ -525,7 +525,7 @@ QtObject:
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
     try:
       let responseObj = response.parseJson
-      if (responseObj.kind != JObject):
+      if responseObj.kind != JObject:
         raise newException(CatchableError, "load more messages response is not a json object")
 
       let errorString = responseObj{"error"}.getStr()
@@ -536,19 +536,19 @@ QtObject:
       discard responseObj.getProp("chatId", chatId)
 
       let msgCursor = self.initOrGetMessageCursor(chatId)
-      if(msgCursor.getValue() == ""):
+      if msgCursor.getValue() == "":
         # this is the first time we load messages for this chat
         # we need to load pinned messages as well
         self.asyncLoadPinnedMessagesForChat(chatId)
 
       # handling messages
       var msgCursorValue: string
-      if(responseObj.getProp("messagesCursor", msgCursorValue)):
+      if responseObj.getProp("messagesCursor", msgCursorValue):
         msgCursor.setValue(msgCursorValue)
 
       var messagesArr: JsonNode
       var messages: seq[MessageDto]
-      if(responseObj.getProp("messages", messagesArr)):
+      if responseObj.getProp("messages", messagesArr):
         messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
       self.bulkReplacePubKeysWithDisplayNames(messages)
@@ -556,8 +556,20 @@ QtObject:
       # handling reactions
       var reactionsArr: JsonNode
       var reactions: seq[ReactionDto]
-      if(responseObj.getProp("reactions", reactionsArr)):
-        reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
+      if responseObj.getProp("reactions", reactionsArr):
+        reactions = map(
+          reactionsArr.getElems(),
+          proc(x: JsonNode): ReactionDto =
+            result = x.toReactionDto()
+            # TODO remove this once we fully support full emojis
+            case result.emoji:
+              of "❤️": result.emojiId = 1
+              of "👍": result.emojiId = 2
+              of "👎": result.emojiId = 3
+              of "😂": result.emojiId = 4
+              of "😢": result.emojiId = 5
+              of "😠": result.emojiId = 6
+        )
 
       let data = MessagesLoadedArgs(
         chatId: chatId,
@@ -596,7 +608,7 @@ QtObject:
     except Exception as e:
       error "error: ", procName="onAsyncLoadCommunityMemberAllMessages", errName = e.name, errDesription = e.msg
 
-  proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int) =
+  proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int, emoji: string) =
     try:
       let response = status_go.addReaction(chatId, messageId, emojiId)
 
@@ -614,7 +626,7 @@ QtObject:
         reactionId = reactions[0].id
 
       let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
-      reactionId: reactionId)
+        reactionId: reactionId)
       self.events.emit(SIGNAL_MESSAGE_REACTION_ADDED, data)
 
     except Exception as e:

@@ -12,6 +12,7 @@ type ReactionDto* = object
   `from`*: string
   messageId*: string
   emojiId*: int
+  emoji*: string
 
 proc toReactionDto*(jsonObj: JsonNode): ReactionDto =
   result = ReactionDto()
@@ -22,3 +23,4 @@ proc toReactionDto*(jsonObj: JsonNode): ReactionDto =
   discard jsonObj.getProp("from", result.from)
   discard jsonObj.getProp("messageId", result.messageId)
   discard jsonObj.getProp("emojiId", result.emojiId)
+  discard jsonObj.getProp("emoji", result.emoji)
