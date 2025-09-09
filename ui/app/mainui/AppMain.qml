@@ -1973,22 +1973,18 @@ Item {
                             dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
                             dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
-                            onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
-                            onDappConnectRequested: () => {
+                            onDappListRequested: dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
+                            onDappConnectRequested: {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
                                 dAppsServiceLoader.dappConnectRequested()
                             }
-                            onDappDisconnectRequested: (dappUrl) => {
+                            onDappDisconnectRequested: function(dappUrl) {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
-                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => {
-                                                      popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
-                                                  }
-                            onBridgeTokenRequested: (tokenId, tokenType) => {
-                                                        popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
-                                                    }
-                            onOpenSwapModalRequested: popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
+                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                            onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
+                            onOpenSwapModalRequested: (swapFormData) => popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                         }
                         onLoaded: {
                             item.resetView()

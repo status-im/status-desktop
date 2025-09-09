@@ -415,12 +415,8 @@ StatusWindow {
         // These signal handlers keep the compatibility with the old keychain approach,
         // which is used by `keycard_popup` (any auth inside the app) and the old onboarding.
         // NOTE: this hack won't work if changes are made with another Keychain instance.
-        onCredentialSaved: (account) => {
-                               localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
-                           }
-        onCredentialDeleted: (account) => {
-                                 localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never
-                             }
+        onCredentialSaved: (account) => localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
+        onCredentialDeleted: (account) => localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never
     }
 
     Component {
