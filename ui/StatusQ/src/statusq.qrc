@@ -262,5 +262,6 @@
         <file>StatusQ/Popups/Dialog/StatusFolderDialog.qml</file>
         <file>StatusQ/Popups/Dialog/StatusFileDialog.qml</file>
         <file>StatusQ/Popups/Dialog/StatusSaveFileDialog.qml</file>
+        <file>StatusQ/Components/StatusLoadingPageIndicator.qml</file>
     </qresource>
 </RCC>
