@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #
-# Build Qt 6.9.0 for desktop (host platform) - required for Android cross-compilation
-# Based on https://github.com/carlonluca/docker-qt/blob/master/6.9.0/build_6.9.0_amd64.sh
+# Build Qt 6.9.2 for desktop (host platform) - required for Android cross-compilation
+# Based on https://github.com/carlonluca/docker-qt/blob/master/6.9.2/build_6.9.2_amd64.sh
 #
 
 set -e
 
-qt_version="6.9.0"
+qt_version="6.9.2"
 qt_branch="v${qt_version}"
 
 echo "Building Qt ${qt_version} for desktop (host platform)..."

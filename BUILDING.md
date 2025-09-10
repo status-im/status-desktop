@@ -181,7 +181,7 @@ python3 -m pip install setuptools --break-system-packages
 
 ### Windows & Linux
 
-Install **Qt 6.9.0** using the [Qt Online Installer](https://download.qt.io/official_releases/online_installers/).
+Install **Qt 6.9.2** using the [Qt Online Installer](https://download.qt.io/official_releases/online_installers/).
 
 ### Linux (Alternative)
 
@@ -238,7 +238,7 @@ If you installed Qt via your system's package manager, additional environment co
 
 Otherwise, set those environment variables:
 ```shell
-export QTDIR="/path/to/Qt/6.9.0/gcc_64"
+export QTDIR="/path/to/Qt/6.9.2/gcc_64"
 export PATH="${QTDIR}/bin:${PATH}"
 ```
 
@@ -289,7 +289,7 @@ make run
 Make sure your `QTDIR` and `PATH` are correctly set. You can also try:
 
 ```bash
-export QTDIR=/path/to/Qt/6.9.0/gcc_64
+export QTDIR=/path/to/Qt/6.9.2/gcc_64
 export PATH=$QTDIR/bin:$PATH
 ```
 

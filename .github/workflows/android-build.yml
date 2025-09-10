@@ -6,7 +6,7 @@ on:
       qt_version:
         description: 'Qt version to use'
         required: false
-        default: '6.9.0'
+        default: '6.9.2'
         type: string
       architecture:
         description: 'Target architecture'

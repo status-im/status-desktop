@@ -39,13 +39,13 @@ if [[ -z "${IN_NIX_SHELL}" ]]; then
     cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 "${APP_DIR}/usr/lib/"
 
     # fix for missing QtWebEngineProcess since QT6
-    cp /opt/qt/6.9.0/gcc_64/libexec/QtWebEngineProcess "${APP_DIR}/usr/libexec/"
+    cp /opt/qt/6.9.2/gcc_64/libexec/QtWebEngineProcess "${APP_DIR}/usr/libexec/"
     chmod +x "${APP_DIR}/usr/libexec/QtWebEngineProcess"
 
     # to fix : [0912/162517.794426:FATAL:v8_initializer.cc(625)] Error loading V8 startup snapshot file
     echo "Bundling Qt WebEngine resources..."
-    cp /opt/qt/6.9.0/gcc_64/resources/* "${APP_DIR}/usr/libexec/"
-    cp -r /opt/qt/6.9.0/gcc_64/translations/qtwebengine_locales "${APP_DIR}/usr/libexec/"
+    cp /opt/qt/6.9.2/gcc_64/resources/* "${APP_DIR}/usr/libexec/"
+    cp -r /opt/qt/6.9.2/gcc_64/translations/qtwebengine_locales "${APP_DIR}/usr/libexec/"
 
     echo "Bundling pcsc-lite 2.2.3..."
     cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite.so* "${APP_DIR}/usr/lib/"
