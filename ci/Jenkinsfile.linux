@@ -7,10 +7,10 @@ def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
   agent {
-    /* Image with Ubuntu 22.04 and QT 6.9.0 */
+    /* Image with Ubuntu 22.04 and QT 6.9.2 */
     docker {
       label 'linux'
-      image 'harbor.status.im/status-im/status-desktop-build:1.0.4-qt6.9.0'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }

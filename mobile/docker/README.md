@@ -14,7 +14,7 @@ The Dockerfile uses a multi-stage build approach with the following layers:
 
 ## Build Arguments
 
-- `QTVER`: Qt version (default: 6.9.0)
+- `QTVER`: Qt version (default: 6.9.2)
 - `TARGETARCH`: Target architecture (default: amd64)
 - `JAVA_VERSION`: Java version (default: 17)
 - `ANDROID_API_LEVEL`: Android API level (default: 35)
@@ -30,13 +30,13 @@ The image is built via Jenkins using `ci/Jenkinsfile.qt-build`. To build manuall
 ```bash
 # Build the complete mobile-build image
 docker build \
-  --build-arg QTVER=6.9.0 \
+  --build-arg QTVER=6.9.2 \
   --build-arg TARGETARCH=amd64 \
   --build-arg JAVA_VERSION=17 \
   --build-arg ANDROID_API_LEVEL=35 \
   --build-arg ANDROID_NDK_VERSION=27.2.12479018 \
   --target mobile-build \
-  -t statusteam/nim-status-client-build:1.0.1-qt6.9.0-android .
+  -t statusteam/nim-status-client-build:1.0.1-qt6.9.2-android .
 ```
 
 ## Qt Source Build
@@ -49,7 +49,7 @@ When building Qt from source, the process requires:
 ## Image Contents
 
 The final image includes:
-- Qt 6.9.0 for Android and desktop
+- Qt 6.9.2 for Android and desktop
 - Android SDK/NDK
 - Nim 2.0.12
 - Go 1.24.7

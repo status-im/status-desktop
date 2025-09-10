@@ -3,7 +3,7 @@
 # =============================================================================
 # Global build arguments used across multiple stages
 # =============================================================================
-ARG QTVER=6.9.0
+ARG QTVER=6.9.2
 ARG TARGETARCH=amd64
 ARG JAVA_VERSION=17
 ARG ANDROID_API_LEVEL=35
@@ -139,7 +139,7 @@ COPY --from=qt-builder /root/export/ /qt_export/
 
 # =============================================================================
 # Stage 5: Qt Installation - installs Qt from exports
-# inspired by https://github.com/carlonluca/docker-qt/blob/master/Dockerfile_6.9.0
+# inspired by https://github.com/carlonluca/docker-qt/blob/master/Dockerfile_6.9.2
 # =============================================================================
 FROM qt-dev-base AS qt-installation
 

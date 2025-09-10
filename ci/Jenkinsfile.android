@@ -7,10 +7,10 @@ def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
   agent {
-    /* Image with Ubuntu 22.04, QT 6.9.0, Android SDK/NDK, Go, and Nim */
+    /* Image with Ubuntu 22.04, QT 6.9.2, Android SDK/NDK, Go, and Nim */
     docker {
       label 'linux'
-      image 'harbor.status.im/status-im/status-desktop-build:1.0.4-qt6.9.0-android'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2-android'
       alwaysPull true
     }
   }
@@ -47,11 +47,17 @@ pipeline {
     GOTMPDIR = "${env.WORKSPACE_TMP}"
     STATUS_APK_ARTIFACT = "pkg/Status-tablet-${BUILD_NUMBER}.apk"
     PLATFORM = "android/arm64"
-    QT_ANDROID_PATH = "/opt/qt/6.9.0/android_arm64_v8a"
+    QT_ANDROID_PATH = "/opt/qt/6.9.2/android_arm64_v8a"
     STATUS_APK = "${WORKSPACE}/mobile/bin/android/qt6/Status-tablet.apk"
   }
 
   stages {
+    
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
+      }
+    }
 
     stage('Build Android APK') {
       steps {
