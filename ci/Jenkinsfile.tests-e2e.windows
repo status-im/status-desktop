@@ -70,6 +70,9 @@ pipeline {
     STATUS_RUNTIME_HTTP_API = 'False'
     STATUS_RUNTIME_WS_API = 'False'
 
+    /* Disable QML disk cache */
+    QML_DISABLE_DISK_CACHE = 1
+
     /* Avoid race conditions with other builds using virtualenv. */
     VIRTUAL_ENV = "${WORKSPACE_TMP}\\venv"
     PATH = "${VIRTUAL_ENV}\\bin;C:\\Qt\\6.9.0\\msvc2022_64\\bin;${PATH}"
