@@ -8,7 +8,7 @@ settingsContentBaseScrollView_Flickable = {"container": settingsContentBase_Scro
 
 # Left Panel
 
-mainWindow_LeftTabView = {"container": statusDesktop_mainWindow, "type": "LeftTabView", "unnamed": 1, "visible": True}
+mainWindow_LeftTabView = {"container": statusDesktop_mainWindow, "id": "leftPanel", "type": "SettingsLeftTabView", "unnamed": 1, "visible": True}
 LeftTabView_ScrollView = {"container": mainWindow_LeftTabView, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 LeftTabProfileMenu = {"container": LeftTabView_ScrollView, "objectName": "leftTabViewProfileMenu", "type": "MenuPanel", "visible": True}
 
