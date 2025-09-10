@@ -176,7 +176,7 @@ Item {
                 anchors.fill: addEmojiButton
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: {
+                onClicked: (mouse) => {
                     root.addEmojiClicked(this, mouse);
                 }
             }
