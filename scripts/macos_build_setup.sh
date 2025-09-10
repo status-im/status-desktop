@@ -3,7 +3,7 @@ set -eo pipefail
 
 GO_VERSION="1.24.7"
 GO_INSTALL_DIR="/usr/local/go"
-QT_VERSION="6.9.0"
+QT_VERSION="6.9.2"
 CMAKE_VERSION="3.31.6"
 CMAKE_BREW_FORMULA_COMMIT_SHA="b4e46db74e74a8c1650b38b1da222284ce1ec5ce"
 CMAKE_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${CMAKE_BREW_FORMULA_COMMIT_SHA}/Formula/c/cmake.rb"
