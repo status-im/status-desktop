@@ -66,8 +66,8 @@ Item {
     // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
         localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
-        thirdpartyServicesEnabled: appMain.featureFlagsStore.privacyModeFeatureEnabled &&
-                                   appMain.privacyStore.thirdpartyServicesEnabled
+        thirdpartyServicesEnabled: appMain.featureFlagsStore.privacyModeFeatureEnabled ?
+                                   appMain.privacyStore.thirdpartyServicesEnabled: true
         onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
     }
 
@@ -1270,6 +1270,8 @@ Item {
             stateIcon.asset.color: Theme.palette.baseColor2
             stateIcon.asset.width: 14
 
+            thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
+
             onClicked: {
                 changeAppSectionBySectionId(model.id)
             }
@@ -1449,6 +1451,8 @@ Item {
 
                 StatusNewItemGradient { id: newGradient }
                 badge.gradient: displayCreateCommunityBadge ? newGradient : undefined // gradient has precedence over a simple color
+
+                thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
 
                 onClicked: {
                     if(model.sectionType === Constants.appSection.swap) {
