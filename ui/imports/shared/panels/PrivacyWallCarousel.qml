@@ -55,6 +55,11 @@ Control {
         }
 
         Image {
+            id: placeholderImage
+
+            // Used to onlt start cross fade animation after the first image is set
+            property bool initialized: false
+
             Layout.fillWidth: true
             Layout.maximumWidth: 688
             Layout.fillHeight: true
@@ -64,7 +69,29 @@ Control {
             fillMode: Image.PreserveAspectFit
             asynchronous: true
 
-            source: Theme.png(root.model.get(pageIndicator.currentIndex).image)
+            // cross-fade sequence
+            SequentialAnimation {
+                id: fadeSwap
+                OpacityAnimator { target: placeholderImage; from: 1; to: 0; duration: 500;}
+                PropertyAction   { target: placeholderImage; property: "source";
+                                   value: Theme.png(root.model.get(pageIndicator.currentIndex).image) }
+                OpacityAnimator { target: placeholderImage; from: 0; to: 1; duration: 500; }
+            }
+
+            // start the animation whenever the index changes
+            Connections {
+                target: pageIndicator
+                function onCurrentIndexChanged() {
+                    if(placeholderImage.initialized) {
+                        fadeSwap.start()
+                    }
+                }
+            }
+
+            Component.onCompleted: {
+                placeholderImage.source = Theme.png(root.model.get(pageIndicator.currentIndex).image)
+                initialized = true
+            }
         }
 
         StatusLoadingPageIndicator {
