@@ -11,7 +11,7 @@ SplitView {
     StatusSectionLayout {
         navBar: StatusAppNavBar {
             anchors.fill: parent
-            thirdpartyServicesDisabled: privacyModelCtrl.checked
+            thirdpartyServicesEnabled: thirdpartyServicesCtrl.checked
             regularItemsModel: ListModel {
                 ListElement {
                     sectionId: "mainApp"
@@ -70,6 +70,7 @@ SplitView {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
+                thirdpartyServicesEnabled: thirdpartyServicesCtrl.checked
             }
             delegateHeight: 40
         }
@@ -89,9 +90,9 @@ SplitView {
         SplitView.preferredHeight: childrenRect.height
 
         CheckBox {
-            id: privacyModelCtrl
-            text: "Enable Privacy Mode"
-            checked: false
+            id: thirdpartyServicesCtrl
+            text: "Enable ThirdParty Services"
+            checked: true
         }
     }
 }
