@@ -157,10 +157,6 @@ endif
 deps: | check-qt-dir deps-common status-go-deps bottles
 
 update: | check-qt-dir update-common
-ifeq ($(mkspecs),macx)
-	# Install or update package.json files
-	yarn install --check-files
-endif
 
 QML_DEBUG ?= false
 QML_DEBUG_PORT ?= 49152
@@ -849,7 +845,7 @@ clean-destdir:
 	rm -rf bin/*
 
 clean: | clean-common clean-destdir statusq-clean status-go-clean dotherside-clean storybook-clean clean-translations
-	rm -rf node_modules bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
+	rm -rf bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
 
 clean-git:
