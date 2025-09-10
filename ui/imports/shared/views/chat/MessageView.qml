@@ -14,6 +14,7 @@ import shared.popups.send
 
 import StatusQ
 import StatusQ.Core
+import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Controls
@@ -315,6 +316,7 @@ Loader {
 
         readonly property int chatButtonSize: 32
         property bool hideMessage: false
+        property bool emojiPopupOpened: false
 
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
@@ -419,9 +421,16 @@ Loader {
         function addReactionClicked(mouseArea, mouse) {
             if (!d.addReactionAllowed)
                 return
+            if (d.emojiPopupOpened) {
+                return
+            }
             // Don't use mouseArea as parent, as it will be destroyed right after opening menu
             const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
-            Global.openMenu(addReactionContextMenu, root, {}, point)
+            // TODO fix position, it's way too high
+            emojiPopup.open()
+            emojiPopup.x = point.x
+            emojiPopup.y = point.y
+            d.emojiPopupOpened = true
         }
 
         function onImageClicked(image, mouse, imageSource, url = "") {
@@ -438,6 +447,21 @@ Loader {
 
         function correctBridgeNameCapitalization(bridgeName) {
             return (bridgeName === "discord") ? "Discord" : bridgeName
+        }
+    }
+
+
+    Connections {
+        enabled: d.emojiPopupOpened
+        target: emojiPopup
+
+        function onEmojiSelected(text: string, atCursor: bool) {
+            // TODO call toggleReaction when it supports all emojis
+            // root.messageStore.toggleReaction(root.messageId, emojiId)
+        }
+        function onClosed() {
+            // Debounce so that the popup doesn't immediately reopen when clicking the button
+            Backpressure.debounce(root, 100, () => { d.emojiPopupOpened = false })()
         }
     }
 
@@ -1184,25 +1208,6 @@ Loader {
         NewMessagesMarker {
             count: root.messageStore.newMessagesCount
             timestamp: root.messageTimestamp
-        }
-    }
-
-    Component {
-        id: addReactionContextMenu
-
-        MessageAddReactionContextMenu {
-            reactionsModel: root.emojiReactionsModel
-
-            onToggleReaction: (emojiId) => {
-                root.messageStore.toggleReaction(root.messageId, emojiId)
-            }
-            onOpened: {
-                root.setMessageActive(root.messageId, true)
-            }
-            onClosed: {
-                root.setMessageActive(root.messageId, false)
-                destroy()
-            }
         }
     }
 
