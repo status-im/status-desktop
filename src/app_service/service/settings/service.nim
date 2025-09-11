@@ -1096,6 +1096,8 @@ QtObject:
       error "reading backupPath setting error: ", errDesription
 
   proc setBackupPath*(self: Service, value: string) {.slot.} =
+    if self.settings.backupPath == value:
+      return
     try:
       let formattedPath = singletonInstance.utils.fromPathUri(value)
       if self.saveSetting(KEY_BACKUP_PATH, formattedPath):
@@ -1109,6 +1111,38 @@ QtObject:
   QtProperty[string] backupPath:
     read = getBackupPath
     notify = backupPathChanged
+
+  proc messagesBackupEnabledChanged*(self: Service) {.signal.}
+  proc getMessagesBackupEnabled*(self: Service): bool {.slot.} =
+    if self.initialized:
+      return self.settings.messagesBackupEnabled
+
+    try:
+      let response = status_settings.messagesBackupEnabled()
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+      return response.result.getBool
+    except Exception as e:
+      let errDesription = e.msg
+      error "reading messagesBackupEnabled setting error: ", errDesription
+      return false
+
+  proc setMessagesBackupEnabled*(self: Service, value: bool) {.slot.} =
+    if self.settings.messagesBackupEnabled == value:
+      return
+    try:
+      if self.saveSetting(KEY_MESSAGES_BACKUP_ENABLED, value):
+        self.settings.messagesBackupEnabled = value
+        self.messagesBackupEnabledChanged()
+      else:
+        raise newException(RpcException, "Failed to save messages backup enabled setting")
+    except Exception as e:
+      error "error: ", procName="setMessagesBackupEnabled", errName = e.name, errDesription = e.msg
+
+  QtProperty[bool] messagesBackupEnabled:
+    read = getMessagesBackupEnabled
+    write = setMessagesBackupEnabled
+    notify = messagesBackupEnabledChanged
 
   proc thirdpartyServicesEnabledChanged*(self: Service) {.signal.}
 

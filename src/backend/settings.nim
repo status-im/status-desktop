@@ -114,5 +114,8 @@ proc toggleNewsRSSEnabled*(value: bool): RpcResponse[JsonNode] =
 proc backupPath*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("settings_backupPath")
 
+proc messagesBackupEnabled*(): RpcResponse[JsonNode] =
+  return core.callPrivateRPC("settings_messagesBackupEnabled")
+
 proc thirdpartyServicesEnabled*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("settings_thirdpartyServicesEnabled")
