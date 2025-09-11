@@ -11,13 +11,20 @@
         <source>%n valid address(s)</source>
         <translation>
 			<numerusform>%n valid address</numerusform>
-			<numerusform>%n valid addresss</numerusform>
+			<numerusform>%n valid addresses</numerusform>
 		</translation>
     </message>
     <message numerus="yes">
         <source>%n invalid key(s)</source>
         <translation>
 			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n invalid week(s)</source>
+        <translation>
+			<numerusform>%n invalid week(s)</numerusform>
 			<numerusform></numerusform>
 		</translation>
     </message>
