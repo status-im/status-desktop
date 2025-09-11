@@ -18,7 +18,7 @@ This section is for developers who want full control over the build environment.
 pip3 install -U pip
 pip3 install aqtinstall
 
-# Install Qt 5.15.2 (or6.9.2forQt6)
+# Install Qt 6.9.2
 aqt install-qt mac ios 6.9.2 -O $HOME/qt -m all --autodesktop
 
 # If the above fails on arm64, try:
