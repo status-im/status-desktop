@@ -5,9 +5,9 @@ import StatusQ // ClipboardUtils
 import StatusQ.Core.Theme
 import StatusQ.TestHelpers
 
-import AppLayouts.Onboarding2
-import AppLayouts.Onboarding2.pages
-import AppLayouts.Onboarding2.stores
+import AppLayouts.Onboarding
+import AppLayouts.Onboarding.pages
+import AppLayouts.Onboarding.stores
 import AppLayouts.Onboarding.enums
 
 import shared.stores as SharedStores

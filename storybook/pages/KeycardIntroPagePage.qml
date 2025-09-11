@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.pages
 import AppLayouts.Onboarding.enums
 
 Item {

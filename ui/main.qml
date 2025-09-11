@@ -9,10 +9,10 @@ import shared.stores
 import mainui
 import AppLayouts.stores as AppStores
 
+import AppLayouts.Onboarding
 import AppLayouts.Onboarding.enums
-import AppLayouts.Onboarding2 as Onboarding2
-import AppLayouts.Onboarding2.stores
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.stores
+import AppLayouts.Onboarding.pages
 
 import StatusQ
 import StatusQ.Core
@@ -440,7 +440,7 @@ StatusWindow {
     Component {
         id: onboardingV2
 
-        Onboarding2.OnboardingLayout {
+        OnboardingLayout {
             id: onboardingLayout
             objectName: "startupOnboardingLayout"
 
