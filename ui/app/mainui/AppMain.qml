@@ -2327,58 +2327,13 @@ Item {
         }
     } // ColumnLayout
 
-    Action {
-        shortcut: "Ctrl+1"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(0)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+2"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(1)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+3"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(2)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+4"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(3)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+5"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(4)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+6"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(5)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+7"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(6)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+8"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(7)
-        }
-    }
-    Action {
-        shortcut: "Ctrl+9"
-        onTriggered: {
-            Global.setNthEnabledSectionActive(8)
+    Instantiator {
+        model: 9
+        delegate: Action {
+            shortcut: "Ctrl+" + (index + 1)
+            onTriggered: {
+                Global.setNthEnabledSectionActive(index)
+            }
         }
     }
 
@@ -2411,6 +2366,14 @@ Item {
         }
     }
 
+    Shortcut {
+        id: homePageShortcut
+        context: Qt.ApplicationShortcut
+        sequence: "Ctrl+J"
+        onActivated: d.openHomePage()
+        enabled: appMain.featureFlagsStore.homePageEnabled
+    }
+
     Loader {
         id: channelPickerLoader
         active: false
@@ -2424,14 +2387,6 @@ Item {
                 close()
             }
         }
-    }
-
-    Shortcut {
-        id: homePageShortcut
-        context: Qt.ApplicationShortcut
-        sequence: "Ctrl+J"
-        onActivated: d.openHomePage()
-        enabled: appMain.featureFlagsStore.homePageEnabled
     }
 
     StatusListView {
