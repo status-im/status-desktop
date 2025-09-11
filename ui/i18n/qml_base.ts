@@ -10,8 +10,8 @@
     <message numerus="yes">
         <source>%n valid address(s)</source>
         <translation>
-			<numerusform></numerusform>
-			<numerusform></numerusform>
+			<numerusform>%n valid address</numerusform>
+			<numerusform>%n valid addresss</numerusform>
 		</translation>
     </message>
     <message numerus="yes">
