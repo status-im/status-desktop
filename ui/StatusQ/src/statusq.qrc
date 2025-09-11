@@ -219,7 +219,6 @@
         <file>StatusQ/Core/Utils/xss.js</file>
         <file>StatusQ/Core/qmldir</file>
         <file>StatusQ/Layout/StatusAppNavBar.qml</file>
-        <file>StatusQ/Layout/StatusMainLayout.qml</file>
         <file>StatusQ/Layout/StatusSectionLayout.qml</file>
         <file>StatusQ/Layout/LayoutChooser.qml</file>
         <file>StatusQ/Layout/StatusSectionLayoutLandscape.qml</file>
