@@ -1,5 +1,4 @@
 module StatusQ.Layout
 
-StatusMainLayout 0.1 StatusMainLayout.qml
 StatusSectionLayout 0.1 StatusSectionLayout.qml
 StatusAppNavBar 0.1 StatusAppNavBar.qml

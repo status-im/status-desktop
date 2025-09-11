@@ -1457,973 +1457,971 @@ Item {
         }
     }
 
-    StatusMainLayout {
+    ColumnLayout {
         anchors.fill: parent
 
-        rightPanel: ColumnLayout {
-            spacing: 0
-            objectName: "mainRightView"
+        spacing: 0
+        objectName: "mainRightView"
 
-            ColumnLayout {
-                id: bannersLayout
+        ColumnLayout {
+            id: bannersLayout
 
-                enabled: !localAppSettings.testEnvironment
-                         && d.activeSectionType !== Constants.appSection.homePage
-                         && !SQUtils.Utils.isMobile // Temp disable until we have proper way to handle banners on mobile
-                visible: enabled
+            enabled: !localAppSettings.testEnvironment
+                     && d.activeSectionType !== Constants.appSection.homePage
+                     && !SQUtils.Utils.isMobile // Temp disable until we have proper way to handle banners on mobile
+            visible: enabled
 
+            Layout.fillWidth: true
+
+            // apply left/right margins when we remove the window titlebar
+            Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.left : 0
+            Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.right : 0
+
+            Layout.maximumHeight: implicitHeight
+            spacing: 1
+
+            GlobalBanner {
                 Layout.fillWidth: true
 
-                // apply left/right margins when we remove the window titlebar
-                Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.left : 0
-                Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.right : 0
+                isOnline: appMain.rootStore.isOnline
+                testnetEnabled: appMain.networksStore.areTestNetworksEnabled
+                seedphraseBackedUp: appMain.privacyStore.mnemonicBackedUp || appMain.profileStore.userDeclinedBackupBanner
 
-                Layout.maximumHeight: implicitHeight
-                spacing: 1
+                onOpenTestnetPopupRequested: Global.openTestnetPopup()
+                onOpenBackUpSeedPopupRequested: popups.openBackUpSeedPopup()
+                onUserDeclinedBackupBannerRequested: appMain.profileStore.setUserDeclinedBackupBanner()
+            }
 
-                GlobalBanner {
-                    Layout.fillWidth: true
+            ModuleWarning {
+                Layout.fillWidth: true
+                readonly property int progress: appMain.communitiesStore.discordImportProgress
+                readonly property bool inProgress: (progress > 0 && progress < 100) || appMain.communitiesStore.discordImportInProgress
+                readonly property bool finished: progress >= 100
+                readonly property bool cancelled: appMain.communitiesStore.discordImportCancelled
+                readonly property bool stopped: appMain.communitiesStore.discordImportProgressStopped
+                readonly property int errors: appMain.communitiesStore.discordImportErrorsCount
+                readonly property int warnings: appMain.communitiesStore.discordImportWarningsCount
+                readonly property string communityId: appMain.communitiesStore.discordImportCommunityId
+                readonly property string communityName: appMain.communitiesStore.discordImportCommunityName
+                readonly property string channelId: appMain.communitiesStore.discordImportChannelId
+                readonly property string channelName: appMain.communitiesStore.discordImportChannelName
+                readonly property string channelOrCommunityName: channelName || communityName
+                delay: false
+                active: !cancelled && (inProgress || finished || stopped)
+                type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
+                text: {
+                    if (finished || stopped) {
+                        if (errors)
+                            return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(channelOrCommunityName)
 
-                    isOnline: appMain.rootStore.isOnline
-                    testnetEnabled: appMain.networksStore.areTestNetworksEnabled
-                    seedphraseBackedUp: appMain.privacyStore.mnemonicBackedUp || appMain.profileStore.userDeclinedBackupBanner
-
-                    onOpenTestnetPopupRequested: Global.openTestnetPopup()
-                    onOpenBackUpSeedPopupRequested: popups.openBackUpSeedPopup()
-                    onUserDeclinedBackupBannerRequested: appMain.profileStore.setUserDeclinedBackupBanner()
-                }
-
-                ModuleWarning {
-                    Layout.fillWidth: true
-                    readonly property int progress: appMain.communitiesStore.discordImportProgress
-                    readonly property bool inProgress: (progress > 0 && progress < 100) || appMain.communitiesStore.discordImportInProgress
-                    readonly property bool finished: progress >= 100
-                    readonly property bool cancelled: appMain.communitiesStore.discordImportCancelled
-                    readonly property bool stopped: appMain.communitiesStore.discordImportProgressStopped
-                    readonly property int errors: appMain.communitiesStore.discordImportErrorsCount
-                    readonly property int warnings: appMain.communitiesStore.discordImportWarningsCount
-                    readonly property string communityId: appMain.communitiesStore.discordImportCommunityId
-                    readonly property string communityName: appMain.communitiesStore.discordImportCommunityName
-                    readonly property string channelId: appMain.communitiesStore.discordImportChannelId
-                    readonly property string channelName: appMain.communitiesStore.discordImportChannelName
-                    readonly property string channelOrCommunityName: channelName || communityName
-                    delay: false
-                    active: !cancelled && (inProgress || finished || stopped)
-                    type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
-                    text: {
-                        if (finished || stopped) {
-                            if (errors)
-                                return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(channelOrCommunityName)
-
-                            let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
-                            if (warnings)
-                                result += qsTr("Details (%1)").arg(qsTr("%n issue(s)", "", warnings))
-                            else
-                                result += qsTr("Details")
-                            result += "</a>"
-                            return result
-                        }
-                        if (inProgress) {
-                            let result = qsTr("Importing ‘%1’ from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
-                            if (warnings)
-                                result += qsTr("Check progress (%1)").arg(qsTr("%n issue(s)", "", warnings))
-                            else
-                                result += qsTr("Check progress")
-                            result += "</a>"
-                            return result
-                        }
-
-                        return ""
-                    }
-                    onLinkActivated: popups.openDiscordImportProgressPopup(!!channelId)
-                    progressValue: progress
-                    closeBtnVisible: finished || stopped
-                    buttonText: finished && !errors ? !!channelId ? qsTr("Visit your new channel") : qsTr("Visit your Community") : ""
-                    onClicked: function() {
-                        if (!!channelId)
-                            rootStore.setActiveSectionChat(communityId, channelId)
+                        let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
+                        if (warnings)
+                            result += qsTr("Details (%1)").arg(qsTr("%n issue(s)", "", warnings))
                         else
-                            appMain.communitiesStore.setActiveCommunity(communityId)
+                            result += qsTr("Details")
+                        result += "</a>"
+                        return result
                     }
-                    onCloseClicked: hide()
-                }
-
-                ModuleWarning {
-                    id: mailserverConnectionBanner
-                    type: ModuleWarning.Warning
-                    text: qsTr("Can not connect to store node. Retrying automatically")
-                    onCloseClicked: hide()
-                    Layout.fillWidth: true
-                }
-
-                ConnectionWarnings {
-                    id: walletBlockchainConnectionBanner
-                    objectName: "walletBlockchainConnectionBanner"
-                    Layout.fillWidth: true
-                    websiteDown: Constants.walletConnections.blockchains
-                    withCache: networkConnectionStore.balanceCache
-                    networkConnectionStore: appMain.networkConnectionStore
-                    tooltipMessage: qsTr("Pocket Network (POKT) & Infura are currently both unavailable for %1. Balances for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                    toastText: {
-                        switch(connectionState) {
-                        case Constants.ConnectionStatus.Success:
-                            return qsTr("Pocket Network (POKT) connection successful")
-                        case Constants.ConnectionStatus.Failure:
-                            if(completelyDown) {
-                                if(withCache)
-                                    return qsTr("POKT & Infura down. Token balances are as of %1.").arg(lastCheckedAt)
-                                else
-                                    return qsTr("POKT & Infura down. Token balances cannot be retrieved.")
-                            }
-                            else if(chainIdsDown.length > 0) {
-                                if(chainIdsDown.length > 2) {
-                                    return qsTr("POKT & Infura down for <a href='#'>multiple chains </a>. Token balances for those chains cannot be retrieved.")
-                                }
-                                else if(chainIdsDown.length === 1 && withCache) {
-                                    return qsTr("POKT & Infura down for %1. %1 token balances are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                                }
-                                else {
-                                    return qsTr("POKT & Infura down for %1. %1 token balances cannot be retrieved.").arg(jointChainIdString)
-                                }
-                            }
-                            else
-                                return ""
-                        case Constants.ConnectionStatus.Retrying:
-                            return qsTr("Retrying connection to POKT Network (grove.city).")
-                        default:
-                            return ""
-                        }
-                    }
-                }
-
-                ConnectionWarnings {
-                    id: walletCollectiblesConnectionBanner
-                    objectName: "walletCollectiblesConnectionBanner"
-                    Layout.fillWidth: true
-                    websiteDown: Constants.walletConnections.collectibles
-                    withCache: lastCheckedAtUnix > 0
-                    networkConnectionStore: appMain.networkConnectionStore
-                    tooltipMessage: {
-                        if(withCache)
-                            return qsTr("Collectibles providers are currently unavailable for %1. Collectibles for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                    if (inProgress) {
+                        let result = qsTr("Importing ‘%1’ from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
+                        if (warnings)
+                            result += qsTr("Check progress (%1)").arg(qsTr("%n issue(s)", "", warnings))
                         else
-                            return qsTr("Collectibles providers are currently unavailable for %1.").arg(jointChainIdString)
+                            result += qsTr("Check progress")
+                        result += "</a>"
+                        return result
                     }
-                    toastText: {
-                        switch(connectionState) {
-                        case Constants.ConnectionStatus.Success:
-                            return qsTr("Collectibles providers connection successful")
-                        case Constants.ConnectionStatus.Failure:
-                            if(completelyDown) {
-                                if(withCache)
-                                    return qsTr("Collectibles providers down. Collectibles are as of %1.").arg(lastCheckedAt)
-                                else
-                                    return qsTr("Collectibles providers down. Collectibles cannot be retrieved.")
-                            }
-                            else if(chainIdsDown.length > 0) {
-                                if(chainIdsDown.length > 2) {
-                                    if(withCache)
-                                        return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains are as of %1.".arg(lastCheckedAt))
-                                    else
-                                        return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains cannot be retrieved.")
-                                }
-                                else if(chainIdsDown.length === 1) {
-                                    if(withCache)
-                                        return qsTr("Collectibles providers down for %1. Collectibles for this chain are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                                    else
-                                        return qsTr("Collectibles providers down for %1. Collectibles for this chain cannot be retrieved.").arg(jointChainIdString)
-                                }
-                                else {
-                                    if(withCache)
-                                        return qsTr("Collectibles providers down for %1. Collectibles for these chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                                    else
-                                        return qsTr("Collectibles providers down for %1. Collectibles for these chains cannot be retrieved.").arg(jointChainIdString)
-                                }
-                            }
-                            else
-                                return ""
-                        case Constants.ConnectionStatus.Retrying:
-                            return qsTr("Retrying connection to collectibles providers...")
-                        default:
-                            return ""
-                        }
-                    }
-                }
 
-                ConnectionWarnings {
-                    id: walletMarketConnectionBanner
-                    objectName: "walletMarketConnectionBanner"
-                    Layout.fillWidth: true
-                    websiteDown: Constants.walletConnections.market
-                    withCache: networkConnectionStore.marketValuesCache
-                    networkConnectionStore: appMain.networkConnectionStore
-                    toastText: {
-                        switch(connectionState) {
-                        case Constants.ConnectionStatus.Success:
-                            return qsTr("CryptoCompare and CoinGecko connection successful")
-                        case Constants.ConnectionStatus.Failure: {
-                            if(withCache) {
-                                return qsTr("CryptoCompare and CoinGecko down. Market values are as of %1.").arg(lastCheckedAt)
+                    return ""
+                }
+                onLinkActivated: popups.openDiscordImportProgressPopup(!!channelId)
+                progressValue: progress
+                closeBtnVisible: finished || stopped
+                buttonText: finished && !errors ? !!channelId ? qsTr("Visit your new channel") : qsTr("Visit your Community") : ""
+                onClicked: function() {
+                    if (!!channelId)
+                        rootStore.setActiveSectionChat(communityId, channelId)
+                    else
+                        appMain.communitiesStore.setActiveCommunity(communityId)
+                }
+                onCloseClicked: hide()
+            }
+
+            ModuleWarning {
+                id: mailserverConnectionBanner
+                type: ModuleWarning.Warning
+                text: qsTr("Can not connect to store node. Retrying automatically")
+                onCloseClicked: hide()
+                Layout.fillWidth: true
+            }
+
+            ConnectionWarnings {
+                id: walletBlockchainConnectionBanner
+                objectName: "walletBlockchainConnectionBanner"
+                Layout.fillWidth: true
+                websiteDown: Constants.walletConnections.blockchains
+                withCache: networkConnectionStore.balanceCache
+                networkConnectionStore: appMain.networkConnectionStore
+                tooltipMessage: qsTr("Pocket Network (POKT) & Infura are currently both unavailable for %1. Balances for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                toastText: {
+                    switch(connectionState) {
+                    case Constants.ConnectionStatus.Success:
+                        return qsTr("Pocket Network (POKT) connection successful")
+                    case Constants.ConnectionStatus.Failure:
+                        if(completelyDown) {
+                            if(withCache)
+                                return qsTr("POKT & Infura down. Token balances are as of %1.").arg(lastCheckedAt)
+                            else
+                                return qsTr("POKT & Infura down. Token balances cannot be retrieved.")
+                        }
+                        else if(chainIdsDown.length > 0) {
+                            if(chainIdsDown.length > 2) {
+                                return qsTr("POKT & Infura down for <a href='#'>multiple chains </a>. Token balances for those chains cannot be retrieved.")
+                            }
+                            else if(chainIdsDown.length === 1 && withCache) {
+                                return qsTr("POKT & Infura down for %1. %1 token balances are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
                             }
                             else {
-                                return qsTr("CryptoCompare and CoinGecko down. Market values cannot be retrieved.")
+                                return qsTr("POKT & Infura down for %1. %1 token balances cannot be retrieved.").arg(jointChainIdString)
                             }
                         }
-                        case Constants.ConnectionStatus.Retrying:
-                            return qsTr("Retrying connection to CryptoCompare and CoinGecko...")
-                        default:
+                        else
                             return ""
-                        }
+                    case Constants.ConnectionStatus.Retrying:
+                        return qsTr("Retrying connection to POKT Network (grove.city).")
+                    default:
+                        return ""
                     }
                 }
             }
 
-            Item {
+            ConnectionWarnings {
+                id: walletCollectiblesConnectionBanner
+                objectName: "walletCollectiblesConnectionBanner"
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                StackLayout {
-                    id: appView
-                    anchors.fill: parent
-
-                    currentIndex: {
-                        switch (d.activeSectionType) {
-                        case Constants.appSection.homePage:
-                            return Constants.appViewStackIndex.homePage
-                        case Constants.appSection.chat:
-                            return Constants.appViewStackIndex.chat
-                        case Constants.appSection.community:
-                            for (let i = this.children.length - 1; i >= 0; i--) {
-                                var obj = this.children[i]
-                                if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.activeSectionId) {
-                                    return i
-                                }
+                websiteDown: Constants.walletConnections.collectibles
+                withCache: lastCheckedAtUnix > 0
+                networkConnectionStore: appMain.networkConnectionStore
+                tooltipMessage: {
+                    if(withCache)
+                        return qsTr("Collectibles providers are currently unavailable for %1. Collectibles for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                    else
+                        return qsTr("Collectibles providers are currently unavailable for %1.").arg(jointChainIdString)
+                }
+                toastText: {
+                    switch(connectionState) {
+                    case Constants.ConnectionStatus.Success:
+                        return qsTr("Collectibles providers connection successful")
+                    case Constants.ConnectionStatus.Failure:
+                        if(completelyDown) {
+                            if(withCache)
+                                return qsTr("Collectibles providers down. Collectibles are as of %1.").arg(lastCheckedAt)
+                            else
+                                return qsTr("Collectibles providers down. Collectibles cannot be retrieved.")
+                        }
+                        else if(chainIdsDown.length > 0) {
+                            if(chainIdsDown.length > 2) {
+                                if(withCache)
+                                    return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains are as of %1.".arg(lastCheckedAt))
+                                else
+                                    return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains cannot be retrieved.")
                             }
-                            // Should never be here, correct index must be returned from the for loop above
-                            console.error("Wrong section type:", d.activeSectionType,
-                                          "or section id: ", appMain.rootStore.activeSectionId)
-                            return Constants.appViewStackIndex.community
-                        case Constants.appSection.communitiesPortal:
-                            return Constants.appViewStackIndex.communitiesPortal
-                        case Constants.appSection.wallet:
-                            return Constants.appViewStackIndex.wallet
-                        case Constants.appSection.profile:
-                            return Constants.appViewStackIndex.profile
-                        case Constants.appSection.browser:
-                            return Constants.appViewStackIndex.browser
-                        case Constants.appSection.node:
-                            return Constants.appViewStackIndex.node
-                        case Constants.appSection.market:
-                            return Constants.appViewStackIndex.market
-                        case Constants.appSection.activityCenter:
-                            return Constants.appViewStackIndex.activityCenter
-                        default:
-                            // We should never end up here
-                            console.error("AppMain: Unknown section type")
+                            else if(chainIdsDown.length === 1) {
+                                if(withCache)
+                                    return qsTr("Collectibles providers down for %1. Collectibles for this chain are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                                else
+                                    return qsTr("Collectibles providers down for %1. Collectibles for this chain cannot be retrieved.").arg(jointChainIdString)
+                            }
+                            else {
+                                if(withCache)
+                                    return qsTr("Collectibles providers down for %1. Collectibles for these chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                                else
+                                    return qsTr("Collectibles providers down for %1. Collectibles for these chains cannot be retrieved.").arg(jointChainIdString)
+                            }
+                        }
+                        else
+                            return ""
+                    case Constants.ConnectionStatus.Retrying:
+                        return qsTr("Retrying connection to collectibles providers...")
+                    default:
+                        return ""
+                    }
+                }
+            }
+
+            ConnectionWarnings {
+                id: walletMarketConnectionBanner
+                objectName: "walletMarketConnectionBanner"
+                Layout.fillWidth: true
+                websiteDown: Constants.walletConnections.market
+                withCache: networkConnectionStore.marketValuesCache
+                networkConnectionStore: appMain.networkConnectionStore
+                toastText: {
+                    switch(connectionState) {
+                    case Constants.ConnectionStatus.Success:
+                        return qsTr("CryptoCompare and CoinGecko connection successful")
+                    case Constants.ConnectionStatus.Failure: {
+                        if(withCache) {
+                            return qsTr("CryptoCompare and CoinGecko down. Market values are as of %1.").arg(lastCheckedAt)
+                        }
+                        else {
+                            return qsTr("CryptoCompare and CoinGecko down. Market values cannot be retrieved.")
                         }
                     }
-                    onCurrentIndexChanged: {
-                        if (d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.wallet) {
-                            d.maybeDisplayIntroduceYourselfPopup()
+                    case Constants.ConnectionStatus.Retrying:
+                        return qsTr("Retrying connection to CryptoCompare and CoinGecko...")
+                    default:
+                        return ""
+                    }
+                }
+            }
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            StackLayout {
+                id: appView
+                anchors.fill: parent
+
+                currentIndex: {
+                    switch (d.activeSectionType) {
+                    case Constants.appSection.homePage:
+                        return Constants.appViewStackIndex.homePage
+                    case Constants.appSection.chat:
+                        return Constants.appViewStackIndex.chat
+                    case Constants.appSection.community:
+                        for (let i = this.children.length - 1; i >= 0; i--) {
+                            var obj = this.children[i]
+                            if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.activeSectionId) {
+                                return i
+                            }
                         }
+                        // Should never be here, correct index must be returned from the for loop above
+                        console.error("Wrong section type:", d.activeSectionType,
+                                      "or section id: ", appMain.rootStore.activeSectionId)
+                        return Constants.appViewStackIndex.community
+                    case Constants.appSection.communitiesPortal:
+                        return Constants.appViewStackIndex.communitiesPortal
+                    case Constants.appSection.wallet:
+                        return Constants.appViewStackIndex.wallet
+                    case Constants.appSection.profile:
+                        return Constants.appViewStackIndex.profile
+                    case Constants.appSection.browser:
+                        return Constants.appViewStackIndex.browser
+                    case Constants.appSection.node:
+                        return Constants.appViewStackIndex.node
+                    case Constants.appSection.market:
+                        return Constants.appViewStackIndex.market
+                    case Constants.appSection.activityCenter:
+                        return Constants.appViewStackIndex.activityCenter
+                    default:
+                        // We should never end up here
+                        console.error("AppMain: Unknown section type")
+                    }
+                }
+                onCurrentIndexChanged: {
+                    if (d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.wallet) {
+                        d.maybeDisplayIntroduceYourselfPopup()
+                    }
+                }
+
+                // NOTE:
+                // If we ever change stack layout component order we need to updade
+                // Constants.appViewStackIndex accordingly
+
+                Loader {
+                    id: homePageLoader
+                    focus: active
+                    active: appMain.featureFlagsStore.homePageEnabled && appView.currentIndex === Constants.appViewStackIndex.homePage
+
+                    sourceComponent: HomePage {
+                        id: homePage
+
+                        objectName: "homeContainer"
+
+                        HomePageAdaptor {
+                            id: homePageAdaptor
+                            readonly property bool sectionsLoaded: appMain.rootStore.sectionsLoaded
+
+                            sectionsBaseModel: sectionsLoaded ? appMain.rootStore.sectionsModel : null
+                            chatsBaseModel: sectionsLoaded ? appMain.rootChatStore.chatSectionModuleModel
+                                                           : null
+                            chatsSearchBaseModel: sectionsLoaded && !!rootStore.chatSearchModel ? rootStore.chatSearchModel : null
+                            walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
+                            dappsBaseModel: dAppsServiceLoader.active && dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+
+                            showEnabledSectionsOnly: true
+                            marketEnabled: appMain.featureFlagsStore.marketEnabled
+                            browserEnabled: d.isBrowserEnabled
+
+                            syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
+                            messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
+                            showBackUpSeed: !appMain.privacyStore.mnemonicBackedUp
+                            backUpSeedBadgeCount: appMain.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
+
+                            searchPhrase: homePage.searchPhrase
+
+                            profileId: appMain.profileStore.pubKey
+                        }
+
+                        homePageEntriesModel: homePageAdaptor.homePageEntriesModel
+                        sectionsModel: homePageAdaptor.sectionsModel
+                        pinnedModel: homePageAdaptor.pinnedModel
+
+                        profileStore: appMain.profileStore
+
+                        getEmojiHashFn: appMain.utilsStore.getEmojiHash
+                        getLinkToProfileFn: appMain.contactsStore.getLinkToProfile
+
+                        useNewDockIcons: false
+
+                        onItemActivated: function(key, sectionType, itemId) {
+                            homePageAdaptor.setTimestamp(key, new Date().valueOf())
+
+                            if (sectionType === -1) { // search
+                                const [sectionId, chatId] = key.split(";")
+                                return rootStore.setActiveSectionChat(sectionId, chatId)
+                            } else if (sectionType === Constants.appSection.profile) {
+                                if (itemId == Constants.settingsSubsection.backUpSeed) {
+                                    return Global.openBackUpSeedPopup()
+                                } else if (itemId == Constants.settingsSubsection.signout) {
+                                    return Global.quitAppRequested()
+                                }
+                            }
+
+                            let subsection = itemId
+                            let subSubsection = -1
+                            let data = {}
+
+                            if (sectionType === Constants.appSection.wallet && !!itemId) {
+                                subsection = WalletLayout.LeftPanelSelection.Address
+                                subSubsection = WalletLayout.RightPanelSelection.Assets
+                                data = { address: itemId }
+                            }
+
+                            globalConns.onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
+                        }
+                        onItemPinRequested: function(key, pin) {
+                            homePageAdaptor.setPinned(key, pin)
+                            if (pin)
+                                homePageAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
+                        }
+                        onDappDisconnectRequested: function(dappUrl) {
+                            dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                            dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                        }
+
+                        onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
+                        onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
+                    }
+                }
+
+                Loader {
+                    asynchronous: true
+                    active: false
+                    sourceComponent: {
+                        if (appMain.rootChatStore.chatsLoadingFailed) {
+                            return errorStateComponent
+                        }
+                        if (appMain.rootStore.sectionsLoaded) {
+                            return personalChatLayoutComponent
+                        }
+                        return loadingStateComponent
                     }
 
-                    // NOTE:
-                    // If we ever change stack layout component order we need to updade
-                    // Constants.appViewStackIndex accordingly
-
-                    Loader {
-                        id: homePageLoader
-                        focus: active
-                        active: appMain.featureFlagsStore.homePageEnabled && appView.currentIndex === Constants.appViewStackIndex.homePage
-
-                        sourceComponent: HomePage {
-                            id: homePage
-
-                            objectName: "homeContainer"
-
-                            HomePageAdaptor {
-                                id: homePageAdaptor
-                                readonly property bool sectionsLoaded: appMain.rootStore.sectionsLoaded
-
-                                sectionsBaseModel: sectionsLoaded ? appMain.rootStore.sectionsModel : null
-                                chatsBaseModel: sectionsLoaded ? appMain.rootChatStore.chatSectionModuleModel
-                                                               : null
-                                chatsSearchBaseModel: sectionsLoaded && !!rootStore.chatSearchModel ? rootStore.chatSearchModel : null
-                                walletsBaseModel: sectionsLoaded ? WalletStores.RootStore.accounts : null
-                                dappsBaseModel: dAppsServiceLoader.active && dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-
-                                showEnabledSectionsOnly: true
-                                marketEnabled: appMain.featureFlagsStore.marketEnabled
-                                browserEnabled: d.isBrowserEnabled
-
-                                syncingBadgeCount: appMain.devicesStore.devicesModel.count - appMain.devicesStore.devicesModel.pairedCount
-                                messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
-                                showBackUpSeed: !appMain.privacyStore.mnemonicBackedUp
-                                backUpSeedBadgeCount: appMain.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
-
-                                searchPhrase: homePage.searchPhrase
-
-                                profileId: appMain.profileStore.pubKey
-                            }
-
-                            homePageEntriesModel: homePageAdaptor.homePageEntriesModel
-                            sectionsModel: homePageAdaptor.sectionsModel
-                            pinnedModel: homePageAdaptor.pinnedModel
-
-                            profileStore: appMain.profileStore
-
-                            getEmojiHashFn: appMain.utilsStore.getEmojiHash
-                            getLinkToProfileFn: appMain.contactsStore.getLinkToProfile
-
-                            useNewDockIcons: false
-
-                            onItemActivated: function(key, sectionType, itemId) {
-                                homePageAdaptor.setTimestamp(key, new Date().valueOf())
-
-                                if (sectionType === -1) { // search
-                                    const [sectionId, chatId] = key.split(";")
-                                    return rootStore.setActiveSectionChat(sectionId, chatId)
-                                } else if (sectionType === Constants.appSection.profile) {
-                                    if (itemId == Constants.settingsSubsection.backUpSeed) {
-                                        return Global.openBackUpSeedPopup()
-                                    } else if (itemId == Constants.settingsSubsection.signout) {
-                                        return Global.quitAppRequested()
-                                    }
-                                }
-
-                                let subsection = itemId
-                                let subSubsection = -1
-                                let data = {}
-
-                                if (sectionType === Constants.appSection.wallet && !!itemId) {
-                                    subsection = WalletLayout.LeftPanelSelection.Address
-                                    subSubsection = WalletLayout.RightPanelSelection.Assets
-                                    data = { address: itemId }
-                                }
-
-                                globalConns.onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
-                            }
-                            onItemPinRequested: function(key, pin) {
-                                homePageAdaptor.setPinned(key, pin)
-                                if (pin)
-                                    homePageAdaptor.setTimestamp(key, new Date().valueOf()) // update the timestamp so that the pinned dock items are sorted by their recency
-                            }
-                            onDappDisconnectRequested: function(dappUrl) {
-                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
-                                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
-                            }
-
-                            onSetCurrentUserStatusRequested: (status) => appMain.rootStore.setCurrentUserStatus(status)
-                            onViewProfileRequested: (pubKey) => Global.openProfilePopup(pubKey)
-                        }
+                    // Do not unload section data from the memory in order not
+                    // to reset scroll, not send text input and etc during the
+                    // sections switching
+                    Binding on active {
+                        when: appView.currentIndex === Constants.appViewStackIndex.chat
+                        value: true
+                        restoreMode: Binding.RestoreNone
                     }
 
-                    Loader {
-                        asynchronous: true
-                        active: false
-                        sourceComponent: {
-                            if (appMain.rootChatStore.chatsLoadingFailed) {
-                                return errorStateComponent
-                            }
-                            if (appMain.rootStore.sectionsLoaded) {
-                                return personalChatLayoutComponent
-                            }
-                            return loadingStateComponent
-                        }
-
-                        // Do not unload section data from the memory in order not
-                        // to reset scroll, not send text input and etc during the
-                        // sections switching
-                        Binding on active {
-                            when: appView.currentIndex === Constants.appViewStackIndex.chat
-                            value: true
-                            restoreMode: Binding.RestoreNone
-                        }
-
-                        Component {
-                            id: loadingStateComponent
-                            Item {
-                                anchors.fill: parent
-
-                                Row {
-                                    anchors.centerIn: parent
-                                    spacing: 6
-                                    StatusBaseText {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        text: qsTr("Loading sections...")
-                                    }
-                                    LoadingAnimation { anchors.verticalCenter: parent.verticalCenter }
-                                }
-                            }
-                        }
-
-                        Component {
-                            id: errorStateComponent
-                            Item {
-                                anchors.fill: parent
-                                StatusBaseText {
-                                    text: qsTr("Error loading chats, try closing the app and restarting")
-                                    anchors.centerIn: parent
-                                }
-                            }
-                        }
-
-                        Component {
-                            id: personalChatLayoutComponent
-
-                            ChatLayout {
-                                id: chatLayoutContainer
-
-                                isChatView: true
-                                navBar: appMain.navBar
-                                rootStore: ChatStores.RootStore {
-                                    contactsStore: appMain.contactsStore
-                                    currencyStore: appMain.currencyStore
-                                    communityTokensStore: appMain.communityTokensStore
-                                    emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                                    openCreateChat: createChatView.opened
-                                    networkConnectionStore: appMain.networkConnectionStore
-                                    isChatSectionModule: true
-                                }
-                                createChatPropertiesStore: appMain.createChatPropertiesStore
-                                tokensStore: appMain.tokensStore
-                                transactionStore: appMain.transactionStore
-                                walletAssetsStore: appMain.walletAssetsStore
-                                currencyStore: appMain.currencyStore
-                                networksStore: appMain.networksStore
-                                advancedStore: appMain.advancedStore
-                                emojiPopup: statusEmojiPopup.item
-                                stickersPopup: statusStickersPopupLoader.item
-                                sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled
-                                disabledTooltipText: !appMain.networkConnectionStore.sendBuyBridgeEnabled ?
-                                                         appMain.networkConnectionStore.sendBuyBridgeToolTipText : ""
-                                paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
-
-                                mutualContactsModel: contactsModelAdaptor.mutualContacts
-
-                                // Unfurling related data:
-                                gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
-                                neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
-
-                                // Users related data
-                                usersModel: rootStore.usersStore.usersModel
-
-                                // Contacts related data:
-                                myPublicKey: appMain.contactsStore.myPublicKey
-
-                                onProfileButtonClicked: {
-                                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
-                                }
-
-                                onOpenAppSearch: {
-                                    appSearch.openSearchPopup()
-                                }
-
-                                onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
-                                onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
-
-                                // Unfurling related requests:
-                                onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
-
-                                onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
-
-                                // Edit group chat members signals:
-                                onGroupMembersUpdateRequested: rootStore.usersStore.groupMembersUpdateRequested(membersPubKeysList)
-
-                                // Contacts related requests:
-                                onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
-                                onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
-                                onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
-                                onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
-                            }
-                        }
-                    }
-
-                    Loader {
-                        active: appView.currentIndex === Constants.appViewStackIndex.communitiesPortal
-                        asynchronous: true
-                        sourceComponent: CommunitiesPortalLayout {
+                    Component {
+                        id: loadingStateComponent
+                        Item {
                             anchors.fill: parent
-                            createCommunityEnabled: !SQUtils.Utils.isMobile
-                            navBar: appMain.navBar
-                            communitiesStore: appMain.communitiesStore
-                            assetsModel: appMain.rootStore.globalAssetsModel
-                            collectiblesModel: appMain.rootStore.globalCollectiblesModel
-                            createCommunityBadgeVisible: !appMain.communitiesStore.createCommunityPopupSeen
+
+                            Row {
+                                anchors.centerIn: parent
+                                spacing: 6
+                                StatusBaseText {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: qsTr("Loading sections...")
+                                }
+                                LoadingAnimation { anchors.verticalCenter: parent.verticalCenter }
+                            }
                         }
                     }
 
-                    Loader {
-                        active: appView.currentIndex === Constants.appViewStackIndex.wallet
-                        asynchronous: true
-                        sourceComponent: WalletLayout {
-                            objectName: "walletLayoutReal"
-                            navBar: appMain.navBar
-                            sharedRootStore: appMain.sharedRootStore
-                            store: appMain.rootStore
-                            contactsStore: appMain.contactsStore
-                            communitiesStore: appMain.communitiesStore
-                            transactionStore: appMain.transactionStore
-                            emojiPopup: statusEmojiPopup.item
-                            networkConnectionStore: appMain.networkConnectionStore
-                            networksStore: appMain.networksStore
-                            appMainVisible: appMain.visible
-                            swapEnabled: featureFlagsStore.swapEnabled
-                            dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
-                            dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
-                            dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-                            isKeycardEnabled: featureFlagsStore.keycardEnabled
-                            onDappListRequested: dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
-                            onDappConnectRequested: {
-                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
-                                dAppsServiceLoader.dappConnectRequested()
+                    Component {
+                        id: errorStateComponent
+                        Item {
+                            anchors.fill: parent
+                            StatusBaseText {
+                                text: qsTr("Error loading chats, try closing the app and restarting")
+                                anchors.centerIn: parent
                             }
-                            onDappDisconnectRequested: function(dappUrl) {
-                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
-                                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
-                            }
-                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
-                            onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
-                            onOpenSwapModalRequested: (swapFormData) => popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
-                        }
-                        onLoaded: {
-                            item.resetView()
                         }
                     }
 
-                    Loader {
-                        id: browserLayoutContainer
+                    Component {
+                        id: personalChatLayoutComponent
 
-                        asynchronous: true
-                        Binding on active {
-                            when: appView.currentIndex === Constants.appViewStackIndex.browser
-                            value: d.isBrowserEnabled && !localAppSettings.testEnvironment
-                            restoreMode: Binding.RestoreNone
-                        }
+                        ChatLayout {
+                            id: chatLayoutContainer
 
-                        sourceComponent: BrowserLayout {
-                            id: browserLayout
-                            userUID: appMain.profileStore.pubKey
+                            isChatView: true
                             navBar: appMain.navBar
-                            bookmarksStore: BrowserStores.BookmarksStore {}
-                            downloadsStore: BrowserStores.DownloadsStore {}
-                            browserRootStore: BrowserStores.BrowserRootStore {}
-                            browserWalletStore: BrowserStores.BrowserWalletStore {}
-                            web3ProviderStore: BrowserStores.Web3ProviderStore {
-                                dappBrowserAccountAddress: browserLayout.browserWalletStore.dappBrowserAccount.address
-                            }
-
-                            transactionStore: appMain.transactionStore
-                            assetsStore: appMain.walletAssetsStore
-                            currencyStore: appMain.currencyStore
-                            tokensStore: appMain.tokensStore
-                            onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
-                        }
-                    }
-
-                    Loader {
-                        id: profileLoader
-
-                        property int settingsSubsection: Constants.settingsSubsection.profile
-                        onSettingsSubsectionChanged: {
-                            item.settingsSubsection = settingsSubsection
-                        }
-                        property int settingsSubSubsection: -1
-                        onSettingsSubSubsectionChanged: {
-                            item.settingsSubsection = settingsSubsection
-                            item.settingsSubSubsection = settingsSubSubsection
-                        }
-
-                        active: appView.currentIndex === Constants.appViewStackIndex.profile
-                        asynchronous: true
-                        sourceComponent: ProfileLayout {
-                            navBar: appMain.navBar
-                            isProduction: appMain.rootStore.isProduction
-
-                            sharedRootStore: appMain.sharedRootStore
-                            utilsStore: appMain.utilsStore
-                            aboutStore: appMain.aboutStore
-                            profileStore: appMain.profileStore
-                            contactsStore: appMain.contactsStore
-                            devicesStore: appMain.devicesStore
-                            advancedStore: appMain.advancedStore
-                            privacyStore: appMain.privacyStore
-                            notificationsStore: appMain.notificationsStore
-                            languageStore: appMain.languageStore
-                            keycardStore: appMain.keycardStore
-                            walletStore: appMain.walletProfileStore
-                            messagingSettingsStore: appMain.messagingSettingsStore
-                            ensUsernamesStore: appMain.ensUsernamesStore
-                            globalStore: appMain.rootStore
-                            communitiesStore: appMain.communitiesStore
-                            networkConnectionStore: appMain.networkConnectionStore
-                            tokensStore: appMain.tokensStore
-                            walletAssetsStore: appMain.walletAssetsStore
-                            collectiblesStore: appMain.walletCollectiblesStore
-                            currencyStore: appMain.currencyStore
-                            networksStore: appMain.networksStore
-                            messagingRootStore: appMain.messagingRootStore
-
-                            isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
-                            keychain: appMain.keychain
-                            emojiPopup: statusEmojiPopup.item
-
-                            mutualContactsModel: contactsModelAdaptor.mutualContacts
-                            blockedContactsModel: contactsModelAdaptor.blockedContacts
-                            pendingContactsModel: contactsModelAdaptor.pendingContacts
-                            pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
-                            dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
-                            isKeycardEnabled: featureFlagsStore.keycardEnabled
-                            isBrowserEnabled: featureFlagsStore.browserEnabled
-                            privacyModeFeatureEnabled: featureFlagsStore.privacyModeFeatureEnabled
-
-                            theme: appMainLocalSettings.theme
-                            fontSize: appMainLocalSettings.fontSize
-                            
-                            onAddressWasShownRequested: WalletStores.RootStore.addressWasShown(address)
-                            onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
-                            onConnectUsernameRequested:(ensName, ownerAddress) => popupRequestsHandler.sendModalHandler.connectUsername(ensName, ownerAddress)
-                            onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
-                            onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
-
-                            onThemeChangeRequested: function(theme) {
-                                appMainLocalSettings.theme = theme
-                                Theme.changeTheme(theme)
-                            }
-                            onFontSizeChangeRequested: function(fontSize) {
-                                appMainLocalSettings.fontSize = fontSize
-                                Theme.changeFontSize(fontSize)
-                            }
-                            // Communities related settings view:
-                            onLeaveCommunityRequest: appMain.communitiesStore.leaveCommunity(communityId)
-                            onSetCommunityMutedRequest: appMain.communitiesStore.setCommunityMuted(communityId, mutedType)
-                            onInviteFriends: Global.openInviteFriendsToCommunityPopup(communityData,
-                                                                                      appMain.communitiesStore.communitiesProfileModule,
-                                                                                      null)
-                            onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
-                            onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
-                        }
-                        onLoaded: {
-                            item.settingsSubsection = profileLoader.settingsSubsection
-                            item.settingsSubSubsection = profileLoader.settingsSubSubsection
-                        }
-                    }
-
-                    Loader {
-                        active: appView.currentIndex === Constants.appViewStackIndex.node
-                        asynchronous: true
-                        sourceComponent: NodeLayout {
-                            navBar: appMain.navBar
-                        }
-                    }
-
-                    Loader {
-                        active: appView.currentIndex === Constants.appViewStackIndex.market
-                        asynchronous: true
-                        sourceComponent: MarketLayout {
-                            objectName: "marketLayout"
-                            navBar: appMain.navBar
-
-                            tokensModel: appMain.marketStore.marketLeaderboardModel
-                            totalTokensCount: appMain.marketStore.totalLeaderboardCount
-                            loading: appMain.marketStore.marketLeaderboardLoading
-                            currencySymbol: {
-                                const symbol = SQUtils.ModelUtils.getByKey(
-                                                appMain.currencyStore.currenciesModel,
-                                                "shortName",
-                                                appMain.currencyStore.currentCurrency,
-                                                "symbol")
-                                return !!symbol ? symbol: ""
-                            }
-                            fnFormatCurrencyAmount: function(amount, options) {
-                                return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
-                            }
-                            currentPage: appMain.marketStore.currentPage
-                            onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
-                            onFetchMarketTokens: (pageNumber, pageSize) => {
-                                                     appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
-                                                 }
-                        }
-                        onActiveChanged: {
-                            if(!active) {
-                               appMain.marketStore.unsubscribeFromUpdates()
-                            }
-                        }
-                        onLoaded: item.resetView()
-                    }
-
-                    Loader {
-                        active: appView.currentIndex === Constants.appViewStackIndex.activityCenter
-                        asynchronous: true
-                        sourceComponent: ActivityCenterLayout {
-                            id: activityCenterPopup
-
-                            objectName: "activityCenterLayout"
-                            navBar: appMain.navBar
-
-                            contactsStore: appMain.contactsStore
-                            store: ChatStores.RootStore {
+                            rootStore: ChatStores.RootStore {
                                 contactsStore: appMain.contactsStore
                                 currencyStore: appMain.currencyStore
                                 communityTokensStore: appMain.communityTokensStore
                                 emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                 openCreateChat: createChatView.opened
-                                walletStore: WalletStores.RootStore
+                                networkConnectionStore: appMain.networkConnectionStore
                                 isChatSectionModule: true
                             }
-                            activityCenterStore: appMain.activityCenterStore
-                            privacyStore: appMain.privacyStore
-                            notificationsStore: appMain.notificationsStore
-                            messagingRootStore: appMain.messagingRootStore
-                        }
-                    }
+                            createChatPropertiesStore: appMain.createChatPropertiesStore
+                            tokensStore: appMain.tokensStore
+                            transactionStore: appMain.transactionStore
+                            walletAssetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
+                            networksStore: appMain.networksStore
+                            advancedStore: appMain.advancedStore
+                            emojiPopup: statusEmojiPopup.item
+                            stickersPopup: statusStickersPopupLoader.item
+                            sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled
+                            disabledTooltipText: !appMain.networkConnectionStore.sendBuyBridgeEnabled ?
+                                                     appMain.networkConnectionStore.sendBuyBridgeToolTipText : ""
+                            paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
 
-                    Repeater {
-                        model: SortFilterProxyModel {
-                            sourceModel: appMain.rootStore.sectionsModel
-                            filters: ValueFilter {
-                                roleName: "sectionType"
-                                value: Constants.appSection.community
-                            }
-                        }
+                            mutualContactsModel: contactsModelAdaptor.mutualContacts
 
-                        delegate: Loader {
-                            readonly property string sectionId: model.id
+                            // Unfurling related data:
+                            gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
+                            neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
 
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                            Layout.fillHeight: true
+                            // Users related data
+                            usersModel: rootStore.usersStore.usersModel
 
-                            asynchronous: true
-                            active: false
+                            // Contacts related data:
+                            myPublicKey: appMain.contactsStore.myPublicKey
 
-                            // Do not unload section data from the memory in order not
-                            // to reset scroll, not send text input and etc during the
-                            // sections switching
-                            Binding on active {
-                                when: sectionId === appMain.rootStore.activeSectionId
-                                value: true
-                                restoreMode: Binding.RestoreNone
+                            onProfileButtonClicked: {
+                                Global.changeAppSectionBySectionType(Constants.appSection.profile);
                             }
 
-                            sourceComponent: ChatLayout {
-                                id: chatLayoutComponent
-
-                                readonly property bool isManageCommunityEnabledInAdvanced: appMain.advancedStore.isManageCommunityOnTestModeEnabled
-
-                                Connections {
-                                    target: Global
-                                    function onSwitchToCommunitySettings(communityId: string) {
-                                        if (communityId !== model.id)
-                                            return
-                                        chatLayoutComponent.currentIndex = 1 // Settings
-                                    }
-                                    function onSwitchToCommunityChannelsView(communityId: string) {
-                                        if (communityId !== model.id)
-                                            return
-                                        chatLayoutComponent.currentIndex = 0
-                                    }
-                                }
-                                
-                                isChatView: false // This will be a community view
-                                navBar: appMain.navBar
-                                emojiPopup: statusEmojiPopup.item
-                                stickersPopup: statusStickersPopupLoader.item
-                                sectionItemModel: model
-                                createChatPropertiesStore: appMain.createChatPropertiesStore
-                                communitiesStore: appMain.communitiesStore
-                                communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
-                                                           (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
-
-                                newCommnityStore: appMain.messagingRootStore.createCommunityRootStore(this, model.id)
-                                rootStore: ChatStores.RootStore {
-                                    contactsStore: appMain.contactsStore
-                                    currencyStore: appMain.currencyStore
-                                    communityTokensStore: appMain.communityTokensStore
-                                    emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                                    openCreateChat: createChatView.opened
-                                    isChatSectionModule: false
-                                    communityId: model.id
-                                }
-                                tokensStore: appMain.tokensStore
-                                transactionStore: appMain.transactionStore
-                                walletAssetsStore: appMain.walletAssetsStore
-                                currencyStore: appMain.currencyStore
-                                networksStore: appMain.networksStore
-                                advancedStore: appMain.advancedStore
-                                paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
-
-                                mutualContactsModel: contactsModelAdaptor.mutualContacts
-
-                                // Unfurling related data:
-                                gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
-                                neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
-
-                                usersModel: rootStore.usersStore.usersModel
-
-                                // Contacts related data:
-                                myPublicKey: appMain.contactsStore.myPublicKey
-
-                                onProfileButtonClicked: {
-                                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
-                                }
-
-                                onOpenAppSearch: {
-                                    appSearch.openSearchPopup()
-                                }
-
-                                onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
-                                onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
-
-                                // Unfurling related requests:
-                                onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
-
-                                onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
-
-                                // Contacts related requests:
-                                onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
-                                onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
-                                onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
-                                onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
+                            onOpenAppSearch: {
+                                appSearch.openSearchPopup()
                             }
+
+                            onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
+                            onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+
+                            // Unfurling related requests:
+                            onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+                            onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
+
+                            // Edit group chat members signals:
+                            onGroupMembersUpdateRequested: rootStore.usersStore.groupMembersUpdateRequested(membersPubKeysList)
+
+                            // Contacts related requests:
+                            onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
+                            onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
+                            onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
+                            onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
                         }
                     }
                 }
 
                 Loader {
-                    id: createChatView
+                    active: appView.currentIndex === Constants.appViewStackIndex.communitiesPortal
+                    asynchronous: true
+                    sourceComponent: CommunitiesPortalLayout {
+                        anchors.fill: parent
+                        createCommunityEnabled: !SQUtils.Utils.isMobile
+                        navBar: appMain.navBar
+                        communitiesStore: appMain.communitiesStore
+                        assetsModel: appMain.rootStore.globalAssetsModel
+                        collectiblesModel: appMain.rootStore.globalCollectiblesModel
+                        createCommunityBadgeVisible: !appMain.communitiesStore.createCommunityPopupSeen
+                    }
+                }
 
-                    property bool opened: false
-                    readonly property real defaultWidth: parent.width - Constants.chatSectionLeftColumnWidth -
-                             anchors.rightMargin - anchors.leftMargin
-                    active: appMain.rootStore.sectionsLoaded && opened
+                Loader {
+                    active: appView.currentIndex === Constants.appViewStackIndex.wallet
+                    asynchronous: true
+                    sourceComponent: WalletLayout {
+                        objectName: "walletLayoutReal"
+                        navBar: appMain.navBar
+                        sharedRootStore: appMain.sharedRootStore
+                        store: appMain.rootStore
+                        contactsStore: appMain.contactsStore
+                        communitiesStore: appMain.communitiesStore
+                        transactionStore: appMain.transactionStore
+                        emojiPopup: statusEmojiPopup.item
+                        networkConnectionStore: appMain.networkConnectionStore
+                        networksStore: appMain.networksStore
+                        appMainVisible: appMain.visible
+                        swapEnabled: featureFlagsStore.swapEnabled
+                        dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
+                        dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
+                        dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+                        isKeycardEnabled: featureFlagsStore.keycardEnabled
+                        onDappListRequested: dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
+                        onDappConnectRequested: {
+                            dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
+                            dAppsServiceLoader.dappConnectRequested()
+                        }
+                        onDappDisconnectRequested: function(dappUrl) {
+                            dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                            dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                        }
+                        onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                        onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
+                        onOpenSwapModalRequested: (swapFormData) => popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
+                    }
+                    onLoaded: {
+                        item.resetView()
+                    }
+                }
+
+                Loader {
+                    id: browserLayoutContainer
 
                     asynchronous: true
-                    anchors.top: parent.top
-                    anchors.topMargin: 8
-                    anchors.rightMargin: 8
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
+                    Binding on active {
+                        when: appView.currentIndex === Constants.appViewStackIndex.browser
+                        value: d.isBrowserEnabled && !localAppSettings.testEnvironment
+                        restoreMode: Binding.RestoreNone
+                    }
 
-                    sourceComponent: CreateChatView {
-                        width: Math.min(Math.max(implicitWidth, createChatView.defaultWidth), createChatView.parent.width)
+                    sourceComponent: BrowserLayout {
+                        id: browserLayout
+                        userUID: appMain.profileStore.pubKey
+                        navBar: appMain.navBar
+                        bookmarksStore: BrowserStores.BookmarksStore {}
+                        downloadsStore: BrowserStores.DownloadsStore {}
+                        browserRootStore: BrowserStores.BrowserRootStore {}
+                        browserWalletStore: BrowserStores.BrowserWalletStore {}
+                        web3ProviderStore: BrowserStores.Web3ProviderStore {
+                            dappBrowserAccountAddress: browserLayout.browserWalletStore.dappBrowserAccount.address
+                        }
+
+                        transactionStore: appMain.transactionStore
+                        assetsStore: appMain.walletAssetsStore
+                        currencyStore: appMain.currencyStore
+                        tokensStore: appMain.tokensStore
+                        onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
+                    }
+                }
+
+                Loader {
+                    id: profileLoader
+
+                    property int settingsSubsection: Constants.settingsSubsection.profile
+                    onSettingsSubsectionChanged: {
+                        item.settingsSubsection = settingsSubsection
+                    }
+                    property int settingsSubSubsection: -1
+                    onSettingsSubSubsectionChanged: {
+                        item.settingsSubsection = settingsSubsection
+                        item.settingsSubSubsection = settingsSubSubsection
+                    }
+
+                    active: appView.currentIndex === Constants.appViewStackIndex.profile
+                    asynchronous: true
+                    sourceComponent: ProfileLayout {
+                        navBar: appMain.navBar
+                        isProduction: appMain.rootStore.isProduction
+
+                        sharedRootStore: appMain.sharedRootStore
                         utilsStore: appMain.utilsStore
-                        rootStore: ChatStores.RootStore {
+                        aboutStore: appMain.aboutStore
+                        profileStore: appMain.profileStore
+                        contactsStore: appMain.contactsStore
+                        devicesStore: appMain.devicesStore
+                        advancedStore: appMain.advancedStore
+                        privacyStore: appMain.privacyStore
+                        notificationsStore: appMain.notificationsStore
+                        languageStore: appMain.languageStore
+                        keycardStore: appMain.keycardStore
+                        walletStore: appMain.walletProfileStore
+                        messagingSettingsStore: appMain.messagingSettingsStore
+                        ensUsernamesStore: appMain.ensUsernamesStore
+                        globalStore: appMain.rootStore
+                        communitiesStore: appMain.communitiesStore
+                        networkConnectionStore: appMain.networkConnectionStore
+                        tokensStore: appMain.tokensStore
+                        walletAssetsStore: appMain.walletAssetsStore
+                        collectiblesStore: appMain.walletCollectiblesStore
+                        currencyStore: appMain.currencyStore
+                        networksStore: appMain.networksStore
+                        messagingRootStore: appMain.messagingRootStore
+
+                        isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
+                        keychain: appMain.keychain
+                        emojiPopup: statusEmojiPopup.item
+
+                        mutualContactsModel: contactsModelAdaptor.mutualContacts
+                        blockedContactsModel: contactsModelAdaptor.blockedContacts
+                        pendingContactsModel: contactsModelAdaptor.pendingContacts
+                        pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
+                        dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
+                        isKeycardEnabled: featureFlagsStore.keycardEnabled
+                        isBrowserEnabled: featureFlagsStore.browserEnabled
+                        privacyModeFeatureEnabled: featureFlagsStore.privacyModeFeatureEnabled
+
+                        theme: appMainLocalSettings.theme
+                        fontSize: appMainLocalSettings.fontSize
+
+                        onAddressWasShownRequested: WalletStores.RootStore.addressWasShown(address)
+                        onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
+                        onConnectUsernameRequested:(ensName, ownerAddress) => popupRequestsHandler.sendModalHandler.connectUsername(ensName, ownerAddress)
+                        onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
+                        onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
+
+                        onThemeChangeRequested: function(theme) {
+                            appMainLocalSettings.theme = theme
+                            Theme.changeTheme(theme)
+                        }
+                        onFontSizeChangeRequested: function(fontSize) {
+                            appMainLocalSettings.fontSize = fontSize
+                            Theme.changeFontSize(fontSize)
+                        }
+                        // Communities related settings view:
+                        onLeaveCommunityRequest: appMain.communitiesStore.leaveCommunity(communityId)
+                        onSetCommunityMutedRequest: appMain.communitiesStore.setCommunityMuted(communityId, mutedType)
+                        onInviteFriends: Global.openInviteFriendsToCommunityPopup(communityData,
+                                                                                  appMain.communitiesStore.communitiesProfileModule,
+                                                                                  null)
+                        onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                        onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                    }
+                    onLoaded: {
+                        item.settingsSubsection = profileLoader.settingsSubsection
+                        item.settingsSubSubsection = profileLoader.settingsSubSubsection
+                    }
+                }
+
+                Loader {
+                    active: appView.currentIndex === Constants.appViewStackIndex.node
+                    asynchronous: true
+                    sourceComponent: NodeLayout {
+                        navBar: appMain.navBar
+                    }
+                }
+
+                Loader {
+                    active: appView.currentIndex === Constants.appViewStackIndex.market
+                    asynchronous: true
+                    sourceComponent: MarketLayout {
+                        objectName: "marketLayout"
+                        navBar: appMain.navBar
+
+                        tokensModel: appMain.marketStore.marketLeaderboardModel
+                        totalTokensCount: appMain.marketStore.totalLeaderboardCount
+                        loading: appMain.marketStore.marketLeaderboardLoading
+                        currencySymbol: {
+                            const symbol = SQUtils.ModelUtils.getByKey(
+                                            appMain.currencyStore.currenciesModel,
+                                            "shortName",
+                                            appMain.currencyStore.currentCurrency,
+                                            "symbol")
+                            return !!symbol ? symbol: ""
+                        }
+                        fnFormatCurrencyAmount: function(amount, options) {
+                            return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
+                        }
+                        currentPage: appMain.marketStore.currentPage
+                        onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
+                        onFetchMarketTokens: (pageNumber, pageSize) => {
+                                                 appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
+                                             }
+                    }
+                    onActiveChanged: {
+                        if(!active) {
+                           appMain.marketStore.unsubscribeFromUpdates()
+                        }
+                    }
+                    onLoaded: item.resetView()
+                }
+
+                Loader {
+                    active: appView.currentIndex === Constants.appViewStackIndex.activityCenter
+                    asynchronous: true
+                    sourceComponent: ActivityCenterLayout {
+                        id: activityCenterPopup
+
+                        objectName: "activityCenterLayout"
+                        navBar: appMain.navBar
+
+                        contactsStore: appMain.contactsStore
+                        store: ChatStores.RootStore {
                             contactsStore: appMain.contactsStore
                             currencyStore: appMain.currencyStore
                             communityTokensStore: appMain.communityTokensStore
                             emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                             openCreateChat: createChatView.opened
+                            walletStore: WalletStores.RootStore
                             isChatSectionModule: true
                         }
-                        createChatPropertiesStore: appMain.createChatPropertiesStore
+                        activityCenterStore: appMain.activityCenterStore
+                        privacyStore: appMain.privacyStore
+                        notificationsStore: appMain.notificationsStore
+                        messagingRootStore: appMain.messagingRootStore
+                    }
+                }
 
-                        mutualContactsModel: contactsModelAdaptor.mutualContacts
+                Repeater {
+                    model: SortFilterProxyModel {
+                        sourceModel: appMain.rootStore.sectionsModel
+                        filters: ValueFilter {
+                            roleName: "sectionType"
+                            value: Constants.appSection.community
+                        }
+                    }
 
-                        emojiPopup: statusEmojiPopup.item
-                        stickersPopup: statusStickersPopupLoader.item
+                    delegate: Loader {
+                        readonly property string sectionId: model.id
+
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillHeight: true
+
+                        asynchronous: true
+                        active: false
+
+                        // Do not unload section data from the memory in order not
+                        // to reset scroll, not send text input and etc during the
+                        // sections switching
+                        Binding on active {
+                            when: sectionId === appMain.rootStore.activeSectionId
+                            value: true
+                            restoreMode: Binding.RestoreNone
+                        }
+
+                        sourceComponent: ChatLayout {
+                            id: chatLayoutComponent
+
+                            readonly property bool isManageCommunityEnabledInAdvanced: appMain.advancedStore.isManageCommunityOnTestModeEnabled
+
+                            Connections {
+                                target: Global
+                                function onSwitchToCommunitySettings(communityId: string) {
+                                    if (communityId !== model.id)
+                                        return
+                                    chatLayoutComponent.currentIndex = 1 // Settings
+                                }
+                                function onSwitchToCommunityChannelsView(communityId: string) {
+                                    if (communityId !== model.id)
+                                        return
+                                    chatLayoutComponent.currentIndex = 0
+                                }
+                            }
+
+                            isChatView: false // This will be a community view
+                            navBar: appMain.navBar
+                            emojiPopup: statusEmojiPopup.item
+                            stickersPopup: statusStickersPopupLoader.item
+                            sectionItemModel: model
+                            createChatPropertiesStore: appMain.createChatPropertiesStore
+                            communitiesStore: appMain.communitiesStore
+                            communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
+                                                       (appMain.rootStore.isProduction && appMain.networksStore.areTestNetworksEnabled)
+
+                            newCommnityStore: appMain.messagingRootStore.createCommunityRootStore(this, model.id)
+                            rootStore: ChatStores.RootStore {
+                                contactsStore: appMain.contactsStore
+                                currencyStore: appMain.currencyStore
+                                communityTokensStore: appMain.communityTokensStore
+                                emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                openCreateChat: createChatView.opened
+                                isChatSectionModule: false
+                                communityId: model.id
+                            }
+                            tokensStore: appMain.tokensStore
+                            transactionStore: appMain.transactionStore
+                            walletAssetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
+                            networksStore: appMain.networksStore
+                            advancedStore: appMain.advancedStore
+                            paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
+
+                            mutualContactsModel: contactsModelAdaptor.mutualContacts
+
+                            // Unfurling related data:
+                            gifUnfurlingEnabled: appMain.sharedRootStore.gifUnfurlingEnabled
+                            neverAskAboutUnfurlingAgain: appMain.sharedRootStore.neverAskAboutUnfurlingAgain
+
+                            usersModel: rootStore.usersStore.usersModel
+
+                            // Contacts related data:
+                            myPublicKey: appMain.contactsStore.myPublicKey
+
+                            onProfileButtonClicked: {
+                                Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                            }
+
+                            onOpenAppSearch: {
+                                appSearch.openSearchPopup()
+                            }
+
+                            onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
+                            onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+
+                            // Unfurling related requests:
+                            onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+                            onOpenGifPopupRequest: popupRequestsHandler.statusGifPopupHandler.openGifs(params, cbOnGifSelected, cbOnClose)
+
+                            // Contacts related requests:
+                            onChangeContactNicknameRequest: appMain.contactsStore.changeContactNickname(pubKey, nickname, displayName, isEdit)
+                            onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
+                            onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
+                            onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
+                        }
                     }
                 }
             }
-        } // ColumnLayout
 
-        Action {
-            shortcut: "Ctrl+1"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(0)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+2"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(1)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+3"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(2)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+4"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(3)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+5"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(4)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+6"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(5)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+7"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(6)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+8"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(7)
-            }
-        }
-        Action {
-            shortcut: "Ctrl+9"
-            onTriggered: {
-                Global.setNthEnabledSectionActive(8)
-            }
-        }
+            Loader {
+                id: createChatView
 
-        Shortcut {
-            sequence: "Ctrl+K"
-            context: Qt.ApplicationShortcut
-            onActivated: {
-                if (homePageLoader.active)
-                    return
-                if (!channelPickerLoader.active)
-                    channelPickerLoader.active = true
+                property bool opened: false
+                readonly property real defaultWidth: parent.width - Constants.chatSectionLeftColumnWidth -
+                         anchors.rightMargin - anchors.leftMargin
+                active: appMain.rootStore.sectionsLoaded && opened
 
-                if (channelPickerLoader.item.opened) {
-                    channelPickerLoader.item.close()
-                    channelPickerLoader.active = false
-                } else {
-                    channelPickerLoader.item.open()
+                asynchronous: true
+                anchors.top: parent.top
+                anchors.topMargin: 8
+                anchors.rightMargin: 8
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+
+                sourceComponent: CreateChatView {
+                    width: Math.min(Math.max(implicitWidth, createChatView.defaultWidth), createChatView.parent.width)
+                    utilsStore: appMain.utilsStore
+                    rootStore: ChatStores.RootStore {
+                        contactsStore: appMain.contactsStore
+                        currencyStore: appMain.currencyStore
+                        communityTokensStore: appMain.communityTokensStore
+                        emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                        openCreateChat: createChatView.opened
+                        isChatSectionModule: true
+                    }
+                    createChatPropertiesStore: appMain.createChatPropertiesStore
+
+                    mutualContactsModel: contactsModelAdaptor.mutualContacts
+
+                    emojiPopup: statusEmojiPopup.item
+                    stickersPopup: statusStickersPopupLoader.item
                 }
             }
         }
-        Shortcut {
-            sequence: "Ctrl+F"
-            context: Qt.ApplicationShortcut
-            onActivated: {
-                if (appSearch.active) {
-                    appSearch.closeSearchPopup()
-                } else {
-                    appSearch.openSearchPopup()
-                }
+    } // ColumnLayout
+
+    Action {
+        shortcut: "Ctrl+1"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(0)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+2"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(1)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+3"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(2)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+4"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(3)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+5"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(4)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+6"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(5)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+7"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(6)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+8"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(7)
+        }
+    }
+    Action {
+        shortcut: "Ctrl+9"
+        onTriggered: {
+            Global.setNthEnabledSectionActive(8)
+        }
+    }
+
+    Shortcut {
+        sequence: "Ctrl+K"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            if (homePageLoader.active)
+                return
+            if (!channelPickerLoader.active)
+                channelPickerLoader.active = true
+
+            if (channelPickerLoader.item.opened) {
+                channelPickerLoader.item.close()
+                channelPickerLoader.active = false
+            } else {
+                channelPickerLoader.item.open()
             }
         }
+    }
+    Shortcut {
+        sequence: "Ctrl+F"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            if (appSearch.active) {
+                appSearch.closeSearchPopup()
+            } else {
+                appSearch.openSearchPopup()
+            }
+        }
+    }
 
-        Loader {
-            id: channelPickerLoader
-            active: false
-            asynchronous: true
-            sourceComponent: StatusSearchListPopup {
-                searchBoxPlaceholder: qsTr("Where do you want to go?")
-                model: rootStore.chatSearchModel
+    Loader {
+        id: channelPickerLoader
+        active: false
+        asynchronous: true
+        sourceComponent: StatusSearchListPopup {
+            searchBoxPlaceholder: qsTr("Where do you want to go?")
+            model: rootStore.chatSearchModel
 
-                onSelected: function (sectionId, chatId) {
-                    rootStore.setActiveSectionChat(sectionId, chatId)
-                    close()
-                }
+            onSelected: function (sectionId, chatId) {
+                rootStore.setActiveSectionChat(sectionId, chatId)
+                close()
             }
         }
     }
