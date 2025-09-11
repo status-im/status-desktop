@@ -9,16 +9,25 @@
     </message>
     <message numerus="yes">
         <source>%n valid address(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
     </message>
     <message numerus="yes">
         <source>%n invalid</source>
         <comment>invalid addresses, where &quot;addresses&quot; is implicit</comment>
-        <translation type="unfinished"></translation>
+        <translation>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
     </message>
     <message numerus="yes">
         <source>%n invalid address(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
     </message>
 </context>
 <context>
