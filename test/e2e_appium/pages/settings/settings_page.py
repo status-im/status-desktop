@@ -3,6 +3,8 @@ from typing import Optional
 from ..base_page import BasePage
 from locators.settings.settings_locators import SettingsLocators
 from .backup_seed_modal import BackupSeedModal
+from locators.wallet.saved_addresses_locators import SavedAddressesLocators
+from pages.wallet.saved_addresses_page import SavedAddressesPage
 
 
 class SettingsPage(BasePage):
@@ -14,7 +16,6 @@ class SettingsPage(BasePage):
         return self.is_element_visible(self.locators.PROFILE_MENU_ITEM, timeout=timeout)
 
     def open_sign_out_and_quit(self) -> bool:
-        # Try exact then heuristic
         if self.safe_click(
             self.locators.SIGN_OUT_AND_QUIT,
             fallback_locators=[self.locators.SIGN_OUT_AND_QUIT_ALT], 
@@ -23,14 +24,12 @@ class SettingsPage(BasePage):
         return False
 
     def confirm_sign_out(self) -> bool:
-        #TODO: Remove fallback locators
         return self.safe_click(
             self.locators.CONFIRM_SIGN_OUT,
             fallback_locators=[self.locators.CONFIRM_QUIT],
         )
 
     def open_backup_recovery_phrase(self) -> Optional[BackupSeedModal]:
-        # Click explicit TID menu item only
         try:
             if not self.is_element_visible(
                 self.locators.BACKUP_RECOVERY_MENU_ITEM, timeout=10
@@ -50,3 +49,21 @@ class SettingsPage(BasePage):
         return not self.is_element_visible(
             self.locators.BACKUP_RECOVERY_MENU_ITEM, timeout=2
         )
+
+    def open_saved_addresses(self) -> Optional[SavedAddressesPage]:
+        locators = SavedAddressesLocators()
+        if not self.is_loaded(timeout=10):
+            return None
+        try:
+            self.safe_click(locators.SETTINGS_WALLET_MENU_ITEM)
+        except Exception:
+            pass
+        try:
+            if not self.is_element_visible(locators.SAVED_ADDRESSES_ITEM, timeout=10):
+                return None
+            if not self.safe_click(locators.SAVED_ADDRESSES_ITEM):
+                return None
+        except Exception:
+            return None
+        page = SavedAddressesPage(self.driver)
+        return page if page.is_loaded(timeout=10) else None
