@@ -33,6 +33,9 @@ StatusListItem {
     property int usage: SavedAddressesDelegate.Usage.Delegate
     property bool showButtons: sensor.containsMouse
 
+    // Expose menu button so containers (e.g., popup) can relabel it for tests
+    property alias menuButtonAlias: menuButton
+
     property alias sendButton: sendButton
 
     signal aboutToOpenPopup()
@@ -98,12 +101,15 @@ StatusListItem {
             onClicked: root.openSendModal(d.visibleAddress)
         },
         StatusRoundButton {
+            id: menuButton
             objectName: "savedAddressView_Delegate_menuButton_" + root.name
+            // Visible when row is valid; enabled on hover/focus per existing behavior
             visible: !!root.name
             enabled: root.showButtons
             type: StatusRoundButton.Type.Quinary
             radius: 8
             icon.name: "more"
+            Accessible.name: Utils.formatAccessibleName("Options", "savedAddressMenuButton")
             onClicked: {
                 menu.openMenu(this, x + width - menu.width - statusListItemComponentsSlot.spacing, y + height + Theme.halfPadding,
                     {
@@ -127,6 +133,7 @@ StatusListItem {
 
         readonly property int maxHeight: 341
         height: implicitHeight > maxHeight ? maxHeight : implicitHeight
+        // Optional: stable name for tests (access via TIDs on actions instead)
 
         function openMenu(parent, x, y, model) {
             menu.name = model.name;
