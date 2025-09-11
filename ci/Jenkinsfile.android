@@ -10,7 +10,7 @@ pipeline {
     /* Image with Ubuntu 22.04, QT 6.9.0, Android SDK/NDK, Go, and Nim */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.0.4-qt6.9.0-android'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.4-qt6.9.0-android'
       alwaysPull true
     }
   }

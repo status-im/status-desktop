@@ -10,7 +10,7 @@ pipeline {
     /* Image with Ubuntu 22.04 and QT 6.9.0 */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:2.0.5-qt6.9.0'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.4-qt6.9.0'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
