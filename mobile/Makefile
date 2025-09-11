@@ -1,5 +1,8 @@
 -include ./scripts/EnvVariables.mk
 -include ./scripts/Common.mk
+
+STATUS_GO_LIB := $(LIB_PATH)/libstatus$(LIB_EXT)
+
 $(info Configuring build system for $(OS) $(ARCH) with QT $(QT_MAJOR))
 
 # default rule
@@ -9,7 +12,6 @@ iosdevice: IPHONE_SDK=iphoneos
 iosdevice: default
 
 # dependencies
-status-go: clean-status-go $(STATUS_GO_LIB)
 statusq: clean-statusq $(STATUS_Q_LIB)
 dotherside: clean-dotherside $(DOTHERSIDE_LIB)
 openssl: clean-openssl $(OPENSSL_LIB)
@@ -17,17 +19,25 @@ qrcodegen: clean-qrcodegen $(QRCODEGEN_LIB)
 nim-status-client: clean-nim-status-client $(NIM_STATUS_CLIENT_LIB)
 status-desktop-rcc: clean-status-desktop-rcc $(STATUS_DESKTOP_RCC)
 
-$(STATUS_GO_LIB): $(STATUS_GO_FILES) $(STATUS_GO_SCRIPT)
-	@echo "Building Status Go"
-ifeq ($(OS),ios)
-	@STATUS_GO=$(STATUS_GO) \
-		CC="$(shell xcrun --sdk ${SDK} --find clang)" \
-		CGO_CFLAGS="-arch ${ARCH} -isysroot $(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path) -miphoneos-version-min=${IOS_TARGET} -fembed-bitcode" \
-		$(STATUS_GO_SCRIPT) $(HANDLE_OUTPUT)
-else
-	@STATUS_GO=$(STATUS_GO) $(STATUS_GO_SCRIPT) $(HANDLE_OUTPUT)
+$(STATUS_GO_LIB):
+	@echo "Building status-go mobile library"
+ifeq ($(OS),android)
+	  CC="$(CC)" $(MAKE) -C ../vendor/status-go statusgo-android-library \
+		ARCH=$(ARCH) \
+		ANDROID_NDK_ROOT="$(ANDROID_NDK_ROOT)" \
+		ANDROID_API="$(ANDROID_API)" \
+		HOST_OS="$(HOST_OS)" \
+		SHELL=/bin/sh
+else ifeq ($(OS),ios)
+	$(MAKE) -C ../vendor/status-go statusgo-ios-library \
+		ARCH=$(ARCH) \
+		IPHONE_SDK="$(IPHONE_SDK)" \
+		IOS_TARGET="$(IOS_TARGET)" \
+		SHELL=/bin/sh
 endif
-	@echo "Status Go built $(STATUS_GO_LIB)"
+	@echo "Copying library to mobile lib directory"
+	@mkdir -p $(LIB_PATH)
+	@cp ../vendor/status-go/build/bin/libstatus$(LIB_EXT) $(LIB_PATH)/libstatus$(LIB_EXT)
 
 $(STATUS_Q_LIB): $(STATUS_Q_FILES) $(STATUS_Q_SCRIPT) $(STATUS_Q_UI_FILES)
 	@echo "Building StatusQ"
@@ -73,7 +83,7 @@ makedir:
 all: $(TARGET)
 
 .PHONY: clean
-clean: clean-status-go clean-statusq clean-dotherside clean-openssl clean-qrcodegen clean-nim-status-client clean-status-desktop-rcc
+clean: clean-statusq clean-dotherside clean-openssl clean-qrcodegen clean-nim-status-client clean-status-desktop-rcc
 	@echo "Cleaning"
 	@rm -rf $(ROOT_DIR)/bin $(ROOT_DIR)/build $(ROOT_DIR)/lib
 
@@ -81,12 +91,6 @@ clean: clean-status-go clean-statusq clean-dotherside clean-openssl clean-qrcode
 run: makedir $(TARGET)
 	@echo "Running"
 	@APP=$(TARGET) QT_MAJOR=$(QT_MAJOR) USE_QML_SERVER=$(USE_QML_SERVER) $(RUN_SCRIPT)
-
-.PHONY: clean-status-go
-clean-status-go:
-	@rm -f $(STATUS_GO_LIB)
-	@rm -rf $(STATUS_GO)/build
-	@make -C $(STATUS_DESKTOP) status-go-clean
 
 .PHONY: clean-statusq
 clean-statusq:
