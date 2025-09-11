@@ -39,9 +39,14 @@ SplitView {
         isProduction: ctrlIsProduction.checked
         localBackupEnabled: localBackupEnabledSwitch.checked
         backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
+        messagesBackupEnabled: false
         onBackupPathSet: function(path) {
             logs.logEvent("SyncingView::onBackupPathSet", ["path"], arguments)
             backupPath = path
+        }
+        onBackupMessagesEnabledToggled: function(enabled) {
+            logs.logEvent("SyncingView::backupMessagesEnabledToggled", ["enabled"], arguments)
+            messagesBackupEnabled = enabled
         }
         advancedStore: ProfileStores.AdvancedStore {
             readonly property bool isDebugEnabled: ctrlDebugEnabled.checked

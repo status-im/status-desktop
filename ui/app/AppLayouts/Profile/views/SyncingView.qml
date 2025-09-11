@@ -37,9 +37,11 @@ SettingsContentBase {
 
     required property bool isProduction
     required property bool localBackupEnabled
+    required property bool messagesBackupEnabled
     required property url backupPath
 
     signal backupPathSet(url path)
+    signal backupMessagesEnabledToggled(bool enabled)
 
     ColumnLayout {
         id: layout
@@ -290,9 +292,26 @@ SettingsContentBase {
         StatusSettingsLineButton {
             anchors.leftMargin: 0
             anchors.rightMargin: 0
+            visible: root.localBackupEnabled
             text: qsTr("Directory of the local backup files")
             currentValue: root.backupPath
             onClicked: backupPathDialog.open()
+        }
+
+        StatusSettingsLineButton {
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            visible: root.localBackupEnabled
+            text: qsTr("Backup messages locally")
+            isSwitch: true
+            switchChecked: root.messagesBackupEnabled
+            onClicked: {
+                if (root.messagesBackupEnabled) {
+                    root.backupMessagesEnabledToggled(false)
+                    return
+                }
+                Global.openPopup(enableMessagesBackupDialog)
+            }
         }
 
         StatusButton {
@@ -414,6 +433,17 @@ SettingsContentBase {
             id: getSyncCodeInstructionsPopup
             GetSyncCodeInstructionsPopup {
                 destroyOnClose: true
+            }
+        }
+
+        Component {
+            id: enableMessagesBackupDialog
+            EnableMessagesBackupDialog {
+                destroyOnClose: true
+                onEnableRequested: {
+                    root.backupMessagesEnabledToggled(true)
+                    Global.closePopup()
+                }
             }
         }
 

@@ -58,6 +58,7 @@ const KEY_NEWS_FEED_ENABLED* = "news-feed-enabled?"
 const KEY_NEWS_NOTIFICATIONS_ENABLED* = "news-notifications-enabled?"
 const KEY_NEWS_RSS_ENABLED* = "news-rss-enabled?"
 const KEY_BACKUP_PATH* = "backup-path"
+const KEY_MESSAGES_BACKUP_ENABLED* = "messages-backup-enabled?"
 const KEY_THIRDPARTY_SERVICES_ENABLED* = "thirdparty_services_enabled"
 
 # Notifications Settings Values
@@ -117,6 +118,7 @@ type
   SettingsDto* = object # There is no point to keep all these info as settings, but we must follow status-go response
     address*: string
     backupPath*: string
+    messagesBackupEnabled*: bool
     currency*: string
     dappsAddress*: string
     eip1581Address*: string
@@ -233,6 +235,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
   discard jsonObj.getProp(KEY_AUTO_REFRESH_TOKENS, result.autoRefreshTokens)
   discard jsonObj.getProp(KEY_BACKUP_PATH, result.backupPath)
+  discard jsonObj.getProp(KEY_MESSAGES_BACKUP_ENABLED, result.messagesBackupEnabled)
   discard jsonObj.getProp(KEY_THIRDPARTY_SERVICES_ENABLED, result.thirdpartyServicesEnabled)
 
   var lastTokensUpdate: string
