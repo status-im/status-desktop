@@ -1,6 +1,6 @@
 import QtQuick
 
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.pages
 
 Item {
     id: root

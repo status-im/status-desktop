@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.pages
 
 import utils
 

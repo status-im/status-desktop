@@ -8,10 +8,10 @@ import QtQuick.Window
 import StatusQ
 import StatusQ.Core.Backpressure
 
+import AppLayouts.Onboarding
 import AppLayouts.Onboarding.enums
-import AppLayouts.Onboarding2
-import AppLayouts.Onboarding2.pages
-import AppLayouts.Onboarding2.stores
+import AppLayouts.Onboarding.pages
+import AppLayouts.Onboarding.stores
 
 import shared.panels
 import utils

@@ -5,7 +5,7 @@ import QtQuick.Controls
 
 import StatusQ.Core.Backpressure
 
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.pages
 import AppLayouts.Onboarding.enums
 
 import Storybook

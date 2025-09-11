@@ -5,7 +5,7 @@ import StatusQ.Core.Theme
 import StatusQ.Popups.Dialog
 import StatusQ.Controls
 
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.pages
 
 StatusDialog {
     id: root

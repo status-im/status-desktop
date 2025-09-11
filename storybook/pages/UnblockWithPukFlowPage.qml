@@ -11,8 +11,8 @@ import Storybook
 
 import utils
 
-import AppLayouts.Onboarding2
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding
+import AppLayouts.Onboarding.pages
 import AppLayouts.Onboarding.enums
 
 SplitView {
