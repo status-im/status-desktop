@@ -19,30 +19,73 @@ pipeline {
       description: 'Qt version to build'
     )
     string(
-      name: 'DOCKER_TAG',
-      defaultValue: '1.0.3-qt6.9.2-android',
-      description: 'Docker image tag for the final image'
+      name: 'DOCKER_TAG_ANDROID',
+      defaultValue: '1.0.4-qt6.9.2-android',
+      description: 'Docker image tag for the Andorid image'
     )
-    booleanParam(
-      name: 'PUSH_TO_DOCKERHUB',
-      defaultValue: true,
-      description: 'Push the final image to DockerHub'
+    string(
+      name: 'DOCKER_TAG_LINUX',
+      defaultValue: '1.0.4-qt6.9.2',
+      description: 'Docker image tag for the Linux image'
+    )
+    string(
+      name: 'DOCKER_REGISTRY',
+      description: 'Docker registry ',
+      defaultValue: params.DOCKER_REGISTRY ?: 'docker.io',
     )
   }
 
   environment {
-    DOCKER_REGISTRY = 'statusteam'
-    DOCKER_IMAGE_BASE = 'nim-status-client-build'
-    MOBILE_BUILD_DIR = "${WORKSPACE}/mobile/docker"
+    DOCKER_IMAGE = 'statusteam/nim-status-client-build'
+    ANDROID_BUILD_DIR = "${WORKSPACE}/mobile/docker"
+    LINUX_BUILD_DIR = "${WORKSPACE}/ci"
   }
 
   stages {
-    stage('Build Docker Images') {
+
+    stage('Build Docker Image for Linux') {
       steps {
         script {
-          dir("${MOBILE_BUILD_DIR}") {
+          dir("${LINUX_BUILD_DIR}") {
             image = docker.build(
-              "${DOCKER_REGISTRY}/${DOCKER_IMAGE_BASE}:${params.DOCKER_TAG}",
+              "${DOCKER_IMAGE}:${params.DOCKER_TAG_LINUX}",
+              "--build-arg QT_VERSION=${params.QT_VERSION} " +
+              "--build-arg LINUXDEPLOYQT_VERSION=20250615-0393b84 " +
+              "--build-arg PCSCLITE_VERSION=2.2.3 " +
+              "."
+            )
+          }
+        }
+      }
+    }
+
+    stage('Test Image for Linux') {
+      steps {
+        script {
+          image.inside('--entrypoint=""') {
+            sh "qmake --version"
+            sh "ls -la /opt/qt/${params.QT_VERSION}/"
+          }
+        }
+      }
+    }
+
+    stage('Push Linux image to Docker registry') {
+      steps {
+        script {
+          withDockerRegistry([credentialsId: 'docker-io-credentials', url: "https://${DOCKER_REGISTRY}"]) {
+            image.push(params.DOCKER_TAG_LINUX)
+          }
+        }
+      }
+    }
+
+    stage('Build Docker Image for Android') {
+      steps {
+        script {
+          dir("${ANDROID_BUILD_DIR}") {
+            image = docker.build(
+              "${DOCKER_IMAGE}:${params.DOCKER_TAG_ANDROID}",
               "--build-arg QTVER=${params.QT_VERSION} " +
               "--build-arg TARGETARCH=amd64 " +
               "--build-arg JAVA_VERSION=17 " +
@@ -58,33 +101,27 @@ pipeline {
       }
     }
 
-    stage('Test Images') {
-      parallel {
-        stage('Test Mobile Build Image') {
-          steps {
-            script {
-              image.inside('--entrypoint=""') {
-                sh "qmake --version"
-                sh "nim --version"
-                sh "go version"
-                sh "protoc --version"
-                sh "java -version"
-                sh "ls -la /opt/qt/${params.QT_VERSION}/"
-              }
-            }
+    stage('Test Image for Android') {
+      steps {
+        script {
+          image.inside('--entrypoint=""') {
+            sh "qmake --version"
+            sh "nim --version"
+            sh "go version"
+            sh "protoc --version"
+            sh "java -version"
+            sh "ls -la /opt/qt/${params.QT_VERSION}/"
           }
         }
-
       }
     }
 
-    stage('Push to DockerHub') {
-      when {
-        expression { params.PUSH_TO_DOCKERHUB == true }
-      }
+    stage('Push Android image to Docker registry') {
       steps {
         script {
-          image.push()
+          withDockerRegistry([credentialsId: 'docker-io-credentials', url: "https://${DOCKER_REGISTRY}"]) {
+            image.push(params.DOCKER_TAG_ANDROID)
+          }
         }
       }
     }
