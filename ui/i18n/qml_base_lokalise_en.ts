@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <TS version="2.1" language="en" sourcelanguage="en">
 <context>
     <name />
@@ -37,8 +38,8 @@
         <translation>Status Help</translation>
     </message>
     <message>
-        <source>Status desktop&#8217;s GitHub Repositories</source>
-        <translation>Status desktop&#8217;s GitHub Repositories</translation>
+        <source>Status desktop’s GitHub Repositories</source>
+        <translation>Status desktop’s GitHub Repositories</translation>
     </message>
     <message>
         <source>status-desktop</source>
@@ -244,7 +245,27 @@
     </message>
 </context>
 <context>
-    <name>ActivityCenterPopup</name>
+    <name>ActivityCenterLayout</name>
+    <message>
+        <source>Notifications</source>
+        <translation>Notifications</translation>
+    </message>
+    <message>
+        <source>Under construction.&lt;br&gt;More notification types to be coming soon.</source>
+        <translation>Under construction.&lt;br&gt;More notification types to be coming soon.</translation>
+    </message>
+    <message>
+        <source>Mark all as Read</source>
+        <translation>Mark all as Read</translation>
+    </message>
+    <message>
+        <source>Show read notifications</source>
+        <translation>Show read notifications</translation>
+    </message>
+    <message>
+        <source>Hide read notifications</source>
+        <translation>Hide read notifications</translation>
+    </message>
     <message>
         <source>Pair new device and sync profile</source>
         <translation>Pair new device and sync profile</translation>
@@ -335,22 +356,6 @@
     <message>
         <source>System</source>
         <translation>System</translation>
-    </message>
-    <message>
-        <source>Under construction.&lt;br&gt;More notification types to be coming soon.</source>
-        <translation>Under construction.&lt;br&gt;More notification types to be coming soon.</translation>
-    </message>
-    <message>
-        <source>Mark all as Read</source>
-        <translation>Mark all as Read</translation>
-    </message>
-    <message>
-        <source>Show read notifications</source>
-        <translation>Show read notifications</translation>
-    </message>
-    <message>
-        <source>Hide read notifications</source>
-        <translation>Hide read notifications</translation>
     </message>
 </context>
 <context>
@@ -463,50 +468,51 @@
     </message>
 </context>
 <context>
-    <name>ActivityNotificationBase</name>
-    <message>
-        <source>Mark as Unread</source>
-        <translation>Mark as Unread</translation>
-    </message>
-    <message>
-        <source>Mark as Read</source>
-        <translation>Mark as Read</translation>
-    </message>
-</context>
-<context>
     <name>ActivityNotificationCommunityBanUnban</name>
     <message>
-        <source>You were banned from</source>
-        <translation>You were banned from</translation>
+        <source>You were &lt;font color='%1'&gt;banned&lt;/font&gt; from community</source>
+        <translation>You were &lt;font color='%1'&gt;banned&lt;/font&gt; from community</translation>
     </message>
     <message>
-        <source>You've been unbanned from</source>
-        <translation>You've been unbanned from</translation>
-    </message>
-    <message>
-        <source>Visit Community</source>
-        <translation>Visit Community</translation>
+        <source>You have been  &lt;font color='%1'&gt;unbanned&lt;/font&gt; from community</source>
+        <translation>You have been  &lt;font color='%1'&gt;unbanned&lt;/font&gt; from community</translation>
     </message>
 </context>
 <context>
     <name>ActivityNotificationCommunityKicked</name>
     <message>
-        <source>You were kicked from</source>
-        <translation>You were kicked from</translation>
+        <source>You were &lt;font color='%1'&gt;kicked&lt;/font&gt; from community</source>
+        <translation>You were &lt;font color='%1'&gt;kicked&lt;/font&gt; from community</translation>
     </message>
 </context>
 <context>
     <name>ActivityNotificationCommunityMembershipRequest</name>
     <message>
-        <source>Wants to join</source>
-        <translation>Wants to join</translation>
+        <source>accepted</source>
+        <translation>accepted</translation>
+    </message>
+    <message>
+        <source>declined</source>
+        <translation>declined</translation>
+    </message>
+    <message>
+        <source>accepted pending</source>
+        <translation>accepted pending</translation>
+    </message>
+    <message>
+        <source>declined pending</source>
+        <translation>declined pending</translation>
+    </message>
+    <message>
+        <source>Requested membership in your community &lt;font color='%1'&gt;%2&lt;/font&gt;</source>
+        <translation>Requested membership in your community &lt;font color='%1'&gt;%2&lt;/font&gt;</translation>
     </message>
 </context>
 <context>
     <name>ActivityNotificationCommunityRequest</name>
     <message>
-        <source>Request to join</source>
-        <translation>Request to join</translation>
+        <source>Request to join &lt;font color='%1'&gt;%2&lt;/font&gt;</source>
+        <translation>Request to join &lt;font color='%1'&gt;%2&lt;/font&gt;</translation>
     </message>
     <message>
         <source>pending</source>
@@ -519,10 +525,6 @@
     <message>
         <source>declined</source>
         <translation>declined</translation>
-    </message>
-    <message>
-        <source>Visit Community</source>
-        <translation>Visit Community</translation>
     </message>
 </context>
 <context>
@@ -585,12 +587,24 @@
 <context>
     <name>ActivityNotificationContactRequest</name>
     <message>
-        <source>Contact request sent to %1</source>
-        <translation>Contact request sent to %1</translation>
+        <source>accepted</source>
+        <translation>accepted</translation>
     </message>
     <message>
-        <source>Contact request:</source>
-        <translation>Contact request:</translation>
+        <source>declined</source>
+        <translation>declined</translation>
+    </message>
+    <message>
+        <source>pending</source>
+        <translation>pending</translation>
+    </message>
+    <message>
+        <source>Contact request sent to %1 &lt;font color='%2'&gt;%3&lt;/font&gt;</source>
+        <translation>Contact request sent to %1 &lt;font color='%2'&gt;%3&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <source>Contact request &lt;font color='%1'&gt;%2&lt;/font&gt;</source>
+        <translation>Contact request &lt;font color='%1'&gt;%2&lt;/font&gt;</translation>
     </message>
 </context>
 <context>
@@ -634,8 +648,8 @@
 <context>
     <name>ActivityNotificationNewsMessage</name>
     <message>
-        <source>Read more</source>
-        <translation>Read more</translation>
+        <source>Learn more</source>
+        <translation>Learn more</translation>
     </message>
 </context>
 <context>
@@ -711,8 +725,16 @@
 <context>
     <name>ActivityNotificationUnknownGroupChatInvitation</name>
     <message>
-        <source>Invitation to an unknown group</source>
-        <translation>Invitation to an unknown group</translation>
+        <source>accepted</source>
+        <translation>accepted</translation>
+    </message>
+    <message>
+        <source>declined</source>
+        <translation>declined</translation>
+    </message>
+    <message>
+        <source>Invitation to an unknown group &lt;font color='%1'&gt;%2&lt;/font&gt;</source>
+        <translation>Invitation to an unknown group &lt;font color='%1'&gt;%2&lt;/font&gt;</translation>
     </message>
 </context>
 <context>
@@ -1135,26 +1157,20 @@
     </message>
     <message numerus="yes">
         <source>%n valid address(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n valid address</numerusform>
+            <numerusform>%n valid addresses</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n invalid</source>
         <comment>invalid addresses, where "addresses" is implicit</comment>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n invalid</numerusform>
+            <numerusform>%n invalid</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n invalid address(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n invalid address</numerusform>
+            <numerusform>%n invalid addresses</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>AdvancedView</name>
@@ -1370,17 +1386,15 @@
         <translation>Example: 12 addresses and 3 members</translation>
     </message>
     <message>
-        <source>&#8734; recipients</source>
+        <source>∞ recipients</source>
         <comment>infinite number of recipients</comment>
-        <translation>&#8734; recipients</translation>
+        <translation>∞ recipients</translation>
     </message>
     <message numerus="yes">
         <source>%n recipient(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n recipient</numerusform>
+            <numerusform>%n recipients</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>AirdropTokensSelector</name>
@@ -1472,11 +1486,9 @@
     </message>
     <message numerus="yes">
         <source>Max %n decimal place(s) for this asset</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Max %n decimal place for this asset</numerusform>
+            <numerusform>Max %n decimal places for this asset</numerusform>
+        </translation></message>
     <message>
         <source>Amount must be greater than 0</source>
         <translation>Amount must be greater than 0</translation>
@@ -1522,8 +1534,8 @@ from "%1" to "%2"</translation>
         <translation>Live network settings for %1 updated</translation>
     </message>
     <message>
-        <source>&#8220;%1&#8221; key pair and its derived accounts were successfully removed from all devices</source>
-        <translation>&#8220;%1&#8221; key pair and its derived accounts were successfully removed from all devices</translation>
+        <source>“%1” key pair and its derived accounts were successfully removed from all devices</source>
+        <translation>“%1” key pair and its derived accounts were successfully removed from all devices</translation>
     </message>
     <message>
         <source>Please re-generate QR code and try importing again</source>
@@ -1539,11 +1551,9 @@ from "%1" to "%2"</translation>
     </message>
     <message numerus="yes">
         <source>%n key pair(s) successfully imported</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n key pair successfully imported</numerusform>
+            <numerusform>%n key pairs successfully imported</numerusform>
+        </translation></message>
     <message>
         <source>unknown</source>
         <translation>unknown</translation>
@@ -1893,12 +1903,12 @@ from "%1" to "%2"</translation>
         <translation>Leave Community</translation>
     </message>
     <message>
-        <source>The import of &#8216;%1&#8217; from Discord to Status was stopped: &lt;a href='#'&gt;Critical issues found&lt;/a&gt;</source>
-        <translation>The import of &#8216;%1&#8217; from Discord to Status was stopped: &lt;a href='#'&gt;Critical issues found&lt;/a&gt;</translation>
+        <source>The import of ‘%1’ from Discord to Status was stopped: &lt;a href='#'&gt;Critical issues found&lt;/a&gt;</source>
+        <translation>The import of ‘%1’ from Discord to Status was stopped: &lt;a href='#'&gt;Critical issues found&lt;/a&gt;</translation>
     </message>
     <message>
-        <source>&#8216;%1&#8217; was successfully imported from Discord to Status</source>
-        <translation>&#8216;%1&#8217; was successfully imported from Discord to Status</translation>
+        <source>‘%1’ was successfully imported from Discord to Status</source>
+        <translation>‘%1’ was successfully imported from Discord to Status</translation>
     </message>
     <message>
         <source>Details (%1)</source>
@@ -1906,18 +1916,16 @@ from "%1" to "%2"</translation>
     </message>
     <message numerus="yes">
         <source>%n issue(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n issue</numerusform>
+            <numerusform>%n issues</numerusform>
+        </translation></message>
     <message>
         <source>Details</source>
         <translation>Details</translation>
     </message>
     <message>
-        <source>Importing &#8216;%1&#8217; from Discord to Status</source>
-        <translation>Importing &#8216;%1&#8217; from Discord to Status</translation>
+        <source>Importing ‘%1’ from Discord to Status</source>
+        <translation>Importing ‘%1’ from Discord to Status</translation>
     </message>
     <message>
         <source>Check progress (%1)</source>
@@ -2250,12 +2258,12 @@ from "%1" to "%2"</translation>
         <translation>Custom order</translation>
     </message>
     <message>
-        <source>Edit custom order &#8594;</source>
-        <translation>Edit custom order &#8594;</translation>
+        <source>Edit custom order →</source>
+        <translation>Edit custom order →</translation>
     </message>
     <message>
-        <source>Create custom order &#8594;</source>
-        <translation>Create custom order &#8594;</translation>
+        <source>Create custom order →</source>
+        <translation>Create custom order →</translation>
     </message>
     <message>
         <source>Community minted</source>
@@ -2303,8 +2311,8 @@ from "%1" to "%2"</translation>
         <translation>Decide whether you want to keep the recovery phrase in your Status app for future access or remove it permanently.</translation>
     </message>
     <message>
-        <source>Permanently remove your recovery phrase from the Status app &#8212; you will not be able to view it again</source>
-        <translation>Permanently remove your recovery phrase from the Status app &#8212; you will not be able to view it again</translation>
+        <source>Permanently remove your recovery phrase from the Status app — you will not be able to view it again</source>
+        <translation>Permanently remove your recovery phrase from the Status app — you will not be able to view it again</translation>
     </message>
 </context>
 <context>
@@ -2341,10 +2349,10 @@ from "%1" to "%2"</translation>
         <translation>Reveal recovery phrase</translation>
     </message>
     <message>
-        <source>Never share your recovery phrase. If someone asks for it, they&#8217;re likely trying to scam you.
+        <source>Never share your recovery phrase. If someone asks for it, they’re likely trying to scam you.
 
 To backup you recovery phrase, write it down and store it securely in a safe place.</source>
-        <translation>Never share your recovery phrase. If someone asks for it, they&#8217;re likely trying to scam you.
+        <translation>Never share your recovery phrase. If someone asks for it, they’re likely trying to scam you.
 
 To backup you recovery phrase, write it down and store it securely in a safe place.</translation>
     </message>
@@ -2421,12 +2429,12 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
         <translation>Block user</translation>
     </message>
     <message>
-        <source>You will not see %1&#8217;s messages but %1 can still see your messages in mutual group chats and communities. %1 will be unable to message you.</source>
-        <translation>You will not see %1&#8217;s messages but %1 can still see your messages in mutual group chats and communities. %1 will be unable to message you.</translation>
+        <source>You will not see %1’s messages but %1 can still see your messages in mutual group chats and communities. %1 will be unable to message you.</source>
+        <translation>You will not see %1’s messages but %1 can still see your messages in mutual group chats and communities. %1 will be unable to message you.</translation>
     </message>
     <message>
-        <source>Blocking a user purges the database of all messages that you&#8217;ve previously received from %1 in all contexts. This can take a moment.</source>
-        <translation>Blocking a user purges the database of all messages that you&#8217;ve previously received from %1 in all contexts. This can take a moment.</translation>
+        <source>Blocking a user purges the database of all messages that you’ve previously received from %1 in all contexts. This can take a moment.</source>
+        <translation>Blocking a user purges the database of all messages that you’ve previously received from %1 in all contexts. This can take a moment.</translation>
     </message>
     <message>
         <source>Remove contact</source>
@@ -2640,15 +2648,13 @@ Do you wish to override the security check and continue?</translation>
         <translation>Burn %1 token on %2</translation>
     </message>
     <message numerus="yes">
-        <source>How many of %1&#8217;s remaining %Ln %2 token(s) would you like to burn?</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <source>How many of %1’s remaining %Ln %2 token(s) would you like to burn?</source>
+        <translation><numerusform>How many of %1’s remaining %Ln %2 token would you like to burn?</numerusform>
+            <numerusform>How many of %1’s remaining %Ln %2 tokens would you like to burn?</numerusform>
+        </translation></message>
     <message>
-        <source>How many of %1&#8217;s remaining %2 %3 tokens would you like to burn?</source>
-        <translation>How many of %1&#8217;s remaining %2 %3 tokens would you like to burn?</translation>
+        <source>How many of %1’s remaining %2 %3 tokens would you like to burn?</source>
+        <translation>How many of %1’s remaining %2 %3 tokens would you like to burn?</translation>
     </message>
     <message>
         <source>Specific amount</source>
@@ -3054,11 +3060,9 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>ChatMessagesView</name>
@@ -3261,12 +3265,12 @@ file format</translation>
         <translation>Custom order</translation>
     </message>
     <message>
-        <source>Edit custom order &#8594;</source>
-        <translation>Edit custom order &#8594;</translation>
+        <source>Edit custom order →</source>
+        <translation>Edit custom order →</translation>
     </message>
     <message>
-        <source>Create custom order &#8594;</source>
-        <translation>Create custom order &#8594;</translation>
+        <source>Create custom order →</source>
+        <translation>Create custom order →</translation>
     </message>
     <message>
         <source>Clear filter</source>
@@ -3372,11 +3376,9 @@ file format</translation>
     <name>ColumnHeaderPanel</name>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation></message>
     <message>
         <source>Start chat</source>
         <translation>Start chat</translation>
@@ -3403,11 +3405,9 @@ file format</translation>
     <name>CommunitiesListPanel</name>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation></message>
     <message>
         <source>Membership Request Sent</source>
         <translation>Membership Request Sent</translation>
@@ -3647,11 +3647,9 @@ file format</translation>
     </message>
     <message numerus="yes">
         <source>%n message(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n message</numerusform>
+            <numerusform>%n messages</numerusform>
+        </translation></message>
     <message>
         <source>No messages</source>
         <translation>No messages</translation>
@@ -3693,11 +3691,9 @@ file format</translation>
     </message>
     <message numerus="yes">
         <source>Share %n address(s) to join</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Share %n address to join</numerusform>
+            <numerusform>Share %n addresses to join</numerusform>
+        </translation></message>
     <message>
         <source>Select addresses to share</source>
         <translation>Select addresses to share</translation>
@@ -3741,11 +3737,9 @@ file format</translation>
     <name>CommunitySettingsView</name>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation></message>
     <message>
         <source>Back to community</source>
         <translation>Back to community</translation>
@@ -3833,8 +3827,8 @@ file format</translation>
         <translation>I am ready to write down my recovery phrase</translation>
     </message>
     <message>
-        <source>I know where I&#8217;ll store it</source>
-        <translation>I know where I&#8217;ll store it</translation>
+        <source>I know where I’ll store it</source>
+        <translation>I know where I’ll store it</translation>
     </message>
     <message>
         <source>You can only complete this process once. Status will not store your recovery phrase and can never help you recover it.</source>
@@ -3859,8 +3853,8 @@ file format</translation>
 <context>
     <name>ConfirmChangePasswordModal</name>
     <message>
-        <source>Your data must now be re-encrypted with your new password. This process may take some time, during which you won&#8217;t be able to interact with the app. Do not quit the app or turn off your device. Doing so will lead to data corruption, loss of your Status profile and the inability to restart Status.</source>
-        <translation>Your data must now be re-encrypted with your new password. This process may take some time, during which you won&#8217;t be able to interact with the app. Do not quit the app or turn off your device. Doing so will lead to data corruption, loss of your Status profile and the inability to restart Status.</translation>
+        <source>Your data must now be re-encrypted with your new password. This process may take some time, during which you won’t be able to interact with the app. Do not quit the app or turn off your device. Doing so will lead to data corruption, loss of your Status profile and the inability to restart Status.</source>
+        <translation>Your data must now be re-encrypted with your new password. This process may take some time, during which you won’t be able to interact with the app. Do not quit the app or turn off your device. Doing so will lead to data corruption, loss of your Status profile and the inability to restart Status.</translation>
     </message>
     <message>
         <source>Re-encryption complete</source>
@@ -3963,10 +3957,10 @@ file format</translation>
         <translation>Store Your Phrase Offline and Complete Your Back Up</translation>
     </message>
     <message>
-        <source>By completing this process, you will remove your recovery phrase from this application&#8217;s storage. This makes your funds more secure.
+        <source>By completing this process, you will remove your recovery phrase from this application’s storage. This makes your funds more secure.
 
 You will remain logged in, and your recovery phrase will be entirely in your hands.</source>
-        <translation>By completing this process, you will remove your recovery phrase from this application&#8217;s storage. This makes your funds more secure.
+        <translation>By completing this process, you will remove your recovery phrase from this application’s storage. This makes your funds more secure.
 
 You will remain logged in, and your recovery phrase will be entirely in your hands.</translation>
     </message>
@@ -4070,11 +4064,9 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message numerus="yes">
         <source>Key pair must be at least %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Key pair must be at least %n character</numerusform>
+            <numerusform>Key pair must be at least %n characters</numerusform>
+        </translation></message>
     <message>
         <source>Only letters and numbers allowed</source>
         <translation>Only letters and numbers allowed</translation>
@@ -4156,16 +4148,16 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <translation>Username already taken :(</translation>
     </message>
     <message>
-        <source>Username doesn&#8217;t belong to you :(</source>
-        <translation>Username doesn&#8217;t belong to you :(</translation>
+        <source>Username doesn’t belong to you :(</source>
+        <translation>Username doesn’t belong to you :(</translation>
     </message>
     <message>
         <source>Continuing will connect this username with your chat key.</source>
         <translation>Continuing will connect this username with your chat key.</translation>
     </message>
     <message>
-        <source>&#10003; Username available!</source>
-        <translation>&#10003; Username available!</translation>
+        <source>✓ Username available!</source>
+        <translation>✓ Username available!</translation>
     </message>
     <message>
         <source>Username is already connected with your chat key and can be used inside Status.</source>
@@ -4340,8 +4332,8 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <translation>%1 will be right back!</translation>
     </message>
     <message>
-        <source>You will automatically re-enter the community and be able to view and post as normal as soon as the community&#8217;s control node comes back online.</source>
-        <translation>You will automatically re-enter the community and be able to view and post as normal as soon as the community&#8217;s control node comes back online.</translation>
+        <source>You will automatically re-enter the community and be able to view and post as normal as soon as the community’s control node comes back online.</source>
+        <translation>You will automatically re-enter the community and be able to view and post as normal as soon as the community’s control node comes back online.</translation>
     </message>
 </context>
 <context>
@@ -4357,49 +4349,6 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <message>
         <source>Non-Ethereum cointype</source>
         <translation>Non-Ethereum cointype</translation>
-    </message>
-</context>
-<context>
-    <name>Controls</name>
-    <message>
-        <source>XS</source>
-        <translation>XS</translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation>S</translation>
-    </message>
-    <message>
-        <source>M</source>
-        <translation>M</translation>
-    </message>
-    <message>
-        <source>L</source>
-        <translation>L</translation>
-    </message>
-    <message>
-        <source>XL</source>
-        <translation>XL</translation>
-    </message>
-    <message>
-        <source>XXL</source>
-        <translation>XXL</translation>
-    </message>
-    <message>
-        <source>50%</source>
-        <translation>50%</translation>
-    </message>
-    <message>
-        <source>100%</source>
-        <translation>100%</translation>
-    </message>
-    <message>
-        <source>150%</source>
-        <translation>150%</translation>
-    </message>
-    <message>
-        <source>200%</source>
-        <translation>200%</translation>
     </message>
 </context>
 <context>
@@ -4480,24 +4429,20 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <translation>%1h</translation>
     </message>
     <message numerus="yes">
-        <source>%n&#8201;min(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <source>%n min(s)</source>
+        <translation><numerusform>%n min</numerusform>
+            <numerusform>%n mins</numerusform>
+        </translation></message>
     <message>
         <source>%1m</source>
         <comment>x minutes</comment>
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <source>%n&#8201;sec(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <source>%n sec(s)</source>
+        <translation><numerusform>%n secs</numerusform>
+            <numerusform>%n secs</numerusform>
+        </translation></message>
     <message>
         <source>Expired on: %1</source>
         <translation>Expired on: %1</translation>
@@ -4610,11 +4555,9 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message numerus="yes">
         <source>Validate %n file(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Validate %n file</numerusform>
+            <numerusform>Validate %n files</numerusform>
+        </translation></message>
     <message>
         <source>Validate (%1/%2) files</source>
         <translation>Validate (%1/%2) files</translation>
@@ -4644,8 +4587,8 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <translation>Browse files</translation>
     </message>
     <message>
-        <source>Export the Discord channel&#8217;s chat history data using %1</source>
-        <translation>Export the Discord channel&#8217;s chat history data using %1</translation>
+        <source>Export the Discord channel’s chat history data using %1</source>
+        <translation>Export the Discord channel’s chat history data using %1</translation>
     </message>
     <message>
         <source>Refer to this &lt;a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'&gt;documentation&lt;/a&gt; if you have any queries</source>
@@ -4761,14 +4704,6 @@ Send a contact request to the person you would like to chat with, you will be ab
         <translation>You can only send direct messages to your Contacts.
 
 Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.</translation>
-    </message>
-    <message>
-        <source>To: </source>
-        <translation>To: </translation>
-    </message>
-    <message>
-        <source>USER LIMIT REACHED</source>
-        <translation>USER LIMIT REACHED</translation>
     </message>
 </context>
 <context>
@@ -4908,8 +4843,8 @@ Send a contact request to the person you would like to chat with, you will be ab
         <translation>Create profile password</translation>
     </message>
     <message>
-        <source>This password can&#8217;t be recovered</source>
-        <translation>This password can&#8217;t be recovered</translation>
+        <source>This password can’t be recovered</source>
+        <translation>This password can’t be recovered</translation>
     </message>
     <message>
         <source>Confirm password</source>
@@ -4951,8 +4886,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Create a new profile from scratch</translation>
     </message>
     <message>
-        <source>Let&#8217;s go!</source>
-        <translation>Let&#8217;s go!</translation>
+        <source>Let’s go!</source>
+        <translation>Let’s go!</translation>
     </message>
     <message>
         <source>Use a recovery phrase</source>
@@ -5086,8 +5021,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Colombian peso</translation>
     </message>
     <message>
-        <source>Costa Rican col&#243;n</source>
-        <translation>Costa Rican col&#243;n</translation>
+        <source>Costa Rican colón</source>
+        <translation>Costa Rican colón</translation>
     </message>
     <message>
         <source>Czech koruna</source>
@@ -5142,8 +5077,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Indian rupee</translation>
     </message>
     <message>
-        <source>Icelandic kr&#243;na</source>
-        <translation>Icelandic kr&#243;na</translation>
+        <source>Icelandic króna</source>
+        <translation>Icelandic króna</translation>
     </message>
     <message>
         <source>Jamaican dollar</source>
@@ -5238,12 +5173,12 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Pakistani rupee</translation>
     </message>
     <message>
-        <source>Polish z&#322;oty</source>
-        <translation>Polish z&#322;oty</translation>
+        <source>Polish złoty</source>
+        <translation>Polish złoty</translation>
     </message>
     <message>
-        <source>Paraguayan guaran&#237;</source>
-        <translation>Paraguayan guaran&#237;</translation>
+        <source>Paraguayan guaraní</source>
+        <translation>Paraguayan guaraní</translation>
     </message>
     <message>
         <source>Qatari riyal</source>
@@ -5302,12 +5237,12 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Uruguayan peso</translation>
     </message>
     <message>
-        <source>Venezuelan bol&#237;var</source>
-        <translation>Venezuelan bol&#237;var</translation>
+        <source>Venezuelan bolívar</source>
+        <translation>Venezuelan bolívar</translation>
     </message>
     <message>
-        <source>Vietnamese &#273;&#7891;ng</source>
-        <translation>Vietnamese &#273;&#7891;ng</translation>
+        <source>Vietnamese đồng</source>
+        <translation>Vietnamese đồng</translation>
     </message>
     <message>
         <source>South African rand</source>
@@ -5551,25 +5486,6 @@ Remember your password and don't share it with anyone.</translation>
     </message>
 </context>
 <context>
-    <name>DemoApp</name>
-    <message>
-        <source>Invite People</source>
-        <translation>Invite People</translation>
-    </message>
-    <message>
-        <source>View Community</source>
-        <translation>View Community</translation>
-    </message>
-    <message>
-        <source>Edit Community</source>
-        <translation>Edit Community</translation>
-    </message>
-    <message>
-        <source>Leave Community</source>
-        <translation>Leave Community</translation>
-    </message>
-</context>
-<context>
     <name>DerivationPath</name>
     <message>
         <source>Derivation Path</source>
@@ -5679,8 +5595,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Status messenger is the most secure fully decentralised messenger in the world</translation>
     </message>
     <message>
-        <source>Full metadata privacy means it&#8217;s impossible to tell who you are talking to by surveilling your internet traffic</source>
-        <translation>Full metadata privacy means it&#8217;s impossible to tell who you are talking to by surveilling your internet traffic</translation>
+        <source>Full metadata privacy means it’s impossible to tell who you are talking to by surveilling your internet traffic</source>
+        <translation>Full metadata privacy means it’s impossible to tell who you are talking to by surveilling your internet traffic</translation>
     </message>
     <message>
         <source>Status is truly private - none of your personal details (or any other information) are sent to us</source>
@@ -5691,12 +5607,12 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Messages sent using Status are end to end encrypted and can only be opened by the recipient</translation>
     </message>
     <message>
-        <source>Status uses the Waku p2p gossip messaging protocol &#8212; an evolution of the EF&#8217;s original Whisper protocol</source>
-        <translation>Status uses the Waku p2p gossip messaging protocol &#8212; an evolution of the EF&#8217;s original Whisper protocol</translation>
+        <source>Status uses the Waku p2p gossip messaging protocol — an evolution of the EF’s original Whisper protocol</source>
+        <translation>Status uses the Waku p2p gossip messaging protocol — an evolution of the EF’s original Whisper protocol</translation>
     </message>
     <message>
-        <source>Status is home to crypto&#8217;s leading multi-chain self-custodial wallet</source>
-        <translation>Status is home to crypto&#8217;s leading multi-chain self-custodial wallet</translation>
+        <source>Status is home to crypto’s leading multi-chain self-custodial wallet</source>
+        <translation>Status is home to crypto’s leading multi-chain self-custodial wallet</translation>
     </message>
     <message>
         <source>Status removes intermediaries to keep your messages private and your assets secure</source>
@@ -5719,8 +5635,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Your cryptographic key pair encrypts all of your messages which can only be unlocked by the intended recipient</translation>
     </message>
     <message>
-        <source>Status&#8217; Web3 browser requires all DApps to ask permission before connecting to your wallet</source>
-        <translation>Status&#8217; Web3 browser requires all DApps to ask permission before connecting to your wallet</translation>
+        <source>Status’ Web3 browser requires all DApps to ask permission before connecting to your wallet</source>
+        <translation>Status’ Web3 browser requires all DApps to ask permission before connecting to your wallet</translation>
     </message>
     <message>
         <source>Your non-custodial wallet gives you full control over your funds without the use of a server</source>
@@ -5731,8 +5647,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Status is decentralized and serverless - chat, transact, and browse without surveillance and censorship</translation>
     </message>
     <message>
-        <source>Status is open source software that lets you use with p2p networks. Status itself doesn&#8217;t provide any services</source>
-        <translation>Status is open source software that lets you use with p2p networks. Status itself doesn&#8217;t provide any services</translation>
+        <source>Status is open source software that lets you use with p2p networks. Status itself doesn’t provide any services</source>
+        <translation>Status is open source software that lets you use with p2p networks. Status itself doesn’t provide any services</translation>
     </message>
     <message>
         <source>Status is a way to access p2p networks that are permissionlessly created and run by individuals around the world</source>
@@ -5791,8 +5707,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Our team of core contributors work remotely from over 50+ countries spread across 6 continents</translation>
     </message>
     <message>
-        <source>The only continent that doesn&#8217;t (yet!) have any Status core contributors is Antarctica</source>
-        <translation>The only continent that doesn&#8217;t (yet!) have any Status core contributors is Antarctica</translation>
+        <source>The only continent that doesn’t (yet!) have any Status core contributors is Antarctica</source>
+        <translation>The only continent that doesn’t (yet!) have any Status core contributors is Antarctica</translation>
     </message>
     <message>
         <source>We are the 5th most active crypto project on github</source>
@@ -5823,8 +5739,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Your mobile company, and government are able to see the contents of all your private SMS messages</translation>
     </message>
     <message>
-        <source>Many other messengers with e2e encryption don&#8217;t have metadata privacy!</source>
-        <translation>Many other messengers with e2e encryption don&#8217;t have metadata privacy!</translation>
+        <source>Many other messengers with e2e encryption don’t have metadata privacy!</source>
+        <translation>Many other messengers with e2e encryption don’t have metadata privacy!</translation>
     </message>
     <message>
         <source>Help to translate Status into your native language see https://translate.status.im/ for more info</source>
@@ -5855,12 +5771,12 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Status also builds the Nimbus Ethereum consensus, execution and light clients</translation>
     </message>
     <message>
-        <source>Status&#8217;s Nimbus team is collaborating with the Ethereum Foundation to create the Portal Network</source>
-        <translation>Status&#8217;s Nimbus team is collaborating with the Ethereum Foundation to create the Portal Network</translation>
+        <source>Status’s Nimbus team is collaborating with the Ethereum Foundation to create the Portal Network</source>
+        <translation>Status’s Nimbus team is collaborating with the Ethereum Foundation to create the Portal Network</translation>
     </message>
     <message>
-        <source>Status&#8217;s Portal Network client (Fluffy) will let Status users interact with Ethereum in a fully decenteralised way</source>
-        <translation>Status&#8217;s Portal Network client (Fluffy) will let Status users interact with Ethereum in a fully decenteralised way</translation>
+        <source>Status’s Portal Network client (Fluffy) will let Status users interact with Ethereum in a fully decenteralised way</source>
+        <translation>Status’s Portal Network client (Fluffy) will let Status users interact with Ethereum in a fully decenteralised way</translation>
     </message>
     <message>
         <source>We are currently working on a tool to let you import an existing Telegram or Discord group into Status</source>
@@ -5937,8 +5853,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Initializing community</translation>
     </message>
     <message>
-        <source>&#10003; Complete</source>
-        <translation>&#10003; Complete</translation>
+        <source>✓ Complete</source>
+        <translation>✓ Complete</translation>
     </message>
     <message>
         <source>Import stopped...</source>
@@ -5958,41 +5874,37 @@ Remember your password and don't share it with anyone.</translation>
     </message>
     <message numerus="yes">
         <source>%n more issue(s) downloading assets</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
+        <translation><numerusform>%n more issue downloading assets</numerusform>
+            <numerusform>%n more issues downloading assets</numerusform>
+        </translation></message>
+    <message>
+        <source>Importing ‘%1’ from Discord...</source>
+        <translation>Importing ‘%1’ from Discord...</translation>
     </message>
     <message>
-        <source>Importing &#8216;%1&#8217; from Discord...</source>
-        <translation>Importing &#8216;%1&#8217; from Discord...</translation>
+        <source>Importing ‘%1’ from Discord stopped...</source>
+        <translation>Importing ‘%1’ from Discord stopped...</translation>
     </message>
     <message>
-        <source>Importing &#8216;%1&#8217; from Discord stopped...</source>
-        <translation>Importing &#8216;%1&#8217; from Discord stopped...</translation>
-    </message>
-    <message>
-        <source>Importing &#8216;%1&#8217; stopped due to a critical issue...</source>
-        <translation>Importing &#8216;%1&#8217; stopped due to a critical issue...</translation>
+        <source>Importing ‘%1’ stopped due to a critical issue...</source>
+        <translation>Importing ‘%1’ stopped due to a critical issue...</translation>
     </message>
     <message numerus="yes">
-        <source>&#8216;%1&#8217; was imported with %n issue(s).</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <source>‘%1’ was imported with %n issue(s).</source>
+        <translation><numerusform>‘%1’ was imported with %n issue.</numerusform>
+            <numerusform>‘%1’ was imported with %n issues.</numerusform>
+        </translation></message>
     <message>
-        <source>&#8216;%1&#8217; was successfully imported from Discord.</source>
-        <translation>&#8216;%1&#8217; was successfully imported from Discord.</translation>
+        <source>‘%1’ was successfully imported from Discord.</source>
+        <translation>‘%1’ was successfully imported from Discord.</translation>
     </message>
     <message>
         <source>Your Discord import is in progress...</source>
         <translation>Your Discord import is in progress...</translation>
     </message>
     <message>
-        <source>This process can take a while. Feel free to hide this window and use Status normally in the meantime. We&#8217;ll notify you when the %1 is ready for you.</source>
-        <translation>This process can take a while. Feel free to hide this window and use Status normally in the meantime. We&#8217;ll notify you when the %1 is ready for you.</translation>
+        <source>This process can take a while. Feel free to hide this window and use Status normally in the meantime. We’ll notify you when the %1 is ready for you.</source>
+        <translation>This process can take a while. Feel free to hide this window and use Status normally in the meantime. We’ll notify you when the %1 is ready for you.</translation>
     </message>
     <message>
         <source>Channel</source>
@@ -6061,8 +5973,8 @@ Remember your password and don't share it with anyone.</translation>
 <context>
     <name>DisplayNameValidators</name>
     <message>
-        <source>Display Names can&#8217;t start or end with a space</source>
-        <translation>Display Names can&#8217;t start or end with a space</translation>
+        <source>Display Names can’t start or end with a space</source>
+        <translation>Display Names can’t start or end with a space</translation>
     </message>
     <message>
         <source>Invalid characters (use A-Z and 0-9, hyphens and underscores only)</source>
@@ -6070,21 +5982,17 @@ Remember your password and don't share it with anyone.</translation>
     </message>
     <message numerus="yes">
         <source>Display Names must be at least %n character(s) long</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Display Names must be at least %n character long</numerusform>
+            <numerusform>Display Names must be at least %n characters long</numerusform>
+        </translation></message>
     <message numerus="yes">
-        <source>Display Names can&#8217;t be longer than %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <source>Display Names can’t be longer than %n character(s)</source>
+        <translation><numerusform>Display Names can’t be longer than %n character</numerusform>
+            <numerusform>Display Names can’t be longer than %n characters</numerusform>
+        </translation></message>
     <message>
-        <source>Display Names can&#8217;t end in &#8220;.eth&#8221;, &#8220;_eth&#8221; or &#8220;-eth&#8221;</source>
-        <translation>Display Names can&#8217;t end in &#8220;.eth&#8221;, &#8220;_eth&#8221; or &#8220;-eth&#8221;</translation>
+        <source>Display Names can’t end in “.eth”, “_eth” or “-eth”</source>
+        <translation>Display Names can’t end in “.eth”, “_eth” or “-eth”</translation>
     </message>
     <message>
         <source>Adjective-animal Display Name formats are not allowed</source>
@@ -6204,8 +6112,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Your messages are displayed to others with this username:</translation>
     </message>
     <message>
-        <source>Once you select a username, you won&#8217;t be able to disable it afterwards. You will only be able choose a different username to display.</source>
-        <translation>Once you select a username, you won&#8217;t be able to disable it afterwards. You will only be able choose a different username to display.</translation>
+        <source>Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display.</source>
+        <translation>Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display.</translation>
     </message>
 </context>
 <context>
@@ -6235,8 +6143,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Show fees (will be enabled once the form is filled)</translation>
     </message>
     <message>
-        <source>Add valid &#8220;What&#8221; and &#8220;To&#8221; values to see fees</source>
-        <translation>Add valid &#8220;What&#8221; and &#8220;To&#8221; values to see fees</translation>
+        <source>Add valid “What” and “To” values to see fees</source>
+        <translation>Add valid “What” and “To” values to see fees</translation>
     </message>
     <message>
         <source>Not enough tokens to send to all recipients. Reduce the number of recipients or change the number of tokens sent to each recipient.</source>
@@ -6248,18 +6156,14 @@ Remember your password and don't share it with anyone.</translation>
     </message>
     <message numerus="yes">
         <source>Sign transaction - Airdrop %n token(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Sign transaction - Airdrop %n token</numerusform>
+            <numerusform>Sign transaction - Airdrop %n tokens</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>to %n recipient(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>to %n recipient</numerusform>
+            <numerusform>to %n recipients</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>EditCommunityTokenView</name>
@@ -6494,8 +6398,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Checking RPC...</translation>
     </message>
     <message>
-        <source>What is %1? This isn&#8217;t a URL &#128530;</source>
-        <translation>What is %1? This isn&#8217;t a URL &#128530;</translation>
+        <source>What is %1? This isn’t a URL 😒</source>
+        <translation>What is %1? This isn’t a URL 😒</translation>
     </message>
     <message>
         <source>RPC appears to be either offline or this is not a valid JSON RPC endpoint URL</source>
@@ -6510,8 +6414,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>JSON RPC URLs are the same</translation>
     </message>
     <message>
-        <source>Chain ID returned from JSON RPC doesn&#8217;t match %1</source>
-        <translation>Chain ID returned from JSON RPC doesn&#8217;t match %1</translation>
+        <source>Chain ID returned from JSON RPC doesn’t match %1</source>
+        <translation>Chain ID returned from JSON RPC doesn’t match %1</translation>
     </message>
     <message>
         <source>Restart required for changes to take effect</source>
@@ -6597,8 +6501,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Select network</translation>
     </message>
     <message>
-        <source>The network you select will be where all your community&#8217;s tokens reside. Once set, this setting can&#8217;t be changed and tokens can&#8217;t move to other networks.</source>
-        <translation>The network you select will be where all your community&#8217;s tokens reside. Once set, this setting can&#8217;t be changed and tokens can&#8217;t move to other networks.</translation>
+        <source>The network you select will be where all your community’s tokens reside. Once set, this setting can’t be changed and tokens can’t move to other networks.</source>
+        <translation>The network you select will be where all your community’s tokens reside. Once set, this setting can’t be changed and tokens can’t move to other networks.</translation>
     </message>
     <message>
         <source>Mint</source>
@@ -6640,8 +6544,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Hide permission</translation>
     </message>
     <message>
-        <source>Make this permission hidden from members who don&#8217;t meet its requirements</source>
-        <translation>Make this permission hidden from members who don&#8217;t meet its requirements</translation>
+        <source>Make this permission hidden from members who don’t meet its requirements</source>
+        <translation>Make this permission hidden from members who don’t meet its requirements</translation>
     </message>
     <message>
         <source>Permission with same properties is already active, edit properties to create a new permission.</source>
@@ -6805,8 +6709,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Enter a number between 0 and 1023</translation>
     </message>
     <message>
-        <source>Invalid shard number. Number must be 0 &#8212; 1023.</source>
-        <translation>Invalid shard number. Number must be 0 &#8212; 1023.</translation>
+        <source>Invalid shard number. Number must be 0 — 1023.</source>
+        <translation>Invalid shard number. Number must be 0 — 1023.</translation>
     </message>
     <message>
         <source>Pub/Sub topic</source>
@@ -6925,8 +6829,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>Hey!</translation>
     </message>
     <message>
-        <source>You&#8217;re displaying your ENS username in chats</source>
-        <translation>You&#8217;re displaying your ENS username in chats</translation>
+        <source>You’re displaying your ENS username in chats</source>
+        <translation>You’re displaying your ENS username in chats</translation>
     </message>
 </context>
 <context>
@@ -7052,8 +6956,8 @@ Remember your password and don't share it with anyone.</translation>
         <translation>After 1 year, you can release the name and get your deposit back, or take no action to keep the name.</translation>
     </message>
     <message>
-        <source>If terms of the contract change &#8212; e.g. Status makes contract upgrades &#8212; user has the right to release the username regardless of time held.</source>
-        <translation>If terms of the contract change &#8212; e.g. Status makes contract upgrades &#8212; user has the right to release the username regardless of time held.</translation>
+        <source>If terms of the contract change — e.g. Status makes contract upgrades — user has the right to release the username regardless of time held.</source>
+        <translation>If terms of the contract change — e.g. Status makes contract upgrades — user has the right to release the username regardless of time held.</translation>
     </message>
     <message>
         <source>The contract controller cannot access your deposited funds. They can only be moved back to the address that sent them.</source>
@@ -7208,11 +7112,9 @@ Please add it and try again.</translation>
     </message>
     <message numerus="yes">
         <source>Key pair name must be at least %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Key pair name must be at least %n character</numerusform>
+            <numerusform>Key pair name must be at least %n characters</numerusform>
+        </translation></message>
     <message>
         <source>For your future reference. This is only visible to you.</source>
         <translation>For your future reference. This is only visible to you.</translation>
@@ -7244,8 +7146,8 @@ Please add it and try again.</translation>
 <context>
     <name>EnterPairingCode</name>
     <message>
-        <source>The codes don&#8217;t match</source>
-        <translation>The codes don&#8217;t match</translation>
+        <source>The codes don’t match</source>
+        <translation>The codes don’t match</translation>
     </message>
     <message>
         <source>Enter a new pairing code</source>
@@ -7335,11 +7237,9 @@ Please add it and try again.</translation>
     </message>
     <message numerus="yes">
         <source>Key pair name must be at least %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Key pair name must be at least %n character</numerusform>
+            <numerusform>Key pair name must be at least %n characters</numerusform>
+        </translation></message>
     <message>
         <source>For your future reference. This is only visible to you.</source>
         <translation>For your future reference. This is only visible to you.</translation>
@@ -7352,16 +7252,14 @@ Please add it and try again.</translation>
         <translation>Invalid recovery phrase</translation>
     </message>
     <message>
-        <source>The phrase you&#8217;ve entered is invalid</source>
-        <translation>The phrase you&#8217;ve entered is invalid</translation>
+        <source>The phrase you’ve entered is invalid</source>
+        <translation>The phrase you’ve entered is invalid</translation>
     </message>
     <message numerus="yes">
         <source>%n word(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n word</numerusform>
+            <numerusform>%n words</numerusform>
+        </translation></message>
     <message>
         <source>Enter recovery phrase</source>
         <translation>Enter recovery phrase</translation>
@@ -7388,18 +7286,16 @@ Please add it and try again.</translation>
     </message>
     <message numerus="yes">
         <source>Key pair name must be at least %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Key pair name must be at least %n character</numerusform>
+            <numerusform>Key pair name must be at least %n characters</numerusform>
+        </translation></message>
     <message>
         <source>For your future reference. This is only visible to you.</source>
         <translation>For your future reference. This is only visible to you.</translation>
     </message>
     <message>
-        <source>The phrase you&#8217;ve entered does not match this Keycard&#8217;s recovery phrase</source>
-        <translation>The phrase you&#8217;ve entered does not match this Keycard&#8217;s recovery phrase</translation>
+        <source>The phrase you’ve entered does not match this Keycard’s recovery phrase</source>
+        <translation>The phrase you’ve entered does not match this Keycard’s recovery phrase</translation>
     </message>
     <message>
         <source>Enter recovery phrase for %1 key pair</source>
@@ -7444,8 +7340,8 @@ Please add it and try again.</translation>
         <translation>Enter word</translation>
     </message>
     <message>
-        <source>This word doesn&#8217;t match</source>
-        <translation>This word doesn&#8217;t match</translation>
+        <source>This word doesn’t match</source>
+        <translation>This word doesn’t match</translation>
     </message>
 </context>
 <context>
@@ -7497,8 +7393,8 @@ Please add it and try again.</translation>
         <translation>Any of your synced &lt;b&gt;desktop&lt;/b&gt; devices can be the control node for this Community:</translation>
     </message>
     <message>
-        <source>You don&#8217;t currently have any &lt;b&gt;synced desktop devices&lt;/b&gt;. You will need to sync another desktop device before you can move the %1 control node to it. Does the device you want to use as the control node currently have Status installed?</source>
-        <translation>You don&#8217;t currently have any &lt;b&gt;synced desktop devices&lt;/b&gt;. You will need to sync another desktop device before you can move the %1 control node to it. Does the device you want to use as the control node currently have Status installed?</translation>
+        <source>You don’t currently have any &lt;b&gt;synced desktop devices&lt;/b&gt;. You will need to sync another desktop device before you can move the %1 control node to it. Does the device you want to use as the control node currently have Status installed?</source>
+        <translation>You don’t currently have any &lt;b&gt;synced desktop devices&lt;/b&gt;. You will need to sync another desktop device before you can move the %1 control node to it. Does the device you want to use as the control node currently have Status installed?</translation>
     </message>
     <message>
         <source>Close</source>
@@ -7580,8 +7476,8 @@ Please add it and try again.</translation>
         <translation>Encrypted key pairs code</translation>
     </message>
     <message>
-        <source>On your other device, navigate to the Wallet screen&lt;br&gt;and select &#8216;Import missing key pairs&#8217;. For security reasons,&lt;br&gt;do not save this code anywhere.</source>
-        <translation>On your other device, navigate to the Wallet screen&lt;br&gt;and select &#8216;Import missing key pairs&#8217;. For security reasons,&lt;br&gt;do not save this code anywhere.</translation>
+        <source>On your other device, navigate to the Wallet screen&lt;br&gt;and select ‘Import missing key pairs’. For security reasons,&lt;br&gt;do not save this code anywhere.</source>
+        <translation>On your other device, navigate to the Wallet screen&lt;br&gt;and select ‘Import missing key pairs’. For security reasons,&lt;br&gt;do not save this code anywhere.</translation>
     </message>
     <message>
         <source>Your QR and encrypted key pairs code have expired.</source>
@@ -7709,8 +7605,8 @@ Please add it and try again.</translation>
 <context>
     <name>FetchMoreMessagesButton</name>
     <message>
-        <source>&#8595; Fetch more messages</source>
-        <translation>&#8595; Fetch more messages</translation>
+        <source>↓ Fetch more messages</source>
+        <translation>↓ Fetch more messages</translation>
     </message>
     <message>
         <source>Before %1</source>
@@ -7747,12 +7643,12 @@ Please add it and try again.</translation>
 <context>
     <name>FinaliseOwnershipDeclinePopup</name>
     <message>
-        <source>Are you sure you don&#8217;t want to be the owner?</source>
-        <translation>Are you sure you don&#8217;t want to be the owner?</translation>
+        <source>Are you sure you don’t want to be the owner?</source>
+        <translation>Are you sure you don’t want to be the owner?</translation>
     </message>
     <message>
-        <source>If you don&#8217;t want to be the owner of the %1 Community it is important that you let the previous owner know so they can organise another owner to take over. You will have to send the Owner token back to them or on to the next designated owner.</source>
-        <translation>If you don&#8217;t want to be the owner of the %1 Community it is important that you let the previous owner know so they can organise another owner to take over. You will have to send the Owner token back to them or on to the next designated owner.</translation>
+        <source>If you don’t want to be the owner of the %1 Community it is important that you let the previous owner know so they can organise another owner to take over. You will have to send the Owner token back to them or on to the next designated owner.</source>
+        <translation>If you don’t want to be the owner of the %1 Community it is important that you let the previous owner know so they can organise another owner to take over. You will have to send the Owner token back to them or on to the next designated owner.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -7786,8 +7682,8 @@ Please add it and try again.</translation>
         <translation>Congratulations! You have been sent the %1 Community Owner token.</translation>
     </message>
     <message>
-        <source>To finalise your ownership and assume ultimate admin rights for the %1 Community, you need to make your device the Community's &lt;a style="color:%3;" href="%2"&gt;control node&lt;/a&gt;&lt;a style="color:%3;text-decoration: none" href="%2"&gt;&#8599;&lt;/a&gt;. You will also need to sign a small transaction to update the %1 Community smart contract to make you the official signatory for all Community changes.</source>
-        <translation>To finalise your ownership and assume ultimate admin rights for the %1 Community, you need to make your device the Community's &lt;a style="color:%3;" href="%2"&gt;control node&lt;/a&gt;&lt;a style="color:%3;text-decoration: none" href="%2"&gt;&#8599;&lt;/a&gt;. You will also need to sign a small transaction to update the %1 Community smart contract to make you the official signatory for all Community changes.</translation>
+        <source>To finalise your ownership and assume ultimate admin rights for the %1 Community, you need to make your device the Community's &lt;a style="color:%3;" href="%2"&gt;control node&lt;/a&gt;&lt;a style="color:%3;text-decoration: none" href="%2"&gt;↗&lt;/a&gt;. You will also need to sign a small transaction to update the %1 Community smart contract to make you the official signatory for all Community changes.</source>
+        <translation>To finalise your ownership and assume ultimate admin rights for the %1 Community, you need to make your device the Community's &lt;a style="color:%3;" href="%2"&gt;control node&lt;/a&gt;&lt;a style="color:%3;text-decoration: none" href="%2"&gt;↗&lt;/a&gt;. You will also need to sign a small transaction to update the %1 Community smart contract to make you the official signatory for all Community changes.</translation>
     </message>
     <message>
         <source>Symbol</source>
@@ -8149,8 +8045,8 @@ L2 fee: %2</translation>
         <translation>Got it</translation>
     </message>
     <message>
-        <source>We&#8217;ll collect anonymous analytics and diagnostics from your app to enhance Status&#8217;s quality and performance.</source>
-        <translation>We&#8217;ll collect anonymous analytics and diagnostics from your app to enhance Status&#8217;s quality and performance.</translation>
+        <source>We’ll collect anonymous analytics and diagnostics from your app to enhance Status’s quality and performance.</source>
+        <translation>We’ll collect anonymous analytics and diagnostics from your app to enhance Status’s quality and performance.</translation>
     </message>
     <message>
         <source>Gather basic usage data, like clicks and page views</source>
@@ -8459,11 +8355,9 @@ L2 fee: %2</translation>
     </message>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation></message>
     <message>
         <source>Public key detected</source>
         <translation>Public key detected</translation>
@@ -8562,11 +8456,9 @@ L2 fee: %2</translation>
     </message>
     <message numerus="yes">
         <source>Add %n channel(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Add %n channel</numerusform>
+            <numerusform>Add %n channels</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>InlineSelectorPanel</name>
@@ -8663,11 +8555,9 @@ L2 fee: %2</translation>
     </message>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation></message>
     <message>
         <source>Go to Community</source>
         <translation>Go to Community</translation>
@@ -8704,35 +8594,27 @@ L2 fee: %2</translation>
     </message>
     <message numerus="yes">
         <source>Send %n invite(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Send %n invite</numerusform>
+            <numerusform>Send %n invites</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>IssuePill</name>
     <message numerus="yes">
         <source>%n warning(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n warning</numerusform>
+            <numerusform>%n warnings</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n error(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n error</numerusform>
+            <numerusform>%n errors</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n message(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n message</numerusform>
+            <numerusform>%n messages</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>JSDialogWindow</name>
@@ -8852,8 +8734,8 @@ L2 fee: %2</translation>
         <translation>You will now require this Keycard to log into Status and transact with accounts derived from this key pair</translation>
     </message>
     <message>
-        <source>A key pair is your shareable public address and a secret private key that controls your wallet. Your key pair is being generated on your Keycard &#8212; keep it plugged in until the process completes.</source>
-        <translation>A key pair is your shareable public address and a secret private key that controls your wallet. Your key pair is being generated on your Keycard &#8212; keep it plugged in until the process completes.</translation>
+        <source>A key pair is your shareable public address and a secret private key that controls your wallet. Your key pair is being generated on your Keycard — keep it plugged in until the process completes.</source>
+        <translation>A key pair is your shareable public address and a secret private key that controls your wallet. Your key pair is being generated on your Keycard — keep it plugged in until the process completes.</translation>
     </message>
 </context>
 <context>
@@ -8947,11 +8829,9 @@ Are you sure you want to do this?</translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n attempt remaining</numerusform>
+            <numerusform>%n attempts remaining</numerusform>
+        </translation></message>
     <message>
         <source>Unblock using PUK</source>
         <translation>Unblock using PUK</translation>
@@ -8965,11 +8845,9 @@ Are you sure you want to do this?</translation>
     <name>KeycardEnterPukPage</name>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n attempt remaining</numerusform>
+            <numerusform>%n attempts remaining</numerusform>
+        </translation></message>
     <message>
         <source>Factory reset Keycard</source>
         <translation>Factory reset Keycard</translation>
@@ -9319,8 +9197,8 @@ you will need to factory reset it before proceeding</translation>
         <translation>Keycard successfully renamed</translation>
     </message>
     <message>
-        <source>Keycard&#8217;s PUK successfully set</source>
-        <translation>Keycard&#8217;s PUK successfully set</translation>
+        <source>Keycard’s PUK successfully set</source>
+        <translation>Keycard’s PUK successfully set</translation>
     </message>
     <message>
         <source>Pairing code successfully set</source>
@@ -9379,8 +9257,8 @@ was a brand new empty Keycard</translation>
         <translation>Unlock a Keycard failed</translation>
     </message>
     <message>
-        <source>Setting Keycard&#8217;s PUK failed</source>
-        <translation>Setting Keycard&#8217;s PUK failed</translation>
+        <source>Setting Keycard’s PUK failed</source>
+        <translation>Setting Keycard’s PUK failed</translation>
     </message>
     <message>
         <source>Setting pairing code failed</source>
@@ -9435,8 +9313,8 @@ an empty new or factory reset Keycard</source>
 an empty new or factory reset Keycard</translation>
     </message>
     <message>
-        <source>Copy &#8220;%1&#8221; to inserted keycard</source>
-        <translation>Copy &#8220;%1&#8221; to inserted keycard</translation>
+        <source>Copy “%1” to inserted keycard</source>
+        <translation>Copy “%1” to inserted keycard</translation>
     </message>
     <message>
         <source>This recovery phrase has already been imported</source>
@@ -9467,8 +9345,8 @@ this key pair to Status?</translation>
         <translation>%1 is your default Status key pair.</translation>
     </message>
     <message>
-        <source> Migrating this key pair will mean you will no longer require this Keycard to login to Status or transact with the key pair&#8217;s derived accounts.</source>
-        <translation> Migrating this key pair will mean you will no longer require this Keycard to login to Status or transact with the key pair&#8217;s derived accounts.</translation>
+        <source> Migrating this key pair will mean you will no longer require this Keycard to login to Status or transact with the key pair’s derived accounts.</source>
+        <translation> Migrating this key pair will mean you will no longer require this Keycard to login to Status or transact with the key pair’s derived accounts.</translation>
     </message>
     <message>
         <source> The key pair and accounts will be fully removed from Keycard and stored on device.</source>
@@ -9538,16 +9416,16 @@ to login to Status?</translation>
         <translation>Insert your Keycard</translation>
     </message>
     <message>
-        <source>Get help via %1 &#128279;</source>
-        <translation>Get help via %1 &#128279;</translation>
+        <source>Get help via %1 🔗</source>
+        <translation>Get help via %1 🔗</translation>
     </message>
     <message>
         <source>Reading Keycard...</source>
         <translation>Reading Keycard...</translation>
     </message>
     <message>
-        <source>Oops this isn&#8217;t a Keycard</source>
-        <translation>Oops this isn&#8217;t a Keycard</translation>
+        <source>Oops this isn’t a Keycard</source>
+        <translation>Oops this isn’t a Keycard</translation>
     </message>
     <message>
         <source>Remove card and insert a Keycard</source>
@@ -9619,8 +9497,8 @@ to login to Status?</translation>
         <translation>Keycard is not empty</translation>
     </message>
     <message>
-        <source>You can&#8217;t use it to store new keys right now</source>
-        <translation>You can&#8217;t use it to store new keys right now</translation>
+        <source>You can’t use it to store new keys right now</source>
+        <translation>You can’t use it to store new keys right now</translation>
     </message>
     <message>
         <source>Log in with this Keycard</source>
@@ -9638,9 +9516,9 @@ to login to Status?</translation>
         <translation>It is very important that you do not lose this PIN</translation>
     </message>
     <message>
-        <source>Don&#8217;t lose your PIN! If you do, you may lose
+        <source>Don’t lose your PIN! If you do, you may lose
 access to your funds.</source>
-        <translation>Don&#8217;t lose your PIN! If you do, you may lose
+        <translation>Don’t lose your PIN! If you do, you may lose
 access to your funds.</translation>
     </message>
     <message>
@@ -9652,8 +9530,8 @@ access to your funds.</translation>
         <translation>Enter the Keycard PIN</translation>
     </message>
     <message>
-        <source>Enter this Keycard&#8217;s PIN</source>
-        <translation>Enter this Keycard&#8217;s PIN</translation>
+        <source>Enter this Keycard’s PIN</source>
+        <translation>Enter this Keycard’s PIN</translation>
     </message>
     <message>
         <source>Enter Keycard PIN</source>
@@ -9665,11 +9543,9 @@ access to your funds.</translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n attempt remaining</numerusform>
+            <numerusform>%n attempts remaining</numerusform>
+        </translation></message>
     <message>
         <source>Your saved PIN is out of date</source>
         <translation>Your saved PIN is out of date</translation>
@@ -9746,8 +9622,8 @@ access to your funds.</translation>
         <translation>Unlock Keycard</translation>
     </message>
     <message>
-        <source>Check what&#8217;s on a Keycard</source>
-        <translation>Check what&#8217;s on a Keycard</translation>
+        <source>Check what’s on a Keycard</source>
+        <translation>Check what’s on a Keycard</translation>
     </message>
     <message>
         <source>Rename Keycard</source>
@@ -9861,8 +9737,8 @@ access to your funds.</translation>
         <translation>Check what is stored on this Keycard</translation>
     </message>
     <message>
-        <source>I don&#8217;t know the PIN</source>
-        <translation>I don&#8217;t know the PIN</translation>
+        <source>I don’t know the PIN</source>
+        <translation>I don’t know the PIN</translation>
     </message>
     <message>
         <source>Next</source>
@@ -9968,8 +9844,8 @@ access to your funds.</translation>
 <context>
     <name>KeycardPuk</name>
     <message>
-        <source>The PUK doesn&#8217;t match</source>
-        <translation>The PUK doesn&#8217;t match</translation>
+        <source>The PUK doesn’t match</source>
+        <translation>The PUK doesn’t match</translation>
     </message>
     <message>
         <source>Enter PUK</source>
@@ -9981,11 +9857,9 @@ access to your funds.</translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n attempt remaining</numerusform>
+            <numerusform>%n attempts remaining</numerusform>
+        </translation></message>
     <message>
         <source>Choose a Keycard PUK</source>
         <translation>Choose a Keycard PUK</translation>
@@ -10121,33 +9995,6 @@ access to your funds.</translation>
     <message>
         <source>Restart</source>
         <translation>Restart</translation>
-    </message>
-</context>
-<context>
-    <name>Layout</name>
-    <message>
-        <source>To: </source>
-        <translation>To: </translation>
-    </message>
-    <message>
-        <source>USER LIMIT REACHED</source>
-        <translation>USER LIMIT REACHED</translation>
-    </message>
-    <message>
-        <source>Invite People</source>
-        <translation>Invite People</translation>
-    </message>
-    <message>
-        <source>View Community</source>
-        <translation>View Community</translation>
-    </message>
-    <message>
-        <source>Edit Community</source>
-        <translation>Edit Community</translation>
-    </message>
-    <message>
-        <source>Leave Community</source>
-        <translation>Leave Community</translation>
     </message>
 </context>
 <context>
@@ -10309,55 +10156,41 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>%n year(s) ago</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n year ago</numerusform>
+            <numerusform>%n years ago</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n month(s) ago</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n month ago</numerusform>
+            <numerusform>%n months ago</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n week(s) ago</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n week ago</numerusform>
+            <numerusform>%n weeks ago</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n day(s) ago</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n day ago</numerusform>
+            <numerusform>%n days ago</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n hour(s) ago</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n hour ago</numerusform>
+            <numerusform>%n hours ago</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n min(s) ago</source>
         <comment>x minute(s) ago</comment>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n min ago</numerusform>
+            <numerusform>%n mins ago</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>%n sec(s) ago</source>
         <comment>x second(s) ago</comment>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n sec ago</numerusform>
+            <numerusform>%n secs ago</numerusform>
+        </translation></message>
     <message>
         <source>now</source>
         <translation>now</translation>
@@ -10418,11 +10251,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>PIN incorrect. %n attempt(s) remaining.</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>PIN incorrect. %n attempt remaining.</numerusform>
+            <numerusform>PIN incorrect. %n attempts remaining.</numerusform>
+        </translation></message>
     <message>
         <source>Login failed. %1</source>
         <translation>Login failed. %1</translation>
@@ -10479,8 +10310,8 @@ to load</translation>
         <translation>4. Create a new password</translation>
     </message>
     <message>
-        <source>Enter a new password and you&#8217;re all set! You will be able to use your new password</source>
-        <translation>Enter a new password and you&#8217;re all set! You will be able to use your new password</translation>
+        <source>Enter a new password and you’re all set! You will be able to use your new password</source>
+        <translation>Enter a new password and you’re all set! You will be able to use your new password</translation>
     </message>
 </context>
 <context>
@@ -10594,11 +10425,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Account name must be at least %n character</numerusform>
+            <numerusform>Account name must be at least %n characters</numerusform>
+        </translation></message>
     <message>
         <source>Colour</source>
         <translation>Colour</translation>
@@ -10651,8 +10480,8 @@ to load</translation>
         <translation>Other</translation>
     </message>
     <message>
-        <source>Check what&#8217;s on a Keycard</source>
-        <translation>Check what&#8217;s on a Keycard</translation>
+        <source>Check what’s on a Keycard</source>
+        <translation>Check what’s on a Keycard</translation>
     </message>
     <message>
         <source>Factory reset a Keycard</source>
@@ -10680,11 +10509,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>%n key pair(s) require import to use on this device</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n key pair requires import to use on this device</numerusform>
+            <numerusform>%n key pairs require import to use on this device</numerusform>
+        </translation></message>
     <message>
         <source>Import missing key pairs</source>
         <translation>Import missing key pairs</translation>
@@ -11000,8 +10827,8 @@ to load</translation>
         <translation>Show community assets when sending tokens</translation>
     </message>
     <message>
-        <source>Don&#8217;t display assets with balance lower than</source>
-        <translation>Don&#8217;t display assets with balance lower than</translation>
+        <source>Don’t display assets with balance lower than</source>
+        <translation>Don’t display assets with balance lower than</translation>
     </message>
     <message>
         <source>Auto-refresh tokens lists</source>
@@ -11146,11 +10973,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Add %n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Add %n member</numerusform>
+            <numerusform>Add %n members</numerusform>
+        </translation></message>
     <message>
         <source>Add</source>
         <translation>Add</translation>
@@ -11175,11 +11000,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>MembersSettingsPanel</name>
@@ -11465,24 +11288,24 @@ to load</translation>
         <translation>What we will receive:</translation>
     </message>
     <message>
-        <source> &#8226;  IP address
- &#8226;  Universally Unique Identifiers of device
- &#8226;  Logs of actions within the app, including button presses and screen visits</source>
-        <translation> &#8226;  IP address
- &#8226;  Universally Unique Identifiers of device
- &#8226;  Logs of actions within the app, including button presses and screen visits</translation>
+        <source> •  IP address
+ •  Universally Unique Identifiers of device
+ •  Logs of actions within the app, including button presses and screen visits</source>
+        <translation> •  IP address
+ •  Universally Unique Identifiers of device
+ •  Logs of actions within the app, including button presses and screen visits</translation>
     </message>
     <message>
-        <source>What we won&#8217;t receive:</source>
-        <translation>What we won&#8217;t receive:</translation>
+        <source>What we won’t receive:</source>
+        <translation>What we won’t receive:</translation>
     </message>
     <message>
-        <source> &#8226;  Your profile information
- &#8226;  Your addresses
- &#8226;  Information you input and send</source>
-        <translation> &#8226;  Your profile information
- &#8226;  Your addresses
- &#8226;  Information you input and send</translation>
+        <source> •  Your profile information
+ •  Your addresses
+ •  Information you input and send</source>
+        <translation> •  Your profile information
+ •  Your addresses
+ •  Information you input and send</translation>
     </message>
     <message>
         <source>Usage data will be shared from all profiles added to device. %1 %2</source>
@@ -11592,11 +11415,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Remotely destruct %n token(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Remotely destruct %n token</numerusform>
+            <numerusform>Remotely destruct %n tokens</numerusform>
+        </translation></message>
     <message>
         <source>Remotely destruct</source>
         <translation>Remotely destruct</translation>
@@ -11615,11 +11436,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Remotely destruct %Ln %1 token(s) on %2</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Remotely destruct %Ln %1 token on %2</numerusform>
+            <numerusform>Remotely destruct %Ln %1 tokens on %2</numerusform>
+        </translation></message>
     <message>
         <source>Delete %1</source>
         <translation>Delete %1</translation>
@@ -11652,8 +11471,8 @@ to load</translation>
         <translation>1 of 1</translation>
     </message>
     <message>
-        <source>&#8734; remaining</source>
-        <translation>&#8734; remaining</translation>
+        <source>∞ remaining</source>
+        <translation>∞ remaining</translation>
     </message>
     <message>
         <source>%L1 / %L2 remaining</source>
@@ -11684,8 +11503,8 @@ to load</translation>
         <translation>Get started</translation>
     </message>
     <message>
-        <source>Token minting can only be performed by admins that hodl the Community&#8217;s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</source>
-        <translation>Token minting can only be performed by admins that hodl the Community&#8217;s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</translation>
+        <source>Token minting can only be performed by admins that hodl the Community’s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</source>
+        <translation>Token minting can only be performed by admins that hodl the Community’s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you).</translation>
     </message>
     <message>
         <source>In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.</source>
@@ -12234,11 +12053,9 @@ to load</translation>
     <name>NewMessagesMarker</name>
     <message numerus="yes">
         <source>%n missed message(s) since %1</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n missed message since %1</numerusform>
+            <numerusform>%n missed message since %1</numerusform>
+        </translation></message>
     <message>
         <source>NEW</source>
         <comment>new message(s)</comment>
@@ -12272,18 +12089,16 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Nicknames must be at least %n character(s) long</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
+        <translation><numerusform>Nicknames must be at least %n character long</numerusform>
+            <numerusform>Nicknames must be at least %n characters long</numerusform>
+        </translation></message>
+    <message>
+        <source>Nicknames can’t start or end with a space</source>
+        <translation>Nicknames can’t start or end with a space</translation>
     </message>
     <message>
-        <source>Nicknames can&#8217;t start or end with a space</source>
-        <translation>Nicknames can&#8217;t start or end with a space</translation>
-    </message>
-    <message>
-        <source>Nicknames can&#8217;t end in &#8220;.eth&#8221;, &#8220;_eth&#8221; or &#8220;-eth&#8221;</source>
-        <translation>Nicknames can&#8217;t end in &#8220;.eth&#8221;, &#8220;_eth&#8221; or &#8220;-eth&#8221;</translation>
+        <source>Nicknames can’t end in “.eth”, “_eth” or “-eth”</source>
+        <translation>Nicknames can’t end in “.eth”, “_eth” or “-eth”</translation>
     </message>
     <message>
         <source>Adjective-animal nickname formats are not allowed</source>
@@ -12309,8 +12124,8 @@ to load</translation>
 <context>
     <name>NoFriendsRectangle</name>
     <message>
-        <source>You don&#8217;t have any contacts yet. Invite your friends to start chatting.</source>
-        <translation>You don&#8217;t have any contacts yet. Invite your friends to start chatting.</translation>
+        <source>You don’t have any contacts yet. Invite your friends to start chatting.</source>
+        <translation>You don’t have any contacts yet. Invite your friends to start chatting.</translation>
     </message>
     <message>
         <source>No users match your search</source>
@@ -12744,11 +12559,11 @@ to load</translation>
     <name>OwnerTokenWelcomeView</name>
     <message>
         <source>Your &lt;b&gt;Owner token&lt;/b&gt; will give you permissions to access the token management features for your community. This token is very important - only one will ever exist, and if this token gets lost then access to the permissions it enables for your community will be lost forever as well.&lt;br&gt;&lt;br&gt;
-                        Minting your Owner token also automatically mints your community&#8217;s &lt;b&gt;TokenMaster token&lt;/b&gt;.  You can airdrop your community&#8217;s TokenMaster token to anybody you wish to grant both Admin permissions and permission to access your community&#8217;s token management functions to.&lt;br&gt;&lt;br&gt;
-                        Only the hodler of the Owner token can airdrop TokenMaster tokens. TokenMaster tokens are soulbound (meaning they can&#8217;t be transferred), and you (the hodler of the Owner token) can remotely destruct a TokenMaster token at any time, to revoke TokenMaster permissions from any individual.</source>
+                        Minting your Owner token also automatically mints your community’s &lt;b&gt;TokenMaster token&lt;/b&gt;.  You can airdrop your community’s TokenMaster token to anybody you wish to grant both Admin permissions and permission to access your community’s token management functions to.&lt;br&gt;&lt;br&gt;
+                        Only the hodler of the Owner token can airdrop TokenMaster tokens. TokenMaster tokens are soulbound (meaning they can’t be transferred), and you (the hodler of the Owner token) can remotely destruct a TokenMaster token at any time, to revoke TokenMaster permissions from any individual.</source>
         <translation>Your &lt;b&gt;Owner token&lt;/b&gt; will give you permissions to access the token management features for your community. This token is very important - only one will ever exist, and if this token gets lost then access to the permissions it enables for your community will be lost forever as well.&lt;br&gt;&lt;br&gt;
-                        Minting your Owner token also automatically mints your community&#8217;s &lt;b&gt;TokenMaster token&lt;/b&gt;.  You can airdrop your community&#8217;s TokenMaster token to anybody you wish to grant both Admin permissions and permission to access your community&#8217;s token management functions to.&lt;br&gt;&lt;br&gt;
-                        Only the hodler of the Owner token can airdrop TokenMaster tokens. TokenMaster tokens are soulbound (meaning they can&#8217;t be transferred), and you (the hodler of the Owner token) can remotely destruct a TokenMaster token at any time, to revoke TokenMaster permissions from any individual.</translation>
+                        Minting your Owner token also automatically mints your community’s &lt;b&gt;TokenMaster token&lt;/b&gt;.  You can airdrop your community’s TokenMaster token to anybody you wish to grant both Admin permissions and permission to access your community’s token management functions to.&lt;br&gt;&lt;br&gt;
+                        Only the hodler of the Owner token can airdrop TokenMaster tokens. TokenMaster tokens are soulbound (meaning they can’t be transferred), and you (the hodler of the Owner token) can remotely destruct a TokenMaster token at any time, to revoke TokenMaster permissions from any individual.</translation>
     </message>
     <message>
         <source>Only 1 will ever exist</source>
@@ -12853,11 +12668,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Minimum %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Minimum %n character</numerusform>
+            <numerusform>Minimum %n characters</numerusform>
+        </translation></message>
     <message>
         <source>Passwords don't match</source>
         <translation>Passwords don't match</translation>
@@ -12868,11 +12681,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Maximum %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Maximum %n character</numerusform>
+            <numerusform>Maximum %n characters</numerusform>
+        </translation></message>
     <message>
         <source>Password pwned, shouldn't be used</source>
         <translation>Password pwned, shouldn't be used</translation>
@@ -13048,18 +12859,14 @@ to load</translation>
     <name>PermissionQualificationPanel</name>
     <message numerus="yes">
         <source>%L1% of the %Ln community member(s) with known addresses will qualify for this permission.</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%L1% of the %Ln community member with known addresses will qualify for this permission.</numerusform>
+            <numerusform>%L1% of the %Ln community members with known addresses will qualify for this permission.</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>The addresses of %Ln community member(s) are unknown.</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>The addresses of %Ln community member are unknown.</numerusform>
+            <numerusform>The addresses of %Ln community members are unknown.</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>PermissionTypes</name>
@@ -13144,8 +12951,8 @@ to load</translation>
         <translation>Members who meet the requirements will be allowed to read the selected channels</translation>
     </message>
     <message>
-        <source>Max of 5 &#8216;become member&#8217; permissions for this Community has been reached. You will need to delete an existing &#8216;become member&#8217; permission before you can add a new one.</source>
-        <translation>Max of 5 &#8216;become member&#8217; permissions for this Community has been reached. You will need to delete an existing &#8216;become member&#8217; permission before you can add a new one.</translation>
+        <source>Max of 5 ‘become member’ permissions for this Community has been reached. You will need to delete an existing ‘become member’ permission before you can add a new one.</source>
+        <translation>Max of 5 ‘become member’ permissions for this Community has been reached. You will need to delete an existing ‘become member’ permission before you can add a new one.</translation>
     </message>
 </context>
 <context>
@@ -13298,11 +13105,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>%n message(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n message</numerusform>
+            <numerusform>%n messages</numerusform>
+        </translation></message>
     <message>
         <source>Pinned messages will appear here.</source>
         <translation>Pinned messages will appear here.</translation>
@@ -13499,12 +13304,35 @@ to load</translation>
         <translation>Your IP address will be exposed to https://status.app</translation>
     </message>
     <message>
+        <source>Third-party services</source>
+        <translation>Third-party services</translation>
+    </message>
+    <message>
+        <source>Enable/disable all third-party services</source>
+        <translation>Enable/disable all third-party services</translation>
+    </message>
+    <message>
+        <source>Share feedback or suggest improvements on our %1.</source>
+        <translation>Share feedback or suggest improvements on our %1.</translation>
+    </message>
+    <message>
         <source>Share usage data with Status</source>
         <translation>Share usage data with Status</translation>
     </message>
     <message>
         <source>From all profiles on device</source>
         <translation>From all profiles on device</translation>
+    </message>
+</context>
+<context>
+    <name>PrivacyStore</name>
+    <message>
+        <source>Third-party services successfully enabled</source>
+        <translation>Third-party services successfully enabled</translation>
+    </message>
+    <message>
+        <source>Third-party services successfully disabled</source>
+        <translation>Third-party services successfully disabled</translation>
     </message>
 </context>
 <context>
@@ -13585,11 +13413,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Bio can't be longer than %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Bio can't be longer than %n character</numerusform>
+            <numerusform>Bio can't be longer than %n characters</numerusform>
+        </translation></message>
     <message>
         <source>Invalid characters. Standard keyboard characters and emojis only.</source>
         <translation>Invalid characters. Standard keyboard characters and emojis only.</translation>
@@ -13873,8 +13699,8 @@ to load</translation>
         <translation>Search asset name, symbol or community</translation>
     </message>
     <message>
-        <source>Don&#8217;t see some of your assets?</source>
-        <translation>Don&#8217;t see some of your assets?</translation>
+        <source>Don’t see some of your assets?</source>
+        <translation>Don’t see some of your assets?</translation>
     </message>
 </context>
 <context>
@@ -13911,8 +13737,8 @@ to load</translation>
         <translation>Search collectible name, number, collection or community</translation>
     </message>
     <message>
-        <source>Don&#8217;t see some of your collectibles?</source>
-        <translation>Don&#8217;t see some of your collectibles?</translation>
+        <source>Don’t see some of your collectibles?</source>
+        <translation>Don’t see some of your collectibles?</translation>
     </message>
 </context>
 <context>
@@ -14119,8 +13945,8 @@ to load</translation>
         <translation>Link limit of %1 reached</translation>
     </message>
     <message>
-        <source>&#65291; Add a link</source>
-        <translation>&#65291; Add a link</translation>
+        <source>＋ Add a link</source>
+        <translation>＋ Add a link</translation>
     </message>
     <message>
         <source>Edit link</source>
@@ -14344,11 +14170,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Remotely destruct %n token(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Remotely destruct %n token</numerusform>
+            <numerusform>Remotely destruct %n tokens</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>RemoveAccountConfirmationPopup</name>
@@ -14489,11 +14313,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Account name must be at least %n character</numerusform>
+            <numerusform>Account name must be at least %n characters</numerusform>
+        </translation></message>
     <message>
         <source>This is not a valid account name</source>
         <translation>This is not a valid account name</translation>
@@ -14902,8 +14724,8 @@ to load</translation>
         <translation>Select a key pair</translation>
     </message>
     <message>
-        <source>Select which key pair you&#8217;d like to move to this Keycard</source>
-        <translation>Select which key pair you&#8217;d like to move to this Keycard</translation>
+        <source>Select which key pair you’d like to move to this Keycard</source>
+        <translation>Select which key pair you’d like to move to this Keycard</translation>
     </message>
     <message>
         <source>Profile key pair</source>
@@ -15442,22 +15264,18 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Reveal %n address(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Reveal %n address</numerusform>
+            <numerusform>Reveal %n addresses</numerusform>
+        </translation></message>
     <message>
         <source>Share all addresses to join</source>
         <translation>Share all addresses to join</translation>
     </message>
     <message numerus="yes">
         <source>Share %n address(s) to join</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Share %n address to join</numerusform>
+            <numerusform>Share %n addresses to join</numerusform>
+        </translation></message>
     <message>
         <source>Selected addresses have insufficient tokens to maintain %1 membership</source>
         <translation>Selected addresses have insufficient tokens to maintain %1 membership</translation>
@@ -15526,18 +15344,14 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Share %n address(s) to join</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Share %n address to join</numerusform>
+            <numerusform>Share %n addresses to join</numerusform>
+        </translation></message>
     <message numerus="yes">
         <source>To share %n address(s) with &lt;b&gt;%1&lt;/b&gt;, authenticate the associated key pairs...</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>To share %n address with &lt;b&gt;%1&lt;/b&gt;, authenticate the associated key pairs...</numerusform>
+            <numerusform>To share %n addresses with &lt;b&gt;%1&lt;/b&gt;, authenticate the associated key pairs...</numerusform>
+        </translation></message>
     <message>
         <source>Stored on device</source>
         <translation>Stored on device</translation>
@@ -15555,12 +15369,12 @@ to load</translation>
         <translation>Stored on keycard</translation>
     </message>
     <message>
-        <source>Authenticate via &#8220;%1&#8221; key pair</source>
-        <translation>Authenticate via &#8220;%1&#8221; key pair</translation>
+        <source>Authenticate via “%1” key pair</source>
+        <translation>Authenticate via “%1” key pair</translation>
     </message>
     <message>
-        <source>The following key pairs will be authenticated via &#8220;%1&#8221; key pair</source>
-        <translation>The following key pairs will be authenticated via &#8220;%1&#8221; key pair</translation>
+        <source>The following key pairs will be authenticated via “%1” key pair</source>
+        <translation>The following key pairs will be authenticated via “%1” key pair</translation>
     </message>
 </context>
 <context>
@@ -15706,6 +15520,13 @@ to load</translation>
     </message>
 </context>
 <context>
+    <name>SimplifiedMessageView</name>
+    <message>
+        <source>You</source>
+        <translation>You</translation>
+    </message>
+</context>
+<context>
     <name>SiweLifeCycle</name>
     <message>
         <source>Failed to authenticate %1 from %2</source>
@@ -15834,58 +15655,10 @@ to load</translation>
     </message>
 </context>
 <context>
-    <name>StatusAddressPage</name>
-    <message>
-        <source>Copy Action: </source>
-        <translation>Copy Action: </translation>
-    </message>
-</context>
-<context>
     <name>StatusAddressValidator</name>
     <message>
         <source>Please enter a valid address.</source>
         <translation>Please enter a valid address.</translation>
-    </message>
-</context>
-<context>
-    <name>StatusAppChatView</name>
-    <message>
-        <source>More</source>
-        <translation>More</translation>
-    </message>
-    <message>
-        <source>Start chat</source>
-        <translation>Start chat</translation>
-    </message>
-</context>
-<context>
-    <name>StatusAppCommunitiesPortalView</name>
-    <message>
-        <source>Find community</source>
-        <translation>Find community</translation>
-    </message>
-    <message>
-        <source>Featured</source>
-        <translation>Featured</translation>
-    </message>
-    <message>
-        <source>Popular</source>
-        <translation>Popular</translation>
-    </message>
-</context>
-<context>
-    <name>StatusAppCommunityView</name>
-    <message>
-        <source>Search</source>
-        <translation>Search</translation>
-    </message>
-    <message>
-        <source>Members</source>
-        <translation>Members</translation>
-    </message>
-    <message>
-        <source>Community content here</source>
-        <translation>Community content here</translation>
     </message>
 </context>
 <context>
@@ -15935,11 +15708,9 @@ to load</translation>
     <name>StatusChatImageQtyValidator</name>
     <message numerus="yes">
         <source>You can only upload %n image(s) at a time</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>You can only upload %n image at a time</numerusform>
+            <numerusform>You can only upload %n images at a time</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>StatusChatImageSizeValidator</name>
@@ -15956,11 +15727,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>%Ln pinned message(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%Ln pinned message</numerusform>
+            <numerusform>%Ln pinned messages</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>StatusChatInput</name>
@@ -15994,11 +15763,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>Maximum message character count is %n</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Maximum message character count is %n</numerusform>
+            <numerusform>Maximum message character count is %n</numerusform>
+        </translation></message>
     <message>
         <source>Bold (%1)</source>
         <translation>Bold (%1)</translation>
@@ -16066,55 +15833,6 @@ to load</translation>
     <message>
         <source>Select Colour</source>
         <translation>Select Colour</translation>
-    </message>
-</context>
-<context>
-    <name>StatusColorSelector</name>
-    <message>
-        <source>Color</source>
-        <translation>Color</translation>
-    </message>
-</context>
-<context>
-    <name>StatusColorSpacePage</name>
-    <message>
-        <source>Thickness</source>
-        <translation>Thickness</translation>
-    </message>
-    <message>
-        <source>Min saturate: </source>
-        <translation>Min saturate: </translation>
-    </message>
-    <message>
-        <source>Max saturate: </source>
-        <translation>Max saturate: </translation>
-    </message>
-    <message>
-        <source>Min value: </source>
-        <translation>Min value: </translation>
-    </message>
-    <message>
-        <source>Max value: </source>
-        <translation>Max value: </translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation>Color</translation>
-    </message>
-</context>
-<context>
-    <name>StatusCommunityTagsPage</name>
-    <message>
-        <source>Select tags that will fit your Community</source>
-        <translation>Select tags that will fit your Community</translation>
-    </message>
-    <message>
-        <source>Search tags</source>
-        <translation>Search tags</translation>
-    </message>
-    <message>
-        <source>Selected tags</source>
-        <translation>Selected tags</translation>
     </message>
 </context>
 <context>
@@ -16284,17 +16002,6 @@ to load</translation>
     </message>
 </context>
 <context>
-    <name>StatusExpandableSettingsItemPage</name>
-    <message>
-        <source>Back up seed phrase</source>
-        <translation>Back up seed phrase</translation>
-    </message>
-    <message>
-        <source>Not Implemented</source>
-        <translation>Not Implemented</translation>
-    </message>
-</context>
-<context>
     <name>StatusFloatValidator</name>
     <message>
         <source>Please enter a valid numeric value.</source>
@@ -16332,33 +16039,6 @@ to load</translation>
     </message>
 </context>
 <context>
-    <name>StatusImageCropPanelPage</name>
-    <message>
-        <source>Cycle image</source>
-        <translation>Cycle image</translation>
-    </message>
-    <message>
-        <source>Cycle spacing</source>
-        <translation>Cycle spacing</translation>
-    </message>
-    <message>
-        <source>Cycle frame margins</source>
-        <translation>Cycle frame margins</translation>
-    </message>
-    <message>
-        <source>Load external image</source>
-        <translation>Load external image</translation>
-    </message>
-    <message>
-        <source>Test Title</source>
-        <translation>Test Title</translation>
-    </message>
-    <message>
-        <source>Supported image formats (%1)</source>
-        <translation>Supported image formats (%1)</translation>
-    </message>
-</context>
-<context>
     <name>StatusImageSelector</name>
     <message>
         <source>Supported image formats (%1)</source>
@@ -16377,17 +16057,6 @@ to load</translation>
     <message>
         <source>Search</source>
         <translation>Search</translation>
-    </message>
-</context>
-<context>
-    <name>StatusListPickerPage</name>
-    <message>
-        <source>Search Languages</source>
-        <translation>Search Languages</translation>
-    </message>
-    <message>
-        <source>Search Currencies</source>
-        <translation>Search Currencies</translation>
     </message>
 </context>
 <context>
@@ -16487,11 +16156,9 @@ to load</translation>
     </message>
     <message numerus="yes">
         <source>The value must be at least %n character(s).</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>The value must be at least %n character.</numerusform>
+            <numerusform>The value must be at least %n characters.</numerusform>
+        </translation></message>
 </context>
 <context>
     <name>StatusNewTag</name>
@@ -16675,16 +16342,18 @@ access to your webcam</translation>
         <translation>This device</translation>
     </message>
     <message>
+        <source>Never seen online</source>
+        <translation>Never seen online</translation>
+    </message>
+    <message>
         <source>Online now</source>
         <translation>Online now</translation>
     </message>
     <message numerus="yes">
         <source>Online %n minute(s) ago</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Online %n minute ago</numerusform>
+            <numerusform>Online %n minutes ago</numerusform>
+        </translation></message>
     <message>
         <source>Last seen earlier today</source>
         <translation>Last seen earlier today</translation>
@@ -16704,17 +16373,6 @@ access to your webcam</translation>
     <message>
         <source>Unpair</source>
         <translation>Unpair</translation>
-    </message>
-</context>
-<context>
-    <name>StatusTagSelectorPage</name>
-    <message>
-        <source>To: </source>
-        <translation>To: </translation>
-    </message>
-    <message>
-        <source>USER LIMIT REACHED</source>
-        <translation>USER LIMIT REACHED</translation>
     </message>
 </context>
 <context>
@@ -16778,11 +16436,9 @@ access to your webcam</translation>
     </message>
     <message numerus="yes">
         <source>%n day(s) until finality</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n day until finality</numerusform>
+            <numerusform>%n days until finality</numerusform>
+        </translation></message>
     <message>
         <source>%1 / %2 confirmations</source>
         <translation>%1 / %2 confirmations</translation>
@@ -16803,21 +16459,12 @@ access to your webcam</translation>
     </message>
 </context>
 <context>
-    <name>StatusWalletColorSelect</name>
-    <message>
-        <source>Account color</source>
-        <translation>Account color</translation>
-    </message>
-</context>
-<context>
     <name>SupportedTokenListsPanel</name>
     <message numerus="yes">
-        <source>%n token(s) &#183; Last updated %1</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <source>%n token(s) · Last updated %1</source>
+        <translation><numerusform>%n token · Last updated %1</numerusform>
+            <numerusform>%n tokens · Last updated %1</numerusform>
+        </translation></message>
     <message>
         <source>View</source>
         <translation>View</translation>
@@ -17209,8 +16856,8 @@ access to your webcam</translation>
 <context>
     <name>SyncingView</name>
     <message>
-        <source>Verify your login with password or KeyCard</source>
-        <translation>Verify your login with password or KeyCard</translation>
+        <source>Verify your login with password or Keycard</source>
+        <translation>Verify your login with password or Keycard</translation>
     </message>
     <message>
         <source>Reveal a temporary QR and Sync Code</source>
@@ -17365,6 +17012,69 @@ access to your webcam</translation>
     <message>
         <source>Add at least 1 tag</source>
         <translation>Add at least 1 tag</translation>
+    </message>
+</context>
+<context>
+    <name>ThirdpartyServicesPopup</name>
+    <message>
+        <source>Third-party services</source>
+        <translation>Third-party services</translation>
+    </message>
+    <message>
+        <source>Status uses essential third-party services to make your experience more convenient, efficient, and engaging. While only necessary integrations are included, users who prefer to avoid any third-party services can disable them entirely – though this may limit functionality and affect usability</source>
+        <translation>Status uses essential third-party services to make your experience more convenient, efficient, and engaging. While only necessary integrations are included, users who prefer to avoid any third-party services can disable them entirely – though this may limit functionality and affect usability</translation>
+    </message>
+    <message>
+        <source>Features that will be unavailable:</source>
+        <translation>Features that will be unavailable:</translation>
+    </message>
+    <message>
+        <source>Wallet (Swap, Send, Token data, etc.)</source>
+        <translation>Wallet (Swap, Send, Token data, etc.)</translation>
+    </message>
+    <message>
+        <source>Market (Token data, prices, and news, etc.)</source>
+        <translation>Market (Token data, prices, and news, etc.)</translation>
+    </message>
+    <message>
+        <source>Token-gated communities and admin tools</source>
+        <translation>Token-gated communities and admin tools</translation>
+    </message>
+    <message>
+        <source>Status news, etc.</source>
+        <translation>Status news, etc.</translation>
+    </message>
+    <message>
+        <source>You may also experience:</source>
+        <translation>You may also experience:</translation>
+    </message>
+    <message>
+        <source>Missing or invalid data</source>
+        <translation>Missing or invalid data</translation>
+    </message>
+    <message>
+        <source>Errors and unexpected behavior</source>
+        <translation>Errors and unexpected behavior</translation>
+    </message>
+    <message>
+        <source>Only disable third-party services if you're aware of the trade-offs. Re-enable them anytime in Settings. Read more details about third-party services %1.</source>
+        <translation>Only disable third-party services if you're aware of the trade-offs. Re-enable them anytime in Settings. Read more details about third-party services %1.</translation>
+    </message>
+    <message>
+        <source>Share feedback or suggest improvements on our %1.</source>
+        <translation>Share feedback or suggest improvements on our %1.</translation>
+    </message>
+    <message>
+        <source>Disable third-party services</source>
+        <translation>Disable third-party services</translation>
+    </message>
+    <message>
+        <source>Enable third-party services</source>
+        <translation>Enable third-party services</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Close</translation>
     </message>
 </context>
 <context>
@@ -17551,11 +17261,9 @@ access to your webcam</translation>
     <name>TokenListPopup</name>
     <message numerus="yes">
         <source>%n token(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n token</numerusform>
+            <numerusform>%n tokens</numerusform>
+        </translation></message>
     <message>
         <source>Done</source>
         <translation>Done</translation>
@@ -17994,9 +17702,9 @@ access to your webcam</translation>
         <translation>Current: %1</translation>
     </message>
     <message>
-        <source>The gas price you set is the exact amount you&#8217;ll pay per unit of gas used. If you set a gas price higher than what&#8217;s required for inclusion, the difference will not be refunded. Choose your gas price carefully to avoid overpaying.
+        <source>The gas price you set is the exact amount you’ll pay per unit of gas used. If you set a gas price higher than what’s required for inclusion, the difference will not be refunded. Choose your gas price carefully to avoid overpaying.
 </source>
-        <translation>The gas price you set is the exact amount you&#8217;ll pay per unit of gas used. If you set a gas price higher than what&#8217;s required for inclusion, the difference will not be refunded. Choose your gas price carefully to avoid overpaying.
+        <translation>The gas price you set is the exact amount you’ll pay per unit of gas used. If you set a gas price higher than what’s required for inclusion, the difference will not be refunded. Choose your gas price carefully to avoid overpaying.
 </translation>
     </message>
     <message>
@@ -18088,10 +17796,10 @@ The gas limit is a cap on how much work the transaction can do on the blockchain
         <translation>Last transaction: %1</translation>
     </message>
     <message>
-        <source>Transaction counter ensuring transactions from your account are processed in the correct order and can&#8217;t be replayed. Each new transaction increments the nonce by 1, ensuring uniqueness and preventing double-spending.
+        <source>Transaction counter ensuring transactions from your account are processed in the correct order and can’t be replayed. Each new transaction increments the nonce by 1, ensuring uniqueness and preventing double-spending.
 
 If a transaction with a lower nonce is pending, higher nonce transactions will remain in the queue until the earlier one is confirmed.</source>
-        <translation>Transaction counter ensuring transactions from your account are processed in the correct order and can&#8217;t be replayed. Each new transaction increments the nonce by 1, ensuring uniqueness and preventing double-spending.
+        <translation>Transaction counter ensuring transactions from your account are processed in the correct order and can’t be replayed. Each new transaction increments the nonce by 1, ensuring uniqueness and preventing double-spending.
 
 If a transaction with a lower nonce is pending, higher nonce transactions will remain in the queue until the earlier one is confirmed.</translation>
     </message>
@@ -18142,12 +17850,12 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation>How to move the %1 control node to another device</translation>
     </message>
     <message>
-        <source>&lt;b&gt;It looks like you haven&#8217;t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can transfer ownership of %1 by sending the Owner token to the account of the person you want to be the new Community owner.</source>
-        <translation>&lt;b&gt;It looks like you haven&#8217;t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can transfer ownership of %1 by sending the Owner token to the account of the person you want to be the new Community owner.</translation>
+        <source>&lt;b&gt;It looks like you haven’t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can transfer ownership of %1 by sending the Owner token to the account of the person you want to be the new Community owner.</source>
+        <translation>&lt;b&gt;It looks like you haven’t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can transfer ownership of %1 by sending the Owner token to the account of the person you want to be the new Community owner.</translation>
     </message>
     <message>
-        <source>&lt;b&gt;It looks like you haven&#8217;t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can make one of your other synced desktop devices the control node for the %1 Community.</source>
-        <translation>&lt;b&gt;It looks like you haven&#8217;t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can make one of your other synced desktop devices the control node for the %1 Community.</translation>
+        <source>&lt;b&gt;It looks like you haven’t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can make one of your other synced desktop devices the control node for the %1 Community.</source>
+        <translation>&lt;b&gt;It looks like you haven’t minted the %1 Owner token yet.&lt;/b&gt; Once you have minted this token, you can make one of your other synced desktop devices the control node for the %1 Community.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -18169,8 +17877,8 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation>To transfer ownership of %1:</translation>
     </message>
     <message>
-        <source>1. Send the %1 Owner token (%2) to the new owner&#8217;s address</source>
-        <translation>1. Send the %1 Owner token (%2) to the new owner&#8217;s address</translation>
+        <source>1. Send the %1 Owner token (%2) to the new owner’s address</source>
+        <translation>1. Send the %1 Owner token (%2) to the new owner’s address</translation>
     </message>
     <message>
         <source>2. Ask the new owner to setup the control node for %1 on their desktop device</source>
@@ -18257,8 +17965,8 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation>Log in with your Status recovery phrase</translation>
     </message>
     <message>
-        <source>Recovery phrase doesn&#8217;t match the profile of an existing Keycard user on this device</source>
-        <translation>Recovery phrase doesn&#8217;t match the profile of an existing Keycard user on this device</translation>
+        <source>Recovery phrase doesn’t match the profile of an existing Keycard user on this device</source>
+        <translation>Recovery phrase doesn’t match the profile of an existing Keycard user on this device</translation>
     </message>
     <message>
         <source>The entered recovery phrase is already added</source>
@@ -18307,22 +18015,18 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>Utils</name>
     <message numerus="yes">
         <source>%n word(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>%n word</numerusform>
+            <numerusform>%n words</numerusform>
+        </translation></message>
     <message>
         <source>You need to enter a password</source>
         <translation>You need to enter a password</translation>
     </message>
     <message numerus="yes">
         <source>Password needs to be %n character(s) or more</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Password needs to be %n character or more</numerusform>
+            <numerusform>Password needs to be %n characters or more</numerusform>
+        </translation></message>
     <message>
         <source>You need to repeat your password</source>
         <translation>You need to repeat your password</translation>
@@ -18341,11 +18045,9 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message numerus="yes">
         <source>The PIN must be exactly %n digit(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>The PIN must be exactly %n digit</numerusform>
+            <numerusform>The PIN must be exactly %n digits</numerusform>
+        </translation></message>
     <message>
         <source>You need to repeat your PIN</source>
         <translation>You need to repeat your PIN</translation>
@@ -18360,11 +18062,9 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message numerus="yes">
         <source>The %1 cannot exceed %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>The %1 cannot exceed %n character</numerusform>
+            <numerusform>The %1 cannot exceed %n characters</numerusform>
+        </translation></message>
     <message>
         <source>Must be an hexadecimal color (eg: #4360DF)</source>
         <translation>Must be an hexadecimal color (eg: #4360DF)</translation>
@@ -18375,11 +18075,9 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message numerus="yes">
         <source>Value has to be at least %n character(s) long</source>
-        <translation type="unfinished">
-            <numerusform />
-            <numerusform />
-        </translation>
-    </message>
+        <translation><numerusform>Value has to be at least %n character long</numerusform>
+            <numerusform>Value has to be at least %n characters long</numerusform>
+        </translation></message>
     <message>
         <source>Messages</source>
         <translation>Messages</translation>
@@ -18427,6 +18125,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Home Page</source>
         <translation>Home Page</translation>
+    </message>
+    <message>
+        <source>Activity Center</source>
+        <translation>Activity Center</translation>
     </message>
     <message>
         <source>Add new user</source>
@@ -19124,10 +18826,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
 <context>
     <name>WelcomePage</name>
     <message>
-        <source>Welcome to Status</source>
-        <translation>Welcome to Status</translation>
-    </message>
-    <message>
         <source>Own your crypto</source>
         <translation>Own your crypto</translation>
     </message>
@@ -19152,6 +18850,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation>Be safe with secure cold wallet</translation>
     </message>
     <message>
+        <source>Welcome to Status</source>
+        <translation>Welcome to Status</translation>
+    </message>
+    <message>
         <source>The open-source, decentralised wallet and messenger</source>
         <translation>The open-source, decentralised wallet and messenger</translation>
     </message>
@@ -19162,6 +18864,18 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Log in</source>
         <translation>Log in</translation>
+    </message>
+    <message>
+        <source>Third-party services %1</source>
+        <translation>Third-party services %1</translation>
+    </message>
+    <message>
+        <source>enabled</source>
+        <translation>enabled</translation>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation>disabled</translation>
     </message>
     <message>
         <source>By proceeding you accept Status&lt;br&gt;%1 and %2</source>
@@ -19179,16 +18893,12 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
 <context>
     <name>main</name>
     <message>
-        <source>Status Desktop</source>
-        <translation>Status Desktop</translation>
-    </message>
-    <message>
         <source>Hello World</source>
         <translation>Hello World</translation>
     </message>
     <message>
-        <source>StatusQ Documentation App</source>
-        <translation>StatusQ Documentation App</translation>
+        <source>Status Desktop</source>
+        <translation>Status Desktop</translation>
     </message>
 </context>
 <context>
