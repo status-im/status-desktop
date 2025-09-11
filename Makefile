@@ -22,6 +22,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	check-pkg-target-macos \
 	check-pkg-target-windows \
 	clean \
+	update-translations \
 	compile-translations \
 	deps \
 	nim_status_client \
@@ -39,11 +40,11 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	status-keycard-go \
 	statusq-sanity-checker \
 	run-statusq-sanity-checker \
-        statusq-tests \
-        run-statusq-tests \
-        storybook-build \
-        run-storybook \
-        run-storybook-tests \
+	statusq-tests \
+	run-statusq-tests \
+	storybook-build \
+	run-storybook \
+	run-storybook-tests \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -532,18 +533,25 @@ $(UI_RESOURCES): $(UI_SOURCES) | check-qt-dir
 
 rcc: $(UI_RESOURCES)
 
-TS_SOURCES := $(shell find ui/i18n -iname '*.ts') # ui/i18n/qml_*.ts
-QM_BINARIES := $(shell find ui/i18n -iname "*.ts" | sed 's/\.ts/\.qm/' | sed 's/ui/bin/') # bin/i18n/qml_*.qm
+TS_SOURCE_DIR := ui/i18n
+TS_BUILD_DIR := $(TS_SOURCE_DIR)/build
 
-$(QM_BINARIES): TS_FILE = $(shell echo $@ | sed 's/\.qm/\.ts/' | sed 's/bin/ui/')
-$(QM_BINARIES): $(TS_SOURCES) | check-qt-dir
-	mkdir -p bin/i18n
-	lrelease -removeidentical $(TS_FILE) -qm $@ $(HANDLE_OUTPUT)
+log-update-translations:
+	echo -e "\033[92mUpdating:\033[39m translations"
+
+update-translations: | log-update-translations
+	cmake -S $(TS_SOURCE_DIR) -B $(TS_BUILD_DIR) -Wno-dev $(HANDLE_OUTPUT)
+	cmake --build $(TS_BUILD_DIR) --target update_application_translations $(HANDLE_OUTPUT)
 
 log-compile-translations:
 	echo -e "\033[92mCompiling:\033[39m translations"
 
-compile-translations: | log-compile-translations $(QM_BINARIES)
+compile-translations: | update-translations log-compile-translations
+	cmake -S $(TS_SOURCE_DIR) -B $(TS_BUILD_DIR) -Wno-dev $(HANDLE_OUTPUT)
+	cmake --build $(TS_BUILD_DIR) --target compile_application_translations $(HANDLE_OUTPUT)
+
+clean-translations:
+	rm -rf $(TS_BUILD_DIR)
 
 # used to override the default number of kdf iterations for sqlcipher
 KDF_ITERATIONS ?= 0
@@ -839,7 +847,7 @@ zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 clean-destdir:
 	rm -rf bin/*
 
-clean: | clean-common clean-destdir statusq-clean status-go-clean dotherside-clean storybook-clean
+clean: | clean-common clean-destdir statusq-clean status-go-clean dotherside-clean storybook-clean clean-translations
 	rm -rf node_modules bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
 
