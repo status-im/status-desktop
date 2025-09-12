@@ -5,10 +5,12 @@
     <name>AddressesSelectorPanel</name>
     <message>
         <source>ETH addresses</source>
+        <comment>some of my description comment</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n valid address(s)</source>
+        <comment>some of my description double comment</comment>
         <translation>
 			<numerusform>%n valid address</numerusform>
 			<numerusform>%n valid addresses</numerusform>
