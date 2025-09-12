@@ -88,8 +88,9 @@ class SettingsLeftPanel(QObject):
     def open_advanced_settings(self) -> 'AdvancedSettingsView':
         return AdvancedSettingsView().wait_until_appears()
 
+
 class SettingsScreen(QObject):
 
     def __init__(self):
         super().__init__(settings_names.mainWindow_ProfileLayout)
-        self.left_panel = SettingsLeftPanel()
+        self.left_panel = SettingsLeftPanel().wait_until_appears()

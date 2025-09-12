@@ -1,5 +1,5 @@
 MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-QT_VERSION?=6.9.0
+QT_VERSION?=6.9.2
 QT_MAJOR=$(shell echo $(QT_VERSION) | cut -d. -f1)
 
 -include $(MAKEFILE_DIR)/scripts/Common.mk

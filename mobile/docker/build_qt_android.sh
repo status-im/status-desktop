@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #
-# Based on https://github.com/carlonluca/docker-qt/blob/master/6.9.0/build_6.9.0_android.sh
+# Based on https://github.com/carlonluca/docker-qt/blob/master/6.9.2/build_6.9.2_android.sh
 # This builds Qt for all Android architectures (arm64-v8a, armeabi-v7a, x86, x86_64)
 #
 
 set -e
 
-qt_version="6.9.0"
+qt_version="6.9.2"
 ffmpeg_version="7.1"
 
 export ANDROID_SDK_HOME=$ANDROID_SDK_ROOT
