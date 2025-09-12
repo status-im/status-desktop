@@ -7,7 +7,6 @@ import ../item as chat_item
 import ./chat_details
 import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
-import ../../../shared_models/message_reaction_item as pinned_msg_reaction_item
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 
@@ -278,39 +277,25 @@ method onChatMuted*(self: Module) =
 method onChatUnmuted*(self: Module) =
   self.view.setMuted(false)
 
-method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let myPublicKey = singletonInstance.userProfile.getPubKey()
-    let myName = singletonInstance.userProfile.getName()
-    self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName,
-    reactionId)
-  else:
-    error "(pinned) wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
+method onReactionAdded*(self: Module, messageId: string, emoji: string, reactionId: string) =
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  let myName = singletonInstance.userProfile.getName()
+  self.view.pinnedModel().addReaction(messageId, emoji, didIReactWithThisEmoji = true, myPublicKey, myName, reactionId)
 
-method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true)
-  else:
-    error "(pinned) wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
+method onReactionRemoved*(self: Module, messageId: string, emoji: string, reactionId: string) =
+  self.view.pinnedModel().removeReaction(messageId, emoji, reactionId, didIRemoveThisReaction = true)
 
-method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string,
-  reactionFrom: string) =
-  var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let item = self.view.pinnedModel().getItemWithMessageId(messageId)
-    if(item.isNil):
-      return
+method toggleReactionFromOthers*(self: Module, messageId: string, emoji: string, reactionId: string, reactionFrom: string) =
+  let item = self.view.pinnedModel().getItemWithMessageId(messageId)
+  if item.isNil:
+    return
 
-    if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
-      let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
-      self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
-        userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
-    else:
-      self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
+  if item.shouldAddReaction(emoji, reactionFrom):
+    let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
+    self.view.pinnedModel().addReaction(messageId, emoji, didIReactWithThisEmoji = false,
+      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
   else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReactionFromOthers"
+    self.view.pinnedModel().removeReaction(messageId, emoji, reactionId, didIRemoveThisReaction = false)
 
 method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)

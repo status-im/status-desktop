@@ -13,36 +13,36 @@ SplitView {
     id: root
 
     Logs { id: logs }
-
+// FIXME
     ListModel {
         id: emojiReactionsModel
         ListElement {
-            emojiId: 1
+            emoji: "❤️"
             filename: "emojiReactions/heart"
             didIReactWithThisEmoji: false
         }
         ListElement {
-            emojiId: 2
+            emoji: "👍"
             filename: "emojiReactions/thumbsUp"
             didIReactWithThisEmoji: false
         }
         ListElement {
-            emojiId: 3
+            emoji: "👎"
             filename: "emojiReactions/thumbsDown"
             didIReactWithThisEmoji: false
         }
         ListElement {
-            emojiId: 4
+            emoji: "😂"
             filename: "emojiReactions/laughing"
             didIReactWithThisEmoji: false
         }
         ListElement {
-            emojiId: 5
+            emoji: "😢"
             filename: "emojiReactions/sad"
             didIReactWithThisEmoji: false
         }
         ListElement {
-            emojiId: 6
+            emoji: "😡"
             filename: "emojiReactions/angry"
             didIReactWithThisEmoji: false
         }
@@ -83,7 +83,7 @@ SplitView {
                 onUnpinMessage: logs.logEvent(`onUnpinMessage: ${messageContextMenuView.messageId}`)
                 onPinnedMessagesLimitReached: logs.logEvent(`onPinnedMessagesLimitReached: ${messageContextMenuView.messageId}`)
                 onMarkMessageAsUnread: logs.logEvent(`onMarkMessageAsUnread: ${messageContextMenuView.messageId}`)
-                onToggleReaction: (emojiId) => logs.logEvent("onToggleReaction", ["emojiId"], [emojiId])
+                onToggleReaction: (emoji) => logs.logEvent("onToggleReaction", ["emoji"], [emoji])
                 onDeleteMessage: logs.logEvent(`onDeleteMessage: ${messageContextMenuView.messageId}`)
                 onEditClicked: logs.logEvent(`onEditClicked: ${messageContextMenuView.messageId}`)
                 onShowReplyArea: (senderId) => logs.logEvent("onShowReplyArea", ["senderId"], [senderId])

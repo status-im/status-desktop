@@ -3,7 +3,6 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller
 import ../../../../shared_models/[message_model, message_item, contacts_utils]
-import ../../../../shared_models/message_reaction_item
 import ../../../../shared_models/link_preview_model
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
@@ -167,15 +166,11 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
     self.updateLinkPreviewsCommunities(item, requestFromMailserver = item.seen)
 
     for r in reactions:
-      if(r.messageId == message.id):
-        var emojiIdAsEnum: EmojiId
-        if(message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
-          let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
-          let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
-          item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
-            userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
-        else:
-          error "wrong emoji id found when loading messages", methodName="newMessagesLoaded"
+      if r.messageId == message.id:
+        let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
+        let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
+        item.addReaction(r.emoji, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
+          userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
 
     if message.editedAt != 0:
       item.isEdited = true
@@ -324,67 +319,38 @@ method onMessageDelivered*(self: Module, messageId: string) =
 method loadMoreMessages*(self: Module) =
   discard self.controller.loadMoreMessages()
 
-method toggleReaction*(self: Module, messageId: string, emojiId: int) =
-  var emojiIdAsEnum: EmojiId
-  if not message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum):
-    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReaction"
-    return
-
+method toggleReaction*(self: Module, messageId: string, emoji: string) =
   let item = self.view.model().getItemWithMessageId(messageId)
   if item.isNil:
     return
 
   let myPublicKey = singletonInstance.userProfile.getPubKey()
-  if item.shouldAddReaction(emojiIdAsEnum, myPublicKey):
-    # TODO remove this conversion when the new popup is hooked and sends emoji string directly
-    # Convert emoji type to string for the new addReaction method
-    var emoji = ""
-    case emojiIdAsEnum:
-    of EmojiId.Heart: emoji = "❤️"
-    of EmojiId.Thumbsup: emoji = "👍"
-    of EmojiId.Thumbsdown: emoji = "👎"
-    of EmojiId.Laughing: emoji = "😂"
-    of EmojiId.Cry: emoji = "😢"
-    of EmojiId.Angry: emoji = "😠"
-
-    self.controller.addReaction(messageId, emojiId, emoji)
+  if item.shouldAddReaction(emoji, myPublicKey):
+    self.controller.addReaction(messageId, emoji)
   else:
-    let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
-    self.controller.removeReaction(messageId, emojiId, reactionId)
+    let reactionId = item.getReactionId(emoji, myPublicKey)
+    self.controller.removeReaction(messageId, emoji, reactionId)
 
-method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let myPublicKey = singletonInstance.userProfile.getPubKey()
-    let myName = singletonInstance.userProfile.getName()
-    self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName,
-    reactionId)
-  else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
+method onReactionAdded*(self: Module, messageId: string, emoji: string, reactionId: string) =
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  let myName = singletonInstance.userProfile.getName()
+  self.view.model().addReaction(messageId, emoji, didIReactWithThisEmoji = true, myPublicKey, myName, reactionId)
 
-method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true)
-  else:
-    error "wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
+method onReactionRemoved*(self: Module, messageId: string, emoji: string, reactionId: string) =
+  self.view.model().removeReaction(messageId, emoji, reactionId, didIRemoveThisReaction = true)
 
-method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string,
+method toggleReactionFromOthers*(self: Module, messageId: string, emoji: string, reactionId: string,
   reactionFrom: string) =
-  var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let item = self.view.model().getItemWithMessageId(messageId)
-    if(item.isNil):
-      info "message with this id is not loaded yet ", msgId=messageId, methodName="toggleReactionFromOthers"
-      return
-    if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
-      let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
-      self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
-      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
-    else:
-      self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
+  let item = self.view.model().getItemWithMessageId(messageId)
+  if(item.isNil):
+    info "message with this id is not loaded yet ", msgId=messageId, methodName="toggleReactionFromOthers"
+    return
+  if(item.shouldAddReaction(emoji, reactionFrom)):
+    let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
+    self.view.model().addReaction(messageId, emoji, didIReactWithThisEmoji = false,
+    userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
   else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReactionFromOthers"
+    self.view.model().removeReaction(messageId, emoji, reactionId, didIRemoveThisReaction = false)
 
 method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
   self.controller.pinUnpinMessage(messageId, pin)

@@ -1,6 +1,6 @@
 import nimqml, tables, json, sets, algorithm, sequtils, strutils, stew/shims/strformat, sugar
 
-import message_item, message_reaction_item, message_transaction_parameters_item, contacts_utils
+import message_item, message_transaction_parameters_item, contacts_utils
 
 import ../../../app_service/service/message/dto/message
 import ../../../app_service/service/contacts/dto/contact_details
@@ -572,24 +572,20 @@ QtObject:
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.ResendError.int])
 
-  proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool,
+  proc addReaction*(self: Model, messageId: string, emoji: string, didIReactWithThisEmoji: bool,
     userPublicKey: string, userDisplayName: string, reactionId: string) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
-    self.items[ind].addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
+    self.items[ind].addReaction(emoji, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
 
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[ModelRole.Reactions.int])
-
-  proc removeReaction*(self: Model, messageId: string, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
+  proc removeReaction*(self: Model, messageId: string, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
 
-    self.items[ind].removeReaction(emojiId, reactionId, didIRemoveThisReaction)
+    self.items[ind].removeReaction(emoji, reactionId, didIRemoveThisReaction)
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete

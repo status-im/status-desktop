@@ -92,19 +92,19 @@ proc init*(self: Controller) =
     let args = MessageAddRemoveReactionArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onReactionAdded(args.messageId, args.emojiId, args.reactionId)
+    self.delegate.onReactionAdded(args.messageId, args.emoji, args.reactionId)
 
   self.events.on(SIGNAL_MESSAGE_REACTION_REMOVED) do(e:Args):
     let args = MessageAddRemoveReactionArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
+    self.delegate.onReactionRemoved(args.messageId, args.emoji, args.reactionId)
 
   self.events.on(SIGNAL_MESSAGE_REACTION_FROM_OTHERS) do(e:Args):
     let args = MessageAddRemoveReactionArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.toggleReactionFromOthers(args.messageId, args.emojiId, args.reactionId, args.reactionFrom)
+    self.delegate.toggleReactionFromOthers(args.messageId, args.emoji, args.reactionId, args.reactionFrom)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)

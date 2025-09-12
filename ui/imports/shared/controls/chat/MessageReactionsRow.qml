@@ -9,7 +9,7 @@ Row {
 
     property var reactionsModel
 
-    signal toggleReaction(int emojiId)
+    signal toggleReaction(string emoji)
 
     spacing: Theme.halfPadding
     leftPadding: Theme.halfPadding
@@ -19,13 +19,13 @@ Row {
         model: root.reactionsModel
         delegate: EmojiReaction {
             source: Theme.svg(model.filename)
-            emojiId: model.emojiId
+            emoji: model.emoji
             reactedByUser: model.didIReactWithThisEmoji
             onCloseModal: {
                 if (reactedByUser) {
                     return
                 }
-                root.toggleReaction(emojiId)
+                root.toggleReaction(emoji)
             }
         }
     }
