@@ -62,7 +62,7 @@ proc init*(self: Controller) =
     let args = PinnedMessagesLoadedArgs(e)
     if(self.chatId != args.chatId or args.pinnedMessages.len == 0):
       return
-    self.delegate.newPinnedMessagesLoaded(args.pinnedMessages)
+    self.delegate.newPinnedMessagesLoaded(args.pinnedMessages, args.reactions)
 
   self.events.on(SIGNAL_MESSAGE_PINNED) do(e:Args):
     let args = MessagePinUnpinArgs(e)
@@ -105,6 +105,12 @@ proc init*(self: Controller) =
     if(self.chatId != args.chatId):
       return
     self.delegate.toggleReactionFromOthers(args.messageId, args.emoji, args.reactionId, args.reactionFrom)
+
+  self.events.on(SIGNAL_REACTIONS_FOR_MESSAGE_LOADED) do(e:Args):
+    let args = ReactionsLoadedArgs(e)
+    if(self.chatId != args.chatId or args.messageId.len == 0):
+      return
+    self.delegate.onReactionsLoaded(args.messageId, args.reactions)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
@@ -237,6 +243,9 @@ proc clearChatHistory*(self: Controller) =
 
 proc leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)
+
+proc asyncLoadReactionsForMessage*(self: Controller, messageId: string) =
+  self.messageService.asyncLoadReactionsForMessage(self.chatId, messageId)
 
 proc getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)

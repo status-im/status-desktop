@@ -42,6 +42,7 @@ const MESSAGES_PER_PAGE_MAX* = 40
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
 const SIGNAL_PINNED_MESSAGES_LOADED* = "pinnedMessagesLoaded"
+const SIGNAL_REACTIONS_FOR_MESSAGE_LOADED* = "signalReactionsForMessageLoaded"
 const SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED* = "firstUnseenMessageLoaded"
 const SIGNAL_NEW_MESSAGE_RECEIVED* = "newMessageReceived"
 const SIGNAL_MESSAGE_PINNED* = "messagePinned"
@@ -84,6 +85,12 @@ type
   PinnedMessagesLoadedArgs* = ref object of Args
     chatId*: string
     pinnedMessages*: seq[PinnedMessageDto]
+    reactions*: seq[ReactionDto]
+
+  ReactionsLoadedArgs* = ref object of Args
+    chatId*: string
+    messageId*: string
+    reactions*: seq[ReactionDto]
 
   MessagePinUnpinArgs* = ref object of Args
     chatId*: string
@@ -247,6 +254,53 @@ QtObject:
 
     self.threadpool.start(arg)
     return true
+
+  proc onAsyncLoadReactionsForMessage*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      if responseObj.kind != JObject:
+        raise newException(CatchableError, "load reactions for message response is not a json object")
+
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
+
+      var chatId: string
+      discard responseObj.getProp("chatId", chatId)
+
+      var messageId: string
+      discard responseObj.getProp("messageId", messageId)
+
+     # handling reactions
+      var reactions: seq[ReactionDto]
+      var reactionsArr: JsonNode
+      if responseObj.getProp("reactions", reactionsArr):
+        reactions = map(
+          reactionsArr.getElems(),
+          proc(x: JsonNode): ReactionDto =
+            result = x.toReactionDto()
+        )
+
+      let data = ReactionsLoadedArgs(chatId: chatId, messageId: messageId, reactions: reactions)
+
+      self.events.emit(SIGNAL_REACTIONS_FOR_MESSAGE_LOADED, data)
+    except Exception as e:
+      error "Error load reactions for message async", msg = e.msg
+
+  proc asyncLoadReactionsForMessage*(self: Service, chatId: string, messageId: string) =
+    if chatId.len == 0 or messageId.len == 0:
+      error "empty chat id or message id", procName="asyncLoadReactionsForMessage"
+      return
+
+    let arg = AsyncFetchReactionsForMessageTaskArg(
+      tptr: asyncFetchReactionsForMessageTask,
+      vptr: cast[uint](self.vptr),
+      slot: "onAsyncLoadReactionsForMessage",
+      chatId: chatId,
+      messageId: messageId
+    )
+
+    self.threadpool.start(arg)
 
   proc asyncLoadPinnedMessagesForChat*(self: Service, chatId: string) =
     if (chatId.len == 0):
@@ -519,8 +573,17 @@ QtObject:
       # set initial number of pinned messages
       self.numOfPinnedMessagesPerChat[chatId] = pinnedMessages.len
 
-      let data = PinnedMessagesLoadedArgs(chatId: chatId,
-        pinnedMessages: pinnedMessages)
+     # handling reactions
+      var reactions: seq[ReactionDto]
+      var reactionsArr: JsonNode
+      if responseObj.getProp("reactions", reactionsArr):
+        reactions = map(
+          reactionsArr.getElems(),
+          proc(x: JsonNode): ReactionDto =
+            result = x.toReactionDto()
+        )
+
+      let data = PinnedMessagesLoadedArgs(chatId: chatId, pinnedMessages: pinnedMessages, reactions: reactions)
 
       self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
     except Exception as e:
