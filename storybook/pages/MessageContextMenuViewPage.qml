@@ -13,7 +13,7 @@ SplitView {
     id: root
 
     Logs { id: logs }
-
+// FIXME
     ListModel {
         id: emojiReactionsModel
         ListElement {

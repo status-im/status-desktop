@@ -515,11 +515,11 @@ proc getReactionId*(self: Item, emoji: string, userPublicKey: string): string =
 proc addReaction*(self: Item, emoji: string, didIReactWithThisEmoji: bool, userPublicKey: string,
   userDisplayName: string, reactionId: string) =
   self.reactionsModel.addReaction(emoji, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
-  # self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emoji), didIReactWithThisEmoji)
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(emoji, didIReactWithThisEmoji)
 
 proc removeReaction*(self: Item, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =
   self.reactionsModel.removeReaction(emoji, reactionId, didIRemoveThisReaction)
-  # self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emoji), not didIRemoveThisReaction)
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(emoji, not didIRemoveThisReaction)
 
 proc messageAttachments*(self: Item): seq[string] {.inline.} =
   self.messageAttachments

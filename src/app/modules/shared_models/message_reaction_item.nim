@@ -1,15 +1,6 @@
 import json, stew/shims/strformat
 
 type
-  EmojiId* {.pure.} = enum
-    Heart = 1,
-    Thumbsup,
-    Thumbsdown,
-    Laughing,
-    Cry,
-    Angry
-
-type
   ReactionDetails* = object
     publicKey: string
     displayName: string

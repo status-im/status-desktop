@@ -580,10 +580,6 @@ QtObject:
 
     self.items[ind].addReaction(emoji, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
 
-    # let index = self.createIndex(ind, 0, nil)
-    # defer: index.delete
-    # self.dataChanged(index, index, @[ModelRole.Reactions.int])
-
   proc removeReaction*(self: Model, messageId: string, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):

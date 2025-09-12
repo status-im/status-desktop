@@ -334,8 +334,7 @@ method toggleReaction*(self: Module, messageId: string, emoji: string) =
 method onReactionAdded*(self: Module, messageId: string, emoji: string, reactionId: string) =
   let myPublicKey = singletonInstance.userProfile.getPubKey()
   let myName = singletonInstance.userProfile.getName()
-  self.view.model().addReaction(messageId, emoji, didIReactWithThisEmoji = true, myPublicKey, myName,
-  reactionId)
+  self.view.model().addReaction(messageId, emoji, didIReactWithThisEmoji = true, myPublicKey, myName, reactionId)
 
 method onReactionRemoved*(self: Module, messageId: string, emoji: string, reactionId: string) =
   self.view.model().removeReaction(messageId, emoji, reactionId, didIRemoveThisReaction = true)

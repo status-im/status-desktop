@@ -602,7 +602,7 @@ QtObject:
 
   proc addReaction*(self: Service, chatId: string, messageId: string, emoji: string) =
     try:
-      let response = status_go.addReactionV2(chatId, messageId, emoji)
+      let response = status_go.addReaction(chatId, messageId, emoji)
 
       let errorString = response.result{"error"}.getStr()
       if errorString != "":
@@ -618,7 +618,7 @@ QtObject:
         reactionId = reactions[0].id
 
       let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId,
-        reactionId: reactionId)
+        reactionId: reactionId, emoji: emoji)
       self.events.emit(SIGNAL_MESSAGE_REACTION_ADDED, data)
 
     except Exception as e:
