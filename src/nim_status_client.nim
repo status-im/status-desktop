@@ -8,12 +8,14 @@ import
 
 import status_go
 import app/core/main
+import app/core/credential_verifier
 import constants as main_constants
 import statusq_bridge
 
 import app/global/global_singleton
 import app/global/local_app_settings
 import app/boot/app_controller
+import env_cli_vars
 
 featureGuard KEYCARD_ENABLED:
   import keycard_go
@@ -118,7 +120,7 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
 proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, file: cstring, function: cstring, line: cint) {.cdecl, exportc.} =
   # Initialize Nim GC stack bottom for foreign threads
   # https://status-im.github.io/nim-style-guide/interop.html#calling-nim-code-from-other-languages
-  when declared(setupForeignThreadGc): 
+  when declared(setupForeignThreadGc):
     setupForeignThreadGc()
   when declared(nimGC_setStackBottom):
     var locals {.volatile, noinit.}: pointer
@@ -154,6 +156,9 @@ proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, 
       warn "qt message of unknown type", messageType = int(messageType)
 
 proc mainProc() =
+  # used in CI
+  if env_cli_vars.desktopConfig.verifyCredentials:
+    quit(runCredentialVerification())
 
   when defined(macosx) and defined(arm64):
     var signalStack: cstring = cast[cstring](allocShared(SIGSTKSZ))
