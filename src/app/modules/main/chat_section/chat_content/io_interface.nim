@@ -43,13 +43,13 @@ method onChatMuted*(self: AccessInterface) {.base.} =
 method onChatUnmuted*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
+method onReactionAdded*(self: AccessInterface, messageId: string, emoji: string, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
+method onReactionRemoved*(self: AccessInterface, messageId: string, emoji: string, reactionId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string,
+method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emoji: string, reactionId: string,
   reactionFrom: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

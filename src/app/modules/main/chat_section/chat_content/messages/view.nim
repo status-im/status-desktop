@@ -48,8 +48,8 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
 
-  proc toggleReaction*(self: View, messageId: string, emojiId: int) {.slot.} =
-    self.delegate.toggleReaction(messageId, emojiId)
+  proc toggleReaction*(self: View, messageId: string, emoji: string) {.slot.} =
+    self.delegate.toggleReaction(messageId, emoji)
 
   proc pinMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.pinUnpinMessage(messageId, true)

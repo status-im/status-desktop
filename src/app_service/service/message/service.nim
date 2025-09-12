@@ -106,7 +106,7 @@ type
   MessageAddRemoveReactionArgs* = ref object of Args
     chatId*: string
     messageId*: string
-    emojiId*: int
+    emoji*: string
     reactionId*: string
     reactionFrom*: string
 
@@ -383,8 +383,8 @@ QtObject:
 
   proc handleEmojiReactionsUpdate(self: Service, emojiReactions: seq[ReactionDto]) =
     for r in emojiReactions:
-      let data = MessageAddRemoveReactionArgs(chatId: r.localChatId, messageId: r.messageId, emojiId: r.emojiId,
-      reactionId: r.id, reactionFrom: r.`from`)
+      let data = MessageAddRemoveReactionArgs(chatId: r.localChatId, messageId: r.messageId,
+      reactionId: r.id, reactionFrom: r.`from`, emoji: r.emoji)
       self.events.emit(SIGNAL_MESSAGE_REACTION_FROM_OTHERS, data)
 
   proc handleMessagesReload(self: Service, communityId: string) =
@@ -567,14 +567,6 @@ QtObject:
           reactionsArr.getElems(),
           proc(x: JsonNode): ReactionDto =
             result = x.toReactionDto()
-            # TODO remove this once we fully support full emojis
-            case result.emoji:
-              of "❤️": result.emojiId = 1
-              of "👍": result.emojiId = 2
-              of "👎": result.emojiId = 3
-              of "😂": result.emojiId = 4
-              of "😢": result.emojiId = 5
-              of "😠": result.emojiId = 6
         )
 
       let data = MessagesLoadedArgs(
@@ -614,9 +606,9 @@ QtObject:
     except Exception as e:
       error "error: ", procName="onAsyncLoadCommunityMemberAllMessages", errName = e.name, errDesription = e.msg
 
-  proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int, emoji: string) =
+  proc addReaction*(self: Service, chatId: string, messageId: string, emoji: string) =
     try:
-      let response = status_go.addReaction(chatId, messageId, emojiId)
+      let response = status_go.addReaction(chatId, messageId, emoji)
 
       let errorString = response.result{"error"}.getStr()
       if errorString != "":
@@ -631,14 +623,14 @@ QtObject:
       if reactions.len > 0:
         reactionId = reactions[0].id
 
-      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
-        reactionId: reactionId)
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId,
+        reactionId: reactionId, emoji: emoji)
       self.events.emit(SIGNAL_MESSAGE_REACTION_ADDED, data)
 
     except Exception as e:
       error "error: ", procName="addReaction", errName = e.name, errDesription = e.msg
 
-  proc removeReaction*(self: Service, reactionId: string, chatId: string, messageId: string, emojiId: int) =
+  proc removeReaction*(self: Service, reactionId: string, chatId: string, messageId: string, emoji: string) =
     try:
       let response = status_go.removeReaction(reactionId)
 
@@ -646,7 +638,7 @@ QtObject:
       if errorString != "":
         raise newException(CatchableError, errorString)
 
-      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emoji: emoji,
       reactionId: reactionId)
       self.events.emit(SIGNAL_MESSAGE_REACTION_REMOVED, data)
 

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQml.Models
 
 import StatusQ.Core
 import StatusQ.Components
@@ -19,7 +20,35 @@ SplitView {
 
         readonly property var exampleAlbum: [ModelsData.banners.coinbase, ModelsData.icons.status]
 
+        readonly property var messageWithReactions: [{
+            timestamp: 1667937830123,
+            senderId: "zq123456790",
+            senderDisplayName: "Alice",
+            contentType: StatusMessage.ContentType.Text,
+            message: "This message has reactions",
+            isContact: true,
+            isAReply: false,
+            trustIndicator: StatusContactVerificationIcons.TrustedType.None,
+            outgoingStatus: StatusMessage.OutgoingStatus.Delivered,
+            reactionsModel: [
+                {
+                    emoji: "😄",
+                    didIReactWithThisEmoji: true,
+                    numberOfReactions: 1,
+                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\"]"
+                },
+                {
+                    emoji: "🕵️‍♀",
+                    didIReactWithThisEmoji: false,
+                    numberOfReactions: 2,
+                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Bob\", \"John\"]"
+                }
+            ]
+        }]
+
         readonly property var messagesModel: ListModel {
+            Component.onCompleted: append(d.messageWithReactions)
+
             ListElement {
                 timestamp: 1656937930123
                 senderId: "zq123456789"
@@ -32,6 +61,7 @@ SplitView {
                 isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1657937930135
@@ -43,6 +73,7 @@ SplitView {
                 isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1667937930159
@@ -54,6 +85,7 @@ SplitView {
                 isAReply: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1667937930489
@@ -65,6 +97,7 @@ SplitView {
                 isAReply: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1667937930159
@@ -76,6 +109,7 @@ SplitView {
                 isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1719769718000
@@ -88,6 +122,7 @@ SplitView {
                 amISender: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Sending
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1719769718000
@@ -101,6 +136,7 @@ SplitView {
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Sent
                 resendError: ""
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1719769718000
@@ -114,6 +150,7 @@ SplitView {
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
                 resendError: ""
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1719769718000
@@ -127,6 +164,7 @@ SplitView {
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Expired
                 resendError: ""
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1719769718000
@@ -140,6 +178,7 @@ SplitView {
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Expired
                 resendError: "can't send message on Tuesday"
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1667937930159
@@ -153,6 +192,7 @@ SplitView {
                 isAReply: true
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1667937930159
@@ -164,6 +204,7 @@ SplitView {
                 isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
             ListElement {
                 timestamp: 1667937830123
@@ -175,6 +216,7 @@ SplitView {
                 isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                reactionsModel: []
             }
         }
     }
@@ -203,6 +245,7 @@ SplitView {
                     resendError: model.outgoingStatus === StatusMessage.OutgoingStatus.Expired ? model.resendError : ""
                     linkAddressAndEnsName: true
                     disabledTooltipText: disableLinkCheckbox.checked ? "Send not available": ""
+                    reactionsModel: model.reactionsModel
 
                     messageDetails {
                         readonly property bool isEnsVerified: model.senderDisplayName.endsWith(".eth")

@@ -24,7 +24,7 @@ StatusDropdown {
     property alias searchString: searchBox.text
     property string emojiSize: ""
 
-    signal emojiSelected(string emoji, bool atCu)
+    signal emojiSelected(string emoji, bool atCu, string hexcode)
 
     modal: false
     width: 360
@@ -39,10 +39,8 @@ StatusDropdown {
 
         const encodedIcon = StatusQUtils.Emoji.getEmojiCodepoint(iconCodePoint)
 
-        root.emojiModel.addRecentEmoji(hexcode)
-
         // Adding a space because otherwise, some emojis would fuse since emoji is just a string
-        root.emojiSelected(StatusQUtils.Emoji.parse(encodedIcon, root.emojiSize || undefined) + ' ', true)
+        root.emojiSelected(StatusQUtils.Emoji.parse(encodedIcon, root.emojiSize || undefined) + ' ', true, hexcode)
         root.close()
     }
 
