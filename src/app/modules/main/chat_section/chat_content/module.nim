@@ -155,7 +155,7 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy: string,
-    item: var pinned_msg_item.Item):bool =
+    item: var pinned_msg_item.Item, reactions: seq[ReactionDto]):bool =
 
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getCommunityDetails().chats
@@ -192,13 +192,20 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
 
+  for r in reactions:
+    if r.messageId == message.id:
+      let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
+      let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
+      item.addReaction(r.emoji, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
+        userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
+
   return true
 
-method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) =
+method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto], reactions: seq[ReactionDto]) =
   var viewItems: seq[pinned_msg_item.Item]
   for p in pinnedMessages:
     var item: pinned_msg_item.Item
-    if(not self.buildPinnedMessageItem(p.message, p.pinnedBy, item)):
+    if(not self.buildPinnedMessageItem(p.message, p.pinnedBy, item, reactions)):
       continue
 
     viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
@@ -218,7 +225,8 @@ method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string)
   let response = self.controller.getMessageById(messageId)
   if response.error.len > 0:
     return
-  if not self.buildPinnedMessageItem(response.message, actionInitiatedBy, item):
+  # TODO get the reactions for this message only
+  if not self.buildPinnedMessageItem(response.message, actionInitiatedBy, item, @[]):
     return
 
   self.view.pinnedModel().insertItemBasedOnClock(item)

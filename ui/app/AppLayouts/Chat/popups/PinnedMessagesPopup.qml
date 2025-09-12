@@ -109,6 +109,7 @@ StatusDialog {
                     messageContentType: model.contentType
                     pinnedMessage: model.pinned
                     messagePinnedBy: model.pinnedBy
+                    reactionsModel: model.reactions
                     sticker: model.sticker
                     stickerPack: model.stickerPack
                     linkPreviewModel: model.linkPreviewModel

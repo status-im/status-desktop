@@ -86,6 +86,26 @@ proc asyncFetchPinnedChatMessagesTask(argEncoded: string) {.gcsafe, nimcall.} =
     responseJson["pinnedMessages"] = pinnedMsgArr
     responseJson["pinnedMessagesCursor"] = msgCursor
 
+    # handle reactions
+    var reactions: Table[string, JsonNode]
+    var reactionsSeq: seq[JsonNode]
+
+    let pinnedMsgsJson = pinnedMsgArr.getElems()
+    var messageIds = newSeq[string]()
+    for pinnedMessageJson in pinnedMsgsJson:
+      var messageObj: JsonNode
+      if pinnedMessageJson.getProp("message", messageObj):
+        messageIds.add(messageObj["id"].getStr())
+
+    for messageId in messageIds:
+      let rResponse = status_go.fetchReactionsForMessageWithId(arg.chatId, messageId)
+      if not rResponse.error.isNil:
+        raise newException(CatchableError, rResponse.error.message)
+      # reactionsTable[messageId] = rResponse.result
+      reactionsSeq = concat(reactionsSeq, rResponse.result.getElems())
+
+    responseJson["reactions"] = %reactionsSeq
+
     arg.finish(responseJson)
 
   except Exception as e:

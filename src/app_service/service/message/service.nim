@@ -85,6 +85,7 @@ type
   PinnedMessagesLoadedArgs* = ref object of Args
     chatId*: string
     pinnedMessages*: seq[PinnedMessageDto]
+    reactions*: seq[ReactionDto]
 
   MessagePinUnpinArgs* = ref object of Args
     chatId*: string
@@ -513,8 +514,17 @@ QtObject:
       # set initial number of pinned messages
       self.numOfPinnedMessagesPerChat[chatId] = pinnedMessages.len
 
-      let data = PinnedMessagesLoadedArgs(chatId: chatId,
-        pinnedMessages: pinnedMessages)
+     # handling reactions
+      var reactions: seq[ReactionDto]
+      var reactionsArr: JsonNode
+      if responseObj.getProp("reactions", reactionsArr):
+        reactions = map(
+          reactionsArr.getElems(),
+          proc(x: JsonNode): ReactionDto =
+            result = x.toReactionDto()
+        )
+
+      let data = PinnedMessagesLoadedArgs(chatId: chatId, pinnedMessages: pinnedMessages, reactions: reactions)
 
       self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
     except Exception as e:
