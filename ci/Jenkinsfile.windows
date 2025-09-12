@@ -149,6 +149,21 @@ pipeline {
         jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
       } }
     }
+
+
+    stage('E2E') {
+      when { expression { utils.isPRBuild() } }
+      steps { script {
+        build(
+          job: 'status-desktop/systems/windows/x86_64/tests-e2e-new',
+          wait: false,
+          parameters: jenkins.mapToParams([
+            GIT_REF: env.GIT_COMMIT,
+            BUILD_SOURCE: env.JOB_NAME,
+          ]),
+        )
+      } }
+    }
   }
   post {
     success { script { github.notifyPR(true) } }
