@@ -17,3 +17,4 @@ StatusScrollView 0.1 StatusScrollView.qml
 singleton StatusSharedUpdateTimer 0.1 StatusSharedUpdateTimer.qml
 StatusTooltipSettings 0.1 StatusTooltipSettings.qml
 singleton LocaleUtils 0.1 LocaleUtils.qml
+singleton TestConfig 0.1 TestConfig.qml

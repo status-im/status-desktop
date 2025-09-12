@@ -39,6 +39,38 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
         Core Qml Gui Quick QuickControls2 REQUIRED)
 
+# --- QML test hooks flag and TestConfig generation ---
+option(STATUSQ_TESTMODE "Enable QML test hooks (TestConfig.testMode)" OFF)
+set(TEST_MODE false)
+if(STATUSQ_TESTMODE)
+    set(TEST_MODE true)
+endif()
+
+# Generate TestConfig.qml into the build tree
+set(_gen_qml ${CMAKE_CURRENT_BINARY_DIR}/src/StatusQ/Core/TestConfig.qml)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src/StatusQ/Core)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/Core/TestConfig.qml.in
+  ${_gen_qml}
+  @ONLY
+)
+if(NOT EXISTS ${_gen_qml})
+  message(FATAL_ERROR "Expected generated file missing: ${_gen_qml}")
+endif()
+
+# Generate a .qrc that includes the generated QML
+set(_gen_qrc ${CMAKE_CURRENT_BINARY_DIR}/TestConfig.generated.qrc)
+file(WRITE ${_gen_qrc}
+  "<RCC>\n"
+  "  <qresource prefix=\"/StatusQ\">\n"
+  "    <file alias=\"Core/TestConfig.qml\">${_gen_qml}</file>\n"
+  "  </qresource>\n"
+  "</RCC>\n"
+)
+
+qt_add_resources(STATUSQ_TESTCONFIG_RCC ${_gen_qrc})
+# --- END test hooks ---
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest REQUIRED)
 endif()
@@ -113,6 +145,7 @@ endif()
 
 add_library(StatusQ ${LIB_TYPE}
         ${STATUSQ_QRC_COMPILED}
+        ${STATUSQ_TESTCONFIG_RCC}
         include/StatusQ/audioutils.h
         include/StatusQ/clipboardutils.h
         include/StatusQ/constantrole.h
