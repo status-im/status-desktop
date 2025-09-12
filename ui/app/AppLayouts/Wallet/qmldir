@@ -1,2 +1,3 @@
 WalletLayout 1.0 WalletLayout.qml
+WalletPrivacyWall 1.0 WalletPrivacyWall.qml
 singleton WalletUtils 1.0 WalletUtils.qml

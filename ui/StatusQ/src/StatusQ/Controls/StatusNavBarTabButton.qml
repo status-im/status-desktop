@@ -13,6 +13,15 @@ StatusIconTabButton {
     property alias tooltip: statusTooltip
     property Component popupMenu
     property alias stateIcon: stateIcon
+    property bool thirdpartyServicesEnabled: true
+
+    identicon.asset.color: (statusNavBarTabButton.hovered || highlighted || statusNavBarTabButton.checked) ?
+                               statusNavBarTabButton.thirdpartyServicesEnabled ?
+                                   Theme.palette.primaryColor1 :
+                                   Theme.palette.indirectColor1 :
+                                 statusNavBarTabButton.thirdpartyServicesEnabled ?
+                                    Theme.palette.baseColor1 :
+                                    Theme.palette.indirectColor3
 
     StatusToolTip {
         id: statusTooltip

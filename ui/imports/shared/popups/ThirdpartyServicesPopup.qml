@@ -123,7 +123,7 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 type: StatusBaseButton.Type.Primary
-                normalColor: Theme.palette.customisationColors.purple
+                normalColor: Theme.palette.privacyModeColor
                 textColor: Theme.palette.white
                 text: root.thirdPartyServicesEnabled ? qsTr("Disable third-party services") : qsTr("Enable third-party services")
                 onClicked: {

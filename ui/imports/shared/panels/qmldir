@@ -18,3 +18,4 @@ Separator 1.0 Separator.qml
 SequenceColumnLayout 1.0 SequenceColumnLayout.qml
 SequenceColumnLayoutSeparator 1.0 SequenceColumnLayoutSeparator.qml
 StyledText 1.0 StyledText.qml
+PrivacyWallCarousel 1.0 PrivacyWallCarousel.qml

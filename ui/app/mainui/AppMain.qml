@@ -66,6 +66,8 @@ Item {
     // Primary store container — all additional stores should be initialized under this root
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {
         localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
+        thirdpartyServicesEnabled: appMain.featureFlagsStore.privacyModeFeatureEnabled ?
+                                   appMain.privacyStore.thirdpartyServicesEnabled: true
         onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
     }
 
@@ -1193,6 +1195,8 @@ Item {
         visible: !homePageLoader.active
         width: visible ? implicitWidth : 0
 
+        thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
+
         topSectionModel: SortFilterProxyModel {
             sourceModel: appMain.rootStore.sectionsModel
             filters: [
@@ -1265,6 +1269,8 @@ Item {
             stateIcon.asset.name: "cancel"
             stateIcon.asset.color: Theme.palette.baseColor2
             stateIcon.asset.width: 14
+
+            thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
 
             onClicked: {
                 changeAppSectionBySectionId(model.id)
@@ -1445,6 +1451,8 @@ Item {
 
                 StatusNewItemGradient { id: newGradient }
                 badge.gradient: displayCreateCommunityBadge ? newGradient : undefined // gradient has precedence over a simple color
+
+                thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
 
                 onClicked: {
                     if(model.sectionType === Constants.appSection.swap) {
@@ -1957,35 +1965,54 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.wallet
                         asynchronous: true
-                        sourceComponent: WalletLayout {
-                            objectName: "walletLayoutReal"
-                            navBar: appMain.navBar
-                            sharedRootStore: appMain.sharedRootStore
-                            store: appMain.rootStore
-                            contactsStore: appMain.contactsStore
-                            communitiesStore: appMain.communitiesStore
-                            transactionStore: appMain.transactionStore
-                            emojiPopup: statusEmojiPopup.item
-                            networkConnectionStore: appMain.networkConnectionStore
-                            networksStore: appMain.networksStore
-                            appMainVisible: appMain.visible
-                            swapEnabled: featureFlagsStore.swapEnabled
-                            dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
-                            dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
-                            dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-                            isKeycardEnabled: featureFlagsStore.keycardEnabled
-                            onDappListRequested: dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
-                            onDappConnectRequested: {
-                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
-                                dAppsServiceLoader.dappConnectRequested()
+                        sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? walletLayout: walletPrivacyWall
+
+                        Component {
+                            id: walletPrivacyWall
+
+                            WalletPrivacyWall {
+                                navBar: appMain.navBar
+
+                                onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                                onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
+                                                                Constants.statusDiscussPageUrl,
+                                                                SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
                             }
-                            onDappDisconnectRequested: function(dappUrl) {
-                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
-                                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                        }
+
+                        Component {
+                            id: walletLayout
+
+                            WalletLayout {
+                                objectName: "walletLayoutReal"
+                                navBar: appMain.navBar
+                                sharedRootStore: appMain.sharedRootStore
+                                store: appMain.rootStore
+                                contactsStore: appMain.contactsStore
+                                communitiesStore: appMain.communitiesStore
+                                transactionStore: appMain.transactionStore
+                                emojiPopup: statusEmojiPopup.item
+                                networkConnectionStore: appMain.networkConnectionStore
+                                networksStore: appMain.networksStore
+                                appMainVisible: appMain.visible
+                                swapEnabled: featureFlagsStore.swapEnabled
+                                dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
+                                dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
+                                dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+                                isKeycardEnabled: featureFlagsStore.keycardEnabled
+                                onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
+                                onDappConnectRequested: {
+                                    dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
+                                    dAppsServiceLoader.dappConnectRequested()
+                                }
+                                onDappDisconnectRequested: function(dappUrl) {
+                                    dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                                    dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                                }
+                                onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                                onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
+                                onOpenSwapModalRequested: popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                             }
-                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
-                            onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
-                            onOpenSwapModalRequested: (swapFormData) => popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                         }
                         onLoaded: {
                             item.resetView()
@@ -2121,33 +2148,53 @@ Item {
                     Loader {
                         active: appView.currentIndex === Constants.appViewStackIndex.market
                         asynchronous: true
-                        sourceComponent: MarketLayout {
-                            objectName: "marketLayout"
-                            navBar: appMain.navBar
+                        sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? marketLayout: marketPrivacyWall
 
-                            tokensModel: appMain.marketStore.marketLeaderboardModel
-                            totalTokensCount: appMain.marketStore.totalLeaderboardCount
-                            loading: appMain.marketStore.marketLeaderboardLoading
-                            currencySymbol: {
-                                const symbol = SQUtils.ModelUtils.getByKey(
-                                                appMain.currencyStore.currenciesModel,
-                                                "shortName",
-                                                appMain.currencyStore.currentCurrency,
-                                                "symbol")
-                                return !!symbol ? symbol: ""
+                        Component {
+                            id: marketPrivacyWall
+
+                            MarketPrivacyWall {
+                                navBar: appMain.navBar
+
+                                onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                                onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
+                                                                Constants.statusDiscussPageUrl,
+                                                                SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
                             }
-                            fnFormatCurrencyAmount: function(amount, options) {
-                                return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
-                            }
-                            currentPage: appMain.marketStore.currentPage
-                            onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
-                            onFetchMarketTokens: (pageNumber, pageSize) => {
-                                                     appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
-                                                 }
                         }
+
+                        Component {
+                            id: marketLayout
+
+                            MarketLayout {
+                                objectName: "marketLayout"
+                                navBar: appMain.navBar
+
+                                tokensModel: appMain.marketStore.marketLeaderboardModel
+                                totalTokensCount: appMain.marketStore.totalLeaderboardCount
+                                loading: appMain.marketStore.marketLeaderboardLoading
+                                currencySymbol: {
+                                    const symbol = SQUtils.ModelUtils.getByKey(
+                                                     appMain.currencyStore.currenciesModel,
+                                                     "shortName",
+                                                     appMain.currencyStore.currentCurrency,
+                                                     "symbol")
+                                    return !!symbol ? symbol: ""
+                                }
+                                fnFormatCurrencyAmount: function(amount, options) {
+                                    return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency, options)
+                                }
+                                currentPage: appMain.marketStore.currentPage
+                                onRequestLaunchSwap: popupRequestsHandler.swapModalHandler.launchSwap()
+                                onFetchMarketTokens: (pageNumber, pageSize) => {
+                                                         appMain.marketStore.requestMarketTokenPage(pageNumber, pageSize)
+                                                     }
+                            }
+                        }
+
                         onActiveChanged: {
-                            if(!active) {
-                               appMain.marketStore.unsubscribeFromUpdates()
+                            if(!active && appMain.rootStore.thirdpartyServicesEnabled) {
+                                appMain.marketStore.unsubscribeFromUpdates()
                             }
                         }
                         onLoaded: item.resetView()
