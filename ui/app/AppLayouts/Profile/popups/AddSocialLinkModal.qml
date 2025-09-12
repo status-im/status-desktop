@@ -21,7 +21,6 @@ StatusStackModal {
 
     implicitWidth: 480 // design
     implicitHeight: 512 // design
-    anchors.centerIn: parent
     padding: currentIndex === 0 ? 0 : Theme.padding
 
     headerSettings.title: currentIndex === 0 ? qsTr("Add a link") :
