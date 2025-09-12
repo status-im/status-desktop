@@ -4,12 +4,12 @@
 <context>
     <name>AddressesSelectorPanel</name>
     <message>
-        <source>ETH addresses</source>
-        <translation>ETH addresses translation</translation>
-    </message>
-    <message>
         <source>BTC addresses</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>ETH addresses new key name</source>
+        <translation>ETH addresses translation</translation>
     </message>
 </context>
 </TS>
