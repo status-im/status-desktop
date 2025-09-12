@@ -7,5 +7,9 @@
         <source>ETH addresses</source>
         <translation>ETH addresses translation</translation>
     </message>
+    <message>
+        <source>BTC addresses</source>
+        <translation></translation>
+    </message>
 </context>
 </TS>
