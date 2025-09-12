@@ -16,11 +16,7 @@ proc fetchReactions*(chatId: string, cursorVal: string, limit: int): RpcResponse
   let payload = %* [chatId, cursorVal, limit]
   result = callPrivateRPC("emojiReactionsByChatID".prefix, payload)
 
-proc addReaction*(chatId: string, messageId: string, emojiId: int): RpcResponse[JsonNode] =
-  let payload = %* [chatId, messageId, emojiId]
-  result = callPrivateRPC("sendEmojiReaction".prefix, payload)
-
-proc addReactionV2*(chatId: string, messageId: string, emoji: string): RpcResponse[JsonNode] =
+proc addReaction*(chatId: string, messageId: string, emoji: string): RpcResponse[JsonNode] =
   let payload = %* [chatId, messageId, emoji]
   result = callPrivateRPC("sendEmojiReactionV2".prefix, payload)
 

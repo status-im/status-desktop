@@ -1,15 +1,6 @@
 import json, stew/shims/strformat
 
 type
-  EmojiId* {.pure.} = enum
-    Heart = 1,
-    Thumbsup,
-    Thumbsdown,
-    Laughing,
-    Cry,
-    Angry
-
-type
   ReactionDetails* = object
     publicKey: string
     displayName: string
@@ -17,19 +8,11 @@ type
 
 type
   MessageReactionItem* = object
-    emojiId: EmojiId
     emoji: string
     didIReactWithThisEmoji: bool
     reactions: seq[ReactionDetails]
 
-proc toEmojiIdAsEnum*(emojiId: int, emojiIdAsEnum: var EmojiId): bool =
-  if(emojiId >= ord(low(EmojiId)) or emojiId <= ord(high(EmojiId))):
-    emojiIdAsEnum = EmojiId(emojiId)
-    return true
-  return false
-
-proc initMessageReactionItem*(emojiId: EmojiId, emoji: string): MessageReactionItem =
-  result.emojiId = emojiId
+proc initMessageReactionItem*(emoji: string): MessageReactionItem =
   result.emoji = emoji
   result.didIReactWithThisEmoji = false
 
@@ -40,15 +23,11 @@ proc `$`*(self: MessageReactionItem): string =
     r.reactionId & "\n"
 
   result = fmt"""MessageReactionItem(
-    emojiId: {self.emojiId},
     emoji: {self.emoji},
     didIReactWithThisEmoji: {self.didIReactWithThisEmoji},
     reactionsCount: {self.reactions.len},
     reactions: {reactions}
     ]"""
-
-proc emojiId*(self: MessageReactionItem): EmojiId {.inline.} =
-  self.emojiId
 
 proc emoji*(self: MessageReactionItem): string {.inline.} =
   self.emoji

@@ -106,27 +106,6 @@ QtObject {
         return String.fromCodePoint(...codePointParts);
     }
 
-    function getShortcodeFromId(emojiId) {
-        switch (emojiId) {
-            case 1: return ":heart:"
-            case 2: return ":thumbsup:"
-            case 3: return ":thumbsdown:"
-            case 4: return ":laughing:"
-            case 5: return ":cry:"
-            case 6: return ":angry:"
-            default: return undefined
-        }
-    }
-
-    function getEmojiFromId(emojiId) {
-        let shortcode = getShortcodeFromId(emojiId)
-        let emojiUnicode = getEmojiUnicode(shortcode)
-        if (emojiUnicode) {
-            return fromCodePoint(emojiUnicode)
-        }
-        return undefined
-    }
-
     // Used to exclude flags emojis from the random emoji picker
     // Based on the knowledge that flags emojis are contiguous in the emoji list
     readonly property int firstFlagIndex: 3504

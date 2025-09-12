@@ -10,7 +10,7 @@ import ./payment_request_model as payment_request_model
 import ./emoji_reactions_model as emoji_reactions_model
 
 export types.ContentType
-import message_reaction_model, message_reaction_item, message_transaction_parameters_item
+import message_reaction_model, message_transaction_parameters_item
 
 type
   Item* = ref object
@@ -506,20 +506,20 @@ proc `pinnedBy=`*(self: Item, value: string) {.inline.} =
 proc reactionsModel*(self: Item): MessageReactionModel {.inline.} =
   self.reactionsModel
 
-proc shouldAddReaction*(self: Item, emojiId: EmojiId, userPublicKey: string): bool =
-  return self.reactionsModel.shouldAddReaction(emojiId, userPublicKey)
+proc shouldAddReaction*(self: Item, emoji: string, userPublicKey: string): bool =
+  return self.reactionsModel.shouldAddReaction(emoji, userPublicKey)
 
-proc getReactionId*(self: Item, emojiId: EmojiId, userPublicKey: string): string =
-  return self.reactionsModel.getReactionId(emojiId, userPublicKey)
+proc getReactionId*(self: Item, emoji: string, userPublicKey: string): string =
+  return self.reactionsModel.getReactionId(emoji, userPublicKey)
 
-proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string,
+proc addReaction*(self: Item, emoji: string, didIReactWithThisEmoji: bool, userPublicKey: string,
   userDisplayName: string, reactionId: string) =
-  self.reactionsModel.addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
-  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emojiId), didIReactWithThisEmoji)
+  self.reactionsModel.addReaction(emoji, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(emoji, didIReactWithThisEmoji)
 
-proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
-  self.reactionsModel.removeReaction(emojiId, reactionId, didIRemoveThisReaction)
-  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emojiId), not didIRemoveThisReaction)
+proc removeReaction*(self: Item, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =
+  self.reactionsModel.removeReaction(emoji, reactionId, didIRemoveThisReaction)
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(emoji, not didIRemoveThisReaction)
 
 proc messageAttachments*(self: Item): seq[string] {.inline.} =
   self.messageAttachments

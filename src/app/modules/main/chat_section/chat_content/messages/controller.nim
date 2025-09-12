@@ -114,19 +114,19 @@ proc init*(self: Controller) =
     let args = MessageAddRemoveReactionArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onReactionAdded(args.messageId, args.emojiId, args.reactionId)
+    self.delegate.onReactionAdded(args.messageId, args.emoji, args.reactionId)
 
   self.events.on(SIGNAL_MESSAGE_REACTION_REMOVED) do(e:Args):
     let args = MessageAddRemoveReactionArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
+    self.delegate.onReactionRemoved(args.messageId, args.emoji, args.reactionId)
 
   self.events.on(SIGNAL_MESSAGE_REACTION_FROM_OTHERS) do(e:Args):
     let args = MessageAddRemoveReactionArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.toggleReactionFromOthers(args.messageId, args.emojiId, args.reactionId, args.reactionFrom)
+    self.delegate.toggleReactionFromOthers(args.messageId, args.emoji, args.reactionId, args.reactionFrom)
 
   self.events.on(SIGNAL_MESSAGES_MARKED_AS_READ) do(e: Args):
     let args = MessagesMarkedAsReadArgs(e)
@@ -256,11 +256,11 @@ proc loadMoreMessages*(self: Controller): bool =
   let limit = self.loadingMessagesPerPageFactor * MESSAGES_PER_PAGE
   return self.messageService.asyncLoadMoreMessagesForChat(self.chatId, limit)
 
-proc addReaction*(self: Controller, messageId: string, emojiId: int, emoji: string) =
-  self.messageService.addReaction(self.chatId, messageId, emojiId, emoji)
+proc addReaction*(self: Controller, messageId: string, emoji: string) =
+  self.messageService.addReaction(self.chatId, messageId, emoji)
 
-proc removeReaction*(self: Controller, messageId: string, emojiId: int, reactionId: string) =
-  self.messageService.removeReaction(reactionId, self.chatId, messageId, emojiId)
+proc removeReaction*(self: Controller, messageId: string, emoji: string, reactionId: string) =
+  self.messageService.removeReaction(reactionId, self.chatId, messageId, emoji)
 
 proc pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, pin)

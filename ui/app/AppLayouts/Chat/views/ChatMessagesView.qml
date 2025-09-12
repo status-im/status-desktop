@@ -421,6 +421,10 @@ Item {
                     messageStore.setEditModeOff(model.id)
             }
 
+            onEmojiReactionToggled: (messageId, emoji) => {
+                root.messageStore.toggleReaction(messageId, emoji)
+            }
+
             // Unfurling related requests:
             onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)
 

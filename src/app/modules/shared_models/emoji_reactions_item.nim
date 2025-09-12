@@ -1,17 +1,17 @@
 type
     EmojiReactionItem* = ref object
-        emojiId: int
+        emoji: string
         filename: string
         didIReactWithThisEmoji: bool
 
-proc initItem*(emojiId: int, filename: string, didIReactWithThisEmoji: bool): EmojiReactionItem =
+proc initItem*(emoji: string, filename: string, didIReactWithThisEmoji: bool): EmojiReactionItem =
     result = EmojiReactionItem()
-    result.emojiId = emojiId
+    result.emoji = emoji
     result.filename = filename
     result.didIReactWithThisEmoji = didIReactWithThisEmoji
 
-proc emojiId*(self: EmojiReactionItem): int =
-    self.emojiId
+proc emoji*(self: EmojiReactionItem): string =
+    self.emoji
 
 proc filename*(self: EmojiReactionItem): string =
     self.filename
