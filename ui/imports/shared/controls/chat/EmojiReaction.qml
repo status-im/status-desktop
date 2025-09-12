@@ -9,7 +9,7 @@ import shared.panels
 
 Rectangle {
     property alias source: reactionImage.source
-    property int emojiId
+    property string emoji
     property bool reactedByUser: false
     property bool isHovered: false
     signal closeModal()

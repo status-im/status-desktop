@@ -4,8 +4,7 @@ import message_reaction_item
 
 type
   ModelRole {.pure.} = enum
-    EmojiId = UserRole + 1
-    Emoji
+    Emoji = UserRole + 1
     DidIReactWithThisEmoji
     NumberOfReactions
     JsonArrayOfUsersReactedWithThisEmoji
@@ -44,7 +43,6 @@ QtObject:
 
   method roleNames(self: MessageReactionModel): Table[int, string] =
     {
-      ModelRole.EmojiId.int:"emojiId",
       ModelRole.Emoji.int:"emoji",
       ModelRole.DidIReactWithThisEmoji.int:"didIReactWithThisEmoji",
       ModelRole.NumberOfReactions.int:"numberOfReactions",
@@ -62,8 +60,6 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.EmojiId:
-      result = newQVariant(item.emojiId.int)
     of ModelRole.Emoji:
       result = newQVariant(item.emoji)
     of ModelRole.DidIReactWithThisEmoji:
@@ -75,44 +71,44 @@ QtObject:
       # because of that we're returning json array as a string.
       result = newQVariant($item.jsonArrayOfUsersReactedWithThisEmoji)
 
-  proc reactionItemWithEmojiIdExists(self: MessageReactionModel, emojiId: EmojiId): bool =
+  proc reactionItemWithEmojiExists(self: MessageReactionModel, emoji: string): bool =
     for it in self.items:
-      if(it.emojiId == emojiId):
+      if(it.emoji == emoji):
         return true
     return false
 
-  proc getIndexOfTheItemWithEmojiId(self: MessageReactionModel, emojiId: EmojiId): int =
+  proc getIndexOfTheItemWithEmoji(self: MessageReactionModel, emoji: string): int =
     for i in 0..<self.items.len:
-      if(self.items[i].emojiId == emojiId):
+      if(self.items[i].emoji == emoji):
         return i
     return -1
 
-  proc findPositionForTheItemWithEmojiId(self: MessageReactionModel, emojiId: EmojiId): int =
+  proc findPositionForTheItemWithEmoji(self: MessageReactionModel, emoji: string): int =
     if(self.items.len == 0):
       return 0
 
     for i in 0..<self.items.len:
-      if(emojiId < self.items[i].emojiId):
+      if(emoji < self.items[i].emoji):
         return i
 
     return self.items.len
 
-  proc shouldAddReaction*(self: MessageReactionModel, emojiId: EmojiId, userPublicKey: string): bool =
-    let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
+  proc shouldAddReaction*(self: MessageReactionModel, emoji: string, userPublicKey: string): bool =
+    let ind = self.getIndexOfTheItemWithEmoji(emoji)
     if(ind == -1):
       return true
     return self.items[ind].shouldAddReaction(userPublicKey)
 
-  proc getReactionId*(self: MessageReactionModel, emojiId: EmojiId, userPublicKey: string): string =
-    let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
+  proc getReactionId*(self: MessageReactionModel, emoji: string, userPublicKey: string): string =
+    let ind = self.getIndexOfTheItemWithEmoji(emoji)
     if(ind == -1):
       return ""
     return self.items[ind].getReactionId(userPublicKey)
 
-  proc addReaction*(self: MessageReactionModel, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string,
+  proc addReaction*(self: MessageReactionModel, emoji: string, didIReactWithThisEmoji: bool, userPublicKey: string,
     userDisplayName: string, reactionId: string) =
-    if(self.reactionItemWithEmojiIdExists(emojiId)):
-      let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
+    if(self.reactionItemWithEmojiExists(emoji)):
+      let ind = self.getIndexOfTheItemWithEmoji(emoji)
       if(ind == -1):
         return
       self.items[ind].addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
@@ -123,9 +119,9 @@ QtObject:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
 
-      var item = initMessageReactionItem(emojiId, "")
+      var item = initMessageReactionItem(emoji)
       item.addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
-      let position = self.findPositionForTheItemWithEmojiId(emojiId) # Model should maintain items based on the emoji id.
+      let position = self.findPositionForTheItemWithEmoji(emoji) # Model should maintain items based on the emoji.
 
       self.beginInsertRows(parentModelIndex, position, position)
       self.items.insert(item, position)
@@ -133,8 +129,8 @@ QtObject:
 
     self.countChanged()
 
-  proc removeReaction*(self: MessageReactionModel, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
-    let ind = self.getIndexOfTheItemWithEmojiId(emojiId)
+  proc removeReaction*(self: MessageReactionModel, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =
+    let ind = self.getIndexOfTheItemWithEmoji(emoji)
     if(ind == -1):
       return
     self.items[ind].removeReaction(reactionId, didIRemoveThisReaction)

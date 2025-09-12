@@ -2,10 +2,10 @@ import nimqml, tables
 import emoji_reactions_item
 
 type
-    ModelRole {.pure.} = enum
-        EmojiId = UserRole + 1
-        Filename
-        DidIReactWithThisEmoji
+  ModelRole {.pure.} = enum
+    Emoji = UserRole + 1
+    Filename
+    DidIReactWithThisEmoji
 
 QtObject:
     type Model* = ref object of QAbstractListModel
@@ -20,44 +20,31 @@ QtObject:
     # ```nim 
     #   for i in 1..itemCount:
     #       items.add(initItem(i, "emojiReactions/emoji_$(i)", false))
-    # ```
-    proc setup(self: Model) =
-        self.items = @[
-            initItem(1, "emojiReactions/heart",      false),
-            initItem(2, "emojiReactions/thumbsUp",   false),
-            initItem(3, "emojiReactions/thumbsDown", false),
-            initItem(4, "emojiReactions/laughing",   false),
-            initItem(5, "emojiReactions/sad",        false),
-            initItem(6, "emojiReactions/angry",      false),
-        ]
-        self.QAbstractListModel.setup
-
-    proc newEmojiReactionsModel*(): Model =
-        new(result, delete)
-        result.setup
-
-    proc newModel*(): Model =
-        new(result, delete)
-        result.setup
-
-    proc countChanged(self: Model) {.signal.}
-
-    proc getCount*(self: Model): int {.slot.} =
-        self.items.len
-
-    QtProperty[int] count:
-        read = getCount
-        notify = countChanged
-
-    method rowCount(self: Model, index: QModelIndex = nil): int =
-        return self.items.len
-
-    method roleNames(self: Model): Table[int, string] =
-        {
-            ModelRole.EmojiId.int: "emojiId",
-            ModelRole.Filename.int: "filename",
-            ModelRole.DidIReactWithThisEmoji.int: "didIReactWithThisEmoji"
-        }.toTable
+  # ```
+  proc setup(self: Model) =
+    self.items = @[
+        initItem("❤️", "emojiReactions/heart",      false),
+        initItem("👍", "emojiReactions/thumbsUp",   false),
+        initItem("👎", "emojiReactions/thumbsDown", false),
+        initItem("😂", "emojiReactions/laughing",   false),
+        initItem("😢", "emojiReactions/sad",        false),
+        initItem("😡", "emojiReactions/angry",      false),
+    ]
+    self.QAbstractListModel.setup
+  
+  proc newEmojiReactionsModel*(): Model =
+    new(result, delete)
+    result.setup
+  
+  method rowCount(self: Model, index: QModelIndex = nil): int =
+    return self.items.len
+  
+  method roleNames(self: Model): Table[int, string] =
+    {
+      ModelRole.Emoji.int: "emoji",
+      ModelRole.Filename.int: "filename",
+       ModelRole.DidIReactWithThisEmoji.int: "didIReactWithThisEmoji"
+    }.toTable
 
     method data(self: Model, index: QModelIndex, role: int): QVariant =
         if not index.isValid:
@@ -66,13 +53,13 @@ QtObject:
             return
 
         let item = self.items[index.row]
-        let enumRole = role.ModelRole
+    let enumRole = role.ModelRole
 
-        case enumRole:
-            of ModelRole.EmojiId: result = newQVariant(item.emojiId)
-            of ModelRole.Filename: result = newQVariant(item.filename)
-            of ModelRole.DidIReactWithThisEmoji: result = newQVariant(item.didIReactWithThisEmoji)
-
+    case enumRole:
+      of ModelRole.Emoji: result = newQVariant(item.emoji)
+      of ModelRole.Filename: result = newQVariant(item.filename)
+      of ModelRole.DidIReactWithThisEmoji: result = newQVariant(item.didIReactWithThisEmoji)
+  
     proc setItems*(self: Model, items: seq[EmojiReactionItem]) =
         self.beginResetModel()
         self.items = items
