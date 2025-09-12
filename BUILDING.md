@@ -45,11 +45,9 @@ Run with **Administrator** privileges:
 choco install make cmake mingw wget
 ```
 
-#### Install Go 1.23
+#### Install Go 1.24
 
-Download and install Go 1.23 from the [official website](https://go.dev/dl/).
-
-> ⚠️ Note: 1.23 version is a strict requirement for now. Version 1.24 won't work
+Download and install Go 1.24 from the [official website](https://go.dev/dl/).
 
 > ⚠️ Note: There is a script `scripts/windows_build_setup.ps1`, but it may be outdated.
 
@@ -64,7 +62,7 @@ sudo apt update
 sudo apt install libpcsclite-dev build-essential mesa-common-dev libglu1-mesa-dev libssl-dev cmake jq libxcb-xinerama0 protobuf-compiler
 ```
 
-Install **Go 1.23**:
+Install **Go 1.24**:
 
 Download and install from the [official website](https://go.dev/dl/).
 
@@ -109,7 +107,7 @@ Install [Homebrew](https://brew.sh/) if not already installed.
 #### Install Required Packages
 
 ```bash
-brew install cmake pkg-config go@1.23 qt protobuf 
+brew install cmake pkg-config go@1.24 qt protobuf 
 ```
 
 Install additional packages if you are planning to build DMG

@@ -126,7 +126,7 @@ ENV PATH="/opt/cmake/bin:${PATH}"
 
 # Installing Golang
 RUN GOLANG_SHA256="535f9f81802499f2a7dbfa70abb8fda3793725fcc29460f719815f6e10b5fd60" \
- && GOLANG_TARBALL="go1.23.10.linux-amd64.tar.gz" \
+ && GOLANG_TARBALL="go1.24.7.linux-amd64.tar.gz" \
  && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
