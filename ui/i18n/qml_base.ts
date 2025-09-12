@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>ETH addresses new key name</source>
-        <translation>ETH addresses translation</translation>
+        <translation>ETH addresses translation new translation</translation>
     </message>
 </context>
 </TS>
