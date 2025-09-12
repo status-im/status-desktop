@@ -26,6 +26,7 @@ const eventActivityFetchTransactionDetails*: string = "wallet-activity-fetch-tra
 const eventActivityGetCollectiblesDone*: string = "wallet-activity-get-collectibles"
 
 const eventActivitySessionUpdated*: string = "wallet-activity-session-updated"
+const eventActivityInitialFetchComplete*: string = "wallet-activity-initial-fetch-complete"
 
 type
   Period* = object
@@ -34,7 +35,7 @@ type
 
   # see status-go/services/wallet/activity/filter.go Type
   ActivityType* {.pure.} = enum
-    Send, Receive, Buy, Swap, Bridge, ContractDeployment, Mint, Approve
+    Send, Receive, Buy, Swap, Bridge, ContractDeployment, Mint, Approve, ContractInteraction, Unknown
 
   # see status-go/services/wallet/activity/filter.go Status
   ActivityStatus* {.pure.} = enum
