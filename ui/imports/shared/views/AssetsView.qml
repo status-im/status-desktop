@@ -131,13 +131,13 @@ Control {
         ]
 
         sorters: [
-            RoleSorter {
-                roleName: "isCommunity"
-            },
-            RoleSorter {
-                roleName: sortOrderComboBox.currentSortRoleName
-                sortOrder: sortOrderComboBox.currentSortOrder
-            }
+//            RoleSorter {
+//                roleName: "isCommunity"
+//            }
+            // RoleSorter {
+            //     roleName: sortOrderComboBox.currentSortRoleName
+            //     sortOrder: sortOrderComboBox.currentSortOrder
+            // }
         ]
     }
 
