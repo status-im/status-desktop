@@ -238,7 +238,7 @@ RUN echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN mkdir /nix && chown jenkins:jenkins /nix
 
 # Install/Update Golang to the version we need
-RUN GOLANG_SHA256="535f9f81802499f2a7dbfa70abb8fda3793725fcc29460f719815f6e10b5fd60" \
+RUN GOLANG_SHA256="da18191ddb7db8a9339816f3e2b54bdded8047cdc2a5d67059478f8d1595c43f" \
     && GOLANG_TARBALL="go${GOLANG_VERSION}.linux-amd64.tar.gz" \
     && rm -rf /usr/local/go \
     && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
