@@ -4,6 +4,8 @@ import ../item as chat_item
 import app_service/service/message/dto/pinned_message
 import app_service/service/chat/dto/chat
 import app_service/service/message/dto/message
+import app_service/service/message/dto/reaction
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
 
@@ -25,7 +27,7 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method onNotificationsUpdated*(self: AccessInterface, hasUnreadMessages: bool, notificationCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method newPinnedMessagesLoaded*(self: AccessInterface, pinnedMessages: seq[PinnedMessageDto]) {.base.} =
+method newPinnedMessagesLoaded*(self: AccessInterface, pinnedMessages: seq[PinnedMessageDto], reactions: seq[ReactionDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUnpinMessage*(self: AccessInterface, messageId: string) {.base.} =
@@ -51,6 +53,9 @@ method onReactionRemoved*(self: AccessInterface, messageId: string, emoji: strin
 
 method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emoji: string, reactionId: string,
   reactionFrom: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onReactionsLoaded*(self: AccessInterface, messageId: string, reactions: seq[ReactionDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
