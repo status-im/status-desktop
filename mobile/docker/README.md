@@ -19,7 +19,7 @@ The Dockerfile uses a multi-stage build approach with the following layers:
 - `JAVA_VERSION`: Java version (default: 17)
 - `ANDROID_API_LEVEL`: Android API level (default: 35)
 - `ANDROID_NDK_VERSION`: Android NDK version (default: 27.2.12479018)
-- `GOLANG_VERSION`: Go version (default: 1.23.10)
+- `GOLANG_VERSION`: Go version (default: 1.24.7)
 - `NIM_VERSION`: Nim version (default: 2.0.12)
 - `NIX_VERSION`: Nix version (default: 2.24.11)
 
@@ -52,7 +52,7 @@ The final image includes:
 - Qt 6.9.0 for Android and desktop
 - Android SDK/NDK
 - Nim 2.0.12
-- Go 1.23.10
+- Go 1.24.7
 - Nix package manager
 - OpenSSL 3.0.15 for Android arm64-v8a
 - Protobuf compiler and tools

@@ -48,7 +48,7 @@ pipeline {
               "--build-arg JAVA_VERSION=17 " +
               "--build-arg ANDROID_API_LEVEL=35 " +
               "--build-arg ANDROID_NDK_VERSION=27.2.12479018 " +
-              "--build-arg GOLANG_VERSION=1.23.10 " +
+              "--build-arg GOLANG_VERSION=1.24.7 " +
               "--build-arg NIM_VERSION=2.0.12 " +
               "--build-arg NIX_VERSION=2.24.11 " +
               "--target mobile-build ."
