@@ -418,10 +418,14 @@ StatusSectionLayout {
                 advancedStore: root.advancedStore
                 localBackupEnabled: root.devicesStore.localBackupEnabled
                 backupPath: root.devicesStore.backupPath
+                messagesBackupEnabled: root.devicesStore.messagesBackupEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
                 onBackupPathSet: function(path) {
                     root.devicesStore.setBackupPath(path)
+                }
+                onBackupMessagesEnabledToggled: function(enabled) {
+                    root.devicesStore.setMessagesBackupEnabled(enabled)
                 }
             }
         }
