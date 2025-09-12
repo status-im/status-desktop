@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en" sourcelanguage="en">
+<TS version="2.1" language="cs_CZ" sourcelanguage="en_US">
 <context>
     <name></name>
     <message>
@@ -547,7 +547,7 @@
     <name>ActivityNotificationCommunityTokenReceived</name>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dozvědět se více</translation>
     </message>
     <message>
         <source>Transaction details</source>
@@ -650,7 +650,7 @@
     <name>ActivityNotificationNewsMessage</name>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dozvědět se více</translation>
     </message>
 </context>
 <context>
@@ -1161,6 +1161,7 @@
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1169,11 +1170,13 @@
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n invalid address(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -1287,7 +1290,7 @@
     </message>
     <message>
         <source>Restart</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restartovat</translation>
     </message>
     <message>
         <source>Download messages</source>
@@ -1402,6 +1405,7 @@
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -1498,6 +1502,7 @@
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -1562,6 +1567,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     <message numerus="yes">
         <source>%n key pair(s) successfully imported</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -1929,6 +1935,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     <message numerus="yes">
         <source>%n issue(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -2585,7 +2592,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
 </context>
 <context>
@@ -2661,6 +2668,7 @@ Do you wish to override the security check and continue?</source>
     <message numerus="yes">
         <source>How many of %1’s remaining %Ln %2 token(s) would you like to burn?</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -2892,7 +2900,7 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Settings</source>
         <comment>Go to settings page</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
     <message>
         <source>Link previews will never be shown. You can manage link previews in %1.</source>
@@ -3076,6 +3084,7 @@ Do you wish to override the security check and continue?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -3106,7 +3115,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">nebo</translation>
     </message>
 </context>
 <context>
@@ -3349,7 +3358,7 @@ file format</source>
     <message>
         <source>Settings</source>
         <comment>Go to Settings</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
 </context>
 <context>
@@ -3393,6 +3402,7 @@ file format</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -3422,6 +3432,7 @@ file format</source>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -3668,6 +3679,7 @@ file format</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -3712,6 +3724,7 @@ file format</source>
     <message numerus="yes">
         <source>Share %n address(s) to join</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -3760,6 +3773,7 @@ file format</source>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -3871,7 +3885,7 @@ file format</source>
     </message>
     <message>
         <source>Restart</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Restartovat</translation>
     </message>
 </context>
 <context>
@@ -4089,6 +4103,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -4287,7 +4302,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontakty</translation>
     </message>
     <message>
         <source>Pending Requests</source>
@@ -4457,6 +4472,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -4467,6 +4483,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <message numerus="yes">
         <source>%n&#x2009;sec(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -4584,6 +4601,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <message numerus="yes">
         <source>Validate %n file(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -4725,7 +4743,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <name>CreateChatView</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontakty</translation>
     </message>
     <message>
         <source>You can only send direct messages to your Contacts.
@@ -4895,7 +4913,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>CreateProfilePage</name>
     <message>
         <source>Create profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit profil</translation>
     </message>
     <message>
         <source>How would you like to start using Status?</source>
@@ -5277,7 +5295,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>CurrenciesStore</name>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">N/A</translation>
     </message>
 </context>
 <context>
@@ -5601,7 +5619,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokročilé</translation>
     </message>
     <message>
         <source>Create a 12-digit personal unblocking key (PUK)</source>
@@ -5901,6 +5919,7 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -5918,6 +5937,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <message numerus="yes">
         <source>‘%1’ was imported with %n issue(s).</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6013,11 +6033,13 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Display Names can’t be longer than %n character(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6191,11 +6213,13 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>to %n recipient(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6642,7 +6666,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">nebo</translation>
     </message>
     <message>
         <source>invite</source>
@@ -6761,7 +6785,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>EnsAddedView</name>
     <message>
         <source>ENS usernames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ENS uživatelská jména</translation>
     </message>
     <message>
         <source>Username added</source>
@@ -6780,7 +6804,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>EnsConnectedView</name>
     <message>
         <source>ENS usernames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ENS uživatelská jména</translation>
     </message>
     <message>
         <source>Username added</source>
@@ -6834,7 +6858,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>EnsListView</name>
     <message>
         <source>ENS usernames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ENS uživatelská jména</translation>
     </message>
     <message>
         <source>Add username</source>
@@ -6900,7 +6924,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>EnsRegisteredView</name>
     <message>
         <source>ENS usernames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ENS uživatelská jména</translation>
     </message>
     <message>
         <source>Username added</source>
@@ -6923,7 +6947,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>EnsReleasedView</name>
     <message>
         <source>ENS usernames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ENS uživatelská jména</translation>
     </message>
     <message>
         <source>Username removed</source>
@@ -6977,7 +7001,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>EnsTermsAndConditionsView</name>
     <message>
         <source>ENS usernames</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ENS uživatelská jména</translation>
     </message>
     <message>
         <source>Terms of name registration</source>
@@ -7150,6 +7174,7 @@ Please add it and try again.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -7211,7 +7236,7 @@ Please add it and try again.</source>
     <name>EnterPassword</name>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Heslo</translation>
     </message>
     <message>
         <source>Enter your password</source>
@@ -7277,6 +7302,7 @@ Please add it and try again.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -7297,6 +7323,7 @@ Please add it and try again.</source>
     <message numerus="yes">
         <source>%n word(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -7328,6 +7355,7 @@ Please add it and try again.</source>
     <message numerus="yes">
         <source>Key pair name must be at least %n character(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -7485,11 +7513,11 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
     <message>
         <source>Syncing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Synchronizace</translation>
     </message>
     <message>
         <source>3. Click &lt;font color=&apos;%1&apos;&gt;Setup Syncing&lt;/font&gt; and sync your other devices</source>
@@ -7672,7 +7700,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jiná</translation>
     </message>
     <message>
         <source>Collections</source>
@@ -7888,7 +7916,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
     <message>
         <source>Click</source>
@@ -7978,7 +8006,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Profil</translation>
     </message>
     <message>
         <source>Tap</source>
@@ -7994,7 +8022,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Syncing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Synchronizace</translation>
     </message>
     <message>
         <source>Copy the</source>
@@ -8127,14 +8155,14 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jiná</translation>
     </message>
 </context>
 <context>
     <name>HistoryBetaTag</name>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation>nebo</translation>
     </message>
     <message>
         <source>Activity is in beta. If transactions are missing, check %1.</source>
@@ -8231,7 +8259,7 @@ L2 fee: %2</source>
     <name>HoldingsListPanel</name>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">nebo</translation>
     </message>
 </context>
 <context>
@@ -8300,19 +8328,19 @@ L2 fee: %2</source>
     <name>HomePageView</name>
     <message>
         <source>Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>Domovská stránka</translation>
     </message>
     <message>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>Výchozí pro systém</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Jiná</translation>
     </message>
     <message>
         <source>Example: duckduckgo.com</source>
-        <translation type="unfinished"></translation>
+        <translation>Příklad: duckduckgo.com</translation>
     </message>
 </context>
 <context>
@@ -8398,6 +8426,7 @@ L2 fee: %2</source>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -8503,6 +8532,7 @@ L2 fee: %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -8604,6 +8634,7 @@ L2 fee: %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -8645,6 +8676,7 @@ L2 fee: %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -8655,6 +8687,7 @@ L2 fee: %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -8662,11 +8695,13 @@ L2 fee: %2</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n message(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -8886,6 +8921,7 @@ Are you sure you want to do this?</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -8902,6 +8938,7 @@ Are you sure you want to do this?</source>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -9583,6 +9620,7 @@ access to your funds.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -9899,6 +9937,7 @@ access to your funds.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -9979,31 +10018,31 @@ access to your funds.</source>
     <name>LanguageView</name>
     <message>
         <source>Set Display Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit měnu zobrazení</translation>
     </message>
     <message>
         <source>Search Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat měny</translation>
     </message>
     <message>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyk</translation>
     </message>
     <message>
         <source>Translations coming soon</source>
-        <translation type="unfinished"></translation>
+        <translation>Přklady již brzy</translation>
     </message>
     <message>
         <source>Alpha languages</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfa jazyky</translation>
     </message>
     <message>
         <source>Beta languages</source>
-        <translation type="unfinished"></translation>
+        <translation>Beta jazyky</translation>
     </message>
     <message>
         <source>Search Languages</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat jazyky</translation>
     </message>
     <message>
         <source>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</source>
@@ -10011,46 +10050,46 @@ access to your funds.</source>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation>Dozvědět se více</translation>
     </message>
     <message>
         <source>Time Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Formát času</translation>
     </message>
     <message>
         <source>Use System Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít nastavení systému</translation>
     </message>
     <message>
         <source>Use 24-Hour Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Používat 24 hodinový čas</translation>
     </message>
     <message>
         <source>Change language</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit jazyk</translation>
     </message>
     <message>
         <source>Display language has been changed. You must restart the application for changes to take effect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyk zobrazení byl změněn. Je třeba restartovat aplikaci, aby se projevily změny.</translation>
     </message>
     <message>
         <source>Restart</source>
-        <translation type="unfinished"></translation>
+        <translation>Restartovat</translation>
     </message>
 </context>
 <context>
     <name>LeftTabView</name>
     <message>
         <source>Wallet</source>
-        <translation type="unfinished"></translation>
+        <translation>Peněženka</translation>
     </message>
     <message>
         <source>All accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechny účty</translation>
     </message>
     <message>
         <source>Saved addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložené adresy</translation>
     </message>
 </context>
 <context>
@@ -10156,47 +10195,48 @@ to load</source>
     <message>
         <source>%1K</source>
         <comment>Thousand</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1K</translation>
     </message>
     <message>
         <source>%1M</source>
         <comment>Million</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1M</translation>
     </message>
     <message>
         <source>%1B</source>
         <comment>Billion</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1B</translation>
     </message>
     <message>
         <source>%1T</source>
         <comment>Trillion</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1T</translation>
     </message>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation>N/A</translation>
     </message>
     <message>
         <source>B</source>
         <comment>Billion</comment>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <source>Today %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Dnes %1</translation>
     </message>
     <message>
         <source>Yesterday %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Včera %1</translation>
     </message>
     <message>
         <source>%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2</translation>
     </message>
     <message numerus="yes">
         <source>%n year(s) ago</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -10206,11 +10246,13 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n week(s) ago</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -10220,11 +10262,13 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n hour(s) ago</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -10235,6 +10279,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -10243,11 +10288,12 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <source>now</source>
-        <translation type="unfinished"></translation>
+        <translation>nyní</translation>
     </message>
 </context>
 <context>
@@ -10306,6 +10352,7 @@ to load</source>
     <message numerus="yes">
         <source>PIN incorrect. %n attempt(s) remaining.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -10374,7 +10421,7 @@ to load</source>
     <name>LoginPasswordInput</name>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Heslo</translation>
     </message>
     <message>
         <source>Hide password</source>
@@ -10443,11 +10490,11 @@ to load</source>
     <name>LoginUserSelector</name>
     <message>
         <source>Create profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vytvořit profil</translation>
     </message>
     <message>
         <source>Log in</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přihlásit se</translation>
     </message>
 </context>
 <context>
@@ -10482,6 +10529,7 @@ to load</source>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -10535,7 +10583,7 @@ to load</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jiná</translation>
     </message>
     <message>
         <source>Check what’s on a Keycard</source>
@@ -10568,6 +10616,7 @@ to load</source>
     <message numerus="yes">
         <source>%n key pair(s) require import to use on this device</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -10671,7 +10720,7 @@ to load</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jiná</translation>
     </message>
     <message>
         <source>Arrange by collection</source>
@@ -10880,7 +10929,7 @@ to load</source>
     </message>
     <message>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokročilé</translation>
     </message>
     <message>
         <source>Show community assets when sending tokens</source>
@@ -11036,6 +11085,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -11063,6 +11113,7 @@ to load</source>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -11478,6 +11529,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -11499,6 +11551,7 @@ to load</source>
     <message numerus="yes">
         <source>Remotely destruct %Ln %1 token(s) on %2</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -11825,7 +11878,7 @@ to load</source>
     </message>
     <message>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Komunity</translation>
     </message>
     <message>
         <source>Accounts</source>
@@ -12014,7 +12067,7 @@ to load</source>
     <name>NewAccountLoginPage</name>
     <message>
         <source>Log in</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přihlásit se</translation>
     </message>
     <message>
         <source>How would you like to log in to Status?</source>
@@ -12120,6 +12173,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -12156,6 +12210,7 @@ to load</source>
     <message numerus="yes">
         <source>Nicknames must be at least %n character(s) long</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -12453,7 +12508,7 @@ to load</source>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">nebo</translation>
     </message>
 </context>
 <context>
@@ -12557,7 +12612,7 @@ to load</source>
     <name>OverviewSettingsFooter</name>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dozvědět se více</translation>
     </message>
     <message>
         <source>Finalise your ownership of the %1 Community</source>
@@ -12737,6 +12792,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -12750,6 +12806,7 @@ to load</source>
     <message numerus="yes">
         <source>Maximum %n character(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -12932,11 +12989,13 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>The addresses of %Ln community member(s) are unknown.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -13082,7 +13141,7 @@ to load</source>
     <name>PermissionsRow</name>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">nebo</translation>
     </message>
     <message>
         <source>Eligible to join</source>
@@ -13180,6 +13239,7 @@ to load</source>
     <message numerus="yes">
         <source>%n message(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -13326,7 +13386,7 @@ to load</source>
     <message>
         <source>Settings</source>
         <comment>Go to Settings</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
     <message>
         <source>Hide collectible</source>
@@ -13362,7 +13422,7 @@ to load</source>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odhlásit se a ukončit</translation>
     </message>
 </context>
 <context>
@@ -13492,6 +13552,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -13591,7 +13652,7 @@ to load</source>
     </message>
     <message>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Komunity</translation>
     </message>
     <message>
         <source>Accounts</source>
@@ -13633,7 +13694,7 @@ to load</source>
     <name>ProfileLayout</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontakty</translation>
     </message>
     <message>
         <source>Status Keycard</source>
@@ -13667,7 +13728,7 @@ to load</source>
     <name>ProfilePopupInviteFriendsPanel</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontakty</translation>
     </message>
     <message>
         <source>Search contacts</source>
@@ -13963,7 +14024,7 @@ to load</source>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontakty</translation>
     </message>
     <message>
         <source>Showcase limit of %1 reached. &lt;br&gt;Remove item from showcase to add more.</source>
@@ -14106,7 +14167,7 @@ to load</source>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dozvědět se více</translation>
     </message>
     <message>
         <source>Initiate the vote</source>
@@ -14249,6 +14310,7 @@ to load</source>
     <message numerus="yes">
         <source>Remotely destruct %n token(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -14394,6 +14456,7 @@ to load</source>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -14732,7 +14795,7 @@ to load</source>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jiná</translation>
     </message>
     <message>
         <source>Back</source>
@@ -15143,39 +15206,39 @@ to load</source>
     <name>SettingsEntriesModel</name>
     <message>
         <source>Apps</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplikace</translation>
     </message>
     <message>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Preference</translation>
     </message>
     <message>
         <source>About &amp; Help</source>
-        <translation type="unfinished"></translation>
+        <translation>O aplikaci a nápověda</translation>
     </message>
     <message>
         <source>Back up recovery phrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Zálohovat obnovovací frázi</translation>
     </message>
     <message>
         <source>Recovery phrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovovací fráze</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo</translation>
     </message>
     <message>
         <source>Keycard</source>
-        <translation type="unfinished"></translation>
+        <translation>Keycard</translation>
     </message>
     <message>
         <source>ENS usernames</source>
-        <translation type="unfinished"></translation>
+        <translation>ENS uživatelská jména</translation>
     </message>
     <message>
         <source>This section is going through a redesign.</source>
@@ -15183,7 +15246,7 @@ to load</source>
     </message>
     <message>
         <source>Syncing</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronizace</translation>
     </message>
     <message>
         <source>Connection problems can happen.&lt;br&gt;If they do, please use the Enter a Recovery Phrase feature instead.</source>
@@ -15191,58 +15254,58 @@ to load</source>
     </message>
     <message>
         <source>Messaging</source>
-        <translation type="unfinished"></translation>
+        <translation>Zprávy</translation>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontakty</translation>
     </message>
     <message>
         <source>Wallet</source>
-        <translation type="unfinished"></translation>
+        <translation>Peněženka</translation>
     </message>
     <message>
         <source>Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Webový prohlížeč</translation>
     </message>
     <message>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>Komunity</translation>
     </message>
     <message>
         <source>Privacy and security</source>
-        <translation type="unfinished"></translation>
+        <translation>Soukromí a zabezpečení</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzhled</translation>
     </message>
     <message>
         <source>Notifications &amp; Sounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Upozornění a zvuk</translation>
     </message>
     <message>
         <source>Language &amp; Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyk a měna</translation>
     </message>
     <message>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokročilé</translation>
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>O aplikaci</translation>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Odhlásit se a ukončit</translation>
     </message>
 </context>
 <context>
     <name>SettingsLeftTabView</name>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení</translation>
     </message>
 </context>
 <context>
@@ -15349,6 +15412,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -15358,6 +15422,7 @@ to load</source>
     <message numerus="yes">
         <source>Share %n address(s) to join</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -15433,11 +15498,13 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>To share %n address(s) with &lt;b&gt;%1&lt;/b&gt;, authenticate the associated key pairs...</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -15483,7 +15550,7 @@ to load</source>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontakty</translation>
     </message>
     <message>
         <source>Contacts (set account to Contacts)</source>
@@ -15801,6 +15868,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -15820,6 +15888,7 @@ to load</source>
     <message numerus="yes">
         <source>%Ln pinned message(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -15858,6 +15927,7 @@ to load</source>
     <message numerus="yes">
         <source>Maximum message character count is %n</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -16254,6 +16324,7 @@ to load</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -16450,6 +16521,7 @@ access to your webcam</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -16488,7 +16560,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">nebo</translation>
     </message>
     <message>
         <source>to post</source>
@@ -16537,6 +16609,7 @@ access to your webcam</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -16563,6 +16636,7 @@ access to your webcam</source>
     <message numerus="yes">
         <source>%n token(s) · Last updated %1</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -16663,7 +16737,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">N/A</translation>
     </message>
     <message>
         <source>Max fees:</source>
@@ -16840,7 +16914,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Log in</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přihlásit se</translation>
     </message>
     <message>
         <source>Try to pair again</source>
@@ -17223,7 +17297,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dozvědět se více</translation>
     </message>
     <message>
         <source>You were airdropped %1 %2 from %3 to %4</source>
@@ -17363,6 +17437,7 @@ access to your webcam</source>
     <message numerus="yes">
         <source>%n token(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -17536,7 +17611,7 @@ access to your webcam</source>
     <name>TransactionDelegate</name>
     <message>
         <source>N/A</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">N/A</translation>
     </message>
     <message>
         <source>%1 (community asset) from %2 on %3</source>
@@ -17924,7 +17999,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Heslo</translation>
     </message>
     <message>
         <source>Enter password</source>
@@ -18110,6 +18185,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -18119,6 +18195,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message numerus="yes">
         <source>Password needs to be %n character(s) or more</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -18144,6 +18221,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -18163,6 +18241,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -18178,6 +18257,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -18186,15 +18266,15 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Wallet</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Peněženka</translation>
     </message>
     <message>
         <source>Browser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Webový prohlížeč</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
     <message>
         <source>Node Management</source>
@@ -18436,11 +18516,11 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>WalletHeader</name>
     <message>
         <source>Saved addresses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uložené adresy</translation>
     </message>
     <message>
         <source>All accounts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Všechny účty</translation>
     </message>
     <message>
         <source>Last refreshed %1</source>
@@ -18822,7 +18902,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>WalletView</name>
     <message>
         <source>Wallet</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Peněženka</translation>
     </message>
     <message>
         <source>Networks</source>
@@ -18848,7 +18928,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Wallet</source>
         <comment>Go to Wallet</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Peněženka</translation>
     </message>
     <message>
         <source>Edit %1</source>
@@ -18864,7 +18944,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Saved addresses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uložené adresy</translation>
     </message>
     <message>
         <source>Add new account</source>
@@ -18953,7 +19033,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Welcome to Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Vítejte ve Statusu</translation>
     </message>
     <message>
         <source>The open-source, decentralised wallet and messenger</source>
@@ -18961,23 +19041,23 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Create profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit profil</translation>
     </message>
     <message>
         <source>Log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlásit se</translation>
     </message>
     <message>
         <source>Third-party services %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Služby třetích stran %1</translation>
     </message>
     <message>
         <source>enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>zapnuto</translation>
     </message>
     <message>
         <source>disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>vypnuto</translation>
     </message>
     <message>
         <source>By proceeding you accept Status&lt;br&gt;%1 and %2</source>

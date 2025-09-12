@@ -12,20 +12,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-lupdate_only{
-SOURCES += $$files("$$PWD/*qmldir", true)
-SOURCES += $$files("$$PWD/*.qml", true)
-SOURCES += $$files("$$PWD/*.js", true)
-SOURCES += $$files("$$PWD/../monitoring/*.qml", true)
-SOURCES += $$files("$$PWD/../*.md", false)
-}
-
-# Other *.ts files will be provided by Lokalise platform
-TRANSLATIONS += \
-    i18n/qml_base.ts \
-    i18n/qml_en.ts \
-
-
 OTHER_FILES += $$files("$$PWD/*qmldir", true)
 OTHER_FILES += $$files("$$PWD/*.qml", true)
 OTHER_FILES += $$files("$$PWD/*.js", true)
