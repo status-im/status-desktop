@@ -69,21 +69,24 @@ pipeline {
   }
 
   environment {
-    PLATFORM = "linux/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
+    PLATFORM = "linux/${getArch()}${(params.USE_NWAKU ?: false) ? '-nwaku' : ''}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
-    /* Control output the filename */
+    /* Set USE_NWAKU before VERSION since version.sh uses it */
+    USE_NWAKU = "${params.USE_NWAKU}"
+    /* sets App Version in Settings */  
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
-    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION)}"
-    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION)}"
+    /* Control output the filename */
+    APP_TYPE = "${utils.getAppType() + (params.USE_NWAKU ? '-experimental' : '')}"
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
     /* Hack fix for params not being set in job on first run */
     NIMFLAGS =               "${params.NIMFLAGS}"
-    USE_NWAKU =              "${params.USE_NWAKU}"
     ENTITLEMENTS =           "${params.ENTITLEMENTS}"
     RELEASE =                "${params.RELEASE}"
     INCLUDE_DEBUG_SYMBOLS =  "${params.INCLUDE_DEBUG_SYMBOLS}"
@@ -113,14 +116,12 @@ pipeline {
 
     stage('status-go') {
       steps {
-        sh "echo USE_NWAKU is ${USE_NWAKU}"
         sh 'make status-go'
       }
     }
 
     stage('Package') {
       steps { script {
-        sh "echo USE_NWAKU is ${USE_NWAKU}"
         linux.bundle('tgz-linux')
       } }
     }
@@ -142,7 +143,7 @@ pipeline {
     }
 
     stage('E2E') {
-      when { expression { utils.isPRBuild() && !params.USE_NWAKU } }
+      when { expression { utils.isPRBuild() && !(params.USE_NWAKU ?: false) } }
       steps { script {
         build(
           job: 'status-desktop/e2e/prs',
