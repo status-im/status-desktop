@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-echo "$(git describe --tags)${USE_NWAKU:+-nwaku-experimental}"
+git fetch origin --tags --force --no-recurse-submodules && git describe --tags
