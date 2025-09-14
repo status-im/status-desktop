@@ -13,6 +13,7 @@
     </message>
     <message>
     <source>%n valid address(s)</source>
+    <translation></translation>
     </message>
 </context>
 </TS>
