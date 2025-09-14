@@ -11,5 +11,8 @@
         <source>ETH addresses new key name</source>
         <translation>ETH addresses translation new translation</translation>
     </message>
+    <message>
+    <source>%n valid address(s)</source>
+    </message>
 </context>
 </TS>
