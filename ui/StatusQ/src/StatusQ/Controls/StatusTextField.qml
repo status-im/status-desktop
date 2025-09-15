@@ -3,10 +3,13 @@ import QtQuick.Controls
 import QtQuick.Controls.Universal
 
 import StatusQ.Components
+import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 TextField {
     id: root
+    Accessible.name: Utils.formatAccessibleName(placeholderText, objectName)
 
     font.family: Theme.baseFont.name
     font.pixelSize: Theme.primaryTextFontSize

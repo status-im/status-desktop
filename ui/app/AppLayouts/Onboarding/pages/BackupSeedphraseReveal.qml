@@ -7,6 +7,7 @@ import StatusQ.Core
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import AppLayouts.Onboarding.components
 
@@ -90,6 +91,8 @@ OnboardingPage {
                                     objectName: "seedWordText_" + (index+1)
                                     Layout.fillWidth: true
                                     text: modelData
+                                    Accessible.role: Accessible.StaticText
+                                    Accessible.name: SQUtils.Utils.formatAccessibleName(modelData, objectName)
                                 }
                             }
                         }
