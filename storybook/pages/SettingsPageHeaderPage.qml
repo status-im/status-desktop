@@ -36,7 +36,7 @@ SplitView {
         SettingsPageHeader {
             id: settingsPageHeader
 
-            width: widthSlider.value || undefined
+            width: widthSlider.value
 
             title: titleTextField.text
             subtitle: subtitleTextField.text
@@ -85,13 +85,14 @@ SplitView {
                 Slider {
                     id: widthSlider
 
-                    from: 0
-                    to: 700
+                    value: 500
+                    from: 200
+                    to: 800
                     stepSize: 1
                 }
 
                 Label {
-                    text: widthSlider.value || "implicit"
+                    text: widthSlider.value
                 }
             }
 

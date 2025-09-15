@@ -20,12 +20,20 @@ Control {
         RowLayout {
             Layout.alignment: Qt.AlignVCenter
 
+            Layout.horizontalStretchFactor: 1
+            Layout.preferredWidth: 0
+
             StatusBaseText {
                 id: titleText
+
+                Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 0
 
                 color: Theme.palette.directColor1
                 font.pixelSize: Theme.fontSize26
                 font.bold: true
+
+                elide: Text.ElideRight
             }
 
             StatusBaseText {
@@ -33,19 +41,23 @@ Control {
 
                 Layout.leftMargin: 6
                 Layout.topMargin: 6
+                Layout.fillWidth: true
+                Layout.preferredWidth: 0
+                Layout.horizontalStretchFactor: 1
 
                 visible: !!text
                 color: Theme.palette.baseColor1
                 font.pixelSize: Theme.primaryTextFontSize
+                elide: Text.ElideRight
             }
-        }
-
-        Item {
-            Layout.fillWidth: true
         }
 
         RowLayout {
             id: buttonsRow
+
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+            Layout.horizontalStretchFactor: 0
+
 
             spacing: parent.spacing
             children: root.buttons
