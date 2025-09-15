@@ -230,16 +230,32 @@ class ChatView(QObject):
     @allure.step('Get messages')
     def messages(self, index: int) -> typing.List[Message]:
         _messages = []
-        time.sleep(2)
+        
         # message_list_item has different indexes if we run multiple instances, so we pass index
         if index is not None:
             self._message_list_item.real_name['index'] = index
+        
         if self._recent_messages_button.is_visible:
             self._recent_messages_button.click()
+        
+        self._wait_for_messages_to_load()
+        
         for item in driver.findAllObjects(self._message_list_item.real_name):
             if getattr(item, 'isMessage', True):
                 _messages.append(Message(item))
+        
+        if not _messages:
+            raise LookupError("No messages found")
+        
         return _messages
+
+    def _wait_for_messages_to_load(self, timeout: int = 10) -> None:
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            items = driver.findAllObjects(self._message_list_item.real_name)
+            if items:  # Consider that messages are loaded
+                return
+            time.sleep(0.1)  # Small pause between checks
 
     def open_send_modal_from_link(self, text):
         text_messages = driver.findAllObjects(self._message_text_item.real_name)
