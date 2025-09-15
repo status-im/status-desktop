@@ -9,7 +9,6 @@ import StatusQ.Core.Utils
 
 TextField {
     id: root
-    Accessible.role: root.echoMode === TextInput.Password ? Accessible.PasswordField : Accessible.TextField
     Accessible.name: Utils.formatAccessibleName(placeholderText, objectName)
 
     font.family: Theme.baseFont.name

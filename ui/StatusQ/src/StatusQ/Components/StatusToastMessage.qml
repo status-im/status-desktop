@@ -132,7 +132,6 @@ Control {
     */
     property string iconColor: ""
 
-    Accessible.role: Accessible.Alert
     Accessible.name: Utils.formatAccessibleName(root.primaryText + (root.secondaryText.length ? (" — " + root.secondaryText) : ""), objectName)
 
     /*!

@@ -9,7 +9,6 @@ import StatusQ.Core.Utils
 
 AbstractButton {
     id: root
-    Accessible.role: Accessible.Button
     Accessible.name: Utils.formatAccessibleName(root.text, objectName)
 
     // compat with `Button`, cf https://bugreports.qt.io/browse/QTBUG-136704

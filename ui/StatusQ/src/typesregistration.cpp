@@ -89,6 +89,7 @@ void registerStatusQTypes() {
                                               });
 
 #ifdef BUNDLE_QML_RESOURCES
+    Q_INIT_RESOURCE(TestConfig);
     Q_INIT_RESOURCE(statusq);
     Q_INIT_RESOURCE(fonts);
     Q_INIT_RESOURCE(img);

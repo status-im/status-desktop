@@ -58,6 +58,11 @@ if(NOT EXISTS ${_gen_qml})
   message(FATAL_ERROR "Expected generated file missing: ${_gen_qml}")
 endif()
 
+# For shadow build OFF mode, also copy to source directory
+if(NOT ${STATUSQ_SHADOW_BUILD})
+  configure_file(${_gen_qml} ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/Core/TestConfig.qml COPYONLY)
+endif()
+
 # Generate a .qrc that includes the generated QML
 set(_gen_qrc ${CMAKE_CURRENT_BINARY_DIR}/TestConfig.generated.qrc)
 file(WRITE ${_gen_qrc}

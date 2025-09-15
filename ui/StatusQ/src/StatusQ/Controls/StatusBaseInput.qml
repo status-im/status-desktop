@@ -43,7 +43,7 @@ import StatusQ.Core.Utils
 Item {
     id: root
 
-    Accessible.role: Accessible.TextField
+    // Accessibility properties
     Accessible.name: Utils.formatAccessibleName(placeholderText, objectName)
 
     /*!
