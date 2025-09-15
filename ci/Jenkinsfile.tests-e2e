@@ -48,6 +48,8 @@ pipeline {
   }
 
   options {
+    /* IMPORTANT: Disable automatic checkout to control submodule handling */
+    skipDefaultCheckout()
     timestamps()
     /* Prevent Jenkins jobs from running forever */
     timeout(time: 120, unit: 'MINUTES')
@@ -103,6 +105,26 @@ pipeline {
   }
 
   stages {
+    stage('Checkout') {
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: scm.branches,
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [
+            [$class: 'SubmoduleOption',
+              disableSubmodules: false,
+              parentCredentials: true,
+              recursiveSubmodules: false,
+              reference: '',
+              trackingSubmodules: false
+            ]
+          ],
+          submoduleCfg: [],
+          userRemoteConfigs: scm.userRemoteConfigs
+        ])
+      }
+    }
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'

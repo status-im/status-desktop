@@ -24,6 +24,8 @@ pipeline {
   }
 
   options {
+    /* IMPORTANT: Disable automatic checkout to control submodule handling */
+    skipDefaultCheckout()
     timestamps()
     /* Prevent Jenkins jobs from running forever */
     timeout(time: 45, unit: 'MINUTES')
@@ -52,6 +54,31 @@ pipeline {
   }
 
   stages {
+    stage('Checkout') {
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: scm.branches,
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [
+            [$class: 'SubmoduleOption',
+              disableSubmodules: false,
+              parentCredentials: true,
+              recursiveSubmodules: false,
+              reference: '',
+              trackingSubmodules: false
+            ]
+          ],
+          submoduleCfg: [],
+          userRemoteConfigs: scm.userRemoteConfigs
+        ])
+      }
+    }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
+      }
+    }
 
     stage('Build Android APK') {
       steps {
