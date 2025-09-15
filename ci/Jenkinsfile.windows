@@ -47,6 +47,8 @@ pipeline {
   }
 
   options {
+    /* IMPORTANT: Disable automatic checkout to control submodule handling */
+    skipDefaultCheckout()
     timestamps()
     /* Prevent Jenkins jobs from running forever */
     timeout(time: 60, unit: 'MINUTES')
@@ -75,7 +77,7 @@ pipeline {
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
-    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    VERSION = "${sh(script: 'git fetch origin --tags --force --no-recurse-submodules && git describe --tags', returnStdout: true).trim()}"
     STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch(), version: env.VERSION)}"
     /* 7zip archive filename */
     STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch(), version: env.VERSION)}"
@@ -96,6 +98,26 @@ pipeline {
   }
 
   stages {
+    stage('Checkout') {
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: scm.branches,
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [
+            [$class: 'SubmoduleOption',
+              disableSubmodules: false,
+              parentCredentials: true,
+              recursiveSubmodules: false,
+              reference: '',
+              trackingSubmodules: false
+            ]
+          ],
+          submoduleCfg: [],
+          userRemoteConfigs: scm.userRemoteConfigs
+        ])
+      }
+    }
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
