@@ -660,6 +660,8 @@ QtObject {
         readonly property var alphanumericalExpanded2: /^$|^[a-zA-Z0-9\-_\.\u0020\&]+$/
         // Adds dash, underscore, dot, space, comma and ampersand
         readonly property var alphanumericalExpanded3: /^$|^[a-zA-Z0-9\-_\.\,\u0020\&]+$/
+        // Adds a newline (e.g. community description)
+        readonly property var alphanumericalExpanded4: /^$|^[a-zA-Z0-9\-_\.\,\u0020\&\r?\n]+$/
         readonly property var alphanumericalWithSpace: /^$|^[a-zA-Z0-9\s]+$/
         readonly property var asciiPrintable:         /^$|^[!-~]+$/
         readonly property var ascii:                  /^$|^[\x00-\x7F]+$/
