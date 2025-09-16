@@ -7,7 +7,7 @@ def isPRBuild = utils.isPRBuild()
 pipeline {
   agent {
     docker {
-      label 'linux'
+      label 'linuxcontainer'
       image 'statusteam/nim-status-client-build:2.0.4-qt6.9.0'
     }
   }
