@@ -2,13 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US" sourcelanguage="en">
 <context>
-    <name></name>
-    <message>
-        <source>Contains account(s) with Keycard incompatible derivation paths</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AboutView</name>
     <message>
         <source>Check for updates</source>
@@ -6719,6 +6712,29 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
 </context>
 <context>
+    <name>EnableMessagesBackupDialog</name>
+    <message>
+        <source>Enable Local Messages Backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabling local message backup will store all your messages on your device in an encrypted backup file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make sure to keep this file secure.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EnableShardingPopup</name>
     <message>
         <source>Enable community sharding for %1</source>
@@ -8766,6 +8782,13 @@ L2 fee: %2</source>
     <message>
         <source>Keycard Locked</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Contains %n account(s) with Keycard incompatible derivation paths</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -17067,6 +17090,10 @@ access to your webcam</source>
     </message>
     <message>
         <source>Select your backup directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup messages locally</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
