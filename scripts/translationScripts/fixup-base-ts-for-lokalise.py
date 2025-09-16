@@ -35,10 +35,27 @@ def main():
 
     # Process each message in the base file
     for context in base_root.findall('context'):
+        context_name = context.find('name')
+        if context_name is not None:
+            context_name_text = context_name.text or ""
+        else:
+            context_name_text = ""
+
         for message in context.findall('message'):
             numerus = message.get('numerus')
             source = message.find('source')
             translation = message.find('translation')
+
+            # Check if comment exists, if not, add one with context name
+            comment = message.find('comment')
+            if comment is None:
+                comment = ET.Element('comment')
+                comment.text = context_name_text
+                # Insert after source (assuming source is at index 0)
+                if source is not None:
+                    message.insert(1, comment)
+                else:
+                    message.insert(0, comment)  # If no source, insert at beginning
 
             if numerus == 'yes' and source is not None and source.text in plural_lookup:
                 # Copy translation from plural file

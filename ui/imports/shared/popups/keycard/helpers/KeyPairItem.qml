@@ -66,7 +66,7 @@ StatusListItem {
     beneathTagsTitle: root.keyPairType === Constants.keycard.keyPairType.profile && root.displayAdditionalInfoForProfileKeypair?
                           root.additionalInfoForProfileKeypair :
                           !root.canBeSelected?
-                              qsTranslate("", "Contains account(s) with Keycard incompatible derivation paths", root.keyPairAccounts.count.toString()) :
+                              qsTr("Contains %n account(s) with Keycard incompatible derivation paths", "", root.keyPairAccounts.count) :
                               ""
     beneathTagsIcon: !!beneathTagsTitle? "info" : ""
 
