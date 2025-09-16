@@ -21,6 +21,11 @@ pipeline {
       description: 'Decides whether release credentials are used.',
       defaultValue: params.RELEASE ?: false
     )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0','1','2','3']
+    )
   }
 
   options {
@@ -54,8 +59,10 @@ pipeline {
   stages {
 
     stage('Build Android APK') {
-      steps {
-        sh "make -j${utils.getProcCount()} mobile-build V=3 USE_SYSTEM_NIM=1"
+      steps { 
+        script {
+          linux.bundle(target='mobile-build', verbose=params.VERBOSE)
+        }
       }
     }
 

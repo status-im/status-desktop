@@ -910,6 +910,7 @@ mobile-run: deps-common
 	echo -e "\033[92mRunning:\033[39m mobile app"
 	$(MAKE) -C mobile run
 
+mobile-build: USE_SYSTEM_NIM=1
 mobile-build: | deps-common
 	echo -e "\033[92mBuilding:\033[39m mobile app"
 	$(MAKE) -C mobile
