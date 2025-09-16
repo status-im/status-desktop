@@ -2,13 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="cs_CZ" sourcelanguage="en">
 <context>
-    <name></name>
-    <message>
-        <source>Contains account(s) with Keycard incompatible derivation paths</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AboutView</name>
     <message>
         <source>Check for updates</source>
@@ -402,7 +395,7 @@
     </message>
     <message>
         <source>Tokens</source>
-        <translation type="unfinished"></translation>
+        <translation>Tokeny</translation>
     </message>
     <message>
         <source>Counterparty</source>
@@ -1043,7 +1036,7 @@
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
     <message>
         <source>Add</source>
@@ -1429,7 +1422,7 @@
     <name>AirdropsSettingsPanel</name>
     <message>
         <source>Airdrops</source>
-        <translation type="unfinished"></translation>
+        <translation>Airdropy</translation>
     </message>
     <message>
         <source>New Airdrop</source>
@@ -1898,11 +1891,11 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Mute Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Ztlumit komunitu</translation>
     </message>
     <message>
         <source>Unmute Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit ztlumení</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -1910,15 +1903,15 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Edit Shared Addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit sdílené adresy</translation>
     </message>
     <message>
         <source>Close Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavřít komunitu</translation>
     </message>
     <message>
         <source>Leave Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Opustit komunitu</translation>
     </message>
     <message>
         <source>The import of ‘%1’ from Discord to Status was stopped: &lt;a href=&apos;#&apos;&gt;Critical issues found&lt;/a&gt;</source>
@@ -2229,7 +2222,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Overview</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehled</translation>
     </message>
     <message>
         <source>Website</source>
@@ -2303,7 +2296,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
 </context>
 <context>
@@ -2734,7 +2727,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
 </context>
 <context>
@@ -3073,7 +3066,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Members</source>
-        <translation type="unfinished"></translation>
+        <translation>Členové</translation>
     </message>
     <message>
         <source>More</source>
@@ -3081,10 +3074,10 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n člen</numerusform>
+            <numerusform>%n členové</numerusform>
+            <numerusform>%n členů</numerusform>
         </translation>
     </message>
 </context>
@@ -3137,7 +3130,7 @@ Do you wish to override the security check and continue?</source>
     <name>ChatView</name>
     <message>
         <source>Members</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Členové</translation>
     </message>
 </context>
 <context>
@@ -3399,10 +3392,10 @@ file format</source>
     <name>ColumnHeaderPanel</name>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n člen</numerusform>
+            <numerusform>%n členové</numerusform>
+            <numerusform>%n členů</numerusform>
         </translation>
     </message>
     <message>
@@ -3692,7 +3685,7 @@ file format</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
 </context>
 <context>
@@ -3715,7 +3708,7 @@ file format</source>
     </message>
     <message>
         <source>Cancel Membership Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit členský požadavek</translation>
     </message>
     <message>
         <source>Share all addresses to join</source>
@@ -4700,7 +4693,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Oprávnění</translation>
     </message>
     <message>
         <source>Add permission</source>
@@ -4976,7 +4969,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Tokens</source>
-        <translation type="unfinished"></translation>
+        <translation>Tokeny</translation>
     </message>
     <message>
         <source>Bitcoin</source>
@@ -6743,6 +6736,29 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
 </context>
 <context>
+    <name>EnableMessagesBackupDialog</name>
+    <message>
+        <source>Enable Local Messages Backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabling local message backup will store all your messages on your device in an encrypted backup file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make sure to keep this file secure.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EnableShardingPopup</name>
     <message>
         <source>Enable community sharding for %1</source>
@@ -7450,7 +7466,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
 </context>
 <context>
@@ -8426,9 +8442,9 @@ L2 fee: %2</source>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n člen</numerusform>
+            <numerusform>%n členové</numerusform>
+            <numerusform>%n členů</numerusform>
         </translation>
     </message>
     <message>
@@ -8632,9 +8648,9 @@ L2 fee: %2</source>
     <message numerus="yes">
         <source>%n member(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n člen</numerusform>
+            <numerusform>%n členové</numerusform>
+            <numerusform>%n členů</numerusform>
         </translation>
     </message>
     <message>
@@ -8801,6 +8817,14 @@ L2 fee: %2</source>
     <message>
         <source>Keycard Locked</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>Contains %n account(s) with Keycard incompatible derivation paths</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -9827,7 +9851,7 @@ access to your funds.</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
     <message>
         <source>Close app</source>
@@ -9980,7 +10004,7 @@ access to your funds.</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
     <message>
         <source>Import key pair</source>
@@ -11108,14 +11132,14 @@ to load</source>
     <name>MembersSelectorPanel</name>
     <message>
         <source>Members</source>
-        <translation type="unfinished"></translation>
+        <translation>Členové</translation>
     </message>
     <message numerus="yes">
         <source>%n member(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n člen</numerusform>
+            <numerusform>%n členové</numerusform>
+            <numerusform>%n členů</numerusform>
         </translation>
     </message>
 </context>
@@ -11123,7 +11147,7 @@ to load</source>
     <name>MembersSettingsPanel</name>
     <message>
         <source>Members</source>
-        <translation type="unfinished"></translation>
+        <translation>Členové</translation>
     </message>
     <message>
         <source>Invite people</source>
@@ -11470,7 +11494,7 @@ to load</source>
     </message>
     <message>
         <source>Tokens</source>
-        <translation type="unfinished"></translation>
+        <translation>Tokeny</translation>
     </message>
     <message>
         <source>Mint token</source>
@@ -12474,7 +12498,7 @@ to load</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
     <message>
         <source>Status Software Terms of Use</source>
@@ -12655,7 +12679,7 @@ to load</source>
     <name>OverviewSettingsPanel</name>
     <message>
         <source>Overview</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehled</translation>
     </message>
     <message>
         <source>Transfer ownership</source>
@@ -12735,7 +12759,7 @@ to load</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
 </context>
 <context>
@@ -13160,7 +13184,7 @@ to load</source>
     <name>PermissionsSettingsPanel</name>
     <message>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Oprávnění</translation>
     </message>
     <message>
         <source>Add new permission</source>
@@ -13187,7 +13211,7 @@ to load</source>
     <name>PermissionsView</name>
     <message>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Oprávnění</translation>
     </message>
     <message>
         <source>You can manage your community by creating and issuing membership and access permissions</source>
@@ -13770,11 +13794,11 @@ to load</source>
     </message>
     <message>
         <source>Close Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavřít komunitu</translation>
     </message>
     <message>
         <source>Leave Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Opustit komunitu</translation>
     </message>
 </context>
 <context>
@@ -15336,7 +15360,7 @@ to load</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
     <message>
         <source>Close</source>
@@ -15440,7 +15464,7 @@ to load</source>
     <name>SharedAddressesPermissionsPanel</name>
     <message>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Oprávnění</translation>
     </message>
     <message>
         <source>Updating eligibility</source>
@@ -16879,7 +16903,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
 </context>
 <context>
@@ -17141,6 +17165,10 @@ access to your webcam</source>
     </message>
     <message>
         <source>Select your backup directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup messages locally</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17444,7 +17472,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotovo</translation>
     </message>
     <message>
         <source>Source</source>
