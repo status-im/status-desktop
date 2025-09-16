@@ -10,7 +10,7 @@ ColumnLayout {
     id: root
 
     property string name: "Socks"
-    property string description: "We like the sock. A community of Unisocks wearers we like the sock. Unisocks wearers we like the sock."
+    property string description: "We like the sock. A community of Unisocks wearers we like the sock.\n\nUnisocks wearers we like the sock."
 
     property int membersCount: 184
     property bool amISectionAdmin: true

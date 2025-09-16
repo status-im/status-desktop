@@ -382,7 +382,7 @@ Item {
                         color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 
-                        Keys.onReturnPressed: {
+                        Keys.onReturnPressed: function (event) {
                             event.accepted = !multiline && !acceptReturn
                             // Special case for single line inputs, where we want to accept the return key, but notify the parend
                             // Enter and return can be used to accept the input
@@ -390,7 +390,7 @@ Item {
                                 root.keyPressed(event)
                             }
                         }
-                        Keys.onEnterPressed: {
+                        Keys.onEnterPressed: function (event) {
                             event.accepted = !multiline && !acceptReturn
                             // Special case for single line inputs, where we want to accept the return key, but notify the parend
                             // Enter and return can be used to accept the input
