@@ -2,13 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US" sourcelanguage="en">
 <context>
-    <name></name>
-    <message>
-        <source>Contains account(s) with Keycard incompatible derivation paths</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AboutView</name>
     <message>
         <source>Check for updates</source>
@@ -538,6 +531,10 @@
 <context>
     <name>ActivityNotificationCommunityRequest</name>
     <message>
+        <source>Request to join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>pending</source>
         <translation type="unfinished"></translation>
     </message>
@@ -547,10 +544,6 @@
     </message>
     <message>
         <source>declined</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Request to join</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2261,10 +2254,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
 <context>
     <name>BackupSeedModal</name>
     <message>
-        <source>Continue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Not Now</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2274,6 +2263,10 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Confirm Recovery Phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2338,6 +2331,10 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
 <context>
     <name>BackupSeedphraseIntro</name>
     <message>
+        <source>Backup your recovery phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Your recovery phrase is a 12 word passcode to your funds that cannot be recovered if lost. Write it down offline and store it somewhere secure.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2345,13 +2342,17 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <source>Backup recovery phrase</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>BackupSeedphraseOutro</name>
     <message>
         <source>Backup your recovery phrase</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>BackupSeedphraseOutro</name>
+    <message>
+        <source>Store your phrase offline</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Ensure you have written down your recovery phrase and have a safe place to keep it. Remember, anyone who has your recovery phrase has access to your funds.</source>
         <translation type="unfinished"></translation>
@@ -2364,25 +2365,9 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Backup your recovery phrase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Store your phrase offline</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>BackupSeedphraseReveal</name>
-    <message>
-        <source>Reveal recovery phrase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Confirm recovery phrase</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Backup your recovery phrase</source>
         <translation type="unfinished"></translation>
@@ -2392,12 +2377,28 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Reveal recovery phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Anyone who sees this will have access to your funds.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm recovery phrase</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>BackupSeedphraseVerify</name>
+    <message>
+        <source>Backup your recovery phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm the following words from your recovery phrase...</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Empty</source>
         <translation type="unfinished"></translation>
@@ -2412,14 +2413,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backup your recovery phrase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Confirm the following words from your recovery phrase...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4637,6 +4630,14 @@ You will remain logged in, and your recovery phrase will be entirely in your han
 <context>
     <name>CreateChatView</name>
     <message>
+        <source>To: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>USER LIMIT REACHED</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Contacts</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4644,14 +4645,6 @@ You will remain logged in, and your recovery phrase will be entirely in your han
         <source>You can only send direct messages to your Contacts.
 
 Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>USER LIMIT REACHED</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8222,6 +8215,10 @@ L2 fee: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enter the public key of the community you wish to access</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Community key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8234,10 +8231,6 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Public key detected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter the public key of the community you wish to access</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8590,6 +8583,13 @@ L2 fee: %2</source>
         <source>Keycard Locked</source>
         <translation type="unfinished"></translation>
     </message>
+    <message numerus="yes">
+        <source>Contains %n account(s) with Keycard incompatible derivation paths</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>KeyPairUnknownItem</name>
@@ -8601,11 +8601,11 @@ L2 fee: %2</source>
 <context>
     <name>KeycardAddKeyPairPage</name>
     <message>
-        <source>Key pair added to Keycard</source>
+        <source>Adding key pair to Keycard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Adding key pair to Keycard</source>
+        <source>Key pair added to Keycard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11757,7 +11757,15 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Requires Pocket Network(POKT) or Infura, both of which are currently unavailable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Requires CryptoCompare or CoinGecko, both of which are currently unavailable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11782,14 +11790,6 @@ to load</source>
     </message>
     <message>
         <source>Pocket Network (POKT) &amp; Infura are currently both unavailable for %1. %1 balances are as of %2.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Requires CryptoCompare or CoinGecko, both of which are currently unavailable</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16908,6 +16908,10 @@ access to your webcam</source>
 <context>
     <name>SyncingView</name>
     <message>
+        <source>Verify your login with password or KeyCard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Reveal a temporary QR and Sync Code</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16953,6 +16957,10 @@ access to your webcam</source>
     </message>
     <message>
         <source>Directory of the local backup files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup Data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17013,14 +17021,6 @@ access to your webcam</source>
     </message>
     <message>
         <source>Select your backup directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Verify your login with password or KeyCard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backup Data</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -18780,6 +18780,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
 <context>
     <name>WelcomePage</name>
     <message>
+        <source>Welcome to Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Own your crypto</source>
         <translation type="unfinished"></translation>
     </message>
@@ -18801,10 +18805,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Be safe with secure cold wallet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Welcome to Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18839,11 +18839,11 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Status Desktop</source>
+        <source>StatusQ Documentation App</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>StatusQ Documentation App</source>
+        <source>Status Desktop</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

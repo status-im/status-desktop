@@ -323,6 +323,16 @@
     </message>
 </context>
 <context>
+    <name>KeyPairItem</name>
+    <message numerus="yes">
+        <source>Contains %n account(s) with Keycard incompatible derivation paths</source>
+        <translation>
+            <numerusform>Contains %n account with Keycard incompatible derivation paths</numerusform>
+            <numerusform>Contains %n accounts with Keycard incompatible derivation paths</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>KeycardEnterPinPage</name>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
