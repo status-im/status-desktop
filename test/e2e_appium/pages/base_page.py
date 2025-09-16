@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from config import log_element_action
 from core import EnvironmentSwitcher
 from utils.gestures import Gestures
-from utils.screenshot import save_screenshot
+from utils.screenshot import save_screenshot, save_page_source
 from utils.app_lifecycle_manager import AppLifecycleManager
 from utils.keyboard_manager import KeyboardManager
 from utils.element_state_checker import ElementStateChecker
@@ -54,6 +54,20 @@ class BasePage:
             return save_screenshot(self.driver, self._screenshots_dir, name)
         except Exception:
             return None
+
+    def dump_page_source(self, name: Optional[str] = None) -> Optional[str]:
+        try:
+            return save_page_source(self.driver, self._screenshots_dir, name)
+        except Exception:
+            return None
+
+    def wait_for_invisibility(self, locator, timeout: Optional[int] = None) -> bool:
+        """Wait until the element located by locator becomes invisible or detached."""
+        try:
+            wait = self._create_wait(timeout, "element_find")
+            return wait.until(EC.invisibility_of_element_located(locator))
+        except Exception:
+            return False
 
     def _create_wait(self, timeout: Optional[int], config_key: str) -> WebDriverWait:
         """Create WebDriverWait with timeout from parameter or YAML config."""

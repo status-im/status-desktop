@@ -1,6 +1,8 @@
 import random
+import string
 from typing import Optional
 from eth_account.hdaccount import generate_mnemonic, Mnemonic
+from eth_account import Account
 
 
 def generate_seed_phrase(word_count: Optional[int] = None) -> str:
@@ -33,3 +35,16 @@ def generate_12_word_seed_phrase() -> str:
 def generate_24_word_seed_phrase() -> str:
     """Generate a 24-word seed phrase."""
     return generate_seed_phrase(24)
+
+
+def generate_ethereum_address() -> str:
+    """Generate a random EIP-55 checksummed Ethereum address."""
+    acct = Account.create()
+    return acct.address
+
+
+def generate_account_name(length: int = 12) -> str:
+    """Generate a simple name for UI entries."""
+    length = max(4, min(length, 24))
+    letters = string.ascii_letters
+    return "".join(random.choice(letters) for _ in range(length))
