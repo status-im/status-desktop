@@ -40,11 +40,14 @@ DropArea {
     property var getCurrencyAmount: function (balance, symbol) {}
     property var getCurrentCurrencyAmount: function(balance){}
 
-    ListView.onRemove: SequentialAnimation {
+    SequentialAnimation {
+        id: removeAnimation
         PropertyAction { target: root; property: "ListView.delayRemove"; value: true }
         NumberAnimation { target: root; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
         PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
+
+    ListView.onRemove: removeAnimation.start()
 
     keys: isCommunityToken ? ["x-status-draggable-community-token-item"] : ["x-status-draggable-regular-token-item"]
     width: ListView.view ? ListView.view.width : 0

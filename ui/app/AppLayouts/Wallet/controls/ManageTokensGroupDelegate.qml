@@ -33,11 +33,14 @@ DropArea {
 
     readonly property bool unknownCommunityName: model.communityName.startsWith("0x") && model.communityName === model.communityId
     
-    ListView.onRemove: SequentialAnimation {
+    SequentialAnimation {
+        id: removeAnimation
         PropertyAction { target: root; property: "ListView.delayRemove"; value: true }
         NumberAnimation { target: root; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
         PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
+
+    ListView.onRemove: removeAnimation.start()
 
     keys: isCollection ? ["x-status-draggable-collection-group-item"] : ["x-status-draggable-community-group-item"]
     width: ListView.view ? ListView.view.width : 0
