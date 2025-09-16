@@ -1,4 +1,4 @@
-import nimqml, std/json, sequtils, strutils, options
+import nimqml, std/json, sequtils, strutils, options, chronicles
 import tables, stint
 
 import entry

@@ -615,15 +615,12 @@ rpc(startActivityFilterSessionV2, "wallet"):
 rpc(updateActivityFilterForSession, "wallet"):
   sessionId: int32
   filter: ActivityFilter
-  count: int
 
 rpc(resetActivityFilterSession, "wallet"):
   sessionId: int32
-  count: int
 
 rpc(getMoreForActivityFilterSession, "wallet"):
   sessionId: int32
-  count: int
 
 rpc(stopActivityFilterSession, "wallet"):
   sessionId: int32
@@ -644,9 +641,9 @@ proc newActivityFilterSession*(
   except:
     return (int32(-1), false)
 
-proc updateFilterForSession*(sessionId: int32, filter: ActivityFilter, count: int): bool {.inline.} =
+proc updateFilterForSession*(sessionId: int32, filter: ActivityFilter): bool {.inline.} =
   try:
-    let res = updateActivityFilterForSession(sessionId, filter, count)
+    let res = updateActivityFilterForSession(sessionId, filter)
     if res.error != nil:
       error "error updating fitler for session", err = res.error
       return false
