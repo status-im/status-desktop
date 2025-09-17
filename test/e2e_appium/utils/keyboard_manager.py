@@ -1,6 +1,7 @@
+import time
+
 from config.logging_config import get_logger
 from utils.gestures import Gestures
-
 
 class KeyboardManager:
 
@@ -9,31 +10,39 @@ class KeyboardManager:
         self.gestures = Gestures(driver)
         self.logger = get_logger("keyboard_manager")
 
-    def hide_keyboard(self) -> bool:
+    def hide_keyboard(self, retries: int = 3, delay: float = 0.5) -> bool:
         try:
-            try:
-                self.driver.hide_keyboard()
-                self.logger.info("Keyboard hidden successfully using hide_keyboard()")
+            if not self.driver.is_keyboard_shown():
+                self.logger.debug("Keyboard not shown, nothing to hide")
                 return True
-            except Exception as e:
-                self.logger.debug(f"hide_keyboard() failed: {e}")
 
-            try:
-                self.driver.back()
-                self.logger.info("Keyboard hidden using back button")
-                return True
-            except Exception as e:
-                self.logger.debug(f"Back button failed: {e}")
+            for attempt in range(1, retries + 1):
+                try:
+                    self.driver.hide_keyboard()
+                    time.sleep(delay)  # let UI settle
+                    if not self.driver.is_keyboard_shown():
+                        self.logger.info(f"Keyboard hidden using hide_keyboard() (attempt {attempt})")
+                        return True
+                    else:
+                        self.logger.debug(f"hide_keyboard() attempt {attempt} executed but keyboard still visible")
+                except Exception as e:
+                    self.logger.debug(f"hide_keyboard() attempt {attempt} failed: {e}")
+                time.sleep(delay)
 
             try:
                 size = self.driver.get_window_size()
                 center_x = size["width"] // 2
-                top = size["height"] // 3
-                height = size["height"] // 3
+                start_y = int(size["height"] * 0.4)
+                end_y = int(size["height"] * 0.2)
 
-                self.gestures.swipe_down(max(0, center_x - 10), top, 20, height, 0.8)
-                self.logger.info("Keyboard hidden using swipe gesture")
-                return True
+                self.logger.debug(f"Swiping from ({center_x},{start_y}) to ({center_x},{end_y}) to dismiss keyboard")
+                self.gestures.swipe_down(center_x, start_y, 20, end_y, 0.8)
+                time.sleep(delay)
+                if not self.driver.is_keyboard_shown():
+                    self.logger.info("Keyboard hidden using swipe gesture")
+                    return True
+                else:
+                    self.logger.debug("Swipe executed but keyboard still visible")
             except Exception as e:
                 self.logger.debug(f"Swipe gesture failed: {e}")
 
@@ -41,7 +50,7 @@ class KeyboardManager:
             return False
 
         except Exception as e:
-            self.logger.error(f"Error hiding keyboard: {e}")
+            self.logger.error(f"Unexpected error hiding keyboard: {e}")
             return False
 
     def ensure_element_visible(

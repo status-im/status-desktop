@@ -43,7 +43,7 @@ class TestOnboardingFlow(BaseTest):
             "analytics_screen",
             "password_screen",
             "loading_screen",
-            "main_app_verification",
+            "wallet_verification",
         ]
         completed_steps = result["steps_completed"]
 

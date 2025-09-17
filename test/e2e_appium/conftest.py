@@ -12,7 +12,7 @@ from .utils.screenshot import save_screenshot, save_page_source
 
 # Expose fixture modules without star imports
 pytest_plugins = [
-    # "fixtures.onboarding_fixture",  # Disabled - using BaseAppReadyTest instead
+    "fixtures.onboarding_fixture",
 ]
 
 

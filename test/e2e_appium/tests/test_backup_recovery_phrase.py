@@ -8,7 +8,6 @@ from pages.app import App
 
 class TestBackupRecoveryPhrase(BaseAppReadyTest):
     @pytest.mark.critical
-    @pytest.mark.smoke
     @lambdatest_reporting
     def test_sign_out_from_settings(self):
         # BaseAppReadyTest ensures authenticated home
@@ -33,6 +32,7 @@ class TestBackupRecoveryPhrase(BaseAppReadyTest):
         "remove_phrase",
         [pytest.param(True, id="delete")],
     )
+    @pytest.mark.smoke
     @lambdatest_reporting
     def test_backup_recovery_phrase_flow(self, remove_phrase):
         # BaseAppReadyTest ensures home; open Settings (left-nav preferred)
