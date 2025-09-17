@@ -88,8 +88,6 @@ StatusGroupBox {
     */
     readonly property alias addButton: addItemButton
 
-    implicitWidth: 560
-
     Flow {
         id: flow
 

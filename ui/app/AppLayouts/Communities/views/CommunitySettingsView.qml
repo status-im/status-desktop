@@ -357,6 +357,9 @@ StatusSectionLayout {
             sourceComponent: PermissionsSettingsPanel {
                 permissionsModel: root.permissionsModel
 
+                // by design
+                preferredContentWidth: 560
+
                 // temporary solution to provide icons for assets, similar
                 // method is used in wallet (constructing filename from asset's
                 // symbol) and is intended to be replaced by more robust

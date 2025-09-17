@@ -17,15 +17,13 @@ import SortFilterProxyModel
 
 ColumnLayout {
     id: root
-    width: root.viewWidth
-    property int topPadding: count ? 16 : 0
+
     spacing: 24
 
-    QtObject {
-        id: d
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: Theme.xlPadding * 2
 
-        property int permissionIndexToRemove
-    }
+    property int topPadding: count ? 16 : 0
 
     required property var permissionsModel
     required property var assetsModel
@@ -35,7 +33,6 @@ ColumnLayout {
     // id, name, image, color, owner, admin properties expected
     required property QtObject communityDetails
 
-    property int viewWidth: 560 // by design
     property bool viewOnlyCanAddReaction
     property bool showChannelOptions: false
     property bool allowIntroPanel: true
@@ -46,6 +43,12 @@ ColumnLayout {
     signal userRestrictionsToggled(bool checked)
 
     readonly property alias count: listView.count
+
+    QtObject {
+        id: d
+
+        property int permissionIndexToRemove
+    }
 
     Connections {
         target: root.communityDetails
@@ -76,6 +79,8 @@ ColumnLayout {
 
     IntroPanel {
         Layout.fillWidth: true
+        Layout.maximumWidth: root.preferredContentWidth
+        Layout.rightMargin: root.internalRightPadding
 
         visible: (root.count === 0 && root.allowIntroPanel)
 
@@ -91,16 +96,20 @@ ColumnLayout {
 
     StatusListView {
         id: listView
+
         reuseItems: true
         model: root.permissionsModel
         spacing: 24
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+
+        // It allows to unroll the list when the outer layout height is unbound
         Layout.preferredHeight: contentHeight
         Layout.topMargin: root.topPadding
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         delegate: PermissionItem {
-            width: root.viewWidth
+            width: Math.min(ListView.view.width - root.internalRightPadding,
+                            root.preferredContentWidth)
 
             holdingsListModel: HoldingsSelectionModel {
                 sourceModel: model.holdingsListModel
@@ -142,15 +151,22 @@ ColumnLayout {
         id: noPermissionsLabel
         Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.maximumWidth: root.preferredContentWidth
+        Layout.rightMargin: root.internalRightPadding
+
         visible: (root.count === 0 && root.showChannelOptions)
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         text: qsTr("No channel permissions")
+        wrapMode: Text.Wrap
         color: Theme.palette.secondaryText
     }
 
     StatusIconSwitch {
         Layout.fillWidth: true
+        Layout.maximumWidth: root.preferredContentWidth
+        Layout.rightMargin: root.internalRightPadding
+
         padding: 0
 
         visible: root.showChannelOptions

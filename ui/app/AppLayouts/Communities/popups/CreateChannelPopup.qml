@@ -832,7 +832,10 @@ StatusStackModal {
                     Layout.alignment: Qt.AlignBottom
                     Layout.leftMargin: Theme.padding
                     Layout.rightMargin: Theme.padding
-                    viewWidth: (scrollView.availableWidth - 32)
+
+                    preferredContentWidth: scrollView.availableWidth
+                    internalRightPadding: 0
+
                     permissionsModel: d.channelEditModel.channelPermissionsModel
                     assetsModel: root.assetsModel
                     collectiblesModel: root.collectiblesModel
@@ -920,7 +923,10 @@ StatusStackModal {
             initialPage.header: null
             initialPage.topPadding: 0
             initialPage.leftPadding: 0
-            viewWidth: scrollView.availableWidth - 32
+
+            preferredContentWidth: width
+            internalRightPadding: 0
+
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             permissionsModel: d.channelEditModel.channelPermissionsModel
