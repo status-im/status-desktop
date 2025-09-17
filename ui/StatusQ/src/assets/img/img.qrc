@@ -442,5 +442,15 @@
         <file>icons/homepage/shell.svg</file>
         <file>icons/homepage/swap.svg</file>
         <file>icons/homepage/wallet.svg</file>
+        <file>icons/action-mention.svg</file>
+        <file>icons/action-reply.svg</file>
+        <file>icons/action-add.svg</file>
+        <file>icons/action-admin.svg</file>
+        <file>icons/action-chat.svg</file>
+        <file>icons/action-check.svg</file>
+        <file>icons/action-coin.svg</file>
+        <file>icons/action-sync-fail.svg</file>
+        <file>icons/action-sync.svg</file>
+        <file>icons/action-warn.svg</file>
     </qresource>
 </RCC>
