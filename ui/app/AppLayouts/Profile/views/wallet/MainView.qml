@@ -291,7 +291,7 @@ Column {
                 keyPair: model.keyPair
                 hasPairedDevices: root.walletStore.walletModule.hasPairedDevices
                 userProfilePublicKey: walletStore.userProfilePublicKey
-                onGoToAccountView: root.goToAccountView(account)
+                onGoToAccountView: (account) => root.goToAccountView(account)
                 onRunRenameKeypairFlow: root.runRenameKeypairFlow(model)
                 onRunRemoveKeypairFlow: root.runRemoveKeypairFlow(model)
                 onRunImportViaSeedPhraseFlow: {

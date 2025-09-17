@@ -284,12 +284,12 @@ SettingsContentBase {
                 stackContainer.currentIndex = mainViewIndex
             }
 
-            onEditNetwork: {
+            onEditNetwork: function (chainId) {
                 editNetwork.network = ModelUtils.getByKey(root.networksStore.allNetworks, "chainId", chainId)
                 stackContainer.currentIndex = editNetworksViewIndex
             }
 
-            onSetNetworkActive: {
+            onSetNetworkActive: function (chainId, active) {
                 root.networksStore.setNetworkActive(chainId, active)
             }
         }
@@ -354,7 +354,7 @@ SettingsContentBase {
             onRunStopUsingKeycardFlow: {
                 root.keycardStore.runStopUsingKeycardPopup(keyPair.keyUid)
             }
-            onUpdateWatchAccountHiddenFromTotalBalance: {
+            onUpdateWatchAccountHiddenFromTotalBalance: (address, hideFromTotalBalance) => {
                 root.walletStore.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
             }
         }
