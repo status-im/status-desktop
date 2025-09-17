@@ -29,14 +29,6 @@ QtObject:
       result &= fmt"""
       [{i}]:({$self.items[i]})
       """
-  proc countChanged(self: MessageReactionModel) {.signal.}
-
-  proc getCount(self: MessageReactionModel): int {.slot.} =
-    self.items.len
-
-  QtProperty[int] count:
-    read = getCount
-    notify = countChanged
 
   method rowCount(self: MessageReactionModel, index: QModelIndex = nil): int =
     return self.items.len
@@ -127,8 +119,6 @@ QtObject:
       self.items.insert(item, position)
       self.endInsertRows()
 
-    self.countChanged()
-
   proc removeReaction*(self: MessageReactionModel, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =
     let ind = self.getIndexOfTheItemWithEmoji(emoji)
     if(ind == -1):
@@ -143,7 +133,6 @@ QtObject:
       self.beginRemoveRows(parentModelIndex, ind, ind)
       self.items.delete(ind)
       self.endRemoveRows()
-      self.countChanged()
     else:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete

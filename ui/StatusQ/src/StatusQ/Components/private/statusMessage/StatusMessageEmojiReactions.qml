@@ -20,6 +20,7 @@ Item {
 
     property bool isCurrentUser
     property var emojiReactionsModel
+    property bool limitReached: false
 
     QtObject {
         id: d
@@ -159,22 +160,24 @@ Item {
                 width: 16.5
                 height: 16.5
 
-                color: addEmojiButton.isHovered ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                color: addEmojiButton.isHovered && !root.limitReached ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             }
 
             StatusMouseArea {
                 id: addEmojiButtonMouseArea
                 anchors.fill: addEmojiButton
-                cursorShape: Qt.PointingHandCursor
+                cursorShape: !root.limitReached ? Qt.PointingHandCursor : Qt.ArrowCursor
                 hoverEnabled: true
                 onClicked: (mouse) => {
+                    if (root.limitReached)
+                        return
                     root.addEmojiClicked(this, mouse);
                 }
             }
 
             StatusToolTip {
                 visible: addEmojiButton.isHovered
-                text: qsTr("Add reaction")
+                text: root.limitReached ? qsTr("Maximum number of different reactions reached") : qsTr("Add reaction")
             }
         }
     }
