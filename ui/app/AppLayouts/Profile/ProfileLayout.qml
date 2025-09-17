@@ -124,8 +124,10 @@ StatusSectionLayout {
     }
 
     Component.onCompleted: {
-        profileContainer.currentIndexChanged()
-        root.devicesStore.loadDevices() // Load devices to get non-paired number for badge
+        Qt.callLater(() => {
+                         profileContainer.currentIndexChanged()
+                         root.devicesStore.loadDevices() // Load devices to get non-paired number for badge
+                     })
     }
 
     QtObject {
@@ -170,7 +172,7 @@ StatusSectionLayout {
 
         model: settingsEntriesModel
 
-        onMenuItemClicked: {
+        onMenuItemClicked: function(event) {
             if (profileContainer.currentItem.dirty && !profileContainer.currentItem.ignoreDirty) {
                 event.accepted = true;
                 profileContainer.currentItem.notifyDirty();
@@ -208,7 +210,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: MyProfileView {
                 id: myProfileView
                 implicitWidth: parent.width
@@ -330,7 +331,6 @@ StatusSectionLayout {
         Loader {
             id: walletView
             active: false
-            asynchronous: true
             sourceComponent: WalletView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -353,7 +353,7 @@ StatusSectionLayout {
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
 
-                onAddressWasShownRequested: root.addressWasShownRequested(address)
+                onAddressWasShownRequested: (address) => root.addressWasShownRequested(address)
 
                 onBackButtonNameChanged: d.backButtonName = backButtonName
             }

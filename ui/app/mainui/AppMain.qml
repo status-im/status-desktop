@@ -2062,7 +2062,6 @@ Item {
                     }
 
                     active: appView.currentIndex === Constants.appViewStackIndex.profile
-                    asynchronous: true
                     sourceComponent: ProfileLayout {
                         navBar: appMain.navBar
                         isProduction: appMain.rootStore.isProduction
@@ -2107,11 +2106,11 @@ Item {
                         theme: appMainLocalSettings.theme
                         fontSize: appMainLocalSettings.fontSize
 
-                        onAddressWasShownRequested: WalletStores.RootStore.addressWasShown(address)
+                        onAddressWasShownRequested: (address) => WalletStores.RootStore.addressWasShown(address)
                         onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
-                        onConnectUsernameRequested:(ensName, ownerAddress) => popupRequestsHandler.sendModalHandler.connectUsername(ensName, ownerAddress)
-                        onRegisterUsernameRequested: popupRequestsHandler.sendModalHandler.registerUsername(ensName)
-                        onReleaseUsernameRequested: popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
+                        onConnectUsernameRequested: (ensName, ownerAddress) => popupRequestsHandler.sendModalHandler.connectUsername(ensName, ownerAddress)
+                        onRegisterUsernameRequested: (ensName) => popupRequestsHandler.sendModalHandler.registerUsername(ensName)
+                        onReleaseUsernameRequested: (ensName, senderAddress, chainId) => popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
 
                         onThemeChangeRequested: function(theme) {
                             appMainLocalSettings.theme = theme
