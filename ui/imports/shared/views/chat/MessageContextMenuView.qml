@@ -31,6 +31,7 @@ StatusMenu {
     property bool editRestricted: false
     property bool pinnedMessage: false
     property bool canPin: false
+    property bool emojiReactionLimitReached: false
 
     readonly property bool isMyMessage: {
         return root.messageSenderId !== "" && root.messageSenderId === root.myPublicKey;
@@ -48,7 +49,7 @@ StatusMenu {
 
     MessageReactionsRow {
         id: emojiRow
-        visible: !root.disabledForChat || root.forceEnableEmojiReactions
+        visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions)
         reactionsModel: root.reactionModel
         bottomPadding: Theme.halfPadding
         onToggleReaction: (emoji) => {

@@ -246,6 +246,7 @@ SplitView {
                     linkAddressAndEnsName: true
                     disabledTooltipText: disableLinkCheckbox.checked ? "Send not available": ""
                     reactionsModel: model.reactionsModel
+                    maxEmojiReactionsPerMessage: 20
 
                     messageDetails {
                         readonly property bool isEnsVerified: model.senderDisplayName.endsWith(".eth")
