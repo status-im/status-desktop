@@ -104,7 +104,7 @@ Item {
         contactsStore: appMain.contactsStore
         currencyStore: appMain.currencyStore
         communityTokensStore: appMain.communityTokensStore
-        emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+        defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
         openCreateChat: createChatView.opened
         networkConnectionStore: appMain.networkConnectionStore
     }
@@ -1888,7 +1888,7 @@ Item {
                                 contactsStore: appMain.contactsStore
                                 currencyStore: appMain.currencyStore
                                 communityTokensStore: appMain.communityTokensStore
-                                emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                                 openCreateChat: createChatView.opened
                                 networkConnectionStore: appMain.networkConnectionStore
                                 isChatSectionModule: true
@@ -2212,7 +2212,7 @@ Item {
                             contactsStore: appMain.contactsStore
                             currencyStore: appMain.currencyStore
                             communityTokensStore: appMain.communityTokensStore
-                            emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                            defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                             openCreateChat: createChatView.opened
                             walletStore: WalletStores.RootStore
                             isChatSectionModule: true
@@ -2286,7 +2286,7 @@ Item {
                                 contactsStore: appMain.contactsStore
                                 currencyStore: appMain.currencyStore
                                 communityTokensStore: appMain.communityTokensStore
-                                emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                                 openCreateChat: createChatView.opened
                                 isChatSectionModule: false
                                 communityId: model.id
@@ -2358,7 +2358,7 @@ Item {
                         contactsStore: appMain.contactsStore
                         currencyStore: appMain.currencyStore
                         communityTokensStore: appMain.communityTokensStore
-                        emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                        defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                         openCreateChat: createChatView.opened
                         isChatSectionModule: true
                     }

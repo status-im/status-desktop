@@ -14,13 +14,6 @@ QtObject:
   proc delete(self: Model) =
     self.QAbstractListModel.delete
 
-  # TODO : To make this code scale, we can consider a loop similar to
-  # below code, and rename emoji to just be emojiReactions/emoji_[1 ... n]
-  #
-  # ```nim 
-  #   for i in 1..itemCount:
-  #       items.add(initItem(i, "emojiReactions/emoji_$(i)", false))
-  # ```
   proc setup(self: Model) =
     self.items = @[
         initItem("❤️", "emojiReactions/heart",      false),
@@ -32,7 +25,7 @@ QtObject:
     ]
     self.QAbstractListModel.setup
   
-  proc newEmojiReactionsModel*(): Model =
+  proc newDefaultEmojiReactionsModel*(): Model =
     new(result, delete)
     result.setup
   

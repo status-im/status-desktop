@@ -4,7 +4,7 @@ import ./preserved_properties
 import ./urls_model
 import ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
 import ../../../../../../app/modules/shared_models/payment_request_model as payment_request_model
-import ../../../../../../app/modules/shared_models/emoji_reactions_model as emoji_reactions_model
+import ../../../../../../app/modules/shared_models/default_emoji_reactions_model as default_emoji_reactions_model
 
 QtObject:
   type
@@ -20,8 +20,8 @@ QtObject:
       urlsModelVariant: QVariant
       sendingInProgress: bool
       askToEnableLinkPreview: bool
-      emojiReactionsModel: emoji_reactions_model.Model
-      emojiReactionsModelVariant: QVariant
+      defaultEmojiReactionsModel: default_emoji_reactions_model.Model
+      defaultEmojiReactionsModelVariant: QVariant
 
   proc setSendingInProgress*(self: View, value: bool)
 
@@ -41,8 +41,8 @@ QtObject:
     result.urlsModel = newUrlsModel()
     result.urlsModelVariant = newQVariant(result.urlsModel)
     result.askToEnableLinkPreview = false
-    result.emojiReactionsModel = newEmojiReactionsModel()
-    result.emojiReactionsModelVariant = newQVariant(result.emojiReactionsModel)
+    result.defaultEmojiReactionsModel = newDefaultEmojiReactionsModel()
+    result.defaultEmojiReactionsModelVariant = newQVariant(result.defaultEmojiReactionsModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()

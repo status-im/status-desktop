@@ -13,7 +13,7 @@ StatusMenu {
     id: root
 
     // expected roles: emoji:string, filename:string, didIReactWithThisEmoji:bool
-    property var reactionModel
+    property var defaultEmojiReactionsModel
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
@@ -50,7 +50,7 @@ StatusMenu {
     MessageReactionsRow {
         id: emojiRow
         visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions)
-        reactionsModel: root.reactionModel
+        defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
         bottomPadding: Theme.halfPadding
         onToggleReaction: (emoji) => {
             root.toggleReaction(emoji)
