@@ -348,7 +348,7 @@ Item {
             pinnedMessage: model.pinned
             messagePinnedBy: model.pinnedBy
             reactionsModel: model.reactions
-            emojiReactionsModel: model.emojiReactionsModel
+            defaultEmojiReactionsModel: model.defaultEmojiReactionsModel
             sticker: model.sticker
             stickerPack: model.stickerPack
             editModeOn: model.editMode

@@ -80,7 +80,7 @@ Loader {
     property var paymentRequestModel
     property string messageAttachments: ""
     property var transactionParams
-    property var emojiReactionsModel
+    property var defaultEmojiReactionsModel
     property var formatBalance
 
     // These 2 properties can be dropped when the new unfurling flow supports GIFs
@@ -1263,7 +1263,7 @@ Loader {
         MessageContextMenuView {
             id: messageContextMenuView
             emojiReactionLimitReached: root.emojiReactionLimitReached
-            reactionModel: root.emojiReactionsModel
+            defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
             forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
             isDebugEnabled: root.rootStore && root.rootStore.isDebugEnabled

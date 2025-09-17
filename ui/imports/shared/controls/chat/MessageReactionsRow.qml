@@ -7,7 +7,7 @@ import shared.controls.chat
 Row {
     id: root
 
-    property var reactionsModel
+    property var defaultEmojiReactionsModel
 
     signal toggleReaction(string emoji)
 
@@ -16,7 +16,7 @@ Row {
     rightPadding: Theme.halfPadding
 
     Repeater {
-        model: root.reactionsModel
+        model: root.defaultEmojiReactionsModel
         delegate: EmojiReaction {
             source: Theme.svg(model.filename)
             emoji: model.emoji

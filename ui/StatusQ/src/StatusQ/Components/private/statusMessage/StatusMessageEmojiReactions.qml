@@ -19,7 +19,7 @@ Item {
     signal toggleReaction(string emoji)
 
     property bool isCurrentUser
-    property var emojiReactionsModel
+    property var reactionsModel
     property bool limitReached: false
 
     QtObject {
@@ -72,7 +72,7 @@ Item {
             id: reactionRepeater
 
             width: childrenRect.width
-            model: root.emojiReactionsModel
+            model: root.reactionsModel
 
             Control {
                 id: reactionDelegate
