@@ -12,6 +12,7 @@ Control {
     property alias cardWidth: cardWidth.value
 
     property int minCardWidth: 256
+    property int maxCardWidth: 400
 
     background: Rectangle {
         color: Theme.palette.directColor8
@@ -103,9 +104,9 @@ Control {
             Layout.leftMargin: Theme.padding
             Layout.rightMargin: Theme.padding
             Layout.fillWidth: true
-            value: 312
-            from: 250
-            to: 400
+            value: from
+            from: root.minCardWidth
+            to: root.maxCardWidth
         }
     }
 }
