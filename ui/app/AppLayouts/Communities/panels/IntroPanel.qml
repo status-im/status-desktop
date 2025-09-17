@@ -5,8 +5,6 @@ import QtQuick.Layouts
 import StatusQ.Core
 import StatusQ.Core.Theme
 
-import utils
-
 Control {
     id: root
 
@@ -44,10 +42,12 @@ Control {
             id: imageItem
 
             objectName: "welcomeSettingsImage"
+
             Layout.preferredWidth: root.imageWidth
             Layout.preferredHeight: root.imageHeigth
             Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: root.imageBottomMargin
+            Layout.fillWidth: true
 
             fillMode: Image.PreserveAspectFit
             mipmap: true

@@ -32,7 +32,9 @@ StatusScrollView {
                      && !root.permissionDuplicated
                      && (isEditState ? !root.permissionTypeLimitExceeded : !root.permissionTypeLimitReached)
 
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
+
     property bool isEditState: false
 
     readonly property bool dirty:
@@ -177,13 +179,13 @@ StatusScrollView {
     }
 
     onPermissionTypeChanged: Qt.callLater(() => d.loadInitValues())
-    contentWidth: mainLayout.width
-    contentHeight: mainLayout.height
+    contentWidth: root.availableWidth
+    contentHeight: sequenceColumnLayout.height
 
     SequenceColumnLayout {
-        id: mainLayout
+        id: sequenceColumnLayout
 
-        width: root.viewWidth
+        width: root.availableWidth
         title: qsTr("Anyone")
 
         StatusItemSelector {
@@ -193,6 +195,9 @@ StatusScrollView {
             property int editedIndex: -1
 
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             icon: Theme.svg("contact_verified")
             title: qsTr("Who holds")
             placeholderText: qsTr("Example: 10 SNT")
@@ -388,6 +393,8 @@ StatusScrollView {
             objectName: "permissionsSelector"
 
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             title: qsTr("Is allowed to")
             placeholderText: qsTr("Example: View and post")
@@ -476,10 +483,13 @@ StatusScrollView {
 
             readonly property bool editable: !d.isCommunityPermission
 
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             addButton.visible: editable
             itemsClickable: editable
             visible: root.showChannelSelector
-            Layout.fillWidth: true
             icon: d.isCommunityPermission ? Theme.svg("communities") : Theme.svg("create-category")
             title: qsTr("In")
             placeholderText: qsTr("Example: `#general` channel")
@@ -579,16 +589,25 @@ StatusScrollView {
                                d.dropdownVerticalOffset)
             }
         }
-        Separator {
+
+        Rectangle {
             Layout.topMargin: 24
+            Layout.preferredHeight: 1
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             color: Theme.palette.baseColor2
         }
 
         StatusIconSwitch {
+            readonly property int additionalPadding: 16
+
             Layout.topMargin: 12
             Layout.fillWidth: true
-            Layout.leftMargin: 16
-            Layout.rightMargin: Layout.leftMargin
+            Layout.maximumWidth: root.preferredContentWidth - 2 * additionalPadding
+            Layout.rightMargin: root.internalRightPadding + additionalPadding
+            Layout.leftMargin: additionalPadding
 
             enabled: d.dirtyValues.permissionType !== PermissionTypes.Type.Admin
             checked: d.dirtyValues.isPrivate
@@ -603,6 +622,9 @@ StatusScrollView {
             objectName: "duplicationPanel"
 
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             Layout.topMargin: 50 // by desing
 
             text: {
@@ -621,6 +643,9 @@ StatusScrollView {
 
         StatusWarningBox {
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             Layout.topMargin: Theme.padding
             visible: root.showChannelSelector
             icon: "desktop"
@@ -631,8 +656,9 @@ StatusScrollView {
 
         StatusButton {
             Layout.preferredHeight: 44
-            Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
             Layout.topMargin: Theme.bigPadding
 
             visible: !root.isEditState && root.showChannelSelector

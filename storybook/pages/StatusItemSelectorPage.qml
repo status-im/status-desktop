@@ -14,6 +14,9 @@ ColumnLayout {
     StatusItemSelector {
         id: selector
 
+        Layout.fillWidth: true
+        Layout.margins: 50
+
         icon: Theme.png("tokens/SNT")
         title: "Item Selector Title"
 
