@@ -11,6 +11,8 @@ Control {
     property alias showTracer: showTracer.checked
     property alias cardWidth: cardWidth.value
 
+    property int minCardWidth: 250
+
     background: Rectangle {
         color: Theme.palette.directColor8
         radius: 8
@@ -102,7 +104,7 @@ Control {
             Layout.rightMargin: Theme.padding
             Layout.fillWidth: true
             value: 312
-            from: 250
+            from: root.minCardWidth
             to: 400
         }
     }
