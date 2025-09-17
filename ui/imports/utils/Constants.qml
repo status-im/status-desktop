@@ -1550,6 +1550,8 @@ QtObject {
 
     readonly property int maxActiveNetworks: 5
 
+    readonly property int maxEmojiReactionsPerMessage: 20
+
     /*
         Hacky workaround functions to deal with token collision workaround https://github.com/status-im/status-go/pull/6538
         We use unique symbols with the form "symbol(decimals)" to avoid bundling tokens with different decimals.

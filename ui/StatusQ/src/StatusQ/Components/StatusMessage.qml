@@ -66,6 +66,7 @@ Control {
     property int outgoingStatus: StatusMessage.OutgoingStatus.Unknown
     property double timestamp: 0
     property var reactionsModel
+    property int maxEmojiReactionsPerMessage
 
     property bool showHeader: true
     property bool isActiveMessage: false
@@ -398,7 +399,8 @@ Control {
                         sourceComponent: StatusMessageEmojiReactions {
                             id: emojiReactionsPanel
                             enabled: !root.disableEmojis
-                            emojiReactionsModel: root.reactionsModel
+                            reactionsModel: root.reactionsModel
+                            limitReached: !!root.reactionsModel && root.reactionsModel.ModelCount.count >= root.maxEmojiReactionsPerMessage
 
                             onHoverChanged: (hovered) => root.hoverChanged(messageId, hovered)
 

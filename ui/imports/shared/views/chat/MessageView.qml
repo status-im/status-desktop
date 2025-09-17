@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
+import QtModelsToolkit
 
 import utils
 import shared.panels
@@ -72,7 +73,9 @@ Loader {
 
     property bool pinnedMessage: false
     property string messagePinnedBy: ""
-    property var reactionsModel: []
+    property var reactionsModel
+    readonly property bool emojiReactionLimitReached: !!root.reactionsModel && root.reactionsModel.ModelCount.count >= Constants.maxEmojiReactionsPerMessage
+
     property var linkPreviewModel
     property var paymentRequestModel
     property string messageAttachments: ""
@@ -757,6 +760,7 @@ Loader {
 
                 resendError: root.resendError
                 reactionsModel: root.reactionsModel
+                maxEmojiReactionsPerMessage: Constants.maxEmojiReactionsPerMessage
                 linkPreviewModel: root.linkPreviewModel
                 paymentRequestModel: root.paymentRequestModel
                 gifLinks: root.gifLinks
@@ -1047,7 +1051,13 @@ Loader {
                             height: d.chatButtonSize
                             icon.name: "reaction-b"
                             type: StatusFlatRoundButton.Type.Tertiary
-                            tooltip.text: qsTr("Add reaction")
+                            enabled: !root.emojiReactionLimitReached
+                            tooltip.text: {
+                                if (root.emojiReactionLimitReached) {
+                                    return qsTr("Maximum number of different reactions reached")
+                                }
+                                return qsTr("Add reaction")
+                            }
                             onClicked: (mouse) => {
                                 d.addReactionClicked(this, mouse)
                             }
@@ -1252,6 +1262,7 @@ Loader {
 
         MessageContextMenuView {
             id: messageContextMenuView
+            emojiReactionLimitReached: root.emojiReactionLimitReached
             reactionModel: root.emojiReactionsModel
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
             forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
