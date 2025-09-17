@@ -11320,10 +11320,6 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add reaction</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Reply</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11345,6 +11341,14 @@ to load</source>
     </message>
     <message>
         <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum number of different reactions reached</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add reaction</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16259,6 +16263,10 @@ to load</source>
     </message>
     <message>
         <source>Add reaction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum number of different reactions reached</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

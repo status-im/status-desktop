@@ -13,9 +13,9 @@ SplitView {
     id: root
 
     Logs { id: logs }
-// FIXME
+
     ListModel {
-        id: emojiReactionsModel
+        id: defaultEmojiReactionsModel
         ListElement {
             emoji: "❤️"
             filename: "emojiReactions/heart"
@@ -66,11 +66,11 @@ SplitView {
             MessageContextMenuView {
                 id: messageContextMenuView
                 anchors.centerIn: parent
-                visible: true
+                visible: false
                 closePolicy: Popup.NoAutoClose
 
                 messageId: "Oxdeadbeef"
-                reactionModel: emojiReactionsModel
+                defaultEmojiReactionsModel: defaultEmojiReactionsModel
                 messageContentType: Constants.messageContentType.messageType
                 chatType: Constants.chatType.oneToOne
                 isDebugEnabled: isDebugEnabledCheckBox.checked
