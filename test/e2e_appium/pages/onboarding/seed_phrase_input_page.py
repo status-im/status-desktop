@@ -50,6 +50,7 @@ class SeedPhraseInputPage(BasePage):
 
             time.sleep(0.5)
             self.logger.info("✅ Seed phrase paste completed successfully")
+            self.hide_keyboard()
             return True
 
         except Exception as e:
@@ -91,7 +92,7 @@ class SeedPhraseInputPage(BasePage):
 
         try:
             if self.hide_keyboard():
-                time.sleep(0.3)
+                time.sleep(0.5)
         except Exception:
             pass
 
