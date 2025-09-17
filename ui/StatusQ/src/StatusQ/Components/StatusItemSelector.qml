@@ -115,8 +115,6 @@ StatusFlowSelector {
 
     placeholderItem.visible: repeater.count === 0
 
-    implicitWidth: 560
-
     Repeater {
         id: repeater
 

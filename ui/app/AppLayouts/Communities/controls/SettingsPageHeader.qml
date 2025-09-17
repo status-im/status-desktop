@@ -21,6 +21,7 @@ Control {
             Layout.alignment: Qt.AlignVCenter
 
             Layout.horizontalStretchFactor: 1
+            Layout.fillWidth: true
             Layout.preferredWidth: 0
 
             StatusBaseText {
@@ -57,6 +58,7 @@ Control {
 
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
             Layout.horizontalStretchFactor: 0
+            Layout.fillWidth: true
 
 
             spacing: parent.spacing

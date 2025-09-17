@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import AppLayouts.Communities.controls
 import AppLayouts.Communities.layouts
@@ -8,6 +9,7 @@ import AppLayouts.Communities.views
 import StatusQ
 import StatusQ.Controls
 import StatusQ.Core
+import StatusQ.Core.Theme
 import StatusQ.Core.Utils
 
 import utils
@@ -29,7 +31,9 @@ StackView {
     // id, name, image, color, owner properties expected
     required property var communityDetails
 
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width
+    property int internalRightPadding: Theme.xlPadding * 2
+
     property string previousPageName: depth > 1 ? qsTr("Permissions") : ""
 
     signal createPermissionRequested(int permissionType, var holdings,
@@ -87,20 +91,25 @@ StackView {
     // Community Permissions possible view contents:
     initialItem: SettingsPage {
         id: initialItem
-        width: root.viewWidth + leftPadding
 
         title: qsTr("Permissions")
+
+        preferredHeaderContentWidth: root.preferredContentWidth
+        headerRightPadding: root.internalRightPadding
 
         buttons: StatusButton {
             objectName: "addNewItemButton"
 
             text: qsTr("Add new permission")
 
+            Layout.fillWidth: true
+
             onClicked: root.push(newPermissionView, StackView.Immediate)
         }
 
         contentItem: PermissionsView {
             id: permissionsView
+
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
@@ -108,7 +117,8 @@ StackView {
 
             communityDetails: root.communityDetails
 
-            viewWidth: root.viewWidth
+            preferredContentWidth: root.preferredContentWidth
+            internalRightPadding: root.internalRightPadding
 
             onEditPermissionRequested: {
                 const item = ModelUtils.get(root.permissionsModel, index)
@@ -149,7 +159,7 @@ StackView {
 
         SettingsPage {
             id: newPermissionViewPage
-            implicitWidth: 0
+
             title: isEditState ? qsTr("Edit permission") : qsTr("New permission")
 
             property alias isSaveEnabled: editPermissionView.saveEnabled
@@ -178,7 +188,8 @@ StackView {
             contentItem: EditPermissionView {
                 id: editPermissionView
 
-                viewWidth: root.viewWidth
+                preferredContentWidth: root.preferredContentWidth
+                internalRightPadding: root.internalRightPadding
 
                 SortFilterProxyModel {
                     id: nonOwnerCollectibles

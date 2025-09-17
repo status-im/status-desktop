@@ -8,39 +8,36 @@ import StatusQ.Core.Theme
 import utils
 
 ColumnLayout {
-    Item {
-        Layout.fillHeight: true
+
+    StatusFlowSelector {
         Layout.fillWidth: true
+        Layout.margins: 100
 
-        StatusFlowSelector {
-            anchors.centerIn: parent
+        icon: Theme.png("tokens/SNT")
+        title: "Item Selector Title"
 
-            icon: Theme.png("tokens/SNT")
-            title: "Item Selector Title"
+        placeholderText: "Example: Empty items"
 
-            placeholderText: "Example: Empty items"
+        Repeater {
+            id: repeater
 
-            Repeater {
-                id: repeater
-
-                model: ListModel {
-                    id: listModel
-                }
-
-                property int counter: 0
-
-                delegate: StatusListItemTag {
-                    title: `tag ${model.name}`
-
-                    onClicked: listModel.remove(index)
-                }
+            model: ListModel {
+                id: listModel
             }
 
-            placeholderItem.visible: listModel.count === 0
+            property int counter: 0
 
-            addButton.onClicked: {
-                listModel.append({ name: `item ${repeater.counter++}` })
+            delegate: StatusListItemTag {
+                title: `tag ${model.name}`
+
+                onClicked: listModel.remove(index)
             }
+        }
+
+        placeholderItem.visible: listModel.count === 0
+
+        addButton.onClicked: {
+            listModel.append({ name: `item ${repeater.counter++}` })
         }
     }
 
