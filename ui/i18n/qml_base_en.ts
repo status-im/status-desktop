@@ -10988,6 +10988,29 @@ to load</source>
     </message>
 </context>
 <context>
+    <name>MarketPrivacyWall</name>
+    <message>
+        <source>Enable third-party services for market features to work.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Real-time token data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stay updated with live prices and trading volumes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swap straight from the market</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Easy swaps to any token from leaderboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MarketTokenHeader</name>
     <message>
         <source>#</source>
@@ -13431,6 +13454,17 @@ to load</source>
     </message>
     <message>
         <source>Third-party services successfully disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PrivacyWallCarousel</name>
+    <message>
+        <source>Enable third-party services</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share feedback or suggest improvements on our %1.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -18535,6 +18569,45 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>WalletNetworkDelegate</name>
     <message>
         <source>Required for some Status features</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WalletPrivacyWall</name>
+    <message>
+        <source>Enable third-party services for wallet features to work.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Portfolio view for your tokens</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use multi-chain, multi-account, and fully self-custodial wallet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fast &amp; easy token swaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Access wide token coverage and the best prices across top DEXes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Organize collectibles your way</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search, filter, and sort your collectibles exactly how you want</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple ways to buy tokens</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
