@@ -32,9 +32,7 @@ QtObject:
     events: EventEmitter
     eventHandler: EventHandlerFn
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter
   ): Service =
@@ -179,3 +177,7 @@ QtObject:
 
   proc rejectSigning*(self: Service, requestId: string): bool =
     rejectRequest(self, requestId, status_go.sendSignRejectedFinishedRpc, "sendSignRejectedFinishedRpc failed: ")
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

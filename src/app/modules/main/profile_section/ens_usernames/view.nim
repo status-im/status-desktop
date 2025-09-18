@@ -12,9 +12,7 @@ QtObject:
       etherscanTxLink: string
       etherscanAddressLink: string
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -105,3 +103,7 @@ QtObject:
 
   proc ensnameResolverAddress*(self: View, ensUsername: string): string {.slot.} =
     return self.delegate.ensnameResolverAddress(ensUsername)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

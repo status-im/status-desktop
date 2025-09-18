@@ -10,9 +10,7 @@ QtObject:
       chainId: int
       chainName: string
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -88,4 +86,7 @@ QtObject:
 
   proc authenticateToPostMessage*(self: View, payloadMethod: string, requestType: string, message: string) {.slot.} =
     self.delegate.authenticateToPostMessage(payloadMethod, requestType, message)
+
+  proc delete*(self: View) =
+    self.QObject.delete
 

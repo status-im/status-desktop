@@ -20,12 +20,8 @@ QtObject:
 
       sessionId: Option[int32]
 
-  proc setup(self: EventsHandler) =
-    self.QObject.setup
-
-  proc delete*(self: EventsHandler) =
-    self.QObject.delete
-
+  proc setup(self: EventsHandler)
+  proc delete*(self: EventsHandler)
   proc onFilteringDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityFilteringDone] = handler
 
@@ -85,4 +81,10 @@ QtObject:
 
   proc clearSessionId*(self: EventsHandler) =
     self.sessionId = none(int32)
+
+  proc setup(self: EventsHandler) =
+    self.QObject.setup
+
+  proc delete*(self: EventsHandler) =
+    self.QObject.delete
 

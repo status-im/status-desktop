@@ -25,9 +25,7 @@ QtObject:
 
   proc setSendingInProgress*(self: View, value: bool)
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -189,3 +187,7 @@ QtObject:
 
   proc emitSendingMessageFailure*(self: View) =
     self.setSendingInProgress(false)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

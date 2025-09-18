@@ -17,12 +17,8 @@ QtObject:
   type SourcesOfTokensModel* = ref object of QAbstractListModel
     delegate: io_interface.SourcesOfTokensModelDataSource
 
-  proc setup(self: SourcesOfTokensModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: SourcesOfTokensModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: SourcesOfTokensModel)
+  proc delete(self: SourcesOfTokensModel)
   proc newSourcesOfTokensModel*(delegate: io_interface.SourcesOfTokensModelDataSource): SourcesOfTokensModel =
     new(result, delete)
     result.setup
@@ -72,3 +68,10 @@ QtObject:
   proc modelsUpdated*(self: SourcesOfTokensModel) =
       self.beginResetModel()
       self.endResetModel()
+
+  proc setup(self: SourcesOfTokensModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: SourcesOfTokensModel) =
+    self.QAbstractListModel.delete
+

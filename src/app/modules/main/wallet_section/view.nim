@@ -30,12 +30,8 @@ QtObject:
       isAccountTokensReloading: bool
       lastReloadTimestamp: int64
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface,
     activityController: activityc.Controller,
     tmpActivityControllers: ActivityControllerArray,
@@ -288,3 +284,10 @@ QtObject:
 
   proc isChecksumValidForAddress*(self: View, address: string): bool {.slot.} =
     return self.delegate.isChecksumValidForAddress(address)
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

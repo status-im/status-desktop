@@ -53,35 +53,8 @@ QtObject:
     txL1FeeInWei: string,
     approvalFeeInWei: string,
     approvalL1FeeInWei: string
-  ) =
-    self.QObject.setup
-    self.bridgeName = bridgeName
-    self.fromNetwork = fromNetwork
-    self.toNetwork = toNetwork
-    self.maxAmountIn = maxAmountIn
-    self.amountIn = amountIn
-    self.amountOut = amountOut
-    self.gasAmount = gasAmount
-    self.gasFees = gasFees
-    self.tokenFees = tokenFees
-    self.cost = cost
-    self.estimatedTime = estimatedTime
-    self.amountInLocked = amountInLocked
-    self.isFirstSimpleTx = isFirstSimpleTx
-    self.isFirstBridgeTx = isFirstBridgeTx
-    self.approvalRequired = approvalRequired
-    self.approvalGasFees = approvalGasFees
-    self.approvalAmountRequired = approvalAmountRequired
-    self.approvalContractAddress = approvalContractAddress
-    self.slippagePercentage = slippagePercentage
-    self.txFeeInWei = txFeeInWei
-    self.txL1FeeInWei = txL1FeeInWei
-    self.approvalFeeInWei = approvalFeeInWei
-    self.approvalL1FeeInWei = approvalL1FeeInWei
-
-  proc delete*(self: SuggestedRouteItem) =
-      self.QObject.delete
-
+  )
+  proc delete*(self: SuggestedRouteItem)
   proc newSuggestedRouteItem*(
     bridgeName: string = "",
     fromNetwork: int = 0,
@@ -300,3 +273,56 @@ QtObject:
   QtProperty[string] approvalL1FeeInWei:
     read = getApprovalL1FeeInWei
     notify = approvalL1FeeInWeiChanged
+
+  proc delete*(self: SuggestedRouteItem) =
+      self.QObject.delete
+
+  proc setup*(self: SuggestedRouteItem,
+    bridgeName: string,
+    fromNetwork: int,
+    toNetwork: int,
+    maxAmountIn: string,
+    amountIn: string,
+    amountOut: string,
+    gasAmount: string,
+    gasFees: GasFeesItem,
+    tokenFees: float,
+    cost: float,
+    estimatedTime: int,
+    amountInLocked: bool,
+    isFirstSimpleTx: bool,
+    isFirstBridgeTx: bool,
+    approvalRequired: bool,
+    approvalGasFees: float,
+    approvalAmountRequired: string,
+    approvalContractAddress: string,
+    slippagePercentage: float,
+    txFeeInWei: string,
+    txL1FeeInWei: string,
+    approvalFeeInWei: string,
+    approvalL1FeeInWei: string
+  ) =
+    self.QObject.setup
+    self.bridgeName = bridgeName
+    self.fromNetwork = fromNetwork
+    self.toNetwork = toNetwork
+    self.maxAmountIn = maxAmountIn
+    self.amountIn = amountIn
+    self.amountOut = amountOut
+    self.gasAmount = gasAmount
+    self.gasFees = gasFees
+    self.tokenFees = tokenFees
+    self.cost = cost
+    self.estimatedTime = estimatedTime
+    self.amountInLocked = amountInLocked
+    self.isFirstSimpleTx = isFirstSimpleTx
+    self.isFirstBridgeTx = isFirstBridgeTx
+    self.approvalRequired = approvalRequired
+    self.approvalGasFees = approvalGasFees
+    self.approvalAmountRequired = approvalAmountRequired
+    self.approvalContractAddress = approvalContractAddress
+    self.slippagePercentage = slippagePercentage
+    self.txFeeInWei = txFeeInWei
+    self.txL1FeeInWei = txL1FeeInWei
+    self.approvalFeeInWei = approvalFeeInWei
+    self.approvalL1FeeInWei = approvalL1FeeInWei

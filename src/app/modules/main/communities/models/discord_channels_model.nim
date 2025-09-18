@@ -14,12 +14,8 @@ QtObject:
   type DiscordChannelsModel* = ref object of QAbstractListModel
     items*: seq[DiscordChannelItem]
 
-  proc setup(self: DiscordChannelsModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: DiscordChannelsModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: DiscordChannelsModel)
+  proc delete(self: DiscordChannelsModel)
   proc newDiscordChannelsModel*(): DiscordChannelsModel =
     new(result, delete)
     result.setup
@@ -225,3 +221,10 @@ QtObject:
       self.items[i].selected = self.items[i].getId() == id
       self.dataChanged(index, index, @[ModelRole.Selected.int])
     self.hasSelectedItemsChanged()
+
+  proc setup(self: DiscordChannelsModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: DiscordChannelsModel) =
+    self.QAbstractListModel.delete
+

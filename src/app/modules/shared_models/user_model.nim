@@ -43,15 +43,19 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[UserItem]
 
+  # Forward declarations for ORC
+  proc delete(self: Model)
+  proc setup(self: Model)
+
+  proc newModel*(): Model =
+    new(result, delete)
+    result.setup
+
   proc delete(self: Model) =
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
     self.QAbstractListModel.setup
-
-  proc newModel*(): Model =
-    new(result, delete)
-    result.setup
 
   proc countChanged(self: Model) {.signal.}
 

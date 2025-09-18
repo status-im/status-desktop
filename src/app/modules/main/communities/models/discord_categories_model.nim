@@ -11,12 +11,8 @@ QtObject:
   type DiscordCategoriesModel* = ref object of QAbstractListModel
     items*: seq[DiscordCategoryItem]
 
-  proc setup(self: DiscordCategoriesModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: DiscordCategoriesModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: DiscordCategoriesModel)
+  proc delete(self: DiscordCategoriesModel)
   proc newDiscordCategoriesModel*(): DiscordCategoriesModel =
     new(result, delete)
     result.setup
@@ -115,3 +111,10 @@ QtObject:
       defer: index.delete
       self.items[i].selected = self.items[i].getId() == id
       self.dataChanged(index, index, @[ModelRole.Selected.int])
+
+  proc setup(self: DiscordCategoriesModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: DiscordCategoriesModel) =
+    self.QAbstractListModel.delete
+

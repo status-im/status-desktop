@@ -18,9 +18,7 @@ QtObject:
       backupImportError: string
       backupDataError: string
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -144,3 +142,7 @@ QtObject:
     self.setBackupImportState(BackupImportState.InProgress)
     self.setBackupImportError("")
     self.delegate.importLocalBackupFile(filePath)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

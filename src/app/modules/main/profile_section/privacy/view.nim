@@ -7,9 +7,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -93,3 +91,7 @@ QtObject:
     
   proc emitUrlUnfurlingModeUpdated*(self: View, mode: int) =
     self.urlUnfurlingModeChanged()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

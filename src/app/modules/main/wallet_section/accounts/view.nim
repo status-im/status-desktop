@@ -14,9 +14,7 @@ QtObject:
       accounts: Model
       accountsVariant: QVariant
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -77,3 +75,7 @@ QtObject:
 
   proc getWalletAccountAsJson*(self: View, address: string): string {.slot.} =
     return $self.delegate.getWalletAccountAsJson(address)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

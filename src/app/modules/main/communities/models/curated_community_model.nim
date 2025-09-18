@@ -25,12 +25,8 @@ QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
     items: seq[CuratedCommunityItem]
 
-  proc setup(self: CuratedCommunityModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: CuratedCommunityModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: CuratedCommunityModel)
+  proc delete(self: CuratedCommunityModel)
   proc newCuratedCommunityModel*(): CuratedCommunityModel =
     new(result, delete)
     result.setup
@@ -164,3 +160,10 @@ QtObject:
       echo "Tried to set permission items on an item that doesn't exist. Item ID: ", itemId
       return
     self.items[idx].setPermissionModelItems(items)
+
+  proc setup(self: CuratedCommunityModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: CuratedCommunityModel) =
+    self.QAbstractListModel.delete
+

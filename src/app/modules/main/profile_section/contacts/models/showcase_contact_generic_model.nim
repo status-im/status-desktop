@@ -15,12 +15,8 @@ QtObject:
     ShowcaseContactGenericModel* = ref object of QAbstractListModel
       items: seq[ShowcaseContactGenericItem]
 
-  proc delete(self: ShowcaseContactGenericModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: ShowcaseContactGenericModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: ShowcaseContactGenericModel)
+  proc setup(self: ShowcaseContactGenericModel)
   proc newShowcaseContactGenericModel*(): ShowcaseContactGenericModel =
     new(result, delete)
     result.setup
@@ -60,3 +56,10 @@ QtObject:
 
   proc clear*(self: ShowcaseContactGenericModel) {.slot.} =
     self.setItems(@[])
+
+  proc delete(self: ShowcaseContactGenericModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: ShowcaseContactGenericModel) =
+    self.QAbstractListModel.setup
+

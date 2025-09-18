@@ -83,9 +83,7 @@ QtObject:
   proc asyncStart*(self: Service, storageDir: string)
   proc onAsyncResponse(self: Service, response: string) {.slot.}
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
     new(result, delete)
     result.QObject.setup
@@ -263,3 +261,7 @@ QtObject:
           raise newException(RpcException, error.message)
     except Exception as e:
       error "error storing metadata", err=e.msg
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

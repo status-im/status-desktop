@@ -7,12 +7,8 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
@@ -85,3 +81,10 @@ QtObject:
     return self.delegate.getWalletModule()
   QtProperty[QVariant] walletModule:
     read = getWalletModule
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

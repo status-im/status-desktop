@@ -33,11 +33,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       activityCenterNotifications*: seq[Item]
 
-  proc setup(self: Model) = self.QAbstractListModel.setup
-
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: Model)
+  proc delete(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.activityCenterNotifications = @[]
@@ -244,3 +241,9 @@ QtObject:
     else:
       for activityCenterNotification in activityCenterNotifications:
         self.upsertActivityCenterNotification(activityCenterNotification)
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+

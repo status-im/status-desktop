@@ -69,12 +69,8 @@ QtObject:
     PathModel* = ref object of QAbstractListModel
       items*: seq[PathItem]
 
-  proc delete(self: PathModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: PathModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: PathModel)
+  proc setup(self: PathModel)
   proc newPathModel*(): PathModel =
     new(result, delete)
     result.setup
@@ -279,3 +275,10 @@ QtObject:
       result = newQVariant(item.estimatedTime)
     else:
       discard
+
+  proc delete(self: PathModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: PathModel) =
+    self.QAbstractListModel.setup
+

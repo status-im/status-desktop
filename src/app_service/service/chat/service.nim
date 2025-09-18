@@ -128,9 +128,7 @@ QtObject:
     chats: Table[string, ChatDto] # [chat_id, ChatDto]
     contactService: contact_service.Service
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
@@ -785,3 +783,7 @@ QtObject:
         communityId: communityId,
         error: errMsg,
       ))
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

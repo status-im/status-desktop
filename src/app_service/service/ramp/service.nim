@@ -30,9 +30,7 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
@@ -76,3 +74,7 @@ QtObject:
       parameters: %parameters,
     )
     self.threadpool.start(arg)
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

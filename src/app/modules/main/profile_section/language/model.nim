@@ -15,12 +15,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[Item]
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -63,3 +59,10 @@ QtObject:
       result = newQVariant(item.flag)
     of ModelRole.State:
       result = newQVariant(item.state.int)
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

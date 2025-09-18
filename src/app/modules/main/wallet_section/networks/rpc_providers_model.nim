@@ -22,12 +22,8 @@ QtObject:
   type RpcProvidersModel* = ref object of QAbstractListModel
     delegate: io_interface.NetworksDataSource
 
-  proc setup(self: RpcProvidersModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: RpcProvidersModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: RpcProvidersModel)
+  proc delete(self: RpcProvidersModel)
   proc newRpcProvidersModel*(delegate: io_interface.NetworksDataSource): RpcProvidersModel =
     new(result, delete)
     result.setup
@@ -86,3 +82,10 @@ QtObject:
   proc refreshModel*(self: RpcProvidersModel) =
     self.beginResetModel()
     self.endResetModel()
+
+  proc setup(self: RpcProvidersModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: RpcProvidersModel) =
+    self.QAbstractListModel.delete
+

@@ -12,9 +12,7 @@ QtObject:
     detailsLoaded: bool
     errorInScanningActivity: bool
 
-  proc delete*(self: DerivedAddressItem) =
-    self.QObject.delete
-
+  proc delete*(self: DerivedAddressItem)
   proc newDerivedAddressItem*(
     order: int = 0,
     address: string = "",
@@ -160,3 +158,7 @@ QtObject:
     self.setAlreadyCreatedChecked(item.getAlreadyCreatedChecked())
     self.setDetailsLoaded(item.getDetailsLoaded())
     self.setErrorInScanningActivity(item.getErrorInScanningActivity())
+
+  proc delete*(self: DerivedAddressItem) =
+    self.QObject.delete
+

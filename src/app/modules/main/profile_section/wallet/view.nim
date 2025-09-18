@@ -8,9 +8,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -59,3 +57,7 @@ QtObject:
     return self.delegate.getRpcStats()
   proc resetRpcStats(self: View) {.slot.} =
     self.delegate.resetRpcStats()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

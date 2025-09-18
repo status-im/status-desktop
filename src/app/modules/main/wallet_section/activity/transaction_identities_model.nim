@@ -13,12 +13,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[backend.TransactionIdentity]
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.items = @[]
@@ -70,4 +66,10 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
 

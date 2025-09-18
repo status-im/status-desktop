@@ -18,18 +18,8 @@ QtObject:
     amountToReceive: UInt256,
     toNetworksRouteModel: NetworkRouteModel,
     rawPaths: string
-    ) =
-      self.QObject.setup
-      self.uuid = uuid
-      self.suggestedRoutes = suggestedRoutes
-      self.gasTimeEstimate = gasTimeEstimate
-      self.amountToReceive = amountToReceive
-      self.toNetworksRouteModel = toNetworksRouteModel
-      self.rawPaths = rawPaths
-
-  proc delete*(self: TransactionRoutes) =
-      self.QObject.delete
-
+    )
+  proc delete*(self: TransactionRoutes)
   proc newTransactionRoutes*(
     uuid: string = "",
     suggestedRoutes: SuggestedRouteModel = newSuggestedRouteModel(),
@@ -92,3 +82,22 @@ QtObject:
   QtProperty[string] rawPaths:
     read = getRawPaths
     notify = rawPathsChanged
+
+  proc delete*(self: TransactionRoutes) =
+      self.QObject.delete
+
+  proc setup*(self: TransactionRoutes,
+    uuid: string,
+    suggestedRoutes: SuggestedRouteModel,
+    gasTimeEstimate: GasEstimateItem,
+    amountToReceive: UInt256,
+    toNetworksRouteModel: NetworkRouteModel,
+    rawPaths: string
+    ) =
+      self.QObject.setup
+      self.uuid = uuid
+      self.suggestedRoutes = suggestedRoutes
+      self.gasTimeEstimate = gasTimeEstimate
+      self.amountToReceive = amountToReceive
+      self.toNetworksRouteModel = toNetworksRouteModel
+      self.rawPaths = rawPaths

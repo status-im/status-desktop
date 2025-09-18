@@ -25,9 +25,7 @@ QtObject:
 
   proc activeSectionSet*(self: View, item: SectionItem)
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -418,3 +416,7 @@ QtObject:
   proc loggedInUserAuthenticated(self: View, requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) {.signal.}
   proc emitLoggedInUserAuthenticated*(self: View, requestedBy: string, password: string, pin: string, keyUid: string, keycardUid: string) =
     self.loggedInUserAuthenticated(requestedBy, password, pin, keyUid, keycardUid)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

@@ -20,9 +20,7 @@ QtObject:
       loginAccountsModelVariant: QVariant
       convertKeycardAccountState: ProgressState
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -196,3 +194,7 @@ QtObject:
 
   proc startKeycardFactoryReset(self: View) {.slot.} =
     self.delegate.startKeycardFactoryReset()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

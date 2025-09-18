@@ -40,14 +40,8 @@ QtObject:
 
   proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails)
 
-  proc setup(self: NotificationsManager, events: EventEmitter, settingsService: settings_service.Service) =
-    self.QObject.setup
-    self.events = events
-    self.settingsService = settingsService
-
-  proc delete*(self: NotificationsManager) =
-    self.QObject.delete
-
+  proc setup(self: NotificationsManager, events: EventEmitter, settingsService: settings_service.Service)
+  proc delete*(self: NotificationsManager)
   proc newNotificationsManager*(events: EventEmitter, settingsService: settings_service.Service): NotificationsManager =
     new(result, delete)
     result.setup(events, settingsService)
@@ -358,3 +352,12 @@ QtObject:
     # MyRequestToJoinCommunityRejected)
     else:
       self.notificationCheck(title, message, details, "")
+
+  proc setup(self: NotificationsManager, events: EventEmitter, settingsService: settings_service.Service) =
+    self.QObject.setup
+    self.events = events
+    self.settingsService = settingsService
+
+  proc delete*(self: NotificationsManager) =
+    self.QObject.delete
+

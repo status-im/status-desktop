@@ -22,9 +22,7 @@ QtObject:
       walletAccountService: wallet_account_service.Service
       events: EventEmitter
 
-  proc delete*(self: Controller) =
-    self.QObject.delete
-
+  proc delete*(self: Controller)
   proc newController*(
     service: wallet_connect_service.Service,
     walletAccountService: wallet_account_service.Service,
@@ -242,3 +240,7 @@ QtObject:
     except Exception as e:
       error "Failed to convert fees info to hex: ", feesInfoJson=feesInfoJson, ex=e.msg
       return ""
+
+  proc delete*(self: Controller) =
+    self.QObject.delete
+

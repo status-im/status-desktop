@@ -21,9 +21,7 @@ QtObject:
         peers*: seq[string]
         connected: bool
 
-    proc delete*(self: Service) =
-       self.QObject.delete
-
+    proc delete*(self: Service)
     proc newService*(events: EventEmitter, settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service): Service =
         new(result, delete)
         result.QObject.setup
@@ -82,3 +80,7 @@ QtObject:
       except Exception as e:
         let errDescription = e.msg
         error "error: ", errDescription
+
+    proc delete*(self: Service) =
+       self.QObject.delete
+

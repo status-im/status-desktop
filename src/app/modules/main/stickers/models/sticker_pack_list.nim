@@ -29,20 +29,18 @@ QtObject:
       packs*: seq[StickerPackView]
       foundStickers*: QVariant
 
-  proc setup(self: StickerPackList) = self.QAbstractListModel.setup
-
-  proc delete(self: StickerPackList) = self.QAbstractListModel.delete
-
-  proc clear*(self: StickerPackList) =
-    self.beginResetModel()
-    self.packs = @[]
-    self.endResetModel()
-
+  proc setup(self: StickerPackList)
+  proc delete(self: StickerPackList)
   proc newStickerPackList*(delegate: io_interface.AccessInterface): StickerPackList =
     new(result, delete)
     result.delegate = delegate
     result.packs = @[]
     result.setup()
+
+  proc clear*(self: StickerPackList) =
+    self.beginResetModel()
+    self.packs = @[]
+    self.endResetModel()
 
   method rowCount(self: StickerPackList, index: QModelIndex = nil): int = self.packs.len
 
@@ -140,3 +138,6 @@ QtObject:
 
   proc getFoundStickers*(self: StickerPackList): QVariant {.slot.} =
     return self.foundStickers
+
+  proc setup(self: StickerPackList) = self.QAbstractListModel.setup
+  proc delete(self: StickerPackList) = self.QAbstractListModel.delete

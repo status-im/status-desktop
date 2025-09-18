@@ -11,13 +11,8 @@ QtObject:
     DappsModel* = ref object of QAbstractListModel
       items: seq[Item]
 
-  proc delete(self: DappsModel) =
-    self.items = @[]
-    self.QAbstractListModel.delete
-
-  proc setup(self: DappsModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: DappsModel)
+  proc setup(self: DappsModel)
   proc newDappsModel*(): DappsModel =
     new(result, delete)
     result.setup
@@ -82,3 +77,11 @@ QtObject:
     self.items = @[]
     self.endResetModel()
     self.countChanged()
+
+  proc delete(self: DappsModel) =
+    self.items = @[]
+    self.QAbstractListModel.delete
+
+  proc setup(self: DappsModel) =
+    self.QAbstractListModel.setup
+

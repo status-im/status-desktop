@@ -22,9 +22,7 @@ QtObject:
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
       remainingAttempts: int
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -236,3 +234,7 @@ QtObject:
 
   proc remainingAccountCapacity*(self: View): int {.slot.} =
     return self.delegate.remainingAccountCapacity()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

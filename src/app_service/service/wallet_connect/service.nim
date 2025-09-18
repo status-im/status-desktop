@@ -65,9 +65,7 @@ QtObject:
     authenticationCallback: AuthenticationResponseFn
     signCallback: SignResponseFn
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
@@ -334,3 +332,7 @@ QtObject:
       self.events.emit(SIGNAL_ESTIMATED_GAS_RESPONSE, args)
     except Exception as e:
       error "failed to parse estimated gas response", msg = e.msg 
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

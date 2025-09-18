@@ -10,14 +10,8 @@ QtObject:
       model: Model
       modelVariant: QVariant
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
@@ -54,3 +48,12 @@ QtObject:
 
   proc updateBookmarkByUrl*(self: View, oldUrl: string, item: Item) =
     self.model.updateItemByUrl(oldUrl, item)
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.model.delete
+    self.modelVariant.delete
+    self.QObject.delete
+

@@ -10,9 +10,7 @@ QtObject:
       modelVariant: QVariant
       currentLanguage: string
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -48,3 +46,7 @@ QtObject:
     if language != self.currentLanguage:
       self.currentLanguage = language
       self.languageChanged()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+
