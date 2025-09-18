@@ -440,9 +440,6 @@ method insertMockedKeycardAction*(self: AccessInterface, cardIndex: int) {.base.
 method removeMockedKeycardAction*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fakeLoadingScreenFinished*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onCommunityTokensDetailsLoaded*(self: AccessInterface, communityId: string,
     communityTokens: seq[CommunityTokenDto], communityTokenJsonItems: JsonNode) {.base.} =
   raise newException(ValueError, "No implementation available")

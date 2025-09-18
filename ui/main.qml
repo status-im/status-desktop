@@ -229,8 +229,6 @@ StatusWindow {
     }
 
     function moveToAppMain() {
-        mainModule.fakeLoadingScreenFinished()
-
         Global.appIsReady = true
 
         loader.sourceComponent = app
@@ -249,7 +247,7 @@ StatusWindow {
         target: SystemUtils
         enabled: SQUtils.Utils.mac
 
-        onQuit: (spontaneous) => {
+        function onQuit(spontaneous) {
             if (spontaneous)
                 Qt.exit(0)
         }
@@ -391,7 +389,7 @@ StatusWindow {
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}
         /* only unload splash screen once appmain is loaded else we see
-        an empty screen for a sec until it is laoded */
+        an empty screen for a sec until it is loaded */
         onLoaded: startupOnboardingLoader.active = false
     }
 
@@ -414,15 +412,9 @@ StatusWindow {
         DidYouKnowSplashScreen {
             objectName: "splashScreenV2"
             readonly property bool backAvailableHint: false
-            readonly property string pageClassName: "Splash"
             property bool runningProgressAnimation
             messagesEnabled: true
-            NumberAnimation on progress {
-                from: 0.0
-                to: 1
-                duration: !!localAppSettings && localAppSettings.fakeLoadingScreenEnabled ? 30000 : 3000
-                running: runningProgressAnimation
-            }
+            infiniteLoading: runningProgressAnimation
         }
     }
 

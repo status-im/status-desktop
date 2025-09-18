@@ -1306,10 +1306,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fake loading screen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Manage communities on testnet</source>
         <translation type="unfinished"></translation>
     </message>

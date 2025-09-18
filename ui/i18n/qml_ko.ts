@@ -1300,10 +1300,6 @@
         <translation>자동 메시지</translation>
     </message>
     <message>
-        <source>Fake loading screen</source>
-        <translation>가짜 로딩 화면</translation>
-    </message>
-    <message>
         <source>Manage communities on testnet</source>
         <translation>Testnet에서 커뮤니티 관리</translation>
     </message>
