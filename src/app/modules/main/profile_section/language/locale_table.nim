@@ -31,7 +31,7 @@ let localeDescriptionTable* = {
     "id": Description(name: "Indonesian", native: "Bahasa Indonesia", flag: "🇮🇩", state: State.Alpha),
     "it": Description(name: "Italian", native: "Italiano", flag: "🇮🇹", state: State.Alpha),
     "ja": Description(name: "Japanese", native: "日本語", flag: "🇯🇵", state: State.Alpha),
-    "ko": Description(name: "Korean", native: "한국어", flag: "🇰🇷", state: State.Alpha),
+    "ko": Description(name: "Korean", native: "한국어", flag: "🇰🇷", state: State.Stable),
     "ms": Description(name: "Malay", native: "Bahasa Melayu", flag: "🇲🇾", state: State.Alpha),
     "ne": Description(name: "Nepali", native: "नेपाली", flag: "🇳🇵", state: State.Alpha),
     "nl": Description(name: "Dutch", native: "Nederlands", flag: "🇳🇱", state: State.Alpha),

@@ -5,7 +5,7 @@ project(status-app-i18n) # dummy project to silence warnings, TBD at the topleve
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS LinguistTools)
 
-#qt6_standard_project_setup(I18N_TRANSLATED_LANGUAGES cs)
+#qt6_standard_project_setup(I18N_TRANSLATED_LANGUAGES cs ko)
 
 set(QT_NO_MISSING_CATALOG_LANGUAGE_WARNING ON)
 
@@ -20,6 +20,7 @@ qt6_add_lupdate(
     TS_FILES
         ${CMAKE_SOURCE_DIR}/qml_base_en.ts #empty base file, for manual translations
         ${CMAKE_SOURCE_DIR}/qml_cs.ts
+        ${CMAKE_SOURCE_DIR}/qml_ko.ts
     PLURALS_TS_FILE
         ${CMAKE_SOURCE_DIR}/qml_en.ts
     SOURCES ${COLLECTED_SOURCE_FILES}
@@ -31,6 +32,7 @@ qt6_add_lrelease(
     TS_FILES
         ${CMAKE_SOURCE_DIR}/qml_en.ts
         ${CMAKE_SOURCE_DIR}/qml_cs.ts
+        ${CMAKE_SOURCE_DIR}/qml_ko.ts
     QM_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../bin/i18n
     MERGE_QT_TRANSLATIONS
     QT_TRANSLATION_CATALOGS qtbase qtmultimedia qtwebengine
