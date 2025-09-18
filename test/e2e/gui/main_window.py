@@ -51,7 +51,7 @@ class MainLeftPanel(QObject):
         self.wallet_button.click()
         wallet_screen = WalletScreen()
         check_interval = 0.1  # Check every 100ms for better precision
-        
+
         while True:
             try:
                 if wallet_screen.is_visible:
@@ -60,7 +60,7 @@ class MainLeftPanel(QObject):
             except Exception as e:
                 LOG.debug("Exception during visibility check: %s", e)
             time.sleep(check_interval)
-        
+
         load_time = time.time() - start_time
         LOG.info(f'Wallet loaded in {load_time:.3f} seconds')
         return wallet_screen, load_time
@@ -188,6 +188,8 @@ class MainWindow(Window):
 
         # since we now struggle with 3 words names, I need to change display name first
         left_panel = MainLeftPanel()
+        # TODO: this is done to prevent app from crashing when opening settings too fast (probably QT bug)
+        time.sleep(3)
         settings_screen = left_panel.open_settings()
         profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)
