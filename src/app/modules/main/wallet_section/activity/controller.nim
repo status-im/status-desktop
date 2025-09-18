@@ -305,7 +305,6 @@ QtObject:
         error "Error converting activity entries: ", code = e.msg
     )
 
-
   proc newController*(currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       savedAddressService: saved_address_service.Service,

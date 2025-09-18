@@ -26,7 +26,6 @@ const eventActivityFetchTransactionDetails*: string = "wallet-activity-fetch-tra
 const eventActivityGetCollectiblesDone*: string = "wallet-activity-get-collectibles"
 
 const eventActivitySessionUpdated*: string = "wallet-activity-session-updated"
-const eventActivityInitialFetchComplete*: string = "wallet-activity-initial-fetch-complete"
 
 type
   Period* = object

@@ -1,4 +1,4 @@
-import nimqml, std/json, sequtils, strutils, options, chronicles
+import nimqml, std/json, sequtils, strutils, options
 import tables, stint
 
 import entry
@@ -44,22 +44,9 @@ QtObject:
   proc onGetCollectiblesDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityGetCollectiblesDone] = handler
 
-  proc onInitialFetchComplete*(self: EventsHandler, handler: EventCallbackProc) =
-    self.eventHandlers[backend_activity.eventActivityInitialFetchComplete] = handler
-
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)
 
-    # Special case: initial fetch complete event doesn't require a session ID
-    if data.eventType == backend_activity.eventActivityInitialFetchComplete:
-      if self.eventHandlers.hasKey(data.eventType):
-        let callback = self.eventHandlers[data.eventType]
-        # Initial fetch complete event might not have JSON data, create empty JSON
-        let responseJson = if data.message.len > 0: parseJson(data.message) else: newJObject()
-        callback(responseJson)
-      return
-
-    # All other activity messages have a requestId matching the session ID or static request ID
     if not data.requestId.isSome():
       return
 
