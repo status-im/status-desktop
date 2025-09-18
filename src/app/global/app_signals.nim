@@ -40,7 +40,7 @@ type
     userId*: string # can be public key or ens name
 
 const SIGNAL_STATUS_URL_ACTIVATED* = "statusUrlActivated"
-const FAKE_LOADING_SCREEN_FINISHED* = "fakeLoadingScreenFinished"
+const SPLASH_SCREEN_FINISHED* = "splashScreenFinished"
 
 const SIGNAL_MAIN_LOADED* = "signalMainLoaded"
 

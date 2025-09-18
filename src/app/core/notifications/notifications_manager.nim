@@ -88,7 +88,7 @@ QtObject:
     self.notificationSetUp = true
 
   proc init*(self: NotificationsManager) =
-    self.events.once(FAKE_LOADING_SCREEN_FINISHED) do(e:Args):
+    self.events.once(SPLASH_SCREEN_FINISHED) do(e:Args):
       self.onAppReady()
 
   proc showOSNotification(self: NotificationsManager, title: string, message: string, identifier: string) =
