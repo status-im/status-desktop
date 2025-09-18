@@ -558,6 +558,7 @@ OnboardingStackView {
         id: thirdpartyServicesPopup
 
         ThirdpartyServicesPopup {
+            isOnboardingFlow: true
             thirdPartyServicesEnabled: root.thirdpartyServicesEnabled
 
             onToggleThirdpartyServicesEnabledRequested: root.toggleThirdpartyServicesEnabledRequested()
