@@ -41,12 +41,8 @@ QtObject:
   type TokenModel* = ref object of QAbstractListModel
     items*: seq[TokenItem]
 
-  proc setup(self: TokenModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: TokenModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: TokenModel)
+  proc delete(self: TokenModel)
   proc newTokenModel*(): TokenModel =
     new(result, delete)
     result.setup
@@ -299,3 +295,10 @@ QtObject:
         result &= fmt"""TokenModel:
         [{i}]:({$self.items[i]})
         """
+
+  proc setup(self: TokenModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: TokenModel) =
+    self.QAbstractListModel.delete
+

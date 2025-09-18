@@ -27,12 +27,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       delegate: io_interface.NetworksDataSource
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(delegate: io_interface.NetworksDataSource): Model =
     new(result, delete)
     result.setup
@@ -161,3 +157,10 @@ QtObject:
           chainIds.add(chainId)
           enable = true
     return (chainIds, enable)
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

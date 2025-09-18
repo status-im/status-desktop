@@ -10,9 +10,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       allCollectiblesModel: collectibles_model.Model
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -68,3 +66,7 @@ QtObject:
       error "Failed to toggle collectibleGroupByCollection"
       return
     self.collectibleGroupByCollectionChanged()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

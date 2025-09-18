@@ -10,13 +10,8 @@ QtObject:
       dappsModel: DappsModel
       dappsModelVariant: QVariant
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.dappsModel.delete
-    self.dappsModelVariant.delete
-    self.QObject.delete
+  proc setup(self: View)
+  proc delete*(self: View)
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -24,6 +19,14 @@ QtObject:
     result.dappsModel = newDappsModel()
     result.dappsModelVariant = newQVariant(result.dappsModel)
     result.setup()
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.dappsModel.delete
+    self.dappsModelVariant.delete
+    self.QObject.delete
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()

@@ -13,9 +13,7 @@ QtObject:
       devicesLoadingError: bool
       localPairingStatus: LocalPairingStatus
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -150,3 +148,7 @@ QtObject:
     if error.len == 0:
       self.model.updateItemEnabled(installationId, false)
     return error
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

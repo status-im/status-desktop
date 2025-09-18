@@ -13,13 +13,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[Item]
 
-  proc delete(self: Model) =
-    self.items = @[]
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -116,3 +111,11 @@ QtObject:
     self.items[index] = item
     self.dataChanged(topLeft, bottomRight)
     self.modelChanged()
+
+  proc delete(self: Model) =
+    self.items = @[]
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

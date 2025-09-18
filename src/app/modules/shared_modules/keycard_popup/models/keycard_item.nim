@@ -7,9 +7,7 @@ QtObject:
   type KeycardItem* = ref object of KeyPairItem
     keycardUid: string
 
-  proc delete*(self: KeycardItem) =
-      self.KeyPairItem.delete
-
+  proc delete*(self: KeycardItem)
   proc initKeycardItem*(
       keycardUid = "",
       keyUid = "",
@@ -56,3 +54,7 @@ QtObject:
   proc setItem*(self: KeycardItem, item: KeycardItem) =
     self.setKeycardUid(item.getKeycardUid())
     self.KeyPairItem.setItem(KeyPairItem(item))
+
+  proc delete*(self: KeycardItem) =
+      self.KeyPairItem.delete
+

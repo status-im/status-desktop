@@ -21,13 +21,8 @@ QtObject:
 
   proc updatePairedCount(self: Model)
 
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-    self.pairedCount = 0
-
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: Model)
+  proc delete(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -171,3 +166,11 @@ QtObject:
     if count != self.pairedCount:
       self.pairedCount = count
       self.pairedCountChanged()
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+    self.pairedCount = 0
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+

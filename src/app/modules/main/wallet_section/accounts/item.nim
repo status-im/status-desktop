@@ -11,7 +11,6 @@ QtObject:
     currencyBalance: CurrencyAmount
     isWallet: bool
     canSend: bool
-
   proc setup*(self: Item,
     name: string,
     address: string,
@@ -30,30 +29,8 @@ QtObject:
     areTestNetworksEnabled: bool,
     hideFromTotalBalance: bool,
     canSend: bool
-  ) =
-    self.QObject.setup
-    self.WalletAccountItem.setup(name,
-      address,
-      mixedcaseAddress,
-      colorId,
-      emoji,
-      walletType,
-      path,
-      keyUid,
-      keycardAccount,
-      position,
-      operability = wa_dto.AccountFullyOperable,
-      areTestNetworksEnabled,
-      hideFromTotalBalance)
-    self.createdAt = createdAt
-    self.assetsLoading = assetsLoading
-    self.currencyBalance = currencyBalance
-    self.isWallet = isWallet
-    self.canSend = canSend
-
-  proc delete*(self: Item) =
-    self.QObject.delete
-
+  )
+  proc delete*(self: Item)
   proc newItem*(
     name: string = "",
     address: string = "",
@@ -131,3 +108,45 @@ QtObject:
 
   proc setHideFromTotalBalance*(self: Item, value: bool) =
     self.hideFromTotalBalance = value
+
+  proc delete*(self: Item) =
+    self.QObject.delete
+
+  proc setup*(self: Item,
+    name: string,
+    address: string,
+    mixedcaseAddress: string,
+    path: string,
+    colorId: string,
+    walletType: string,
+    currencyBalance: CurrencyAmount,
+    emoji: string,
+    keyUid: string,
+    createdAt: int,
+    position: int,
+    keycardAccount: bool,
+    assetsLoading: bool,
+    isWallet: bool,
+    areTestNetworksEnabled: bool,
+    hideFromTotalBalance: bool,
+    canSend: bool
+  ) =
+    self.QObject.setup
+    self.WalletAccountItem.setup(name,
+      address,
+      mixedcaseAddress,
+      colorId,
+      emoji,
+      walletType,
+      path,
+      keyUid,
+      keycardAccount,
+      position,
+      operability = wa_dto.AccountFullyOperable,
+      areTestNetworksEnabled,
+      hideFromTotalBalance)
+    self.createdAt = createdAt
+    self.assetsLoading = assetsLoading
+    self.currencyBalance = currencyBalance
+    self.isWallet = isWallet
+    self.canSend = canSend

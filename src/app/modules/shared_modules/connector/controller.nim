@@ -22,22 +22,12 @@ QtObject:
       service: connector_service.Service
       events: EventEmitter
 
-  proc delete*(self: Controller) =
-    self.QObject.delete
-
-  proc connectRequested*(self: Controller, requestId: string, payload: string) {.signal.}
-  proc connected*(self: Controller, payload: string) {.signal.}
-  proc disconnected*(self: Controller, payload: string) {.signal.}
-
-  proc sendTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
-  proc sign(self: Controller, requestId: string, payload: string) {.signal.}
-  proc approveConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
-  proc rejectConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
-
-  proc approveTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
-  proc rejectTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
-  proc approveSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
-  proc rejectSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+  proc delete*(self: Controller)
+  proc emitConnectRequested*(self: Controller, requestId: string, payload: string)
+  proc emitConnected*(self: Controller, payload: string)
+  proc emitDisconnected*(self: Controller, payload: string)
+  proc emitSendTransaction*(self: Controller, requestId: string, payload: string)
+  proc emitSign*(self: Controller, requestId: string, payload: string)
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -59,7 +49,7 @@ QtObject:
         "url": params.url,
       }
 
-      controller.connectRequested(params.requestId, dappInfo.toJson())
+      controller.emitConnectRequested(params.requestId, dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION) do(e: Args):
       let params = ConnectorSendTransactionSignal(e)
@@ -71,7 +61,7 @@ QtObject:
         "txArgs": params.txArgs,
       }
 
-      controller.sendTransaction(params.requestId, dappInfo.toJson())
+      controller.emitSendTransaction(params.requestId, dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION) do(e: Args):
       let params = ConnectorGrantDAppPermissionSignal(e)
@@ -83,7 +73,7 @@ QtObject:
         "sharedAccount": params.sharedAccount,
       }
 
-      controller.connected(dappInfo.toJson())
+      controller.emitConnected(dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION) do(e: Args):
       let params = ConnectorRevokeDAppPermissionSignal(e)
@@ -93,7 +83,7 @@ QtObject:
         "url": params.url,
       }
 
-      controller.disconnected(dappInfo.toJson())
+      controller.emitDisconnected(dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_SIGN) do(e: Args):
       let params = ConnectorSignSignal(e)
@@ -106,9 +96,34 @@ QtObject:
         "method": params.signMethod,
       }
 
-      controller.sign(params.requestId, dappInfo.toJson())
+      controller.emitSign(params.requestId, dappInfo.toJson())
 
     result.QObject.setup
+
+  proc connectRequested*(self: Controller, requestId: string, payload: string) {.signal.}
+  proc connected*(self: Controller, payload: string) {.signal.}
+  proc disconnected*(self: Controller, payload: string) {.signal.}
+
+  proc sendTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
+  proc sign(self: Controller, requestId: string, payload: string) {.signal.}
+  proc approveConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
+  proc rejectConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
+
+  proc approveTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+  proc rejectTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+  proc approveSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+  proc rejectSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+
+  proc emitConnectRequested*(self: Controller, requestId: string, payload: string) =
+    self.connectRequested(requestId, payload)
+  proc emitConnected*(self: Controller, payload: string) =
+    self.connected(payload)
+  proc emitDisconnected*(self: Controller, payload: string) =
+    self.disconnected(payload)
+  proc emitSendTransaction*(self: Controller, requestId: string, payload: string) =
+    self.sendTransaction(requestId, payload)
+  proc emitSign*(self: Controller, requestId: string, payload: string) =
+    self.sign(requestId, payload)
 
   proc parseSingleUInt(chainIDsString: string): uint =
     try:
@@ -156,3 +171,7 @@ QtObject:
   proc rejectSigning*(self: Controller, sessionTopic: string, requestId: string): bool {.slot.} =
     result = self.service.rejectSigning(requestId)
     self.rejectSignResponse(sessionTopic, requestId, not result)
+
+  proc delete*(self: Controller) =
+    self.QObject.delete
+

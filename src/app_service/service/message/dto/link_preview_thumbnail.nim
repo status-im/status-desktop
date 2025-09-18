@@ -8,11 +8,8 @@ QtObject:
     url: string
     dataUri: string
 
-  proc setup*(self: LinkPreviewThumbnail) =
-    self.QObject.setup()
-
-  proc delete*(self: LinkPreviewThumbnail) =
-    self.QObject.delete()
+  proc setup*(self: LinkPreviewThumbnail)
+  proc delete*(self: LinkPreviewThumbnail)
 
   proc update*(self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string)
 
@@ -26,6 +23,12 @@ QtObject:
     new(result, delete)
     result.setup()
     result.update(width, height, url, dataUri)
+
+  proc setup*(self: LinkPreviewThumbnail) =
+    self.QObject.setup()
+
+  proc delete*(self: LinkPreviewThumbnail) =
+    self.QObject.delete()
 
   proc widthChanged*(self: LinkPreviewThumbnail) {.signal.}
   proc getWidth*(self: LinkPreviewThumbnail): int {.slot.} =

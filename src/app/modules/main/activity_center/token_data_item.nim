@@ -13,12 +13,8 @@ QtObject:
     imageUrl*: string
     tokenType*: int
 
-  proc setup(self: TokenDataItem) =
-    self.QObject.setup
-
-  proc delete*(self: TokenDataItem) =
-    self.QObject.delete
-
+  proc setup(self: TokenDataItem)
+  proc delete*(self: TokenDataItem)
   proc newTokenDataItem*(
     chainId: int,
     txHash: string,
@@ -96,3 +92,10 @@ QtObject:
   proc tokenType*(self: TokenDataItem): int {.slot.} = result = self.tokenType
   QtProperty[int] tokenType:
     read = tokenType
+
+  proc setup(self: TokenDataItem) =
+    self.QObject.setup
+
+  proc delete*(self: TokenDataItem) =
+    self.QObject.delete
+

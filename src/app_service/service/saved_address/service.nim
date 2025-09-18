@@ -37,9 +37,7 @@ QtObject:
     networkService: network_service.Service
     settingsService: settings_service.Service
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(threadpool: ThreadPool, events: EventEmitter, networkService: network_service.Service,
     settingsService: settings_service.Service): Service =
     new(result, delete)
@@ -179,3 +177,7 @@ QtObject:
       return response.result.getInt
     except Exception as e:
       error "error: ", procName="remainingCapacityForSavedAddresses", errName=e.name, errDesription=e.msg
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

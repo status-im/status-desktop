@@ -12,28 +12,16 @@ QtObject:
     eip1559Enabled: bool
 
   proc setup*(self: GasFeesItem,
-    gasPrice: float,
-    baseFee: float,
-    maxPriorityFeePerGas: float,
-    maxFeePerGasL: float,
-    maxFeePerGasM: float,
-    maxFeePerGasH: float,
-    l1GasFee: float,
-    eip1559Enabled: bool
-  ) =
-    self.QObject.setup
-    self.gasPrice = gasPrice
-    self.baseFee = baseFee
-    self.maxPriorityFeePerGas = maxPriorityFeePerGas
-    self.maxFeePerGasL = maxFeePerGasL
-    self.maxFeePerGasM = maxFeePerGasM
-    self.maxFeePerGasH = maxFeePerGasH
-    self.l1GasFee = l1GasFee
-    self.eip1559Enabled = eip1559Enabled
-
-  proc delete*(self: GasFeesItem) =
-      self.QObject.delete
-
+      gasPrice: float,
+      baseFee: float,
+      maxPriorityFeePerGas: float,
+      maxFeePerGasL: float,
+      maxFeePerGasM: float,
+      maxFeePerGasH: float,
+      l1GasFee: float,
+      eip1559Enabled: bool
+    )
+  proc delete*(self: GasFeesItem)
   proc newGasFeesItem*(
     gasPrice: float = 0,
     baseFee: float = 0,
@@ -98,3 +86,26 @@ QtObject:
     return self.eip1559Enabled
   QtProperty[bool] eip1559Enabled:
     read = getEip1559Enabled
+
+  proc delete*(self: GasFeesItem) =
+      self.QObject.delete
+
+  proc setup*(self: GasFeesItem,
+    gasPrice: float,
+    baseFee: float,
+    maxPriorityFeePerGas: float,
+    maxFeePerGasL: float,
+    maxFeePerGasM: float,
+    maxFeePerGasH: float,
+    l1GasFee: float,
+    eip1559Enabled: bool
+  ) =
+    self.QObject.setup
+    self.gasPrice = gasPrice
+    self.baseFee = baseFee
+    self.maxPriorityFeePerGas = maxPriorityFeePerGas
+    self.maxFeePerGasL = maxFeePerGasL
+    self.maxFeePerGasM = maxFeePerGasM
+    self.maxFeePerGasH = maxFeePerGasH
+    self.l1GasFee = l1GasFee
+    self.eip1559Enabled = eip1559Enabled

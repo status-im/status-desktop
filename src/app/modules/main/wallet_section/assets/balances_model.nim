@@ -13,12 +13,8 @@ QtObject:
     delegate: io_interface.GroupedAccountAssetsDataSource
     index: int
 
-  proc setup(self: BalancesModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: BalancesModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: BalancesModel)
+  proc delete(self: BalancesModel)
   proc newBalancesModel*(delegate: io_interface.GroupedAccountAssetsDataSource, index: int): BalancesModel =
     new(result, delete)
     result.setup
@@ -59,3 +55,10 @@ QtObject:
         result = newQVariant(item.balance.toString(10))
       of ModelRole.Account:
         result = newQVariant(item.account)
+
+  proc setup(self: BalancesModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: BalancesModel) =
+    self.QAbstractListModel.delete
+

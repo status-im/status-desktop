@@ -12,9 +12,7 @@ QtObject:
   proc load*(self: View) =
     discard
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(communityTokensModule: community_tokens_module_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -99,3 +97,7 @@ QtObject:
 
   proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
     self.communityTokensModule.stopUpdatesForSuggestedRoute()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

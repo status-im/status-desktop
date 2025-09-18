@@ -17,12 +17,8 @@ QtObject:
       currencyBalance: CurrencyAmount
       emoji: string
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.setup()
@@ -100,22 +96,28 @@ QtObject:
 
   proc connectedAccountDeleted*(self: View) {.signal.}
 
-proc setData*(self: View, item: account_item.Item) =
-    self.name = item.name()
-    self.nameChanged()
-    self.address = item.address()
-    self.addressChanged()
-    self.path = item.path()
-    self.pathChanged()
-    self.colorId = item.colorId()
-    self.colorIdChanged()
-    self.walletType = item.walletType()
-    self.walletTypeChanged()
-    self.currencyBalance = item.currencyBalance()
-    self.currencyBalanceChanged()
-    self.emoji = item.emoji()
-    self.emojiChanged()
+  proc setData*(self: View, item: account_item.Item) =
+      self.name = item.name()
+      self.nameChanged()
+      self.address = item.address()
+      self.addressChanged()
+      self.path = item.path()
+      self.pathChanged()
+      self.colorId = item.colorId()
+      self.colorIdChanged()
+      self.walletType = item.walletType()
+      self.walletTypeChanged()
+      self.currencyBalance = item.currencyBalance()
+      self.currencyBalanceChanged()
+      self.emoji = item.emoji()
+      self.emojiChanged()
 
-proc isAddressCurrentAccount*(self: View, address: string): bool =
-  return self.address == address
+  proc isAddressCurrentAccount*(self: View, address: string): bool =
+    return self.address == address
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.QObject.delete
 

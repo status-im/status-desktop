@@ -11,12 +11,8 @@ QtObject:
   type DiscordImportErrorsModel* = ref object of QAbstractListModel
     items*: seq[DiscordImportErrorItem]
 
-  proc setup(self: DiscordImportErrorsModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: DiscordImportErrorsModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: DiscordImportErrorsModel)
+  proc delete(self: DiscordImportErrorsModel)
   proc newDiscordDiscordImportErrorsModel*(): DiscordImportErrorsModel =
     new(result, delete)
     result.setup
@@ -57,3 +53,10 @@ QtObject:
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
+
+  proc setup(self: DiscordImportErrorsModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: DiscordImportErrorsModel) =
+    self.QAbstractListModel.delete
+

@@ -29,11 +29,27 @@ QtObject:
 
       requestId: int32
 
-  proc setup(self: EventsHandler) =
-    self.QObject.setup
+  proc setup(self: EventsHandler)
+  proc delete*(self: EventsHandler)
+  proc handleApiEvents(self: EventsHandler, e: Args)
+  proc setupWalletEventHandlers(self: EventsHandler)
+  proc newEventsHandler*(requestId: int32, events: EventEmitter): EventsHandler =
+    new(result, delete)
 
-  proc delete*(self: EventsHandler) =
-    self.QObject.delete
+    result.requestId = requestId
+
+    result.events = events
+    result.eventHandlers = initTable[string, EventCallbackProc]()
+
+    result.setup()
+
+    result.setupWalletEventHandlers()
+
+    # Register for wallet events
+    let eventsHandler = result
+    result.events.on(SignalType.Wallet.event, proc(e: Args) =
+        eventsHandler.handleApiEvents(e)
+    )
 
   proc onOwnedCollectiblesFilteringDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_collectibles.eventOwnedCollectiblesFilteringDone] = handler
@@ -98,24 +114,6 @@ QtObject:
       if self.collectiblesOwnershipUpdateFinishedWithErrorFn == nil or self.shouldIgnoreEvent(data):
         return
       self.collectiblesOwnershipUpdateFinishedWithErrorFn(data.accounts[0], data.chainID)
-
-  proc newEventsHandler*(requestId: int32, events: EventEmitter): EventsHandler =
-    new(result, delete)
-
-    result.requestId = requestId
-
-    result.events = events
-    result.eventHandlers = initTable[string, EventCallbackProc]()
-
-    result.setup()
-
-    result.setupWalletEventHandlers()
-
-    # Register for wallet events
-    let eventsHandler = result
-    result.events.on(SignalType.Wallet.event, proc(e: Args) =
-        eventsHandler.handleApiEvents(e)
-    )
  
   proc updateSubscribedAddresses*(self: EventsHandler, addresses: seq[string]) =
     self.subscribedAddresses.clear()
@@ -126,3 +124,10 @@ QtObject:
     self.subscribedChainIDs.clear()
     for chainID in chainIDs:
       self.subscribedChainIDs.incl(chainID)
+
+  proc setup(self: EventsHandler) =
+    self.QObject.setup
+
+  proc delete*(self: EventsHandler) =
+    self.QObject.delete
+

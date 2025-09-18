@@ -11,12 +11,8 @@ QtObject:
     SuggestedRouteModel* = ref object of QAbstractListModel
       items*: seq[SuggestedRouteItem]
 
-  proc delete(self: SuggestedRouteModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: SuggestedRouteModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: SuggestedRouteModel)
+  proc setup(self: SuggestedRouteModel)
   proc newSuggestedRouteModel*(): SuggestedRouteModel =
     new(result, delete)
     result.setup
@@ -67,3 +63,10 @@ QtObject:
     case enumRole:
     of ModelRole.Route:
       result = newQVariant(item)
+
+  proc delete(self: SuggestedRouteModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: SuggestedRouteModel) =
+    self.QAbstractListModel.setup
+

@@ -13,12 +13,8 @@ QtObject:
   type DiscordFileListModel* = ref object of QAbstractListModel
     items*: seq[DiscordFileItem]
 
-  proc setup(self: DiscordFileListModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: DiscordFileListModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: DiscordFileListModel)
+  proc delete(self: DiscordFileListModel)
   proc newDiscordFileListModel*(): DiscordFileListModel =
     new(result, delete)
     result.setup
@@ -184,4 +180,10 @@ QtObject:
     self.countChanged()
     self.selectedCountChanged()
     self.selectedFilesValidChanged()
+
+  proc setup(self: DiscordFileListModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: DiscordFileListModel) =
+    self.QAbstractListModel.delete
 

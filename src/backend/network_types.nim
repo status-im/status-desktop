@@ -63,6 +63,10 @@ type NetworkDto* = ref object of RootObj
   noBaseFee* {.serializedFieldName("noBaseFee").}: bool
   noPriorityFee* {.serializedFieldName("noPriorityFee").}: bool
 
+{.experimental: "notnil".}
+type NetworkDtoSafe* = NetworkDto not nil
+
+
 proc `$`*(self: NetworkDto): string =
   return fmt"""NetworkDto(
     chainId:{self.chainId},

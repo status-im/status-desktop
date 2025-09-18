@@ -72,9 +72,7 @@ QtObject:
   proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.}
   proc onENSNamesFetched*(self: Service, response: string) {.slot.}
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
@@ -108,3 +106,7 @@ QtObject:
   include service_account
   include service_token
   include service_keycard
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

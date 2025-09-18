@@ -25,9 +25,7 @@ QtObject:
       showcaseContactSocialLinksModelVariant: QVariant
 
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -190,3 +188,7 @@ QtObject:
 
   proc loadProfileShowcaseContactSocialLinks*(self: View, items: seq[ShowcaseContactSocialLinkItem]) =
     self.showcaseContactSocialLinksModel.setItems(items)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

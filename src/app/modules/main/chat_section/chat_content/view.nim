@@ -15,11 +15,8 @@ QtObject:
       chatDetails: ChatDetails
       chatDetailsVariant: QVariant
 
-  proc chatDetailsChanged*(self:View) {.signal.}
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -28,6 +25,8 @@ QtObject:
     result.pinnedMessagesModelVariant = newQVariant(result.pinnedMessagesModel)
     result.chatDetails = newChatDetails()
     result.chatDetailsVariant = newQVariant(result.chatDetails)
+
+  proc chatDetailsChanged*(self:View) {.signal.}
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -134,3 +133,7 @@ QtObject:
 
   proc updateChatBlocked*(self: View, blocked: bool) =
     self.chatDetails.setBlocked(blocked)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

@@ -13,12 +13,8 @@ QtObject:
     DerivedAddressModel* = ref object of QAbstractListModel
       items: seq[DerivedAddressItem]
 
-  proc delete(self: DerivedAddressModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: DerivedAddressModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: DerivedAddressModel)
+  proc setup(self: DerivedAddressModel)
   proc newDerivedAddressModel*(): DerivedAddressModel =
     new(result, delete)
     result.setup
@@ -125,3 +121,10 @@ QtObject:
 
   proc getAllAddresses*(self: DerivedAddressModel): seq[string] =
     return self.items.map(x => x.getAddress())
+
+  proc delete(self: DerivedAddressModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: DerivedAddressModel) =
+    self.QAbstractListModel.setup
+

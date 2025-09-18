@@ -11,19 +11,8 @@ QtObject:
   type Model* = ref object of QAbstractListModel
     items: seq[EmojiReactionItem]
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.items = @[
-        initItem("❤️", "emojiReactions/heart",      false),
-        initItem("👍", "emojiReactions/thumbsUp",   false),
-        initItem("👎", "emojiReactions/thumbsDown", false),
-        initItem("😂", "emojiReactions/laughing",   false),
-        initItem("😢", "emojiReactions/sad",        false),
-        initItem("😡", "emojiReactions/angry",      false),
-    ]
-    self.QAbstractListModel.setup
+  proc delete(self: Model)
+  proc setup(self: Model)
   
   proc newDefaultEmojiReactionsModel*(): Model =
     new(result, delete)
@@ -77,3 +66,17 @@ QtObject:
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.DidIReactWithThisEmoji.int])
       return
+
+  proc setup(self: Model) =
+    self.items = @[
+        initItem("❤️", "emojiReactions/heart",      false),
+        initItem("👍", "emojiReactions/thumbsUp",   false),
+        initItem("👎", "emojiReactions/thumbsDown", false),
+        initItem("😂", "emojiReactions/laughing",   false),
+        initItem("😢", "emojiReactions/sad",        false),
+        initItem("😡", "emojiReactions/angry",      false),
+    ]
+    self.QAbstractListModel.setup
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete

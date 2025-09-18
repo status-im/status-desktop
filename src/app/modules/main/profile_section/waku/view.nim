@@ -7,9 +7,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       activeMailserver: string
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -31,3 +29,7 @@ QtObject:
   proc onActiveMailserverChanged*(self: View, activeMailserverId: string) =
     self.activeMailserver = activeMailserverId
     self.activeMailserverChanged()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

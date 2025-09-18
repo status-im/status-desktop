@@ -16,12 +16,8 @@ QtObject:
     currentFileName: string
     settings: QSettings
 
-  proc setup(self: LocalAccountSettings) =
-    self.QObject.setup
-    self.settingsFileDir = os.joinPath(DATADIR, "qt")
-
-  proc delete*(self: LocalAccountSettings) =
-    self.QObject.delete
+  proc setup(self: LocalAccountSettings)
+  proc delete*(self: LocalAccountSettings)
 
   proc newLocalAccountSettings*():
     LocalAccountSettings =
@@ -66,3 +62,10 @@ QtObject:
     read = getStoreToKeychainValue
     write = setStoreToKeychainValue
     notify = storeToKeychainValueChanged
+
+  proc setup(self: LocalAccountSettings) =
+    self.QObject.setup
+    self.settingsFileDir = os.joinPath(DATADIR, "qt")
+
+  proc delete*(self: LocalAccountSettings) =
+    self.QObject.delete

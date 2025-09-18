@@ -19,12 +19,8 @@ QtObject:
   type MarketLeaderboardModel* = ref object of QAbstractListModel
     delegate: io_interface.MarketLeaderboardDataSource
 
-  proc setup(self: MarketLeaderboardModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: MarketLeaderboardModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: MarketLeaderboardModel)
+  proc delete(self: MarketLeaderboardModel)
   proc newMarketLeaderboardModel*(
     delegate: io_interface.MarketLeaderboardDataSource,
     ): MarketLeaderboardModel =
@@ -95,3 +91,10 @@ QtObject:
 
       if changedRoles.len > 0:
         self.dataChanged(modelIndex, modelIndex, changedRoles)
+
+  proc setup(self: MarketLeaderboardModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: MarketLeaderboardModel) =
+    self.QAbstractListModel.delete
+

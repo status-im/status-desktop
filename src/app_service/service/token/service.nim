@@ -66,9 +66,7 @@ QtObject:
   proc rebuildMarketData*(self: Service)
   proc fetchTokenPreferences(self: Service)
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
@@ -577,3 +575,7 @@ QtObject:
         self.tokenPriceTable[tokenSymbol] = price
     if anyUpdated:
       self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

@@ -21,9 +21,7 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool
@@ -62,3 +60,7 @@ QtObject:
       error "error: ", procName="updateCollectiblePreferences", errName=e.name, errDesription=e.msg
 
     self.events.emit(SIGNAL_COLLECTIBLE_PREFERENCES_UPDATED, ResultArgs(success: updated))
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

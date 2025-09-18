@@ -21,9 +21,7 @@ QtObject:
       showcasePreferencesSocialLinksModel: ShowcasePreferencesSocialLinkModel
       showcasePreferencesSocialLinksModelVariant: QVariant
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -126,3 +124,7 @@ QtObject:
 
   proc loadProfileShowcasePreferencesSocialLinks*(self: View, items: seq[ShowcasePreferencesSocialLinkItem]) =
     self.showcasePreferencesSocialLinksModel.setItems(items)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

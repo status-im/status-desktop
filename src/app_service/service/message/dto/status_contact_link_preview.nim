@@ -12,13 +12,9 @@ QtObject:
     description: string
     icon: LinkPreviewThumbnail
     emojiHash: string
-
-  proc setup*(self: StatusContactLinkPreview) =
-    self.QObject.setup()
-    self.icon = newLinkPreviewThumbnail()
-
-  proc delete*(self: StatusContactLinkPreview) =
-    self.QObject.delete()
+  
+  proc setup*(self: StatusContactLinkPreview)
+  proc delete*(self: StatusContactLinkPreview)
 
   proc newStatusContactLinkPreview*(publicKey: var string, displayName: string, description: string, icon: LinkPreviewThumbnail, emojiHash: string): StatusContactLinkPreview =
     new(result, delete)
@@ -28,6 +24,13 @@ QtObject:
     result.description = description
     result.icon.copy(icon)
     result.emojiHash = emojiHash
+
+  proc setup*(self: StatusContactLinkPreview) =
+    self.QObject.setup()
+    self.icon = newLinkPreviewThumbnail()
+
+  proc delete*(self: StatusContactLinkPreview) =
+    self.QObject.delete()
 
   proc publicKeyChanged*(self: StatusContactLinkPreview) {.signal.}
   proc getPublicKey*(self: StatusContactLinkPreview): string {.slot.} =

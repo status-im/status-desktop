@@ -23,12 +23,8 @@ QtObject:
     events: EventEmitter
     keychainManager: StatusKeychainManager
 
-  proc setup(self: Service) =
-    self.QObject.setup
-
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc setup(self: Service)
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter): Service =
     new(result, delete)
     result.setup()
@@ -64,3 +60,10 @@ QtObject:
     ## This slot is called in case a password is successfully retrieved from the
     ## Keychain. In this case @data contains required password.
     self.events.emit(SIGNAL_KEYCHAIN_SERVICE_SUCCESS, KeyChainServiceArg(data: data))
+
+  proc setup(self: Service) =
+    self.QObject.setup
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

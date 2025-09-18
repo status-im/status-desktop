@@ -40,7 +40,7 @@ proc fetchNetworks(self: Service) =
     let errDescription = response.error.message
     error "error getting networks: ", errDescription
   let networksDto = if response.result.isNil or response.result.kind == JNull: @[]
-            else: Json.decode($response.result, seq[NetworkDto], allowUnknownFields = true)
+            else: Json.decode($response.result, seq[NetworkDtoSafe], allowUnknownFields = true)
   self.flatNetworks = networksDto.map(n => networkDtoToItem(n))
   self.rpcProviders = @[]
   for network in self.flatNetworks:
