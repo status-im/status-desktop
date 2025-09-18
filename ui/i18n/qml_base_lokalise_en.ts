@@ -1292,10 +1292,6 @@
         <comment>AdvancedView</comment><translation>Auto message</translation>
     </message>
     <message>
-        <source>Fake loading screen</source>
-        <comment>AdvancedView</comment><translation>Fake loading screen</translation>
-    </message>
-    <message>
         <source>Manage communities on testnet</source>
         <comment>AdvancedView</comment><translation>Manage communities on testnet</translation>
     </message>

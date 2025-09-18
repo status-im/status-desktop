@@ -20,6 +20,7 @@ SplitView {
             SplitView.fillWidth: true
             progress: progressSlider.position
             messagesEnabled: ctrlMessagesEnabled.checked
+            infiniteLoading: ctrlInfinite.checked
         }
     }
 
@@ -33,10 +34,15 @@ SplitView {
             }
             Slider {
                 id: progressSlider
+                enabled: !ctrlInfinite.checked
             }
             Switch {
                 id: ctrlMessagesEnabled
                 text: "Messages enabled"
+            }
+            Switch {
+                id: ctrlInfinite
+                text: "Infinite loading"
             }
         }
     }

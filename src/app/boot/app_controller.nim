@@ -453,6 +453,8 @@ proc finishAppLoading*(self: AppController) =
 
   self.mainModule.checkAndPerformProfileMigrationIfNeeded()
 
+  self.notificationsManager.onAppReady()
+
 proc logout*(self: AppController) =
   self.generalService.logout()
 

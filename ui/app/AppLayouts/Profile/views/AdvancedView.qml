@@ -408,17 +408,6 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                text: qsTr("Fake loading screen")
-                isSwitch: true
-                switchChecked: root.advancedStore.isFakeLoadingScreenEnabled
-                onClicked: {
-                    root.advancedStore.toggleFakeLoadingScreen()
-                }
-            }
-
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 objectName: "manageCommunitiesOnTestnetButton"
                 text: qsTr("Manage communities on testnet")
                 isSwitch: true

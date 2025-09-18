@@ -383,9 +383,6 @@ QtObject:
   proc removeMockedKeycardAction*(self: View) {.slot.} =
     self.delegate.removeMockedKeycardAction()
 
-  proc fakeLoadingScreenFinished*(self: View) {.slot.} =
-    self.delegate.fakeLoadingScreenFinished()
-
   ## Address was shown is added here because it will be used from many different parts of the app
   ## and "mainModule" is accessible from everywhere
   proc addressWasShown*(self: View, address: string) {.slot.} =

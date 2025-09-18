@@ -52,7 +52,7 @@ QtObject:
     new(result, delete)
     result.setup(events, settingsService)
 
-  proc onAppReady(self: NotificationsManager) =
+  proc onAppReady*(self: NotificationsManager) =
     self.osNotification = newStatusOSNotification()
 
     signalConnect(self.osNotification, "notificationClicked(QString)", self, "onOSNotificationClicked(QString)", 2)
@@ -88,8 +88,7 @@ QtObject:
     self.notificationSetUp = true
 
   proc init*(self: NotificationsManager) =
-    self.events.once(FAKE_LOADING_SCREEN_FINISHED) do(e:Args):
-      self.onAppReady()
+    discard
 
   proc showOSNotification(self: NotificationsManager, title: string, message: string, identifier: string) =
     if defined(windows):
