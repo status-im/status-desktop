@@ -70,11 +70,12 @@ switch("warning", "BareExcept:off")
 # We assume this as a good practive to keep `else` even if all cases are covered
 switch("warning", "UnreachableElse:off")
 
-# Those are popular to miss in our app, and quickly make build log unreadable, so we want to prevent them
-switch("warningAsError", "UseBase:on")
-switch("warningAsError", "UnusedImport:on")
-switch("warningAsError", "Deprecated:on")
-switch("warningAsError", "HoleEnumConv:on")
+when defined(gcRefc):
+  # Those are popular to miss in our app, and quickly make build log unreadable, so we want to prevent them
+  switch("warningAsError", "UseBase:on")
+  switch("warningAsError", "UnusedImport:on")
+  switch("warningAsError", "Deprecated:on")
+  switch("warningAsError", "HoleEnumConv:on")
 
 # Workaround for https://github.com/nim-lang/Nim/issues/23429
 switch("warning", "UseBase:on")

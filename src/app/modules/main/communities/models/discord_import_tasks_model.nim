@@ -17,12 +17,8 @@ QtObject:
   type DiscordImportTasksModel* = ref object of QAbstractListModel
     items*: seq[DiscordImportTaskItem]
 
-  proc setup(self: DiscordImportTasksModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: DiscordImportTasksModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: DiscordImportTasksModel)
+  proc delete(self: DiscordImportTasksModel)
   proc newDiscordDiscordImportTasksModel*(): DiscordImportTasksmodel =
     new(result, delete)
     result.setup
@@ -123,3 +119,10 @@ QtObject:
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
+
+  proc setup(self: DiscordImportTasksModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: DiscordImportTasksModel) =
+    self.QAbstractListModel.delete
+

@@ -15,12 +15,8 @@ QtObject:
   type TokenOwnersModel* = ref object of QAbstractListModel
     items*: seq[TokenOwnersItem]
 
-  proc setup(self: TokenOwnersModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: TokenOwnersModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: TokenOwnersModel)
+  proc delete(self: TokenOwnersModel)
   proc newTokenOwnersModel*(): TokenOwnersModel =
     new(result, delete)
     result.setup
@@ -91,3 +87,10 @@ QtObject:
         result &= fmt"""TokenOwnersModel:
         [{i}]:({$self.items[i]})
         """
+
+  proc setup(self: TokenOwnersModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: TokenOwnersModel) =
+    self.QAbstractListModel.delete
+

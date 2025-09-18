@@ -12,9 +12,7 @@ QtObject:
       stats*: Stats
       peerSize: int
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -105,3 +103,7 @@ QtObject:
 
   proc setWakuV2LightClient*(self: View, enabled: bool) {.slot.} =
     self.delegate.setLightClient(enabled)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

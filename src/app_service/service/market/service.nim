@@ -46,9 +46,7 @@ QtObject:
   proc handlePageDataUpdated(self: Service, data: WalletSignal)
   proc handlePricesUpdated(self: Service, data: WalletSignal)
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     settingsService: settings_service.Service
@@ -160,4 +158,7 @@ QtObject:
       discard backend.unsubscribeFromLeaderboard()
     except Exception as e:
       error "error when calling unsubscribeFromLeaderboard ", msg = e.msg
+
+  proc delete*(self: Service) =
+    self.QObject.delete
 

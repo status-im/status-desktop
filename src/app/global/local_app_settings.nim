@@ -31,18 +31,19 @@ QtObject:
   type LocalAppSettings* = ref object of QObject
     settings: QSettings
 
-  proc setup(self: LocalAppSettings) =
-    self.QObject.setup
-
-  proc delete*(self: LocalAppSettings) =
-    self.QObject.delete
-
+  proc setup(self: LocalAppSettings)
+  proc delete*(self: LocalAppSettings)
   proc newLocalAppSettings*(fileName: string): LocalAppSettings =
     new(result, delete)
     result.setup
     let filePath = os.joinPath(DATADIR, "qt", fileName)
     result.settings = newQSettings(filePath, QSettingsFormat.IniFormat)
 
+  proc setup(self: LocalAppSettings) =
+    self.QObject.setup
+  
+  proc delete*(self: LocalAppSettings) =
+    self.QObject.delete
 
   proc languageChanged*(self: LocalAppSettings) {.signal.}
   proc getLanguage*(self: LocalAppSettings): string {.slot.} =

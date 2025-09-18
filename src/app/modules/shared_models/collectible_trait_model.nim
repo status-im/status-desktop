@@ -14,12 +14,8 @@ QtObject:
     TraitModel* = ref object of QAbstractListModel
       items: seq[backend.CollectibleTrait]
 
-  proc delete(self: TraitModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: TraitModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: TraitModel)
+  proc setup(self: TraitModel)
   proc newTraitModel*(): TraitModel =
     new(result, delete)
     result.setup
@@ -73,3 +69,10 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc delete(self: TraitModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: TraitModel) =
+    self.QAbstractListModel.setup
+

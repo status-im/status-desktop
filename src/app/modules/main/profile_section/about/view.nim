@@ -9,9 +9,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       fetching*: bool
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -53,3 +51,7 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

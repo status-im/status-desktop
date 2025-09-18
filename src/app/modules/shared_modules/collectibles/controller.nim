@@ -49,11 +49,41 @@ QtObject:
       dataType: backend_collectibles.CollectibleDataType
       fetchCriteria: backend_collectibles.FetchCriteria
 
-  proc setup(self: Controller) =
-    self.QObject.setup
+  proc setup(self: Controller)
+  proc delete*(self: Controller)
+  proc setupEventHandlers(self: Controller)
+  proc newController*(
+    requestId: int32,
+    networkService: network_service.Service,
+    events: EventEmitter,
+    loadType: LoadType,
+    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Header,
+    fetchCriteria: backend_collectibles.FetchCriteria = backend_collectibles.FetchCriteria(
+      fetchType: backend_collectibles.FetchType.NeverFetch,
+    )): Controller =
+    new(result, delete)
 
-  proc delete*(self: Controller) =
-    self.QObject.delete
+    result.requestId = requestId
+    result.loadType = loadType
+    result.dataType = dataType
+    result.fetchCriteria = fetchCriteria
+
+    result.networkService = networkService
+
+    result.model = newModel()
+    result.fetchFromStart = true
+  
+    result.eventsHandler = newEventsHandler(result.requestId, events)
+
+    result.addresses = @[]
+    result.chainIds = @[]
+    result.filter = backend_collectibles.newCollectibleFilterAllEntries()
+
+    result.setup()
+
+    result.setupEventHandlers()
+
+    signalConnect(result.model, "loadMoreItems()", result, "onModelLoadMoreItems()")
 
   proc getModel*(self: Controller): Model =
     return self.model
@@ -257,39 +287,6 @@ QtObject:
       self.setOwnershipState(address, chainID, OwnershipStateError)
     )
 
-  proc newController*(
-    requestId: int32,
-    networkService: network_service.Service,
-    events: EventEmitter,
-    loadType: LoadType,
-    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Header,
-    fetchCriteria: backend_collectibles.FetchCriteria = backend_collectibles.FetchCriteria(
-      fetchType: backend_collectibles.FetchType.NeverFetch,
-    )): Controller =
-    new(result, delete)
-
-    result.requestId = requestId
-    result.loadType = loadType
-    result.dataType = dataType
-    result.fetchCriteria = fetchCriteria
-
-    result.networkService = networkService
-
-    result.model = newModel()
-    result.fetchFromStart = true
-  
-    result.eventsHandler = newEventsHandler(result.requestId, events)
-
-    result.addresses = @[]
-    result.chainIds = @[]
-    result.filter = backend_collectibles.newCollectibleFilterAllEntries()
-
-    result.setup()
-
-    result.setupEventHandlers()
-
-    signalConnect(result.model, "loadMoreItems()", result, "onModelLoadMoreItems()")
-
   proc setSelectedAccount*(self: Controller, address: string) =
     self.selectedAddress = address
     self.checkModelState()
@@ -319,3 +316,10 @@ QtObject:
   proc getItemForData*(self: Controller, tokenId: string, tokenAddress: string, chainId: int): CollectiblesEntry =
     let uid = self.model.getUidForData(tokenId, tokenAddress, chainId)
     return self.model.getItemById(uid)
+
+  proc setup(self: Controller) =
+    self.QObject.setup
+
+  proc delete*(self: Controller) =
+    self.QObject.delete
+

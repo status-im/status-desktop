@@ -12,9 +12,7 @@ QtObject:
       gifColumnCModel: GifColumnModel
       gifLoading: bool
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -138,3 +136,7 @@ QtObject:
   proc isFavorite*(self: View, id: string): bool {.slot.} =
     let gifItem = self.findGifDto(id)
     return self.delegate.isFavorite(gifItem)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

@@ -18,9 +18,7 @@ QtObject:
       selectedKeyPair: KeyPairItem
       selectedAccount: KeyPairAccountItem
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -133,3 +131,7 @@ QtObject:
 
   proc updateWatchAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) {.slot.} =
     self.delegate.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

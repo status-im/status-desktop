@@ -70,9 +70,7 @@ QtObject:
   proc getNotificationVolume*(self: Service): int
   proc getNotificationMessagePreview*(self: Service): int
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter): Service =
     new(result, delete)
     result.events = events
@@ -1170,3 +1168,7 @@ QtObject:
     read = getThirdpartyServicesEnabled
     write = setThirdpartyServicesEnabled
     notify = thirdpartyServicesEnabledChanged
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

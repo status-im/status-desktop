@@ -31,9 +31,7 @@ QtObject:
     missingEncryptionKey: bool
     requiresPermissions: bool
 
-  proc delete*(self: ChatDetails) =
-    self.QObject.delete
-
+  proc delete*(self: ChatDetails)
   proc newChatDetails*(): ChatDetails =
     new(result, delete)
     result.QObject.setup
@@ -374,3 +372,7 @@ QtObject:
       return
     self.requiresPermissions = value
     self.requiresPermissionsChanged()
+
+  proc delete*(self: ChatDetails) =
+    self.QObject.delete
+

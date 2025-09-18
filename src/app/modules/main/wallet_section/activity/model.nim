@@ -16,12 +16,8 @@ QtObject:
       entries: seq[entry.ActivityEntry]
       hasMore: bool
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
 
@@ -143,3 +139,10 @@ QtObject:
   proc refreshAmountCurrency*(self: Model, currencyService: Service) =
     for i in 0..self.entries.high:
       self.entries[i].resetAmountCurrency(currencyService)
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

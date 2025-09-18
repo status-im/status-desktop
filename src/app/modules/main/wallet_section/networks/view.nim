@@ -11,12 +11,8 @@ QtObject:
       areTestNetworksEnabled: bool
       enabledChainIds: string
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
@@ -96,3 +92,10 @@ QtObject:
     self.delegate.fetchChainIdForUrl(url, isMainUrl)
 
   proc chainIdFetchedForUrl*(self: View, url: string, chainId: int, success: bool, isMainUrl: bool) {.signal.}
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

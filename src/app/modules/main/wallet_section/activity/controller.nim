@@ -59,11 +59,37 @@ QtObject:
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
 
-  proc setup(self: Controller) =
-    self.QObject.setup
+  proc setup(self: Controller)
+  proc delete*(self: Controller)
+  proc setupEventHandlers(self: Controller, events: EventEmitter)
+  proc newController*(currencyService: currency_service.Service,
+                      tokenService: token_service.Service,
+                      savedAddressService: saved_address_service.Service,
+                      networkService: network_service.Service,
+                      events: EventEmitter): Controller =
+    new(result, delete)
 
-  proc delete*(self: Controller) =
-    self.QObject.delete
+    result.model = newModel()
+    result.recipientsModel = newRecipientsModel()
+    result.collectiblesModel = newCollectiblesModel()
+    result.tokenService = tokenService
+    result.savedAddressService = savedAddressService
+    result.networkService = networkService
+    result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
+
+    result.eventsHandler = newEventsHandler(events)
+    result.status = newStatus()
+
+    result.currencyService = currencyService
+
+    result.filterTokenCodes = initHashSet[string]()
+
+    result.addresses = @[]
+    result.chainIds = @[]
+
+    result.setup()
+
+    result.setupEventHandlers(events)
 
   proc getModel*(self: Controller): QVariant {.slot.} =
     return newQVariant(self.model)
@@ -305,35 +331,6 @@ QtObject:
         error "Error converting activity entries: ", code = e.msg
     )
 
-  proc newController*(currencyService: currency_service.Service,
-                      tokenService: token_service.Service,
-                      savedAddressService: saved_address_service.Service,
-                      networkService: network_service.Service,
-                      events: EventEmitter): Controller =
-    new(result, delete)
-
-    result.model = newModel()
-    result.recipientsModel = newRecipientsModel()
-    result.collectiblesModel = newCollectiblesModel()
-    result.tokenService = tokenService
-    result.savedAddressService = savedAddressService
-    result.networkService = networkService
-    result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
-
-    result.eventsHandler = newEventsHandler(events)
-    result.status = newStatus()
-
-    result.currencyService = currencyService
-
-    result.filterTokenCodes = initHashSet[string]()
-
-    result.addresses = @[]
-    result.chainIds = @[]
-
-    result.setup()
-
-    result.setupEventHandlers(events)
-
   proc setFilterStatus*(self: Controller, statusesArrayJsonString: string) {.slot.} =
     let statusesJson = parseJson(statusesArrayJsonString)
     if statusesJson.kind != JArray:
@@ -511,3 +508,10 @@ QtObject:
 
   proc noLimitTimestamp*(self: Controller): int {.slot.} =
     return backend_activity.noLimitTimestampForPeriod
+
+  proc setup(self: Controller) =
+    self.QObject.setup
+
+  proc delete*(self: Controller) =
+    self.QObject.delete
+

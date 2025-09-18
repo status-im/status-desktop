@@ -17,12 +17,8 @@ QtObject:
 
       requestId: int32
 
-  proc setup(self: EventsHandler) =
-    self.QObject.setup
-
-  proc delete*(self: EventsHandler) =
-    self.QObject.delete
-
+  proc setup(self: EventsHandler)
+  proc delete*(self: EventsHandler)
   proc onGetCollectiblesDetailsDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_collectibles.eventGetCollectiblesDetailsDone] = handler
 
@@ -66,3 +62,9 @@ QtObject:
         eventsHandler.handleApiEvents(e)
     )
  
+  proc setup(self: EventsHandler) =
+    self.QObject.setup
+
+  proc delete*(self: EventsHandler) =
+    self.QObject.delete
+

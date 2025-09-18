@@ -12,13 +12,8 @@ QtObject:
     delegate: io_interface.TokenBySymbolModelDataSource
     index: int
 
-  proc setup(self: AddressPerChainModel) =
-    self.QAbstractListModel.setup
-    self.index = 0
-
-  proc delete(self: AddressPerChainModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: AddressPerChainModel)
+  proc delete(self: AddressPerChainModel)
   proc newAddressPerChainModel*(delegate: io_interface.TokenBySymbolModelDataSource, index: int): AddressPerChainModel =
     new(result, delete)
     result.setup
@@ -53,3 +48,11 @@ QtObject:
         result = newQVariant(item.chainId)
       of ModelRole.Address:
         result = newQVariant(item.address)
+
+  proc setup(self: AddressPerChainModel) =
+    self.QAbstractListModel.setup
+    self.index = 0
+
+  proc delete(self: AddressPerChainModel) =
+    self.QAbstractListModel.delete
+

@@ -7,12 +7,8 @@ QtObject:
     sectionType: SectionType
     joined: bool
 
-  proc setup(self: SectionDetails) =
-    self.QObject.setup
-
-  proc delete*(self: SectionDetails) =
-    self.QObject.delete
-
+  proc setup(self: SectionDetails)
+  proc delete*(self: SectionDetails)
   proc newActiveSection*(): SectionDetails =
     new(result, delete)
     result.setup
@@ -64,3 +60,10 @@ QtObject:
       self.joinedChanged()
     if sectionTypeChanged:
       self.sectionTypeChanged()
+
+  proc setup(self: SectionDetails) =
+    self.QObject.setup
+
+  proc delete*(self: SectionDetails) =
+    self.QObject.delete
+

@@ -11,12 +11,8 @@ QtObject:
       content: string
       author: DiscordMessageAuthor
 
-  proc setup(self: DiscordMessageItem) =
-    self.QObject.setup
-
-  proc delete*(self: DiscordMessageItem) =
-    self.QObject.delete
-
+  proc setup(self: DiscordMessageItem)
+  proc delete*(self: DiscordMessageItem)
   proc newDiscordMessageItem*(
       id: string,
       timestamp: string,
@@ -66,3 +62,10 @@ QtObject:
 
   proc author*(self: DiscordMessageItem): DiscordMessageAuthor {.inline.} =
     self.author
+
+  proc setup(self: DiscordMessageItem) =
+    self.QObject.setup
+
+  proc delete*(self: DiscordMessageItem) =
+    self.QObject.delete
+

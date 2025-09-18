@@ -19,12 +19,8 @@ QtObject:
   type TokenPermissionsModel* = ref object of QAbstractListModel
     items*: seq[TokenPermissionItem]
 
-  proc setup(self: TokenPermissionsModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: TokenPermissionsModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: TokenPermissionsModel)
+  proc delete(self: TokenPermissionsModel)
   proc newTokenPermissionsModel*(): TokenPermissionsModel =
     new(result, delete)
     result.setup
@@ -161,3 +157,10 @@ QtObject:
       ModelRole.State.int
     ])
     self.tokenCriteriaUpdated()
+
+  proc setup(self: TokenPermissionsModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: TokenPermissionsModel) =
+    self.QAbstractListModel.delete
+

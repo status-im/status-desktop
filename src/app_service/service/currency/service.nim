@@ -34,9 +34,7 @@ QtObject:
   proc fetchAllCurrencyFormats(self: Service)
   proc getCachedCurrencyFormats(self: Service): Table[string, CurrencyFormatDto]
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
@@ -139,3 +137,7 @@ QtObject:
     if token != nil:
       decimals = token.decimals
     return u256ToFloat(decimals, amountInt)
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

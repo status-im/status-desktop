@@ -9,9 +9,7 @@ QtObject:
       exemptionsModel: Model
       exemptionsModelVariant: QVariant
       
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -45,3 +43,7 @@ QtObject:
   proc saveExemptions*(self: View, itemId: string, muteAllMessages: bool, personalMentions: string, 
     globalMentions: string, otherMessages: string) {.slot.} =
     self.delegate.saveExemptions(itemId, muteAllMessages, personalMentions, globalMentions, otherMessages)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

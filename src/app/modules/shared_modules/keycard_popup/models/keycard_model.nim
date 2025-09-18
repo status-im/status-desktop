@@ -12,12 +12,8 @@ QtObject:
     KeycardModel* = ref object of QAbstractListModel
       items: seq[KeycardItem]
 
-  proc delete(self: KeycardModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: KeycardModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: KeycardModel)
+  proc setup(self: KeycardModel)
   proc newKeycardModel*(): KeycardModel =
     new(result, delete)
     result.setup
@@ -168,3 +164,10 @@ QtObject:
           self.items[i].removeAccountByAddress(acc)
         if removeKeycardItemIfHasNoAccounts and self.items[i].getAccountsModel().getCount() == 0:
           self.removeItem(i)
+
+  proc delete(self: KeycardModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: KeycardModel) =
+    self.QAbstractListModel.setup
+

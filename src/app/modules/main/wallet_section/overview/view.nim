@@ -21,12 +21,8 @@ QtObject:
       isWatchOnlyAccount: bool
       canSend: bool
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.setup()
@@ -150,3 +146,10 @@ QtObject:
     if(self.isAllAccounts != item.getIsAllAccounts()):
       self.isAllAccounts = item.getIsAllAccounts()
       self.isAllAccountsChanged()
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

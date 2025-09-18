@@ -72,9 +72,7 @@ QtObject:
   proc getChainStatusTable(message: string): ConnectionStatusNotification
   proc getChainStatusTable(statusPerChain: Table[int, ProviderStatus]): ConnectionStatusNotification
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     walletService: wallet_service.Service,
@@ -284,3 +282,7 @@ QtObject:
         self.connectionStatus[MARKET] = newConnectionStatus()
       if(self.connectionStatus.hasKey(COLLECTIBLES)):
         self.connectionStatus[COLLECTIBLES] = newConnectionStatus()
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

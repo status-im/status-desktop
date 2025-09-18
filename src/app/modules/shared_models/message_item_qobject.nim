@@ -5,12 +5,8 @@ QtObject:
   type MessageItem* = ref object of QObject
     messageItem*: message_item.Item
 
-  proc setup(self: MessageItem) =
-    self.QObject.setup
-
-  proc delete*(self: MessageItem) =
-    self.QObject.delete
-
+  proc setup(self: MessageItem)
+  proc delete*(self: MessageItem)
   proc newMessageItem*(message: message_item.Item): MessageItem =
     new(result, delete)
     result.setup
@@ -201,3 +197,10 @@ QtObject:
   proc albumImagesCount*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.albumImagesCount
   QtProperty[int] albumImagesCount:
     read = albumImagesCount
+
+  proc setup(self: MessageItem) =
+    self.QObject.setup
+
+  proc delete*(self: MessageItem) =
+    self.QObject.delete
+
