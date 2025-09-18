@@ -177,7 +177,10 @@ SettingsContentBase {
                 icon.name: "external-link"
                 text: qsTr("Learn more")
                 size: StatusBaseButton.Size.Small
-                onClicked: Global.openLinkWithConfirmation(Constants.externalStatusLinkWithHttps + '/translations',  Constants.externalStatusLinkWithHttps)
+                onClicked: Global.activateDeepLink(
+                    // Status Community's translation channel
+                    "https://status.app/cc/G-gAAORqbagnhrSvikdvJE1-f7iUTLVeGDI6uS1gbdHJClvLOIsozcOgbrhs8sVle2GBnz0QghKrJugxwVVmAGNFIcm4KPPNFIKvKdf_83iSXsosZUr1rHgLeJqn0el8TPRaMwxCExy35wPCYGG0TH9dzY_YAnS4705bQNv18a-cEVCyBKPdTgXvRJjjowqNh-zcFB9U6PpT2klNfmPCj05HNG3ShpUfTYxsXslmjKKSyWWQUsyikZIz8sV0zsia-Wwe#zQ3shZeEJqTC1xhGUjxuS4rtHSrhJ8vUYp64v6qWkLpvdy9L9"
+                )
             }
         }
 
