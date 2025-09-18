@@ -1,6 +1,8 @@
 import QtQuick
 
 import StatusQ.Core.Utils as SQUtils
+import StatusQ.Core.Backpressure
+import StatusQ.Core
 
 import shared.stores as SharedStores
 import shared.stores.send as SharedSendStores
@@ -162,7 +164,10 @@ QtObject {
         popupParent: root.popupParent
         thirdPartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
 
-        onToggleThirdpartyServicesEnabledRequested: root.privacyStore.toggleThirdpartyServicesEnabledRequested()
+        onToggleThirdpartyServicesEnabledRequested: {
+            root.privacyStore.toggleThirdpartyServicesEnabledRequested()
+            Backpressure.debounce(root, 200, () => { SystemUtils.restartApplication() })()
+        }
         onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
         onOpenThirdpartyServicesArticleRequested: Global.openLinkWithConfirmation(Constants.statusThirdpartyServicesArticle, SQUtils.StringUtils.extractDomainFromLink(Constants.statusThirdpartyServicesArticle))
     }

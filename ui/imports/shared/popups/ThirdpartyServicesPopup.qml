@@ -14,6 +14,7 @@ StatusDialog {
     id: root
 
     required property bool thirdPartyServicesEnabled
+    property bool isOnboardingFlow: false
 
     signal toggleThirdpartyServicesEnabledRequested()
     signal openDiscussPageRequested()
@@ -125,7 +126,20 @@ StatusDialog {
                 type: StatusBaseButton.Type.Primary
                 normalColor: Theme.palette.privacyModeColor
                 textColor: Theme.palette.white
-                text: root.thirdPartyServicesEnabled ? qsTr("Disable third-party services") : qsTr("Enable third-party services")
+                text: {
+                    if(root.thirdPartyServicesEnabled) {
+                        if(root.isOnboardingFlow) {
+                            return qsTr("Disable third-party services")
+                        }
+                        return qsTr("Disable services and restart the app")
+                    }
+                    else {
+                        if(root.isOnboardingFlow) {
+                            return qsTr("Enable third-party services")
+                        }
+                        return qsTr("Enable services and restart the app")
+                    }
+                }
                 onClicked: {
                     root.toggleThirdpartyServicesEnabledRequested()
                     root.close()

@@ -2031,6 +2031,7 @@ Item {
                     sourceComponent: BrowserLayout {
                         id: browserLayout
                         userUID: appMain.profileStore.pubKey
+                        thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
                         navBar: appMain.navBar
                         bookmarksStore: BrowserStores.BookmarksStore {}
                         downloadsStore: BrowserStores.DownloadsStore {}
@@ -2854,36 +2855,43 @@ Item {
             }
 
             // DAppsModule provides the middleware for the dapps
-            dappsModule: DAppsModule {
-                currenciesStore: appMain.currencyStore
-                groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
-                accountsModel: WalletStores.RootStore.nonWatchAccounts
-                dappsMetrics: dappMetrics
-                networksModel: SortFilterProxyModel {
-                    sourceModel: appMain.networksStore.activeNetworks
-                    proxyRoles: [
-                        FastExpressionRole {
-                            name: "isOnline"
-                            expression: !appMain.networkConnectionStore.blockchainNetworksDown.map(Number).includes(model.chainId)
-                            expectedRoles: "chainId"
-                        }
-                    ]
-                }
-                wcSdk: WalletConnectSDK {
-                    enabled: featureFlagsStore.dappsEnabled && WalletStores.RootStore.walletSectionInst.walletReady
-                    userUID: appMain.profileStore.pubKey
-                    projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
-                }
-                bcSdk: DappsConnectorSDK {
-                    enabled: featureFlagsStore.connectorEnabled && WalletStores.RootStore.walletSectionInst.walletReady
-                    store: SharedStores.BrowserConnectStore {
-                        controller: WalletStores.RootStore.dappsConnectorController
-                    }
-                    networksModel: appMain.networksStore.activeNetworks
+            dappsModule: dappsModuleLoader.item
+            // when active, this instantiates a DAppsModule; when inactive, item is null
+            Loader {
+                id: dappsModuleLoader
+                active: appMain.rootStore.thirdpartyServicesEnabled
+
+                sourceComponent: DAppsModule {
+                    currenciesStore: appMain.currencyStore
+                    groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
                     accountsModel: WalletStores.RootStore.nonWatchAccounts
-                }
-                store: SharedStores.DAppsStore {
-                    controller: WalletStores.RootStore.walletConnectController
+                    dappsMetrics: dappMetrics
+                    networksModel: SortFilterProxyModel {
+                        sourceModel: appMain.networksStore.activeNetworks
+                        proxyRoles: [
+                            FastExpressionRole {
+                                name: "isOnline"
+                                expression: !appMain.networkConnectionStore.blockchainNetworksDown.map(Number).includes(model.chainId)
+                                expectedRoles: "chainId"
+                            }
+                        ]
+                    }
+                    wcSdk: WalletConnectSDK {
+                        enabled: featureFlagsStore.dappsEnabled && WalletStores.RootStore.walletSectionInst.walletReady
+                        userUID: appMain.profileStore.pubKey
+                        projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
+                    }
+                    bcSdk: DappsConnectorSDK {
+                        enabled: featureFlagsStore.connectorEnabled && WalletStores.RootStore.walletSectionInst.walletReady
+                        store: SharedStores.BrowserConnectStore {
+                            controller: WalletStores.RootStore.dappsConnectorController
+                        }
+                        networksModel: appMain.networksStore.activeNetworks
+                        accountsModel: WalletStores.RootStore.nonWatchAccounts
+                    }
+                    store: SharedStores.DAppsStore {
+                        controller: WalletStores.RootStore.walletConnectController
+                    }
                 }
             }
             selectedAddress: WalletStores.RootStore.selectedAddress
