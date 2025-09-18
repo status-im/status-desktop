@@ -16,12 +16,6 @@ jobs:
     name: Check status-go submodule branch
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
-          submodules: false
-
       - name: Get submodule commits and check if changed using GitHub API
         id: statusgo
         run: |
