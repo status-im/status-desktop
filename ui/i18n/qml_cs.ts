@@ -17303,15 +17303,23 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable services and restart the app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable services and restart the app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Disable third-party services</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enable third-party services</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

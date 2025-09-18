@@ -29,6 +29,7 @@ Item {
         assetsStore: WalletAssetsStore {}
         currencyStore: CurrenciesStore {}
         tokensStore: TokensStore {}
+        thirdpartyServicesEnabled: true
 
         bookmarksStore: BrowserStores.BookmarksStore {
             property var bookmarksModel: ListModel {}
