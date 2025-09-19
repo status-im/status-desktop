@@ -6,6 +6,7 @@ import StatusQ.Core
 
 import shared.stores as SharedStores
 import shared.stores.send as SharedSendStores
+import shared.popups
 
 import AppLayouts.stores as AppStores
 import AppLayouts.Wallet.stores as WalletStores
@@ -170,5 +171,22 @@ QtObject {
         }
         onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
         onOpenThirdpartyServicesArticleRequested: Global.openLinkWithConfirmation(Constants.statusThirdpartyServicesArticle, SQUtils.StringUtils.extractDomainFromLink(Constants.statusThirdpartyServicesArticle))
+    }
+
+    readonly property Component enableMessageBackupPopupComponent: Component {
+        EnableMessageBackupPopup {
+            visible: true
+            destroyOnClose: true
+            onClosed: appMainLocalSettings.enableMessageBackupPopupSeen = true
+            onAccepted: appMain.devicesStore.setMessagesBackupEnabled(true)
+        }
+    }
+
+    function maybeDisplayEnableMessageBackupPopup() {
+        if (!appMainLocalSettings.enableMessageBackupPopupSeen && !appMain.devicesStore.messagesBackupEnabled) {
+            enableMessageBackupPopupComponent.createObject(appMain).open()
+            return true
+        }
+        return false
     }
 }

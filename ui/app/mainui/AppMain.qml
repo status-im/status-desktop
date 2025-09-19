@@ -831,8 +831,11 @@ Item {
         }
 
         function maybeDisplayIntroduceYourselfPopup() {
-            if (!appMainLocalSettings.introduceYourselfPopupSeen && allContacsAdaptor.selfDisplayName === "")
+            if (!appMainLocalSettings.introduceYourselfPopupSeen && allContacsAdaptor.selfDisplayName === "") {
                 introduceYourselfPopupComponent.createObject(appMain).open()
+                return true
+            }
+            return false
         }
 
         function ensName(username) {
@@ -848,6 +851,7 @@ Item {
         category: "AppMainLocalSettings_%1".arg(allContacsAdaptor.selfPubKey)
         property var whitelistedUnfurledDomains: []
         property bool introduceYourselfPopupSeen
+        property bool enableMessageBackupPopupSeen
         property var recentEmojis
         property string skinColor // NB: must be a string for the twemoji lib to work; we don't want the `#` in the name
         property int theme: Theme.Style.System
@@ -1731,7 +1735,13 @@ Item {
                 }
                 onCurrentIndexChanged: {
                     if (d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.wallet) {
-                        d.maybeDisplayIntroduceYourselfPopup()
+                        if (d.maybeDisplayIntroduceYourselfPopup()) {
+                            // we displayed the popup, so we should not display the enable message backup popup
+                            return
+                        }
+                        if (d.activeSectionType === Constants.appSection.chat || d.activeSectionType === Constants.appSection.community) {
+                            popupRequestsHandler.maybeDisplayEnableMessageBackupPopup()
+                        }
                     }
                 }
 
