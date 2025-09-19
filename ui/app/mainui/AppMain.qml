@@ -831,8 +831,21 @@ Item {
         }
 
         function maybeDisplayIntroduceYourselfPopup() {
-            if (!appMainLocalSettings.introduceYourselfPopupSeen && allContacsAdaptor.selfDisplayName === "")
+            if (!appMainLocalSettings.introduceYourselfPopupSeen && allContacsAdaptor.selfDisplayName === "") {
                 introduceYourselfPopupComponent.createObject(appMain).open()
+                return true
+            }
+            return false
+        }
+
+        function maybeDisplayEnableMessageBackupPopup() {
+            console.log("maybeDisplayEnableMessageBackupPopup", appMainLocalSettings.enableMessageBackupPopupSeen, appMain.devicesStore.messagesBackupEnabled)
+            if (!appMainLocalSettings.enableMessageBackupPopupSeen && !appMain.devicesStore.messagesBackupEnabled) {
+                console.log("displaying enableMessageBackupPopup11111")
+                enableMessageBackupPopupComponent.createObject(appMain).open()
+                return true
+            }
+            return false
         }
 
         function ensName(username) {
@@ -848,6 +861,7 @@ Item {
         category: "AppMainLocalSettings_%1".arg(allContacsAdaptor.selfPubKey)
         property var whitelistedUnfurledDomains: []
         property bool introduceYourselfPopupSeen
+        property bool enableMessageBackupPopupSeen
         property var recentEmojis
         property string skinColor // NB: must be a string for the twemoji lib to work; we don't want the `#` in the name
         property int theme: Theme.Style.System
@@ -1731,7 +1745,13 @@ Item {
                 }
                 onCurrentIndexChanged: {
                     if (d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.wallet) {
-                        d.maybeDisplayIntroduceYourselfPopup()
+                        if (d.maybeDisplayIntroduceYourselfPopup()) {
+                            // we displayed the popup, so we should not display the enable message backup popup
+                            return
+                        }
+                        if (d.activeSectionType === Constants.appSection.chat || d.activeSectionType === Constants.appSection.community) {
+                            d.maybeDisplayEnableMessageBackupPopup()
+                        }
                     }
                 }
 
@@ -2785,6 +2805,16 @@ Item {
             colorId: appMain.profileStore.colorId
             onClosed: appMainLocalSettings.introduceYourselfPopupSeen = true
             onAccepted: Global.changeAppSectionBySectionType(Constants.appSection.profile)
+        }
+    }
+
+    Component {
+        id: enableMessageBackupPopupComponent
+        EnableMessageBackupPopup {
+            visible: true
+            destroyOnClose: true
+            onClosed: appMainLocalSettings.enableMessageBackupPopupSeen = true
+            onAccepted: appMain.devicesStore.setMessagesBackupEnabled(true)
         }
     }
 
