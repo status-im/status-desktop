@@ -87,7 +87,7 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
   - Runs parallel to other features and doesn't need to be shipped to any particular milestones
   - No API changes are expected until the Chat SDK is integrated
   - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
-  - In Progress ⏳ 🟩🟩⬜⬜⬜ 41% (estimated progress as not all subtasks are created)
+  - In Progress ⏳ 🟩🟩⬜⬜⬜ 44% (estimated progress as not all subtasks are created)
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
   - Progress is also inherited from the Tablet Epic above
@@ -97,20 +97,22 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
   - In Progress ⏳ 🟩🟩🟨⬜⬜ 53%
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
-  - In Progress ⏳ 🟩🟨⬜⬜⬜ 38%
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 68%
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
-  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17%
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 25%
 - [Local Backup finishing touches](https://github.com/status-im/status-desktop/issues/18583)
-  - In Progress ⏳ 🟩🟨⬜⬜⬜ 38%
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 50%
 - [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
-  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17%
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 69%
 - [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
   - In Progress ⏳
 - [Translation initiative](https://github.com/status-im/status-desktop/issues/18293)
-  - In Progress ⏳ 🟩🟨⬜⬜⬜ 33%
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 57%
 - [Full Emoji list in Reactions](https://github.com/status-im/status-desktop/issues/18766)
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 65%
 - Improve Token List and Support custom tokens
+  - In Progress ⏳
 
 ### 2.37
 
