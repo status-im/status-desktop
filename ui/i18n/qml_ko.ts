@@ -6688,6 +6688,37 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
 </context>
 <context>
+    <name>EnableMessageBackupPopup</name>
+    <message>
+        <source>Do you wish to enable message backup?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can now enable message backup to keep your messages on your device.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will allow you to restore your messages if you reinstall the app or switch devices.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Just remember to keep your backup file safe and secure!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can change your mind in the Syncing settings later.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip</source>
+        <translation type="unfinished">건너 뛰기</translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished">사용</translation>
+    </message>
+</context>
+<context>
     <name>EnableMessagesBackupDialog</name>
     <message>
         <source>Enable Local Messages Backup</source>
@@ -17174,6 +17205,14 @@ access to your webcam</source>
     <message>
         <source>Close</source>
         <translation>닫기</translation>
+    </message>
+    <message>
+        <source>Disable services and restart the app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable services and restart the app</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
