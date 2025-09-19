@@ -181,6 +181,11 @@ proc mainProc() =
 
   ensureDirectories(DATADIR, TMPDIR, LOGDIR)
 
+  let qmlcacheDir = TMPDIR & "qmlcache"
+  putenv("QML_DISK_CACHE_PATH", qmlcacheDir)
+  if dirExists(qmlcacheDir):
+    removeDir(qmlcacheDir)
+
   let isExperimental = isExperimental()
   let resourcesPath = determineResourcePath()
   let openUri = determineOpenUri()
