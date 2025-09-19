@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.9.16'
 pipeline {
 
   agent {
-    label 'windows-t && windows-04'
+    label 'windows && windows-04 && qt-6.9.2'
   }
 
   parameters {
@@ -75,7 +75,7 @@ pipeline {
 
     /* Avoid race conditions with other builds using virtualenv. */
     VIRTUAL_ENV = "${WORKSPACE_TMP}\\venv"
-    PATH = "${VIRTUAL_ENV}\\bin;C:\\Qt\\6.9.0\\msvc2022_64\\bin;${PATH}"
+    PATH = "${VIRTUAL_ENV}\\bin;C:\\Qt\\6.9.2\\msvc2022_64\\bin;${PATH}"
 
     /* To store user configuratiin files in temp dir */
     XDG_CONFIG_HOME = "${WORKSPACE_TMP}/config"
