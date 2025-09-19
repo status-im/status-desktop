@@ -16,12 +16,10 @@ Item {
     property int imageMargin: 4
     signal addEmojiClicked(var sender, var mouse)
     signal hoverChanged(bool hovered)
-    signal toggleReaction(int emojiID)
+    signal toggleReaction(string emoji)
 
     property bool isCurrentUser
     property var emojiReactionsModel
-
-    property var icons: []
 
     QtObject {
         id: d
@@ -30,7 +28,7 @@ Item {
             return nodes.join(qsTr(" and "));
         }
 
-        function showReactionAuthors(jsonArrayOfUsersReactedWithThisEmoji, emojiId) {
+        function showReactionAuthors(jsonArrayOfUsersReactedWithThisEmoji, emoji) {
             const listOfUsers = JSON.parse(jsonArrayOfUsersReactedWithThisEmoji)
             if (listOfUsers.error) {
                 console.error("error parsing users who reacted to a message, error: ", obj.error)
@@ -62,7 +60,7 @@ Item {
             }
             return qsTr("%1 reacted with %2")
                         .arg(author)
-                        .arg(Emoji.getEmojiFromId(emojiId));
+                        .arg(emoji);
         }
     }
 
@@ -105,17 +103,9 @@ Item {
                 contentItem: Row {
                     spacing: 4
 
-                    StatusEmoji {
-                        objectName: "emojiReaction"
+                    StatusBaseText {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 15
-                        height: 15
-
-                        source: {
-                            if (model.emojiId >= 1 && model.emojiId <= root.icons.length)
-                                return root.icons[model.emojiId - 1];
-                            return "";
-                        }
+                        text: model.emoji
                     }
 
                     StatusBaseText {
@@ -130,7 +120,7 @@ Item {
                 StatusToolTip {
                     visible: reactionDelegate.hovered
                     maxWidth: 400
-                    text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emojiId)
+                    text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emoji)
                 }
 
                 StatusMouseArea {
@@ -145,7 +135,7 @@ Item {
                         root.hoverChanged(false)
                     }
                     onClicked: {
-                        root.toggleReaction(model.emojiId)
+                        root.toggleReaction(model.emoji)
                     }
                 }
             }

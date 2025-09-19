@@ -86,6 +86,57 @@ proc asyncFetchPinnedChatMessagesTask(argEncoded: string) {.gcsafe, nimcall.} =
     responseJson["pinnedMessages"] = pinnedMsgArr
     responseJson["pinnedMessagesCursor"] = msgCursor
 
+    # handle reactions
+    var reactionsSeq: seq[JsonNode]
+
+    let pinnedMsgsJson = pinnedMsgArr.getElems()
+    var messageIds = newSeq[string]()
+    for pinnedMessageJson in pinnedMsgsJson:
+      var messageObj: JsonNode
+      if pinnedMessageJson.getProp("message", messageObj):
+        messageIds.add(messageObj["id"].getStr())
+
+    for messageId in messageIds:
+      let rResponse = status_go.fetchReactionsForMessageWithId(arg.chatId, messageId)
+      if not rResponse.error.isNil:
+        raise newException(CatchableError, rResponse.error.message)
+
+      reactionsSeq = concat(reactionsSeq, rResponse.result.getElems())
+
+    responseJson["reactions"] = %reactionsSeq
+
+    arg.finish(responseJson)
+
+  except Exception as e:
+    arg.finish(%* {
+      "chatId": arg.chatId,
+      "error": e.msg,
+    })
+
+#################################################
+# Async load reactions for a message
+#################################################
+type
+  AsyncFetchReactionsForMessageTaskArg = ref object of QObjectTaskArg
+    chatId: string
+    messageId: string
+
+proc asyncFetchReactionsForMessageTask(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncFetchReactionsForMessageTaskArg](argEncoded)
+
+  try:
+    var responseJson = %*{
+      "chatId": arg.chatId,
+      "messageId": arg.messageId
+    }
+
+    # handle reactions
+    let rResponse = status_go.fetchReactionsForMessageWithId(arg.chatId, arg.messageId)
+    if not rResponse.error.isNil:
+      raise newException(CatchableError, rResponse.error.message)
+
+    responseJson["reactions"] = rResponse.result
+
     arg.finish(responseJson)
 
   except Exception as e:

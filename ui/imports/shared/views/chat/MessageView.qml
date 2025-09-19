@@ -171,6 +171,8 @@ Loader {
     // Community access related requests:
     signal spectateCommunityRequested(string communityId)
 
+    signal emojiReactionToggled(string messageId, string emoji)
+
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
             return false
@@ -455,9 +457,8 @@ Loader {
         enabled: d.emojiPopupOpened
         target: emojiPopup
 
-        function onEmojiSelected(text: string, atCursor: bool) {
-            // TODO call toggleReaction when it supports all emojis
-            // root.messageStore.toggleReaction(root.messageId, emojiId)
+        function onEmojiSelected(text: string, atCursor: bool, hexcode: string) {
+            root.emojiReactionToggled(root.messageId, StatusQUtils.Emoji.fromCodePoint(hexcode))
         }
         function onClosed() {
             // Debounce so that the popup doesn't immediately reopen when clicking the button
@@ -737,14 +738,6 @@ Loader {
                 }
 
                 pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
-                reactionIcons: [
-                    Theme.svg("emojiReactions/heart"),
-                    Theme.svg("emojiReactions/thumbsUp"),
-                    Theme.svg("emojiReactions/thumbsDown"),
-                    Theme.svg("emojiReactions/laughing"),
-                    Theme.svg("emojiReactions/sad"),
-                    Theme.svg("emojiReactions/angry"),
-                ]
 
                 timestamp: root.messageTimestamp
                 editMode: root.editModeOn
@@ -833,7 +826,7 @@ Loader {
                 onReplyMessageClicked: (mouse) => root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
                 onSenderNameClicked: (sender) => root.openProfileContextMenu(sender)
 
-                onToggleReactionClicked: {
+                onToggleReactionClicked: (emoji) => {
                     if (root.isChatBlocked)
                         return
 
@@ -842,7 +835,7 @@ Loader {
                         return
                     }
 
-                    root.messageStore.toggleReaction(root.messageId, emojiId)
+                    root.messageStore.toggleReaction(root.messageId, emoji)
                 }
 
                 onAddReactionClicked: (sender, mouse) => {
@@ -1277,8 +1270,8 @@ Loader {
                                                         root.chatId)
             }
             onMarkMessageAsUnread: root.messageStore.markMessageAsUnread(messageContextMenuView.messageId)
-            onToggleReaction: (emojiId) => {
-                root.messageStore.toggleReaction(messageContextMenuView.messageId, emojiId)
+            onToggleReaction: (emoji) => {
+                root.messageStore.toggleReaction(messageContextMenuView.messageId, emoji)
             }
             onDeleteMessage: root.messageStore.warnAndDeleteMessage(messageContextMenuView.messageId)
             onEditClicked: root.messageStore.setEditModeOn(messageContextMenuView.messageId)

@@ -43,6 +43,7 @@ const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
 const SIGNAL_PINNED_MESSAGES_LOADED* = "pinnedMessagesLoaded"
+const SIGNAL_REACTIONS_FOR_MESSAGE_LOADED* = "signalReactionsForMessageLoaded"
 const SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED* = "firstUnseenMessageLoaded"
 const SIGNAL_NEW_MESSAGE_RECEIVED* = "newMessageReceived"
 const SIGNAL_MESSAGE_PINNED* = "messagePinned"
@@ -85,6 +86,12 @@ type
   PinnedMessagesLoadedArgs* = ref object of Args
     chatId*: string
     pinnedMessages*: seq[PinnedMessageDto]
+    reactions*: seq[ReactionDto]
+
+  ReactionsLoadedArgs* = ref object of Args
+    chatId*: string
+    messageId*: string
+    reactions*: seq[ReactionDto]
 
   MessagePinUnpinArgs* = ref object of Args
     chatId*: string
@@ -107,7 +114,7 @@ type
   MessageAddRemoveReactionArgs* = ref object of Args
     chatId*: string
     messageId*: string
-    emojiId*: int
+    emoji*: string
     reactionId*: string
     reactionFrom*: string
 
@@ -245,6 +252,53 @@ QtObject:
     self.threadpool.start(arg)
     return true
 
+  proc onAsyncLoadReactionsForMessage*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      if responseObj.kind != JObject:
+        raise newException(CatchableError, "load reactions for message response is not a json object")
+
+      let errorString = responseObj{"error"}.getStr()
+      if errorString != "":
+        raise newException(CatchableError, errorString)
+
+      var chatId: string
+      discard responseObj.getProp("chatId", chatId)
+
+      var messageId: string
+      discard responseObj.getProp("messageId", messageId)
+
+     # handling reactions
+      var reactions: seq[ReactionDto]
+      var reactionsArr: JsonNode
+      if responseObj.getProp("reactions", reactionsArr):
+        reactions = map(
+          reactionsArr.getElems(),
+          proc(x: JsonNode): ReactionDto =
+            result = x.toReactionDto()
+        )
+
+      let data = ReactionsLoadedArgs(chatId: chatId, messageId: messageId, reactions: reactions)
+
+      self.events.emit(SIGNAL_REACTIONS_FOR_MESSAGE_LOADED, data)
+    except Exception as e:
+      error "Error load reactions for message async", msg = e.msg
+
+  proc asyncLoadReactionsForMessage*(self: Service, chatId: string, messageId: string) =
+    if chatId.len == 0 or messageId.len == 0:
+      error "empty chat id or message id", procName="asyncLoadReactionsForMessage"
+      return
+
+    let arg = AsyncFetchReactionsForMessageTaskArg(
+      tptr: asyncFetchReactionsForMessageTask,
+      vptr: cast[uint](self.vptr),
+      slot: "onAsyncLoadReactionsForMessage",
+      chatId: chatId,
+      messageId: messageId
+    )
+
+    self.threadpool.start(arg)
+
   proc asyncLoadPinnedMessagesForChat*(self: Service, chatId: string) =
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadPinnedMessagesForChat"
@@ -380,8 +434,8 @@ QtObject:
 
   proc handleEmojiReactionsUpdate(self: Service, emojiReactions: seq[ReactionDto]) =
     for r in emojiReactions:
-      let data = MessageAddRemoveReactionArgs(chatId: r.localChatId, messageId: r.messageId, emojiId: r.emojiId,
-      reactionId: r.id, reactionFrom: r.`from`)
+      let data = MessageAddRemoveReactionArgs(chatId: r.localChatId, messageId: r.messageId,
+      reactionId: r.id, reactionFrom: r.`from`, emoji: r.emoji)
       self.events.emit(SIGNAL_MESSAGE_REACTION_FROM_OTHERS, data)
 
   proc handleMessagesReload(self: Service, communityId: string) =
@@ -513,8 +567,17 @@ QtObject:
       # set initial number of pinned messages
       self.numOfPinnedMessagesPerChat[chatId] = pinnedMessages.len
 
-      let data = PinnedMessagesLoadedArgs(chatId: chatId,
-        pinnedMessages: pinnedMessages)
+     # handling reactions
+      var reactions: seq[ReactionDto]
+      var reactionsArr: JsonNode
+      if responseObj.getProp("reactions", reactionsArr):
+        reactions = map(
+          reactionsArr.getElems(),
+          proc(x: JsonNode): ReactionDto =
+            result = x.toReactionDto()
+        )
+
+      let data = PinnedMessagesLoadedArgs(chatId: chatId, pinnedMessages: pinnedMessages, reactions: reactions)
 
       self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
     except Exception as e:
@@ -561,14 +624,6 @@ QtObject:
           reactionsArr.getElems(),
           proc(x: JsonNode): ReactionDto =
             result = x.toReactionDto()
-            # TODO remove this once we fully support full emojis
-            case result.emoji:
-              of "❤️": result.emojiId = 1
-              of "👍": result.emojiId = 2
-              of "👎": result.emojiId = 3
-              of "😂": result.emojiId = 4
-              of "😢": result.emojiId = 5
-              of "😠": result.emojiId = 6
         )
 
       let data = MessagesLoadedArgs(
@@ -608,9 +663,9 @@ QtObject:
     except Exception as e:
       error "error: ", procName="onAsyncLoadCommunityMemberAllMessages", errName = e.name, errDesription = e.msg
 
-  proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int, emoji: string) =
+  proc addReaction*(self: Service, chatId: string, messageId: string, emoji: string) =
     try:
-      let response = status_go.addReaction(chatId, messageId, emojiId)
+      let response = status_go.addReaction(chatId, messageId, emoji)
 
       let errorString = response.result{"error"}.getStr()
       if errorString != "":
@@ -625,14 +680,14 @@ QtObject:
       if reactions.len > 0:
         reactionId = reactions[0].id
 
-      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
-        reactionId: reactionId)
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId,
+        reactionId: reactionId, emoji: emoji)
       self.events.emit(SIGNAL_MESSAGE_REACTION_ADDED, data)
 
     except Exception as e:
       error "error: ", procName="addReaction", errName = e.name, errDesription = e.msg
 
-  proc removeReaction*(self: Service, reactionId: string, chatId: string, messageId: string, emojiId: int) =
+  proc removeReaction*(self: Service, reactionId: string, chatId: string, messageId: string, emoji: string) =
     try:
       let response = status_go.removeReaction(reactionId)
 
@@ -640,7 +695,7 @@ QtObject:
       if errorString != "":
         raise newException(CatchableError, errorString)
 
-      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
+      let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emoji: emoji,
       reactionId: reactionId)
       self.events.emit(SIGNAL_MESSAGE_REACTION_REMOVED, data)
 

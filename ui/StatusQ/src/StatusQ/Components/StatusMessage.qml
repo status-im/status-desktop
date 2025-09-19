@@ -50,7 +50,6 @@ Control {
     property string pinnedMsgInfoText: ""
 
     property string messageAttachments: ""
-    property var reactionIcons: []
     property var linkPreviewModel
     property var paymentRequestModel
     property var gifLinks
@@ -66,7 +65,7 @@ Control {
     property string resendError: ""
     property int outgoingStatus: StatusMessage.OutgoingStatus.Unknown
     property double timestamp: 0
-    property var reactionsModel: []
+    property var reactionsModel
 
     property bool showHeader: true
     property bool isActiveMessage: false
@@ -91,7 +90,7 @@ Control {
     signal replyMessageClicked(var mouse)
 
     signal addReactionClicked(var sender, var mouse)
-    signal toggleReactionClicked(int emojiId)
+    signal toggleReactionClicked(string emoji)
     signal imageClicked(var image, var mouse, var imageSource)
     signal stickerClicked()
     signal resendClicked()
@@ -394,19 +393,18 @@ Control {
                         }
                     }
                     Loader {
-                        active: root.reactionsModel.count > 0
+                        active: !!root.reactionsModel && root.reactionsModel.ModelCount.count > 0
                         visible: active
                         sourceComponent: StatusMessageEmojiReactions {
                             id: emojiReactionsPanel
                             enabled: !root.disableEmojis
                             emojiReactionsModel: root.reactionsModel
-                            icons: root.reactionIcons
 
                             onHoverChanged: (hovered) => root.hoverChanged(messageId, hovered)
 
                             isCurrentUser: root.messageDetails.amISender
                             onAddEmojiClicked: (sender, mouse) => root.addReactionClicked(sender, mouse)
-                            onToggleReaction: (emojiID) => root.toggleReactionClicked(emojiID)
+                            onToggleReaction: (emoji) => root.toggleReactionClicked(emoji)
                         }
                     }
                 }

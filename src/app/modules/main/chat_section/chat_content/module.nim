@@ -7,7 +7,6 @@ import ../item as chat_item
 import ./chat_details
 import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
-import ../../../shared_models/message_reaction_item as pinned_msg_reaction_item
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 
@@ -156,7 +155,7 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy: string,
-    item: var pinned_msg_item.Item):bool =
+    item: var pinned_msg_item.Item, reactions: seq[ReactionDto]):bool =
 
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getCommunityDetails().chats
@@ -193,13 +192,20 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
 
+  for r in reactions:
+    if r.messageId == message.id:
+      let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
+      let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
+      item.addReaction(r.emoji, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
+        userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
+
   return true
 
-method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) =
+method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto], reactions: seq[ReactionDto]) =
   var viewItems: seq[pinned_msg_item.Item]
   for p in pinnedMessages:
     var item: pinned_msg_item.Item
-    if(not self.buildPinnedMessageItem(p.message, p.pinnedBy, item)):
+    if(not self.buildPinnedMessageItem(p.message, p.pinnedBy, item, reactions)):
       continue
 
     viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
@@ -219,9 +225,11 @@ method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string)
   let response = self.controller.getMessageById(messageId)
   if response.error.len > 0:
     return
-  if not self.buildPinnedMessageItem(response.message, actionInitiatedBy, item):
+
+  if not self.buildPinnedMessageItem(response.message, actionInitiatedBy, item, @[]):
     return
 
+  self.controller.asyncLoadReactionsForMessage(messageId)
   self.view.pinnedModel().insertItemBasedOnClock(item)
 
 method onMessageEdited*(self: Module, message: MessageDto) =
@@ -278,39 +286,38 @@ method onChatMuted*(self: Module) =
 method onChatUnmuted*(self: Module) =
   self.view.setMuted(false)
 
-method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let myPublicKey = singletonInstance.userProfile.getPubKey()
-    let myName = singletonInstance.userProfile.getName()
-    self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName,
-    reactionId)
-  else:
-    error "(pinned) wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
+method onReactionAdded*(self: Module, messageId: string, emoji: string, reactionId: string) =
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  let myName = singletonInstance.userProfile.getName()
+  self.view.pinnedModel().addReaction(messageId, emoji, didIReactWithThisEmoji = true, myPublicKey, myName, reactionId)
 
-method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
-  var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true)
-  else:
-    error "(pinned) wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
+method onReactionRemoved*(self: Module, messageId: string, emoji: string, reactionId: string) =
+  self.view.pinnedModel().removeReaction(messageId, emoji, reactionId, didIRemoveThisReaction = true)
 
-method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string,
-  reactionFrom: string) =
-  var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let item = self.view.pinnedModel().getItemWithMessageId(messageId)
-    if(item.isNil):
-      return
+method toggleReactionFromOthers*(self: Module, messageId: string, emoji: string, reactionId: string, reactionFrom: string) =
+  let item = self.view.pinnedModel().getItemWithMessageId(messageId)
+  if item.isNil:
+    return
 
-    if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
-      let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
-      self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
-        userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
-    else:
-      self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
+  if item.shouldAddReaction(emoji, reactionFrom):
+    let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
+    self.view.pinnedModel().addReaction(messageId, emoji, didIReactWithThisEmoji = false,
+      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
   else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReactionFromOthers"
+    self.view.pinnedModel().removeReaction(messageId, emoji, reactionId, didIRemoveThisReaction = false)
+
+method onReactionsLoaded*(self: Module, messageId: string, reactions: seq[ReactionDto]) =
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  for reaction in reactions:
+    let userWhoAddedThisReaction = self.controller.getContactById(reaction.`from`)
+    self.view.pinnedModel().addReaction(
+      messageId,
+      reaction.emoji,
+      didIReactWithThisEmoji = (reaction.`from` == myPublicKey),
+      userWhoAddedThisReaction.id,
+      userWhoAddedThisReaction.userDefaultDisplayName(),
+      reaction.id
+    )
 
 method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)

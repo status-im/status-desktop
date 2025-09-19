@@ -12,7 +12,7 @@ import shared.controls.chat
 StatusMenu {
     id: root
 
-    // expected roles: emojiId:int, filename:string, didIReactWithThisEmoji:bool
+    // expected roles: emoji:string, filename:string, didIReactWithThisEmoji:bool
     property var reactionModel
 
     property string myPublicKey: ""
@@ -40,7 +40,7 @@ StatusMenu {
     signal unpinMessage()
     signal pinnedMessagesLimitReached()
     signal showReplyArea(string messageSenderId)
-    signal toggleReaction(int emojiId)
+    signal toggleReaction(string emoji)
     signal deleteMessage()
     signal editClicked()
     signal markMessageAsUnread()
@@ -51,8 +51,8 @@ StatusMenu {
         visible: !root.disabledForChat || root.forceEnableEmojiReactions
         reactionsModel: root.reactionModel
         bottomPadding: Theme.halfPadding
-        onToggleReaction: {
-            root.toggleReaction(emojiId)
+        onToggleReaction: (emoji) => {
+            root.toggleReaction(emoji)
             root.close()
         }
     }
