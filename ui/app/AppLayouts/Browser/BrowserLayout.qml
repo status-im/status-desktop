@@ -31,6 +31,7 @@ StatusSectionLayout {
     id: root
 
     required property string userUID
+    required property bool thirdpartyServicesEnabled
 
     required property TransactionStore transactionStore
     required property var assetsStore
@@ -275,6 +276,7 @@ StatusSectionLayout {
             z: 50
             tabComponent: webEngineView
             currentWebEngineProfile: _internal.currentWebView.profile
+            thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
             determineRealURL: function(url) {
                 return _internal.determineRealURL(url)
             }

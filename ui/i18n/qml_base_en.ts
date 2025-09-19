@@ -17228,15 +17228,23 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable services and restart the app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable services and restart the app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Disable third-party services</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enable third-party services</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -19095,11 +19103,11 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
 <context>
     <name>main</name>
     <message>
-        <source>Hello World</source>
+        <source>Status Desktop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Status Desktop</source>
+        <source>Hello World</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
