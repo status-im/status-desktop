@@ -73,7 +73,7 @@ pipeline {
     QTDIR = "/c/Qt/6.9.2/msvc2022_64"
     PATH = "${env.QTDIR}/bin:${goPath()}/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
-    QML_DISABLE_DISK_CACHE = "true"
+    QML_DISABLE_DISK_CACHE = 1
     /* Control output the filename */
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch(), version: env.VERSION)}"
