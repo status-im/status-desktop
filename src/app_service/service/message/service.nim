@@ -38,7 +38,6 @@ logScope:
 
 const MESSAGES_PER_PAGE* = 20
 const MESSAGES_PER_PAGE_MAX* = 40
-const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
@@ -202,9 +201,13 @@ QtObject:
     return self.msgCursor.hasKey(chatId)
 
   proc resetMessageCursor*(self: Service, chatId: string) =
-    if(not self.msgCursor.hasKey(chatId)):
+    if not self.msgCursor.hasKey(chatId):
       return
     self.msgCursor.del(chatId)
+
+  proc resetAllMessageCursors*(self: Service) =
+    self.msgCursor = initTable[string, MessageCursor]()
+    self.pinnedMsgCursor = initTable[string, MessageCursor]()
 
   proc initOrGetMessageCursor(self: Service, chatId: string): MessageCursor =
     if(not self.msgCursor.hasKey(chatId)):
@@ -467,6 +470,9 @@ QtObject:
     self.events.on(SIGNAL_CHAT_LEFT) do(e: Args):
       var chatArg = ChatArgs(e)
       self.resetMessageCursor(chatArg.chatId)
+
+    self.events.on(SignalType.LocalMessageBackupDone.event) do(e: Args):
+      self.resetAllMessageCursors()
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     let chainIds = self.networkService.getCurrentNetworksChainIds()
