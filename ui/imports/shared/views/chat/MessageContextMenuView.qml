@@ -13,7 +13,7 @@ StatusMenu {
     id: root
 
     // expected roles: emoji:string, filename:string, didIReactWithThisEmoji:bool
-    property var reactionModel
+    property var defaultEmojiReactionsModel
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
@@ -31,6 +31,7 @@ StatusMenu {
     property bool editRestricted: false
     property bool pinnedMessage: false
     property bool canPin: false
+    property bool emojiReactionLimitReached: false
 
     readonly property bool isMyMessage: {
         return root.messageSenderId !== "" && root.messageSenderId === root.myPublicKey;
@@ -48,8 +49,8 @@ StatusMenu {
 
     MessageReactionsRow {
         id: emojiRow
-        visible: !root.disabledForChat || root.forceEnableEmojiReactions
-        reactionsModel: root.reactionModel
+        visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions)
+        defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
         bottomPadding: Theme.halfPadding
         onToggleReaction: (emoji) => {
             root.toggleReaction(emoji)
