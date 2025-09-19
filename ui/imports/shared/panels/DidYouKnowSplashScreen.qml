@@ -13,6 +13,7 @@ import shared.panels.private
 Pane {
     id: root
 
+    property alias infiniteLoading: splashScreen.infiniteLoading
     property alias progress: splashScreen.progress
     property alias splashScreenText: splashScreen.text
     property alias splashScreenSecondaryText: splashScreen.secondaryText
@@ -28,7 +29,7 @@ Pane {
             id: content
             anchors.bottom: parent.bottom
             width: parent.width
-            visible: root.progress !== 0 && root.messagesEnabled
+            visible: root.messagesEnabled
             Behavior on visible {
                 SequentialAnimation {
                     PropertyAction { target: content; property: "opacity"; value: visible ? 0 : didYouKnowText.opacity }                        //set opacity to 0 if the visible property changed to true
