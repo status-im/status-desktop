@@ -14,12 +14,8 @@ QtObject:
     OwnershipModel* = ref object of QAbstractListModel
       items: seq[backend.AccountBalance]
 
-  proc delete(self: OwnershipModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: OwnershipModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: OwnershipModel)
+  proc setup(self: OwnershipModel)
   proc newOwnershipModel*(): OwnershipModel =
     new(result, delete)
     result.setup
@@ -78,3 +74,10 @@ QtObject:
         balance += item.balance
         break
     return balance
+
+  proc delete(self: OwnershipModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: OwnershipModel) =
+    self.QAbstractListModel.setup
+

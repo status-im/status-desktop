@@ -40,14 +40,8 @@ QtObject:
     addressPerChainModel: seq[AddressPerChainModel]
     tokenMarketDetails: seq[MarketDetailsItem]
 
-  proc setup(self: TokensBySymbolModel) =
-    self.QAbstractListModel.setup
-    self.addressPerChainModel = @[]
-    self.tokenMarketDetails = @[]
-
-  proc delete(self: TokensBySymbolModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: TokensBySymbolModel)
+  proc delete(self: TokensBySymbolModel)
   proc newTokensBySymbolModel*(
     delegate: io_interface.TokenBySymbolModelDataSource,
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource
@@ -193,3 +187,12 @@ QtObject:
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])
+
+  proc setup(self: TokensBySymbolModel) =
+    self.QAbstractListModel.setup
+    self.addressPerChainModel = @[]
+    self.tokenMarketDetails = @[]
+
+  proc delete(self: TokensBySymbolModel) =
+    self.QAbstractListModel.delete
+

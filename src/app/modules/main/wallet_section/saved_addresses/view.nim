@@ -10,9 +10,7 @@ QtObject:
       model: Model
       modelVariant: QVariant
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -56,3 +54,7 @@ QtObject:
 
   proc remainingCapacityForSavedAddresses*(self: View): int {.slot.} =
     return self.delegate.remainingCapacityForSavedAddresses()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

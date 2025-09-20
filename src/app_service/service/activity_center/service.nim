@@ -71,9 +71,7 @@ QtObject:
   # Forward declaration
   proc asyncActivityNotificationLoad*(self: Service)
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
@@ -358,3 +356,7 @@ QtObject:
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error dismissing activity center notification", msg = e.msg
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

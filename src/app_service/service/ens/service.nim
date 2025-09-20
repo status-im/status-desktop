@@ -85,9 +85,7 @@ QtObject:
   proc add*(self: Service, chainId: int, username: string): bool
   proc remove*(self: Service, chainId: int, username: string): bool
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
@@ -374,3 +372,7 @@ QtObject:
     except Exception as e:
       error "Error getting ENS resourceUrl", username=username, exception=e.msg
       raise
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

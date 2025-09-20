@@ -19,12 +19,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[WalletAccountItem]
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -127,3 +123,10 @@ QtObject:
     self.items.insert(@[currentItem], toRow)
     self.endMoveRows()
     return true
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

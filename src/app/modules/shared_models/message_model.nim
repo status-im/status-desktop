@@ -82,16 +82,19 @@ QtObject:
       items*: seq[Item]
       firstUnseenMessageId: string
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
+  proc delete(self: Model)
+  proc setup(self: Model)
 
   proc newModel*(): Model =
     new(result, delete)
     result.setup
     result.firstUnseenMessageId = ""
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
 
   proc `$`*(self: Model): string =
     result = "MessageModel:\n"

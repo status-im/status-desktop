@@ -14,12 +14,8 @@ QtObject:
     KeyPairModel* = ref object of QAbstractListModel
       items: seq[KeyPairItem]
 
-  proc delete(self: KeyPairModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: KeyPairModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: KeyPairModel)
+  proc setup(self: KeyPairModel)
   proc newKeyPairModel*(): KeyPairModel =
     new(result, delete)
     result.setup
@@ -119,3 +115,10 @@ QtObject:
   proc setBalanceForAddress*(self: KeyPairModel, address: string, balance: CurrencyAmount) =
     for item in self.items:
       item.setBalanceForAddress(address, balance)
+
+  proc delete(self: KeyPairModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: KeyPairModel) =
+    self.QAbstractListModel.setup
+

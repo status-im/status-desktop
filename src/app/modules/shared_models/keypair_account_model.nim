@@ -15,12 +15,8 @@ QtObject:
     KeyPairAccountModel* = ref object of QAbstractListModel
       items: seq[KeyPairAccountItem]
 
-  proc delete(self: KeyPairAccountModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: KeyPairAccountModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: KeyPairAccountModel)
+  proc setup(self: KeyPairAccountModel)
   proc newKeyPairAccountModel*(): KeyPairAccountModel =
     new(result, delete)
     result.setup
@@ -143,3 +139,10 @@ QtObject:
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         self.items[i].setHideFromTotalBalance(hideFromTotalBalance)
+
+  proc delete(self: KeyPairAccountModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: KeyPairAccountModel) =
+    self.QAbstractListModel.setup
+

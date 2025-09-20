@@ -12,12 +12,8 @@ QtObject:
       # TODO: store resolved names here along addresses
       hasMore: bool
 
-  proc delete(self: RecipientsModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: RecipientsModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: RecipientsModel)
+  proc setup(self: RecipientsModel)
   proc newRecipientsModel*(): RecipientsModel =
     new(result, delete)
 
@@ -92,4 +88,10 @@ QtObject:
   QtProperty[bool] hasMore:
     read = getHasMore
     notify = hasMoreChanged
+
+  proc delete(self: RecipientsModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: RecipientsModel) =
+    self.QAbstractListModel.setup
 

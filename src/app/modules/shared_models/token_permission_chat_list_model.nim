@@ -10,12 +10,8 @@ QtObject:
   type TokenPermissionChatListModel* = ref object of QAbstractListModel
     items*: seq[TokenPermissionChatListItem]
 
-  proc setup(self: TokenPermissionChatListModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: TokenPermissionChatListModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: TokenPermissionChatListModel)
+  proc delete(self: TokenPermissionChatListModel)
   proc newTokenPermissionChatListModel*(): TokenPermissionChatListModel =
     new(result, delete)
     result.setup
@@ -74,3 +70,10 @@ QtObject:
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.ChannelName.int])
         return
+
+  proc setup(self: TokenPermissionChatListModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: TokenPermissionChatListModel) =
+    self.QAbstractListModel.delete
+

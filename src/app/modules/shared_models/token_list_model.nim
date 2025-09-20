@@ -20,12 +20,8 @@ QtObject:
   type TokenListModel* = ref object of QAbstractListModel
     items*: seq[TokenListItem]
 
-  proc setup(self: TokenListModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: TokenListModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: TokenListModel)
+  proc delete(self: TokenListModel)
   proc newTokenListModel*(): TokenListModel =
     new(result, delete)
     result.setup
@@ -131,3 +127,10 @@ QtObject:
         result = newQVariant(item.getDecimals())
       of ModelRole.PrivilegesLevel:
         result = newQVariant(item.getPrivilegesLevel())
+
+  proc setup(self: TokenListModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: TokenListModel) =
+    self.QAbstractListModel.delete
+

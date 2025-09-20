@@ -6,12 +6,8 @@ QtObject:
   type ActiveItem* = ref object of QObject
     item: ChatItem
 
-  proc setup(self: ActiveItem) =
-    self.QObject.setup
-
-  proc delete*(self: ActiveItem) =
-    self.QObject.delete
-
+  proc setup(self: ActiveItem)
+  proc delete*(self: ActiveItem)
   proc newActiveItem*(): ActiveItem =
     new(result, delete)
     result.setup
@@ -133,3 +129,9 @@ QtObject:
   QtProperty[bool] permissionsCheckOngoing:
     read = getPermissionsCheckOngoing
   
+  proc setup(self: ActiveItem) =
+    self.QObject.setup
+
+  proc delete*(self: ActiveItem) =
+    self.QObject.delete
+

@@ -174,9 +174,7 @@ QtObject:
 
   proc bulkReplacePubKeysWithDisplayNames(self: Service, messages: var seq[MessageDto])
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
@@ -1245,3 +1243,7 @@ proc deleteCommunityMemberMessages*(self: Service, communityId: string, memberPu
 
   except Exception as e:
     error "error: ", procName="deleteCommunityMemberMessages", errName = e.name, errDesription = e.msg
+
+proc delete*(self: Service) =
+  self.QObject.delete
+

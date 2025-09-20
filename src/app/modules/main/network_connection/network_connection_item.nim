@@ -7,9 +7,7 @@ QtObject:
     chainIds: string
     lastCheckedAt: int
 
-  proc delete*(self: NetworkConnectionItem) =
-    self.QObject.delete
-
+  proc delete*(self: NetworkConnectionItem)
   proc newNetworkConnectionItem*(completelyDown = false, connectionState = 0, chainIds = "", lastCheckedAt = 0): NetworkConnectionItem =
     new(result, delete)
     result.QObject.setup
@@ -71,3 +69,7 @@ QtObject:
       if self.lastCheckedAt != lastCheckedAt :
         self.lastCheckedAt = lastCheckedAt
         self.lastCheckedAtChanged()
+
+  proc delete*(self: NetworkConnectionItem) =
+    self.QObject.delete
+

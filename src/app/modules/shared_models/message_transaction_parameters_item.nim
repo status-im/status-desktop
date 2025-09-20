@@ -12,12 +12,8 @@ QtObject:
       commandState: int
       signature: string
 
-  proc setup(self: TransactionParametersItem) =
-    self.QObject.setup
-
-  proc delete*(self: TransactionParametersItem) =
-    self.QObject.delete
-
+  proc setup(self: TransactionParametersItem)
+  proc delete*(self: TransactionParametersItem)
   proc newTransactionParametersItem*(
       id: string,
       fromAddress: string,
@@ -114,3 +110,10 @@ QtObject:
 
   proc signature*(self: TransactionParametersItem): string {.inline.} =
     self.signature
+
+  proc setup(self: TransactionParametersItem) =
+    self.QObject.setup
+
+  proc delete*(self: TransactionParametersItem) =
+    self.QObject.delete
+

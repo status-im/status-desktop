@@ -84,10 +84,7 @@ QtObject:
   proc isBusy*(self: Service): bool {.featureGuard(KEYCARD_ENABLED).}  =
     return self.busy
 
-  proc delete*(self: Service) =
-    self.closingApp = true
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter, threadpool: ThreadPool): Service {.featureGuard(KEYCARD_ENABLED).}  =
     new(result, delete)
     result.QObject.setup
@@ -507,3 +504,8 @@ QtObject:
 
   proc resetAPI*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     keycard_go.ResetAPI()
+
+  proc delete*(self: Service) =
+    self.closingApp = true
+    self.QObject.delete
+

@@ -31,9 +31,7 @@ QtObject:
     threadpool: ThreadPool
     timeoutInMilliseconds: int
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
     new(result, delete)
     result.QObject.setup
@@ -125,3 +123,7 @@ QtObject:
     except Exception as e:
       error "error:", procName="asyncImportLocalBackupFile", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOCAL_BACKUP_IMPORT_COMPLETED, LocalBackupImportArg(error: e.msg))
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

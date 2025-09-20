@@ -73,9 +73,7 @@ QtObject:
   proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.}
   proc onENSNamesFetched*(self: Service, response: string) {.slot.}
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
@@ -110,3 +108,7 @@ QtObject:
   include service_token
   include service_keycard
   include balance_history
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

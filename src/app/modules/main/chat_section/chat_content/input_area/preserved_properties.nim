@@ -7,13 +7,8 @@ QtObject:
       replyMessageId: string
       fileUrlsAndSourcesJson: string
 
-  proc setup(self: PreservedProperties) =
-    self.QObject.setup
-    self.fileUrlsAndSourcesJson = "[]"
-
-  proc delete*(self: PreservedProperties) =
-    self.QObject.delete
-
+  proc setup(self: PreservedProperties)
+  proc delete*(self: PreservedProperties)
   proc newPreservedProperties*(): PreservedProperties =
     new(result, delete)
     result.setup
@@ -56,4 +51,11 @@ QtObject:
     read = getFileUrlsAndSourcesJson
     write = setFileUrlsAndSourcesJson
     notify = fileUrlsAndSourcesJsonChanged
+
+  proc setup(self: PreservedProperties) =
+    self.QObject.setup
+    self.fileUrlsAndSourcesJson = "[]"
+
+  proc delete*(self: PreservedProperties) =
+    self.QObject.delete
 

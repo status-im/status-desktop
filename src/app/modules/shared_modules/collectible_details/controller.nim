@@ -24,11 +24,31 @@ QtObject:
 
       dataType: backend_collectibles.CollectibleDataType
 
-  proc setup(self: Controller) =
-    self.QObject.setup
+  proc setup(self: Controller)
+  proc delete*(self: Controller)
+  proc setupEventHandlers(self: Controller) 
+  proc newController*(
+    requestId: int32,
+    networkService: network_service.Service,
+    events: EventEmitter,
+    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Details
+  ): Controller =
+    new(result, delete)
 
-  proc delete*(self: Controller) =
-    self.QObject.delete
+    result.requestId = requestId
+
+    result.dataType = dataType
+
+    result.networkService = networkService
+
+    result.detailedEntry = newCollectibleDetailsEmptyEntry()
+    result.isDetailedEntryLoading = false
+
+    result.eventsHandler = newEventsHandler(result.requestId, events)
+
+    result.setup()
+
+    result.setupEventHandlers()
 
   proc getDetailedEntry*(self: Controller): QVariant {.slot.} =
     return newQVariant(self.detailedEntry)
@@ -129,25 +149,9 @@ QtObject:
       self.processGetCollectionSocialsResponse(jsonObj)
     )
 
-  proc newController*(
-    requestId: int32,
-    networkService: network_service.Service,
-    events: EventEmitter,
-    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Details
-  ): Controller =
-    new(result, delete)
+  proc setup(self: Controller) =
+    self.QObject.setup
 
-    result.requestId = requestId
+  proc delete*(self: Controller) =
+    self.QObject.delete
 
-    result.dataType = dataType
-
-    result.networkService = networkService
-
-    result.detailedEntry = newCollectibleDetailsEmptyEntry()
-    result.isDetailedEntryLoading = false
-
-    result.eventsHandler = newEventsHandler(result.requestId, events)
-
-    result.setup()
-
-    result.setupEventHandlers()

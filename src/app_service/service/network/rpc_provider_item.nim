@@ -19,34 +19,19 @@ QtObject:
     authToken*: string
 
   proc setup*(self: RpcProviderItem,
-    id: int,
-    chainId: int,
-    name: string,
-    url: string,
-    isRpsLimiterEnabled: bool,
-    providerType: RpcProviderType,
-    isEnabled: bool,
-    authType: RpcProviderAuthType,
-    authLogin: string,
-    authPassword: string,
-    authToken: string
-    ) =
-      self.QObject.setup
-      self.id = id
-      self.chainId = chainId
-      self.name = name
-      self.url = url
-      self.isRpsLimiterEnabled = isRpsLimiterEnabled
-      self.providerType = providerType
-      self.isEnabled = isEnabled
-      self.authType = authType
-      self.authLogin = authLogin
-      self.authPassword = authPassword
-      self.authToken = authToken
-
-  proc delete*(self: RpcProviderItem) =
-      self.QObject.delete
-
+      id: int,
+      chainId: int,
+      name: string,
+      url: string,
+      isRpsLimiterEnabled: bool,
+      providerType: RpcProviderType,
+      isEnabled: bool,
+      authType: RpcProviderAuthType,
+      authLogin: string,
+      authPassword: string,
+      authToken: string
+      )
+  proc delete*(self: RpcProviderItem)
   proc rpcProviderDtoToItem*(rpcProvider: RpcProviderDto): RpcProviderItem =
     new(result, delete)
     result.setup(rpcProvider.id, rpcProvider.chainId, rpcProvider.name, rpcProvider.url, rpcProvider.isRpsLimiterEnabled,
@@ -136,3 +121,32 @@ QtObject:
     return self.authToken
   QtProperty[string] authToken:
     read = authToken
+
+  proc delete*(self: RpcProviderItem) =
+      self.QObject.delete
+
+  proc setup*(self: RpcProviderItem,
+      id: int,
+      chainId: int,
+      name: string,
+      url: string,
+      isRpsLimiterEnabled: bool,
+      providerType: RpcProviderType,
+      isEnabled: bool,
+      authType: RpcProviderAuthType,
+      authLogin: string,
+      authPassword: string,
+      authToken: string
+      ) =
+        self.QObject.setup
+        self.id = id
+        self.chainId = chainId
+        self.name = name
+        self.url = url
+        self.isRpsLimiterEnabled = isRpsLimiterEnabled
+        self.providerType = providerType
+        self.isEnabled = isEnabled
+        self.authType = authType
+        self.authLogin = authLogin
+        self.authPassword = authPassword
+        self.authToken = authToken

@@ -19,12 +19,8 @@ QtObject:
     ShowcasePreferencesGenericModel* = ref object of QAbstractListModel
       items: seq[ShowcasePreferencesGenericItem]
 
-  proc delete(self: ShowcasePreferencesGenericModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: ShowcasePreferencesGenericModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: ShowcasePreferencesGenericModel)
+  proc setup(self: ShowcasePreferencesGenericModel)
   proc newShowcasePreferencesGenericModel*(): ShowcasePreferencesGenericModel =
     new(result, delete)
     result.setup
@@ -67,3 +63,10 @@ QtObject:
 
   proc clear*(self: ShowcasePreferencesGenericModel) {.slot.} =
     self.setItems(@[])
+
+  proc delete(self: ShowcasePreferencesGenericModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: ShowcasePreferencesGenericModel) =
+    self.QAbstractListModel.setup
+

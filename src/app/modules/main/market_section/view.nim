@@ -10,12 +10,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       marketLeaderboardModel: MarketLeaderboardModel
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
@@ -74,3 +70,10 @@ QtObject:
 
   proc updatePage*(self: View, updates: seq[LeaderboardTokenUpdated]) =
     self.marketLeaderboardModel.pageUpdated(updates)
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

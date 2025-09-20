@@ -88,9 +88,7 @@ QtObject:
   # Forward declaration
   proc obtainMarketStickerPacks*(self: Service)
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
@@ -366,3 +364,7 @@ QtObject:
       discard status_stickers.clearRecentStickers()
     except RpcException:
       error "Error removing recent stickers", message = getCurrentExceptionMsg()
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

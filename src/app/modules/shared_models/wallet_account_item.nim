@@ -33,25 +33,8 @@ QtObject:
     operability: string = wa_dto.AccountFullyOperable,
     areTestNetworksEnabled: bool = false,
     hideFromTotalBalance: bool = true
-    ) =
-      self.QObject.setup
-      self.name = name
-      self.address = address
-      self.mixedcaseAddress = mixedcaseAddress
-      self.colorId = colorId
-      self.emoji = emoji
-      self.walletType = walletType
-      self.path = path
-      self.keyUid = keyUid
-      self.keycardAccount = keycardAccount
-      self.position = position
-      self.operability = operability
-      self.areTestNetworksEnabled = areTestNetworksEnabled
-      self.hideFromTotalBalance = hideFromTotalBalance
-
-  proc delete*(self: WalletAccountItem) =
-      self.QObject.delete
-
+    )
+  proc delete*(self: WalletAccountItem)
   proc newWalletAccountItem*(
     name: string = "",
     address: string = "",
@@ -206,3 +189,35 @@ QtObject:
   proc `hideFromTotalBalance=`*(self: WalletAccountItem, value: bool) {.inline.} =
     self.hideFromTotalBalance = value
     self.hideFromTotalBalanceChanged()
+
+  proc delete*(self: WalletAccountItem) =
+      self.QObject.delete
+  proc setup*(self: WalletAccountItem,
+    name: string = "",
+    address: string = "",
+    mixedcaseAddress: string = "",
+    colorId: string = "",
+    emoji: string = "",
+    walletType: string = "",
+    path: string = "",
+    keyUid: string = "",
+    keycardAccount: bool = false,
+    position: int = 0,
+    operability: string = wa_dto.AccountFullyOperable,
+    areTestNetworksEnabled: bool = false,
+    hideFromTotalBalance: bool = true
+    ) =
+      self.QObject.setup
+      self.name = name
+      self.address = address
+      self.mixedcaseAddress = mixedcaseAddress
+      self.colorId = colorId
+      self.emoji = emoji
+      self.walletType = walletType
+      self.path = path
+      self.keyUid = keyUid
+      self.keycardAccount = keycardAccount
+      self.position = position
+      self.operability = operability
+      self.areTestNetworksEnabled = areTestNetworksEnabled
+      self.hideFromTotalBalance = hideFromTotalBalance

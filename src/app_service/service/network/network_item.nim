@@ -29,50 +29,27 @@ QtObject:
     noPriorityFee*: bool
 
   proc setup*(self: NetworkItem,
-    chainId: int,
-    layer: int,
-    chainName: string,
-    iconUrl: string,
-    shortName: string,
-    chainColor: string,
-    rpcProviders: seq[RpcProviderItem],
-    blockExplorerURL: string,
-    nativeCurrencyName: string,
-    nativeCurrencySymbol: string,
-    nativeCurrencyDecimals: int,
-    isTest: bool,
-    isEnabled: bool,
-    relatedChainId: int,
-    isActive: bool,
-    isDeactivatable: bool,
-    eip1559Enabled: bool,
-    noBaseFee: bool,
-    noPriorityFee: bool
-    ) =
-      self.QObject.setup
-      self.chainId = chainId
-      self.layer = layer
-      self.chainName = chainName
-      self.iconUrl = iconUrl
-      self.shortName = shortName
-      self.chainColor = chainColor
-      self.rpcProviders = rpcProviders
-      self.blockExplorerURL = blockExplorerURL
-      self.nativeCurrencyName = nativeCurrencyName
-      self.nativeCurrencySymbol = nativeCurrencySymbol
-      self.nativeCurrencyDecimals = nativeCurrencyDecimals
-      self.isTest = isTest
-      self.isEnabled = isEnabled
-      self.relatedChainId = relatedChainId
-      self.isActive = isActive
-      self.isDeactivatable = isDeactivatable
-      self.eip1559Enabled = eip1559Enabled
-      self.noBaseFee = noBaseFee
-      self.noPriorityFee = noPriorityFee
-
-  proc delete*(self: NetworkItem) =
-      self.QObject.delete
-
+        chainId: int,
+        layer: int,
+        chainName: string,
+        iconUrl: string,
+        shortName: string,
+        chainColor: string,
+        rpcProviders: seq[RpcProviderItem],
+        blockExplorerURL: string,
+        nativeCurrencyName: string,
+        nativeCurrencySymbol: string,
+        nativeCurrencyDecimals: int,
+        isTest: bool,
+        isEnabled: bool,
+        relatedChainId: int,
+        isActive: bool,
+        isDeactivatable: bool,
+        eip1559Enabled: bool,
+        noBaseFee: bool,
+        noPriorityFee: bool
+        )
+  proc delete*(self: NetworkItem)
   proc networkDtoToItem*(network: NetworkDto): NetworkItem =
     new(result, delete)
     let rpcProviders = network.rpcProviders.map(p => rpcProviderDtoToItem(p))
@@ -200,3 +177,48 @@ QtObject:
     return self.isActive
   QtProperty[bool] isActive:
     read = isActive
+
+  proc delete*(self: NetworkItem) =
+      self.QObject.delete
+
+  proc setup*(self: NetworkItem,
+      chainId: int,
+      layer: int,
+      chainName: string,
+      iconUrl: string,
+      shortName: string,
+      chainColor: string,
+      rpcProviders: seq[RpcProviderItem],
+      blockExplorerURL: string,
+      nativeCurrencyName: string,
+      nativeCurrencySymbol: string,
+      nativeCurrencyDecimals: int,
+      isTest: bool,
+      isEnabled: bool,
+      relatedChainId: int,
+      isActive: bool,
+      isDeactivatable: bool,
+      eip1559Enabled: bool,
+      noBaseFee: bool,
+      noPriorityFee: bool
+      ) =
+        self.QObject.setup
+        self.chainId = chainId
+        self.layer = layer
+        self.chainName = chainName
+        self.iconUrl = iconUrl
+        self.shortName = shortName
+        self.chainColor = chainColor
+        self.rpcProviders = rpcProviders
+        self.blockExplorerURL = blockExplorerURL
+        self.nativeCurrencyName = nativeCurrencyName
+        self.nativeCurrencySymbol = nativeCurrencySymbol
+        self.nativeCurrencyDecimals = nativeCurrencyDecimals
+        self.isTest = isTest
+        self.isEnabled = isEnabled
+        self.relatedChainId = relatedChainId
+        self.isActive = isActive
+        self.isDeactivatable = isDeactivatable
+        self.eip1559Enabled = eip1559Enabled
+        self.noBaseFee = noBaseFee
+        self.noPriorityFee = noPriorityFee

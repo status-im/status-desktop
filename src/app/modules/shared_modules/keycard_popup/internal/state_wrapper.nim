@@ -5,9 +5,7 @@ QtObject:
   type StateWrapper* = ref object of QObject
     stateObj: State
 
-  proc delete*(self: StateWrapper) =
-    self.QObject.delete
-
+  proc delete*(self: StateWrapper)
   proc newStateWrapper*(): StateWrapper =
     new(result, delete)
     result.QObject.setup()
@@ -64,3 +62,7 @@ QtObject:
   proc tertiaryActionClicked*(self: StateWrapper) {.signal.}
   proc doTertiaryAction*(self: StateWrapper) {.slot.} =
     self.tertiaryActionClicked()
+
+  proc delete*(self: StateWrapper) =
+    self.QObject.delete
+

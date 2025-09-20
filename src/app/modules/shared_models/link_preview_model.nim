@@ -42,12 +42,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[Item]
 
-  proc delete*(self: Model) = 
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete*(self: Model)
+  proc setup(self: Model)
   proc newLinkPreviewModel*(linkPreviews: seq[LinkPreview] = @[]): Model =
     new(result, delete)
     result.setup
@@ -350,3 +346,10 @@ QtObject:
     for row, item in self.items:
       if item.linkPreview.getCommunityId() == communityId:
         self.setItemLoadingLocalData(row, item, true)
+
+  proc delete*(self: Model) = 
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

@@ -35,9 +35,7 @@ QtObject:
       editMode: bool
       disablePopup: bool # unables user to interact with the popup (action buttons are disabled as well as close popup button)
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -361,3 +359,7 @@ QtObject:
 
   proc remainingWatchOnlyAccountCapacity*(self: View): int {.slot.} =
     return self.delegate.remainingWatchOnlyAccountCapacity()
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

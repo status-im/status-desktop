@@ -19,9 +19,7 @@ QtObject:
       loading: bool
       keepUnread: bool
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -249,3 +247,7 @@ QtObject:
 
   proc forceLinkPreviewsLocalData*(self: View, messageId: string) {.slot.} =
     self.delegate.forceLinkPreviewsLocalData(messageId)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

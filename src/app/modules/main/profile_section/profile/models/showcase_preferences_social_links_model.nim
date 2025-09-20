@@ -17,12 +17,8 @@ QtObject:
     ShowcasePreferencesSocialLinkModel* = ref object of QAbstractListModel
       items: seq[ShowcasePreferencesSocialLinkItem]
 
-  proc delete(self: ShowcasePreferencesSocialLinkModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: ShowcasePreferencesSocialLinkModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: ShowcasePreferencesSocialLinkModel)
+  proc setup(self: ShowcasePreferencesSocialLinkModel)
   proc newShowcasePreferencesSocialLinkModel*(): ShowcasePreferencesSocialLinkModel =
     new(result, delete)
     result.setup
@@ -65,3 +61,10 @@ QtObject:
 
   proc clear*(self: ShowcasePreferencesSocialLinkModel) {.slot.} =
     self.setItems(@[])
+
+  proc delete(self: ShowcasePreferencesSocialLinkModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: ShowcasePreferencesSocialLinkModel) =
+    self.QAbstractListModel.setup
+

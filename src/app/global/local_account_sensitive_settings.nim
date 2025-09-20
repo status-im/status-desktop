@@ -85,12 +85,8 @@ QtObject:
     settingsFileDir: string
     settings: QSettings
 
-  proc setup(self: LocalAccountSensitiveSettings) =
-    self.QObject.setup
-    self.settingsFileDir = os.joinPath(DATADIR, "qt")
-
-  proc delete*(self: LocalAccountSensitiveSettings) =
-    self.QObject.delete
+  proc setup(self: LocalAccountSensitiveSettings)
+  proc delete*(self: LocalAccountSensitiveSettings)
 
   proc newLocalAccountSensitiveSettings*():
     LocalAccountSensitiveSettings =
@@ -643,3 +639,10 @@ QtObject:
       of LSS_KEY_USER_DECLINED_BACKUP_BANNER: self.userDeclinedBackupBannerChanged()
       of LSS_KEY_GIF_UNFURLING_ENABLED: self.gifUnfurlingEnabledChanged()
       of LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN: self.createCommunityPopupSeenChanged()
+
+  proc setup(self: LocalAccountSensitiveSettings) =
+    self.QObject.setup
+    self.settingsFileDir = os.joinPath(DATADIR, "qt")
+
+  proc delete*(self: LocalAccountSensitiveSettings) =
+    self.QObject.delete

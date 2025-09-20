@@ -23,11 +23,15 @@ QtObject:
 
       isFilterDirty: bool
 
-  proc setup(self: Status) =
-    self.QObject.setup
+  proc setup(self: Status)
+  proc delete*(self: Status)
+  proc newStatus*(): Status =
+    new(result, delete)
 
-  proc delete*(self: Status) =
-    self.QObject.delete
+    result.errorCode = backend_activity.ErrorCode.ErrorCodeSuccess
+    result.isFilterDirty = false
+
+    result.setup()
 
   proc filterChainsChanged*(self: Status) {.signal.}
 
@@ -65,14 +69,6 @@ QtObject:
   proc setErrorCode*(self: Status, errorCode: int) =
     self.errorCode = backend_activity.ErrorCode(errorCode)
     self.errorCodeChanged()
-
-  proc newStatus*(): Status =
-    new(result, delete)
-
-    result.errorCode = backend_activity.ErrorCode.ErrorCodeSuccess
-    result.isFilterDirty = false
-
-    result.setup()
 
   proc getLoadingData*(self: Status): bool {.slot.} =
     return self.loadingData
@@ -144,3 +140,10 @@ QtObject:
   QtProperty[bool] isFilterDirty:
     read = getIsFilterDirty
     notify = isFilterDirtyChanged
+
+  proc setup(self: Status) =
+    self.QObject.setup
+
+  proc delete*(self: Status) =
+    self.QObject.delete
+

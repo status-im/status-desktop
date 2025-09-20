@@ -12,12 +12,23 @@ QtObject:
     description*: string
     color*: string
     community*: StatusCommunityLinkPreview
+  
+  proc setup*(self: StatusCommunityChannelLinkPreview)
+  proc delete*(self: StatusCommunityChannelLinkPreview)
+  proc toStatusCommunityChannelLinkPreview*(jsonObj: JsonNode): StatusCommunityChannelLinkPreview =
+    new(result, delete)
+    result.setup()
 
-  proc setup*(self: StatusCommunityChannelLinkPreview) =
-    self.QObject.setup()
+    discard jsonObj.getProp("channelUuid", result.channelUuid)
+    discard jsonObj.getProp("emoji", result.emoji)
+    discard jsonObj.getProp("displayName", result.displayName)
+    discard jsonObj.getProp("description", result.description)
+    discard jsonObj.getProp("color", result.color)
+  
+    var communityJsonNode: JsonNode
+    if jsonObj.getProp("community", communityJsonNode):
+      result.community = toStatusCommunityLinkPreview(communityJsonNode)
 
-  proc delete*(self: StatusCommunityChannelLinkPreview) =
-    self.QObject.delete()
 
   proc channelUuidChanged*(self: StatusCommunityChannelLinkPreview) {.signal.}
   proc getChannelUuid*(self: StatusCommunityChannelLinkPreview): string {.slot.} =
@@ -57,19 +68,12 @@ QtObject:
   proc getCommunity*(self: StatusCommunityChannelLinkPreview): StatusCommunityLinkPreview =
     return self.community
 
-  proc toStatusCommunityChannelLinkPreview*(jsonObj: JsonNode): StatusCommunityChannelLinkPreview =
-    new(result, delete)
-    result.setup()
-
-    discard jsonObj.getProp("channelUuid", result.channelUuid)
-    discard jsonObj.getProp("emoji", result.emoji)
-    discard jsonObj.getProp("displayName", result.displayName)
-    discard jsonObj.getProp("description", result.description)
-    discard jsonObj.getProp("color", result.color)
   
-    var communityJsonNode: JsonNode
-    if jsonObj.getProp("community", communityJsonNode):
-      result.community = toStatusCommunityLinkPreview(communityJsonNode)
+  proc setup*(self: StatusCommunityChannelLinkPreview) =
+    self.QObject.setup()
+
+  proc delete*(self: StatusCommunityChannelLinkPreview) =
+    self.QObject.delete()
   
   proc `$`*(self: StatusCommunityChannelLinkPreview): string =
     return fmt"""StatusCommunityChannelLinkPreview(

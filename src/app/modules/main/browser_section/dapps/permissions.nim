@@ -9,12 +9,8 @@ QtObject:
     PermissionsModel* = ref object of QAbstractListModel
       items: seq[string]
 
-  proc delete(self: PermissionsModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: PermissionsModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: PermissionsModel)
+  proc setup(self: PermissionsModel)
   proc newPermissionsModel*(): PermissionsModel =
     new(result, delete)
     result.setup
@@ -66,3 +62,10 @@ QtObject:
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
+
+  proc delete(self: PermissionsModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: PermissionsModel) =
+    self.QAbstractListModel.setup
+

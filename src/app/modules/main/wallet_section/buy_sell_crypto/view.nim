@@ -15,9 +15,7 @@ QtObject:
       modelVariant: QVariant
       isFetching: bool
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -84,3 +82,7 @@ QtObject:
 
   proc onProviderUrlReady*(self: View, uuid: string, url: string) =
     self.providerUrlReady(uuid, url)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

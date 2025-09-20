@@ -14,9 +14,7 @@ QtObject:
       unreadCount: int
       hasUnseen: bool
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -207,3 +205,7 @@ QtObject:
 
   proc enableInstallationAndSync*(self: View, installationId: string) {.slot.} =
     self.delegate.enableInstallationAndSync(installationId)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

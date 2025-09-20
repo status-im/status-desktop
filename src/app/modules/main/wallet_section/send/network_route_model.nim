@@ -19,12 +19,8 @@ QtObject:
   type NetworkRouteModel* = ref object of QAbstractListModel
     items*: seq[NetworkRouteItem]
 
-  proc delete(self: NetworkRouteModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: NetworkRouteModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: NetworkRouteModel)
+  proc setup(self: NetworkRouteModel)
   proc newNetworkRouteModel*(): NetworkRouteModel =
     new(result, delete)
     result.setup
@@ -202,3 +198,10 @@ QtObject:
       if(self.items[i].getChainId() == chainId):
         self.items[i].isRouteEnabled = true
       self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
+
+  proc delete(self: NetworkRouteModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: NetworkRouteModel) =
+    self.QAbstractListModel.setup
+

@@ -31,12 +31,19 @@ QtObject:
       generatedCollectionId: string
       tokenType: TokenType
 
-  proc setup(self: CollectiblesEntry) =
-    self.QObject.setup
-
-  proc delete*(self: CollectiblesEntry) =
-    self.QObject.delete
-
+  proc setup(self: CollectiblesEntry)
+  proc delete*(self: CollectiblesEntry)
+  proc contractTypeToTokenType(contractType : ContractType): TokenType
+  proc setData(self: CollectiblesEntry, data: backend.Collectible)
+  proc newCollectibleDetailsFullEntry*(data: backend.Collectible, extradata: ExtraData): CollectiblesEntry =
+    new(result, delete)
+    result.id = data.id
+    result.setData(data)
+    result.extradata = extradata
+    result.generatedId = result.id.toString()
+    result.generatedCollectionId = result.id.contractID.toString()
+    result.tokenType = contractTypeToTokenType(data.contractType.get(ContractType.ContractTypeUnknown))
+    result.setup()
   proc setData(self: CollectiblesEntry, data: backend.Collectible) =
     self.data = data
     self.traits = newTraitModel()
@@ -388,16 +395,6 @@ QtObject:
       of ContractType.ContractTypeERC1155: return TokenType.ERC1155
       else: return TokenType.Unknown
 
-  proc newCollectibleDetailsFullEntry*(data: backend.Collectible, extradata: ExtraData): CollectiblesEntry =
-    new(result, delete)
-    result.id = data.id
-    result.setData(data)
-    result.extradata = extradata
-    result.generatedId = result.id.toString()
-    result.generatedCollectionId = result.id.contractID.toString()
-    result.tokenType = contractTypeToTokenType(data.contractType.get(ContractType.ContractTypeUnknown))
-    result.setup()
-
   proc newCollectibleDetailsBasicEntry*(id: backend.CollectibleUniqueID, extradata: ExtraData): CollectiblesEntry =
     new(result, delete)
     result.id = id
@@ -432,3 +429,10 @@ QtObject:
     # Notify changes for all properties
     self.twitterHandleChanged()
     self.websiteChanged()
+
+  proc setup(self: CollectiblesEntry) =
+    self.QObject.setup
+
+  proc delete*(self: CollectiblesEntry) =
+    self.QObject.delete
+

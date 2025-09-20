@@ -14,9 +14,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       pathModel: PathModel
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -108,3 +106,7 @@ QtObject:
 
   proc getEstimatedTime*(self: View, chainId: int, gasPrice: string, maxFeesPerGas: string, priorityFee: string): int {.slot.} =
     return self.delegate.getEstimatedTime(chainId, gasPrice, maxFeesPerGas, priorityFee)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

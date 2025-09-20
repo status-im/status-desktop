@@ -20,12 +20,8 @@ QtObject:
     SubModel* = ref object of QAbstractListModel
       items: seq[SubItem]
 
-  proc delete*(self: SubModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: SubModel) =
-    self.QAbstractListModel.setup
-
+  proc delete*(self: SubModel)
+  proc setup(self: SubModel)
   proc newSubModel*(): SubModel =
     new(result, delete)
     result.setup()
@@ -103,3 +99,10 @@ QtObject:
     for i in self.items:
       if (i.value == value):
         return i
+
+  proc delete*(self: SubModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: SubModel) =
+    self.QAbstractListModel.setup
+

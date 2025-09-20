@@ -42,12 +42,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[MemberItem]
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -590,3 +586,10 @@ QtObject:
       airdropAddress = airdropAddress,
       joined = joined,
     )
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+
