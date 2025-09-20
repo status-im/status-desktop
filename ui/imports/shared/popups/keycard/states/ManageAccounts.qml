@@ -234,8 +234,10 @@ Item {
                 let inputCoords = accountName.mapToItem(appMain, 0, 0)
                 root.emojiPopup.open()
                 root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
-                root.emojiPopup.x = inputCoords.x
-                root.emojiPopup.y = inputCoords.y + accountName.height + Theme.halfPadding
+                if (!root.emojiPopup.bottomSheet) {
+                    root.emojiPopup.x = inputCoords.x
+                    root.emojiPopup.y = inputCoords.y + accountName.height + Theme.halfPadding
+                }
             }
         }
 

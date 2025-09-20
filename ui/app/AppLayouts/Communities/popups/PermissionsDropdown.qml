@@ -92,8 +92,9 @@ StatusDropdown {
         id: group
     }
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
         spacing: 0
+        anchors.fill: parent
 
         CustomSeparator {
             Layout.fillWidth: true
