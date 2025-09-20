@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.16'
+library 'status-jenkins-lib@refactor-common-secrets'
 
 pipeline {
 
