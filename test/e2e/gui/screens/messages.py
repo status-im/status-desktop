@@ -10,6 +10,7 @@ import configs
 import driver
 from driver.objects_access import walk_children
 from gui.components.activity_center import ActivityCenter
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from gui.components.community.pinned_messages_popup import PinnedMessagesPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import ConfirmationMessagePopup
@@ -57,6 +58,7 @@ class LeftPanel(QObject):
     def click_chat_by_name(self, chat_name: str):
         self._chat_list_item.real_name['objectName'] = chat_name
         self._chat_list_item.click()
+        skip_message_backup_popup_if_visible()
         return ChatView()
 
     @allure.step('Click start chat button')

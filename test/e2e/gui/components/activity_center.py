@@ -6,6 +6,7 @@ import allure
 import configs.timeouts
 import driver
 from driver.objects_access import walk_children
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
@@ -49,6 +50,7 @@ class ContactRequest:
     def accept(self):
         assert self.accept_button is not None, 'Button not found'
         self.accept_button.click()
+        skip_message_backup_popup_if_visible()
 
     @allure.step('Decline request')
     def decline(self):

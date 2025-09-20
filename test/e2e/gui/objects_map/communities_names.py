@@ -79,10 +79,14 @@ chatLogView_chatMessageViewDelegate_MessageView = {"container": mainWindow_chatL
 """Chat context menu"""
 chatContextMenu = {"container": statusDesktop_mainWindow_overlay, "objectName": "ChatContextMenuView", "type": "PopupItem", "visible": True}
 
-""" Kick / Ban member popup """
+"""Kick / Ban member popup"""
 kickBanMemberPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "KickBanPopup", "type": "PopupItem", "visible": True}
 ban_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_BanModal_BanButton", "type": "StatusButton", "visible": True}
 confirm_kick_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
+
+"""Enable message backup popup"""
+enableMessageBackupPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "EnableMessageBackupPopup", "type": "PopupItem", "visible": True}
+enableMessageBackupPopupSkipButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "backupMessageSkipStatusFlatButton", "type": "StatusFlatButton", "visible": True}
 
 # Community Settings
 mainWindow_communitySettingsBackToCommunityButton_StatusBaseText = {"container": mainWindow_communityLoader_Loader, "objectName": "communitySettingsBackToCommunityButton", "type": "StatusBaseText", "visible": True}

@@ -11,6 +11,7 @@ from constants.links import external_link, link_to_status_community
 import configs.testpath
 from constants import UserAccount, RandomUser
 from constants.messaging import Messaging
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
 from scripts.utils.generators import random_text_message
@@ -97,6 +98,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             aut_one.attach()
             main_window.prepare()
             main_window.left_panel.open_messages_screen()
+            
+            skip_message_backup_popup_if_visible()
+            
             messages_screen.left_panel.start_chat().create_chat(members)
 
             with step('Verify group chat info'):
