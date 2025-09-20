@@ -1,0 +1,137 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+def isNightlyBuild = utils.isNightlyBuild()
+
+pipeline {
+
+  agent { label 'macos && arm64 && nix-2.24 && xcode-16.2' }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether release credentials are used.',
+      defaultValue: params.RELEASE ?: false
+    )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0','1','2','3']
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 45, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(abortPrevious: isPRBuild)
+    disableRestartFromStage()
+  }
+
+  environment {
+    GOCACHE = "${env.WORKSPACE_TMP}/go-cache"
+    GOMODCACHE = "${env.WORKSPACE_TMP}/go-mod-cache"
+    GOTMPDIR = "${env.WORKSPACE_TMP}"
+    PLATFORM = "ios/${getArch()}"
+    /* Improve make performance */
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    QT_VERSION="6.9.2"
+    QMAKE = "/Users/admin/${QT_VERSION}/ios/bin/qmake"
+    QT_HOST_PATH = "/Users/admin/${QT_VERSION}/macos"
+    /* QMAKE = sh(script: "which qmake", returnStdout: true).trim() */
+    QTDIR = sh(script:"${env.QMAKE} -query QT_INSTALL_PREFIX", returnStdout: true).trim()
+    /* Enforce Go version installed infra-role-golang. */
+    /* to fix missing rcc, since QT6 rcc is located at ${QTDIR}/libexec/rcc */
+    PATH = "${env.QTDIR}/bin:${env.QTDIR}/libexec:${env.HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
+    /* prevent sharing cache dir across different jobs */
+    GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
+    XDG_CACHE_HOME = "${env.WORKSPACE_TMP}/.cache"
+    /* sets App Version in Settings */
+    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    /* Control output the filename */
+    APP_TYPE = "${utils.getAppType()}"
+    /* iOS build configuration */
+    IPHONE_SDK = "iphoneos"
+    ARCH = "x86_64"
+    /* iOS app paths */
+    STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'app.zip', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_IOS_APP = "${WORKSPACE}/mobile/bin/ios/qt6/Status-tablet.app"
+  }
+
+  stages {
+    
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
+      }
+    }
+
+    stage('status-go') {
+      steps {
+        sh 'make status-go'
+      }
+    }
+
+    stage('Build iOS App') {
+      steps {
+        sh 'make mobile-build'
+      }
+    }
+
+    stage('Package iOS App') {
+      steps {
+        sh 'mkdir -p pkg'
+        sh "cd mobile/bin/ios/qt6 && zip -r ${env.WORKSPACE}/${env.STATUS_IOS_APP_ARTIFACT} Status-tablet.app"
+        sh "ls -la ${env.STATUS_IOS_APP_ARTIFACT}"
+      }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps {
+            script {
+              env.PKG_URL = s5cmd.upload(env.STATUS_IOS_APP_ARTIFACT)
+              jenkins.setBuildDesc(APP: env.PKG_URL)
+            }
+          }
+        }
+        stage('Archive') {
+          steps {
+            archiveArtifacts env.STATUS_IOS_APP_ARTIFACT
+          }
+        }
+      }
+    }   
+  }
+
+  post {
+      success { script { github.notifyPR(true) } }
+      failure { script { github.notifyPR(false) } }
+      cleanup { sh './scripts/clean-git.sh' }
+  }
+}
+
+def getArch() {
+    def tokens = Thread.currentThread().getName().split('/')
+    for (def arch in ['x86_64', 'aarch64']) {
+      if (tokens.contains(arch)) { return arch }
+    }
+}
+
+/* We extract the name of the job from currentThread because
+ * before an agent is picked env is not available. */
+def getJobPathTokens() {
+    return Thread.currentThread().getName().split('/')
+}

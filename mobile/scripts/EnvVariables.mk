@@ -1,5 +1,5 @@
 #OS: ios, android
-QSPEC:=$(shell qmake -query QMAKE_XSPEC)
+QSPEC:=$(shell $(QMAKE) -query QMAKE_XSPEC)
 ifeq ($(QSPEC),macx-ios-clang)
     OS:=ios
 else ifeq ($(QSPEC),macx-clang)
@@ -18,8 +18,8 @@ HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
 #Architectures: arm64, arm, x86_64. x86_64 is default for simulator
 ARCH?=$(shell uname -m)
 # Detect Qt version from qmake
-QT_MAJOR?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
-QT_DIR?=$(shell qmake -query QT_INSTALL_PREFIX)
+QT_MAJOR?=$(shell $(QMAKE) -query QT_VERSION | head -c 1 2>/dev/null)
+QT_DIR?=$(shell $(QMAKE) -query QT_INSTALL_PREFIX)
 MAKEFILE_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 ifneq ($(QT_MAJOR),6)
@@ -95,13 +95,13 @@ endif
 
 
 # Verify tools are installed
-QMAKE := $(shell which qmake)
+QMAKE ?= $(shell which qmake)
 ifeq ($(QMAKE),)
     $(error qmake not found)
 endif
 $(info QMAKE: $(QMAKE))
 
-RCC := $(shell qmake -query QT_HOST_LIBEXECS)/rcc
+RCC := $(shell $(QMAKE) -query QT_HOST_LIBEXECS)/rcc
 ifeq ($(RCC),)
     $(error rcc not found)
 endif

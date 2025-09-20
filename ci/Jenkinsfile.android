@@ -50,9 +50,15 @@ pipeline {
     GOCACHE = "${env.WORKSPACE_TMP}/go-cache"
     GOMODCACHE = "${env.WORKSPACE_TMP}/go-mod-cache"
     GOTMPDIR = "${env.WORKSPACE_TMP}"
-    STATUS_APK_ARTIFACT = "pkg/Status-tablet-${BUILD_NUMBER}.apk"
+    /* sets App Version in Settings */
+    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    /* Control output the filename */
+    APP_TYPE = "${utils.getAppType()}"
+    STATUS_APK_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'apk', arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
     PLATFORM = "android/arm64"
-    QT_ANDROID_PATH = "/opt/qt/6.9.2/android_arm64_v8a"
+    QT_VERSION = "6.9.2"
+    QT_ANDROID_PATH = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a"
+    QMAKE = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a/bin/qmake"
     STATUS_APK = "${WORKSPACE}/mobile/bin/android/qt6/Status-tablet.apk"
   }
 
