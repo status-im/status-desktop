@@ -8,6 +8,7 @@ import configs
 import driver
 from constants import CommunityData
 from gui.components.community.color_select_popup import ColorSelectPopup
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.elements.button import Button
@@ -36,16 +37,16 @@ class CreateNewCommunityPopup(QObject):
         self._archive_support_checkbox = CheckBox(names.archiveSupportToggle_StatusCheckBox)
         self._request_to_join_checkbox = CheckBox(names.requestToJoinToggle_StatusCheckBox)
         self._pin_messages_checkbox = CheckBox(names.pinMessagesToggle_StatusCheckBox)
-        self._next_button = Button(names.createCommunityNextBtn_StatusButton)
+        self.next_button = Button(names.createCommunityNextBtn_StatusButton)
         self._intro_text_edit = TextEdit(names.createCommunityIntroMessageInput_TextEdit)
         self._outro_text_edit = TextEdit(names.createCommunityOutroMessageInput_TextEdit)
-        self._create_community_button = Button(names.createCommunityFinalBtn_StatusButton)
+        self.create_community_button = Button(names.createCommunityFinalBtn_StatusButton)
         self._cropped_image_logo_item = QObject(names.croppedImageLogo)
         self._cropped_image_banner_item = QObject(names.croppedImageBanner)
 
     @allure.step('Get next button enabled state')
     def is_next_button_enabled(self) -> bool:
-        return driver.waitForObjectExists(self._next_button.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+        return driver.waitForObjectExists(self.next_button.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
     @allure.step('Get archive support checkbox state')
     def is_archive_checkbox_checked(self) -> bool:
@@ -143,7 +144,7 @@ class CreateNewCommunityPopup(QObject):
 
     @allure.step('Open intro/outro form')
     def open_next_form(self):
-        self._next_button.click()
+        self.next_button.click()
 
     @allure.step('Select color and verify it was set correctly')
     def verify_color(self, color: str):
@@ -173,9 +174,9 @@ class CreateNewCommunityPopup(QObject):
         self.set_tags(community_data.tags)
         self.verify_tags(community_data.tags)
         self.verify_checkboxes_values()
-        self._next_button.click()
+        self.next_button.click()
         self.set_intro(community_data.introduction)
         self.set_outro(community_data.leaving_message)
-        self._create_community_button.click()
-        self.wait_until_hidden()
+        self.create_community_button.click()
+        skip_message_backup_popup_if_visible()
         return CommunityScreen().wait_until_appears()

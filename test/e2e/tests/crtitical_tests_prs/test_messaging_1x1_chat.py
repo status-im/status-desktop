@@ -12,6 +12,7 @@ from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_
 from constants.messaging import Messaging
 from constants.wallet import WalletAddress
 from ext.test_files.base64_images import BASE_64_IMAGE_JPEG
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from gui.screens.messages import MessagesScreen
 
 import configs.testpath
@@ -140,6 +141,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         #     send_modal = chat.open_send_modal_from_link(chat_message1)
         #     assert str(send_modal.send_modal_recipient_panel.object.selectedRecipientAddress) == chat_message1
             left_panel_chat.click()
+            skip_message_backup_popup_if_visible()
 
         with step(f'User {user_one.name}, edit message and verify it was changed'):
             message_actions = message.hover_message()

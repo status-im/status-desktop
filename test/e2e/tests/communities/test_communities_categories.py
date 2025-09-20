@@ -9,6 +9,7 @@ from constants import RandomCommunity
 from tests import test_data
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703272', 'Member role cannot add category')

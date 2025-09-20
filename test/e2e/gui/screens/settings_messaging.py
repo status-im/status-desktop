@@ -6,6 +6,7 @@ import allure
 import configs.timeouts
 import driver
 from driver.objects_access import walk_children
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from gui.components.settings.block_user_popup import BlockUserPopup
 from gui.components.settings.respond_to_id_request_popup import RespondToIDRequestPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
@@ -74,6 +75,7 @@ class ContactItem:
     def accept(self) -> MessagesScreen:
         assert self._accept_button is not None, 'Button not found'
         self._accept_button.click()
+        skip_message_backup_popup_if_visible()
         return MessagesScreen().wait_until_appears()
 
     @allure.step('Reject request')
