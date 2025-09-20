@@ -19,12 +19,13 @@ function check_version {
 
 function install_build_dependencies {
   echo "Install build dependencies"
-  brew install pkg-config libtool jq node@22 yarn protoc-gen-go aqtinstall
+  brew install pkg-config libtool jq node@22 yarn protoc-gen-go aqtinstall xcbeautify
 }
 
 function install_qt {
   echo "Installing QT ${QT_VERSION}"
   aqt install-qt mac desktop ${QT_VERSION} clang_64 -m all
+  aqt install-qt mac ios ${QT_VERSION} ios -m all
 }
 
 function install_cmake {
