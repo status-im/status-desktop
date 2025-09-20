@@ -52,7 +52,9 @@ pipeline {
     GOTMPDIR = "${env.WORKSPACE_TMP}"
     STATUS_APK_ARTIFACT = "pkg/Status-tablet-${BUILD_NUMBER}.apk"
     PLATFORM = "android/arm64"
-    QT_ANDROID_PATH = "/opt/qt/6.9.2/android_arm64_v8a"
+    QT_VERSION = "6.9.2"
+    QT_ANDROID_PATH = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a"
+    QMAKE = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a/bin/qmake"
     STATUS_APK = "${WORKSPACE}/mobile/bin/android/qt6/Status-tablet.apk"
   }
 
