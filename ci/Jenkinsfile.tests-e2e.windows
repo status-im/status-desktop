@@ -1,0 +1,282 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.16'
+
+pipeline {
+
+  agent {
+    label 'windows && x86_64 && qt-6.9.2 && go-1.24 && windows-e2e'
+  }
+
+  parameters {
+    gitParameter(
+      name: 'GIT_REF',
+      description: 'Git branch to checkout.',
+      branchFilter: 'origin/(.*)',
+      branch: '',
+      defaultValue: 'master',
+      quickFilterEnabled: false,
+      selectedValue: 'DEFAULT',
+      sortMode: 'ASCENDING_SMART',
+      tagFilter: '*',
+      type: 'PT_BRANCH'
+    )
+    string(
+      name: 'BUILD_SOURCE',
+      description: 'URL to tar.gz file OR path to Jenkins build.',
+      defaultValue: getDefaultBuildSource()
+    )
+    string(
+      name: 'TEST_NAME',
+      description: 'Paste test name/part of test name to run specific test.',
+      defaultValue: ''
+    )
+    string(
+      name: 'TEST_SCOPE_FLAG',
+      description: 'Paste a known mark to run tests labeled with this mark',
+      defaultValue: getDefaultTestScopeFlag()
+    )
+    string(
+      name: 'TESTRAIL_RUN_NAME',
+      description: 'Test run name in Test Rail.',
+      defaultValue: ''
+    )
+    choice(
+      name: 'LOG_LEVEL',
+      description: 'Log level for pytest.',
+      choices: ['INFO', 'DEBUG', 'TRACE', 'WARNING', 'CRITICAL']
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 120, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      daysToKeepStr: '60',
+      numToKeepStr: '50',
+      artifactNumToKeepStr: '50',
+    ))
+    disableRestartFromStage()
+  }
+
+  environment {
+    PLATFORM = 'tests/e2e'
+
+    SQUISH_DIR = 'C:\\squish-runner-9.0.1-qt-6.9'
+    PYTHONPATH = "${SQUISH_DIR}\\lib;${SQUISH_DIR}\\bin;${SQUISH_DIR}\\lib\\python;${PYTHONPATH}"
+
+    /* To stop e2e tests using port 8545 */
+    STATUS_RUNTIME_HTTP_API = 'False'
+    STATUS_RUNTIME_WS_API = 'False'
+
+    /* Avoid race conditions with other builds using virtualenv. */
+    VIRTUAL_ENV = "${WORKSPACE_TMP}\\venv"
+    PATH = "${VIRTUAL_ENV}\\bin;C:\\Qt\\6.9.2\\msvc2022_64\\bin;${PATH}"
+
+    /* To store user configuratiin files in temp dir */
+    XDG_CONFIG_HOME = "${WORKSPACE_TMP}/config"
+
+    TESTRAIL_URL = 'https://ethstatus.testrail.net'
+    TESTRAIL_PROJECT_ID = 18
+    /* Override QT xcb plugin with linux to avoid errors like:
+     * "Could not load the Qt platform plugin "xcb" in "" even though it was found." 
+    QT_QPA_PLATFORM = "linuxfb"*/
+
+    /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
+    STATUS_RUNTIME_TEST_MODE = 1
+
+    /* Logging rules let you enable or disable logging for categories */
+    QT_LOGGING_RULES = '*.warning=true'
+
+    /* Set to a non-zero value to make Qt print out diagnostic information about the each (C++) plugin it tries to load. */
+    /* QT_DEBUG_PLUGINS = 0 */
+
+    /* Hack fix for params not being set in job on first run */
+    BUILD_SOURCE =      "${params.BUILD_SOURCE}"
+    TEST_NAME =         "${params.TEST_NAME}"
+    TEST_SCOPE_FLAG =   "${params.TEST_SCOPE_FLAG}"
+    TESTRAIL_RUN_NAME = "${params.TESTRAIL_RUN_NAME}"
+    LOG_LEVEL =         "${params.LOG_LEVEL}"
+
+  }
+
+  stages {
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
+    stage('Prep') {
+      steps { script {
+        setNewBuildName()
+        updateGitHubStatus()
+      } }
+    }
+
+    stage('Deps') {
+      steps { script { dir('test/e2e') {
+          bat """
+            python310 -m venv ${VIRTUAL_ENV}
+            python310 -m pip install --upgrade pip
+            python310 -m pip install -r requirements.txt
+          """
+      } } }
+    }
+
+    stage('Download') {
+      when { expression { params.BUILD_SOURCE.startsWith('http') } }
+      steps { timeout(5) { script { dir('test/e2e') {
+        sh 'mkdir -p ./pkg/'
+        setBuildDescFromFile(params.BUILD_SOURCE)
+        fileOperations([
+          fileDownloadOperation(
+            url:            params.BUILD_SOURCE,
+            targetFileName: 'StatusIm-Desktop.7z',
+            targetLocation: './pkg/',
+            userName:       '',
+            password:       '',
+          )
+        ])
+      } } } }
+    }
+
+    stage('Copy') {
+      when { expression { ! params.BUILD_SOURCE.startsWith('http') } }
+      steps { timeout(5) { script { dir('test/e2e') {
+        copyArtifacts(
+          projectName: params.BUILD_SOURCE,
+          filter:      'pkg/*-x86_64.7z',
+          selector:    lastWithArtifacts(),
+          target:      './'
+        )
+        setBuildDescFromFile(utils.findFile('pkg/*7z'))
+      } } } }
+    }
+
+    stage('Unpack') {
+      steps { timeout(5) { script { dir('test/e2e') {
+        sh 'mkdir aut'
+        sh "7z x '${utils.findFile('pkg/*.7z')}' -o'./aut'"
+        env.AUT_PATH = utils.findFile('aut/Status/bin/Status.exe').replace('\\','/')
+      } } } }
+    }
+
+    stage('Test') {
+      steps {
+        timeout(time: getTestStageTimeout()) {
+          dir('test/e2e') {
+            script {
+              def flags = []
+              if (params.TEST_NAME)       { flags.add("-k=${params.TEST_NAME}") }
+              if (params.TEST_SCOPE_FLAG) { flags.add(params.TEST_SCOPE_FLAG) }
+              if (params.LOG_LEVEL)       { flags.addAll(["--log-level=${params.LOG_LEVEL}", "--log-cli-level=${params.LOG_LEVEL}"]) }
+              def flagStr = flags.join(' ')
+
+              withCredentials([
+                usernamePassword(credentialsId: 'test-rail-api-devops', usernameVariable: 'TESTRAIL_USR', passwordVariable: 'TESTRAIL_PSW'),
+                string(credentialsId: 'wallet-test-user-seed', variable: 'WALLET_TEST_USER_SEED')
+              ]) {
+                sh"""
+                  pushd configs
+                  ln -sf _local.ci.py _local.py || cp _local.ci.py _local.py
+                  popd
+
+                """
+                bat"""
+                  python310 -m pytest -m "not keycard" -v --reruns=1 --timeout=300 ${flagStr} --disable-warnings --alluredir=./allure-results -o timeout_func_only=true
+                """
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    always { script { dir('test/e2e') {
+      archiveArtifacts('aut/Status/bin/*.log')
+
+      /* Needed to categorize types of errors and add environment section in allure report. */
+      sh 'cp ext/allure_files/categories.json allure-results'
+      sh 'cp ext/allure_files/environment.properties allure-results'
+
+      allure([
+        results: [[path: 'allure-results']],
+        reportBuildPolicy: 'ALWAYS',
+        properties: [],
+        jdk: '',
+      ])
+      /* Link for Jenkins Builds GitHub comment. */
+      env.PKG_URL = "${env.BUILD_URL}allure/"
+      updateGitHubStatus()
+    } } }
+    success { script {
+      github.notifyPR(true)
+    } }
+    failure { script {
+      github.notifyPR(false)
+      discord.send(
+        header: '**Desktop E2E test failure!**',
+        cred: 'discord-status-desktop-e2e-webhook',
+      )
+    } }
+    cleanup { cleanWs(disableDeferredWipeout: true) }
+  }
+}
+
+def setNewBuildName() {
+  if (currentBuild.upstreamBuilds) {
+    def parent = utils.parentOrCurrentBuild()
+    currentBuild.displayName = parent.getFullDisplayName().minus('status-desktop » ')
+  }
+}
+
+def setBuildDescFromFile(fileNameOrPath) {
+  def tokens = utils.parseFilename(utils.baseName(fileNameOrPath))
+  if (tokens == null) { /* Fallback for regex fail. */
+    currentBuild.description = utils.baseName(fileNameOrPath)
+    return
+  }
+  if (tokens.build && tokens.build.startsWith('pr')) {
+    currentBuild.displayName = tokens.build.replace(/^pr/, 'PR-')
+  }
+  currentBuild.description = formatMap([
+    Node: NODE_NAME,
+    Build: tokens.build,
+    Commit: tokens.commit,
+    Version: (tokens.tstamp ?: tokens.version),
+  ])
+}
+
+def updateGitHubStatus() {
+  /* For PR builds update check status. */
+  if (params.BUILD_SOURCE ==~ /.*\/PR-[0-9]+\/?$/) {
+    github.statusUpdate(
+      context: 'jenkins/prs/tests/e2e-new.windows',
+      commit: jenkins.getJobCommitByPath(params.BUILD_SOURCE),
+      repo_url: 'https://github.com/status-im/status-desktop'
+    )
+  }
+}
+
+def formatMap(Map data=[:]) {
+  def text = ''
+  data.each { key, val -> text += "<b>${key}</b>: ${val}</a><br>\n" }
+  return text
+}
+
+def getDefaultBuildSource() {
+  return ''
+}
+
+def getDefaultTestScopeFlag() {
+  if (JOB_NAME == "status-desktop/systems/windows/x86_64/tests-e2e") {
+    return ''
+  } else {
+    return '-m=critical'
+  }
+}
+
+def getTestStageTimeout() { params.TEST_SCOPE_FLAG == '-m=critical' ? 30 : 120 }
