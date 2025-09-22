@@ -16,7 +16,7 @@ StackView {
 
     // General properties:
     property int preferredContentWidth: width
-    property int internalRightPadding: Theme.xlPadding * 2
+    property int internalRightPadding: 0
 
     // id, name, image, color, owner properties expected
     required property var communityDetails

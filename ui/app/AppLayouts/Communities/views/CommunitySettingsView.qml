@@ -324,9 +324,9 @@ StatusSectionLayout {
             sourceComponent: MembersSettingsPanel {
                 rootStore: root.rootStore
 
-                preferredHeaderContentWidth: 560
-                preferredContentWidth: 560
-                internalRightPadding: Theme.xlPadding * 2
+                preferredHeaderContentWidth: d.preferredContentWidth
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
 
                 membersModel: membersModelAdaptor.joinedMembers
                 bannedMembersModel: membersModelAdaptor.bannedMembers
@@ -362,7 +362,8 @@ StatusSectionLayout {
                 permissionsModel: root.permissionsModel
 
                 // by design
-                preferredContentWidth: 560
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
 
                 // temporary solution to provide icons for assets, similar
                 // method is used in wallet (constructing filename from asset's
@@ -407,8 +408,8 @@ StatusSectionLayout {
                 id: mintTokensSettingsPanel
 
                 // by design
-                preferredContentWidth: 560
-                internalRightPadding: Theme.xlPadding * 2
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
 
                 enabledChainIds: root.enabledChainIds
 
@@ -544,8 +545,8 @@ StatusSectionLayout {
                 id: airdropsSettingsPanel
 
                 // by design
-                preferredContentWidth: 560
-                internalRightPadding: Theme.xlPadding * 2
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
 
                 communityDetails: d.communityDetails
 
@@ -656,6 +657,9 @@ StatusSectionLayout {
 
     QtObject {
         id: d
+
+        readonly property int preferredContentWidth: 560 // by design
+        readonly property int internalRightPadding: Theme.xlPadding * 2
 
         property int currentIndex: 0
 
@@ -779,8 +783,6 @@ StatusSectionLayout {
             onClosed: destroy()
         }
     }
-
-
 
     Connections {
         target: root.chatCommunitySectionModule

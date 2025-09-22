@@ -29,7 +29,7 @@ StackView {
 
     // General properties:
     property int preferredContentWidth: width
-    property int internalRightPadding: Theme.xlPadding * 2
+    property int internalRightPadding: 0
 
     property string previousPageName: depth > 1 ? qsTr("Back") : ""
     required property string communityId

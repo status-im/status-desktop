@@ -26,7 +26,7 @@ Item {
 
     required property var model
 
-    property int preferredContentWidth: width - internalRightPadding
+    property int preferredContentWidth: width
     property int internalRightPadding: 0
 
     property string searchString

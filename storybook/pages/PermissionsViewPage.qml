@@ -29,6 +29,8 @@ SplitView {
                     margins: 50
                 }
 
+                internalRightPadding: 50
+
                 ListModel {
                     id: permissionsModel
 
