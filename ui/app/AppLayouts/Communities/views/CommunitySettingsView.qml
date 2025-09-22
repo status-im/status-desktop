@@ -401,6 +401,9 @@ StatusSectionLayout {
 
             sourceComponent: MintTokensSettingsPanel {
                 id: mintTokensSettingsPanel
+
+                // by design
+                preferredContentWidth: 560
                 enabledChainIds: root.enabledChainIds
 
                 readonly property CommunityTokensStore communityTokensStore:

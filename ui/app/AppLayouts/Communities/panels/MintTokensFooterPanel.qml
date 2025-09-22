@@ -33,18 +33,26 @@ Control {
     height: 61 // by design
     spacing: Theme.padding
 
-    contentItem: Item {
+    contentItem: ColumnLayout {
+        spacing: 0
+
         StatusModalDivider {
-            width: parent.width
-            anchors.top: parent.top
+            Layout.fillWidth: true
         }
 
         RowLayout {
-            anchors.centerIn: parent
             spacing: root.spacing
+
+            Item {
+                Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 1
+            }
 
             StatusFlatButton {
                 id: sendOwnershipButton
+
+                Layout.horizontalStretchFactor: 0
+                Layout.fillWidth: true
 
                 icon.name: "send"
                 text: qsTr("Send Owner token to transfer %1 Community ownership").arg(root.communityName)
@@ -55,6 +63,9 @@ Control {
             StatusFlatButton {
                 id: airdropButton
 
+                Layout.horizontalStretchFactor: 0
+                Layout.fillWidth: true
+
                 icon.name: "airdrop"
                 text: qsTr("Airdrop")
 
@@ -63,6 +74,9 @@ Control {
 
             StatusFlatButton {
                 id: retailButton
+
+                Layout.horizontalStretchFactor: 0
+                Layout.fillWidth: true
 
                 icon.name: "token-sale"
                 visible: false // TODO: Milestone 14
@@ -73,6 +87,9 @@ Control {
 
             StatusFlatButton {
                 id: remotelyDestructButton
+
+                Layout.horizontalStretchFactor: 0
+                Layout.fillWidth: true
 
                 icon.name: "remotely-destruct"
                 text: qsTr("Remotely destruct")
@@ -85,12 +102,20 @@ Control {
             StatusFlatButton {
                 id: burnButton
 
+                Layout.horizontalStretchFactor: 0
+                Layout.fillWidth: true
+
                 icon.name: "delete"
                 text: qsTr("Burn")
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"
 
                 onClicked: root.burnClicked()
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 1
             }
         }
     }

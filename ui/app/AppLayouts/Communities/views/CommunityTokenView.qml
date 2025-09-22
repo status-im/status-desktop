@@ -19,7 +19,9 @@ import QtModelsToolkit
 StatusScrollView {
     id: root
 
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
+
     property bool preview: false
 
     // https://bugreports.qt.io/browse/QTBUG-84269
@@ -121,7 +123,9 @@ StatusScrollView {
     ColumnLayout {
         id: mainLayout
 
-        width: root.viewWidth
+        width: Math.min(root.preferredContentWidth,
+                        root.availableWidth - root.internalRightPadding)
+
         spacing: Theme.padding
 
         RowLayout {
@@ -137,7 +141,10 @@ StatusScrollView {
             }
 
             StatusBaseText {
+                Layout.fillWidth: true
                 elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                maximumLineCount: 3
                 font.pixelSize: Theme.primaryTextFontSize
                 text: (root.deployState === Constants.ContractTransactionStatus.InProgress) ?
                           (root.isAssetView ?
@@ -226,8 +233,11 @@ StatusScrollView {
         Loader {
             id: tokenHolderLoader
 
+            Layout.fillWidth: true
+
             visible: !root.preview && root.deploymentCompleted
-            sourceComponent: token.tokenHoldersLoading ? tokenHoldersLoadingComponent : sortableTokenHolderPanel
+            sourceComponent: token.tokenHoldersLoading ? tokenHoldersLoadingComponent
+                                                       : sortableTokenHolderPanel
         }
 
         Component {
@@ -235,6 +245,8 @@ StatusScrollView {
 
             StatusBaseText {
                 text: qsTr("Loading token holders...")
+
+                wrapMode: Text.Wrap
             }
         }
 

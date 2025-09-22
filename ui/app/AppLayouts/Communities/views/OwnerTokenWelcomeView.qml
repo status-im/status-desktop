@@ -14,7 +14,8 @@ import utils
 StatusScrollView {
     id: root
 
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
 
     required property string communityLogo
     required property color communityColor
@@ -31,7 +32,7 @@ StatusScrollView {
 
         objectName: "welcomeView"
 
-        width: root.viewWidth
+        width: root.availableWidth
         spacing: 20
 
         StatusBaseText {
@@ -40,6 +41,8 @@ StatusScrollView {
             objectName: "introPanelText"
 
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             wrapMode: Text.WordWrap
             lineHeight: 1.2
@@ -53,7 +56,9 @@ StatusScrollView {
             
             objectName: "infoPanel_owner"
 
-            Layout.fillWidth:  true
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             communityLogo: root.communityLogo
             communityColor: root.communityColor
@@ -71,7 +76,9 @@ StatusScrollView {
 
             objectName: "infoPanel_master"
 
-            Layout.fillWidth:  true
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             communityLogo: root.communityLogo
             communityColor: root.communityColor
@@ -87,11 +94,12 @@ StatusScrollView {
         }
 
         StatusButton {
-
             objectName: "welcomeViewNextButton"
+
             Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: Theme.bigPadding
-
+            Layout.rightMargin: mainLayout.width - Math.min(root.preferredContentWidth,
+                                                            mainLayout.width - root.internalRightPadding)
             text: qsTr("Next")
 
             onClicked: root.nextClicked()

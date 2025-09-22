@@ -57,6 +57,9 @@ SplitView {
             CommunityTokenView {
                 id: view
 
+                preferredContentWidth: 560
+                internalRightPadding: 50
+
                 anchors.fill: parent
                 anchors.margins: 50
                 preview: previewBox.checked

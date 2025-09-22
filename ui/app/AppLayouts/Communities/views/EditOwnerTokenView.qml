@@ -22,7 +22,8 @@ import SortFilterProxyModel
 StatusScrollView {
     id: root
 
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
 
     // Community info:
     property string communityName
@@ -84,12 +85,14 @@ StatusScrollView {
     ColumnLayout {
         id: mainLayout
 
-        width: root.viewWidth
+        width: root.availableWidth
         spacing: Theme.padding
 
         // Owner token defintion:
         StatusBaseText {
-            Layout.maximumWidth: root.viewWidth
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             elide: Text.ElideMiddle
             font.pixelSize: d.titleSize
@@ -100,6 +103,8 @@ StatusScrollView {
 
         TokenInfoPanel {
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             token: root.ownerToken
             accountBoxVisible: false
@@ -108,6 +113,8 @@ StatusScrollView {
 
         StatusModalDivider {
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             topPadding: Theme.padding
             bottomPadding: Theme.padding
@@ -115,7 +122,10 @@ StatusScrollView {
 
         // TMaster token definition:
         StatusBaseText {
-            Layout.maximumWidth: root.viewWidth
+
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             elide: Text.ElideMiddle
             font.pixelSize: d.titleSize
@@ -126,6 +136,8 @@ StatusScrollView {
 
         TokenInfoPanel {
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             token: root.tMasterToken
             accountBoxVisible: false
@@ -134,18 +146,26 @@ StatusScrollView {
 
         StatusModalDivider {
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             topPadding: Theme.padding
             bottomPadding: Theme.padding
         }
 
         CustomLabelDescriptionComponent {
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             label: qsTr("Select account")
             description: qsTr("This account will be where you receive your Owner token and will also be the account that pays the token minting gas fees.")
         }
 
         ColumnLayout {
             spacing: 11
+
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             AccountSelector {
                 id: accountBox
@@ -154,6 +174,7 @@ StatusScrollView {
                 Layout.topMargin: -Theme.halfPadding
                 model: root.accounts
                 selectedAddress: ownerToken.accountAddress
+
                 Binding {
                     target: root.ownerToken
                     property: "accountAddress"
@@ -195,12 +216,18 @@ StatusScrollView {
         CustomNetworkFilterRowComponent {
             id: networkSelector
 
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             label: qsTr("Select network")
             description: qsTr("The network you select will be where all your community’s tokens reside. Once set, this setting can’t be changed and tokens can’t move to other networks.")
         }
 
         FeesBox {
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             Layout.topMargin: Theme.padding
 
             model: QtObject {
@@ -217,8 +244,10 @@ StatusScrollView {
 
         StatusButton {
             Layout.preferredHeight: 44
-            Layout.alignment: Qt.AlignHCenter
+            Layout.maximumWidth: root.preferredContentWidth
             Layout.fillWidth: true
+
+            Layout.rightMargin: root.internalRightPadding
             Layout.topMargin: 4
             Layout.bottomMargin: Theme.padding
 
@@ -261,7 +290,6 @@ StatusScrollView {
         property string label
         property string description
 
-        Layout.fillWidth: true
         Layout.topMargin: Theme.padding
         spacing: 8
 
