@@ -5,8 +5,9 @@ AirdropTokensSelector 1.0 AirdropTokensSelector.qml
 BannerPicker 1.0 BannerPicker.qml
 CategoryListItem 1.0 CategoryListItem.qml
 ColorPicker 1.0 ColorPicker.qml
-CommunityListItem 1.0 CommunityListItem.qml
 CommunityEligibilityTag 1.0 CommunityEligibilityTag.qml
+CommunityInfoPanel 1.0 CommunityInfoPanel.qml
+CommunityListItem 1.0 CommunityListItem.qml
 DescriptionInput 1.0 DescriptionInput.qml
 EditCommunitySettingsForm 1.0 EditCommunitySettingsForm.qml
 EnsPanel 1.0 EnsPanel.qml
@@ -36,4 +37,3 @@ TokenItem 1.0 TokenItem.qml
 TokenPanel 1.0 TokenPanel.qml
 singleton PermissionTypes 1.0 PermissionTypes.qml
 singleton TokenCategories 1.0 TokenCategories.qml
-CommunityInfoPanel 1.0 CommunityInfoPanel.qml

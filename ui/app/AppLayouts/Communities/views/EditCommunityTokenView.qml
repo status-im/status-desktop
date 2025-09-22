@@ -21,7 +21,9 @@ import SortFilterProxyModel
 StatusScrollView {
     id: root
 
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
+
     property bool isAssetView: false
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
 
@@ -103,10 +105,14 @@ StatusScrollView {
     ColumnLayout {
         id: mainLayout
 
-        width: root.viewWidth
+        width: root.availableWidth
         spacing: Theme.padding
 
         StatusBaseText {
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             elide: Text.ElideRight
             text: root.isAssetView ? qsTr("Icon") : qsTr("Artwork")
         }
@@ -114,9 +120,12 @@ StatusScrollView {
         DropAndEditImagePanel {
             id: dropAreaItem
 
-            enabled: !showFees.checked
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
             Layout.preferredHeight: d.imageSelectorRectWidth
+
+            enabled: !showFees.checked
             dataImage: root.token.artworkSource
             artworkSource: root.token.artworkSource
             editorAnchorLeft: false
@@ -133,6 +142,10 @@ StatusScrollView {
 
         CustomStatusInput {
             id: nameInput
+
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             enabled: !showFees.checked
             label: qsTr("Name")
@@ -163,6 +176,10 @@ StatusScrollView {
         CustomStatusInput {
             id: descriptionInput
 
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             enabled: !showFees.checked
             label: qsTr("Description")
             text: root.token.description
@@ -183,6 +200,11 @@ StatusScrollView {
 
         CustomStatusInput {
             id: symbolInput
+
+
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             enabled: !showFees.checked
             label: qsTr("Symbol")
@@ -219,11 +241,20 @@ StatusScrollView {
         StatusBaseText {
             text: qsTr("Network")
             color: Theme.palette.directColor1
+
+            elide: Text.ElideRight
+
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
         }
 
         Rectangle {
             Layout.preferredHeight: 44
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             radius: 8
             color: "transparent"
             border.color: Theme.palette.directColor7
@@ -267,7 +298,10 @@ StatusScrollView {
         NetworkWarningPanel {
             visible: !!root.networkThatIsNotActive
             enabled: !showFees.checked
+
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
             Layout.topMargin: Theme.padding
 
             networkThatIsNotActive: root.networkThatIsNotActive
@@ -291,6 +325,9 @@ StatusScrollView {
 
         CustomStatusInput {
             id: supplyInput
+
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
 
             visible: !unlimitedSupplyChecker.checked
             label: qsTr("Total finite supply")
@@ -342,6 +379,10 @@ StatusScrollView {
         CustomStatusInput {
             id: assetDecimalsInput
 
+            Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             visible: root.isAssetView
             label: qsTr("Decimals (DP)")
             charLimit: 2
@@ -380,10 +421,12 @@ StatusScrollView {
             visible: showFees.checked
 
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
+
             Layout.topMargin: Theme.padding
 
             accountErrorText: root.feeErrorText
-            implicitWidth: 0
 
             model: QtObject {
                 id: singleFeeModel
@@ -412,9 +455,11 @@ StatusScrollView {
 
         StatusButton {
             id: previewButton
+
             Layout.preferredHeight: 44
-            Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.rightMargin: root.internalRightPadding
             Layout.topMargin: Theme.padding
             Layout.bottomMargin: Theme.padding
             text: qsTr("Preview")
@@ -464,7 +509,10 @@ StatusScrollView {
         Layout.fillWidth: true
 
         StatusBaseText {
+            Layout.fillWidth: true
+
             text: labelDescComponent.label
+            wrapMode: Text.WordWrap
             color: Theme.palette.directColor1
         }
 
@@ -486,6 +534,8 @@ StatusScrollView {
         property alias checked: switch_.checked
 
         Layout.fillWidth: true
+        Layout.maximumWidth: root.preferredContentWidth
+        Layout.rightMargin: root.internalRightPadding
         Layout.topMargin: Theme.padding
         spacing: 64
 

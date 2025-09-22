@@ -50,11 +50,16 @@ SplitView {
             MintedTokensView {
                 anchors.fill: parent
                 anchors.margins: 50
+                anchors.rightMargin: 0
+
+                internalRightPadding: 50
+
                 model: filteredTokensModel
                 isOwner: true
                 isAdmin: false
 
-                onItemClicked: logs.logEvent("MintedTokensView::itemClicked",
+                onItemClicked: tokenKey =>
+                               logs.logEvent("MintedTokensView::itemClicked",
                                              ["tokenKey"], [tokenKey])
             }
         }

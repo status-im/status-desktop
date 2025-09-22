@@ -28,7 +28,9 @@ StackView {
     id: root
 
     // General properties:
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width
+    property int internalRightPadding: Theme.xlPadding * 2
+
     property string previousPageName: depth > 1 ? qsTr("Back") : ""
     required property string communityId
     required property string communityName
@@ -146,11 +148,8 @@ StackView {
 
         // Owner or TMaster token retry navigation
         function retryPrivilegedToken(key, chainId, accountName, accountAddress) {
-            var properties = {
-                key: key,
-                chainId: chainId,
-                accountName: accountName,
-                accountAddress: accountAddress,
+            const properties = {
+                key, chainId, accountName, accountAddress,
             }
 
             root.push(ownerTokenEditViewComponent, properties,
@@ -171,8 +170,10 @@ StackView {
     }
 
     initialItem: SettingsPage {
-        implicitWidth: 0
         title: qsTr("Tokens")
+
+        preferredHeaderContentWidth: root.preferredContentWidth
+        headerRightPadding: root.internalRightPadding
 
         buttons: [
             StatusButton {
@@ -191,6 +192,9 @@ StackView {
         ]
 
         contentItem: MintedTokensView {
+            preferredContentWidth: root.preferredContentWidth
+            internalRightPadding: root.internalRightPadding
+
             model: SortFilterProxyModel {
                 sourceModel: root.tokensModel
                 proxyRoles: ExpressionRole {
@@ -226,8 +230,13 @@ StackView {
 
             title: qsTr("Mint Owner token")
 
+            preferredHeaderContentWidth: root.preferredContentWidth
+            headerRightPadding: root.internalRightPadding
+
             contentItem: OwnerTokenWelcomeView {
-                viewWidth: root.viewWidth
+                preferredContentWidth: root.preferredContentWidth
+                internalRightPadding: root.internalRightPadding
+
                 communityLogo: root.communityLogo
                 communityColor: root.communityColor
                 communityName: root.communityName
@@ -254,15 +263,19 @@ StackView {
 
             title: qsTr("Mint Owner token")
 
+            preferredHeaderContentWidth: root.preferredContentWidth
+            headerRightPadding: root.internalRightPadding
+
             contentItem: EditOwnerTokenView {
                 id: editOwnerTokenView
+
+                preferredContentWidth: root.preferredContentWidth
+                internalRightPadding: root.internalRightPadding
 
                 function signMintTransaction() {
                     root.mintOwnerToken(ownerToken, tMasterToken)
                     root.resetNavigation()
                 }
-
-                viewWidth: root.viewWidth
 
                 communityLogo: root.communityLogo
                 communityColor: root.communityColor
@@ -283,7 +296,7 @@ StackView {
                 isFeeLoading: !feeSubscriber.feesResponse
 
                 onMintClicked: signMintPopup.open()
-                
+
                 DeployFeesSubscriber {
                     id: feeSubscriber
                     communityId: root.communityId
@@ -327,6 +340,9 @@ StackView {
         SettingsPage {
             id: newTokenPage
 
+            preferredHeaderContentWidth: root.preferredContentWidth
+            headerRightPadding: root.internalRightPadding
+
             readonly property string chainIcon: NetworkModelHelpers.getChainIconUrl(root.flatNetworks, root.chainIndex)
 
             property TokenObject asset: TokenObject{
@@ -356,13 +372,15 @@ StackView {
             title: qsTr("Mint token")
 
             contentItem: ColumnLayout {
-                width: root.viewWidth
                 spacing: Theme.padding
 
                 StatusSwitchTabBar {
                     id: optionsTab
 
-                    Layout.preferredWidth: root.viewWidth
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: root.preferredContentWidth
+                    Layout.rightMargin: root.internalRightPadding
+
                     currentIndex: newTokenPage.isAssetView ? 1 : 0
 
                     StatusSwitchTabButton {
@@ -379,7 +397,7 @@ StackView {
                 }
 
                 StackLayout {
-                    Layout.preferredWidth: root.viewWidth
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
 
                     currentIndex: optionsTab.currentIndex
@@ -407,7 +425,9 @@ StackView {
                     component CustomEditCommunityTokenView: EditCommunityTokenView {
                         id: editView
 
-                        viewWidth: root.viewWidth
+                        preferredContentWidth: root.preferredContentWidth
+                        internalRightPadding: root.internalRightPadding
+
                         accounts: root.accounts
                         tokensModel: root.tokensModel
                         referenceAssetsBySymbolModel: root.referenceAssetsBySymbolModel
@@ -465,6 +485,9 @@ StackView {
         SettingsPage {
             id: tokenPreviewPage
 
+            preferredHeaderContentWidth: root.preferredContentWidth
+            headerRightPadding: root.internalRightPadding
+
             property alias token: preview.token
 
             title: token.name
@@ -473,7 +496,9 @@ StackView {
             contentItem: CommunityTokenView {
                 id: preview
 
-                viewWidth: root.viewWidth
+                preferredContentWidth: root.preferredContentWidth
+                internalRightPadding: root.internalRightPadding
+
                 preview: true
 
                 accounts: root.accounts
@@ -533,6 +558,9 @@ StackView {
     component TokenViewPage: SettingsPage {
         id: tokenViewPage
 
+        preferredHeaderContentWidth: root.preferredContentWidth
+        headerRightPadding: root.internalRightPadding
+
         property TokenObject token: TokenObject {}
         readonly property bool deploymentFailed: view.deployState === Constants.ContractTransactionStatus.Failed
 
@@ -552,11 +580,15 @@ StackView {
                 text: qsTr("Delete")
                 type: StatusBaseButton.Type.Danger
 
+                Layout.fillWidth: true
+
                 visible: (!tokenViewPage.isPrivilegedTokenItem) && !root.isAdminOnly && tokenViewPage.deploymentFailed
 
                 onClicked: deleteTokenAlertPopup.open()
             },
             StatusButton {
+                Layout.fillWidth: true
+
                 function retryAssetOrCollectible() {
                     // https://bugreports.qt.io/browse/QTBUG-91917
                     var isAssetView = tokenViewPage.token.type === Constants.TokenType.ERC20
@@ -594,6 +626,8 @@ StackView {
                 }
             },
             StatusButton {
+                Layout.fillWidth: true
+
                 text: qsTr("Refresh")
                 visible: localAppSettings.refreshTokenEnabled && (tokenViewPage.token.deployState === Constants.ContractTransactionStatus.InProgress)
                 onClicked: root.refreshToken(tokenViewPage.token.key)
@@ -606,7 +640,8 @@ StackView {
 
             property string airdropKey: tokenViewPage.airdropKey // TO REMOVE: Temporal property until airdrop backend is not ready to use token key instead of symbol
 
-            viewWidth: root.viewWidth
+            preferredContentWidth: root.preferredContentWidth
+            internalRightPadding: root.internalRightPadding
 
             token: tokenViewPage.token
             membersModel: tokenViewPage.membersModel
@@ -695,8 +730,8 @@ StackView {
                 SelfDestructFeesSubscriber {
                     id: selfDestructFeesSubscriber
 
-                    walletsAndAmounts: [{ 
-                        walletAddress: tokenMasterActionPopup.address, 
+                    walletsAndAmounts: [{
+                        walletAddress: tokenMasterActionPopup.address,
                         amount: 1
                     }]
                     accountAddress: tokenMasterActionPopup.selectedAccount
@@ -807,7 +842,7 @@ StackView {
                                      !!view.tokenOwnersModel &&
                                      view.tokenOwnersModel.count > 0
 
-            burnEnabled: deployStateCompleted            
+            burnEnabled: deployStateCompleted
             sendOwnershipEnabled: deployStateCompleted
 
             sendOwnershipVisible: root.isOwner && tokenViewPage.isOwnerTokenItem
@@ -840,7 +875,7 @@ StackView {
                 collectibleName: view.token.name
                 model: view.tokenOwnersModel || null
                 accounts: root.accounts
-                chainName: view.token.chainName   
+                chainName: view.token.chainName
 
                 feeText: remotelyDestructFeeSubscriber.feeText
                 feeErrorText: remotelyDestructFeeSubscriber.feeErrorText
@@ -851,7 +886,7 @@ StackView {
                     root.enableNetwork(root.ownerTokenChainId)
                     d.networkThatIsNotActive = ""
                 }
-                
+
                 onRemotelyDestructClicked: {
                     remotelyDestructPopup.close()
                     footer.accountAddress = accountAddress
@@ -1034,7 +1069,7 @@ StackView {
 
                 delegate: TokenViewPage {
                     required property var model
-                    implicitWidth: 0
+
                     anchors.fill: parent
 
                     tokenOwnersModel: model.tokenOwnersModel

@@ -23,7 +23,9 @@ StatusScrollView {
     required property bool isAdmin
 
     // General props
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
+
     property var model
     property string communityName
     property string communityId
@@ -43,6 +45,7 @@ StatusScrollView {
                                   string accountAddress)
 
     padding: 0
+    contentWidth: availableWidth
 
     QtObject {
         id: d
@@ -102,6 +105,9 @@ StatusScrollView {
     }
 
     Loader {
+        width: Math.min(root.preferredContentWidth,
+                        root.availableWidth - root.internalRightPadding)
+
         sourceComponent: root.count === 0 ? introComponent : mainLayoutComponent
     }
 
@@ -109,8 +115,7 @@ StatusScrollView {
         id: introComponent
 
         ColumnLayout {
-             width: root.viewWidth
-             spacing: 20
+            spacing: 20
 
             IntroPanel {
                 Layout.fillWidth: true
@@ -128,12 +133,12 @@ StatusScrollView {
             }
 
             StatusInfoBoxPanel {
-
                 objectName: "infoBoxPanel"
                 
                 readonly property bool isAdminOnly: root.isAdmin && !root.isOwner
 
                 Layout.fillWidth: true
+
                 Layout.bottomMargin: 20
 
                 title: qsTr("Get started")
@@ -155,13 +160,16 @@ StatusScrollView {
         ColumnLayout {
             id: mainLayout
 
-            width: root.viewWidth
             spacing: Theme.halfPadding
 
             StatusBaseText {
                 Layout.leftMargin: Theme.padding
+                Layout.rightMargin: Theme.padding
+                Layout.fillWidth: true
 
                 text: qsTr("Assets")
+
+                elide: Text.ElideRight
                 font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.baseColor1
             }
@@ -171,6 +179,7 @@ StatusScrollView {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight
+
                 interactive: false
 
                 visible: count > 0
@@ -178,7 +187,9 @@ StatusScrollView {
 
                 delegate: StatusListItem {
                     height: 64
+
                     width: ListView.view.width
+
                     title: model.name ?? ""
                     subTitle: model.symbol ?? ""
                     asset.name: model.image ? model.image : ""
@@ -207,16 +218,20 @@ StatusScrollView {
 
             // Empty placeholder when no assets; dashed rounded rectangle
             ShapeRectangle {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: parent.width - 4 // The rectangular path is rendered outside
+                Layout.fillWidth: true
+                Layout.leftMargin: 2 // The rectangular path is rendered outside
+                Layout.rightMargin: 2
                 Layout.preferredHeight: 44
+
                 visible: assetsList.count === 0
                 text: qsTr("You currently have no minted assets")
             }
 
             StatusBaseText {
-                Layout.leftMargin: Theme.padding
                 Layout.topMargin: Theme.halfPadding
+                Layout.leftMargin: Theme.padding
+                Layout.rightMargin: Theme.padding
+                Layout.fillWidth: true
 
                 text: qsTr("Collectibles")
                 font.pixelSize: Theme.primaryTextFontSize
@@ -227,7 +242,8 @@ StatusScrollView {
                 id: collectiblesGrid
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: childrenRect.height
+                Layout.preferredHeight: contentHeight
+
                 interactive: false
 
                 visible: count > 0
@@ -238,6 +254,7 @@ StatusScrollView {
                         value: Constants.TokenType.ERC721
                     }
                 }
+
                 cellHeight: 229
                 cellWidth: 176
                 leftMargin: 16
@@ -273,16 +290,19 @@ StatusScrollView {
 
             // Empty placeholder when no collectibles; dashed rounded rectangle
             ShapeRectangle {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: parent.width - 4 // The rectangular path is rendered outside
+                Layout.fillWidth: true
+                Layout.leftMargin: 2 // The rectangular path is rendered outside
+                Layout.rightMargin: 2
                 Layout.preferredHeight: 44
+
                 visible: collectiblesGrid.count === 0
                 text: qsTr("You currently have no minted collectibles")
             }
 
             // Retry button, only in case of Owner or TMaster tokens failure
             StatusButton {
-                Layout.preferredWidth: 336
+                Layout.fillWidth: true
+                Layout.maximumWidth: implicitWidth
                 Layout.preferredHeight: 44
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 24

@@ -27,6 +27,11 @@ SplitView {
             EditCommunityTokenView {
                 anchors.fill: parent
                 anchors.margins: 50
+                anchors.rightMargin: 0
+
+                preferredContentWidth: 560
+                internalRightPadding: 50
+
                 isAssetView: isAssetBox.checked
                 accounts: WalletAccountsModel {}
                 tokensModel: MintedTokensModel {}
