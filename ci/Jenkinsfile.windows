@@ -73,7 +73,7 @@ pipeline {
     QTDIR = "/c/Qt/6.9.2/msvc2022_64"
     PATH = "${env.QTDIR}/bin:${goPath()}/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
-    QML_DISABLE_DISK_CACHE = "true"
+    QML_DISABLE_DISK_CACHE = 1
     /* Control output the filename */
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch(), version: env.VERSION)}"
@@ -147,6 +147,21 @@ pipeline {
         archiveArtifacts(env.STATUS_CLIENT_7Z)
         env.PKG_URL = exe_url
         jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
+      } }
+    }
+
+
+    stage('E2E') {
+      when { expression { utils.isPRBuild() } }
+      steps { script {
+        build(
+          job: 'status-desktop/e2e/prs-windows',
+          wait: false,
+          parameters: jenkins.mapToParams([
+            GIT_REF: env.GIT_COMMIT,
+            BUILD_SOURCE: env.JOB_NAME,
+          ]),
+        )
       } }
     }
   }
