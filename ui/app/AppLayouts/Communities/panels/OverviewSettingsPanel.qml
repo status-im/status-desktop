@@ -85,14 +85,14 @@ StackLayout {
         id: mainSettingsPageComp
         ColumnLayout {
             spacing: 16
-            RowLayout {
-                Layout.fillWidth: true
 
+            RowLayout {
                 spacing: 16
 
                 ColumnLayout {
+                    id: titleColumn
+
                     Layout.fillWidth: true
-                    Layout.maximumWidth: 747
 
                     StatusBaseText {
                         id: nameText
@@ -102,7 +102,7 @@ StackLayout {
                         font.bold: true
                         font.letterSpacing: -0.4
                         color: Theme.palette.directColor1
-                        wrapMode: Text.WordWrap
+                        wrapMode: Text.Wrap
                         text: root.name
                     }
 
@@ -113,11 +113,11 @@ StackLayout {
                         font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                         wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
+                        maximumLineCount: 3
                         text: root.description
                     }
                 }
-
-                Item { Layout.fillWidth: true }
 
                 StatusButton {
                     Layout.preferredHeight: 38

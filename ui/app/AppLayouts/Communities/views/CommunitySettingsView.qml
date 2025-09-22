@@ -324,6 +324,10 @@ StatusSectionLayout {
             sourceComponent: MembersSettingsPanel {
                 rootStore: root.rootStore
 
+                preferredHeaderContentWidth: 560
+                preferredContentWidth: 560
+                internalRightPadding: Theme.xlPadding * 2
+
                 membersModel: membersModelAdaptor.joinedMembers
                 bannedMembersModel: membersModelAdaptor.bannedMembers
                 pendingMembersModel: membersModelAdaptor.pendingMembers

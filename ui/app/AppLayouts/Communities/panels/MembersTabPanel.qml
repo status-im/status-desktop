@@ -26,6 +26,9 @@ Item {
 
     required property var model
 
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
+
     property string searchString
     property RootStore rootStore
 
@@ -261,7 +264,8 @@ Item {
 
             readonly property string title: model.preferredDisplayName
 
-            width: ListView.view.width
+            width: Math.min(ListView.view.width - root.internalRightPadding,
+                            root.preferredContentWidth)
 
             icon.width: 40
             icon.height: 40
