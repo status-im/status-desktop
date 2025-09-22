@@ -355,10 +355,11 @@ proc initializeQmlContext(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
   singletonInstance.engine.setRootContextProperty("metrics", self.metricsVariant)
-  singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
-  # We need to init a language service once qml is loaded
+  # We need to init a language service before qml is loaded
   self.languageService.init()
+
+  singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
 proc onboardingDidLoad*(self: AppController) =
   self.initializeQmlContext()
