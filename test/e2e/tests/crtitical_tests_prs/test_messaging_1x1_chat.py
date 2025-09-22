@@ -35,8 +35,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     local_picture = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
     picture = random.choice([BASE_64_IMAGE_JPEG, local_picture])
 
-    EMOJI_PATHES = [HEART_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, LAUGHING_EMOJI_PATH,
-                    SAD_EMOJI_PATH, ANGRY_EMOJI_PATH]
+    EMOJI_PATHES = ["❤️", "👍", "👎", "😂", "😢", "😡"]
 
     with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):

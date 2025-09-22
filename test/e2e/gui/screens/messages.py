@@ -214,7 +214,7 @@ class Message:
             if getattr(child, 'id', '') == 'reactionDelegate':
                 for item in walk_children(child):
                     if getattr(item, 'objectName', '') == 'emojiReaction':
-                        reactions_pathes.append(item.source.path)
+                        reactions_pathes.append(item.text)
         return reactions_pathes
 
 

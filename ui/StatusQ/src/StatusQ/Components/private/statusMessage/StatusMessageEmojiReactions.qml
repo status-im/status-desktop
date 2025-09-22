@@ -104,6 +104,7 @@ Item {
                     spacing: 4
 
                     StatusBaseText {
+                        objectName: "emojiReaction"
                         anchors.verticalCenter: parent.verticalCenter
                         text: model.emoji
                     }
