@@ -23,6 +23,9 @@ import SortFilterProxyModel
 StatusScrollView {
     id: root
 
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
+
     // id, name, image, color, owner properties expected
     required property var communityDetails
 
@@ -48,8 +51,6 @@ StatusScrollView {
 
     property string enabledChainIds
 
-    property int viewWidth: 560 // by design
-
     readonly property var selectedHoldingsModel: ListModel {}
     // Array containing the contract keys and amounts of the tokens to be airdropped
     readonly property alias selectedContractKeysAndAmounts: d.selectedContractKeysAndAmounts
@@ -59,6 +60,8 @@ StatusScrollView {
     readonly property alias selectedFeeAccount: d.selectedFeeAccount
     // Bool property indicating whether the fees are shown
     readonly property bool showingFees: d.showFees
+
+    contentWidth: availableWidth
 
     signal calculateFees()
     signal stopUpdatingFees()
@@ -253,7 +256,10 @@ StatusScrollView {
 
     SequenceColumnLayout {
         id: mainLayout
-        width: root.viewWidth
+
+        width: Math.min(root.preferredContentWidth,
+                        root.availableWidth - root.internalRightPadding)
+
         spacing: 0
 
         AirdropTokensSelector {
@@ -412,6 +418,9 @@ StatusScrollView {
 
         AirdropRecipientsSelector {
             id: airdropRecipientsSelector
+
+            Layout.fillWidth: true
+
             enabled: !showFees.checked
 
             addressesModel: addresses
@@ -572,6 +581,9 @@ StatusScrollView {
 
         StatusSwitch {
             id: showFees
+
+            Layout.fillWidth: true
+
             enabled: root.isFullyFilled
             text: qsTr("Show fees (will be enabled once the form is filled)")
 

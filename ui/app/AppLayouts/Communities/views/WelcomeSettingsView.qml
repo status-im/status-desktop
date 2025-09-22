@@ -9,7 +9,8 @@ import AppLayouts.Communities.panels
 StatusScrollView {
     id: root
 
-    property int viewWidth: 560 // by design
+    property int preferredContentWidth: width - internalRightPadding
+    property int internalRightPadding: 0
 
     property alias image: introPanel.image
     property alias title: introPanel.title
@@ -31,7 +32,8 @@ StatusScrollView {
     ColumnLayout {
         id: mainLayout
 
-        width: root.viewWidth
+        width: Math.min(root.preferredContentWidth,
+                        root.availableWidth - root.internalRightPadding)
         spacing: 20
 
         IntroPanel {
