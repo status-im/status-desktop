@@ -453,6 +453,10 @@ Control {
 
             StatusBaseText {
                 id: label
+
+                Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 0
+
                 visible: !!text
                 elide: Text.ElideRight
                 text: root.label
@@ -461,6 +465,10 @@ Control {
 
             StatusBaseText {
                 id: secondaryLabel
+
+                Layout.fillWidth: true
+                Layout.horizontalStretchFactor: 0
+
                 visible: !!root.secondaryLabel
                 elide: Text.ElideRight
                 text: root.secondaryLabel
@@ -485,6 +493,7 @@ Control {
             }
 
             Item {
+                Layout.horizontalStretchFactor: 1
                 Layout.fillWidth: true
             }
 
