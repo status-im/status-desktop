@@ -32,7 +32,7 @@ StatusScrollView {
                      && !root.permissionDuplicated
                      && (isEditState ? !root.permissionTypeLimitExceeded : !root.permissionTypeLimitReached)
 
-    property int preferredContentWidth: width - internalRightPadding
+    property int preferredContentWidth: width
     property int internalRightPadding: 0
 
     property bool isEditState: false

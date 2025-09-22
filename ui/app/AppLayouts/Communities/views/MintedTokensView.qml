@@ -23,7 +23,7 @@ StatusScrollView {
     required property bool isAdmin
 
     // General props
-    property int preferredContentWidth: width - internalRightPadding
+    property int preferredContentWidth: width
     property int internalRightPadding: 0
 
     property var model

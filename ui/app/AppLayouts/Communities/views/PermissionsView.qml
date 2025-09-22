@@ -20,8 +20,8 @@ ColumnLayout {
 
     spacing: 24
 
-    property int preferredContentWidth: width - internalRightPadding
-    property int internalRightPadding: Theme.xlPadding * 2
+    property int preferredContentWidth: width
+    property int internalRightPadding: 0
 
     property int topPadding: count ? 16 : 0
 

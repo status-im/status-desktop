@@ -82,6 +82,7 @@ SplitView {
 
                 anchors.fill: parent
                 anchors.topMargin: 50
+                internalRightPadding: 50
 
                 // User profile
                 isOwner: ownerChecked.checked

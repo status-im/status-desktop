@@ -22,7 +22,7 @@ import SortFilterProxyModel
 StatusScrollView {
     id: root
 
-    property int preferredContentWidth: width - internalRightPadding
+    property int preferredContentWidth: width
     property int internalRightPadding: 0
 
     // Community info:

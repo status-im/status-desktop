@@ -76,6 +76,7 @@ SplitView {
 
             anchors.fill: parent
             anchors.topMargin: 50
+            internalRightPadding: 50
 
             permissionsModel: permissionsStoreMock.permissionsModel
             assetsModel: AssetsModel {}
