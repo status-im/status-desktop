@@ -14,6 +14,10 @@ import utils
 StackView {
     id: root
 
+    // General properties:
+    property int preferredContentWidth: width
+    property int internalRightPadding: Theme.xlPadding * 2
+
     // id, name, image, color, owner properties expected
     required property var communityDetails
 
@@ -38,7 +42,6 @@ StackView {
 
     required property string enabledChainIds
 
-    property int viewWidth: 560 // by design
     property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
 
     signal airdropClicked(var airdropTokens, var addresses, string feeAccountAddress)
@@ -73,8 +76,10 @@ StackView {
     }
 
     initialItem: SettingsPage {
-        implicitWidth: 0
         title: qsTr("Airdrops")
+
+        preferredHeaderContentWidth: root.preferredContentWidth
+        headerRightPadding: root.internalRightPadding
 
         buttons: [
             StatusButton {
@@ -88,7 +93,9 @@ StackView {
         ]
 
         contentItem: WelcomeSettingsView {
-            viewWidth: root.viewWidth
+            preferredContentWidth: root.preferredContentWidth
+            internalRightPadding: root.internalRightPadding
+
             image: Theme.png("community/airdrops8_1")
             title: qsTr("Airdrop community tokens")
             subtitle: qsTr("You can mint custom tokens and collectibles for your community")
@@ -113,8 +120,14 @@ StackView {
         SettingsPage {
             title: qsTr("New airdrop")
 
+            preferredHeaderContentWidth: root.preferredContentWidth
+            headerRightPadding: root.internalRightPadding
+
             contentItem: EditAirdropView {
                 id: view
+
+                preferredContentWidth: root.preferredContentWidth
+                internalRightPadding: root.internalRightPadding
 
                 padding: 0
 

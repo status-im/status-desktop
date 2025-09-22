@@ -408,6 +408,8 @@ StatusSectionLayout {
 
                 // by design
                 preferredContentWidth: 560
+                internalRightPadding: Theme.xlPadding * 2
+
                 enabledChainIds: root.enabledChainIds
 
                 readonly property CommunityTokensStore communityTokensStore:
@@ -541,6 +543,10 @@ StatusSectionLayout {
             sourceComponent: AirdropsSettingsPanel {
                 id: airdropsSettingsPanel
 
+                // by design
+                preferredContentWidth: 560
+                internalRightPadding: Theme.xlPadding * 2
+
                 communityDetails: d.communityDetails
 
                 // Profile type
@@ -556,7 +562,9 @@ StatusSectionLayout {
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
-                readonly property RolesRenamingModel renamedTokensBySymbolModel: RolesRenamingModel {
+                RolesRenamingModel {
+                    id: renamedTokensBySymbolModel
+
                     sourceModel: root.community.communityTokens || null
                     mapping: [
                         RoleRename {
@@ -642,7 +650,6 @@ StatusSectionLayout {
                 onRegisterAirdropFeeSubscriber: {
                     d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
                 }
-
             }
         }
     }
