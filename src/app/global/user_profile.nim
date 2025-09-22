@@ -20,16 +20,18 @@ QtObject:
     largeImage: string
     currentUserStatus: int
 
+  proc setup(self: UserProfile)
+  proc delete*(self: UserProfile)
+  proc newUserProfile*(localAccountSettings: LocalAccountSettings): UserProfile =
+    new(result, delete)
+    result.setup
+    result.localAccountSettings = localAccountSettings
+
   proc setup(self: UserProfile) =
     self.QObject.setup
 
   proc delete*(self: UserProfile) =
     self.QObject.delete
-
-  proc newUserProfile*(localAccountSettings: LocalAccountSettings): UserProfile =
-    new(result, delete)
-    result.setup
-    result.localAccountSettings = localAccountSettings
 
   proc setFixedData*(self: UserProfile, username: string, keyUid: string, pubKey: string, isKeycardUser: bool) =
     self.username = username

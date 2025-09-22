@@ -156,9 +156,7 @@ QtObject:
   proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
   proc sendTransactionsSignal(self: Service, sendDetails: SendDetailsDto, sentTransactions: seq[RouterSentTransaction] = @[])
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
@@ -538,3 +536,7 @@ proc reevaluateRouterPath*(self: Service, uuid: string, pathName: string, chainI
     isApprovalTx: isApprovalTx,
   )
   self.threadpool.start(arg)
+
+proc delete*(self: Service) =
+  self.QObject.delete
+

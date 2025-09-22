@@ -22,13 +22,9 @@ QtObject:
     description: string
     linkType: LinkType
     thumbnail: LinkPreviewThumbnail
-
-  proc setup*(self: StandardLinkPreview) =
-    self.QObject.setup
-    self.thumbnail = newLinkPreviewThumbnail()
-
-  proc delete*(self: StandardLinkPreview) =
-    self.QObject.delete
+  
+  proc setup*(self: StandardLinkPreview)
+  proc delete*(self: StandardLinkPreview)
 
   proc newStandardLinkPreview*(hostname: string, title: string, description: string, thumbnail: LinkPreviewThumbnail, linkType: LinkType): StandardLinkPreview =
     new(result, delete)
@@ -38,6 +34,13 @@ QtObject:
     result.description = description
     result.linkType = linkType
     result.thumbnail.copy(thumbnail)
+
+  proc setup*(self: StandardLinkPreview) =
+    self.QObject.setup
+    self.thumbnail = newLinkPreviewThumbnail()
+
+  proc delete*(self: StandardLinkPreview) =
+    self.QObject.delete
 
   proc hostnameChanged*(self: StandardLinkPreview) {.signal.}
   proc getHostname*(self: StandardLinkPreview): string {.slot.} =

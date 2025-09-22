@@ -13,13 +13,8 @@ QtObject:
       delegate: io_interface.GroupedAccountAssetsDataSource
       balancesPerChain: seq[BalancesModel]
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-    self.balancesPerChain = @[]
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(delegate: io_interface.GroupedAccountAssetsDataSource): Model =
     new(result, delete)
     result.setup
@@ -72,3 +67,11 @@ QtObject:
         self.balancesPerChain.add(newBalancesModel(self.delegate, balancesPerChainLen+i))
     self.endResetModel()
     self.countChanged()
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+    self.balancesPerChain = @[]
+

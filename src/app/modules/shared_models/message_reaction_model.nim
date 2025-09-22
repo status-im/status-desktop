@@ -15,12 +15,8 @@ QtObject:
     MessageReactionModel* = ref object of QAbstractListModel
       items: seq[MessageReactionItem]
 
-  proc delete(self: MessageReactionModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: MessageReactionModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: MessageReactionModel)
+  proc setup(self: MessageReactionModel)
   proc newMessageReactionModel*(): MessageReactionModel =
     new(result, delete)
     result.setup
@@ -152,3 +148,10 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index)
+
+  proc delete(self: MessageReactionModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: MessageReactionModel) =
+    self.QAbstractListModel.setup
+

@@ -40,12 +40,8 @@ QtObject:
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource
     tokenMarketDetails: seq[MarketDetailsItem]
 
-  proc setup(self: FlatTokensModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: FlatTokensModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: FlatTokensModel)
+  proc delete(self: FlatTokensModel)
   proc newFlatTokensModel*(
     delegate: io_interface.FlatTokenModelDataSource,
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource
@@ -185,3 +181,10 @@ QtObject:
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])
+
+  proc setup(self: FlatTokensModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: FlatTokensModel) =
+    self.QAbstractListModel.delete
+

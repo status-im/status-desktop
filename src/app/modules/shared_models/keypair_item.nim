@@ -31,37 +31,20 @@ QtObject:
     ownershipVerified: bool
 
   proc setup*(self: KeyPairItem,
-    keyUid: string,
-    pubKey: string,
-    locked: bool,
-    name: string,
-    image: string,
-    icon: string,
-    pairType: KeyPairType,
-    derivedFrom: string,
-    lastUsedDerivationIndex: int,
-    migratedToKeycard: bool,
-    syncedFrom: string,
-    ownershipVerified: bool
-    ) =
-    self.QObject.setup
-    self.keyUid = keyUid
-    self.pubKey = pubKey
-    self.locked = locked
-    self.name = name
-    self.image = image
-    self.icon = icon
-    self.pairType = pairType
-    self.derivedFrom = derivedFrom
-    self.lastUsedDerivationIndex = lastUsedDerivationIndex
-    self.migratedToKeycard = migratedToKeycard
-    self.syncedFrom = syncedFrom
-    self.ownershipVerified = ownershipVerified
-    self.accounts = newKeyPairAccountModel()
-
-  proc delete*(self: KeyPairItem) =
-    self.QObject.delete
-
+      keyUid: string,
+      pubKey: string,
+      locked: bool,
+      name: string,
+      image: string,
+      icon: string,
+      pairType: KeyPairType,
+      derivedFrom: string,
+      lastUsedDerivationIndex: int,
+      migratedToKeycard: bool,
+      syncedFrom: string,
+      ownershipVerified: bool
+      )
+  proc delete*(self: KeyPairItem)
   proc newKeyPairItem*(keyUid = "",
     pubKey = "",
     locked = false,
@@ -307,3 +290,35 @@ QtObject:
     self.setAccounts(item.getAccountsModel().getItems())
     self.setOwnershipVerified(item.getOwnershipVerified())
     self.setLastAccountAsObservedAccount()
+
+  proc delete*(self: KeyPairItem) =
+    self.QObject.delete
+
+  proc setup*(self: KeyPairItem,
+      keyUid: string,
+      pubKey: string,
+      locked: bool,
+      name: string,
+      image: string,
+      icon: string,
+      pairType: KeyPairType,
+      derivedFrom: string,
+      lastUsedDerivationIndex: int,
+      migratedToKeycard: bool,
+      syncedFrom: string,
+      ownershipVerified: bool
+      ) =
+      self.QObject.setup
+      self.keyUid = keyUid
+      self.pubKey = pubKey
+      self.locked = locked
+      self.name = name
+      self.image = image
+      self.icon = icon
+      self.pairType = pairType
+      self.derivedFrom = derivedFrom
+      self.lastUsedDerivationIndex = lastUsedDerivationIndex
+      self.migratedToKeycard = migratedToKeycard
+      self.syncedFrom = syncedFrom
+      self.ownershipVerified = ownershipVerified
+      self.accounts = newKeyPairAccountModel()

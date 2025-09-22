@@ -9,12 +9,8 @@ QtObject:
     displayDecimals: int
     stripTrailingZeroes: bool
 
-  proc setup(self: CurrencyAmount) =
-    self.QObject.setup
-
-  proc delete*(self: CurrencyAmount) =
-    self.QObject.delete
-
+  proc setup(self: CurrencyAmount)
+  proc delete*(self: CurrencyAmount)
   proc newCurrencyAmount*(
     amount: float64,
     symbol: string,
@@ -77,3 +73,10 @@ QtObject:
     discard jsonObj.getProp("symbol", result.symbol)
     discard jsonObj.getProp("displayDecimals", result.displayDecimals)
     discard jsonObj.getProp("stripTrailingZeroes", result.stripTrailingZeroes)
+
+  proc setup(self: CurrencyAmount) =
+    self.QObject.setup
+
+  proc delete*(self: CurrencyAmount) =
+    self.QObject.delete
+

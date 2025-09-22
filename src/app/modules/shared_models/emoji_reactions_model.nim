@@ -11,27 +11,8 @@ QtObject:
     type Model* = ref object of QAbstractListModel
         items: seq[EmojiReactionItem]
 
-    proc delete(self: Model) =
-        self.QAbstractListModel.delete
-
-    # TODO : To make this code scale, we can consider a loop similar to
-    # below code, and rename emoji to just be emojiReactions/emoji_[1 ... n]
-    #
-    # ```nim 
-    #   for i in 1..itemCount:
-    #       items.add(initItem(i, "emojiReactions/emoji_$(i)", false))
-    # ```
-    proc setup(self: Model) =
-        self.items = @[
-            initItem(1, "emojiReactions/heart",      false),
-            initItem(2, "emojiReactions/thumbsUp",   false),
-            initItem(3, "emojiReactions/thumbsDown", false),
-            initItem(4, "emojiReactions/laughing",   false),
-            initItem(5, "emojiReactions/sad",        false),
-            initItem(6, "emojiReactions/angry",      false),
-        ]
-        self.QAbstractListModel.setup
-
+    proc delete(self: Model)
+    proc setup(self: Model)
     proc newEmojiReactionsModel*(): Model =
         new(result, delete)
         result.setup
@@ -81,3 +62,25 @@ QtObject:
     proc setItemDidIReactWithThisEmoji*(self: Model, emojiId: int, didIReactWithThisEmoji: bool) =
         if self.items.len > 0:
             self.items[emojiId - 1].didIReactWithThisEmoji = didIReactWithThisEmoji
+
+    proc delete(self: Model) =
+        self.QAbstractListModel.delete
+
+    # TODO : To make this code scale, we can consider a loop similar to
+    # below code, and rename emoji to just be emojiReactions/emoji_[1 ... n]
+    #
+    # ```nim 
+    #   for i in 1..itemCount:
+    #       items.add(initItem(i, "emojiReactions/emoji_$(i)", false))
+    # ```
+    proc setup(self: Model) =
+        self.items = @[
+            initItem(1, "emojiReactions/heart",      false),
+            initItem(2, "emojiReactions/thumbsUp",   false),
+            initItem(3, "emojiReactions/thumbsDown", false),
+            initItem(4, "emojiReactions/laughing",   false),
+            initItem(5, "emojiReactions/sad",        false),
+            initItem(6, "emojiReactions/angry",      false),
+        ]
+        self.QAbstractListModel.setup
+

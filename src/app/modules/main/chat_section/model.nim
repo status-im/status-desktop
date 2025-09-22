@@ -49,12 +49,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[ChatItem]
 
-  proc delete*(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete*(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -770,3 +766,10 @@ QtObject:
       let modelIndex = self.createIndex(index, 0, nil)
       defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex, @[ModelRole.PermissionsCheckOngoing.int])
+
+  proc delete*(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

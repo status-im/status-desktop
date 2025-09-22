@@ -61,9 +61,7 @@ QtObject:
     walletAccountService: wallet_account_service.Service
     localPairingStatus: LocalPairingStatus
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter,
     threadpool: ThreadPool,
     settingsService: settings_service.Service,
@@ -411,3 +409,7 @@ QtObject:
     except Exception as e:
       error "error in pairDevice: ", desription = e.msg
       return e.msg
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

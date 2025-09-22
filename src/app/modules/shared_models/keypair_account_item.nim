@@ -20,9 +20,7 @@ QtObject:
     areTestNetworksEnabled: bool
     hideFromTotalBalance: bool
 
-  proc delete*(self: KeyPairAccountItem) =
-    self.QObject.delete
-
+  proc delete*(self: KeyPairAccountItem)
   proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", colorId = "", icon = "",
     balance = newCurrencyAmount(), balanceFetched = true, operability = wa_dto.AccountFullyOperable,
     isDefaultAccount = false, areTestNetworksEnabled =false, hideFromTotalBalance = false): KeyPairAccountItem =
@@ -181,3 +179,7 @@ QtObject:
   QtProperty[bool] hideFromTotalBalance:
     read = hideFromTotalBalance
     notify = hideFromTotalBalanceChanged
+
+  proc delete*(self: KeyPairAccountItem) =
+    self.QObject.delete
+

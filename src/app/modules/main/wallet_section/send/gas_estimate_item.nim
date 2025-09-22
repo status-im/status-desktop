@@ -10,15 +10,8 @@ QtObject:
     totalFeesInNativeCrypto: float,
     totalTokenFees: float,
     totalTime: int
-  ) =
-    self.QObject.setup
-    self.totalFeesInNativeCrypto = totalFeesInNativeCrypto
-    self.totalTokenFees = totalTokenFees
-    self.totalTime = totalTime
-
-  proc delete*(self: GasEstimateItem) =
-      self.QObject.delete
-
+  )
+  proc delete*(self: GasEstimateItem)
   proc newGasEstimateItem*(
     totalFeesInNativeCrypto: float = 0,
     totalTokenFees: float = 0,
@@ -54,3 +47,16 @@ QtObject:
   QtProperty[int] totalTime:
     read = getTotalTime
     notify = totalTimeChanged
+
+  proc delete*(self: GasEstimateItem) =
+      self.QObject.delete
+
+  proc setup*(self: GasEstimateItem,
+    totalFeesInNativeCrypto: float,
+    totalTokenFees: float,
+    totalTime: int
+  ) =
+    self.QObject.setup
+    self.totalFeesInNativeCrypto = totalFeesInNativeCrypto
+    self.totalTokenFees = totalTokenFees
+    self.totalTime = totalTime

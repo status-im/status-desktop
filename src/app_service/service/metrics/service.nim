@@ -30,9 +30,7 @@ QtObject:
     threadpool: ThreadPool
     metricsEnabled: bool
 
-  proc delete*(self: MetricsService) =
-    self.QObject.delete
-
+  proc delete*(self: MetricsService)
   proc newService*(threadpool: ThreadPool): MetricsService =
     new(result, delete)
     result.QObject.setup
@@ -89,3 +87,7 @@ QtObject:
         self.centralizedMetricsEnabledChanged()
     except Exception as e:
       error "toggleCentralizedMetrics", exceptionMsg = e.msg
+
+  proc delete*(self: MetricsService) =
+    self.QObject.delete
+

@@ -7,9 +7,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -26,3 +24,7 @@ QtObject:
 
   proc parseContactSharedUrl*(self: View, url: string): string {.slot.} =
     return self.delegate.parseContactSharedUrl(url)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

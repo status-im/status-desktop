@@ -12,12 +12,8 @@ QtObject:
       collectiblesNetworkConnection: NetworkConnectionItem
       marketValuesNetworkConnection: NetworkConnectionItem
 
-  proc setup(self: View) =
-    self.QObject.setup
-
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc setup(self: View)
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
@@ -70,4 +66,10 @@ QtObject:
       of MARKET:
         self.marketValuesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
     self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, float(lastCheckedAt))
+
+  proc setup(self: View) =
+    self.QObject.setup
+
+  proc delete*(self: View) =
+    self.QObject.delete
 

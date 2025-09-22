@@ -11,9 +11,7 @@ QtObject:
       chatSearchModel: chat_search_model.Model
       chatSearchModelVariant: QVariant
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -70,3 +68,7 @@ QtObject:
     return self.chatSearchModelVariant
   QtProperty[QVariant] chatSearchModel:
     read = getChatSearchModel
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

@@ -22,12 +22,8 @@ QtObject:
     delegate: io_interface.AccessInterface
     built: bool
 
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: Model)
+  proc delete(self: Model)
   proc newModel*(delegate: io_interface.AccessInterface): Model =
     new(result, delete)
     result.setup
@@ -174,4 +170,10 @@ QtObject:
     for item in self.items:
       if item.sectionId == sectionId:
         self.updateSectionNameOnChatItem(item.chatId, sectionName)
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
 

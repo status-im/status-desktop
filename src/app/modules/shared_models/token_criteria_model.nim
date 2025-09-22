@@ -18,12 +18,8 @@ QtObject:
   type TokenCriteriaModel* = ref object of QAbstractListModel
     items*: seq[TokenCriteriaItem]
 
-  proc setup(self: TokenCriteriaModel) =
-    self.QAbstractListModel.setup
-
-  proc delete(self: TokenCriteriaModel) =
-    self.QAbstractListModel.delete
-
+  proc setup(self: TokenCriteriaModel)
+  proc delete(self: TokenCriteriaModel)
   proc newTokenCriteriaModel*(): TokenCriteriaModel =
     new(result, delete)
     result.setup
@@ -93,3 +89,10 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
+
+  proc setup(self: TokenCriteriaModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: TokenCriteriaModel) =
+    self.QAbstractListModel.delete
+

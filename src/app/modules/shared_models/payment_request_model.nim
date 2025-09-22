@@ -13,12 +13,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[PaymentRequest]
 
-  proc delete*(self: Model) = 
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete*(self: Model)
+  proc setup(self: Model)
   proc newPaymentRequestModel*(paymentRequests: seq[PaymentRequest] = @[]): Model =
     new(result, delete)
     result.setup
@@ -97,3 +93,10 @@ QtObject:
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
+
+  proc delete*(self: Model) = 
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

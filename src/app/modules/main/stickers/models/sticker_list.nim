@@ -13,10 +13,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       stickers*: seq[Item]
 
-  proc setup(self: StickerList) = self.QAbstractListModel.setup
-
-  proc delete(self: StickerList) = self.QAbstractListModel.delete
-
+  proc setup(self: StickerList)
+  proc delete(self: StickerList)
   proc newStickerList*(delegate: io_interface.AccessInterface, stickers: seq[Item] = @[]): StickerList =
     new(result, delete)
     result.delegate = delegate
@@ -74,3 +72,7 @@ QtObject:
     self.beginRemoveRows(modelIndex, idx, idx)
     self.stickers.delete(idx)
     self.endRemoveRows()
+
+  proc setup(self: StickerList) = self.QAbstractListModel.setup
+
+  proc delete(self: StickerList) = self.QAbstractListModel.delete

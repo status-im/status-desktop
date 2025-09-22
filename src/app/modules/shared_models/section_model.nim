@@ -55,15 +55,20 @@ QtObject:
     SectionModel* = ref object of QAbstractListModel
       items: seq[SectionItem]
 
+  # Forward declarations for ORC
+  proc delete(self: SectionModel)
+  proc setup(self: SectionModel)
+
+  proc newModel*(): SectionModel =
+    new(result, delete)
+    result.setup
+
+  # Implementations after constructor
   proc delete(self: SectionModel) =
     self.QAbstractListModel.delete
 
   proc setup(self: SectionModel) =
     self.QAbstractListModel.setup
-
-  proc newModel*(): SectionModel =
-    new(result, delete)
-    result.setup
 
   proc `$`*(self: SectionModel): string =
     for i in 0 ..< self.items.len:

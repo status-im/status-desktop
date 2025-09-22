@@ -14,10 +14,8 @@ QtObject:
     GifColumnModel* = ref object of QAbstractListModel
       gifs*: seq[GifDto]
 
-  proc setup(self: GifColumnModel) = self.QAbstractListModel.setup
-
-  proc delete(self: GifColumnModel) = self.QAbstractListModel.delete
-
+  proc setup(self: GifColumnModel)
+  proc delete(self: GifColumnModel)
   proc newGifColumnModel*(): GifColumnModel =
     new(result, delete)
     result.gifs = @[]
@@ -52,3 +50,6 @@ QtObject:
       GifRoles.Title.int:"title",
       GifRoles.TinyUrl.int:"tinyUrl",
     }.toTable
+
+  proc setup(self: GifColumnModel) = self.QAbstractListModel.setup
+  proc delete(self: GifColumnModel) = self.QAbstractListModel.delete

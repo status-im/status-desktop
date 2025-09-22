@@ -33,9 +33,7 @@ QtObject:
     events: EventEmitter
     settingsService: settings_service.Service
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter, threadpool: ThreadPool, settingsService: settings_service.Service): Service =
     new(result, delete)
     result.QObject.setup
@@ -195,3 +193,7 @@ QtObject:
         return response.result.getInt
     except Exception as e:
       error "Error getting unseen activity center notifications", msg = e.msg
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

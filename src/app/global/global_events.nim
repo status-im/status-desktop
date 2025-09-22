@@ -3,15 +3,17 @@ import nimqml
 QtObject:
   type GlobalEvents* = ref object of QObject
 
+  proc setup(self: GlobalEvents)
+  proc delete*(self: GlobalEvents)
+  proc newGlobalEvents*(): GlobalEvents =
+    new(result, delete)
+    result.setup
+
   proc setup(self: GlobalEvents) =
     self.QObject.setup
 
   proc delete*(self: GlobalEvents) =
     self.QObject.delete
-
-  proc newGlobalEvents*(): GlobalEvents =
-    new(result, delete)
-    result.setup
 
   proc showTestNotification*(self: GlobalEvents, title: string, message: string) {.signal.}
 

@@ -36,12 +36,8 @@ QtObject:
       isUpdating: bool
       isError: bool
 
-  proc delete(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -339,3 +335,10 @@ QtObject:
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
       return $chainId & "+" & tokenAddress & "+" & tokenId
     return ""
+
+  proc delete(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

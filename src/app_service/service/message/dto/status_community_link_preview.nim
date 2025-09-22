@@ -15,14 +15,34 @@ QtObject:
     banner*: LinkPreviewThumbnail
     encrypted*: bool
     joined*: bool
+  
+  proc setup*(self: StatusCommunityLinkPreview)
+  proc delete*(self: StatusCommunityLinkPreview)
 
-  proc setup*(self: StatusCommunityLinkPreview) =
-    self.QObject.setup()
-    self.icon = newLinkPreviewThumbnail()
-    self.banner = newLinkPreviewThumbnail()
+  proc toStatusCommunityLinkPreview*(jsonObj: JsonNode): StatusCommunityLinkPreview =
+      new(result, delete)
+      result.setup()
 
-  proc delete*(self: StatusCommunityLinkPreview) =
-    self.QObject.delete()
+      var icon: LinkPreviewThumbnail
+      var banner: LinkPreviewThumbnail
+
+      discard jsonObj.getProp("communityId", result.communityId)
+      discard jsonObj.getProp("displayName", result.displayName)
+      discard jsonObj.getProp("description", result.description)
+      discard jsonObj.getProp("membersCount", result.membersCount)
+      discard jsonObj.getProp("activeMembersCount", result.activeMembersCount)
+      discard jsonObj.getProp("color", result.color)
+
+      var iconJson: JsonNode
+      if jsonObj.getProp("icon", iconJson):
+        icon = toLinkPreviewThumbnail(iconJson)
+
+      var bannerJson: JsonNode
+      if jsonObj.getProp("banner", bannerJson):
+        banner = toLinkPreviewThumbnail(bannerJson)
+
+      result.icon.copy(icon)
+      result.banner.copy(banner)
 
   proc communityIdChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getCommunityId*(self: StatusCommunityLinkPreview): string {.slot.} =
@@ -88,30 +108,14 @@ QtObject:
     read = getJoined
     notify = joinedChanged
 
-  proc toStatusCommunityLinkPreview*(jsonObj: JsonNode): StatusCommunityLinkPreview =
-    new(result, delete)
-    result.setup()
 
-    var icon: LinkPreviewThumbnail
-    var banner: LinkPreviewThumbnail
+  proc setup*(self: StatusCommunityLinkPreview) =
+    self.QObject.setup()
+    self.icon = newLinkPreviewThumbnail()
+    self.banner = newLinkPreviewThumbnail()
 
-    discard jsonObj.getProp("communityId", result.communityId)
-    discard jsonObj.getProp("displayName", result.displayName)
-    discard jsonObj.getProp("description", result.description)
-    discard jsonObj.getProp("membersCount", result.membersCount)
-    discard jsonObj.getProp("activeMembersCount", result.activeMembersCount)
-    discard jsonObj.getProp("color", result.color)
-
-    var iconJson: JsonNode
-    if jsonObj.getProp("icon", iconJson):
-      icon = toLinkPreviewThumbnail(iconJson)
-
-    var bannerJson: JsonNode
-    if jsonObj.getProp("banner", bannerJson):
-      banner = toLinkPreviewThumbnail(bannerJson)
-
-    result.icon.copy(icon)
-    result.banner.copy(banner)
+  proc delete*(self: StatusCommunityLinkPreview) =
+    self.QObject.delete()
 
   proc `$`*(self: StatusCommunityLinkPreview): string =
     result = fmt"""StatusCommunityLinkPreview(

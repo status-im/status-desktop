@@ -21,12 +21,8 @@ QtObject:
       items: seq[CollectibleItem]
       hasMore: bool
 
-  proc delete(self: CollectiblesModel) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: CollectiblesModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: CollectiblesModel)
+  proc setup(self: CollectiblesModel)
   proc newCollectiblesModel*(): CollectiblesModel =
     new(result, delete)
     result.setup
@@ -205,3 +201,10 @@ QtObject:
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
       return $chainId & "+" & tokenAddress & "+" & tokenId
     return ""
+
+  proc delete(self: CollectiblesModel) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: CollectiblesModel) =
+    self.QAbstractListModel.setup
+

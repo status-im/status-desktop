@@ -22,12 +22,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[Item]
 
-  proc delete*(self: Model) =
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete*(self: Model)
+  proc setup(self: Model)
   proc newModel*(): Model =
     new(result, delete)
     result.setup
@@ -195,3 +191,10 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, roles)
+
+  proc delete*(self: Model) =
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+

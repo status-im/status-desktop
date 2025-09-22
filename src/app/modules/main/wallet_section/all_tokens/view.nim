@@ -20,9 +20,7 @@ QtObject:
       # of symbol clash when minting community tokens
       tokensBySymbolModel: TokensBySymbolModel
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -231,3 +229,7 @@ QtObject:
   QtProperty[bool] autoRefreshTokensLists:
     read = getAutoRefreshTokensLists
     notify = autoRefreshTokensListsChanged
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

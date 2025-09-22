@@ -14,9 +14,7 @@ QtObject:
       recentStickers*: StickerList
       stickersMarketAddress: string
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -173,3 +171,7 @@ QtObject:
   proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string) {.signal.}
   proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string) =
     self.transactionCompleted(success, txHash, packID, trxType)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

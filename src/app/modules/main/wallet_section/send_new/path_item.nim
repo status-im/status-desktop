@@ -116,67 +116,8 @@ QtObject:
     approvalEstimatedTime: int,
     approvalFee: string,
     approvalL1Fee: string
-  ) =
-    self.QObject.setup
-    self.processorName = processorName
-    self.fromChain = fromChain
-    self.fromChainEIP1559Compliant = fromChainEIP1559Compliant
-    self.fromChainNoBaseFee = fromChainNoBaseFee
-    self.fromChainNoPriorityFee = fromChainNoPriorityFee
-    self.toChain = toChain
-    self.fromToken = fromToken
-    self.toToken = toToken
-    self.amountIn = amountIn
-    self.amountInLocked = amountInLocked
-    self.amountOut = amountOut
-    self.suggestedNonEIP1559GasPrice = suggestedNonEIP1559GasPrice
-    self.suggestedNonEIP1559EstimatedTime = suggestedNonEIP1559EstimatedTime
-    self.suggestedMaxFeesPerGasLowLevel = suggestedMaxFeesPerGasLowLevel
-    self.suggestedPriorityFeePerGasLowLevel = suggestedPriorityFeePerGasLowLevel
-    self.suggestedEstimatedTimeLowLevel = suggestedEstimatedTimeLowLevel
-    self.suggestedMaxFeesPerGasMediumLevel = suggestedMaxFeesPerGasMediumLevel
-    self.suggestedPriorityFeePerGasMediumLevel = suggestedPriorityFeePerGasMediumLevel
-    self.suggestedEstimatedTimeMediumLevel = suggestedEstimatedTimeMediumLevel
-    self.suggestedMaxFeesPerGasHighLevel = suggestedMaxFeesPerGasHighLevel
-    self.suggestedPriorityFeePerGasHighLevel = suggestedPriorityFeePerGasHighLevel
-    self.suggestedEstimatedTimeHighLevel = suggestedEstimatedTimeHighLevel
-    self.suggestedMinPriorityFee = suggestedMinPriorityFee
-    self.suggestedMaxPriorityFee = suggestedMaxPriorityFee
-    self.currentBaseFee = currentBaseFee
-    self.suggestedTxNonce = suggestedTxNonce
-    self.suggestedTxGasAmount = suggestedTxGasAmount
-    self.suggestedApprovalTxNonce = suggestedApprovalTxNonce
-    self.suggestedApprovalGasAmount = suggestedApprovalGasAmount
-    self.txNonce = txNonce
-    self.txGasPrice = txGasPrice
-    self.txGasFeeMode = txGasFeeMode
-    self.txMaxFeesPerGas = txMaxFeesPerGas
-    self.txBaseFee = txBaseFee
-    self.txPriorityFee = txPriorityFee
-    self.txGasAmount = txGasAmount
-    self.txBonderFees = txBonderFees
-    self.txTokenFees = txTokenFees
-    self.txEstimatedTime = txEstimatedTime
-    self.txFee = txFee
-    self.txL1Fee = txL1Fee
-    self.txTotalFee = txTotalFee
-    self.approvalRequired = approvalRequired
-    self.approvalAmountRequired = approvalAmountRequired
-    self.approvalContractAddress = approvalContractAddress
-    self.approvalTxNonce = approvalTxNonce
-    self.approvalGasPrice = approvalGasPrice
-    self.approvalGasFeeMode = approvalGasFeeMode
-    self.approvalMaxFeesPerGas = approvalMaxFeesPerGas
-    self.approvalBaseFee = approvalBaseFee
-    self.approvalPriorityFee = approvalPriorityFee
-    self.approvalGasAmount = approvalGasAmount
-    self.approvalEstimatedTime = approvalEstimatedTime
-    self.approvalFee = approvalFee
-    self.approvalL1Fee = approvalL1Fee
-
-  proc delete*(self: PathItem) =
-    self.QObject.delete
-
+  )
+  proc delete*(self: PathItem)
   proc newPathItem*(
     processorName: string,
     fromChain: int,
@@ -522,3 +463,120 @@ QtObject:
     if self.processorName == wallet_constants.PROCESSOR_NAME_BRIDGE_HOP:
       return self.txEstimatedTime + 1
     return self.txEstimatedTime
+
+  proc delete*(self: PathItem) =
+    self.QObject.delete
+
+  proc setup*(self: PathItem,
+    processorName: string,
+    fromChain: int,
+    fromChainEIP1559Compliant: bool,
+    fromChainNoBaseFee: bool,
+    fromChainNoPriorityFee: bool,
+    toChain: int,
+    fromToken: string,
+    toToken: string,
+    amountIn: string,
+    amountInLocked: bool,
+    amountOut: string,
+    suggestedNonEIP1559GasPrice: string,
+    suggestedNonEIP1559EstimatedTime: int,
+    suggestedMaxFeesPerGasLowLevel: string,
+    suggestedPriorityFeePerGasLowLevel: string,
+    suggestedEstimatedTimeLowLevel: int,
+    suggestedMaxFeesPerGasMediumLevel: string,
+    suggestedPriorityFeePerGasMediumLevel: string,
+    suggestedEstimatedTimeMediumLevel: int,
+    suggestedMaxFeesPerGasHighLevel: string,
+    suggestedPriorityFeePerGasHighLevel: string,
+    suggestedEstimatedTimeHighLevel: int,
+    suggestedMinPriorityFee: string,
+    suggestedMaxPriorityFee: string,
+    currentBaseFee: string,
+    suggestedTxNonce: string,
+    suggestedTxGasAmount: string,
+    suggestedApprovalTxNonce: string,
+    suggestedApprovalGasAmount: string,
+    txNonce: string,
+    txGasPrice: string,
+    txGasFeeMode: int,
+    txMaxFeesPerGas: string,
+    txBaseFee: string,
+    txPriorityFee: string,
+    txGasAmount: string,
+    txBonderFees: string,
+    txTokenFees: string,
+    txEstimatedTime: int,
+    txFee: string,
+    txL1Fee: string,
+    txTotalFee: string,
+    approvalRequired: bool,
+    approvalAmountRequired: string,
+    approvalContractAddress: string,
+    approvalTxNonce: string,
+    approvalGasPrice: string,
+    approvalGasFeeMode: int,
+    approvalMaxFeesPerGas: string,
+    approvalBaseFee: string,
+    approvalPriorityFee: string,
+    approvalGasAmount: string,
+    approvalEstimatedTime: int,
+    approvalFee: string,
+    approvalL1Fee: string
+  ) =
+    self.QObject.setup
+    self.processorName = processorName
+    self.fromChain = fromChain
+    self.fromChainEIP1559Compliant = fromChainEIP1559Compliant
+    self.fromChainNoBaseFee = fromChainNoBaseFee
+    self.fromChainNoPriorityFee = fromChainNoPriorityFee
+    self.toChain = toChain
+    self.fromToken = fromToken
+    self.toToken = toToken
+    self.amountIn = amountIn
+    self.amountInLocked = amountInLocked
+    self.amountOut = amountOut
+    self.suggestedNonEIP1559GasPrice = suggestedNonEIP1559GasPrice
+    self.suggestedNonEIP1559EstimatedTime = suggestedNonEIP1559EstimatedTime
+    self.suggestedMaxFeesPerGasLowLevel = suggestedMaxFeesPerGasLowLevel
+    self.suggestedPriorityFeePerGasLowLevel = suggestedPriorityFeePerGasLowLevel
+    self.suggestedEstimatedTimeLowLevel = suggestedEstimatedTimeLowLevel
+    self.suggestedMaxFeesPerGasMediumLevel = suggestedMaxFeesPerGasMediumLevel
+    self.suggestedPriorityFeePerGasMediumLevel = suggestedPriorityFeePerGasMediumLevel
+    self.suggestedEstimatedTimeMediumLevel = suggestedEstimatedTimeMediumLevel
+    self.suggestedMaxFeesPerGasHighLevel = suggestedMaxFeesPerGasHighLevel
+    self.suggestedPriorityFeePerGasHighLevel = suggestedPriorityFeePerGasHighLevel
+    self.suggestedEstimatedTimeHighLevel = suggestedEstimatedTimeHighLevel
+    self.suggestedMinPriorityFee = suggestedMinPriorityFee
+    self.suggestedMaxPriorityFee = suggestedMaxPriorityFee
+    self.currentBaseFee = currentBaseFee
+    self.suggestedTxNonce = suggestedTxNonce
+    self.suggestedTxGasAmount = suggestedTxGasAmount
+    self.suggestedApprovalTxNonce = suggestedApprovalTxNonce
+    self.suggestedApprovalGasAmount = suggestedApprovalGasAmount
+    self.txNonce = txNonce
+    self.txGasPrice = txGasPrice
+    self.txGasFeeMode = txGasFeeMode
+    self.txMaxFeesPerGas = txMaxFeesPerGas
+    self.txBaseFee = txBaseFee
+    self.txPriorityFee = txPriorityFee
+    self.txGasAmount = txGasAmount
+    self.txBonderFees = txBonderFees
+    self.txTokenFees = txTokenFees
+    self.txEstimatedTime = txEstimatedTime
+    self.txFee = txFee
+    self.txL1Fee = txL1Fee
+    self.txTotalFee = txTotalFee
+    self.approvalRequired = approvalRequired
+    self.approvalAmountRequired = approvalAmountRequired
+    self.approvalContractAddress = approvalContractAddress
+    self.approvalTxNonce = approvalTxNonce
+    self.approvalGasPrice = approvalGasPrice
+    self.approvalGasFeeMode = approvalGasFeeMode
+    self.approvalMaxFeesPerGas = approvalMaxFeesPerGas
+    self.approvalBaseFee = approvalBaseFee
+    self.approvalPriorityFee = approvalPriorityFee
+    self.approvalGasAmount = approvalGasAmount
+    self.approvalEstimatedTime = approvalEstimatedTime
+    self.approvalFee = approvalFee
+    self.approvalL1Fee = approvalL1Fee

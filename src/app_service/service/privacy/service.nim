@@ -31,9 +31,7 @@ QtObject:
     accountsService: accounts_service.Service
     threadpool: threadpool.ThreadPool
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter, settingsService: settings_service.Service,
     accountsService: accounts_service.Service): Service =
     new(result, delete)
@@ -105,3 +103,7 @@ QtObject:
 
   proc mnemonicWasShown*(self: Service) =
     self.settingsService.mnemonicWasShown()
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

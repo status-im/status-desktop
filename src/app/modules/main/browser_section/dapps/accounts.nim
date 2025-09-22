@@ -13,13 +13,8 @@ QtObject:
     AccountsModel* = ref object of QAbstractListModel
       items: seq[WalletAccountDto]
 
-  proc delete(self: AccountsModel) =
-    self.items = @[]
-    self.QAbstractListModel.delete
-
-  proc setup(self: AccountsModel) =
-    self.QAbstractListModel.setup
-
+  proc delete(self: AccountsModel)
+  proc setup(self: AccountsModel)
   proc newAccountsModel*(): AccountsModel =
     new(result, delete)
     result.setup
@@ -89,3 +84,11 @@ QtObject:
     self.items = @[]
     self.endResetModel()
     self.countChanged()
+
+  proc delete(self: AccountsModel) =
+    self.items = @[]
+    self.QAbstractListModel.delete
+
+  proc setup(self: AccountsModel) =
+    self.QAbstractListModel.setup
+

@@ -18,15 +18,17 @@ QtObject:
   proc isCompressedPubKey*(self: Utils, publicKey: string): bool
   proc getDecompressedPk*(self: Utils, compressedKey: string): string
 
+  proc setup(self: Utils)
+  proc delete*(self: Utils)
+  proc newUtils*(): Utils =
+    new(result, delete)
+    result.setup
+
   proc setup(self: Utils) =
     self.QObject.setup
 
   proc delete*(self: Utils) =
     self.QObject.delete
-
-  proc newUtils*(): Utils =
-    new(result, delete)
-    result.setup
 
   proc fromPathUri*(self: Utils, path: string): string {.slot.} =
     var formattedPath = replace(path, "file://", "")

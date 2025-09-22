@@ -109,12 +109,12 @@ QtObject:
     self.localBackupEnabled = LOCAL_BACKUP_ENABLED
     self.privacyModeFeatureEnabled = PRIVACY_MODE_FEATURE_ENABLED
 
+  proc newFeatureFlags*(): FeatureFlags =
+    new(result)
+    result.setup()
+
   proc delete*(self: FeatureFlags) =
     self.QObject.delete()
-
-  proc newFeatureFlags*(): FeatureFlags =
-    new(result, delete)
-    result.setup()
 
   proc getDappsEnabled*(self: FeatureFlags): bool {.slot.} =
     return self.dappsEnabled

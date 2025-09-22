@@ -75,9 +75,7 @@ QtObject:
   # Forward declaration:
   proc doConnect(self: Service)
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(events: EventEmitter, threadpool: ThreadPool,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service): Service =
@@ -131,3 +129,7 @@ QtObject:
       let h = HistoryRequestCompletedSignal(e)
       info "history request completed"
       self.events.emit(SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED, Args())
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

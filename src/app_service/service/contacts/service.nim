@@ -114,9 +114,7 @@ QtObject:
   proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false): ContactDetails
   proc parseContactsResponse*(self: Service, contacts: JsonNode, fromBackup: bool = false)
 
-  proc delete*(self: Service) =
-    self.QObject.delete
-
+  proc delete*(self: Service)
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
@@ -736,3 +734,7 @@ QtObject:
     except Exception as e:
       error "onProfileShowcaseAccountsByAddressFetched", msg = e.msg
     self.events.emit(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED, data)
+
+  proc delete*(self: Service) =
+    self.QObject.delete
+

@@ -41,12 +41,8 @@ QtObject:
       # true for entries that were changed/added in the current session
       highlight: bool
 
-  proc setup(self: ActivityEntry) =
-    self.QObject.setup
-
-  proc delete*(self: ActivityEntry) =
-    self.QObject.delete
-
+  proc setup(self: ActivityEntry)
+  proc delete*(self: ActivityEntry)
   proc isInTransactionType(self: ActivityEntry): bool =
     return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
 
@@ -379,3 +375,10 @@ QtObject:
   QtProperty[bool] highlight:
     read = getHighlight
     notify = highlightChanged
+
+  proc setup(self: ActivityEntry) =
+    self.QObject.setup
+
+  proc delete*(self: ActivityEntry) =
+    self.QObject.delete
+

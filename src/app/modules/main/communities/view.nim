@@ -62,9 +62,7 @@ QtObject:
       keypairsSigningModel: KeyPairModel
       keypairsSigningModelVariant: QVariant
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -835,3 +833,7 @@ QtObject:
 
   proc promoteSelfToControlNode*(self: View, communityId: string) {.slot.} =
     self.delegate.promoteSelfToControlNode(communityId)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

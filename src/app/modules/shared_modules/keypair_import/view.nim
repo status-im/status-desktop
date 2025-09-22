@@ -19,9 +19,7 @@ QtObject:
       connectionString: string
       connectionStringError: string
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -154,3 +152,7 @@ QtObject:
 
   proc validateConnectionString*(self: View, connectionString: string): string {.slot.} =
     return self.delegate.validateConnectionString(connectionString)
+
+  proc delete*(self: View) =
+    self.QObject.delete
+

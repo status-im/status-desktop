@@ -89,3 +89,27 @@ proc `$`*(self: NetworkDto): string =
 
 proc `%`*(t: NetworkDto): JsonNode {.inline.} =
   result = parseJson(t.toJson)
+
+
+when defined(gcOrc) or defined(gcArc):
+  # The compiler complains that we can't prove the obj is not nil
+  # Keep this workaround for now
+  proc readValue*(r: var JsonReader, value: var seq[RpcProviderDto])
+                  {.raises: [SerializationError, IOError].} =
+    r.parseArray:
+      var tmp: RpcProviderDto
+      readValue(r, tmp)
+      when compiles(move(tmp)):
+        value.add move(tmp)
+      else:
+        value.add tmp
+
+  proc readValue*(r: var JsonReader, value: var seq[NetworkDto])
+                {.raises: [SerializationError, IOError].} =
+    r.parseArray:
+      var tmp: NetworkDto
+      readValue(r, tmp)
+      when compiles(move(tmp)):
+        value.add move(tmp)
+      else:
+        value.add tmp

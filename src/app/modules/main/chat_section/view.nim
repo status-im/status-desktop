@@ -38,9 +38,7 @@ QtObject:
       communityMemberReevaluationStatus: int
 
 
-  proc delete*(self: View) =
-    self.QObject.delete
-
+  proc delete*(self: View)
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
@@ -543,3 +541,8 @@ QtObject:
 
   proc markAllReadInCommunity*(self: View) {.slot.} =
     self.delegate.markAllReadInCommunity()
+
+  proc delete*(self: View) =
+    echo "[ChatSection][View] Deleting View"
+    self.QObject.delete
+

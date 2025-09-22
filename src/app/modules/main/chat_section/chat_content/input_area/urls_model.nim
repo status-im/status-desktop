@@ -9,12 +9,8 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[string]
 
-  proc delete*(self: Model) = 
-    self.QAbstractListModel.delete
-
-  proc setup(self: Model) =
-    self.QAbstractListModel.setup
-
+  proc delete*(self: Model)
+  proc setup(self: Model)
   proc newUrlsModel*(): Model =
     new(result, delete)
     result.setup
@@ -91,3 +87,10 @@ QtObject:
       self.endInsertRows()
 
     self.countChanged()
+
+  proc delete*(self: Model) = 
+    self.QAbstractListModel.delete
+
+  proc setup(self: Model) =
+    self.QAbstractListModel.setup
+
