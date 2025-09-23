@@ -3,6 +3,7 @@ from typing import Optional
 from ..base_page import BasePage
 from locators.settings.settings_locators import SettingsLocators
 from .backup_seed_modal import BackupSeedModal
+from .password_change_page import PasswordChangePage
 from locators.wallet.saved_addresses_locators import SavedAddressesLocators
 from pages.wallet.saved_addresses_page import SavedAddressesPage
 
@@ -44,6 +45,22 @@ class SettingsPage(BasePage):
             return None
         modal = BackupSeedModal(self.driver)
         return modal if modal.is_displayed(timeout=10) else None
+
+    def open_password_settings(self) -> Optional[PasswordChangePage]:
+        if not self.is_loaded(timeout=10):
+            return None
+        try:
+            if not self.safe_click(
+                self.locators.PASSWORD_MENU_ITEM,
+                timeout=5,
+                fallback_locators=[self.locators.PASSWORD_MENU_ITEM_TEXT],
+            ):
+                return None
+        except Exception:
+            return None
+
+        page = PasswordChangePage(self.driver)
+        return page if page.is_loaded(timeout=10) else None
 
     def is_backup_entry_removed(self) -> bool:
         return not self.is_element_visible(

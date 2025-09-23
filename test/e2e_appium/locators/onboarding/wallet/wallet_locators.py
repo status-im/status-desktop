@@ -2,9 +2,9 @@ from ...base_locators import BaseLocators
 
 class WalletLocators(BaseLocators):
 
-    WALLET_HEADER = BaseLocators.accessibility_id("Wallet")
+    WALLET_HEADER = BaseLocators.content_desc_contains("walletHeader")
     WALLET_FOOTER_SEND_BUTTON = BaseLocators.xpath(
-        "//android.view.View.VirtualChild[@content-desc='Send [tid:walletFooterSendButton]']"
+        "//*[contains(@resource-id, 'walletFooterSendButton')]"
     )
     ASSETS_TAB = BaseLocators.text_contains("Assets")
     ACTIVITY_TAB = BaseLocators.text_contains("Activity")

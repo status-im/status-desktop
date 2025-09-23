@@ -165,6 +165,7 @@ class BasePage:
         )
         self.logger.error(message)
         self.take_screenshot(f"click_failure_{locators_to_try[0][1]}")
+        self.dump_page_source(f"click_failure_{locators_to_try[0][1]}")
         raise ElementInteractionError(message, str(locators_to_try[0]), "click")
 
     def safe_input(self, locator, text: str, timeout: Optional[int] = None) -> bool:
