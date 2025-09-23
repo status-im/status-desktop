@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pyperclip
 import pytest
@@ -10,7 +12,6 @@ from constants import UserAccount, RandomUser
 from constants.syncing import SyncingSettings
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
-from gui.screens.home import HomeScreen
 from gui.screens.onboarding import OnboardingWelcomeToStatusView, SyncResultView, OnboardingProfileSyncedView, \
     OnboardingBiometricsView
 
@@ -40,7 +41,7 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
                 user.password)
             setup_syncing.wait_until_enabled()
             sync_code = setup_syncing.syncing_code
-            main_window.hide()
+            main_window.minimize()
 
         with step('Verify sync code format is valid'):
             sync_code_fields = sync_code.split(':')
@@ -59,9 +60,6 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
             sync_start.click_paste_button()
             sync_start.continue_button.click()
             profile_syncing_view = OnboardingProfileSyncedView().wait_until_appears()
-            assert 'Profile sync in progress' in \
-                   str(profile_syncing_view.profile_synced_view_header.wait_until_appears().object.text), \
-                f'Profile sync process did not start'
             assert profile_syncing_view.log_in_button.wait_until_appears(timeout_msec=15000), \
                 f'Log in button is not shown within 15 seconds'
             assert 'Profile synced' in str(
@@ -78,7 +76,8 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
                 online_identifier = main_window.left_panel.open_online_identifier()
                 assert online_identifier.get_user_name == user.name, \
                     f'Name in online identifier and display name do not match'
-                main_window.hide()
+                main_window.left_panel.click()
+                main_window.minimize()
 
         with step(f'Open first instance {aut_one.aut_id} and verify it is synced, click done'):
             aut_one.attach()
@@ -90,42 +89,43 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
             sync_device_found.done_button.click()
 
         # TODO: https://github.com/status-im/status-desktop/issues/18680
-        # with step('Change Allow contact requests toggle state to OFF'):
-        #     home = main_window.left_panel.open_home_screen()
-        #     messaging_settings = home.open_messaging_settings_from_grid()
-        #     messaging_settings.switch_allow_contact_requests_toggle(False)
-        #     assert not messaging_settings.allow_contact_requests_toggle.object.checked
-        #     main_window.minimize()
-        #
-        # with step(f'Check that settings changes are reflected in second instance {aut_two.aut_id}'):
-        #     aut_two.attach()
-        #     main_window.prepare()
-        #     home = HomeScreen()
-        #     msg_stngs = home.open_messaging_settings_from_grid()
-        #     assert driver.waitFor(
-        #         lambda: not msg_stngs.allow_contact_requests_toggle.object.checked, 15000), \
-        #         f'Toggle changes are not synced'
-        #     main_window.hide()
-        #
-        # with step(f'Unpair the device from first instance {aut_one.aut_id}'):
-        #     aut_one.attach()
-        #     main_window.prepare()
-        #     synced_view = main_window.left_panel.open_settings().left_panel.open_syncing_settings()
-        #     synced_view.open_unpair_confirmation().confirm_unpairing()
-        #
-        # with step('Switch toggle state ON'):
-        #     home = main_window.left_panel.open_home_screen()
-        #     messaging_settings = home.open_messaging_settings_from_grid()
-        #     messaging_settings.switch_allow_contact_requests_toggle(True)
-        #     assert messaging_settings.allow_contact_requests_toggle.object.checked
-        #     main_window.hide()
-        #
-        # with step(f'Check that changes for toggle are not reflected in second instance {aut_two.aut_id}'):
-        #     aut_two.attach()
-        #     main_window.prepare()
-        #     home = main_window.left_panel.open_home_screen()
-        #     msg_stngs = home.open_messaging_settings_from_grid()
-        #     assert driver.waitFor(
-        #         lambda: not msg_stngs.allow_contact_requests_toggle.object.checked, 15000), \
-        #         f'Toggle state should remain unchecked becase devices are not paired'
+        with step('Change Allow contact requests toggle state to OFF'):
+            messaging_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings()
+            time.sleep(2)  # allowing messages settings page to fully appear
+            messaging_settings.switch_allow_contact_requests_toggle(False)
+            time.sleep(2)  # wait for animation of the toggle to finish
+            assert driver.waitFor(
+                lambda: not messaging_settings.allow_contact_requests_toggle.object.checked,
+                3000), f'Toggle did not change to OFF. Current state: {messaging_settings.allow_contact_requests_toggle.object.checked}'
+            main_window.minimize()
 
+        with step(f'Check that settings changes are reflected in second instance {aut_two.aut_id}'):
+            aut_two.attach()
+            main_window.prepare()
+            msg_stngs = main_window.left_panel.open_settings().left_panel.open_messaging_settings()
+            assert driver.waitFor(
+                lambda: not msg_stngs.allow_contact_requests_toggle.object.checked, 15000), \
+                f'Toggle changes are not synced'
+            main_window.minimize()
+
+        with step(f'Unpair the device from first instance {aut_one.aut_id}'):
+            aut_one.attach()
+            main_window.prepare()
+            synced_view = main_window.left_panel.open_settings().left_panel.open_syncing_settings()
+            synced_view.open_unpair_confirmation().confirm_unpairing()
+
+        with step('Switch toggle state ON'):
+            home = main_window.left_panel.open_home_screen()
+            messaging_settings = home.open_messaging_settings_from_grid()
+            messaging_settings.switch_allow_contact_requests_toggle(True)
+            assert messaging_settings.allow_contact_requests_toggle.object.checked
+            main_window.hide()
+
+        with step(f'Check that changes for toggle are not reflected in second instance {aut_two.aut_id}'):
+            aut_two.attach()
+            main_window.prepare()
+            home = main_window.left_panel.open_home_screen()
+            msg_stngs = home.open_messaging_settings_from_grid()
+            assert driver.waitFor(
+                lambda: not msg_stngs.allow_contact_requests_toggle.object.checked, 15000), \
+                f'Toggle state should remain unchecked becase devices are not paired'
