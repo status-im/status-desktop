@@ -196,8 +196,10 @@ QtObject {
     readonly property real pressedOpacity: 0.7
 
     property int dynamicFontUnits: 0
+    property int currentFontSize: Theme.FontSizeM
 
     function updateFontSize(fontSize:int) {
+        currentFontSize = fontSize
         switch (fontSize) {
             case Theme.FontSizeXS:
                 dynamicFontUnits = -2

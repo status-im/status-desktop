@@ -171,6 +171,14 @@ Control {
         // Action badge icon size (design baseline)
         readonly property int actionIconSize: 18
 
+        // Suggested default factors per font size step
+        property real factorXS:   0.80
+        property real factorS:    0.90
+        property real factorM:    1.00
+        property real factorL:    1.10
+        property real factorXL:   1.20
+        property real factorXXL:  1.30
+
         // Dot size used by header spacing.
         readonly property int readUnreadBadgeSize: 8
 
@@ -180,6 +188,19 @@ Control {
                 bg.color = Theme.palette.baseColor5
             } else {
                 bg.color = Theme.palette.transparent
+            }
+        }
+
+        // Returns the avatar scaling factor for a given font size enum value.
+        function avatarFactorForFontSize(fs) {
+            switch (fs) {
+            case Theme.FontSize.FontSizeXS:  return d.factorXS;
+            case Theme.FontSize.FontSizeS:   return d.factorS;
+            case Theme.FontSize.FontSizeM:   return d.factorM;
+            case Theme.FontSize.FontSizeL:   return d.factorL;
+            case Theme.FontSize.FontSizeXL:  return d.factorXL;
+            case Theme.FontSize.FontSizeXXL: return d.factorXXL;
+            default:                         return 1.0;  // Safe fallback
             }
         }
     }
@@ -217,6 +238,9 @@ Control {
         NotificationAvatar {
             Layout.alignment: Qt.AlignTop
             Layout.leftMargin: Theme.halfPadding
+
+            // Scale avatar with current font size factor
+            density: d.avatarFactorForFontSize(Theme.currentFontSize)
 
             avatarSource: root.avatarSource
             badgeIconName: root.badgeIconName
