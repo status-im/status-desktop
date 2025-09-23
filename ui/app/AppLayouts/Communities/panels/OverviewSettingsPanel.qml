@@ -19,6 +19,9 @@ import utils
 StackLayout {
     id: root
 
+    property int preferredContentWidth: width
+    property int internalRightPadding: 0
+
     required property bool isOwner
     required property bool isAdmin
     required property bool isTokenMaster
@@ -232,6 +235,7 @@ StackLayout {
 
     SettingsPage {
         id: mainSettingsPage
+
         Layout.fillWidth: !root.communitySettingsDisabled
         Layout.preferredWidth: root.communitySettingsDisabled ? 560 + leftPadding + rightPadding : -1
         Layout.fillHeight: !root.communitySettingsDisabled
@@ -261,6 +265,7 @@ StackLayout {
         id: editCommunityPage
 
         title: qsTr("Edit Community")
+        preferredHeaderContentWidth: root.preferredContentWidth
 
         contentItem: Loader {
             id: editSettingsPanelLoader
@@ -280,6 +285,9 @@ StackLayout {
 
             sourceComponent: EditSettingsPanel {
                 id: editSettingsPanel
+
+                preferredContentWidth: root.preferredContentWidth
+                internalRightPadding: root.internalRightPadding
 
                 function isValidRect(r /*rect*/) {
                     return r.width !== 0 && r.height !== 0

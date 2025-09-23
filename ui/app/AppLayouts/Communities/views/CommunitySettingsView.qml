@@ -219,6 +219,9 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             sourceComponent: OverviewSettingsPanel {
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
+
                 isOwner: root.isOwner
                 isAdmin: root.isAdmin
                 isTokenMaster: root.isTokenMasterOwner
