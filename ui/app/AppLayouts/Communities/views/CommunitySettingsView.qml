@@ -168,9 +168,13 @@ StatusSectionLayout {
                     title: model.sectionName
                     asset.name: model.sectionIcon
                     selected: d.currentIndex === index && !root.communitySettingsDisabled
-                    onClicked: d.currentIndex = index
                     visible: model.sectionEnabled
                     height: visible ? implicitHeight : 0
+
+                    onClicked: {
+                        d.currentIndex = index
+                        root.goToNextPanel()
+                    }
                 }
             }
         }
