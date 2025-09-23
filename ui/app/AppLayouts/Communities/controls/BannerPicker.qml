@@ -1,19 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 
-import utils
 import shared.panels
-import shared.popups
 
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Layout
 import StatusQ.Components
-import StatusQ.Popups
 import StatusQ.Controls
-import StatusQ.Controls.Validators
 
 Item {
     id: root
@@ -22,7 +16,8 @@ Item {
     property alias cropRect: editor.cropRect
     property alias imageData: editor.dataImage
 
-    readonly property bool hasSelectedImage: localAppSettings.testEnvironment ? true : editor.userSelectedImage
+    readonly property bool hasSelectedImage: localAppSettings.testEnvironment ?
+                                                 true : editor.userSelectedImage
 
     implicitHeight: layout.implicitHeight
 
@@ -47,8 +42,9 @@ Item {
         EditCroppedImagePanel {
             id: editor
 
-            Layout.preferredWidth: 475
-            Layout.preferredHeight: Layout.preferredWidth / aspectRatio
+            Layout.fillWidth: true
+            Layout.maximumWidth: 475
+            Layout.preferredHeight: width / aspectRatio
             Layout.alignment: Qt.AlignHCenter
 
             imageFileDialogTitle: qsTr("Choose an image for banner")

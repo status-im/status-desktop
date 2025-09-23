@@ -15,6 +15,9 @@ StatusScrollView {
     id: root
     objectName: "communityEditPanelScrollView"
 
+    property int preferredContentWidth: width
+    property int internalRightPadding: 0
+
     property alias name: baseLayout.name
     property alias description: baseLayout.description
     property alias introMessage: introMessageTextInput.text
@@ -48,13 +51,20 @@ StatusScrollView {
     signal shardIndexEdited(int shardIndex)
 
     padding: 0
+    contentWidth: mainLayout.width
+    contentHeight: mainLayout.height
 
     ColumnLayout {
         id: mainLayout
-        width: baseLayout.width
         spacing: Theme.padding
+
+        width: Math.min(root.preferredContentWidth,
+                        root.availableWidth - root.internalRightPadding)
+
         EditCommunitySettingsForm {
             id: baseLayout
+
+            Layout.fillWidth: true
             Layout.fillHeight: true
         }
         StatusModalDivider {

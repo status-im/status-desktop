@@ -37,8 +37,6 @@ Control {
     property alias bannerImageData: bannerPicker.imageData
     property alias bannerPath: bannerPicker.source
     property alias bannerCropRect: bannerPicker.cropRect
-    
-    implicitWidth: 608
 
     function validate(isDevBuild = false) {
         if (!nameInput.validate(true))
