@@ -12258,13 +12258,6 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>NotificationCard</name>
-    <message>
-        <source>Just now</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>NotificationSelect</name>
     <message>
         <source>Send Alerts</source>
@@ -17099,6 +17092,14 @@ access to your webcam</source>
         <source>Backup messages locally</source>
         <translation>메시지를 로컬에 백업</translation>
     </message>
+    <message>
+        <source>Enable message syncing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabling this will allow all your messages to be sent to the new device during the local pairing.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TagsPanel</name>
@@ -19083,6 +19084,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Status Desktop</source>
         <translation>스테이터스 데스크톱</translation>
+    </message>
+    <message>
+        <source>Hello World</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
