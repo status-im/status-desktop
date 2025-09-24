@@ -47,6 +47,7 @@ InformationTag {
         d.networksCount
         return qsTr("Activity is in beta. If transactions are missing, check %1.").arg(d.getExplorerLinks(root.flatNetworks, tagPrimaryLabel.hoveredLink))
     }
+    tagPrimaryLabel.wrapMode: Text.WordWrap
     tagPrimaryLabel.onLinkActivated: root.linkActivated(link)
     // NB: regular binding won't work as `tagPrimaryLabel` is an alias
     Binding {
