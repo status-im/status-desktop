@@ -26,11 +26,6 @@ QtObject:
   QtProperty[QVariant] contactsModule:
     read = getContactsModule
 
-  proc getLanguageModule(self: View): QVariant {.slot.} =
-    return self.delegate.getLanguageModule()
-  QtProperty[QVariant] languageModule:
-    read = getLanguageModule
-
   proc getProfileModule(self: View): QVariant {.slot.} =
     return self.delegate.getProfileModule()
   QtProperty[QVariant] profileModule:

@@ -16,13 +16,13 @@ Control {
     property color color: Theme.palette.statusModal.backgroundColor
     property bool dropShadowEnabled
 
-    spacing: 5
-    padding: 16
+    spacing: Theme.halfPadding
+    padding: Theme.padding
     bottomPadding: padding + root.SafeArea.margins.bottom
 
     background: Rectangle {
         color: root.color
-        radius: 8
+        radius: Theme.radius
 
         layer.enabled: root.dropShadowEnabled
         layer.effect: DropShadow {
@@ -50,7 +50,7 @@ Control {
     contentItem: ColumnLayout {
         id: layout
 
-        spacing: 8
+        spacing: Theme.halfPadding
 
         Repeater {
             Layout.topMargin: 4

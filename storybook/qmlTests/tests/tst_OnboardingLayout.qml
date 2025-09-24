@@ -52,6 +52,9 @@ Item {
             networkChecksEnabled: false
             keycardPinInfoPageDelay: 0
 
+            availableLanguages: ["de", "cs", "en", "en_CA", "ko", "ar", "fr", "fr_CA", "pt_BR", "pt", "uk", "ja", "el"]
+            currentLanguage: "en"
+
             keychain: Keychain {
                 readonly property bool available: mockDriver.biometricsAvailable
                 function hasCredential(account) {

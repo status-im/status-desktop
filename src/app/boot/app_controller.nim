@@ -6,7 +6,6 @@ import app_service/service/keycard/service as keycard_service
 import app_service/service/keycardV2/service as keycard_serviceV2
 import app_service/service/accounts/service as accounts_service
 import app_service/service/contacts/service as contacts_service
-import app_service/service/language/service as language_service
 import app_service/service/chat/service as chat_service
 import app_service/service/community/service as community_service
 import app_service/service/message/service as message_service
@@ -91,7 +90,6 @@ type
     aboutService: about_service.Service
     networkService: network_service.Service
     activityCenterService: activity_center_service.Service
-    languageService: language_service.Service
     privacyService: privacy_service.Service
     nodeConfigurationService: node_configuration_service.Service
     savedAddressService: saved_address_service.Service
@@ -214,7 +212,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   )
   result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.dappPermissionsService = dapp_permissions_service.newService()
-  result.languageService = language_service.newService(statusFoundation.events)
   result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.threadpool, statusFoundation.events,
@@ -268,7 +265,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.contactsService,
     result.aboutService,
     result.dappPermissionsService,
-    result.languageService,
     result.privacyService,
     result.providerService,
     result.stickersService,
@@ -307,7 +303,6 @@ proc delete*(self: AppController) =
     self.onboardingModule.delete
     self.onboardingModule = nil
   self.mainModule.delete
-  self.languageService.delete
 
   self.appSettingsVariant.delete
   self.localAppSettingsVariant.delete
@@ -355,9 +350,6 @@ proc initializeQmlContext(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
   singletonInstance.engine.setRootContextProperty("metrics", self.metricsVariant)
-
-  # We need to init a language service before qml is loaded
-  self.languageService.init()
 
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 

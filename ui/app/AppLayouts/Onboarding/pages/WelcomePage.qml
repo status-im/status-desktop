@@ -18,8 +18,13 @@ OnboardingPage {
     required property bool privacyModeFeatureEnabled
     required property bool thirdpartyServicesEnabled
 
+    required property var availableLanguages
+    required property string currentLanguage
+
     signal createProfileRequested()
     signal loginRequested()
+
+    signal changeLanguageRequested(string newLanguageCode)
 
     signal privacyPolicyRequested()
     signal termsOfUseRequested()
@@ -125,6 +130,7 @@ OnboardingPage {
                     spacing: root.padding
                     StatusButton {
                         objectName: "btnCreateProfile"
+                        id: btnCreateProfile
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignBottom
                         text: qsTr("Create profile")
@@ -137,6 +143,7 @@ OnboardingPage {
                         isOutline: true
                         onClicked: root.loginRequested()
                     }
+
                     StatusBaseText {
                         objectName: "thirdPartyServices"
                         Layout.fillWidth: true
@@ -191,6 +198,16 @@ OnboardingPage {
                         }
                     }
                 }
+            }
+
+            StatusLanguageSelector {
+                anchors.right: parent.right
+                anchors.rightMargin: root.isPortrait ? 0 : Theme.padding
+                anchors.top: parent.top
+                anchors.topMargin: root.isPortrait ? Theme.halfPadding : 0
+                currentLanguage: root.currentLanguage
+                languageCodes: root.availableLanguages
+                onLanguageSelected: (languageCode) => root.changeLanguageRequested(languageCode)
             }
         }
     }

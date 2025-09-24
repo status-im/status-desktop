@@ -33,6 +33,7 @@
         <file>StatusQ/Components/StatusInfoBoxPanel.qml</file>
         <file>StatusQ/Components/StatusItemSelector.qml</file>
         <file>StatusQ/Components/StatusLetterIdenticon.qml</file>
+        <file>StatusQ/Components/StatusLanguageSelector.qml</file>
         <file>StatusQ/Components/StatusListItem.qml</file>
         <file>StatusQ/Components/StatusListItemBadge.qml</file>
         <file>StatusQ/Components/StatusListItemTag.qml</file>
