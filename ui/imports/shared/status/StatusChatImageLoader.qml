@@ -111,9 +111,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            onClicked: {
-                root.clicked(imageMessage, mouse)
-            }
+            onClicked: (mouse) => root.clicked(imageMessage, mouse)
         }
 
         Component.onDestruction: imageMessage.source = ""

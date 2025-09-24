@@ -10,6 +10,7 @@ import StatusQ.Components
 import StatusQ.Popups
 import StatusQ.Popups.Dialog
 import StatusQ.Core.Utils as StatusQUtils
+import StatusQ.Core.Backpressure
 
 import utils
 
@@ -36,10 +37,11 @@ SettingsContentBase {
 
     required property bool isProduction
     required property bool localBackupEnabled
+    required property bool messagesBackupEnabled
     required property url backupPath
-    required property var toFileUri // Function to convert a file path to a file URI
 
     signal backupPathSet(url path)
+    signal backupMessagesEnabledToggled(bool enabled)
 
     ColumnLayout {
         id: layout
@@ -50,7 +52,7 @@ SettingsContentBase {
             id: d
 
             readonly property var instructionsModel: [
-                qsTr("Verify your login with password or KeyCard"),
+                qsTr("Verify your login with password or Keycard"),
                 qsTr("Reveal a temporary QR and Sync Code") + "*",
                 qsTr("Share that information with your new device"),
             ]
@@ -290,9 +292,26 @@ SettingsContentBase {
         StatusSettingsLineButton {
             anchors.leftMargin: 0
             anchors.rightMargin: 0
+            visible: root.localBackupEnabled
             text: qsTr("Directory of the local backup files")
             currentValue: root.backupPath
             onClicked: backupPathDialog.open()
+        }
+
+        StatusSettingsLineButton {
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            visible: root.localBackupEnabled
+            text: qsTr("Backup messages locally")
+            isSwitch: true
+            switchChecked: root.messagesBackupEnabled
+            onClicked: {
+                if (root.messagesBackupEnabled) {
+                    root.backupMessagesEnabledToggled(false)
+                    return
+                }
+                Global.openPopup(enableMessagesBackupDialog)
+            }
         }
 
         StatusButton {
@@ -301,7 +320,22 @@ SettingsContentBase {
             visible: root.localBackupEnabled
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Backup Data Locally")
-            onClicked : root.devicesStore.performLocalBackup()
+            asset.emoji: {
+                if (root.devicesStore.backupDataState !== Constants.BackupImportState.Completed) {
+                    return ""
+                }
+                if (root.devicesStore.backupDataError) {
+                    return "❌"
+                }
+                return "✅"
+            }
+            loading: root.devicesStore.backupDataState === Constants.BackupImportState.InProgress
+            onClicked : {
+                root.devicesStore.performLocalBackup()
+                Backpressure.debounce(this, 5000, () => {
+                    root.devicesStore.resetBackupDataState()
+                })()
+            }
         }
 
         StatusButton {
@@ -402,11 +436,23 @@ SettingsContentBase {
             }
         }
 
+        Component {
+            id: enableMessagesBackupDialog
+            EnableMessagesBackupDialog {
+                destroyOnClose: true
+                onEnableRequested: {
+                    root.backupMessagesEnabledToggled(true)
+                    Global.closePopup()
+                }
+            }
+        }
+
         StatusFileDialog {
             id: importBackupFileDialog
 
             title: qsTr("Select your backup file")
             nameFilters: [qsTr("Supported backup formats (%1)").arg("*.bkp")]
+            currentFolder: root.devicesStore.toFileUri(root.backupPath)
             selectMultiple: false
             onAccepted: root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
         }

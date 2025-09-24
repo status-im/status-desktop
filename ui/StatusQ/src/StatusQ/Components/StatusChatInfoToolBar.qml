@@ -1,5 +1,5 @@
 import QtQuick
-import Qt5Compat.GraphicalEffects
+
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Popups

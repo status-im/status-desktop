@@ -109,7 +109,7 @@ Item {
                 isActive: model.isActive
                 isDeactivatable: model.isDeactivatable
                 
-                onSetNetworkActive: {
+                onSetNetworkActive: function (active) {
                     if (!active) {
                         // Launch confirmation popup
                         Global.openPopup(deactivateNetworkPopupComponent, {chainId: model.chainId, iconUrl: model.iconUrl, chainName: model.chainName})

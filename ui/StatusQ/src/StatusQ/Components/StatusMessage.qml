@@ -234,13 +234,11 @@ Control {
                     visible: active
                     name: root.messageDetails.sender.displayName
                     usesDefaultName: root.messageDetails.sender.usesDefaultName
-                    colorHash: root.messageDetails.sender.profileImage.colorHash
                     userColor: root.messageDetails.sender.profileImage.assetSettings.color
                     image: root.messageDetails.sender.profileImage.assetSettings.name
                     interactive: true
                     imageWidth: root.messageDetails.sender.profileImage.assetSettings.width
                     imageHeight: root.messageDetails.sender.profileImage.assetSettings.height
-                    ensVerified: root.messageDetails.sender.isEnsVerified
                     isBridgedAccount: root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage
                     onClicked: (mouse) => root.profilePictureClicked(this, mouse)
                 }

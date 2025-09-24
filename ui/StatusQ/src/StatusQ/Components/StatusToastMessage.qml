@@ -6,6 +6,7 @@ import Qt5Compat.GraphicalEffects
 import StatusQ.Core
 import StatusQ.Controls
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 /*!
     \qmltype StatusToastMessage
@@ -130,6 +131,8 @@ Control {
         This property holds icon color if it needs a customized color, otherwise, it will depend on toast type.
     */
     property string iconColor: ""
+
+    Accessible.name: Utils.formatAccessibleName(root.primaryText + (root.secondaryText.length ? (" — " + root.secondaryText) : ""), objectName)
 
     /*!
         \qmlmethod

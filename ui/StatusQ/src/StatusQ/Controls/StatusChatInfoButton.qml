@@ -24,7 +24,6 @@ Button {
         height: 36
         charactersLen: 2
     }
-    property alias ringSettings: identicon.ringSettings
 
     property int type: StatusChatInfoButton.Type.Unknown0
     property alias tooltip: statusToolTip

@@ -14,10 +14,11 @@ type
 
 let localeDescriptionTable* = {
     "ar": Description(name: "Arabic", native: "العربية", flag: "", state: State.Alpha),
-    "bn": Description(name: "Bengali", native: "বাংলা", flag: "X", state: State.Alpha),
+    "bn": Description(name: "Bengali", native: "বাংলা",  flag: "X", state: State.Alpha),
+    "cs": Description(name: "Czech", native: "čeština", flag: "🇨🇿", state: State.Alpha),
     "de": Description(name: "German", native: "Deutsch", flag: "🇩🇪", state: State.Alpha),
     "el": Description(name: "Greek", native: "Ελληνικά", flag: "🇬🇷", state: State.Alpha),
-    "en": Description(name: "English", native: "English", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", state: State.Stable),
+    "en": Description(name: "English", native: "English", flag: "🇬🇧", state: State.Stable),
     "en_US": Description(name: "English (United States)", native: "English (United States)", flag: "🇺🇸", state: State.Alpha),
     "es": Description(name: "Spanish", native: "Español", flag: "🇪🇸", state: State.Alpha),
     "es_419": Description(name: "Spanish (Latin America)", native: "Español (Latinoamerica)", flag: "", state: State.Alpha),
@@ -30,7 +31,7 @@ let localeDescriptionTable* = {
     "id": Description(name: "Indonesian", native: "Bahasa Indonesia", flag: "🇮🇩", state: State.Alpha),
     "it": Description(name: "Italian", native: "Italiano", flag: "🇮🇹", state: State.Alpha),
     "ja": Description(name: "Japanese", native: "日本語", flag: "🇯🇵", state: State.Alpha),
-    "ko": Description(name: "Korean", native: "한국어", flag: "🇰🇷", state: State.Alpha),
+    "ko": Description(name: "Korean", native: "한국어", flag: "🇰🇷", state: State.Stable),
     "ms": Description(name: "Malay", native: "Bahasa Melayu", flag: "🇲🇾", state: State.Alpha),
     "ne": Description(name: "Nepali", native: "नेपाली", flag: "🇳🇵", state: State.Alpha),
     "nl": Description(name: "Dutch", native: "Nederlands", flag: "🇳🇱", state: State.Alpha),

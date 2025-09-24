@@ -211,13 +211,11 @@ proc createChatIdentifierItem(self: Module): Item =
   var chatName = chatDto.name
   var smallImage = ""
   var chatIcon = ""
-  var senderColorHash = ""
   var senderIsAdded = false
   if chatDto.chatType == ChatType.OneToOne:
     let sender = self.controller.getContactDetails(chatDto.id)
     senderIsAdded = sender.dto.added
     (chatName, smallImage, chatIcon) = self.controller.getOneToOneChatNameAndImage()
-    senderColorHash = sender.colorHash
 
   result = message_model.createMessageItemFromDtos(
     message = MessageDto(
@@ -230,7 +228,6 @@ proc createChatIdentifierItem(self: Module): Item =
     sender = ContactDetails(
     defaultDisplayName: chatName,
     icon: chatIcon,
-    colorHash: senderColorHash,
     dto: ContactsDto(
       id: chatDto.id,
       added: senderIsAdded,
@@ -329,18 +326,31 @@ method loadMoreMessages*(self: Module) =
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
   var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    let item = self.view.model().getItemWithMessageId(messageId)
-    if(item.isNil):
-      return
-    let myPublicKey = singletonInstance.userProfile.getPubKey()
-    if(item.shouldAddReaction(emojiIdAsEnum, myPublicKey)):
-      self.controller.addReaction(messageId, emojiId)
-    else:
-      let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
-      self.controller.removeReaction(messageId, emojiId, reactionId)
-  else:
+  if not message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum):
     error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReaction"
+    return
+
+  let item = self.view.model().getItemWithMessageId(messageId)
+  if item.isNil:
+    return
+
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  if item.shouldAddReaction(emojiIdAsEnum, myPublicKey):
+    # TODO remove this conversion when the new popup is hooked and sends emoji string directly
+    # Convert emoji type to string for the new addReaction method
+    var emoji = ""
+    case emojiIdAsEnum:
+    of EmojiId.Heart: emoji = "❤️"
+    of EmojiId.Thumbsup: emoji = "👍"
+    of EmojiId.Thumbsdown: emoji = "👎"
+    of EmojiId.Laughing: emoji = "😂"
+    of EmojiId.Cry: emoji = "😢"
+    of EmojiId.Angry: emoji = "😠"
+
+    self.controller.addReaction(messageId, emojiId, emoji)
+  else:
+    let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
+    self.controller.removeReaction(messageId, emojiId, reactionId)
 
 method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
   var emojiIdAsEnum: EmojiId
@@ -439,7 +449,6 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderUsesDefaultName = resolveUsesDefaultName(updatedContact.dto.localNickname, updatedContact.dto.name, updatedContact.dto.displayName)
       item.senderOptionalName = updatedContact.optionalName
       item.senderIcon = updatedContact.icon
-      item.senderColorHash = updatedContact.colorHash
       item.senderIsAdded = updatedContact.dto.added
       item.senderTrustStatus = updatedContact.dto.trustStatus
       item.senderEnsVerified = updatedContact.dto.ensVerified

@@ -79,7 +79,6 @@ StatusDialog {
                     senderIsEnsVerified: model.senderEnsVerified
                     senderIsAdded: model.senderIsAdded
                     senderIcon: model.senderIcon
-                    senderColorHash: model.senderColorHash
                     senderTrustStatus: model.senderTrustStatus
                     amISender: model.amISender
                     messageText: model.messageText
@@ -103,7 +102,6 @@ StatusDialog {
                     quotedMessageAuthorDetailsThumbnailImage: model.quotedMessageAuthorThumbnailImage
                     quotedMessageAuthorDetailsEnsVerified: model.quotedMessageAuthorEnsVerified
                     quotedMessageAuthorDetailsIsContact: model.quotedMessageAuthorIsContact
-                    quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
                     bridgeName: model.bridgeName
                     isViewMemberMessagesePopup: true
                     shouldRepeatHeader: true

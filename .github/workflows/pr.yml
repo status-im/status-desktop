@@ -1,0 +1,110 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - master
+      - release/**
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+jobs:
+  check-status-go-submodule:
+    name: Check status-go submodule branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          submodules: false
+
+      - name: Get status-go submodule commit
+        id: statusgo
+        run: |
+          commit=$(git ls-tree HEAD vendor/status-go | awk '{print $3}')
+          echo "commit=$commit" >> $GITHUB_OUTPUT
+          echo "[LOG] status-go submodule commit: $commit"
+
+      - name: Fetch relevant status-go branches
+        run: |
+          git submodule update --init vendor/status-go
+          cd vendor/status-go
+          if ! git fetch origin 'release/*:refs/remotes/origin/release/*' 2>/dev/null; then
+            echo "[WARN] No release/* branches found."
+          fi
+          if ! git fetch origin develop:refs/remotes/origin/develop 2>/dev/null; then
+            echo "[WARN] develop branch not found on remote."
+          fi
+          echo "[LOG] status-go relevant branches fetched."
+
+      - name: Get containing branches
+        id: branches
+        run: |
+          cd vendor/status-go
+          branches=$(git branch -r --contains ${{ steps.statusgo.outputs.commit }} | sed 's/ *origin\///')
+          # Normalize branch list: remove 'HEAD -> ...', trim whitespace, one per line
+          cleaned_branches=$(echo "$branches" | sed '/HEAD ->/d' | awk '{$1=$1};1')
+          echo "branches<<EOF" >> $GITHUB_OUTPUT
+          echo "$cleaned_branches" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "[LOG] status-go commit is contained in branches:"
+          echo "$cleaned_branches"
+
+      - name: Fetch base branch status-go commit
+        run: |
+          git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+          BASE_STATUS_GO_COMMIT=$(git ls-tree ${{ github.base_ref }} vendor/status-go | awk '{print $3}')
+          echo "BASE_STATUS_GO_COMMIT=$BASE_STATUS_GO_COMMIT" >> $GITHUB_ENV
+          echo "[LOG] status-go commit on base branch (${{ github.base_ref }}): $BASE_STATUS_GO_COMMIT"
+
+      - name: Check if status-go submodule changed
+        id: check_statusgo_changed
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          if git diff --name-only origin/${{ github.base_ref }} HEAD | grep -q '^vendor/status-go$'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "[LOG] status-go submodule changed in this PR."
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "[LOG] status-go submodule NOT changed in this PR."
+          fi
+
+      - name: Validate status-go branch policy for master
+        if: steps.check_statusgo_changed.outputs.changed == 'true' && github.base_ref == 'master'
+        run: |
+          BRANCHES="${{ steps.branches.outputs.branches }}"
+          echo "[LOG] Checking branch policy for master branch"
+          if ! echo "$BRANCHES" | grep -x 'develop'; then
+            echo "::error::status-go submodule must point to a commit on 'develop' branch when PR targets master."
+            exit 1
+          fi
+          echo "[LOG] status-go commit is on develop branch."
+
+      - name: Validate status-go branch policy for release
+        if: steps.check_statusgo_changed.outputs.changed == 'true' && startsWith(github.base_ref, 'release/')
+        run: |
+          BRANCHES="${{ steps.branches.outputs.branches }}"
+          echo "[LOG] Checking branch policy for release branch: ${{ github.base_ref }}"
+          if ! echo "$BRANCHES" | grep -E '^release/' >/dev/null; then
+            echo "::error::status-go submodule must point to a commit on a 'release/*' branch when PR targets a release branch."
+            exit 1
+          fi
+          echo "[LOG] status-go commit is on a release/* branch."
+
+      - name: Validate status-go commit recency
+        if: steps.check_statusgo_changed.outputs.changed == 'true'
+        run: |
+          STATUS_GO_COMMIT="${{ steps.statusgo.outputs.commit }}"
+          BASE_STATUS_GO_COMMIT="$BASE_STATUS_GO_COMMIT"
+          echo "[LOG] Checking commit recency: PR=$STATUS_GO_COMMIT, base=$BASE_STATUS_GO_COMMIT"
+          cd vendor/status-go
+          if git merge-base --is-ancestor "$BASE_STATUS_GO_COMMIT" "$STATUS_GO_COMMIT"; then
+            echo "[LOG] status-go commit is newer than or equal to base branch. OK."
+          else
+            echo "::error::status-go submodule commit in PR is older than the one on the base branch."
+            exit 1
+          fi

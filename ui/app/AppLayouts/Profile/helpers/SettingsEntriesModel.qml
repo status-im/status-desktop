@@ -202,6 +202,7 @@ SortFilterProxyModel {
         }
 
         delegate: QtObject {
+            readonly property string objectName: "settingsNav_" + model.subsection
             readonly property bool visible: {
                 switch (model.subsection) {
                     case Constants.settingsSubsection.ensUsernames:
@@ -235,7 +236,7 @@ SortFilterProxyModel {
         }
 
         expectedRoles: ["subsection"]
-        exposedRoles: ["visible", "badgeCount"]
+        exposedRoles: ["visible", "badgeCount", "objectName"]
     }
 
     filters: ValueFilter {

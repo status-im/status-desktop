@@ -110,12 +110,6 @@ QtObject:
       pk = self.getDecompressedPk(publicKey)
     procs_from_visual_identity_service.getEmojiHashAsJson(pk)
 
-  proc getColorHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
-    var pk = publicKey
-    if self.isCompressedPubKey(publicKey):
-      pk = self.getDecompressedPk(publicKey)
-    procs_from_visual_identity_service.getColorHashAsJson(pk)
-
   proc getColorId*(self: Utils, publicKey: string): int {.slot.} =
     var pk = publicKey
     if self.isCompressedPubKey(publicKey):
@@ -160,5 +154,11 @@ QtObject:
   proc isChatKey*(self: Utils, value: string): bool {.slot.} =
     result = (self.isHexFormat(value) and len(value) == 132) or self.isCompressedPubKey(value)
 
+  # Check if a string is a valid Base64 data URL
+  # This function is to be used in async tasks
   proc isBase64DataUrl*(str: string): bool =
     return str.match(re2"(?i)^data:[^,]*;base64,[A-Za-z0-9+/=]+$")
+
+  # This function is to be used in QML
+  proc isBase64DataUrl*(self: Utils, str: string): bool {.slot.} =
+    return isBase64DataUrl(str)

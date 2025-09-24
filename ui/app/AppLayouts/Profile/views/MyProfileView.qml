@@ -109,13 +109,6 @@ SettingsContentBase {
             text: qsTr("Collectibles")
         }
 
-        // TODO: Uncomment when assets tab is implemented
-        // StatusTabButton {
-        //     objectName: "assetsTabButton"
-        //     width: implicitWidth
-        //     text: qsTr("Assets")
-        // }
-
         StatusTabButton {
             objectName: "webTabButton"
             width: implicitWidth
@@ -132,7 +125,6 @@ SettingsContentBase {
         readonly property ContactDetails liveContactDetails: ContactDetails {
             publicKey: root.profileStore.pubKey
             colorId: root.profileStore.colorId
-            colorHash: root.profileStore.colorHash
             onlineStatus: root.profileStore.currentUserStatus
             isCurrentUser: true
             displayName: descriptionPanel.displayName.text || root.profileStore.name
@@ -298,7 +290,6 @@ SettingsContentBase {
                 pubkeyVisible: false
                 emojiHashVisible: false
                 editImageButtonVisible: true
-                colorHash: root.profileStore.colorHash
                 colorId: root.profileStore.colorId
             }
 
@@ -377,22 +368,6 @@ SettingsContentBase {
             }
         }
 
-        // assets
-        // TODO: Integrate the assets tab with the new backend
-        // ProfileShowcaseAssetsPanel {
-        //     id: profileShowcaseAssetsPanel
-
-        //     baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
-        //     showcaseModel: root.contactsStore.showcaseContactAssetsModel
-        //     addAccountsButtonVisible: root.contactsStore.showcaseContactAccountsModel.hiddenCount > 0
-        //     formatCurrencyAmount: function(amount, symbol) {
-        //         return root.currencyStore.formatCurrencyAmount(amount, symbol)
-        //     }
-
-        //     onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-        //     onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
-        // }
-
         // web
         ProfileSocialLinksPanel {
             showcaseLimit: root.profileStore.getProfileShowcaseSocialLinksLimit()
@@ -433,7 +408,6 @@ SettingsContentBase {
                 showcaseAccountsModel: priv.showcaseModels.accountsVisibleModel
                 showcaseCollectiblesModel: priv.showcaseModels.collectiblesVisibleModel
                 showcaseSocialLinksModel: priv.showcaseModels.socialLinksVisibleModel
-                //showcaseAssetsModel: priv.showcaseModels.assetsVisibleModel
 
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
@@ -456,7 +430,6 @@ SettingsContentBase {
                 showcaseAccountsModel: priv.showcaseModels.accountsVisibleModel
                 showcaseCollectiblesModel: priv.showcaseModels.collectiblesVisibleModel
                 showcaseSocialLinksModel: priv.showcaseModels.socialLinksVisibleModel
-                //showcaseAssetsModel: priv.showcaseModels.assetsVisibleModel
 
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel

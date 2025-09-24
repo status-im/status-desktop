@@ -8,7 +8,6 @@
     This module is part of the \l{StatusQ}{StatusQ} project.
 
    \list
-       \li \l{StatusAddress}
        \li \l{StatusAnimatedImage}
        \li \l{StatusBadge}
        \li \l{StatusChatInfoToolBar}
@@ -20,7 +19,6 @@
        \li \l{StatusChatToolBar}
        \li \l{StatusContactRequestsIndicatorListItem}
        \li \l{StatusDescriptionListItem}
-       \li \l{StatusExpandableItem}
        \li \l{StatusFlowSelector}
        \li \l{StatusGroupBox}
        \li \l{StatusImage}
@@ -44,7 +42,6 @@
        \li \l{StatusRoundedMedia}
        \li \l{StatusMacWindowButtons}
        \li \l{StatusListItemBadge}
-       \li \l{StatusExpandableItem}
        \li \l{StatusEmojiAndColorComboBox}
        \li \l{StatusSmartIdenticon}
        \li \l{StatusTagSelector}

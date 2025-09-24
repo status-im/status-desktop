@@ -7,6 +7,8 @@ import StatusQ.Core.Theme
 import utils
 
 QtObject {
+    id: root
+
     readonly property QtObject icons: QtObject {
         readonly property string status: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAP/SURBVHgBzZndVdtAEIXvyhTgVIB8KACoAPPzHlIBogJMBRYVBFdgUQEUwI+pIOI9OTYVhLzHq9yRVkbYxpbWK8ffOToCIaEZ7d3ZmVkFB7SDYdPD+NRDYzcBfF7a49E0R85IDgXEGuMXjcZgELVGWBEFSzKjccF/0EZ22LxcnOmt4kxlBwqGd/DxC69KNAauqjpSyYGjYNitwfAPUILhY9S6Knt/KQf41f0t4DbJtL0ORhyNwzKj4S274fj89awB/Fij8YIv7zwOhqfLblzowEnw2kWiI9QomQXIO29Ftotu+lRCYnwCHWIDWDQv5jpwHPzk0DVusUkoL3job9/MXJ6+IBNW9If/I5tFvHFi709P7Jk5QOOfsHnGC02JhNMXPziQTtosFdhIJBIeBb/C4rWJhIx0hth8REotSulNftnKr9L4LmqCX05edgfoV/ldQfkJ1IGyG22mMlqygTD7X6j168d8weV91BrM+yNjfMBT18KRySikc4CpcBvO0b2HqLX/mfECY3ukmTKYEapCPgrZJFZoXMAhXACvHqKdTpl7TVi8REUUvIP0XIN8In758yoPmBR9qCqGb8roi+dSPkmWRZZOhXNEy6q6jJBVgVAOs0x9Y1tZJRaLJ6PZnkct7cIRGl4ECyihPWW1+itfJrEPN1jXtVyM+rBC7cpC5sMJ+gUVMQGkv0Kx1NyCIyjFhHlKx4O3rdM4jTcN/YfqHmkexXt5DyXjfcV7+8UWdw7wK3ZolJzT5T07Z7liA/WxJaugWuEryPM0s/c3zXUwypMsie08STOgqQsy5c8xHfoOy17SNIqFsyxiPqzQvTG8MDe6LMyBfis4qTlGIqEYFg5IV+2+ZLpQ5CQYthM4K5hGXmJS3KokFiuuee4MztAvlG8Sw4Jx1qythIRNngI4IoEXe2ys3mFNuC6aGBAGnpmAA1SE+fjSrlkRU28HcEcsK7+pB/CMijDGXxhJLKWOJhnnUk/OqQOM4dc2VZG0YLIm2HzEQYbppzo6fNqoZtKVYHgLE3uNDmjkMyYpg2qaVKGNepgUTZNUQkbBbFzYxOg2DW5jTRSLpkljy1T4PWw4Um8X0/aZ3ig1K33Rde4FlEZKVnYyWsVrM71RDs83iwldO0manuNw+vqMA7ZtjrqhVM7nVXxzd2ik4aQsc506yPpMrbkZw8JNvhVDqxPE+MdoJ/zs70t3KWWjjU70Fda7Z2Dm4aWoYdF9Sx0QZEWl1p4su8k2xBJMynQ5SjmQU7ek8vKUDeGw7DOVHBCyVkgS8lFnhUmhrr6uWp5WdiDHyIopBKSzbbvwDSQTtjE8x9qBIu/OaDqStip9FOaL6XyIgbHs0kglxUXpztboIv8AhiCFIFIIkjEAAAAASUVORK5CYII="
         readonly property string superRare: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAUySURBVHgB1VpLSCtLEC29gqL4X4gimiguxfhZ61X8LATxLdSNcnNRQUTEh4ob8UYEN27u2ykiLy5EcfXEDy7EiIgbF9eHCv4gefgX/KKI33pdnczcTJxJJjHReKCIU10zU6eruru6xwDwAhAxiv2UM8lgomGiYxJlEwEWm6wy+ZfJQkBAgAU+CuQ0kx9MTOg5fjHRM9HAe8HO8Qv0Lv72OREfOe6IH+BtUM+gNdzvBTN6KxrsQd/Q970uB3pnObwFaE2Zj4ZnKYX+4bwA90iwG8rR//BNztcAGec17OcXSBchf8Alk0zHxU+OgBmsq6k/YpURyLRXBNpfoDXXNOC/0DEfDfYKMQK21DGD/4NSScsiQb+SCHh/BfQNaGy2CBc8Ap70/tXVFZycnADrCYiLi4OIiAh4R4hRECLwVe2dU1NT0NraCtPT07C/vw8LCwuQmZkJsbGxkJWVBTqdDkwmE7cdHh6GhIQEiI+PF6WoqAgGBwehurqaX6enp0NVVRUsLS2BG5BEgSLgss55enrCuro6zM3Nxbu7O0nbw8MDdnR0ID2KZGRkRGzr7OwU9SRlZWVi28DAAAYGBoptzc3N/D0qYRKc16ixppeR+ezsrKJNQ0MDt+nv7xd1LEqKBAhtbW2S9t7eXnQDUURAr8YyJyeHv2BxcVHR5vz8HJOSkrCvr0/UXV5eOiWwu7sraWcphy8vL6gSehoDOlcJx8IKq6ur/O+hoSEiLWsXHR3N22mAq4VWq4WoqN+L/tHREdze3qq9XUcEMlxZEQHBaRqYJSUlsLm5KWtbWFjIB6pasDEAz8/P4jV1QmhoqNrbNbx0UBMrjUYjCTVJQUEBH7A0iJXgKoU2NjYk7TQm3IAZ1FrS4HIkIAhbB7C+vh63t7fRHQJnZ2eYn5/P9cHBwdx5Z50hgwvVBGh6a2xsVCRB8uXLFzQYDE4JZGRkYHd3N9bW1nLipKuoqECz2YyeQDUBAaOjo5iamuqUSE9PjyIBisDKygonK+gSExORDXz0BERA1X734kJqNjc3h+3t7bJjg9Jhb29PkQChqalJoqeF0FMCZjWGbHqU1bMZBMfGxjAlJUXikNFodEqA8p/NOBLSa2tr6CbMNI1aJ3gXmJiYAPaCV3qaBqmW2dragpqaGlH/+Pjo9HkxMTHQ0vK7nLm/vwe2kiuuMQqw0A0/1VAtLS3FvLw83uNKODg4QFYh8h6dn593GgECpaVjCtqv4irwU3UpQQToBV1dXYo2Nzc3nAA5JRA9Pj6WOFhcXCy5Z3JyUtIeEhKC6+vrqBJ64axTNQESKuzkMD4+jkFBQTgzMyPqaNaydzAyMhKvr68l97GVXWJD1yrrIQ1PJFRxwkwEWP2OaWlpGBYWhnq9Hlndz52hIo6cJ52QOoTl5WVMTk5+NUtVVlbyyAjY2dlBtiGS2NAs5Vi2O4BOTsQdmQFcbCkPDw/55oRAtQtbdcFiscDp6SmvXbKzs4HNRNIRxtqVwCLB6x4BbKy8KuJolxceHq70iO8sXY0CASoHzeB/Z0HOQFtKC99S2nb4f8HngVE44LI/VvlMUdAKBMRjlU8UhW7740W5o0Ua3S53aR8EC3Nea68IlDH6A6znLv4G8infUfmKgC08f4L/4btbn2VpbUD/gQE8AfoHCQO8BWj9WvNRH/n04A2g9fTOjO8HOurUgLeBvk8p6nUD+BJojYYRvQvuOFqrgfeBjQhtht7yBd/0VscDwAtAa75+BesKLvzLjcbO5NImtP/+z/b7j/CZ6C34H+drFRIBW7QeAAAAAElFTkSuQmCC"
@@ -62,11 +64,11 @@ QtObject {
         readonly property string kitty4Big: Theme.png("collectibles/FurbeardBig")
         readonly property string kitty5: Theme.png("collectibles/Magicat")
         readonly property string kitty5Big: Theme.png("collectibles/MagicatBig")
-        readonly property string superRare: Theme.png("collectibles/SuperRare")
-        readonly property string custom: Theme.png("collectibles/SNT")
-        readonly property string doodles: Theme.png("collectibles/Doodles")
+        readonly property string superRare: root.icons.superRare
+        readonly property string custom: root.icons.status
+        readonly property string doodles: root.icons.dribble
         readonly property string mana: Theme.png("collectibles/MANA-token-icon")
-        readonly property string cryptoPunks: Theme.png("collectibles/CryptoPunks")
+        readonly property string cryptoPunks: root.icons.cryptPunks
     }
 
     readonly property QtObject networks: QtObject {
@@ -91,5 +93,408 @@ QtObject {
         readonly property string moonPay: Theme.png("onRampProviders/moonPay")
         readonly property string ramp: Theme.png("onRampProviders/ramp")
         readonly property string mercuryo: Theme.png("onRampProviders/mercuryo")
+    }
+
+    readonly property ListModel languagePickerModel: ListModel {
+        ListElement {
+            key: 0
+            name: "English"
+            shortName: "English"
+            imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 1
+            name: "Korean"
+            shortName: "한국어"
+            imageSource: "../../assets/twemoji/svg/1f1f0-1f1f7.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 2
+            name: "Portuguese (Brazilian)"
+            shortName: "Português"
+            imageSource: "../../assets/twemoji/svg/1f1e7-1f1f7.svg"
+            category: ""
+            selected: true
+        }
+        ListElement {
+            key: 3
+            name: "Dutch"
+            shortName: "Nederlands"
+            imageSource: "../../assets/twemoji/svg/1f1f3-1f1f1.svg"
+            category: "Beta Languages"
+            selected: false
+        }
+        ListElement {
+            key: 4
+            name: "Indonesian"
+            shortName: "Bahasa Indonesia"
+            imageSource: "../../assets/twemoji/svg/1f1ee-1f1e9.svg"
+            category: "Beta Languages"
+            selected: false
+        }
+        ListElement {
+            key: 5
+            name: "Spanish"
+            shortName: "Español"
+            imageSource: "../../assets/twemoji/svg/1f1ea-1f1e6.svg"
+            category: "Beta Languages"
+            selected: false
+        }
+    }
+
+    readonly property ListModel languageNoImagePickerModel: ListModel {
+        ListElement {
+            key: 0
+            name: "Chinese (Mainland China)"
+            shortName: "普通话"
+            category: ""
+            selected: true
+        }
+        ListElement {
+            key: 1
+            name: "Russian"
+            shortName: "Русский Язык"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 2
+            name: "Arabic"
+            shortName: "ا َل ْع َر َب ِي َ ّة ُ"
+            category: "Beta Languages"
+            selected: true
+        }
+        ListElement {
+            key: 3
+            name: "Chinese (Taiwan)"
+            shortName: "臺灣華語"
+            category: "Beta Languages"
+            selected: false
+        }
+        ListElement {
+            key: 4
+            name: "Filipino"
+            shortName: "Wikang Filipino"
+            category: "Beta Languages"
+            selected: false
+        }
+        ListElement {
+            key: 5
+            name: "French"
+            shortName: "Français"
+            category: "Beta Languages"
+            selected: false
+        }
+        ListElement {
+            key: 6
+            name: "Italian"
+            shortName: "Italiano"
+            category: "Beta Languages"
+            selected: false
+        }
+        ListElement {
+            key: 7
+            name: "Turkish"
+            shortName: "Türkçe"
+            category: "Beta Languages"
+            selected: false
+        }
+        ListElement {
+            key: 8
+            name: "Urdu"
+            shortName: "ا ُرد ُو"
+            category: "Beta Languages"
+            selected: false
+        }
+    }
+
+    readonly property ListModel currencyPickerModel: ListModel {
+        ListElement {
+            key: 0
+            name: "United States Dollar"
+            shortName: "USD"
+            symbol: "$"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 1
+            name: "British Pound"
+            shortName: "GBP"
+            symbol: "£"
+            imageSource: "../../assets/twemoji/svg/1f4b5.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 2
+            name: "Euro"
+            shortName: "EUR"
+            symbol: "€"
+            imageSource: "../../assets/twemoji/svg/1f4b6.svg"
+            category: ""
+            selected: true
+        }
+        ListElement {
+            key: 3
+            name: "Shout Korean Won"
+            shortName: "KRW"
+            symbol: "₩"
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 4
+            name: "Ethereum"
+            shortName: "ETH"
+            symbol: "Ξ"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
+            category: "Tokens"
+            selected: true
+        }
+        ListElement {
+            key: 5
+            name: "Bitcoin"
+            shortName: "BTC"
+            symbol: "฿"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: "Tokens"
+            selected: false
+        }
+        ListElement {
+            key: 6
+            name: "Status Network Token"
+            shortName: "SNT"
+            symbol: ""
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
+            category: "Tokens"
+            selected: false
+        }
+
+        ListElement {
+            key: 7
+            name: "Emirati Dirham"
+            shortName: "AED"
+            symbol: "د.إ"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: "Other Fiat"
+            selected: false
+        }
+        ListElement {
+            key: 8
+            name: "Afghani"
+            shortName: "AFN"
+            symbol: "؋"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
+            category: "Other Fiat"
+            selected: false
+        }
+        ListElement {
+            key: 9
+            name: "Argentine Peso"
+            shortName: "AFN"
+            symbol: "$"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: "Other Fiat"
+            selected: false
+        }
+    }
+
+    readonly property ListModel currencyPickerModel2: ListModel {
+        ListElement {
+            key: 0
+            name: "United States Dollar"
+            shortName: "USD"
+            symbol: "$"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 1
+            name: "British Pound"
+            shortName: "GBP"
+            symbol: "£"
+            imageSource: "../../assets/twemoji/svg/1f4b5.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 2
+            name: "Euro"
+            shortName: "EUR"
+            symbol: "€"
+            imageSource: "../../assets/twemoji/svg/1f4b6.svg"
+            category: ""
+            selected: true
+        }
+        ListElement {
+            key: 3
+            name: "Shout Korean Won"
+            shortName: "KRW"
+            symbol: "₩"
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
+            category: ""
+            selected: false
+        }
+        ListElement {
+            key: 4
+            name: "Ethereum"
+            shortName: "ETH"
+            symbol: "Ξ"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
+            category: "Tokens"
+            selected: true
+        }
+        ListElement {
+            key: 5
+            name: "Bitcoin"
+            shortName: "BTC"
+            symbol: "฿"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: "Tokens"
+            selected: false
+        }
+        ListElement {
+            key: 6
+            name: "Status Network Token"
+            shortName: "SNT"
+            symbol: ""
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
+            category: "Tokens"
+            selected: false
+        }
+
+        ListElement {
+            key: 7
+            name: "Emirati Dirham"
+            shortName: "AED"
+            symbol: "د.إ"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: "Other Fiat"
+            selected: false
+        }
+        ListElement {
+            key: 8
+            name: "Afghani"
+            shortName: "AFN"
+            symbol: "؋"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
+            category: "Other Fiat"
+            selected: false
+        }
+        ListElement {
+            key: 9
+            name: "Argentine Peso"
+            shortName: "AFN"
+            symbol: "$"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
+            category: "Other Fiat"
+            selected: false
+        }
+    }
+
+    readonly property ListModel optionsModel: ListModel {
+        ListElement {
+            value: "item_1"
+            title: "Item with icon"
+            imageSource: ""
+            iconName: "chat"
+            iconColor: ""
+            isIdenticon: false
+            hasSubItems: true
+            subItems: [
+                ListElement {
+                    value: "sub_item_1_1"
+                    text: "Profile image item"
+                    imageSource: "https://featuringnfts.com/wp-content/uploads/2022/01/cryptopunks-profile.png"
+                    iconName: ""
+                    iconColor: ""
+                },
+                ListElement {
+                    value: "sub_item_1_2"
+                    text: "identicon item"
+                    imageSource: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+                                  nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+                    iconName: ""
+                    iconColor: ""
+                }]}
+        ListElement {
+            value: "item_1"
+            title: "No submenu"
+            imageSource: ""
+            iconName: "airdrop"
+            isIdenticon: false
+            hasSubItems: false
+            subItems: []
+        }
+        ListElement {
+            value: "item_2"
+            title: "Community item";
+            imageSource: "https://cdn-icons-png.flaticon.com/512/3991/3991951.png"
+            iconName: ""
+            iconColor: ""
+            isIdenticon: false
+            hasSubItems: true
+            subItems: [
+                ListElement {
+                    value: "sub_item_2_1"
+                    text: "welcome"
+                    imageSource: ""
+                    iconName: "channel"
+                    iconColor: ""
+                },
+                ListElement {
+                    value: "sub_item_2_2"
+                    text: "support"
+                    imageSource: ""
+                    iconName: "channel"
+                    iconColor: ""
+                },
+                ListElement {
+                    value: "sub_item_2_3"
+                    text: "news"
+                    imageSource: ""
+                    iconName: "channel"
+                    iconColor: ""
+                }]}
+        ListElement {
+            value: "item_3"
+            title: "Other";
+            imageSource: "";
+            iconName: "info"
+            iconColor: ""
+            isIdenticon: false
+            hasSubItems: true
+            subItems: [
+                ListElement {
+                    value: "sub_item_3_1"
+                    text: "news"
+                    imageSource: ""
+                    iconName: "channel"
+                    iconColor: ""
+                }]}
+        ListElement {
+            value: "item_4"
+            title: "Letter identicon";
+            imageSource: "";
+            iconName: ""
+            iconColor: "red"
+            isIdenticon: false
+            hasSubItems: true
+            subItems: [
+                ListElement {
+                    value: "sub_item_4_1"
+                    text: "news"
+                    imageSource: ""
+                    iconName: "channel"
+                    iconColor: ""
+                }]}
     }
 }

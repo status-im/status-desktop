@@ -172,7 +172,6 @@ Item {
                                        "isVerified": entry.isVerified,
                                        "isUntrustworthy": entry.isUntrustworthy,
                                        "isContact": entry.isContact,
-                                       "ringSpecModel": entry.ringSpecModel,
                                        "icon": entry.icon,
                                        "isImage": entry.isImage,
                                        "onlineStatus": entry.onlineStatus,
@@ -295,7 +294,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 visible: (parent.width>22)
-                Keys.onPressed: {
+                Keys.onPressed: function (event) {
                     if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape)
                             && getText(cursorPosition, (cursorPosition-1)) === ""
                             && (namesList.count-1) >= 0) {
@@ -412,7 +411,6 @@ Item {
                 icon.name: model.icon
                 icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.pubKey)]
                 status: model.onlineStatus
-                colorHash: model.colorHash
                 color: (hovered || highlighted) ? Theme.palette.baseColor2 : "transparent"
                 onClicked: {
                     root.insertTag(model.displayName, model.pubKey, model.isAdmin, model.isAdmin ? "crown" : "");

@@ -23,7 +23,6 @@ import AppLayouts.Wallet.popups
 import AppLayouts.Wallet.adaptors
 import AppLayouts.Communities.stores
 import AppLayouts.Profile.helpers
-import mainui.activitycenter.stores
 
 import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Chat.stores as ChatStores
@@ -48,6 +47,7 @@ QtObject {
     required property NetworksStore networksStore
 
     property AppLayoutStores.ContactsStore contactsStore
+    property AppLayoutStores.ActivityCenterStore activityCenterStore
     property ChatStores.RootStore chatStore
     property UtilsStore utilsStore
     property CommunitiesStore communitiesStore
@@ -59,7 +59,6 @@ QtObject {
     property NetworkConnectionStore networkConnectionStore
     property WalletStores.BuyCryptoStore buyCryptoStore
     property ProfileStores.AdvancedStore advancedStore
-    property ActivityCenterStore activityCenterStore
     property ProfileStores.AboutStore aboutStore
     property ProfileStores.PrivacyStore privacyStore
 

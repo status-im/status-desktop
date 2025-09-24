@@ -7,7 +7,7 @@ This section is for developers who want full control over the build environment.
 ### Prerequisites
 
 - Python 3.x
-- Qt 6.9.0
+- Qt 6.9.2
 - Xcode
 - iPad Pro simulator
 
@@ -18,13 +18,13 @@ This section is for developers who want full control over the build environment.
 pip3 install -U pip
 pip3 install aqtinstall
 
-# Install Qt 5.15.2 (or6.9.0forQt6)
-aqt install-qt mac ios 6.9.0 -O $HOME/qt -m all --autodesktop
+# Install Qt 6.9.2
+aqt install-qt mac ios 6.9.2 -O $HOME/qt -m all --autodesktop
 
 # If the above fails on arm64, try:
-arch -x86_64 aqt install-qt mac ios 6.9.0 -O $HOME/qt -m all --autodesktop
-export PATH=$HOME/qt/6.9.0/ios/bin:$HOME/qt/6.9.0/macos/libexec:$HOME/qt/6.9.0/macos/bin:${PATH}
-export QTDIR=$HOME/qt/6.9.0/ios
+arch -x86_64 aqt install-qt mac ios 6.9.2 -O $HOME/qt -m all --autodesktop
+export PATH=$HOME/qt/6.9.2/ios/bin:$HOME/qt/6.9.2/macos/libexec:$HOME/qt/6.9.2/macos/bin:${PATH}
+export QTDIR=$HOME/qt/6.9.2/ios
 ```
 
 2. **Build and run:**
@@ -52,12 +52,12 @@ Note: It's best to install the qt architecture matching the system architecture
 ```bash
 # For Qt6 (includesdesktoptools)
 # arm host
-aqt install-qt mac android 6.9.0 android_arm64_v8a -O $HOME/qt -m all --autodesktop
+aqt install-qt mac android 6.9.2 android_arm64_v8a -O $HOME/qt -m all --autodesktop
 # x64 host
-aqt install-qt mac android 6.9.0 android_x86_64 -O $HOME/qt -m all --autodesktop
+aqt install-qt mac android 6.9.2 android_x86_64 -O $HOME/qt -m all --autodesktop
 # optional
-aqt install-qt mac android 6.9.0 android_x86 -O $HOME/qt -m all
-aqt install-qt mac android 6.9.0 android_armv7 -O $HOME/qt -m all
+aqt install-qt mac android 6.9.2 android_x86 -O $HOME/qt -m all
+aqt install-qt mac android 6.9.2 android_armv7 -O $HOME/qt -m all
 ```
 2. **Set environment variables:**
 ```bash
@@ -75,7 +75,7 @@ export PATH="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROO
 # Add Qt to PATH. Qt6 needs both ios bin and host libexec and host bin (in this order!)
 export QTDIR='/your/Qt/Preferred/Folder' # CHANGE ME
 export QTTARGET='yourQtHostTarget' # CHANGE ME
-export PATH="$QTDIR/6.9.0/$QTTARGET/bin:$QTDIR/6.9.0/$QTTARGET/libexec:$QTDIR/6.9.0/$QTTARGET/bin:${PATH}"
+export PATH="$QTDIR/6.9.2/$QTTARGET/bin:$QTDIR/6.9.2/$QTTARGET/libexec:$QTDIR/6.9.2/$QTTARGET/bin:${PATH}"
 
 ```
 

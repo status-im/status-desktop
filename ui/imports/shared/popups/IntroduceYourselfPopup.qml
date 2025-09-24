@@ -18,7 +18,6 @@ StatusDialog {
 
     required property string pubKey
     required property int colorId
-    required property var colorHash
 
     width: 480
     padding: Theme.smallPadding*2
@@ -59,7 +58,6 @@ StatusDialog {
                         userColor: Utils.colorForColorId(root.colorId)
                         imageWidth: 68
                         imageHeight: 68
-                        colorHash: root.colorHash
                         interactive: false
                     }
                     StatusBaseText {
@@ -101,7 +99,6 @@ StatusDialog {
                         userColor: Utils.colorForColorId(root.colorId)
                         imageWidth: 68
                         imageHeight: 68
-                        colorHash: root.colorHash
                         interactive: false
                     }
                     StatusBaseText {

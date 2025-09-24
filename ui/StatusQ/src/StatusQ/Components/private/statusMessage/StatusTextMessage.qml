@@ -109,15 +109,13 @@ Item {
         wrapMode: root.convertToSingleLine ? Text.NoWrap : Text.Wrap
         readOnly: true
         selectByMouse: true
-        onLinkActivated: {
+        onLinkActivated: function(link) {
             if(d.showDisabledTooltipForAddressEnsName(link)) {
                 return
             }
             root.linkActivated(link)
         }
-        onLinkHovered: {
-            disabledLinkTooltip.visible = d.showDisabledTooltipForAddressEnsName(link)
-        }
+        onLinkHovered: (link) => disabledLinkTooltip.visible = d.showDisabledTooltipForAddressEnsName(link)
         HoverHandler {
             id: hoverHandler
         }

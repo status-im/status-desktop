@@ -8,10 +8,10 @@ import QtQuick.Window
 import StatusQ
 import StatusQ.Core.Backpressure
 
+import AppLayouts.Onboarding
 import AppLayouts.Onboarding.enums
-import AppLayouts.Onboarding2
-import AppLayouts.Onboarding2.pages
-import AppLayouts.Onboarding2.stores
+import AppLayouts.Onboarding.pages
+import AppLayouts.Onboarding.stores
 
 import shared.panels
 import utils
@@ -183,6 +183,8 @@ SplitView {
         keychain: keychain
         isKeycardEnabled: ctrlKeycard.checked
 
+        privacyModeFeatureEnabled: ctryPrivacyModelEnabled.checked
+
         onFinished: function(flow, data) {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
             logs.logEvent("onFinished", ["flow", "data"], arguments)
@@ -334,29 +336,6 @@ SplitView {
                 }
             }
         }
-
-        Button {
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.margins: 10
-
-            visible: onboarding.currentPage instanceof BackupSeedphraseAcks
-
-            text: "Paste seed phrase verification"
-            focusPolicy: Qt.NoFocus
-            onClicked: {
-                for (let i = 1;; i++) {
-                    const checkBox = StorybookUtils.findChild(
-                                       onboarding.currentPage,
-                                       `ack${i}`)
-
-                    if (checkBox === null)
-                        break
-
-                    checkBox.checked = true
-                }
-            }
-        }
     }
 
     KeychainMock {
@@ -481,6 +460,12 @@ SplitView {
                 Switch {
                     id: ctrlKeycard
                     text: "Keycard enabled"
+                    checked: true
+                }
+
+                Switch {
+                    id: ctryPrivacyModelEnabled
+                    text: "Privacy Mode Feature Enabled"
                     checked: true
                 }
 

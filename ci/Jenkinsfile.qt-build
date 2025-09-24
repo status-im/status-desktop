@@ -1,0 +1,180 @@
+#!/usr/bin/env groovy
+library 'status-jenkins-lib@v1.9.24'
+
+pipeline {
+  agent {
+    label 'linux && x86_64 && qt-builder'
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+    timestamps()
+    timeout(time: 12, unit: 'HOURS')
+  }
+
+  parameters {
+    string(
+      name: 'QT_VERSION',
+      defaultValue: '6.9.2',
+      description: 'Qt version to build'
+    )
+    string(
+      name: 'DOCKER_TAG_ANDROID',
+      defaultValue: '1.0.4-qt6.9.0-android',
+      description: 'Docker image tag for the Andorid image'
+    )
+    string(
+      name: 'DOCKER_TAG_LINUX',
+      defaultValue: '1.0.4-qt6.9.0',
+      description: 'Docker image tag for the Linux image'
+    )
+    string(
+      name: 'DOCKER_REGISTRY',
+      description: 'Docker registry ',
+      defaultValue: params.DOCKER_REGISTRY ?: 'harbor.status.im',
+    )
+    string(
+      name: 'LINUXDEPLOYQT_VERSION',
+      description: 'Version of Linux Deploy QT present in Digital Ocean Spaces',
+      defaultValue: '20250615-0393b84',
+    )
+    string(
+      name: 'PCSCLITE_VERSION',
+      description: 'PCSC Lite version to bundle for keycard support',
+      defaultValue: '2.2.3',
+    )
+    string(
+      name: 'ANDROID_TARGET_ARCH',
+      description: 'CPU Target Architecture for Android Builds',
+      defaultValue: 'amd64',
+    )
+    string(
+      name: 'JAVA_VERSION',
+      description: 'Java version for Android builds',
+      defaultValue: '17',
+    )
+    string(
+      name: 'ANDROID_API_LEVEL',
+      description: 'Android API level',
+      defaultValue: '35',
+    )
+    string(
+      name: 'ANDROID_NDK_VERSION',
+      description: 'Android NDK version',
+      defaultValue: '27.2.12479018',
+    )
+    string(
+      name: 'GOLANG_VERSION',
+      description: 'Go language version',
+      defaultValue: '1.24.7',
+    )
+    string(
+      name: 'NIM_VERSION',
+      description: 'Nim language version',
+      defaultValue: '2.0.12',
+    )
+    string(
+      name: 'NIX_VERSION',
+      description: 'Nix package manager version',
+      defaultValue: '2.24.11',
+    )
+  }
+
+  environment {
+    DOCKER_IMAGE = 'status-im/status-desktop-build'
+    ANDROID_BUILD_DIR = "${WORKSPACE}/mobile/docker"
+    LINUX_BUILD_DIR = "${WORKSPACE}/ci"
+  }
+
+  stages {
+
+    stage('Build Docker Image for Linux') {
+      steps {
+        script {
+          dir("${LINUX_BUILD_DIR}") {
+            image = docker.build(
+              "${params.DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.DOCKER_TAG_LINUX}",
+              "--build-arg QT_VERSION=${params.QT_VERSION} " +
+              "--build-arg LINUXDEPLOYQT_VERSION=${params.LINUXDEPLOYQT_VERSION} " +
+              "--build-arg PCSCLITE_VERSION=${params.PCSCLITE_VERSION} " +
+              "."
+            )
+          }
+        }
+      }
+    }
+
+    stage('Test Image for Linux') {
+      steps {
+        script {
+          image.inside('--entrypoint=""') {
+            sh "qmake --version"
+            sh "ls -la /opt/qt/${params.QT_VERSION}/"
+          }
+        }
+      }
+    }
+
+    stage('Push Linux image to Docker registry') {
+      steps {
+        script {
+          withDockerRegistry([credentialsId: 'harbor-status-im-status-desktop-build-robot', url: "https://${params.DOCKER_REGISTRY}"]) {
+            image.push(params.DOCKER_TAG_LINUX)
+          }
+        }
+      }
+    }
+
+    stage('Build Docker Image for Android') {
+      steps {
+        script {
+          dir("${ANDROID_BUILD_DIR}") {
+            image = docker.build(
+              "${params.DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.DOCKER_TAG_ANDROID}",
+              "--build-arg QTVER=${params.QT_VERSION} " +
+              "--build-arg TARGETARCH=${params.ANDROID_TARGET_ARCH} " +
+              "--build-arg JAVA_VERSION=${params.JAVA_VERSION} " +
+              "--build-arg ANDROID_API_LEVEL=${params.ANDROID_API_LEVEL} " +
+              "--build-arg ANDROID_NDK_VERSION=${params.ANDROID_NDK_VERSION} " +
+              "--build-arg GOLANG_VERSION=${params.GOLANG_VERSION} " +
+              "--build-arg NIM_VERSION=${params.NIM_VERSION} " +
+              "--build-arg NIX_VERSION=${params.NIX_VERSION} " +
+              "--target mobile-build ."
+            )
+          }
+        }
+      }
+    }
+
+    stage('Test Image for Android') {
+      steps {
+        script {
+          image.inside('--entrypoint=""') {
+            sh "qmake --version"
+            sh "nim --version"
+            sh "go version"
+            sh "protoc --version"
+            sh "java -version"
+            sh "ls -la /opt/qt/${params.QT_VERSION}/"
+          }
+        }
+      }
+    }
+
+    stage('Push Android image to Docker registry') {
+      steps {
+        script {
+          withDockerRegistry([credentialsId: 'harbor-status-im-status-desktop-build-robot', url: "https://${params.DOCKER_REGISTRY}"]) {
+            image.push(params.DOCKER_TAG_ANDROID)
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    always { cleanWs() }
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+  }
+}

@@ -105,7 +105,6 @@ method load*[T](self: Module[T]) =
         acc.images.thumbnail,
         acc.images.large,
         acc.keyUid,
-        acc.colorHash,
         acc.colorId,
         acc.keycardPairing
       ))
@@ -159,18 +158,20 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
     let keycardInfo = self.view.getKeycardEvent().keycardInfo
     let saveBiometrics = data["enableBiometrics"].getBool
     let backupImportFileUrl = data["backupImportFileUrl"].getStr
+    let thirdpartyServicesEnabled = data["thirdpartyServicesEnabled"].getBool
 
     var err = ""
 
     case self.onboardingFlow:
       # CREATE PROFILE FLOWS
       of OnboardingFlow.CreateProfileWithPassword:
-        err = self.controller.createAccountAndLogin(password)
+        err = self.controller.createAccountAndLogin(password, thirdpartyServicesEnabled)
       of OnboardingFlow.CreateProfileWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
           password,
           mnemonic,
           keycardInstanceUID = "",
+          thirdpartyServicesEnabled,
         )
       of OnboardingFlow.CreateProfileWithKeycardNewSeedphrase:
         # New user with a seedphrase we showed them
@@ -178,6 +179,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           mnemonic,
           keycardInstanceUID = keycardInfo.instanceUID,
+          thirdpartyServicesEnabled,
         )
       of OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase:
         # New user who entered their own seed phrase
@@ -185,6 +187,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           mnemonic,
           keycardInstanceUID = keycardInfo.instanceUID,
+          thirdpartyServicesEnabled,
         )
 
       # LOGIN FLOWS
@@ -193,6 +196,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           password,
           mnemonic,
           keycardInstanceUID = "",
+          thirdpartyServicesEnabled,
         )
       of OnboardingFlow.LoginWithSyncing:
         # The pairing was already done directly through inputConnectionStringForBootstrapping, we can login
@@ -206,6 +210,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           keycardInfo.keyUID,
           keycardInfo.instanceUID,
           self.exportedKeys,
+          thirdpartyServicesEnabled,
         )
       of OnboardingFlow.LoginWithLostKeycardSeedphrase:
         # 1. Schedule `convertToRegularAccount` for post-onboarding

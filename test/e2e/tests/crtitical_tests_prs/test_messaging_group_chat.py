@@ -63,10 +63,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
         with step(f'User {user_two.name}, accept contact request from {user_one.name} via activity center'):
             aut_two.attach()
             main_window.prepare()
-            activity_center = ToolBar().open_activity_center()
+            activity_center = main_window.left_panel.open_activity_center()
             request = activity_center.find_contact_request_in_list(user_one.name)
-            activity_center.click_activity_center_button(
-                'Contact requests').accept_contact_request(request)
+            activity_center.accept_contact_request(request)
             main_window.left_panel.click()
             main_window.hide()
 
@@ -88,10 +87,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
         with step(f'User {user_three.name}, accept contact request from {user_one.name} via activity center'):
             aut_three.attach()
             main_window.prepare()
-            activity_center = ToolBar().open_activity_center()
+            activity_center = main_window.left_panel.open_activity_center()
             request = activity_center.find_contact_request_in_list(user_one.name, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
-            activity_center.click_activity_center_button(
-                'Contact requests').accept_contact_request(request)
+            activity_center.accept_contact_request(request)
             main_window.left_panel.click()
             main_window.hide()
 

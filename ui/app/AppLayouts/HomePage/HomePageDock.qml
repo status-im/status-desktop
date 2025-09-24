@@ -117,11 +117,14 @@ Control {
 
             sourceComponent: model.pinnable ? pinnedDockButton : regularDockButton
 
-            ListView.onRemove: SequentialAnimation {
+            SequentialAnimation {
+                id: removeAnimation
                 PropertyAction { target: delegateLoader; property: "ListView.delayRemove"; value: true }
                 NumberAnimation { target: delegateLoader; property: "scale"; to: 0; duration: Theme.AnimationDuration.Default; easing.type: Easing.InOutQuad }
                 PropertyAction { target: delegateLoader; property: "ListView.delayRemove"; value: false }
             }
+
+            ListView.onRemove: removeAnimation.start()
         }
 
         Behavior on implicitWidth {

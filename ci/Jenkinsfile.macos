@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@v1.9.27'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -7,7 +7,7 @@ def isPRBuild = utils.isPRBuild()
 pipeline {
   /* This way we run the same Jenkinsfile on different platforms. */
   agent {
-    label "${getAgentLabels().join(' && ')} && qt-6.9.0 && go-1.23 && xcode-16.2"
+    label "${getAgentLabels().join(' && ')} && qt-6.9.2 && go-1.24 && xcode-16.2"
   }
 
   parameters {
@@ -68,10 +68,10 @@ pipeline {
   }
 
   environment {
-    PLATFORM = "macos/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
+    PLATFORM = "macos/${getArch()}${(params.USE_NWAKU ?: false) ? '-nwaku' : ''}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
-    QT_VERSION="6.9.0"
+    QT_VERSION="6.9.2"
     QMAKE = "/Users/admin/${QT_VERSION}/macos/bin/qmake"
     /* QMAKE = sh(script: "which qmake", returnStdout: true).trim() */
     QTDIR = sh(script:"${env.QMAKE} -query QT_INSTALL_PREFIX", returnStdout: true).trim()
@@ -80,9 +80,13 @@ pipeline {
     PATH = "${env.QTDIR}/bin:${env.QTDIR}/libexec:${env.HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
-    /* Control output the filename */
+    /* Set USE_NWAKU before VERSION since version.sh uses it */
+    USE_NWAKU = "${params.USE_NWAKU}"
+    /* Controls the App version in Settings */
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
-    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg', arch: getArch(), version: env.VERSION)}"
+    /* Control output the filename */
+    APP_TYPE = "${utils.getAppType() + ( params.USE_NWAKU ? '-experimental' : '' )}"
+    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     /* Apple Team ID for Notarization */
     MACOS_NOTARIZE_TEAM_ID = "8B5X2M6H2Y"
     /* prevent sharing cache dir across different jobs */
@@ -90,7 +94,6 @@ pipeline {
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
     /* Hack fix for params not being set in job on first run */
     NIMFLAGS =               "${params.NIMFLAGS}"
-    USE_NWAKU =              "${params.USE_NWAKU}"
     ENTITLEMENTS =           "${params.ENTITLEMENTS}"
     RELEASE =                "${params.RELEASE}"
     INCLUDE_DEBUG_SYMBOLS =  "${params.INCLUDE_DEBUG_SYMBOLS}"
@@ -104,6 +107,11 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+      }
+    }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
       }
     }
     stage('Deps') {
@@ -123,14 +131,12 @@ pipeline {
 
     stage('status-go') {
       steps {
-        sh "echo USE_NWAKU is ${USE_NWAKU}"
         sh 'make status-go'
       }
     }
 
     stage('Package') {
       steps { script {
-        sh "echo USE_NWAKU is ${USE_NWAKU}"
         macos.bundle('pkg-macos')
       } }
     }

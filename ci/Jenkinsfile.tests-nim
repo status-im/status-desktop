@@ -8,7 +8,7 @@ pipeline {
   agent {
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:2.0.4-qt6.9.0'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
     }
   }
 
@@ -47,7 +47,7 @@ pipeline {
     /* Improve make performance */
     MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Makefile assumes the compiler folder is included */
-    QTDIR = "/opt/qt/6.9.0/gcc_64"
+    QTDIR = "/opt/qt/6.9.2/gcc_64"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Include library in order to compile the project */
@@ -63,6 +63,11 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+      }
+    }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
       }
     }
     stage('Deps') {

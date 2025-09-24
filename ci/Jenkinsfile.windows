@@ -1,11 +1,11 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@v1.9.27'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
-  agent { label 'windows && x86_64 && qt-6.9.0 && go-1.23' }
+  agent { label 'windows && x86_64 && qt-6.9.2 && go-1.24' }
 
   parameters {
     booleanParam(
@@ -70,7 +70,7 @@ pipeline {
     /* Improve make performance */
     MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Explicitly set the QT version */
-    QTDIR = "/c/Qt/6.9.0/msvc2022_64"
+    QTDIR = "/c/Qt/6.9.2/msvc2022_64"
     PATH = "${env.QTDIR}/bin:${goPath()}/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
@@ -99,6 +99,11 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+      }
+    }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
       }
     }
     stage('Deps') {

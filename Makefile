@@ -22,6 +22,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	check-pkg-target-macos \
 	check-pkg-target-windows \
 	clean \
+	update-translations \
 	compile-translations \
 	deps \
 	nim_status_client \
@@ -39,11 +40,11 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	status-keycard-go \
 	statusq-sanity-checker \
 	run-statusq-sanity-checker \
-        statusq-tests \
-        run-statusq-tests \
-        storybook-build \
-        run-storybook \
-        run-storybook-tests \
+	statusq-tests \
+	run-statusq-tests \
+	storybook-build \
+	run-storybook \
+	run-storybook-tests \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -156,10 +157,6 @@ endif
 deps: | check-qt-dir deps-common status-go-deps bottles
 
 update: | check-qt-dir update-common
-ifeq ($(mkspecs),macx)
-	# Install or update package.json files
-	yarn install --check-files
-endif
 
 QML_DEBUG ?= false
 QML_DEBUG_PORT ?= 49152
@@ -302,7 +299,6 @@ $(STATUSQ_CMAKE_CACHE): | check-qt-dir
 	cmake \
 		-DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
 		-DCMAKE_BUILD_TYPE=$(COMMON_CMAKE_BUILD_TYPE) \
-		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=OFF \
 		$(COMMON_CMAKE_CONFIG_PARAMS) \
@@ -335,7 +331,6 @@ statusq-clean:
 statusq-sanity-checker:
 	echo -e "\033[92mConfiguring:\033[39m StatusQ SanityChecker"
 	cmake \
-		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=ON \
 		-DSTATUSQ_BUILD_TESTS=OFF \
 		$(COMMON_CMAKE_CONFIG_PARAMS) \
@@ -355,7 +350,6 @@ run-statusq-sanity-checker: statusq-sanity-checker
 statusq-tests:
 	echo -e "\033[92mConfiguring:\033[39m StatusQ Unit Tests"
 	cmake \
-		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=ON \
 		-DSTATUSQ_SHADOW_BUILD=OFF \
@@ -465,6 +459,14 @@ dotherside-clean:
 dotherside: | dotherside-build
 
 ##
+## sds
+##
+
+SDS := /vendor/status-go/vendor/github.com/waku-org/sds-go-bindings/third_party/nim-sds/build/libsds.$(LIB_EXT)
+SDS_LIBDIR := $(shell pwd)/$(shell dirname "$(SDS)")
+export SDS_LIBDIR
+
+##
 ##	status-go
 ##
 
@@ -535,26 +537,32 @@ $(UI_RESOURCES): $(UI_SOURCES) | check-qt-dir
 
 rcc: $(UI_RESOURCES)
 
-TS_SOURCES := $(shell find ui/i18n -iname '*.ts') # ui/i18n/qml_*.ts
-QM_BINARIES := $(shell find ui/i18n -iname "*.ts" | sed 's/\.ts/\.qm/' | sed 's/ui/bin/') # bin/i18n/qml_*.qm
+TS_SOURCE_DIR := ui/i18n
+TS_BUILD_DIR := $(TS_SOURCE_DIR)/build
 
-$(QM_BINARIES): TS_FILE = $(shell echo $@ | sed 's/\.qm/\.ts/' | sed 's/bin/ui/')
-$(QM_BINARIES): $(TS_SOURCES) | check-qt-dir
-	mkdir -p bin/i18n
-	lrelease -removeidentical $(TS_FILE) -qm $@ $(HANDLE_OUTPUT)
+log-update-translations:
+	echo -e "\033[92mUpdating:\033[39m translations"
+
+update-translations: | log-update-translations
+	cmake -S $(TS_SOURCE_DIR) -B $(TS_BUILD_DIR) -Wno-dev $(HANDLE_OUTPUT)
+	cmake --build $(TS_BUILD_DIR) --target update_application_translations $(HANDLE_OUTPUT)
+#	+ cd scripts/translationScripts && ./fixup-base-ts-for-lokalise.py $(HANDLE_OUTPUT)
 
 log-compile-translations:
 	echo -e "\033[92mCompiling:\033[39m translations"
 
-compile-translations: | log-compile-translations $(QM_BINARIES)
+compile-translations: | update-translations log-compile-translations
+	cmake -S $(TS_SOURCE_DIR) -B $(TS_BUILD_DIR) -Wno-dev $(HANDLE_OUTPUT)
+	cmake --build $(TS_BUILD_DIR) --target compile_application_translations $(HANDLE_OUTPUT)
+
+clean-translations:
+	rm -rf $(TS_BUILD_DIR)
 
 # used to override the default number of kdf iterations for sqlcipher
 KDF_ITERATIONS ?= 0
 ifeq ($(shell test $(KDF_ITERATIONS) -gt 0; echo $$?),0)
   NIM_PARAMS += -d:KDF_ITERATIONS:"$(KDF_ITERATIONS)"
 endif
-
-NIM_PARAMS += -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=dynamic -d:chronicles_log_level=trace
 
 RESOURCES_LAYOUT ?= -d:development
 
@@ -611,6 +619,8 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSG
 		--mm:refc \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
 		--passL:"-lstatus" \
+		--passL:"-L$(SDS_LIBDIR)" \
+		--passL:"-lsds" \
 		--passL:"-L$(STATUSQ_INSTALL_PATH)/StatusQ" \
 		--passL:"-lStatusQ" \
 		--passL:"-L$(STATUSKEYCARDGO_LIBDIR)" \
@@ -844,8 +854,8 @@ zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 clean-destdir:
 	rm -rf bin/*
 
-clean: | clean-common clean-destdir statusq-clean status-go-clean dotherside-clean storybook-clean
-	rm -rf node_modules bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
+clean: | clean-common clean-destdir statusq-clean status-go-clean dotherside-clean storybook-clean clean-translations
+	rm -rf bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
 
 clean-git:
@@ -862,12 +872,12 @@ run: $(RUN_TARGET)
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(SDS_LIBDIR)":"$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(SDS_LIBDIR)":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
@@ -883,15 +893,15 @@ run-macos: nim_status_client
 run-windows: STATUS_RC_FILE = status-dev.rc
 run-windows: compile_windows_resources nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
-	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(PATH)" \
+	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(SDS_LIBDIR)":"$(PATH)" \
 	./bin/nim_status_client.exe $(ARGS)
 
 NIM_TEST_FILES := $(wildcard test/nim/*.nim)
 NIM_TESTS := $(foreach test_file,$(NIM_TEST_FILES),nim-test-run/$(test_file))
 
 nim-test-run/%: | dotherside $(STATUSGO) $(QRCODEGEN)
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
-	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(SDS_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
+	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(SDS_LIBDIR)" --passL:"-lsds" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
 
 tests-nim-linux: $(NIM_TESTS)
 
@@ -906,6 +916,7 @@ mobile-run: deps-common
 	echo -e "\033[92mRunning:\033[39m mobile app"
 	$(MAKE) -C mobile run
 
+mobile-build: USE_SYSTEM_NIM=1
 mobile-build: | deps-common
 	echo -e "\033[92mBuilding:\033[39m mobile app"
 	$(MAKE) -C mobile V=3

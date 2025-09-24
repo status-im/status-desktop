@@ -67,7 +67,6 @@ SplitView {
             readonly property string name: "John Roe"
             readonly property string icon: ModelsData.icons.rarible
             readonly property int colorId: 7
-            readonly property var colorHash: [{colorId: 7, segmentLength: 1}, {colorId: 6, segmentLength: 2}]
             readonly property bool usesDefaultName: false
             property int currentUserStatus: Constants.currentUserStatus.automatic
         }
@@ -83,8 +82,6 @@ SplitView {
         }
 
         useNewDockIcons: ctrlNewIcons.checked
-        hasUnseenACNotifications: ctrlHasNotifications.checked
-        aCNotificationCount: ctrlNotificationsCount.value
 
         onItemActivated: function(key, sectionType, itemId) {
             homePageAdaptor.setTimestamp(key, new Date().valueOf())
@@ -101,10 +98,6 @@ SplitView {
         onDappDisconnectRequested: function(dappUrl) {
             logs.logEvent("onDappDisconnectRequested", ["dappUrl"], arguments)
             console.info("!!! DAPP DISCONNECT:", dappUrl)
-        }
-
-        onNotificationButtonClicked: {
-            logs.logEvent("onNotificationButtonClicked") // <- openActivityCenterPopup()
         }
         onSetCurrentUserStatusRequested: function (status) {
             profileStore.currentUserStatus = status
@@ -182,20 +175,6 @@ SplitView {
                     text: "Show dApps"
                     checked: true
                     enabled: !ctrlShowAllEntries.checked
-                }
-            }
-            RowLayout {
-                Switch {
-                    id: ctrlHasNotifications
-                    text: "Has unseen notifications"
-                }
-                Label { text: "  Count:" }
-                SpinBox {
-                    id: ctrlNotificationsCount
-                    from: 0
-                    to: 100
-                    value: 0
-                    enabled: ctrlHasNotifications.checked
                 }
             }
             Button {

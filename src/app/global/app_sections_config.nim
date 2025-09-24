@@ -25,6 +25,10 @@ const NODEMANAGEMENT_SECTION_ID* = "nodeManagement"
 const NODEMANAGEMENT_SECTION_NAME* = "Node Management"
 const NODEMANAGEMENT_SECTION_ICON* = "node"
 
+const ACTIVITYCENTER_SECTION_ID* = "activityCenterPage"
+const ACTIVITYCENTER_SECTION_NAME* = "Activity Center"
+const ACTIVITYCENTER_SECTION_ICON* = "notification"
+
 const SETTINGS_SECTION_ID* = "profileSettings"
 const SETTINGS_SECTION_NAME* = "Settings"
 const SETTINGS_SECTION_ICON* = "settings"

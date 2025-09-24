@@ -184,6 +184,12 @@ proc reloadAccountTokens*(self: Service) =
 
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, forceRefresh = true)
+  
+  try:
+    discard collectibles.refetchOwnedCollectibles()
+  except Exception as e:
+    let errDesription = e.msg
+    error "error refetchOwnedCollectibles: ", errDesription
 
 proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
   return self.currencyService.parseCurrencyValueByTokensKey(tokensKey, amountInt)

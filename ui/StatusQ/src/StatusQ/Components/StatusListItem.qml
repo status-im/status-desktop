@@ -1,11 +1,11 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Controls
-import Qt5Compat.GraphicalEffects
 
 import "private"
 
@@ -71,12 +71,6 @@ Rectangle {
                         Theme.palette.dangerColor3 : Theme.palette.primaryColor3
         }
         imgIsIdenticon: false
-    }
-
-    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        initalAngleRad: 0
-        ringPxSize: 1.5
-        distinctiveColors: Theme.palette.identiconRingColors
     }
 
     property alias sensor: sensor
@@ -171,7 +165,6 @@ Rectangle {
                     !!root.asset.name ||
                     !!root.asset.emoji) && !root.showLoadingIndicator)
             badge.border.color: root.color
-            ringSettings: root.ringSettings
             loading: root.loading
 
             onClicked: root.iconClicked(mouse)

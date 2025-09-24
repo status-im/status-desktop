@@ -24,8 +24,6 @@ Item {
     property alias popupMenu: popupMenuSlot.sourceComponent
     property alias categoryPopupMenu: categoryPopupMenuSlot.sourceComponent
 
-    property var isEnsVerified: function(pubKey) { return false }
-
     signal chatItemSelected(string categoryId, string id)
     signal chatItemClicked(string id)
     signal chatItemUnmuted(string id)
@@ -216,7 +214,6 @@ Item {
                         asset.bgWidth: iconWidth
                         asset.bgHeight: iconHeight
 
-                        ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
                         onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
                         sensor.enabled: draggableItem.dragActive
                         dragged: draggableItem.dragActive

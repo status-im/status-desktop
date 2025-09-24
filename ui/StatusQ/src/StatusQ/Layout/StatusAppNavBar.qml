@@ -11,6 +11,8 @@ Rectangle {
     id: root
     objectName: "statusAppNavBar"
 
+    required property bool thirdpartyServicesEnabled
+
     property alias topSectionModel: topSectionListview.model
     property alias topSectionDelegate: topSectionListview.delegate
 
@@ -27,7 +29,8 @@ Rectangle {
 
     implicitWidth: 78
 
-    color: Theme.palette.statusAppNavBar.backgroundColor
+    color: root.thirdpartyServicesEnabled ? Theme.palette.statusAppNavBar.backgroundColor :
+                                            Theme.palette.privacyModeColor
 
     QtObject {
         id: d
@@ -94,6 +97,11 @@ Rectangle {
             boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
         }
 
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
         Rectangle {
             id: secondSectionSeparator
 
@@ -101,7 +109,6 @@ Rectangle {
             Layout.preferredWidth: d.separatorWidth
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.directColor7
-            visible: topSectionListview.count || communityItemsListView.count
         }
 
         ListView {
@@ -116,11 +123,6 @@ Rectangle {
             clip: true
             spacing: d.spacing
             boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
         }
 
         Loader {

@@ -3,7 +3,7 @@
 .import "chartjs-plugin-crosshair.js" as CrosshairLib
 .import "chartjs-plugin-datalabels.js" as DataLabelsLib
 
-.import StatusQ.Core.Theme 0.1 as SQTheme
+.import StatusQ.Core.Theme as SQTheme
 
 
 /*! 

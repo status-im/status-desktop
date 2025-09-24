@@ -26,7 +26,6 @@ type
     amISender: bool
     senderIsAdded: bool
     senderIcon: string
-    senderColorHash: string
     seen: bool
     outgoingStatus: string
     messageText: string
@@ -89,7 +88,6 @@ proc initMessageItem*(
     senderOptionalName: string,
     senderUsesDefaultName: bool,
     senderIcon: string,
-    senderColorHash: string,
     amISender: bool,
     senderIsAdded: bool,
     outgoingStatus,
@@ -148,7 +146,6 @@ proc initMessageItem*(
   result.amISender = amISender
   result.senderIsAdded = senderIsAdded
   result.senderIcon = senderIcon
-  result.senderColorHash = senderColorHash
   result.seen = seen
   result.outgoingStatus = outgoingStatus
   result.messageText = text
@@ -259,7 +256,6 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     senderOptionalName = "",
     senderUsesDefaultName = false,
     senderIcon = "",
-    senderColorHash = "",
     amISender = false,
     senderIsAdded = false,
     outgoingStatus = "",
@@ -386,12 +382,6 @@ proc senderIcon*(self: Item): string {.inline.} =
 
 proc `senderIcon=`*(self: Item, value: string) {.inline.} =
   self.senderIcon = value
-
-proc senderColorHash*(self: Item): string {.inline.} =
-  self.senderColorHash
-
-proc `senderColorHash=`*(self: Item, value: string) {.inline.} =
-  self.senderColorHash = value
 
 proc amISender*(self: Item): bool {.inline.} =
   self.amISender
@@ -571,7 +561,6 @@ proc toJsonNode*(self: Item): JsonNode =
     "amISender": self.amISender,
     "senderIsAdded": self.senderIsAdded,
     "senderIcon": self.senderIcon,
-    "senderColorHash": self.senderColorHash,
     "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,
     "messageText": self.messageText,

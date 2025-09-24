@@ -8,10 +8,10 @@ import StatusQ.Core.Theme
 
 /*!
    \qmltype StatusDraggableListItem
-   \inherits QtQuickControls::ItemDelegate
+   \inherits QtQuickControls::AbstractButton
    \inqmlmodule StatusQ.Components
    \since StatusQ.Components 0.1
-   \brief It is a list item with the ability to be dragged and dropped to reorder within a list view. Inherits from \c QtQuickControls::ItemDelegate.
+   \brief It is a list item with the ability to be dragged and dropped to reorder within a list view. Inherits from \c QtQuickControls::AbstractButton.
 
    The \c StatusDraggableListItem is a list item with a (smartident)icon, title and a subtitle on the left side, and optional actions on the right.
 

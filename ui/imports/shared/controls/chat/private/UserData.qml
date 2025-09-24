@@ -7,6 +7,5 @@ QtObject {
     property string image
     property bool ensVerified
     property int colorId
-    property var colorHash
     property var emojiHash
 }

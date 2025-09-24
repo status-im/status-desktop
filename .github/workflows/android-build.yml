@@ -6,7 +6,7 @@ on:
       qt_version:
         description: 'Qt version to use'
         required: false
-        default: '6.9.0'
+        default: '6.9.2'
         type: string
       architecture:
         description: 'Target architecture'
@@ -18,6 +18,14 @@ on:
           - 'arm'
           - 'x86_64'
           - 'x86'
+      testmode:
+        description: 'Enable QML test hooks (passed to CMake STATUSQ_TESTMODE) for Appium builds'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 jobs:
   android-build:
@@ -44,6 +52,7 @@ jobs:
           echo "ARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=${{ steps.qt-paths.outputs.qt-android-path }}/lib/pkgconfig" >> $GITHUB_ENV
           echo "USE_SYSTEM_NIM=1" >> $GITHUB_ENV
+          echo "TESTMODE=${{ inputs.testmode }}" >> $GITHUB_ENV
           echo "${{ steps.qt-paths.outputs.qt-android-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/libexec:${{ steps.qt-paths.outputs.qt-android-path }}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
@@ -55,10 +64,10 @@ jobs:
           $HOME/.nimble/bin/choosenim 2.0.12
           echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
 
-      - name: Setup Go 1.23
+      - name: Setup Go 1.24
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23
+          go-version: 1.24
           cache-dependency-path: go.sum
 
       - name: Install Go tools
@@ -81,4 +90,3 @@ jobs:
         with:
           name: Status-tablet
           path: mobile/bin/android/qt6/default/Status-tablet.apk
-

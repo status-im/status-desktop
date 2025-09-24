@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-GO_VERSION="1.23.10"
+GO_VERSION="1.24.7"
 GO_INSTALL_DIR="/usr/local/go"
-QT_VERSION="6.9.0"
+QT_VERSION="6.9.2"
 QT_INSTALL_DIR="/opt/qt"
 
 function check_version {

@@ -10,6 +10,7 @@ import driver
 from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
 from constants import UserAccount, CommunityData, Color
 from constants.dock_buttons import DockButtons
+from gui.components.activity_center import ActivityCenter
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.toast_message import ToastMessage
@@ -42,6 +43,7 @@ class MainLeftPanel(QObject):
         self.community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
         self.settings_button = Button(names.settingsGearButton)
         self.wallet_button = Button(names.mainWalletButton)
+        self.activity_center_button = Button(names.activityCenterButton)
 
     @allure.step('Click Wallet button and record load time until WalletScreen is visible')
     def open_wallet_and_record_load_time(self):
@@ -49,7 +51,7 @@ class MainLeftPanel(QObject):
         self.wallet_button.click()
         wallet_screen = WalletScreen()
         check_interval = 0.1  # Check every 100ms for better precision
-        
+
         while True:
             try:
                 if wallet_screen.is_visible:
@@ -58,7 +60,7 @@ class MainLeftPanel(QObject):
             except Exception as e:
                 LOG.debug("Exception during visibility check: %s", e)
             time.sleep(check_interval)
-        
+
         load_time = time.time() - start_time
         LOG.info(f'Wallet loaded in {load_time:.3f} seconds')
         return wallet_screen, load_time
@@ -77,6 +79,11 @@ class MainLeftPanel(QObject):
     @open_with_retries(SettingsScreen)
     def open_settings(self):
         return self.settings_button
+
+    @allure.step('Click Activity center button and open Activity center panel')
+    @open_with_retries(ActivityCenter)
+    def open_activity_center(self):
+        return self.activity_center_button
 
     @allure.step('Click Wallet button and open Wallet main screen')
     @open_with_retries(WalletScreen)
@@ -181,6 +188,8 @@ class MainWindow(Window):
 
         # since we now struggle with 3 words names, I need to change display name first
         left_panel = MainLeftPanel()
+        # TODO: this is done to prevent app from crashing when opening settings too fast (probably QT bug)
+        time.sleep(3)
         settings_screen = left_panel.open_settings()
         profile = settings_screen.left_panel.open_profile_settings()
         profile.set_name(user_account.name)

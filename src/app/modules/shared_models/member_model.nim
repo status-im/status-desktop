@@ -22,7 +22,6 @@ type
     Alias
     Icon
     ColorId
-    ColorHash
     OnlineStatus
     IsContact
     IsVerified
@@ -94,7 +93,6 @@ QtObject:
       ModelRole.Alias.int: "alias",
       ModelRole.Icon.int: "icon",
       ModelRole.ColorId.int: "colorId",
-      ModelRole.ColorHash.int: "colorHash",
       ModelRole.OnlineStatus.int: "onlineStatus",
       ModelRole.IsContact.int: "isContact",
       ModelRole.IsVerified.int: "isVerified",
@@ -151,10 +149,6 @@ QtObject:
       if item.colorId == 0:
         item.colorId = singletonInstance.utils.getColorId(item.pubKey)
       result = newQVariant(item.colorId)
-    of ModelRole.ColorHash:
-      if item.colorHash == "":
-        item.colorHash = singletonInstance.utils.getColorHashAsJson(item.pubKey)
-      result = newQVariant(item.colorHash)
     of ModelRole.OnlineStatus:
       result = newQVariant(item.onlineStatus.int)
     of ModelRole.IsContact:
@@ -584,7 +578,6 @@ QtObject:
       alias = contactDetails.dto.alias,
       icon = contactDetails.icon,
       colorId = contactDetails.colorId,
-      colorHash = contactDetails.colorHash,
       onlineStatus = status,
       isContact = contactDetails.dto.isContact,
       isBlocked = contactDetails.dto.isBlocked,

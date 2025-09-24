@@ -20,7 +20,6 @@ def test_back_up_recovery_phrase_sign_out(
         online_identifier = main_screen.left_panel.open_online_identifier()
         assert online_identifier.get_user_name == user_account.name, \
             f'Display name in online identifier is wrong, current: {online_identifier.get_user_name}, expected: {user_account.name}'
-        assert online_identifier.identicon_ring.is_visible, f'Identicon ring is not present when it should'
 
     with step('Verify that user avatar background color'):
         avatar_color = str(main_screen.left_panel.profile_button.object.identicon.asset.bgColor.name).upper()

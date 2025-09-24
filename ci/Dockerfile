@@ -1,4 +1,4 @@
-ARG QT_VERSION="6.9.0"
+ARG QT_VERSION="6.9.2"
 ARG QT_MODULES="qtwebchannel qtwebview qtwebsockets qt5compat qtmultimedia qtwebengine qtpositioning qtserialport qtshadertools qtimageformats qtscxml qthttpserver"
 ARG LINUXDEPLOYQT_VERSION="20250615-0393b84"
 ARG PCSCLITE_VERSION="2.2.3"
@@ -39,7 +39,7 @@ RUN tar -xJf /tmp/pcsc.tar.xz -C /pcsc --strip-components=1
 
 WORKDIR /pcsc
 
-RUN meson setup builddir -Dpolkit=false -Dlibsystemd=false -Dserial=false -Dipcdir=/pcscd/run
+RUN meson setup builddir -Dpolkit=false -Dlibsystemd=false -Dserial=false -Dipcdir=/tmp/pcscd/run
 RUN cd builddir && ninja
 RUN cp builddir/pcsclite.h src/PCSC
 
@@ -125,8 +125,8 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1
 ENV PATH="/opt/cmake/bin:${PATH}"
 
 # Installing Golang
-RUN GOLANG_SHA256="535f9f81802499f2a7dbfa70abb8fda3793725fcc29460f719815f6e10b5fd60" \
- && GOLANG_TARBALL="go1.23.10.linux-amd64.tar.gz" \
+RUN GOLANG_SHA256="da18191ddb7db8a9339816f3e2b54bdded8047cdc2a5d67059478f8d1595c43f" \
+ && GOLANG_TARBALL="go1.24.7.linux-amd64.tar.gz" \
  && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \

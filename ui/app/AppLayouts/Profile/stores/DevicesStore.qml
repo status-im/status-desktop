@@ -23,8 +23,11 @@ QtObject {
     
     // Backup import properties
     readonly property int backupImportState: syncModule ? syncModule.backupImportState : 0
+    readonly property int backupDataState: syncModule ? syncModule.backupDataState : 0
     readonly property string backupImportError: syncModule ? syncModule.backupImportError : ""
+    readonly property string backupDataError: syncModule ? syncModule.backupDataError : ""
     readonly property url backupPath: d.appSettingsInst.backupPath
+    readonly property bool messagesBackupEnabled: d.appSettingsInst.messagesBackupEnabled
 
     readonly property QtObject _d: StatusQUtils.QObject {
         id: d
@@ -44,6 +47,10 @@ QtObject {
 
     function setBackupPath(path) {
         d.appSettingsInst.setBackupPath(path)
+    }
+
+    function setMessagesBackupEnabled(enabled) {
+        d.appSettingsInst.setMessagesBackupEnabled(enabled)
     }
 
     function toFileUri(path) {
@@ -93,8 +100,12 @@ QtObject {
     function importLocalBackupFile(filePath: string) {
         root.syncModule.importLocalBackupFile(filePath)
     }
+
     function performLocalBackup() {
-        let error = root.syncModule.performLocalBackup()
-        console.log("Performing local backup, error:", error)
+        root.syncModule.performLocalBackup()
+    }
+
+    function resetBackupDataState() {
+        root.syncModule.resetBackupDataState()
     }
 }

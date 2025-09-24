@@ -9,7 +9,7 @@ StatusModal {
     id: root
 
     property string stackTitle: qsTr("StackModal")
-    property int subHeaderPadding: 16
+    property int subHeaderPadding: Theme.padding
 
     property alias stackItems: stackLayout.children
     property alias currentIndex: stackLayout.currentIndex
@@ -69,7 +69,7 @@ StatusModal {
 
     headerSettings.title: replaceLoader.item && typeof(replaceLoader.item.title) != "undefined"
                                                 ? replaceLoader.item.title : stackTitle
-    padding: 16
+    padding: Theme.padding
 
     leftButtons: [ backButton ]
 

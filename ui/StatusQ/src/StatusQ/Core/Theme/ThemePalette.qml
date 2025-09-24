@@ -16,6 +16,7 @@ QtObject {
 
     property color dropShadow
     property color dropShadow2
+    property color dropShadow3 // suitable for MultiEffect
     property color backdropColor: getColor('black', 0.4)
 
     property color baseColor1
@@ -89,8 +90,6 @@ QtObject {
     property color desktopBlue10
 
     property var userCustomizationColors: []
-
-    property var identiconRingColors: []
 
     property color blockProgressBarColor
 
@@ -226,6 +225,8 @@ QtObject {
         customisationColors.orange,
         customisationColors.camel
     ]
+
+    readonly property color privacyModeColor: customisationColors.purple
 
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)

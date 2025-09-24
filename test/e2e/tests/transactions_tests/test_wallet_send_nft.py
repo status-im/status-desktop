@@ -18,6 +18,7 @@ from helpers.wallet_helper import authenticate_with_password, open_send_modal_fo
     pytest.param('0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43', 1, '')
 ])
 @pytest.mark.timeout(timeout=120)
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/18071')
 def test_wallet_send_nft(main_window, user_account, receiver_account_address, amount, asset):
 
     user_account = ReturningUser(

@@ -50,8 +50,6 @@ StatusSectionLayout {
         tab.url = _internal.determineRealURL(url)
     }
 
-    onNotificationButtonClicked: Global.openActivityCenterPopup()
-
     QtObject {
         id: _internal
 

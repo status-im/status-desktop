@@ -11,16 +11,16 @@ endif
 
 # compile macros
 ifeq ($(USE_QML_SERVER),)
-  export APP_VARIANT := default
+  export APP_VARIANT := $(OS)/qt$(QT_MAJOR)
 else
-  export APP_VARIANT := qmlserver-$(USE_QML_SERVER)
+  export APP_VARIANT := $(OS)/qt$(QT_MAJOR)/qmlserver-$(USE_QML_SERVER)
 endif
 
 # path macros
 ROOT_DIR := $(STATUS_DESKTOP)/mobile
-BIN_PATH := $(ROOT_DIR)/bin/$(OS)/qt$(QT_MAJOR)/$(APP_VARIANT)
-LIB_PATH := $(ROOT_DIR)/lib/$(OS)/qt$(QT_MAJOR)/$(APP_VARIANT)
-BUILD_PATH := $(ROOT_DIR)/build/$(OS)/qt$(QT_MAJOR)/$(APP_VARIANT)
+BIN_PATH := $(ROOT_DIR)/bin/$(APP_VARIANT)
+LIB_PATH := $(ROOT_DIR)/lib/$(APP_VARIANT)
+BUILD_PATH := $(ROOT_DIR)/build/$(APP_VARIANT)
 
 SCRIPTS_PATH := $(ROOT_DIR)/scripts
 

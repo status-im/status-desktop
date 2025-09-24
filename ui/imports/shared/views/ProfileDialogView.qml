@@ -223,12 +223,10 @@ Pane {
                 usesDefaultName: contactDetails.usesDefaultName
                 image: contactDetails.largeImage
                 userColor: Utils.colorForColorId(contactDetails.colorId)
-                colorHash: contactDetails.colorHash
 
                 interactive: false
                 imageWidth: 90
                 imageHeight: imageWidth
-                ensVerified: contactDetails.ensVerified
 
                 Binding on onlineStatus {
                     value: contactDetails.onlineStatus
@@ -500,10 +498,6 @@ Pane {
                         width: implicitWidth
                         text: qsTr("Collectibles")
                     }
-                    // StatusTabButton {
-                    //     width: implicitWidth
-                    //     text: qsTr("Assets")
-                    // }
                     StatusTabButton {
                         width: implicitWidth
                         text: qsTr("Web")
@@ -526,7 +520,6 @@ Pane {
                     accountsModel: root.showcaseAccountsModel
                     collectiblesModel: root.showcaseCollectiblesModel
                     socialLinksModel: root.showcaseSocialLinksModel
-                    // assetsModel: root.showcaseAssetsModel
 
                     walletStore: root.walletStore
                     networksStore: root.networksStore

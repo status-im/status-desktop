@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@v1.9.27'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -7,10 +7,10 @@ def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
   agent {
-    /* Image with Ubuntu 22.04 and QT 6.9.0 */
+    /* Image with Ubuntu 22.04 and QT 6.9.2 */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:2.0.3-qt6.9.0'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
@@ -69,21 +69,24 @@ pipeline {
   }
 
   environment {
-    PLATFORM = "linux/${getArch()}${params.USE_NWAKU ? '-nwaku' : ''}"
+    PLATFORM = "linux/${getArch()}${(params.USE_NWAKU ?: false) ? '-nwaku' : ''}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
-    /* Control output the filename */
+    /* Set USE_NWAKU before VERSION since version.sh uses it */
+    USE_NWAKU = "${params.USE_NWAKU}"
+    /* sets App Version in Settings */  
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
-    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION)}"
-    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION)}"
+    /* Control output the filename */
+    APP_TYPE = "${utils.getAppType() + (params.USE_NWAKU ? '-experimental' : '')}"
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
     /* Hack fix for params not being set in job on first run */
     NIMFLAGS =               "${params.NIMFLAGS}"
-    USE_NWAKU =              "${params.USE_NWAKU}"
     ENTITLEMENTS =           "${params.ENTITLEMENTS}"
     RELEASE =                "${params.RELEASE}"
     INCLUDE_DEBUG_SYMBOLS =  "${params.INCLUDE_DEBUG_SYMBOLS}"
@@ -99,6 +102,11 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
+      }
+    }
     stage('Deps') {
       steps {
         sh 'make update'
@@ -108,14 +116,12 @@ pipeline {
 
     stage('status-go') {
       steps {
-        sh "echo USE_NWAKU is ${USE_NWAKU}"
         sh 'make status-go'
       }
     }
 
     stage('Package') {
       steps { script {
-        sh "echo USE_NWAKU is ${USE_NWAKU}"
         linux.bundle('tgz-linux')
       } }
     }
@@ -137,7 +143,7 @@ pipeline {
     }
 
     stage('E2E') {
-      when { expression { utils.isPRBuild() && !params.USE_NWAKU } }
+      when { expression { utils.isPRBuild() && !(params.USE_NWAKU ?: false) } }
       steps { script {
         build(
           job: 'status-desktop/e2e/prs',

@@ -56,7 +56,6 @@ SettingsContentBase {
             emojiHash: root.utilsStore.getEmojiHash(pubKey),
             displayName: entry.preferredDisplayName,
             userIcon: entry.icon,
-            colorHash: entry.colorHash,
             colorId: entry.colorId,
             trustStatus: entry.trustStatus,
             onlineStatus: entry.onlineStatus,

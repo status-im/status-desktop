@@ -181,26 +181,6 @@ Control {
             }
         }
 
-        // ProfileShowcaseAssetsView {
-        //     width: parent.width
-        //     height: parent.height
-
-        //     mainDisplayName: root.mainDisplayName
-        //     assetsModel: assetsProxyModel
-        //     sendToAccountEnabled: root.sendToAccountEnabled
-        //     delegatesActionsMenu: delegatesActionsMenu
-
-        //     cellHeight: d.delegateHeightS
-        //     cellWidth: d.delegateWidthS
-
-        //     onCloseRequested: root.closeRequested()
-        //     onVisitCommunity: {
-        //        Global.openPopup(visitComunityPopupComponent, {communityId: model.communityId, communityName: model.communityName,
-        //                     communityLogo: model.communityImage, tokenName: model.name,
-        //                     tokenImage: Constants.tokenIcon(model.symbol), isAssetType: false });
-        //      }
-        // }
-
         ProfileShowcaseSocialLinksView {
             width: parent.width
             height: parent.height

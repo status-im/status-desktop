@@ -6,7 +6,7 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label 'linux && x86_64 && qt-6.9.0'
+    label 'linux && x86_64 && qt-6.9.2'
   }
 
   parameters {
@@ -39,7 +39,7 @@ pipeline {
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Makefile assumes the compiler folder is included */
-    QTDIR = "/opt/qt/6.9.0/gcc_64"
+    QTDIR = "/opt/qt/6.9.2/gcc_64"
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Hack fix for params not being set in job on first run */
     VERBOSE = "${params.VERBOSE}"
@@ -49,6 +49,11 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+      }
+    }
+    stage('Fetch submodules') {
+      steps {
+        sh 'git submodule update --init --recursive'
       }
     }
     stage('Build StatusQ Tests') {

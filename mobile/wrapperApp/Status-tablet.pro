@@ -19,22 +19,22 @@ QML_IMPORT_PATH += $$PWD/../../ui/imports \
                    $$PWD/../../ui/StatusQ/src
 
 QMLPATHS += $$QML_IMPORT_PATH
-LIB_PREFIX = qt$$QT_MAJOR_VERSION/$$(APP_VARIANT)
+LIB_PREFIX = $$(APP_VARIANT)
 
 android {
     message("configuring for android $${QT_ARCH}, $$(ANDROID_ABI)")
     
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/qt$$QT_MAJOR_VERSION
 
-    LIBS += -L$$PWD/../lib/android/$$LIB_PREFIX -lnim_status_client
+    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client
     ANDROID_EXTRA_LIBS += \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libssl_3.so \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libcrypto_3.so \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libnim_status_client.so \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libstatus.so \
+                        $$PWD/../lib/$$LIB_PREFIX/libssl_3.so \
+                        $$PWD/../lib/$$LIB_PREFIX/libcrypto_3.so \
+                        $$PWD/../lib/$$LIB_PREFIX/libnim_status_client.so \
+                        $$PWD/../lib/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
+                        $$PWD/../lib/$$LIB_PREFIX/libstatus.so \
                         $$PWD/../lib/android/$$LIB_PREFIX/libsds.so \
-                        $$PWD/../lib/android/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
+                        $$PWD/../lib/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
 }
 
 ios {
@@ -46,10 +46,5 @@ ios {
     QMAKE_BUNDLE = status$${QMAKE_BUNDLE_SUFFIX}
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
 
-    LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
+    LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
 }
-
-DESTDIR=$$PWD/../bin/$$LIB_PREFIX
-
-target.path = $$PWD/../lib/$$LIB_PREFIX
-INSTALLS += target

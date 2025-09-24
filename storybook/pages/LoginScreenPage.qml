@@ -7,7 +7,7 @@ import Models
 import Storybook
 
 import AppLayouts.Onboarding.enums
-import AppLayouts.Onboarding2.pages
+import AppLayouts.Onboarding.pages
 
 import utils
 

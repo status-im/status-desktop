@@ -154,14 +154,7 @@ QtObject:
       openseaApiKey: OPENSEA_API_KEY_RESOLVED,
       raribleMainnetApiKey: RARIBLE_MAINNET_API_KEY_RESOLVED,
       raribleTestnetApiKey: RARIBLE_TESTNET_API_KEY_RESOLVED,
-      alchemyEthereumMainnetToken: ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
-      alchemyEthereumSepoliaToken: ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
-      alchemyArbitrumMainnetToken: ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
-      alchemyArbitrumSepoliaToken: ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
-      alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
-      alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
-      alchemyBaseMainnetToken: ALCHEMY_BASE_MAINNET_TOKEN_RESOLVED,
-      alchemyBaseSepoliaToken: ALCHEMY_BASE_SEPOLIA_TOKEN_RESOLVED,
+      alchemyApiKey: ALCHEMY_API_KEY_RESOLVED,
       statusProxyStageName: STATUS_PROXY_STAGE_NAME_RESOLVED,
       statusProxyMarketUser: STATUS_PROXY_USER_RESOLVED,
       statusProxyMarketPassword: STATUS_PROXY_PASSWORD_RESOLVED,
@@ -205,17 +198,20 @@ QtObject:
         apiConfig: defaultApiConfig(),
       )
 
-  proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+  proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string,
+    imageCropRectangle: ImageCropRectangle, thirdpartyServicesEnabled: bool): CreateAccountRequest =
     var request = defaultCreateAccountRequest()
     request.password = hashPassword(password)
     request.displayName = displayName
     request.imagePath = imagePath
     request.imageCropRectangle = imageCropRectangle
+    request.thirdpartyServicesEnabled = thirdpartyServicesEnabled
     return request
 
-  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
+  proc createAccountAndLogin*(self: Service, password: string, displayName: string,
+    imagePath: string, imageCropRectangle: ImageCropRectangle, thirdpartyServicesEnabled: bool): string =
     try:
-      let request = buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
+      let request = buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle, thirdpartyServicesEnabled)
       let response = status_account.createAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -241,11 +237,12 @@ QtObject:
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
     keycardInstanceUID: string = "",
+    thirdpartyServicesEnabled: bool
   ): string =
 
     var request = RestoreAccountRequest(
       mnemonic: mnemonic,
-      createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle, thirdpartyServicesEnabled),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
 
@@ -257,6 +254,7 @@ QtObject:
     displayName: string,
     imagePath: string,
     imageCropRectangle: ImageCropRectangle,
+    thirdpartyServicesEnabled: bool
     ): string =
 
     let keycard = KeycardData(
@@ -274,7 +272,7 @@ QtObject:
 
     var request = RestoreAccountRequest(
       keycard: keycard,
-      createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
+      createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle, thirdpartyServicesEnabled),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
 
@@ -284,6 +282,7 @@ QtObject:
     keyUid: string,
     instanceUid: string,
     keycardKeys: KeycardExportedKeysDto,
+    thirdpartyServicesEnabled: bool
     ): string =
 
     let keycard = KeycardData(
@@ -305,7 +304,8 @@ QtObject:
         password = "",
         displayName = "",
         imagePath = "",
-        imageCropRectangle = ImageCropRectangle()
+        imageCropRectangle = ImageCropRectangle(),
+        thirdpartyServicesEnabled
       ),
     )
     request.createAccountRequest.keycardInstanceUID = instanceUid

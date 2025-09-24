@@ -18,7 +18,6 @@ from gui.main_window import MainWindow
 @pytest.mark.parametrize('bio, links', [pytest.param('This is my bio', constants.social_links)])
 @pytest.mark.smoke
 # TODO: add clicking Preview button and check data there
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/18462')
 def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_account, bio, links):
     with step('Open profile settings and check name, bio and links'):
         profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()
@@ -50,7 +49,6 @@ def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_accou
         main_screen.authorize_user(user_account=UserAccount(name=new_user_name, password=user_account.password))
 
     with step('Open profile settings and check new name, bio and links'):
-        main_screen.home.open_from_dock(DockButtons.WALLET.value)
         profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()
         assert profile_settings.get_display_name == new_user_name
         assert profile_settings.get_bio == bio

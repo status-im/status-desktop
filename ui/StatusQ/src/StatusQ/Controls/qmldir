@@ -17,7 +17,6 @@ StatusCircularProgressBar 0.1 StatusCircularProgressBar.qml
 StatusClearButton 0.1 StatusClearButton.qml
 StatusColorAnimation 0.1 StatusColorAnimation.qml
 StatusColorRadioButton 0.1 StatusColorRadioButton.qml
-StatusColorSelector 0.1 StatusColorSelector.qml
 StatusColorSelectorGrid 0.1 StatusColorSelectorGrid.qml
 StatusComboBox 0.1 StatusComboBox.qml
 StatusCommunityTag 0.1 StatusCommunityTag.qml
@@ -28,7 +27,6 @@ StatusFlatRoundButton 0.1 StatusFlatRoundButton.qml
 StatusIconSwitch 0.1 StatusIconSwitch.qml
 StatusIconTabButton 0.1 StatusIconTabButton.qml
 StatusIconTextButton 0.1 StatusIconTextButton.qml
-StatusIdenticonRing 0.1 StatusIdenticonRing.qml
 StatusImageCrop 0.1 StatusImageCrop.qml
 StatusImageSelector 0.1 StatusImageSelector.qml
 StatusInput 0.1 StatusInput.qml
@@ -62,6 +60,4 @@ StatusTextField 0.1 StatusTextField.qml
 StatusTextWithLoadingState 0.1 StatusTextWithLoadingState.qml
 StatusTokenInlineSelector 0.1 StatusTokenInlineSelector.qml
 StatusToolTip 0.1 StatusToolTip.qml
-StatusWalletColorButton 0.1 StatusWalletColorButton.qml
-StatusWalletColorSelect 0.1 StatusWalletColorSelect.qml
 StatusWarningBox 0.1 StatusWarningBox.qml

@@ -164,8 +164,8 @@ Rectangle {
         // common popups are emoji, jif and stickers
         // Put controlWidth as argument with default value for binding
         function getCommonPopupRelativePosition(popup, popupParent, controlWidth = control.width) {
-            const popupWidth = emojiPopup ? emojiPopup.width : 0
-            const popupHeight = emojiPopup ? emojiPopup.height : 0
+            const popupWidth = popup ? popup.width : 0
+            const popupHeight = popup ? popup.height : 0
             const controlX = controlWidth - popupWidth - Theme.halfPadding
             const controlY = -popupHeight
             return popupParent.mapFromItem(control, controlX, controlY)

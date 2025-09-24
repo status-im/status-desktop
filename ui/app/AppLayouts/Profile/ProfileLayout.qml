@@ -30,8 +30,6 @@ import AppLayouts.Wallet.stores
 import AppLayouts.stores as AppLayoutsStores
 import AppLayouts.stores.Messaging as MessagingStores
 
-import mainui.activitycenter.stores
-
 import SortFilterProxyModel
 
 
@@ -67,7 +65,6 @@ StatusSectionLayout {
     property SharedStores.UtilsStore utilsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property CommunitiesStore.CommunitiesStore communitiesStore
-    property ActivityCenterStore activityCenterStore
     property MessagingStores.MessagingSettingsStore messagingSettingsStore
     property AppLayoutsStores.ContactsStore contactsStore
     property AppLayoutsStores.RootStore globalStore
@@ -78,6 +75,7 @@ StatusSectionLayout {
 
     property bool isKeycardEnabled: true
     property bool isBrowserEnabled: true
+    required property bool privacyModeFeatureEnabled
 
     property var mutualContactsModel
     property var blockedContactsModel
@@ -101,11 +99,10 @@ StatusSectionLayout {
     signal setCommunityMutedRequest(string communityId, int mutedType)
     signal inviteFriends(var communityData)
 
-    backButtonName: d.backButtonName
-    notificationCount: root.activityCenterStore.unreadNotificationsCount
-    hasUnseenNotifications: root.activityCenterStore.hasUnseenNotifications
+    signal openThirdpartyServicesInfoPopupRequested()
+    signal openDiscussPageRequested()
 
-    onNotificationButtonClicked: Global.openActivityCenterPopup()
+    backButtonName: d.backButtonName
     onBackButtonClicked: {
         switch (root.settingsSubsection) {
         case Constants.settingsSubsection.contacts:
@@ -127,8 +124,10 @@ StatusSectionLayout {
     }
 
     Component.onCompleted: {
-        profileContainer.currentIndexChanged()
-        root.devicesStore.loadDevices() // Load devices to get non-paired number for badge
+        Qt.callLater(() => {
+                         profileContainer.currentIndexChanged()
+                         root.devicesStore.loadDevices() // Load devices to get non-paired number for badge
+                     })
     }
 
     QtObject {
@@ -173,7 +172,7 @@ StatusSectionLayout {
 
         model: settingsEntriesModel
 
-        onMenuItemClicked: {
+        onMenuItemClicked: function(event) {
             if (profileContainer.currentItem.dirty && !profileContainer.currentItem.ignoreDirty) {
                 event.accepted = true;
                 profileContainer.currentItem.notifyDirty();
@@ -211,7 +210,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: MyProfileView {
                 id: myProfileView
                 implicitWidth: parent.width
@@ -333,7 +331,6 @@ StatusSectionLayout {
         Loader {
             id: walletView
             active: false
-            asynchronous: true
             sourceComponent: WalletView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -356,7 +353,7 @@ StatusSectionLayout {
                 emojiPopup: root.emojiPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
 
-                onAddressWasShownRequested: root.addressWasShownRequested(address)
+                onAddressWasShownRequested: (address) => root.addressWasShownRequested(address)
 
                 onBackButtonNameChanged: d.backButtonName = backButtonName
             }
@@ -421,11 +418,14 @@ StatusSectionLayout {
                 advancedStore: root.advancedStore
                 localBackupEnabled: root.devicesStore.localBackupEnabled
                 backupPath: root.devicesStore.backupPath
-                toFileUri: root.devicesStore.toFileUri
+                messagesBackupEnabled: root.devicesStore.messagesBackupEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
                 onBackupPathSet: function(path) {
                     root.devicesStore.setBackupPath(path)
+                }
+                onBackupMessagesEnabledToggled: function(enabled) {
+                    root.devicesStore.setMessagesBackupEnabled(enabled)
                 }
             }
         }
@@ -588,6 +588,8 @@ StatusSectionLayout {
             sourceComponent: PrivacyAndSecurityView {
                 isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
                 isCentralizedMetricsEnabled: root.isCentralizedMetricsEnabled
+                thirdpartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
+                privacyModeFeatureEnabled: root.privacyModeFeatureEnabled
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -597,6 +599,8 @@ StatusSectionLayout {
                 onSetNewsRSSEnabledRequested: function (isStatusNewsViaRSSEnabled) {
                     root.privacyStore.setNewsRSSEnabled(isStatusNewsViaRSSEnabled)
                 }
+                onOpenThirdpartyServicesInfoPopupRequested: root.openThirdpartyServicesInfoPopupRequested()
+                onOpenDiscussPageRequested: root.openDiscussPageRequested()
             }
         }
     }

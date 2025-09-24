@@ -256,8 +256,8 @@ proc loadMoreMessages*(self: Controller): bool =
   let limit = self.loadingMessagesPerPageFactor * MESSAGES_PER_PAGE
   return self.messageService.asyncLoadMoreMessagesForChat(self.chatId, limit)
 
-proc addReaction*(self: Controller, messageId: string, emojiId: int) =
-  self.messageService.addReaction(self.chatId, messageId, emojiId)
+proc addReaction*(self: Controller, messageId: string, emojiId: int, emoji: string) =
+  self.messageService.addReaction(self.chatId, messageId, emojiId, emoji)
 
 proc removeReaction*(self: Controller, messageId: string, emojiId: int, reactionId: string) =
   self.messageService.removeReaction(reactionId, self.chatId, messageId, emojiId)

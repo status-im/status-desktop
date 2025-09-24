@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.19)
 
 project(StatusQ)
 
-option(STATUSQ_BUILD_SANDBOX "Enable to build StatusQ Sandbox application" ON)
 option(STATUSQ_BUILD_SANITY_CHECKER "Enable to build StatusQ Sanity Checker application" ON)
 option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
 option(STATUSQ_STATIC_LIB "Enable to build StatusQ as a static library" OFF)
@@ -40,6 +39,43 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
         Core Qml Gui Quick QuickControls2 REQUIRED)
 
+# --- QML test hooks flag and TestConfig generation ---
+option(STATUSQ_TESTMODE "Enable QML test hooks (TestConfig.testMode)" OFF)
+set(TEST_MODE false)
+if(STATUSQ_TESTMODE)
+    set(TEST_MODE true)
+endif()
+
+# Generate TestConfig.qml into the build tree
+set(_gen_qml ${CMAKE_CURRENT_BINARY_DIR}/src/StatusQ/Core/TestConfig.qml)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src/StatusQ/Core)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/Core/TestConfig.qml.in
+  ${_gen_qml}
+  @ONLY
+)
+if(NOT EXISTS ${_gen_qml})
+  message(FATAL_ERROR "Expected generated file missing: ${_gen_qml}")
+endif()
+
+# For shadow build OFF mode, also copy to source directory
+if(NOT ${STATUSQ_SHADOW_BUILD})
+  configure_file(${_gen_qml} ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/Core/TestConfig.qml COPYONLY)
+endif()
+
+# Generate a .qrc that includes the generated QML
+set(_gen_qrc ${CMAKE_CURRENT_BINARY_DIR}/TestConfig.generated.qrc)
+file(WRITE ${_gen_qrc}
+  "<RCC>\n"
+  "  <qresource prefix=\"/StatusQ\">\n"
+  "    <file alias=\"Core/TestConfig.qml\">${_gen_qml}</file>\n"
+  "  </qresource>\n"
+  "</RCC>\n"
+)
+
+qt_add_resources(STATUSQ_TESTCONFIG_RCC ${_gen_qrc})
+# --- END test hooks ---
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest REQUIRED)
 endif()
@@ -63,7 +99,7 @@ if (NOT DEFINED STATUSQ_SHADOW_BUILD)
     #   When OFF:
     #     - no resources are compiled, it's expected to use QML/JS sources
     #
-    #   STATUSQ_SHADOW_BUILD mode is created for sandbox/storybook hot reloading
+    #   STATUSQ_SHADOW_BUILD mode is created for storybook hot reloading
     #   without copying all qml files to build directory.
     #
     #   It's expected for the app to add ${STATUSQ_MODULE_IMPORT_PATH} to
@@ -114,6 +150,7 @@ endif()
 
 add_library(StatusQ ${LIB_TYPE}
         ${STATUSQ_QRC_COMPILED}
+        ${STATUSQ_TESTCONFIG_RCC}
         include/StatusQ/audioutils.h
         include/StatusQ/clipboardutils.h
         include/StatusQ/constantrole.h
@@ -233,10 +270,6 @@ set(QML_IMPORT_PATH
         CACHE STRING "")
 
 ### Add other subdirectories
-
-if (${STATUSQ_BUILD_SANDBOX})
-    add_subdirectory(sandbox)
-endif ()
 
 if (${STATUSQ_BUILD_SANITY_CHECKER})
     add_subdirectory(sanity_checker)

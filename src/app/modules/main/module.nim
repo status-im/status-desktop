@@ -2,7 +2,7 @@ import nimqml, tables, json, sequtils, stew/shims/strformat, marshal, times, chr
 
 import io_interface, view, controller
 import ephemeral_notification_item, ephemeral_notification_model
-import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details, contacts_utils, color_hash_item]
+import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details, contacts_utils]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/global/app_sections_config
 import app/global/app_signals
@@ -678,7 +678,7 @@ method load*[T](
 
   # Default to Wallet section if no active section is set or if the active section is the settings section
   # or if the active section is the home page section but home page is not enabled
-  if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID or
+  if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID or activeSectionId == ACTIVITYCENTER_SECTION_ID or
     (activeSectionId == HOMEPAGE_SECTION_ID and not homePageEnabled):
     activeSectionId = WALLET_SECTION_ID
 
@@ -786,6 +786,25 @@ method load*[T](
   if activeSectionId == nodeManagementSectionItem.id:
     activeSection = nodeManagementSectionItem
 
+  # Activity Center Section
+  let activityCenterSectionItem = initSectionItem(
+    ACTIVITYCENTER_SECTION_ID,
+    SectionType.ActivityCenter,
+    ACTIVITYCENTER_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    image = "",
+    icon = ACTIVITYCENTER_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
+  self.view.model().addItem(activityCenterSectionItem)
+  if activeSectionId == activityCenterSectionItem.id:
+    activeSection = activityCenterSectionItem
+
   # Profile Section
   let profileSettingsSectionItem = initSectionItem(
     SETTINGS_SECTION_ID,
@@ -870,8 +889,8 @@ method load*[T](
   #  activeSection = homePageSectionItem
 
   # Set active section on app start
-  # If section is empty or profile wait until chats are loaded
-  if not activeSection.isEmpty() and activeSection.sectionType != SectionType.ProfileSettings:
+  # If section is empty wait until chats are loaded
+  if not activeSection.isEmpty():
     self.setActiveSection(activeSection)
 
 proc isEverythingLoaded[T](self: Module[T]): bool =
@@ -1262,6 +1281,13 @@ proc checkIfWeHaveNotifications[T](self: Module[T]) =
   let sectionWithUnread = self.view.model().isThereASectionWithUnreadMessages()
   let activtyCenterNotifications = self.activityCenterModule.unreadActivityCenterNotificationsCountFromView() > 0
   self.view.setNotificationAvailable(sectionWithUnread or activtyCenterNotifications)
+  
+  # Update Activity Center section item related notifications properties
+  let activityCenterNotificationsCount = self.activityCenterModule.unreadActivityCenterNotificationsCount()
+  self.view.model().updateNotifications(
+    ACTIVITYCENTER_SECTION_ID,
+    hasNotification = activtyCenterNotifications,
+    notificationsCount = activityCenterNotificationsCount)
 
 method onActivityNotificationsUpdated[T](self: Module[T]) =
   self.checkIfWeHaveNotifications()
@@ -1412,7 +1438,6 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "icon": contactDetails.icon,
     "isCurrentUser": contactDetails.isCurrentUser,
     "colorId": contactDetails.colorId,
-    "colorHash": contactDetails.colorHash,
     # contact dto props
     "displayName": contactDetails.dto.displayName,
     "publicKey": contactDetails.dto.id,

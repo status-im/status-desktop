@@ -437,7 +437,7 @@ QtObject:
         slot: "onAsyncSendImagesDone",
         chatId: chatId,
         imagePathsJson: imagePathsJson,
-        tempDir: TMPDIR,
+        tempDir: TMPDIR.replace("\\", "\\\\"), # Escape backslashes so that the JSON sent is valid (Windows issue)
         msg: msg,
         replyTo: replyTo,
         preferredUsername: preferredUsername,

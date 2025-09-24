@@ -479,11 +479,14 @@ DoubleFlickableWithFolding {
                 }
             }
 
-            ListView.onRemove: SequentialAnimation {
+            SequentialAnimation {
+                id: removeAnimation
                 PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: true }
                 NumberAnimation { target: showcaseDelegateRoot; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
                 PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: false }
             }
+
+            ListView.onRemove: removeAnimation.start()
 
             width: ListView.view.width
             height: showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0

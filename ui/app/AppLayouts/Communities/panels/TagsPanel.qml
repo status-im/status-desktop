@@ -125,7 +125,7 @@ StatusScrollView {
         StatusCommunityTags {
             model: d.tagsModel
             mode: StatusCommunityTags.ShowSelectedOnly
-            onClicked: {
+            onClicked: function(item) {
                 d.countSelectedTags--;
                 item.selected = false;
             }

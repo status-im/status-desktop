@@ -20,7 +20,7 @@ Item {
         }
     }
 
-    property url testImageUrl: `${Qt.resolvedUrl(".")}../../sandbox/demoapp/data/logo-test-image.png`
+    property url testImageUrl: `${Qt.resolvedUrl(".")}../../src/assets/png/status-preparing.png`
 
     Component {
         id: withSourceComponent
@@ -28,7 +28,6 @@ Item {
         StatusImageCropPanel {
             anchors.fill: parent
 
-            // TODO: generate test image and break the sandbox dependency
             source: root.testImageUrl
             windowStyle: StatusImageCrop.WindowStyle.Rectangular
             Component.onCompleted: setCropRect(Qt.rect(10, 0, sourceSize.width - 20, sourceSize.height))
@@ -43,8 +42,6 @@ Item {
     }
 
     TestCase {
-        id: qmlWarningsTest
-
         name: "StatusImageCropPanel"
 
         when: windowShown

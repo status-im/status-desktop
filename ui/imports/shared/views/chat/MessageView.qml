@@ -14,6 +14,7 @@ import shared.popups.send
 
 import StatusQ
 import StatusQ.Core
+import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Controls
@@ -56,8 +57,6 @@ Loader {
     property string senderOptionalName: ""
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
-    //TODO: provide the sender color hash from nim model in case of ContactVerificationRequest, OngoingContactVerificationRequest or PinnedMessagesPopup
-    property var senderColorHash:  senderId != "" ? Utils.getColorHashAsJson(senderId, senderIsEnsVerified) : ""
     property bool amISender: false
     property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin
     property bool senderIsAdded: false
@@ -101,7 +100,6 @@ Loader {
     property string quotedMessageAuthorDetailsThumbnailImage: ""
     property bool quotedMessageAuthorDetailsEnsVerified: false
     property bool quotedMessageAuthorDetailsIsContact: false
-    property var quotedMessageAuthorDetailsColorHash
 
     property var album: []
     property int albumCount: 0
@@ -136,7 +134,6 @@ Loader {
     property string deletedBy: ""
     property string deletedByContactDisplayName: ""
     property string deletedByContactIcon: ""
-    property string deletedByContactColorHash: ""
 
     property bool shouldRepeatHeader: d.shouldRepeatHeader
 
@@ -202,7 +199,6 @@ Loader {
             compressedPubKey: contactDetails.compressedPubKey,
             displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
-            colorHash: isReply ? quotedMessageAuthorDetailsColorHash : root.senderColorHash,
             colorId: Utils.colorIdForPubkey(pubKey),
             trustStatus: contactDetails.trustStatus,
             ensVerified: contactDetails.ensVerified,
@@ -320,6 +316,7 @@ Loader {
 
         readonly property int chatButtonSize: 32
         property bool hideMessage: false
+        property bool emojiPopupOpened: false
 
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
@@ -424,9 +421,16 @@ Loader {
         function addReactionClicked(mouseArea, mouse) {
             if (!d.addReactionAllowed)
                 return
+            if (d.emojiPopupOpened) {
+                return
+            }
             // Don't use mouseArea as parent, as it will be destroyed right after opening menu
             const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
-            Global.openMenu(addReactionContextMenu, root, {}, point)
+            // TODO fix position, it's way too high
+            emojiPopup.open()
+            emojiPopup.x = point.x
+            emojiPopup.y = point.y
+            d.emojiPopupOpened = true
         }
 
         function onImageClicked(image, mouse, imageSource, url = "") {
@@ -443,6 +447,21 @@ Loader {
 
         function correctBridgeNameCapitalization(bridgeName) {
             return (bridgeName === "discord") ? "Discord" : bridgeName
+        }
+    }
+
+
+    Connections {
+        enabled: d.emojiPopupOpened
+        target: emojiPopup
+
+        function onEmojiSelected(text: string, atCursor: bool) {
+            // TODO call toggleReaction when it supports all emojis
+            // root.messageStore.toggleReaction(root.messageId, emojiId)
+        }
+        function onClosed() {
+            // Debounce so that the popup doesn't immediately reopen when clicking the button
+            Backpressure.debounce(root, 100, () => { d.emojiPopupOpened = false })()
         }
     }
 
@@ -611,8 +630,6 @@ Loader {
                         name: root.deletedByContactIcon || ""
                         pubkey: root.deletedBy
                         colorId: deletedMessage.colorId
-                        colorHash: root.deletedByContactColorHash
-                        showRing: true
                     }
                 }
 
@@ -641,7 +658,6 @@ Loader {
                     visible: true
                     name: root.deletedByContactDisplayName
                     asset: deletedMessage.messageDetails.sender.profileImage.assetSettings
-                    ringSettings: deletedMessage.messageDetails.sender.profileImage.ringSettings
                 }
 
                 StatusBaseText {
@@ -765,8 +781,7 @@ Loader {
                 bottomPadding: showHeader && d.nextMessageHasHeader ? Theme.halfPadding : 2
                 disableHover: root.disableHover ||
                               (delegate.hideQuickActions && !d.addReactionAllowed) ||
-                              (root.chatLogView && root.chatLogView.moving) ||
-                              Global.activityPopupOpened
+                              (root.chatLogView && root.chatLogView.moving)
 
                 disableEmojis: !d.addReactionAllowed
                 hideMessage: d.hideMessage
@@ -893,8 +908,6 @@ Loader {
                         name: root.senderIcon || ""
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
-                        colorHash: root.senderColorHash
-                        showRing: !root.isDiscordMessage && !root.senderIsEnsVerified && !root.isBridgeMessage
                     }
                     sender.badgeImage: Theme.svg("discord-bridge")
                 }
@@ -943,10 +956,8 @@ Loader {
                         height: 20
                         name: quotedMessageAuthorDetailsThumbnailImage
                         assetSettings.isImage: quotedMessageAuthorDetailsThumbnailImage
-                        showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified && (root.quotedMessageContentType !== Constants.messageContentType.bridgeMessageType)
                         pubkey: sender.id
                         colorId: Utils.colorIdForPubkey(sender.id)
-                        colorHash: quotedMessageAuthorDetailsColorHash
                     }
                 }
 
@@ -997,7 +1008,7 @@ Loader {
                         senderColorId: Utils.colorIdForPubkey(root.senderId)
                         paymentRequestModel: root.paymentRequestModel
                         playAnimations: root.Window.active && root.messageStore.isChatActive
-                        isOnline: root.rootStore.isOnline
+                        isOnline: root.messageStore.isOnline
                         highlightLink: delegate.hoveredLink
                         areTestNetworksEnabled: root.areTestNetworksEnabled
                         formatBalance: root.formatBalance
@@ -1197,25 +1208,6 @@ Loader {
         NewMessagesMarker {
             count: root.messageStore.newMessagesCount
             timestamp: root.messageTimestamp
-        }
-    }
-
-    Component {
-        id: addReactionContextMenu
-
-        MessageAddReactionContextMenu {
-            reactionsModel: root.emojiReactionsModel
-
-            onToggleReaction: (emojiId) => {
-                root.messageStore.toggleReaction(root.messageId, emojiId)
-            }
-            onOpened: {
-                root.setMessageActive(root.messageId, true)
-            }
-            onClosed: {
-                root.setMessageActive(root.messageId, false)
-                destroy()
-            }
         }
     }
 

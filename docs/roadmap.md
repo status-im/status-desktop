@@ -24,24 +24,26 @@ gantt
 
     Backend refactor        :2025-06-01, 100d
 
-    2.35 release :milestone, m235, 2025-08-11, 1d
+    2.35 release :milestone, m235, 2025-09-04, 1d
 
     section 2.35
     Qt6 migration           :2025-06-01, 26d
     Tablet build            :t1, 2025-06-08, 31d
     Jump to screen (shell)  :2025-06-01, 24d
     User data local backups :lb1, 2025-06-16, 34d
-    Memory improvements     :mi1, 2025-07-01, 30d
+    Memory improvements     :mi1, 2025-07-01, 60d
 
-    2.36 release            :milestone, m236, 2025-09-29, 1d
+    2.36 release            :milestone, m236, 2025-10-27, 1d
 
     section 2.36
-    Mobile build            :2025-06-09, 60d
-    Privacy Mode            :after m235, 29d
+    Mobile build            :2025-06-09, 80d
+    Privacy Mode            :2025-08-15, 29d
     Dapp Browser            :after m235, 35d
-    Messages local backups  :mlb, after lb1, 25d
-    External Activity fetching :2025-07-28, 25d
-    Token List Improvements  :2025-08-11, 25d
+    Messages local backups  :mlb, after lb1, 35d
+    External Activity fetching :2025-07-28, 45d
+    Token List Improvements  :2025-08-16, 30d
+    Linea Integration       :after m235, 20d
+    Full Emoji reactions    :after m235, 15d
 
     2.37 release             :milestone, m237, 2025-11-17, 1d
 
@@ -61,11 +63,6 @@ Release Epic: https://github.com/status-im/status-desktop/issues/17966
 
 #### Features
 
-- [Backend refactor](https://github.com/status-im/status-go/issues/6435) 
-  - Runs parallel to other features and doesn't need to be shipped to any particular milestones
-  - No API changes are expected until the Chat SDK is integrated
-  - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
-  - In Progress ⏳ 23% 🟩⬜⬜⬜⬜ (+1%) (estimated progress as not all subtasks are created)
 - [QT6 migration](https://github.com/status-im/status-desktop/issues/17622)
   - No provided FURPS at the moment
     - This is about maintaing the same level of quality as with QT5 but with QT6 instead.
@@ -78,10 +75,7 @@ Release Epic: https://github.com/status-im/status-desktop/issues/17966
   - Done ✅ 🟩🟩🟩🟩🟩 100%
 - [Backup user data locally](https://github.com/status-im/status-desktop/issues/18106)
   - [FURPS](/docs/FURPS/local-user-backups.md)
-  - Done ✅ 🟩🟩🟩🟩🟩 100% (+4%)
-- [Memory and Performance improvements](https://github.com/status-im/status-desktop/issues/18296)
-  - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
-  - In Progress ⏳ 🟩🟩🟨⬜⬜ 57%
+  - Done ✅ 🟩🟩🟩🟩🟩 100%
 
 ### 2.36
 
@@ -89,26 +83,36 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
 
 #### Features
 
+- [Backend refactor](https://github.com/status-im/status-go/issues/6435) 
+  - Runs parallel to other features and doesn't need to be shipped to any particular milestones
+  - No API changes are expected until the Chat SDK is integrated
+  - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
+  - In Progress ⏳ 🟩🟩⬜⬜⬜ 44% (estimated progress as not all subtasks are created)
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
   - Progress is also inherited from the Tablet Epic above
   - In Progress ⏳ 🟩⬜⬜⬜⬜ 26%
+- [Memory and Performance improvements](https://github.com/status-im/status-desktop/issues/18296)
+  - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 53%
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
-  - In Progress ⏳ (analysis and design phase)
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 68%
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
-  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17% (+7%)
+  - In Progress ⏳ 🟩⬜⬜⬜⬜ 25%
 - [Local Backup finishing touches](https://github.com/status-im/status-desktop/issues/18583)
-  - In Progress ⏳ 🟨⬜⬜⬜⬜ 17% (+17%)
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 50%
 - [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
-  - In Progress ⏳ ⬜⬜⬜⬜⬜ 8%
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 69%
 - [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
   - In Progress ⏳
 - [Translation initiative](https://github.com/status-im/status-desktop/issues/18293)
-  - In Progress ⏳ 🟩🟨⬜⬜⬜ 33%
-- Ethereum Follow Protocol
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 57%
+- [Full Emoji list in Reactions](https://github.com/status-im/status-desktop/issues/18766)
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 65%
 - Improve Token List and Support custom tokens
+  - In Progress ⏳
 
 ### 2.37
 
@@ -128,4 +132,5 @@ Not all Epics are created yet as it's too early to know exactly what will be wor
 - File sending over Codex
   - Dependant on Codex being available in Light mode for mobile and having a C library.
 - Keycard Shell Integration
+- Ethereum Follow Protocol
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en_GB" sourcelanguage="en_US">
+<TS version="2.1" language="en" sourcelanguage="en">
 <context>
     <name>AddressesSelectorPanel</name>
     <message numerus="yes">
@@ -319,6 +319,16 @@
         <translation>
             <numerusform>%n message</numerusform>
             <numerusform>%n messages</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>KeyPairItem</name>
+    <message numerus="yes">
+        <source>Contains %n account(s) with Keycard incompatible derivation paths</source>
+        <translation>
+            <numerusform>Contains %n account with Keycard incompatible derivation paths</numerusform>
+            <numerusform>Contains %n accounts with Keycard incompatible derivation paths</numerusform>
         </translation>
     </message>
 </context>

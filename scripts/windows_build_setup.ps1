@@ -33,8 +33,8 @@ function Install-Dependencies {
     if (!(scoop bucket list | Where { $_.Name -eq "extras" })) {
         scoop bucket add extras
     }
-    scoop install --global go@1.23.10
-    scoop install --global protobuf@3.20.0
+    scoop install --global go@1.24.7
+    scoop install --global protobuf@3.20.1
     scoop install --global vcredist2022
     scoop install --global cmake@3.31.6
     scoop install --global `
@@ -100,7 +100,7 @@ export PATH=`"/c/ProgramData/scoop/apps/inno-setup/current:`$PATH`"
 # Stop the script after first error
 $ErrorActionPreference = 'Stop'
 # Version of Qt SDK available form aqt
-$QtVersion = "6.9.0"
+$QtVersion = "6.9.2"
 
 # Don't run when sourcing script
 If ($MyInvocation.InvocationName -ne ".") {

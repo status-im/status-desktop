@@ -14,13 +14,13 @@ import StatusQ.Core.Utils
 
 import shared.controls
 
-import "../stores"
+import AppLayouts.Profile.stores as ProfileStores
 
 StatusDialog {
     id: root
 
-    property DevicesStore devicesStore
-    property AdvancedStore advancedStore
+    property ProfileStores.DevicesStore devicesStore
+    property ProfileStores.AdvancedStore advancedStore
     property var deviceModel
 
     readonly property string deviceName: d.deviceName

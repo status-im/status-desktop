@@ -23,12 +23,6 @@ Loader {
         bgRadius: bgWidth / 2
     }
 
-    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        initalAngleRad: 0
-        ringPxSize: root.asset.ringPxSize
-        distinctiveColors: Theme.palette.identiconRingColors
-    }
-
     sourceComponent: {
         if (root.loading) return loadingComp
         if (root.asset.isLetterIdenticon || root.asset.name === "") return letterIdenticon
@@ -128,13 +122,6 @@ Loader {
             border.width: root.asset.bgBorderWidth
             border.color: root.asset.bgBorderColor
         }
-    }
-
-    // Next components are painted above main sourceComponent
-    StatusIdenticonRing {
-        settings: root.ringSettings
-        anchors.fill: parent
-        z: root.dZ/2
     }
 
     // State component

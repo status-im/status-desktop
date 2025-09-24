@@ -66,7 +66,7 @@ StatusListItem {
     beneathTagsTitle: root.keyPairType === Constants.keycard.keyPairType.profile && root.displayAdditionalInfoForProfileKeypair?
                           root.additionalInfoForProfileKeypair :
                           !root.canBeSelected?
-                              qsTranslate("", "Contains account(s) with Keycard incompatible derivation paths", root.keyPairAccounts.count.toString()) :
+                              qsTr("Contains %n account(s) with Keycard incompatible derivation paths", "", root.keyPairAccounts.count) :
                               ""
     beneathTagsIcon: !!beneathTagsTitle? "info" : ""
 
@@ -82,12 +82,6 @@ StatusListItem {
         charactersLen: 2
         isLetterIdenticon: !root.keyPairIcon && !asset.name.toString()
         bgColor: root.keyPairCardLocked? Theme.palette.dangerColor3 : Theme.palette.primaryColor3
-    }
-
-    ringSettings {
-        ringSpecModel: root.keyPairType === Constants.keycard.keyPairType.profile?
-                           Utils.getColorHashAsJson(d.myPublicKey) : []
-        ringPxSize: Math.max(asset.width / 24.0)
     }
 
     tagsModel: root.keyPairAccounts

@@ -32,9 +32,7 @@ Item {
     property bool isContact: false
     property bool isBlocked
     property bool isCurrentUser
-    property bool userIsEnsVerified
     property rect cropRect
-    property var colorHash: []
     property int colorId
 
     property int imageSize: ProfileHeader.ImageSize.Compact
@@ -122,13 +120,11 @@ Item {
                 objectName: "ProfileHeader_userImage"
                 name: root.displayName
                 usesDefaultName: root.usesDefaultName
-                colorHash: root.colorHash
                 userColor: Utils.colorForColorId(root.colorId)
                 image: root.previewIcon
                 interactive: false
                 imageWidth: d.getSize(36, 64, 170)
                 imageHeight: imageWidth
-                ensVerified: root.userIsEnsVerified
                 loading: root.loading
                 onlineStatus: root.onlineStatus
                 isBridgedAccount: root.isBridgedAccount

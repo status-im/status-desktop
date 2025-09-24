@@ -439,6 +439,8 @@ QtObject {
             return qsTr("dApp")
         case Constants.appSection.homePage:
             return "%1 (%2)".arg(qsTr("Home Page")).arg(additionalTextFunction(sectionType))
+        case Constants.appSection.activityCenter:
+            return qsTr("Activity Center")
         default:
             return fallback
         }
@@ -752,7 +754,7 @@ QtObject {
 
     // Is given ChainID a testnet
     function isChainIDTestnet(chainID) {
-        switch (chainID) {
+        switch (+chainID) {
             case Constants.chains.mainnetChainId:
             case Constants.chains.arbitrumChainId:
             case Constants.chains.optimismChainId:
@@ -764,7 +766,7 @@ QtObject {
     }
 
     function isL1Chain(chainID) {
-        switch (chainID) {
+        switch (+chainID) {
             case Constants.chains.mainnetChainId:
             case Constants.chains.sepoliaChainId:
             case Constants.chains.binanceSmartChainMainnetChainId:
@@ -776,7 +778,7 @@ QtObject {
 
     // Get NativeTokenSymbol for ChainID
     function getNativeTokenSymbol(chainID) {
-        switch (chainID) {
+        switch (+chainID) {
             case Constants.chains.binanceSmartChainMainnetChainId:
             case Constants.chains.binanceSmartChainTestnetChainId:
                 return Constants.bnbToken
@@ -870,10 +872,6 @@ QtObject {
         return true
     }
 
-    function isBase64DataUrl(str) {
-        return /^data:.*;base64,/.test(str);
-    }
-
     function toBase64(buffer) {
         const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         const bufferView = new Uint8Array(buffer);
@@ -960,7 +958,6 @@ QtObject {
             icon: "",
             isCurrentUser: "",
             colorId: "",
-            colorHash: [],
             displayName: "",
             publicKey: publicKey,
             compressedPubKey: "",
@@ -1006,17 +1003,6 @@ QtObject {
         if (!mainModuleInst)
             return false
         return mainModuleInst.isEnsVerified(publicKey)
-    }
-
-    function getColorHashAsJson(publicKey, skipEnsVerification=false) {
-        if (publicKey === "" || !isChatKey(publicKey))
-            return
-        if (skipEnsVerification) // we know already the user is ENS verified -> no color ring
-            return
-        if (isEnsVerified(publicKey)) // ENS verified -> no color ring
-            return
-        let jsonObj = globalUtilsInst.getColorHashAsJson(publicKey)
-        return JSON.parse(jsonObj)
     }
 
     function colorIdForPubkey(publicKey) {

@@ -14,7 +14,6 @@
        \li \l{StatusChatCommandButton}
        \li \l{StatusChatInfoButton}
        \li \l{StatusChatListCategoryItemButton}
-       \li \l{StatusColorSelector}
        \li \l{StatusDropdown}
        \li \l{StatusIconTabButton}
        \li \l{StatusNavBarTabButton}
@@ -32,7 +31,6 @@
        \li \l{StatusSelect}
        \li \l{StatusBaseInput}
        \li \l{StatusIconTextButton}
-       \li \l{StatusIdenticonRing}
        \li \l{StatusInput}
        \li \l{StatusImageSelector}
        \li \l{StatusItemPicker}
@@ -43,8 +41,6 @@
        \li \l{StatusSwitchTabButton}
        \li \l{StatusSwitchTabBar}
        \li \l{StatusSelectableText}
-       \li \l{StatusWalletColorButton}
-       \li \l{StatusWalletColorSelect}
        \li \l{StatusRegularExpressionValidator}
        \li \l{StatusIntValidator}
        \li \l{StatusSeedPhraseInput}

@@ -37,19 +37,10 @@ SplitView {
             profileType: profileTypeSelector.currentValue
             trustStatus: trustStatusSelector.currentValue
             contactType: contactTypeSelector.currentValue
-            ensVerified: ensVerifiedCheckBox.checked
             onlineStatus: onlineStatusSelector.currentValue
             hasLocalNickname: hasLocalNicknameCheckBox.checked
             chatType: chatTypeSelector.currentValue
             isAdmin: isAdminCheckBox.checked
-
-            colorHash: [
-                { segmentLength: 3, colorId: 11 },
-                { segmentLength: 5, colorId: 9  },
-                { segmentLength: 1, colorId: 26 },
-                { segmentLength: 2, colorId: 19 },
-                { segmentLength: 5, colorId: 17 }
-            ]
 
             colorId: colorIdSpinBox.value
 
@@ -239,12 +230,6 @@ SplitView {
                     }
 
                     CheckBox {
-                        id: ensVerifiedCheckBox
-                        text: "ENS Verified"
-                        checked: false
-                    }
-
-                    CheckBox {
                         id: hasLocalNicknameCheckBox
 
                         text: "Has Local Nickname"
@@ -280,7 +265,6 @@ SplitView {
         property alias chatTypeIndex: chatTypeSelector.currentIndex
 
         property alias useIcon: useIconCheckBox.checked
-        property alias ensVerified: ensVerifiedCheckBox.checked
         property alias hasLocalNickname: hasLocalNicknameCheckBox.checked
         property alias isAdmin: isAdminCheckBox.checked
         property alias hideDisabled: hideDisabledCheckBox.checked

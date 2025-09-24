@@ -5,9 +5,9 @@ import StatusQ // ClipboardUtils
 import StatusQ.Core.Theme
 import StatusQ.TestHelpers
 
-import AppLayouts.Onboarding2
-import AppLayouts.Onboarding2.pages
-import AppLayouts.Onboarding2.stores
+import AppLayouts.Onboarding
+import AppLayouts.Onboarding.pages
+import AppLayouts.Onboarding.stores
 import AppLayouts.Onboarding.enums
 
 import shared.stores as SharedStores
@@ -131,6 +131,8 @@ Item {
                     onboardingStore.accountLoginError("", true)
                 }
             }
+
+            privacyModeFeatureEnabled: false
         }
     }
 
@@ -1351,6 +1353,27 @@ Item {
             })
 
             // TODO extend the check with trying to complete the flows
+        }
+
+        function test_privacyModeFeatureEnabled_showsThirdPartyServices() {
+            verify(!!controlUnderTest)
+
+            // Get current page from stack (adjust LoginScreen to your actual root page type)
+            const page = getCurrentPage(controlUnderTest.stack, WelcomePage)
+            verify(!!page)
+
+            // Find the thirdPartyServices component
+            const thirdPartyServices = findChild(page, "thirdPartyServices")
+            verify(!!thirdPartyServices)
+
+            // Verify visibility
+            tryCompare(thirdPartyServices, "visible", false)
+
+            // Enable privacy mode feature
+            controlUnderTest.privacyModeFeatureEnabled = true
+
+            // Verify visibility
+            tryCompare(thirdPartyServices, "visible", true)
         }
     }
 }

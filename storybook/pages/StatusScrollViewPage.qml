@@ -67,7 +67,7 @@ SplitView {
 
                     Image {
                         width: widthFillCheckBox.checked ? scrollView3.availableWidth : widthSpinBox.value
-                        source: "https://placekitten.com/900/900"
+                        source: "https://res.cloudinary.com/dhgck7ebz/image/upload/f_auto,c_limit,w_1080,q_auto/Non%20Beta%20Release/Illustrations/hero-1"
                     }
                 }
 
@@ -286,3 +286,4 @@ SplitView {
 }
 
 // category: Components
+// status: good

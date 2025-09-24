@@ -29,9 +29,6 @@ Control {
 
     property bool useNewDockIcons: true
 
-    required property bool hasUnseenACNotifications
-    required property int aCNotificationCount
-
     property var getLinkToProfileFn: function(pubkey) { console.error("IMPLEMENT ME"); return "" }
     property var getEmojiHashFn: function(pubkey) { console.error("IMPLEMENT ME"); return "" }
 
@@ -41,7 +38,6 @@ Control {
     signal itemPinRequested(string key, bool pin)
     signal dappDisconnectRequested(string dappUrl)
 
-    signal notificationButtonClicked()
     signal setCurrentUserStatusRequested(int status)
     signal viewProfileRequested(string pubKey)
 
@@ -172,26 +168,13 @@ Control {
         anchors.topMargin: Theme.defaultSmallPadding
         spacing: 12
 
-        StatusActivityCenterButton {
-            objectName: "homeACButton"
-            Layout.topMargin: 4
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
-            icon.height: 24
-            unreadNotificationsCount: root.aCNotificationCount
-            hasUnseenNotifications: root.hasUnseenACNotifications
-            onClicked: root.notificationButtonClicked()
-        }
-
         ProfileButton {
             objectName: "homeProfileButton"
             name: root.profileStore.name
             pubKey: root.profileStore.pubKey
             compressedPubKey: root.profileStore.compressedPubKey
-            isEnsVerified: !!root.profileStore.preferredName
             iconSource: root.profileStore.icon
             colorId: root.profileStore.colorId
-            colorHash: root.profileStore.colorHash
             currentUserStatus: root.profileStore.currentUserStatus
             usesDefaultName: root.profileStore.usesDefaultName
 

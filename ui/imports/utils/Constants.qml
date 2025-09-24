@@ -339,6 +339,7 @@ QtObject {
         readonly property int swap: 8
         readonly property int market: 9
         readonly property int browser: 10
+        readonly property int activityCenter: 11
 
         readonly property int homePage: 0
         readonly property int dApp: 999
@@ -354,6 +355,7 @@ QtObject {
         readonly property int profile: 5
         readonly property int node: 6
         readonly property int market: 7
+        readonly property int activityCenter: 8
     }
 
     readonly property QtObject settingsSubsection: QtObject {
@@ -658,6 +660,8 @@ QtObject {
         readonly property var alphanumericalExpanded2: /^$|^[a-zA-Z0-9\-_\.\u0020\&]+$/
         // Adds dash, underscore, dot, space, comma and ampersand
         readonly property var alphanumericalExpanded3: /^$|^[a-zA-Z0-9\-_\.\,\u0020\&]+$/
+        // Adds a newline (e.g. community description)
+        readonly property var alphanumericalExpanded4: /^$|^[a-zA-Z0-9\-_\.\,\u0020\&\r?\n]+$/
         readonly property var alphanumericalWithSpace: /^$|^[a-zA-Z0-9\s]+$/
         readonly property var asciiPrintable:         /^$|^[!-~]+$/
         readonly property var ascii:                  /^$|^[\x00-\x7F]+$/
@@ -1012,6 +1016,8 @@ QtObject {
     readonly property string statusHelpLinkPrefix: `https://status.app/help/`
     readonly property string downloadLink: "https://status.im/get"
     readonly property string sendViaChatPrefix: '//send-via-personal-chat//'
+    readonly property string statusDiscussPageUrl: 'https://discuss.status.app/'
+    readonly property string statusThirdpartyServicesArticle: 'https://status.app/help/getting-started/privacy-with-status-third-parties'
 
     readonly property int maxUploadFiles: 6
     readonly property double maxUploadFilesizeMB: 10

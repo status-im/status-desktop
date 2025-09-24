@@ -14,7 +14,9 @@ QtObject:
       model: Model
       modelVariant: QVariant
       backupImportState: BackupImportState
+      backupDataState: BackupImportState
       backupImportError: string
+      backupDataError: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -26,7 +28,9 @@ QtObject:
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
     result.backupImportState = BackupImportState.None
+    result.backupDataState = BackupImportState.None
     result.backupImportError = ""
+    result.backupDataError = ""
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -72,6 +76,21 @@ QtObject:
     read = getBackupImportState
     notify = backupImportStateChanged
 
+  proc backupDataStateChanged*(self: View) {.signal.}
+
+  proc getBackupDataState*(self: View): int {.slot.} =
+    return self.backupDataState.int
+
+  proc setBackupDataState*(self: View, state: BackupImportState) = # not a slot
+    if state == self.backupDataState:
+      return
+    self.backupDataState = state
+    self.backupDataStateChanged()
+
+  QtProperty[int] backupDataState:
+    read = getBackupDataState
+    notify = backupDataStateChanged
+
   proc backupImportErrorChanged*(self: View) {.signal.}
 
   proc getBackupImportError*(self: View): string {.slot.} =
@@ -87,6 +106,21 @@ QtObject:
     read = getBackupImportError
     notify = backupImportErrorChanged
 
+  proc backupDataErrorChanged*(self: View) {.signal.}
+
+  proc getBackupDataError*(self: View): string {.slot.} =
+    return self.backupDataError
+
+  proc setBackupDataError*(self: View, error: string) = # not a slot
+    if error == self.backupDataError:
+      return
+    self.backupDataError = error
+    self.backupDataErrorChanged()
+
+  QtProperty[string] backupDataError:
+    read = getBackupDataError
+    notify = backupDataErrorChanged
+
   proc localBackupImportCompleted*(self: View, success: bool) {.signal.}
 
   proc onLocalBackupImportCompleted*(self: View, error: string) = # not a slot
@@ -94,8 +128,17 @@ QtObject:
     self.setBackupImportError(error)
     self.localBackupImportCompleted(error.len == 0)
 
-  proc performLocalBackup*(self: View): string {.slot.} =
-    return self.delegate.performLocalBackup()
+  proc performLocalBackup*(self: View) {.slot.} =
+    self.setBackupDataState(BackupImportState.InProgress)
+    self.setBackupDataError("")
+
+    let error = self.delegate.performLocalBackup()
+    self.setBackupDataState(BackupImportState.Completed)
+    self.setBackupDataError(error)
+
+  proc resetBackupDataState*(self: View): int {.slot.} =
+    self.setBackupDataState(BackupImportState.None)
+    self.setBackupDataError("")
 
   proc importLocalBackupFile*(self: View, filePath: string) {.slot.} =
     self.setBackupImportState(BackupImportState.InProgress)
