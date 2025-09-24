@@ -2221,10 +2221,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation>24 hodin</translation>
     </message>
     <message>
-        <source>Overview</source>
-        <translation>Přehled</translation>
-    </message>
-    <message>
         <source>Website</source>
         <translation>Website</translation>
     </message>

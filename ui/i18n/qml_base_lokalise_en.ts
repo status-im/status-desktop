@@ -2717,11 +2717,6 @@
       <translation>24 Hours</translation>
     </message>
     <message>
-      <source>Overview</source>
-      <comment>AssetsDetailView</comment>
-      <translation>Overview</translation>
-    </message>
-    <message>
       <source>Website</source>
       <comment>AssetsDetailView</comment>
       <translation>Website</translation>
