@@ -35,6 +35,7 @@ InformationTag {
     tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
     tagPrimaryLabel.text: qsTr("Displaying collectibles on %1 is not currently supported by Status.")
         .arg(d.formattedUnsupportedNetworks)
+    tagPrimaryLabel.wrapMode: Text.WordWrap
 
     // NB: regular binding won't work as `tagPrimaryLabel` is an alias
     Binding {
