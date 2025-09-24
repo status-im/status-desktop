@@ -8,7 +8,6 @@ import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/about/service as about_service
-import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../../app_service/service/devices/service as devices_service
@@ -27,7 +26,6 @@ import ../../../../app_service/service/node/service as node_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
-import ./language/module as language_module
 import ./privacy/module as privacy_module
 import ./about/module as about_module
 import ./advanced/module as advanced_module
@@ -51,7 +49,6 @@ type
     moduleLoaded: bool
 
     profileModule: profile_module.AccessInterface
-    languageModule: language_module.AccessInterface
     contactsModule: contacts_module.AccessInterface
     privacyModule: privacy_module.AccessInterface
     aboutModule: about_module.AccessInterface
@@ -73,7 +70,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   profileService: profile_service.Service,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
-  languageService: language_service.Service,
   privacyService: privacy_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
   devicesService: devices_service.Service,
@@ -99,7 +95,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.profileModule = profile_module.newModule(result, events, profileService, settingsService, communityService,
     walletAccountService, tokenService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService, networkService)
-  result.languageModule = language_module.newModule(result, events, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService,
     generalService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
@@ -126,7 +121,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
 method delete*(self: Module) =
   self.profileModule.delete
   self.contactsModule.delete
-  self.languageModule.delete
   self.privacyModule.delete
   self.aboutModule.delete
   self.advancedModule.delete
@@ -144,7 +138,6 @@ method load*(self: Module) =
   self.view.load()
   self.profileModule.load()
   self.contactsModule.load()
-  self.languageModule.load()
   self.privacyModule.load()
   self.aboutModule.load()
   self.advancedModule.load()
@@ -165,9 +158,6 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.contactsModule.isLoaded()):
-    return
-
-  if(not self.languageModule.isLoaded()):
     return
 
   if(not self.privacyModule.isLoaded()):
@@ -220,12 +210,6 @@ method contactsModuleDidLoad*(self: Module) =
 
 method getContactsModule*(self: Module): QVariant =
   self.contactsModule.getModuleAsVariant()
-
-method languageModuleDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method getLanguageModule*(self: Module): QVariant =
-  self.languageModule.getModuleAsVariant()
 
 method privacyModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()

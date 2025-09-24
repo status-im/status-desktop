@@ -50,7 +50,6 @@ import app_service/service/accounts/utils as accounts_utils
 import app_service/service/settings/service as settings_service
 import app_service/service/contacts/service as contacts_service
 import app_service/service/about/service as about_service
-import app_service/service/language/service as language_service
 import app_service/service/privacy/service as privacy_service
 import app_service/service/stickers/service as stickers_service
 import app_service/service/activity_center/service as activity_center_service
@@ -160,7 +159,6 @@ proc newModule*[T](
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
   dappPermissionsService: dapp_permissions_service.Service,
-  languageService: language_service.Service,
   privacyService: privacy_service.Service,
   providerService: provider_service.Service,
   stickersService: stickers_service.Service,
@@ -239,7 +237,7 @@ proc newModule*[T](
   )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
-    profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
+    profileService, contactsService, aboutService, privacyService, nodeConfigurationService,
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
     networkService, keycardService, keychainService, tokenService, nodeService
   )

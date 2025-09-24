@@ -48,7 +48,7 @@ QtObject:
 
   proc languageChanged*(self: LocalAppSettings) {.signal.}
   proc getLanguage*(self: LocalAppSettings): string {.slot.} =
-    self.settings.value(LAS_KEY_LANGUAGE, newQVariant(DEFAULT_LAS_KEY_LANGUAGE)).stringVal
+    self.settings.value(LAS_KEY_LANGUAGE).stringVal
   proc setLanguage*(self: LocalAppSettings, value: string) {.slot.} =
     self.settings.setValue(LAS_KEY_LANGUAGE, newQVariant(value))
     self.languageChanged()

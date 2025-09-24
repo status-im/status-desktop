@@ -8,6 +8,7 @@ import shared.stores
 
 import mainui
 import AppLayouts.stores as AppStores
+import AppLayouts.Profile.stores
 
 import AppLayouts.Onboarding
 import AppLayouts.Onboarding.enums
@@ -42,8 +43,9 @@ StatusWindow {
         privacyModeFeatureEnabled: featureFlags ? featureFlags.privacyModeFeatureEnabled : false
     }
 
-    property MetricsStore metricsStore: MetricsStore {}
-    property UtilsStore utilsStore: UtilsStore {}
+    readonly property MetricsStore metricsStore: MetricsStore {}
+    readonly property UtilsStore utilsStore: UtilsStore {}
+    readonly property LanguageStore languageStore: LanguageStore {}
 
     objectName: "mainWindow"
     color: Theme.palette.background
@@ -327,6 +329,15 @@ StatusWindow {
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
+        if (languageStore.currentLanguage === "" && // if we haven't configured the language yet...
+                languageStore.availableLanguages.includes(Qt.uiLanguage)) { // ...and we have a translation for it
+            // set the language to the user's OS default
+            languageStore.changeLanguage(Qt.uiLanguage, true /*shouldRetranslate*/)
+        } else {
+            // set the configured language
+            languageStore.changeLanguage(languageStore.currentLanguage, true /*shouldRetranslate*/)
+        }
+
         Theme.changeTheme(Theme.Style.System)
 
         applySafeAreaDirtyHack()
@@ -389,6 +400,7 @@ StatusWindow {
         AppMain {
             utilsStore: applicationWindow.utilsStore
             featureFlagsStore: applicationWindow.featureFlagsStore
+            languageStore: applicationWindow.languageStore
 
             visible: !startupOnboardingLoader.active
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
@@ -467,6 +479,10 @@ StatusWindow {
                     appKeychain.deleteCredential(account)
                 }
             }
+
+            currentLanguage: languageStore.currentLanguage
+            availableLanguages: languageStore.availableLanguages
+            onChangeLanguageRequested: (newLanguageCode) => languageStore.changeLanguage(newLanguageCode, true /*shouldRetranslate*/)
 
             keychain: appKeychain
 

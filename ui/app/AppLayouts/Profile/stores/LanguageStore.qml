@@ -1,14 +1,17 @@
 import QtQuick
 
+import StatusQ
+
 QtObject {
     id: root
 
-    property var languageModule
+    readonly property string currentLanguage: localAppSettings.language
+    readonly property var availableLanguages: LanguageService.availableLanguages
 
-    readonly property var languageModel: languageModule ? languageModule.model : null
-    readonly property string currentLanguage: languageModule ? languageModule.currentLanguage : null
-
-    function changeLanguage(language) {
-        root.languageModule.changeLanguage(language)
+    function changeLanguage(languageCode, shouldRetranslate = false) {
+        const result = LanguageService.setLanguage(languageCode, shouldRetranslate)
+        if (result)
+            localAppSettings.language = languageCode
+        return result
     }
 }

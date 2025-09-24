@@ -21,6 +21,8 @@
 #include <qtmodelstoolkit/registerqmltypes.h>
 #include <qqmlsortfilterproxymodeltypes.h>
 
+#include "l10n/languagemodel.h"
+#include "l10n/languageservice.h"
 #include "wallet/managetokenscontroller.h"
 #include "wallet/managetokensmodel.h"
 #include "onboarding/enums.h"
@@ -41,6 +43,11 @@ void registerStatusQTypes() {
 
     qmlRegisterType<ManageTokensController>("StatusQ.Models", 0, 1, "ManageTokensController");
     qmlRegisterType<ManageTokensModel>("StatusQ.Models", 0, 1, "ManageTokensModel");
+
+    qmlRegisterType<LanguageModel>("StatusQ.Models", 0, 1, "LanguageModel");
+    qmlRegisterSingletonType<LanguageService>("StatusQ", 0, 1, "LanguageService", [](QQmlEngine* engine, QJSEngine*) {
+        return new LanguageService(engine);
+    });
 
     qmlRegisterType<NetworkChecker>("StatusQ", 0, 1, "NetworkChecker");
 

@@ -4,7 +4,6 @@ import QtQuick.Layouts
 
 import AppLayouts.stores as AppLayoutStores
 import AppLayouts.Profile.views
-import AppLayouts.Profile.stores
 
 import Storybook
 
@@ -27,40 +26,12 @@ SplitView {
             contentWidth: parent.width - 150
 
             languageSelectionEnabled: ctrlLanguageSelectionEnabled.checked
-            languageStore: LanguageStore {
-                property string currentLanguage: "en"
+            availableLanguages: ["de", "cs", "en", "en_CA", "ko", "ar", "fr", "fr_CA", "pt_BR", "pt", "uk", "ja", "el"]
+            currentLanguage: "en"
 
-                readonly property ListModel languageModel: ListModel {
-                    ListElement {
-                        locale: "ar"
-                        name: "Arabic"
-                        shortName: "العربية"
-                        flag: "🇸🇦"
-                        state: 0
-                        selected: false
-                    }
-                    ListElement {
-                        locale: "en"
-                        name: "English"
-                        shortName: "English"
-                        flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿"
-                        state: 2
-                        selected: true
-                    }
-                    ListElement {
-                        locale: "cs_CZ"
-                        name: "Czech"
-                        shortName: "čeština"
-                        flag: "🇨🇿"
-                        state: 1
-                        selected: false
-                    }
-                }
-
-                function changeLanguage(language) {
-                    logs.logEvent("languageStore::changeLanguage", ["language"], arguments)
-                    currentLanguage = language
-                }
+            onChangeLanguageRequested: function(newLanguageCode) {
+                logs.logEvent("onChangeLanguageRequested", ["newLanguageCode"], arguments)
+                currentLanguage = newLanguageCode
             }
 
             currencyStore: SharedStores.CurrenciesStore {
@@ -119,6 +90,7 @@ SplitView {
             Switch {
                 id: ctrlLanguageSelectionEnabled
                 text: "Language selection enabled"
+                checked: true
             }
         }
     }
