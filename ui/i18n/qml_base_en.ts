@@ -10048,18 +10048,6 @@ access to your funds.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Alpha languages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Beta languages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Languages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16237,6 +16225,13 @@ to load</source>
     <name>StatusIntValidator</name>
     <message>
         <source>Please enter a valid numeric value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StatusLanguageSelector</name>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

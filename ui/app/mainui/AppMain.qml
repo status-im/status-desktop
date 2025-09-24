@@ -82,7 +82,6 @@ Item {
     readonly property ProfileStores.AdvancedStore advancedStore: rootStore.profileSectionStore.advancedStore
     readonly property ProfileStores.PrivacyStore privacyStore: rootStore.profileSectionStore.privacyStore
     readonly property ProfileStores.NotificationsStore notificationsStore: rootStore.profileSectionStore.notificationsStore
-    readonly property ProfileStores.LanguageStore languageStore: rootStore.profileSectionStore.languageStore
     readonly property ProfileStores.KeycardStore keycardStore: rootStore.profileSectionStore.keycardStore
     readonly property ProfileStores.WalletStore walletProfileStore: rootStore.profileSectionStore.walletStore
     readonly property ProfileStores.EnsUsernamesStore ensUsernamesStore: rootStore.profileSectionStore.ensUsernamesStore
@@ -129,6 +128,7 @@ Item {
     readonly property WalletStores.BuyCryptoStore buyCryptoStore: WalletStores.BuyCryptoStore {}
 
     required property AppStores.FeatureFlagsStore featureFlagsStore
+    required property ProfileStores.LanguageStore languageStore
     // TODO: Only until the  old send modal transaction store can be replaced with this one
     readonly property WalletStores.TransactionStoreNew transactionStoreNew: WalletStores.TransactionStoreNew {}
 

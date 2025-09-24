@@ -49,10 +49,6 @@ QtObject {
         notificationsModule: d.profileSectionModuleInst.notificationsModule
     }
 
-    property LanguageStore languageStore: LanguageStore {
-        languageModule: d.profileSectionModuleInst.languageModule
-    }
-
     property AdvancedStore advancedStore: AdvancedStore {
         walletModule: d.profileSectionModuleInst.walletModule
         advancedModule: d.profileSectionModuleInst.advancedModule

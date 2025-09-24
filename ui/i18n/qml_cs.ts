@@ -235,7 +235,7 @@
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
 </context>
 <context>
@@ -4060,7 +4060,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
     <message>
         <source>Connect</source>
@@ -6805,7 +6805,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
     <message>
         <source>Enter shard number</source>
@@ -7516,7 +7516,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
     <message>
         <source>Control node (this device)</source>
@@ -10088,18 +10088,6 @@ access to your funds.</source>
         <translation>Přklady již brzy</translation>
     </message>
     <message>
-        <source>Alpha languages</source>
-        <translation>Alfa jazyky</translation>
-    </message>
-    <message>
-        <source>Beta languages</source>
-        <translation>Beta jazyky</translation>
-    </message>
-    <message>
-        <source>Search Languages</source>
-        <translation>Hledat jazyky</translation>
-    </message>
-    <message>
         <source>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10414,11 +10402,11 @@ to load</source>
     </message>
     <message>
         <source>Login failed. %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přihlášení selhalo. %1</translation>
     </message>
     <message>
         <source>Show details.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zobrazit podrobnosti.</translation>
     </message>
     <message>
         <source>Enter Keycard PIN</source>
@@ -10476,54 +10464,54 @@ to load</source>
     <name>LoginPasswordInput</name>
     <message>
         <source>Password</source>
-        <translation type="unfinished">Heslo</translation>
+        <translation>Heslo</translation>
     </message>
     <message>
         <source>Hide password</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrýt heslo</translation>
     </message>
     <message>
         <source>Reveal password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat heslo</translation>
     </message>
 </context>
 <context>
     <name>LoginScreen</name>
     <message>
         <source>Password incorrect. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Chybné heslo. %1</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapomněli jste heslo?</translation>
     </message>
     <message>
         <source>Login failed. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlášení selhalo. %1</translation>
     </message>
     <message>
         <source>Show details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit podrobnosti.</translation>
     </message>
     <message>
         <source>Welcome back</source>
-        <translation type="unfinished"></translation>
+        <translation>Vítejte zpět</translation>
     </message>
     <message>
         <source>Lost this Keycard?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ztratili jste Keycard?</translation>
     </message>
     <message>
         <source>Login failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlášení selhalo</translation>
     </message>
     <message>
         <source>Copy error message</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkopírovat chybovou hlášku</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
@@ -10545,11 +10533,11 @@ to load</source>
     <name>LoginUserSelector</name>
     <message>
         <source>Create profile</source>
-        <translation type="unfinished">Vytvořit profil</translation>
+        <translation>Vytvořit profil</translation>
     </message>
     <message>
         <source>Log in</source>
-        <translation type="unfinished">Přihlásit se</translation>
+        <translation>Přihlásit se</translation>
     </message>
 </context>
 <context>
@@ -15433,7 +15421,7 @@ to load</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
 </context>
 <context>
@@ -15713,7 +15701,7 @@ to load</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
     <message>
         <source>Reject</source>
@@ -16187,7 +16175,7 @@ to load</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
     <message>
         <source>Abort</source>
@@ -16308,6 +16296,13 @@ to load</source>
     <name>StatusIntValidator</name>
     <message>
         <source>Please enter a valid numeric value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StatusLanguageSelector</name>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17343,7 +17338,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zavřít</translation>
     </message>
     <message>
         <source>Disable services and restart the app</source>

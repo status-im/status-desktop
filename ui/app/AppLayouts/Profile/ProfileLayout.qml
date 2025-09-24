@@ -383,10 +383,18 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 languageSelectionEnabled: localAppSettings.translationsEnabled
-                languageStore: root.languageStore
+                currentLanguage: root.languageStore.currentLanguage
+                availableLanguages: root.languageStore.availableLanguages
                 currencyStore: root.currencyStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
+                onChangeLanguageRequested: function (newLanguageCode) {
+                    const result = root.languageStore.changeLanguage(newLanguageCode, false /*shouldRetranslate*/)
+                    if (result)
+                        Qt.callLater(() => SystemUtils.restartApplication())
+                    else
+                        console.warn("Failed setting language to:", newLanguageCode)
+                }
             }
         }
 

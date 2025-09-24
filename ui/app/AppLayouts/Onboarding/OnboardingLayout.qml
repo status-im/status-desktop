@@ -22,6 +22,11 @@ Page {
     required property Keychain keychain
     required property bool privacyModeFeatureEnabled
 
+    // list of language/locale codes, e.g. ["cs_CZ","ko","fr"]
+    required property var availableLanguages
+    // language currently selected for translations, e.g. "cs"
+    required property string currentLanguage
+
     property bool isKeycardEnabled: true
 
     property bool networkChecksEnabled: true
@@ -37,6 +42,8 @@ Page {
                                                           : stack.topLevelItem
         return Utils.objectTypeName(item)
     }
+
+    signal changeLanguageRequested(string newLanguageCode)
 
     signal shareUsageDataRequested(bool enabled)
 
@@ -142,6 +149,9 @@ Page {
         anchors.fill: parent
 
         loginAccountsModel: root.onboardingStore.loginAccountsModel
+        availableLanguages: root.availableLanguages
+        currentLanguage: root.currentLanguage
+
         keycardState: root.onboardingStore.keycardState
         keycardUID: root.onboardingStore.keycardUID
         pinSettingState: root.onboardingStore.pinSettingState
@@ -165,6 +175,8 @@ Page {
         tryToSetPukFunction: root.onboardingStore.setPuk
         remainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
         remainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
+
+        onChangeLanguageRequested: (newLanguageCode) => root.changeLanguageRequested(newLanguageCode)
 
         onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
 

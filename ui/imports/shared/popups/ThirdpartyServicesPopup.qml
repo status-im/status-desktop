@@ -161,7 +161,7 @@ StatusDialog {
     component Section: ColumnLayout {
         property alias title: titleItem.text
         property alias model: bodyItem.model
-        spacing: 8
+        spacing: Theme.halfPadding
 
         Paragraph {
             id: titleItem
@@ -177,6 +177,7 @@ StatusDialog {
             Layout.fillWidth: true
             delegate: StatusItemDelegate {
                 Layout.fillWidth: true
+                cursorShape: Qt.ArrowCursor
                 icon.width: 20
                 icon.height: 20
                 icon.name: "info"

@@ -14,16 +14,16 @@ import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Components
 import StatusQ.Controls
 
-import AppLayouts.Profile.stores
-
 import "../popups"
-
-import SortFilterProxyModel
 
 SettingsContentBase {
     id: root
 
-    property LanguageStore languageStore
+    // list of language/locale codes, e.g. ["cs_CZ","ko","fr"]
+    required property var availableLanguages
+    // language currently selected for translations, e.g. "cs"
+    required property string currentLanguage
+
     property SharedStores.CurrenciesStore currencyStore
     property bool languageSelectionEnabled
 
@@ -31,15 +31,11 @@ SettingsContentBase {
     onVisibleChanged: { if(!visible) root.setViewIdleState()}
     onBaseAreaClicked: { root.setViewIdleState() }
 
+    signal changeLanguageRequested(string newLanguageCode)
 
     function setViewIdleState() {
         currencyPicker.close()
         languagePicker.close()
-    }
-
-    function changeLanguage(key) {
-        languagePicker.newKey = key
-        Qt.callLater(root.languageStore.changeLanguage, languagePicker.newKey)
     }
 
     ColumnLayout {
@@ -97,70 +93,21 @@ SettingsContentBase {
                 text: qsTr("Language")
             }
             Item { Layout.fillWidth: true }
-            StatusListPicker {
+            StatusLanguageSelector {
+                Layout.preferredWidth: currencyPicker.width
                 id: languagePicker
+                enabled: root.languageSelectionEnabled
+                currentLanguage: root.currentLanguage
+                languageCodes: root.availableLanguages
+                onLanguageSelected: (languageCode) =>
+                                    languageConfirmationDialog.createObject(root, {oldCode: root.currentLanguage, newCode: languageCode}).open()
 
-                button.interactive: root.languageSelectionEnabled
                 StatusToolTip {
                     y: parent.height + Theme.padding
                     margins: 0
-                    visible: !root.languageSelectionEnabled && languagePicker.button.hovered
+                    visible: !root.languageSelectionEnabled && languagePicker.hovered
                     orientation: StatusToolTip.Orientation.Bottom
                     text: qsTr("Translations coming soon")
-                }
-
-                property string newKey
-
-                function descriptionForState(state) {
-                    if (state === Constants.translationsState.alpha) return qsTr("Alpha languages")
-                    if (state === Constants.translationsState.beta) return qsTr("Beta languages")
-                    return ""
-                }
-
-                objectName: "languagePicker"
-                inputList: SortFilterProxyModel {
-                    sourceModel: root.languageStore.languageModel
-
-                    // "category" is the only role that can't be mocked by StatusListPicker::proxy
-                    // due to StatusListPicker internal implementation limitation (ListView's section.property)
-                    proxyRoles: [
-                        FastExpressionRole {
-                            name: "category"
-                            expression: languagePicker.descriptionForState(model.state)
-                            expectedRoles: ["state"]
-                        }
-                    ]
-
-                    sorters: [
-                        RoleSorter {
-                            roleName: "state"
-                            sortOrder: Qt.DescendingOrder
-                        },
-                        StringSorter {
-                            roleName: "name"
-                        }
-                    ]
-                }
-
-                proxy {
-                    key: (model) => model.locale
-                    name: (model) => model.name
-                    shortName: (model) => model.native || model.shortName
-                    symbol: (model) => ""
-                    imageSource: (model) => StatusQUtils.Emoji.iconSource(model.flag)
-                    selected: (model) => model.locale === root.languageStore.currentLanguage
-                    setSelected: (model, val) => null // readonly
-                }
-
-                z: root.z + 1
-                placeholderSearchText: qsTr("Search Languages")
-                maxPickerHeight: 350
-
-                onItemPickerChanged: (key, selected) => {
-                    if(selected && root.languageStore.currentLanguage !== key) {
-                        root.changeLanguage(key)
-                        Global.openPopup(languageConfirmationDialog)
-                    }
                 }
             }
         }
@@ -219,11 +166,18 @@ SettingsContentBase {
         Component {
             id: languageConfirmationDialog
             ConfirmationDialog {
+                property string oldCode
+                property string newCode
+
                 destroyOnClose: true
-                headerSettings.title: qsTr("Change language")
+                title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Restart")
-                onConfirmButtonClicked: SystemUtils.restartApplication()
+                onConfirmButtonClicked: {
+                    root.changeLanguageRequested(newCode)
+                    close()
+                }
+                onRejected: root.currentLanguage = oldCode
             }
         }
     }

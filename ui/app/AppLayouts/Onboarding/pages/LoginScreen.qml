@@ -34,6 +34,11 @@ OnboardingPage {
     // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, order:int, keycardCreatedAccount:bool}]
     required property var loginAccountsModel
 
+    // list of language/locale codes, e.g. ["cs_CZ","ko","fr"]
+    required property var availableLanguages
+    // language currently selected for translations, e.g. "cs"
+    required property string currentLanguage
+
     // allows to set if currently selected account can be logged in using biometrics
     property bool isBiometricsLogin
     property bool isKeycardEnabled: true
@@ -43,6 +48,7 @@ OnboardingPage {
 
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
+    signal changeLanguageRequested(string newLanguageCode)
 
     function setBiometricResponse(secret: string, error = "") {
         if (!root.isBiometricsLogin)
@@ -300,6 +306,14 @@ OnboardingPage {
                 onClicked: root.lostKeycardFlowRequested()
             }
         }
+    }
+
+    StatusLanguageSelector {
+        anchors.right: parent.right
+        anchors.top: parent.top
+        currentLanguage: root.currentLanguage
+        languageCodes: root.availableLanguages
+        onLanguageSelected: (languageCode) => root.changeLanguageRequested(languageCode)
     }
 
     Component {
