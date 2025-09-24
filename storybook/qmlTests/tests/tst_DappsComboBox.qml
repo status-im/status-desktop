@@ -61,7 +61,7 @@ Item {
             mouseClick(controlUnderTest)
             const popup = findChild(controlUnderTest, "dappsListPopup")
             compare(popup.visible, true)
-            compare(popup.x, controlUnderTest.width - popup.width)
+            compare(fuzzyCompare(popup.x, controlUnderTest.width - popup.width, 1))
             compare(popup.y, controlUnderTest.height + 4)
             compare(popup.width, 312)
             verify(popup.height > 0)

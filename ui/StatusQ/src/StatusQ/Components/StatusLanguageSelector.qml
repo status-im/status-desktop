@@ -107,8 +107,9 @@ Button {
 
         objectName: "dropdown"
 
-        x: root.width - width
-        y: root.height + 2
+        directParent: root
+        relativeX: root.width - width
+        relativeY: root.height + 2
         width: 300
         margins: Theme.halfPadding
 

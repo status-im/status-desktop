@@ -1179,6 +1179,7 @@ Item {
         id: statusEmojiPopup
         active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
+            directParent: root.window.contentItem
             height: 440
             settings: appMainLocalSettings
             emojiModel: SQUtils.Emoji.emojiModel
@@ -1189,6 +1190,7 @@ Item {
         id: statusStickersPopupLoader
         active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusStickersPopup {
+            directParent: root.window.contentItem
             store: appMain.rootChatStore
             isWalletEnabled: appMain.walletProfileStore.isWalletEnabled
             onBuyClicked: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
@@ -2436,6 +2438,9 @@ Item {
         active: false
         asynchronous: true
         sourceComponent: StatusSearchListPopup {
+            directParent: appMain
+            relativeX: appMain.width/2 - width/2
+            relativeY: appMain.height/2 - height/2
             searchBoxPlaceholder: qsTr("Where do you want to go?")
             model: rootStore.chatSearchModel
 

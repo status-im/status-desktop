@@ -38,7 +38,7 @@ Column {
         label: "ComboBox with custom delegate"
         model: commmonModel
         delegate: StatusItemDelegate {
-            width: comboBox1.control.width
+            width: comboBox1.popup.width
             highlighted: comboBox1.control.highlightedIndex === index
             text: modelData
             font: comboBox1.control.font

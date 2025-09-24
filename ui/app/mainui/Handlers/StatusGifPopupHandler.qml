@@ -16,8 +16,6 @@ QtObject {
         property var cbOnGifSelected: function () {} // It stores callback for gifSelected
         property var cbOnClose: function () {} // It stores callback for popup closed
         property var popupParent: null // Gifs button object type
-        property var parentXPosition: null // Gifs button rigth
-        property var parentYPosition: null // Gifs button bottom
         property bool closeAfterSelection: true
     }
 
@@ -26,11 +24,9 @@ QtObject {
         _d.cbOnGifSelected = cbOnGifSelected
         _d.cbOnClose = cbOnClose
         _d.popupParent = params.popupParent
-        _d.parentXPosition = _d.popupParent.x + _d.popupParent.width
-        _d.parentYPosition = _d.popupParent.y
         _d.closeAfterSelection = params.closeAfterSelection
 
-        let gifPopupInst = gifPopupComponent.createObject(_d.popupParent)
+        let gifPopupInst = gifPopupComponent.createObject()
         gifPopupInst.open()
     }
 
@@ -40,9 +36,9 @@ QtObject {
 
             width: 360
             height: 440
-            x: _d.parentXPosition - width - Theme.halfPadding
-            y: _d.parentYPosition - height
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+            directParent: _d.popupParent
+            relativeX: directParent.width - popup.width - Theme.halfPadding
+            relativeY: -popup.height
 
             gifUnfurlingEnabled: root.gifUnfurlingEnabled
             loading: root.gifStore.gifLoading

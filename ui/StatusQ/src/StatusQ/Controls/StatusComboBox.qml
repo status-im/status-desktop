@@ -143,16 +143,16 @@ Item {
             popup: StatusDropdown {
                 id: dropdown
 
+                directParent: comboBox
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                y: comboBox.height + 4
+                relativeY: comboBox.height + 4
 
                 implicitWidth: comboBox.width
                 height: Math.min(implicitContentHeight + topPadding + bottomPadding,
                                  comboBox.Window.height - topMargin - bottomMargin)
-                margins: dropdown.bottomSheet ? 0 : 8
 
                 padding: 1
-                verticalPadding: dropdown.bottomSheet ? 0 : 8
+                verticalPadding: 8
 
                 background: Rectangle {
                     color: Theme.palette.statusSelect.menuItemBackgroundColor
@@ -181,7 +181,7 @@ Item {
             }
 
             delegate: StatusItemDelegate {
-                width: comboBox.width
+                width: dropdown.width
                 highlighted: comboBox.highlightedIndex === index
                 font: comboBox.font
                 text: control.textRole ? modelData[control.textRole] : modelData

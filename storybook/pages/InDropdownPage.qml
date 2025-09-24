@@ -21,8 +21,9 @@ SplitView {
         SplitView.fillHeight: true
 
         InDropdown {
-            parent: pane
-            anchors.centerIn: parent
+            directParent: pane
+            relativeX: pane.width/2 - width/2
+            relativeY: pane.height/2 - height/2
 
             closePolicy: Popup.NoAutoClose
 

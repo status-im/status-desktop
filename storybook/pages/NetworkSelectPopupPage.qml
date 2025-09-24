@@ -45,6 +45,9 @@ SplitView {
 
                     NetworkSelectPopup {
                         id: networkSelectPopup
+
+                        directParent: popupPlaceholder
+
                         flatNetworks: d.activeNetworks
                         multiSelection: multiSelectionCheckbox.checked
                         showManageNetworksButton: showManageNetworksButtonCheckbox.checked
@@ -122,6 +125,8 @@ SplitView {
                     active: false
 
                     sourceComponent: NetworkSelectPopup {
+
+                        directParent: singleSelectionPopupPlaceholder
                         flatNetworks: d.activeNetworks
                         selection: selectedEntry.available ? [selectedEntry.value] : []
                         onClosed: selectPopupLoader.active = false

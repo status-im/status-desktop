@@ -98,10 +98,11 @@ ComboBox {
 
     popup: StatusDropdown {
         id: dropdown
-        y: root.height + 4
+
+        directParent: root
+        relativeY: root.height + 4
 
         implicitWidth: 290
-        margins: dropdown.bottomSheet ? 0: Theme.halfPadding
 
         padding: 1
         verticalPadding: Theme.halfPadding

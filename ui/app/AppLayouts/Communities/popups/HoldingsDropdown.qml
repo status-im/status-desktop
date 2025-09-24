@@ -158,22 +158,17 @@ StatusDropdown {
             root.assetAmount = "0"
             root.collectibleAmount = "1"
         }
-
-        function forceLayout() {
-            root.height = 0         //setting height to 0 before because Popup cannot properly resize if the current contentHeight exceeds the available height
-            root.height = undefined //use implicit height
-        }
     }
 
     StatesStack {
         id: statesStack
     }
 
+    height: Math.min(implicitHeight, 425)
     width: d.defaultWidth
     leftPadding: 0
     rightPadding: 0
     topPadding: d.padding
-    bottomInset: d.bottomInset
     bottomPadding: d.bottomInset + (loader.sourceComponent == listLayout ? 0 : d.padding)
 
     contentItem: ColumnLayout {
@@ -249,7 +244,6 @@ StatusDropdown {
             Layout.leftMargin: loader.sourceComponent == listLayout ? 0 : d.padding
             Layout.rightMargin: loader.sourceComponent == listLayout ? 0 : d.padding
             Layout.fillHeight: true
-            onItemChanged: d.forceLayout()
         }
 
         states: [
@@ -371,8 +365,6 @@ StatusDropdown {
 
             onFooterButtonClicked: statesStack.push(
                                        HoldingsDropdown.FlowType.List_Deep1_All)
-
-            onLayoutChanged: d.forceLayout()
 
             Component.onCompleted: {
                 if(d.extendedDeepNavigation)

@@ -176,27 +176,27 @@ Rectangle {
 
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
-                when: d.emojiPopupOpened && !emojiPopup.bottomSheet
+                when: d.emojiPopupOpened
 
                 PropertyChanges {
                     target: emojiPopup
 
-                    parent: emojiBtn
-                    x: d.emojiPopupPosition.x
-                    y: d.emojiPopupPosition.y
+                    directParent: emojiBtn
+                    relativeX: d.emojiPopupPosition.x
+                    relativeY: d.emojiPopupPosition.y
                 }
             }
         }
         readonly property StateGroup stickersPopupTakeover: StateGroup {
             states: State {
-                when: d.stickersPopupOpened && !stickersPopup.bottomSheet
+                when: d.stickersPopupOpened
 
                 PropertyChanges {
                     target: stickersPopup
 
-                    parent: stickersBtn
-                    x: d.stickersPopupPosition.x
-                    y: d.stickersPopupPosition.y
+                    directParent: stickersBtn
+                    relativeX: d.stickersPopupPosition.x
+                    relativeY: d.stickersPopupPosition.y
                 }
             }
         }
@@ -1481,7 +1481,7 @@ Rectangle {
                                 onClicked: {
                                     highlighted = true
                                     control.openGifPopupRequest({// Properties needed for relative position and close
-                                                                    popupParent: gifBtn,
+                                                                    popupParent: actions,
                                                                     closeAfterSelection: control.closeGifPopupAfterSelection
                                                                 },
                                                                 // Gif selected callback

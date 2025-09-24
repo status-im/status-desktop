@@ -24,6 +24,8 @@ SplitView {
     }
 
     Pane {
+        id: topPane
+
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
@@ -46,6 +48,9 @@ SplitView {
 
         StatusEmojiPopup {
             id: emojiPopup
+
+            directParent: topPane
+
             height: 440
             visible: true
             modal: false

@@ -31,10 +31,44 @@ import StatusQ.Core.Theme
 QC.Popup {
     id: root
 
-    property bool bottomSheetEnabled: true
-
-    // The max width of a phone in portrait mode
-    readonly property bool bottomSheet: !bottomSheetEnabled ? false:
+    /*!
+        \qmlproperty bool StatusDropdown::bottomSheetAllowed
+        Controls whether the dropdown may switch to a bottom-sheet presentation when vertical
+        space is limited. Set to false to force classic anchored dropdown behavior.
+        Default: true.
+    */
+    property bool bottomSheetAllowed: true
+    /*!
+        \qmlproperty Item StatusDropdown::directParent
+        The visual parent (an Item) used for anchoring/positioning when NOT in bottom-sheet mode.
+        Required.
+    */
+    required property Item directParent
+    /*!
+        \qmlproperty real StatusDropdown::relativeX
+        Horizontal offset applied relative to \c directParent in classic dropdown mode.
+        Useful for left/right alignment nudges after mapping coordinates into the parent space.
+        Default: 0.
+    */
+    property real relativeX: 0
+    /*!
+        \qmlproperty real StatusDropdown::relativeY
+        Vertical offset applied relative to \c directParent in classic dropdown mode.
+        Typical usage is to open below the anchor by mapping the anchor’s height, then adding
+        this offset. Ignored in bottom-sheet mode.
+        Default: 0.
+    */
+    property real relativeY: 0
+    /*!
+        \qmlproperty bool StatusDropdown::bottomSheet
+        Read-only flag indicating whether the dropdown should present as a bottom sheet.
+        True when:
+          - \c bottomSheetAllowed is true, and
+          - the window is in portrait (\c d.windowHeight > d.windowWidth), and
+          - the window width is at or below \c Theme.portraitBreakpoint.width.
+        Otherwise false. Used to switch layout/parenting to a full-width, bottom-anchored sheet.
+    */
+    readonly property bool bottomSheet: !bottomSheetAllowed ? false:
                                             d.windowHeight > d.windowWidth
                                             && d.windowWidth <= Theme.portraitBreakpoint.width
 
@@ -45,22 +79,40 @@ QC.Popup {
        readonly property int windowHeight: window ? window.height: Screen.height
     }
 
-    modal: root.bottomSheet
-    dim: root.bottomSheet
+    Binding {
+        when: !root.bottomSheet
 
-    Binding on parent {
-        when: root.bottomSheet
-        value: {
-            return QC.Overlay && QC.Overlay.overlay ? QC.Overlay.overlay:
-                   d.window && d.window.contentItem ? d.window.contentItem : parent
+        root {
+            parent: root.directParent
+            modal: false
+            dim: false
+            closePolicy: QC.Popup.CloseOnEscape | QC.Popup.CloseOnPressOutsideParent
+
+            x: root.relativeX
+            y: root.relativeY
+
+            margins: Theme.halfPadding
         }
     }
-    Binding on closePolicy      { when: root.bottomSheet; value: QC.Popup.CloseOnPressOutside}
-    Binding on x                { when: root.bottomSheet; value: 0}
-    Binding on y                { when: root.bottomSheet; value: d.windowHeight - height}
-    Binding on width            { when: root.bottomSheet; value: d.windowWidth}
-    Binding on height           { when: root.bottomSheet; value: Math.min(implicitHeight, d.windowHeight * 0.9)}
-    Binding on bottomPadding    { when: root.bottomSheet; value: !!d.window ? d.window.SafeArea.margins.bottom: 0}
+
+    Binding {
+        when: root.bottomSheet
+
+        root {
+            parent: QC.Overlay && QC.Overlay.overlay ? QC.Overlay.overlay:
+                    d.window && d.window.contentItem ? d.window.contentItem : parent
+            modal: true
+            dim: true
+            closePolicy: QC.Popup.CloseOnPressOutside
+
+            x: 0
+            y: d.windowHeight - height
+            width: d.windowWidth
+            height: Math.min(implicitHeight, d.windowHeight * 0.9)
+            bottomPadding: !!d.window ? d.window.SafeArea.margins.bottom: 0
+            margins: 0
+        }
+    }
 
     background: Rectangle {
        color: Theme.palette.statusMenu.backgroundColor

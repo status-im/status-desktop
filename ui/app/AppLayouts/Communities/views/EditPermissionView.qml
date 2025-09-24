@@ -240,6 +240,8 @@ StatusScrollView {
             HoldingsDropdown {
                 id: dropdown
 
+                directParent: tokensSelector.addButton
+
                 communityId: root.communityDetails.id
 
                 assetsModel: root.assetsModel
@@ -338,11 +340,8 @@ StatusScrollView {
             }
 
             addButton.onClicked: {
-                dropdown.parent = tokensSelector.addButton
-                if (!dropdown.bottomSheet) {
-                    dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
-                    dropdown.y = 0
-                }
+                dropdown.directParent = tokensSelector.addButton
+                dropdown.relativeX = tokensSelector.addButton.width + d.dropdownHorizontalOffset
                 dropdown.open()
 
                 editedIndex = -1
@@ -352,9 +351,9 @@ StatusScrollView {
                 if (mouse.button !== Qt.LeftButton)
                     return
 
-                dropdown.parent = item
-                dropdown.x = mouse.x + d.dropdownHorizontalOffset
-                dropdown.y = d.dropdownVerticalOffset
+                dropdown.directParent = item
+                dropdown.relativeX = mouse.x + d.dropdownHorizontalOffset
+                dropdown.relativeY = d.dropdownVerticalOffset
 
                 const modelItem = tokensSelector.model.get(index)
 
@@ -433,9 +432,9 @@ StatusScrollView {
 
                     onClicked: {
                         permissionsDropdown.mode = PermissionsDropdown.Mode.Update
-                        permissionsDropdown.parent = parent
-                        permissionsDropdown.x = mouse.x + d.dropdownHorizontalOffset
-                        permissionsDropdown.y = d.dropdownVerticalOffset
+                        permissionsDropdown.directParent = parent
+                        permissionsDropdown.relativeX = mouse.x + d.dropdownHorizontalOffset
+                        permissionsDropdown.relativeY = d.dropdownVerticalOffset
                         permissionsDropdown.open()
                     }
                 }
@@ -443,6 +442,8 @@ StatusScrollView {
 
             PermissionsDropdown {
                 id: permissionsDropdown
+
+                directParent: permissionsSelector.addButton
 
                 allowCommunityOptions: root.showChannelSelector
                 initialPermissionType: d.dirtyValues.permissionType
@@ -461,10 +462,9 @@ StatusScrollView {
 
             addButton.onClicked: {
                 permissionsDropdown.mode = PermissionsDropdown.Mode.Add
-                permissionsDropdown.parent = permissionsSelector.addButton
-                permissionsDropdown.x = permissionsSelector.addButton.width
+                permissionsDropdown.directParent = permissionsSelector.addButton
+                permissionsDropdown.relativeX = permissionsSelector.addButton.width
                         + d.dropdownHorizontalOffset
-                permissionsDropdown.y = 0
                 permissionsDropdown.open()
             }
         }
@@ -493,9 +493,9 @@ StatusScrollView {
             property bool wholeCommunitySelected: false
 
             function openInDropdown(parent, x, y) {
-                inDropdown.parent = parent
-                inDropdown.x = x
-                inDropdown.y = y
+                inDropdown.directParent = parent
+                inDropdown.relativeX = x
+                inDropdown.relativeY = y
 
                 const selectedChannels = []
 
@@ -535,6 +535,8 @@ StatusScrollView {
 
             InDropdown {
                 id: inDropdown
+
+                directParent: inSelector.addButton
 
                 model: root.channelsModel
 
