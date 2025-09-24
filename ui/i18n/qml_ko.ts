@@ -2207,10 +2207,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation>24시간</translation>
     </message>
     <message>
-        <source>Overview</source>
-        <translation>개요</translation>
-    </message>
-    <message>
         <source>Website</source>
         <translation>웹사이트</translation>
     </message>
