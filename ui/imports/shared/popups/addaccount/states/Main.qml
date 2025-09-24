@@ -60,13 +60,12 @@ Item {
             let inputCoords = accountName.mapToItem(appMain, 0, 0)
             root.store.emojiPopup.open()
             root.store.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
-            if (!root.store.emojiPopup.bottomSheet) {
-                root.store.emojiPopup.x = inputCoords.x
-                if (!showLeft) {
-                    root.store.emojiPopup.x += accountName.width - root.store.emojiPopup.width
-                }
-                root.store.emojiPopup.y = inputCoords.y + accountName.height + Theme.halfPadding
+            root.store.emojiPopup.directParent = accountName
+            root.store.emojiPopup.relativeX = 0
+            if (!showLeft) {
+                root.store.emojiPopup.relativeX = accountName.width - root.store.emojiPopup.width
             }
+            root.store.emojiPopup.relativeY = accountName.height + Theme.halfPadding
         }
     }
 

@@ -64,10 +64,8 @@ StatusModal {
 
             onIconClicked: {
                 popup.emojiPopup.open()
-                if (!popup.emojiPopup.bottomSheet) {
-                    popup.emojiPopup.x = popup.x + accountNameInput.x + Theme.padding
-                    popup.emojiPopup.y = popup.y + contentItem.y + accountNameInput.y + accountNameInput.height +  Theme.halfPadding
-                }
+                popup.emojiPopup.directParent = accountNameInput
+                popup.emojiPopup.relativeY = accountNameInput.height
             }
             validators: [
                 StatusMinLengthValidator {

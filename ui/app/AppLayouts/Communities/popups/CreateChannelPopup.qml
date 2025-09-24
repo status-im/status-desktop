@@ -148,10 +148,9 @@ StatusStackModal {
             root.emojiPopupOpened = true;
             root.emojiPopup.open();
             root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
-            if (!root.emojiPopup.bottomSheet) {
-                root.emojiPopup.x = leftSide ? root.x + Theme.padding : (root.x + (root.width - root.emojiPopup.width - Theme.padding));
-                root.emojiPopup.y = root.y + root.header.height + root.topPadding + nameInput.height + Theme.smallPadding;
-            }
+            root.emojiPopup.directParent = nameInput
+            root.emojiPopup.relativeX = leftSide ? 0 : nameInput.width - root.emojiPopup.width
+            root.emojiPopup.relativeY = nameInput.height + Theme.smallPadding;
         }
 
         function _getChannelConfig() {

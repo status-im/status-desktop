@@ -57,7 +57,6 @@ StatusDropdown {
     enabled: !!d.recentStickers && !!d.stickerPackList
     width: 360
     height: 440
-    closePolicy: Popup.CloseOnEscape | (root.bottomSheet ? Popup.CloseOnPressOutside: Popup.CloseOnPressOutsideParent)
     background: Rectangle {
         radius: Theme.radius
         color: Theme.palette.background

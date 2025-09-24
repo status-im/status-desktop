@@ -209,10 +209,11 @@ Item {
 
     StatusDropdown {
         id: suggListContainer
+
+        directParent: seedWordInput
+        relativeY: seedWordInput.height + 4
         contentWidth: seedSuggestionsList.width
         contentHeight: ((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34
-        x: 0
-        y: seedWordInput.height + 4
         topPadding: 8
         bottomPadding: 8
         leftPadding: 0
@@ -220,7 +221,7 @@ Item {
 
         // On mobile, force popup to remain a dropdown instead of a bottom sheet.
         // Reason: a bottom sheet would be hidden behind the on-screen keyboard.
-        bottomSheetEnabled: false
+        bottomSheetAllowed: false
 
         visible: ((filteredList.count > 0) && seedWordInput.input.edit.activeFocus)
 

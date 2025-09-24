@@ -76,8 +76,8 @@ StatusTextField {
     Keys.forwardTo: [suggestionsList]
 
     StatusDropdown {
-        x: 0
-        y: parent.height + d.contentSpacing
+        directParent: root
+        relativeY: root.height + d.contentSpacing
         width: parent.width
         contentHeight: ((suggestionsList.count <= 5) ? suggestionsList.count : 5) * d.delegateHeight // max 5 delegates
         visible: filteredModel.count > 0 && root.cursorVisible && !d.isEmpty && !root.valid

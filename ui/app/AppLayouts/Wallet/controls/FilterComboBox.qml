@@ -193,12 +193,11 @@ ComboBox {
     popup: StatusDropdown {
         id: dropdown
 
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-        y: root.height + 4
+        directParent: root
+        relativeY: root.height + 4
 
         implicitWidth: 290
         implicitHeight: Math.min(contentHeight+margins, 380)
-        margins: dropdown.bottomSheet ? 0 : Theme.halfPadding
 
         padding: 0
         bottomPadding: Theme.halfPadding

@@ -54,8 +54,9 @@ Control {
 
         objectName: "dropdown"
 
-        y: root.height + 4
-        x: root.width - width
+        directParent: root
+        relativeY: root.height + 4
+        relativeX: root.width - width
 
         width: 448
         height: Math.min(implicitHeight, d.windowHeight - button.mapToItem(null, 0, button.height).y - d.bottomPadding)

@@ -43,10 +43,10 @@ Control {
     StatusDropdown {
         id: dropdown
 
-        y: parent.height + 4
-        width: parent.width
+        directParent: root
+        relativeY: root.height + 4
+        width: root.width
 
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         padding: 0
 
         contentItem: SearchableAssetsPanel {

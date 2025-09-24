@@ -14,10 +14,8 @@ import utils
 StatusDropdown {
     id: root
 
-    anchors.centerIn: Overlay.overlay
-
-    width: 400
-    height: 300
+    implicitWidth: 400
+    implicitHeight: 300
 
     required property var model
 

@@ -67,8 +67,9 @@ ComboBox {
     popup: DAppsListPopup {
         objectName: "dappsListPopup"
 
-        x: root.width - width
-        y: root.height + 4
+        directParent: root
+        relativeX: root.width - width
+        relativeY: root.height + 4
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
