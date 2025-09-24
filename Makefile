@@ -459,6 +459,14 @@ dotherside-clean:
 dotherside: | dotherside-build
 
 ##
+## sds
+##
+
+SDS := /vendor/status-go/vendor/github.com/waku-org/sds-go-bindings/third_party/nim-sds/build/libsds.$(LIB_EXT)
+SDS_LIBDIR := $(shell pwd)/$(shell dirname "$(SDS)")
+export SDS_LIBDIR
+
+##
 ##	status-go
 ##
 
@@ -611,6 +619,8 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSG
 		--mm:refc \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
 		--passL:"-lstatus" \
+		--passL:"-L$(SDS_LIBDIR)" \
+		--passL:"-lsds" \
 		--passL:"-L$(STATUSQ_INSTALL_PATH)/StatusQ" \
 		--passL:"-lStatusQ" \
 		--passL:"-L$(STATUSKEYCARDGO_LIBDIR)" \
@@ -862,12 +872,12 @@ run: $(RUN_TARGET)
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(SDS_LIBDIR)":"$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(SDS_LIBDIR)":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
@@ -883,15 +893,15 @@ run-macos: nim_status_client
 run-windows: STATUS_RC_FILE = status-dev.rc
 run-windows: compile_windows_resources nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
-	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(PATH)" \
+	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(SDS_LIBDIR)":"$(PATH)" \
 	./bin/nim_status_client.exe $(ARGS)
 
 NIM_TEST_FILES := $(wildcard test/nim/*.nim)
 NIM_TESTS := $(foreach test_file,$(NIM_TEST_FILES),nim-test-run/$(test_file))
 
 nim-test-run/%: | dotherside $(STATUSGO) $(QRCODEGEN)
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
-	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(SDS_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
+	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(SDS_LIBDIR)" --passL:"-lsds" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
 
 tests-nim-linux: $(NIM_TESTS)
 
