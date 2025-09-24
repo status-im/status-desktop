@@ -258,8 +258,7 @@ SettingsContentBase {
                 }
 
                 StatusButton {
-
-                    objectName: "setupSyncingStatusButton"           
+                    objectName: "setupSyncingStatusButton"
 
                     Layout.alignment: Qt.AlignHCenter
                     normalColor: Theme.palette.primaryColor1
@@ -269,6 +268,30 @@ SettingsContentBase {
                     text: qsTr("Setup Syncing")
                     onClicked: {
                         d.setupSyncing()
+                    }
+                }
+
+                RowLayout {
+                    Layout.alignment: Qt.AlignHCenter
+                    spacing: Theme.halfPadding
+
+                    StatusCheckBox {
+                        objectName: "enableMessageSyncingCheckBox"
+
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: implicitWidth
+                        text: qsTr("Enable message syncing")
+                        leftSide: true
+                        checked: false
+                        onToggled: () => {
+                            console.log("Enable message syncing toggled", checked)
+                        }
+                    }
+
+                    StatusNavBarTabButton {
+                        icon.name: "help"
+                        tooltip.text: qsTr("Enabling this will allow all your messages to be sent to the new device during the local pairing.")
+                        thirdpartyServicesEnabled: thirdpartyServicesCtrl.checked
                     }
                 }
 
