@@ -273,6 +273,8 @@ StatusScrollView {
             HoldingsDropdown {
                 id: dropdown
 
+                directParent: tokensSelector.addButton
+
                 communityId: communityDetails.id
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
@@ -367,11 +369,8 @@ StatusScrollView {
             }
 
             addButton.onClicked: {
-                dropdown.parent = tokensSelector.addButton
-                if (!dropdown.bottomSheet) {
-                    dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
-                    dropdown.y = 0
-                }
+                dropdown.directParent = tokensSelector.addButton
+                dropdown.relativeX = tokensSelector.addButton.width + d.dropdownHorizontalOffset
                 dropdown.open()
 
                 editedIndex = -1
@@ -381,9 +380,9 @@ StatusScrollView {
                 if (mouse.button !== Qt.LeftButton)
                     return
 
-                dropdown.parent = item
-                dropdown.x = mouse.x + d.dropdownHorizontalOffset
-                dropdown.y = d.dropdownVerticalOffset
+                dropdown.directParent = item
+                dropdown.relativeX = mouse.x + d.dropdownHorizontalOffset
+                dropdown.relativeY = d.dropdownVerticalOffset
 
                 const modelItem = selectedHoldingsModel.get(index)
 
@@ -479,11 +478,8 @@ StatusScrollView {
             }
 
             function openPopup(popup) {
-                popup.parent = addButton
-                if (!dropdown.bottomSheet) {
-                    popup.x = addButton.width + d.dropdownHorizontalOffset
-                    popup.y = 0
-                }
+                popup.directParent = addButton
+                popup.relativeX = addButton.width + d.dropdownHorizontalOffset
                 popup.open()
             }
 
@@ -491,6 +487,9 @@ StatusScrollView {
 
             RecipientTypeSelectionDropdown {
                 id: recipientTypeSelectionDropdown
+
+                directParent: airdropRecipientsSelector.addButton
+                relativeX: airdropRecipientsSelector.addButton.width
 
                 onEthAddressesSelected: {
                     airdropRecipientsSelector.showAddressesInputWhenEmpty = true
@@ -514,6 +513,9 @@ StatusScrollView {
 
             MembersDropdown {
                 id: membersDropdown
+
+                directParent: airdropRecipientsSelector.addButton
+                relativeX: airdropRecipientsSelector.addButton.width
 
                 forceButtonDisabled:
                     mode === MembersDropdown.Mode.Update &&

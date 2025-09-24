@@ -17,10 +17,11 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    Item {
+    Pane {
         id: container
-        anchors.fill: parent
-        anchors.margins: 50
+
+        SplitView.fillWidth: true
+        SplitView.fillHeight: true
 
         RowLayout {
 
@@ -49,8 +50,9 @@ SplitView {
         HoldingsDropdown {
             id: holdingsDropdown
 
-            parent: container
-            anchors.centerIn: container
+            directParent: container
+            relativeX: container.width/2 - width/2
+            relativeY: container.height/2 - height/2
 
             allTokensMode: ctrlAllTokensMode.checked
 

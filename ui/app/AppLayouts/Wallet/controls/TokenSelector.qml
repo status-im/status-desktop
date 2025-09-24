@@ -70,7 +70,8 @@ Control {
 
         objectName: "dropdown"
 
-        y: parent.height + 4
+        directParent: root
+        relativeY: parent.height + 4
         width: 448
 
         horizontalPadding: 0

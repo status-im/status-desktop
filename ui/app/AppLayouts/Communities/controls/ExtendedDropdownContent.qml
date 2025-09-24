@@ -298,8 +298,8 @@ Item {
         anchors.bottomMargin: 3
 
         onClicked: {
-            filterOptionsPopup.x = filterButton.x + filterButton.width - filterOptionsPopup.width
-            filterOptionsPopup.y = filterButton.y + filterButton.height + 8
+            filterOptionsPopup.relativeX = filterButton.width - filterOptionsPopup.width
+            filterOptionsPopup.relativeY = filterButton.height + 8
             filterOptionsPopup.open()
         }
     }
@@ -307,6 +307,8 @@ Item {
     // Filter options popup:
     StatusDropdown {
         id: filterOptionsPopup
+
+        directParent: filterButton
 
         width: d.filterPopupWidth
 

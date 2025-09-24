@@ -163,23 +163,10 @@ StatusComboBox {
     popup: NetworkSelectPopup {
         id: networkSelectorView
 
-        parent: d.bottomSheet ? Overlay.overlay ?? parent : parent
-        closePolicy: Popup.CloseOnEscape | (d.bottomSheet ? Popup.CloseOnPressOutside: Popup.CloseOnPressOutsideParent)
-        modal: d.bottomSheet
+        directParent: root
+        relativeX: parent.width - width
+        relativeY: parent.height + 4
 
-        x: parent.width - width
-        y: d.bottomSheet ? d.windowHeight - height: parent.height + 4
-
-        Binding on width {
-            when: d.bottomSheet
-            value: d.windowWidth
-        }
-        height: d.bottomSheet ?
-                    Math.min(implicitHeight, d.windowHeight * 0.9) :
-                    Math.min(implicitContentHeight + topPadding + bottomPadding,
-                            d.window.height - topMargin - bottomMargin)
-
-        margins: d.bottomSheet ? 0 : 8
         padding: 1
         topPadding: 8
         bottomPadding: !!d.window.window ? d.window.window.SafeArea.margins.bottom: 0
@@ -240,8 +227,5 @@ StatusComboBox {
         property var window: root.control.Window
         property int windowWidth: window ? window.width: Screen.width
         property int windowHeight: window ? window.height: Screen.height
-        // The max width of a phone in portrait mode
-        readonly property bool bottomSheet: d.windowHeight > d.windowWidth
-                                            && d.windowWidth <= Theme.portraitBreakpoint.width
     }
 }

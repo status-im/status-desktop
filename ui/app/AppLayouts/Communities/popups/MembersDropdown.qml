@@ -61,7 +61,6 @@ StatusDropdown {
     width: 295
 
     padding: 11
-    bottomInset: 10
     bottomPadding: padding + bottomInset
 
     onOpened: {
