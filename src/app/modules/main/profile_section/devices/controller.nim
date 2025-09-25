@@ -103,8 +103,8 @@ proc authenticateLoggedInUser*(self: Controller, additionalBip44Paths: seq[strin
 proc validateConnectionString*(self: Controller, connectionString: string): string =
   return self.devicesService.validateConnectionString(connectionString)
 
-proc getConnectionStringForBootstrappingAnotherDevice*(self: Controller, password, chatKey: string): string =
-  return self.devicesService.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
+proc getConnectionStringForBootstrappingAnotherDevice*(self: Controller, password, chatKey: string, messageSyncingEnabled: bool): string =
+  return self.devicesService.getConnectionStringForBootstrappingAnotherDevice(password, chatKey, messageSyncingEnabled)
 
 proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string) =
   self.devicesService.inputConnectionStringForBootstrapping(connectionString)

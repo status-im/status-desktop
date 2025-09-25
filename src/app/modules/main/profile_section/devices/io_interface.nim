@@ -50,7 +50,7 @@ method advertise*(self: AccessInterface) {.base.} =
 method enableDevice*(self: AccessInterface, installationId: string, enable: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method generateConnectionStringAndRunSetupSyncingPopup*(self: AccessInterface) {.base.} =
+method generateConnectionStringAndRunSetupSyncingPopup*(self: AccessInterface, messageSyncingEnabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onLoggedInUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string, additinalPathsDetails: Table[string, KeyDetails]) {.base.} =

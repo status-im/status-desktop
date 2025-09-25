@@ -130,8 +130,8 @@ QtObject:
   proc openPopupWithConnectionString*(self: View, rawConnectionString: string) =
     self.openPopupWithConnectionStringSignal(rawConnectionString)
 
-  proc generateConnectionStringAndRunSetupSyncingPopup*(self: View) {.slot.} =
-    self.delegate.generateConnectionStringAndRunSetupSyncingPopup()
+  proc generateConnectionStringAndRunSetupSyncingPopup*(self: View, messageSyncingEnabled: bool) {.slot.} =
+    self.delegate.generateConnectionStringAndRunSetupSyncingPopup(messageSyncingEnabled)
 
   proc validateConnectionString*(self: View, connectionString: string): string {.slot.} =
     return self.delegate.validateConnectionString(connectionString)
