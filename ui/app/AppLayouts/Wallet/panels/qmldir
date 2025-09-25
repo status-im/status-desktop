@@ -19,4 +19,5 @@ StickySendModalHeader 1.0 StickySendModalHeader.qml
 SwapInputPanel 1.0 SwapInputPanel.qml
 TokenSelectorPanel 1.0 TokenSelectorPanel.qml
 WalletAccountHeader 1.0 WalletAccountHeader.qml
+WalletFollowingAddressesHeader 1.0 WalletFollowingAddressesHeader.qml
 WalletSavedAddressesHeader 1.0 WalletSavedAddressesHeader.qml

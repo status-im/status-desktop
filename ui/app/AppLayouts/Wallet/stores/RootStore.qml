@@ -16,8 +16,9 @@ QtObject {
     id: root
 
     property bool showSavedAddresses: false
+    property bool showFollowingAddresses: false
     property string selectedAddress: ""
-    readonly property bool showAllAccounts: !root.showSavedAddresses && !root.selectedAddress
+    readonly property bool showAllAccounts: !root.showSavedAddresses && !root.showFollowingAddresses && !root.selectedAddress
 
     property var lastCreatedSavedAddress
     property bool addingSavedAddress: false
@@ -61,6 +62,27 @@ QtObject {
                 value: root.networksStore.areTestNetworksEnabled
             }
         ]
+    }
+
+    readonly property var followingAddresses: walletSectionFollowingAddresses ? walletSectionFollowingAddresses.model : null
+    property bool loadingFollowingAddresses: false
+
+    function refreshFollowingAddresses(search, limit, offset) {
+        if (!walletSectionFollowingAddresses) return
+        var primaryAddress = getPrimaryAccountAddress()
+        if (primaryAddress) {
+            search = search || ""
+            limit = limit || 10
+            offset = offset || 0
+            walletSectionFollowingAddresses.fetchFollowingAddresses(primaryAddress, search, limit, offset)
+        }
+    }
+
+    function getPrimaryAccountAddress() {
+        var firstAccount = SQUtils.ModelUtils.getFirstModelEntryIf(root.accounts, (account) => {
+            return true  // Get the first account
+        })
+        return firstAccount ? firstAccount.address : ""
     }
 
     property var nonWatchAccounts: SortFilterProxyModel {

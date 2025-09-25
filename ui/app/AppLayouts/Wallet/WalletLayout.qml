@@ -93,7 +93,8 @@ Item {
     enum LeftPanelSelection {
         AllAddresses,
         Address,
-        SavedAddresses
+        SavedAddresses,
+        FollowingAddresses
     }
 
     enum RightPanelSelection {
@@ -115,6 +116,7 @@ Item {
     function openDesiredView(leftPanelSelection, rightPanelSelection, data) {
         if (leftPanelSelection !== WalletLayout.LeftPanelSelection.AllAddresses &&
                 leftPanelSelection !== WalletLayout.LeftPanelSelection.SavedAddresses &&
+                leftPanelSelection !== WalletLayout.LeftPanelSelection.FollowingAddresses &&
                 leftPanelSelection !== WalletLayout.LeftPanelSelection.Address) {
             console.warn("not supported left selection", leftPanelSelection)
             return
@@ -122,6 +124,8 @@ Item {
 
         if (leftPanelSelection === WalletLayout.LeftPanelSelection.SavedAddresses) {
             d.displaySavedAddresses()
+        } else if (leftPanelSelection === WalletLayout.LeftPanelSelection.FollowingAddresses) {
+            d.displayFollowingAddresses()
         } else {
             let address = data.address ?? ""
             if (leftPanelSelection === WalletLayout.LeftPanelSelection.AllAddresses) {
@@ -162,10 +166,24 @@ Item {
         onShowSavedAddressesChanged: {
             if(showSavedAddresses) {
                 rightPanelStackView.replace(cmpSavedAddresses)
-            } else {
+                RootStore.backButtonName = ""
+            } else if (!showFollowingAddresses) {
+                // Only replace with walletContainer if we're not showing following addresses
                 rightPanelStackView.replace(walletContainer)
+                RootStore.backButtonName = ""
             }
-            RootStore.backButtonName = ""
+        }
+
+        readonly property bool showFollowingAddresses: RootStore.showFollowingAddresses
+        onShowFollowingAddressesChanged: {
+            if(showFollowingAddresses) {
+                rightPanelStackView.replace(cmpFollowingAddresses)
+                RootStore.backButtonName = ""
+            } else if (!showSavedAddresses) {
+                // Only replace with walletContainer if we're not showing saved addresses
+                rightPanelStackView.replace(walletContainer)
+                RootStore.backButtonName = ""
+            }
         }
 
         property SwapInputParamsForm swapFormData: SwapInputParamsForm {
@@ -178,12 +196,14 @@ Item {
 
         function displayAllAddresses() {
             RootStore.showSavedAddresses = false
+            RootStore.showFollowingAddresses = false
             RootStore.selectedAddress = ""
             RootStore.setFilterAllAddresses()
         }
 
         function displayAddress(address) {
             RootStore.showSavedAddresses = false
+            RootStore.showFollowingAddresses = false
             RootStore.selectedAddress = address
             d.resetRightPanelStackView() // Avoids crashing on asset items being destroyed while in signal handler
             RootStore.setFilterAddress(address)
@@ -191,6 +211,13 @@ Item {
 
         function displaySavedAddresses() {
             RootStore.showSavedAddresses = true
+            RootStore.showFollowingAddresses = false
+            RootStore.selectedAddress = ""
+        }
+
+        function displayFollowingAddresses() {
+            RootStore.showSavedAddresses = false
+            RootStore.showFollowingAddresses = true
             RootStore.selectedAddress = ""
         }
 
@@ -222,6 +249,19 @@ Item {
         id: cmpSavedAddresses
 
         SavedAddressesView {
+            networkConnectionStore: root.networkConnectionStore
+            networksStore: root.networksStore
+
+            onSendToAddressRequested: {
+                Global.sendToRecipientRequested(address)
+            }
+        }
+    }
+
+    Component {
+        id: cmpFollowingAddresses
+        FollowingAddressesView {
+            rootStore: root.store
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
 
@@ -297,6 +337,10 @@ Item {
             selectSavedAddresses: function() {
                 walletSectionLayout.goToNextPanel()
                 d.displaySavedAddresses()
+            }
+            selectFollowingAddresses: function() {
+                walletSectionLayout.goToNextPanel()
+                d.displayFollowingAddresses()
             }
         }
 

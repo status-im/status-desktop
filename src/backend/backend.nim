@@ -326,3 +326,6 @@ rpc(fetchMarketTokenPageAsync, "wallet"):
 
 rpc(unsubscribeFromLeaderboard, "wallet"):
   discard
+
+rpc(getFollowingAddresses, "wallet"):
+  userAddress: string
