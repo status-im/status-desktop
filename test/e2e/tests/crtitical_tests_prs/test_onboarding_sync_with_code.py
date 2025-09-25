@@ -41,7 +41,7 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
                 user.password)
             setup_syncing.wait_until_enabled()
             sync_code = setup_syncing.syncing_code
-            main_window.minimize()
+            main_window.hide()  # minimize is not working in squish 9.0.1 for windows
 
         with step('Verify sync code format is valid'):
             sync_code_fields = sync_code.split(':')
@@ -77,7 +77,7 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
                 assert online_identifier.get_user_name == user.name, \
                     f'Name in online identifier and display name do not match'
                 main_window.left_panel.click()
-                main_window.minimize()
+                main_window.hide()  # minimize is not working in squish 9.0.1 for windows
 
         with step(f'Open first instance {aut_one.aut_id} and verify it is synced, click done'):
             aut_one.attach()
@@ -97,7 +97,7 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
             assert driver.waitFor(
                 lambda: not messaging_settings.allow_contact_requests_toggle.object.checked,
                 3000), f'Toggle did not change to OFF. Current state: {messaging_settings.allow_contact_requests_toggle.object.checked}'
-            main_window.minimize()
+            main_window.hide()  # minimize is not working in squish 9.0.1 for windows
 
         with step(f'Check that settings changes are reflected in second instance {aut_two.aut_id}'):
             aut_two.attach()
@@ -106,7 +106,7 @@ def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instance
             assert driver.waitFor(
                 lambda: not msg_stngs.allow_contact_requests_toggle.object.checked, 15000), \
                 f'Toggle changes are not synced'
-            main_window.minimize()
+            main_window.hide()  # minimize is not working in squish 9.0.1 for windows
 
         with step(f'Unpair the device from first instance {aut_one.aut_id}'):
             aut_one.attach()
