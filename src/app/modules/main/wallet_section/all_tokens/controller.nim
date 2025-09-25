@@ -42,10 +42,6 @@ proc init*(self: Controller) =
     let args = TokenHistoricalDataArgs(e)
     self.delegate.tokenHistoricalDataResolved(args.result)
 
-  self.events.on(SIGNAL_BALANCE_HISTORY_DATA_READY) do(e:Args):
-    let args = TokenBalanceHistoryDataArgs(e)
-    self.delegate.tokenBalanceHistoryDataResolved(args.result)
-
   self.events.on(SIGNAL_COMMUNITY_TOKEN_RECEIVED) do(e: Args):
     let args = CommunityTokenReceivedArgs(e)
     let token = TokenDto(
@@ -72,9 +68,6 @@ proc init*(self: Controller) =
 
 proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
   self.tokenService.getHistoricalDataForToken(symbol, currency, range)
-
-proc fetchHistoricalBalanceForTokenAsJson*(self: Controller, addresses: seq[string], tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  self.walletAccountService.fetchHistoricalBalanceForTokenAsJson(addresses, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
 
 proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
   return self.tokenService.getSourcesOfTokensList()

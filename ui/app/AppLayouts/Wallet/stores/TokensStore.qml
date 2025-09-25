@@ -21,7 +21,6 @@ QtObject {
     readonly property double tokenListUpdatedAt: root._allTokensModule.tokenListUpdatedAt
 
     readonly property bool marketHistoryIsLoading: Global.appIsReady ? walletSectionAllTokens.marketHistoryIsLoading : false
-    readonly property bool balanceHistoryIsLoading: Global.appIsReady ? walletSectionAllTokens.balanceHistoryIsLoading : false
 
     /* This contains the different sources for the tokens list
        ex. uniswap list, status tokens list */
@@ -129,10 +128,6 @@ QtObject {
 
     function getHistoricalDataForToken(symbol, currency) {
         root._allTokensModule.getHistoricalDataForToken(symbol, currency)
-    }
-
-    function fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum) {
-        root._allTokensModule.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
     }
 
     function getDisplayAssetsBelowBalanceThresholdCurrency() {

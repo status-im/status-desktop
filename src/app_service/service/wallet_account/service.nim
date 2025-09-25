@@ -70,7 +70,6 @@ QtObject:
   proc onMigratedAccountsForKeycardRemoved*(self: Service, response: string) {.slot.}
   proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.}
   proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.}
-  proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.}
   proc onENSNamesFetched*(self: Service, response: string) {.slot.}
 
   proc delete*(self: Service) =
@@ -109,4 +108,3 @@ QtObject:
   include service_account
   include service_token
   include service_keycard
-  include balance_history

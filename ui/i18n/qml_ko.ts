@@ -17175,6 +17175,14 @@ access to your webcam</source>
         <source>Close</source>
         <translation>닫기</translation>
     </message>
+    <message>
+        <source>Disable services and restart the app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable services and restart the app</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ThumbnailsDropdownContent</name>

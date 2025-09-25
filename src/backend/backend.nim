@@ -298,13 +298,6 @@ rpc(getName, "ens"):
   chainId: int
   address: string
 
-rpc(getBalanceHistory, "wallet"):
-  chainIds: seq[int]
-  addresses: seq[string]
-  tokenSymbol: string
-  currencySymbol: string
-  timeInterval: int
-
 rpc(getCachedCurrencyFormats, "wallet"):
   discard
 
