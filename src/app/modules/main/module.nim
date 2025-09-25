@@ -52,6 +52,7 @@ import app_service/service/privacy/service as privacy_service
 import app_service/service/stickers/service as stickers_service
 import app_service/service/activity_center/service as activity_center_service
 import app_service/service/saved_address/service as saved_address_service
+import app_service/service/following_address/service as following_address_service
 import app_service/service/node/service as node_service
 import app_service/service/node_configuration/service as node_configuration_service
 import app_service/service/devices/service as devices_service
@@ -100,6 +101,8 @@ type
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
     savedAddressService: saved_address_service.Service
+    followingAddressService: following_address_service.Service
+    keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     stickersService: stickers_service.Service
     communityTokensService: community_tokens_service.Service
@@ -159,6 +162,7 @@ proc newModule*[T](
   stickersService: stickers_service.Service,
   activityCenterService: activity_center_service.Service,
   savedAddressService: saved_address_service.Service,
+  followingAddressService: following_address_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
   devicesService: devices_service.Service,
   mailserversService: mailservers_service.Service,
@@ -212,6 +216,8 @@ proc newModule*[T](
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.savedAddressService = savedAddressService
+  result.followingAddressService = followingAddressService
+  result.keychainService = keychainService
   result.stickersService = stickersService
   result.communityTokensService = communityTokensService
 
@@ -220,7 +226,7 @@ proc newModule*[T](
   result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService, collectibleService, currencyService,
     rampService, transactionService, walletAccountService,
-    settingsService, savedAddressService, networkService, accountsService,
+    settingsService, savedAddressService, followingAddressService, networkService, accountsService,
     keycardService, nodeService, networkConnectionService, devicesService,
     communityTokensService, threadpool
   )
