@@ -25,8 +25,11 @@ def test_plus_button_manage_generated_account_custom_derivation_path(main_screen
             user_account.password).save_changes()
 
     with step('Verify toast message notification when adding account'):
-        messages = main_screen.wait_for_toast_notifications()
-        assert f'"{wallet_account.name}" successfully added' in messages
+        expected_message = f'"{wallet_account.name}" successfully added'
+        messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: wallet_account.name in [account.name for account in wallet.left_panel.accounts],

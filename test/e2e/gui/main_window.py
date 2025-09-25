@@ -213,28 +213,50 @@ class MainWindow(Window):
 
     @allure.step('Wait for notification and get text')
     def wait_for_toast_notifications(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC,
-                                     settle_time: float = 0.2) -> list[str]:
+                                 expected_messages: list[str] = None) -> list[str]:
+        """
+        Wait for toast notifications and collect all messages.
+        
+        Args:
+            timeout_sec: Maximum time to wait for notifications
+            expected_messages: Optional list of expected message patterns. 
+                              If provided, method will finish early when all expected messages are found.
+        
+        Returns:
+            List of all collected toast messages
+        """
         start_time = time.monotonic()
         seen_messages = set()
-        last_new_time = start_time
-
-        while time.monotonic() - start_time < timeout_sec:
+        
+        def collect_messages():
+            """Helper function to collect current toast messages"""
             try:
                 current_toasts = set(ToastMessage().get_toast_messages())
-                new_toasts = current_toasts - seen_messages
-                if new_toasts:
-                    seen_messages.update(new_toasts)
-                    last_new_time = time.monotonic()
+                seen_messages.update(current_toasts)
+                return current_toasts
             except LookupError:
-                pass  # No toasts at this moment
-
-            # If we've seen new toasts recently, keep waiting
-            if time.monotonic() - last_new_time < settle_time:
+                return set()
+        
+        if expected_messages:
+            # Use driver.waitFor to wait for expected messages
+            def all_expected_found():
+                collect_messages()
+                return all(any(expected in msg for msg in seen_messages) for expected in expected_messages)
+            
+            # Wait for expected messages to appear
+            driver.waitFor(lambda: all_expected_found(), timeout_sec * 1000)
+            
+            # Continue collecting for a short time to get any additional messages
+            additional_wait = 0.5  # Wait 0.5 seconds for additional messages
+            end_time = time.monotonic() + additional_wait
+            while time.monotonic() < end_time:
+                collect_messages()
                 time.sleep(0.1)
-                continue
-            else:
-                # No new toasts for 'settle_time', assume done
-                break
+        else:
+            # Original behavior - collect all messages for full timeout
+            while time.monotonic() - start_time < timeout_sec:
+                collect_messages()
+                time.sleep(0.1)
 
         if not seen_messages:
             raise LookupError(f"No notifications found within {timeout_sec} seconds.")

@@ -43,8 +43,11 @@ def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: Ma
             account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        messages = main_screen.wait_for_toast_notifications()
-        assert f'"{name1}" successfully added' in messages
+        expected_message = f'"{name1}" successfully added'
+        messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: name1 in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -74,8 +77,11 @@ def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: Ma
             account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        messages = main_screen.wait_for_toast_notifications()
-        assert f'"{name2}" successfully added' in messages
+        expected_message = f'"{name2}" successfully added'
+        messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: name2 in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -86,8 +92,11 @@ def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: Ma
         auth_modal.authenticate(user_account.password)
 
     with step('Verify toast message notification when removing account'):
-        messages = main_screen.wait_for_toast_notifications()
-        assert f'"{new_name}" successfully removed' in messages, \
+        expected_message = f'"{new_name}" successfully removed'
+        messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that the account is not displayed in accounts list'):

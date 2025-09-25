@@ -46,8 +46,11 @@ def test_back_up_recovery_phrase_sign_out(
         back_up_seed_modal.back_up_seed_phrase_and_delete()
 
     with step('Verify notification after removing seed phrase'):
-        messages = main_screen.wait_for_toast_notifications()
-        assert f'Recovery phrase permanently removed from Status application storage' in messages, f'Messages: {messages}'
+        expected_message = 'Recovery phrase permanently removed from Status application storage'
+        messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in messages, f'Messages: {messages}'
 
     with step('Go to settings screen from dock and check back up seed phrase banner is not shown there'):
         settings = home.open_from_dock(DockButtons.SETTINGS.value)

@@ -91,9 +91,12 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             members.ban_member(user_one.name).confirm_banning()
 
         with step('Check toast message about banned member'):
-            toast_messages = main_screen.wait_for_toast_notifications()
-            assert user_one.name + ToastMessages.BANNED_USER_TOAST.value + community.name in toast_messages, \
-                f"{user_one.name + ToastMessages.BANNED_USER_TOAST.value + community.name} is not found in {toast_messages}"
+            expected_message = user_one.name + ToastMessages.BANNED_USER_TOAST.value + community.name
+            toast_messages = main_screen.wait_for_toast_notifications(
+                expected_messages=[expected_message]
+            )
+            assert expected_message in toast_messages, \
+                f"{expected_message} is not found in {toast_messages}"
 
         with step(f'User {user_two.name}, does not see {user_one.name} in members list'):
             members_list = community_screen.right_panel.members
@@ -119,9 +122,12 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             aut_two.attach()
             main_screen.prepare()
             members.unban_member(user_one.name)
-            toast_messages = main_screen.wait_for_toast_notifications()
-            assert user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name in toast_messages, \
-                f"{user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name} is not found in {toast_messages}"
+            expected_message = user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name
+            toast_messages = main_screen.wait_for_toast_notifications(
+                expected_messages=[expected_message]
+            )
+            assert expected_message in toast_messages, \
+                f"{expected_message} is not found in {toast_messages}"
             main_screen.hide()
 
         with step(f'User {user_one.name} joins community again'):
@@ -129,9 +135,12 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             main_screen.prepare()
             chat1 = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat1.open_banned_community(community.name, 0)
-            toast_messages = main_screen.wait_for_toast_notifications()
-            assert ToastMessages.UNBANNED_USER_CONFIRM.value + community.name in toast_messages, \
-                f"{ToastMessages.UNBANNED_USER_CONFIRM.value} is not present in {toast_messages}"
+            expected_message = ToastMessages.UNBANNED_USER_CONFIRM.value + community.name
+            toast_messages = main_screen.wait_for_toast_notifications(
+                expected_messages=[expected_message]
+            )
+            assert expected_message in toast_messages, \
+                f"{expected_message} is not present in {toast_messages}"
             main_screen.left_panel.open_community_context_menu(community.name).leave_community_option.click()
 
             messages_view1 = main_screen.left_panel.open_messages_screen()
@@ -152,9 +161,12 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             kick_popup.confirm_kicking()
 
         with step('Check toast message about kicked member'):
-            toast_messages = main_screen.wait_for_toast_notifications()
-            assert user_one.name + ToastMessages.KICKED_USER_TOAST.value + community.name in toast_messages, \
-                f"{user_one.name + ToastMessages.KICKED_USER_TOAST.value} is not found in  {toast_messages}"
+            expected_message = user_one.name + ToastMessages.KICKED_USER_TOAST.value + community.name
+            toast_messages = main_screen.wait_for_toast_notifications(
+                expected_messages=[expected_message]
+            )
+            assert expected_message in toast_messages, \
+                f"{expected_message} is not found in {toast_messages}"
 
         with step(f'User {user_two.name}, does not see {user_one.name} in members list'):
             assert driver.waitFor(lambda: user_one.name not in community_screen.right_panel.members, timeout)

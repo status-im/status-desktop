@@ -40,10 +40,12 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
         permissions_settings.create_permission()
 
     with step('Check toast message for permission creation'):
-        toast_messages = main_screen.wait_for_toast_notifications()
-        message = toast_messages[0]
-        assert ToastMessages.CREATE_PERMISSION_TOAST.value in toast_messages, \
-            f"Toast message is incorrect, current message is {message}"
+        expected_message = ToastMessages.CREATE_PERMISSION_TOAST.value
+        toast_messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in toast_messages, \
+            f"Toast message is incorrect, current message is {toast_messages[0]}"
 
     with step('Created permission is displayed on permission page'):
         if permission_set['asset_title'] is not False:
@@ -99,9 +101,12 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Check toast message for edited permission'):
-        messages = main_screen.wait_for_toast_notifications()
-        assert ToastMessages.UPDATE_PERMISSION_TOAST.value in messages, \
-            f"Toast message is incorrect, current message is {message}"
+        expected_message = ToastMessages.UPDATE_PERMISSION_TOAST.value
+        messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in messages, \
+            f"Toast message is incorrect, current message is {messages[0]}"
 
     with step('Delete permission'):
         delete_pop_up = permissions_intro_view.click_delete_permission()
@@ -111,9 +116,12 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
         assert driver.waitFor(lambda: PermissionsIntroView().is_visible)
 
     with step('Check toast message for deleted permission'):
-        messages = main_screen.wait_for_toast_notifications()
-        assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
-            f"Toast message is incorrect, current message is {message}"
+        expected_message = ToastMessages.DELETE_PERMISSION_TOAST.value
+        messages = main_screen.wait_for_toast_notifications(
+            expected_messages=[expected_message]
+        )
+        assert expected_message in messages, \
+            f"Toast message is incorrect, current message is {messages[0]}"
 
     with step('Create new permission'):
         new_permission_data = {

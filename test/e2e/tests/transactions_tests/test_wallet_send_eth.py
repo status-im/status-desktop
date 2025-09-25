@@ -50,5 +50,8 @@ def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, 
     with step('Authenticate with password'):
         authenticate_with_password(user_account)
 
-    assert f'Sending {amount} ETH from {WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value} to {receiver_account_address[:6]}' in ' '.join(
-        main_window.wait_for_toast_notifications()).replace('×', 'x')
+    expected_message = f'Sending {amount} ETH from {WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value} to {receiver_account_address[:6]}'
+    toast_messages = main_window.wait_for_toast_notifications(
+        expected_messages=[expected_message]
+    )
+    assert expected_message in ' '.join(toast_messages).replace('×', 'x')

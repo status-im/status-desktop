@@ -76,13 +76,15 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
             block_popup.block_user_button.click()
 
         with step('Check toast message about blocked member'):
-            toast_messages = main_screen.wait_for_toast_notifications()
             message_1 = ToastMessages.REMOVED_CONTACT_TOAST.value
             message_2 = user_two.name + ToastMessages.BLOCKED_USER_TOAST.value
-            assert driver.waitFor(lambda: message_1 in toast_messages,
-                                  timeout), f"Toast message {message_1} is incorrect, current message is {toast_messages}"
-            assert driver.waitFor(lambda: message_2 in toast_messages,
-                                  timeout), f"Toast message {message_2} is incorrect, current message is {toast_messages}"
+            toast_messages = main_screen.wait_for_toast_notifications(
+                expected_messages=[message_1, message_2]
+            )
+            assert message_1 in toast_messages, \
+                f"Toast message {message_1} is incorrect, current message is {toast_messages}"
+            assert message_2 in toast_messages, \
+                f"Toast message {message_2} is incorrect, current message is {toast_messages}"
             main_screen.hide()
 
         with step(f'User {user_two.name} does not see {user_one.name} in contacts list'):
@@ -110,7 +112,9 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
             unblock_popup.unblock_user_button.click()
 
         with step('Check toast message about unblocked member'):
-            toast_messages = main_screen.wait_for_toast_notifications()
             message_2 = user_two.name + ToastMessages.UNBLOCKED_USER_TOAST.value
-            assert driver.waitFor(lambda: message_2 in toast_messages,
-                                  timeout), f"Toast message {message_2} is incorrect, current message is {toast_messages}"
+            toast_messages = main_screen.wait_for_toast_notifications(
+                expected_messages=[message_2]
+            )
+            assert message_2 in toast_messages, \
+                f"Toast message {message_2} is incorrect, current message is {toast_messages}"
