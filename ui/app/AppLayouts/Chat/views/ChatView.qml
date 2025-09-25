@@ -264,6 +264,7 @@ StatusSectionLayout {
 
             usersModel: root.usersModel
             amIChatAdmin: root.amIChatAdmin
+            showMembersButtonHighlighted: localAccountSensitiveSettings.expandUsersList
 
             onSearchButtonClicked: root.openAppSearch()
             onDisplayEditChannelPopup: {
@@ -282,6 +283,11 @@ StatusSectionLayout {
             }
 
             onGroupMembersUpdateRequested: root.groupMembersUpdateRequested(membersPubKeysList)
+
+            onToggleShowMembersRequested: {
+                localAccountSensitiveSettings.expandUsersList =
+                        !localAccountSensitiveSettings.expandUsersList;
+            }
         }
     }
 
