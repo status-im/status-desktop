@@ -46,6 +46,12 @@ LayoutChooser {
     implicitWidth: Theme.portraitBreakpoint.width
     implicitHeight: Theme.portraitBreakpoint.height
 
+    enum Panels {
+        LeftPanel,
+        CentralPanel,
+        RightPanel
+    }
+
     property Component handle: Item { }
 
     /*!
@@ -120,6 +126,8 @@ LayoutChooser {
 
     signal backButtonClicked()
 
+    signal swiped(int previousIndex, int currentIndex)
+
     /*!
         \qmlmethod StatusSectionLayout::goToNextPanel()
         This method is used to focus the panel that needs to be active.
@@ -178,6 +186,15 @@ LayoutChooser {
         backButtonName: root.backButtonName
         headerContent: root.headerContent
 
+        property int currentIndexCache
+
+        onCurrentIndexChanged: {
+            root.swiped(currentIndexCache, currentIndex)
+            currentIndexCache = currentIndex
+        }
+
         onBackButtonClicked: root.backButtonClicked()
+
+        Component.onCompleted: currentIndexCache = currentIndex
     }
 }
