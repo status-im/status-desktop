@@ -211,6 +211,39 @@ class OnboardingFlow:
         if self.config.take_screenshots:
             self._take_screenshot("welcome_completed")
 
+    def _execute_seed_phrase_import_step(self):
+        """Execute seed phrase import from Create Profile screen into Password."""
+        self.current_step = "seed_phrase_import"
+        self.logger.info("Step 3: Seed Phrase Import")
+
+        if self.config.validate_each_step:
+            assert self.create_profile_page.is_screen_displayed(), (
+                "Create profile screen should be displayed before seed phrase import"
+            )
+
+        self.create_profile_page.click_use_recovery_phrase()
+
+        seed_phrase = self.config.seed_phrase or generate_seed_phrase()
+        self.config.seed_phrase = seed_phrase
+
+        seed_page = SeedPhraseInputPage(self.driver, flow_type="create")
+        if self.config.validate_each_step:
+            assert seed_page.is_screen_displayed(), (
+                "Seed phrase input screen should be displayed"
+            )
+
+        success = seed_page.import_seed_phrase(seed_phrase)
+        assert success, "Should successfully import seed phrase via clipboard"
+
+        self.step_results["seed_phrase_import"] = {
+            "success": True,
+            "word_count": len(seed_phrase.split()),
+            "timestamp": datetime.now(),
+        }
+
+        if self.config.take_screenshots:
+            self._take_screenshot("seed_phrase_import_completed")
+
     def _execute_analytics_step(self):
         """Execute analytics screen interaction"""
         self.current_step = "analytics_screen"
@@ -309,12 +342,17 @@ class OnboardingFlow:
 
     def _execute_main_app_verification(self):
         """Execute main app verification"""
-        self.current_step = "main_app_verification"
-        self.logger.info("Step 6: Main App Verification")
+        self.current_step = "wallet_verification"
+        self.logger.info("Step 6: Wallet Landing Verification")
 
-        assert self.main_app_page.is_main_app_loaded(), "Main app should be loaded"
+        from locators.onboarding.wallet.wallet_locators import WalletLocators
 
-        self.step_results["main_app_verification"] = {
+        locators = WalletLocators()
+        assert self.main_app_page.is_element_visible(
+            locators.WALLET_FOOTER_SEND_BUTTON
+        ), "Wallet landing screen should be visible after onboarding"
+
+        self.step_results["wallet_verification"] = {
             "success": True,
             "timestamp": datetime.now(),
         }

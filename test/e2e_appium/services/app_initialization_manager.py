@@ -14,7 +14,11 @@ class AppInitializationManager:
     def perform_initial_activation(
         self, timeout: float = 15.0, interval: float = 2.0
     ) -> bool:
-        """Perform initial app activation until UI appears or timeout is reached."""
+        """Perform initial app activation until UI appears or timeout is reached.
+
+        Raises:
+            RuntimeError: If the UI never surfaces before the timeout expires.
+        """
         self.logger.debug("🚀 Starting app initialization sequence")
 
         self._wait_for_session_ready()
@@ -30,9 +34,9 @@ class AppInitializationManager:
                 if self._wait_for_ui_response(timeout=interval):
                     self.logger.info("✓ App UI surfaced after activation")
                     return True
-
-        self.logger.warning("⚠ App activation timeout - UI may not be ready")
-        return False
+                
+        self.logger.error("⚠ App activation timeout - UI never surfaced")
+        raise RuntimeError("App activation timed out before UI became available")
 
     def _wait_for_session_ready(
         self, timeout: float = 2.0, poll_interval: float = 0.2
