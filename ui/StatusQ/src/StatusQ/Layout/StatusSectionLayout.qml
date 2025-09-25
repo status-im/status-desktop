@@ -126,12 +126,12 @@ LayoutChooser {
     */
     function goToNextPanel() {
         if (portraitView.visible)
-            portraitView.currentIndex = portraitView.currentIndex + 1;
+            portraitView.incrementCurrentIndex()
     }
 
     function goToPreviousPanel() {
         if (portraitView.visible)
-            portraitView.currentIndex = portraitView.currentIndex - 1;
+            portraitView.decrementCurrentIndex()
     }
 
     criteria: [
