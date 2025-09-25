@@ -7,6 +7,7 @@ from .password_page import PasswordPage
 from .loading_page import SplashScreen
 from .home_page import HomePage
 from .seed_phrase_input_page import SeedPhraseInputPage
+from .main_app_page import MainAppPage
 
 __all__ = [
     "WelcomePage",
@@ -16,4 +17,5 @@ __all__ = [
     "SplashScreen",
     "HomePage",
     "SeedPhraseInputPage",
+    "MainAppPage",
 ]
