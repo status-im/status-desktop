@@ -57,23 +57,17 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
                 if not rawBalanceStr.contains("nil"):
                   rawBalance = rawBalanceStr.parse(Uint256)
 
-                var balance1DayAgo: Uint256 = u256(0)
-                let balance1DayAgoStr = balanceObj{"balance1DayAgo"}.getStr
-                if not balance1DayAgoStr.contains("nil"):
-                  balance1DayAgo = stint.parse(balance1DayAgoStr, UInt256)
-
                 let token_by_symbol_key = if communityId.isEmptyOrWhitespace: symbol
                                           else: address
                 if groupedAccountsTokensBalances.hasKey(token_by_symbol_key):
                   groupedAccountsTokensBalances[token_by_symbol_key].balancesPerAccount.add(BalanceItem(account: accountAddress,
                     chainId: chainId,
-                    balance: rawBalance,
-                    balance1DayAgo: balance1DayAgo))
+                    balance: rawBalance))
                 else:
                   groupedAccountsTokensBalances[token_by_symbol_key] = GroupedTokenItem(
                     tokensKey: token_by_symbol_key,
                     symbol: symbol,
-                    balancesPerAccount: @[BalanceItem(account: accountAddress, chainId: chainId, balance: rawBalance, balance1DayAgo: balance1DayAgo)]
+                    balancesPerAccount: @[BalanceItem(account: accountAddress, chainId: chainId, balance: rawBalance)]
                     )
 
         # set assetsLoading to false once the tokens are loaded

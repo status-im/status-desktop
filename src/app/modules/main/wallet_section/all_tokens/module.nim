@@ -98,13 +98,6 @@ method getHistoricalDataForToken*(self: Module, symbol: string, currency: string
 method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
   self.view.setTokenHistoricalDataReady(tokenDetails)
 
-method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  let addresses = if address == "": self.addresses else: @[address]
-  self.controller.fetchHistoricalBalanceForTokenAsJson(addresses, tokenSymbol, currencySymbol,timeIntervalEnum)
-
-method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
-  self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)
-
 # Interfaces for getting lists from the service files into the abstract models
 
 method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDataSource =

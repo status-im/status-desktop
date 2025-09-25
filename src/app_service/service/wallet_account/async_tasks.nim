@@ -212,43 +212,6 @@ type
     BalanceHistory1Year,
     BalanceHistoryAllTime
 
-type
-  GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
-    chainIds: seq[int]
-    addresses: seq[string]
-    tokenSymbol: string
-    currencySymbol: string
-    timeInterval: BalanceHistoryTimeInterval
-
-proc getTokenBalanceHistoryDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[GetTokenBalanceHistoryDataTaskArg](argEncoded)
-  var response = %*{}
-  try:
-    # status-go time intervals are starting from 1
-    response = backend.getBalanceHistory(arg.chainIds, arg.addresses, arg.tokenSymbol, arg.currencySymbol, int(arg.timeInterval) + 1).result
-
-    let output = %* {
-        "chainIds": arg.chainIds,
-        "addresses": arg.addresses,
-        "tokenSymbol": arg.tokenSymbol,
-        "currencySymbol": arg.currencySymbol,
-        "timeInterval": int(arg.timeInterval),
-        "historicalData": response
-    }
-
-    arg.finish(output)
-    return
-  except Exception as e:
-    let output = %* {
-      "chainIds": arg.chainIds,
-      "addresses": arg.addresses,
-      "tokenSymbol": arg.tokenSymbol,
-      "currencySymbol": arg.currencySymbol,
-      "timeInterval": int(arg.timeInterval),
-      "error": e.msg,
-    }
-    arg.finish(output)
-
 #################################################
 # Async get ENS names for account
 #################################################

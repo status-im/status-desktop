@@ -37,8 +37,6 @@ const SIGNAL_KEYCARD_UNLOCKED* = "keycardUnlocked"
 const SIGNAL_KEYCARD_UID_UPDATED* = "keycardUidUpdated"
 const SIGNAL_KEYCARD_NAME_CHANGED* = "keycardNameChanged"
 
-const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
-
 #################################################
 # Payload sent via above defined signals
 #################################################

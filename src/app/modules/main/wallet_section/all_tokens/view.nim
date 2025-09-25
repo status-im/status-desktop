@@ -7,7 +7,6 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       marketHistoryIsLoading: bool
-      balanceHistoryIsLoading: bool
 
       # This contains the different sources for the tokens list
       # ex. uniswap list, status tokens list
@@ -28,7 +27,6 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.marketHistoryIsLoading = false
-    result.balanceHistoryIsLoading = false
     result.sourcesOfTokensModel = newSourcesOfTokensModel(delegate.getSourcesOfTokensModelDataSource())
     result.flatTokensModel = newFlatTokensModel(
       delegate.getFlatTokenModelDataSource(),
@@ -61,18 +59,6 @@ QtObject:
     read = getTokenListUpdatedAt
     notify = tokenListUpdatedAtChanged
 
-  proc balanceHistoryIsLoadingChanged*(self: View) {.signal.}
-  proc getBalanceHistoryIsLoading(self: View): QVariant {.slot.} =
-    return newQVariant(self.balanceHistoryIsLoading)
-  proc setBalanceHistoryIsLoading(self: View, isLoading: bool) =
-    if self.balanceHistoryIsLoading == isLoading:
-      return
-    self.balanceHistoryIsLoading = isLoading
-    self.balanceHistoryIsLoadingChanged()
-  QtProperty[QVariant] balanceHistoryIsLoading:
-    read = getBalanceHistoryIsLoading
-    notify = balanceHistoryIsLoadingChanged
-
   proc getHistoricalDataForToken*(self: View, symbol: string, currency: string) {.slot.} =
     self.setMarketHistoryIsLoading(true)
     self.delegate.getHistoricalDataForToken(symbol, currency)
@@ -82,16 +68,6 @@ QtObject:
   proc setTokenHistoricalDataReady*(self: View, tokenDetails: string) =
     self.setMarketHistoryIsLoading(false)
     self.tokenHistoricalDataReady(tokenDetails)
-
-  proc fetchHistoricalBalanceForTokenAsJson*(self: View, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) {.slot.} =
-    self.setBalanceHistoryIsLoading(true)
-    self.delegate.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
-
-  proc tokenBalanceHistoryDataReady*(self: View, balanceHistoryJson: string) {.signal.}
-
-  proc setTokenBalanceHistoryDataReady*(self: View, balanceHistoryJson: string) =
-    self.setBalanceHistoryIsLoading(false)
-    self.tokenBalanceHistoryDataReady(balanceHistoryJson)
 
   proc sourcesOfTokensModelChanged*(self: View) {.signal.}
   proc getSourcesOfTokensModel(self: View): QVariant {.slot.} =
