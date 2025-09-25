@@ -15,6 +15,7 @@ import SortFilterProxyModel
 import StatusQ
 import StatusQ.Controls
 import StatusQ.Core
+import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils
 import StatusQ.Layout
@@ -426,6 +427,30 @@ StatusSectionLayout {
             onEditPermissionRequested: root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
             onPrepareTokenModelForCommunityChatRequested: root.prepareTokenModelForCommunityChat(communityId, chatId)
         }
+    }
+
+    Connections {
+        target: localAccountSensitiveSettings
+
+        function onExpandUsersListChanged() {
+            Qt.callLater(() => {
+                if (localAccountSensitiveSettings.expandUsersList)
+                    goToNextPanel()
+            })
+        }
+    }
+
+    onSwiped: (previous, current) => {
+        if (previous !== StatusSectionLayout.RightPanel)
+            return
+
+        // Setting timeout to let the swipe animation to complete. The workaround
+        // is needed because SwipeView doesn't expose any API to detect completed
+        // swipe action
+        Backpressure.setTimeout(this, 300, () => {
+            localAccountSensitiveSettings.expandUsersList
+                = !localAccountSensitiveSettings.expandUsersList
+        })
     }
 
     Component {
