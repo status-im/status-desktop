@@ -7,6 +7,7 @@ import AppLayouts.Browser.stores as BrowserStores
 // dummy container/section for mobile
 StatusSectionLayout {
     required property string userUID
+    required property bool thirdpartyServicesEnabled
 
     property var transactionStore
     property var assetsStore
