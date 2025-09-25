@@ -22,6 +22,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    messageSyncingEnabled: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
@@ -33,6 +34,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, settingsService, devicesService)
   result.moduleLoaded = false
+  result.messageSyncingEnabled = false
 
 method delete*(self: Module) =
   self.view.delete
@@ -99,7 +101,8 @@ method updateOrAddDevice*(self: Module, installation: InstallationDto) =
 method updateInstallationName*(self: Module, installationId: string, name: string) =
   self.view.model().updateItemName(installationId, name)
 
-method generateConnectionStringAndRunSetupSyncingPopup*(self: Module) =
+method generateConnectionStringAndRunSetupSyncingPopup*(self: Module, messageSyncingEnabled: bool) =
+  self.messageSyncingEnabled = messageSyncingEnabled
   var additionalBip44Paths: seq[string]
   if singletonInstance.userProfile.getIsKeycardUser():
     additionalBip44Paths.add(account_constants.PATH_WHISPER)
@@ -112,7 +115,7 @@ method onLoggedInUserAuthenticated*(self: Module, pin: string, password: string,
       chatKey = additinalPathsDetails[account_constants.PATH_WHISPER].privateKey
       if chatKey.startsWith("0x"):
         chatKey = chatKey[2..^1]
-  let connectionString = self.controller.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
+  let connectionString = self.controller.getConnectionStringForBootstrappingAnotherDevice(password, chatKey, self.messageSyncingEnabled)
   if password.len == 0 and pin.len == 0:
     return
   self.view.openPopupWithConnectionString(connectionString)

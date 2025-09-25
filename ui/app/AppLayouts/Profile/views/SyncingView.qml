@@ -57,6 +57,7 @@ SettingsContentBase {
                 qsTr("Share that information with your new device"),
             ]
 
+            property bool messageSyncingEnabled: false
 
             function personalizeDevice(model) {
                 Global.openPopup(personalizeDevicePopup, {
@@ -77,7 +78,7 @@ SettingsContentBase {
             }
 
             function setupSyncing() {
-                root.devicesStore.generateConnectionStringAndRunSetupSyncingPopup()
+                root.devicesStore.generateConnectionStringAndRunSetupSyncingPopup(messageSyncingEnabled)
             }
         }
 
@@ -283,9 +284,7 @@ SettingsContentBase {
                         text: qsTr("Enable message syncing")
                         leftSide: true
                         checked: false
-                        onToggled: () => {
-                            console.log("Enable message syncing toggled", checked)
-                        }
+                        onToggled: d.messageSyncingEnabled = checked
                     }
 
                     StatusNavBarTabButton {

@@ -77,8 +77,8 @@ QtObject {
         root.devicesModule.enableDevice(installationId, enable)
     }
 
-    function generateConnectionStringAndRunSetupSyncingPopup() {
-        root.devicesModule.generateConnectionStringAndRunSetupSyncingPopup()
+    function generateConnectionStringAndRunSetupSyncingPopup(messageSyncingEnabled) {
+        root.devicesModule.generateConnectionStringAndRunSetupSyncingPopup(messageSyncingEnabled)
     }
 
     function validateConnectionString(connectionString) {
