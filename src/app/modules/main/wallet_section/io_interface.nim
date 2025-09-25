@@ -64,6 +64,9 @@ method networksModuleDidLoad*(self: AccessInterface) {.base.} =
 method savedAddressesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method followingAddressesModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method buySellCryptoModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

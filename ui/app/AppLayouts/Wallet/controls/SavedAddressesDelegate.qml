@@ -30,6 +30,8 @@ StatusListItem {
     property string mixedcaseAddress
     property string ens
     property string colorId
+    property string avatar  // Optional ENS avatar URL
+    property bool isFollowingAddress: false  // True if from EFP following list, false if saved address
 
     property int usage: SavedAddressesDelegate.Usage.Delegate
     property bool showButtons: sensor.containsMouse
@@ -63,8 +65,9 @@ StatusListItem {
     asset {
         width: 40
         height: 40
+        name: root.avatar || ""  // Use avatar URL if available
         color: Utils.getColorForId(root.colorId)
-        isLetterIdenticon: true
+        isLetterIdenticon: !root.avatar  // Only use letter identicon if no avatar
         letterIdenticonBgWithAlpha: true
     }
 
@@ -156,6 +159,7 @@ StatusListItem {
             text: qsTr("Edit saved address")
             objectName: "editSavedAddress"
             assetSettings.name: "pencil-outline"
+            enabled: !root.isFollowingAddress
             onTriggered: {
                 if (root.usage === SavedAddressesDelegate.Usage.Item) {
                     root.aboutToOpenPopup()
@@ -238,6 +242,7 @@ StatusListItem {
             type: StatusAction.Type.Danger
             assetSettings.name: "delete"
             objectName: "deleteSavedAddress"
+            enabled: !root.isFollowingAddress
             onTriggered: {
                 if (root.usage === SavedAddressesDelegate.Usage.Item) {
                     root.aboutToOpenPopup()

@@ -43,6 +43,8 @@ StatusDialog {
         d.mixedcaseAddress = params.mixedcaseAddress?? Constants.zeroAddress
         d.ens = params.ens?? ""
         d.colorId = params.colorId?? ""
+        d.avatar = params.avatar?? ""
+        d.isFollowingAddress = params.isFollowingAddress?? false
 
         walletSection.activityController.setFilterToAddresses(JSON.stringify([d.address]))
         walletSection.activityController.updateFilter()
@@ -59,6 +61,8 @@ StatusDialog {
         property string mixedcaseAddress: Constants.zeroAddress
         property string ens: ""
         property string colorId: ""
+        property string avatar: ""
+        property bool isFollowingAddress: false
 
         readonly property string visibleAddress: !!d.ens? d.ens : d.address
 
@@ -135,6 +139,8 @@ StatusDialog {
             ens: d.ens
             colorId: d.colorId
             mixedcaseAddress: d.mixedcaseAddress
+                    avatar: d.avatar
+                    isFollowingAddress: d.isFollowingAddress
 
             statusListItemTitle.font.pixelSize: Theme.fontSize22
             statusListItemTitle.font.bold: Font.Bold
