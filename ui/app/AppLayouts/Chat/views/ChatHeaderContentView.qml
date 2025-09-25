@@ -32,6 +32,8 @@ RowLayout {
     property var usersModel
     property var amIChatAdmin
 
+    property bool showMembersButtonHighlighted
+
     signal groupMembersUpdateRequested(string membersPubKeysList)
 
     signal searchButtonClicked()
@@ -44,6 +46,8 @@ RowLayout {
                                    int channelPosition,
                                    var deleteDialog,
                                    bool hideIfPermissionsNotMet)
+
+    signal toggleShowMembersRequested
 
     function addRemoveGroupMember() {
         root.state = d.stateMembersSelectorContent
@@ -101,12 +105,13 @@ RowLayout {
                 return localAccountSensitiveSettings.showOnlineUsers &&
                         chatContentModule.chatDetails.isUsersListAvailable
             }
-            highlighted: localAccountSensitiveSettings.expandUsersList
+
+            highlighted: root.showMembersButtonHighlighted
+
             icon.name: "group-chat"
             type: StatusFlatRoundButton.Type.Secondary
-            onClicked: {
-                localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList;
-            }
+            onClicked: root.toggleShowMembersRequested()
+
             // initializing the tooltip
             tooltip.text: qsTr("Members")
             tooltip.orientation: StatusToolTip.Orientation.Bottom
