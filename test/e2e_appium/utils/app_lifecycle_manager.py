@@ -30,17 +30,14 @@ class AppLifecycleManager:
         Returns:
             bool: True if restart was successful
         """
+        env_name = os.getenv("CURRENT_TEST_ENVIRONMENT", "lambdatest").lower()
+
         try:
             self.logger.info(f"🔄 Restarting app: {app_package}")
+            if env_name in ("lambdatest", "lt"):
+                return self._restart_lambda_test(app_package)
 
-            self.driver.terminate_app(app_package)
-            self.logger.debug("✓ App terminated")
-
-            self.driver.activate_app(app_package)
-            self.logger.debug("✓ App reactivated")
-
-            self.logger.info("✅ App restart completed successfully")
-            return True
+            return self._restart_local(app_package)
 
         except Exception as e:
             self.logger.error(f"❌ App restart failed: {e}")
@@ -126,3 +123,60 @@ class AppLifecycleManager:
         except Exception as e:
             self.logger.error(f"❌ Failed to activate app: {e}")
             return False
+
+    def _restart_lambda_test(self, app_package: str) -> bool:
+        """Restart the app on LambdaTest using lambda-adb with a close/launch fallback."""
+        try:
+            self.logger.debug("Cloud run detected; restarting via lambda-adb commands")
+            self.driver.execute_script(
+                "lambda-adb",
+                {
+                    "command": "shell",
+                    "text": f"am force-stop {app_package}",
+                },
+            )
+            self.logger.debug("✓ lambda-adb force-stop issued")
+            self.driver.execute_script(
+                "lambda-adb",
+                {
+                    "command": "shell",
+                    "text": (
+                        "am start -n "
+                        f"{app_package}/org.qtproject.qt.android.bindings.QtActivity"
+                    ),
+                },
+            )
+            self.logger.debug("✓ lambda-adb start activity issued")
+            self.logger.info("✅ App restart completed successfully (LambdaTest lambda-adb)")
+            return True
+        except Exception as lambda_error:
+            self.logger.warning(
+                "lambda-adb restart failed on LambdaTest: %s. Attempting close/launch fallback.",
+                lambda_error,
+            )
+            try:
+                self.driver.close_app()
+                self.logger.debug("✓ App closed via close_app")
+                self.driver.launch_app()
+                self.logger.debug("✓ App launched via launch_app")
+                self.logger.info(
+                    "✅ App restart completed successfully (LambdaTest close/launch fallback)"
+                )
+                return True
+            except Exception as fallback_error:
+                self.logger.error(
+                    "❌ App restart failed on LambdaTest fallback path: %s",
+                    fallback_error,
+                )
+                return False
+
+    def _restart_local(self, app_package: str) -> bool:
+        """Restart the app on local/emulator environments."""
+        self.driver.terminate_app(app_package)
+        self.logger.debug("✓ App terminated")
+
+        self.driver.activate_app(app_package)
+        self.logger.debug("✓ App reactivated")
+
+        self.logger.info("✅ App restart completed successfully")
+        return True
