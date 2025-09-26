@@ -1,7 +1,7 @@
 import os
 from functools import wraps
 
-from core import SessionManager
+from core.test_context import TestContext, TestConfiguration
 from config.logging_config import get_logger
 
 # Constants
@@ -9,28 +9,21 @@ CLOUD_ENVIRONMENTS = ["lt", "lambdatest"]
 
 
 def lambdatest_reporting(func):
-    """
-    Decorator to ensure LambdaTest result reporting for cloud tests.
-
-    Automatically handles success/failure reporting without requiring
-    manual report_test_result() calls in test methods.
-    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         try:
             result = func(self, *args, **kwargs)
-            if hasattr(self, 'report_test_result'):
+            if hasattr(self, "report_test_result"):
                 self.report_test_result(passed=True)
             return result
         except Exception as e:
-            if hasattr(self, 'report_test_result'):
+            if hasattr(self, "report_test_result"):
                 error_msg = str(e)
                 self.report_test_result(passed=False, error_message=error_msg)
             raise
 
     return wrapper
-
 
 
 class BaseTest:
@@ -48,8 +41,13 @@ class BaseTest:
         if hasattr(self, "request") and hasattr(self.request, "config"):
             test_env = self.request.config.getoption("--env", default=test_env)
 
-        self.session_manager = SessionManager(test_env)
-        self.driver = self.session_manager.get_driver()
+        # Initialize test context (owns session/driver)
+        self.ctx = TestContext(environment=test_env).initialize(
+            TestConfiguration(environment=test_env)
+        )
+
+        self.session_manager = self.ctx._session_manager
+        self.driver = self.ctx.driver
         self.test_name = method.__name__
 
         if not hasattr(self.__class__, "_active_drivers"):
@@ -78,23 +76,33 @@ class BaseTest:
                 if hasattr(self.__class__, "_active_drivers"):
                     self.__class__._active_drivers.pop(id(self), None)
 
-                # Clean up driver
-                self.session_manager.cleanup_driver()
+                # Clean up via TestContext to avoid double cleanup
+                try:
+                    if hasattr(self, "ctx") and self.ctx:
+                        self.ctx.cleanup()
+                finally:
+                    # Fallback to direct cleanup if context not present
+                    try:
+                        if self.session_manager and self.session_manager.driver:
+                            self.session_manager.cleanup_driver()
+                    except Exception:
+                        pass
 
     def _validate_result_reporting(self):
-        """Validate that cloud tests use explicit result reporting."""
         if self.session_manager.environment in CLOUD_ENVIRONMENTS:
             if not self._result_reported:
                 error_msg = f"Test '{self.test_name}' failed to report result."
                 self.logger.error(f"❌ {error_msg}")
                 raise RuntimeError(error_msg)
 
-    def report_test_result(self, passed: bool = None, error_message: str = None, status: str = None):
+    def report_test_result(
+        self, passed: bool = None, error_message: str = None, status: str = None
+    ):
         """
         Report test result to LambdaTest.
 
         Args:
-            passed: Whether the test passed (for backward compatibility)
+            passed: Whether the test passed
             error_message: Optional error message for failed tests
             status: Direct status override ("passed", "failed", "error", "unknown", "skipped", "ignored")
         """
@@ -107,7 +115,9 @@ class BaseTest:
                     self.driver, self.test_name, final_status, error_message
                 )
                 logger = get_logger("session")
-                logger.info(f"✅ Reported to LambdaTest: {self.test_name} = {final_status.upper()}")
+                logger.info(
+                    f"✅ Reported to LambdaTest: {self.test_name} = {final_status.upper()}"
+                )
             except Exception as e:
                 logger = get_logger("session")
                 logger.error(f"⚠️ Failed to report result to LambdaTest: {e}")
@@ -161,3 +171,13 @@ class BaseTest:
         if hasattr(cls, "_active_drivers"):
             return cls._active_drivers.get(test_instance_id)
         return None
+
+
+class BaseAppReadyTest(BaseTest):
+    def setup_method(self, method):
+        super().setup_method(method)
+        try:
+            self.ctx.get_home()
+        except Exception as e:
+            self.logger.error(f"Failed to prepare app in BaseAppReadyTest: {e}")
+            raise

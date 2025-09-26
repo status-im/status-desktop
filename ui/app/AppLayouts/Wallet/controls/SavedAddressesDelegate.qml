@@ -33,6 +33,8 @@ StatusListItem {
     property int usage: SavedAddressesDelegate.Usage.Delegate
     property bool showButtons: sensor.containsMouse
 
+    property alias menuButtonAlias: menuButton
+
     property alias sendButton: sendButton
 
     signal aboutToOpenPopup()
@@ -98,12 +100,14 @@ StatusListItem {
             onClicked: root.openSendModal(d.visibleAddress)
         },
         StatusRoundButton {
+            id: menuButton
             objectName: "savedAddressView_Delegate_menuButton_" + root.name
             visible: !!root.name
             enabled: root.showButtons
             type: StatusRoundButton.Type.Quinary
             radius: 8
             icon.name: "more"
+            Accessible.name: Utils.formatAccessibleName("Options", objectName)
             onClicked: {
                 menu.openMenu(this, x + width - menu.width - statusListItemComponentsSlot.spacing, y + height + Theme.halfPadding,
                     {

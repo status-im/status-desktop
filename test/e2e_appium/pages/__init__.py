@@ -1,11 +1,9 @@
-"""
-Pages package for Status Desktop tablet E2E tests.
-Contains Page Object Model classes for different screens.
-"""
+"""Pages package for tablet E2E tests."""
 
 from .base_page import BasePage
+from .app import App
 from .onboarding import (
-    MainAppPage,
+    HomePage,
     WelcomePage,
     AnalyticsPage,
     CreateProfilePage,
@@ -15,7 +13,8 @@ from .onboarding import (
 
 __all__ = [
     "BasePage",
-    "MainAppPage",
+    "HomePage",
+    "App",
     "WelcomePage",
     "AnalyticsPage",
     "CreateProfilePage",
