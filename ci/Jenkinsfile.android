@@ -9,7 +9,7 @@ pipeline {
   agent {
     /* Image with Ubuntu 22.04, QT 6.9.2, Android SDK/NDK, Go, and Nim */
     docker {
-      label 'linux'
+      label 'linuxcontainer'
       image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2-android'
       alwaysPull true
     }
