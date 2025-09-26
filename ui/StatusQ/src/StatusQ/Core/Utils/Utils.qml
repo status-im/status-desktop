@@ -336,4 +336,22 @@ QtObject {
         
         return content.length > 0 ? (content + tidSuffix) : tidSuffix
     }
+
+    function htmlToPlainText(html) {
+      if (!html) return "";
+
+      return String(html)
+        .replace(/<br\s*\/?>/gi, "\n")   // line breaks
+        .replace(/<[^>]+>/g, "")         // strip tags
+        .replace(/&nbsp;/g, " ")         // decode a few common entities
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .trim();
+    }
+
+    function plainTextLength(html) {
+      return htmlToPlainText(html).length;
+    }
+
 }

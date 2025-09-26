@@ -22,13 +22,29 @@ Item {
     property int imageWidth: 350
     property int shapeType: -1
 
+    // Switches scaling mode for AnimatedImage:
+    // - false (default): PreserveAspectFit → full image visible, may letterbox.
+    // - true: PreserveAspectCrop → fills container, may crop edges.
+    property bool isFillCropMode: false
+
+    // Determines whether album images respond to user click.
+    // - true (default): images are clickable; each image installs a MouseArea
+    //   and emits the `imageClicked` signal when tapped or clicked.
+    // - false: images are display-only with no interaction.
+    property bool imageClickable: true
+
+    // Cursor shape used when hovering over clickable album images.
+    // - Default: Qt.PointingHandCursor (hand icon).
+    // - Common alternatives: Qt.ArrowCursor, Qt.CrossCursor, etc.
+    property int imageCursorShape: Qt.PointingHandCursor
+
     property string loadingImageText: ""
     property string errorLoadingImageText: ""
 
     signal clicked(var image, var mouse, var imageSource)
 
-    implicitWidth: loadingImage.visible ? loadingImage.width : imageMessage.width
-    implicitHeight: loadingImage.visible ? loadingImage.height : imageMessage.paintedHeight
+    implicitWidth: imageMessage.width
+    implicitHeight: imageMessage.paintedHeight
 
     QtObject {
         id: _internal
@@ -38,9 +54,13 @@ Item {
 
     AnimatedImage {
         id: imageMessage
-
-        width: sourceSize.width > imageWidth ? imageWidth : sourceSize.width
-        fillMode: Image.PreserveAspectFit
+        width: Math.min(sourceSize.width, imageWidth)
+        height: imageContainer.isFillCropMode
+                   ? width // Fixed box for crop
+                   : (sourceSize.width > 0
+                      ? Math.round(width * sourceSize.height / sourceSize.width) // Fit by width / Preserve aspect ratio
+                      : implicitHeight) // Before image is loaded
+        fillMode: imageContainer.isFillCropMode ? Image.PreserveAspectCrop : Image.PreserveAspectFit
         source: imageContainer.source
         playing: _internal.isAnimated && isAppWindowActive && !_internal.pausePlaying
         cache: false
@@ -78,10 +98,11 @@ Item {
         }
 
         StatusMouseArea {
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: imageContainer.imageCursorShape
+            enabled: imageContainer.imageClickable
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            onClicked: {
+            onClicked: (mouse) => {
                 if (imageContainer.isAnimated) {
                     // FIXME the ListView completely removes Items that scroll out of view
                     // so when we scroll backto the image, it gets reloaded and playing is reset

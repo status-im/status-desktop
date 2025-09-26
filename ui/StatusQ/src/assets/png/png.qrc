@@ -930,5 +930,6 @@
         <file>wallet/placeholders/mainView.png</file>
         <file>market/tradeCenter.png</file>
         <file>market/swap.png</file>
+        <file>activity_center/news-placeholder.png</file>
     </qresource>
 </RCC>

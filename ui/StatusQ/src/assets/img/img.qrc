@@ -442,5 +442,7 @@
         <file>icons/homepage/shell.svg</file>
         <file>icons/homepage/swap.svg</file>
         <file>icons/homepage/wallet.svg</file>
+        <file>icons/action-mention.svg</file>
+        <file>icons/action-reply.svg</file>
     </qresource>
 </RCC>
