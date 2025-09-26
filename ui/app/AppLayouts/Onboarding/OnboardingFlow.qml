@@ -19,6 +19,11 @@ OnboardingStackView {
 
     required property var loginAccountsModel
 
+    // list of language/locale codes, e.g. ["cs_CZ","ko","fr"]
+    required property var availableLanguages
+    // language currently selected for translations, e.g. "cs"
+    required property string currentLanguage
+
     required property int keycardState
     required property string keycardUID
     required property int pinSettingState
@@ -47,6 +52,7 @@ OnboardingStackView {
 
     readonly property LoginScreen loginScreen: d.loginScreen
 
+    signal changeLanguageRequested(string newLanguageCode)
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
     signal loginRequested(string keyUid, int method, var data)
@@ -173,6 +179,10 @@ OnboardingStackView {
         id: welcomePage
 
         WelcomePage {
+            availableLanguages: root.availableLanguages
+            currentLanguage: root.currentLanguage
+            onChangeLanguageRequested: (newLanguageCode) => root.changeLanguageRequested(newLanguageCode)
+
             privacyModeFeatureEnabled: root.privacyModeFeatureEnabled
             thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
 
@@ -195,6 +205,10 @@ OnboardingStackView {
             keycardUID: root.keycardUID
             keycardRemainingPinAttempts: root.remainingPinAttempts
             keycardRemainingPukAttempts: root.remainingPukAttempts
+
+            availableLanguages: root.availableLanguages
+            currentLanguage: root.currentLanguage
+            onChangeLanguageRequested: (newLanguageCode) => root.changeLanguageRequested(newLanguageCode)
 
             loginAccountsModel: root.loginAccountsModel
             isKeycardEnabled: root.isKeycardEnabled

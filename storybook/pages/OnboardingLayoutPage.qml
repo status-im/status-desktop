@@ -180,6 +180,14 @@ SplitView {
             }
         }
 
+        availableLanguages: ["de", "cs", "en", "en_CA", "ko", "ar", "fr", "fr_CA", "pt_BR", "pt", "uk", "ja", "el"]
+        currentLanguage: "en"
+
+        onChangeLanguageRequested: function(language) {
+            logs.logEvent("onChangeLanguageRequested", ["language"], arguments)
+            currentLanguage = language
+        }
+
         keychain: keychain
         isKeycardEnabled: ctrlKeycard.checked
 

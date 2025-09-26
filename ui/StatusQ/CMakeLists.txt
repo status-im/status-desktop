@@ -204,6 +204,12 @@ add_library(StatusQ ${LIB_TYPE}
 
         # onboarding
         src/onboarding/enums.h
+
+        # l10n
+        src/l10n/languagemodel.h
+        src/l10n/languagemodel.cpp
+        src/l10n/languageservice.h
+        src/l10n/languageservice.cpp
         )
 
 target_compile_features(StatusQ PRIVATE cxx_std_17)

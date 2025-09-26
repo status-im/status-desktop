@@ -6676,6 +6676,37 @@ Remember your password and don't share it with anyone.</translation>
     </message>
 </context>
 <context>
+    <name>EnableMessageBackupPopup</name>
+    <message>
+        <source>Do you wish to enable message backup?</source>
+        <comment>EnableMessageBackupPopup</comment><translation>Do you wish to enable message backup?</translation>
+    </message>
+    <message>
+        <source>You can now enable message backup to keep your messages on your device.</source>
+        <comment>EnableMessageBackupPopup</comment><translation>You can now enable message backup to keep your messages on your device.</translation>
+    </message>
+    <message>
+        <source>This will allow you to restore your messages if you reinstall the app or switch devices.</source>
+        <comment>EnableMessageBackupPopup</comment><translation>This will allow you to restore your messages if you reinstall the app or switch devices.</translation>
+    </message>
+    <message>
+        <source>Just remember to keep your backup file safe and secure!</source>
+        <comment>EnableMessageBackupPopup</comment><translation>Just remember to keep your backup file safe and secure!</translation>
+    </message>
+    <message>
+        <source>You can change your mind in the Syncing settings later.</source>
+        <comment>EnableMessageBackupPopup</comment><translation>You can change your mind in the Syncing settings later.</translation>
+    </message>
+    <message>
+        <source>Skip</source>
+        <comment>EnableMessageBackupPopup</comment><translation>Skip</translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <comment>EnableMessageBackupPopup</comment><translation>Enable</translation>
+    </message>
+</context>
+<context>
     <name>EnableMessagesBackupDialog</name>
     <message>
         <source>Enable Local Messages Backup</source>
@@ -9974,18 +10005,6 @@ access to your funds.</translation>
         <comment>LanguageView</comment><translation>Translations coming soon</translation>
     </message>
     <message>
-        <source>Alpha languages</source>
-        <comment>LanguageView</comment><translation>Alpha languages</translation>
-    </message>
-    <message>
-        <source>Beta languages</source>
-        <comment>LanguageView</comment><translation>Beta languages</translation>
-    </message>
-    <message>
-        <source>Search Languages</source>
-        <comment>LanguageView</comment><translation>Search Languages</translation>
-    </message>
-    <message>
         <source>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</source>
         <comment>LanguageView</comment><translation>We need your help to translate Status, so that together we can bring privacy and free speech to the people everywhere, including those who need it most.</translation>
     </message>
@@ -10926,6 +10945,29 @@ to load</translation>
     </message>
 </context>
 <context>
+    <name>MarketPrivacyWall</name>
+    <message>
+        <source>Enable third-party services for market features to work.</source>
+        <comment>MarketPrivacyWall</comment><translation>Enable third-party services for market features to work.</translation>
+    </message>
+    <message>
+        <source>Real-time token data</source>
+        <comment>MarketPrivacyWall</comment><translation>Real-time token data</translation>
+    </message>
+    <message>
+        <source>Stay updated with live prices and trading volumes.</source>
+        <comment>MarketPrivacyWall</comment><translation>Stay updated with live prices and trading volumes.</translation>
+    </message>
+    <message>
+        <source>Swap straight from the market</source>
+        <comment>MarketPrivacyWall</comment><translation>Swap straight from the market</translation>
+    </message>
+    <message>
+        <source>Easy swaps to any token from leaderboard</source>
+        <comment>MarketPrivacyWall</comment><translation>Easy swaps to any token from leaderboard</translation>
+    </message>
+</context>
+<context>
     <name>MarketTokenHeader</name>
     <message>
         <source>#</source>
@@ -11231,10 +11273,6 @@ to load</translation>
         <comment>MessageView</comment><translation>Unknown message. Try fetching more messages</translation>
     </message>
     <message>
-        <source>Add reaction</source>
-        <comment>MessageView</comment><translation>Add reaction</translation>
-    </message>
-    <message>
         <source>Reply</source>
         <comment>MessageView</comment><translation>Reply</translation>
     </message>
@@ -11257,6 +11295,14 @@ to load</translation>
     <message>
         <source>Delete</source>
         <comment>MessageView</comment><translation>Delete</translation>
+    </message>
+    <message>
+        <source>Maximum number of different reactions reached</source>
+        <comment>MessageView</comment><translation>Maximum number of different reactions reached</translation>
+    </message>
+    <message>
+        <source>Add reaction</source>
+        <comment>MessageView</comment><translation>Add reaction</translation>
     </message>
 </context>
 <context>
@@ -13354,6 +13400,17 @@ to load</translation>
     <message>
         <source>Third-party services successfully disabled</source>
         <comment>PrivacyStore</comment><translation>Third-party services successfully disabled</translation>
+    </message>
+</context>
+<context>
+    <name>PrivacyWallCarousel</name>
+    <message>
+        <source>Enable third-party services</source>
+        <comment>PrivacyWallCarousel</comment><translation>Enable third-party services</translation>
+    </message>
+    <message>
+        <source>Share feedback or suggest improvements on our %1.</source>
+        <comment>PrivacyWallCarousel</comment><translation>Share feedback or suggest improvements on our %1.</translation>
     </message>
 </context>
 <context>
@@ -16074,6 +16131,13 @@ to load</translation>
     </message>
 </context>
 <context>
+    <name>StatusLanguageSelector</name>
+    <message>
+        <source>Search</source>
+        <comment>StatusLanguageSelector</comment><translation>Search</translation>
+    </message>
+</context>
+<context>
     <name>StatusListPicker</name>
     <message>
         <source>Search</source>
@@ -16129,6 +16193,10 @@ to load</translation>
     <message>
         <source>Add reaction</source>
         <comment>StatusMessageEmojiReactions</comment><translation>Add reaction</translation>
+    </message>
+    <message>
+        <source>Maximum number of different reactions reached</source>
+        <comment>StatusMessageEmojiReactions</comment><translation>Maximum number of different reactions reached</translation>
     </message>
 </context>
 <context>
@@ -17090,16 +17158,24 @@ access to your webcam</translation>
         <comment>ThirdpartyServicesPopup</comment><translation>Share feedback or suggest improvements on our %1.</translation>
     </message>
     <message>
+        <source>Close</source>
+        <comment>ThirdpartyServicesPopup</comment><translation>Close</translation>
+    </message>
+    <message>
+        <source>Disable services and restart the app</source>
+        <comment>ThirdpartyServicesPopup</comment><translation>Disable services and restart the app</translation>
+    </message>
+    <message>
+        <source>Enable services and restart the app</source>
+        <comment>ThirdpartyServicesPopup</comment><translation>Enable services and restart the app</translation>
+    </message>
+    <message>
         <source>Disable third-party services</source>
         <comment>ThirdpartyServicesPopup</comment><translation>Disable third-party services</translation>
     </message>
     <message>
         <source>Enable third-party services</source>
         <comment>ThirdpartyServicesPopup</comment><translation>Enable third-party services</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <comment>ThirdpartyServicesPopup</comment><translation>Close</translation>
     </message>
 </context>
 <context>
@@ -18435,6 +18511,45 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
+    <name>WalletPrivacyWall</name>
+    <message>
+        <source>Enable third-party services for wallet features to work.</source>
+        <comment>WalletPrivacyWall</comment><translation>Enable third-party services for wallet features to work.</translation>
+    </message>
+    <message>
+        <source>Portfolio view for your tokens</source>
+        <comment>WalletPrivacyWall</comment><translation>Portfolio view for your tokens</translation>
+    </message>
+    <message>
+        <source>Use multi-chain, multi-account, and fully self-custodial wallet</source>
+        <comment>WalletPrivacyWall</comment><translation>Use multi-chain, multi-account, and fully self-custodial wallet</translation>
+    </message>
+    <message>
+        <source>Fast &amp; easy token swaps</source>
+        <comment>WalletPrivacyWall</comment><translation>Fast &amp; easy token swaps</translation>
+    </message>
+    <message>
+        <source>Access wide token coverage and the best prices across top DEXes</source>
+        <comment>WalletPrivacyWall</comment><translation>Access wide token coverage and the best prices across top DEXes</translation>
+    </message>
+    <message>
+        <source>Organize collectibles your way</source>
+        <comment>WalletPrivacyWall</comment><translation>Organize collectibles your way</translation>
+    </message>
+    <message>
+        <source>Search, filter, and sort your collectibles exactly how you want</source>
+        <comment>WalletPrivacyWall</comment><translation>Search, filter, and sort your collectibles exactly how you want</translation>
+    </message>
+    <message>
+        <source>Multiple ways to buy tokens</source>
+        <comment>WalletPrivacyWall</comment><translation>Multiple ways to buy tokens</translation>
+    </message>
+    <message>
+        <source>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</source>
+        <comment>WalletPrivacyWall</comment><translation>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</translation>
+    </message>
+</context>
+<context>
     <name>WalletUtils</name>
     <message>
         <source>~ Unknown</source>
@@ -18918,12 +19033,12 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
 <context>
     <name>main</name>
     <message>
-        <source>Hello World</source>
-        <comment>main</comment><translation>Hello World</translation>
-    </message>
-    <message>
         <source>Status Desktop</source>
         <comment>main</comment><translation>Status Desktop</translation>
+    </message>
+    <message>
+        <source>Hello World</source>
+        <comment>main</comment><translation>Hello World</translation>
     </message>
 </context>
 <context>

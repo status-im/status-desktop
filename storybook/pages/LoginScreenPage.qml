@@ -30,6 +30,8 @@ SplitView {
         property int loginResult: Onboarding.ProgressState.Idle // NB abusing the tristate enum here a bit :)
     }
 
+    Component.onCompleted: console.warn("!!! Qt UI LANGUAGE:", Qt.uiLanguage) // <-- what the user wants ideally
+
     LoginAccountsModel {
         id: accModel
     }
@@ -40,6 +42,14 @@ SplitView {
         SplitView.fillHeight: true
 
         loginAccountsModel: accModel
+
+        availableLanguages: ["de", "cs", "en", "en_CA", "ko", "ar", "fr", "fr_CA", "pt_BR", "pt", "uk", "ja", "el"]
+        currentLanguage: "en"
+
+        onChangeLanguageRequested: function(newLanguageCode) {
+            logs.logEvent("onChangeLanguageRequested", ["newLanguageCode"], arguments)
+            currentLanguage = newLanguageCode
+        }
 
         keycardState: driver.keycardState
         keycardUID: driver.keycardUID
@@ -52,25 +62,25 @@ SplitView {
         onDismissBiometricsRequested: biometricsPopup.close()
 
         onLoginRequested: function(keyUid, method, data) {
-                              driver.loginResult = Onboarding.ProgressState.InProgress
-                              logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
+            driver.loginResult = Onboarding.ProgressState.InProgress
+            logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
 
-                              // SIMULATION: emit an error in case of wrong password/PIN
-                              if (method === Onboarding.LoginMethod.Password && data.password !== ctrlPassword.text) {
-                                  driver.loginResult = Onboarding.ProgressState.Failed
-                                  setAccountLoginError("", true)
-                              } else if (method === Onboarding.LoginMethod.Keycard && data.pin !== ctrlPin.text) {
-                                  driver.loginResult = Onboarding.ProgressState.Failed
-                                  driver.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
-                                  if (driver.keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
-                                      driver.keycardState = Onboarding.KeycardState.BlockedPIN
-                                      driver.keycardRemainingPinAttempts = 0
-                                  }
-                                  setAccountLoginError("", true)
-                              } else {
-                                  driver.loginResult = Onboarding.ProgressState.Success
-                              }
-                          }
+            // SIMULATION: emit an error in case of wrong password/PIN
+            if (method === Onboarding.LoginMethod.Password && data.password !== ctrlPassword.text) {
+                driver.loginResult = Onboarding.ProgressState.Failed
+                setAccountLoginError("", true)
+            } else if (method === Onboarding.LoginMethod.Keycard && data.pin !== ctrlPin.text) {
+                driver.loginResult = Onboarding.ProgressState.Failed
+                driver.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
+                if (driver.keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
+                    driver.keycardState = Onboarding.KeycardState.BlockedPIN
+                    driver.keycardRemainingPinAttempts = 0
+                }
+                setAccountLoginError("", true)
+            } else {
+                driver.loginResult = Onboarding.ProgressState.Success
+            }
+        }
 
         onSelectedProfileKeyIdChanged: {
             driver.keycardState = Onboarding.KeycardState.NoPCSCService
