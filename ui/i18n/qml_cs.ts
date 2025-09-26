@@ -17244,6 +17244,14 @@ access to your webcam</source>
         <source>Backup messages locally</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Enable message syncing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabling this will allow all your messages to be sent to the new device during the local pairing.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TagsPanel</name>
