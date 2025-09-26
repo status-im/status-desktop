@@ -46,7 +46,7 @@ StatusSelect {
 
         tagsDelegate: StatusListItemTag {
             bgColor: Utils.getColorForId(model.account.colorId)
-            height: Theme.bigPadding
+            height: 24
             bgRadius: 6
             tagClickable: false
             closeButtonVisible: false
@@ -104,7 +104,7 @@ StatusSelect {
 
         tagsDelegate: StatusListItemTag {
             bgColor: Utils.getColorForId(model.account.colorId)
-            height: Theme.bigPadding
+            height: 24
             bgRadius: 6
             tagClickable: false
             closeButtonVisible: false
