@@ -209,13 +209,12 @@ QtObject:
       return
     return status_go.validateConnectionString(connectionString)
 
-  proc getConnectionStringForBootstrappingAnotherDevice*(self: Service, password: string, chatKey: string): string =
+  proc getConnectionStringForBootstrappingAnotherDevice*(self: Service, password: string, chatKey: string, messageSyncingEnabled: bool): string =
     let keyUid = singletonInstance.userProfile.getKeyUid()
     let keycardUser = singletonInstance.userProfile.getIsKeycardUser()
     var finalPassword = utils.hashPassword(password)
     if keycardUser:
       finalPassword = password
-
     let configJSON = %* {
       "senderConfig": %* {
         "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, keyUid),
@@ -223,6 +222,7 @@ QtObject:
         "keyUID": keyUid,
         "password": finalPassword,
         "chatKey": chatKey,
+        "messageSyncingEnabled": messageSyncingEnabled
       },
       "serverConfig": %* {
         "timeout": 5 * 60 * 1000,
