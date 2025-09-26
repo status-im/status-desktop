@@ -31,8 +31,8 @@ SplitView {
         IntroPanel {
             id: tokenPanel
 
-            width: 600
-            anchors.centerIn: parent
+            anchors.margins: 50
+            anchors.fill: parent
 
             image: Theme.png("community/airdrops8_1")
 

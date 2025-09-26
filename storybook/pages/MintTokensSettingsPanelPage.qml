@@ -89,6 +89,7 @@ SplitView {
 
             anchors.fill: parent
             anchors.topMargin: 50
+            internalRightPadding: 50
 
             // General:
             communityLogo: ModelsData.collectibles.doodles
@@ -190,8 +191,9 @@ SplitView {
             }
 
             RowLayout {
-
                 RadioButton {
+                    id: inProgress
+
                     text: "Set all to 'In progress'"
 
                     onClicked: mintedTokensModel.changeAllMintingStates(Constants.ContractTransactionStatus.InProgress)
@@ -221,6 +223,10 @@ SplitView {
         property alias editorModelChecked: editorModelChecked.checked
         property alias privilegedModelChecked: privilegedModelChecked.checked
         property alias completeModelChecked: completeModelChecked.checked
+
+        property alias inProgressChecked: inProgress.checked
+        property alias inFailedCheck: failedCheck.checked
+        property alias inDeployCheck: deployCheck.checked
     }
 }
 

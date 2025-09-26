@@ -252,12 +252,20 @@ Control{
         RowLayout {
             id: footer
             visible: root.showButtons
-            spacing: 85
+            spacing: {
+                const contentWidthNoSpace = editColumnLayout.implicitWidth
+                                          + copyColumnLayout.implicitWidth
+                                          + deleteColumnLayout.implicitWidth
+
+                return contentWidthNoSpace + 85 * 2 > parent.width ? 40 : 85
+            }
             Layout.fillWidth: true
             Layout.bottomMargin: d.commonMargin
             Layout.alignment: Qt.AlignHCenter
 
             ColumnLayout {
+                id: editColumnLayout
+
                 spacing: d.buttonTextSpacing
                 StatusRoundButton {
                     Layout.alignment: Qt.AlignHCenter
@@ -279,6 +287,8 @@ Control{
             }
 
             ColumnLayout {
+                id: copyColumnLayout
+
                 spacing: d.buttonTextSpacing
                 StatusRoundButton {
                     Layout.alignment: Qt.AlignHCenter
@@ -297,6 +307,8 @@ Control{
             }
 
             ColumnLayout {
+                id: deleteColumnLayout
+
                 spacing: d.buttonTextSpacing
                 StatusRoundButton {
                     Layout.alignment: Qt.AlignHCenter

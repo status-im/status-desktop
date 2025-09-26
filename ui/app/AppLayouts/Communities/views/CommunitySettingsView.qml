@@ -168,9 +168,13 @@ StatusSectionLayout {
                     title: model.sectionName
                     asset.name: model.sectionIcon
                     selected: d.currentIndex === index && !root.communitySettingsDisabled
-                    onClicked: d.currentIndex = index
                     visible: model.sectionEnabled
                     height: visible ? implicitHeight : 0
+
+                    onClicked: {
+                        d.currentIndex = index
+                        root.goToNextPanel()
+                    }
                 }
             }
         }
@@ -219,6 +223,9 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             sourceComponent: OverviewSettingsPanel {
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
+
                 isOwner: root.isOwner
                 isAdmin: root.isAdmin
                 isTokenMaster: root.isTokenMasterOwner
@@ -324,6 +331,10 @@ StatusSectionLayout {
             sourceComponent: MembersSettingsPanel {
                 rootStore: root.rootStore
 
+                preferredHeaderContentWidth: d.preferredContentWidth
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
+
                 membersModel: membersModelAdaptor.joinedMembers
                 bannedMembersModel: membersModelAdaptor.bannedMembers
                 pendingMembersModel: membersModelAdaptor.pendingMembers
@@ -356,6 +367,10 @@ StatusSectionLayout {
         
             sourceComponent: PermissionsSettingsPanel {
                 permissionsModel: root.permissionsModel
+
+                // by design
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
 
                 // temporary solution to provide icons for assets, similar
                 // method is used in wallet (constructing filename from asset's
@@ -398,6 +413,11 @@ StatusSectionLayout {
 
             sourceComponent: MintTokensSettingsPanel {
                 id: mintTokensSettingsPanel
+
+                // by design
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
+
                 enabledChainIds: root.enabledChainIds
 
                 readonly property CommunityTokensStore communityTokensStore:
@@ -531,6 +551,10 @@ StatusSectionLayout {
             sourceComponent: AirdropsSettingsPanel {
                 id: airdropsSettingsPanel
 
+                // by design
+                preferredContentWidth: d.preferredContentWidth
+                internalRightPadding: d.internalRightPadding
+
                 communityDetails: d.communityDetails
 
                 // Profile type
@@ -546,7 +570,9 @@ StatusSectionLayout {
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
-                readonly property RolesRenamingModel renamedTokensBySymbolModel: RolesRenamingModel {
+                RolesRenamingModel {
+                    id: renamedTokensBySymbolModel
+
                     sourceModel: root.community.communityTokens || null
                     mapping: [
                         RoleRename {
@@ -632,13 +658,15 @@ StatusSectionLayout {
                 onRegisterAirdropFeeSubscriber: {
                     d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
                 }
-
             }
         }
     }
 
     QtObject {
         id: d
+
+        readonly property int preferredContentWidth: 560 // by design
+        readonly property int internalRightPadding: Theme.xlPadding * 2
 
         property int currentIndex: 0
 
@@ -762,8 +790,6 @@ StatusSectionLayout {
             onClosed: destroy()
         }
     }
-
-
 
     Connections {
         target: root.chatCommunitySectionModule

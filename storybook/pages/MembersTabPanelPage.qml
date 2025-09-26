@@ -28,6 +28,9 @@ SplitView {
 
         SplitView.fillWidth: true
         SplitView.fillHeight: true
+
+        internalRightPadding: 20
+
         model: usersModelWithMembershipState
         panelType: viewStateSelector.currentValue
         searchString: ctrlSearch.text

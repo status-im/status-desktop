@@ -19,6 +19,9 @@ import utils
 StackLayout {
     id: root
 
+    property int preferredContentWidth: width
+    property int internalRightPadding: 0
+
     required property bool isOwner
     required property bool isAdmin
     required property bool isTokenMaster
@@ -85,14 +88,14 @@ StackLayout {
         id: mainSettingsPageComp
         ColumnLayout {
             spacing: 16
-            RowLayout {
-                Layout.fillWidth: true
 
+            RowLayout {
                 spacing: 16
 
                 ColumnLayout {
+                    id: titleColumn
+
                     Layout.fillWidth: true
-                    Layout.maximumWidth: 747
 
                     StatusBaseText {
                         id: nameText
@@ -102,7 +105,7 @@ StackLayout {
                         font.bold: true
                         font.letterSpacing: -0.4
                         color: Theme.palette.directColor1
-                        wrapMode: Text.WordWrap
+                        wrapMode: Text.Wrap
                         text: root.name
                     }
 
@@ -113,11 +116,11 @@ StackLayout {
                         font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
                         wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
+                        maximumLineCount: 3
                         text: root.description
                     }
                 }
-
-                Item { Layout.fillWidth: true }
 
                 StatusButton {
                     Layout.preferredHeight: 38
@@ -232,6 +235,7 @@ StackLayout {
 
     SettingsPage {
         id: mainSettingsPage
+
         Layout.fillWidth: !root.communitySettingsDisabled
         Layout.preferredWidth: root.communitySettingsDisabled ? 560 + leftPadding + rightPadding : -1
         Layout.fillHeight: !root.communitySettingsDisabled
@@ -261,6 +265,7 @@ StackLayout {
         id: editCommunityPage
 
         title: qsTr("Edit Community")
+        preferredHeaderContentWidth: root.preferredContentWidth
 
         contentItem: Loader {
             id: editSettingsPanelLoader
@@ -280,6 +285,9 @@ StackLayout {
 
             sourceComponent: EditSettingsPanel {
                 id: editSettingsPanel
+
+                preferredContentWidth: root.preferredContentWidth
+                internalRightPadding: root.internalRightPadding
 
                 function isValidRect(r /*rect*/) {
                     return r.width !== 0 && r.height !== 0

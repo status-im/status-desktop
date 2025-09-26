@@ -88,8 +88,6 @@ StatusGroupBox {
     */
     readonly property alias addButton: addItemButton
 
-    implicitWidth: 560
-
     Flow {
         id: flow
 
@@ -101,6 +99,8 @@ StatusGroupBox {
 
             leftPadding: 12
             rightPadding: 12
+
+            width: Math.min(flow.width, implicitWidth)
 
             bgColor: Theme.palette.baseColor2
             title: root.placeholderText

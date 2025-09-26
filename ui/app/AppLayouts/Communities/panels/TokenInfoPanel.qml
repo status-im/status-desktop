@@ -23,7 +23,7 @@ Control {
     property bool networkBoxVisible: true
 
     // Token object properties:
-    /* required */ property TokenObject token // https://bugreports.qt.io/browse/QTBUG-84269
+    required property TokenObject token // https://bugreports.qt.io/browse/QTBUG-84269
     readonly property bool isAssetPanel: token.type === Constants.TokenType.ERC20
 
     QtObject {
@@ -43,8 +43,6 @@ Control {
         onBurnStateChanged: if(burnState === Constants.ContractTransactionStatus.Completed) d.startAnimation(true)
     }
 
-    implicitWidth: 560 // by design
-
     contentItem: ColumnLayout {
         id: mainLayout
 
@@ -53,8 +51,11 @@ Control {
         // General artwork representation:
         Rectangle {
             visible: !token.isPrivilegedToken
-            Layout.preferredHeight: d.imageSelectorRectSize
-            Layout.preferredWidth: Layout.preferredHeight
+
+            Layout.fillWidth: true
+            Layout.maximumWidth: d.imageSelectorRectSize
+            Layout.maximumHeight: Layout.maximumWidth
+            Layout.preferredHeight: width
 
             radius: root.isAssetPanel ? Layout.preferredWidth / 2 : 8
             color:Theme.palette.baseColor2
@@ -76,7 +77,7 @@ Control {
                 source: image
                 maskSource: parent
             }
-        }        
+        }
 
         // Special artwork representation for `Owner and Master Token` tokens:
         PrivilegedTokenArtworkPanel {
@@ -91,18 +92,23 @@ Control {
             spacing: Theme.halfPadding
             Layout.fillWidth: true
 
-            component CustomPreviewBox: Rectangle {
+            component CustomPreviewBox: Control {
                 id: previewBox
 
+                property color color
                 property string label
                 property string value
                 property bool isLoading: false
                 property bool highlighted: false
 
-                radius: 8
-                border.color: Theme.palette.baseColor2
-                implicitWidth: Math.min(boxContent.implicitWidth + Theme.padding, mainLayout.width)
-                implicitHeight: boxContent.implicitHeight + Theme.padding
+                padding: Theme.halfPadding
+
+                background: Rectangle {
+                    color: previewBox.color
+                    radius: 8
+                    border.color: Theme.palette.baseColor2
+                }
+
                 states: [
                     State {
                         when: !previewBox.highlighted
@@ -116,9 +122,9 @@ Control {
 
                 onHighlightedChanged: if(highlighted) animation.start()
 
-                ColumnLayout {
+                contentItem: ColumnLayout {
                     id: boxContent
-                    anchors.centerIn: parent
+
                     spacing: 2
 
                     StatusBaseText {
@@ -140,7 +146,8 @@ Control {
                         }
 
                         StatusBaseText {
-                            Layout.maximumWidth: mainLayout.width - Theme.padding
+                            Layout.fillWidth: true
+
                             text: previewBox.value
                             elide: Text.ElideRight
                             font.pixelSize: Theme.primaryTextFontSize
@@ -170,6 +177,8 @@ Control {
                 id: symbolBox
                 objectName: "symbolBox"
 
+                width: Math.min(implicitWidth, parent.width)
+
                 label: qsTr("Symbol")
                 value: token.symbol
             }
@@ -177,6 +186,8 @@ Control {
             CustomPreviewBox {
                 id: totalbox
                 objectName: "totalBox"
+
+                width: Math.min(implicitWidth, parent.width)
 
                 label: qsTr("Total")
                 value: token.infiniteSupply
@@ -193,6 +204,8 @@ Control {
                 id: remainingBox
                 objectName: "remainingBox"
 
+                width: Math.min(implicitWidth, parent.width)
+
                 readonly property int remainingTokens: root.preview ? token.supply : token.remainingTokens
 
                 label: qsTr("Remaining")
@@ -205,6 +218,8 @@ Control {
             }
 
             CustomPreviewBox {
+                width: Math.min(implicitWidth, parent.width)
+
                 visible: root.isAssetPanel
                 label: qsTr("DP")
                 value: token.decimals
@@ -212,6 +227,9 @@ Control {
 
             CustomPreviewBox {
                 objectName: "transferableBox"
+
+                width: Math.min(implicitWidth, parent.width)
+
                 visible: !root.isAssetPanel
                 label: qsTr("Transferable")
                 value: token.transferable ? qsTr("Yes") : qsTr("No")
@@ -221,6 +239,8 @@ Control {
                 objectName: "destructibleBox"
                 visible: !root.isAssetPanel
 
+                width: Math.min(implicitWidth, parent.width)
+
                 label: qsTr("Destructible")
                 value: token.remotelyDestruct ? qsTr("Yes") : qsTr("No")
             }
@@ -228,23 +248,28 @@ Control {
             CustomPreviewBox {
                 visible: root.accountBoxVisible
 
+                width: Math.min(implicitWidth, parent.width)
+
                 label: qsTr("Account")
                 value: token.accountName
             }
 
-            Rectangle {
+            Control {
                 visible: root.networkBoxVisible
+
+                width: Math.min(implicitWidth, parent.width)
                 height: symbolBox.height
-                width: rowChain.implicitWidth + 2 * Theme.padding
-                border.width: 1
-                radius: 8
-                border.color: Theme.palette.baseColor2
-                color: "transparent"
 
-                RowLayout {
-                    id: rowChain
+                horizontalPadding: Theme.padding
 
-                    anchors.centerIn: parent
+                background: Rectangle {
+                     border.width: 1
+                     radius: 8
+                     border.color: Theme.palette.baseColor2
+                     color: "transparent"
+                }
+
+                contentItem: RowLayout {
                     spacing: Theme.padding
 
                     SVGImage {
@@ -257,11 +282,13 @@ Control {
 
                     StatusBaseText {
                         Layout.alignment: Qt.AlignVCenter
+                        Layout.fillWidth: true
 
                         text: token.chainName
                         font.pixelSize: Theme.additionalTextSize
                         font.weight: Font.Medium
                         color: Theme.palette.baseColor1
+                        elide: Text.ElideRight
                     }
                 }
             }

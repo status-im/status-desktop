@@ -43,6 +43,9 @@ SplitView {
                 anchors.fill: parent
                 anchors.margins: 50
 
+                preferredContentWidth: 560
+                internalRightPadding: 50
+
                 communityName: communityName.text
                 communityLogo: doodles.checked ? ModelsData.collectibles.doodles : ModelsData.collectibles.mana
                 communityColor: color1.checked ?  "#FFC4E9" : "#f44336"

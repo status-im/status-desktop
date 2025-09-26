@@ -18,6 +18,9 @@ import QtModelsToolkit
 SettingsPage {
     id: root
 
+    property int preferredContentWidth: width
+    property int internalRightPadding: 0
+
     property RootStore rootStore
 
     property var membersModel
@@ -47,13 +50,14 @@ SettingsPage {
 
     buttons: [
         StatusButton {
+            Layout.fillWidth: true
+
             text: qsTr("Invite people")
             onClicked: root.inviteNewPeopleClicked()
         }
     ]
 
     contentItem: ColumnLayout {
-
         function goTo(tab: int) {
             let tabButton = membersTabBar.currentItem
             switch (tab) {
@@ -70,16 +74,19 @@ SettingsPage {
                 tabButton = bannedBtn
                 break
             }
-            
+
             if (tabButton.enabled)
                 membersTabBar.currentIndex = tabButton.TabBar.index
         }
-        
+
         spacing: Theme.padding
 
         StatusTabBar {
             id: membersTabBar
-            Layout.preferredWidth: root.preferredContentWidth
+
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.fillWidth: true
+            Layout.rightMargin: root.internalRightPadding
 
             StatusTabButton {
                 readonly property int subSection: MembersTabPanel.TabType.AllMembers
@@ -123,14 +130,21 @@ SettingsPage {
 
         SearchBox {
             id: memberSearch
-            Layout.preferredWidth: root.preferredContentWidth
+
+            Layout.maximumWidth: root.preferredContentWidth
+            Layout.fillWidth: true
+            Layout.rightMargin: root.internalRightPadding
+
             placeholderText: qsTr("Search by name or chat key")
             enabled: membersTabBar.currentItem.enabled
         }
 
         MembersTabPanel {
-            Layout.preferredWidth: root.preferredContentWidth
+            Layout.fillWidth: true
             Layout.fillHeight: true
+
+            preferredContentWidth: root.preferredContentWidth
+            internalRightPadding: root.internalRightPadding
 
             panelType: membersTabBar.currentItem.subSection
             model: {
