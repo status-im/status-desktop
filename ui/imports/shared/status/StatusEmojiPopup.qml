@@ -26,7 +26,6 @@ StatusDropdown {
 
     signal emojiSelected(string emoji, bool atCu, string hexcode)
 
-    modal: false
     width: 360
     padding: 0
 
@@ -206,6 +205,7 @@ StatusDropdown {
         StatusGridView {
             id: emojiGrid
             Layout.fillWidth: true
+            Layout.preferredHeight: root.availableHeight || contentHeight
             Layout.fillHeight: true
             Layout.leftMargin: d.headerMargin
 

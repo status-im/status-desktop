@@ -423,18 +423,39 @@ Loader {
             }
         }
 
+        function isAbove(mouseArea, mouse, popupH) {
+            const p = mouseArea.mapToItem(null, mouse.x, mouse.y)
+            const winH = mouseArea.Window.height
+            const spaceAbove = p.y
+            const spaceBelow = winH - p.y
+
+            // plenty of room below → place below
+            if (popupH <= spaceBelow) return false
+             // no room below but fits above → place above
+            if (popupH <= spaceAbove) return true
+            // otherwise pick the side with more space
+            return spaceAbove > spaceBelow
+        }
+
         function addReactionClicked(mouseArea, mouse) {
-            if (!d.addReactionAllowed)
-                return
-            if (d.emojiPopupOpened) {
-                return
-            }
+            if (!d.addReactionAllowed || d.emojiPopupOpened) return
+
             // Don't use mouseArea as parent, as it will be destroyed right after opening menu
             const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
-            // TODO fix position, it's way too high
+            // Position: put popup next to the click and clamp inside the container
+            let x =  point.x - emojiPopup.width
+            let y = 0
+            if (isAbove(mouseArea, mouse, emojiPopup.height)) {
+                y = point.y - emojiPopup.height - Theme.bigPadding
+            } else {
+                y = point.y + Theme.bigPadding
+            }
+
             emojiPopup.open()
-            emojiPopup.x = point.x
-            emojiPopup.y = point.y
+            emojiPopup.directParent = root
+            emojiPopup.relativeX = x
+            emojiPopup.relativeY = y
+
             d.emojiPopupOpened = true
         }
 
@@ -448,7 +469,6 @@ Loader {
                 break;
             }
         }
-
 
         function correctBridgeNameCapitalization(bridgeName) {
             return (bridgeName === "discord") ? "Discord" : bridgeName

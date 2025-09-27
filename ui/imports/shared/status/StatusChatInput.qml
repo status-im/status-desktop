@@ -181,10 +181,9 @@ Rectangle {
                 PropertyChanges {
                     target: emojiPopup
 
-                    parent: emojiBtn
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                    x: d.emojiPopupPosition.x
-                    y: d.emojiPopupPosition.y
+                    directParent: emojiBtn
+                    relativeX: d.emojiPopupPosition.x
+                    relativeY: d.emojiPopupPosition.y
                 }
             }
         }
@@ -195,10 +194,9 @@ Rectangle {
                 PropertyChanges {
                     target: stickersPopup
 
-                    parent: stickersBtn
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                    x: d.stickersPopupPosition.x
-                    y: d.stickersPopupPosition.y
+                    directParent: stickersBtn
+                    relativeX: d.stickersPopupPosition.x
+                    relativeY: d.stickersPopupPosition.y
                 }
             }
         }
@@ -1483,7 +1481,7 @@ Rectangle {
                                 onClicked: {
                                     highlighted = true
                                     control.openGifPopupRequest({// Properties needed for relative position and close
-                                                                    popupParent: gifBtn,
+                                                                    popupParent: actions,
                                                                     closeAfterSelection: control.closeGifPopupAfterSelection
                                                                 },
                                                                 // Gif selected callback

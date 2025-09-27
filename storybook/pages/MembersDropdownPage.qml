@@ -88,6 +88,8 @@ SplitView {
         MembersDropdown {
             id: membersDropdown
 
+            directParent: container
+
             closePolicy: Popup.NoAutoClose
 
             model: SortFilterProxyModel {

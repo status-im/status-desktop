@@ -26,7 +26,7 @@ ColumnLayout {
         StatusDropdown {
             id: dropdown
 
-            parent: selector.addButton
+            directParent: selector.addButton
             width: 200
             contentItem: ColumnLayout {
                 spacing: 10

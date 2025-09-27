@@ -37,6 +37,8 @@ Item {
     signal updateClicked(string packId)
     signal buyClicked(string packId, int price)
 
+    implicitHeight: childrenRect.height
+
     StatusGridView {
         id: availableStickerPacks
         objectName: "stickerMarketStatusGridView"

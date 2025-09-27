@@ -14,7 +14,7 @@ import StatusQ.Components
 //TODO improve this!
 import AppLayouts.Chat.stores as ChatStores
 
-Popup {
+StatusDropdown {
     id: root
 
     property ChatStores.RootStore store
@@ -57,8 +57,6 @@ Popup {
     enabled: !!d.recentStickers && !!d.stickerPackList
     width: 360
     height: 440
-    modal: false
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
         radius: Theme.radius
         color: Theme.palette.background
@@ -89,8 +87,7 @@ Popup {
 
     padding: 0
 
-    ColumnLayout {
-        anchors.fill: parent
+    contentItem: ColumnLayout {
         spacing: 0
 
         StatusStickerMarket {

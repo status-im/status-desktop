@@ -15,7 +15,9 @@ Item {
     Component {
         id: componentUnderTest
         NetworkSelectPopup {
-            anchors.centerIn: parent
+            directParent: root
+            relativeX: parent.width/2 - width/2
+            relativeY: parent.height/2 - height/2
             flatNetworks: NetworksModel.flatNetworks
             visible: true
         }

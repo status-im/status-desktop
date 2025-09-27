@@ -140,14 +140,16 @@ Item {
                 }
             }
 
-            popup: Popup {
+            popup: StatusDropdown {
+                id: dropdown
+
+                directParent: comboBox
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                y: comboBox.height + 4
+                relativeY: comboBox.height + 4
 
                 implicitWidth: comboBox.width
                 height: Math.min(implicitContentHeight + topPadding + bottomPadding,
                                  comboBox.Window.height - topMargin - bottomMargin)
-                margins: 8
 
                 padding: 1
                 verticalPadding: 8
@@ -179,7 +181,7 @@ Item {
             }
 
             delegate: StatusItemDelegate {
-                width: comboBox.width
+                width: dropdown.width
                 highlighted: comboBox.highlightedIndex === index
                 font: comboBox.font
                 text: control.textRole ? modelData[control.textRole] : modelData

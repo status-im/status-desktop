@@ -14,7 +14,7 @@ StatusDropdown {
     padding: 8
     leftPadding: 16
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
         spacing: 8
 
         StatusIconTextButton {

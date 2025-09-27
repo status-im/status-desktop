@@ -15,7 +15,7 @@ import utils
 import "../controls"
 import "../views"
 
-Popup {
+StatusDropdown {
     id: root
 
     required property var flatNetworks

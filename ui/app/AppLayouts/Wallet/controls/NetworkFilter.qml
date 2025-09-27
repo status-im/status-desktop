@@ -162,8 +162,14 @@ StatusComboBox {
 
     popup: NetworkSelectPopup {
         id: networkSelectorView
-        y: control.height + 4
-        x: root.width - width
+
+        directParent: root
+        relativeX: parent.width - width
+        relativeY: parent.height + 4
+
+        padding: 1
+        topPadding: 8
+        bottomPadding: !!d.window.window ? d.window.window.SafeArea.margins.bottom: 0
 
         flatNetworks: root.flatNetworks
         selectionAllowed: root.selectionAllowed
@@ -218,5 +224,8 @@ StatusComboBox {
 
             return ""
         }
+        property var window: root.control.Window
+        property int windowWidth: window ? window.width: Screen.width
+        property int windowHeight: window ? window.height: Screen.height
     }
 }

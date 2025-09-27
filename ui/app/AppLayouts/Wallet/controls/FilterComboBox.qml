@@ -190,13 +190,14 @@ ComboBox {
         y: root.topPadding + (root.availableHeight - height) / 2
     }
 
-    popup: Popup {
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-        y: root.height + 4
+    popup: StatusDropdown {
+        id: dropdown
+
+        directParent: root
+        relativeY: root.height + 4
 
         implicitWidth: 290
         implicitHeight: Math.min(contentHeight+margins, 380)
-        margins: Theme.halfPadding
 
         padding: 0
         bottomPadding: Theme.halfPadding

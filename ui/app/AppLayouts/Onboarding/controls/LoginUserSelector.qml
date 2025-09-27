@@ -90,7 +90,8 @@ Control {
 
         closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnEscape
 
-        y: parent.height + 2
+        directParent: root
+        relativeY: root.height + 2
         width: root.width
 
         verticalPadding: Theme.halfPadding
