@@ -2124,8 +2124,8 @@ method insertMockedKeycardAction*[T](self: Module[T], cardIndex: int) =
 method removeMockedKeycardAction*[T](self: Module[T]) =
   self.keycardService.removeMockedKeycardAction()
 
-method fakeLoadingScreenFinished*[T](self: Module[T]) =
-  self.events.emit(FAKE_LOADING_SCREEN_FINISHED, Args())
+method splashScreenFinished*[T](self: Module[T]) =
+  self.events.emit(SPLASH_SCREEN_FINISHED, Args())
 
 method addressWasShown*[T](self: Module[T], address: string) =
   if address.len == 0:

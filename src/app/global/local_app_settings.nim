@@ -13,8 +13,6 @@ const DEFAULT_SCROLL_VELOCITY = 0 # unset
 const DEFAULT_SCROLL_DECELERATION = 0 # unset
 const LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED = "global/custom_mouse_scroll_enabled"
 const DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED = false
-const LAS_KEY_FAKE_LOADING_SCREEN_ENABLED = "global/fake_loading_screen"
-let DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and not TEST_MODE_ENABLED #enabled in production, disabled in development and e2e tests
 const LAS_KEY_SHARDED_COMMUNITIES_ENABLED = "global/sharded_communities"
 const DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED = false
 const LAS_KEY_TRANSLATIONS_ENABLED = "global/translations_enabled"
@@ -129,19 +127,6 @@ QtObject:
   proc displayMockedKeycardWindow*(self: LocalAppSettings): bool {.slot.} =
     return DISPLAY_MOCKED_KEYCARD_WINDOW
 
-  proc fakeLoadingScreenEnabledChanged*(self: LocalAppSettings) {.signal.}
-  proc getFakeLoadingScreenEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(DEFAULT_FAKE_LOADING_SCREEN_ENABLED)).boolVal
-
-  proc setFakeLoadingScreenEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
-    self.settings.setValue(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(enabled))
-    self.fakeLoadingScreenEnabledChanged()
-
-  QtProperty[bool] fakeLoadingScreenEnabled:
-    read = getFakeLoadingScreenEnabled
-    write = setFakeLoadingScreenEnabled
-    notify = fakeLoadingScreenEnabledChanged
-
   proc refreshTokenEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getRefreshTokenEnabled*(self: LocalAppSettings): bool {.slot.} =
     self.settings.value(LAS_KEY_REFRESH_TOKEN_ENABLED, newQVariant(false)).boolVal
@@ -194,7 +179,6 @@ QtObject:
       of LAS_KEY_SCROLL_VELOCITY: self.scrollVelocityChanged()
       of LAS_KEY_SCROLL_DECELERATION: self.scrollDecelerationChanged()
       of LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED: self.isCustomMouseScrollingEnabledChanged()
-      of LAS_KEY_FAKE_LOADING_SCREEN_ENABLED: self.fakeLoadingScreenEnabledChanged()
       of LAS_KEY_SHARDED_COMMUNITIES_ENABLED: self.wakuV2ShardedCommunitiesEnabledChanged()
       of LAS_KEY_TRANSLATIONS_ENABLED: self.translationsEnabledChanged()
 
