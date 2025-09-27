@@ -296,6 +296,11 @@ type StatusDesktopConfig = object
     desc: "Sets address for prometheus metrics"
     name: "METRICS_ADDRESS"
     abbr: "metrics-address" .}: string
+  verifyCredentials* {.
+    defaultValue: false
+    desc: "Verify that all required credentials are present and exit"
+    name: "VERIFY_CREDENTIALS"
+    abbr: "verify-credentials" .}: bool
 
 # On macOS the first time when a user gets the "App downloaded from the
 # internet" warning, and clicks the Open button, the OS passes a unique process
@@ -310,4 +315,4 @@ else:
 if defined(macosx):
   cliParams.keepIf(proc(p: string): bool = not p.startsWith("-psn_"))
 
-let desktopConfig = StatusDesktopConfig.load(cmdLine = cliParams, envVarsPrefix = RUN_TIME_PREFIX)
+let desktopConfig* = StatusDesktopConfig.load(cmdLine = cliParams, envVarsPrefix = RUN_TIME_PREFIX)
