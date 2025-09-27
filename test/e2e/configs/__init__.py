@@ -19,8 +19,8 @@ except ImportError:
 
 if AUT_PATH is None:
     exit('Please add "AUT_PATH" in ./configs/_local.py')
-if get_platform() == "Windows" and 'bin' not in AUT_PATH:
-    exit('Please use launcher from "bin" folder in "AUT_PATH"')
+if get_platform() == "Windows" and 'Status' not in AUT_PATH:
+    exit('Please use launcher from "Status" folder in "AUT_PATH"')
 AUT_PATH = SystemPath(AUT_PATH)
 WALLET_SEED = os.getenv('WALLET_TEST_USER_SEED')
 
