@@ -81,7 +81,7 @@ QObject {
 
         communityIcon [url] - renamed from communityImage
     **/
-    readonly property alias model: sfpm
+    readonly property alias model: proxyModel
 
     ObjectProxyModel {
         id: proxyModel
@@ -191,14 +191,9 @@ QObject {
              "marketPrice", "marketChangePct24hour", "communityIcon"]
     }
 
-    SortFilterProxyModel {
-        id: sfpm
+//    SortFilterProxyModel {
+//        id: sfpm
 
-        sourceModel: proxyModel
-
-        filters: ValueFilter {
-            roleName: "visible"
-            value: true
-        }
-    }
+//        sourceModel: proxyModel
+//    }
 }
