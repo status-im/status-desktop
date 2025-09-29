@@ -3,12 +3,12 @@ import base
 
 import ../../../../app_service/service/settings/dto/[settings]
 
-type WakuBackedUpSettingsSignal* = ref object of Signal
+type BackedUpSettingsSignal* = ref object of Signal
   backedUpSettingField*: SettingsFieldDto
 
-proc fromEvent*(T: type WakuBackedUpSettingsSignal, event: JsonNode): WakuBackedUpSettingsSignal =
-  result = WakuBackedUpSettingsSignal()
-  result.signalType = SignalType.WakuBackedUpSettings
+proc fromEvent*(T: type BackedUpSettingsSignal, event: JsonNode): BackedUpSettingsSignal =
+  result = BackedUpSettingsSignal()
+  result.signalType = SignalType.BackedUpSettings
 
   let e = event["event"]
   if e.contains("backedUpSettings"):

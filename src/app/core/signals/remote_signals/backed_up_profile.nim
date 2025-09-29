@@ -3,12 +3,12 @@ import base
 
 import ../../../../app_service/service/accounts/dto/[accounts]
 
-type WakuBackedUpProfileSignal* = ref object of Signal
+type BackedUpProfileSignal* = ref object of Signal
   backedUpProfile*: WakuBackedUpProfileDto
 
-proc fromEvent*(T: type WakuBackedUpProfileSignal, event: JsonNode): WakuBackedUpProfileSignal =
-  result = WakuBackedUpProfileSignal()
-  result.signalType = SignalType.WakuBackedUpProfile
+proc fromEvent*(T: type BackedUpProfileSignal, event: JsonNode): BackedUpProfileSignal =
+  result = BackedUpProfileSignal()
+  result.signalType = SignalType.BackedUpProfile
 
   let e = event["event"]
   if e.contains("backedUpProfile"):
