@@ -120,7 +120,7 @@ StatusListItem {
     }
 
     readonly property string inTransactionValue: {
-        if (!isModelDataValid || !isMultiTransaction) {
+        if (!isModelDataValid) {
             return qsTr("N/A")
         } else if (!modelData.inSymbol && !!modelData.tokenInAddress) {
             return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(inCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenInAddress, 4))
@@ -128,7 +128,7 @@ StatusListItem {
         return currenciesStore.formatCurrencyAmount(inCryptoValue, modelData.inSymbol)
     }
     readonly property string outTransactionValue: {
-        if (!isModelDataValid || !isMultiTransaction) {
+        if (!isModelDataValid) {
             return qsTr("N/A")
         } else if (!modelData.outSymbol && !!modelData.tokenOutAddress) {
             return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(outCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenOutAddress, 4))
