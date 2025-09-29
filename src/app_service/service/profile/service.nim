@@ -64,8 +64,8 @@ QtObject:
       let args = SettingsTextValueArgs(e)
       updateDisplayName(args.value)
 
-    self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
-      var receivedData = WakuBackedUpProfileSignal(e)
+    self.events.on(SignalType.BackedUpProfile.event) do(e: Args):
+      var receivedData = BackedUpProfileSignal(e)
 
       if receivedData.backedUpProfile.displayName != "":
         updateDisplayName(receivedData.backedUpProfile.displayName)

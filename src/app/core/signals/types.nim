@@ -1,11 +1,9 @@
 {.used.}
 
 import ./remote_signals/[base, chronicles_logs, community, connector, discovery_summary, envelope, expired, mailserver, messages,
-  peerstats, signal_type, stats, wallet, whisper_filter, update_available, status_updates, waku_backed_up_profile,
-  waku_backed_up_settings, waku_backed_up_keypair, waku_backed_up_watch_only_account,
-  waku_fetching_backup_progress, pairing, node, networks]
+  peerstats, signal_type, stats, wallet, whisper_filter, update_available, status_updates, backed_up_profile,
+  backed_up_settings, pairing, node, networks]
 
 export base, chronicles_logs, community, connector, discovery_summary, envelope, expired, mailserver, messages, peerstats,
-  signal_type, stats, wallet, whisper_filter, update_available, status_updates, waku_backed_up_profile,
-  waku_backed_up_settings, waku_backed_up_keypair, waku_backed_up_watch_only_account,
-  waku_fetching_backup_progress, pairing, node, networks
+  signal_type, stats, wallet, whisper_filter, update_available, status_updates, backed_up_profile,
+  backed_up_settings, pairing, node, networks

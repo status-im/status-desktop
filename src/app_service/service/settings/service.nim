@@ -145,8 +145,8 @@ QtObject:
         for settingsField in receivedData.settings:
           self.parseSettingsField(settingsField)
 
-    self.events.on(SignalType.WakuBackedUpSettings.event) do(e: Args):
-      var receivedData = WakuBackedUpSettingsSignal(e)
+    self.events.on(SignalType.BackedUpSettings.event) do(e: Args):
+      var receivedData = BackedUpSettingsSignal(e)
       self.parseSettingsField(receivedData.backedUpSettingField)
 
     self.initialized = true
