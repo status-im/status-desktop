@@ -12367,6 +12367,13 @@ to load</source>
     </message>
 </context>
 <context>
+    <name>NotificationCard</name>
+    <message>
+        <source>Just now</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>NotificationSelect</name>
     <message>
         <source>Send Alerts</source>
