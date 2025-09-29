@@ -2,7 +2,9 @@ pragma Singleton
 
 import QtQuick
 
-QtObject {
+import StatusQ.Core.Utils as SQUtils
+
+SQUtils.QObject {
     enum FontSize {
         FontSizeXS,
         FontSizeS,
@@ -197,7 +199,10 @@ QtObject {
 
     property int dynamicFontUnits: 0
 
+    readonly property int currentFontSize: d.fontSize
+
     function updateFontSize(fontSize:int) {
+        d.fontSize = fontSize
         switch (fontSize) {
             case Theme.FontSizeXS:
                 dynamicFontUnits = -2
@@ -248,5 +253,12 @@ QtObject {
     }
     function emoji(name) {
         return assetPath + "twemoji/svg/" + name + ".svg"
+    }
+
+
+    QtObject {
+        id: d
+
+        property int fontSize: Theme.FontSizeM
     }
 }
