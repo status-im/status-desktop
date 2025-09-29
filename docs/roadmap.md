@@ -91,26 +91,28 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
   - Progress is also inherited from the Tablet Epic above
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 26%
+  - In Progress ⏳ 🟩🟨⬜⬜⬜ 36%
 - [Memory and Performance improvements](https://github.com/status-im/status-desktop/issues/18296)
   - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
   - In Progress ⏳ 🟩🟩🟨⬜⬜ 53%
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
-  - In Progress ⏳ 🟩🟩🟩⬜⬜ 68%
+  - In Progress ⏳ 🟩🟩🟩🟨⬜ 73%
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
   - In Progress ⏳ 🟩⬜⬜⬜⬜ 25%
 - [Local Backup finishing touches](https://github.com/status-im/status-desktop/issues/18583)
-  - In Progress ⏳ 🟩🟩🟨⬜⬜ 50%
+  - In Progress ⏳ 🟩🟩🟩⬜⬜ 63%
 - [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
-  - In Progress ⏳ 🟩🟩🟩⬜⬜ 69%
+  - In Progress ⏳ 🟩🟩🟩🟩🟩 100%
+- [Opt-in Messages Sync during local pairing](https://github.com/status-im/status-desktop/issues/18892)
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 50%
 - [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
   - In Progress ⏳
 - [Translation initiative](https://github.com/status-im/status-desktop/issues/18293)
-  - In Progress ⏳ 🟩🟩🟨⬜⬜ 57%
+  - In Progress ⏳ 🟩🟩🟩🟨⬜ 70%
 - [Full Emoji list in Reactions](https://github.com/status-im/status-desktop/issues/18766)
-  - In Progress ⏳ 🟩🟩🟩⬜⬜ 65%
+  - In Progress ⏳ 🟩🟩🟩🟩⬜ 80%
 - Improve Token List and Support custom tokens
   - In Progress ⏳
 
