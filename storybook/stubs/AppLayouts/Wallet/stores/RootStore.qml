@@ -9,6 +9,9 @@ import Models
 QtObject {
     id: root
 
+    property bool showSavedAddresses
+    property bool isAccountTokensReloading
+
     // TODO: Remove this. This stub should be empty. The color transformation should be done in adaptors or in the first model transformation steps.
 
     function savedAddressNameExists(name) {
