@@ -102,7 +102,7 @@ SplitView {
                                                    colorIds: "purple;pink;magenta"
                                                })
         property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {
-            function toggleNetwork(chainId) {
+            function toggleNetworkEnabled(chainId) {
                 print ("toggleNetwork called with chainId: " + chainId)
             }
         }
@@ -144,11 +144,22 @@ SplitView {
                 width: parent.width
                 active: globalUtilsReady && mainModuleReady
 
+                QtObject {
+                    id: localAppSettings
+
+                    property string seenNetworkChains: "[]"
+                }
+
                 sourceComponent: WalletHeader {
                     networkConnectionStore: connectionStore
                     overview: allAccountsCheckbox.checked ? d.dummyAllAccountsOverview :  d.dummyOverview
-                    walletStore: walletStore
+                    walletStore: WalletStores.RootStore
                     networksStore: d.networksStore
+
+                    dAppsModel: ListModel {
+
+                    }
+
                     width: parent.width
                 }
             }
