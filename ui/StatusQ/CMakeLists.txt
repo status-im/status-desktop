@@ -222,13 +222,13 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication})
     target_sources(StatusQ PRIVATE
         src/statuswindow_osx.mm
-        src/keychain_osx.mm
+        src/keychain_apple.mm
     )
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
     target_sources(StatusQ PRIVATE
         src/ios_utils.mm
         src/statuswindow_other.cpp
-        src/keychain_other.cpp
+        src/keychain_apple.mm
     )
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
     target_sources(StatusQ PRIVATE
