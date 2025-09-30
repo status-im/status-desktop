@@ -72,7 +72,7 @@ private:
     QFuture<void> m_future;
     LAContext *m_activeAuthContext;
 
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     Status getCredential(const QString &reason, const QString &account, QString *out);
     void reevaluateAvailability();
 #endif
