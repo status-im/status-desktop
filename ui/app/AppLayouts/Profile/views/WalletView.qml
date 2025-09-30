@@ -149,7 +149,7 @@ SettingsContentBase {
                 stackContainer.currentIndex === root.editNetworksViewIndex ? editNetwork.height:
                 stackContainer.currentIndex === root.accountOrderViewIndex ? accountOrderView.height:
                 stackContainer.currentIndex === root.manageTokensViewIndex ? manageTokensView.implicitHeight :
-                stackContainer.currentIndex === root.savedAddressesViewIndex ? savedAddressesView.height:
+                stackContainer.currentIndex === root.savedAddressesViewIndex ? root.availableHeight:
                                                                              accountView.height
         currentIndex: mainViewIndex
 
@@ -401,6 +401,7 @@ SettingsContentBase {
 
         SavedAddressesView {
             id: savedAddressesView
+
             contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
