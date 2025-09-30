@@ -18576,6 +18576,17 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
+    <name>WalletAccountHeader</name>
+    <message>
+        <source>All accounts</source>
+        <translation type="unfinished">Všechny účty</translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>WalletAddressMenu</name>
     <message>
         <source>Address copied</source>
