@@ -4,7 +4,20 @@ library 'status-jenkins-lib@v1.9.16'
 pipeline {
 
   agent {
-    label 'linux && x86_64 && qt-6.9.2'
+    /* Image with Ubuntu 22.04 and QT 6.9.2 */
+    docker {
+      label 'linuxcontainer'
+      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
+      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
+      args '--entrypoint="" ' +
+          '--network=host ' +
+          '--cap-add=SYS_ADMIN ' +
+          '--security-opt=apparmor:unconfined ' +
+          '--device=/dev/fuse ' +
+          '--volume=/var/run/docker.sock:/var/run/docker.sock ' +
+          '--volume=/home/jenkins/.squish-license:/home/jenkins/.squish-license ' +
+          '--volume=/opt/squish-runner-9.0.1-qt-6.9:/opt/squish-runner-9.0.1-qt-6.9'
+    }
   }
 
   parameters {

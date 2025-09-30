@@ -7,7 +7,7 @@ def isPRBuild = utils.isPRBuild()
 pipeline {
   agent {
     docker {
-      label 'linux'
+      label 'linuxcontainer'
       image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
     }
   }

@@ -6,7 +6,7 @@ library 'status-jenkins-lib@v1.9.27'
 urls = [:]
 
 pipeline {
-  agent { label 'linux' }
+  agent { label 'linuxcontainer' }
 
   options {
     timestamps()
