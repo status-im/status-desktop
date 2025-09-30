@@ -30,7 +30,7 @@ FocusScope {
     property alias headerButton: header.headerButton
     property alias networkFilter: header.networkFilter
 
-    default property alias content: contentWrapper.children
+    default property alias content: contentWrapper.target
 
     signal dappListRequested()
     signal dappConnectRequested()
@@ -59,8 +59,9 @@ FocusScope {
             onManageNetworksRequested: root.manageNetworksRequested()
         }
 
-        Item {
+        LayoutItemProxy {
             id: contentWrapper
+
             Layout.fillWidth: true
             Layout.fillHeight: true
         }

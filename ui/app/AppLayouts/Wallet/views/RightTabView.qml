@@ -64,7 +64,6 @@ RightTabBaseView {
 
     StackLayout {
         id: stack
-        anchors.fill: parent
 
         onCurrentIndexChanged: {
             RootStore.backButtonName = d.getBackButtonText(currentIndex)
