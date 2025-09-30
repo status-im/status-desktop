@@ -67,7 +67,7 @@ StatusDropdown {
             showIndicator: root.showSelectionIndicator
             showNewChainIcon: root.showNewChainIcon
 
-            onToggleNetwork: {
+            onToggleNetwork: (chainId, index) => {
                 if (!root.multiSelection && root.closePolicy !== Popup.NoAutoClose)
                     root.close()
                 root.toggleNetwork(chainId, index)
