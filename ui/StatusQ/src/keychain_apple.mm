@@ -10,13 +10,24 @@
 #include <LocalAuthentication/LocalAuthentication.h>
 #include <Security/Security.h>
 
+#if TARGET_OS_OSX
 const static auto authPolicy =
-#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 150000
-    LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion;
-#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101202
-    LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-#else
+    #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 150000
+        LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion;
+    #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101202
+        LAPolicyDeviceOwnerAuthenticationWithBiometrics;
+    #else
+        LAPolicyDeviceOwnerAuthentication;
+    #endif
+#elif TARGET_OS_IPHONE
+const static LAPolicy authPolicy =
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+        LAPolicyDeviceOwnerAuthenticationWithBiometrics;
+    #else
     LAPolicyDeviceOwnerAuthentication;
+    #endif
+#else
+const static LAPolicy authPolicy = LAPolicyDeviceOwnerAuthentication;
 #endif
 
 static Keychain::Status convertStatus(OSStatus status)
@@ -26,8 +37,16 @@ static Keychain::Status convertStatus(OSStatus status)
         return Keychain::StatusSuccess;
     case errSecItemNotFound:
         return Keychain::StatusNotFound;
+#if defined(errSecCSCancelled)
+    // Present on macOS SDKs
     case errSecCSCancelled:
         return Keychain::StatusCancelled;
+#endif
+#if defined(errSecUserCanceled)
+    // Present on iOS (and also macOS); treat as the same "user cancelled" outcome
+    case errSecUserCanceled:
+        return Keychain::StatusCancelled;
+#endif
     default:
         return Keychain::StatusGenericError;
     }
@@ -138,7 +157,16 @@ void Keychain::cancelActiveRequest()
 Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
 {
     CFErrorRef error = NULL;
-    auto flags = kSecAccessControlBiometryCurrentSet | kSecAccessControlOr | kSecAccessControlWatch;
+
+    // On iOS there is no Apple Watch companion unlock; keep flags minimal.
+    // We still create an access control object even if it's not added to the query (left commented below),
+    // to keep parity with macOS and make it easy to enable later.
+    #if TARGET_OS_OSX
+        auto flags = kSecAccessControlBiometryCurrentSet | kSecAccessControlOr | kSecAccessControlWatch;
+    #else
+        auto flags = kSecAccessControlBiometryCurrentSet;
+    #endif
+
     auto accessControl = SecAccessControlCreateWithFlags(NULL,
                                                          kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
                                                          flags,
@@ -157,7 +185,8 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
         (__bridge id) kSecAttrService: m_service.toNSString(),
         (__bridge id) kSecAttrAccount: account.toNSString(),
         (__bridge id) kSecValueData: [password.toNSString() dataUsingEncoding:NSUTF8StringEncoding],
-        //                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
+        // (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl, // enable if you want Keychain to enforce biometrics
+
     };
 
     SecItemDelete((__bridge CFDictionaryRef) query);                  // Ensure old item is removed
@@ -208,15 +237,26 @@ Keychain::Status Keychain::getCredential(const QString &reason, const QString &a
         (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
 
+    // Use the LAContext with Keychain when available. iOS 11+/macOS 10.13+ support kSecUseAuthenticationContext.
+    #if (defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || \
+        (defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300)
+        NSMutableDictionary *mutableQuery = [query mutableCopy];
+        mutableQuery[(__bridge id)kSecUseAuthenticationContext] = m_activeAuthContext;
+        query = mutableQuery;
+    #endif
+
     CFDataRef data = NULL;
 
     const auto status = SecItemCopyMatching((__bridge CFDictionaryRef) query, (CFTypeRef *) &data);
 
+    // Convert and release CF data on success.
     if (out != nullptr) {
         auto dataString = [[NSString alloc] initWithData:(__bridge NSData *) data
                                                 encoding:NSUTF8StringEncoding];
         *out = QString::fromNSString(dataString);
     }
+
+    if (data) CFRelease(data);
 
     return convertStatus(status);
 }

@@ -59,5 +59,7 @@
     <string>Photos access is required to give you the ability to send images.</string>
     <key>NSAppleMusicUsageDescription</key>
     <string>Status uses Media Library to save and send Images. The Media Library module internally requires permissions to Apple Music</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>Log in securely to your account.</string>
 </dict>
 </plist>
