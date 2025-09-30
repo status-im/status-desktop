@@ -105,7 +105,13 @@ StatusListItem {
             if (d.txType === Constants.TransactionType.Mint) {
                 value += modelData.amount + " "
             }
-            value += (modelData.nftName ? modelData.nftName : "#" + modelData.tokenID)
+            if (modelData.nftName) {
+                value += modelData.nftName
+            } else if (modelData.tokenID) {
+                value += "#" + modelData.tokenID
+            } else {
+                value += qsTr("Unknown NFT")
+            }
             return value
         } else if (!modelData.symbol && !!modelData.tokenAddress) {
             return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.tokenAddress, 4))
@@ -114,7 +120,7 @@ StatusListItem {
     }
 
     readonly property string inTransactionValue: {
-        if (!isModelDataValid || !isMultiTransaction) {
+        if (!isModelDataValid) {
             return qsTr("N/A")
         } else if (!modelData.inSymbol && !!modelData.tokenInAddress) {
             return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(inCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenInAddress, 4))
@@ -122,7 +128,7 @@ StatusListItem {
         return currenciesStore.formatCurrencyAmount(inCryptoValue, modelData.inSymbol)
     }
     readonly property string outTransactionValue: {
-        if (!isModelDataValid || !isMultiTransaction) {
+        if (!isModelDataValid) {
             return qsTr("N/A")
         } else if (!modelData.outSymbol && !!modelData.tokenOutAddress) {
             return "%1 (%2)".arg(root.currenciesStore.formatCurrencyAmount(outCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenOutAddress, 4))
@@ -131,12 +137,14 @@ StatusListItem {
     }
 
     readonly property string tokenImage: {
-        if (!isModelDataValid || d.txType === Constants.TransactionType.ContractDeployment)
+        if (!isModelDataValid || 
+            d.txType === Constants.TransactionType.ContractDeployment || 
+            d.txType === Constants.TransactionType.ContractInteraction)
             return ""
         if (root.isNFT) {
             return modelData.nftImageUrl ? modelData.nftImageUrl : ""
         } else {
-            return Constants.tokenIcon(isMultiTransaction ? modelData.outSymbol : modelData.symbol)
+            return Constants.tokenIcon(isMultiTransaction ? d.txType === Constants.TransactionType.Receive ? modelData.inSymbol : modelData.outSymbol : modelData.symbol)
         }
     }
 
@@ -279,9 +287,14 @@ StatusListItem {
                 return qsTr("%1 to %2 in %3 on %4").arg(outTransactionValue).arg(inTransactionValue).arg(fromAddress).arg(networkName)
             return qsTr("%1 to %2 on %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
         case Constants.TransactionType.Bridge:
-            if (allAccounts)
-                return qsTr("%1 from %2 to %3 in %4").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
-            return qsTr("%1 from %2 to %3").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn)
+            if (allAccounts) {
+                if (networkNameIn)
+                    return qsTr("%1 from %2 to %3 in %4").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
+                return qsTr("%1 from %2 in %3").arg(outTransactionValue).arg(networkNameOut).arg(fromAddress)
+            }
+            if (networkNameIn)
+                return qsTr("%1 from %2 to %3").arg(outTransactionValue).arg(networkNameOut).arg(networkNameIn)
+            return qsTr("%1 from %2").arg(outTransactionValue).arg(networkNameOut)
         case Constants.TransactionType.ContractDeployment:
             const name = addressNameTo || addressNameFrom
             return qsTr("Via %1 on %2").arg(name).arg(networkName)
@@ -298,6 +311,7 @@ StatusListItem {
             if (allAccounts)
                 return qsTr("%1 in %2 for %3 on %4").arg(transactionValue).arg(fromAddress).arg(approvalSpender).arg(networkName)
             return qsTr("%1 for %2 on %3").arg(transactionValue).arg(approvalSpender).arg(networkName)
+        case Constants.TransactionType.ContractInteraction:
         default:
             // Unknown contract interaction
             if (allAccounts)

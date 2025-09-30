@@ -460,6 +460,10 @@
         <source>Clear all filters</source>
         <translation>모든 필터 지우기</translation>
     </message>
+    <message>
+        <source>Contract Interaction</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ActivityNotificationCommunityBanUnban</name>
@@ -17760,6 +17764,18 @@ access to your webcam</source>
         <source>Retry</source>
         <translation>다시 시도</translation>
     </message>
+    <message>
+        <source>Unknown NFT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 from %2 in %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 from %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TransactionModalFooter</name>
@@ -19061,10 +19077,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
 </context>
 <context>
     <name>main</name>
-    <message>
-        <source>Hello World</source>
-        <translation>안녕하세요 세상</translation>
-    </message>
     <message>
         <source>Status Desktop</source>
         <translation>스테이터스 데스크톱</translation>

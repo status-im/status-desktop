@@ -47,7 +47,6 @@ QtObject:
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)
 
-    # All activiy messages have a requestId matching the session ID or static request ID
     if not data.requestId.isSome():
       return
 

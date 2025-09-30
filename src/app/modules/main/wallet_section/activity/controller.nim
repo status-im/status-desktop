@@ -140,7 +140,7 @@ QtObject:
   proc updateFilter*(self: Controller) {.slot.} =
     self.invalidateData()
 
-    if not backend_activity.updateFilterForSession(self.sessionId(), self.currentActivityFilter, FETCH_BATCH_COUNT_DEFAULT):
+    if not backend_activity.updateFilterForSession(self.sessionId(), self.currentActivityFilter):
       self.status.setLoadingData(false)
       error "error updating activity filter"
       return
@@ -148,7 +148,7 @@ QtObject:
   proc resetActivityData*(self: Controller) {.slot.} =
     self.invalidateData()
 
-    let response = backend_activity.resetActivityFilterSession(self.sessionId(), FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.resetActivityFilterSession(self.sessionId())
     if response.error != nil:
       self.status.setLoadingData(false)
       error "error fetching activity entries from start: ", error = response.error
@@ -157,7 +157,7 @@ QtObject:
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
 
-    let response = backend_activity.getMoreForActivityFilterSession(self.sessionId(), FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.getMoreForActivityFilterSession(self.sessionId())
     if response.error != nil:
       self.status.setLoadingData(false)
       error "error fetching more activity entries: ", error = response.error
@@ -252,6 +252,7 @@ QtObject:
     self.eventsHandler.onFilteringSessionUpdated(proc (jn: JsonNode) =
       if jn.kind != JObject:
         error "expected an object"
+        return
 
       let res = fromJson(jn, backend_activity.SessionUpdate)
 
