@@ -18613,6 +18613,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
+    <name>WalletSavedAddressesHeader</name>
+    <message>
+        <source>Add new address</source>
+        <translation type="unfinished">새 주소 추가</translation>
+    </message>
+    <message>
+        <source>Saved addresses</source>
+        <translation type="unfinished">저장된 주소</translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished">마지막 새로 고침 %1</translation>
+    </message>
+</context>
+<context>
     <name>WalletUtils</name>
     <message>
         <source>~ Unknown</source>
