@@ -19083,10 +19083,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
 <context>
     <name>main</name>
     <message>
-        <source>Hello World</source>
-        <translation>안녕하세요 세상</translation>
-    </message>
-    <message>
         <source>Status Desktop</source>
         <translation>스테이터스 데스크톱</translation>
     </message>
