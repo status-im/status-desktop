@@ -579,7 +579,6 @@ StatusWindow {
                 applicationWindow.startSystemMove()
                 mouse.accepted = false
             }
-
         }
     }
 }

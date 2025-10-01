@@ -275,9 +275,7 @@ ColumnLayout {
             isError: d.incorrectWordAtIndex.includes(mnemonicIndex) & !!text
             inputList: d.seedPhrases_en
 
-            onDoneInsertingWord: {
-                grid.addWord(mnemonicIndex, word)
-            }
+            onDoneInsertingWord: (word) => grid.addWord(mnemonicIndex, word)
             onEditingFinished: {
                 if (text === "") {
                     return
