@@ -162,6 +162,7 @@ SplitView {
                     text: "Password:\t"
                 }
                 TextField {
+                    Layout.preferredWidth: 150
                     id: ctrlPassword
                     text: "0123456789"
                     placeholderText: "Example password"
@@ -179,6 +180,7 @@ SplitView {
                     text: "Keycard PIN:\t"
                 }
                 TextField {
+                    Layout.preferredWidth: 150
                     id: ctrlPin
                     text: "111111"
                     inputMask: "999999"
@@ -188,6 +190,7 @@ SplitView {
                     text: "PUK:"
                 }
                 TextField {
+                    Layout.preferredWidth: 150
                     id: ctrlPuk
                     text: "111111111111"
                     inputMask: "999999999999"

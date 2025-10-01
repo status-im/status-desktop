@@ -98,7 +98,7 @@ OnboardingPage {
         property bool biometricsSuccessful
         property bool biometricsFailed
 
-        readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount && root.isKeycardEnabled
+        readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount
         readonly property bool isWrongKeycard: !!root.keycardUID && loginUserSelector.selectedProfileKeyId !== root.keycardUID
 
         readonly property int loginModelCount: root.loginAccountsModel.ModelCount.count
@@ -218,6 +218,7 @@ OnboardingPage {
                 model: root.loginAccountsModel
                 currentKeycardLocked: root.keycardState === Onboarding.KeycardState.BlockedPIN ||
                                       root.keycardState === Onboarding.KeycardState.BlockedPUK
+                isKeycardEnabled: root.isKeycardEnabled
 
                 onSelectedProfileKeyIdChanged: {
                     root.dismissBiometricsRequested()
