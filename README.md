@@ -35,9 +35,9 @@ Get the latest release for your platform:
 
 |Windows|Linux|macOS|
 | --- | --- | --- |
-| Intel chip (no native Windows ARM build yet) | Continuous effort to support the lowest Ubuntu LTS version. | Intel chip |
-| Windows 11 is used for testing | Actively tested on Ubuntu 22.04 | ARM chip |
-| | Should run on most of Linux flavours using glibc 2.31 or newer  | MacOS latest version |
+| Intel chip (no native Windows ARM build yet) | Continuous effort to support the lowest Ubuntu LTS version. | ARM chip |
+| Windows 11 is used for testing | Actively tested on Ubuntu 22.04 | MacOS latest version |
+| | Should run on most of Linux flavours using glibc 2.31 or newer |  |
 
 ### Windows
 
