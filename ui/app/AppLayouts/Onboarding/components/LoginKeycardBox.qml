@@ -236,6 +236,10 @@ Control {
                 target: pinInputField
                 visible: true
             }
+            PropertyChanges {
+                target: background
+                border.color: Theme.palette.primaryColor1
+            }
             StateChangeScript {
                 script: {
                     pinInputField.forceFocus()

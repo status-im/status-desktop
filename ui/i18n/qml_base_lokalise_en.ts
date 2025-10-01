@@ -12773,6 +12773,14 @@
     </message>
   </context>
   <context>
+    <name>LoginUserSelectorDelegate</name>
+    <message>
+      <source>Keycard is not yet supported</source>
+      <comment>LoginUserSelectorDelegate</comment>
+      <translation>Keycard is not yet supported</translation>
+    </message>
+  </context>
+  <context>
     <name>LogoPicker</name>
     <message>
       <source>Community logo</source>

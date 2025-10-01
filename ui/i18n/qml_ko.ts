@@ -10448,6 +10448,13 @@ to load</source>
     </message>
 </context>
 <context>
+    <name>LoginUserSelectorDelegate</name>
+    <message>
+        <source>Keycard is not yet supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LogoPicker</name>
     <message>
         <source>Community logo</source>
