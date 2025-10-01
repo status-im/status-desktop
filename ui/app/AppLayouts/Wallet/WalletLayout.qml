@@ -215,17 +215,10 @@ Item {
 
     Component {
         id: cmpSavedAddresses
+
         SavedAddressesView {
-            store: root.store
-            contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
-
-            networkFilter.visible: false
-            headerButton.text: qsTr("Add new address")
-            headerButton.onClicked: {
-                Global.openAddEditSavedAddressesPopup({})
-            }
 
             onSendToAddressRequested: {
                 Global.sendToRecipientRequested(address)
