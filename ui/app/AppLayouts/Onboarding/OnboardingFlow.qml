@@ -434,9 +434,9 @@ OnboardingStackView {
 
             onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
-            onSetPinRequested: (pin) => {
-                unblockWithSeedphraseFlow.pin = pin
-                root.setPinRequested(pin)
+            onSetPinRequested: (newPin) => {
+                pin = newPin
+                root.setPinRequested(newPin)
             }
 
             onFinished: {
@@ -463,9 +463,9 @@ OnboardingStackView {
             remainingAttempts: root.remainingPukAttempts
             keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-            onSetPinRequested: (pin) => {
-                unblockWithPukFlow.pin = pin
-                root.setPinRequested(pin)
+            onSetPinRequested: (newPin) => {
+                pin = newPin
+                root.setPinRequested(newPin)
             }
             onKeycardFactoryResetRequested: root.push(keycardFactoryResetFlow)
 

@@ -25,7 +25,6 @@ Item {
     Label {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        //text: "Hint: %1".arg(popup.mnemonic)
         text: !!popup.stack.currentItem && popup.stack.currentItem.toString().startsWith("BackupSeedphraseVerify") ?
                   "Hint: %1".arg(popup.stack.currentItem.verificationWordsMap.map((entry) => entry.seedWord))
                 : ""
