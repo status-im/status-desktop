@@ -5,31 +5,31 @@
     <name>AboutView</name>
     <message>
         <source>Check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkontrolovat aktualizace</translation>
     </message>
     <message>
         <source>Current Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuální verze</translation>
     </message>
     <message>
         <source>Status Go Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Verze Status Go</translation>
     </message>
     <message>
         <source>Qt Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Verze Qt</translation>
     </message>
     <message>
         <source>Release Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Poznámky k vydání</translation>
     </message>
     <message>
         <source>Status Manifesto</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Manifesto</translation>
     </message>
     <message>
         <source>Status Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Nápověda Status</translation>
     </message>
     <message>
         <source>Status desktop’s GitHub Repositories</source>
@@ -37,19 +37,19 @@
     </message>
     <message>
         <source>status-desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>status-desktop</translation>
     </message>
     <message>
         <source>status-go</source>
-        <translation type="unfinished"></translation>
+        <translation>status-go</translation>
     </message>
     <message>
         <source>StatusQ</source>
-        <translation type="unfinished"></translation>
+        <translation>StatusQ</translation>
     </message>
     <message>
         <source>go-waku</source>
-        <translation type="unfinished"></translation>
+        <translation>go-waku</translation>
     </message>
     <message>
         <source>Legal &amp; Privacy Documents</source>
@@ -72,11 +72,11 @@
     <name>AcceptRejectOptionsButtonsPanel</name>
     <message>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Podrobnosti</translation>
     </message>
     <message>
         <source>Decline and block</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamítnout a blokovat</translation>
     </message>
 </context>
 <context>
@@ -122,7 +122,7 @@
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit</translation>
     </message>
     <message>
         <source>Include in balances and activity</source>
@@ -134,11 +134,11 @@
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <source>Add new account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přidat nový účet</translation>
     </message>
     <message>
         <source>Add watched address</source>
@@ -176,7 +176,7 @@
     </message>
     <message>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresa</translation>
     </message>
     <message>
         <source>Key pair</source>
@@ -235,7 +235,7 @@
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
@@ -270,7 +270,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Pair and Sync</source>
@@ -317,7 +317,7 @@
     <name>ActivityCenterPopupTopBarPanel</name>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Všechny</translation>
     </message>
     <message>
         <source>News</source>
@@ -325,7 +325,7 @@
     </message>
     <message>
         <source>Admin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Správce</translation>
     </message>
     <message>
         <source>Mentions</source>
@@ -349,7 +349,7 @@
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Systémový</translation>
     </message>
 </context>
 <context>
@@ -414,11 +414,11 @@
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijmout</translation>
     </message>
     <message>
         <source>Swap</source>
@@ -743,7 +743,7 @@
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dnes</translation>
     </message>
     <message>
         <source>Yesterday</source>
@@ -793,11 +793,11 @@
     <name>ActivityTokensFilterSubMenu</name>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>No Assets</source>
@@ -820,11 +820,11 @@
     <name>ActivityTypeFilterSubMenu</name>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odeslat</translation>
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přijmout</translation>
     </message>
     <message>
         <source>Contract Deployment</source>
@@ -863,23 +863,23 @@
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ano</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne</translation>
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit změny</translation>
     </message>
     <message>
         <source>Add account</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat účet</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokračovat</translation>
     </message>
     <message>
         <source>Reveal recovery phrase</source>
@@ -953,11 +953,11 @@
     </message>
     <message>
         <source>Address name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název adresy</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název</translation>
     </message>
     <message>
         <source>Please name your saved address</source>
@@ -969,11 +969,11 @@
     </message>
     <message>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresa</translation>
     </message>
     <message>
         <source>Ethereum address</source>
-        <translation type="unfinished"></translation>
+        <translation>Ethereum adresa</translation>
     </message>
     <message>
         <source>Checksum of the entered address is incorrect</source>
@@ -981,15 +981,15 @@
     </message>
     <message>
         <source>Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Add address</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat adresu</translation>
     </message>
 </context>
 <context>
@@ -1016,7 +1016,7 @@
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vložit</translation>
     </message>
     <message>
         <source>Pasted</source>
@@ -1024,7 +1024,7 @@
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Název</translation>
     </message>
     <message>
         <source>Name of the website</source>
@@ -1036,7 +1036,7 @@
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odstranit</translation>
     </message>
     <message>
         <source>Done</source>
@@ -1199,7 +1199,7 @@
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Systémový</translation>
     </message>
     <message>
         <source>Minimize on close</source>
@@ -1291,7 +1291,7 @@
     </message>
     <message>
         <source>Download messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stánout zprávy</translation>
     </message>
     <message>
         <source>Debug</source>
@@ -1371,7 +1371,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Change</source>
@@ -1477,7 +1477,7 @@
     <name>AlertPopup</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -1851,7 +1851,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Device paired</source>
-        <translation type="unfinished"></translation>
+        <translation>Zařízení spárováno</translation>
     </message>
     <message>
         <source>Sync in process. Keep device powered and app open.</source>
@@ -1883,11 +1883,11 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Community Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info o komunitě</translation>
     </message>
     <message>
         <source>Community Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Komunitní pravidla</translation>
     </message>
     <message>
         <source>Mute Community</source>
@@ -1899,7 +1899,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Označit jako přečtěné</translation>
     </message>
     <message>
         <source>Edit Shared Addresses</source>
@@ -1923,7 +1923,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Details (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Podrobnosti (%1)</translation>
     </message>
     <message numerus="yes">
         <source>%n issue(s)</source>
@@ -1935,7 +1935,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Podrobnosti</translation>
     </message>
     <message>
         <source>Importing ‘%1’ from Discord to Status</source>
@@ -2098,11 +2098,11 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     <name>AppSearch</name>
     <message>
         <source>No results</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné výsledky</translation>
     </message>
     <message>
         <source>Anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Kdekoliv</translation>
     </message>
 </context>
 <context>
@@ -2113,58 +2113,58 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Text size</source>
-        <translation type="unfinished"></translation>
+        <translation>Velikost textu</translation>
     </message>
     <message>
         <source>XS</source>
-        <translation type="unfinished"></translation>
+        <translation>XS</translation>
     </message>
     <message>
         <source>S</source>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <source>M</source>
-        <translation type="unfinished"></translation>
+        <translation>M</translation>
     </message>
     <message>
         <source>L</source>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <source>XL</source>
-        <translation type="unfinished"></translation>
+        <translation>XL</translation>
     </message>
     <message>
         <source>XXL</source>
-        <translation type="unfinished"></translation>
+        <translation>XXL</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Režim</translation>
     </message>
     <message>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Světlý</translation>
     </message>
     <message>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Tmavý</translation>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Systémový</translation>
     </message>
 </context>
 <context>
     <name>AssetContextMenu</name>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijmout</translation>
     </message>
     <message>
         <source>Swap</source>
@@ -2172,7 +2172,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Manage tokens</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spravovat tokeny</translation>
     </message>
     <message>
         <source>Hide asset</source>
@@ -2187,18 +2187,18 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     <name>AssetSelector</name>
     <message>
         <source>Select asset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vybrat aktivum</translation>
     </message>
 </context>
 <context>
     <name>AssetsDetailView</name>
     <message>
         <source>Price</source>
-        <translation type="unfinished"></translation>
+        <translation>Cena</translation>
     </message>
     <message>
         <source>Market Cap</source>
-        <translation type="unfinished"></translation>
+        <translation>Tržní kapitalizace</translation>
     </message>
     <message>
         <source>Day Low</source>
@@ -2210,15 +2210,15 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Hour</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodina</translation>
     </message>
     <message>
         <source>Day</source>
-        <translation type="unfinished"></translation>
+        <translation>Den</translation>
     </message>
     <message>
         <source>24 Hours</source>
-        <translation type="unfinished"></translation>
+        <translation>24 hodin</translation>
     </message>
     <message>
         <source>Overview</source>
@@ -2226,7 +2226,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Website</source>
-        <translation type="unfinished"></translation>
+        <translation>Website</translation>
     </message>
     <message>
         <source>Minted by</source>
@@ -2234,18 +2234,18 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Contract</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrakt</translation>
     </message>
     <message>
         <source>Copy contract address</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat adresu kontraktu</translation>
     </message>
 </context>
 <context>
     <name>AssetsView</name>
     <message>
         <source>Sort by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Třídit podle:</translation>
     </message>
     <message>
         <source>Asset balance value</source>
@@ -2281,7 +2281,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyraženo komunitou</translation>
     </message>
 </context>
 <context>
@@ -2292,7 +2292,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokračovat</translation>
     </message>
     <message>
         <source>Done</source>
@@ -2345,7 +2345,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokračovat</translation>
     </message>
 </context>
 <context>
@@ -2397,7 +2397,7 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokračovat</translation>
     </message>
 </context>
 <context>
@@ -2458,7 +2458,7 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Block</source>
@@ -2638,7 +2638,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>History</source>
@@ -2704,18 +2704,18 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Burn tokens</source>
-        <translation type="unfinished"></translation>
+        <translation>Spálit tokeny</translation>
     </message>
 </context>
 <context>
     <name>BuyCryptoModal</name>
     <message>
         <source>Buy via %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Koupit přes %1</translation>
     </message>
     <message>
         <source>Ways to buy %1 for %2</source>
@@ -2734,30 +2734,30 @@ Do you wish to override the security check and continue?</source>
     <name>BuyCryptoProvidersListPanel</name>
     <message>
         <source>One time</source>
-        <translation type="unfinished"></translation>
+        <translation>Jednorázově</translation>
     </message>
     <message>
         <source>Recurrent</source>
-        <translation type="unfinished"></translation>
+        <translation>Opakovaně</translation>
     </message>
 </context>
 <context>
     <name>BuyReceiveBanner</name>
     <message>
         <source>Ways to buy</source>
-        <translation type="unfinished"></translation>
+        <translation>Způsoby nákupu</translation>
     </message>
     <message>
         <source>Via card or bank</source>
-        <translation type="unfinished"></translation>
+        <translation>Pomocí karty nebo banky</translation>
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijmout</translation>
     </message>
     <message>
         <source>Deposit to your Wallet</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit do peněženky</translation>
     </message>
 </context>
 <context>
@@ -2792,7 +2792,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Yes, enable biometrics</source>
@@ -2846,41 +2846,41 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Add channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat kanály</translation>
     </message>
     <message>
         <source>Add categories</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat kategorie</translation>
     </message>
 </context>
 <context>
     <name>ChartDataBase</name>
     <message>
         <source>7D</source>
-        <translation type="unfinished"></translation>
+        <translation>7D</translation>
     </message>
     <message>
         <source>1M</source>
-        <translation type="unfinished"></translation>
+        <translation>1M</translation>
     </message>
     <message>
         <source>6M</source>
-        <translation type="unfinished"></translation>
+        <translation>6M</translation>
     </message>
     <message>
         <source>1Y</source>
-        <translation type="unfinished"></translation>
+        <translation>1R</translation>
     </message>
     <message>
         <source>ALL</source>
-        <translation type="unfinished"></translation>
+        <translation>VŠE</translation>
     </message>
 </context>
 <context>
     <name>ChatAnchorButtonsPanel</name>
     <message>
         <source>99+</source>
-        <translation type="unfinished"></translation>
+        <translation>99+</translation>
     </message>
 </context>
 <context>
@@ -2893,7 +2893,7 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Settings</source>
         <comment>Go to settings page</comment>
-        <translation type="unfinished">Nastavení</translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <source>Link previews will never be shown. You can manage link previews in %1.</source>
@@ -2917,105 +2917,105 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Sending...</source>
-        <translation type="unfinished"></translation>
+        <translation>Odesílání...</translation>
     </message>
     <message>
         <source>Unblock</source>
-        <translation type="unfinished"></translation>
+        <translation>Odblokovat</translation>
     </message>
 </context>
 <context>
     <name>ChatContentView</name>
     <message>
         <source>Blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokováno</translation>
     </message>
 </context>
 <context>
     <name>ChatContextMenuView</name>
     <message>
         <source>Add / remove from group</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat / odstranit ze skupiny</translation>
     </message>
     <message>
         <source>Add to group</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat do skupiny</translation>
     </message>
     <message>
         <source>Copy channel link</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat odkaz na kanál</translation>
     </message>
     <message>
         <source>Edit name and image</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit název a obrázek</translation>
     </message>
     <message>
         <source>Unmute Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit ztlumení kanálu</translation>
     </message>
     <message>
         <source>Unmute Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit ztlumení chatu</translation>
     </message>
     <message>
         <source>Mark as Read</source>
-        <translation type="unfinished"></translation>
+        <translation>Označit jako přečtěné</translation>
     </message>
     <message>
         <source>Edit Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit kanál</translation>
     </message>
     <message>
         <source>Debug actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladicí akce</translation>
     </message>
     <message>
         <source>Copy channel ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat ID kanálu</translation>
     </message>
     <message>
         <source>Copy chat ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat ID chatu</translation>
     </message>
     <message>
         <source>Fetch messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Stáhnout zprávy</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Stáhnout</translation>
     </message>
     <message>
         <source>Clear History</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat historii</translation>
     </message>
     <message>
         <source>Delete Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat kanál</translation>
     </message>
     <message>
         <source>Leave group</source>
-        <translation type="unfinished"></translation>
+        <translation>Opustit skupinu</translation>
     </message>
     <message>
         <source>Close Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavřít chat</translation>
     </message>
     <message>
         <source>Leave Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Opustit chat</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Download messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Stánout zprávy</translation>
     </message>
     <message>
         <source>Clear chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat historii chatu</translation>
     </message>
     <message>
         <source>Are you sure you want to clear your chat history with &lt;b&gt;%1&lt;/b&gt;? All messages will be deleted on your side and will be unrecoverable.</source>
@@ -3027,23 +3027,23 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>Opustit</translation>
     </message>
     <message>
         <source>Delete #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat #%1</translation>
     </message>
     <message>
         <source>Close chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavřít chat</translation>
     </message>
     <message>
         <source>Leave chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Opustit chat</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <source>Are you sure you want to delete #%1 channel?</source>
@@ -3062,7 +3062,7 @@ Do you wish to override the security check and continue?</source>
     <name>ChatHeaderContentView</name>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat</translation>
     </message>
     <message>
         <source>Members</source>
@@ -3070,7 +3070,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>More</source>
-        <translation type="unfinished"></translation>
+        <translation>Více</translation>
     </message>
     <message numerus="yes">
         <source>%n member(s)</source>
@@ -3108,7 +3108,7 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished">nebo</translation>
+        <translation>nebo</translation>
     </message>
 </context>
 <context>
@@ -3130,14 +3130,14 @@ Do you wish to override the security check and continue?</source>
     <name>ChatView</name>
     <message>
         <source>Members</source>
-        <translation type="unfinished">Členové</translation>
+        <translation>Členové</translation>
     </message>
 </context>
 <context>
     <name>ChatsLoadingPanel</name>
     <message>
         <source>Loading chats...</source>
-        <translation type="unfinished"></translation>
+        <translation>Načítání chatů...</translation>
     </message>
 </context>
 <context>
@@ -3232,7 +3232,7 @@ file format</source>
     <name>CollectiblesNotSupportedTag</name>
     <message>
         <source>and</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">a</translation>
     </message>
     <message>
         <source>Displaying collectibles on %1 is not currently supported by Status.</source>
@@ -3262,7 +3262,7 @@ file format</source>
     </message>
     <message>
         <source>Sort by:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Třídit podle:</translation>
     </message>
     <message>
         <source>Date added</source>
@@ -3298,7 +3298,7 @@ file format</source>
     </message>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyraženo komunitou</translation>
     </message>
     <message>
         <source>Others</source>
@@ -3306,15 +3306,15 @@ file format</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odeslat</translation>
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přijmout</translation>
     </message>
     <message>
         <source>Manage tokens</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spravovat tokeny</translation>
     </message>
     <message>
         <source>Hide collectible</source>
@@ -3358,34 +3358,34 @@ file format</source>
     <name>ColorPanel</name>
     <message>
         <source>Community Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva komunity</translation>
     </message>
     <message>
         <source>Select Community Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat barvu komunity</translation>
     </message>
     <message>
         <source>This is not a valid colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Toto je neplatná barva</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Náhled</translation>
     </message>
     <message>
         <source>White text should be legible on top of this colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Bílý text by měl být čitelný na tomto podkladu</translation>
     </message>
     <message>
         <source>Standard colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardní barvy</translation>
     </message>
 </context>
 <context>
     <name>ColorPicker</name>
     <message>
         <source>Community colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva komunity</translation>
     </message>
 </context>
 <context>
@@ -3400,7 +3400,7 @@ file format</source>
     </message>
     <message>
         <source>Start chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahájit chat</translation>
     </message>
 </context>
 <context>
@@ -3408,16 +3408,16 @@ file format</source>
     <message>
         <source>Featured</source>
         <extracomment>Featured communities</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zvýrazněné</translation>
     </message>
     <message>
         <source>All</source>
         <extracomment>All communities</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Všechny</translation>
     </message>
     <message>
         <source>No communities found</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné komunity nenalezeny</translation>
     </message>
 </context>
 <context>
@@ -3475,27 +3475,27 @@ file format</source>
     <name>CommunitiesPortalLayout</name>
     <message>
         <source>Discover Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>Objevujte komunity</translation>
     </message>
     <message>
         <source>Join Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat se ke komunitě</translation>
     </message>
     <message>
         <source>Create New Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit novou komunitu</translation>
     </message>
     <message>
         <source>Create new community</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit novou komunitu</translation>
     </message>
     <message>
         <source>Create a new Status community</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit novou Status komunitu</translation>
     </message>
     <message>
         <source>Create new</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit novou</translation>
     </message>
     <message>
         <source>&apos;%1&apos; import in progress...</source>
@@ -3518,11 +3518,11 @@ file format</source>
     <name>CommunitiesView</name>
     <message>
         <source>Import community</source>
-        <translation type="unfinished"></translation>
+        <translation>Importovat komunitu</translation>
     </message>
     <message>
         <source>Discover your Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>Objevujte své komunity</translation>
     </message>
     <message>
         <source>Explore and see what communities are trending</source>
@@ -3530,27 +3530,27 @@ file format</source>
     </message>
     <message>
         <source>Discover</source>
-        <translation type="unfinished"></translation>
+        <translation>Objevovat</translation>
     </message>
     <message>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Vlastník</translation>
     </message>
     <message>
         <source>TokenMaster</source>
-        <translation type="unfinished"></translation>
+        <translation>TokenMaster</translation>
     </message>
     <message>
         <source>Admin</source>
-        <translation type="unfinished"></translation>
+        <translation>Správce</translation>
     </message>
     <message>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation>Člen</translation>
     </message>
     <message>
         <source>Pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Nevyřízené</translation>
     </message>
 </context>
 <context>
@@ -3575,35 +3575,35 @@ file format</source>
     <name>CommunityColumnView</name>
     <message>
         <source>Create channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit kanál</translation>
     </message>
     <message>
         <source>Create category</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit kategorii</translation>
     </message>
     <message>
         <source>Invite people</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozvat lidi</translation>
     </message>
     <message>
         <source>Mute category</source>
-        <translation type="unfinished"></translation>
+        <translation>Ztlumit kategorii</translation>
     </message>
     <message>
         <source>Unmute category</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit ztlumení kategorie</translation>
     </message>
     <message>
         <source>Edit Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit kategorii</translation>
     </message>
     <message>
         <source>Delete Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat kategorii</translation>
     </message>
     <message>
         <source>Delete &apos;%1&apos; category</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat kategorii &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Are you sure you want to delete &apos;%1&apos; category? Channels inside the category won&apos;t be deleted.</source>
@@ -3611,7 +3611,7 @@ file format</source>
     </message>
     <message>
         <source>Create channel or category</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit kanál nebo kategorii</translation>
     </message>
     <message>
         <source>You were banned from community</source>
@@ -3619,23 +3619,23 @@ file format</source>
     </message>
     <message>
         <source>Membership request pending...</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádost o členství nevyřízena...</translation>
     </message>
     <message>
         <source>Request to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Požádat o připojení</translation>
     </message>
     <message>
         <source>Join Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat se ke komunitě</translation>
     </message>
     <message>
         <source>Request to join failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Požadavek k připojení selhal</translation>
     </message>
     <message>
         <source>Please try again later</source>
-        <translation type="unfinished"></translation>
+        <translation>Prosím zkuste znovu později</translation>
     </message>
     <message>
         <source>Finalise community ownership</source>
@@ -3647,7 +3647,7 @@ file format</source>
     </message>
     <message>
         <source>Error deleting the category</source>
-        <translation type="unfinished"></translation>
+        <translation>Chyba při mazání kategorie</translation>
     </message>
 </context>
 <context>
@@ -3909,7 +3909,7 @@ file format</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Re-encrypt data using new password</source>
@@ -3936,7 +3936,7 @@ file format</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Visit site</source>
@@ -4006,11 +4006,11 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odmítnout</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Are you sure you want to do this?</source>
@@ -4052,7 +4052,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odmítnout</translation>
     </message>
     <message>
         <source>Disconnect</source>
@@ -4082,7 +4082,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <name>ConnectionWarnings</name>
     <message>
         <source>Retry now</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkusit znovu</translation>
     </message>
 </context>
 <context>
@@ -4208,64 +4208,64 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <name>ContactPanel</name>
     <message>
         <source>Send message</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat zprávu</translation>
     </message>
     <message>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation>Odmítnout</translation>
     </message>
     <message>
         <source>Decline Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamítnout požadavek</translation>
     </message>
     <message>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijmout</translation>
     </message>
     <message>
         <source>Accept Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijmout požadavek</translation>
     </message>
     <message>
         <source>Remove Rejection</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit zamítnutí</translation>
     </message>
 </context>
 <context>
     <name>ContactRequestCta</name>
     <message>
         <source>Accepted</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijato</translation>
     </message>
     <message>
         <source>Pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Nevyřízeno</translation>
     </message>
     <message>
         <source>Declined &amp; Blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Odmítnuto a zablokováno</translation>
     </message>
     <message>
         <source>Declined</source>
-        <translation type="unfinished"></translation>
+        <translation>Odmítnuto</translation>
     </message>
 </context>
 <context>
     <name>ContactsColumnView</name>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Zprávy</translation>
     </message>
     <message>
         <source>Start chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahájit chat</translation>
     </message>
 </context>
 <context>
     <name>ContactsListPanel</name>
     <message>
         <source>Contact Request Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádost o kontakt odeslána</translation>
     </message>
 </context>
 <context>
@@ -4291,50 +4291,50 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     <name>ContactsView</name>
     <message>
         <source>Send contact request to chat key</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat žádost o kontakt pomocí chatovacího klíče</translation>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished">Kontakty</translation>
+        <translation>Kontakty</translation>
     </message>
     <message>
         <source>Pending Requests</source>
-        <translation type="unfinished"></translation>
+        <translation>Nevyřízené požadavky</translation>
     </message>
     <message>
         <source>Dismissed Requests</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamítnuté požadavky</translation>
     </message>
     <message>
         <source>Blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokované</translation>
     </message>
     <message>
         <source>Search by name or chat key</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat pomocí jména nebo klíče</translation>
     </message>
     <message>
         <source>Trusted Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Důvěryhodné kontakty</translation>
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation>Obdrženo</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Odesláno</translation>
     </message>
 </context>
 <context>
     <name>ContextCard</name>
     <message>
         <source>Connect with</source>
-        <translation type="unfinished"></translation>
+        <translation>Spojit pomocí</translation>
     </message>
     <message>
         <source>On</source>
-        <translation type="unfinished"></translation>
+        <translation>na</translation>
     </message>
 </context>
 <context>
@@ -4350,11 +4350,11 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Copy contract address</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat adresu kontraktu</translation>
     </message>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkopírováno</translation>
     </message>
 </context>
 <context>
@@ -4399,7 +4399,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokračovat</translation>
     </message>
 </context>
 <context>
@@ -4518,11 +4518,11 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Delete Category</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smazat kategorii</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uložit</translation>
     </message>
     <message>
         <source>Create</source>
@@ -4549,7 +4549,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uložit změny</translation>
     </message>
     <message>
         <source>Close without saving</source>
@@ -4577,7 +4577,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Create channel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vytvořit kanál</translation>
     </message>
     <message>
         <source>Clear all</source>
@@ -4677,7 +4677,7 @@ You will remain logged in, and your recovery phrase will be entirely in your han
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Popis</translation>
     </message>
     <message>
         <source>Describe the channel</source>
@@ -4753,11 +4753,11 @@ Send a contact request to the person you would like to chat with, you will be ab
     </message>
     <message>
         <source>Create New Community</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vytvořit novou komunitu</translation>
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Další</translation>
     </message>
     <message>
         <source>Start Discord import</source>
@@ -5288,7 +5288,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>CurrenciesStore</name>
     <message>
         <source>N/A</source>
-        <translation type="unfinished">N/A</translation>
+        <translation>N/A</translation>
     </message>
 </context>
 <context>
@@ -5299,22 +5299,22 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Disconnect %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpojit %1</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Disconnect dApp</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpojit dApp</translation>
     </message>
 </context>
 <context>
     <name>DAppDelegate</name>
     <message>
         <source>Disconnect dApp</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpojit dApp</translation>
     </message>
 </context>
 <context>
@@ -5361,7 +5361,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Fees</source>
-        <translation type="unfinished"></translation>
+        <translation>Poplatky</translation>
     </message>
     <message>
         <source>Max. fees on %1</source>
@@ -5380,7 +5380,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Connect a dApp</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Připojit dApp</translation>
     </message>
 </context>
 <context>
@@ -5465,29 +5465,29 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>DAppsWorkflow</name>
     <message>
         <source>Connect a dApp</source>
-        <translation type="unfinished"></translation>
+        <translation>Připojit dApp</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>How would you like to connect?</source>
-        <translation type="unfinished"></translation>
+        <translation>Jak si přejete připojit se?</translation>
     </message>
 </context>
 <context>
     <name>DappsComboBox</name>
     <message>
         <source>dApp connections</source>
-        <translation type="unfinished"></translation>
+        <translation>dApp spojení</translation>
     </message>
 </context>
 <context>
     <name>DeactivateNetworkPopup</name>
     <message>
         <source>Disable %1 network</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázet síť %1</translation>
     </message>
     <message>
         <source>Balances stored on this network will not be visible in the Wallet. Your funds will be safe and you can always enable the network again.</source>
@@ -5495,7 +5495,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Disable %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázat %1</translation>
     </message>
 </context>
 <context>
@@ -5528,11 +5528,11 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resetovat</translation>
     </message>
     <message>
         <source>Account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Účet</translation>
     </message>
     <message>
         <source>Select address</source>
@@ -5551,7 +5551,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Účet</translation>
     </message>
 </context>
 <context>
@@ -5566,14 +5566,14 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Upravit</translation>
     </message>
 </context>
 <context>
     <name>DescriptionInput</name>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Popis</translation>
     </message>
     <message>
         <source>What your community is about</source>
@@ -5612,7 +5612,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Advanced</source>
-        <translation type="unfinished">Pokročilé</translation>
+        <translation>Pokročilé</translation>
     </message>
     <message>
         <source>Create a 12-digit personal unblocking key (PUK)</source>
@@ -5985,7 +5985,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Continue importing</source>
@@ -6084,7 +6084,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     <name>DownloadMenu</name>
     <message>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Otevřít</translation>
     </message>
     <message>
         <source>Show in folder</source>
@@ -6100,7 +6100,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -6152,7 +6152,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít</translation>
     </message>
     <message>
         <source>Your messages are displayed to others with this username:</source>
@@ -6238,7 +6238,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Upload</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrát</translation>
     </message>
     <message>
         <source>Drag and Drop or Upload Artwork</source>
@@ -6266,7 +6266,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název</translation>
     </message>
     <message>
         <source>Please name your token name (use A-Z and 0-9, hyphens and underscores only)</source>
@@ -6290,7 +6290,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Popis</translation>
     </message>
     <message>
         <source>Describe your asset (will be shown in hodler&apos;s wallets)</source>
@@ -6310,15 +6310,15 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Symbol</translation>
     </message>
     <message>
         <source>e.g. ETH</source>
-        <translation type="unfinished"></translation>
+        <translation>např. ETH</translation>
     </message>
     <message>
         <source>e.g. DOODLE</source>
-        <translation type="unfinished"></translation>
+        <translation>např. DOODLE</translation>
     </message>
     <message>
         <source>Please enter your token symbol (use A-Z only)</source>
@@ -6358,7 +6358,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>e.g. 300</source>
-        <translation type="unfinished"></translation>
+        <translation>např. 300</translation>
     </message>
     <message>
         <source>Please enter a total finite supply</source>
@@ -6430,18 +6430,18 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Náhled</translation>
     </message>
 </context>
 <context>
     <name>EditCroppedImagePanel</name>
     <message>
         <source>Select different image</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvolit jiný obrázek</translation>
     </message>
     <message>
         <source>Remove image</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit obrázek</translation>
     </message>
 </context>
 <context>
@@ -6551,7 +6551,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Select network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vybrat síť</translation>
     </message>
     <message>
         <source>The network you select will be where all your community’s tokens reside. Once set, this setting can’t be changed and tokens can’t move to other networks.</source>
@@ -6690,7 +6690,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkusit znovu</translation>
     </message>
 </context>
 <context>
@@ -6782,7 +6782,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Enable</source>
@@ -6797,7 +6797,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Enable community sharding</source>
@@ -6898,7 +6898,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpět</translation>
     </message>
 </context>
 <context>
@@ -6964,7 +6964,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odstranit</translation>
     </message>
 </context>
 <context>
@@ -7041,7 +7041,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpět</translation>
     </message>
 </context>
 <context>
@@ -7116,7 +7116,7 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpět</translation>
     </message>
     <message>
         <source>10 SNT</source>
@@ -7233,7 +7233,7 @@ Please add it and try again.</source>
     <name>EnterName</name>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Náhled</translation>
     </message>
     <message>
         <source>Rename this Keycard</source>
@@ -7318,7 +7318,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vložit</translation>
     </message>
     <message>
         <source>Private key invalid</source>
@@ -7334,7 +7334,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Public address of private key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Veřejná adresa nebo soukromý klíč</translation>
     </message>
     <message>
         <source>Key name</source>
@@ -7436,7 +7436,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Enter word</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zadat slovo</translation>
     </message>
     <message>
         <source>Incorrect word</source>
@@ -7455,7 +7455,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Enter word</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zadat slovo</translation>
     </message>
     <message>
         <source>This word doesn’t match</source>
@@ -7673,22 +7673,22 @@ Please add it and try again.</source>
     <name>FavoriteMenu</name>
     <message>
         <source>Open in new Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít na nové záložce</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit</translation>
     </message>
 </context>
 <context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
-        <translation type="unfinished"></translation>
+        <translation>Poplatky</translation>
     </message>
     <message>
         <source>Select account to pay gas fees from</source>
@@ -7699,63 +7699,63 @@ Please add it and try again.</source>
     <name>FeesBoxFooter</name>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation>Celkem</translation>
     </message>
 </context>
 <context>
     <name>FeesSummaryFooter</name>
     <message>
         <source>via %1</source>
-        <translation type="unfinished"></translation>
+        <translation>přes %1</translation>
     </message>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation>Celkem</translation>
     </message>
 </context>
 <context>
     <name>FeesView</name>
     <message>
         <source>Fees</source>
-        <translation type="unfinished"></translation>
+        <translation>Poplatky</translation>
     </message>
 </context>
 <context>
     <name>FetchMoreMessagesButton</name>
     <message>
         <source>↓ Fetch more messages</source>
-        <translation type="unfinished"></translation>
+        <translation>↓ Stáhnout více zpráv</translation>
     </message>
     <message>
         <source>Before %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Před %1</translation>
     </message>
 </context>
 <context>
     <name>FilterComboBox</name>
     <message>
         <source>Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolekce</translation>
     </message>
     <message>
         <source>Collection, community, name or #</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolekce, komunita, jméno nebo #</translation>
     </message>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyraženo komunitou</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished">Jiná</translation>
+        <translation>Jiné</translation>
     </message>
     <message>
         <source>Collections</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolekce</translation>
     </message>
     <message>
         <source>No collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádná kolekce</translation>
     </message>
 </context>
 <context>
@@ -7770,7 +7770,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>I don&apos;t want to be the owner</source>
@@ -7805,7 +7805,7 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Symbol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Symbol</translation>
     </message>
     <message>
         <source>Visit Community</source>
@@ -7901,31 +7901,32 @@ Please add it and try again.</source>
     <name>GapComponent</name>
     <message>
         <source>Fetch messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Stáhnout zprávy</translation>
     </message>
     <message>
         <source>Between %1 and %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezi %1 a %2</translation>
     </message>
 </context>
 <context>
     <name>GasSelector</name>
     <message>
         <source>%1 transaction fee</source>
-        <translation type="unfinished"></translation>
+        <translation>Poplatek za transakci v %1</translation>
     </message>
     <message>
         <source>L1 fee: %1
 L2 fee: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>L1 poplatek: %1
+L2 poplatek: %2</translation>
     </message>
     <message>
         <source>Approve %1 %2 Bridge</source>
-        <translation type="unfinished"></translation>
+        <translation>Schválit přemostění %2 v %1</translation>
     </message>
     <message>
         <source>%1 -&gt; %2 bridge</source>
-        <translation type="unfinished"></translation>
+        <translation>Přemostění %1 -&gt; %2</translation>
     </message>
 </context>
 <context>
@@ -7955,7 +7956,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Otevřít</translation>
     </message>
     <message>
         <source>Settings / Wallet</source>
@@ -8198,7 +8199,7 @@ L2 fee: %2</source>
     <name>Helpers</name>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyraženo komunitou</translation>
     </message>
     <message>
         <source>Other</source>
@@ -8228,7 +8229,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dnes</translation>
     </message>
     <message>
         <source>Yesterday</source>
@@ -8279,11 +8280,11 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>ENS</source>
@@ -8291,7 +8292,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpět</translation>
     </message>
     <message>
         <source>Asset</source>
@@ -8320,7 +8321,7 @@ L2 fee: %2</source>
     <name>HomePageDockButton</name>
     <message>
         <source>Unpin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odepnout</translation>
     </message>
     <message>
         <source>Disconnect</source>
@@ -8350,7 +8351,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Banned</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zabanované</translation>
     </message>
 </context>
 <context>
@@ -8364,11 +8365,11 @@ L2 fee: %2</source>
     <name>HomePageGridItem</name>
     <message>
         <source>Unpin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odepnout</translation>
     </message>
     <message>
         <source>Pin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Připnout</translation>
     </message>
 </context>
 <context>
@@ -8425,7 +8426,7 @@ L2 fee: %2</source>
     <name>ImageCropWorkflow</name>
     <message>
         <source>Supported image formats (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Podporované formáty obrázků (%1)</translation>
     </message>
     <message>
         <source>Image format not supported</source>
@@ -8444,7 +8445,7 @@ L2 fee: %2</source>
     <name>ImportCommunityPopup</name>
     <message>
         <source>Join Community</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přidat se ke komunitě</translation>
     </message>
     <message>
         <source>Invalid key</source>
@@ -8507,7 +8508,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -8591,18 +8592,18 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>No results found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Žádné výsledky nenalezeny</translation>
     </message>
 </context>
 <context>
     <name>Input</name>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkopírováno</translation>
     </message>
     <message>
         <source>Pasted</source>
@@ -8610,11 +8611,11 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kopírovat</translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vložit</translation>
     </message>
 </context>
 <context>
@@ -8716,7 +8717,7 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Další</translation>
     </message>
     <message numerus="yes">
         <source>Send %n invite(s)</source>
@@ -8758,11 +8759,11 @@ L2 fee: %2</source>
     <name>JSDialogWindow</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -9794,7 +9795,7 @@ access to your funds.</source>
     <name>KeycardPopupDetails</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Use biometrics instead</source>
@@ -9846,7 +9847,7 @@ access to your funds.</source>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkusit znovu</translation>
     </message>
     <message>
         <source>Input recovery phrase</source>
@@ -9874,7 +9875,7 @@ access to your funds.</source>
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Další</translation>
     </message>
     <message>
         <source>Unlock Keycard</source>
@@ -10046,11 +10047,11 @@ access to your funds.</source>
     <name>KickBanPopup</name>
     <message>
         <source>Kick %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vykopnout %1</translation>
     </message>
     <message>
         <source>Ban %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zabanovat %1</translation>
     </message>
     <message>
         <source>Are you sure you want to kick &lt;b&gt;%1&lt;/b&gt; from %2?</source>
@@ -10066,7 +10067,7 @@ access to your funds.</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -10222,7 +10223,7 @@ access to your funds.</source>
     </message>
     <message>
         <source>No results</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Žádné výsledky</translation>
     </message>
 </context>
 <context>
@@ -10402,11 +10403,11 @@ to load</source>
     </message>
     <message>
         <source>Login failed. %1</source>
-        <translation type="unfinished">Přihlášení selhalo. %1</translation>
+        <translation>Přihlášení selhalo. %1</translation>
     </message>
     <message>
         <source>Show details.</source>
-        <translation type="unfinished">Zobrazit podrobnosti.</translation>
+        <translation>Zobrazit podrobnosti.</translation>
     </message>
     <message>
         <source>Enter Keycard PIN</source>
@@ -10417,11 +10418,11 @@ to load</source>
     <name>LoginPasswordBox</name>
     <message>
         <source>Log In</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlásit se</translation>
     </message>
     <message>
         <source>Forgot your password?</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapomněli jste heslo?</translation>
     </message>
     <message>
         <source>To recover your password follow these steps:</source>
@@ -10563,31 +10564,31 @@ to load</source>
     <name>Main</name>
     <message>
         <source>Account name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název účtu</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název</translation>
     </message>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Název účtu musí být nejméně %n znak</numerusform>
+            <numerusform>Název účtu musí být nejméně %n znaky</numerusform>
+            <numerusform>Název účtu musí být nejméně %n znaků</numerusform>
         </translation>
     </message>
     <message>
         <source>Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva</translation>
     </message>
     <message>
         <source>Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Účet</translation>
     </message>
     <message>
         <source>Public address of private key</source>
-        <translation type="unfinished"></translation>
+        <translation>Veřejná adresa nebo soukromý klíč</translation>
     </message>
 </context>
 <context>
@@ -10638,7 +10639,7 @@ to load</source>
     </message>
     <message>
         <source>Networks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sítě</translation>
     </message>
     <message>
         <source>Account order</source>
@@ -10705,11 +10706,11 @@ to load</source>
     </message>
     <message>
         <source>Colour</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Barva</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Náhled</translation>
     </message>
     <message>
         <source>Account %1 of %2</source>
@@ -10728,7 +10729,7 @@ to load</source>
     <name>ManageAssetsPanel</name>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>Your assets will appear here</source>
@@ -10736,7 +10737,7 @@ to load</source>
     </message>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyraženo komunitou</translation>
     </message>
     <message>
         <source>Arrange by community</source>
@@ -10751,7 +10752,7 @@ to load</source>
     <name>ManageCollectiblesPanel</name>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyraženo komunitou</translation>
     </message>
     <message>
         <source>Arrange by community</source>
@@ -10778,11 +10779,11 @@ to load</source>
     <name>ManageHiddenPanel</name>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>Your hidden collectibles will appear here</source>
@@ -10930,7 +10931,7 @@ to load</source>
     <name>ManageTokensDelegate</name>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyraženo komunitou</translation>
     </message>
     <message>
         <source>%1 was successfully hidden</source>
@@ -10960,11 +10961,11 @@ to load</source>
     <name>ManageTokensView</name>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>Hidden</source>
@@ -11007,7 +11008,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -11030,7 +11031,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -11091,7 +11092,7 @@ to load</source>
     </message>
     <message>
         <source>Price</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cena</translation>
     </message>
     <message>
         <source>24hr</source>
@@ -11103,7 +11104,7 @@ to load</source>
     </message>
     <message>
         <source>Market Cap</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tržní kapitalizace</translation>
     </message>
 </context>
 <context>
@@ -11128,7 +11129,7 @@ to load</source>
     <name>MembersDropdown</name>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpět</translation>
     </message>
     <message>
         <source>Search members</source>
@@ -11163,11 +11164,11 @@ to load</source>
     <name>MembersSelectorBase</name>
     <message>
         <source>To:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pro:</translation>
     </message>
     <message>
         <source>%1 USER LIMIT REACHED</source>
-        <translation type="unfinished"></translation>
+        <translation>DOSAŽEN LIMIT UŽIVATELŮ: %1</translation>
     </message>
 </context>
 <context>
@@ -11193,27 +11194,27 @@ to load</source>
     </message>
     <message>
         <source>Invite people</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozvat lidi</translation>
     </message>
     <message>
         <source>All Members</source>
-        <translation type="unfinished"></translation>
+        <translation>Všichni členové</translation>
     </message>
     <message>
         <source>Pending Requests</source>
-        <translation type="unfinished"></translation>
+        <translation>Nevyřízené požadavky</translation>
     </message>
     <message>
         <source>Rejected</source>
-        <translation type="unfinished"></translation>
+        <translation>Odmítnuté</translation>
     </message>
     <message>
         <source>Banned</source>
-        <translation type="unfinished"></translation>
+        <translation>Zabanované</translation>
     </message>
     <message>
         <source>Search by name or chat key</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat pomocí jména nebo klíče</translation>
     </message>
 </context>
 <context>
@@ -11264,72 +11265,72 @@ to load</source>
     </message>
     <message>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijmout</translation>
     </message>
     <message>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation>Odmítnout</translation>
     </message>
 </context>
 <context>
     <name>MembershipCta</name>
     <message>
         <source>Accepted</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijato</translation>
     </message>
     <message>
         <source>Declined</source>
-        <translation type="unfinished"></translation>
+        <translation>Odmítnuto</translation>
     </message>
     <message>
         <source>Accept pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijetí nevyřízeno</translation>
     </message>
     <message>
         <source>Reject pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamítnutí nevyřízeno</translation>
     </message>
 </context>
 <context>
     <name>MenuBackButton</name>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zpět</translation>
     </message>
 </context>
 <context>
     <name>MessageContextMenuView</name>
     <message>
         <source>Reply to</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpovědět na</translation>
     </message>
     <message>
         <source>Edit message</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit zprávu</translation>
     </message>
     <message>
         <source>Copy message</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovar zprávu</translation>
     </message>
     <message>
         <source>Copy Message Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat ID zprávy</translation>
     </message>
     <message>
         <source>Unpin</source>
-        <translation type="unfinished"></translation>
+        <translation>Odepnout</translation>
     </message>
     <message>
         <source>Pin</source>
-        <translation type="unfinished"></translation>
+        <translation>Připnout</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Označit jako nepřečtěné</translation>
     </message>
     <message>
         <source>Delete message</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat zprávu</translation>
     </message>
 </context>
 <context>
@@ -11364,15 +11365,15 @@ to load</source>
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt; deleted this message</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; smazal(a) tuto zprávu</translation>
     </message>
     <message>
         <source>Pinned</source>
-        <translation type="unfinished"></translation>
+        <translation>Připnuto</translation>
     </message>
     <message>
         <source>Pinned by</source>
-        <translation type="unfinished"></translation>
+        <translation>Připnul</translation>
     </message>
     <message>
         <source>Imported from discord</source>
@@ -11380,11 +11381,11 @@ to load</source>
     </message>
     <message>
         <source>Bridged from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Přemostěno z %1</translation>
     </message>
     <message>
         <source>Message deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazaná zpráva</translation>
     </message>
     <message>
         <source>Unknown message. Try fetching more messages</source>
@@ -11392,35 +11393,35 @@ to load</source>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"></translation>
+        <translation>Odpovědět</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit</translation>
     </message>
     <message>
         <source>Unpin</source>
-        <translation type="unfinished"></translation>
+        <translation>Odepnout</translation>
     </message>
     <message>
         <source>Pin</source>
-        <translation type="unfinished"></translation>
+        <translation>Připnout</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Označit jako nepřečtěné</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <source>Maximum number of different reactions reached</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dosažen maximální počet různých reakcí</translation>
     </message>
     <message>
         <source>Add reaction</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přidat reakci</translation>
     </message>
 </context>
 <context>
@@ -11536,7 +11537,7 @@ to load</source>
     <name>MintTokensSettingsPanel</name>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpět</translation>
     </message>
     <message>
         <source>Tokens</source>
@@ -11564,11 +11565,11 @@ to load</source>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>Sign transaction - Mint %1 token</source>
@@ -11576,7 +11577,7 @@ to load</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smazat</translation>
     </message>
     <message>
         <source>Retry mint</source>
@@ -11584,7 +11585,7 @@ to load</source>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Obnovit</translation>
     </message>
     <message>
         <source>Restart token&apos;s transaction listening if the token got stuck in minting state</source>
@@ -11703,7 +11704,7 @@ to load</source>
     </message>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>You currently have no minted assets</source>
@@ -11711,7 +11712,7 @@ to load</source>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>You currently have no minted collectibles</source>
@@ -11851,7 +11852,7 @@ to load</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Smazat</translation>
     </message>
     <message>
         <source>Update</source>
@@ -11932,7 +11933,7 @@ to load</source>
     <name>MyProfileView</name>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Náhled</translation>
     </message>
     <message>
         <source>Invalid changes made to Identity</source>
@@ -11956,7 +11957,7 @@ to load</source>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>Web</source>
@@ -12103,7 +12104,7 @@ to load</source>
     <name>NetworksAdvancedCustomRoutingView</name>
     <message>
         <source>Networks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sítě</translation>
     </message>
     <message>
         <source>Hide Unpreferred Networks</source>
@@ -12137,7 +12138,7 @@ to load</source>
     <name>NewAccountLoginPage</name>
     <message>
         <source>Log in</source>
-        <translation type="unfinished">Přihlásit se</translation>
+        <translation>Přihlásit se</translation>
     </message>
     <message>
         <source>How would you like to log in to Status?</source>
@@ -12189,11 +12190,11 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokračovat</translation>
     </message>
     <message>
         <source>Status does not have access to local network</source>
@@ -12249,7 +12250,7 @@ to load</source>
     <message>
         <source>NEW</source>
         <comment>new message(s)</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">NOVÉ</translation>
     </message>
 </context>
 <context>
@@ -12303,7 +12304,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Remove nickname</source>
@@ -12333,7 +12334,7 @@ to load</source>
     <name>NoImageUploadedPanel</name>
     <message>
         <source>Upload</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nahrávání</translation>
     </message>
     <message>
         <source>Wide aspect ratio is optimal</source>
@@ -12348,7 +12349,7 @@ to load</source>
     </message>
     <message>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odmítnout</translation>
     </message>
     <message>
         <source>%1 no longer holds the tokens required to join %2 in their wallet, so their request to join %2 must be rejected.</source>
@@ -12441,7 +12442,7 @@ to load</source>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zprávy</translation>
     </message>
     <message>
         <source>1:1 Chats</source>
@@ -12574,11 +12575,11 @@ to load</source>
     <name>OperatorsUtils</name>
     <message>
         <source>and</source>
-        <translation type="unfinished"></translation>
+        <translation>a</translation>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished">nebo</translation>
+        <translation>nebo</translation>
     </message>
 </context>
 <context>
@@ -12627,7 +12628,7 @@ to load</source>
     <name>OverviewSettingsChart</name>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zprávy</translation>
     </message>
     <message>
         <source>1H</source>
@@ -12643,7 +12644,7 @@ to load</source>
     </message>
     <message>
         <source>7D</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">7D</translation>
     </message>
     <message>
         <source>Date</source>
@@ -12651,11 +12652,11 @@ to load</source>
     </message>
     <message>
         <source>1M</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">1M</translation>
     </message>
     <message>
         <source>6M</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">6M</translation>
     </message>
     <message>
         <source>Month</source>
@@ -12663,11 +12664,11 @@ to load</source>
     </message>
     <message>
         <source>1Y</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">1R</translation>
     </message>
     <message>
         <source>ALL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">VŠE</translation>
     </message>
     <message>
         <source>Year</source>
@@ -12790,7 +12791,7 @@ to load</source>
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Další</translation>
     </message>
 </context>
 <context>
@@ -12975,7 +12976,7 @@ to load</source>
     </message>
     <message>
         <source>On</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">na</translation>
     </message>
     <message>
         <source>Only</source>
@@ -13029,27 +13030,27 @@ to load</source>
     </message>
     <message>
         <source>and</source>
-        <translation type="unfinished"></translation>
+        <translation>a</translation>
     </message>
     <message>
         <source>in</source>
-        <translation type="unfinished"></translation>
+        <translation>v</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit</translation>
     </message>
     <message>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplikovat</translation>
     </message>
     <message>
         <source>Undo delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátit smazání</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat</translation>
     </message>
 </context>
 <context>
@@ -13111,15 +13112,15 @@ to load</source>
     </message>
     <message>
         <source>TokenMaster</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">TokenMaster</translation>
     </message>
     <message>
         <source>Admin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Správce</translation>
     </message>
     <message>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Člen</translation>
     </message>
     <message>
         <source>You&apos;ll no longer be a</source>
@@ -13211,7 +13212,7 @@ to load</source>
     <name>PermissionsRow</name>
     <message>
         <source>or</source>
-        <translation type="unfinished">nebo</translation>
+        <translation>nebo</translation>
     </message>
     <message>
         <source>Eligible to join</source>
@@ -13223,7 +13224,7 @@ to load</source>
     </message>
     <message>
         <source>+%1</source>
-        <translation type="unfinished"></translation>
+        <translation>+%1</translation>
     </message>
 </context>
 <context>
@@ -13320,7 +13321,7 @@ to load</source>
     </message>
     <message>
         <source>Unpin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odepnout</translation>
     </message>
     <message>
         <source>Jump to</source>
@@ -13415,7 +13416,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Leave %1</source>
@@ -13456,7 +13457,7 @@ to load</source>
     <message>
         <source>Settings</source>
         <comment>Go to Settings</comment>
-        <translation type="unfinished">Nastavení</translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <source>Hide collectible</source>
@@ -13492,7 +13493,7 @@ to load</source>
     </message>
     <message>
         <source>Sign out &amp; Quit</source>
-        <translation type="unfinished">Odhlásit se a ukončit</translation>
+        <translation>Odhlásit se a ukončit</translation>
     </message>
 </context>
 <context>
@@ -13661,7 +13662,7 @@ to load</source>
     </message>
     <message>
         <source>Send contact request</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poslat žádost o kontakt</translation>
     </message>
     <message>
         <source>Block user</source>
@@ -13741,7 +13742,7 @@ to load</source>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
     <message>
         <source>Web</source>
@@ -13756,7 +13757,7 @@ to load</source>
     </message>
     <message>
         <source>Select different image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zvolit jiný obrázek</translation>
     </message>
     <message>
         <source>Select image</source>
@@ -13768,18 +13769,18 @@ to load</source>
     </message>
     <message>
         <source>Remove image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odstranit obrázek</translation>
     </message>
 </context>
 <context>
     <name>ProfileLayout</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished">Kontakty</translation>
+        <translation>Kontakty</translation>
     </message>
     <message>
         <source>Status Keycard</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Keycard</translation>
     </message>
     <message>
         <source>The Keycard module is still busy, please try again</source>
@@ -13794,11 +13795,11 @@ to load</source>
     </message>
     <message>
         <source>Contact</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontakt</translation>
     </message>
     <message>
         <source>Trusted contact</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Důvěryhodný kontakt</translation>
     </message>
     <message>
         <source>Preview as %1</source>
@@ -13885,7 +13886,7 @@ to load</source>
     </message>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkopírováno</translation>
     </message>
     <message>
         <source>Copy address</source>
@@ -13996,7 +13997,7 @@ to load</source>
     </message>
     <message>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Člen</translation>
     </message>
 </context>
 <context>
@@ -14007,11 +14008,11 @@ to load</source>
     </message>
     <message>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vlastník</translation>
     </message>
     <message>
         <source>Admin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Správce</translation>
     </message>
     <message>
         <source>Token Master</source>
@@ -14019,7 +14020,7 @@ to load</source>
     </message>
     <message>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Člen</translation>
     </message>
     <message>
         <source>You&apos;re there too</source>
@@ -14035,7 +14036,7 @@ to load</source>
     </message>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkopírováno</translation>
     </message>
     <message>
         <source>Copy link to community</source>
@@ -14124,7 +14125,7 @@ to load</source>
     </message>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkopírováno</translation>
     </message>
     <message>
         <source>Copy link</source>
@@ -14147,7 +14148,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -14158,7 +14159,7 @@ to load</source>
     </message>
     <message>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Link limit of %1 reached</source>
@@ -14221,19 +14222,19 @@ to load</source>
     </message>
     <message>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vlastník</translation>
     </message>
     <message>
         <source>Admin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Správce</translation>
     </message>
     <message>
         <source>TokenMaster</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">TokenMaster</translation>
     </message>
     <message>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Člen</translation>
     </message>
 </context>
 <context>
@@ -14248,49 +14249,49 @@ to load</source>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished">Dozvědět se více</translation>
+        <translation>Dozvědět se více</translation>
     </message>
     <message>
         <source>Initiate the vote</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahájit hlasování</translation>
     </message>
 </context>
 <context>
     <name>RPCStatsModal</name>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation>Celkem</translation>
     </message>
     <message>
         <source>%1 of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 z %2</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Resetovat</translation>
     </message>
 </context>
 <context>
     <name>RateView</name>
     <message>
         <source>Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation>Pásmo</translation>
     </message>
     <message>
         <source>Upload</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrávání</translation>
     </message>
     <message>
         <source>Kb/s</source>
-        <translation type="unfinished"></translation>
+        <translation>Kb/s</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Stahování</translation>
     </message>
 </context>
 <context>
@@ -14306,7 +14307,7 @@ to load</source>
     </message>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkopírováno</translation>
     </message>
 </context>
 <context>
@@ -14386,7 +14387,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message numerus="yes">
         <source>Remotely destruct %n token(s)</source>
@@ -14433,7 +14434,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -14456,7 +14457,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -14479,7 +14480,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -14498,7 +14499,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Remove key pair and derived accounts</source>
@@ -14517,7 +14518,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Remove saved address</source>
@@ -14537,9 +14538,9 @@ to load</source>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Název účtu musí být nejméně %n znak</numerusform>
+            <numerusform>Název účtu musí být nejméně %n znaky</numerusform>
+            <numerusform>Název účtu musí být nejméně %n znaků</numerusform>
         </translation>
     </message>
     <message>
@@ -14587,11 +14588,11 @@ to load</source>
     </message>
     <message>
         <source>Standard colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardní barvy</translation>
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit změny</translation>
     </message>
 </context>
 <context>
@@ -14618,11 +14619,11 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit změny</translation>
     </message>
 </context>
 <context>
@@ -14645,33 +14646,33 @@ to load</source>
     </message>
     <message>
         <source>Ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorovat</translation>
     </message>
     <message>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijmout</translation>
     </message>
 </context>
 <context>
     <name>RightTabView</name>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation>Sbírky</translation>
     </message>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiva</translation>
     </message>
     <message>
         <source>Activity</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivita</translation>
     </message>
 </context>
 <context>
     <name>RootStore</name>
     <message>
         <source>You</source>
-        <translation type="unfinished"></translation>
+        <translation>Vy</translation>
     </message>
     <message>
         <source>You need to be a member of this group to send messages</source>
@@ -14683,7 +14684,7 @@ to load</source>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Zpráva</translation>
     </message>
     <message>
         <source>Arbiscan Explorer</source>
@@ -14725,7 +14726,7 @@ to load</source>
     <name>SavedAddressActivityPopup</name>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odeslat</translation>
     </message>
 </context>
 <context>
@@ -14805,7 +14806,7 @@ to load</source>
     <name>ScrollingModal</name>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Systémový</translation>
     </message>
     <message>
         <source>Custom</source>
@@ -14828,14 +14829,14 @@ to load</source>
     <name>SearchBox</name>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat</translation>
     </message>
 </context>
 <context>
     <name>SearchBoxWithRightIcon</name>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat</translation>
     </message>
 </context>
 <context>
@@ -14872,7 +14873,7 @@ to load</source>
     </message>
     <message>
         <source>Community minted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyraženo komunitou</translation>
     </message>
     <message>
         <source>Other</source>
@@ -14880,7 +14881,7 @@ to load</source>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpět</translation>
     </message>
 </context>
 <context>
@@ -14910,18 +14911,18 @@ to load</source>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokračovat</translation>
     </message>
 </context>
 <context>
     <name>SeedphraseVerifyInput</name>
     <message>
         <source>Enter word</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadat slovo</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyčistit</translation>
     </message>
 </context>
 <context>
@@ -15027,7 +15028,7 @@ to load</source>
     <name>SelectParamsForBuyCryptoPanel</name>
     <message>
         <source>Buy via %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Koupit přes %1</translation>
     </message>
     <message>
         <source>Select which network and asset</source>
@@ -15035,18 +15036,18 @@ to load</source>
     </message>
     <message>
         <source>Select network</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat síť</translation>
     </message>
     <message>
         <source>Select asset</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat aktivum</translation>
     </message>
 </context>
 <context>
     <name>SendContactRequestMenuItem</name>
     <message>
         <source>Send contact request</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslat žádost o kontakt</translation>
     </message>
 </context>
 <context>
@@ -15061,15 +15062,15 @@ to load</source>
     </message>
     <message>
         <source>Send contact request</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poslat žádost o kontakt</translation>
     </message>
     <message>
         <source>who are you</source>
-        <translation type="unfinished"></translation>
+        <translation>kdo jste</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -15080,7 +15081,7 @@ to load</source>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit</translation>
     </message>
     <message>
         <source>Enter chat key here</source>
@@ -15092,7 +15093,7 @@ to load</source>
     </message>
     <message>
         <source>who are you</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">kdo jste</translation>
     </message>
     <message>
         <source>Send Contact Request</source>
@@ -15103,7 +15104,7 @@ to load</source>
     <name>SendMessageMenuItem</name>
     <message>
         <source>Send message</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat zprávu</translation>
     </message>
 </context>
 <context>
@@ -15126,7 +15127,7 @@ to load</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat</translation>
     </message>
     <message>
         <source>Amount to bridge</source>
@@ -15164,7 +15165,7 @@ to load</source>
     <name>SendModalHeader</name>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odeslat</translation>
     </message>
     <message>
         <source>On:</source>
@@ -15179,7 +15180,7 @@ to load</source>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vložit</translation>
     </message>
 </context>
 <context>
@@ -15210,7 +15211,7 @@ to load</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odeslat</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -15230,7 +15231,7 @@ to load</source>
     </message>
     <message>
         <source>Fees</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poplatky</translation>
     </message>
     <message>
         <source>Max. fees on %1</source>
@@ -15272,7 +15273,7 @@ to load</source>
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uložit změny</translation>
     </message>
     <message>
         <source>Save for later</source>
@@ -15280,7 +15281,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
 </context>
 <context>
@@ -15421,7 +15422,7 @@ to load</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
@@ -15466,7 +15467,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Requirements check pending</source>
@@ -15541,7 +15542,7 @@ to load</source>
     </message>
     <message>
         <source>Admin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Správce</translation>
     </message>
     <message>
         <source>Join</source>
@@ -15557,7 +15558,7 @@ to load</source>
     </message>
     <message>
         <source>TokenMaster</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">TokenMaster</translation>
     </message>
 </context>
 <context>
@@ -15659,7 +15660,7 @@ to load</source>
     </message>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkopírováno</translation>
     </message>
 </context>
 <context>
@@ -15678,11 +15679,11 @@ to load</source>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zpráva</translation>
     </message>
     <message>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odmítnout</translation>
     </message>
     <message>
         <source>Sign</source>
@@ -15705,14 +15706,14 @@ to load</source>
     </message>
     <message>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odmítnout</translation>
     </message>
 </context>
 <context>
     <name>SignTransactionsPopup</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Sign transaction</source>
@@ -15727,7 +15728,7 @@ to load</source>
     </message>
     <message>
         <source>Fees</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poplatky</translation>
     </message>
     <message>
         <source>Insufficient funds for send transaction</source>
@@ -15761,7 +15762,7 @@ to load</source>
     <name>SimplifiedMessageView</name>
     <message>
         <source>You</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vy</translation>
     </message>
 </context>
 <context>
@@ -15917,7 +15918,7 @@ to load</source>
     <name>StatusBadge</name>
     <message>
         <source>99+</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">99+</translation>
     </message>
 </context>
 <context>
@@ -15964,7 +15965,7 @@ to load</source>
     <name>StatusChatInfoButton</name>
     <message>
         <source>Unmute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit ztlumení</translation>
     </message>
     <message numerus="yes">
         <source>%Ln pinned message(s)</source>
@@ -15979,157 +15980,157 @@ to load</source>
     <name>StatusChatInput</name>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Zpráva</translation>
     </message>
     <message>
         <source>Please choose an image</source>
-        <translation type="unfinished"></translation>
+        <translation>Prosím vyberte obrázek</translation>
     </message>
     <message>
         <source>Image files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubory s obrázky (%1)</translation>
     </message>
     <message>
         <source>Add image</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat obrázek</translation>
     </message>
     <message>
         <source>Not available in Testnet mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedostupné v režimu Testnet</translation>
     </message>
     <message>
         <source>Add payment request</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat požadavek na platbu</translation>
     </message>
     <message>
         <source>Please reduce the message length</source>
-        <translation type="unfinished"></translation>
+        <translation>Prosím zkraťte délku zprávy</translation>
     </message>
     <message numerus="yes">
         <source>Maximum message character count is %n</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Maximální počet znaků je %n</numerusform>
+            <numerusform>Maximální počet znaků je %n</numerusform>
+            <numerusform>Maximální počet znaků je %n</numerusform>
         </translation>
     </message>
     <message>
         <source>Bold (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tučné (%1)</translation>
     </message>
     <message>
         <source>Italic (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Skloněné (%1)</translation>
     </message>
     <message>
         <source>Strikethrough (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeškrtnuté (%1)</translation>
     </message>
     <message>
         <source>Code (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kód (%1)</translation>
     </message>
     <message>
         <source>Quote (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Odsazení (%1)</translation>
     </message>
     <message>
         <source>Send message</source>
-        <translation type="unfinished"></translation>
+        <translation>Odeslat zprávu</translation>
     </message>
 </context>
 <context>
     <name>StatusChatListCategoryItem</name>
     <message>
         <source>Add channel inside category</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat kanál do kategorie</translation>
     </message>
     <message>
         <source>More</source>
-        <translation type="unfinished"></translation>
+        <translation>Více</translation>
     </message>
 </context>
 <context>
     <name>StatusChatListItem</name>
     <message>
         <source>Unmute</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit ztlumení</translation>
     </message>
 </context>
 <context>
     <name>StatusClearButton</name>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyčistit</translation>
     </message>
 </context>
 <context>
     <name>StatusColorDialog</name>
     <message>
         <source>This is not a valid colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Toto je neplatná barva</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Náhled</translation>
     </message>
     <message>
         <source>Standard colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardní barvy</translation>
     </message>
     <message>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat barvu</translation>
     </message>
 </context>
 <context>
     <name>StatusContactVerificationIcons</name>
     <message>
         <source>Blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokován</translation>
     </message>
     <message>
         <source>Trusted contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Důvěryhodný kontakt</translation>
     </message>
     <message>
         <source>Untrusted contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedůvěryhodný kontakt</translation>
     </message>
     <message>
         <source>Contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontakt</translation>
     </message>
     <message>
         <source>Untrusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedůvěryhodný</translation>
     </message>
 </context>
 <context>
     <name>StatusDatePicker</name>
     <message>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation>Dnes</translation>
     </message>
     <message>
         <source>Previous year</source>
-        <translation type="unfinished"></translation>
+        <translation>Předchozí rok</translation>
     </message>
     <message>
         <source>Previous month</source>
-        <translation type="unfinished"></translation>
+        <translation>Předchozí měsíc</translation>
     </message>
     <message>
         <source>Select year/month</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat rok/měsíc</translation>
     </message>
     <message>
         <source>Next year</source>
-        <translation type="unfinished"></translation>
+        <translation>Následující rok</translation>
     </message>
     <message>
         <source>Next month</source>
-        <translation type="unfinished"></translation>
+        <translation>Následující měsíc</translation>
     </message>
 </context>
 <context>
@@ -16160,92 +16161,92 @@ to load</source>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resetovat</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Použít</translation>
     </message>
 </context>
 <context>
     <name>StatusDialog</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Přerušit</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>No to all</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne všem</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Save all</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit vše</translation>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>Zkusit znovu</translation>
     </message>
     <message>
         <source>Ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorovat</translation>
     </message>
     <message>
         <source>Yes to all</source>
-        <translation type="unfinished"></translation>
+        <translation>Ano všem</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ano</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Použít</translation>
     </message>
 </context>
 <context>
     <name>StatusEditMessage</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
 </context>
 <context>
     <name>StatusEmojiPopup</name>
     <message>
         <source>Search Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Výsledky hledání</translation>
     </message>
     <message>
         <source>No results found</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné výsledky nenalezeny</translation>
     </message>
 </context>
 <context>
@@ -16270,7 +16271,7 @@ to load</source>
     <name>StatusGifPopup</name>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat</translation>
     </message>
     <message>
         <source>TRENDING</source>
@@ -16289,7 +16290,7 @@ to load</source>
     <name>StatusImageSelector</name>
     <message>
         <source>Supported image formats (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Podporované formáty obrázků (%1)</translation>
     </message>
 </context>
 <context>
@@ -16303,14 +16304,14 @@ to load</source>
     <name>StatusLanguageSelector</name>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hledat</translation>
     </message>
 </context>
 <context>
     <name>StatusListPicker</name>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hledat</translation>
     </message>
 </context>
 <context>
@@ -16322,56 +16323,56 @@ to load</source>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Otevřít</translation>
     </message>
 </context>
 <context>
     <name>StatusMessageDialog</name>
     <message>
         <source>Question</source>
-        <translation type="unfinished"></translation>
+        <translation>Dotaz</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informace</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Upozornění</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Chyba</translation>
     </message>
 </context>
 <context>
     <name>StatusMessageEmojiReactions</name>
     <message>
         <source> and </source>
-        <translation type="unfinished"></translation>
+        <translation> a </translation>
     </message>
     <message>
         <source>%1 more</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 navíc</translation>
     </message>
     <message>
         <source>%1 reacted with %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 reagoval(a) s %2</translation>
     </message>
     <message>
         <source>Add reaction</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat reakci</translation>
     </message>
     <message>
         <source>Maximum number of different reactions reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosažen maximální počet různých reakcí</translation>
     </message>
 </context>
 <context>
     <name>StatusMessageHeader</name>
     <message>
         <source>You</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vy</translation>
     </message>
     <message>
         <source>Failed to resend: %1</source>
@@ -16383,7 +16384,7 @@ to load</source>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odesláno</translation>
     </message>
     <message>
         <source>Sending</source>
@@ -16402,7 +16403,7 @@ to load</source>
     <name>StatusMessageReply</name>
     <message>
         <source>You</source>
-        <translation type="unfinished"></translation>
+        <translation>Vy</translation>
     </message>
 </context>
 <context>
@@ -16424,85 +16425,85 @@ to load</source>
     <name>StatusNewTag</name>
     <message>
         <source>NEW</source>
-        <translation type="unfinished"></translation>
+        <translation>NOVÉ</translation>
     </message>
 </context>
 <context>
     <name>StatusPasswordStrengthIndicator</name>
     <message>
         <source>Very weak</source>
-        <translation type="unfinished"></translation>
+        <translation>Velmi slabé</translation>
     </message>
     <message>
         <source>Weak</source>
-        <translation type="unfinished"></translation>
+        <translation>Slabé</translation>
     </message>
     <message>
         <source>Okay</source>
-        <translation type="unfinished"></translation>
+        <translation>Oukej</translation>
     </message>
     <message>
         <source>Good</source>
-        <translation type="unfinished"></translation>
+        <translation>Dobré</translation>
     </message>
     <message>
         <source>Very strong</source>
-        <translation type="unfinished"></translation>
+        <translation>Velmi silné</translation>
     </message>
 </context>
 <context>
     <name>StatusQrCodeScanner</name>
     <message>
         <source>Camera is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Kamera není dostupná</translation>
     </message>
 </context>
 <context>
     <name>StatusSearchListPopup</name>
     <message>
         <source>Search...</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat...</translation>
     </message>
 </context>
 <context>
     <name>StatusSearchLocationMenu</name>
     <message>
         <source>Anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Kdekoliv</translation>
     </message>
 </context>
 <context>
     <name>StatusSearchPopup</name>
     <message>
         <source>No results</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádné výsledky</translation>
     </message>
     <message>
         <source>Anywhere</source>
-        <translation type="unfinished"></translation>
+        <translation>Kdekoliv</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledat</translation>
     </message>
     <message>
         <source>In: </source>
-        <translation type="unfinished"></translation>
+        <translation>V: </translation>
     </message>
 </context>
 <context>
     <name>StatusStackModal</name>
     <message>
         <source>StackModal</source>
-        <translation type="unfinished"></translation>
+        <translation>StackModal</translation>
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Další</translation>
     </message>
     <message>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukončit</translation>
     </message>
 </context>
 <context>
@@ -16529,7 +16530,7 @@ to load</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Pending...</source>
@@ -16563,11 +16564,11 @@ to load</source>
     <name>StatusSyncCodeInput</name>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat</translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit</translation>
     </message>
 </context>
 <context>
@@ -16663,11 +16664,11 @@ access to your webcam</source>
     <name>StatusTrayIcon</name>
     <message>
         <source>Open Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít Status</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukončit</translation>
     </message>
 </context>
 <context>
@@ -16771,7 +16772,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Účet</translation>
     </message>
     <message>
         <source>Token</source>
@@ -16787,7 +16788,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Fees</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poplatky</translation>
     </message>
     <message>
         <source>Max. fees on %1</source>
@@ -16802,7 +16803,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přijmout</translation>
     </message>
 </context>
 <context>
@@ -16932,7 +16933,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přijmout</translation>
     </message>
     <message>
         <source>In account</source>
@@ -16944,7 +16945,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Fees</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poplatky</translation>
     </message>
     <message>
         <source>Max. fees on %1</source>
@@ -17079,7 +17080,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kopírovat</translation>
     </message>
 </context>
 <context>
@@ -17118,7 +17119,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokračovat</translation>
     </message>
 </context>
 <context>
@@ -17369,7 +17370,7 @@ access to your webcam</source>
     <name>ThumbnailsDropdownContent</name>
     <message>
         <source>No results</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Žádné výsledky</translation>
     </message>
 </context>
 <context>
@@ -17509,11 +17510,11 @@ access to your webcam</source>
     <name>TokenInfoPanel</name>
     <message>
         <source>Symbol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Symbol</translation>
     </message>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Celkem</translation>
     </message>
     <message>
         <source>Remaining</source>
@@ -17529,11 +17530,11 @@ access to your webcam</source>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ano</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ne</translation>
     </message>
     <message>
         <source>Destructible</source>
@@ -17541,7 +17542,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Účet</translation>
     </message>
 </context>
 <context>
@@ -17572,15 +17573,15 @@ access to your webcam</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Název</translation>
     </message>
     <message>
         <source>Symbol</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Symbol</translation>
     </message>
     <message>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adresa</translation>
     </message>
     <message>
         <source>(Test)</source>
@@ -17591,11 +17592,11 @@ access to your webcam</source>
     <name>TokenMasterActionPopup</name>
     <message>
         <source>Ban %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zabanovat %1</translation>
     </message>
     <message>
         <source>Kick %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vykopnout %1</translation>
     </message>
     <message>
         <source>Remotely destruct TokenMaster token</source>
@@ -17627,7 +17628,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Ban %1 and remotely destruct 1 token</source>
@@ -17658,7 +17659,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odstranit</translation>
     </message>
 </context>
 <context>
@@ -17679,18 +17680,18 @@ access to your webcam</source>
     <name>TokenSelectorCompactButton</name>
     <message>
         <source>Select asset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vybrat aktivum</translation>
     </message>
 </context>
 <context>
     <name>TokenSelectorPanel</name>
     <message>
         <source>Assets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktiva</translation>
     </message>
     <message>
         <source>Collectibles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sbírky</translation>
     </message>
 </context>
 <context>
@@ -17716,7 +17717,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Copied</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkopírováno</translation>
     </message>
 </context>
 <context>
@@ -17811,7 +17812,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odesláno</translation>
     </message>
     <message>
         <source>Receive failed</source>
@@ -17823,7 +17824,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Received</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Obdrženo</translation>
     </message>
     <message>
         <source>Destroy failed</source>
@@ -17915,7 +17916,7 @@ access to your webcam</source>
     </message>
     <message>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkusit znovu</translation>
     </message>
     <message>
         <source>Unknown NFT</source>
@@ -17934,7 +17935,7 @@ access to your webcam</source>
     <name>TransactionModalFooter</name>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Další</translation>
     </message>
     <message>
         <source>Estimated time:</source>
@@ -18150,7 +18151,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Mint %1 Owner token</source>
@@ -18189,7 +18190,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Send %1 owner token</source>
@@ -18208,11 +18209,11 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <source>Unblock</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odblokovat</translation>
     </message>
 </context>
 <context>
@@ -18227,7 +18228,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokračovat</translation>
     </message>
 </context>
 <context>
@@ -18386,19 +18387,19 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zprávy</translation>
     </message>
     <message>
         <source>Wallet</source>
-        <translation type="unfinished">Peněženka</translation>
+        <translation>Peněženka</translation>
     </message>
     <message>
         <source>Browser</source>
-        <translation type="unfinished">Webový prohlížeč</translation>
+        <translation>Webový prohlížeč</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished">Nastavení</translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <source>Node Management</source>
@@ -18406,7 +18407,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Discover Communities</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Objevujte komunity</translation>
     </message>
     <message>
         <source>Chat section loading...</source>
@@ -18561,7 +18562,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vložit</translation>
     </message>
 </context>
 <context>
@@ -18609,7 +18610,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Odeslat</translation>
     </message>
     <message>
         <source>Soulbound collectibles cannot be sent to another wallet</source>
@@ -18617,7 +18618,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Receive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přijmout</translation>
     </message>
     <message>
         <source>Bridge</source>
@@ -18705,7 +18706,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>WalletLayout</name>
     <message>
         <source>Add new address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přidat novou adresu</translation>
     </message>
 </context>
 <context>
@@ -19065,19 +19066,19 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>WalletView</name>
     <message>
         <source>Wallet</source>
-        <translation type="unfinished">Peněženka</translation>
+        <translation>Peněženka</translation>
     </message>
     <message>
         <source>Networks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sítě</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <source>Save and apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit a použít</translation>
     </message>
     <message>
         <source>New custom sort order created</source>
@@ -19091,27 +19092,27 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Wallet</source>
         <comment>Go to Wallet</comment>
-        <translation type="unfinished">Peněženka</translation>
+        <translation>Peněženka</translation>
     </message>
     <message>
         <source>Edit %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit %1</translation>
     </message>
     <message>
         <source>Edit account order</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit pořadí účtů</translation>
     </message>
     <message>
         <source>Manage tokens</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovat tokeny</translation>
     </message>
     <message>
         <source>Saved addresses</source>
-        <translation type="unfinished">Uložené adresy</translation>
+        <translation>Uložené adresy</translation>
     </message>
     <message>
         <source>Add new account</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat nový účet</translation>
     </message>
     <message>
         <source>Under construction, you might experience some minor issues</source>
@@ -19123,7 +19124,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Add new address</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat novou adresu</translation>
     </message>
 </context>
 <context>
@@ -19142,7 +19143,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vložit</translation>
     </message>
     <message>
         <source>Please enter a valid Ethereum address or ENS name</source>
@@ -19239,11 +19240,11 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>main</name>
     <message>
         <source>Status Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Desktop</translation>
     </message>
     <message>
         <source>Hello World</source>
-        <translation type="unfinished"></translation>
+        <translation>Hello World</translation>
     </message>
 </context>
 <context>
