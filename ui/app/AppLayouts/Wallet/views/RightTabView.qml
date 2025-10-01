@@ -12,6 +12,10 @@ import StatusQ.Popups.Dialog
 import AppLayouts.Wallet.controls
 import AppLayouts.Wallet.stores as WalletStores
 
+import AppLayouts.stores as AppLayoutsStores
+import AppLayouts.Communities.stores
+import AppLayouts.Profile.stores as ProfileStores
+
 import utils
 import shared.controls
 import shared.views
@@ -41,6 +45,28 @@ RightTabBaseView {
     signal launchSwapModal(string tokensKey)
     signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
 
+    ///
+    property AppLayoutsStores.RootStore store
+    property AppLayoutsStores.ContactsStore contactsStore
+    property CommunitiesStore communitiesStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
+    required property SharedStores.NetworksStore networksStore
+
+    property bool swapEnabled
+    property bool dAppsEnabled
+    property bool dAppsVisible
+
+    property var dAppsModel
+
+    signal dappListRequested()
+    signal dappConnectRequested()
+    signal dappDisconnectRequested(string dappUrl)
+    signal manageNetworksRequested()
+
+    //property alias header: header
+    property alias headerButton: header.headerButton
+    property alias networkFilter: header.networkFilter
+
     onManageNetworksRequested: {
         Global.changeAppSectionBySectionType(Constants.appSection.profile,
                                              Constants.settingsSubsection.wallet,
@@ -57,10 +83,28 @@ RightTabBaseView {
         RootStore.backButtonName = d.getBackButtonText(stack.currentIndex);
     }
 
+    WalletHeader {
+        id: header
+
+        overview: WalletStores.RootStore.overview
+        walletStore: WalletStores.RootStore
+        networksStore: root.networksStore
+        networkConnectionStore: root.networkConnectionStore
+        loginType: root.store.loginType
+        dAppsEnabled: root.dAppsEnabled
+        dAppsVisible: root.dAppsVisible
+        dAppsModel: root.dAppsModel
+
+        onDappListRequested: root.dappListRequested()
+        onDappConnectRequested: root.dappConnectRequested()
+        onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
+        onManageNetworksRequested: root.manageNetworksRequested()
+    }
+
+    header: stack.currentIndex === 0 ? header : null
     headerButton.onClicked: {
         root.launchShareAddressModal()
     }
-    header.visible: stack.currentIndex === 0
 
     StackLayout {
         id: stack

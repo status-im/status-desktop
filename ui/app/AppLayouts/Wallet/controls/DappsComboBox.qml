@@ -43,7 +43,7 @@ ComboBox {
             anchors.margins: 5
             width: 6
             height: 6
-            visible: root.delegateModel.count > 0
+            visible: root.delegateModel && root.delegateModel.count > 0
         }
 
         StatusIcon {

@@ -14783,6 +14783,13 @@ to load</source>
     </message>
 </context>
 <context>
+    <name>SavedAddressesView</name>
+    <message>
+        <source>Add new address</source>
+        <translation type="unfinished">Přidat novou adresu</translation>
+    </message>
+</context>
+<context>
     <name>ScanOrEnterQrCode</name>
     <message>
         <source>Scan encrypted QR code</source>
@@ -18717,13 +18724,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
-    <name>WalletLayout</name>
-    <message>
-        <source>Add new address</source>
-        <translation type="unfinished">Přidat novou adresu</translation>
-    </message>
-</context>
-<context>
     <name>WalletNetworkDelegate</name>
     <message>
         <source>Required for some Status features</source>
@@ -18773,7 +18773,7 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>WalletSavedAddressesHeader</name>
     <message>
         <source>Add new address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přidat novou adresu</translation>
     </message>
     <message>
         <source>Saved addresses</source>
