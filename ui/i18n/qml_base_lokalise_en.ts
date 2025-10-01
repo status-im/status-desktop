@@ -17924,6 +17924,14 @@
     </message>
   </context>
   <context>
+    <name>SavedAddressesView</name>
+    <message>
+      <source>Add new address</source>
+      <comment>SavedAddressesView</comment>
+      <translation>Add new address</translation>
+    </message>
+  </context>
+  <context>
     <name>ScanOrEnterQrCode</name>
     <message>
       <source>Scan encrypted QR code</source>
@@ -22493,6 +22501,19 @@
     </message>
   </context>
   <context>
+    <name>WalletAccountHeader</name>
+    <message>
+      <source>All accounts</source>
+      <comment>WalletAccountHeader</comment>
+      <translation>All accounts</translation>
+    </message>
+    <message>
+      <source>Last refreshed %1</source>
+      <comment>WalletAccountHeader</comment>
+      <translation>Last refreshed %1</translation>
+    </message>
+  </context>
+  <context>
     <name>WalletAddressMenu</name>
     <message>
       <source>Address copied</source>
@@ -22651,14 +22672,6 @@
     </message>
   </context>
   <context>
-    <name>WalletLayout</name>
-    <message>
-      <source>Add new address</source>
-      <comment>WalletLayout</comment>
-      <translation>Add new address</translation>
-    </message>
-  </context>
-  <context>
     <name>WalletNetworkDelegate</name>
     <message>
       <source>Required for some Status features</source>
@@ -22712,6 +22725,24 @@
       <source>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</source>
       <comment>WalletPrivacyWall</comment>
       <translation>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</translation>
+    </message>
+  </context>
+  <context>
+    <name>WalletSavedAddressesHeader</name>
+    <message>
+      <source>Add new address</source>
+      <comment>WalletSavedAddressesHeader</comment>
+      <translation>Add new address</translation>
+    </message>
+    <message>
+      <source>Saved addresses</source>
+      <comment>WalletSavedAddressesHeader</comment>
+      <translation>Saved addresses</translation>
+    </message>
+    <message>
+      <source>Last refreshed %1</source>
+      <comment>WalletSavedAddressesHeader</comment>
+      <translation>Last refreshed %1</translation>
     </message>
   </context>
   <context>

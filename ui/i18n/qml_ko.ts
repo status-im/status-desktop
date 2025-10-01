@@ -14657,6 +14657,13 @@ to load</source>
     </message>
 </context>
 <context>
+    <name>SavedAddressesView</name>
+    <message>
+        <source>Add new address</source>
+        <translation type="unfinished">새 주소 추가</translation>
+    </message>
+</context>
+<context>
     <name>ScanOrEnterQrCode</name>
     <message>
         <source>Scan encrypted QR code</source>
@@ -18557,13 +18564,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Remove key pair and derived accounts</source>
         <translation>키 쌍과 파생 계정 제거</translation>
-    </message>
-</context>
-<context>
-    <name>WalletLayout</name>
-    <message>
-        <source>Add new address</source>
-        <translation>새 주소 추가</translation>
     </message>
 </context>
 <context>
