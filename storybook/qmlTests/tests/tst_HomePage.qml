@@ -29,6 +29,7 @@ Item {
         messagingBadgeCount: 4
         showBackUpSeed: true
         backUpSeedBadgeCount: 1
+        keycardEnabled: true
 
         searchPhrase: controlUnderTest ? controlUnderTest.searchPhrase : ""
 

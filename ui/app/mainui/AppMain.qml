@@ -1780,6 +1780,7 @@ Item {
                             messagingBadgeCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
                             showBackUpSeed: !appMain.privacyStore.mnemonicBackedUp
                             backUpSeedBadgeCount: appMain.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
+                            keycardEnabled: appMain.featureFlagsStore.keycardEnabled
 
                             searchPhrase: homePage.searchPhrase
 
