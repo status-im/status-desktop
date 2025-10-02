@@ -22585,24 +22585,6 @@
     </message>
   </context>
   <context>
-    <name>WalletHeader</name>
-    <message>
-      <source>Saved addresses</source>
-      <comment>WalletHeader</comment>
-      <translation>Saved addresses</translation>
-    </message>
-    <message>
-      <source>All accounts</source>
-      <comment>WalletHeader</comment>
-      <translation>All accounts</translation>
-    </message>
-    <message>
-      <source>Last refreshed %1</source>
-      <comment>WalletHeader</comment>
-      <translation>Last refreshed %1</translation>
-    </message>
-  </context>
-  <context>
     <name>WalletKeyPairDelegate</name>
     <message>
       <source>Watched addresses</source>

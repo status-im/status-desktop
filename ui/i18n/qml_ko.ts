@@ -18495,21 +18495,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
-    <name>WalletHeader</name>
-    <message>
-        <source>Saved addresses</source>
-        <translation>저장된 주소</translation>
-    </message>
-    <message>
-        <source>All accounts</source>
-        <translation>모든 계정</translation>
-    </message>
-    <message>
-        <source>Last refreshed %1</source>
-        <translation>마지막 새로 고침 %1</translation>
-    </message>
-</context>
-<context>
     <name>WalletKeyPairDelegate</name>
     <message>
         <source>Watched addresses</source>
