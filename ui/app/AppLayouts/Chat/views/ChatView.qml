@@ -68,6 +68,7 @@ StatusSectionLayout {
     property bool amIMember: false
     property bool amISectionAdmin: false
     property bool allChannelsAreHiddenBecauseNotPermitted: false
+    property bool showUsersList: false
 
     property int requestToJoinState: Constants.RequestToJoinState.None
 
@@ -163,6 +164,9 @@ StatusSectionLayout {
     // Community access related requests:
     signal spectateCommunityRequested(string communityId)
 
+    // Navigation
+    signal showUsersListRequested(bool show)
+
     Connections {
         target: root.rootStore.stickersStore.stickersModule
 
@@ -200,18 +204,10 @@ StatusSectionLayout {
     }
 
     showRightPanel: {
-        if (root.contentLocked) {
+        if (root.contentLocked || root.rootStore.openCreateChat ||
+                !root.showUsersList || !root.chatContentModule)
             return false
-        }
 
-        if (root.rootStore.openCreateChat ||
-                !localAccountSensitiveSettings.expandUsersList) {
-            return false
-        }
-
-        if (!root.chatContentModule) {
-            return false
-        }
         // Check if user list is available as an option for particular chat content module
         return root.chatContentModule.chatDetails.isUsersListAvailable
     }
@@ -264,7 +260,7 @@ StatusSectionLayout {
 
             usersModel: root.usersModel
             amIChatAdmin: root.amIChatAdmin
-            showMembersButtonHighlighted: localAccountSensitiveSettings.expandUsersList
+            showMembersButtonHighlighted: root.showUsersList
 
             onSearchButtonClicked: root.openAppSearch()
             onDisplayEditChannelPopup: {
@@ -283,11 +279,7 @@ StatusSectionLayout {
             }
 
             onGroupMembersUpdateRequested: root.groupMembersUpdateRequested(membersPubKeysList)
-
-            onToggleShowMembersRequested: {
-                localAccountSensitiveSettings.expandUsersList =
-                        !localAccountSensitiveSettings.expandUsersList;
-            }
+            onToggleShowMembersRequested: root.showUsersListRequested(!root.showUsersList)
         }
     }
 
@@ -428,17 +420,6 @@ StatusSectionLayout {
         }
     }
 
-    Connections {
-        target: localAccountSensitiveSettings
-
-        function onExpandUsersListChanged() {
-            Qt.callLater(() => {
-                if (localAccountSensitiveSettings.expandUsersList)
-                    goToNextPanel()
-            })
-        }
-    }
-
     onSwiped: (previous, current) => {
         if (previous !== StatusSectionLayout.RightPanel)
             return
@@ -447,8 +428,14 @@ StatusSectionLayout {
         // is needed because SwipeView doesn't expose any API to detect completed
         // swipe action
         Backpressure.setTimeout(this, 300, () => {
-            localAccountSensitiveSettings.expandUsersList
-                = !localAccountSensitiveSettings.expandUsersList
+            root.showUsersList = false
+        })
+    }
+
+    onShowUsersListChanged: {
+        Qt.callLater(() => {
+            if (root.showUsersList)
+                goToNextPanel()
         })
     }
 
