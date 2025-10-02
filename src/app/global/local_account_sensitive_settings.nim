@@ -16,8 +16,6 @@ const LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED* = "ensCommunityPermissionsEnabl
 const DEFAULT_COMMUNITY_PERMISSIONS_ENABLED = false
 const LSS_KEY_IS_BROWSER_ENABLED* = "isExperimentalBrowserEnabled"
 let DEFAULT_IS_BROWSER_ENABLED = not TEST_MODE_ENABLED
-const LSS_KEY_SHOW_ONLINE_USERS* = "showOnlineUsers"
-const DEFAULT_SHOW_ONLINE_USERS = true
 const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
 const DEFAULT_EXPAND_USERS_LIST = true
 const DEFAULT_IS_MULTI_NETWORK_ENABLED = false
@@ -241,19 +239,6 @@ QtObject:
     read = getEnsCommunityPermissionsEnabled
     write = setEnsCommunityPermissionsEnabled
     notify = ensCommunityPermissionsEnabledChanged
-
-  proc showOnlineUsersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getShowOnlineUsers*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_SHOW_ONLINE_USERS, newQVariant(DEFAULT_SHOW_ONLINE_USERS))
-  proc setShowOnlineUsers*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_SHOW_ONLINE_USERS, newQVariant(value)):
-      self.showOnlineUsersChanged()
-
-  QtProperty[bool] showOnlineUsers:
-    read = getShowOnlineUsers
-    write = setShowOnlineUsers
-    notify = showOnlineUsersChanged
-
 
   proc expandUsersListChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getExpandUsersList*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -615,7 +600,6 @@ QtObject:
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
       of LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED: self.ensCommunityPermissionsEnabledChanged()
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
-      of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
       of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN: self.neverAskAboutUnfurlingAgainChanged()
       of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS: self.hideChannelSuggestionsChanged()

@@ -28,7 +28,6 @@ QtObject {
         readonly property string communities: "communities"
         readonly property string activityCenter: "activityCenter"
         readonly property string nodeManagement: "nodeManagement"
-        readonly property string onlineUsers: "onlineUsers"
         readonly property string communitiesPortal: "communitiesPortal"
         readonly property string communityPermissions: "communityPermissions"
         readonly property string discordImportTool: "discordImportTool"
@@ -122,9 +121,6 @@ QtObject {
         }
         else if (feature === experimentalFeatures.nodeManagement) {
             advancedModule.toggleNodeManagementSection()
-        }
-        else if (feature === experimentalFeatures.onlineUsers) {
-            localAccountSensitiveSettings.showOnlineUsers = !localAccountSensitiveSettings.showOnlineUsers
         }
     }
 
