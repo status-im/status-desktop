@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 
+import StatusQ.Core.Theme
+
 FocusScope {
     id: root
 
@@ -9,7 +11,7 @@ FocusScope {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 0
+        spacing: Theme.bigPadding
 
         LayoutItemProxy {
             id: headerWrapper

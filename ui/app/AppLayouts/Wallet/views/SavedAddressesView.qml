@@ -1,10 +1,11 @@
 import QtQuick
 
+import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Wallet.panels
 
-import shared.stores as SharedStores
-import AppLayouts.Wallet.stores as WalletStores
+import StatusQ.Core
 
+import shared.stores as SharedStores
 import utils
 
 RightTabBaseView {
@@ -12,26 +13,18 @@ RightTabBaseView {
 
     signal sendToAddressRequested(string address)
 
+    property WalletStores.RootStore rootStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property SharedStores.NetworksStore networksStore
 
-    header: WalletHeader {
-        id: header
+    header: WalletSavedAddressesHeader {
+        lastReloadedTime: !!root.rootStore.lastReloadTimestamp ?
+                              LocaleUtils.formatRelativeTimestamp(
+                                  root.rootStore.lastReloadTimestamp * 1000) : ""
+        loading: root.rootStore.isAccountTokensReloading
 
-        networkConnectionStore: root.networkConnectionStore
-        networksStore: root.networksStore
-        overview: WalletStores.RootStore.overview
-        walletStore: WalletStores.RootStore
-
-        dAppsEnabled: false
-        dAppsVisible: false
-
-        networkFilter.visible: false
-        headerButton.text: qsTr("Add new address")
-
-        headerButton.onClicked: {
-            Global.openAddEditSavedAddressesPopup({})
-        }
+        onReloadRequested: root.rootStore.reloadAccountTokens()
+        onAddNewAddressClicked: Global.openAddEditSavedAddressesPopup({})
     }
 
     SavedAddresses {

@@ -14780,13 +14780,6 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>SavedAddressesView</name>
-    <message>
-        <source>Add new address</source>
-        <translation type="unfinished">Přidat novou adresu</translation>
-    </message>
-</context>
-<context>
     <name>ScanOrEnterQrCode</name>
     <message>
         <source>Scan encrypted QR code</source>

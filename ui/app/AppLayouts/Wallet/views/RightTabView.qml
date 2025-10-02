@@ -6,21 +6,23 @@ import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Popups.Dialog
 
-import AppLayouts.Wallet.controls
-import AppLayouts.Wallet.stores as WalletStores
-
-import AppLayouts.stores as AppLayoutsStores
 import AppLayouts.Communities.stores
 import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.controls
+import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.stores as AppLayoutsStores
 
-import utils
 import shared.controls
-import shared.views
-import shared.stores as SharedStores
 import shared.panels
+import shared.stores as SharedStores
+import shared.views
+import utils
+
+import QtModelsToolkit
+import SortFilterProxyModel
 
 import "./"
 import "../stores"
@@ -36,16 +38,9 @@ RightTabBaseView {
         Activity = 2
     }
 
-    property SharedStores.RootStore sharedRootStore
-
     property alias currentTabIndex: walletTabBar.currentIndex
 
-    signal launchShareAddressModal()
-    signal launchBuyCryptoModal()
-    signal launchSwapModal(string tokensKey)
-    signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
-
-    ///
+    property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
     property AppLayoutsStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
@@ -55,17 +50,18 @@ RightTabBaseView {
     property bool swapEnabled
     property bool dAppsEnabled
     property bool dAppsVisible
-
     property var dAppsModel
+
+    signal launchShareAddressModal()
+    signal launchBuyCryptoModal()
+    signal launchSwapModal(string tokensKey)
+    signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
+    signal manageNetworksRequested()
 
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
-    signal manageNetworksRequested()
 
-    //property alias header: header
-    property alias headerButton: header.headerButton
-    property alias networkFilter: header.networkFilter
 
     onManageNetworksRequested: {
         Global.changeAppSectionBySectionType(Constants.appSection.profile,
@@ -83,14 +79,58 @@ RightTabBaseView {
         RootStore.backButtonName = d.getBackButtonText(stack.currentIndex);
     }
 
-    WalletHeader {
+    WalletAccountHeader {
         id: header
 
-        overview: WalletStores.RootStore.overview
-        walletStore: WalletStores.RootStore
-        networksStore: root.networksStore
-        networkConnectionStore: root.networkConnectionStore
-        loginType: root.store.loginType
+        readonly property var overview: WalletStores.RootStore.overview
+
+        allAccounts: overview.isAllAccounts
+        emojiId: SQUtils.Emoji.iconId(overview.emoji ?? "", SQUtils.Emoji.size.big)
+        balance: LocaleUtils.currencyAmountToLocaleString(overview.currencyBalance)
+        balanceLoading: overview.balanceLoading
+        color: Utils.getColorForId(overview.colorId)
+        name: overview.name
+        balanceAvailable: !root.networkConnectionStore.accountBalanceNotAvailable
+        networksModel: root.networksStore.activeNetworks
+        ensOrElidedAddress: RootStore.overview.ens ||
+                            SQUtils.Utils.elideAndFormatWalletAddress(
+                                RootStore.overview.mixedcaseAddress)
+        lastReloadedTime: !!WalletStores.RootStore.lastReloadTimestamp ?
+                              LocaleUtils.formatRelativeTimestamp(
+                                  WalletStores.RootStore.lastReloadTimestamp * 1000) : ""
+
+        tokensLoading: WalletStores.RootStore.isAccountTokensReloading
+
+        showNetworksNotificationIcon: {
+            const newChains = Constants.chains.newChains
+            const seenChains = localAppSettings.seenNetworkChains
+
+            for (let i = 0; i < newChains.length; i++)
+                if (seenChains.indexOf(newChains[i]) === -1)
+                    return true
+
+            return false
+        }
+
+        FunctionAggregator {
+            id: chainIdsAggregator
+
+            model: SortFilterProxyModel {
+                sourceModel: root.networksStore.activeNetworks
+                filters: ValueFilter {
+                    roleName: "isEnabled"
+                    value: true
+                }
+            }
+            initialValue: []
+            roleName: "chainId"
+            aggregateFunction: (aggr, value) => [...aggr, value]
+        }
+
+        Binding on networksSelection {
+            value: chainIdsAggregator.value
+        }
+
         dAppsEnabled: root.dAppsEnabled
         dAppsVisible: root.dAppsVisible
         dAppsModel: root.dAppsModel
@@ -99,12 +139,19 @@ RightTabBaseView {
         onDappConnectRequested: root.dappConnectRequested()
         onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
         onManageNetworksRequested: root.manageNetworksRequested()
+        onAddressClicked: root.launchShareAddressModal()
+        onToggleNetworkRequested: chainId => root.networksStore.toggleNetworkEnabled(chainId)
+        onNetworksShown: {
+            if (!showNetworksNotificationIcon)
+                return
+            let seenChains = JSON.parse(localAppSettings.seenNetworkChains)
+            seenChains.push(...Constants.chains.newChains)
+            localAppSettings.seenNetworkChains = JSON.stringify(seenChains)
+        }
+        onReloadRequested: WalletStores.RootStore.reloadAccountTokens()
     }
 
     header: stack.currentIndex === 0 ? header : null
-    headerButton.onClicked: {
-        root.launchShareAddressModal()
-    }
 
     StackLayout {
         id: stack
@@ -212,7 +259,7 @@ RightTabBaseView {
 
                         StatusBetaTag {
                             // TODO remove me when Activity is no longer experimental
-                            // Keep Activity as the last tab for now as the Experimental tag don't flow 
+                            // Keep Activity as the last tab for now as the Experimental tag don't flow
                             anchors.top: parent.top
                             anchors.topMargin: parent.verticalPadding
                             anchors.left: parent.right
@@ -401,7 +448,7 @@ RightTabBaseView {
 
                 Component {
                     id: collectiblesView
-                    CollectiblesView { 
+                    CollectiblesView {
                         id: collView
                         function refreshSortSettings() {
                             settings.category = settingsCategoryName
