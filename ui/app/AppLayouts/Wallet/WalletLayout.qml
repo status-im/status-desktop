@@ -14,9 +14,10 @@ import shared.popups.keypairimport
 import shared.stores as SharedStores
 import shared.stores.send
 
-import AppLayouts.stores as AppLayoutsStores
 import AppLayouts.Communities.stores
 import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.stores as AppLayoutsStores
 
 import QtModelsToolkit
 
@@ -33,6 +34,7 @@ Item {
 
     property Item navBar
 
+    property WalletStores.RootStore walletRootStore
     property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
     property AppLayoutsStores.ContactsStore contactsStore
@@ -230,6 +232,7 @@ Item {
         id: walletContainer
 
         RightTabView {
+            walletRootStore: root.walletRootStore
             sharedRootStore: root.sharedRootStore
             store: root.store
             contactsStore: root.contactsStore

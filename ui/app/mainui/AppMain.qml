@@ -1997,6 +1997,7 @@ Item {
                         WalletLayout {
                             objectName: "walletLayoutReal"
                             navBar: appMain.navBar
+                            walletRootStore: WalletStores.RootStore
                             sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore
                             contactsStore: appMain.contactsStore
