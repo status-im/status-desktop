@@ -17924,14 +17924,6 @@
     </message>
   </context>
   <context>
-    <name>SavedAddressesView</name>
-    <message>
-      <source>Add new address</source>
-      <comment>SavedAddressesView</comment>
-      <translation>Add new address</translation>
-    </message>
-  </context>
-  <context>
     <name>ScanOrEnterQrCode</name>
     <message>
       <source>Scan encrypted QR code</source>

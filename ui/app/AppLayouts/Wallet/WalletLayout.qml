@@ -228,6 +228,7 @@ Item {
 
     Component {
         id: walletContainer
+
         RightTabView {
             sharedRootStore: root.sharedRootStore
             store: root.store
@@ -242,8 +243,6 @@ Item {
 
             dAppsModel: root.dAppsModel
 
-            headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideAndFormatWalletAddress(RootStore.overview.mixedcaseAddress)
-            headerButton.visible: !RootStore.overview.isAllAccounts
             onLaunchShareAddressModal: Global.openShowQRPopup({
                                                                   switchingAccounsEnabled: true,
                                                                   hasFloatingButtons: true

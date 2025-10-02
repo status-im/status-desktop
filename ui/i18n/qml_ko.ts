@@ -14657,13 +14657,6 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>SavedAddressesView</name>
-    <message>
-        <source>Add new address</source>
-        <translation type="unfinished">새 주소 추가</translation>
-    </message>
-</context>
-<context>
     <name>ScanOrEnterQrCode</name>
     <message>
         <source>Scan encrypted QR code</source>
