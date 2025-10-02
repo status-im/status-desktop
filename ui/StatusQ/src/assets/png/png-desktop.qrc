@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/assets/png">
+        <file>market/tradeCenter-light.png</file>
+        <file>market/swap-light.png</file>
+        <file>market/tradeCenter-dark.png</file>
+        <file>market/swap-dark.png</file>
+        <file>wallet/placeholders/buyView-dark.png</file>
+        <file>wallet/placeholders/collectiblesView-dark.png</file>
+        <file>wallet/placeholders/swapView-dark.png</file>
+        <file>wallet/placeholders/mainView-dark.png</file>
+        <file>wallet/placeholders/swapView-light.png</file>
+        <file>wallet/placeholders/mainView-light.png</file>
+        <file>wallet/placeholders/collectiblesView-light.png</file>
+        <file>wallet/placeholders/buyView-light.png</file>
+    </qresource>
+</RCC>
