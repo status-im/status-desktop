@@ -40,6 +40,7 @@ RightTabBaseView {
 
     property alias currentTabIndex: walletTabBar.currentIndex
 
+    property WalletStores.RootStore walletRootStore
     property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
     property AppLayoutsStores.ContactsStore contactsStore
@@ -82,7 +83,7 @@ RightTabBaseView {
     WalletAccountHeader {
         id: header
 
-        readonly property var overview: WalletStores.RootStore.overview
+        readonly property var overview: root.walletRootStore.overview
 
         allAccounts: overview.isAllAccounts
         emojiId: SQUtils.Emoji.iconId(overview.emoji ?? "", SQUtils.Emoji.size.big)
@@ -95,11 +96,11 @@ RightTabBaseView {
         ensOrElidedAddress: RootStore.overview.ens ||
                             SQUtils.Utils.elideAndFormatWalletAddress(
                                 RootStore.overview.mixedcaseAddress)
-        lastReloadedTime: !!WalletStores.RootStore.lastReloadTimestamp ?
+        lastReloadedTime: !!root.walletRootStore.lastReloadTimestamp ?
                               LocaleUtils.formatRelativeTimestamp(
-                                  WalletStores.RootStore.lastReloadTimestamp * 1000) : ""
+                                  root.walletRootStore.lastReloadTimestamp * 1000) : ""
 
-        tokensLoading: WalletStores.RootStore.isAccountTokensReloading
+        tokensLoading: root.walletRootStore.isAccountTokensReloading
 
         showNetworksNotificationIcon: {
             const newChains = Constants.chains.newChains
@@ -148,7 +149,7 @@ RightTabBaseView {
             seenChains.push(...Constants.chains.newChains)
             localAppSettings.seenNetworkChains = JSON.stringify(seenChains)
         }
-        onReloadRequested: WalletStores.RootStore.reloadAccountTokens()
+        onReloadRequested: root.walletRootStore.reloadAccountTokens()
     }
 
     header: stack.currentIndex === 0 ? header : null
@@ -225,11 +226,11 @@ RightTabBaseView {
                 Layout.fillWidth: true
                 Layout.topMargin: Theme.bigPadding
                 Layout.preferredHeight: childrenRect.height
-                visible: WalletStores.RootStore.walletSectionInst.hasPairedDevices
-                         && WalletStores.RootStore.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
+                visible: root.walletRootStore.walletSectionInst.hasPairedDevices
+                         && root.walletRootStore.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
 
                 onRunImport: {
-                    WalletStores.RootStore.walletSectionInst.runKeypairImportPopup()
+                    root.walletRootStore.walletSectionInst.runKeypairImportPopup()
                 }
             }
 
