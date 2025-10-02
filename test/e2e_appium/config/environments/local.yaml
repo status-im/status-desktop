@@ -7,17 +7,31 @@ metadata:
 device:
   name: "sdk_gphone64_arm64"
   platform_version: "15"
+  platform_name: "android"
+
+devices:
+  - name: "sdk_gphone64_arm64"
+    platform_name: "android"
+    platform_version: "12L"
+    tags: ["emulator", "phone", "android"]
+  - name: "sdk_google_atv64_arm64"
+    platform_name: "android"
+    platform_version: "14"
+    tags: ["emulator", "android", "tv"]
   
 appium:
   server_url: "http://localhost:4723"
   
 app:
+  # Prefer attaching to already-installed package when path not provided
   source_type: "local_file"
-  path_template: "${LOCAL_APP_PATH}"
+  path_template: "${LOCAL_APP_PATH:-}"
   
 timeouts:
   default: 60
-  element_wait: 45
+  element_wait: 30
+  element_find: 10
+  element_click: 10
   
 logging:
   level: "DEBUG"
@@ -32,4 +46,8 @@ capabilities:
   platformName: "android"
   automationName: "UiAutomator2"
   newCommandTimeout: 300
-  noReset: false 
+  noReset: false
+  appPackage: "im.status.tablet"
+  appActivity: "org.qtproject.qt.android.bindings.QtActivity"
+  unicodeKeyboard: true
+  resetKeyboard: true

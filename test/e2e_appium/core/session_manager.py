@@ -6,7 +6,7 @@ from appium.webdriver.appium_connection import AppiumConnection
 from selenium.webdriver.remote.client_config import ClientConfig
 
 try:
-    from config import get_config, TestConfig, get_logger, log_session_info
+    from config import get_logger, log_session_info
     from core import EnvironmentSwitcher, ConfigurationError
 except ImportError:
     from config import get_logger, log_session_info
@@ -16,10 +16,11 @@ except ImportError:
 class SessionManager:
     """Manages Appium driver sessions and environment configuration"""
 
-    def __init__(self, environment="lambdatest"):
+    def __init__(self, environment="lambdatest", device_override=None):
         self.environment = environment
         self.driver = None
         self.logger = get_logger("session")
+        self._device_override = device_override or None
 
         # Load YAML-based configuration (simplified)
         try:
@@ -38,10 +39,34 @@ class SessionManager:
                 f"   Timeouts: default={timeouts.get('default')}s, wait={timeouts.get('element_wait')}s"
             )
 
+            # Apply device override if provided
+            if self._device_override:
+                self._apply_device_override(self._device_override)
+
         except ConfigurationError as e:
             self.logger.error(f"❌ Configuration error: {e}")
             self.logger.error("💡 Ensure YAML configuration files are properly set up")
-            raise  # Don't fall back to legacy, force proper config
+            raise
+
+    def _apply_device_override(self, override: dict) -> None:
+        """Override device fields from a device entry (name, platform_name, platform_version, tags)."""
+        try:
+            name = override.get("name")
+            platform_name = override.get("platform_name", self.env_config.platform_name)
+            platform_version = override.get(
+                "platform_version", self.env_config.platform_version
+            )
+            if name:
+                self.env_config.device_name = name
+            if platform_name:
+                self.env_config.platform_name = platform_name
+            if platform_version:
+                self.env_config.platform_version = platform_version
+            self.logger.info(
+                f"🔧 Device override applied → {self.env_config.device_name} ({self.env_config.platform_name} {self.env_config.platform_version})"
+            )
+        except Exception as e:
+            self.logger.warning(f"Failed to apply device override: {e}")
 
     def _get_lambdatest_naming(self) -> dict:
         """Generate LambdaTest build and test names from YAML config."""
