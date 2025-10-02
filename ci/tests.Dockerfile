@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends --fix-missing 
     sudo \
     curl wget gnupg ca-certificates lsb-release python3-pip python3-venv
 
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor --batch --yes -o /etc/apt/keyrings/docker.gpg \
 && gpg --no-default-keyring --keyring /etc/apt/keyrings/docker.gpg --fingerprint \
       | grep -q "9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88" \
 && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
@@ -27,3 +27,5 @@ USER jenkins
 LABEL maintainer="marko@status.im"
 LABEL source="https://github.com/status-im/status-desktop"
 LABEL description="Build image for the Status Desktop e2e tests with Squish and Qt."
+
+ENTRYPOINT [""]

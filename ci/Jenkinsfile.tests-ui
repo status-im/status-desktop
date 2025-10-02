@@ -6,15 +6,16 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    /* Image with Ubuntu 22.04 and QT 6.9.2 */
-    docker {
+    dockerfile {
       label 'linuxcontainer'
-      image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
-      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
-      args '--entrypoint="" ' +
-          '--cap-add SYS_ADMIN ' +
-          '--security-opt apparmor:unconfined ' +
-          '--device /dev/fuse'
+      filename 'tests.Dockerfile'
+      dir 'ci'
+      args '--cap-add SYS_ADMIN ' +
+           '--security-opt apparmor:unconfined ' +
+           '--device /dev/fuse ' +
+           '--volume=/var/run/docker.sock:/var/run/docker.sock ' +
+           '--network=host ' +
+           '--user jenkins'
     }
   }
 
