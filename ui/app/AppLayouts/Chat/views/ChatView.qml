@@ -205,8 +205,7 @@ StatusSectionLayout {
         }
 
         if (root.rootStore.openCreateChat ||
-           !localAccountSensitiveSettings.showOnlineUsers ||
-           !localAccountSensitiveSettings.expandUsersList) {
+                !localAccountSensitiveSettings.expandUsersList) {
             return false
         }
 

@@ -102,8 +102,7 @@ RowLayout {
                 if(!chatContentModule)
                     return false
 
-                return localAccountSensitiveSettings.showOnlineUsers &&
-                        chatContentModule.chatDetails.isUsersListAvailable
+                return chatContentModule.chatDetails.isUsersListAvailable
             }
 
             highlighted: root.showMembersButtonHighlighted
