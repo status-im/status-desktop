@@ -103,6 +103,11 @@ void registerStatusQTypes() {
     Q_INIT_RESOURCE(fonts);
     Q_INIT_RESOURCE(img);
     Q_INIT_RESOURCE(png);
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+    Q_INIT_RESOURCE(png_mobile);
+#else
+    Q_INIT_RESOURCE(png_desktop);
+#endif
     Q_INIT_RESOURCE(twemoji);
     Q_INIT_RESOURCE(twemoji_svg);
 #endif
