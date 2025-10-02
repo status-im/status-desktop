@@ -20,6 +20,22 @@ Control {
     signal openDiscussPageRequested()
     signal enableThirdpartyServicesRequested()
 
+    QtObject {
+        id: d
+        readonly property var window: root.contentItem.Window.window
+        readonly property int windowWidth: window ? window.width: Screen.width
+        readonly property int windowHeight: window ? window.height: Screen.height
+        readonly property bool isSmallPortraitScreen: windowHeight > windowWidth
+                                            // The max width of a phone in portrait mode
+                                            && windowWidth <= Theme.portraitBreakpoint.width
+        function getImagePath(currentIndex) {
+            const imageName = root.model.get(currentIndex).image
+            const platformPostfix = isSmallPortraitScreen ? "-small": ""
+            const imagePath =  "%1-%2%3".arg(imageName).arg(Theme.palette.name).arg(platformPostfix)
+            return Theme.png(imagePath)
+        }
+    }
+
     verticalPadding: Theme.xlPadding
     horizontalPadding: Theme.xlPadding * 2
 
@@ -28,30 +44,49 @@ Control {
 
         Item { Layout.fillHeight: true }
 
-        StatusBaseText {
+        ColumnLayout {
+            readonly property int maxChildrenHeight: (primaryText.maximumLineCount * primaryText.lineHeight) +
+                                                      (secondaryText.maximumLineCount * secondaryText.lineHeight)
+
             Layout.fillWidth: true
+            Layout.preferredHeight: maxChildrenHeight
+            Layout.maximumHeight: maxChildrenHeight
+            spacing: 0
 
-            horizontalAlignment: Text.AlignHCenter
-            font.weight: Font.Bold
-            font.pixelSize: 22
-            lineHeightMode: Text.FixedHeight
-            lineHeight: 30
-            wrapMode: Text.WordWrap
+            Item { Layout.fillHeight: true }
 
-            text: root.model.get(pageIndicator.currentIndex).primary
-        }
+            StatusBaseText {
+                id: primaryText
 
-        StatusBaseText {
-            Layout.topMargin: -parent.spacing
-            Layout.fillWidth: true
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignBottom
 
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Theme.additionalTextSize
-            lineHeightMode: Text.FixedHeight
-            lineHeight: 18
-            wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignHCenter
+                font.weight: Font.Bold
+                font.pixelSize: 22
+                wrapMode: Text.WordWrap
+                lineHeightMode: Text.FixedHeight
+                lineHeight: 30
+                maximumLineCount: 2
 
-            text: root.model.get(pageIndicator.currentIndex).secondary
+                text: root.model.get(pageIndicator.currentIndex).primary
+            }
+
+            StatusBaseText {
+                id: secondaryText
+
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignBottom
+
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: Theme.additionalTextSize
+                lineHeightMode: Text.FixedHeight
+                lineHeight: 18
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
+
+                text: root.model.get(pageIndicator.currentIndex).secondary
+            }
         }
 
         Image {
@@ -74,7 +109,7 @@ Control {
                 id: fadeSwap
                 OpacityAnimator { target: placeholderImage; from: 1; to: 0; duration: 500;}
                 PropertyAction   { target: placeholderImage; property: "source";
-                                   value: Theme.png(root.model.get(pageIndicator.currentIndex).image) }
+                                   value: d.getImagePath(pageIndicator.currentIndex) }
                 OpacityAnimator { target: placeholderImage; from: 0; to: 1; duration: 500; }
             }
 
@@ -89,7 +124,7 @@ Control {
             }
 
             Component.onCompleted: {
-                placeholderImage.source = Theme.png(root.model.get(pageIndicator.currentIndex).image)
+                placeholderImage.source = d.getImagePath(pageIndicator.currentIndex)
                 initialized = true
             }
         }
@@ -101,6 +136,7 @@ Control {
             Layout.maximumWidth: parent.width
 
             count: root.model.count
+            visible: count > 1
         }
 
         StatusBaseText {

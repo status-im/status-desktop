@@ -140,6 +140,18 @@ if (${STATUSQ_SHADOW_BUILD})
         src/assets/png/png.qrc
         src/assets/twemoji/twemoji.qrc
         src/assets/twemoji/twemoji-svg.qrc)
+
+    # Platform-specific PNG bundles
+    if(ANDROID OR IOS)
+        list(APPEND STATUSQ_QRC_FILES
+            src/assets/png/png-mobile.qrc
+        )
+    else()
+        list(APPEND STATUSQ_QRC_FILES
+            src/assets/png/png-desktop.qrc
+        )
+    endif()
+
     if (${STATUSQ_STATIC_LIB})
         # randlib would complain about the generated .o files. Generate cpp files instead.
         qt_add_resources(STATUSQ_QRC_COMPILED ${STATUSQ_QRC_FILES})
