@@ -822,9 +822,12 @@ Item {
         id: d
 
         readonly property int activeSectionType: appMain.rootStore.activeSectionType
-
         readonly property bool isBrowserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
         
+        property bool showUsersList: localAccountSensitiveSettings.expandUsersList
+
+        onShowUsersListChanged: localAccountSensitiveSettings.expandUsersList = showUsersList
+
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
             homePageLoader.item.focusSearch()
@@ -1895,6 +1898,9 @@ Item {
                         ChatLayout {
                             id: chatLayoutContainer
 
+                            showUsersList: d.showUsersList
+                            onShowUsersListRequested: show => d.showUsersList = show
+
                             isChatView: true
                             navBar: appMain.navBar
                             rootStore: ChatStores.RootStore {
@@ -2284,6 +2290,9 @@ Item {
                                     chatLayoutComponent.currentIndex = 0
                                 }
                             }
+
+                            showUsersList: d.showUsersList
+                            onShowUsersListRequested: show => d.showUsersList = show
 
                             isChatView: false // This will be a community view
                             navBar: appMain.navBar

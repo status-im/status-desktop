@@ -67,6 +67,7 @@ StackLayout {
     readonly property int isInvitationPending: root.rootStore.chatCommunitySectionModule.requestToJoinState !== Constants.RequestToJoinState.None
 
     property bool communitySettingsDisabled
+    property bool showUsersList
 
     property bool sendViaPersonalChatEnabled
     property string disabledTooltipText
@@ -106,8 +107,10 @@ StackLayout {
     signal removeTrustStatusRequest(string pubKey)
     signal dismissContactRequest(string chatId, string contactRequestId)
     signal acceptContactRequest(string chatId, string contactRequestId)
-
     onIsPrivilegedUserChanged: if (root.currentIndex === 1) root.currentIndex = 0
+
+    // Navigation
+    signal showUsersListRequested(bool show)
 
     onCurrentIndexChanged: {
         Global.closeCreateChatView()
@@ -217,6 +220,7 @@ StackLayout {
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             disabledTooltipText: root.disabledTooltipText
             paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
+            showUsersList: root.showUsersList
 
             hasUnrestrictedViewOnlyPermission: {
                 viewOnlyUnrestrictedPermissionHelper.revision
@@ -342,6 +346,8 @@ StackLayout {
             onSpectateCommunityRequested: (communityId) => {
                 root.communityAccessStore.spectateCommunity(communityId)
             }
+
+            onShowUsersListRequested: show => root.showUsersListRequested(show)
         }
     }
 
