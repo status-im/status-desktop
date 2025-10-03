@@ -1,5 +1,7 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
+import QtQml
 
 import StatusQ
 import StatusQ.Core
@@ -51,6 +53,9 @@ StatusSectionLayout {
         readonly property int preventShadowClipMargin: Theme.padding
  
         readonly property bool searchMode: searcher.text.length > 0
+
+        // Read-only flag that turns true when the component enters a “compact” layout automatically on resize.
+        readonly property bool compactMode: root.width < 600
     }
 
     SortFilterProxyModel {
@@ -107,49 +112,45 @@ StatusSectionLayout {
                 color: Theme.palette.directColor1
             }
 
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 38
-                spacing: Theme.bigPadding
+            ColumnLayout {
+                spacing: Theme.padding
 
-                SearchBox {
-                    id: searcher
-                    Layout.fillWidth: true
-                    Layout.maximumWidth: 327
-                    Layout.preferredHeight: 38
-                    Layout.alignment: Qt.AlignVCenter
-                    topPadding: 0
-                    bottomPadding: 0
-                }
+                RowLayout {
+                    LayoutItemProxy {
+                        Layout.fillWidth: true
 
-                // Just a row filler to fit design
-                Item { Layout.fillWidth: true }
-
-                StatusButton {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 38
-                    Layout.maximumWidth: implicitWidth
-                    text: qsTr("Join Community")
-                    verticalPadding: 0
-                    onClicked: Global.importCommunityPopupRequested()
-                }
-
-                StatusButton {
-                    objectName: "createCommunityButton"
-                    visible: root.createCommunityEnabled
-                    Layout.preferredHeight: 38
-                    verticalPadding: 0
-                    text: qsTr("Create New Community")
-                    type: StatusBaseButton.Type.Primary
-                    onClicked: {
-                        // Global.openPopup(chooseCommunityCreationTypePopupComponent) // hidden as part of https://github.com/status-im/status-desktop/issues/17726
-                        root.communitiesStore.setCreateCommunityPopupSeen()
-                        Global.createCommunityPopupRequested(false /*isDiscordImport*/)
+                        target: SearchBox {
+                            id: searcher
+                            Layout.fillWidth: true
+                            Layout.maximumWidth: 327
+                            Layout.preferredHeight: 38
+                            Layout.alignment: Qt.AlignVCenter
+                            topPadding: 0
+                            bottomPadding: 0
+                        }
                     }
 
-                    StatusNewBadge {
-                        visible: root.createCommunityBadgeVisible
+                    // filler
+                    Item {
+                        Layout.fillWidth: true
                     }
+
+                    LayoutItemProxy {
+                        visible: !d.compactMode
+
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
+
+                        target: buttonsRow
+                    }
+                }
+
+                LayoutItemProxy {
+                    visible: d.compactMode
+
+                    Layout.fillWidth: true
+
+                    target: buttonsRow
                 }
             }
 
@@ -187,6 +188,42 @@ StatusSectionLayout {
 
                     onCardClicked: (communityId) => root.communitiesStore.navigateToCommunity(communityId)
                 }
+            }
+        }
+    }
+
+    RowLayout {
+        id: buttonsRow
+        Layout.fillWidth: true
+        Layout.preferredHeight: 38
+        spacing: Theme.bigPadding
+
+        StatusButton {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 38
+            Layout.maximumWidth: implicitWidth
+            text: qsTr("Join Community")
+            verticalPadding: 0
+            onClicked: Global.importCommunityPopupRequested()
+        }
+
+        StatusButton {
+            objectName: "createCommunityButton"
+            Layout.fillWidth: true
+            Layout.preferredHeight: 38
+            Layout.maximumWidth: implicitWidth
+            visible: root.createCommunityEnabled
+            verticalPadding: 0
+            text: qsTr("Create New Community")
+            type: StatusBaseButton.Type.Primary
+            onClicked: {
+                // Global.openPopup(chooseCommunityCreationTypePopupComponent) // hidden as part of https://github.com/status-im/status-desktop/issues/17726
+                root.communitiesStore.setCreateCommunityPopupSeen()
+                Global.createCommunityPopupRequested(false /*isDiscordImport*/)
+            }
+
+            StatusNewBadge {
+                visible: root.createCommunityBadgeVisible
             }
         }
     }

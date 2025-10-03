@@ -106,7 +106,9 @@ StatusScrollView {
                 json: tags
             }
 
-            width: d.delegateWidth
+            width: d.delegateWidth > root.contentWidth -  2 * Theme.padding ?
+                       root.contentWidth - 2 * Theme.padding : d.delegateWidth
+
             communityId: model.id
             loaded: model.available
             asset.source: model.icon
@@ -214,6 +216,9 @@ StatusScrollView {
             }
 
             PromotionalCommunityCard {
+                width: d.delegateWidth > root.contentWidth -  2 * Theme.padding ?
+                           root.contentWidth - 2 * Theme.padding : d.delegateWidth
+
                 onLearnMore: Global.openLinkWithConfirmation(d.learnAboutCommunitiesVoteLink,
                                                              StringUtils.extractDomainFromLink(d.learnAboutCommunitiesVoteLink))
                 onInitiateVote: Global.openLinkWithConfirmation(d.voteCommunityLink,
