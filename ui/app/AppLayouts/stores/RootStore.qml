@@ -41,6 +41,8 @@ QtObject {
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {
         localBackupEnabled: root.localBackupEnabled
     }
+
+    readonly property AccountSettingsStore accountSettingsStore: AccountSettingsStore {}
     readonly property ContactsStore contactsStore: ContactsStore {}
     readonly property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
 
