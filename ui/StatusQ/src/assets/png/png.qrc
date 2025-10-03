@@ -924,11 +924,29 @@
         <file>status-logo-icon.png</file>
         <file>status-preparing.png</file>
         <file>unfurling-image.png</file>
-        <file>wallet/placeholders/buyView.png</file>
-        <file>wallet/placeholders/swapView.png</file>
-        <file>wallet/placeholders/collectiblesView.png</file>
-        <file>wallet/placeholders/mainView.png</file>
-        <file>market/tradeCenter.png</file>
-        <file>market/swap.png</file>
+        <file>market/tradeCenter-light.png</file>
+        <file>market/swap-light.png</file>
+        <file>market/tradeCenter-dark.png</file>
+        <file>market/swap-dark.png</file>
+        <file>market/tradeCenter-light-small.png</file>
+        <file>market/swap-light-small.png</file>
+        <file>market/tradeCenter-dark-small.png</file>
+        <file>market/swap-dark-small.png</file>
+        <file>wallet/placeholders/mainView-light-small.png</file>
+        <file>wallet/placeholders/collectiblesView-light-small.png</file>
+        <file>wallet/placeholders/buyView-light-small.png</file>
+        <file>wallet/placeholders/swapView-light-small.png</file>
+        <file>wallet/placeholders/mainView-dark-small.png</file>
+        <file>wallet/placeholders/collectiblesView-dark-small.png</file>
+        <file>wallet/placeholders/buyView-dark-small.png</file>
+        <file>wallet/placeholders/swapView-dark-small.png</file>
+        <file>wallet/placeholders/buyView-dark.png</file>
+        <file>wallet/placeholders/collectiblesView-dark.png</file>
+        <file>wallet/placeholders/swapView-dark.png</file>
+        <file>wallet/placeholders/mainView-dark.png</file>
+        <file>wallet/placeholders/swapView-light.png</file>
+        <file>wallet/placeholders/mainView-light.png</file>
+        <file>wallet/placeholders/collectiblesView-light.png</file>
+        <file>wallet/placeholders/buyView-light.png</file>
     </qresource>
 </RCC>
