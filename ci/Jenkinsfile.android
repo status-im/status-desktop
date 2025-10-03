@@ -49,7 +49,6 @@ pipeline {
   }
 
   environment {
-    USE_SYSTEM_NIM = "1"
     GOCACHE = "${env.WORKSPACE_TMP}/go-cache"
     GOMODCACHE = "${env.WORKSPACE_TMP}/go-mod-cache"
     GOTMPDIR = "${env.WORKSPACE_TMP}"
