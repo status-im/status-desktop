@@ -377,6 +377,7 @@ QtObject {
         readonly property int about_terms: 15 // a subpage under "About"
         readonly property int about_privacy: 16 // a subpage under "About"
         readonly property int privacyAndSecurity: 17
+        readonly property int backupSettings: 20
 
         // special treatment; these do not participate in the main settings' StackLayout
         readonly property int signout: 18

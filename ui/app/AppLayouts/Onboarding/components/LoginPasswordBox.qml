@@ -5,11 +5,15 @@ import QtQml.Models
 
 import StatusQ
 import StatusQ.Core
+import StatusQ.Core.Utils
 import StatusQ.Controls
 import StatusQ.Core.Theme
 import StatusQ.Popups.Dialog
+import StatusQ.Core.Backpressure
 
 import AppLayouts.Onboarding.controls
+
+import utils // for Constants
 
 Control {
     id: root
@@ -17,6 +21,8 @@ Control {
     required property bool isBiometricsLogin
     required property bool biometricsSuccessful
     required property bool biometricsFailed
+
+    required property url backupPath
 
     property string validationError
     property string detailedError
@@ -67,11 +73,11 @@ Control {
             HoverHandler {
                 cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
             }
-            onLinkActivated: (link) => {
+            onLinkActivated: function(link) {
                 if (link.startsWith("#password"))
-                  forgottenPassInstructionsPopupComp.createObject(root).open()
+                    forgottenPassInstructionsPopupComp.createObject(root).open()
                 else
-                  root.detailedErrorPopupRequested()
+                    root.detailedErrorPopupRequested()
             }
         }
         StatusButton {
@@ -93,16 +99,40 @@ Control {
     Component {
         id: forgottenPassInstructionsPopupComp
         StatusDialog {
+            id: forgottenPassInstructionsPopup
             width: 480
             padding: 20
             title: qsTr("Forgot your password?")
             destroyOnClose: true
-            standardButtons: Dialog.Ok
+
+            footer: StatusDialogFooter {
+                rightButtons: ObjectModel {
+                    StatusButton {
+                        text: qsTr("Copy instructions")
+                        icon.name: "copy"
+                        onClicked: {
+                            let textToCopy = ""
+                            for (let i = 0; i < instructionsColumn.children.length; i++) {
+                                if (instructionsColumn.children[i].text)
+                                    textToCopy += StringUtils.plainText(instructionsColumn.children[i].text) + "\n"
+                            }
+
+                            ClipboardUtils.setText(textToCopy)
+                            icon.name = "tiny/checkmark"
+                            icon.color = Theme.palette.successColor1
+
+                            Backpressure.debounce(forgottenPassInstructionsPopup, 1500, () => forgottenPassInstructionsPopup.close())()
+                        }
+                    }
+                }
+            }
+
             contentItem: ColumnLayout {
                 spacing: 20
                 StatusBaseText {
                     Layout.fillWidth: true
-                    text: qsTr("To recover your password follow these steps:")
+                    wrapMode: Text.Wrap
+                    text: qsTr("To recover your profile and data follow these steps:")
                 }
                 OnboardingFrame {
                     Layout.fillWidth: true
@@ -110,18 +140,26 @@ Control {
                     padding: Theme.padding
                     dropShadow: false
                     contentItem: ColumnLayout {
+                        id: instructionsColumn
                         spacing: 4
                         StatusBaseText {
                             Layout.fillWidth: true
                             wrapMode: Text.Wrap
-                            text: qsTr("1. Remove the Status app")
+                            text: qsTr("1. Copy backup file")
                             font.weight: Font.DemiBold
                         }
                         StatusBaseText {
                             Layout.fillWidth: true
                             Layout.leftMargin: Theme.padding
                             wrapMode: Text.Wrap
-                            text: qsTr("This will erase all of your data from the device, including your password")
+                            text: qsTr("Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. " +
+                                       "If you have multiple profiles, save all their backup files." +
+                                       "<br>Backup file path: %1").arg("<a href='%1'>%2</a>".arg(root.backupPath).arg(UrlUtils.convertUrlToLocalPath(root.backupPath)))
+                            linkColor: !!hoveredLink ? Theme.palette.primaryColor1 : color
+                            onLinkActivated: (link) => Qt.openUrlExternally(link)
+                            HoverHandler {
+                                cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
+                            }
                         }
                         StatusBaseText {
                             Layout.fillWidth: true
@@ -136,7 +174,7 @@ Control {
                             wrapMode: Text.Wrap
                             text: qsTr("Re-download the app from %1 %2").arg("<a href='#'>status.app</a>").arg("🔗")
                             linkColor: !!hoveredLink ? Theme.palette.primaryColor1 : color
-                            onLinkActivated: Qt.openUrlExternally("https://status.app")
+                            onLinkActivated: Qt.openUrlExternally(Constants.externalStatusLinkWithHttps)
                             HoverHandler {
                                 cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
                             }
@@ -145,27 +183,20 @@ Control {
                             Layout.fillWidth: true
                             Layout.topMargin: 20
                             wrapMode: Text.Wrap
-                            text:qsTr("3. Sign up with your existing keys")
+                            text: qsTr("3. Restore your Status profile(s)")
                             font.weight: Font.DemiBold
                         }
                         StatusBaseText {
                             Layout.fillWidth: true
                             Layout.leftMargin: Theme.padding
                             wrapMode: Text.Wrap
-                            text: qsTr("Access with your recovery phrase or Keycard")
-                        }
-                        StatusBaseText {
-                            Layout.fillWidth: true
-                            Layout.topMargin: 20
-                            wrapMode: Text.Wrap
-                            text: qsTr("4. Create a new password")
-                            font.weight: Font.DemiBold
-                        }
-                        StatusBaseText {
-                            Layout.fillWidth: true
-                            Layout.leftMargin: Theme.padding
-                            wrapMode: Text.Wrap
-                            text: qsTr("Enter a new password and you’re all set! You will be able to use your new password")
+                            text: qsTr("If you have multiple profiles, repeat for each one:" +
+                                       "<ul>" +
+                                       "<li>On the Welcome screen, open the profile menu → Log in." +
+                                       "<li>Select Log in with Recovery Phrase." +
+                                       "<li>Enter your recovery phrase." +
+                                       "<li>Create a new password." +
+                                       "<li>Import the backup file from Step 1, or skip and import later from <i>Settings > On-device backup</i>.")
                         }
                     }
                 }

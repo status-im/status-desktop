@@ -35,11 +35,15 @@ QtObject {
         readonly property var globalUtilsInst: globalUtils
     }
 
+    signal localBackupExportCompleted(bool success)
     signal localBackupImportCompleted(bool success)
 
     readonly property Connections syncModuleConnections: Connections {
         target: root.syncModule
 
+        function onLocalBackupExportCompleted(success: bool) {
+            root.localBackupExportCompleted(success)
+        }
         function onLocalBackupImportCompleted(success: bool) {
             root.localBackupImportCompleted(success)
         }

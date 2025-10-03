@@ -1,5 +1,6 @@
 AboutView 1.0 AboutView.qml
 AppearanceView 1.0 AppearanceView.qml
+BackupView 1.0 BackupView.qml
 BrowserView 1.0 BrowserView.qml
 ChangePasswordView 1.0 ChangePasswordView.qml
 CommunitiesView 1.0 CommunitiesView.qml
