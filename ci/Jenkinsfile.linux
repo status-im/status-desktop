@@ -13,11 +13,11 @@ pipeline {
       image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" ' +
-           '--volume=/var/run/docker.sock:/var/run/docker.sock ' +
-           '--network=host ' +
            '--cap-add=SYS_ADMIN ' +
            '--security-opt=apparmor:unconfined ' +
-           '--device=/dev/fuse'
+           '--device=/dev/fuse ' +
+           '--volume=/nix:/nix ' +
+           '--volume=/etc/nix:/etc/nix '
     }
   }
 

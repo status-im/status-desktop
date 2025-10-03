@@ -12,6 +12,9 @@ pipeline {
       label 'linuxcontainer'
       image 'harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2-android'
       alwaysPull true
+      args '--entrypoint="" ' +
+           '--volume=/nix:/nix ' +
+           '--volume=/etc/nix:/etc/nix '
     }
   }
 
