@@ -30,16 +30,27 @@ StatusScrollView {
     signal cardClicked(string communityId)
 
     clip: false
+    contentWidth: availableWidth
+    contentItem.scale: d.scale
+    contentItem.width: availableWidth / contentItem.scale
+    contentItem.height: availableHeight / contentItem.scale
+    contentItem.transformOrigin: Item.TopLeft
 
     QtObject {
         id: d
 
-        // values from the design
+        // Values from the design
         readonly property int scrollViewTopMargin: 20
         readonly property int subtitlePixelSize: 17
         readonly property int promotionalCardPosition: Math.max(gridLayout.delegateCountPerRow - 1, 1)
-    
-        readonly property int delegateWidth: 335
+        property int delegateWidth: 335
+
+        readonly property real minWidth: d.delegateWidth + root.rightPadding + root.leftPadding + 2 * Theme.padding
+        readonly property real scale: Math.min(1, root.availableWidth / minWidth)
+
+        Behavior on delegateWidth {
+            PropertyAnimation { duration: Theme.AnimationDuration.Fast }
+        }
 
         // URLs:
         readonly property string learnAboutCommunitiesVoteLink: Constants.statusHelpLinkPrefix + "communities/vote-to-feature-a-status-community#step-2-initiate-a-round-of-vote"
@@ -146,7 +157,7 @@ StatusScrollView {
 
     ColumnLayout {
         id: contentColumn
-        anchors.fill: parent
+        width: root.availableWidth / d.scale
         anchors.leftMargin: root.anchors.leftMargin
         anchors.rightMargin: root.anchors.rightMargin
 
@@ -214,6 +225,8 @@ StatusScrollView {
             }
 
             PromotionalCommunityCard {
+                width: d.delegateWidth
+
                 onLearnMore: Global.openLinkWithConfirmation(d.learnAboutCommunitiesVoteLink,
                                                              StringUtils.extractDomainFromLink(d.learnAboutCommunitiesVoteLink))
                 onInitiateVote: Global.openLinkWithConfirmation(d.voteCommunityLink,
