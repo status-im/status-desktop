@@ -70,7 +70,7 @@ SettingsContentBase {
     titleRowComponentLoader.sourceComponent: Item {
         implicitWidth: 226
         implicitHeight: 38
-        visible: (Qt.platform.os === SQUtils.Utils.mac)
+        visible: (Qt.platform.os === SQUtils.Utils.mac || SQUtils.Utils.isMobile)
 
         property StatusSwitch switchItem: biometricsSwitch
         property StatusDialog popupItem: enableBiometricsPopup

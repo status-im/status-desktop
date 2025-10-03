@@ -230,6 +230,11 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
         src/statuswindow_other.cpp
         src/keychain_other.cpp
     )
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
+    target_sources(StatusQ PRIVATE
+        src/statuswindow_other.cpp
+        src/keychain_android.cpp
+    )
 else ()
     target_sources(StatusQ PRIVATE
         src/statuswindow_other.cpp
