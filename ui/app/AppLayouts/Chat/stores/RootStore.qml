@@ -530,22 +530,6 @@ QtObject {
         return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
 
-    function acceptRequestTransaction(transactionHash, messageId, signature) {
-        return currentChatContentModule().inputAreaModule.acceptRequestTransaction(transactionHash, messageId, signature)
-    }
-
-    function acceptAddressRequest(messageId, address) {
-        currentChatContentModule().inputAreaModule.acceptAddressRequest(messageId, address)
-    }
-
-    function declineAddressRequest(messageId) {
-        currentChatContentModule().inputAreaModule.declineAddressRequest(messageId)
-    }
-
-    function declineRequest(messageId) {
-        currentChatContentModule().inputAreaModule.declineRequest(messageId)
-    }
-
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }
