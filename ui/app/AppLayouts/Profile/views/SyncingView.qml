@@ -166,7 +166,7 @@ SettingsContentBase {
 
         Rectangle {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 17
+            Layout.topMargin: Theme.padding
 
             implicitWidth: instructionsLayout.implicitWidth
                            + instructionsLayout.anchors.leftMargin
@@ -177,26 +177,25 @@ SettingsContentBase {
                             + instructionsLayout.anchors.bottomMargin
 
             color: Theme.palette.primaryColor3
-            radius: 8
+            radius: Theme.radius
 
             ColumnLayout {
                 id: instructionsLayout
 
                 anchors {
                     fill: parent
-                    topMargin: 24
-                    bottomMargin: 24
-                    leftMargin: 16
-                    rightMargin: 16
+                    topMargin: Theme.bigPadding
+                    bottomMargin: Theme.bigPadding
+                    leftMargin: Theme.padding
+                    rightMargin: Theme.padding
                 }
 
-                spacing: 17
+                spacing: Theme.padding
 
                 Item {
                     Layout.alignment: Qt.AlignHCenter
                     height: syncNewDeviceText.height
                     width: syncNewDeviceText.width
-                    Layout.topMargin: -8
 
                     StatusBaseText {
                         id: syncNewDeviceText
@@ -217,43 +216,53 @@ SettingsContentBase {
                 }
 
                 StatusBaseText {
-
                     objectName: "syncNewDeviceSubTitleTextLabel"
 
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Theme.primaryTextFontSize
                     font.weight: Font.Medium
                     text: qsTr("You own your data. Sync it among your devices.")
                 }
 
-                GridLayout {
+                ColumnLayout {
                     Layout.alignment: Qt.AlignHCenter
-                    rows: d.instructionsModel.length
-                    flow: GridLayout.TopToBottom
-
+                    spacing: 6
                     Repeater {
                         model: d.instructionsModel
-
-                        StatusBaseText {
-                            Layout.alignment: Qt.AlignVCenter
-                            color: Theme.palette.baseColor1
-                            font.pixelSize: Theme.additionalTextSize
-                            font.weight: Font.Medium
-                            text: index + 1
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 12
+                            StatusBaseText {
+                                color: Theme.palette.baseColor1
+                                font.pixelSize: Theme.additionalTextSize
+                                font.weight: Font.Medium
+                                text: index + 1
+                            }
+                            StatusBaseText {
+                                text: modelData
+                            }
                         }
                     }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Theme.halfPadding
 
-                    Repeater {
-                        model: d.instructionsModel
+                        StatusCheckBox {
+                            objectName: "enableMessageSyncingCheckBox"
 
-                        StatusBaseText {
-                            Layout.alignment: Qt.AlignVCenter
-                            horizontalAlignment: Text.AlignLeft
-                            color: Theme.palette.directColor1
-                            font.pixelSize: Theme.primaryTextFontSize
-                            text: modelData
+                            text: qsTr("Enable message syncing")
+                            leftSide: true
+                            checked: false
+                            onToggled: d.messageSyncingEnabled = checked
+                        }
+
+                        StatusFlatRoundButton {
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: width
+                            radius: width/2
+                            icon.name: "help"
+                            tooltip.text: qsTr("Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.")
                         }
                     }
                 }
@@ -262,35 +271,10 @@ SettingsContentBase {
                     objectName: "setupSyncingStatusButton"
 
                     Layout.alignment: Qt.AlignHCenter
-                    normalColor: Theme.palette.primaryColor1
-                    hoverColor: Theme.palette.miscColor1;
-                    textColor: Theme.palette.indirectColor1
-                    font.weight: Font.Medium
+                    type: StatusBaseButton.Type.Primary
                     text: qsTr("Setup Syncing")
                     onClicked: {
                         d.setupSyncing()
-                    }
-                }
-
-                RowLayout {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: Theme.halfPadding
-
-                    StatusCheckBox {
-                        objectName: "enableMessageSyncingCheckBox"
-
-                        Layout.fillWidth: true
-                        Layout.maximumWidth: implicitWidth
-                        text: qsTr("Enable message syncing")
-                        leftSide: true
-                        checked: false
-                        onToggled: d.messageSyncingEnabled = checked
-                    }
-
-                    StatusNavBarTabButton {
-                        icon.name: "help"
-                        tooltip.text: qsTr("Enabling this will allow all your messages to be sent to the new device during the local pairing.")
-                        thirdpartyServicesEnabled: thirdpartyServicesCtrl.checked
                     }
                 }
 
