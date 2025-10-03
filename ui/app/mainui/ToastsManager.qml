@@ -258,7 +258,6 @@ QtObject {
                                         Constants.ephemeralNotificationType.danger,
                                        "")
             }
-            
         }
     }
 
