@@ -6,6 +6,7 @@ import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Popups.Dialog
 
+// TODO remove
 StatusDialog {
     id: root
 

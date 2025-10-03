@@ -2934,6 +2934,99 @@
     </message>
   </context>
   <context>
+    <name>BackupView</name>
+    <message>
+      <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</source>
+      <comment>BackupView</comment>
+      <translation>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</translation>
+    </message>
+    <message>
+      <source>Instant backup</source>
+      <comment>BackupView</comment>
+      <translation>Instant backup</translation>
+    </message>
+    <message>
+      <source>By default, backups run automatically every 30 minutes, but you can trigger one instantly with Backup now.</source>
+      <comment>BackupView</comment>
+      <translation>By default, backups run automatically every 30 minutes, but you can trigger one instantly with Backup now.</translation>
+    </message>
+    <message>
+      <source>Backup now</source>
+      <comment>BackupView</comment>
+      <translation>Backup now</translation>
+    </message>
+    <message>
+      <source>Backup data</source>
+      <comment>BackupView</comment>
+      <translation>Backup data</translation>
+    </message>
+    <message>
+      <source>By default, Status backs up your chat list and contacts, joined community IDs and descriptions, app settings, profile data, and wallet watch accounts. To also back up your 1-on-1, group chat, and community messages, enable Back up your messages</source>
+      <comment>BackupView</comment>
+      <translation>By default, Status backs up your chat list and contacts, joined community IDs and descriptions, app settings, profile data, and wallet watch accounts. To also back up your 1-on-1, group chat, and community messages, enable Back up your messages</translation>
+    </message>
+    <message>
+      <source>Backup your messages</source>
+      <comment>BackupView</comment>
+      <translation>Backup your messages</translation>
+    </message>
+    <message>
+      <source>Backup location</source>
+      <comment>BackupView</comment>
+      <translation>Backup location</translation>
+    </message>
+    <message>
+      <source>Choose a folder to store your backup files or use the default one.</source>
+      <comment>BackupView</comment>
+      <translation>Choose a folder to store your backup files or use the default one.</translation>
+    </message>
+    <message>
+      <source>Browse</source>
+      <comment>BackupView</comment>
+      <translation>Browse</translation>
+    </message>
+    <message>
+      <source>Restore your Status profile</source>
+      <comment>BackupView</comment>
+      <translation>Restore your Status profile</translation>
+    </message>
+    <message>
+      <source>Click Import backup file, then locate and select the backup file for your Status profile.</source>
+      <comment>BackupView</comment>
+      <translation>Click Import backup file, then locate and select the backup file for your Status profile.</translation>
+    </message>
+    <message>
+      <source>Import backup file</source>
+      <comment>BackupView</comment>
+      <translation>Import backup file</translation>
+    </message>
+    <message>
+      <source>Success importing local data</source>
+      <comment>BackupView</comment>
+      <translation>Success importing local data</translation>
+    </message>
+    <message>
+      <source>Error importing backup file: %1</source>
+      <comment>BackupView</comment>
+      <translation>Error importing backup file: %1</translation>
+    </message>
+    <message>
+      <source>Select your backup directory</source>
+      <comment>BackupView</comment>
+      <translation>Select your backup directory</translation>
+    </message>
+    <message>
+      <source>Select your backup file</source>
+      <comment>BackupView</comment>
+      <translation>Select your backup file</translation>
+    </message>
+    <message>
+      <source>Supported backup formats (%1)</source>
+      <comment>BackupView</comment>
+      <translation>Supported backup formats (%1)</translation>
+    </message>
+  </context>
+  <context>
     <name>BalanceExceeded</name>
     <message>
       <source>Balance exceeded</source>
@@ -8198,31 +8291,6 @@
   <context>
     <name>EnableMessageBackupPopup</name>
     <message>
-      <source>Do you wish to enable message backup?</source>
-      <comment>EnableMessageBackupPopup</comment>
-      <translation>Do you wish to enable message backup?</translation>
-    </message>
-    <message>
-      <source>You can now enable message backup to keep your messages on your device.</source>
-      <comment>EnableMessageBackupPopup</comment>
-      <translation>You can now enable message backup to keep your messages on your device.</translation>
-    </message>
-    <message>
-      <source>This will allow you to restore your messages if you reinstall the app or switch devices.</source>
-      <comment>EnableMessageBackupPopup</comment>
-      <translation>This will allow you to restore your messages if you reinstall the app or switch devices.</translation>
-    </message>
-    <message>
-      <source>Just remember to keep your backup file safe and secure!</source>
-      <comment>EnableMessageBackupPopup</comment>
-      <translation>Just remember to keep your backup file safe and secure!</translation>
-    </message>
-    <message>
-      <source>You can change your mind in the Syncing settings later.</source>
-      <comment>EnableMessageBackupPopup</comment>
-      <translation>You can change your mind in the Syncing settings later.</translation>
-    </message>
-    <message>
       <source>Skip</source>
       <comment>EnableMessageBackupPopup</comment>
       <translation>Skip</translation>
@@ -8232,33 +8300,48 @@
       <comment>EnableMessageBackupPopup</comment>
       <translation>Enable</translation>
     </message>
+    <message>
+      <source>Enable on-device message backup?</source>
+      <comment>EnableMessageBackupPopup</comment>
+      <translation>Enable on-device message backup?</translation>
+    </message>
+    <message>
+      <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
+      <comment>EnableMessageBackupPopup</comment>
+      <translation>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</translation>
+    </message>
+    <message>
+      <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
+      <comment>EnableMessageBackupPopup</comment>
+      <translation>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</translation>
+    </message>
   </context>
   <context>
     <name>EnableMessagesBackupDialog</name>
     <message>
-      <source>Enable Local Messages Backup</source>
-      <comment>EnableMessagesBackupDialog</comment>
-      <translation>Enable Local Messages Backup</translation>
-    </message>
-    <message>
-      <source>Enabling local message backup will store all your messages on your device in an encrypted backup file.</source>
-      <comment>EnableMessagesBackupDialog</comment>
-      <translation>Enabling local message backup will store all your messages on your device in an encrypted backup file.</translation>
-    </message>
-    <message>
-      <source>Make sure to keep this file secure.</source>
-      <comment>EnableMessagesBackupDialog</comment>
-      <translation>Make sure to keep this file secure.</translation>
-    </message>
-    <message>
-      <source>Cancel</source>
-      <comment>EnableMessagesBackupDialog</comment>
-      <translation>Cancel</translation>
-    </message>
-    <message>
       <source>Enable</source>
       <comment>EnableMessagesBackupDialog</comment>
       <translation>Enable</translation>
+    </message>
+    <message>
+      <source>Enable on-device message backup?</source>
+      <comment>EnableMessagesBackupDialog</comment>
+      <translation>Enable on-device message backup?</translation>
+    </message>
+    <message>
+      <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
+      <comment>EnableMessagesBackupDialog</comment>
+      <translation>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</translation>
+    </message>
+    <message>
+      <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
+      <comment>EnableMessagesBackupDialog</comment>
+      <translation>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</translation>
+    </message>
+    <message>
+      <source>Skip</source>
+      <comment>EnableMessagesBackupDialog</comment>
+      <translation>Skip</translation>
     </message>
   </context>
   <context>
@@ -10380,21 +10463,6 @@
       <translation>Import local backup</translation>
     </message>
     <message>
-      <source>Here you can select a local file from your computer and import your previously backed up contacts, etc...</source>
-      <comment>ImportLocalBackupPage</comment>
-      <translation>Here you can select a local file from your computer and import your previously backed up contacts, etc...</translation>
-    </message>
-    <message>
-      <source>You can skip this step and do it anytime later under Settings &gt; Syncing</source>
-      <comment>ImportLocalBackupPage</comment>
-      <translation>You can skip this step and do it anytime later under Settings &gt; Syncing</translation>
-    </message>
-    <message>
-      <source>Import from file...</source>
-      <comment>ImportLocalBackupPage</comment>
-      <translation>Import from file...</translation>
-    </message>
-    <message>
       <source>Skip</source>
       <comment>ImportLocalBackupPage</comment>
       <translation>Skip</translation>
@@ -10403,6 +10471,16 @@
       <source>Backup files (%1)</source>
       <comment>ImportLocalBackupPage</comment>
       <translation>Backup files (%1)</translation>
+    </message>
+    <message>
+      <source>Import the backup file for your Status profile, or skip this step and import it later from Settings &gt; On-device backups</source>
+      <comment>ImportLocalBackupPage</comment>
+      <translation>Import the backup file for your Status profile, or skip this step and import it later from Settings &gt; On-device backups</translation>
+    </message>
+    <message>
+      <source>Import backup file</source>
+      <comment>ImportLocalBackupPage</comment>
+      <translation>Import backup file</translation>
     </message>
   </context>
   <context>
@@ -12630,21 +12708,6 @@
       <translation>Forgot your password?</translation>
     </message>
     <message>
-      <source>To recover your password follow these steps:</source>
-      <comment>LoginPasswordBox</comment>
-      <translation>To recover your password follow these steps:</translation>
-    </message>
-    <message>
-      <source>1. Remove the Status app</source>
-      <comment>LoginPasswordBox</comment>
-      <translation>1. Remove the Status app</translation>
-    </message>
-    <message>
-      <source>This will erase all of your data from the device, including your password</source>
-      <comment>LoginPasswordBox</comment>
-      <translation>This will erase all of your data from the device, including your password</translation>
-    </message>
-    <message>
       <source>2. Reinstall the Status app</source>
       <comment>LoginPasswordBox</comment>
       <translation>2. Reinstall the Status app</translation>
@@ -12655,24 +12718,34 @@
       <translation>Re-download the app from %1 %2</translation>
     </message>
     <message>
-      <source>3. Sign up with your existing keys</source>
+      <source>Copy instructions</source>
       <comment>LoginPasswordBox</comment>
-      <translation>3. Sign up with your existing keys</translation>
+      <translation>Copy instructions</translation>
     </message>
     <message>
-      <source>Access with your recovery phrase or Keycard</source>
+      <source>To recover your profile and data follow these steps:</source>
       <comment>LoginPasswordBox</comment>
-      <translation>Access with your recovery phrase or Keycard</translation>
+      <translation>To recover your profile and data follow these steps:</translation>
     </message>
     <message>
-      <source>4. Create a new password</source>
+      <source>1. Copy backup file</source>
       <comment>LoginPasswordBox</comment>
-      <translation>4. Create a new password</translation>
+      <translation>1. Copy backup file</translation>
     </message>
     <message>
-      <source>Enter a new password and you’re all set! You will be able to use your new password</source>
+      <source>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.&lt;br&gt;Backup file path: %1</source>
       <comment>LoginPasswordBox</comment>
-      <translation>Enter a new password and you’re all set! You will be able to use your new password</translation>
+      <translation>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.&lt;br&gt;Backup file path: %1</translation>
+    </message>
+    <message>
+      <source>3. Restore your Status profile(s)</source>
+      <comment>LoginPasswordBox</comment>
+      <translation>3. Restore your Status profile(s)</translation>
+    </message>
+    <message>
+      <source>If you have multiple profiles, repeat for each one:&lt;ul&gt;&lt;li&gt;On the Welcome screen, open the profile menu → Log in.&lt;li&gt;Select Log in with Recovery Phrase.&lt;li&gt;Enter your recovery phrase.&lt;li&gt;Create a new password.&lt;li&gt;Import the backup file from Step 1, or skip and import later from &lt;i&gt;Settings &gt; On-device backup&lt;/i&gt;.</source>
+      <comment>LoginPasswordBox</comment>
+      <translation>If you have multiple profiles, repeat for each one:&lt;ul&gt;&lt;li&gt;On the Welcome screen, open the profile menu → Log in.&lt;li&gt;Select Log in with Recovery Phrase.&lt;li&gt;Enter your recovery phrase.&lt;li&gt;Create a new password.&lt;li&gt;Import the backup file from Step 1, or skip and import later from &lt;i&gt;Settings &gt; On-device backup&lt;/i&gt;.</translation>
     </message>
   </context>
   <context>
@@ -18653,6 +18726,11 @@
       <comment>SettingsEntriesModel</comment>
       <translation>Sign out &amp; Quit</translation>
     </message>
+    <message>
+      <source>On-device backup</source>
+      <comment>SettingsEntriesModel</comment>
+      <translation>On-device backup</translation>
+    </message>
   </context>
   <context>
     <name>SettingsLeftTabView</name>
@@ -20886,9 +20964,9 @@
       <translation>Enable message syncing</translation>
     </message>
     <message>
-      <source>Enabling this will allow all your messages to be sent to the new device during the local pairing.</source>
+      <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
       <comment>SyncingView</comment>
-      <translation>Enabling this will allow all your messages to be sent to the new device during the local pairing.</translation>
+      <translation>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</translation>
     </message>
   </context>
   <context>
@@ -21121,14 +21199,24 @@
       <translation>Trust mark removed for %1</translation>
     </message>
     <message>
-      <source>Local backup import completed</source>
+      <source>Your data backed up successfully</source>
       <comment>ToastsManager</comment>
-      <translation>Local backup import completed</translation>
+      <translation>Your data backed up successfully</translation>
     </message>
     <message>
-      <source>Local backup import failed</source>
+      <source>Backup failed, please try again</source>
       <comment>ToastsManager</comment>
-      <translation>Local backup import failed</translation>
+      <translation>Backup failed, please try again</translation>
+    </message>
+    <message>
+      <source>Your data backup restored successfully</source>
+      <comment>ToastsManager</comment>
+      <translation>Your data backup restored successfully</translation>
+    </message>
+    <message>
+      <source>Import failed. Make sure the backup file matches your profile name.</source>
+      <comment>ToastsManager</comment>
+      <translation>Import failed. Make sure the backup file matches your profile name.</translation>
     </message>
   </context>
   <context>

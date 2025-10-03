@@ -35,7 +35,6 @@ SettingsContentBase {
     property ProfileStores.PrivacyStore privacyStore
     property ProfileStores.AdvancedStore advancedStore
 
-    required property bool isProduction
     required property bool localBackupEnabled
     required property bool messagesBackupEnabled
     required property url backupPath

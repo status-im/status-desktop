@@ -36,7 +36,6 @@ SplitView {
 
         contentWidth: 664
 
-        isProduction: ctrlIsProduction.checked
         localBackupEnabled: localBackupEnabledSwitch.checked
         backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
         messagesBackupEnabled: false
@@ -164,12 +163,6 @@ SplitView {
             Switch {
                 id: ctrlDebugEnabled
                 text: "Debug enabled"
-            }
-
-            Switch {
-                id: ctrlIsProduction
-                text: "Is production"
-                checked: true
             }
 
             Switch {
