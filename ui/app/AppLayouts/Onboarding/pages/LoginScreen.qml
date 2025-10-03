@@ -39,6 +39,8 @@ OnboardingPage {
     // language currently selected for translations, e.g. "cs"
     required property string currentLanguage
 
+    required property url backupPath
+
     // allows to set if currently selected account can be logged in using biometrics
     property bool isBiometricsLogin
     property bool isKeycardEnabled: true
@@ -258,6 +260,7 @@ OnboardingPage {
                 isBiometricsLogin: root.isBiometricsLogin
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
+                backupPath: root.backupPath
                 onPasswordEditedManually: {
                     // reset state when typing the pass manually; not to break the bindings inside the component
                     validationError = ""
