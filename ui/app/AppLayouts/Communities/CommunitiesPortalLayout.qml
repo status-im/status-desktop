@@ -1,5 +1,7 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
+import QtQml
 
 import StatusQ
 import StatusQ.Core
@@ -51,6 +53,9 @@ StatusSectionLayout {
         readonly property int preventShadowClipMargin: Theme.padding
  
         readonly property bool searchMode: searcher.text.length > 0
+
+        // Read-only flag that turns true when the component enters a “compact” layout automatically on resize.
+        readonly property bool compactMode: root.width < 600
     }
 
     SortFilterProxyModel {
@@ -87,31 +92,32 @@ StatusSectionLayout {
         ]
     }
 
-    centerPanel: Item {
+    centerPanel: ColumnLayout {
+        id: column
+
         anchors.fill: parent
 
         anchors.topMargin: d.layoutTopMargin
         anchors.leftMargin: Theme.xlPadding*2
         anchors.rightMargin: Theme.xlPadding
 
+        spacing: 18
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: qsTr("Discover Communities")
+            font.weight: Font.Bold
+            font.pixelSize: d.titlePixelSize
+            color: Theme.palette.directColor1
+            elide: Text.ElideRight
+            wrapMode: Text.Wrap
+            maximumLineCount: 2
+        }
+
         ColumnLayout {
-            id: column
-
-            anchors.fill: parent
-            spacing: 18
-
-            StatusBaseText {
-                text: qsTr("Discover Communities")
-                font.weight: Font.Bold
-                font.pixelSize: d.titlePixelSize
-                color: Theme.palette.directColor1
-            }
+            spacing: Theme.padding
 
             RowLayout {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 38
-                spacing: Theme.bigPadding
-
                 SearchBox {
                     id: searcher
                     Layout.fillWidth: true
@@ -122,71 +128,92 @@ StatusSectionLayout {
                     bottomPadding: 0
                 }
 
-                // Just a row filler to fit design
-                Item { Layout.fillWidth: true }
-
-                StatusButton {
+                // filler
+                Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 38
-                    Layout.maximumWidth: implicitWidth
-                    text: qsTr("Join Community")
-                    verticalPadding: 0
-                    onClicked: Global.importCommunityPopupRequested()
                 }
 
-                StatusButton {
-                    objectName: "createCommunityButton"
-                    visible: root.createCommunityEnabled
-                    Layout.preferredHeight: 38
-                    verticalPadding: 0
-                    text: qsTr("Create New Community")
-                    type: StatusBaseButton.Type.Primary
-                    onClicked: {
-                        // Global.openPopup(chooseCommunityCreationTypePopupComponent) // hidden as part of https://github.com/status-im/status-desktop/issues/17726
-                        root.communitiesStore.setCreateCommunityPopupSeen()
-                        Global.createCommunityPopupRequested(false /*isDiscordImport*/)
-                    }
+                LayoutItemProxy {
+                    visible: !d.compactMode
 
-                    StatusNewBadge {
-                        visible: root.createCommunityBadgeVisible
-                    }
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignHCenter
+
+                    target: buttonsRow
                 }
             }
 
-            TagsRow {
-                id: communityTags
+            LayoutItemProxy {
+                visible: d.compactMode
+
                 Layout.fillWidth: true
 
-                tags: root.communitiesStore.communityTags
+                target: buttonsRow
+            }
+        }
+
+        TagsRow {
+            id: communityTags
+            Layout.fillWidth: true
+
+            tags: root.communitiesStore.communityTags
+        }
+
+
+        CommunitiesGridView {
+            id: communitiesGrid
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.leftMargin: d.preventShadowClipMargin
+            Layout.rightMargin: d.preventShadowClipMargin
+
+            contentWidth: availableWidth
+            padding: 0
+            bottomPadding: d.layoutBottomMargin
+
+            model: filteredCommunitiesModel
+            searchLayout: d.searchMode
+
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+
+            onCardClicked: (communityId) => root.communitiesStore.navigateToCommunity(communityId)
+        }
+    }
+
+    RowLayout {
+        id: buttonsRow
+        Layout.fillWidth: true
+        Layout.preferredHeight: 38
+        spacing: Theme.bigPadding
+
+        StatusButton {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 38
+            Layout.maximumWidth: implicitWidth
+            text: qsTr("Join Community")
+            verticalPadding: 0
+            onClicked: Global.importCommunityPopupRequested()
+        }
+
+        StatusButton {
+            objectName: "createCommunityButton"
+            Layout.fillWidth: true
+            Layout.preferredHeight: 38
+            Layout.maximumWidth: implicitWidth
+            visible: root.createCommunityEnabled
+            verticalPadding: 0
+            text: qsTr("Create New Community")
+            type: StatusBaseButton.Type.Primary
+            onClicked: {
+                // Global.openPopup(chooseCommunityCreationTypePopupComponent) // hidden as part of https://github.com/status-im/status-desktop/issues/17726
+                root.communitiesStore.setCreateCommunityPopupSeen()
+                Global.createCommunityPopupRequested(false /*isDiscordImport*/)
             }
 
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.leftMargin: -d.preventShadowClipMargin
-                Layout.rightMargin: -d.preventShadowClipMargin
-
-                clip: true
-
-                CommunitiesGridView {
-                    id: communitiesGrid
-
-                    anchors.fill: parent
-                    anchors.rightMargin: d.preventShadowClipMargin
-                    anchors.leftMargin: d.preventShadowClipMargin
-                    contentWidth: availableWidth
-
-                    padding: 0
-                    bottomPadding: d.layoutBottomMargin
-
-                    model: filteredCommunitiesModel
-                    searchLayout: d.searchMode
-
-                    assetsModel: root.assetsModel
-                    collectiblesModel: root.collectiblesModel
-
-                    onCardClicked: (communityId) => root.communitiesStore.navigateToCommunity(communityId)
-                }
+            StatusNewBadge {
+                visible: root.createCommunityBadgeVisible
             }
         }
     }
@@ -216,8 +243,8 @@ StatusSectionLayout {
                 BannerPanel {
                     readonly property bool importInProgress: root.communitiesStore.discordImportInProgress && !root.communitiesStore.discordImportCancelled
                     text: importInProgress ?
-                        qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName || root.communitiesStore.discordImportChannelName) :
-                        qsTr("Import existing Discord community into Status")
+                              qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName || root.communitiesStore.discordImportChannelName) :
+                              qsTr("Import existing Discord community into Status")
                     buttonText: qsTr("Import existing")
                     icon.name: "download"
                     buttonTooltipText: qsTr("Your current import must be finished or cancelled before a new import can be started.")
