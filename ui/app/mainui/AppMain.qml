@@ -72,6 +72,7 @@ Item {
     }
 
     // Global cross-domain stores (just references from `rootStore`)
+    readonly property AppStores.AccountSettingsStore accountSettingsStore: rootStore.accountSettingsStore
     readonly property AppStores.ContactsStore contactsStore: rootStore.contactsStore
     readonly property AppStores.ActivityCenterStore activityCenterStore: rootStore.activityCenterStore
 
@@ -822,9 +823,8 @@ Item {
         id: d
 
         readonly property int activeSectionType: appMain.rootStore.activeSectionType
-
         readonly property bool isBrowserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
-        
+
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
             homePageLoader.item.focusSearch()
@@ -1894,6 +1894,10 @@ Item {
                         ChatLayout {
                             id: chatLayoutContainer
 
+                            showUsersList: appMain.accountSettingsStore.showUsersList
+                            onShowUsersListRequested:
+                                show => appMain.accountSettingsStore.setShowUsersList(show)
+
                             isChatView: true
                             navBar: appMain.navBar
                             rootStore: ChatStores.RootStore {
@@ -2283,6 +2287,10 @@ Item {
                                     chatLayoutComponent.currentIndex = 0
                                 }
                             }
+
+                            showUsersList: appMain.accountSettingsStore.showUsersList
+                            onShowUsersListRequested:
+                                show => appMain.accountSettingsStore.setShowUsersList(show)
 
                             isChatView: false // This will be a community view
                             navBar: appMain.navBar
