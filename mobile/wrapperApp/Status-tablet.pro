@@ -34,6 +34,9 @@ android {
                         $$PWD/../lib/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
                         $$PWD/../lib/$$LIB_PREFIX/libstatus.so \
                         $$PWD/../lib/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
+
+    OTHER_FILES += \
+        android/src/im/status/tablet/SecureAndroidAuthentication.java
 }
 
 ios {
