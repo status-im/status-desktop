@@ -53,8 +53,8 @@ SplitView {
         }
 
         devicesStore: ProfileStores.DevicesStore {
-            function generateConnectionStringAndRunSetupSyncingPopup() {
-                logs.logEvent("devicesStore::generateConnectionStringAndRunSetupSyncingPopup")
+            function generateConnectionStringAndRunSetupSyncingPopup(enabled) {
+                logs.logEvent("devicesStore::generateConnectionStringAndRunSetupSyncingPopup", ["enabled"], arguments)
             }
 
             function setInstallationName(installationId, name) {
@@ -80,6 +80,9 @@ SplitView {
 
                 function pairDevice(installationId) {
                     logs.logEvent("devicesStore::devicesModule::pairDevice", ["installationId"], arguments)
+                }
+                function unpairDevice(installationId) {
+                    logs.logEvent("devicesStore::devicesModule::unpairDevice", ["installationId"], arguments)
                 }
                 signal openPopupWithConnectionStringSignal(string rawConnectionString)
             }
@@ -181,3 +184,4 @@ SplitView {
 // category: Views
 // status: good
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=1592-128606&mode=design&t=1xZLPCet6yRCZCuz-0
+// https://www.figma.com/design/idUoxN7OIW2Jpp3PMJ1Rl8/Settings----Desktop-Legacy?node-id=1592-128590&m=dev
