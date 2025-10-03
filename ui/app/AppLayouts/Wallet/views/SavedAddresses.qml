@@ -97,8 +97,11 @@ ColumnLayout {
     StatusListView {
         id: listView
         objectName: "SavedAddressesView_savedAddresses"
+
+        visible: count > 0
         Layout.fillWidth: true
-        Layout.preferredHeight: contentHeight
+        Layout.fillHeight: true
+
         spacing: 8
 
         model: SortFilterProxyModel {

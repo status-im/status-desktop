@@ -6,17 +6,23 @@ import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Popups.Dialog
 
+import AppLayouts.Communities.stores
+import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.controls
 import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.stores as AppLayoutsStores
 
-import utils
 import shared.controls
-import shared.views
-import shared.stores as SharedStores
 import shared.panels
+import shared.stores as SharedStores
+import shared.views
+import utils
+
+import QtModelsToolkit
+import SortFilterProxyModel
 
 import "./"
 import "../stores"
@@ -32,14 +38,31 @@ RightTabBaseView {
         Activity = 2
     }
 
-    property SharedStores.RootStore sharedRootStore
-
     property alias currentTabIndex: walletTabBar.currentIndex
+
+    property WalletStores.RootStore walletRootStore
+    property SharedStores.RootStore sharedRootStore
+    property AppLayoutsStores.RootStore store
+    property AppLayoutsStores.ContactsStore contactsStore
+    property CommunitiesStore communitiesStore
+    property SharedStores.NetworkConnectionStore networkConnectionStore
+    required property SharedStores.NetworksStore networksStore
+
+    property bool swapEnabled
+    property bool dAppsEnabled
+    property bool dAppsVisible
+    property var dAppsModel
 
     signal launchShareAddressModal()
     signal launchBuyCryptoModal()
     signal launchSwapModal(string tokensKey)
     signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
+    signal manageNetworksRequested()
+
+    signal dappListRequested()
+    signal dappConnectRequested()
+    signal dappDisconnectRequested(string dappUrl)
+
 
     onManageNetworksRequested: {
         Global.changeAppSectionBySectionType(Constants.appSection.profile,
@@ -57,14 +80,82 @@ RightTabBaseView {
         RootStore.backButtonName = d.getBackButtonText(stack.currentIndex);
     }
 
-    headerButton.onClicked: {
-        root.launchShareAddressModal()
+    WalletAccountHeader {
+        id: header
+
+        readonly property var overview: root.walletRootStore.overview
+
+        allAccounts: overview.isAllAccounts
+        emojiId: SQUtils.Emoji.iconId(overview.emoji ?? "", SQUtils.Emoji.size.big)
+        balance: LocaleUtils.currencyAmountToLocaleString(overview.currencyBalance)
+        balanceLoading: overview.balanceLoading
+        color: Utils.getColorForId(overview.colorId)
+        name: overview.name
+        balanceAvailable: !root.networkConnectionStore.accountBalanceNotAvailable
+        networksModel: root.networksStore.activeNetworks
+        ensOrElidedAddress: RootStore.overview.ens ||
+                            SQUtils.Utils.elideAndFormatWalletAddress(
+                                RootStore.overview.mixedcaseAddress)
+        lastReloadedTime: !!root.walletRootStore.lastReloadTimestamp ?
+                              LocaleUtils.formatRelativeTimestamp(
+                                  root.walletRootStore.lastReloadTimestamp * 1000) : ""
+
+        tokensLoading: root.walletRootStore.isAccountTokensReloading
+
+        showNetworksNotificationIcon: {
+            const newChains = Constants.chains.newChains
+            const seenChains = localAppSettings.seenNetworkChains
+
+            for (let i = 0; i < newChains.length; i++)
+                if (seenChains.indexOf(newChains[i]) === -1)
+                    return true
+
+            return false
+        }
+
+        FunctionAggregator {
+            id: chainIdsAggregator
+
+            model: SortFilterProxyModel {
+                sourceModel: root.networksStore.activeNetworks
+                filters: ValueFilter {
+                    roleName: "isEnabled"
+                    value: true
+                }
+            }
+            initialValue: []
+            roleName: "chainId"
+            aggregateFunction: (aggr, value) => [...aggr, value]
+        }
+
+        Binding on networksSelection {
+            value: chainIdsAggregator.value
+        }
+
+        dAppsEnabled: root.dAppsEnabled
+        dAppsVisible: root.dAppsVisible
+        dAppsModel: root.dAppsModel
+
+        onDappListRequested: root.dappListRequested()
+        onDappConnectRequested: root.dappConnectRequested()
+        onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
+        onManageNetworksRequested: root.manageNetworksRequested()
+        onAddressClicked: root.launchShareAddressModal()
+        onToggleNetworkRequested: chainId => root.networksStore.toggleNetworkEnabled(chainId)
+        onNetworksShown: {
+            if (!showNetworksNotificationIcon)
+                return
+            let seenChains = JSON.parse(localAppSettings.seenNetworkChains)
+            seenChains.push(...Constants.chains.newChains)
+            localAppSettings.seenNetworkChains = JSON.stringify(seenChains)
+        }
+        onReloadRequested: root.walletRootStore.reloadAccountTokens()
     }
-    header.visible: stack.currentIndex === 0
+
+    header: stack.currentIndex === 0 ? header : null
 
     StackLayout {
         id: stack
-        anchors.fill: parent
 
         onCurrentIndexChanged: {
             RootStore.backButtonName = d.getBackButtonText(currentIndex)
@@ -135,11 +226,11 @@ RightTabBaseView {
                 Layout.fillWidth: true
                 Layout.topMargin: Theme.bigPadding
                 Layout.preferredHeight: childrenRect.height
-                visible: WalletStores.RootStore.walletSectionInst.hasPairedDevices
-                         && WalletStores.RootStore.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
+                visible: root.walletRootStore.walletSectionInst.hasPairedDevices
+                         && root.walletRootStore.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
 
                 onRunImport: {
-                    WalletStores.RootStore.walletSectionInst.runKeypairImportPopup()
+                    root.walletRootStore.walletSectionInst.runKeypairImportPopup()
                 }
             }
 
@@ -169,7 +260,7 @@ RightTabBaseView {
 
                         StatusBetaTag {
                             // TODO remove me when Activity is no longer experimental
-                            // Keep Activity as the last tab for now as the Experimental tag don't flow 
+                            // Keep Activity as the last tab for now as the Experimental tag don't flow
                             anchors.top: parent.top
                             anchors.topMargin: parent.verticalPadding
                             anchors.left: parent.right
@@ -358,7 +449,7 @@ RightTabBaseView {
 
                 Component {
                     id: collectiblesView
-                    CollectiblesView { 
+                    CollectiblesView {
                         id: collView
                         function refreshSortSettings() {
                             settings.category = settingsCategoryName

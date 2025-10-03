@@ -228,8 +228,8 @@ AbstractButton {
         anchors.fill: parent
         acceptedButtons: Qt.AllButtons
         enabled: root.loading || root.loadingWithText || !root.interactive
-        onPressed: mouse.accepted = true
-        onWheel: wheel.accepted = true
+        onPressed: mouse => mouse.accepted = true
+        onWheel: wheel => wheel.accepted = true
         cursorShape: root.interactive && !root.loading && !root.loadingWithText ? Qt.PointingHandCursor: undefined // always works; 'undefined' resets to default cursor
     }
 

@@ -18416,6 +18416,17 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
+    <name>WalletAccountHeader</name>
+    <message>
+        <source>All accounts</source>
+        <translation type="unfinished">모든 계정</translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished">마지막 새로 고침 %1</translation>
+    </message>
+</context>
+<context>
     <name>WalletAddressMenu</name>
     <message>
         <source>Address copied</source>
@@ -18481,21 +18492,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
-    <name>WalletHeader</name>
-    <message>
-        <source>Saved addresses</source>
-        <translation>저장된 주소</translation>
-    </message>
-    <message>
-        <source>All accounts</source>
-        <translation>모든 계정</translation>
-    </message>
-    <message>
-        <source>Last refreshed %1</source>
-        <translation>마지막 새로 고침 %1</translation>
-    </message>
-</context>
-<context>
     <name>WalletKeyPairDelegate</name>
     <message>
         <source>Watched addresses</source>
@@ -18546,13 +18542,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
-    <name>WalletLayout</name>
-    <message>
-        <source>Add new address</source>
-        <translation>새 주소 추가</translation>
-    </message>
-</context>
-<context>
     <name>WalletNetworkDelegate</name>
     <message>
         <source>Required for some Status features</source>
@@ -18596,6 +18585,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WalletSavedAddressesHeader</name>
+    <message>
+        <source>Add new address</source>
+        <translation type="unfinished">새 주소 추가</translation>
+    </message>
+    <message>
+        <source>Saved addresses</source>
+        <translation type="unfinished">저장된 주소</translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished">마지막 새로 고침 %1</translation>
     </message>
 </context>
 <context>

@@ -22490,6 +22490,19 @@
     </message>
   </context>
   <context>
+    <name>WalletAccountHeader</name>
+    <message>
+      <source>All accounts</source>
+      <comment>WalletAccountHeader</comment>
+      <translation>All accounts</translation>
+    </message>
+    <message>
+      <source>Last refreshed %1</source>
+      <comment>WalletAccountHeader</comment>
+      <translation>Last refreshed %1</translation>
+    </message>
+  </context>
+  <context>
     <name>WalletAddressMenu</name>
     <message>
       <source>Address copied</source>
@@ -22569,24 +22582,6 @@
     </message>
   </context>
   <context>
-    <name>WalletHeader</name>
-    <message>
-      <source>Saved addresses</source>
-      <comment>WalletHeader</comment>
-      <translation>Saved addresses</translation>
-    </message>
-    <message>
-      <source>All accounts</source>
-      <comment>WalletHeader</comment>
-      <translation>All accounts</translation>
-    </message>
-    <message>
-      <source>Last refreshed %1</source>
-      <comment>WalletHeader</comment>
-      <translation>Last refreshed %1</translation>
-    </message>
-  </context>
-  <context>
     <name>WalletKeyPairDelegate</name>
     <message>
       <source>Watched addresses</source>
@@ -22648,14 +22643,6 @@
     </message>
   </context>
   <context>
-    <name>WalletLayout</name>
-    <message>
-      <source>Add new address</source>
-      <comment>WalletLayout</comment>
-      <translation>Add new address</translation>
-    </message>
-  </context>
-  <context>
     <name>WalletNetworkDelegate</name>
     <message>
       <source>Required for some Status features</source>
@@ -22709,6 +22696,24 @@
       <source>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</source>
       <comment>WalletPrivacyWall</comment>
       <translation>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</translation>
+    </message>
+  </context>
+  <context>
+    <name>WalletSavedAddressesHeader</name>
+    <message>
+      <source>Add new address</source>
+      <comment>WalletSavedAddressesHeader</comment>
+      <translation>Add new address</translation>
+    </message>
+    <message>
+      <source>Saved addresses</source>
+      <comment>WalletSavedAddressesHeader</comment>
+      <translation>Saved addresses</translation>
+    </message>
+    <message>
+      <source>Last refreshed %1</source>
+      <comment>WalletSavedAddressesHeader</comment>
+      <translation>Last refreshed %1</translation>
     </message>
   </context>
   <context>

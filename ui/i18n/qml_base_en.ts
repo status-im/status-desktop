@@ -18491,6 +18491,17 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
+    <name>WalletAccountHeader</name>
+    <message>
+        <source>All accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>WalletAddressMenu</name>
     <message>
         <source>Address copied</source>
@@ -18556,21 +18567,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
-    <name>WalletHeader</name>
-    <message>
-        <source>Saved addresses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>All accounts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last refreshed %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>WalletKeyPairDelegate</name>
     <message>
         <source>Watched addresses</source>
@@ -18621,13 +18617,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
 </context>
 <context>
-    <name>WalletLayout</name>
-    <message>
-        <source>Add new address</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>WalletNetworkDelegate</name>
     <message>
         <source>Required for some Status features</source>
@@ -18670,6 +18659,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Pay with cards, bank transfers, Apple/Google Pay, SEPA, and 9+ options</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WalletSavedAddressesHeader</name>
+    <message>
+        <source>Add new address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

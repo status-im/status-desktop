@@ -14,9 +14,10 @@ import shared.popups.keypairimport
 import shared.stores as SharedStores
 import shared.stores.send
 
-import AppLayouts.stores as AppLayoutsStores
 import AppLayouts.Communities.stores
 import AppLayouts.Profile.stores as ProfileStores
+import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.stores as AppLayoutsStores
 
 import QtModelsToolkit
 
@@ -33,6 +34,7 @@ Item {
 
     property Item navBar
 
+    property WalletStores.RootStore walletRootStore
     property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
     property AppLayoutsStores.ContactsStore contactsStore
@@ -215,17 +217,10 @@ Item {
 
     Component {
         id: cmpSavedAddresses
+
         SavedAddressesView {
-            store: root.store
-            contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
-
-            networkFilter.visible: false
-            headerButton.text: qsTr("Add new address")
-            headerButton.onClicked: {
-                Global.openAddEditSavedAddressesPopup({})
-            }
 
             onSendToAddressRequested: {
                 Global.sendToRecipientRequested(address)
@@ -235,7 +230,9 @@ Item {
 
     Component {
         id: walletContainer
+
         RightTabView {
+            walletRootStore: root.walletRootStore
             sharedRootStore: root.sharedRootStore
             store: root.store
             contactsStore: root.contactsStore
@@ -249,8 +246,6 @@ Item {
 
             dAppsModel: root.dAppsModel
 
-            headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideAndFormatWalletAddress(RootStore.overview.mixedcaseAddress)
-            headerButton.visible: !RootStore.overview.isAllAccounts
             onLaunchShareAddressModal: Global.openShowQRPopup({
                                                                   switchingAccounsEnabled: true,
                                                                   hasFloatingButtons: true

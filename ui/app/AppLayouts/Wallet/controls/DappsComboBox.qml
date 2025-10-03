@@ -43,7 +43,7 @@ ComboBox {
             anchors.margins: 5
             width: 6
             height: 6
-            visible: root.delegateModel.count > 0
+            visible: root.delegateModel && root.delegateModel.count > 0
         }
 
         StatusIcon {
@@ -68,7 +68,13 @@ ComboBox {
         objectName: "dappsListPopup"
 
         directParent: root
-        relativeX: root.width - width
+        relativeX: {
+            const globalX = root.mapToGlobal(root.width / 2, 0).x
+            if (globalX < root.Window.width / 2)
+               return 0
+
+            return root.width - width
+        }
         relativeY: root.height + 4
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
