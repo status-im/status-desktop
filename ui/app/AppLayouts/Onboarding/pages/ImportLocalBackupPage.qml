@@ -24,7 +24,15 @@ OnboardingPage {
         ColumnLayout {
             anchors.centerIn: parent
             width: Math.min(400, root.availableWidth)
-            spacing: root.padding
+            spacing: 20
+
+            StatusImage {
+                Layout.preferredWidth: 325
+                Layout.preferredHeight: 325
+                Layout.alignment: Qt.AlignHCenter
+                source: Theme.png("onboarding/status_chat")
+            }
+
             StatusBaseText {
                 Layout.fillWidth: true
                 text: root.title
@@ -35,40 +43,24 @@ OnboardingPage {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                text: qsTr("Here you can select a local file from your computer and import your previously backed up contacts, etc...")
+                text: qsTr("Import the backup file for your Status profile, or skip this step and import it later from Settings > On-device backups")
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
-            }
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr("You can skip this step and do it anytime later under Settings > Syncing")
-                color: Theme.palette.baseColor1
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            StatusImage {
-                Layout.preferredWidth: 325
-                Layout.preferredHeight: 325
-                Layout.topMargin: Theme.bigPadding
-                Layout.bottomMargin: Theme.bigPadding
-                Layout.alignment: Qt.AlignHCenter
-                source: Theme.png("onboarding/status_chat")
             }
 
             StatusButton {
                 objectName: "btnImportFile"
                 Layout.alignment: Qt.AlignHCenter
                 Layout.maximumWidth: parent.width
-                Layout.preferredWidth: 320
-                text: qsTr("Import from file...")
+                Layout.minimumWidth: 180
+                text: qsTr("Import backup file")
                 onClicked: fileDlg.open()
             }
             StatusButton {
                 objectName: "btnSkipImport"
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: 320
+                Layout.minimumWidth: 180
                 text: qsTr("Skip")
                 isOutline: true
                 onClicked: root.skipRequested()
