@@ -18,6 +18,7 @@ Control {
     // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, order:int, keycardCreatedAccount:bool}]
     required property var model
     required property bool currentKeycardLocked
+    required property bool isKeycardEnabled
 
     readonly property string selectedProfileKeyId: currentEntry.value
     readonly property bool keycardCreatedAccount: currentEntry.available ? currentEntry.item.keycardCreatedAccount : false
@@ -61,6 +62,7 @@ Control {
                     colorId: currentEntry.item.colorId
                     keycardCreatedAccount: currentEntry.item.keycardCreatedAccount
                     keycardLocked: root.currentKeycardLocked
+                    keycardEnabled: root.isKeycardEnabled
                 }
             }
         ]
@@ -110,11 +112,13 @@ Control {
                     sorters: RoleSorter {
                         roleName: "order"
                     }
-                    filters: ValueFilter { // don't show the currently selected item
-                        roleName: "keyUid"
-                        value: root.selectedProfileKeyId
-                        inverted: true
-                    }
+                    filters: [
+                        ValueFilter { // don't show the currently selected item
+                            roleName: "keyUid"
+                            value: root.selectedProfileKeyId
+                            inverted: true
+                        }
+                    ]
                 }
                 implicitHeight: contentHeight
                 spacing: 0
@@ -125,6 +129,8 @@ Control {
                     image: model.thumbnailImage
                     colorId: model.colorId
                     keycardCreatedAccount: model.keycardCreatedAccount
+                    keycardEnabled: root.isKeycardEnabled
+                    enabled: !model.keycardCreatedAccount ? true : root.isKeycardEnabled
                     onClicked: {
                         dropdown.close()
                         root.setSelection(model.keyUid)

@@ -19,12 +19,16 @@ ItemDelegate {
     property string image
     property bool keycardCreatedAccount
     property bool keycardLocked
+    property bool keycardEnabled
     property bool isAction
 
     verticalPadding: 12
     leftPadding: Theme.padding
     rightPadding: Theme.bigPadding
     spacing: Theme.padding
+
+    hoverEnabled: enabled
+    opacity: enabled ? 1 : Theme.disabledOpacity
 
     background: Rectangle {
         color: root.hovered || root.highlighted ? Theme.palette.statusSelect.menuItemHoverBackgroundColor
@@ -59,19 +63,29 @@ ItemDelegate {
             }
         }
 
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: StatusQUtils.Emoji.parse(root.label)
-            color: root.isAction ? Theme.palette.primaryColor1 : Theme.palette.directColor1
-            elide: Text.ElideRight
+        ColumnLayout {
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: StatusQUtils.Emoji.parse(root.label)
+                color: root.isAction ? Theme.palette.primaryColor1 : Theme.palette.directColor1
+                elide: Text.ElideRight
+            }
+            StatusBaseText {
+                Layout.fillWidth: true
+                visible: root.keycardCreatedAccount && !root.keycardEnabled
+                text: qsTr("Keycard is not yet supported")
+                font.pixelSize: Theme.tertiaryTextFontSize
+                elide: Text.ElideRight
+            }
         }
 
         Loader {
             id: keycardIcon
             active: root.keycardCreatedAccount
-            sourceComponent: StatusIcon {
+            sourceComponent: StatusIconWithTooltip {
                 icon: "keycard"
-                color: root.keycardLocked ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
+                color: root.keycardLocked || !root.keycardEnabled ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
+                tooltipText: !root.keycardEnabled ? qsTr("Keycard is not yet supported") : ""
             }
         }
     }

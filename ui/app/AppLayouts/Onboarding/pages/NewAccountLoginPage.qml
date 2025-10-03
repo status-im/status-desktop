@@ -108,6 +108,7 @@ OnboardingPage {
                         Layout.rightMargin: -buttonFrame.padding
                         Layout.preferredHeight: 1
                         color: Theme.palette.statusMenu.separatorColor
+                        visible: root.isKeycardEnabled
                     }
                     ListItemButton {
                         objectName: "btnWithKeycard"
@@ -116,7 +117,7 @@ OnboardingPage {
                         subTitle: qsTr("If your profile keys are stored on a Keycard")
                         icon.source: Theme.png("onboarding/create_profile_keycard")
                         onClicked: root.loginWithKeycardRequested()
-                        enabled: root.isKeycardEnabled
+                        visible: root.isKeycardEnabled
                     }
                 }
             }

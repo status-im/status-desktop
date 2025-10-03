@@ -45,6 +45,7 @@ SplitView {
             showEnabledSectionsOnly: ctrlShowEnabledSectionsOnly.checked
             marketEnabled: ctrlMarketEnabled.checked
             browserEnabled: ctrlBrowserEnabled.checked
+            keycardEnabled: ctrlKeycardEnabled.checked
 
             syncingBadgeCount: 2
             messagingBadgeCount: 4
@@ -132,6 +133,11 @@ SplitView {
             Switch {
                 id: ctrlBrowserEnabled
                 text: "Browser enabled"
+                checked: true
+            }
+            Switch {
+                id: ctrlKeycardEnabled
+                text: "Keycard enabled"
                 checked: true
             }
             RowLayout {

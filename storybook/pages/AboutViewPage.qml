@@ -28,7 +28,7 @@ SplitView {
             qtRuntimeVersion: SQCore.SystemUtils.qtRuntimeVersion()
 
             onCheckForUpdates: logs.logEvent("store::checkForUpdates")
-            onOpenLink: Qt.openUrlExternally(url)
+            onOpenLink: (url) => Qt.openUrlExternally(url)
         }
 
         LogsAndControlsPanel {

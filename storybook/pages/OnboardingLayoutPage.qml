@@ -60,6 +60,8 @@ SplitView {
     OnboardingLayout {
         id: onboarding
 
+        readonly property string focusedObjectName: Window?.activeFocusItem?.objectName ?? ""
+
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
@@ -238,8 +240,9 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.currentPage instanceof CreatePasswordPage ||
-                     (onboarding.currentPage instanceof LoginScreen && !onboarding.currentPage.selectedProfileIsKeycard)
+            visible: onboarding.focusedObjectName === "loginPasswordInput" ||
+                     onboarding.focusedObjectName === "passwordViewNewPassword" ||
+                     onboarding.focusedObjectName === "passwordViewNewPasswordConfirm"
 
             onClicked: {
                 const currentItem = onboarding.stack.currentItem
@@ -247,10 +250,8 @@ SplitView {
                 const loginPassInput = StorybookUtils.findChild(
                                          currentItem,
                                          "loginPasswordInput")
-                if (!!loginPassInput) {
-                    ClipboardUtils.setText(mockDriver.password)
-                    loginPassInput.paste()
-                }
+                if (!!loginPassInput)
+                    loginPassInput.text = mockDriver.password
 
                 const input1 = StorybookUtils.findChild(
                                  currentItem,
@@ -275,7 +276,7 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.currentPage instanceof SeedphrasePage
+            visible: onboarding.focusedObjectName.startsWith("enterSeedPhraseInputField")
 
             onClicked: {
                 const words = Utils.splitWords(mockDriver.mnemonic)
@@ -298,9 +299,8 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.currentPage instanceof KeycardEnterPinPage ||
-                     onboarding.currentPage instanceof KeycardCreatePinPage ||
-                     (onboarding.currentPage instanceof LoginScreen && onboarding.currentPage.selectedProfileIsKeycard && store.keycardState === Onboarding.KeycardState.NotEmpty)
+            visible: ctrlLoginScreen.checked ? onboarding.currentPage.selectedProfileIsKeycard && store.keycardState === Onboarding.KeycardState.NotEmpty && onboarding.focusedObjectName === "pinInputTextInput"
+                                             : onboarding.focusedObjectName === "pinInputTextInput"
 
             text: "Copy valid PIN (\"%1\")".arg(mockDriver.pin)
             focusPolicy: Qt.NoFocus
@@ -312,7 +312,7 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.currentPage instanceof KeycardEnterPukPage
+            visible: onboarding.currentPage.toString().startsWith("UnblockWithPukFlow") && onboarding.focusedObjectName === "pinInputTextInput"
 
             text: "Copy valid PUK (\"%1\")".arg(mockDriver.puk)
             focusPolicy: Qt.NoFocus
@@ -324,7 +324,7 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.currentPage instanceof BackupSeedphraseVerify
+            visible: onboarding.focusedObjectName.startsWith("seedInput_")
 
             text: "Paste seed phrase verification"
             focusPolicy: Qt.NoFocus
@@ -356,7 +356,7 @@ SplitView {
         onTouchIdCheckedChanged: onboarding.keychainChanged()
 
         function hasCredential(account) {
-            const isKeycard = onboarding.currentPage instanceof LoginScreen
+            const isKeycard = onboarding.currentPage.toString().startsWith("LoginScreen")
                             && onboarding.currentPage.selectedProfileIsKeycard
 
             keychain.saveCredential(account, isKeycard ? mockDriver.pin : mockDriver.password)
@@ -503,13 +503,13 @@ SplitView {
 
                 Button {
                     text: "Unwind"
-                    visible: ctrlLoginScreen.checked && onboarding.stack.depth > 1 && !(onboarding.currentPage instanceof DidYouKnowSplashScreen)
+                    visible: ctrlLoginScreen.checked && onboarding.stack.depth > 1 && !onboarding.currentPage.toString().startsWith("DidYouKnowSplashScreen")
                     onClicked: onboarding.unwindToLoginScreen()
                 }
 
                 Button {
                     text: "Simulate login error"
-                    visible: ctrlLoginScreen.checked && onboarding.currentPage instanceof DidYouKnowSplashScreen
+                    visible: ctrlLoginScreen.checked && onboarding.currentPage.toString().startsWith("DidYouKnowSplashScreen")
                     onClicked: onboarding.onboardingStore.accountLoginError("SIMULATION: Something bad happened", false)
                 }
             }

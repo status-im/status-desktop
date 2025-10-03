@@ -34,7 +34,7 @@ OnboardingStackView {
             authorizationState: Onboarding.AuthorizationState.Authorized // authorization not needed
             keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-            onSetPinRequested: root.setPinRequested(pin)
+            onSetPinRequested: (pin) => root.setPinRequested(pin)
             onFinished: root.finished()
         }
     }

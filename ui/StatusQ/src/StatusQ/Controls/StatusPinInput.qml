@@ -204,6 +204,7 @@ Item {
     // Pin input data management object:
     TextInput {
         id: inputText
+        objectName: "pinInputTextInput"
         visible: false
         focus: true
         maximumLength: root.pinLen
