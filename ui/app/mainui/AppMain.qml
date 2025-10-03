@@ -72,6 +72,7 @@ Item {
     }
 
     // Global cross-domain stores (just references from `rootStore`)
+    readonly property AppStores.AccountSettingsStore accountSettingsStore: rootStore.accountSettingsStore
     readonly property AppStores.ContactsStore contactsStore: rootStore.contactsStore
     readonly property AppStores.ActivityCenterStore activityCenterStore: rootStore.activityCenterStore
 
@@ -823,10 +824,6 @@ Item {
 
         readonly property int activeSectionType: appMain.rootStore.activeSectionType
         readonly property bool isBrowserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
-        
-        property bool showUsersList: localAccountSensitiveSettings.expandUsersList
-
-        onShowUsersListChanged: localAccountSensitiveSettings.expandUsersList = showUsersList
 
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
@@ -1898,8 +1895,9 @@ Item {
                         ChatLayout {
                             id: chatLayoutContainer
 
-                            showUsersList: d.showUsersList
-                            onShowUsersListRequested: show => d.showUsersList = show
+                            showUsersList: appMain.accountSettingsStore.showUsersList
+                            onShowUsersListRequested:
+                                show => appMain.accountSettingsStore.setShowUsersList(show)
 
                             isChatView: true
                             navBar: appMain.navBar
@@ -2291,8 +2289,9 @@ Item {
                                 }
                             }
 
-                            showUsersList: d.showUsersList
-                            onShowUsersListRequested: show => d.showUsersList = show
+                            showUsersList: appMain.accountSettingsStore.showUsersList
+                            onShowUsersListRequested:
+                                show => appMain.accountSettingsStore.setShowUsersList(show)
 
                             isChatView: false // This will be a community view
                             navBar: appMain.navBar
