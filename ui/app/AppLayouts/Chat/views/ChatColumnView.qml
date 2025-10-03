@@ -353,8 +353,9 @@ Item {
                                  && root.rootStore.sectionDetails.joined
                                  && !root.rootStore.sectionDetails.amIBanned
                                  && root.rootStore.isUserAllowedToSendMessage
-                                 && !d.sendingInProgress
                     }
+
+                    textInput.readOnly: d.sendingInProgress
 
                     usersModel: root.usersModel
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
