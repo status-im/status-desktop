@@ -8,24 +8,18 @@ import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Popups
-import StatusQ.Popups.Dialog
-import StatusQ.Core.Utils as StatusQUtils
-import StatusQ.Core.Backpressure
 
 import utils
 
 import shared.panels
 import shared.popups
 import shared.controls
-import shared.controls.chat
 import shared.status
 
 import SortFilterProxyModel
 
 import AppLayouts.Profile.stores as ProfileStores
 import "../popups"
-import "../controls"
-import "../../stores"
 
 SettingsContentBase {
     id: root
@@ -34,14 +28,6 @@ SettingsContentBase {
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.PrivacyStore privacyStore
     property ProfileStores.AdvancedStore advancedStore
-
-    required property bool isProduction
-    required property bool localBackupEnabled
-    required property bool messagesBackupEnabled
-    required property url backupPath
-
-    signal backupPathSet(url path)
-    signal backupMessagesEnabledToggled(bool enabled)
 
     ColumnLayout {
         id: layout
@@ -295,83 +281,6 @@ SettingsContentBase {
             onClicked: Global.openPopup(getSyncCodeInstructionsPopup)
         }
 
-        StatusSettingsLineButton {
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            visible: root.localBackupEnabled
-            text: qsTr("Directory of the local backup files")
-            currentValue: root.backupPath
-            onClicked: backupPathDialog.open()
-        }
-
-        StatusSettingsLineButton {
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            visible: root.localBackupEnabled
-            text: qsTr("Backup messages locally")
-            isSwitch: true
-            switchChecked: root.messagesBackupEnabled
-            onClicked: {
-                if (root.messagesBackupEnabled) {
-                    root.backupMessagesEnabledToggled(false)
-                    return
-                }
-                Global.openPopup(enableMessagesBackupDialog)
-            }
-        }
-
-        StatusButton {
-            objectName: "setupSyncLocalBackupDataButton"
-
-            visible: root.localBackupEnabled
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Backup Data Locally")
-            asset.emoji: {
-                if (root.devicesStore.backupDataState !== Constants.BackupImportState.Completed) {
-                    return ""
-                }
-                if (root.devicesStore.backupDataError) {
-                    return "❌"
-                }
-                return "✅"
-            }
-            loading: root.devicesStore.backupDataState === Constants.BackupImportState.InProgress
-            onClicked : {
-                root.devicesStore.performLocalBackup()
-                Backpressure.debounce(this, 5000, () => {
-                    root.devicesStore.resetBackupDataState()
-                })()
-            }
-        }
-
-        StatusButton {
-            objectName: "importLocalBackupFileButton"
-
-            id: importBackupBtn
-            visible: root.localBackupEnabled
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Import Local Backup File")
-            loading: root.devicesStore.backupImportState === Constants.BackupImportState.InProgress
-            onClicked : importBackupFileDialog.open()
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            color: Theme.palette.successColor1
-            visible: root.devicesStore.backupImportState === Constants.BackupImportState.Completed && !root.devicesStore.backupImportError
-            text: qsTr("Success importing local data")
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            color: Theme.palette.dangerColor1
-            visible: !!root.devicesStore.backupImportError
-            wrapMode: Text.WordWrap
-            text: qsTr("Error importing backup file: %1").arg(root.devicesStore.backupImportError)
-        }
-
         Component {
             id: personalizeDevicePopup
 
@@ -440,35 +349,6 @@ SettingsContentBase {
             GetSyncCodeInstructionsPopup {
                 destroyOnClose: true
             }
-        }
-
-        Component {
-            id: enableMessagesBackupDialog
-            EnableMessagesBackupDialog {
-                destroyOnClose: true
-                onEnableRequested: {
-                    root.backupMessagesEnabledToggled(true)
-                    Global.closePopup()
-                }
-            }
-        }
-
-        StatusFileDialog {
-            id: importBackupFileDialog
-
-            title: qsTr("Select your backup file")
-            nameFilters: [qsTr("Supported backup formats (%1)").arg("*.bkp")]
-            currentFolder: root.devicesStore.toFileUri(root.backupPath)
-            selectMultiple: false
-            onAccepted: root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
-        }
-
-        StatusFolderDialog {
-            id: backupPathDialog
-
-            title: qsTr("Select your backup directory")
-            currentFolder: root.devicesStore.toFileUri(root.backupPath)
-            onAccepted: root.backupPathSet(backupPathDialog.selectedFolder)
         }
 
         Item {

@@ -119,6 +119,7 @@ QtObject:
     read = getBackupDataError
     notify = backupDataErrorChanged
 
+  proc localBackupExportCompleted*(self: View, success: bool) {.signal.}
   proc localBackupImportCompleted*(self: View, success: bool) {.signal.}
 
   proc onLocalBackupImportCompleted*(self: View, error: string) = # not a slot
@@ -133,6 +134,7 @@ QtObject:
     let error = self.delegate.performLocalBackup()
     self.setBackupDataState(BackupImportState.Completed)
     self.setBackupDataError(error)
+    self.localBackupExportCompleted(error.len == 0)
 
   proc resetBackupDataState*(self: View): int {.slot.} =
     self.setBackupDataState(BackupImportState.None)
