@@ -247,11 +247,23 @@ QtObject {
     readonly property Connections _devicesStoreConnections: Connections {
         target: root.devicesStore
 
+        function onLocalBackupExportCompleted(success: bool) {
+            if (success) {
+                Global.displaySuccessToastMessage(qsTr("Your data backed up successfully"))
+            } else {
+                Global.displayToastMessage(qsTr("Backup failed, please try again"),
+                                       "",
+                                       root.warningAssetName,
+                                       false,
+                                        Constants.ephemeralNotificationType.danger,
+                                       "")
+            }
+        }
         function onLocalBackupImportCompleted(success: bool) {
             if (success) {
-                Global.displaySuccessToastMessage(qsTr("Local backup import completed"))
+                Global.displaySuccessToastMessage(qsTr("Your data backup restored successfully"))
             } else {
-                Global.displayToastMessage(qsTr("Local backup import failed"),
+                Global.displayToastMessage(qsTr("Import failed. Make sure the backup file matches your profile name."),
                                        "",
                                        root.warningAssetName,
                                        false,

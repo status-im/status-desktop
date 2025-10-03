@@ -317,7 +317,7 @@ Item {
             anchors.fill: parent
             enabled: edit.enabled
             hoverEnabled: enabled
-            cursorShape: Qt.IBeamCursor
+            cursorShape: enabled ? Qt.IBeamCursor : undefined
             onClicked: {
                 if (edit.activeFocus)
                     return;
