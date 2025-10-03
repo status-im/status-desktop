@@ -1,3 +1,4 @@
+import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -30,8 +31,6 @@ SplitView {
         property int loginResult: Onboarding.ProgressState.Idle // NB abusing the tristate enum here a bit :)
     }
 
-    Component.onCompleted: console.warn("!!! Qt UI LANGUAGE:", Qt.uiLanguage) // <-- what the user wants ideally
-
     LoginAccountsModel {
         id: accModel
     }
@@ -45,6 +44,8 @@ SplitView {
 
         availableLanguages: ["de", "cs", "en", "en_CA", "ko", "ar", "fr", "fr_CA", "pt_BR", "pt", "uk", "ja", "el"]
         currentLanguage: "en"
+
+        backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
 
         onChangeLanguageRequested: function(newLanguageCode) {
             logs.logEvent("onChangeLanguageRequested", ["newLanguageCode"], arguments)

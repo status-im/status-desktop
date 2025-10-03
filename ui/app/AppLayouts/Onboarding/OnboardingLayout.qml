@@ -166,6 +166,8 @@ Page {
         isKeycardEnabled: root.isKeycardEnabled
         networkChecksEnabled: root.networkChecksEnabled
 
+        backupPath: root.onboardingStore.backupPath
+
         generateMnemonic: root.onboardingStore.generateMnemonic
         isBiometricsLogin: (account) => root.keychain.hasCredential(account) === Keychain.StatusSuccess
         passwordStrengthScoreFunction: root.onboardingStore.getPasswordStrengthScore
