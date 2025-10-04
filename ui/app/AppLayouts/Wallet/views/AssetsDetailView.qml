@@ -302,36 +302,62 @@ Item {
                 }
             }
 
-            RowLayout {
+            Flow {
+                id: infoFlow
+
                 Layout.fillWidth: true
                 visible: !d.isCommunityAsset
+                spacing: 5
+
                 InformationTile {
-                    maxWidth: parent.width
+                    id: i1
+
                     objectName: "marketCapInformationTile"
                     primaryText: qsTr("Market Cap")
-                    secondaryText: token && token.marketDetails && token.marketDetails.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.marketCap) : Constants.dummyText
+                    secondaryText: token && token.marketDetails && token.marketDetails.marketCap
+                                   ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.marketCap)
+                                   : Constants.dummyText
                     isLoading: d.marketDetailsLoading
                 }
                 InformationTile {
-                    maxWidth: parent.width
+                    id: i2
+
                     objectName: "dayLowInformationTile"
                     primaryText: qsTr("Day Low")
-                    secondaryText: token && token.marketDetails && token.marketDetails.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.lowDay) : Constants.dummyText
+                    secondaryText: token && token.marketDetails && token.marketDetails.lowDay
+                                   ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.lowDay)
+                                   : Constants.dummyText
                     isLoading: d.marketDetailsLoading
                 }
-                InformationTile {
-                    maxWidth: parent.width
-                    objectName: "dayHighInformationTile"
-                    primaryText: qsTr("Day High")
-                    secondaryText: token && token.marketDetails && token.marketDetails.highDay ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.highDay) : Constants.dummyText
-                    isLoading: d.marketDetailsLoading
-                }
+
+                // Wrapper for adding extra space in the middle of the Flow
                 Item {
-                    Layout.fillWidth: true
+                    readonly property int centralSpacing:
+                        Math.max(0, infoFlow.width
+                                 - i1.width - i2.width - i3.width - i4.width - i5.width - i6.width
+                                 - (infoFlow.children.length - 1) * infoFlow.spacing)
+
+                    width: i3.width + centralSpacing
+                    height: i3.height
+
+                    InformationTile {
+                        id: i3
+
+                        objectName: "dayHighInformationTile"
+                        primaryText: qsTr("Day High")
+                        secondaryText: token && token.marketDetails && token.marketDetails.highDay
+                                       ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.highDay)
+                                       : Constants.dummyText
+                        isLoading: d.marketDetailsLoading
+                    }
                 }
+
                 InformationTile {
-                    readonly property double changePctHour: token && token.marketDetails ? token.marketDetails.changePctHour : 0
-                    maxWidth: parent.width
+                    id: i4
+
+                    readonly property double changePctHour: token && token.marketDetails
+                                                            ? token.marketDetails.changePctHour : 0
+
                     objectName: "hourInformationTile"
                     primaryText: qsTr("Hour")
                     secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2))
@@ -341,8 +367,11 @@ Item {
                     isLoading: d.marketDetailsLoading
                 }
                 InformationTile {
-                    readonly property double changePctDay: token && token.marketDetails ? token.marketDetails.changePctDay : 0
-                    maxWidth: parent.width
+                    id: i5
+
+                    readonly property double changePctDay: token && token.marketDetails
+                                                           ? token.marketDetails.changePctDay : 0
+
                     primaryText: qsTr("Day")
                     objectName: "dayInformationTile"
                     secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2))
@@ -352,8 +381,11 @@ Item {
                     isLoading: d.marketDetailsLoading
                 }
                 InformationTile {
-                    readonly property double changePct24hour: token && token.marketDetails ? token.marketDetails.changePct24hour : 0
-                    maxWidth: parent.width
+                    id: i6
+
+                    readonly property double changePct24hour: token && token.marketDetails
+                                                              ? token.marketDetails.changePct24hour : 0
+
                     primaryText: qsTr("24 Hours")
                     objectName: "24HoursInformationTile"
                     secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2))
@@ -367,23 +399,16 @@ Item {
             Flow {
                 id: detailsFlow
 
-                readonly property bool isOverflowing:  detailsFlow.width - websiteBlock.width - tokenDescriptionText.width < 24
+                readonly property int rightSideWidth: 272
+                readonly property bool isOverflowing:  !tokenDescriptionText.text || detailsFlow.width - detailsFlow.rightSideWidth - tokenDescriptionText.width < 24
 
                 Layout.fillWidth: true
                 spacing: 24
 
-                StatusTabBar {
-                    width: parent.width
-                    StatusTabButton {
-                        width: implicitWidth
-                        text: qsTr("Overview")
-                    }
-                    visible: tokenDescriptionText.visible
-                }
-
                 StatusTextWithLoadingState {
                     id: tokenDescriptionText
-                    width: Math.max(536 , scrollView.availableWidth - websiteBlock.width - 24)
+
+                    width: Math.max(536 , scrollView.availableWidth - detailsFlow.rightSideWidth - 24)
 
                     font.pixelSize: Theme.primaryTextFontSize
                     lineHeight: 22
@@ -397,14 +422,17 @@ Item {
                     visible: !!text
                 }
 
-                GridLayout{
+                GridLayout {
                     columnSpacing: 10
                     rowSpacing: 10
-                    flow: detailsFlow.isOverflowing ? GridLayout.LeftToRight: GridLayout.TopToBottom
+                    flow: detailsFlow.isOverflowing && detailsFlow.width > 400 ? GridLayout.LeftToRight: GridLayout.TopToBottom
+
                     InformationTileAssetDetails {
                         id: websiteBlock
-                        Layout.preferredWidth: 272
-                        visible: !d.isCommunityAsset
+
+                        Layout.alignment: Qt.AlignTop
+                        Layout.preferredWidth: detailsFlow.isOverflowing ? -1 : detailsFlow.rightSideWidth
+                        visible: !d.isCommunityAsset && token.websiteUrl
                         primaryText: qsTr("Website")
                         content: InformationTag {
                             asset.name : "browser"
@@ -427,7 +455,8 @@ Item {
                     }
 
                     InformationTileAssetDetails {
-                        Layout.preferredWidth: 272
+                        Layout.alignment: Qt.AlignTop
+                        Layout.preferredWidth: detailsFlow.isOverflowing ? -1 : detailsFlow.rightSideWidth
                         visible:  d.isCommunityAsset
                         primaryText: qsTr("Minted by")
                         content: InformationTag {
@@ -451,13 +480,14 @@ Item {
                     }
 
                     InformationTileAssetDetails {
-                        Layout.minimumWidth: 272
-                        Layout.preferredWidth: implicitWidth
+                        Layout.alignment: Qt.AlignTop
+                        Layout.preferredWidth: detailsFlow.isOverflowing ? -1 : detailsFlow.rightSideWidth
+
                         primaryText: qsTr("Contract")
                         content: GridLayout {
                             columnSpacing: 10
                             rowSpacing: 10
-                            flow: detailsFlow.isOverflowing ? GridLayout.LeftToRight : GridLayout.TopToBottom
+                            flow: GridLayout.TopToBottom
                             Repeater {
                                 model: SortFilterProxyModel {
                                     sourceModel: d.addressPerChainModel

@@ -268,7 +268,7 @@ Item {
                         Repeater {
                             model: !!collectible ? collectible.traits: null
                             InformationTile {
-                                maxWidth: parent.width
+                                width: Math.min(implicitWidth, parent.width)
                                 primaryText: model.traitType
                                 secondaryText: model.value
                             }
