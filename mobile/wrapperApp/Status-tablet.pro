@@ -46,4 +46,10 @@ ios {
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
 
     LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
+
+    # --- iOS frameworks required by keychain_apple.mm ---
+    LIBS += -framework LocalAuthentication \
+            -framework Security \
+            -framework UIKit \
+            -framework Foundation
 }
