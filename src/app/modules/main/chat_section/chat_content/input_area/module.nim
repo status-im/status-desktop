@@ -79,24 +79,6 @@ method sendChatMessage*(
   self.controller.sendChatMessage(msg, replyTo, contentType,
     singletonInstance.userProfile.getPreferredName(), linkPreviews, paymentRequests)
 
-method requestAddressForTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
-  self.controller.requestAddressForTransaction(fromAddress, amount, tokenAddress)
-
-method requestTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
-  self.controller.requestTransaction(fromAddress, amount, tokenAddress)
-
-method declineRequestTransaction*(self: Module, messageId: string) =
-  self.controller.declineRequestTransaction(messageId)
-
-method declineRequestAddressForTransaction*(self: Module, messageId: string) =
-  self.controller.declineRequestAddressForTransaction(messageId)
-
-method acceptRequestAddressForTransaction*(self: Module, messageId: string, address: string) =
-  self.controller.acceptRequestAddressForTransaction(messageId, address)
-
-method acceptRequestTransaction*(self: Module, transactionHash: string, messageId: string, signature: string) =
-  self.controller.acceptRequestTransaction(transactionHash, messageId, signature)
-
 method setText*(self: Module, text: string, unfurlNewUrls: bool) =
   self.controller.setText(text, unfurlNewUrls)
 

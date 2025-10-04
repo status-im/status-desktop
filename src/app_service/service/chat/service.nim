@@ -12,14 +12,12 @@ import ../contacts/service as contact_service
 import backend/chat as status_chat
 import backend/communities as status_communities
 import backend/group_chat as status_group_chat
-import backend/chatCommands as status_chat_commands
 import app/global/[global_singleton, utils]
 import app/core/eventemitter
 import app/core/signals/types
 import constants
 
 import ../../common/message as message_common
-from ../../common/account_constants import ZERO_ADDRESS
 
 export chat_dto
 
@@ -326,11 +324,6 @@ QtObject:
       self.updateOrAddChat(chat)
       self.signalChatsAndMessagesUpdates(@[chat], messages)
 
-  proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
-    var (chats, _) = self.processMessengerResponse(response)
-    # TODO: Signal is not handled anywhere
-    self.events.emit(SIGNAL_MESSAGE_REMOVE, MessageArgs(id: messageId, channel: chats[0].id))
-
   proc parseChatResponseAndEmit*(self: Service, response: RpcResponse[JsonNode]) =
     var (chats, _) = self.parseChatResponse(response)
     self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
@@ -520,50 +513,6 @@ QtObject:
     except Exception as e:
       error "Error sending message", msg = e.msg
       self.events.emit(SIGNAL_SENDING_FAILED, MessageSendingFailure(chatId: rpcResponseObj["chatId"].getStr, error: e.msg))
-
-  proc requestAddressForTransaction*(self: Service, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-    try:
-      let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
-      let response =  status_chat_commands.requestAddressForTransaction(chatId, fromAddress, amount, address)
-      discard self.processMessengerResponse(response)
-    except Exception as e:
-      error "Error requesting address for transaction", msg = e.msg
-
-  proc requestTransaction*(self: Service, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-    try:
-      let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
-      let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)
-      discard self.processMessengerResponse(response)
-    except Exception as e:
-      error "Error requesting transaction", msg = e.msg
-
-  proc declineRequestTransaction*(self: Service, messageId: string) =
-    try:
-      let response = status_chat_commands.declineRequestTransaction(messageId)
-      self.processUpdateForTransaction(messageId, response)
-    except Exception as e:
-      error "Error requesting transaction", msg = e.msg
-
-  proc declineRequestAddressForTransaction*(self: Service, messageId: string) =
-    try:
-      let response = status_chat_commands.declineRequestAddressForTransaction(messageId)
-      self.processUpdateForTransaction(messageId, response)
-    except Exception as e:
-      error "Error requesting transaction", msg = e.msg
-
-  proc acceptRequestAddressForTransaction*(self: Service, messageId: string, address: string) =
-    try:
-      let response = status_chat_commands.acceptRequestAddressForTransaction(messageId, address)
-      self.processUpdateForTransaction(messageId, response)
-    except Exception as e:
-      error "Error requesting transaction", msg = e.msg
-
-  proc acceptRequestTransaction*(self: Service, transactionHash: string, messageId: string, signature: string) =
-    try:
-      let response = status_chat_commands.acceptRequestTransaction(transactionHash, messageId, signature)
-      discard self.processMessengerResponse(response)
-    except Exception as e:
-      error "Error requesting transaction", msg = e.msg
 
   proc muteChat*(self: Service, chatId: string, interval: int) =
     try:

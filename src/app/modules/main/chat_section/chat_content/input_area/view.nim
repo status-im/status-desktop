@@ -63,24 +63,6 @@ QtObject:
     self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
 
-  proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
-    self.delegate.acceptRequestAddressForTransaction(messageId, address)
-
-  proc declineAddressRequest*(self: View, messageId: string) {.slot.} =
-    self.delegate.declineRequestAddressForTransaction(messageId)
-
-  proc requestAddress*(self: View, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
-    self.delegate.requestAddressForTransaction(fromAddress, amount, tokenAddress)
-
-  proc request*(self: View, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
-    self.delegate.requestTransaction(fromAddress, amount, tokenAddress)
-
-  proc declineRequest*(self: View, messageId: string) {.slot.} =
-    self.delegate.declineRequestTransaction(messageId)
-
-  proc acceptRequestTransaction*(self: View, transactionHash: string, messageId: string, signature: string) {.slot.} =
-    self.delegate.acceptRequestTransaction(transactionHash, messageId, signature)
-
   proc getPreservedProperties(self: View): QVariant {.slot.} =
     return self.preservedPropertiesVariant
 

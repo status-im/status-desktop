@@ -26,24 +26,6 @@ method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, con
 method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method requestTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method declineRequestTransaction*(self: AccessInterface, messageId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method declineRequestAddressForTransaction*(self: AccessInterface, messageId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method acceptRequestAddressForTransaction*(self: AccessInterface, messageId: string, address: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method acceptRequestTransaction*(self: AccessInterface, transactionHash: string, messageId: string, signature: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method searchGifs*(self: AccessInterface, query: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

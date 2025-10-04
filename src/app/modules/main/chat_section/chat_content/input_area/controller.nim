@@ -159,24 +159,6 @@ proc sendChatMessage*(self: Controller,
     paymentRequests
   )
 
-proc requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
-  self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)
-
-proc requestTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
-  self.chatService.requestTransaction(self.chatId, fromAddress, amount, tokenAddress)
-
-proc declineRequestTransaction*(self: Controller, messageId: string) =
-  self.chatService.declineRequestTransaction(messageId)
-
-proc declineRequestAddressForTransaction*(self: Controller, messageId: string) =
-  self.chatService.declineRequestAddressForTransaction(messageId)
-
-proc acceptRequestAddressForTransaction*(self: Controller, messageId: string, address: string) =
-  self.chatService.acceptRequestAddressForTransaction(messageId, address)
-
-proc acceptRequestTransaction*(self: Controller, transactionHash: string, messageId: string, signature: string) =
-  self.chatService.acceptRequestTransaction(transactionHash, messageId, signature)
-
 proc getLinkPreviewEnabled*(self: Controller): bool =
   return self.linkPreviewPersistentSetting == UrlUnfurlingMode.Enabled or self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.Enabled
 
