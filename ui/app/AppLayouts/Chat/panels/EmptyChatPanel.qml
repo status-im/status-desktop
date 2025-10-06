@@ -1,104 +1,80 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
 
-import shared
-import shared.panels
 import shared.popups
 
 import utils
 
-Item {
-    id: element
-    Layout.fillHeight: true
-    Layout.fillWidth: true
+ColumnLayout {
+    id: root
 
     signal shareChatKeyClicked()
 
+    spacing: 0
+
     Image {
-        id: walkieTalkieImage
+        id: placeholderImage
+
         objectName: "emptyChatPanelImage"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+
+        fillMode: Image.PreserveAspectFit
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.maximumHeight: Math.min(width, implicitHeight)
+
+        Layout.topMargin: {
+            const remainingHeight = root.height - height
+
+            return Math.max(0, remainingHeight / 2 -
+                            Math.max(0, baseText.implicitHeight -
+                                     remainingHeight / 2)) / 2
+        }
+
         source: Theme.png("chat/chat@2x")
     }
 
-    Item {
-        id: links
-        anchors.top: walkieTalkieImage.bottom
-        anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
-        height: shareKeyLink.height
-        width: childrenRect.width
+    StatusBaseText {
+        id: baseText
 
-        StyledText {
-            id: shareKeyLink
-            text: qsTr("Share your chat key")
-            font.pixelSize: Theme.primaryTextFontSize
-            color: Theme.palette.primaryColor1
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumHeight: implicitHeight
 
-            StatusMouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onEntered: {
-                    parent.font.underline = true
-                }
-                onExited: {
-                    parent.font.underline = false
-                }
-                onClicked: shareChatKeyClicked()
-            }
-        }
+        text: qsTr("%1 or %2<br>friends to start messaging in Status")
+          .arg(Utils.getStyledLink(qsTr("Share your chat key"), "#share", hoveredLink,
+                Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
+          .arg(Utils.getStyledLink(qsTr("invite"), "#invite", hoveredLink,
+                Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
 
-        StyledText {
-            id: orText
-            text: qsTr("or")
-            font.pixelSize: Theme.primaryTextFontSize
-            color: Theme.palette.secondaryText
-            anchors.left: shareKeyLink.right
-            anchors.leftMargin: 2
-            anchors.bottom: shareKeyLink.bottom
-        }
+        horizontalAlignment: Text.AlignHCenter
 
-        StyledText {
-            id: inviteLink
-            text: qsTr("invite")
-            font.pixelSize: Theme.primaryTextFontSize
-            color: Theme.palette.primaryColor1
-            anchors.left: orText.right
-            anchors.leftMargin: 2
-            anchors.bottom: shareKeyLink.bottom
-
-            StatusMouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onEntered: {
-                    parent.font.underline = true
-                }
-                onExited: {
-                    parent.font.underline = false
-                }
-                onClicked: {
-                    Global.openPopup(inviteFriendsPopup)
-                }
-            }
-        }
-    }
-
-    StyledText {
-        text: qsTr("friends to start messaging in Status")
-        font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.secondaryText
-        anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
-        anchors.top: links.bottom
+        font.pixelSize: Theme.primaryTextFontSize
+        wrapMode: Text.Wrap
+        elide: Text.ElideRight
+        maximumLineCount: 3
+        textFormat: Text.RichText
+
+        onLinkActivated: link => {
+            if (link === "#share")
+                shareChatKeyClicked()
+            else
+                Global.openPopup(inviteFriendsPopup)
+        }
+
+        HoverHandler {
+            // Qt CSS doesn't support custom cursor shape
+            cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
+        }
     }
 
     Component {
         id: inviteFriendsPopup
+
         InviteFriendsPopup {
             destroyOnClose: true
         }
