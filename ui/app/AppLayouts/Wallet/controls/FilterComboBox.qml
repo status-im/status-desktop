@@ -77,8 +77,8 @@ ComboBox {
         readonly property var combinedProxyModel: SortFilterProxyModel {
             id: combinedProxyModel
             sourceModel: d.combinedModel
-            readonly property var containsCollectible: (groupId) => SQUtils.ModelUtils.indexOf(root.sourceModel, "communityId", groupId) >= 0
-                                                                    || SQUtils.ModelUtils.indexOf(root.sourceModel, "collectionUid", groupId) >= 0
+//            readonly property var containsCollectible: (groupId) => SQUtils.ModelUtils.indexOf(root.sourceModel, "communityId", groupId) >= 0
+//                                                                    || SQUtils.ModelUtils.indexOf(root.sourceModel, "collectionUid", groupId) >= 0
             proxyRoles: [
                 FastExpressionRole {
                     name: "groupName"
@@ -121,14 +121,14 @@ ComboBox {
                         return true
                     }
                     expectedRoles: ["sourceGroup", "isSelfCollection"]
-                },
-                FastExpressionFilter {
-                    expression: {
-                        d.sourceModelTracker.revision
-                        return combinedProxyModel.containsCollectible(model.groupId)
-                    }
-                    expectedRoles: ["groupId"]
                 }
+//                FastExpressionFilter {
+//                    expression: {
+//                        d.sourceModelTracker.revision
+//                        return combinedProxyModel.containsCollectible(model.groupId)
+//                    }
+//                    expectedRoles: ["groupId"]
+//                }
             ]
         }
 
@@ -244,12 +244,12 @@ ComboBox {
                 model: d.combinedProxyModel
                 delegate: Item { // NB anything but AbstractButton to prevent auto-closing of the popup
                     width: ListView.view.width
-                    implicitHeight: customMenuDelegate.implicitHeight
+//                    implicitHeight: customMenuDelegate.implicitHeight
 
-                    CustomItemDelegate {
-                        id: customMenuDelegate
-                        width: parent.width
-                    }
+//                    CustomItemDelegate {
+//                        id: customMenuDelegate
+//                        width: parent.width
+//                    }
                 }
                 section.property: "sourceGroup"
                 section.delegate: ColumnLayout {
@@ -343,6 +343,8 @@ ComboBox {
             Loader {
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 32
+
+                asynchronous: true
 
                 sourceComponent: !!menuDelegate.groupImage ? roundImage : roundIcon
 

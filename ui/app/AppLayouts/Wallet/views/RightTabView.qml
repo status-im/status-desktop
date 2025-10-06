@@ -135,8 +135,9 @@ RightTabBaseView {
                 Layout.fillWidth: true
                 Layout.topMargin: Theme.bigPadding
                 Layout.preferredHeight: childrenRect.height
-                visible: WalletStores.RootStore.walletSectionInst.hasPairedDevices
-                         && WalletStores.RootStore.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
+                visible: false
+//                visible: WalletStores.RootStore.walletSectionInst.hasPairedDevices
+//                         && WalletStores.RootStore.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
 
                 onRunImport: {
                     WalletStores.RootStore.walletSectionInst.runKeypairImportPopup()
