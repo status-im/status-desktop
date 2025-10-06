@@ -15,6 +15,33 @@ import app_service/service/community_tokens/community_collectible_owner
 import app_service/service/shared_urls/service as urls_service
 import app_service/service/network/service as network_service
 import app_service/service/network/network_item
+import app/core/custom_urls/urls_manager
+import app_service/service/keychain/service as keychain_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/collectible/service as collectible_service
+import app_service/service/currency/service as currency_service
+import app_service/service/ramp/service as ramp_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/bookmarks/service as bookmark_service
+import app_service/service/profile/service as profile_service
+import app_service/service/about/service as about_service
+import app_service/service/privacy/service as privacy_service
+import app_service/service/language/service as language_service
+import app_service/service/dapp_permissions/service as dapp_permissions_service
+import app_service/service/provider/service as provider_service
+import app_service/service/stickers/service as stickers_service
+import app_service/service/activity_center/service as activity_center_service
+import app_service/service/saved_address/service as saved_address_service
+import app_service/service/devices/service as devices_service
+import app_service/service/node/service as node_service
+import app_service/service/gif/service as gif_service
+import app_service/service/general/service as general_service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/network_connection/service as network_connection_service
+import app_service/service/market/service as market_service
+import app/core/tasks/threadpool
+import app_service/service/ens/service as ens_service
+
 from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard, RequestToJoinState
 
 import app/global/app_signals
@@ -40,6 +67,51 @@ method load*(
   messageService: message_service.Service,
   mailserversService: mailservers_service.Service)
   {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unloadModules*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadModules*(self: AccessInterface,
+  events: EventEmitter,
+  urlsManager: UrlsManager,
+  keychainService: keychain_service.Service,
+  accountsService: accounts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  tokenService: token_service.Service,
+  collectibleService: collectible_service.Service,
+  currencyService: currency_service.Service,
+  rampService: ramp_service.Service,
+  transactionService: transaction_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  bookmarkService: bookmark_service.Service,
+  profileService: profile_service.Service,
+  settingsService: settings_service.Service,
+  contactsService: contacts_service.Service,
+  aboutService: about_service.Service,
+  dappPermissionsService: dapp_permissions_service.Service,
+  languageService: language_service.Service,
+  privacyService: privacy_service.Service,
+  providerService: provider_service.Service,
+  stickersService: stickers_service.Service,
+  activityCenterService: activity_center_service.Service,
+  savedAddressService: saved_address_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  devicesService: devices_service.Service,
+  mailserversService: mailservers_service.Service,
+  nodeService: node_service.Service,
+  gifService: gif_service.Service,
+  ensService: ens_service.Service,
+  communityTokensService: community_tokens_service.Service,
+  networkService: network_service.Service,
+  generalService: general_service.Service,
+  keycardService: keycard_service.Service,
+  networkConnectionService: network_connection_service.Service,
+  sharedUrlsService: urls_service.Service,
+  marketService: market_service.Service,
+  threadpool: ThreadPool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateLoggedInUser*(self: AccessInterface, requestedBy: string) {.base.} =

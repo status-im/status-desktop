@@ -35,6 +35,7 @@ proc newModule*(
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("sharedUrlsModule", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

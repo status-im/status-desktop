@@ -43,6 +43,7 @@ proc newModule*(
   result.controller = controller.newController(result, events, settingsService, networkService, providerService)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("providerModule", newQVariant())
   self.controller.delete
   self.viewVariant.delete
   self.view.delete

@@ -30,6 +30,7 @@ proc newModule*(
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("walletSectionSavedAddresses", newQVariant())
   self.viewVariant.delete
   self.view.delete
 

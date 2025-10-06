@@ -124,6 +124,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("profileSectionModule", newQVariant())
   self.profileModule.delete
   self.contactsModule.delete
   self.languageModule.delete

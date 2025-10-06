@@ -31,6 +31,7 @@ proc newModule*(
   singletonInstance.engine.setRootContextProperty("aboutModule", result.viewVariant)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("aboutModule", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

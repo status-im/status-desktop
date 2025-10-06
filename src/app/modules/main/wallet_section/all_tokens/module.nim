@@ -43,6 +43,7 @@ proc newModule*(
   result.addresses = @[]
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant())
   self.viewVariant.delete
   self.view.delete
   self.controller.delete

@@ -41,6 +41,7 @@ proc newModule*(
   singletonInstance.engine.setRootContextProperty("stickersModule", result.viewVariant)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("stickersModule", newQVariant())
   self.view.delete
 
 method load*(self: Module) =

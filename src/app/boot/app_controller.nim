@@ -142,6 +142,226 @@ proc connect(self: AppController) =
       elif defined(production):
         setLogLevel(chronicles.LogLevel.INFO)
 
+proc loadServices(self: AppController) =
+  # Services
+  self.generalService = general_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.keycardService = keycard_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.keycardServiceV2 = keycard_serviceV2.newService(self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.nodeConfigurationService = node_configuration_service.newService(self.statusFoundation.events)
+  self.keychainService = keychain_service.newService(self.statusFoundation.events)
+  self.accountsService = accounts_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.networkService = network_service.newService(self.statusFoundation.events, self.settingsService)
+  self.contactsService = contacts_service.newService(
+    self.statusFoundation.events, self.statusFoundation.threadpool, self.networkService, self.settingsService
+  )
+  self.chatService = chat_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool, self.contactsService)
+  self.activityCenterService = activity_center_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool, self.chatService)
+  self.tokenService = token_service.newService(
+    self.statusFoundation.events, self.statusFoundation.threadpool, self.networkService, self.settingsService
+  )
+  self.collectibleService = collectible_service.newService(
+    self.statusFoundation.events, self.statusFoundation.threadpool
+  )
+  self.currencyService = currency_service.newService(
+    self.statusFoundation.events, self.statusFoundation.threadpool, self.tokenService, self.settingsService
+  )
+  self.walletAccountService = wallet_account_service.newService(
+    self.statusFoundation.events, self.statusFoundation.threadpool, self.settingsService, self.accountsService,
+    self.tokenService, self.networkService, self.currencyService
+  )
+  self.messageService = message_service.newService(
+    self.statusFoundation.events,
+    self.statusFoundation.threadpool,
+    self.chatService,
+    self.contactsService,
+    self.tokenService,
+    self.walletAccountService,
+    self.networkService,
+  )
+  self.communityService = community_service.newService(self.statusFoundation.events,
+    self.statusFoundation.threadpool, self.chatService, self.activityCenterService, self.messageService)
+  self.rampService = ramp_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.transactionService = transaction_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool,
+    self.currencyService, self.networkService, self.settingsService, self.tokenService)
+  self.bookmarkService = bookmark_service.newService(self.statusFoundation.events)
+  self.profileService = profile_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool, self.settingsService)
+  self.stickersService = stickers_service.newService(
+    self.statusFoundation.events,
+    self.statusFoundation.threadpool,
+    self.settingsService,
+    self.walletAccountService,
+    self.transactionService,
+    self.networkService,
+    self.chatService,
+    self.tokenService
+  )
+  self.aboutService = about_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.dappPermissionsService = dapp_permissions_service.newService()
+  self.languageService = language_service.newService(self.statusFoundation.events)
+  self.privacyService = privacy_service.newService(self.statusFoundation.events, self.settingsService,
+  self.accountsService)
+  self.savedAddressService = saved_address_service.newService(self.statusFoundation.threadpool, self.statusFoundation.events,
+    self.networkService, self.settingsService)
+  self.devicesService = devices_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool,
+    self.settingsService, self.accountsService, self.walletAccountService)
+  self.mailserversService = mailservers_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool,
+    self.settingsService, self.nodeConfigurationService)
+  self.nodeService = node_service.newService(self.statusFoundation.events, self.settingsService, self.nodeConfigurationService)
+  self.gifService = gif_service.newService(self.settingsService, self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.ensService = ens_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool,
+    self.settingsService, self.walletAccountService, self.transactionService,
+    self.networkService, self.tokenService)
+  self.tokensService = tokens_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool,
+    self.networkService, self.transactionService, self.tokenService, self.settingsService, self.walletAccountService,
+    self.activityCenterService, self.communityService, self.currencyService)
+  self.providerService = provider_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool, self.ensService)
+  self.networkConnectionService = network_connection_service.newService(self.statusFoundation.events,
+    self.walletAccountService, self.networkService, self.nodeService, self.tokenService)
+  self.sharedUrlsService = shared_urls_service.newService(self.statusFoundation.events, self.statusFoundation.threadpool)
+  self.marketService = market_service.newService(self.statusFoundation.events, self.settingsService)
+
+proc unloadModules(self: AppController) =
+  # Modules
+  self.mainModule.unloadModules()
+  self.mainModule.delete
+  self.mainModule = nil
+
+  self.accountsService.delete
+  self.accountsService = nil
+  self.chatService.delete
+  self.chatService = nil
+  self.communityService.delete
+  self.communityService = nil
+  self.currencyService.delete
+  self.currencyService = nil
+  self.collectibleService.delete
+  self.collectibleService = nil
+  self.tokenService.delete
+  self.tokenService = nil
+  self.rampService.delete
+  self.rampService = nil
+  self.transactionService.delete
+  self.transactionService = nil
+  self.walletAccountService.delete
+  self.walletAccountService = nil
+  self.aboutService.delete
+  self.aboutService = nil
+  self.networkService.delete
+  self.networkService = nil
+  self.activityCenterService.delete
+  self.activityCenterService = nil
+  self.dappPermissionsService.delete
+  self.dappPermissionsService = nil
+  self.providerService.delete
+  self.providerService = nil
+  self.nodeConfigurationService.delete
+  self.nodeConfigurationService = nil
+  self.nodeService.delete
+  self.nodeService = nil
+  self.settingsService.delete
+  self.settingsService = nil
+  self.stickersService.delete
+  self.stickersService = nil
+  self.savedAddressService.delete
+  self.savedAddressService = nil
+  self.devicesService.delete
+  self.devicesService = nil
+  self.mailserversService.delete
+  self.mailserversService = nil
+  self.messageService.delete
+  self.messageService = nil
+  self.privacyService.delete
+  self.privacyService = nil
+  self.profileService.delete
+  self.profileService = nil
+  self.generalService.delete
+  self.generalService = nil
+  self.ensService.delete
+  self.ensService = nil
+  self.tokensService.delete
+  self.tokensService = nil
+  self.keycardService.delete
+  self.keycardService = nil
+  self.keycardServiceV2.delete
+  self.keycardServiceV2 = nil
+  self.networkConnectionService.delete
+  self.networkConnectionService = nil
+  self.metricsService.delete
+  self.metricsService = nil
+  self.marketService.delete
+  self.marketService = nil
+
+  singletonInstance.engine.setRootContextProperty("localAppSettings", newQVariant())
+  singletonInstance.engine.setRootContextProperty("localAccountSettings", newQVariant())
+  singletonInstance.engine.setRootContextProperty("globalUtils", newQVariant())
+  singletonInstance.engine.setRootContextProperty("metrics", newQVariant())
+  singletonInstance.engine.setRootContextProperty("appSettings", newQVariant())
+  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", newQVariant())
+  singletonInstance.engine.setRootContextProperty("userProfile", newQVariant())
+
+  self.appSettingsVariant.delete
+  self.appSettingsVariant = nil
+  self.localAppSettingsVariant.delete
+  self.localAppSettingsVariant = nil
+  self.localAccountSettingsVariant.delete
+  self.localAccountSettingsVariant = nil
+  self.localAccountSensitiveSettingsVariant.delete
+  self.localAccountSensitiveSettingsVariant = nil
+  self.userProfileVariant.delete
+  self.userProfileVariant = nil
+  self.globalUtilsVariant.delete
+  self.globalUtilsVariant = nil
+  self.metricsVariant.delete
+  self.metricsVariant = nil
+
+  when declared(GC_fullCollect):
+    GC_fullCollect()
+
+proc loadModules(self: AppController) =
+  self.loadServices()
+  self.mainModule = main_module.newModule[AppController](
+    self,
+    self.statusFoundation.events,
+    self.statusFoundation.urlsManager,
+    self.keychainService,
+    self.accountsService,
+    self.chatService,
+    self.communityService,
+    self.messageService,
+    self.tokenService,
+    self.collectibleService,
+    self.currencyService,
+    self.rampService,
+    self.transactionService,
+    self.walletAccountService,
+    self.bookmarkService,
+    self.profileService,
+    self.settingsService,
+    self.contactsService,
+    self.aboutService,
+    self.dappPermissionsService,
+    self.languageService,
+    self.privacyService,
+    self.providerService,
+    self.stickersService,
+    self.activityCenterService,
+    self.savedAddressService,
+    self.nodeConfigurationService,
+    self.devicesService,
+    self.mailserversService,
+    self.nodeService,
+    self.gifService,
+    self.ensService,
+    self.tokensService,
+    self.networkService,
+    self.generalService,
+    self.keycardService,
+    self.networkConnectionService,
+    self.sharedUrlsService,
+    self.marketService,
+    self.statusFoundation.threadpool
+  )
+
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
   result.statusFoundation = statusFoundation
@@ -160,84 +380,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.userProfileVariant = newQVariant(singletonInstance.userProfile)
   result.globalUtilsVariant = newQVariant(singletonInstance.utils)
 
-  # Services
-  result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.events)
-  result.keychainService = keychain_service.newService(statusFoundation.events)
-  result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
-  result.contactsService = contacts_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
-  )
-  result.chatService = chat_service.newService(statusFoundation.events, statusFoundation.threadpool, result.contactsService)
-  result.activityCenterService = activity_center_service.newService(statusFoundation.events, statusFoundation.threadpool, result.chatService)
-  result.tokenService = token_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
-  )
-  result.collectibleService = collectible_service.newService(
-    statusFoundation.events, statusFoundation.threadpool
-  )
-  result.currencyService = currency_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.tokenService, result.settingsService
-  )
-  result.walletAccountService = wallet_account_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
-    result.tokenService, result.networkService, result.currencyService
-  )
-  result.messageService = message_service.newService(
-    statusFoundation.events,
-    statusFoundation.threadpool,
-    result.chatService,
-    result.contactsService,
-    result.tokenService,
-    result.walletAccountService,
-    result.networkService,
-  )
-  result.communityService = community_service.newService(statusFoundation.events,
-    statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
-  result.rampService = ramp_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.currencyService, result.networkService, result.settingsService, result.tokenService)
-  result.bookmarkService = bookmark_service.newService(statusFoundation.events)
-  result.profileService = profile_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
-  result.stickersService = stickers_service.newService(
-    statusFoundation.events,
-    statusFoundation.threadpool,
-    result.settingsService,
-    result.walletAccountService,
-    result.transactionService,
-    result.networkService,
-    result.chatService,
-    result.tokenService
-  )
-  result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.dappPermissionsService = dapp_permissions_service.newService()
-  result.languageService = language_service.newService(statusFoundation.events)
-  result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
-  result.accountsService)
-  result.savedAddressService = saved_address_service.newService(statusFoundation.threadpool, statusFoundation.events,
-    result.networkService, result.settingsService)
-  result.devicesService = devices_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.settingsService, result.accountsService, result.walletAccountService)
-  result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.settingsService, result.nodeConfigurationService)
-  result.nodeService = node_service.newService(statusFoundation.events, result.settingsService, result.nodeConfigurationService)
-  result.gifService = gif_service.newService(result.settingsService, statusFoundation.events, statusFoundation.threadpool)
-  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.settingsService, result.walletAccountService, result.transactionService,
-    result.networkService, result.tokenService)
-  result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.networkService, result.transactionService, result.tokenService, result.settingsService, result.walletAccountService,
-    result.activityCenterService, result.communityService, result.currencyService)
-  result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
-  result.networkConnectionService = network_connection_service.newService(statusFoundation.events,
-    result.walletAccountService, result.networkService, result.nodeService, result.tokenService)
-  result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.marketService = market_service.newService(statusFoundation.events, result.settingsService)
-
-  # Modules
+  result.loadServices()
   result.onboardingModule = onboarding_module.newModule[AppController](
     result,
     statusFoundation.events,
@@ -247,10 +390,11 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.devicesService,
     result.keycardServiceV2,
   )
+
   result.mainModule = main_module.newModule[AppController](
     result,
-    statusFoundation.events,
-    statusFoundation.urlsManager,
+    result.statusFoundation.events,
+    result.statusFoundation.urlsManager,
     result.keychainService,
     result.accountsService,
     result.chatService,
@@ -289,66 +433,13 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.marketService,
     statusFoundation.threadpool
   )
-
   # Do connections
   result.connect()
 
-proc delete*(self: AppController) =
+proc delete*(self: AppController)
   info "logging out..."
   self.generalService.logout()
-
-  singletonInstance.delete
-  self.notificationsManager.delete
-  self.keychainService.delete
-  self.contactsService.delete
-  self.bookmarkService.delete
-  self.gifService.delete
-  if not self.onboardingModule.isNil:
-    self.onboardingModule.delete
-    self.onboardingModule = nil
-  self.mainModule.delete
-  self.languageService.delete
-
-  self.appSettingsVariant.delete
-  self.localAppSettingsVariant.delete
-  self.localAccountSettingsVariant.delete
-  self.localAccountSensitiveSettingsVariant.delete
-  self.userProfileVariant.delete
-  self.globalUtilsVariant.delete
-  self.metricsVariant.delete
-
-  self.accountsService.delete
-  self.chatService.delete
-  self.communityService.delete
-  self.currencyService.delete
-  self.collectibleService.delete
-  self.tokenService.delete
-  self.rampService.delete
-  self.transactionService.delete
-  self.walletAccountService.delete
-  self.aboutService.delete
-  self.networkService.delete
-  self.activityCenterService.delete
-  self.dappPermissionsService.delete
-  self.providerService.delete
-  self.nodeConfigurationService.delete
-  self.nodeService.delete
-  self.settingsService.delete
-  self.stickersService.delete
-  self.savedAddressService.delete
-  self.devicesService.delete
-  self.mailserversService.delete
-  self.messageService.delete
-  self.privacyService.delete
-  self.profileService.delete
-  self.generalService.delete
-  self.ensService.delete
-  self.tokensService.delete
-  self.keycardService.delete
-  self.keycardServiceV2.delete
-  self.networkConnectionService.delete
-  self.metricsService.delete
-  self.marketService.delete
+  self.unloadModules()
 
 proc initializeQmlContext(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)

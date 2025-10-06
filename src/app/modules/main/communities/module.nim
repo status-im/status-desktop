@@ -134,6 +134,7 @@ proc newModule*(
   result.checkingAllChannelPermissionsInProgress = false
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("communitiesModule", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

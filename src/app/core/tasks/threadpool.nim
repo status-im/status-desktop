@@ -37,6 +37,7 @@ proc teardown*(self: ThreadPool) =
   featureGuard THREADPOOL_ENABLED:
     self.pool.syncAll()
     self.pool.shutdown()
+    self.pool = nil
 
 proc newThreadPool*(): ThreadPool =
   new(result)
@@ -70,6 +71,9 @@ proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall, raises: [].} =
 
 proc start*[T: TaskArg](self: ThreadPool, arg: T) =
   featureGuard THREADPOOL_ENABLED:
+    if self.pool.isNil:
+      runTask(arg.safe())
+      return
     self.pool.spawn runTask(arg.safe())
   else:
     runTask(arg.safe())

@@ -31,6 +31,12 @@ proc engine*(self: GlobalSingleton): QQmlApplicationEngine =
     qmlEngine = newQQmlApplicationEngine()
   return qmlEngine
 
+proc releaseEngine*(self: GlobalSingleton) =
+  var qmlEngine {.global.}: QQmlApplicationEngine
+  if not (qmlEngine.isNil):
+    qmlEngine.delete()
+    qmlEngine = nil
+
 proc localAccountSettings*(self: GlobalSingleton): LocalAccountSettings =
   var localAccountSettings {.global.}: LocalAccountSettings
   if (localAccountSettings.isNil):

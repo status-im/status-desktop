@@ -35,6 +35,7 @@ proc newModule*(
   result.controller = controller.newController(result, dappPermissionsService, walletAccountServive)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("dappPermissionsModule", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

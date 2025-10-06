@@ -29,6 +29,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.controller = controller.newController(result, events, bookmarkService)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("bookmarkModule", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

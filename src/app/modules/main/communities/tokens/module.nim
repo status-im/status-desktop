@@ -78,6 +78,7 @@ proc newCommunityTokensModule*(
 proc buildTransactionsFromRoute(self: Module)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("communityTokensModule", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

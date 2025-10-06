@@ -32,6 +32,7 @@ proc newModule*(
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("gifsModule", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

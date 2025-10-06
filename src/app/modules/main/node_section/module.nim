@@ -35,6 +35,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("nodeModel", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.controller.delete

@@ -543,6 +543,5 @@ QtObject:
     self.delegate.markAllReadInCommunity()
 
   proc delete*(self: View) =
-    echo "[ChatSection][View] Deleting View"
     self.QObject.delete
 

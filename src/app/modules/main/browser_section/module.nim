@@ -54,6 +54,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("browserSection", newQVariant())
   self.view.delete
   self.viewVariant.delete
   self.providerModule.delete

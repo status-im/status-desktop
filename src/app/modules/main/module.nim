@@ -138,6 +138,110 @@ proc checkIfWeHaveNotifications[T](self: Module[T])
 proc createMemberItem[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole, airdropAddress: string = ""): MemberItem
 proc getAllCommunityMemberItems[T](self: Module[T], community: CommunityDto): seq[MemberItem]
 
+method unloadModules*[T](self: Module[T]) =
+  # Submodules
+  for module in self.chatSectionModules.values:
+    module.delete
+
+  self.chatSectionModules.clear
+  self.walletSectionModule.delete
+  self.walletSectionModule = nil
+  self.browserSectionModule.delete
+  self.browserSectionModule = nil
+  self.profileSectionModule.delete
+  self.profileSectionModule = nil
+  self.stickersModule.delete
+  self.stickersModule = nil
+  self.gifsModule.delete
+  self.gifsModule = nil
+  self.activityCenterModule.delete
+  self.activityCenterModule = nil
+  self.communitiesModule.delete
+  self.communitiesModule = nil
+  self.appSearchModule.delete
+  self.appSearchModule = nil
+  self.nodeSectionModule.delete
+  self.nodeSectionModule = nil
+  self.networkConnectionModule.delete
+  self.networkConnectionModule = nil
+  self.sharedUrlsModule.delete
+  self.sharedUrlsModule = nil
+  self.marketModule.delete
+  self.marketModule = nil
+
+method loadModules*[T](self: Module[T],
+  events: EventEmitter,
+  urlsManager: UrlsManager,
+  keychainService: keychain_service.Service,
+  accountsService: accounts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  tokenService: token_service.Service,
+  collectibleService: collectible_service.Service,
+  currencyService: currency_service.Service,
+  rampService: ramp_service.Service,
+  transactionService: transaction_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  bookmarkService: bookmark_service.Service,
+  profileService: profile_service.Service,
+  settingsService: settings_service.Service,
+  contactsService: contacts_service.Service,
+  aboutService: about_service.Service,
+  dappPermissionsService: dapp_permissions_service.Service,
+  languageService: language_service.Service,
+  privacyService: privacy_service.Service,
+  providerService: provider_service.Service,
+  stickersService: stickers_service.Service,
+  activityCenterService: activity_center_service.Service,
+  savedAddressService: saved_address_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  devicesService: devices_service.Service,
+  mailserversService: mailservers_service.Service,
+  nodeService: node_service.Service,
+  gifService: gif_service.Service,
+  ensService: ens_service.Service,
+  communityTokensService: community_tokens_service.Service,
+  networkService: network_service.Service,
+  generalService: general_service.Service,
+  keycardService: keycard_service.Service,
+  networkConnectionService: network_connection_service.Service,
+  sharedUrlsService: urls_service.Service,
+  marketService: market_service.Service,
+  threadpool: ThreadPool) =
+  # Submodules
+  self.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
+  self.walletSectionModule = wallet_section_module.newModule(
+    self, events, tokenService, collectibleService, currencyService,
+    rampService, transactionService, walletAccountService,
+    settingsService, savedAddressService, networkService, accountsService,
+    keycardService, nodeService, networkConnectionService, devicesService,
+    communityTokensService, threadpool
+  )
+  self.browserSectionModule = browser_section_module.newModule(
+    self, events, bookmarkService, settingsService, networkService,
+    dappPermissionsService, providerService, walletAccountService,
+    tokenService, currencyService
+  )
+  self.profileSectionModule = profile_section_module.newModule(
+    self, events, accountsService, settingsService, stickersService,
+    profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
+    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
+    networkService, keycardService, keychainService, tokenService, nodeService
+  )
+  self.stickersModule = stickers_module.newModule(self, events, stickersService, settingsService, walletAccountService,
+    networkService, tokenService)
+  self.gifsModule = gifs_module.newModule(self, events, gifService)
+  self.activityCenterModule = activity_center_module.newModule(self, events, activityCenterService, contactsService,
+  messageService, chatService, communityService, devicesService, generalService)
+  self.communitiesModule = communities_module.newModule(self, events, communityService, communityTokensService,
+    networkService, transactionService, tokenService, chatService, walletAccountService, keycardService)
+  self.appSearchModule = app_search_module.newModule(self, events, contactsService, chatService, communityService,
+  messageService)
+  self.nodeSectionModule = node_section_module.newModule(self, events, settingsService, nodeService, nodeConfigurationService)
+  self.networkConnectionModule = network_connection_module.newModule(self, events, networkConnectionService)
+  self.sharedUrlsModule = shared_urls_module.newModule(self, events, sharedUrlsService)
+  self.marketModule = market_module.newModule(self, events, marketService)
 
 proc newModule*[T](
   delegate: T,
@@ -223,64 +327,88 @@ proc newModule*[T](
   result.stickersService = stickersService
   result.communityTokensService = communityTokensService
 
-  # Submodules
-  result.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
-  result.walletSectionModule = wallet_section_module.newModule(
-    result, events, tokenService, collectibleService, currencyService,
-    rampService, transactionService, walletAccountService,
-    settingsService, savedAddressService, networkService, accountsService,
-    keycardService, nodeService, networkConnectionService, devicesService,
-    communityTokensService, threadpool
+  result.loadModules(
+    events,
+    urlsManager,
+    keychainService,
+    accountsService,
+    chatService,
+    communityService,
+    messageService,
+    tokenService,
+    collectibleService,
+    currencyService,
+    rampService,
+    transactionService,
+    walletAccountService,
+    bookmarkService,
+    profileService,
+    settingsService,
+    contactsService,
+    aboutService,
+    dappPermissionsService,
+    languageService,
+    privacyService,
+    providerService,
+    stickersService,
+    activityCenterService,
+    savedAddressService,
+    nodeConfigurationService,
+    devicesService,
+    mailserversService,
+    nodeService,
+    gifService,
+    ensService,
+    communityTokensService,
+    networkService,
+    generalService,
+    keycardService,
+    networkConnectionService,
+    sharedUrlsService,
+    marketService,
+    threadpool
   )
-  result.browserSectionModule = browser_section_module.newModule(
-    result, events, bookmarkService, settingsService, networkService,
-    dappPermissionsService, providerService, walletAccountService,
-    tokenService, currencyService
-  )
-  result.profileSectionModule = profile_section_module.newModule(
-    result, events, accountsService, settingsService, stickersService,
-    profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
-    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
-    networkService, keycardService, keychainService, tokenService, nodeService
-  )
-  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService,
-    networkService, tokenService)
-  result.gifsModule = gifs_module.newModule(result, events, gifService)
-  result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
-  messageService, chatService, communityService, devicesService, generalService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, communityTokensService,
-    networkService, transactionService, tokenService, chatService, walletAccountService, keycardService)
-  result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
-  messageService)
-  result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
-  result.networkConnectionModule = network_connection_module.newModule(result, events, networkConnectionService)
-  result.sharedUrlsModule = shared_urls_module.newModule(result, events, sharedUrlsService)
-  result.marketModule = market_module.newModule(result, events, marketService)
 
 method delete*[T](self: Module[T]) =
-  self.controller.delete
-  self.profileSectionModule.delete
-  self.stickersModule.delete
-  self.gifsModule.delete
-  self.activityCenterModule.delete
-  self.communitiesModule.delete
+  singletonInstance.engine.setRootContextProperty("mainModule", newQVariant())
+
+  if not self.controller.isNil:
+    self.controller.delete
+  if not self.profileSectionModule.isNil:
+    self.profileSectionModule.delete
+  if not self.stickersModule.isNil:
+    self.stickersModule.delete
+  if not self.gifsModule.isNil:
+    self.gifsModule.delete
+  if not self.activityCenterModule.isNil:
+    self.activityCenterModule.delete
+  if not self.communitiesModule.isNil:
+    self.communitiesModule.delete
   for cModule in self.chatSectionModules.values:
     cModule.delete
   self.chatSectionModules.clear
-  self.walletSectionModule.delete
-  self.browserSectionModule.delete
-  self.appSearchModule.delete
-  self.nodeSectionModule.delete
+  if not self.walletSectionModule.isNil:
+    self.walletSectionModule.delete
+  if not self.browserSectionModule.isNil:
+    self.browserSectionModule.delete
+  if not self.appSearchModule.isNil:
+    self.appSearchModule.delete
+  if not self.nodeSectionModule.isNil:
+    self.nodeSectionModule.delete
   if not self.keycardSharedModuleForAuthenticationOrSigning.isNil:
     self.keycardSharedModuleForAuthenticationOrSigning.delete
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
     self.keycardSharedModuleKeycardSyncPurpose.delete
   if not self.keycardSharedModule.isNil:
     self.keycardSharedModule.delete
-  self.networkConnectionModule.delete
-  self.sharedUrlsModule.delete
-  self.view.delete
-  self.viewVariant.delete
+  if not self.networkConnectionModule.isNil:
+    self.networkConnectionModule.delete
+  if not self.sharedUrlsModule.isNil:
+    self.sharedUrlsModule.delete
+  if not self.view.isNil:
+    self.view.delete
+  if not self.viewVariant.isNil:
+    self.viewVariant.delete
 
 method getAppNetwork*[T](self: Module[T]): NetworkItem =
   return self.controller.getAppNetwork()
@@ -913,8 +1041,8 @@ method onChatsLoaded*[T](
   networkService: network_service.Service,
 ) =
   self.chatsLoaded = true
-  if not self.isEverythingLoaded:
-    return
+  # if not self.isEverythingLoaded:
+  #   return
   let myPubKey = singletonInstance.userProfile.getPubKey()
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()

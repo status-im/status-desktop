@@ -56,6 +56,7 @@ proc newModule*(
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("activityCenterModule", newQVariant())
   self.view.delete
 
 method load*(self: Module) =

@@ -39,6 +39,7 @@ proc newModule*(
   result.isAllAccounts = false
 
 method delete*(self: Module) =
+  singletonInstance.engine.setRootContextProperty("walletSectionOverview", newQVariant())
   self.viewVariant.delete
   self.view.delete
 
