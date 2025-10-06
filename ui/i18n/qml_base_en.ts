@@ -6705,15 +6705,11 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>or</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>invite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>friends to start messaging in Status</source>
+        <source>%1 or %2&lt;br&gt;friends to start messaging in Status</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

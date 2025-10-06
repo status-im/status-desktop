@@ -6681,16 +6681,12 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation>채팅 키를 공유</translation>
     </message>
     <message>
-        <source>or</source>
-        <translation>또는</translation>
-    </message>
-    <message>
         <source>invite</source>
         <translation>초대</translation>
     </message>
     <message>
-        <source>friends to start messaging in Status</source>
-        <translation>친구들이 Status에서 메시지를 시작하도록</translation>
+        <source>%1 or %2&lt;br&gt;friends to start messaging in Status</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -8189,19 +8189,14 @@
       <translation>Share your chat key</translation>
     </message>
     <message>
-      <source>or</source>
-      <comment>EmptyChatPanel</comment>
-      <translation>or</translation>
-    </message>
-    <message>
       <source>invite</source>
       <comment>EmptyChatPanel</comment>
       <translation>invite</translation>
     </message>
     <message>
-      <source>friends to start messaging in Status</source>
+      <source>%1 or %2&lt;br&gt;friends to start messaging in Status</source>
       <comment>EmptyChatPanel</comment>
-      <translation>friends to start messaging in Status</translation>
+      <translation>%1 or %2&lt;br&gt;friends to start messaging in Status</translation>
     </message>
   </context>
   <context>
