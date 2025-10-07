@@ -5,10 +5,12 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import StatusQ
 import StatusQ.Controls
 import StatusQ.Core.Theme
 import StatusQ.Popups
 import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
 
 import shared.controls
 import shared.panels
@@ -116,6 +118,13 @@ Item {
         readonly property Loader loader_: Loader {
             id: filteredModel
 
+            function getCategoryLabelForType(category) {
+                if (root.type === ExtendedDropdownContent.Type.Assets)
+                    return TokenCategories.getCategoryLabelForAsset(category)
+
+                return TokenCategories.getCategoryLabelForCollectible(category)
+            }
+
             sourceComponent: SortFilterProxyModel {
                 filters: [
                     ValueFilter {
@@ -176,31 +185,24 @@ Item {
                             value: root.communityId
                         }
                     },
-                    ExpressionFilter {
-                        expression: {
-                            searcher.text
-
-                            if (model.shortName && model.shortName.toLowerCase()
-                                    .includes(searcher.text.toLowerCase()))
-                                return true
-
-                            return model.name.toLowerCase().includes(
-                                        searcher.text.toLowerCase())
+                    AnyOf {
+                        enabled: searcher.text !== ""
+                        SQUtils.SearchFilter {
+                            roleName: "shortName"
+                            searchPhrase: searcher.text
+                        }
+                        SQUtils.SearchFilter {
+                            roleName: "name"
+                            searchPhrase: searcher.text
                         }
                     }
                 ]
 
-                proxyRoles: ExpressionRole {
+                proxyRoles: FastExpressionRole {
                     name: "categoryLabel"
 
-                    function getCategoryLabelForType(category, type) {
-                        if (type === ExtendedDropdownContent.Type.Assets)
-                            return TokenCategories.getCategoryLabelForAsset(category)
-
-                        return TokenCategories.getCategoryLabelForCollectible(category)
-                    }
-
-                    expression: getCategoryLabelForType(model.category, root.type)
+                    expression: filteredModel.getCategoryLabelForType(model.category)
+                    expectedRoles: ["category"]
                 }
 
                 sorters: [
@@ -524,7 +526,7 @@ Item {
             onHeaderItemClicked: root.navigateToMintTokenSettings()
             onFooterButtonClicked: root.footerButtonClicked()
 
-            onItemClicked: root.itemClicked(key, shortName, iconSource)
+            onItemClicked: (key, name, shortName, iconSource, subItems) => root.itemClicked(key, shortName, iconSource)
 
             onImplicitHeightChanged: root.layoutChanged()
 
@@ -571,7 +573,7 @@ Item {
             onHeaderItemClicked: root.navigateToMintTokenSettings()
             onFooterButtonClicked: root.footerButtonClicked()
 
-            onItemClicked: {
+            onItemClicked: function (key, name, shortName, iconSource, subItems) {
                 if(subItems && root.state === d.depth1_ListState) {
                     // One deep navigation
                     d.currentSubitems = subItems
@@ -606,7 +608,7 @@ Item {
 
             padding: 0
 
-            onItemClicked: {
+            onItemClicked: function (key, name, iconSource) {
                 d.reset()
                 root.itemClicked(key, name, iconSource)
             }

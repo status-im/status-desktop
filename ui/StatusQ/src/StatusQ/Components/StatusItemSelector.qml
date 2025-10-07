@@ -162,7 +162,7 @@ StatusFlowSelector {
                     enabled: root.itemsClickable
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onClicked: root.itemClicked(parent, model.index, mouse)
+                    onClicked: (mouse) => root.itemClicked(parent, model.index, mouse)
                 }
             }
         }
