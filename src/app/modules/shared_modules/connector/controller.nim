@@ -12,6 +12,8 @@ const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransac
 const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
 const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
 const SIGNAL_CONNECTOR_SIGN* = "ConnectorSign"
+const SIGNAL_CONNECTOR_CALL_RPC_RESULT* = "ConnectorCallRPCResult"
+const SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED* = "ConnectorDAppChainIdSwitched"
 
 logScope:
   topics = "connector-controller"
@@ -28,6 +30,8 @@ QtObject:
   proc emitDisconnected*(self: Controller, payload: string)
   proc emitSendTransaction*(self: Controller, requestId: string, payload: string)
   proc emitSign*(self: Controller, requestId: string, payload: string)
+  proc emitConnectorCallRPCResult*(self: Controller, requestId: int, payload: string)
+  proc emitChainIdSwitched*(self: Controller, payload: string)
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -98,6 +102,18 @@ QtObject:
 
       controller.emitSign(params.requestId, dappInfo.toJson())
 
+    result.events.on(SIGNAL_CONNECTOR_CALL_RPC_RESULT) do(e: Args):
+      let params = connector_service.ConnectorCallRPCResultArgs(e)
+      controller.emitConnectorCallRPCResult(params.requestId, params.payload)
+
+    result.events.on(SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED) do(e: Args):
+      let params = ConnectorDAppChainIdSwitchedSignal(e)
+      let chainInfo = %*{
+        "url": params.url,
+        "chainId": params.chainId,
+      }
+      controller.emitChainIdSwitched(chainInfo.toJson())
+
     result.QObject.setup
 
   proc connectRequested*(self: Controller, requestId: string, payload: string) {.signal.}
@@ -108,6 +124,8 @@ QtObject:
   proc sign(self: Controller, requestId: string, payload: string) {.signal.}
   proc approveConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
   proc rejectConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
+  proc connectorCallRPCResult*(self: Controller, requestId: int, payload: string) {.signal.}
+  proc chainIdSwitched*(self: Controller, payload: string) {.signal.}
 
   proc approveTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
   proc rejectTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
@@ -124,15 +142,19 @@ QtObject:
     self.sendTransaction(requestId, payload)
   proc emitSign*(self: Controller, requestId: string, payload: string) =
     self.sign(requestId, payload)
+  proc emitConnectorCallRPCResult*(self: Controller, requestId: int, payload: string) =
+    self.connectorCallRPCResult(requestId, payload)
+  proc emitChainIdSwitched*(self: Controller, payload: string) =
+    self.chainIdSwitched(payload)
 
   proc parseSingleUInt(chainIDsString: string): uint =
     try:
-      let chainIds = parseJson(chainIDsString)
-      if chainIds.kind == JArray and chainIds.len > 0 and chainIds[0].kind == JInt:
-        return uint(chainIds[0].getInt())
-      else:
+        let chainIds = parseJson(chainIDsString)
+        if chainIds.kind == JArray and chainIds.len > 0 and chainIds[0].kind == JInt:
+          return uint(chainIds[0].getInt())
+        else:
         raise newException(ValueError, "Invalid JSON array format")
-    except JsonParsingError:
+      except JsonParsingError:
       raise newException(ValueError, "Failed to parse JSON")
 
   proc approveConnection*(self: Controller, requestId: string, account: string, chainIDString: string): bool {.slot.} =
@@ -175,3 +197,5 @@ QtObject:
   proc delete*(self: Controller) =
     self.QObject.delete
 
+  proc connectorCallRPC*(self: Controller, requestId: int, message: string) {.slot.} =
+    self.service.connectorCallRPC(requestId, message)

@@ -6,21 +6,30 @@ import app/global/global_singleton
 
 import app/core/eventemitter
 import app/core/signals/types
+import app/core/tasks/[qt, threadpool]
 
 import strutils
 
 logScope:
   topics = "connector-service"
 
+include ./async_tasks
+
 const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
 const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN* = "ConnectorSign"
+const SIGNAL_CONNECTOR_CALL_RPC_RESULT* = "ConnectorCallRPCResult"
+const SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED* = "ConnectorDAppChainIdSwitched"
 
 # Enum with events
 type Event* = enum
   DappConnect
+
+type ConnectorCallRPCResultArgs* = ref object of Args
+  requestId*: int
+  payload*: string
 
 # Event handler function
 type EventHandlerFn* = proc(event: Event, payload: string)
@@ -31,15 +40,18 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     eventHandler: EventHandlerFn
+    threadpool: ThreadPool
 
   proc delete*(self: Service)
   proc newService*(
-    events: EventEmitter
+    events: EventEmitter,
+    threadpool: ThreadPool
   ): Service =
     new(result, delete)
     result.QObject.setup
 
     result.events = events
+    result.threadpool = threadpool
 
   proc init*(self: Service) =
     self.events.on(SignalType.ConnectorSendRequestAccounts.event, proc(e: Args) =
@@ -94,6 +106,13 @@ QtObject:
 
       self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN, data)
     )
+    self.events.on(SignalType.ConnectorDAppChainIdSwitched.event, proc(e: Args) =
+      if self.eventHandler == nil:
+        return
+
+      var data = ConnectorDAppChainIdSwitchedSignal(e)
+      self.events.emit(SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED, data)
+    )
 
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
     self.eventHandler = handler
@@ -105,7 +124,7 @@ QtObject:
       args.requestId = requestId
       args.account = account
       args.chainId = chainId
-
+      
       return status_go.requestAccountsAcceptedFinishedRpc(args)
 
     except Exception as e:
@@ -177,6 +196,32 @@ QtObject:
 
   proc rejectSigning*(self: Service, requestId: string): bool =
     rejectRequest(self, requestId, status_go.sendSignRejectedFinishedRpc, "sendSignRejectedFinishedRpc failed: ")
+
+  proc onConnectorCallRPCResolved*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      let requestId = responseObj{"requestId"}.getInt(0)
+      
+      var data = ConnectorCallRPCResultArgs()
+      data.requestId = requestId
+      data.payload = response
+      
+      self.events.emit(SIGNAL_CONNECTOR_CALL_RPC_RESULT, data)
+    except Exception as e:
+      error "onConnectorCallRPCResolved failed", error=e.msg
+
+  proc connectorCallRPC*(self: Service, requestId: int, message: string) =
+    try:
+	    let arg = ConnectorCallRPCTaskArg(
+	      tptr: connectorCallRPCTask,
+	      vptr: cast[uint](self.vptr),
+	      slot: "onConnectorCallRPCResolved",
+	      requestId: requestId,
+	      message: message
+	    )
+	    self.threadpool.start(arg)
+    except:
+        error "connectorCallRPC: starting async background task failed", requestId=requestId
 
   proc delete*(self: Service) =
     self.QObject.delete

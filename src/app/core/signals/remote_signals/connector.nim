@@ -38,6 +38,10 @@ type ConnectorSignSignal* = ref object of Signal
   address*: string
   signMethod*: string
 
+type ConnectorDAppChainIdSwitchedSignal* = ref object of Signal
+  url*: string
+  chainId*: string
+
 proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, event: JsonNode): ConnectorSendRequestAccountsSignal =
   result = ConnectorSendRequestAccountsSignal()
   result.signalType = SignalType.ConnectorSendRequestAccounts
@@ -82,3 +86,9 @@ proc fromEvent*(T: type ConnectorSignSignal, event: JsonNode): ConnectorSignSign
   result.challenge = event["event"]{"challenge"}.getStr()
   result.address = event["event"]{"address"}.getStr()
   result.signMethod = event["event"]{"method"}.getStr()
+
+proc fromEvent*(T: type ConnectorDAppChainIdSwitchedSignal, event: JsonNode): ConnectorDAppChainIdSwitchedSignal =
+  result = ConnectorDAppChainIdSwitchedSignal()
+  result.signalType = SignalType.ConnectorDAppChainIdSwitched
+  result.url = event["event"]{"url"}.getStr()
+  result.chainId = event["event"]{"chainId"}.getStr()
