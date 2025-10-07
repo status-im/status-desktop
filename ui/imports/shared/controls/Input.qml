@@ -110,9 +110,7 @@ Item {
             onEditingFinished: inputBox.editingFinished(inputBox.text)
             onTextEdited: inputBox.textEdited(inputBox.text)
 
-            Keys.onPressed: {
-                inputBox.keyPressed(event);
-            }
+            Keys.onPressed: (event) => inputBox.keyPressed(event)
         }
 
         SVGImage {

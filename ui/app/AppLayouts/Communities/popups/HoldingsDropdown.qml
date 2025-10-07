@@ -137,8 +137,6 @@ StatusDropdown {
         // By design values:
         readonly property int padding: 8
         readonly property int defaultWidth: 289
-        readonly property int tabBarHeight: 36
-        readonly property int tabBarTextSize: 13
         readonly property int backButtonWidth: 56
         readonly property int backButtonHeight: 24
         readonly property int backButtonToContentSpace: 8
@@ -197,7 +195,6 @@ StatusDropdown {
             id: tabBar
 
             visible: !backButton.visible
-            Layout.preferredHeight: d.tabBarHeight
             Layout.fillWidth: true
             Layout.leftMargin: d.padding
             Layout.rightMargin: d.padding
@@ -233,7 +230,7 @@ StatusDropdown {
 
                 StatusSwitchTabButton {
                     text: modelData
-                    font.pixelSize: d.tabBarTextSize
+                    font.pixelSize: Theme.additionalTextSize
                 }
             }
         }
@@ -315,7 +312,7 @@ StatusDropdown {
 
             onTypeChanged: forceActiveFocus()
 
-            onItemClicked: {
+            onItemClicked: function (key, name, iconSource) {
                 d.assetAmountText = ""
                 d.collectibleAmountText = ""
 
@@ -348,8 +345,10 @@ StatusDropdown {
                     if((!item.infiniteSupply && (item.supply && item.supply.toString() === "1")
                             || (item.remainingSupply && item.remainingSupply.toString() === "1"))) {
                         root.collectibleAmount = "1"
-                        d.updateSelected ? root.updateCollectible(root.collectibleKey, "1")
-                                         : root.addCollectible(root.collectibleKey, "1")
+                        if (d.updateSelected)
+                            root.updateCollectible(root.collectibleKey, "1")
+                        else
+                            root.addCollectible(root.collectibleKey, "1")
                         return
                     }
                 }
@@ -357,7 +356,7 @@ StatusDropdown {
                 statesStack.push(HoldingsDropdown.FlowType.Selected)
             }
 
-            onNavigateDeep: {
+            onNavigateDeep: function (key, subItems) {
                 d.currentSubItems = subItems
                 d.currentItemKey = key
                 statesStack.push(HoldingsDropdown.FlowType.List_Deep2)

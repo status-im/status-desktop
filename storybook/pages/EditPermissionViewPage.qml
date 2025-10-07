@@ -7,6 +7,8 @@ import AppLayouts.Communities.views
 import Storybook
 import Models
 
+import SortFilterProxyModel
+
 SplitView {
     orientation: Qt.Vertical
     SplitView.fillWidth: true
@@ -29,8 +31,19 @@ SplitView {
 
             assetsModel: AssetsModel {}
             collectiblesModel: CollectiblesModel {}
-            channelsModel: ChannelsModel {}
-
+            channelsModel: SortFilterProxyModel {
+                sourceModel: ChannelsModel {}
+                proxyRoles: [
+                    JoinRole {
+                        name: "key"
+                        roleNames: ["itemId"]
+                    },
+                    JoinRole {
+                        name: "text"
+                        roleNames: ["name"]
+                    }
+                ]
+            }
             communityDetails: QtObject {
                 readonly property string id: "id_sox"
                 readonly property string name: "Socks"
@@ -106,5 +119,5 @@ SplitView {
 }
 
 // category: Views
-
+// status: good
 // https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22253%3A486103&t=JrCIfks1zVzsk3vn-0

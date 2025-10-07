@@ -284,7 +284,7 @@ StatusScrollView {
                     usedEnsNames = d.dirtyValues.getEnsNames().filter(item => item !== ensDomainName)
                 }
 
-                onAddAsset: {
+                onAddAsset: function (key, amount) {
                     const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.assetsModel, key)
 
@@ -292,7 +292,7 @@ StatusScrollView {
                     dropdown.close()
                 }
 
-                onAddCollectible: {
+                onAddCollectible: function (key, amount) {
                     const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
 
@@ -352,7 +352,7 @@ StatusScrollView {
                 editedIndex = -1
             }
 
-            onItemClicked: {
+            onItemClicked: function (item, index, mouse) {
                 if (mouse.button !== Qt.LeftButton)
                     return
 
@@ -437,7 +437,7 @@ StatusScrollView {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
 
-                    onClicked: {
+                    onClicked: function (mouse) {
                         permissionsDropdown.mode = PermissionsDropdown.Mode.Update
                         permissionsDropdown.directParent = parent
                         permissionsDropdown.relativeX = mouse.x + d.dropdownHorizontalOffset
@@ -456,7 +456,7 @@ StatusScrollView {
                 initialPermissionType: d.dirtyValues.permissionType
                 enableAdminPermission: root.communityDetails.owner
 
-                onDone: {
+                onDone: function(permissionType) {
                     if (d.dirtyValues.permissionType === permissionType) {
                         permissionsDropdown.close()
                         return
@@ -554,7 +554,7 @@ StatusScrollView {
                 communityImage: root.communityDetails.image
                 communityColor: root.communityDetails.color
 
-                onChannelsSelected: {
+                onChannelsSelected: function (channels) {
                     d.dirtyValues.selectedChannelsModel.clear()
                     inSelector.model = 0
                     inSelector.wholeCommunitySelected = false

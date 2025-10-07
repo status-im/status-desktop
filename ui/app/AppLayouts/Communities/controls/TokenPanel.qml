@@ -136,7 +136,7 @@ ColumnLayout {
         multiplierIndex: !!networksComboBoxLoader.item
                          ? networksComboBoxLoader.item.currentMultiplierIndex : 0
 
-        onKeyPressed: {
+        onKeyPressed: function (event) {
             if(!addOrUpdateButton.enabled)
                 return
 
