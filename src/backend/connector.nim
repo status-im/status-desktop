@@ -1,8 +1,12 @@
 import options
 import json, json_serialization
 import core, response_type
+import chronicles
 
 from gen import rpc
+
+logScope:
+  topics = "connector-backend"
 
 const
   EventConnectorSendRequestAccounts* = "connector.sendRequestAccounts"
@@ -51,6 +55,9 @@ rpc(signAccepted, "connector"):
 rpc(signRejected, "connector"):
   args: RejectedArgs
 
+rpc(callRPC, "connector"):
+  inputJSON: string
+
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil
 
@@ -74,3 +81,6 @@ proc sendSignAcceptedFinishedRpc*(args: SignAcceptedArgs): bool =
 
 proc sendSignRejectedFinishedRpc*(args: RejectedArgs): bool =
   return isSuccessResponse(signRejected(args))
+
+proc connectorCallRPC*(inputJSON: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callRPC(inputJSON)

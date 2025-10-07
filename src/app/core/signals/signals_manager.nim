@@ -142,6 +142,7 @@ QtObject:
       of SignalType.ConnectorGrantDAppPermission: ConnectorGrantDAppPermissionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorRevokeDAppPermission: ConnectorRevokeDAppPermissionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorSign: ConnectorSignSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorDAppChainIdSwitched: ConnectorDAppChainIdSwitchedSignal.fromEvent(jsonSignal)
       # networks
       of SignalType.NetworksBlockchainHealthChanged: NetworksBlockchainHealthChangedSignal.fromEvent(jsonSignal)
       else:
