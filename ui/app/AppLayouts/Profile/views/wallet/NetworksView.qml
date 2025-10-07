@@ -62,7 +62,7 @@ Item {
             sourceModel: root.flatNetworks
             filters: ValueFilter {
                 roleName: "isTest"
-                value: testModeViewTabBar.currentIndex == root.testnetTabIndex
+                value: testModeViewTabBar.currentIndex === root.testnetTabIndex
             }
         }
 

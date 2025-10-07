@@ -2,7 +2,6 @@ import QtCore
 import QtQml
 import QtQuick
 
-import Qt5Compat.GraphicalEffects
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -156,13 +155,11 @@ SettingsContentBase {
         Binding on currentIndex {
             value: root.manageTokensViewIndex
             when: priv.isManageTokensSubsection
-            restoreMode: Binding.RestoreNone
         }
 
         Binding on currentIndex {
             value: root.networksViewIndex
-            when: root.settingsSubSubsection === Constants.walletSettingsSubsection.manageNetworks
-            restoreMode: Binding.RestoreNone
+            when: priv.isManageNetworksSubsection
         }
 
         onCurrentIndexChanged: {
@@ -174,18 +171,16 @@ SettingsContentBase {
             root.stickTitleRowComponentLoader = false
             root.titleLayout.spacing = 5
 
-            if (currentIndex == root.mainViewIndex) {
+            if (currentIndex === root.mainViewIndex) {
                 root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
-            }
 
-            if(currentIndex == root.networksViewIndex) {
+            } else if(currentIndex === root.networksViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = root.networksSectionTitle
 
                 root.titleRowComponentLoader.sourceComponent = toggleTestnetModeSwitchComponent
-            }
 
-            if(currentIndex == root.editNetworksViewIndex) {
+            } else if(currentIndex === root.editNetworksViewIndex) {
                 priv.backButtonName = root.networksSectionTitle
                 root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.network &&
                                                         !!editNetwork.network.chainName ? editNetwork.network.chainName: "")
@@ -193,23 +188,23 @@ SettingsContentBase {
                 root.titleRowLeftComponentLoader.sourceComponent = networkIcon
                 root.titleLayout.spacing = 12
 
-            } else if(currentIndex == root.accountViewIndex) {
+            } else if(currentIndex === root.accountViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = ""
 
-            } else if(currentIndex == root.accountOrderViewIndex) {
+            } else if(currentIndex === root.accountOrderViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
 
-            } else if(currentIndex == root.manageTokensViewIndex) {
+            } else if(currentIndex === root.manageTokensViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
                 root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
-            } else if(currentIndex == root.savedAddressesViewIndex) {
+            } else if(currentIndex === root.savedAddressesViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Saved addresses")
@@ -275,7 +270,7 @@ SettingsContentBase {
         NetworksView {
             id: networksView
             Layout.fillWidth: true
-            Layout.fillHeight: false
+            Layout.fillHeight: true
 
             flatNetworks: root.networksStore.allNetworks
             areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
@@ -302,10 +297,8 @@ SettingsContentBase {
             networkRPCChanged: root.networksStore.networkRPCChanged
             rpcProviders: root.networksStore.rpcProviders
             areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
-            onEvaluateRpcEndPoint: root.networksStore.evaluateRpcEndPoint(url, isMainUrl)
-            onUpdateNetworkValues: {
-                root.networksStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
-            }
+            onEvaluateRpcEndPoint: (url, isMainUrl) => root.networksStore.evaluateRpcEndPoint(url, isMainUrl)
+            onUpdateNetworkValues: (chainId, newMainRpcInput, newFailoverRpcUrl) => root.networksStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
         }
 
         AccountOrderView {
