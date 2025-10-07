@@ -49,10 +49,10 @@ SplitView {
                 flatNetworks: d.networksModel
                 areTestNetworksEnabled: testModeCheckBox.checked
 
-                onEditNetwork: {
+                onEditNetwork: function (chainId) {
                     console.log("Edit network", chainId)
                 }
-                onSetNetworkActive: {
+                onSetNetworkActive: function (chainId, active) {
                     console.log("Set network active test networks", chainId, active)
                     const index = ModelUtils.indexOf(d.networksModel, "chainId", chainId)
                     d.networksModel.setProperty(index, "isActive", active)
