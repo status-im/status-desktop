@@ -77,9 +77,10 @@ proc asyncEstimateGasTask(argsEncoded: string) {.gcsafe, nimcall.} =
         let tx = parseJson(arg.txJson)
         let transaction = %*{
             "from": tx["from"].getStr,
-            "to": tx["to"].getStr,
-            "data": tx["data"].getStr
+            "to": tx["to"].getStr
         }
+        if tx.hasKey("data"):
+            transaction["data"] = tx["data"]
         if tx.hasKey("value"):
             transaction["value"] = tx["value"]
 

@@ -179,7 +179,7 @@ proc newModule*(
   result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService, transactionService, keycardService)
   result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService, result.events)
 
-  result.dappsConnectorService = connector_service.newService(result.events)
+  result.dappsConnectorService = connector_service.newService(result.events, result.threadpool)
   result.dappsConnectorController = connector_controller.newController(result.dappsConnectorService, result.events)
   result.view = newView(result, result.activityController, result.tmpActivityControllers, result.collectibleDetailsController, result.walletConnectController, result.dappsConnectorController)
   result.viewVariant = newQVariant(result.view)
