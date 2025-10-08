@@ -551,7 +551,6 @@ ColumnLayout {
             fallbackImageUrl: model.imageUrl ?? ""
             backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
             isLoading: !!model.isLoading
-            isMetadataValid: !!model.isMetadataValid
             privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
             ornamentColor: model.communityColor ?? "transparent"
             communityId: model.communityId ?? ""

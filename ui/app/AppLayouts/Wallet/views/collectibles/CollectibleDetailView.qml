@@ -359,7 +359,6 @@ Item {
             id: collectibleImage
             backgroundColor: collectible.backgroundColor
             isCollectibleLoading: root.isCollectibleLoading
-            isMetadataValid: !collectible.isMetadataValid
             mediaUrl: collectible.mediaUrl ?? ""
             mediaType: !!collectible ? (modelIndex > 0 && collectible.mediaType.startsWith("video")) ? "" : collectible.mediaType: ""
             fallbackImageUrl: collectible.imageUrl

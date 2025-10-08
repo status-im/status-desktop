@@ -274,7 +274,6 @@ StatusScrollView {
                     fallbackImageUrl: model.image ? model.image : ""
                     backgroundColor: "transparent"
                     isLoading: false
-                    isMetadataValid: true
                     navigationIconVisible: false
                     privilegesLevel: model.privilegesLevel
                     ornamentColor: model.color
