@@ -417,12 +417,12 @@ RightTabBaseView {
                         onCommunityClicked: Global.switchToCommunity(communityKey)
 
                         onHideRequested: (key) => {
-                                             const token = ModelUtils.getByKey(model, "key", key)
+                                             const token = SQUtils.ModelUtils.getByKey(model, "key", key)
                                              Global.openConfirmHideAssetPopup(token.symbol, token.name, token.icon, !!token.communityId)
                                          }
                         onHideCommunityAssetsRequested:
                             (communityKey) => {
-                                const community = ModelUtils.getByKey(model, "communityId", communityKey)
+                                const community = SQUtils.ModelUtils.getByKey(model, "communityId", communityKey)
                                 confirmHideCommunityAssetsPopup.createObject(root, {
                                                                                  name: community.communityName,
                                                                                  icon: community.communityIcon,
@@ -434,7 +434,7 @@ RightTabBaseView {
                                                      Constants.settingsSubsection.wallet,
                                                      Constants.walletSettingsSubsection.manageAssets)
                         onAssetClicked: (key) => {
-                            const token = ModelUtils.getByKey(model, "key", key)
+                            const token = SQUtils.ModelUtils.getByKey(model, "key", key)
 
                             RootStore.tokensStore.getHistoricalDataForToken(
                                                 token.symbol, RootStore.currencyStore.currentCurrency)
@@ -510,7 +510,7 @@ RightTabBaseView {
                             stack.currentIndex = 1
                         }
                         onSendRequested: (symbol, tokenType, fromAddress) => {
-                                             const collectible = ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
+                                             const collectible = SQUtils.ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
                                              if (!!collectible && collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
                                                  Global.openTransferOwnershipPopup(collectible.communityId,
                                                                                    collectible.communityName,
