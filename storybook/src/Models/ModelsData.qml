@@ -52,7 +52,7 @@ QtObject {
     }
 
     readonly property QtObject collectibles: QtObject {
-        readonly property string anniversary: Theme.png("collectibles/Anniversary")
+        readonly property string anniversary: "https://i2.seadn.io/ethereum/0x5150b29a431ece5eb0e62085535b8aac8df193be/ba8dedcf93676a6be4c0a5da9ba600c7.png?w=1000"
         readonly property string cryptoKitties: Theme.png("collectibles/CryptoKitties")
         readonly property string kitty1: Theme.png("collectibles/Furbeard")
         readonly property string kitty1Big: Theme.png("collectibles/FurbeardBig")
@@ -67,7 +67,7 @@ QtObject {
         readonly property string superRare: root.icons.superRare
         readonly property string custom: root.icons.status
         readonly property string doodles: root.icons.dribble
-        readonly property string mana: Theme.png("collectibles/MANA-token-icon")
+        readonly property string mana: "https://s2.coinmarketcap.com/static/img/coins/200x200/1966.png"
         readonly property string cryptoPunks: root.icons.cryptPunks
     }
 
