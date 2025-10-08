@@ -203,7 +203,6 @@ Item {
                     text: !!collectible ? collectible.description : ""
                     textFormat: Text.MarkdownText
                     color: Theme.palette.directColor4
-                    font.pixelSize: Theme.primaryTextFontSize
                     lineHeight: 22
                     lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight

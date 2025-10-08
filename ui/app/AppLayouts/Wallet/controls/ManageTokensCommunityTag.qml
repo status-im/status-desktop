@@ -18,7 +18,7 @@ Control {
     property alias asset: identicon.asset
     property string communityName
     property string communityId
-    property var communityImage
+    property string communityImage
     property bool loading
 
     property Component customBackground: Component {

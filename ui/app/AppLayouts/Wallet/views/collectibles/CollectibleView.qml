@@ -21,7 +21,7 @@ Control {
     property string unknownTitle: "..."
     property string subTitle: ""
     property alias subTitleColor: subTitleItem.customColor
-    property string backgroundColor: "transparent"
+    property color backgroundColor: "transparent"
     property url mediaUrl : ""
     property string mediaType: ""
     property url fallbackImageUrl : ""

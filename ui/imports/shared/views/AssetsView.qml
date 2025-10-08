@@ -71,7 +71,7 @@ Control {
     property string marketDataError
 
     // formatting function for fiat currency values
-    property var formatFiat: balance => `${balance.toLocaleString(Qt.locale())} XYZ`
+    property var formatFiat: balance => `${balance.toLocaleCurrencyString(Qt.locale())}`
 
     signal sendRequested(string key)
     signal receiveRequested(string key)
@@ -115,7 +115,7 @@ Control {
             // helper role for rendering section delegate
             FastExpressionRole {
                 name: "isCommunity"
-                expression: !!communityId ? "community" : ""
+                expression: !!model.communityId ? "community" : ""
                 expectedRoles: ["communityId"]
             },
             FastExpressionRole {
@@ -255,14 +255,14 @@ Control {
                 errorMode: !!root.balanceError
                 errorIcon.tooltip.text: root.balanceError
 
-                onClicked: {
+                onClicked: function (itemId, mouse) {
                     if (mouse.button === Qt.LeftButton)
                         root.assetClicked(model.key)
                     else if (mouse.button === Qt.RightButton)
                         tokenContextMenu.createObject(this, { model }).popup(mouse.x, mouse.y)
                 }
 
-                onCommunityClicked: root.communityClicked(model.communityId)
+                onCommunityClicked: (communityId) => root.communityClicked(model.communityId)
             }
         }
 
