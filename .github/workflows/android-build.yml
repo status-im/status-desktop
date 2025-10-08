@@ -1,13 +1,9 @@
 name: Android Build APK
+run-name: Android Build APK (${{ inputs.architecture || 'arm64' }} testmode=${{ inputs.testmode || 'false' }})
 
 on:
   workflow_dispatch:
     inputs:
-      qt_version:
-        description: 'Qt version to use'
-        required: false
-        default: '6.9.2'
-        type: string
       architecture:
         description: 'Target architecture'
         required: false
@@ -15,78 +11,151 @@ on:
         type: choice
         options:
           - 'arm64'
-          - 'arm'
           - 'x86_64'
+          - 'arm'
           - 'x86'
       testmode:
-        description: 'Enable QML test hooks (passed to CMake STATUSQ_TESTMODE) for Appium builds'
+        description: 'Enable QML test hooks (STATUSQ_TESTMODE)'
         required: false
         default: 'false'
         type: choice
         options:
           - 'false'
           - 'true'
+      qt_version:
+        description: 'Qt version (dependant on docker image)'
+        required: false
+        default: '6.9.2'
+        type: string
+      verbosity:
+        description: 'Build verbosity level (0–3)'
+        required: false
+        default: '2'
+        type: choice
+        options:
+          - '0'
+          - '1'
+          - '2'
+          - '3'
+      
 
 jobs:
   android-build:
     runs-on: ubuntu-latest
     name: Build Android APK
     container:
-      image: carlonluca/qt-dev:${{ inputs.qt_version }}
+      image: harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2-android
+      options: --user jenkins
+    env:
+      USE_SYSTEM_NIM: 1
+      GOCACHE: /tmp/go-cache
+      GOMODCACHE: /tmp/go-mod-cache
+      GOTMPDIR: /tmp
+      QT_VERSION: ${{ inputs.qt_version }}
 
     steps:
-      - name: Checkout repo with submodules
+      - name: Checkout repository with full history and submodules
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
-      - name: Get Qt paths
-        id: qt-paths
-        uses: ./.github/actions/qt-android-arch
-        with:
-          architecture: ${{ inputs.architecture }}
-          qt-version: ${{ inputs.qt_version }}
-
-      - name: Set environment variables
+      - name: Clean workspace if retrying job
+        if: ${{ github.run_attempt > 1 }}
         run: |
-          echo "ARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=${{ steps.qt-paths.outputs.qt-android-path }}/lib/pkgconfig" >> $GITHUB_ENV
-          echo "USE_SYSTEM_NIM=1" >> $GITHUB_ENV
+          git reset --hard
+          git clean -xfd
+
+      - name: Setup environment
+        shell: bash
+        run: |
+          set -e
+          case "${{ inputs.architecture }}" in
+            arm64)
+              QT_ANDROID_PATH="/opt/qt/${{ inputs.qt_version }}/android_arm64_v8a"
+              ANDROID_ABI="arm64-v8a"
+              ;;
+            arm)
+              QT_ANDROID_PATH="/opt/qt/${{ inputs.qt_version }}/android_armv7"
+              ANDROID_ABI="armeabi-v7a"
+              ;;
+            x86_64)
+              QT_ANDROID_PATH="/opt/qt/${{ inputs.qt_version }}/android_x86_64"
+              ANDROID_ABI="x86_64"
+              ;;
+            x86)
+              QT_ANDROID_PATH="/opt/qt/${{ inputs.qt_version }}/android_x86"
+              ANDROID_ABI="x86"
+              ;;
+            *)
+              echo "Unknown architecture: ${{ inputs.architecture }}" >&2
+              exit 1
+              ;;
+          esac
+
+          echo "QT_ANDROID_PATH=$QT_ANDROID_PATH" >> $GITHUB_ENV
+          echo "ANDROID_ABI=$ANDROID_ABI" >> $GITHUB_ENV
           echo "TESTMODE=${{ inputs.testmode }}" >> $GITHUB_ENV
-          echo "${{ steps.qt-paths.outputs.qt-android-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/bin:${{ steps.qt-paths.outputs.qt-host-path }}/libexec:${{ steps.qt-paths.outputs.qt-android-path }}/libexec:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/opt/android-sdk/platform-tools:/usr/bin:/bin:/usr/local/bin" >> $GITHUB_PATH
+          echo "ARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
 
-      - name: Install dependencies
-        run: |
-          apt-get update
-          apt-get install -yq curl
+          echo "PKG_CONFIG_PATH=$QT_ANDROID_PATH/lib/pkgconfig" >> $GITHUB_ENV
+          echo "QMAKE=$QT_ANDROID_PATH/bin/qmake" >> $GITHUB_ENV
 
-          curl https://nim-lang.org/choosenim/init.sh -sSf | sh -s -- -y
-          $HOME/.nimble/bin/choosenim 2.0.12
-          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
+          echo "$QT_ANDROID_PATH/bin" >> $GITHUB_PATH
+          echo "/opt/android-sdk/emulator" >> $GITHUB_PATH
+          echo "/opt/android-sdk/tools" >> $GITHUB_PATH
+          echo "/opt/android-sdk/tools/bin" >> $GITHUB_PATH
+          echo "/opt/android-sdk/platform-tools" >> $GITHUB_PATH
 
-      - name: Setup Go 1.24
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.24
-          cache-dependency-path: go.sum
+          if command -v javac >/dev/null 2>&1; then
+            JAVA_HOME_PATH=$(dirname "$(dirname "$(readlink -f "$(command -v javac)")")")
+            echo "JAVA_HOME=$JAVA_HOME_PATH" >> $GITHUB_ENV
+            echo "$JAVA_HOME_PATH/bin" >> $GITHUB_PATH
+          fi
 
-      - name: Install Go tools
-        run: |
-          go install github.com/go-bindata/go-bindata/v3/go-bindata@latest
-          go install go.uber.org/mock/mockgen@v0.4.0
-          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1
+          echo "QT_ANDROID_PATH=$QT_ANDROID_PATH"
+          echo "QMAKE path should be: $QT_ANDROID_PATH/bin/qmake"
+          ls -l "$QT_ANDROID_PATH/bin/qmake" || echo "qmake not found, check Qt image."
 
-      - name: Mark repository as safe
-        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+      - name: Fetch submodules
+        run: git submodule update --init --recursive --force
 
       - name: Build Android APK
         shell: bash
         run: |
+          set -e
+          unset GOARCH
+          echo "Using QMAKE: $QMAKE"
+          echo "STATUSQ_TESTMODE: $TESTMODE"
           make mobile-clean
-          make mobile-build V=3 USE_SYSTEM_NIM=1 -j$(nproc)
+          make mobile-build \
+            V=${{ inputs.verbosity }} \
+            USE_SYSTEM_NIM=1 \
+            STATUSQ_TESTMODE=${{ env.TESTMODE }} \
+            -j$(nproc)
 
-      - name: Upload APK
+      - name: Rename APK with version
+        id: version
+        run: |
+          set -e
+          VERSION=$(./scripts/version.sh)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Determined version: $VERSION"
+          
+          SRC_APK="mobile/bin/android/qt6/Status-tablet.apk"
+          DEST_APK="mobile/bin/android/qt6/Status-android-${{ inputs.architecture }}-${VERSION}.apk"
+
+          if [ ! -f "$SRC_APK" ]; then
+            echo "Expected APK not found at $SRC_APK" >&2
+            exit 1
+          fi
+
+          cp "$SRC_APK" "$DEST_APK"
+          echo "Renamed APK: $DEST_APK"
+          echo "apk_path=$DEST_APK" >> $GITHUB_OUTPUT
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Status-tablet
-          path: mobile/bin/android/qt6/Status-tablet.apk
+          name: Status-android-${{ inputs.architecture }}-${{ env.VERSION }}
+          path: ${{ steps.version.outputs.apk_path }}
