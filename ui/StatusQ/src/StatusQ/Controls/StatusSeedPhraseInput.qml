@@ -1,10 +1,8 @@
 import QtQuick
-import QtQuick.Controls
-
-import StatusQ.Controls
-import StatusQ.Popups
 import StatusQ.Core
 import StatusQ.Core.Theme
+
+import SortFilterProxyModel
 
 /*!
    \qmltype StatusSeedPhraseInput
@@ -64,16 +62,30 @@ Item {
     */
     property string leftComponentText: ""
     /*!
-        \qmlproperty ListModel StatusSeedPhraseInput::inputList
+        \qmlproperty var StatusSeedPhraseInput::inputList
         This property holds the seed words dictionary
     */
-    property ListModel inputList: ListModel { }
-    /*!
-        \qmlproperty ListModel StatusSeedPhraseInput::filteredList
-        This property holds the filtered words list based on the user's
-        input text.
-    */
-    property ListModel filteredList: ListModel { }
+    required property var inputList
+
+    QtObject {
+        id: d
+
+        property string filteringPrefix: ""
+    }
+
+    SortFilterProxyModel {
+        id: filteredList
+
+        sourceModel: d.filteringPrefix ? root.inputList : null
+
+        filters: RegExpFilter {
+            id: filter
+
+            syntax: RegExpFilter.Wildcard
+            pattern: `${d.filteringPrefix}*`
+        }
+    }
+
 
     property bool isError
 
@@ -89,13 +101,12 @@ Item {
     /*!
         \qmlsignal keyPressed
         This signal is emitted when the user presses a keyboard key and passes as a
-        parameter the event. The corresponding handler is \c onKeyPressed.
+        parameter the event.
     */
     signal keyPressed(var event)
     /*!
         \qmlsignal editClicked
         This signal is emitted when the user clicks inside the StatusInput.
-        The corresponding handler is \c onEditClicked
     */
     signal editClicked()
     /*!
@@ -108,7 +119,7 @@ Item {
         let seedWordTrimmed = seedWord.trim()
         seedWordInput.input.edit.text = seedWordTrimmed
         seedWordInput.input.edit.cursorPosition = seedWordInput.text.length
-        filteredList.clear()
+        d.filteringPrefix = ""
         root.doneInsertingWord(seedWordTrimmed)
     }
 
@@ -121,7 +132,7 @@ Item {
     Component {
         id: seedInputLeftComponent
         StatusBaseText {
-            leftPadding: text.length == 1 ? 10 : 6
+            leftPadding: text.length === 1 ? 10 : 6
             rightPadding: 4
             text: root.leftComponentText
             font.family: Theme.monoFont.name
@@ -141,31 +152,20 @@ Item {
         input.edit.inputMethodHints: Qt.ImhSensitiveData | Qt.ImhNoPredictiveText | Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase
 
         Binding on input.background.border.color {
-            value: Theme.palette.dangerColor1
             when: root.isError && seedWordInput.input.edit.activeFocus
+            value: Theme.palette.dangerColor1
         }
 
         onTextChanged: {
-            filteredList.clear();
-            let textToCheck = text.trim().toLowerCase()
-
-            if (textToCheck === "") {
-                return;
-            }
-
-            for (var i = 0; i < inputList.count; i++) {
-                const word = inputList.get(i).seedWord
-                if (word.startsWith(textToCheck)) {
-                    filteredList.append({"seedWord": word})
-                }
-            }
+            const trimmedLowercase = text.trim().toLowerCase()
+            d.filteringPrefix = trimmedLowercase
 
             if (filteredList.count === 1 && input.edit.keyEvent !== Qt.Key_Backspace
                     && input.edit.keyEvent !== Qt.Key_Delete
-                    && filteredList.get(0).seedWord.trim() === textToCheck) {
-                seedWordInput.input.edit.cursorPosition = textToCheck.length;
-                filteredList.clear();
-                root.doneInsertingWord(textToCheck);
+                    && filteredList.get(0).seedWord.trim() === trimmedLowercase) {
+                seedWordInput.input.edit.cursorPosition = trimmedLowercase.length
+                d.filteringPrefix = ""
+                root.doneInsertingWord(trimmedLowercase)
             }
         }
         onKeyPressed: function (event) {
@@ -232,11 +232,9 @@ Item {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
 
-            onCountChanged: {
-                seedSuggestionsList.currentIndex = 0
-            }
+            onCountChanged: seedSuggestionsList.currentIndex = 0
 
-            model: root.filteredList
+            model: filteredList
 
             delegate: Item {
                 id: txtDelegate
@@ -264,9 +262,7 @@ Item {
                     height: parent.height
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        root.setWord(seedWord)
-                    }
+                    onClicked: root.setWord(seedWord)
                 }
             }
         }
