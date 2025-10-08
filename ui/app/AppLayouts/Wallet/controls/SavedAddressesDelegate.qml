@@ -107,7 +107,7 @@ StatusListItem {
             type: StatusRoundButton.Type.Quinary
             radius: 8
             icon.name: "more"
-            Accessible.name: Utils.formatAccessibleName("Options", objectName)
+            Accessible.name: StatusQUtils.Utils.formatAccessibleName("Options", objectName)
             onClicked: {
                 menu.openMenu(this, x + width - menu.width - statusListItemComponentsSlot.spacing, y + height + Theme.halfPadding,
                     {
