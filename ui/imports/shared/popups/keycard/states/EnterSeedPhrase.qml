@@ -3,6 +3,7 @@ import QtQuick
 import StatusQ.Core
 import StatusQ.Core.Theme
 
+import shared
 import utils
 import shared.panels as SharedPanels
 
@@ -48,6 +49,8 @@ Item {
         anchors.bottomMargin: Theme.halfPadding
         anchors.leftMargin: Theme.xlPadding
         anchors.rightMargin: Theme.xlPadding
+
+        dictionary: BIP39_en {}
 
         isSeedPhraseValid: function(mnemonic) {
             return root.sharedKeycardModule.validSeedPhrase(mnemonic)

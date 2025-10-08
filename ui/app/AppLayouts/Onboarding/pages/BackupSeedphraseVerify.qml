@@ -10,7 +10,7 @@ import StatusQ.Core.Theme
 
 import AppLayouts.Onboarding.components
 
-import shared.stores
+import shared
 import utils
 
 import SortFilterProxyModel
