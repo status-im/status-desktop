@@ -1,6 +1,8 @@
 import QtQuick
 import QtQml.Models
 
+import utils
+
 ListModel {
     property bool includeRegularCollectibles: true
     onIncludeRegularCollectiblesChanged: fillData()
@@ -18,7 +20,7 @@ ListModel {
     readonly property var data: [
         {
             uid: "123",
-            chainId: 5,
+            chainId: 1,
             userHas: 9,
             name: "Punx not dead!",
             collectionUid: "",
@@ -26,7 +28,7 @@ ListModel {
             collectionImageUrl: ModelsData.collectibles.cryptoPunks,
             communityId: "",
             communityName: "",
-            communityImage: ModelsData.icons.status,
+            communityImage: "",
             imageUrl: ModelsData.collectibles.cryptoPunks,
             isLoading: false,
             backgroundColor: "",
@@ -65,11 +67,10 @@ ListModel {
             tokenId: "403",
             twitterHandle: "@punxNotDead",
             website: "www.punxnotdead.com",
-            isMetadataValid: true
         },
         {
             uid: "pp23",
-            chainId: 5,
+            chainId: 1,
             userHas: 0,
             name: "pepepunk#23",
             collectionUid: "pepepunks",
@@ -111,7 +112,6 @@ ListModel {
             tokenId: "123",
             twitterHandle: "@pepepunks",
             website: "www.pepepunks.com",
-            isMetadataValid: true
         },
         {
             uid: "34545656768",
@@ -120,11 +120,11 @@ ListModel {
             name: "Kitty 1",
             collectionUid: "KT",
             collectionName: "Kitties",
-            collectionImageUrl: ModelsData.collectibles.kitty1Big,
+            collectionImageUrl: "https://www.cryptokitties.co/images/kittyverse/logomark.svg",
             communityId: "",
             communityName: "",
             communityImage: "",
-            imageUrl: ModelsData.collectibles.kitty1Big,
+            imageUrl: "https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/386.svg",
             isLoading: true,
             backgroundColor: "",
             permalink:"opensea.com",
@@ -157,7 +157,6 @@ ListModel {
             tokenId: "7123",
             twitterHandle: "@kitties",
             website: "www.kitties.com",
-            isMetadataValid: true
         },
         {
             uid: "123456",
@@ -166,11 +165,11 @@ ListModel {
             name: "Kitty 2",
             collectionUid: "KT",
             collectionName: "Kitties",
-            collectionImageUrl: ModelsData.collectibles.kitty2Big,
+            collectionImageUrl: "https://www.cryptokitties.co/images/kittyverse/logomark.svg",
             communityId: "",
             communityName: "",
             communityImage: "",
-            imageUrl: ModelsData.collectibles.kitty2Big,
+            imageUrl: "https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/3395.svg",
             isLoading: false,
             backgroundColor: "",
             permalink:"opensea.com",
@@ -182,9 +181,6 @@ ListModel {
                     txTimestamp: 6
                 },
             ],
-            networkShortName: "OPT",
-            networkColor: "red",
-            networkIconUrl: ModelsData.networks.optimism,
             networkShortName: "OPT",
             networkColor: "red",
             networkIconUrl: ModelsData.networks.optimism,
@@ -206,7 +202,6 @@ ListModel {
             tokenId: "403123",
             twitterHandle: "",
             website: "www.kitties.com",
-            isMetadataValid: true
         },
         {
             uid: "12345645459537432",
@@ -215,11 +210,11 @@ ListModel {
             name: "Big Kitty",
             collectionUid: "KT",
             collectionName: "Kitties",
-            collectionImageUrl: ModelsData.collectibles.kitty3Big,
+            collectionImageUrl: "https://www.cryptokitties.co/images/kittyverse/logomark.svg",
             communityId: "",
             communityName: "",
             communityImage: "",
-            imageUrl: ModelsData.collectibles.kitty3Big,
+            imageUrl: "https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/163.png",
             isLoading: false,
             backgroundColor: "",
             permalink:"opensea.com",
@@ -257,7 +252,6 @@ ListModel {
             tokenId: "1",
             twitterHandle: "@kitties",
             website: "",
-            isMetadataValid: true
         },
         {
             uid: "pp21",
@@ -295,7 +289,6 @@ ListModel {
             tokenId: "12568",
             twitterHandle: "@pepepunks",
             website: "www.pepepunks.com",
-            isMetadataValid: true
         },
         {
             uid: "lp#666a",
@@ -333,7 +326,6 @@ ListModel {
             tokenId: "1445",
             twitterHandle: "@lonelyPanda",
             website: "www.lonelyPanda.com",
-            isMetadataValid: true
         },
         {
             uid: "invalid#123",
@@ -373,7 +365,7 @@ ListModel {
     readonly property var communityData: [
         {
             uid: "fp#9140",
-            chainId: 5,
+            chainId: 1,
             name: "Frenly Panda #9140",
             collectionUid: "",
             collectionName: "",
@@ -397,7 +389,6 @@ ListModel {
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
             tokenId: "4",
-            isMetadataValid: true
         },
         {
             uid: "691",
@@ -425,7 +416,6 @@ ListModel {
             description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
             traits: [],
             tokenId: "3",
-            isMetadataValid: true
         },
         {
             uid: "8876",
@@ -439,7 +429,7 @@ ListModel {
             communityImage: "https://i.seadn.io/gcs/files/4a875f997063f4f3772190852c1c44f0.png?w=128&auto=format",
             imageUrl: "https://assets.killabears.com/content/killabears/transparent-512/2385-86ba13cc6945ed0aea7c32a363a96be2f218898358745ae07b947452cb7e4e79.png",
             isLoading: false,
-            backgroundColor: "pink",
+            backgroundColor: "",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
@@ -453,11 +443,12 @@ ListModel {
             description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy :)",
             traits: [],
             tokenId: "341",
-            isMetadataValid: true
+            communityPrivilegesLevel: Constants.TokenPrivilegesLevel.Owner,
+            communityColor: "red"
         },
         {
             uid: "fp#3195",
-            chainId: 5,
+            chainId: 1,
             name: "Frenly Panda #3195324354654756756756784234523",
             collectionUid: "",
             collectionName: "",
@@ -481,11 +472,10 @@ ListModel {
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
             tokenId: "765",
-            isMetadataValid: true
         },
         {
             uid: "fp#4297",
-            chainId: 5,
+            chainId: 1,
             name: "Frenly Panda #4297",
             collectionUid: "",
             collectionName: "",
@@ -509,11 +499,10 @@ ListModel {
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
             tokenId: "166",
-            isMetadataValid: true
         },
         {
             uid: "fp#909",
-            chainId: 5,
+            chainId: 1,
             name: "Frenly Panda #909",
             collectionUid: "",
             collectionName: "",
@@ -537,7 +526,6 @@ ListModel {
             description: "Frenly Pandas is a community for all the fiendly pandas! Welcome onboard and enjoy :)",
             traits: [],
             tokenId: "1111",
-            isMetadataValid: true
         },
         {
             uid: "lb#666",
@@ -570,7 +558,6 @@ ListModel {
             description: "Bearz is a community for all the ferocious Bearz! Welcome onboard and enjoy",
             traits: [],
             tokenId: "6",
-            isMetadataValid: true
         },
         {
             uid: "lb#777",
@@ -598,7 +585,6 @@ ListModel {
             description: "Lonely Turtle is a community for all of us to talk and communicate! Welcome onboard and enjoy",
             traits: [],
             tokenId: "7",
-            isMetadataValid: true
         },
         {
             uid: "ID-Custom",
@@ -624,7 +610,6 @@ ListModel {
             networkShortName: "ARB",
             networkColor: "blue",
             networkIconUrl: ModelsData.networks.arbitrum,
-            isMetadataValid: true
         },
         {
             uid: "ID-MissingMetadata",
@@ -650,7 +635,6 @@ ListModel {
             networkShortName: "OPT",
             networkColor: "red",
             networkIconUrl: ModelsData.networks.optimism,
-            isMetadataValid: true
         },
         {
             uid: "ID-Community1",
@@ -659,8 +643,8 @@ ListModel {
             tokenId: "406",
             name: "Community Admin Token",
             imageUrl: ModelsData.collectibles.mana,
-            backgroundColor: "transparent",
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            backgroundColor: "seashell",
+            description: ModelsData.descriptions.longLoremIpsum,
             collectionUid: "community-uid-1",
             collectionName: "",
             collectionImageUrl: "",
@@ -676,7 +660,6 @@ ListModel {
             networkShortName: "OPT",
             networkColor: "red",
             networkIconUrl: ModelsData.networks.optimism,
-            isMetadataValid: true
         },
         {
             uid: "ID-Community-Unknown",
@@ -685,7 +668,7 @@ ListModel {
             tokenId: "407",
             name: "Removed community token",
             imageUrl: ModelsData.collectibles.mana,
-            backgroundColor: "transparent",
+            backgroundColor: "seashell",
             description: "This is unkown community community token",
             collectionUid: "community-uid-unknown",
             collectionName: "",
@@ -702,7 +685,6 @@ ListModel {
             networkShortName: "OPT",
             networkColor: "red",
             networkIconUrl: ModelsData.networks.optimism,
-            isMetadataValid: true
         }
     ]
 
