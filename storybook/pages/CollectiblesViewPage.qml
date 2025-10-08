@@ -65,21 +65,25 @@ SplitView {
     QtObject {
         id: d
         readonly property string networksChainsCurrentlySelected: {
-            let supportNwChains = ":"
-            for (let i =0; i< networksRepeater.count; i++) {
-                if (networksRepeater.itemAt(i).checked && networksRepeater.itemAt(i).visible)
-                    supportNwChains +=  networksRepeater.itemAt(i).chainID + ":"
+            const supportNwChains = []
+            const count = networksRepeater.count
+            for (let i = 0; i< count; i++) {
+                const item = networksRepeater.itemAt(i)
+                if (item.checked)
+                    supportNwChains.push(item.chainID)
             }
-            return supportNwChains
+            return supportNwChains.join(":")
         }
 
         readonly property string addressesSelected: {
-            let supportedAddresses = ""
-            for (let i =0; i< accountsRepeater.count; i++) {
-                if (accountsRepeater.itemAt(i).checked && accountsRepeater.itemAt(i).visible)
-                    supportedAddresses += accountsRepeater.itemAt(i).address + ":"
+            const supportedAddresses = []
+            const count =  accountsRepeater.count
+            for (let i = 0; i < count; i++) {
+                const item = accountsRepeater.itemAt(i)
+                if (item.checked)
+                    supportedAddresses.push(item.address)
             }
-            return supportedAddresses
+            return supportedAddresses.join(":")
         }
     }
 
@@ -108,25 +112,18 @@ SplitView {
                 settingsStore.setValue(settingsKey, null)
             }
 
-            onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                               qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
-                               false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                             qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
-                                             false, Constants.ephemeralNotificationType.success, "")
-            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
-                                                                       false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
-                                            qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
-                                            false, Constants.ephemeralNotificationType.success, "")
+            onTokenHidden: logs.logEvent("onTokenHidden", ["symbol", "name"], arguments)
+            onCommunityTokenGroupHidden: logs.logEvent("onCommunityTokenGroupHidden", ["communityName"], arguments)
+            onTokenShown: logs.logEvent("onTokenShown", ["symbol", "name"], arguments)
+            onCommunityTokenGroupShown: logs.logEvent("onCommunityTokenGroupShown", ["communityName"], arguments)
         }
         ownedAccountsModel: WalletAccountsModel {}
         activeNetworks: NetworksModel.flatNetworks
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked
-        onCollectibleClicked: logs.logEvent("onCollectibleClicked", ["chainId", "contractAddress", "tokenId", "uid"], arguments)
-        onSendRequested: logs.logEvent("onSendRequested", ["symbol"], arguments)
+        onCollectibleClicked: logs.logEvent("onCollectibleClicked", ["chainId", "contractAddress", "tokenId", "uid", "tokenType", "communityId"], arguments)
+        onSendRequested: logs.logEvent("onSendRequested", ["symbol", "tokenType", "fromAddress"], arguments)
         onReceiveRequested: logs.logEvent("onReceiveRequested", ["symbol"], arguments)
         onSwitchToCommunityRequested: logs.logEvent("onSwitchToCommunityRequested", ["communityId"], arguments)
         onManageTokensRequested: logs.logEvent("onManageTokensRequested")
@@ -206,7 +203,7 @@ SplitView {
             ColumnLayout {
                 Layout.fillWidth: true
                 Text {
-                    text: "select supported network(s)"
+                    text: "Select networks:"
                 }
                 Repeater {
                     id: networksRepeater
@@ -214,8 +211,7 @@ SplitView {
                     delegate: CheckBox {
                         property int chainID: chainId
                         width: parent.width
-                        text: chainName
-                        visible: isTest
+                        text: "%1 (%2)".arg(chainName).arg(chainID)
                         checked: true
                         onToggled: {
                             isEnabled = checked
@@ -227,7 +223,7 @@ SplitView {
             ColumnLayout {
                 Layout.fillWidth: true
                 Text {
-                    text: "select account(s)"
+                    text: "Select accounts:"
                 }
                 Repeater {
                     id: accountsRepeater
@@ -253,3 +249,4 @@ SplitView {
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=19558-95270&mode=design&t=ShZOuMRfiIIl2aR8-0
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=19558-96427&mode=design&t=ShZOuMRfiIIl2aR8-0
 // https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=19087%3A293357&mode=dev
+// status: good
