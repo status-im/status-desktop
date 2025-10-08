@@ -92,7 +92,7 @@ ColumnLayout {
                 d.incorrectWordAtIndex = [...new Set(incorrectWordAtIndex)] // remove dupes
                 return
             }
-            
+
             d.incorrectWordAtIndex = d.incorrectWordAtIndex.filter(function(value) {
                 return value !== pos
             })
@@ -103,7 +103,7 @@ ColumnLayout {
 
             // Split words separated by commas and or blank spaces (spaces, enters, tabs)
             const words = clipboardText.trim().split(/[, \s]+/)
-            
+
             let index = d.tabs.indexOf(words.length)
             if (index === -1) {
                 return false
@@ -186,7 +186,7 @@ ColumnLayout {
             ,["1", "5", "9", "13", "17", "21", "2", "6", "10", "14", "18", "22",
               "3", "7", "11", "15", "19", "23", "4", "8", "12", "16", "20", "24"]
         ]
-        
+
         objectName: "enterSeedPhraseGridView"
         Layout.fillWidth: true
         Layout.preferredHeight: 312
@@ -230,7 +230,7 @@ ColumnLayout {
                         continue
                     }
 
-                    grid.currentIndex = item.itemIndex
+                    grid.currentIndex = item.index
                     item.textEdit.input.edit.forceActiveFocus()
 
                     if (grid.currentIndex !== 12) {
@@ -268,7 +268,7 @@ ColumnLayout {
                 return ""
             }
 
-            readonly property int itemIndex: index
+            required property int index
             readonly property int mnemonicIndex: grid.wordIndex[(grid.count / 6) - 2][index]
 
             leftComponentText: mnemonicIndex
