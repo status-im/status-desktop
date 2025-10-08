@@ -111,7 +111,7 @@ SplitView {
                                 image : Theme.png("tokens/UNI"),
                                 color : "orchid"
                             }                        
-			}
+                        }
                     }
                 }
                 Component.onCompleted: viewLoader.active = true
@@ -131,16 +131,32 @@ SplitView {
         SplitView.preferredWidth: 300
 
         ColumnLayout {
+            anchors.fill: parent
             Label {
                 text: "Collectible:"
             }
-            ComboBox {
-                id: collectibleComboBox
+            RowLayout {
                 Layout.fillWidth: true
-                textRole: "name"
-                model: d.collectiblesModel
-                currentIndex: 0
-                onCurrentIndexChanged: d.refreshCurrentCollectible()
+                ToolButton {
+                    Layout.preferredWidth: 40
+                    text: "←"
+                    enabled: collectibleComboBox.currentIndex > 0
+                    onClicked: collectibleComboBox.decrementCurrentIndex()
+                }
+                ComboBox {
+                    id: collectibleComboBox
+                    Layout.fillWidth: true
+                    textRole: "name"
+                    model: d.collectiblesModel
+                    currentIndex: 0
+                    onCurrentIndexChanged: d.refreshCurrentCollectible()
+                }
+                ToolButton {
+                    Layout.preferredWidth: 40
+                    text: "→"
+                    enabled: collectibleComboBox.currentIndex < collectibleComboBox.count - 1
+                    onClicked: collectibleComboBox.incrementCurrentIndex()
+                }
             }
             CheckBox {
                 id: isLoadingCheckbox
@@ -164,8 +180,10 @@ SplitView {
                     }
                 }
             }
+            Item { Layout.fillHeight: true }
         }
     }
 }
 
 // category: Wallet
+// status: good
