@@ -191,13 +191,14 @@ SplitView {
 
                 model: assetsModel
 
-                onSendRequested: logs.logEvent(`send requested: ${key}`)
-                onReceiveRequested: logs.logEvent(`receive requested: ${key}`)
-                onSwapRequested: logs.logEvent(`swap requested: ${key}`)
-                onAssetClicked: logs.logEvent(`asset clicked: ${key}`)
+                onSendRequested: (key) =>logs.logEvent(`send requested: ${key}`)
+                onReceiveRequested: (key) => logs.logEvent(`receive requested: ${key}`)
+                onSwapRequested: (key) => logs.logEvent(`swap requested: ${key}`)
+                onAssetClicked: (key) => logs.logEvent(`asset clicked: ${key}`)
+                onCommunityClicked: (communityId) => logs.logEvent(`community clicked: ${communityId}`)
 
-                onHideRequested: logs.logEvent(`hide requested: ${key}`)
-                onHideCommunityAssetsRequested: logs.logEvent(`hide community assets requested: ${communityKey}`)
+                onHideRequested: (key) => logs.logEvent(`hide requested: ${key}`)
+                onHideCommunityAssetsRequested: (communityKey) => logs.logEvent(`hide community assets requested: ${communityKey}`)
                 onManageTokensRequested: logs.logEvent(`manage tokens requested`)
 
                 bannerComponent: buyReceiveBannerComponent
@@ -334,3 +335,4 @@ SplitView {
 }
 
 // category: Views
+// status: good
