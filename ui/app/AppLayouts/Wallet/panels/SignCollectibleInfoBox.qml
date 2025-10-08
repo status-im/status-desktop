@@ -19,8 +19,6 @@ Control {
     required property string name
     /** Input property holding collectible background color **/
     required property color backgroundColor
-    /** Input property holding if collectible has valid metadata **/
-    required property bool isMetadataValid
     /** Input property holding collectible fallback image url **/
     required property string fallbackImageUrl
     /** Input property holding collectible contract address **/
@@ -78,7 +76,6 @@ Control {
 
                 objectName: "collectibleMedia"
                 backgroundColor: root.backgroundColor
-                isMetadataValid: root.isMetadataValid
                 fallbackImageUrl: root.fallbackImageUrl
 
                 manualMaxDimension: 40

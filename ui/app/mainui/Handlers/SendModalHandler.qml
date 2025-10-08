@@ -1137,7 +1137,6 @@ QtObject {
                     collectibleTokenId: root.detailedCollectible.tokenId
                     collectibleName: root.detailedCollectible.name
                     collectibleBackgroundColor: root.detailedCollectible.backgroundColor
-                    collectibleIsMetadataValid: root.detailedCollectible.isMetadataValid
                     collectibleMediaUrl: root.detailedCollectible.mediaUrl
                     collectibleMediaType: root.detailedCollectible.mediaType
                     collectibleFallbackImageUrl: root.detailedCollectible.imageUrl
