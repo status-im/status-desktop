@@ -29,7 +29,7 @@ SplitView {
     QtObject {
         id: mockDriver
 
-        readonly property string mnemonic: "apple banana cat cow catalog catch category cattle dog elephant fish grape"
+        readonly property string mnemonic: "apple banana cat country catalog catch category cattle dog elephant fish cat"
         readonly property string pin: "111111"
         readonly property string puk: "111111111111"
         readonly property string password: "somepassword"

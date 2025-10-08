@@ -65,7 +65,7 @@ Item {
         \qmlproperty var StatusSeedPhraseInput::inputList
         This property holds the seed words dictionary
     */
-    required property var inputList
+    property var inputList
 
     QtObject {
         id: d
@@ -76,7 +76,7 @@ Item {
     SortFilterProxyModel {
         id: filteredList
 
-        sourceModel: d.filteringPrefix ? root.inputList : null
+        sourceModel: d.filteringPrefix && root.inputList ? root.inputList : null
 
         filters: RegExpFilter {
             id: filter
