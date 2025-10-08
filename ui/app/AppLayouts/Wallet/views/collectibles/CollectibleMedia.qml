@@ -11,7 +11,6 @@ StatusRoundedMedia {
     readonly property bool isEmpty: !mediaUrl.toString() && !fallbackImageUrl.toString()
     property color backgroundColor: Theme.palette.baseColor5
     property bool isCollectibleLoading: false
-    property bool isMetadataValid: false
 
     QtObject {
         id: d

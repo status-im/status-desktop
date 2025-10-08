@@ -209,8 +209,6 @@ SplitView {
                                          collectibleComboBox.currentCollectible.name: ""
                     collectibleBackgroundColor: !!collectibleComboBox.currentCollectible ?
                                                     collectibleComboBox.currentCollectible.backgroundColor: ""
-                    collectibleIsMetadataValid: !!collectibleComboBox.currentCollectible ?
-                                                    collectibleComboBox.currentCollectible.isMetadataValid : false
                     collectibleMediaUrl: !!collectibleComboBox.currentCollectible ?
                                              collectibleComboBox.currentCollectible.mediaUrl ?? "" : ""
                     collectibleMediaType: ""
