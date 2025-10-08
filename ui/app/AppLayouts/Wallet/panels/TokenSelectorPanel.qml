@@ -99,7 +99,7 @@ Control {
             highlightedKey: root.highlightedKey
             showSectionName: root.showSectionName
 
-            onSelected: root.assetSelected(key)
+            onSelected: (key) => root.assetSelected(key)
         }
 
         SearchableCollectiblesPanel {
@@ -112,8 +112,8 @@ Control {
 
             highlightedKey: root.highlightedKey
 
-            onCollectibleSelected: root.collectibleSelected(key)
-            onCollectionSelected: root.collectionSelected(key)
+            onCollectibleSelected: (key) => root.collectibleSelected(key)
+            onCollectionSelected: (key) => root.collectionSelected(key)
         }
     }
 }

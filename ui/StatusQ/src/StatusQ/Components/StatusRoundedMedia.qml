@@ -72,13 +72,13 @@ StatusRoundedComponent {
     property url fallbackImageUrl
 
     /*!
-        \qmlproperty url StatusRoundedMedia::fillMode
+        \qmlproperty int StatusRoundedMedia::fillMode
         helps set fillModel for the Media file loaded
     */
     property int fillMode: Image.PreserveAspectFit
 
     /*!
-        \qmlproperty url StatusRoundedMedia::maxDimension
+        \qmlproperty int StatusRoundedMedia::manualMaxDimension
         is used to set dimension for the image in case of portrait or landscape
         when fillMode = Image.PreserveAspectFit
         if not set the width/height of parent will be considered
@@ -174,11 +174,11 @@ StatusRoundedComponent {
         enabled: root.enabled && root.interactive && mediaLoader.visible && mediaLoader.item
         cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
+        onClicked: function (mouse) {
             if (root.isError || root.isEmpty) {
                 return
             }
-            if (mouse.button == Qt.RightButton) {
+            if (mouse.button === Qt.RightButton) {
                 if (d.isFallback || componentMediaType === StatusRoundedMedia.MediaType.Image) {
                     root.openImageContextMenu(mediaLoader.item.source, !!mediaLoader.item.playing)
                 } else if (componentMediaType === StatusRoundedMedia.MediaType.Video) {
