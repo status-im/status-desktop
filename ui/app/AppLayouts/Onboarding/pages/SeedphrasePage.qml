@@ -9,6 +9,7 @@ import StatusQ.Core.Theme
 
 import AppLayouts.Onboarding.enums
 
+import shared
 import shared.panels
 
 OnboardingPage {
@@ -54,6 +55,8 @@ OnboardingPage {
                 id: seedPanel
                 Layout.preferredWidth: 580
                 Layout.alignment: Qt.AlignHCenter
+
+                dictionary: BIP39_en {}
                 isSeedPhraseValid: root.isSeedPhraseValid
                 onSubmitSeedPhrase: root.seedphraseSubmitted(getSeedPhraseAsString())
                 onSeedPhraseUpdated: (valid, seedphrase) => root.seedphraseUpdated(valid, seedphrase)

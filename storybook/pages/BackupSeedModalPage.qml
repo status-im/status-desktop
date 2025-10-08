@@ -14,7 +14,7 @@ Item {
 
     BackupSeedModal {
         id: popup
-        mnemonic: "apple banana cat cow catalog catch category cattle dog elephant fish grape"
+        mnemonic: "apple banana cat country catalog catch category cattle dog elephant fish grape"
         visible: true
         closePolicy: Popup.NoAutoClose
         onBackupSeedphraseFinished: function(removeSeedphrase) {

@@ -9,7 +9,6 @@ import StatusQ.Controls
 import StatusQ.Controls.Validators
 
 import utils
-import shared.stores
 import shared.controls
 
 ColumnLayout {
@@ -22,7 +21,7 @@ ColumnLayout {
 
     readonly property bool seedPhraseIsValid: d.allEntriesValid && invalidSeedTxt.text === ""
     property var isSeedPhraseValid: function (mnemonic) { return false }
-    property ListModel dictionary: BIP39_en {}
+    property var dictionary
 
     signal submitSeedPhrase()
     signal seedPhraseUpdated(bool valid, string seedPhrase)
@@ -46,7 +45,6 @@ ColumnLayout {
         property var mnemonicInput: []
         property var incorrectWordAtIndex: [] // 1-based
         readonly property var tabs: [12, 18, 24]
-        readonly property alias seedPhrases_en: root.dictionary
 
         onIncorrectWordAtIndexChanged: d.validate()
 
@@ -86,7 +84,7 @@ ColumnLayout {
         }
 
         function checkWordExistence(word, pos) {
-            if (word !== "" && !ModelUtils.contains(d.seedPhrases_en, "seedWord", word)) {
+            if (word !== "" && !ModelUtils.contains(root.dictionary, "seedWord", word)) {
                 const incorrectWordAtIndex = d.incorrectWordAtIndex
                 incorrectWordAtIndex.push(pos)
                 d.incorrectWordAtIndex = [...new Set(incorrectWordAtIndex)] // remove dupes
@@ -273,7 +271,7 @@ ColumnLayout {
 
             leftComponentText: mnemonicIndex
             isError: d.incorrectWordAtIndex.includes(mnemonicIndex) & !!text
-            inputList: d.seedPhrases_en
+            inputList: root.dictionary
 
             onDoneInsertingWord: (word) => grid.addWord(mnemonicIndex, word)
             onEditingFinished: {

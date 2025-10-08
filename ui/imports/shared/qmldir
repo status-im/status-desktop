@@ -1,4 +1,5 @@
 module shared
 
+BIP39_en 1.0 BIP39_en.qml
 LoadingAnimation 1.0 LoadingAnimation.qml
 UserSearchFilter 1.0 UserSearchFilter.qml

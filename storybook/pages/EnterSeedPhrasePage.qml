@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
+import shared
 import shared.panels
 
 import Storybook
@@ -9,9 +10,11 @@ Item {
     QtObject {
         id: mockDriver
 
-        readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
+        readonly property var seedWords:
+            ["apple", "banana", "cat", "country", "catalog", "catch", "category",
+            "cattle", "dog", "elephant", "fish", "grape"]
 
-        function isSeedPhraseValid(mnemonic: string) {
+        function isSeedPhraseValid(mnemonic: string): bool {
             return mnemonic === seedWords.join(" ")
         }
     }
@@ -20,6 +23,8 @@ Item {
         id: panel
         anchors.centerIn: parent
         isSeedPhraseValid: mockDriver.isSeedPhraseValid
+
+        dictionary: BIP39_en {}
     }
 
     Row {
@@ -37,7 +42,8 @@ Item {
             focusPolicy: Qt.NoFocus
             onClicked: {
                 for (let i = 1;; i++) {
-                    const input = StorybookUtils.findChild(panel, `enterSeedPhraseInputField${i}`)
+                    const input = StorybookUtils.findChild(
+                                    panel, `enterSeedPhraseInputField${i}`)
 
                     if (input === null)
                         break

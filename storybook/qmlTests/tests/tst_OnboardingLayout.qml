@@ -32,7 +32,7 @@ Item {
         property bool biometricsAvailable
         property string existingPin
 
-        readonly property string mnemonic: "apple banana cat cow catalog catch category cattle dog elephant fish grape"
+        readonly property string mnemonic: "apple banana cat country catalog catch category cattle dog elephant fish grape"
         readonly property string dummyNewPassword: "0123456789"
     }
 
