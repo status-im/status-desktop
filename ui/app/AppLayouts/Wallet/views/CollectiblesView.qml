@@ -173,46 +173,7 @@ ColumnLayout {
         readonly property bool onlyRegularCollectiblesType: hasRegularCollectibles && !hasCommunityCollectibles
 
         readonly property var nwFilters: root.networkFilters.split(":")
-        readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
-
-        function getLatestTimestamp(ownership, filterList) {
-            let latest = 0
-
-            if (!!ownership) {
-                for (let i = 0; i < ownership.count; i++) {
-                    let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
-                    if (filterList.includes(accountAddress)) {
-                        let txTimestamp = ModelUtils.get(ownership, i, "txTimestamp")
-                        latest = Math.max(latest, txTimestamp)
-                    }
-                }
-            }
-            return latest
-        }
-
-        function getBalance(ownership, filterList) {
-            // Balance is a Uint256, so we need to use AmountsArithmetic to handle it
-            let balance = AmountsArithmetic.fromNumber(0)
-
-            if (!!ownership) {
-                for (let i = 0; i < ownership.count; i++) {
-                    let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
-                    if (filterList.includes(accountAddress)) {
-                        let tokenBalanceStr = ModelUtils.get(ownership, i, "balance")+""
-                        if (tokenBalanceStr !== "") {
-                            let tokenBalance = AmountsArithmetic.fromString(tokenBalanceStr)
-                            balance = AmountsArithmetic.sum(balance, tokenBalance)
-                        }
-                    }
-                }
-                // For simplicity, we limit the result to the maximum int manageable by QML
-                const maxInt = 2147483647
-                if (AmountsArithmetic.cmp(balance, AmountsArithmetic.fromNumber(maxInt)) === 1) {
-                    return maxInt
-                }
-            }
-            return AmountsArithmetic.toNumber(balance)
-        }
+        readonly property var addrFilters: root.addressFilters.split(":")
 
         function getFirstUserOwnedAddress(ownershipModel) {
             if (!ownershipModel) return ""
@@ -253,7 +214,7 @@ ColumnLayout {
         property bool hasAllTimestamps
     }
 
-    component CustomSFPM: SortFilterProxyModel {
+    component CustomSFPM: GroupsSFPM {
         id: customFilter
         property bool isCommunity
 
@@ -265,18 +226,10 @@ ColumnLayout {
                 expectedRoles: ["communityId", "collectionName", "communityName"]
             },
             FastExpressionRole {
-                name: "balance"
-                expression: {
-                    d.addrFilters
-                    return d.getBalance(model.ownership, d.addrFilters)
-                }
-                expectedRoles: ["ownership"]
-            },
-            FastExpressionRole {
                 name: "lastTxTimestamp"
                 expression: {
                     d.addrFilters
-                    return d.getLatestTimestamp(model.ownership, d.addrFilters)
+                    return root.controller.getOwnershipTotalBalanceAndLastTimestamp(model.ownership, d.addrFilters)["timestamp"]
                 }
                 expectedRoles: ["ownership"]
             }
@@ -284,19 +237,8 @@ ColumnLayout {
         filters: [
             FastExpressionFilter {
                 expression: {
-                    return d.nwFilters.includes(model.chainId+"")
-                }
-                expectedRoles: ["chainId"]
-            },
-            ValueFilter {
-                roleName: "balance"
-                value: 0
-                inverted: true
-            },
-            FastExpressionFilter {
-                expression: {
                     root.controller.revision
-                    return root.controller.filterAcceptsSymbol(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
+                    return (customFilter.isCommunity ? !!model.communityId : !model.communityId) && root.controller.filterAcceptsSymbol(model.symbol)
                 }
                 expectedRoles: ["symbol", "communityId"]
             },
@@ -330,6 +272,33 @@ ColumnLayout {
         ]
     }
 
+    component GroupsSFPM: SortFilterProxyModel {
+        sourceModel: d.sourceModel
+        proxyRoles: [
+            FastExpressionRole {
+                name: "balance"
+                expression: {
+                    d.addrFilters
+                    return root.controller.getOwnershipTotalBalanceAndLastTimestamp(model.ownership, d.addrFilters)["balance"]
+                }
+                expectedRoles: ["ownership"]
+            }
+        ]
+        filters: [
+            FastExpressionFilter {
+                expression: {
+                    return d.nwFilters.includes(model.chainId+"")
+                }
+                expectedRoles: ["chainId"]
+            },
+            ValueFilter {
+                roleName: "balance"
+                value: 0
+                inverted: true
+            }
+        ]
+    }
+
     ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: false
@@ -350,32 +319,7 @@ ColumnLayout {
 
             FilterComboBox {
                 id: cmbFilter
-                sourceModel: SortFilterProxyModel {
-                    sourceModel: d.sourceModel
-                    proxyRoles: [
-                        FastExpressionRole {
-                            name: "balance"
-                            expression: {
-                                d.addrFilters
-                                return d.getBalance(model.ownership, d.addrFilters)
-                            }
-                            expectedRoles: ["ownership"]
-                        }
-                    ]
-                    filters: [
-                        FastExpressionFilter {
-                            expression: {
-                                return d.nwFilters.includes(model.chainId+"")
-                            }
-                            expectedRoles: ["chainId"]
-                        },
-                        ValueFilter {
-                            roleName: "balance"
-                            value: 0
-                            inverted: true
-                        }
-                    ]
-                }
+                sourceModel: GroupsSFPM {}
 
                 regularTokensModel: root.controller.regularTokensModel
                 collectionGroupsModel: root.controller.collectionGroupsModel
@@ -478,6 +422,11 @@ ColumnLayout {
 
         clip: true
 
+        ScrollBar.vertical: StatusScrollBar {
+            policy: ScrollBar.AsNeeded
+            visible: resolveVisibility(policy, doubleFlickable.height, doubleFlickable.contentHeight)
+        }
+
         flickable1: CustomGridView {
             id: communityCollectiblesView
 
@@ -549,7 +498,7 @@ ColumnLayout {
             mediaUrl: model.mediaUrl ?? ""
             mediaType: model.mediaType ?? ""
             fallbackImageUrl: model.imageUrl ?? ""
-            backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
+            backgroundColor: model.backgroundColor ? model.backgroundColor : Theme.palette.baseColor5
             isLoading: !!model.isLoading
             privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
             ornamentColor: model.communityColor ?? "transparent"
