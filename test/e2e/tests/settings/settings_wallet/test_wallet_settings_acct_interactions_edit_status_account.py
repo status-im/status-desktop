@@ -1,13 +1,12 @@
 import random
 import string
-import time
 
 import allure
 import pytest
 from allure_commons._allure import step
 
 from constants.wallet import WalletNetworkSettings, WalletAccountSettings, DerivationPathValue
-from gui.main_window import MainWindow, MainLeftPanel
+from gui.main_window import MainWindow
 from gui.screens.settings_wallet import AccountDetailsView
 
 

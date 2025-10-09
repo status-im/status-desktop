@@ -12,8 +12,11 @@ import configs.testpath
 from constants import UserAccount, RandomUser
 from constants.messaging import Messaging
 from helpers.chat_helper import skip_message_backup_popup_if_visible
+from helpers.multiple_instances_helper import (
+    authorize_user_in_aut, get_chat_key, send_contact_request_from_settings, switch_to_aut
+)
 from gui.main_window import MainWindow
-from gui.screens.messages import MessagesScreen, ToolBar
+from gui.screens.messages import MessagesScreen
 from scripts.utils.generators import random_text_message
 
 
@@ -41,29 +44,19 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             multiple_instances(user_data=None) as aut_three:
         with step(f'Launch multiple instances with new users {user_one.name}, {user_two.name}, {user_three}'):
             for aut, account in zip([aut_one, aut_two, aut_three], [user_one, user_two, user_three]):
-                aut.attach()
-                main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
-                main_window.authorize_user(account)
-                main_window.hide()
+                authorize_user_in_aut(aut, main_window, account)
 
         with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_window.prepare()
-            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            user_2_chat_key = profile_popup.copy_chat_key
-            main_window.left_panel.click()
-            main_window.hide()
+            user_2_chat_key = get_chat_key(aut_two, main_window)
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             settings = main_window.left_panel.open_settings()
             contact_request_form = settings.left_panel.open_messaging_settings().open_contacts_settings().open_contact_request_form()
             contact_request_form.send(user_2_chat_key, f'Hello {user_two.name}')
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name} via activity center'):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
             activity_center = main_window.left_panel.open_activity_center()
             request = activity_center.find_contact_request_in_list(user_one.name)
             activity_center.accept_contact_request(request)
@@ -71,23 +64,16 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.hide()
 
         with step(f'User {user_three.name}, get chat key'):
-            aut_three.attach()
-            main_window.prepare()
-            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            user_3_chat_key = profile_popup.copy_chat_key
-            main_window.left_panel.click()
-            main_window.hide()
+            user_3_chat_key = get_chat_key(aut_three, main_window)
 
         with step(f'User {user_one.name}, send contact request to {user_three.name}'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             settings = main_window.left_panel.open_settings()
             contact_request_form = settings.left_panel.open_messaging_settings().open_contacts_settings().open_contact_request_form()
             contact_request_form.send(user_3_chat_key, f'Hello {user_three.name}')
 
         with step(f'User {user_three.name}, accept contact request from {user_one.name} via activity center'):
-            aut_three.attach()
-            main_window.prepare()
+            switch_to_aut(aut_three, main_window)
             activity_center = main_window.left_panel.open_activity_center()
             request = activity_center.find_contact_request_in_list(user_one.name, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
             activity_center.accept_contact_request(request)
@@ -95,8 +81,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.hide()
 
         with step(f'User {user_one.name}, start chat and add {members}'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             main_window.left_panel.open_messages_screen()
             
             skip_message_backup_popup_if_visible()
@@ -150,8 +135,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 main_window.hide()
 
         with step(f'Check group members and message for {user_two.name}'):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
 
             assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
                                   10000), f'{group_chat_new_name} is not present in chats list for {aut_two}'
@@ -272,8 +256,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.hide()
 
         with step(f'Check group members and message for {user_three.name}'):
-            aut_three.attach()
-            main_window.prepare()
+            switch_to_aut(aut_three, main_window)
 
             with step(f'Check that {user_three.name} is not a member of a group'):
                 assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
@@ -298,8 +281,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.hide()
 
         with step(f'Get back to {user_one.name} and check members list'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             assert group_chat_new_name in messages_screen.left_panel.get_chats_names, \
                 f'{group_chat_new_name} is not present in chats list for {aut_one}'
             messages_screen.left_panel.click_chat_by_name(group_chat_new_name)

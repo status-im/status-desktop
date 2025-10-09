@@ -9,8 +9,9 @@ from driver.aut import AUT
 from helpers.onboarding_helper import open_create_profile_view, import_seed_and_log_in
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
 
-from gui.main_window import MainLeftPanel, MainWindow
+from gui.main_window import MainWindow
 from gui.screens.onboarding import ReturningLoginView
+from helpers.settings_helper import open_wallet_settings, open_profile_settings
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
@@ -32,15 +33,14 @@ def test_import_and_reimport_random_seed(
             import_seed_and_log_in(create_your_profile_view, seed_phrase, user_account)
 
     with step('Verify that restored account reveals correct status wallet address'):
-        profile = main_window.left_panel.open_settings().left_panel.open_profile_settings()
+        profile = open_profile_settings(main_window)
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
 
         status_account_index = 0
-        status_acc_view = (
-            MainLeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(
-                WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value,
-                status_account_index))
+        status_acc_view = open_wallet_settings(main_window).open_account_in_settings(
+            WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value,
+            status_account_index)
         address = status_acc_view.get_account_address_value()
 
         address_from_seed = get_wallet_address_from_mnemonic(seed_phrase)

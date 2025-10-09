@@ -11,6 +11,7 @@ from scripts.utils.generators import random_wallet_acc_keypair_name
 
 import driver
 from gui.main_window import MainWindow
+from helpers.settings_helper import open_wallet_settings
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')

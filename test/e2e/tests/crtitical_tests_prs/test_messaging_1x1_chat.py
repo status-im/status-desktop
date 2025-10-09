@@ -7,12 +7,13 @@ import pytest
 from allure_commons._allure import step
 
 import driver
-from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
-    LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
 from constants.messaging import Messaging
 from constants.wallet import WalletAddress
 from ext.test_files.base64_images import BASE_64_IMAGE_JPEG
 from helpers.chat_helper import skip_message_backup_popup_if_visible
+from helpers.multiple_instances_helper import (
+    authorize_user_in_aut, get_chat_key, send_contact_request_from_settings, switch_to_aut
+)
 from gui.screens.messages import MessagesScreen
 
 import configs.testpath
@@ -41,27 +42,13 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
-                aut.attach()
-                main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
-                main_window.authorize_user(account)
-                main_window.hide()
+                authorize_user_in_aut(aut, main_window, account)
 
         with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_window.prepare()
-            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            main_window.left_panel.click()
-            main_window.hide()
+            chat_key = get_chat_key(aut_two, main_window)
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_window.prepare()
-            settings = main_window.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
+            contacts_settings = send_contact_request_from_settings(aut_one, main_window, chat_key, f'Hello {user_two.name}')
 
         with step('Verify that contact request was sent and is in pending requests'):
             contacts_settings.open_pending_requests()
@@ -71,8 +58,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'Verify that contact request was received by {user_two.name}'):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
             settings = main_window.left_panel.open_settings()
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
@@ -103,8 +89,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'Verify that contact appeared in contacts list of {user_one.name} in messaging settings'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
             assert str(contacts_settings.section_header.object.text) == 'Contacts'
@@ -118,14 +103,12 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'Verify that 1X1 chat with {user_one.name} appeared for {user_two.name}'):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
             messages_screen = main_window.left_panel.open_messages_screen()
             assert user_one.name in messages_screen.left_panel.get_chats_names
 
         with step(f'User {user_one.name} send  a message to {user_two.name}'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             left_panel_chat = main_window.left_panel.open_messages_screen().left_panel
             assert driver.waitFor(lambda: user_two.name in left_panel_chat.get_chats_names,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
@@ -154,8 +137,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name}'):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
             messages_screen.left_panel.click_chat_by_name(user_one.name)
 
         with step(f'User {user_two.name} send reply to {user_one.name}'):
@@ -182,8 +164,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'User {user_one.name}, received reply from {user_two.name}'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             time.sleep(4)
             message_object = messages_screen.chat.messages(2)[0]
             assert driver.waitFor(lambda: chat_message2 in str(message_object.object.unparsedText)), \
@@ -217,8 +198,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'User {user_two.name}, also see emoji reaction on the last message'):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
             message = chat.find_message_by_text(chat_message_reply, 0)
             assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] in str(message.get_emoji_reactions_pathes()[0]),
                                   timeout), \
@@ -226,8 +206,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'User {user_one.name}, delete own message and verify it was deleted'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             message = chat.find_message_by_text(chat_message_reply, 0)
             message.hover_message().delete_message()
 
@@ -245,22 +224,19 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.hide()
 
         with step(f'Verify chat history was not cleared for {user_two.name} '):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
             messages_screen.left_panel.click_chat_by_name(user_one.name)
             messages = messages_screen.chat.messages(index=None)
             assert len(messages) != 0, f"The history of messages is empty"
 
         with step(f'User {user_two.name} close chat'):
-            aut_two.attach()
-            main_window.prepare()
+            switch_to_aut(aut_two, main_window)
             messages_screen.group_chat.close_chat()
             assert user_one.name not in messages_screen.left_panel.get_chats_names, f'{chat} is present in chats list'
             main_window.hide()
 
         with step(f'User {user_one.name} sees chat in the list'):
-            aut_one.attach()
-            main_window.prepare()
+            switch_to_aut(aut_one, main_window)
             assert driver.waitFor(lambda: user_two.name in messages_screen.left_panel.get_chats_names,
                                   timeout), f'{chat} is present in chats list'
             main_window.hide()

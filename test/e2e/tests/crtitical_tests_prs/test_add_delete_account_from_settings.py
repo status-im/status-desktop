@@ -12,6 +12,7 @@ import driver
 from constants.wallet import WalletAccountSettings, DerivationPathValue
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
+from helpers.settings_helper import open_wallet_settings
 
 
 @pytest.mark.critical
@@ -28,8 +29,7 @@ def test_delete_generated_account_from_wallet_settings(
         main_screen: MainWindow, user_account, account_name: str, color: str, emoji: str, emoji_unicode: str):
     
     with step('Open add account pop up from wallet settings'):
-        add_account_popup = \
-            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
+        add_account_popup = open_wallet_settings(main_screen).open_add_account_pop_up()
 
     with step('Add a new generated account from wallet settings screen'):
         add_account_popup.set_name(account_name).save_changes()
@@ -70,7 +70,7 @@ def test_delete_generated_account_from_wallet_settings(
     with step('Navigate to wallet and reopen account details for deletion'):
         # Navigate to wallet screen first, then to settings to get fresh acc_view
         main_screen.home.open_from_dock(DockButtons.WALLET.value)
-        acc_view = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(account_name, account_index)
+        acc_view = open_wallet_settings(main_screen).open_account_in_settings(account_name, account_index)
 
     with step('Delete generated account'):
         delete_confirmation_popup = acc_view.open_remove_account_with_confirmation_popup()
