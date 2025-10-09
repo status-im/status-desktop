@@ -1,13 +1,18 @@
-import nimqml, strutils
+import nimqml, strutils, json
 
 import ./io_interface
 import app/modules/shared/wallet_utils
 import app_service/service/currency/dto
+import app/modules/shared_models/currency_amount
 
 QtObject:
   type MarketDetailsItem* = ref object of QObject
     delegate: io_interface.TokenMarketValuesDataSource
     currencyFormat: CurrencyFormatDto
+    currencyPriceItem: CurrencyAmount
+    marketCapItem: CurrencyAmount
+    highDayItem: CurrencyAmount
+    lowDayItem: CurrencyAmount
     symbol: string
 
   proc setup*(self: MarketDetailsItem) =
@@ -24,15 +29,15 @@ QtObject:
     result.delegate = delegate
     result.symbol = symbol
     result.currencyFormat = delegate.getCurrentCurrencyFormat()
-
-
-  proc updateCurrencyFormat*(self: MarketDetailsItem) =
-    self.currencyFormat = self.delegate.getCurrentCurrencyFormat()
+    result.currencyPriceItem = currencyAmountToItem(delegate.getPriceBySymbol(result.symbol), result.currencyFormat)
+    result.marketCapItem = currencyAmountToItem(delegate.getMarketValuesBySymbol(result.symbol).marketCap, result.currencyFormat)
+    result.highDayItem = currencyAmountToItem(delegate.getMarketValuesBySymbol(result.symbol).highDay, result.currencyFormat)
+    result.lowDayItem = currencyAmountToItem(delegate.getMarketValuesBySymbol(result.symbol).lowDay, result.currencyFormat)
 
   proc marketCapChanged*(self: MarketDetailsItem) {.signal.}
   proc marketCap*(self: MarketDetailsItem): QVariant {.slot.} =
     if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).marketCap, self.currencyFormat))
+    else: return newQVariant(self.marketCapItem)
   QtProperty[QVariant] marketCap:
     read = marketCap
     notify = marketCapChanged
@@ -40,7 +45,7 @@ QtObject:
   proc highDayChanged*(self: MarketDetailsItem) {.signal.}
   proc highDay*(self: MarketDetailsItem): QVariant {.slot.} =
     if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).highDay, self.currencyFormat))
+    else: return newQVariant(self.highDayItem)
   QtProperty[QVariant] highDay:
     read = highDay
     notify = highDayChanged
@@ -48,7 +53,7 @@ QtObject:
   proc lowDayChanged*(self: MarketDetailsItem) {.signal.}
   proc lowDay*(self: MarketDetailsItem): QVariant {.slot.} =
     if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).lowDay, self.currencyFormat))
+    else: return newQVariant(self.lowDayItem)
   QtProperty[QVariant] lowDay:
     read = lowDay
     notify = lowDayChanged
@@ -87,10 +92,53 @@ QtObject:
 
   proc currencyPriceChanged*(self: MarketDetailsItem) {.signal.}
   proc currencyPrice*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant(currencyAmountToItem(0, self.currencyFormat))
-    else:
-      let price = self.delegate.getPriceBySymbol(self.symbol)
-      return newQVariant(currencyAmountToItem(price, self.currencyFormat))
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
+    else: return newQVariant(self.currencyPriceItem)
   QtProperty[QVariant] currencyPrice:
     read = currencyPrice
     notify = currencyPriceChanged
+
+  proc updateCurrencyPrice*(self: MarketDetailsItem) =
+    let price = currencyAmountToItem(self.delegate.getPriceBySymbol(self.symbol), self.currencyFormat)
+    if self.currencyPriceItem == price: return
+
+    self.currencyPriceItem.set(price)
+    self.currencyPriceChanged()
+
+  proc updateMarketCap*(self: MarketDetailsItem) =
+    let marketCap = currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).marketCap, self.currencyFormat)
+    if self.marketCapItem == marketCap: return
+
+    self.marketCapItem.set(marketCap)
+    self.marketCapChanged()
+
+  proc updateHighDay*(self: MarketDetailsItem) =
+    let highDay = currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).highDay, self.currencyFormat)
+    if self.highDayItem == highDay: return
+
+    self.highDayItem.set(highDay)
+    self.highDayChanged()
+
+  proc updateLowDay*(self: MarketDetailsItem) =
+    let lowDay = currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).lowDay, self.currencyFormat)
+    if self.lowDayItem == lowDay: return
+
+    self.lowDayItem.set(lowDay)
+    self.lowDayChanged()
+
+  proc updateCurrencyFormat*(self: MarketDetailsItem) =
+    self.currencyFormat = self.delegate.getCurrentCurrencyFormat()
+    self.updateCurrencyPrice()
+    self.updateMarketCap()
+    self.updateHighDay()
+    self.updateLowDay()
+
+  proc update*(self: MarketDetailsItem) =
+    self.updateCurrencyPrice()
+    self.updateMarketCap()
+    self.updateHighDay()
+    self.updateLowDay()
+    self.changePctHourChanged()
+    self.changePctDayChanged()
+    self.changePct24hourChanged()
+    self.change24hourChanged()
