@@ -50,7 +50,8 @@ APP_CONFIG_DEFINES=(
 
 # build status-client with feature flags
 env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c "${PLATFORM_SPECIFIC[@]}" "${APP_CONFIG_DEFINES[@]}" ${QML_SERVER_DEFINES}  \
-    --mm:refc \
+    --mm:orc \
+    -d:useMalloc \
     --opt:size \
     -d:lto \
     --cc:clang \
