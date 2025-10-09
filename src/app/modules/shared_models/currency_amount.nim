@@ -27,6 +27,20 @@ QtObject:
   proc newCurrencyAmount*: CurrencyAmount =
     result = newCurrencyAmount(0.0, "", 0, true)
 
+  proc set*(self: var CurrencyAmount, other: CurrencyAmount) =
+    self.amount = other.amount
+    self.symbol = other.symbol
+    self.displayDecimals = other.displayDecimals
+    self.stripTrailingZeroes = other.stripTrailingZeroes
+
+  proc `==`*(self: CurrencyAmount, other: CurrencyAmount): bool =
+    if self.isNil or other.isNil: return false
+
+    return self.amount == other.amount and
+      self.symbol == other.symbol and
+      self.displayDecimals == other.displayDecimals and
+      self.stripTrailingZeroes == other.stripTrailingZeroes
+
   proc `$`*(self: CurrencyAmount): string =
     result = fmt"""CurrencyAmount(
       amount: {self.amount},
