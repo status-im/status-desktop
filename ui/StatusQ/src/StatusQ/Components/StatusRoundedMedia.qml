@@ -218,7 +218,8 @@ StatusRoundedComponent {
                 mediaLoader.setSource("StatusAnimatedImage.qml",
                                     {
                                         "source": root.mediaUrl,
-                                        "fillMode": root.fillMode
+                                        "fillMode": root.fillMode,
+                                        "sourceSize": Qt.size(width, height)
                                     });
                 return
             } else if (componentMediaType === StatusRoundedMedia.MediaType.Video) {
@@ -241,7 +242,8 @@ StatusRoundedComponent {
                 mediaLoader.setSource("StatusImage.qml",
                                     {
                                         "source": root.mediaUrl,
-                                        "fillMode": root.fillMode
+                                        "fillMode": root.fillMode,
+                                        "sourceSize": Qt.size(width, height)
                                     })
                 return
             } else if (root.fallbackImageUrl !== "") {
@@ -258,7 +260,8 @@ StatusRoundedComponent {
         mediaLoader.setSource("StatusImage.qml",
                             {
                                 "source": root.fallbackImageUrl,
-                                "fillMode": root.fillMode
+                                "fillMode": root.fillMode,
+                                "sourceSize": Qt.size(width, height)
                             })
     }
 
@@ -267,7 +270,8 @@ StatusRoundedComponent {
         mediaLoader.setSource("StatusImage.qml",
                             {
                                 "source": "",
-                                "fillMode": root.fillMode
+                                "fillMode": root.fillMode,
+                                "sourceSize": Qt.size(-1, -1)
                             });
     }
 }
