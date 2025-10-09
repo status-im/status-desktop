@@ -26,6 +26,9 @@ if [[ "${OS}" == "android" ]]; then
     echo "Building for Android 35"
     ANDROID_PLATFORM=android-35
 
+    mkdir -p "${CWD}/../android/qt${QT_MAJOR}/assets"
+    cp -r "${CWD}/../../bin/i18n" "${CWD}/../android/qt${QT_MAJOR}/assets/"
+
     QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
     QMAKE_BIN="${QMAKE:-qmake}"
     "$QMAKE_BIN" "$CWD/../wrapperApp/Status-tablet.pro" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" -after
@@ -35,7 +38,7 @@ if [[ "${OS}" == "android" ]]; then
 
     # call androiddeployqt
     androiddeployqt --input "$BUILD_DIR/android-Status-tablet-deployment-settings.json" --output "$BUILD_DIR/android-build" --apk "$BUILD_DIR/android-build/Status-tablet.apk" --android-platform "$ANDROID_PLATFORM"
-   
+
     ANDROID_OUTPUT_DIR="bin/android/qt6"
     BIN_DIR_ANDROID=${BIN_DIR:-"$CWD/$ANDROID_OUTPUT_DIR"}
     mkdir -p "$BIN_DIR_ANDROID"
