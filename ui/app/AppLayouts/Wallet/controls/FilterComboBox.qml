@@ -53,7 +53,7 @@ ComboBox {
 
         readonly property int defaultDelegateHeight: 34
 
-        readonly property string searchTextLowerCase: searchBox.input.text.toLowerCase()
+        readonly property string searchTextLowerCase: searchBox.input.text
 
         readonly property SQUtils.ModelChangeTracker sourceModelTracker: SQUtils.ModelChangeTracker {
             model: root.sourceModel
@@ -81,39 +81,23 @@ ComboBox {
             readonly property var containsCollectible: (groupId) => SQUtils.ModelUtils.indexOf(root.sourceModel, "communityId", groupId) >= 0
                                                                     || SQUtils.ModelUtils.indexOf(root.sourceModel, "collectionUid", groupId) >= 0
             proxyRoles: [
-                FastExpressionRole {
-                    name: "groupName"
-                    expression: {
-                        if (!!model.communityId) {
-                            if (model.communityName === model.communityId && !!model.collectionName)
-                                return model.collectionName
-                            return model.communityName
-                        }
-                        return model.collectionName
-                    }
-                    expectedRoles: ["communityId", "collectionName", "communityName"]
-                },
-                FastExpressionRole {
-                    name: "groupKey"
-                    expression: !!model.communityId ? model.communityName : model.collectionName
-                    expectedRoles: ["communityId", "collectionName", "communityName"]
-                },
                 JoinRole {
                     name: "groupId"
                     roleNames: ["collectionUid", "communityId"]
                     separator: ""
                 }
-
             ]
             filters: [
-                FastExpressionFilter {
+                AnyOf {
                     enabled: d.searchTextLowerCase !== ""
-                    expression: {
-                        d.searchTextLowerCase // ensure expression is reevaluated when searchString changes
-                        return model.groupName.toLowerCase().includes(d.searchTextLowerCase) || model.groupId.toLowerCase().includes(d.searchTextLowerCase)
-                               || model.groupKey.toLowerCase().includes(d.searchTextLowerCase)
+                    SQUtils.SearchFilter {
+                        roleName: "groupName"
+                        searchPhrase: d.searchTextLowerCase
                     }
-                    expectedRoles: ["groupName", "groupId", "groupKey"]
+                    SQUtils.SearchFilter {
+                        roleName: "groupId"
+                        searchPhrase: d.searchTextLowerCase
+                    }
                 },
                 FastExpressionFilter {
                     expression: {

@@ -4,7 +4,7 @@
 #include <QString>
 #include <QVariant>
 
-static const auto undefinedTokenOrder = INT_MAX;
+static constexpr auto undefinedTokenOrder = INT_MAX;
 
 // Generic structure representing an asset, collectible, collection or community token
 struct TokenData {
@@ -14,6 +14,8 @@ struct TokenData {
     QVariant balances, marketDetails, decimals;
     int customSortOrderNo{undefinedTokenOrder};
     bool isSelfCollection{false};
+    // proxy roles
+    QString groupName;
 };
 
 // mirrors CollectiblePreferencesItemType from src/backend/collectibles_types.nim
