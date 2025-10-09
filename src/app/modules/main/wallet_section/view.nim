@@ -96,20 +96,9 @@ QtObject:
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 
-# Returning a QVariant from a slot with parameters other than "self" won't compile
-#  proc getCurrencyAmount*(self: View, amount: float, symbol: string): QVariant {.slot.} =
-#    return newQVariant(self.delegate.getCurrencyAmount(amount, symbol))
-
-# As a workaround, we do it in two steps: First call prepareCurrencyAmount, then getPreparedCurrencyAmount
-  proc prepareCurrencyAmount*(self: View, amount: float, symbol: string) {.slot.} =
-    self.tmpAmount = amount
-    self.tmpSymbol = symbol
-
-  proc getPreparedCurrencyAmount*(self: View): QVariant {.slot.} =
-    let currencyAmount = self.delegate.getCurrencyAmount(self.tmpAmount, self.tmpSymbol)
-    self.tmpAmount = 0
-    self.tmpSymbol = "ERROR"
-    return newQVariant(currencyAmount)
+  proc getCurrencyAmount*(self: View, amount: float, symbol: string): string {.slot.} =
+    let currencyAmount = self.delegate.getCurrencyAmount(amount, symbol)
+    return $(currencyAmount.toJsonNode())
 
   proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =
     self.delegate.runAddAccountPopup(addingWatchOnlyAccount)

@@ -24,12 +24,15 @@ QtObject {
         walletSection.updateCurrency(shortName)
     }
 
-    // The object returned by this sometimes becomes null when used as part of a binding expression.
-    // Will probably be solved when moving to C++, for now avoid storing the result of this function and use
-    // formatCurrencyAmount at the visualization point instead, or move functionality over to the NIM side.
     function getCurrencyAmount(amount, symbol) {
-        walletSection.prepareCurrencyAmount(amount, symbol)
-        return walletSection.getPreparedCurrencyAmount()
+        try {
+            let jsonData = walletSection.getCurrencyAmount(amount, symbol)
+            let obj = JSON.parse(jsonData)
+            return obj
+        } catch (e) {
+            console.warn("Error parsing prepared currency amount: " + e)
+            return {amount: 0, symbol: symbol, displayDecimals: 2, stripTrailingZeroes: false}
+        }
     }
 
     function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
