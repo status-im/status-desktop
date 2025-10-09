@@ -2,6 +2,7 @@
 
 #include "tokendata.h"
 
+#include <QJsonObject>
 #include <QElapsedTimer>
 
 ManageTokensController::ManageTokensController(QObject* parent)
@@ -46,7 +47,7 @@ ManageTokensController::ManageTokensController(QObject* parent)
                     qCDebug(manageTokens)
                         << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed() / 1'000'000.f << "ms";
 #endif
-        });
+                });
         connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this, &ManageTokensController::parseSourceModel);
         connect(m_sourceModel, &QAbstractItemModel::dataChanged, this, &ManageTokensController::parseSourceModel);
         m_modelConnectionsInitialized = true;
@@ -307,6 +308,40 @@ bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const
     return m_settingsData.value(symbol).visible;
 }
 
+QJsonObject ManageTokensController::getOwnershipTotalBalanceAndLastTimestamp(QAbstractItemModel *model, const QStringList &filterList) const
+{
+    if (!model)
+        return {};
+
+    constexpr auto roleByName = [](QAbstractItemModel* model, const auto &roleName) {
+        return model->roleNames().key(roleName, -1);
+    };
+
+    qint64 balance = 0;
+    double timestamp = 0.;
+
+    const auto ownershipCount = model->rowCount();
+    const auto accountAddressRole = roleByName(model, "accountAddress");
+
+    for (int i = 0; i < ownershipCount; i++) {
+        const auto accountAddress = model->data(model->index(i, 0), accountAddressRole).toString();
+        if (accountAddress.isEmpty() || !filterList.contains(accountAddress, Qt::CaseInsensitive))
+            continue;
+
+        bool tokenBalanceOk;
+        const auto tokenBalance = model->data(model->index(i, 0), roleByName(model, "balance")).toLongLong(&tokenBalanceOk);
+        if (tokenBalanceOk)
+            balance += tokenBalance;
+
+        bool txTimestampOk;
+        const auto txTimestamp = model->data(model->index(i, 0), roleByName(model, "txTimestamp")).toDouble(&txTimestampOk);
+        if (txTimestampOk)
+            timestamp = std::max(timestamp, txTimestamp);
+    }
+
+    return {{"balance", balance}, {"timestamp", timestamp}};
+}
+
 void ManageTokensController::classBegin()
 {
     // empty on purpose
@@ -442,6 +477,9 @@ void ManageTokensController::addItem(int index)
     token.decimals = dataForIndex(srcIndex, kDecimalsRoleName);
     token.marketDetails = dataForIndex(srcIndex, kMarketDetailsRoleName);
 
+    // proxy roles
+    token.groupName = !communityId.isEmpty() ? token.communityName : token.collectionName;
+
     token.customSortOrderNo = m_settingsData.contains(symbol) ? m_settingsData.value(symbol).sortOrder
                                                               : (visible ? undefinedTokenOrder : 0); // append/prepend
 
@@ -511,6 +549,7 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
             tokenGroup.communityImage = communityToken.communityImage;
             tokenGroup.backgroundColor = communityToken.backgroundColor;
             tokenGroup.balance = 1;
+            tokenGroup.groupName = !communityId.isEmpty() ? tokenGroup.communityName : tokenGroup.collectionName;
 
             if (m_settingsData.contains(communityId)) {
                 tokenGroup.customSortOrderNo = m_settingsData.value(communityId).sortOrder;
@@ -572,6 +611,7 @@ void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
             tokenGroup.communityImage = communityToken.communityImage;
             tokenGroup.backgroundColor = communityToken.backgroundColor;
             tokenGroup.balance = 1;
+            tokenGroup.groupName = !communityId.isEmpty() ? tokenGroup.communityName : collectionName;
             result.append(tokenGroup);
         } else { // update group's childCount
             const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [communityId](const auto& item) {
@@ -616,6 +656,7 @@ void ManageTokensController::rebuildCollectionGroupsModel()
             tokenGroup.image = collectionToken.image;
             tokenGroup.backgroundColor = collectionToken.backgroundColor;
             tokenGroup.balance = 1;
+            tokenGroup.groupName = collectionName;
 
             if (m_settingsData.contains(collectionId)) {
                 tokenGroup.customSortOrderNo = m_settingsData.value(collectionId).sortOrder;
@@ -677,6 +718,7 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
             tokenGroup.image = collectionToken.image;
             tokenGroup.backgroundColor = collectionToken.backgroundColor;
             tokenGroup.balance = 1;
+            tokenGroup.groupName = collectionName;
             result.append(tokenGroup);
         } else if (!isSelfCollection) { // update group's childCount
             const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [collectionId](const auto& item) {

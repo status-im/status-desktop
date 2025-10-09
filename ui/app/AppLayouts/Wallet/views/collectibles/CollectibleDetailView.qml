@@ -356,7 +356,7 @@ Item {
         id: collectibleimageComponent
         CollectibleMedia {
             id: collectibleImage
-            backgroundColor: collectible.backgroundColor
+            backgroundColor: collectible.backgroundColor ? collectible.backgroundColor : Theme.palette.baseColor5
             isCollectibleLoading: root.isCollectibleLoading
             mediaUrl: collectible.mediaUrl ?? ""
             mediaType: !!collectible ? (modelIndex > 0 && collectible.mediaType.startsWith("video")) ? "" : collectible.mediaType: ""
@@ -366,15 +366,15 @@ Item {
             enabled: interactive
             onImageClicked: (image, plain) => Global.openImagePopup(image, "", plain)
             onVideoClicked: (url) => Global.openVideoPopup(url)
-            onOpenImageContextMenu: (url, isGif) => Global.openMenu(imageContextMenu, collectibleImage, { imageSource: url, isGif: isGif, isVideo: false })
-            onOpenVideoContextMenu: (url) => Global.openMenu(imageContextMenu, collectibleImage, { imageSource: url, url: url, isVideo: true, isGif: false })
+            onOpenImageContextMenu: (url, isGif) => imageContextMenu.createObject(this, { imageSource: url, isGif: isGif, isVideo: false }).popup()
+            onOpenVideoContextMenu: (url) => imageContextMenu.createObject(this, { imageSource: url, url: url, isVideo: true, isGif: false }).popup()
+        }
+    }
 
-            Component {
-                id: imageContextMenu
-                ImageContextMenu {
-                    onClosed: destroy()
-                }
-            }
+    Component {
+        id: imageContextMenu
+        ImageContextMenu {
+            onClosed: destroy()
         }
     }
 }

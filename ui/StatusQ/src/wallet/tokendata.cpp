@@ -3,7 +3,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QList>
 
 // This is used by he collectibles to deconflict types saved. However, the UX ignores them on restore/load
 // and relies on the fact that all identities ("key" in backend and "symbol" in frontend) are unique between all
@@ -117,7 +116,7 @@ QString tokenOrdersToJson(const SerializedTokenData& dataList, bool areCollectib
 SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areCollectibles)
 {
     QJsonDocument doc = QJsonDocument::fromJson(json_string.toUtf8());
-    QJsonArray jsonArray = doc.array();
+    const QJsonArray jsonArray = doc.array();
 
     SerializedTokenData dataList;
     for (const QJsonValue& value : jsonArray) {
