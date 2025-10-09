@@ -74,22 +74,23 @@ def get_wallet_address_from_mnemonic(
 
 def generate_secure_password(length: int = 16) -> str:
     """Generate a strong password that meets basic complexity requirements."""
+    # Desktop UI enforces a 12-character minimum password; mirror that here.
     length = max(length, 12)
 
-    alphabet = string.ascii_letters + string.digits
+    lowercase = string.ascii_lowercase
+    uppercase = string.ascii_uppercase
+    digits = string.digits
     symbols = "!@#$%^&*"
 
     password_chars = [
-        secrets.choice(string.ascii_lowercase),
-        secrets.choice(string.ascii_uppercase),
-        secrets.choice(string.digits),
+        secrets.choice(lowercase),
+        secrets.choice(uppercase),
+        secrets.choice(digits),
         secrets.choice(symbols),
     ]
 
-    pool = alphabet + symbols
-    password_chars.extend(
-        secrets.choice(pool) for _ in range(length - len(password_chars))
-    )
+    all_chars = lowercase + uppercase + digits + symbols
+    password_chars += [secrets.choice(all_chars) for _ in range(length - 4)]
 
     _SECURE_RANDOM.shuffle(password_chars)
     return "".join(password_chars)
