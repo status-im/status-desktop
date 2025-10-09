@@ -9,6 +9,7 @@ from allure_commons._allure import step
 import configs
 import driver
 from gui.main_window import MainWindow
+from helpers.settings_helper import open_wallet_settings
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704620',
@@ -24,8 +25,7 @@ from gui.main_window import MainWindow
 @pytest.mark.smoke
 def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str, name: str):
     with (step('Open wallet settings - Saved addresses section')):
-        settings_saved_addresses = \
-            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_saved_addresses()
+        settings_saved_addresses = open_wallet_settings(main_screen).open_saved_addresses()
 
     with step('Click Add new address button and open add saved address popup'):
         add_saved_address_popup = settings_saved_addresses.open_add_edit_saved_address_popup()

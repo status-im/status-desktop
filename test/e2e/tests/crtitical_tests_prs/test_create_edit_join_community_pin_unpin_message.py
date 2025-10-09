@@ -5,7 +5,10 @@ from allure_commons._allure import step
 import driver
 from constants.community import Channel
 from gui.main_window import MainWindow
-from scripts.utils.browser import get_response, get_page_content
+from helpers.multiple_instances_helper import (
+    authorize_user_in_aut, get_chat_key, send_contact_request_from_settings, 
+    accept_contact_request_from_settings, switch_to_aut
+)
 from scripts.utils.generators import random_text_message, random_community_introduction, random_community_description, \
     random_community_name, random_community_leave_message
 import configs
@@ -31,36 +34,17 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
     with multiple_instances() as aut_one, multiple_instances() as aut_two:
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
             for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
-                aut.attach()
-                main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
-                main_screen.authorize_user(account)
-                main_screen.hide()
+                authorize_user_in_aut(aut, main_screen, account)
 
         with step(f'User {user_two.name}, get chat key'):
-            aut_two.attach()
-            main_screen.prepare()
-            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.copy_chat_key
-            main_screen.left_panel.click()
-            main_screen.hide()
+            chat_key = get_chat_key(aut_two, main_screen)
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contact_request_popup = contacts_settings.open_contact_request_form()
-            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
+            send_contact_request_from_settings(aut_one, main_screen, chat_key, f'Hello {user_two.name}')
             main_screen.hide()
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
-            aut_two.attach()
-            main_screen.prepare()
-            settings = main_screen.left_panel.open_settings()
-            messaging_settings = settings.left_panel.open_messaging_settings()
-            contacts_settings = messaging_settings.open_contacts_settings()
-            contacts_settings.accept_contact_request(user_one.name)
+            accept_contact_request_from_settings(aut_two, main_screen, user_one.name)
 
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
             with step('Create community and select it'):
@@ -144,8 +128,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             main_screen.hide()
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
+            switch_to_aut(aut_one, main_screen)
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             chat.click_community_invite(new_name, 0)
@@ -164,8 +147,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             main_screen.hide()
 
         with step(f'User {user_two.name}, see two members in community members list'):
-            aut_two.attach()
-            main_screen.prepare()
+            switch_to_aut(aut_two, main_screen)
             assert driver.waitFor(lambda: user_one.name in community_screen.right_panel.members, 10000)
             assert '2' in community_screen.left_panel.members
 
@@ -193,8 +175,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             main_screen.hide()
 
         with step(f'User {user_one.name} see the {second_message_text} as pinned'):
-            aut_one.attach()
-            main_screen.prepare()
+            switch_to_aut(aut_one, main_screen)
             message = messages_screen.chat.find_message_by_text(second_message_text, 1)
             assert driver.waitFor(lambda: message.message_is_pinned, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
             assert message.pinned_info_text + message.user_name_in_pinned_message == 'Pinned by' + user_two.name
@@ -202,14 +183,12 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             main_screen.hide()
 
         with step(f'User {user_two.name} unpin message from pinned messages popup'):
-            aut_two.attach()
-            main_screen.prepare()
+            switch_to_aut(aut_two, main_screen)
             pinned_msgs = messages_screen.tool_bar.open_pinned_messages_popup()
             pinned_msgs.unpin_message().close()
 
         with step(f'User {user_one.name} see the {second_message_text} as unpinned'):
-            aut_one.attach()
-            main_screen.prepare()
+            switch_to_aut(aut_one, main_screen)
             message = messages_screen.chat.find_message_by_text(second_message_text, 1)
             assert driver.waitFor(lambda: not message.message_is_pinned, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
             assert message.user_name_in_pinned_message == ''
