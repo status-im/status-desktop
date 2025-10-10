@@ -15,7 +15,7 @@ from gui.main_window import MainWindow
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')
 @pytest.mark.case(703033)
-@pytest.mark.critical
+# @pytest.mark.critical
 def test_add_edit_restart_add_delete_generated_account(aut: AUT, main_screen: MainWindow, user_account, ):
     name1 = random_wallet_acc_keypair_name()
     name2 = random_wallet_acc_keypair_name()

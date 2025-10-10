@@ -17,7 +17,7 @@ from gui.screens.onboarding import OnboardingWelcomeToStatusView, SyncResultView
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592, 738760)
-@pytest.mark.critical
+# @pytest.mark.critical
 @pytest.mark.smoke
 def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instances):
     user: UserAccount = RandomUser()

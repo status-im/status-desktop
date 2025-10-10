@@ -22,7 +22,7 @@ from gui.screens.messages import MessagesScreen
 @pytest.mark.case(703255, 703256, 703510, 738743, 738754, 738798, 738799)
 @pytest.mark.communities
 @pytest.mark.smoke
-@pytest.mark.critical
+# @pytest.mark.critical
 def test_create_edit_join_community_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()

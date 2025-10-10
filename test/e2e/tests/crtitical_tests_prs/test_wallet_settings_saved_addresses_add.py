@@ -20,7 +20,7 @@ from gui.main_window import MainWindow
                                  '0x8397bc3c5a60a1883174f722403d63a8833312b7')
                          ])
 @pytest.mark.case(704620, 738787)
-@pytest.mark.critical
+# @pytest.mark.critical
 @pytest.mark.smoke
 def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str, name: str):
     with (step('Open wallet settings - Saved addresses section')):
