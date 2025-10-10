@@ -180,7 +180,7 @@ method authenticateAndTransfer*(self: Module, uuid: string, fromAddr: string) =
     return
 
   let kp = self.controller.getKeypairByAccountAddress(fromAddr)
-  if kp.migratedToKeycard():
+  if not kp.isNil and kp.migratedToKeycard():
     let accounts = kp.accounts.filter(acc => cmpIgnoreCase(acc.address, fromAddr) == 0)
     if accounts.len != 1:
       error "cannot resolve selected account to send from among known keypair accounts"

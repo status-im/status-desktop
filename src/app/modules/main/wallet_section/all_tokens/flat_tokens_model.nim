@@ -144,11 +144,13 @@ QtObject:
 
   proc marketDetailsDataChanged(self: FlatTokensModel) =
     if self.delegate.getFlatTokensList().len > 0:
+      for marketDetails in self.tokenMarketDetails:
+        marketDetails.update()
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
-      self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
+      self.dataChanged(index, lastindex, @[ModelRole.MarketDetailsLoading.int])
 
   proc tokensMarketValuesUpdated*(self: FlatTokensModel) =
     self.marketDetailsDataChanged()
