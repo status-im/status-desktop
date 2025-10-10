@@ -821,13 +821,13 @@ proc tryToStoreDataToKeychain*(self: Controller, password: string) =
     return
   self.keychainService.storeData(singletonInstance.userProfile.getKeyUid(), password)
 
-proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
+proc getCurrencyFormat*(self: Controller, key: string): CurrencyFormatDto =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.getCurrencyFormat(symbol)
+  return self.walletAccountService.getCurrencyFormat(key)
 
-proc parseCurrencyValueByTokensKey*(self: Controller, tokensKey: string, amountInt: UInt256): float64 =
-  return self.walletAccountService.parseCurrencyValueByTokensKey(tokensKey, amountInt)
+proc getCurrencyValueForToken*(self: Controller, tokenKey: string, amountInt: UInt256): float64 =
+  return self.walletAccountService.getCurrencyValueForToken(tokenKey, amountInt)
 
 proc remainingAccountCapacity*(self: Controller): int =
   return self.walletAccountService.remainingAccountCapacity()

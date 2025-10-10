@@ -1,6 +1,9 @@
 import nimqml
 import io_interface
 import model
+
+import app_service/common/wallet_constants
+import app_service/service/token/items/token
 from app_service/service/ens/utils import ENS_REGISTRY
 
 QtObject:
@@ -95,8 +98,12 @@ QtObject:
   proc getCryptoValue*(self: View, fiatAmount: string, cryptoSymbol: string): string {.slot.} =
     return self.delegate.getCryptoValue(fiatAmount, cryptoSymbol)
 
-  proc getStatusTokenKey*(self: View): string {.slot.} =
-    return self.delegate.getStatusTokenKey()
+  proc getStatusTokenKeyForChainId*(self: View, chainId: int): string {.slot.} =
+    let tokenItem = createTokenItem(TokenDto(
+      chainId: chainId,
+      address: wallet_constants.statusTokenAddressForChainId(chainId)
+    ))
+    return tokenItem.key
 
   proc setPrefferedEnsUsername*(self: View, ensUsername: string) {.slot.} =
     self.delegate.setPrefferedEnsUsername(ensUsername)

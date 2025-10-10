@@ -24,27 +24,21 @@ QtObject {
 
     /* This contains the different sources for the tokens list
        ex. uniswap list, status tokens list */
-    readonly property var sourcesOfTokensModel: SortFilterProxyModel {
-        sourceModel: !!root._allTokensModule ? root._allTokensModule.sourcesOfTokensModel : null
-        proxyRoles: FastExpressionRole {
-            function sourceImage(name) {
-                return Constants.getSupportedTokenSourceImage(name)
-            }
-            name: "image"
-            expression: sourceImage(model.name)
-            expectedRoles: ["name"]
-        }
+    readonly property var tokenListsModel: SortFilterProxyModel {
+        sourceModel: !!root._allTokensModule ? root._allTokensModule.tokenListsModel : null
+
         filters: FastExpressionFilter {
-            function shouldDisplayList(listName, tokensCount) {
-                return listName !== Constants.supportedTokenSources.nativeList &&
-                        listName !== Constants.supportedTokenSources.custom &&
-                        tokensCount > 0
+            function shouldDisplayList(listId) {
+                return listId !== Constants.hiddenTokenLists.nativeList &&
+                        listId !== Constants.hiddenTokenLists.custom &&
+                        listId !== Constants.hiddenTokenLists.community
             }
 
             expression: {
-                return shouldDisplayList(model.name, model.tokensCount)
+                return shouldDisplayList(model.id)
             }
-            expectedRoles: ["name", "tokensCount"]
+
+            expectedRoles: ["id"]
         }
     }
 
@@ -60,28 +54,6 @@ QtObject {
         joinRole: "chainId"
     }
 
-    /* This list contains the complete list of tokens with separate
-       entry per token which has a unique [address + network] pair including extended information
-       about the specific network per entry */
-    readonly property var extendedFlatTokensModel: SortFilterProxyModel {
-        sourceModel: root._joinFlatTokensModel
-
-        proxyRoles:  [
-            JoinRole {
-                name: "explorerUrl"
-                roleNames: ["blockExplorerURL", "address"]
-                separator: "/token/"
-            },
-            FastExpressionRole {
-                function tokenIcon(symbol) {
-                    return Constants.tokenIcon(symbol)
-                }
-                name: "image"
-                expression: tokenIcon(model.symbol)
-                expectedRoles: ["symbol"]
-            }
-        ]
-    }
 
     /* This list contains list of tokens grouped by symbol
        EXCEPTION: We may have different entries for the same symbol in case

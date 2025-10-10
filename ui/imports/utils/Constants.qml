@@ -787,12 +787,10 @@ QtObject {
         readonly property int actionSyncDevice: 3
     }
 
-    readonly property QtObject supportedTokenSources: QtObject {
+    readonly property QtObject hiddenTokenLists: QtObject {
         readonly property string nativeList: "native"
-        readonly property string uniswap: "Uniswap Labs Default"
-        readonly property string aave: "Aave token list"
-        readonly property string status: "Status Token List"
         readonly property string custom: "custom"
+        readonly property string community: "community"
     }
 
     enum LocalPairingState {
@@ -1350,21 +1348,6 @@ QtObject {
 
     function isDefaultTokenIcon(url) {
         return url.indexOf("DEFAULT-TOKEN") !== -1
-    }
-
-    function getSupportedTokenSourceImage(name, useDefault=true) {
-        if (name === supportedTokenSources.uniswap)
-            return Theme.png("tokens/UNI")
-
-        if (name === supportedTokenSources.aave)
-            return Theme.png("tokens/AAVE")
-
-        if (name === supportedTokenSources.status)
-            return Theme.png("tokens/SNT")
-
-        if (useDefault)
-            return Theme.png("tokens/DEFAULT-TOKEN")
-        return ""
     }
 
     enum RecipientAddressObjectType {

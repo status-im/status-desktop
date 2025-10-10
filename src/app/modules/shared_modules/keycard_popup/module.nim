@@ -691,7 +691,7 @@ method onTokensRebuilt*[T](self: Module[T], accountAddresses: seq[string], accou
     for token in accountTokens:
       let filteredBalances = token.balancesPerAccount.filter(b =>  b.account == accAdd)
       for balance in filteredBalances:
-          totalTokenBalance += self.controller.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
+          totalTokenBalance += self.controller.getCurrencyValueForToken(token.key, balance.balance)
       let balance =  currencyAmountToItem(totalTokenBalance, currencyFormat)
       if not self.getKeyPairForProcessing().isNil:
         self.getKeyPairForProcessing().setBalanceForAddress(address, balance)

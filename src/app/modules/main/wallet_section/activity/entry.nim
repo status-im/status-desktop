@@ -50,8 +50,8 @@ QtObject:
     let amount = if self.isInTransactionType(): self.metadata.amountIn else: self.metadata.amountOut
     let symbol = if self.isInTransactionType(): self.metadata.symbolIn.get("") else: self.metadata.symbolOut.get("")
     return currencyAmountToItem(
-      currencyService.parseCurrencyValue(symbol, amount),
-      currencyService.getCurrencyFormat(symbol),
+      currencyService.getCurrencyValueForToken(symbol, amount), # TODO: use tokenKey instead of symbol
+      currencyService.getCurrencyFormat(symbol), # TODO: use tokenKey instead of symbol
     )
 
   proc newMultiTransactionActivityEntry*(metadata: backend.ActivityEntry, extradata: ExtraData, currencyService: Service): ActivityEntry =
@@ -84,15 +84,15 @@ QtObject:
 
   proc buildMultiTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
     if metadata.symbolIn.isSome():
-      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+      result.inAmount = currencyService.getCurrencyValueForToken(metadata.symbolIn.get(), metadata.amountIn)
     if metadata.symbolOut.isSome():
-      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
+      result.outAmount = currencyService.getCurrencyValueForToken(metadata.symbolOut.get(), metadata.amountOut)
 
   proc buildTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
     if metadata.symbolIn.isSome() or metadata.amountIn > 0:
-      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
+      result.inAmount = currencyService.getCurrencyValueForToken(metadata.symbolIn.get(""), metadata.amountIn)
     if metadata.symbolOut.isSome() or metadata.amountOut > 0:
-      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
+      result.outAmount = currencyService.getCurrencyValueForToken(metadata.symbolOut.get(""), metadata.amountOut)
 
   proc buildExtraData(backendEntry: backend.ActivityEntry, currencyService: Service): ExtraData =
     var extraData: ExtraData
@@ -147,7 +147,7 @@ QtObject:
 
   QtProperty[QVariant] transactions:
     read = getTransactions
-  
+
   proc getMetadata*(self: ActivityEntry): backend.ActivityEntry =
     return self.metadata
 

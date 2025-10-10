@@ -950,10 +950,10 @@ QtObject:
         return
 
       lastTokensUpdate = response.result.getStr
-      let dateTime = parse(lastTokensUpdate, DateTimeFormat)
+      let dateTime = parse(lastTokensUpdate, DATE_TIME_FORMAT_2)
       self.settings.lastTokensUpdate = dateTime.toTime().toUnix()
-    except ValueError:
-      error "parse lastTokensUpdate: ", lastTokensUpdate
+    except Exception as e:
+      error "parse lastTokensUpdate: ", data=lastTokensUpdate, errName = e.name, errDesription = e.msg
     return self.settings.lastTokensUpdate
 
   ### News Feed Settings ###
@@ -1071,7 +1071,7 @@ QtObject:
     read = getNewsRSSEnabled
     write = setNewsRSSEnabled
     notify = newsRSSEnabledChanged
-  
+
   # BACKUP
   proc getBackupPathWithDefault(backupPath: string): string =
     if backupPath.len > 0:

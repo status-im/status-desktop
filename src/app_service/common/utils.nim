@@ -1,8 +1,8 @@
 import std/[json, os, sugar, strutils]
-import stint, regex, chronicles
+import strutils, stint, regex, times, chronicles
 
 import nimcrypto
-import account_constants
+import account_constants, wallet_constants
 
 import constants as main_constants
 
@@ -90,3 +90,17 @@ proc createHash*(signature: string): string =
   let signatureHex = if signature.startsWith("0x"): signature[2..^1] else: signature
 
   return hashPassword(signatureHex, true)
+
+proc resolveUri*(uri: string): string =
+  if uri.startsWith(wallet_constants.IPFS_SCHEMA):
+    return uri.replace(wallet_constants.IPFS_SCHEMA, wallet_constants.IPFS_GATEWAY)
+  return uri
+
+proc timestampToUnix*(timestamp: string, format: string): int64 =
+  if timestamp.isEmptyOrWhitespace:
+    return 0
+  try:
+    let dateTime = parse(timestamp, format)
+    return dateTime.toTime().toUnix()
+  except Exception as e:
+    warn "failed to parse timestamp: ", data=timestamp, errName = e.name, errDesription = e.msg

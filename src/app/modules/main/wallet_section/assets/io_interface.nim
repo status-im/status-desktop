@@ -2,7 +2,7 @@ import app_service/service/wallet_account/dto/account_token_item
 
 type
   GroupedAccountAssetsDataSource* = tuple[
-    getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem]
+    getGroupedAssetsList: proc(): var seq[GroupedTokenItem]
   ]
 
 type
