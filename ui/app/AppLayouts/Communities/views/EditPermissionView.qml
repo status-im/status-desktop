@@ -286,7 +286,7 @@ StatusScrollView {
 
                 onAddAsset: function (key, amount) {
                     const modelItem = PermissionsHelpers.getTokenByKey(
-                                        root.assetsModel, key)
+                                        root.assetsModel, false, key)
 
                     addItem(Constants.TokenType.ERC20, modelItem, AmountsArithmetic.fromNumber(amount, modelItem.decimals).toFixed())
                     dropdown.close()
@@ -294,7 +294,7 @@ StatusScrollView {
 
                 onAddCollectible: function (key, amount) {
                     const modelItem = PermissionsHelpers.getTokenByKey(
-                                        root.collectiblesModel, key)
+                                        root.collectiblesModel, true, key)
 
                     addItem(Constants.TokenType.ERC721, modelItem, String(amount))
                     dropdown.close()
@@ -308,7 +308,7 @@ StatusScrollView {
 
                 onUpdateAsset: {
                     const itemIndex = prepareUpdateIndex(key)
-                    const modelItem = PermissionsHelpers.getTokenByKey(root.assetsModel, key)
+                    const modelItem = PermissionsHelpers.getTokenByKey(root.assetsModel, false, key)
 
                     d.dirtyValues.selectedHoldingsModel.set(
                                 itemIndex, { type: Constants.TokenType.ERC20, key, amount: AmountsArithmetic.fromNumber(amount, modelItem.decimals).toFixed() })
@@ -318,7 +318,7 @@ StatusScrollView {
                 onUpdateCollectible: {
                     const itemIndex = prepareUpdateIndex(key)
                     const modelItem = PermissionsHelpers.getTokenByKey(
-                                        root.collectiblesModel, key)
+                                        root.collectiblesModel, true, key)
 
                     d.dirtyValues.selectedHoldingsModel.set(
                                 itemIndex,
@@ -365,7 +365,7 @@ StatusScrollView {
                 switch(modelItem.type) {
                     case Constants.TokenType.ERC20:
                         dropdown.assetKey = modelItem.key
-                        const decimals = PermissionsHelpers.getTokenByKey(root.assetsModel, modelItem.key).decimals
+                        const decimals = PermissionsHelpers.getTokenByKey(root.assetsModel, false, modelItem.key).decimals
                         dropdown.assetAmount = AmountsArithmetic.toNumber(modelItem.amount, decimals)
                         break
                     case Constants.TokenType.ERC721:

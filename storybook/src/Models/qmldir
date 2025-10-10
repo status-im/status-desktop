@@ -16,7 +16,7 @@ MintedTokensModel 1.0 MintedTokensModel.qml
 ManageCollectiblesModel 1.0 ManageCollectiblesModel.qml
 ReactionsModels 1.0 ReactionsModels.qml
 RecipientModel 1.0 RecipientModel.qml
-SourceOfTokensModel 1.0 SourceOfTokensModel.qml
+TokenListsModel 1.0 TokenListsModel.qml
 TokenHoldersModel 1.0 TokenHoldersModel.qml
 TokenHoldersJoinModel 1.0 TokenHoldersJoinModel.qml
 UsersModel 1.0 UsersModel.qml

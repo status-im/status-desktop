@@ -115,11 +115,8 @@ proc getWalletDefaultAddress*(self: Controller): string =
 proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-proc getPriceBySymbol*(self: Controller, crypto: string): float64 =
-  return self.tokenService.getPriceBySymbol(crypto)
-
-proc getStatusTokenKey*(self: Controller): string =
-  return self.tokenService.getStatusTokenKey()
+proc getPriceForToken*(self: Controller, tokenKey: string): float64 =
+  return self.tokenService.getPriceForToken(tokenKey)
 
 proc ensnameResolverAddress*(self: Controller, ensUsername: string): string =
   return self.ensService.ensnameResolverAddress(ensUsername)

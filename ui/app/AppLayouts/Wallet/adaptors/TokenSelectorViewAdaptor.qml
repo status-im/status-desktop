@@ -36,8 +36,7 @@ QObject {
     // input API
     required property var assetsModel
 
-    // expected roles: key, name, symbol, image, communityId
-    property var plainTokensBySymbolModel // optional all tokens model, no balances
+    property var tokenGroupsModel
 
     // expected roles: chainId, chainName, iconUrl
     required property var flatNetworksModel
@@ -110,7 +109,7 @@ QObject {
 
     Loader {
         id: allTokensLoader
-        active: showAllTokens && !!plainTokensBySymbolModel
+        active: showAllTokens && !!tokenGroupsModel
         sourceComponent: allTokensComponent
     }
 
@@ -146,7 +145,7 @@ QObject {
                 id: delegateRoot
 
                 // properties exposed as roles to the top-level model
-                readonly property string tokensKey: model.tokensKey
+                readonly property string key: model.key // refers to token group key
                 readonly property int decimals: model.decimals
                 readonly property double currentBalance: aggregator.value
                 readonly property double currencyBalance: {
@@ -172,6 +171,8 @@ QObject {
                             if (typeof balance !== 'string')
                                 return 0
                             let bigIntBalance = AmountsArithmetic.fromString(balance)
+                            if (isNaN(bigIntBalance))
+                                return 0
                             return AmountsArithmetic.toNumber(bigIntBalance, decimals)
                         }
                         expression: balanceToDouble(model.balance, delegateRoot.decimals)
@@ -228,8 +229,8 @@ QObject {
                 }
             }
 
-            exposedRoles: ["tokensKey", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balancesModelCount"]
-            expectedRoles: [ "tokensKey", "communityId", "balances", "decimals", "marketDetails"]
+            exposedRoles: ["key", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balancesModelCount"]
+            expectedRoles: ["key", "communityId", "balances", "decimals", "marketDetails"]
         }
     }
 
@@ -252,41 +253,29 @@ QObject {
         LeftJoinModel {
             id: allTokens
             rightModel: tokensWithBalance
-            leftModel: RolesRenamingModel {
-                id: renamedTokensBySymbolModel
-                sourceModel: SortFilterProxyModel {
-                    sourceModel: root.plainTokensBySymbolModel
-                    filters: [
-                        // remove tokens not available on selected network(s)
-                        FastExpressionFilter {
-                            function isPresentOnEnabledNetworks(addressPerChain) {
-                                if(!addressPerChain)
-                                    return true
-                                if (root.enabledChainIds.length === 0)
-                                    return true
-                                return !!ModelUtils.getFirstModelEntryIf(
-                                            addressPerChain,
-                                            (addPerChain) => {
-                                                return root.enabledChainIds.includes(addPerChain.chainId)
-                                            })
-                            }
-                            expression: {
-                                root.enabledChainIds
-                                return isPresentOnEnabledNetworks(model.addressPerChain)
-                            }
-                            expectedRoles: ["addressPerChain"]
+            leftModel: SortFilterProxyModel {
+                sourceModel: root.tokenGroupsModel
+                filters: [
+                    // remove tokens not available on selected network(s)
+                    FastExpressionFilter {
+                        function isPresentOnEnabledNetworks(tokens, enabledChainIds) {
+                            if (enabledChainIds.length === 0)
+                                return true
+                            return !!ModelUtils.getFirstModelEntryIf(
+                                        tokens,
+                                        (t) => {
+                                            return root.enabledChainIds.includes(t.chainId)
+                                        })
                         }
-                    ]
-                }
-                mapping: [
-                    RoleRename {
-                        from: "key"
-                        to: "tokensKey"
+                        expression: {
+                            return isPresentOnEnabledNetworks(model.tokens, root.enabledChainIds)
+                        }
+                        expectedRoles: ["tokens"]
                     }
                 ]
             }
-            joinRole: "tokensKey"
-            rolesToJoin: ["tokensKey", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
+            joinRole: "key"
+            rolesToJoin: ["key", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
         }
     }
 }

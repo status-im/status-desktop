@@ -43,17 +43,17 @@ QObject {
     - symbol: symbol of the token,
     - decimals: decimals for the token
     */
-    required property var tokensBySymbolModel
+    required property var tokenGroupsModel
     /** Expected networks model structure:
     - chainId: chain Id for network,
     - chainName: name of network,
     - iconUrl: icon representing the network,
     */
     required property var filteredFlatNetworksModel
-    /** selectedTokenKey:
+    /** selectedGroupKey:
         the selected token key
     */
-    required property string selectedTokenKey
+    required property string selectedGroupKey
     /**  selectedNetworkChainId:
         the  selected network chainId
     */
@@ -85,7 +85,7 @@ QObject {
                 name: "accountBalance"
                 expression: {
                     // dependencies
-                    root.selectedTokenKey
+                    root.selectedGroupKey
                     root.selectedNetworkChainId
                     return d.processAccountBalance(model.address)
                 }
@@ -126,8 +126,8 @@ QObject {
         }
 
         function processAccountBalance(address) {
-            let selectedToken = ModelUtils.getByKey(root.tokensBySymbolModel, "key", root.selectedTokenKey)
-            if (!selectedToken) {
+            let selectedTokenGroup = ModelUtils.getByKey(root.tokenGroupsModel, "key", root.selectedGroupKey)
+            if (!selectedTokenGroup) {
                 return null
             }
 
@@ -136,10 +136,10 @@ QObject {
                 return null
             }
 
-            let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "tokensKey", root.selectedTokenKey, "balances")
+            let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "key", root.selectedGroupKey, "balances")
             let accountBalance = ModelUtils.getByKey(balancesModel, "account", address)
             if(accountBalance && accountBalance.balance !== "0") {
-                accountBalance.formattedBalance = root.fnFormatCurrencyAmountFromBigInt(accountBalance.balance, selectedToken.symbol, selectedToken.decimals)
+                accountBalance.formattedBalance = root.fnFormatCurrencyAmountFromBigInt(accountBalance.balance, selectedTokenGroup.symbol, selectedTokenGroup.decimals)
                 return accountBalance
             }
 
@@ -147,7 +147,7 @@ QObject {
                 balance: "0",
                 iconUrl: network.iconUrl,
                 chainColor: network.chainColor,
-                formattedBalance: "0 %1".arg(selectedToken.symbol)
+                formattedBalance: "0 %1".arg(selectedTokenGroup.symbol)
             }
         }
     }

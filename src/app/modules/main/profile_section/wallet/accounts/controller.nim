@@ -57,8 +57,8 @@ proc getEnabledChainIds*(self: Controller): seq[int] =
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
 
-proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
-  return self.walletAccountService.getCurrencyFormat(symbol)
+proc getCurrencyFormat*(self: Controller, key: string): CurrencyFormatDto =
+  return self.walletAccountService.getCurrencyFormat(key)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()

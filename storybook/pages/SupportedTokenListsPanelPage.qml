@@ -15,7 +15,7 @@ import SortFilterProxyModel
 SplitView {
     id: root
 
-    readonly property var sourcesOfTokensModel: SourceOfTokensModel {}
+    readonly property var tokenListsModel: TokenListsModel {}
     readonly property var flatTokensModel: FlatTokensModel {}
     readonly property var joinModel: LeftJoinModel {
         leftModel: root.flatTokensModel
@@ -44,7 +44,7 @@ SplitView {
 
         SupportedTokenListsPanel {
             anchors.fill: parent
-            sourcesOfTokensModel: root.sourcesOfTokensModel
+            tokenListsModel: root.tokenListsModel
             tokensListModel: root.tokensProxyModel
         }
     }

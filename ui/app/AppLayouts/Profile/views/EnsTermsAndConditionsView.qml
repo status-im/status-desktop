@@ -349,13 +349,13 @@ Item {
           qsTr("Not enough SNT") :
           qsTr("Register")
         enabled: d.sntBalance >= 10 && termsAndConditionsCheckbox.checked
-        onClicked: root.registerUsername(root.username)
+        onClicked: root.registerUsername()
     }
 
     ModelEntry {
         id: statusTokenEntry
         sourceModel: root.assetsModel
-        key: "tokensKey"
-        value: root.ensUsernamesStore.getStatusTokenKey()
+        key: "key"
+        value: root.ensUsernamesStore.getStatusTokenGroupKey()
     }
 }

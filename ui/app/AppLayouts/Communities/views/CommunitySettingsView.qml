@@ -377,16 +377,16 @@ StatusSectionLayout {
 
                 communityDetails: d.communityDetails
 
-                onCreatePermissionRequested:
-                    root.createPermissionRequested(holdings, permissionType,isPrivate, channels)
+                onCreatePermissionRequested: (permissionType, holdings, channels, isPrivate) =>
+                    root.createPermissionRequested(holdings, permissionType, isPrivate, channels)
 
-                onUpdatePermissionRequested:
+                onUpdatePermissionRequested: (key, permissionType, holdings, channels, isPrivate) =>
                     root.editPermissionRequested(key, holdings, permissionType, channels, isPrivate)
 
-                onRemovePermissionRequested:
+                onRemovePermissionRequested: (key) =>
                     root.removePermissionRequested(key)
 
-                onNavigateToMintTokenSettings: {
+                onNavigateToMintTokenSettings: (isAssetType) => {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
                     mintPanelLoader.item.openNewTokenForm(isAssetType)
                 }

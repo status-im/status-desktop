@@ -7,6 +7,7 @@ import ../main/wallet_section/accounts/item as wallet_accounts_item
 proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto) : CurrencyAmount =
   return newCurrencyAmount(
     amount,
+    format.key,
     format.symbol,
     int(format.displayDecimals),
     format.stripTrailingZeroes
@@ -32,7 +33,7 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
     w.hideFromTotalBalance
   )
 
-proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: bool, 
+proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: bool,
   currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool,
   marketValuesLoading: bool): wallet_accounts_item.Item =
   return wallet_accounts_item.newItem(
@@ -54,4 +55,4 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: b
     w.hideFromTotalBalance,
     canSend=w.walletType != "watch" and (w.operable==AccountFullyOperable or w.operable==AccountPartiallyOperable)
   )
-  
+

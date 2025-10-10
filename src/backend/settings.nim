@@ -1,5 +1,5 @@
 import json
-import ./core, ./response_type, ../app_service/common/utils
+import ./core, ./response_type
 
 export response_type
 
