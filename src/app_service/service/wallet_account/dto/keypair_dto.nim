@@ -49,6 +49,7 @@ proc toKeypairDto*(jsonObj: JsonNode): KeypairDto =
       result.accounts.add(toWalletAccountDto(accObj))
 
   var keycardsObj: JsonNode
+  result.keycards = @[]
   if jsonObj.getProp("keycards", keycardsObj) and keycardsObj.kind != JNull:
     for kcObj in keycardsObj:
       result.keycards.add(toKeycardDto(kcObj))
