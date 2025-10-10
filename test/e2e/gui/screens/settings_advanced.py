@@ -26,12 +26,12 @@ class AdvancedSettingsView(QObject):
             if not self.rpc_statistics_button.is_visible:
                 self.scroll.vertical_scroll_down(self.rpc_statistics_button)
 
-            if self.manage_community_on_testnet_button.object.switchChecked:
+            if self.manage_community_on_testnet_button.object.checked:
                 return self
 
             self.manage_community_on_testnet_button.click()
             for _ in range(5):
-                if self.manage_community_on_testnet_button.object.switchChecked:
+                if self.manage_community_on_testnet_button.object.checked:
                     return self
                 time.sleep(wait_timeout / 5)
         raise RuntimeError('Could not enable Manage communities on testnet toggle')
