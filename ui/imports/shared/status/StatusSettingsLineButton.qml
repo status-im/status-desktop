@@ -1,125 +1,76 @@
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import utils
-import ".."
-import "../panels"
-
-import StatusQ.Controls as StatusQControls
-import StatusQ.Core as StatusQCore
+import StatusQ.Core
+import StatusQ.Controls
+import StatusQ.Components
 import StatusQ.Core.Theme
 
-Rectangle {
-    property string text
-    property bool isSwitch: false
-    property bool switchChecked: false
-    property string currentValue
-    property bool isBadge: false
-    property string badgeText: "1"
-    property int badgeRadius: 9
-    property bool isEnabled: true
-    signal clicked(bool checked)
-    property bool isHovered: false
-    property int badgeSize: 18
-    property url iconSource
-
+ItemDelegate {
     id: root
-    implicitHeight: 52
-    color: isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent
-    radius: Theme.radius
-    border.width: 0
-    anchors.left: parent.left
-    anchors.leftMargin: -Theme.padding
-    anchors.right: parent.right
-    anchors.rightMargin: -Theme.padding
 
-    RoundedIcon {
-        id: pinImage
-        visible: !!root.iconSource.toString()
-        source: root.iconSource
-        iconColor: Theme.palette.primaryColor1
-        color: Theme.palette.secondaryBackground
-        width: 40
-        height: 40
-        iconWidth: 24
-        iconHeight: 24
-        anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
-        anchors.verticalCenter: parent.verticalCenter
+    property bool isSwitch: false
+    property string currentValue
+    property int badgeValue
+    property int badgeRadius: 9
+
+    horizontalPadding: Theme.padding
+    spacing: Theme.padding
+
+    checkable: isSwitch
+    hoverEnabled: enabled
+
+    background: Rectangle {
+        color: hovered ? Theme.palette.backgroundHover : Theme.palette.transparent
+        radius: Theme.radius
     }
 
-    StyledText {
-        id: textItem
-        anchors.left: pinImage.visible ? pinImage.right : parent.left
-        anchors.leftMargin: Theme.padding
-        anchors.verticalCenter: parent.verticalCenter
-        text: root.text
-        font.pixelSize: Theme.primaryTextFontSize
-        color: Theme.palette.textColor
-    }
+    contentItem: RowLayout {
+        spacing: root.spacing
 
-    StyledText {
-        id: valueText
-        visible: !!root.currentValue
-        text: root.currentValue
-        elide: Text.ElideRight
-        font.pixelSize: Theme.primaryTextFontSize
-        horizontalAlignment: Text.AlignRight
-        color: Theme.palette.secondaryText
-        anchors.left: textItem.right
-        anchors.leftMargin: Theme.padding
-        anchors.right: root.isSwitch ? switchItem.left : caret.left
-        anchors.rightMargin: Theme.padding
-        anchors.verticalCenter: textItem.verticalCenter
+        StatusRoundIcon {
+            Layout.preferredWidth: 40
+            Layout.preferredHeight: 40
+            visible: !!root.icon.source.toString()
+            asset.source: root.icon.source
+            asset.bgColor: Theme.palette.secondaryBackground
+        }
 
-    }
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: root.text
+            elide: Text.ElideRight
+        }
 
-    StatusQControls.StatusSwitch {
-        id: switchItem
-        enabled: root.isEnabled
-        visible: root.isSwitch
-        checked: root.switchChecked
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
-        anchors.verticalCenter: textItem.verticalCenter
-    }
+        StatusBaseText {
+            visible: !!root.currentValue
+            text: root.currentValue
+            horizontalAlignment: Text.AlignRight
+            color: Theme.palette.secondaryText
+        }
 
-    Rectangle {
-        id: badge
-        visible: root.isBadge & !root.isSwitch
-        anchors.right: root.isSwitch ? switchItem.left : caret.left
-        anchors.rightMargin: Theme.padding
-        anchors.verticalCenter: textItem.verticalCenter
-        radius: root.badgeRadius
-        color: Theme.palette.primaryColor1
-        width: root.badgeSize
-        height: root.badgeSize
-        Text {
-            font.pixelSize: Theme.tertiaryTextFontSize
-            color: Theme.palette.white
-            anchors.centerIn: parent
-            text: root.badgeText
+        StatusBadge {
+            visible: badgeValue > 0
+            radius: root.badgeRadius
+            color: Theme.palette.primaryColor1
+            value: root.badgeValue
+        }
+
+        StatusSwitch {
+            visible: root.checkable
+            checked: root.checked
+            onToggled: root.click()
+        }
+
+        StatusIcon {
+            visible: !root.checkable
+            icon: "next"
+            color: Theme.palette.secondaryText
         }
     }
 
-    StatusQCore.StatusIcon {
-        id: caret
-        visible: !root.isSwitch
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
-        anchors.verticalCenter: textItem.verticalCenter
-        icon: "next"
-        color: Theme.palette.secondaryText
-    }
-
-    StatusQCore.StatusMouseArea {
-        anchors.fill: parent
-        enabled: root.isEnabled
-        hoverEnabled: true
-        onEntered: root.isHovered = true
-        onExited: root.isHovered = false
-        onClicked: {
-            root.clicked(!root.switchChecked)
-        }
-        cursorShape: Qt.PointingHandCursor
+    HoverHandler {
+        cursorShape: hovered ? Qt.PointingHandCursor : undefined
     }
 }

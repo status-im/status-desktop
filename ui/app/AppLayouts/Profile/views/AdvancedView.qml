@@ -53,10 +53,7 @@ SettingsContentBase {
             anchors.left: parent.left
             width: root.contentWidth
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Fleet")
                 currentValue: root.advancedStore.fleet
                 onClicked: fleetModal.open()
@@ -65,31 +62,22 @@ SettingsContentBase {
 
             StatusSettingsLineButton {
                 id: labelScrolling
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Chat scrolling")
                 currentValue: root.advancedStore.isCustomScrollingEnabled ? qsTr("Custom") : qsTr("System")
                 onClicked: scrollingModal.open()
             }
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Minimize on close")
                 isSwitch: true
-                switchChecked: !localAccountSensitiveSettings.quitOnClose
-                onClicked: function (checked) {
-                    localAccountSensitiveSettings.quitOnClose = !checked
-                }
+                checked: !localAccountSensitiveSettings.quitOnClose
+                onToggled: localAccountSensitiveSettings.quitOnClose = !checked
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Mainnet data verified by Nimbus")
                 isSwitch: true
-                switchChecked: root.advancedStore.isNimbusProxyEnabled
+                checked: root.advancedStore.isNimbusProxyEnabled
                 onClicked: {
                     Global.openPopup(enableNimbusProxyComponent)
                 }
@@ -136,15 +124,12 @@ SettingsContentBase {
                 bottomPadding: Theme.padding
             }
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Web/dApp Browser")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isBrowserEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isBrowserEnabled) {
+                checked: localAccountSensitiveSettings.isBrowserEnabled
+                onToggled: {
+                    if (checked) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.browser
                         confirmationPopup.open()
                     } else {
@@ -153,15 +138,12 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Node Management")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.nodeManagementEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.nodeManagementEnabled) {
+                checked: localAccountSensitiveSettings.nodeManagementEnabled
+                onToggled: {
+                    if (checked) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.nodeManagement
                         confirmationPopup.open()
                     } else {
@@ -171,23 +153,19 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Archive Protocol Enabled")
                 visible: !SQUtils.Utils.isMobile
                 isSwitch: true
-                switchChecked: root.advancedStore.archiveProtocolEnabled
+                checked: root.advancedStore.archiveProtocolEnabled
                 onClicked: {
                     root.advancedStore.toggleArchiveProtocolEnabled()
                 }
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("ENS Community Permissions Enabled")
                 isSwitch: true
-                switchChecked: root.advancedStore.ensCommunityPermissionsEnabled
+                checked: root.advancedStore.ensCommunityPermissionsEnabled
                 onClicked: {
                     root.advancedStore.toggleEnsCommunityPermissionsEnabled()
                 }
@@ -207,13 +185,10 @@ SettingsContentBase {
                 bottomPadding: Theme.padding
             }
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Enable creation of sharded communities")
                 isSwitch: true
-                switchChecked: root.advancedStore.isWakuV2ShardedCommunitiesEnabled
+                checked: root.advancedStore.isWakuV2ShardedCommunitiesEnabled
                 onClicked: root.advancedStore.toggleWakuV2ShardedCommunities()
             }
 
@@ -312,10 +287,8 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Full developer mode")
-                isEnabled: {
+                enabled: {
                     return !localAccountSensitiveSettings.downloadChannelMessagesEnabled ||
                         !root.advancedStore.isDebugEnabled ||
                         !root.advancedStore.isAutoMessageEnabled
@@ -330,12 +303,10 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Enable translations")
                 isSwitch: true
-                switchChecked: localAppSettings.translationsEnabled
-                onClicked: {
+                checked: localAppSettings.translationsEnabled
+                onToggled: {
                     localAppSettings.translationsEnabled = !localAppSettings.translationsEnabled
                     if (!checked)
                         Global.openPopup(disableLanguagesPopupComponent)
@@ -353,26 +324,20 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Download messages")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
+                checked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
                 onClicked: {
                     localAccountSensitiveSettings.downloadChannelMessagesEnabled = !localAccountSensitiveSettings.downloadChannelMessagesEnabled
                 }
             }
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Debug")
                 isSwitch: true
-                isEnabled: !root.advancedStore.isRuntimeLogLevelSet
-                switchChecked: root.advancedStore.isDebugEnabled
+                enabled: !root.advancedStore.isRuntimeLogLevelSet
+                checked: root.advancedStore.isDebugEnabled
 
                 onClicked: {
                     Global.openPopup(enableDebugComponent)
@@ -393,46 +358,37 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Auto message")
                 isSwitch: true
-                switchChecked: root.advancedStore.isAutoMessageEnabled
+                checked: root.advancedStore.isAutoMessageEnabled
                 onClicked: {
                     Global.openPopup(enableAutoMessageConfirmationDialogComponent)
                 }
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 objectName: "manageCommunitiesOnTestnetButton"
                 text: qsTr("Manage communities on testnet")
                 isSwitch: true
-                switchChecked: root.advancedStore.isManageCommunityOnTestModeEnabled
+                checked: root.advancedStore.isManageCommunityOnTestModeEnabled
                 onClicked: {
                     root.advancedStore.toggleManageCommunityOnTestnet()
                 }
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("Enable community tokens refreshing")
                 isSwitch: true
-                switchChecked: root.advancedStore.refreshTokenEnabled
+                checked: root.advancedStore.refreshTokenEnabled
                 onClicked: {
                     root.advancedStore.toggleRefreshTokenEnabled()
                 }
             }
 
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("How many log files to keep archived")
-                currentValue: root.advancedStore.logMaxBackups
+                currentValue: root.advancedStore.logMaxBackups.toString()
                 onClicked: {
                     Global.openPopup(changeNumberOfLogsArchived)
                 }
@@ -440,8 +396,6 @@ SettingsContentBase {
 
             StatusSettingsLineButton {
                 id: rpcStatsButton
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 text: qsTr("RPC statistics")
                 onClicked: rpcStatsModal.open()
             }

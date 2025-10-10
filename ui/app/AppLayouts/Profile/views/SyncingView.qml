@@ -150,54 +150,38 @@ SettingsContentBase {
             }
         }
 
-        Rectangle {
+        Control {
+            Layout.preferredWidth: parent.width * .75
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Theme.padding
 
-            implicitWidth: instructionsLayout.implicitWidth
-                           + instructionsLayout.anchors.leftMargin
-                           + instructionsLayout.anchors.rightMargin
+            horizontalPadding: Theme.padding
+            verticalPadding: Theme.bigPadding
 
-            implicitHeight: instructionsLayout.implicitHeight
-                            + instructionsLayout.anchors.topMargin
-                            + instructionsLayout.anchors.bottomMargin
+            background: Rectangle {
+                color: Theme.palette.primaryColor3
+                radius: Theme.radius
+            }
 
-            color: Theme.palette.primaryColor3
-            radius: Theme.radius
-
-            ColumnLayout {
-                id: instructionsLayout
-
-                anchors {
-                    fill: parent
-                    topMargin: Theme.bigPadding
-                    bottomMargin: Theme.bigPadding
-                    leftMargin: Theme.padding
-                    rightMargin: Theme.padding
-                }
-
+            contentItem: ColumnLayout {
                 spacing: Theme.padding
 
-                Item {
+                RowLayout {
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
-                    height: syncNewDeviceText.height
-                    width: syncNewDeviceText.width
 
                     StatusBaseText {
-                        id: syncNewDeviceText
+                        Layout.preferredWidth: parent.width - betaTag.width - parent.spacing
                         objectName: "syncNewDeviceTextLabel"
-
+                        elide: Text.ElideRight
                         color: Theme.palette.primaryColor1
                         font.pixelSize: Theme.secondaryAdditionalTextSize
                         font.weight: Font.Bold
                         text: qsTr("Sync a New Device")
-
-                        StatusBetaTag {
-                            anchors.left: parent.right
-                            anchors.leftMargin: 8
-                            anchors.verticalCenter: parent.verticalCenter
-                            tooltipText: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
-                        }
+                    }
+                    StatusBetaTag {
+                        id: betaTag
+                        tooltipText: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
                     }
                 }
 
@@ -206,14 +190,16 @@ SettingsContentBase {
 
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.Wrap
                     color: Theme.palette.baseColor1
                     font.weight: Font.Medium
                     text: qsTr("You own your data. Sync it among your devices.")
                 }
 
                 ColumnLayout {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: 6
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Theme.padding
+
                     Repeater {
                         model: d.instructionsModel
                         RowLayout {
@@ -226,7 +212,9 @@ SettingsContentBase {
                                 text: index + 1
                             }
                             StatusBaseText {
+                                Layout.fillWidth: true
                                 text: modelData
+                                wrapMode: Text.Wrap
                             }
                         }
                     }
@@ -235,6 +223,7 @@ SettingsContentBase {
                         spacing: Theme.halfPadding
 
                         StatusCheckBox {
+                            Layout.fillWidth: true
                             objectName: "enableMessageSyncingCheckBox"
 
                             text: qsTr("Enable message syncing")
@@ -259,9 +248,7 @@ SettingsContentBase {
                     Layout.alignment: Qt.AlignHCenter
                     type: StatusBaseButton.Type.Primary
                     text: qsTr("Setup Syncing")
-                    onClicked: {
-                        d.setupSyncing()
-                    }
+                    onClicked: d.setupSyncing()
                 }
 
                 StatusBaseText {
@@ -270,6 +257,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                     font.pixelSize: Theme.additionalTextSize
                     text: "* " + qsTr("This is best done in private. The code will grant access to your profile.")
+                    wrapMode: Text.Wrap
                 }
             }
         }
