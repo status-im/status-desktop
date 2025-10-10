@@ -157,6 +157,7 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
         include/StatusQ/fastexpressionsorter.h
+        include/StatusQ/oneoffilter.h
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/genericvalidator.h
         include/StatusQ/keychain.h
@@ -176,6 +177,7 @@ add_library(StatusQ ${LIB_TYPE}
         src/constantrole.cpp
         src/externc.cpp
         src/fastexpressionfilter.cpp
+        src/oneoffilter.cpp
         src/fastexpressionrole.cpp
         src/fastexpressionsorter.cpp
         src/formatteddoubleproperty.cpp
