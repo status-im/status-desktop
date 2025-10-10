@@ -92,93 +92,95 @@ StatusSectionLayout {
         ]
     }
 
-    centerPanel: ColumnLayout {
-        id: column
-
+    centerPanel: Item {
         anchors.fill: parent
 
         anchors.topMargin: d.layoutTopMargin
         anchors.leftMargin: Theme.xlPadding*2
         anchors.rightMargin: Theme.xlPadding
 
-        spacing: 18
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: qsTr("Discover Communities")
-            font.weight: Font.Bold
-            font.pixelSize: d.titlePixelSize
-            color: Theme.palette.directColor1
-            elide: Text.ElideRight
-            wrapMode: Text.Wrap
-            maximumLineCount: 2
-        }
-
         ColumnLayout {
-            spacing: Theme.padding
+            id: column
 
-            RowLayout {
-                SearchBox {
-                    id: searcher
-                    Layout.fillWidth: true
-                    Layout.maximumWidth: 327
-                    Layout.preferredHeight: 38
-                    Layout.alignment: Qt.AlignVCenter
-                    topPadding: 0
-                    bottomPadding: 0
-                }
+            anchors.fill: parent
+            spacing: 18
 
-                // filler
-                Item {
-                    Layout.fillWidth: true
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: qsTr("Discover Communities")
+                font.weight: Font.Bold
+                font.pixelSize: d.titlePixelSize
+                color: Theme.palette.directColor1
+                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                maximumLineCount: 2
+            }
+
+            ColumnLayout {
+                spacing: Theme.padding
+
+                RowLayout {
+                    SearchBox {
+                        id: searcher
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: 327
+                        Layout.preferredHeight: 38
+                        Layout.alignment: Qt.AlignVCenter
+                        topPadding: 0
+                        bottomPadding: 0
+                    }
+
+                    // filler
+                    Item {
+                        Layout.fillWidth: true
+                    }
+
+                    LayoutItemProxy {
+                        visible: !d.compactMode
+
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
+
+                        target: buttonsRow
+                    }
                 }
 
                 LayoutItemProxy {
-                    visible: !d.compactMode
+                    visible: d.compactMode
 
                     Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
 
                     target: buttonsRow
                 }
             }
 
-            LayoutItemProxy {
-                visible: d.compactMode
-
+            TagsRow {
+                id: communityTags
                 Layout.fillWidth: true
 
-                target: buttonsRow
+                tags: root.communitiesStore.communityTags
             }
-        }
 
-        TagsRow {
-            id: communityTags
-            Layout.fillWidth: true
+            CommunitiesGridView {
+                id: communitiesGrid
 
-            tags: root.communitiesStore.communityTags
-        }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.leftMargin: d.preventShadowClipMargin
+                Layout.rightMargin: d.preventShadowClipMargin
 
+                contentWidth: availableWidth
+                padding: 0
+                bottomPadding: d.layoutBottomMargin
 
-        CommunitiesGridView {
-            id: communitiesGrid
+                model: filteredCommunitiesModel
+                searchLayout: d.searchMode
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.leftMargin: d.preventShadowClipMargin
-            Layout.rightMargin: d.preventShadowClipMargin
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
 
-            contentWidth: availableWidth
-            padding: 0
-            bottomPadding: d.layoutBottomMargin
-
-            model: filteredCommunitiesModel
-            searchLayout: d.searchMode
-
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
-
-            onCardClicked: (communityId) => root.communitiesStore.navigateToCommunity(communityId)
+                onCardClicked: (communityId) => root.communitiesStore.navigateToCommunity(communityId)
+            }
         }
     }
 
