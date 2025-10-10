@@ -612,15 +612,18 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.backupSettings)
 
-                devicesStore: root.devicesStore
+                backupDataState: root.devicesStore.backupDataState
+                backupDataError: root.devicesStore.backupDataError
+
+                backupImportState: root.devicesStore.backupImportState
+                backupImportError: root.devicesStore.backupImportError
+
                 backupPath: root.devicesStore.backupPath
                 messagesBackupEnabled: root.devicesStore.messagesBackupEnabled
-                onBackupPathSet: function(path) {
-                    root.devicesStore.setBackupPath(path)
-                }
-                onBackupMessagesEnabledToggled: function(enabled) {
-                    root.devicesStore.setMessagesBackupEnabled(enabled)
-                }
+                onBackupPathSet: path => root.devicesStore.setBackupPath(path)
+                onBackupMessagesEnabledToggled: enabled => root.devicesStore.setMessagesBackupEnabled(enabled)
+                onPerformLocalBackupRequested: root.devicesStore.performLocalBackup()
+                onImportLocalBackupFileRequested: selectedFile => root.devicesStore.importLocalBackupFile(selectedFile)
             }
         }
     }

@@ -4,11 +4,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ
+import StatusQ.Core.Backpressure
 
 import Storybook
 
 import AppLayouts.Profile.views
-import AppLayouts.Profile.stores as ProfileStores
 
 import utils
 
@@ -24,29 +24,11 @@ SplitView {
 
         contentWidth: 664
 
-        devicesStore: ProfileStores.DevicesStore {
-            property int backupImportState: Constants.BackupImportState.None
-            readonly property string backupImportError: ctrlErrorState.checked ? "ERR" : ""
-            function importLocalBackupFile(filePath) {
-                logs.logEvent("DevicesStore::importLocalBackupFile", ["filePath"], arguments)
-                backupImportState = Constants.BackupImportState.Completed
-            }
+        backupDataState: Constants.BackupImportState.None
+        backupDataError: ctrlErrorState.checked ? "ERR" : ""
 
-            property int backupDataState: Constants.BackupImportState.None
-            readonly property string backupDataError: ctrlErrorState.checked ? "ERR" : ""
-            function performLocalBackup() {
-                logs.logEvent("DevicesStore::performLocalBackup()")
-                backupDataState = Constants.BackupImportState.Completed
-            }
-            function resetBackupDataState() {
-                logs.logEvent("DevicesStore::resetBackupDataState()")
-                backupDataState = Constants.BackupImportState.None
-            }
-
-            function toFileUri(path) {
-                return UrlUtils.urlFromUserInput(path)
-            }
-        }
+        backupImportState: Constants.BackupImportState.None
+        backupImportError: ctrlErrorState.checked ? "ERR" : ""
 
         backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
         messagesBackupEnabled: false
@@ -57,6 +39,17 @@ SplitView {
         onBackupMessagesEnabledToggled: function(enabled) {
             logs.logEvent("BackupView::backupMessagesEnabledToggled", ["enabled"], arguments)
             messagesBackupEnabled = enabled
+        }
+
+        onPerformLocalBackupRequested: {
+            logs.logEvent("BackupView::onPerformLocalBackupRequested")
+            backupDataState = Constants.BackupImportState.Completed
+            Backpressure.debounce(this, 5000, () => {
+                backupDataState = Constants.BackupImportState.None
+            })()
+        }
+        onImportLocalBackupFileRequested: function(selectedFile) {
+            logs.logEvent("BackupView::onImportLocalBackupFileRequested", ["selectedFile"], arguments)
         }
     }
 

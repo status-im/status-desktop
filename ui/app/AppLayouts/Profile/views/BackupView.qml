@@ -4,26 +4,30 @@ import QtQuick.Layouts
 
 import StatusQ
 import StatusQ.Core
-import StatusQ.Core.Backpressure
 import StatusQ.Controls
 import StatusQ.Core.Theme
 import StatusQ.Popups.Dialog
 
-import AppLayouts.Profile.stores as ProfileStores
-
 import utils
-import shared.panels
 import shared.status
 
 SettingsContentBase {
     id: root
 
-    required property ProfileStores.DevicesStore devicesStore
+    required property int backupDataState // Constants.BackupImportState.*
+    required property string backupDataError
+
+    required property int backupImportState // Constants.BackupImportState.*
+    required property string backupImportError
+
     required property bool messagesBackupEnabled
     required property url backupPath
 
     signal backupPathSet(url path)
     signal backupMessagesEnabledToggled(bool enabled)
+
+    signal performLocalBackupRequested()
+    signal importLocalBackupFileRequested(url selectedFile)
 
     ColumnLayout {
         id: layout
@@ -59,31 +63,26 @@ SettingsContentBase {
             Layout.leftMargin: Theme.padding
             text: qsTr("Backup now")
             icon.name: {
-                if (root.devicesStore.backupDataState !== Constants.BackupImportState.Completed) {
+                if (root.backupDataState !== Constants.BackupImportState.Completed) {
                     return ""
                 }
-                if (root.devicesStore.backupDataError) {
+                if (root.backupDataError) {
                     return "tiny/exclamation"
                 }
                 return "tiny/checkmark"
             }
             icon.color: {
-                if (root.devicesStore.backupDataState !== Constants.BackupImportState.Completed) {
+                if (root.backupDataState !== Constants.BackupImportState.Completed) {
                     return Theme.palette.primaryColor1
                 }
-                if (root.devicesStore.backupDataError) {
+                if (root.backupDataError) {
                     return Theme.palette.dangerColor1
                 }
                 return Theme.palette.successColor1
             }
 
-            loading: root.devicesStore.backupDataState === Constants.BackupImportState.InProgress
-            onClicked : {
-                root.devicesStore.performLocalBackup()
-                Backpressure.debounce(this, 5000, () => {
-                    root.devicesStore.resetBackupDataState()
-                })()
-            }
+            loading: root.backupDataState === Constants.BackupImportState.InProgress
+            onClicked: root.performLocalBackupRequested()
         }
 
         Separator {
@@ -110,12 +109,10 @@ SettingsContentBase {
 
         StatusSettingsLineButton {
             Layout.fillWidth: true
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
             text: qsTr("Backup your messages")
             isSwitch: true
-            switchChecked: root.messagesBackupEnabled
-            onClicked: (checked) => root.backupMessagesEnabledToggled(checked)
+            checked: root.messagesBackupEnabled
+            onToggled: root.backupMessagesEnabledToggled(checked)
         }
 
         Separator {
@@ -177,7 +174,7 @@ SettingsContentBase {
         StatusButton {
             Layout.leftMargin: Theme.padding
             text: qsTr("Import backup file")
-            loading: root.devicesStore.backupImportState === Constants.BackupImportState.InProgress
+            loading: root.backupImportState === Constants.BackupImportState.InProgress
             onClicked: importBackupFileDialog.open()
         }
 
@@ -185,7 +182,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding
             color: Theme.palette.successColor1
-            visible: root.devicesStore.backupImportState === Constants.BackupImportState.Completed && !root.devicesStore.backupImportError
+            visible: root.backupImportState === Constants.BackupImportState.Completed && !root.backupImportError
             text: qsTr("Success importing local data")
         }
 
@@ -193,9 +190,9 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding
             color: Theme.palette.dangerColor1
-            visible: !!root.devicesStore.backupImportError
+            visible: !!root.backupImportError
             wrapMode: Text.WordWrap
-            text: qsTr("Error importing backup file: %1").arg(root.devicesStore.backupImportError)
+            text: qsTr("Error importing backup file: %1").arg(root.backupImportError)
         }
     }
 
@@ -203,7 +200,7 @@ SettingsContentBase {
         id: backupPathDialog
 
         title: qsTr("Select your backup directory")
-        currentFolder: root.devicesStore.toFileUri(root.backupPath)
+        currentFolder: root.backupPath
         onAccepted: root.backupPathSet(backupPathDialog.selectedFolder)
     }
 
@@ -212,7 +209,12 @@ SettingsContentBase {
 
         title: qsTr("Select your backup file")
         nameFilters: [qsTr("Supported backup formats (%1)").arg("*.bkp")]
-        currentFolder: root.devicesStore.toFileUri(root.backupPath)
-        onAccepted: root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
+        currentFolder: root.backupPath
+        onAccepted: root.importLocalBackupFileRequested(importBackupFileDialog.selectedFile)
+    }
+
+    component Separator: Rectangle {
+        implicitHeight: 1
+        color: Theme.palette.separator
     }
 }
