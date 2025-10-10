@@ -40,7 +40,7 @@ def test_back_up_recovery_phrase_sign_out(
         main_screen.left_panel.click()
 
     with step('Click Back up seed card in home page and back up seed'):
-        home = main_screen.left_panel.open_home_screen()
+        home = main_screen.left_panel.open_home_screen().wait_for_home_ui_loaded()
         assert not BackUpSeedPhraseBanner().back_up_seed_banner.exists, "Back up seed banner should not be seen on home page"
         back_up_seed_modal = home.open_back_up_seed_popup_from_home_page()
         back_up_seed_modal.back_up_seed_phrase_and_delete()
