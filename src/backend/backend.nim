@@ -2,6 +2,7 @@ import json, json_serialization, stew/shims/strformat
 import hashes
 import ./core, ./response_type
 import app_service/service/saved_address/dto as saved_address_dto
+import app_service/service/token/dto/token_preferences
 from ./gen import rpc
 
 export response_type
@@ -56,13 +57,6 @@ type
     activityTypes* {.serializedFieldName("activityTypes").}: seq[int]
     readType* {.serializedFieldName("readType").}: int
 
-  TokenPreferencesDto* = ref object of RootObj
-    key* {.serializedFieldName("key").}: string
-    position* {.serializedFieldName("position").}: int
-    groupPosition* {.serializedFieldName("groupPosition").}: int
-    visible* {.serializedFieldName("visible").}: bool
-    communityId* {.serializedFieldName("communityId").}: string
-
 rpc(clientVersion, "web3"):
   discard
 
@@ -83,9 +77,6 @@ rpc(remainingCapacityForSavedAddresses, "wakuext"):
   isTest: bool
 
 rpc(checkConnected, "wallet"):
-  discard
-
-rpc(getTokenList, "wallet"):
   discard
 
 rpc(getPendingTransactions, "wallet"):
@@ -129,7 +120,7 @@ rpc(fetchOrGetCachedWalletBalances, "wallet"):
   forceRefresh: bool
 
 rpc(fetchMarketValues, "wallet"):
-  symbols: seq[string]
+  tokensKeys: seq[string]
   currency: string
 
 rpc(startWallet, "wallet"):
@@ -146,7 +137,7 @@ rpc(getTransactionEstimatedTimeV2, "wallet"):
   maxPriorityFeePerGas: string
 
 rpc(fetchPrices, "wallet"):
-  symbols: seq[string]
+  tokensKeys: seq[string]
   currencies: seq[string]
 
 rpc(fetchDecodedTxData, "wallet"):
@@ -223,12 +214,8 @@ rpc(deleteDappPermissionsByNameAndAddress, "permissions"):
   dapp: string
   address: string
 
-rpc(fetchMarketValues, "wallet"):
-  symbols: seq[string]
-  currencies: seq[string]
-
 rpc(fetchTokenDetails, "wallet"):
-  symbols: seq[string]
+  tokenKeys: seq[string]
 
 rpc(saveOrUpdateKeycard, "accounts"):
   keycard: JsonNode
@@ -282,13 +269,13 @@ rpc(updateKeypairName, "accounts"):
   name: string
 
 rpc(getHourlyMarketValues, "wallet"):
-  symbol: string
+  tokenKey: string
   currency: string
   limit: int
   aggregate: int
 
 rpc(getDailyMarketValues, "wallet"):
-  symbol: string
+  tokenKey: string
   currency: string
   limit: int
   allDate: bool

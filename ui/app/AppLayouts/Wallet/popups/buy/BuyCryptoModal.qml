@@ -29,7 +29,7 @@ StatusStackModal {
     required property var isBuyProvidersModelLoading
 
     required property BuyCryptoParamsForm buyCryptoInputParamsForm
-    required property var plainTokensBySymbolModel
+    required property var tokenGroupsModel
     required property var groupedAccountAssetsModel
     required property var walletAccountsModel
     required property var networksModel
@@ -87,9 +87,9 @@ StatusStackModal {
         }
 
         readonly property ModelEntry selectedTokenEntry: ModelEntry {
-            sourceModel: root.plainTokensBySymbolModel
+            sourceModel: root.tokenGroupsModel
             key: "key"
-            value: root.buyCryptoInputParamsForm.selectedTokenKey
+            value: root.buyCryptoInputParamsForm.selectedTokenGroupKey
         }
 
         readonly property ModelEntry selectedProviderEntry: ModelEntry {
@@ -116,7 +116,7 @@ StatusStackModal {
 
         readonly property var tokenSelectorViewAdaptor: TokenSelectorViewAdaptor {
             assetsModel: root.groupedAccountAssetsModel
-            plainTokensBySymbolModel: root.plainTokensBySymbolModel
+            tokenGroupsModel: root.tokenGroupsModel
             flatNetworksModel: root.networksModel
             currentCurrency: root.currentCurrency
 
@@ -140,7 +140,9 @@ StatusStackModal {
     width: 560
     implicitHeight: 515
     padding: Theme.xlPadding
-    stackTitle: !!root.buyCryptoInputParamsForm.selectedTokenKey ? qsTr("Ways to buy %1 for %2").arg(d.selectedTokenEntry.item.name).arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: ""): qsTr("Ways to buy assets for %1").arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: "")
+    stackTitle: !!root.buyCryptoInputParamsForm.selectedTokenGroupKey ?
+                    qsTr("Ways to buy %1 for %2").arg(d.selectedTokenEntry.item.name).arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: "")
+                  : qsTr("Ways to buy assets for %1").arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: "")
     rightButtons: [d.buyButton, finishButton]
     finishButton: StatusButton {
         text: qsTr("Done")
@@ -183,17 +185,17 @@ StatusStackModal {
             objectName: "selectParamsPanel"
             assetsModel: d.buyCryptoAdaptor.filteredAssetsModel
             selectedProvider: d.selectedProviderEntry.item
-            selectedTokenKey: root.buyCryptoInputParamsForm.selectedTokenKey
+            selectedTokenGroupKey: root.buyCryptoInputParamsForm.selectedTokenGroupKey
             selectedNetworkChainId: root.buyCryptoInputParamsForm.selectedNetworkChainId
             filteredFlatNetworksModel: d.buyCryptoAdaptor.networksModel
-            onNetworkSelected: {
+            onNetworkSelected: (chainId) => {
                 if (root.buyCryptoInputParamsForm.selectedNetworkChainId !== chainId) {
                     root.buyCryptoInputParamsForm.selectedNetworkChainId = chainId
                 }
             }
-            onTokenSelected: {
-                if (root.buyCryptoInputParamsForm.selectedTokenKey !== tokensKey) {
-                    root.buyCryptoInputParamsForm.selectedTokenKey = tokensKey
+            onTokenSelected: (tokenGroupKey) => {
+                if (root.buyCryptoInputParamsForm.selectedTokenGroupKey !== tokenGroupKey) {
+                    root.buyCryptoInputParamsForm.selectedTokenGroupKey = tokenGroupKey
                 }
             }
         }

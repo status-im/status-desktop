@@ -1,5 +1,6 @@
 import nimqml, json, strutils
 
+import app_service/service/token/items/token
 import ./models/[sticker_list, sticker_pack_list]
 import ./io_interface, ./item
 
@@ -165,8 +166,11 @@ QtObject:
     return self.delegate.getCurrentCurrency()
 
 
-  proc getStatusTokenKey*(self: View): string {.slot.} =
-    return self.delegate.getStatusTokenKey()
+  proc getStatusTokenKeyForChainId*(self: View, chainId: int): string {.slot.} =
+    let tokenItem = createStatusTokenItem(chainId)
+    if tokenItem.isNil:
+      return ""
+    return tokenItem.key
 
   proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string) {.signal.}
   proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string) =

@@ -16,22 +16,22 @@ QObject {
     readonly property SortFilterProxyModel filteredAssetsModel: SortFilterProxyModel {
         sourceModel: root.processedTokenSelectorAssetsModel.count ? root.processedTokenSelectorAssetsModel: null
         filters: FastExpressionFilter {
-            function isSupportedByProvider(addressPerChain) {
-                if(!addressPerChain)
+            function isSupportedByProvider(tokens) {
+                if(!tokens)
                     return true
                 return !!ModelUtils.getFirstModelEntryIf(
-                            addressPerChain,
-                            (addPerChain) => {
-                                return root.selectedChainId === addPerChain.chainId &&
-                                root.selectedProviderSupportedAssetsArray.includes(addPerChain.chainId+addPerChain.address)
+                            tokens,
+                            (t) => {
+                                return root.selectedChainId === t.chainId &&
+                                root.selectedProviderSupportedAssetsArray.includes(t.key)
                             })
             }
             expression: {
                 root.selectedChainId //dependency
                 root.selectedProviderSupportedAssetsArray //dependency
-                isSupportedByProvider(model.addressPerChain)
+                isSupportedByProvider(model.tokens)
             }
-            expectedRoles: ["addressPerChain"]
+            expectedRoles: ["tokens"]
             enabled: !!root.selectedProviderSupportedAssetsArray && root.selectedProviderSupportedAssetsArray.length > 0 && root.selectedChainId !== -1
         }
     }

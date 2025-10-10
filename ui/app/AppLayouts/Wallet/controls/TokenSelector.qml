@@ -112,7 +112,7 @@ Control {
                 showSectionName: root.showSectionName
 
                 onAssetSelected: function(key) {
-                    const entry = ModelUtils.getByKey(assetsModel, "tokensKey", key)
+                    const entry = ModelUtils.getByKey(assetsModel, "key", key)
                     highlightedKey = key
 
                     setCurrentAndClose(entry.symbol, entry.iconSource)

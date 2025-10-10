@@ -204,7 +204,7 @@ QtObject:
       self.status.setLoadingCollectibles(false)
       error "error fetching collectibles: ", error = res.error
       return
-      
+
   proc resetFilter*(self: Controller) {.slot.} =
     self.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
@@ -382,17 +382,16 @@ QtObject:
         if network == nil:
           error "network not found for chainId: ", chainId
           continue
-        # TODO: remove this call once the activity filter mechanism uses tokenKeys instead of the token
-        # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
-        let token = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
-        if token != nil:
-          let tokenType = if token.symbol == network.nativeCurrencySymbol: TokenType.Native else: TokenType.ERC20
-          for addrPerChain in token.addressPerChainId:
-            assets.add(backend_activity.Token(
-              tokenType: tokenType,
-              chainId: backend_activity.ChainId(addrPerChain.chainId),
-              address: some(decodeHexAddress(addrPerChain.address))
-            ))
+
+        let token = self.tokenService.getTokenByKey(tokenCode)
+        if token.isNil:
+          continue
+        let tokenType = if token.isNative: TokenType.Native else: TokenType.ERC20
+        assets.add(backend_activity.Token(
+          tokenType: tokenType,
+          chainId: backend_activity.ChainId(token.chainId),
+          address: some(decodeHexAddress(token.address))
+        ))
 
     self.currentActivityFilter.assets = assets
 

@@ -1,10 +1,10 @@
 import tables, json, stew/shims/strformat, strutils
 
-import account_token_item
+import asset_group_item
 
 include  app_service/common/json_utils
 
-export account_token_item
+export asset_group_item
 
 const WalletTypeGenerated* = "generated" # refers to accounts generated from the profile keypair
 const WalletTypeSeed* = "seed"

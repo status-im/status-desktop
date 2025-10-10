@@ -807,8 +807,8 @@ QtObject {
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
 
-                getCurrencyAmount: function (balance, symbol) {
-                    return currencyStore.getCurrencyAmount(balance, symbol)
+                getCurrencyAmount: (balance, key) => {
+                    return currencyStore.getCurrencyAmount(balance, key)
                 }
 
                 onPrepareForSigning: {
@@ -1074,8 +1074,8 @@ QtObject {
                 assetsModel: chatStore.assetsModel
                 collectiblesModel: chatStore.collectiblesModel
 
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.currencyStore.getCurrencyAmount(balance, symbol)
+                getCurrencyAmount: (balance, key) => {
+                    return root.currencyStore.getCurrencyAmount(balance, key)
                 }
 
                 onSharedAddressesUpdated: {
@@ -1336,7 +1336,7 @@ QtObject {
                 isBuyProvidersModelLoading: root.buyCryptoStore.areProvidersLoading
                 currentCurrency: root.currencyStore.currentCurrency
                 walletAccountsModel: root.rootStore.accounts
-                plainTokensBySymbolModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+                tokenGroupsModel: root.walletAssetsStore.walletTokensStore.tokenGroupsModel
                 groupedAccountAssetsModel: root.walletAssetsStore.groupedAccountAssetsModel
                 networksModel: root.networksStore.activeNetworks
                 Component.onCompleted: {
@@ -1376,7 +1376,7 @@ QtObject {
             PaymentRequestModal {
                 id: paymentRequestModal
                 readonly property var paymentRequestAdaptor: PaymentRequestAdaptor {
-                    plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
+                    tokenGroupsModel: WalletStores.RootStore.tokensStore.tokenGroupsModel
                     selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
                     flatNetworksModel: root.networksStore.allNetworks
                 }

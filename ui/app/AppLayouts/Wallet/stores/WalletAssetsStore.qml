@@ -16,7 +16,20 @@ QtObject {
 
     property TokensStore walletTokensStore
 
-    /* this property represents the grouped_account_assets_model from backend*/
+    /*
+        This property represents the grouped_account_assets_model from backend
+
+        Exposed fields:
+        key                 [string] - refers to token group key
+        balances            [model]  - contains a single entry for (token, accountAddress) pair
+            account         [string] - wallet account address
+            groupKey        [string] - group key that the token belongs to (cross chain id or token key if cross chain id is empty)
+            tokenKey        [string] - token unique key (chain - address)
+            chainId         [int]    - token's chain id
+            tokenAddress    [string] - token's address
+            balance         [string] - balance that the `account` has for token with `tokenKey`
+
+    */
     readonly property var baseGroupedAccountAssetModel: walletSectionAssets.groupedAccountAssetsModel
 
     readonly property var assetsController: ManageTokensController {
@@ -38,24 +51,11 @@ QtObject {
         onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
                                          qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
                                          false, Constants.ephemeralNotificationType.success, "")
-        onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+        onTokenShown: (key, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
                                                                    false, Constants.ephemeralNotificationType.success, "")
         onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
                                         qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
                                         false, Constants.ephemeralNotificationType.success, "")
-    }
-
-    /* This model renames the role "key" to "tokensKey" in TokensBySymbolModel so that
-    it can be easily joined with the Account Assets model */
-    readonly property var renamedTokensBySymbolModel: RolesRenamingModel {
-        objectName: "renamedTokensBySymbolModel"
-        sourceModel: walletTokensStore.plainTokensBySymbolModel
-        mapping: [
-            RoleRename {
-                from: "key"
-                to: "tokensKey"
-            }
-        ]
     }
 
     /* PRIVATE: This model renames the roles
@@ -87,9 +87,9 @@ QtObject {
         ]
     }
 
-    /* PRIVATE: This model joins the "Tokens By Symbol Model" and "Communities Model" by communityId */
-    property LeftJoinModel _jointTokensBySymbolModel: LeftJoinModel {
-        leftModel: renamedTokensBySymbolModel
+    /* PRIVATE: This model joins the "Token Groups Model" and "Communities Model" by communityId */
+    property LeftJoinModel _tokenGroupsModelWithCommunityInfo: LeftJoinModel {
+        leftModel: root.walletTokensStore.tokenGroupsModel
         rightModel: _renamedCommunitiesModel
         joinRole: "communityId"
     }
@@ -100,26 +100,9 @@ QtObject {
         objectName: "groupedAccountAssetsModel"
 
         leftModel: root.baseGroupedAccountAssetModel
-        rightModel: _jointTokensBySymbolModel
-        joinRole: "tokensKey"
+        rightModel: _tokenGroupsModelWithCommunityInfo
+        joinRole: "key" // this key refers to group key
     }
-
-    // This is hard coded for now, and should be updated whenever Hop add new tokens for support
-    // This should be dynamically fetched somehow in the future
-    readonly property var tokensSupportedByHopBridge: [
-        Constants.uniqueSymbols.usdcEvm,
-        Constants.uniqueSymbols.usdcBsc,
-        "USDC.e",
-        Constants.uniqueSymbols.usdtEvm,
-        Constants.uniqueSymbols.usdtBsc,
-        "DAI",
-        "HOP",
-        "SNX",
-        "sUSD",
-        "rETH",
-        "MAGIC",
-        "ETH"
-    ]
 
     readonly property SortFilterProxyModel bridgeableGroupedAccountAssetsModel: SortFilterProxyModel {
         objectName: "bridgeableGroupedAccountAssetsModel"
@@ -131,8 +114,19 @@ QtObject {
                     return chainId === Constants.chains.binanceSmartChainMainnetChainId ||
                             chainId === Constants.chains.binanceSmartChainTestnetChainId
                 }
-                expression: !isBSC(model.chainId) && root.tokensSupportedByHopBridge.includes(model.symbol)
-                expectedRoles: ["chainId", "symbol"]
+
+                // this function returns true if the token group item contains at least one token which can be bridged via Hop
+                function supportedByHopBridge(tokens) {
+                    return !!SQUtils.ModelUtils.getFirstModelEntryIf(
+                                tokens,
+                                (t) => {
+                                    return !isBSC(t.chainId) && root.walletTokensStore.tokenAvailableForBridgingViaHop(t.chainId, t.address)
+                                })
+                }
+                expression: {
+                    return supportedByHopBridge(model.tokens)
+                }
+                expectedRoles: ["tokens"]
             }
         ]
     }

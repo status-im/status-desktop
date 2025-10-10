@@ -54,7 +54,7 @@ Control {
 
     readonly property var rightButtons: root.isEditMode? [d.cancelButton, d.saveButton] : [d.shareAddressesButton]
 
-    property var getCurrencyAmount: function (balance, symbol){}
+    property var getCurrencyAmount: function (balance, key){}
 
     signal toggleAddressSelection(string keyUid, string address)
     signal airdropAddressSelected (string address)
@@ -278,16 +278,16 @@ Control {
 
             selectedSharedAddressesMap: root.selectedSharedAddressesMap
 
-            onToggleAddressSelection: {
+            onToggleAddressSelection: (keyUid, address) => {
                 root.toggleAddressSelection(keyUid, address)
             }
 
-            onAirdropAddressSelected: {
+            onAirdropAddressSelected: (address) => {
                 root.airdropAddressSelected(address)
             }
 
-            getCurrencyAmount: function (balance, symbol) {
-                return root.getCurrencyAmount(balance, symbol)
+            getCurrencyAmount: (balance, key) => {
+                return root.getCurrencyAmount(balance, key)
             }
 
             Component.onCompleted: {
