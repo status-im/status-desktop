@@ -69,7 +69,7 @@ class SettingsLeftPanel(QObject):
         return SyncingSettingsView().wait_until_appears()
 
     @allure.step('Choose sign out and quit in settings')
-    @retry_settings(SignOutPopup, '18-MenuItem')
+    @retry_settings(SignOutPopup, '100-MenuItem')
     def open_sign_out_and_quit(self) -> 'SignOutPopup':
         return SignOutPopup().wait_until_appears()
 
