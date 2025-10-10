@@ -266,7 +266,7 @@ StatusSectionLayout {
                         FastExpressionFilter {
                             expression: {
                                 root.collectiblesStore.collectiblesController.revision
-                                return root.collectiblesStore.collectiblesController.filterAcceptsSymbol(model.uid)
+                                return root.collectiblesStore.collectiblesController.filterAcceptsKey(model.uid) // TODO: use token/group key
                             }
                             expectedRoles: ["uid"]
                         }
@@ -365,6 +365,7 @@ StatusSectionLayout {
                 networksStore: root.networksStore
                 contactsStore: root.contactsStore
 
+                thirdpartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
                 myPublicKey: root.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup

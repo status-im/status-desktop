@@ -67,9 +67,6 @@ method getCryptoValue*(self: AccessInterface, fiatAmount: string, cryptoSymbol: 
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getStatusTokenKey*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setPrefferedEnsUsername*(self: AccessInterface, ensUsername: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

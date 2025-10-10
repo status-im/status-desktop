@@ -1,11 +1,11 @@
 import tables, json, options, tables, strutils, times, chronicles
-import ../../stickers/dto/stickers
 
-include ../../../common/json_utils
-from ../../../common/types import StatusType
-from ../../../common/conversion import intToEnum
+import constants
+import app_service/service/stickers/dto/stickers
 
-const DateTimeFormat* = "yyyy-MM-dd'T'HH:mm:sszzz"
+include app_service/common/json_utils
+from app_service/common/types import StatusType
+from app_service/common/conversion import intToEnum
 
 # Setting keys:
 const KEY_ADDRESS* = "address"
@@ -241,10 +241,10 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_LAST_TOKENS_UPDATE, lastTokensUpdate)
   if lastTokensUpdate == "":
     try:
-      let dateTime = parse(lastTokensUpdate, DateTimeFormat)
+      let dateTime = parse(lastTokensUpdate, DATE_TIME_FORMAT_2)
       result.lastTokensUpdate = dateTime.toTime().toUnix()
-    except ValueError:
-      warn "Failed to parse lastTokensUpdate: ", lastTokensUpdate
+    except Exception as e:
+      warn "failed to parse lastTokensUpdate: ", data=lastTokensUpdate, errName = e.name, errDesription = e.msg
 
   var urlUnfurlingMode: int
   discard jsonObj.getProp(KEY_URL_UNFURLING_MODE, urlUnfurlingMode)
