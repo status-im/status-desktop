@@ -34,11 +34,12 @@ QtObject:
     accountFrom: string,
     accountTo: string,
     amountIn: string,
-    token: string,
+    tokenGroupKey: string,
     amountOut: string,
-    toToken: string,
+    toTokenGroupKey: string,
     slippagePercentageString: string,
     extraParamsJson: string) {.slot.} =
+
     var extraParamsTable: Table[string, string]
     self.pathModel.setItems(@[])
     try:
@@ -54,10 +55,11 @@ QtObject:
       error "Error parsing extraParamsJson: ", msg=e.msg
 
     var slippagePercentage: float
-    try:
-      slippagePercentage = slippagePercentageString.parseFloat()
-    except:
-      error "parsing slippage failed", slippage=slippagePercentageString
+    if sendType == ord(transaction_dto.SendType.Swap):
+      try:
+        slippagePercentage = slippagePercentageString.parseFloat()
+      except:
+        error "parsing slippage failed", slippage=slippagePercentageString
 
     self.delegate.suggestedRoutes(
         uuid,
@@ -65,10 +67,10 @@ QtObject:
         chainId,
         accountFrom,
         accountTo,
-        token,
+        tokenGroupKey,
         false, #tokenIsOwnerToken
         amountIn,
-        toToken,
+        toTokenGroupKey,
         amountOut,
         slippagePercentage,
         extraParamsTable)

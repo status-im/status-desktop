@@ -146,7 +146,7 @@ Control {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
-            plainTokensBySymbolModel: root.plainTokensBySymbolModel
+            tokenGroupsModel: root.plainTokensBySymbolModel
             flatNetworksModel: root.flatNetworksModel
             currentCurrency: root.currencyStore.currentCurrency
 

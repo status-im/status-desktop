@@ -16,7 +16,7 @@ SplitView {
 
     Logs { id: logs }
 
-    readonly property var sourcesOfTokensModel: SourceOfTokensModel {}
+    readonly property var tokenListsModel: TokenListsModel {}
     readonly property var flatTokensModel: FlatTokensModel {}
     readonly property var joinModel: LeftJoinModel {
         leftModel: root.flatTokensModel
@@ -49,7 +49,7 @@ SplitView {
 
             Instantiator {
                 model: SortFilterProxyModel {
-                    sourceModel: sourcesOfTokensModel
+                    sourceModel: tokenListsModel
 
                     filters: ValueFilter {
                         id: keyFilter

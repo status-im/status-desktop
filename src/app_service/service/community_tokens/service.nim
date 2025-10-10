@@ -717,13 +717,6 @@ QtObject:
         return token.description
     return ""
 
-  proc getCommunityTokenDescription*(self: Service, addressPerChain: seq[AddressPerChain]): string =
-    for apC in addressPerChain:
-      let description = self.getCommunityTokenDescription(apC.chainId, apC.address)
-      if not description.isEmptyOrWhitespace:
-        return description
-    return ""
-
   proc getCommunityTokenBurnState*(self: Service, chainId: int, contractAddress: string): ContractTransactionStatus =
     let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.BurnCommunityToken)
     for transaction in burnTransactions:
@@ -814,10 +807,10 @@ QtObject:
         )
       )
 
-  proc getFiatValue(self: Service, cryptoBalance: float, cryptoSymbol: string): float =
-    if (cryptoSymbol == ""):
+  proc getFiatValue(self: Service, cryptoBalance: float, tokenKey: string): float =
+    if (tokenKey == ""):
       return 0.0
-    let price = self.tokenService.getPriceBySymbol(cryptoSymbol)
+    let price = self.tokenService.getPriceForToken(tokenKey)
     return cryptoBalance * price
 
   proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto =

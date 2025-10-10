@@ -39,7 +39,7 @@ Item {
     signal goToList();
 
     signal connectUsernameRequested(string ensName, string ownerAddress)
-    signal registerUsernameRequested(string ensName)
+    signal registerUsernameRequested(string ensName, int chainId)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
 
     QtObject {
@@ -279,7 +279,11 @@ Item {
 
             onBackBtnClicked: back();
 
-            onRegisterUsername: ensView.registerUsernameRequested(ensView.selectedUsername)
+            onRegisterUsername: {
+                const chainId = root.ensUsernamesStore.getChainForBuyingEnsName()
+
+                ensView.registerUsernameRequested(ensView.selectedUsername, chainId)
+            }
 
             Connections {
                 target: ensView.ensUsernamesStore.ensUsernamesModule

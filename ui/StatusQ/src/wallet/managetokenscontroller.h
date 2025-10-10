@@ -47,8 +47,8 @@ class ManageTokensController : public QObject, public QQmlParserStatus
 public:
     explicit ManageTokensController(QObject* parent = nullptr);
 
-    Q_INVOKABLE void showHideRegularToken(const QString& symbol, bool flag);
-    Q_INVOKABLE void showHideCommunityToken(const QString& symbol, bool flag);
+    Q_INVOKABLE void showHideRegularToken(const QString& key, bool flag);
+    Q_INVOKABLE void showHideCommunityToken(const QString& key, bool flag);
     Q_INVOKABLE void showHideGroup(const QString& groupId, bool flag);
     Q_INVOKABLE void showHideCollectionGroup(const QString& groupId, bool flag);
 
@@ -64,9 +64,9 @@ public:
 
     Q_INVOKABLE QString serializeSettingsAsJson();
 
-    Q_INVOKABLE int order(const QString& symbol) const;
-    Q_INVOKABLE int compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const;
-    Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
+    Q_INVOKABLE int order(const QString& key) const;
+    Q_INVOKABLE int compareTokens(const QString& lhsKey, const QString& rhsKey) const;
+    Q_INVOKABLE bool filterAcceptsKey(const QString& key) const;
 
     // utils
     Q_INVOKABLE QJsonObject getOwnershipTotalBalanceAndLastTimestamp(QAbstractItemModel *model, const QStringList& filterList) const;
@@ -84,8 +84,8 @@ signals:
     void settingsDirtyChanged(bool dirty);
     void serializeAsCollectiblesChanged();
 
-    void tokenHidden(const QString& symbol, const QString& name);
-    void tokenShown(const QString& symbol, const QString& name);
+    void tokenHidden(const QString& key, const QString& name);
+    void tokenShown(const QString& key, const QString& name);
     void communityTokenGroupHidden(const QString& communityName);
     void communityTokenGroupShown(const QString& communityName);
     void collectionTokenGroupHidden(const QString& communityName);

@@ -1964,7 +1964,7 @@ Item {
                             }
 
                             onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
-                            onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+                            onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, tokenKey, rawAmount)
 
                             // Unfurling related requests:
                             onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
@@ -2045,7 +2045,7 @@ Item {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
-                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                            onSendTokenRequested: (senderAddress, gorupKey, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, gorupKey, tokenType)
                             onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
                             onOpenSwapModalRequested: (swapFormData) => popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                         }
@@ -2165,7 +2165,7 @@ Item {
                         onAddressWasShownRequested: (address) => WalletStores.RootStore.addressWasShown(address)
                         onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
                         onConnectUsernameRequested: (ensName, ownerAddress) => popupRequestsHandler.sendModalHandler.connectUsername(ensName, ownerAddress)
-                        onRegisterUsernameRequested: (ensName) => popupRequestsHandler.sendModalHandler.registerUsername(ensName)
+                        onRegisterUsernameRequested: (ensName, chainId) => popupRequestsHandler.sendModalHandler.registerUsername(ensName, chainId)
                         onReleaseUsernameRequested: (ensName, senderAddress, chainId) => popupRequestsHandler.sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
 
                         onThemeChangeRequested: function(theme) {
@@ -2389,7 +2389,7 @@ Item {
                             }
 
                             onBuyStickerPackRequested: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)
-                            onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId)
+                            onTokenPaymentRequested: popupRequestsHandler.sendModalHandler.openTokenPaymentRequest(recipientAddress, tokenKey, rawAmount)
 
                             // Unfurling related requests:
                             onSetNeverAskAboutUnfurlingAgain: appMain.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)

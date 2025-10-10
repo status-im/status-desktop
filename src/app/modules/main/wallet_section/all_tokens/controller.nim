@@ -44,15 +44,15 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_RECEIVED) do(e: Args):
     let args = CommunityTokenReceivedArgs(e)
-    let token = TokenDto(
+    let token = createTokenItem(TokenDto(
         address: args.address,
         name: args.name,
         symbol: args.symbol,
         decimals: args.decimals,
-        chainID: args.chainId,
-        communityID: args.communityId,
-        image: args.image,
-    )
+        chainId: args.chainId,
+        communityData: CommunityDataItem(id: args.communityId),
+        logoUri: args.image,
+    ))
     self.tokenService.addNewCommunityToken(token)
 
   self.events.on(SIGNAL_DISPLAY_ASSET_BELOW_BALANCE_UPDATED) do(e:Args):
@@ -64,37 +64,29 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS_UPDATED) do(e:Args):
     self.delegate.showCommunityAssetWhenSendingTokensChanged()
 
-  self.tokenService.getSupportedTokensList()
+proc getHistoricalDataForToken*(self: Controller, tokenKey: string, currency: string, range: int) =
+  self.tokenService.getHistoricalDataForToken(tokenKey, currency, range)
 
-proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
-  self.tokenService.getHistoricalDataForToken(symbol, currency, range)
+proc getAllTokenLists*(self: Controller): var seq[TokenListItem] =
+  return self.tokenService.getAllTokenLists()
 
-proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
-  return self.tokenService.getSourcesOfTokensList()
+proc getAllTokenGroups*(self: Controller): var seq[TokenGroupItem] =
+  return self.tokenService.getAllTokenGroups()
 
-proc getFlatTokensList*(self: Controller): var seq[TokenItem] =
-  return self.tokenService.getFlatTokensList()
-
-proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
-  return self.tokenService.getTokenBySymbolList()
-
-proc getTokenDetails*(self: Controller, symbol: string): TokenDetailsItem =
-  return self.tokenService.getTokenDetails(symbol)
+proc getTokenDetails*(self: Controller, tokenKey: string): TokenDetailsItem =
+  return self.tokenService.getTokenDetails(tokenKey)
 
 proc getLastTokensUpdate*(self: Controller): int64 =
   return self.settingsService.getLastTokensUpdate()
 
-proc getMarketValuesBySymbol*(self: Controller, symbol: string): TokenMarketValuesItem =
-  return self.tokenService.getMarketValuesBySymbol(symbol)
+proc getMarketValuesForToken*(self: Controller, tokenKey: string): TokenMarketValuesItem =
+  return self.tokenService.getMarketValuesForToken(tokenKey)
 
-proc getPriceBySymbol*(self: Controller, symbol: string): float64 =
-  return self.tokenService.getPriceBySymbol(symbol)
+proc getPriceForToken*(self: Controller, tokenKey: string): float64 =
+  return self.tokenService.getPriceForToken(tokenKey)
 
 proc getCurrentCurrencyFormat*(self: Controller): CurrencyFormatDto =
   return self.walletAccountService.getCurrencyFormat(self.tokenService.getCurrency())
-
-proc rebuildMarketData*(self: Controller) =
-  self.tokenService.rebuildMarketData()
 
 proc getTokensDetailsLoading*(self: Controller): bool =
   self.tokenService.getTokensDetailsLoading()
@@ -102,17 +94,14 @@ proc getTokensDetailsLoading*(self: Controller): bool =
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   self.tokenService.getTokensMarketValuesLoading()
 
-proc getCommunityTokenDescription*(self: Controller, addressPerChain: seq[AddressPerChain]): string =
-  self.communityTokensService.getCommunityTokenDescription(addressPerChain)
-
 proc getCommunityTokenDescription*(self: Controller, chainId: int, address: string): string =
   self.communityTokensService.getCommunityTokenDescription(chainId, address)
 
 proc updateTokenPreferences*(self: Controller, tokenPreferencesJson: string) =
   self.tokenService.updateTokenPreferences(tokenPreferencesJson)
 
-proc getTokenPreferences*(self: Controller, symbol: string): TokenPreferencesItem =
-  return self.tokenService.getTokenPreferences(symbol)
+proc getTokenPreferences*(self: Controller, groupKey: string): TokenPreferencesItem =
+  return self.tokenService.getTokenPreferences(groupKey)
 
 proc getTokenPreferencesJson*(self: Controller): string =
   return self.tokenService.getTokenPreferencesJson()
@@ -137,7 +126,7 @@ proc toggleDisplayAssetsBelowBalance*(self: Controller): bool =
 
 proc getDisplayAssetsBelowBalanceThreshold*(self: Controller): CurrencyAmount =
   let amount = float64(self.settingsService.displayAssetsBelowBalanceThreshold())
-  self.displayAssetsBelowBalanceThreshold = newCurrencyAmount(amount, self.tokenService.getCurrency(), 9, true)
+  self.displayAssetsBelowBalanceThreshold = newCurrencyAmount(amount, "", self.tokenService.getCurrency(), 9, true)
   return self.displayAssetsBelowBalanceThreshold
 
 proc setDisplayAssetsBelowBalanceThreshold*(self: Controller, threshold: int64): bool =
@@ -148,3 +137,6 @@ proc getAutoRefreshTokensLists*(self: Controller): bool =
 
 proc toggleAutoRefreshTokensLists*(self: Controller): bool =
   return self.settingsService.toggleAutoRefreshTokens()
+
+proc tokenAvailableForBridgingViaHop*(self: Controller, tokenChainId: int, tokenAddress: string): bool =
+  return self.tokenService.tokenAvailableForBridgingViaHop(tokenChainId, tokenAddress)

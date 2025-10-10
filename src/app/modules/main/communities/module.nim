@@ -147,6 +147,7 @@ method load*(self: Module) =
   self.controller.init()
   self.communityTokensModule.load()
   self.view.load()
+  self.onWalletAccountTokensRebuilt()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -504,9 +505,9 @@ method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string
   self.controller.requestCancelDiscordChannelImport(discordChannelId)
 
 proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
-    infiniteSupply: bool, privilegesLevel: int): TokenListItem =
+    infiniteSupply: bool, privilegesLevel: int): token_list_item.TokenListItem =
   let communityTokenDecimals = if token.tokenType == TokenType.ERC20: 18 else: 0
-  let key = if token.tokenType == TokenType.ERC721: token.getContractIdFromFirstAddress() else: token.symbol
+  let key = token.getContractIdFromFirstAddress()
   result = initTokenListItem(
     key = key,
     name = token.name,
@@ -522,7 +523,7 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
   )
 
 proc buildCommunityTokenItemFallback(self: Module, communityTokens: seq[CommunityTokenDto],
-    token: CommunityTokensMetadataDto, communityId: string): TokenListItem =
+    token: CommunityTokensMetadataDto, communityId: string): token_list_item.TokenListItem =
   # Set fallback supply to infinite in case we don't have it
   var supply = "1"
   var infiniteSupply = true
@@ -536,8 +537,8 @@ proc buildCommunityTokenItemFallback(self: Module, communityTokens: seq[Communit
   return self.createCommunityTokenItem(token, communityId, supply, infiniteSupply, privilegesLevel)
 
 proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto]) =
-  var tokenListItems: seq[TokenListItem]
-  var collectiblesListItems: seq[TokenListItem]
+  var tokenListItems: seq[token_list_item.TokenListItem]
+  var collectiblesListItems: seq[token_list_item.TokenListItem]
 
   let communityTokens = self.controller.getAllCommunityTokens()
   for community in communities:
@@ -562,31 +563,55 @@ proc buildTokensAndCollectiblesFromAllCommunities(self: Module) =
   self.buildTokensAndCollectiblesFromCommunities(communities)
 
 proc buildTokensAndCollectiblesFromWallet(self: Module) =
-  var tokenListItems: seq[TokenListItem]
+  var tokenListItems: seq[token_list_item.TokenListItem]
+
+  # TODO: needs to be revisited, cause the UI displays tokens by symbol, while we're working with groups of tokens
+  # this is ok, until all tokens belonging to the same group have the same crossChainId, otherwise the UI will display
+  # those tokens as two items in the dropdown list (even they should be the same token group).
+  # To fix this we need to change the UI of dropdown list and display chains next to selected token.
+  # Or the contract addresses should be in tooltip or expanded for the item in dropdown list (just to be clear which token
+  # is selected in the dropdown list in case of multiple tokens with the same symbol).
 
   # Common ERC20 tokens
   let allNetworks = self.controller.getCurrentNetworksChainIds()
-  let erc20Tokens = self.controller.getTokenBySymbolList().filter(t => (block:
-    let filteredChains = t.addressPerChainId.filter(apC => allNetworks.contains(apc.chainId))
-    return filteredChains.len != 0
-    ))
-  for token in erc20Tokens:
-    let communityTokens = self.controller.getCommunityTokens(token.communityId)
+  let tokenGroups = self.controller.getAllTokenGroupsForActiveNetworksMode()
+  for tokenGroup in tokenGroups:
+    let tokensForSelectedChains = tokenGroup.tokens.filter(t => allNetworks.contains(t.chainId))
+    if tokensForSelectedChains.len <= 0:
+      continue
     var privilegesLevel = PrivilegesLevel.Community.int
-    for communityToken in communityTokens:
-      if communityToken.symbol == token.symbol:
-        privilegesLevel = communityToken.privilegesLevel.int
-        break
+    let communityRelatedTokens = tokensForSelectedChains.filter(t => t.communityData.id.len > 0)
+    if communityRelatedTokens.len > 0:
+      for communityRelatedToken in communityRelatedTokens:
+        let communityTokens = self.controller.getCommunityTokens(communityRelatedToken.communityData.id)
+        for communityToken in communityTokens:
+          if communityToken.symbol == communityRelatedToken.symbol:
+            privilegesLevel = communityToken.privilegesLevel.int
+            break
+
+        let tokenListItem = initTokenListItem(
+          key = communityRelatedToken.key,
+          name = communityRelatedToken.name,
+          symbol = communityRelatedToken.symbol,
+          color = "",
+          communityId = communityRelatedToken.communityData.id,
+          image = "",
+          category = ord(TokenListItemCategory.General),
+          decimals = communityRelatedToken.decimals,
+          privilegesLevel = privilegesLevel
+        )
+        tokenListItems.add(tokenListItem)
+      continue
 
     let tokenListItem = initTokenListItem(
-      key = token.symbol,
-      name = token.name,
-      symbol = token.symbol,
+      key = tokenGroup.key,
+      name = tokenGroup.name,
+      symbol = tokenGroup.symbol,
       color = "",
-      communityId = token.communityId,
+      communityId = "",
       image = "",
       category = ord(TokenListItemCategory.General),
-      decimals = token.decimals,
+      decimals = tokenGroup.decimals,
       privilegesLevel = privilegesLevel
     )
     tokenListItems.add(tokenListItem)

@@ -6,17 +6,17 @@ QtObject {
 
     property string selectedWalletAddress: ""
     property int selectedNetworkChainId: -1
-    property string selectedTokenKey: defaultTokenKey
+    property string selectedTokenGroupKey: defaultTokenGroupKey
     property string selectedProviderId: ""
 
-    readonly property bool filledCorrectly: !!selectedWalletAddress && !!selectedTokenKey && selectedNetworkChainId !== -1
+    readonly property bool filledCorrectly: !!selectedWalletAddress && !!selectedTokenGroupKey && selectedNetworkChainId !== -1
 
-    property string defaultTokenKey: Utils.getNativeTokenSymbol(root.selectedNetworkChainId)
+    property string defaultTokenGroupKey: Utils.getNativeTokenGroupKey(root.selectedNetworkChainId)
 
     function resetFormData() {
         selectedWalletAddress = ""
         selectedNetworkChainId = -1
-        selectedTokenKey = defaultTokenKey
+        selectedTokenGroupKey = defaultTokenGroupKey
         selectedProviderId = ""
     }
 }

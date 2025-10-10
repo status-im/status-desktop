@@ -144,7 +144,7 @@ StatusDialog {
             if (d.selectedHoldingType === Constants.TokenType.ERC20) {
                 if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
                     store.setSendType(Constants.SendType.Transfer)
-                store.setSelectedAssetKey(selectedHolding.tokensKey)
+                store.setSelectedAssetKey(selectedHolding.key)
                 store.setSelectedTokenIsOwnerToken(false)
             } else if (d.selectedHoldingType === Constants.TokenType.ERC721 ||
                        d.selectedHoldingType === Constants.TokenType.ERC1155) {
@@ -158,7 +158,43 @@ StatusDialog {
             }
             store.setSelectedTokenName(selectedHolding.name)
 
+            d.updateChainsForBridge()
             recalculateRoutesAndFees()
+        }
+
+        function updateChainsForBridge() {
+            if(!d.isBridgeTx || !d.selectedHolding) {
+                return
+            }
+
+            let entry = SQUtils.ModelUtils.getByKey(
+                            assetsAdaptor.outputAssetsModel, "key",
+                            d.selectedHolding.key)
+            if(!entry){
+                return
+            }
+            let selectedFromChainId = 0
+            for (let i = 0; i < entry.tokens.ModelCount.count; ++i) {
+                const item = SQUtils.ModelUtils.get(entry.tokens, i)
+                if (d.isBSC(item.chainId)) {
+                    continue
+                }
+                selectedFromChainId = item.chainId
+                break
+            }
+
+            let selectedToChainId = 0
+            for (let i = 0; i < toNetworksRouteModel.ModelCount.count; ++i) {
+                const item = SQUtils.ModelUtils.get(toNetworksRouteModel, i)
+                if (item.chainId !== selectedFromChainId) {
+                    selectedToChainId = item.chainId
+                    break
+                }
+            }
+            if (selectedFromChainId > 0 && selectedToChainId > 0) {
+                popup.store.setRouteEnabledChainFrom(selectedFromChainId)
+                popup.store.setRouteEnabledChainTo(selectedToChainId)
+            }
         }
 
         function addMetricsEvent(subEventName) {
@@ -267,27 +303,6 @@ StatusDialog {
             store.setSendType(popup.preSelectedSendType)
         }
 
-        if(d.isBridgeTx) {
-            let initiallySelectedFromChain = 0
-            if (fromNetworksRouteModel.ModelCount.count > 0) {
-                const item = SQUtils.ModelUtils.get(fromNetworksRouteModel, 0)
-                initiallySelectedFromChain = item.chainId
-            }
-
-            let initiallySelectedToChain = 0
-            for (let i = 0; i < toNetworksRouteModel.ModelCount.count; ++i) {
-                const item = SQUtils.ModelUtils.get(toNetworksRouteModel, i)
-                if (item.chainId !== initiallySelectedFromChain) {
-                    initiallySelectedToChain = item.chainId
-                    break
-                }
-            }
-
-            if (initiallySelectedFromChain > 0 && initiallySelectedToChain > 0) {
-                popup.store.setRouteEnabledChainFrom(initiallySelectedFromChain)
-                popup.store.setRouteEnabledChainTo(initiallySelectedToChain)
-            }
-        }
 
         // To be removed once bridge is splitted to a different component:
         if(d.isBridgeTx && !!popup.preSelectedAccountAddress) {
@@ -299,18 +314,20 @@ StatusDialog {
                 && popup.preSelectedHoldingType >= Constants.TokenType.Native
                 && popup.preSelectedHoldingType < Constants.TokenType.Unknown) {
 
+            d.updateChainsForBridge()
+
             if (popup.preSelectedHoldingType === Constants.TokenType.Native
                     || popup.preSelectedHoldingType === Constants.TokenType.ERC20) {
                 let iconSource = ""
                 let entry = SQUtils.ModelUtils.getByKey(
-                                assetsAdaptor.outputAssetsModel, "tokensKey",
+                                assetsAdaptor.outputAssetsModel, "key",
                                 popup.preSelectedHoldingID)
 
                 if (entry) {
                     iconSource = entry.iconSource
                 } else {
                     entry = SQUtils.ModelUtils.getByKey(
-                                popup.store.walletAssetStore.renamedTokensBySymbolModel, "tokensKey",
+                                popup.store.walletAssetStore.tokenGroupsModel, "key",
                                 popup.preSelectedHoldingID)
                     iconSource = Constants.tokenIcon(entry.symbol)
                 }
@@ -400,8 +417,8 @@ StatusDialog {
 
                 if (d.isSelectedHoldingValidAsset) {
                     d.selectedHolding = SQUtils.ModelUtils.getByKey(
-                                holdingSelector.assetsModel, "tokensKey",
-                                d.selectedHolding.tokensKey)
+                                holdingSelector.assetsModel, "key",
+                                d.selectedHolding.key)
                 }
 
                 d.recalculateRoutesAndFees()
@@ -495,15 +512,15 @@ StatusDialog {
                             }
                         }
 
-                        onAssetSelected: {
+                        onAssetSelected: function(key) {
                             const entry = SQUtils.ModelUtils.getByKey(
-                                            assetsModel, "tokensKey", key)
+                                            assetsModel, "key", key)
                             d.selectedHoldingType = Constants.TokenType.ERC20
                             d.selectedHolding = entry
                             selectedItem = entry
                         }
 
-                        onCollectibleSelected: {
+                        onCollectibleSelected: function(key) {
                             const entry = SQUtils.ModelUtils.getByKey(
                                             popup.collectiblesStore.allCollectiblesModel,
                                             "symbol", key)
@@ -512,7 +529,7 @@ StatusDialog {
                             selectedItem = entry
                         }
 
-                        onCollectionSelected: {
+                        onCollectionSelected: function(key) {
                             const entry = SQUtils.ModelUtils.getByKey(
                                             popup.collectiblesStore.allCollectiblesModel,
                                             "collectionUid", key)

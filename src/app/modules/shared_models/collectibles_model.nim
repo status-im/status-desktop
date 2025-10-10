@@ -3,6 +3,7 @@ import chronicles
 
 import ./collectibles_entry
 import backend/collectibles as backend_collectibles
+import backend/collectibles_types as backend_collectibles_types
 
 type
   CollectibleRole* {.pure.} = enum
@@ -54,7 +55,7 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
     return self.items.len
-    
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -231,13 +232,13 @@ QtObject:
     self.items.delete(idx)
     self.endRemoveRows()
     self.countChanged()
-  
+
   proc updateCollectibleItems(self: Model, newItems: seq[CollectiblesEntry]) =
     if len(self.items) == 0:
       # Current list is empty, just replace with new list
       self.resetCollectibleItems(newItems)
       return
-    
+
     if len(newItems) == 0:
       # New list is empty, just remove all items
       self.resetCollectibleItems()
@@ -333,7 +334,7 @@ QtObject:
         return item.getIDAsString()
     # Fallback, create uid from data, because it still might not be fetched
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
-      return $chainId & "+" & tokenAddress & "+" & tokenId
+      return backend_collectibles_types.makeCollectibleUniqueID(chainId, tokenAddress, tokenId)
     return ""
 
   proc delete(self: Model) =

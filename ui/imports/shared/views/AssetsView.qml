@@ -23,27 +23,71 @@ Control {
     /**
       Expected model structure:
 
-        key         [string] - unique identifier of a token, e.g "0x3234235"
-        symbol      [string] - token's symbol e.g. "ETH" or "SNT"
-        name        [string] - token's name e.g. "Ether" or "Dai"
-        icon        [url]    - token's icon url
-        balance     [double] - tokens balance is the commonly used unit, e.g. 1.2 for 1.2 ETH, used
-                               for sorting and computing market value
-        balanceText [string] - formatted and localized balance. This is not done internally because
-                               it may depend on many external factors
-        error       [string] - error message related to balance
-
-        marketDetailsAvailable [bool]   - specifies if market datails are available for given token
-        marketDetailsLoading   [bool]   - specifies if market datails are available for given token
-        marketPrice            [double] - specifies market price in currently used currency
-        marketChangePct24hour  [double] - percentage price change in last 24 hours, e.g. 0.5 for 0.5% of price change
-
-        communityId   [string] - for community assets, unique identifier of a community, e.g. "0x6734235"
-        communityName [string] - for community assets, name of a community e.g. "Crypto Kitties"
-        communityIcon [url]    - for community assets, community's icon url
-
-        position    [int]  - if custom order available, display position defined by the user via token management
-        canBeHidden [bool] - specifies if given token can be hidden (e.g. ETH should be always visible)
+        key                         [string]    - refers to token group key
+        name                        [string]    - token's name
+        symbol                      [string]    - token's symbol
+        decimals                    [int]       - token's decimals
+        logoUri                     [string]    - token's image
+        tokens                      [model]     - contains tokens that belong to the same token group (a single token per chain), has at least a single token
+            key                     [string]    - token key
+            groupKey                [string]    - token group key
+            crossChainId            [string]    - cross chain id
+            address                 [string]    - token's address
+            name:                   [string]    - token's name
+            symbol:                 [string]    - token's symbol
+            decimals:               [int]       - token's decimals
+            chainId:                [int]       - token's chain id
+            image:                  [string]    - token's image
+            customToken             [bool]      - `true` if the it's a custom token
+            communityId             [string]    - contains community id if the token is a community token
+        balances                    [model]     - contains a single entry for (token, accountAddress) pair
+            account                 [string]    - wallet account address
+            groupKey                [string]    - group key that the token belongs to (cross chain id or token key if cross chain id is empty)
+            tokenKey                [string]    - token unique key (chain - address)
+            chainId                 [int]       - token's chain id
+            tokenAddress            [string]    - token's address
+            balance                 [string]    - balance that the `account` has for token with `tokenKey`
+        communityId                 [string]    - for community assets, unique identifier of a community, e.g. "0x6734235"
+        communityName               [string]    - for community assets, name of a community e.g. "Crypto Kitties"
+        communityIcon               [url]       - for community assets, community's icon url
+        websiteUrl                  [string]    - token's website
+        description                 [string]    - token's description
+        marketDetails               [object]    - contains market data
+            changePctHour           [double]    - percentage change hour
+            changePctDay            [double]    - percentage change day
+            changePct24hour         [double]    - percentage change 24 hrs
+            change24hour            [double]    - change 24 hrs
+            marketCap               [object]
+                amount              [double]    - market capitalization value
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+            highDay                 [object]
+                amount              [double]    - the highest value for day
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+            lowDay                  [object]
+                amount              [double]    - the lowest value for day
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+            currencyPrice           [object]
+                amount              [double]    - token's price
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+        detailsLoading              [bool]      - `true` if details are still being loaded
+        balance                     [double]    - tokens balance is the commonly used unit, e.g. 1.2 for 1.2 ETH, used for sorting and computing market value
+        balanceText                 [string]    - formatted and localized balance. This is not done internally because it may depend on many external factors
+        error                       [string]    - error message related to balance
+        marketDetailsAvailable      [bool]      - specifies if market datails are available for given token
+        marketDetailsLoading        [bool]      - specifies if market datails are available for given token
+        marketPrice                 [double]    - specifies market price in currently used currency
+        marketChangePct24hour       [double]    - percentage price change in last 24 hours, e.g. 0.5 for 0.5% of price change
+        visible                     [bool]      - determines if token is displayed or not
+        position                    [int]       - token's position
+        canBeHidden                 [bool]      - specifies if given token can be hidden (e.g. ETH should be always visible)
     **/
     property var model
 
@@ -231,12 +275,12 @@ Control {
             model: sfpm
 
             delegate: TokenDelegate {
-                objectName: `AssetView_TokenListItem_${model.symbol}`
+                objectName: `AssetView_TokenListItem_${model.symbol}` // TODO: use model.key
 
                 width: ListView.view.width
 
                 name: model.name
-                icon: model.icon
+                icon: model.logoUri
                 balance: model.balanceText
                 marketBalance: root.formatFiat(model.marketBalance)
 
@@ -247,7 +291,7 @@ Control {
 
                 communityId: model.communityId
                 communityName: model.communityName ?? ""
-                communityIcon: model.communityIcon ?? ""
+                communityIcon: model.communityImage ?? ""
 
                 errorTooltipText_1: model.error
                 errorTooltipText_2: root.marketDataError

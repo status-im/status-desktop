@@ -42,8 +42,8 @@ proc getCurrency*(self: Controller): string =
 proc getTotalCurrencyBalance*(self: Controller, addresses: seq[string], chainIds: seq[int]): CurrencyAmount =
   return currencyAmountToItem(self.walletAccountService.getTotalCurrencyBalance(addresses, chainIds), self.currencyService.getCurrencyFormat(self.getCurrency()))
 
-proc getCurrencyAmount*(self: Controller, amount: float64, symbol: string): CurrencyAmount =
-  return currencyAmountToItem(amount, self.currencyService.getCurrencyFormat(symbol))
+proc getCurrencyAmount*(self: Controller, amount: float64, key: string): CurrencyAmount =
+  return currencyAmountToItem(amount, self.currencyService.getCurrencyFormat(key))
 
 proc updateCurrency*(self: Controller, currency: string) =
   self.walletAccountService.updateCurrency(currency)

@@ -29,7 +29,7 @@ import "../controls"
 Item {
     id: root
 
-    property var token: ({})
+    property var tokenGroup: ({})
 
     property WalletStores.TokensStore tokensStore
     property SharedStores.CurrenciesStore currencyStore
@@ -46,13 +46,13 @@ Item {
     QtObject {
         id: d
 
-        readonly property string symbol: !!root.token? root.token.symbol?? "" : ""
-        property bool marketDetailsLoading: !!root.token? root.token.marketDetailsLoading?? false : false
-        property bool tokenDetailsLoading: !!root.token? root.token.detailsLoading?? false: false
-        property bool isCommunityAsset: !!root.token && !!token.communityId
+        readonly property string symbol: !!root.tokenGroup? root.tokenGroup.symbol?? "" : ""
+        property bool marketDetailsLoading: !!root.tokenGroup? root.tokenGroup.marketDetailsLoading?? false : false
+        property bool tokenDetailsLoading: !!root.tokenGroup? root.tokenGroup.detailsLoading?? false: false
+        property bool isCommunityAsset: !!root.tokenGroup && !!tokenGroup.communityId
 
         readonly property LeftJoinModel addressPerChainModel: LeftJoinModel {
-            leftModel: token && token.addressPerChain ? token.addressPerChain: null
+            leftModel: tokenGroup && tokenGroup.tokens ? tokenGroup.tokens: null
             rightModel: root.allNetworksModel
             joinRole: "chainId"
         }
@@ -90,34 +90,34 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         asset.name: {
-            if (!token)
+            if (!tokenGroup)
                 return ""
-            if (token.image)
-                return token.image
-            return Constants.tokenIcon(token.symbol)
+            if (tokenGroup.logoUri)
+                return tokenGroup.logoUri
+            return Constants.tokenIcon(tokenGroup.symbol)
         }
         asset.isImage: true
-        primaryText: token && token.name ? token.name : Constants.dummyText
-        secondaryText: token ? token.balanceText : Constants.dummyText
+        primaryText: tokenGroup && tokenGroup.name ? tokenGroup.name : Constants.dummyText
+        secondaryText: tokenGroup ? tokenGroup.balanceText : Constants.dummyText
         tertiaryText: {
             if (!d.isCommunityAsset) {
-                let totalCurrencyBalance = token ? token.balance * token.marketPrice : 0
+                let totalCurrencyBalance = tokenGroup ? tokenGroup.balance * tokenGroup.marketPrice : 0
                 return root.currencyStore.formatCurrencyAmount(totalCurrencyBalance, root.currencyStore.currentCurrency)
             }
             return ""
         }
-        decimals: token && token.decimals ? token.decimals : 4
-        balances: token && token.balances ? token.balances: null
+        decimals: tokenGroup && tokenGroup.decimals ? tokenGroup.decimals : 4
+        balances: tokenGroup && tokenGroup.balances ? tokenGroup.balances: null
         networksModel: d.enabledNetworksModel
         isLoading: d.marketDetailsLoading
         address: root.address
-        errorTooltipText: token && token.balances ? networkConnectionStore.getBlockchainNetworkDownTextForToken(token.balances): ""
+        errorTooltipText: tokenGroup && tokenGroup.balances ? networkConnectionStore.getBlockchainNetworkDownTextForToken(tokenGroup.balances): ""
         formatBalance: function(balance){
-            return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrencyAmount(balance, token.symbol))
+            return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrencyAmount(balance, tokenGroup.key))
         }
         communityTag.visible: d.isCommunityAsset
-        communityTag.tagPrimaryLabel.text: d.isCommunityAsset ? token.communityName: ""
-        communityTag.asset.name: d.isCommunityAsset ? token && !!token.communityImage ? token.communityImage : "" : ""
+        communityTag.tagPrimaryLabel.text: d.isCommunityAsset ? tokenGroup.communityName: ""
+        communityTag.asset.name: d.isCommunityAsset ? tokenGroup && !!tokenGroup.communityImage ? tokenGroup.communityImage : "" : ""
         communityTag.asset.isImage: true
     }
 
@@ -314,8 +314,8 @@ Item {
 
                     objectName: "marketCapInformationTile"
                     primaryText: qsTr("Market Cap")
-                    secondaryText: token && token.marketDetails && token.marketDetails.marketCap
-                                   ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.marketCap)
+                    secondaryText: tokenGroup && tokenGroup.marketDetails && tokenGroup.marketDetails.marketCap
+                                   ? LocaleUtils.currencyAmountToLocaleString(tokenGroup.marketDetails.marketCap)
                                    : Constants.dummyText
                     isLoading: d.marketDetailsLoading
                 }
@@ -324,8 +324,8 @@ Item {
 
                     objectName: "dayLowInformationTile"
                     primaryText: qsTr("Day Low")
-                    secondaryText: token && token.marketDetails && token.marketDetails.lowDay
-                                   ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.lowDay)
+                    secondaryText: tokenGroup && tokenGroup.marketDetails && tokenGroup.marketDetails.lowDay
+                                   ? LocaleUtils.currencyAmountToLocaleString(tokenGroup.marketDetails.lowDay)
                                    : Constants.dummyText
                     isLoading: d.marketDetailsLoading
                 }
@@ -345,8 +345,8 @@ Item {
 
                         objectName: "dayHighInformationTile"
                         primaryText: qsTr("Day High")
-                        secondaryText: token && token.marketDetails && token.marketDetails.highDay
-                                       ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.highDay)
+                        secondaryText: tokenGroup && tokenGroup.marketDetails && tokenGroup.marketDetails.highDay
+                                       ? LocaleUtils.currencyAmountToLocaleString(tokenGroup.marketDetails.highDay)
                                        : Constants.dummyText
                         isLoading: d.marketDetailsLoading
                     }
@@ -355,8 +355,8 @@ Item {
                 InformationTile {
                     id: i4
 
-                    readonly property double changePctHour: token && token.marketDetails
-                                                            ? token.marketDetails.changePctHour : 0
+                    readonly property double changePctHour: tokenGroup && tokenGroup.marketDetails
+                                                            ? tokenGroup.marketDetails.changePctHour : 0
 
                     objectName: "hourInformationTile"
                     primaryText: qsTr("Hour")
@@ -369,8 +369,8 @@ Item {
                 InformationTile {
                     id: i5
 
-                    readonly property double changePctDay: token && token.marketDetails
-                                                           ? token.marketDetails.changePctDay : 0
+                    readonly property double changePctDay: tokenGroup && tokenGroup.marketDetails
+                                                           ? tokenGroup.marketDetails.changePctDay : 0
 
                     primaryText: qsTr("Day")
                     objectName: "dayInformationTile"
@@ -383,8 +383,8 @@ Item {
                 InformationTile {
                     id: i6
 
-                    readonly property double changePct24hour: token && token.marketDetails
-                                                              ? token.marketDetails.changePct24hour : 0
+                    readonly property double changePct24hour: tokenGroup && tokenGroup.marketDetails
+                                                              ? tokenGroup.marketDetails.changePct24hour : 0
 
                     primaryText: qsTr("24 Hours")
                     objectName: "24HoursInformationTile"
@@ -413,7 +413,7 @@ Item {
                     font.pixelSize: Theme.primaryTextFontSize
                     lineHeight: 22
                     lineHeightMode: Text.FixedHeight
-                    text: token && token.description ? token.description : d.tokenDetailsLoading ? Constants.dummyText: ""
+                    text: tokenGroup && tokenGroup.description ? tokenGroup.description : d.tokenDetailsLoading ? Constants.dummyText: ""
                     customColor: Theme.palette.directColor1
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap
@@ -432,12 +432,12 @@ Item {
 
                         Layout.alignment: Qt.AlignTop
                         Layout.preferredWidth: detailsFlow.isOverflowing ? -1 : detailsFlow.rightSideWidth
-                        visible: !d.isCommunityAsset && token.websiteUrl
+                        visible: !d.isCommunityAsset && tokenGroup.websiteUrl
                         primaryText: qsTr("Website")
                         content: InformationTag {
                             asset.name : "browser"
-                            tagPrimaryLabel.text: SQUtils.Utils.stripHttpsAndwwwFromUrl(token.websiteUrl)
-                            visible: typeof token != "undefined" && token && token.websiteUrl !== ""
+                            tagPrimaryLabel.text: SQUtils.Utils.stripHttpsAndwwwFromUrl(tokenGroup.websiteUrl)
+                            visible: typeof tokenGroup != "undefined" && tokenGroup && tokenGroup.websiteUrl !== ""
                             customBackground: Component {
                                 Rectangle {
                                     color: Theme.palette.baseColor2
@@ -449,7 +449,7 @@ Item {
                             StatusMouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Global.requestOpenLink(token.websiteUrl)
+                                onClicked: Global.requestOpenLink(tokenGroup.websiteUrl)
                             }
                         }
                     }
@@ -460,8 +460,8 @@ Item {
                         visible:  d.isCommunityAsset
                         primaryText: qsTr("Minted by")
                         content: InformationTag {
-                            tagPrimaryLabel.text: token && token.communityName ? token.communityName : ""
-                            asset.name: token && token.communityImage ? token.communityImage : ""
+                            tagPrimaryLabel.text: tokenGroup && tokenGroup.communityName ? tokenGroup.communityName : ""
+                            asset.name: tokenGroup && tokenGroup.communityImage ? tokenGroup.communityImage : ""
                             asset.isImage: true
                             customBackground: Component {
                                 Rectangle {
@@ -474,7 +474,7 @@ Item {
                             StatusMouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Global.switchToCommunity(token.communityId)
+                                onClicked: Global.switchToCommunity(tokenGroup.communityId)
                             }
                         }
                     }

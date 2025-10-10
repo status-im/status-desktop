@@ -775,12 +775,10 @@ QtObject {
         readonly property int actionSyncDevice: 3
     }
 
-    readonly property QtObject supportedTokenSources: QtObject {
+    readonly property QtObject hiddenTokenLists: QtObject {
         readonly property string nativeList: "native"
-        readonly property string uniswap: "Uniswap Labs Default"
-        readonly property string aave: "Aave token list"
-        readonly property string status: "Status Token List"
         readonly property string custom: "custom"
+        readonly property string community: "community"
     }
 
     enum LocalPairingState {
@@ -896,8 +894,21 @@ QtObject {
 
     readonly property string ethToken: "ETH"
     readonly property string bnbToken: "BNB"
+    readonly property string sntToken: "SNT"
+    readonly property string sttToken: "STT"
     readonly property string usdcToken: "USDC"
     readonly property string gweiToken: "Gwei" // special "fake" token, added here to facilitate fee representation in locale
+
+    readonly property string ethGroupKey: "eth-native"
+    readonly property string bnbGroupKey: "bsc-native"
+    readonly property string sntGroupKey: "status"
+    readonly property string sttGroupKey: "status-test-token"
+    readonly property string usdcGroupKeyEvm: "usd-coin"
+    readonly property string usdcGroupKeyBsc: "usd-coin-bsc"
+    readonly property string usdtGroupKeyEvm: "tether"
+    readonly property string daiGroupKey: "dai"
+    readonly property string aaveGroupKey: "aave"
+
     readonly property var rawDecimals: {
         "ETH": 18,
         "BNB": 18,
@@ -1334,21 +1345,6 @@ QtObject {
 
     function isDefaultTokenIcon(url) {
         return url.indexOf("DEFAULT-TOKEN") !== -1
-    }
-
-    function getSupportedTokenSourceImage(name, useDefault=true) {
-        if (name === supportedTokenSources.uniswap)
-            return Assets.png("tokens/UNI")
-
-        if (name === supportedTokenSources.aave)
-            return Assets.png("tokens/AAVE")
-
-        if (name === supportedTokenSources.status)
-            return Assets.png("tokens/SNT")
-
-        if (useDefault)
-            return Assets.png("tokens/DEFAULT-TOKEN")
-        return ""
     }
 
     enum RecipientAddressObjectType {

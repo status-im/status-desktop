@@ -109,8 +109,8 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
           result.errorCode = errorResponseJsonNode["code"].getStr
       result.updatedPrices = initTable[string, float64]()
       if event.contains("UpdatedPrices"):
-        for tokenSymbol, price in event["UpdatedPrices"].pairs():
-          result.updatedPrices[tokenSymbol] = price.getFloat
+        for tokenKey, price in event["UpdatedPrices"].pairs():
+          result.updatedPrices[tokenKey] = price.getFloat
     except Exception as e:
       error "Error parsing best route: ", err=e.msg
     return

@@ -11,7 +11,7 @@ import
   web3/eth_api_types
 
 include  ../../common/json_utils
-import backend/network_types, ../token/dto
+import backend/network_types, ../token/dto/token
 
 type
   SuggestedNonEIP1559Fees* = ref object

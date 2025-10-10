@@ -7,6 +7,7 @@ import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Popups.Dialog
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils
 
 import utils
 
@@ -19,8 +20,7 @@ StatusDialog {
     required property string sourceUrl
     required property string sourceVersion
     required property double updatedAt
-    required property int tokensCount
-    required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl, isTest
+    required property var tokensListModel // Expected roles: name, symbol, image, chainId, blockExplorerURL, isTest
 
     signal linkClicked(string link)
 
@@ -42,6 +42,8 @@ StatusDialog {
         topMargin: Theme.padding
         bottomMargin: Theme.padding
         implicitHeight: contentHeight
+
+        model: root.tokensListModel
 
         header: ColumnLayout {
             spacing: 20
@@ -65,18 +67,14 @@ StatusDialog {
             chainName: model.chainName
             symbol: model.symbol
             address: model.address
-            explorerUrl: model.explorerUrl
+            explorerUrl: "%1/token/%2".arg(model.blockExplorerURL).arg(model.address)
             isTest: model.isTest
         }
-        /* This onCompleted has been added here because without it all
-        the items in the list get initialised before the popup is launched
-        creating a delay */
-        Component.onCompleted: model = root.tokensListModel
     }
 
     header: StatusDialogHeader {
         headline.title: root.title
-        headline.subtitle: qsTr("%n token(s)", "", root.tokensCount)
+        headline.subtitle: qsTr("%n token(s)", "", root.tokensListModel.ModelCount.count)
         actions.closeButton.onClicked: root.close()
         leftComponent: StatusSmartIdenticon {
             asset.name: root.sourceImage

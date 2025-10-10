@@ -43,7 +43,7 @@ QObject {
     property var /* Big */ fiatMaxFees
     property string fiatSymbol
     property var /* Big */ nativeTokenMaxFees
-    property string nativeTokenSymbol
+    property string nativeTokenGroupKey
     property var feesInfo
     property var /* Big */ value
 

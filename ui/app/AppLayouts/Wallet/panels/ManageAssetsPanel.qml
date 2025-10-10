@@ -18,7 +18,7 @@ DoubleFlickableWithFolding {
     readonly property bool dirty: root.controller.dirty
     readonly property bool hasSettings: root.controller.hasSettings
 
-    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrencyAmount: function (balance, key) {}
     property var getCurrentCurrencyAmount: function(balance) {}
 
     function saveSettings(update) {
@@ -67,8 +67,8 @@ DoubleFlickableWithFolding {
             dragParent: root
             count: root.controller.regularTokensModel.count
             dragEnabled: count > 1
-            getCurrencyAmount: function (balance, symbol) {
-                return root.getCurrencyAmount(balance, symbol)
+            getCurrencyAmount: function (balance, key) {
+                return root.getCurrencyAmount(balance, key)
             }
             getCurrentCurrencyAmount: function (balance) {
                 return root.getCurrentCurrencyAmount(balance)
@@ -112,8 +112,8 @@ DoubleFlickableWithFolding {
             dragParent: root
             count: root.controller.communityTokensModel.count
             dragEnabled: count > 1
-            getCurrencyAmount: function (balance, symbol) {
-                return root.getCurrencyAmount(balance, symbol)
+            getCurrencyAmount: function (balance, key) {
+                return root.getCurrencyAmount(balance, key)
             }
             getCurrentCurrencyAmount: function (balance) {
                 return root.getCurrentCurrencyAmount(balance)

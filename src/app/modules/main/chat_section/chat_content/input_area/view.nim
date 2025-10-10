@@ -2,8 +2,8 @@ import nimqml, sets
 import ./io_interface
 import ./preserved_properties
 import ./urls_model
-import ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
-import ../../../../../../app/modules/shared_models/payment_request_model as payment_request_model
+import app/modules/shared_models/link_preview_model as link_preview_model
+import app/modules/shared_models/payment_request_model as payment_request_model
 
 QtObject:
   type
@@ -84,7 +84,7 @@ QtObject:
   QtProperty[bool] askToEnableLinkPreview:
     read = getAskToEnableLinkPreview
     notify = askToEnableLinkPreviewChanged
-    
+
   # Currently used to fetch link previews, but could be used elsewhere
   proc setText*(self: View, text: string) {.slot.} =
     self.delegate.setText(text, true)
@@ -95,7 +95,7 @@ QtObject:
   proc updateLinkPreviewsFromCache*(self: View, urls: seq[string]) =
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)
-    
+
     for contactId in self.linkPreviewModel.getContactIds().items:
       let contact = self.delegate.getContactDetails(contactId)
       if contact.dto.displayName != "":
@@ -110,16 +110,16 @@ QtObject:
 
   proc reloadLinkPreview(self: View, link: string) {.slot.} =
     self.delegate.loadLinkPreviews(@[link])
-  
+
   proc loadLinkPreviews(self: View, links: seq[string]) =
     self.delegate.loadLinkPreviews(links)
-  
+
   proc enableLinkPreview(self: View) {.slot.} =
     self.delegate.setLinkPreviewEnabled(true)
-  
+
   proc disableLinkPreview(self: View) {.slot.} =
     self.delegate.setLinkPreviewEnabled(false)
-  
+
   proc setLinkPreviewEnabledForCurrentMessage(self: View, enabled: bool) {.slot.} =
     self.delegate.setLinkPreviewEnabledForThisMessage(enabled)
     self.delegate.reloadUnfurlingPlan()
@@ -127,8 +127,8 @@ QtObject:
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)
 
-  proc addPaymentRequest*(self: View, receiver: string, amount: string, symbol: string, chainId: int) {.slot.} =
-    self.paymentRequestModel.addPaymentRequest(receiver, amount, symbol, chainId)
+  proc addPaymentRequest*(self: View, receiver: string, amount: string, tokenKey: string, symbol: string) {.slot.} =
+    self.paymentRequestModel.addPaymentRequest(receiver, amount, tokenKey, symbol)
 
   proc removePaymentRequestPreviewData*(self: View, index: int) {.slot.} =
     self.paymentRequestModel.removeItemWithIndex(index)

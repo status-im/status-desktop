@@ -56,10 +56,8 @@ QtObject:
       of ModelRole.Key:
         if item.getType() == ord(TokenType.ENS):
           result = newQVariant(item.getEnsPattern())
-        elif item.getType() == ord(TokenType.ERC721):
-          result = newQVariant(item.getContractIdFromFirstAddress())
         else:
-          result = newQVariant(item.getSymbol())
+          result = newQVariant(item.getContractIdFromFirstAddress())
       of ModelRole.Type:
         result = newQVariant(item.getType())
       of ModelRole.Symbol:

@@ -15,7 +15,7 @@ DropArea {
     id: root
     objectName: "manageTokensDelegate-%1".arg(index)
 
-    // expected roles: symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, imageUrl
+    // expected roles: key, symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, imageUrl
     // + enabledNetworkBalance, enabledNetworkCurrencyBalance
 
     property var controller
@@ -37,7 +37,7 @@ DropArea {
         readonly property int bgRadius: root.isCollectible ? Theme.radius : iconSize/2
     }
 
-    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrencyAmount: function (balance, key) {}
     property var getCurrentCurrencyAmount: function(balance){}
 
     SequentialAnimation {
@@ -79,10 +79,10 @@ DropArea {
         readonly property real totalBalance: aggregator.value/(10 ** model.decimals)
 
         secondaryTitle: root.isCollectible ? (root.isCommunityToken ? qsTr("Community minted") : model.collectionName || model.collectionUid) :
-                                             hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol)))
+                                             hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.key)))
                                                                               .arg(!model.communityId ? LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(totalBalance * model.marketDetails.currencyPrice.amount)):
                                                                                                         LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(0)))
-                                                                            : LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol))
+                                                                            : LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.key))
         bgRadius: priv.bgRadius
         hasImage: true
         icon.source: {
@@ -116,14 +116,14 @@ DropArea {
                 isCollectible: root.isCollectible
                 isCollection: isCollectible && !model.isSelfCollection && !isCommunityToken
                 onMoveRequested: (from, to) => root.ListView.view.model.moveItem(from, to)
-                onShowHideRequested: function(symbol, flag) {
+                onShowHideRequested: function(key, flag) {
                     if (isCommunityToken)
-                        root.controller.showHideCommunityToken(symbol, flag)
+                        root.controller.showHideCommunityToken(key, flag)
                     else
-                        root.controller.showHideRegularToken(symbol, flag)
+                        root.controller.showHideRegularToken(key, flag)
                     if (!flag) {
                         const msg = isCollectible ? qsTr("%1 was successfully hidden").arg(delegate.title)
-                                                  : qsTr("%1 (%2) was successfully hidden").arg(delegate.title).arg(symbol)
+                                                  : qsTr("%1 (%2) was successfully hidden").arg(delegate.title).arg(key)
                         Global.displayToastMessage(msg, "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
                     }
                 }

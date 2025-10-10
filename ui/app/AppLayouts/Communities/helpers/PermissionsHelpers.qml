@@ -12,14 +12,17 @@ import AppLayouts.Communities.controls
 import utils
 
 QtObject {
-    function getTokenByKey(model, key) {
+    function getTokenByKey(model, isCollectible, key) {
         var item
         // key format:
         // chainId+address[+tokenId] - ERC721
         // symbol - ERC20
-        // collectionUid model role keeps chainId+address for every ERC721
-        // key model role keeps: symbol for ERC20, chainId+address for community ERC721 tokens, chainId+address+tokenId for ERC721 tokens from wallet
-        let collectionUid = getCollectionUidFromKey(key)
+        // collectionUid model role keeps chainId-address for every ERC721
+        // key model role keeps: symbol for ERC20, chainId-address for community ERC721 tokens, chainId+address-tokenId for ERC721 tokens from wallet
+        let collectionUid = ""
+        if (isCollectible) {
+            collectionUid = getCollectionUidFromKey(key)
+        }
         if(collectionUid !== "") {
             item = ModelUtils.getByKey(model, "collectionUid", collectionUid)
         } else {
@@ -29,37 +32,37 @@ QtObject {
         return item
     }
 
-    function getTokenNameByKey(model, key) {
-        const item = getTokenByKey(model, key)
+    function getTokenNameByKey(model, isCollectible, key) {
+        const item = getTokenByKey(model, isCollectible, key)
         if (item)
             return item.name
         return ""
     }
 
-    function getTokenShortNameByKey(model, key) {
-        const item = getTokenByKey(model, key)
+    function getTokenShortNameByKey(model, isCollectible, key) {
+        const item = getTokenByKey(model, isCollectible, key)
         if (item)
             return item.shortName ?? ""
         return ""
     }
 
-    function getTokenIconByKey(model, key) {
-        const item = getTokenByKey(model, key)
+    function getTokenIconByKey(model, isCollectible, key) {
+        const item = getTokenByKey(model, isCollectible, key)
         const defaultIcon = Assets.png("tokens/DEFAULT-TOKEN")
         if (item)
             return item.iconSource ? item.iconSource : defaultIcon
         return defaultIcon
     }
 
-    function getTokenDecimalsByKey(model, key) {
-        const item = getTokenByKey(model, key)
+    function getTokenDecimalsByKey(model, isCollectible, key) {
+        const item = getTokenByKey(model, isCollectible, key)
         if (item)
             return item.decimals ?? 0
         return 0
     }
 
-    function getTokenRemainingSupplyByKey(model, key) {
-        const item = getTokenByKey(model, key)
+    function getTokenRemainingSupplyByKey(model, isCollectible, key) {
+        const item = getTokenByKey(model, isCollectible, key)
 
         if (!item || item.remainingSupply === undefined
                 || item.multiplierIndex === undefined)
@@ -130,11 +133,11 @@ QtObject {
     }
 
     function getCollectionUidFromKey(key) {
-        const parts = key.split('+');
+        const parts = key.split('-');
         if(parts.length === 2)
             return key
         else if(parts.length === 3)
-            return parts[0]+"+"+parts[1]
+            return parts[0]+"-"+parts[1]
         else
             return ""
     }

@@ -96,7 +96,7 @@ StatusSectionLayout {
  
     signal addressWasShownRequested(string address)
     signal connectUsernameRequested(string ensName, string ownerAddress)
-    signal registerUsernameRequested(string ensName)
+    signal registerUsernameRequested(string ensName, int chainId)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
 
     signal themeChangeRequested(int theme)
@@ -261,7 +261,7 @@ StatusSectionLayout {
                         FastExpressionFilter {
                             expression: {
                                 root.collectiblesStore.collectiblesController.revision
-                                return root.collectiblesStore.collectiblesController.filterAcceptsSymbol(model.uid)
+                                return root.collectiblesStore.collectiblesController.filterAcceptsKey(model.uid) // TODO: use token/group key
                             }
                             expectedRoles: ["uid"]
                         }
@@ -321,8 +321,8 @@ StatusSectionLayout {
                 networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
                 onConnectUsernameRequested: (ensName, ownerAddress) => root.connectUsernameRequested(ensName, ownerAddress)
-                onRegisterUsernameRequested: root.registerUsernameRequested(ensName)
-                onReleaseUsernameRequested: root.releaseUsernameRequested(ensName, senderAddress, chainId)
+                onRegisterUsernameRequested: (ensName, chainId) => root.registerUsernameRequested(ensName, chainId)
+                onReleaseUsernameRequested: (ensName, senderAddress, chainId) => root.releaseUsernameRequested(ensName, senderAddress, chainId)
             }
         }
 
@@ -359,6 +359,7 @@ StatusSectionLayout {
                 networksStore: root.networksStore
                 contactsStore: root.contactsStore
 
+                thirdpartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
                 myPublicKey: root.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup

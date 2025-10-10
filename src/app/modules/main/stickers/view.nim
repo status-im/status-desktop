@@ -1,5 +1,6 @@
 import nimqml, json, strutils
 
+import app_service/service/token/items/token
 import ./models/[sticker_list, sticker_pack_list]
 import ./io_interface, ./item
 
@@ -163,10 +164,6 @@ QtObject:
 
   proc getCurrentCurrency*(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
-
-
-  proc getStatusTokenKey*(self: View): string {.slot.} =
-    return self.delegate.getStatusTokenKey()
 
   proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string) {.signal.}
   proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string) =

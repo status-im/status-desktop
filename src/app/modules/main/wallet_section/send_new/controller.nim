@@ -92,17 +92,17 @@ proc suggestedRoutes*(self: Controller,
     sendType: SendType,
     accountFrom: string,
     accountTo: string,
-    token: string,
+    tokenGroupKey: string,
     tokenIsOwnerToken: bool,
     amountIn: string,
-    toToken: string = "",
+    toTokenGroupKey: string = "",
     amountOut: string = "",
     fromChainID: int = 0,
     toChainID: int = 0,
     slippagePercentage: float = 0.0,
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
-  self.transactionService.suggestedRoutes(uuid, sendType, accountFrom, accountTo, token, tokenIsOwnerToken, amountIn, toToken, amountOut,
-    fromChainID, toChainID, slippagePercentage, extraParamsTable)
+  self.transactionService.suggestedRoutes(uuid, sendType, accountFrom, accountTo, tokenGroupKey, tokenIsOwnerToken, amountIn,
+    toTokenGroupKey, amountOut, fromChainID, toChainID, slippagePercentage, extraParamsTable)
 
 proc stopSuggestedRoutesAsyncCalculation*(self: Controller) =
   self.transactionService.stopSuggestedRoutesAsyncCalculation()

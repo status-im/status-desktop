@@ -28,7 +28,7 @@ QtObject:
     threadpool: ThreadPool
     tokenService: token_service.Service
     settingsService: settings_service.Service
-    currencyFormatCache: Table[string, CurrencyFormatDto]
+    currencyFormatCache: Table[string, CurrencyFormatDto] # [key, CurrencyFormatDto] - key can be tokenKey or currency symbol
 
   # Forward declarations
   proc fetchAllCurrencyFormats(self: Service)
@@ -63,8 +63,8 @@ QtObject:
   proc jsonToFormatsTable(node: JsonNode) : Table[string, CurrencyFormatDto] =
     result = initTable[string, CurrencyFormatDto]()
 
-    for (symbol, formatObj) in node.pairs:
-      result[symbol] = formatObj.toCurrencyFormatDto()
+    for (key, formatObj) in node.pairs:
+      result[key] = formatObj.toCurrencyFormatDto()
 
   proc getCachedCurrencyFormats(self: Service): Table[string, CurrencyFormatDto] =
     try:
@@ -84,9 +84,9 @@ QtObject:
         if formatsJson.isNil or formatsJson.kind == JNull:
           return
 
-        let formatsPerSymbol = jsonToFormatsTable(formatsJson)
-        for symbol, format in formatsPerSymbol:
-          self.currencyFormatCache[symbol] = format
+        let formatsPerKey = jsonToFormatsTable(formatsJson)
+        for key, format in formatsPerKey:
+          self.currencyFormatCache[key] = format
         self.events.emit(SIGNAL_CURRENCY_FORMATS_UPDATED, CurrencyFormatsUpdatedArgs())
     except Exception as e:
       let errDescription = e.msg
@@ -100,10 +100,19 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
-    if not self.currencyFormatCache.hasKey(symbol):
-      return newCurrencyFormatDto(symbol)
-    return self.currencyFormatCache[symbol]
+  # Returns the currency format for a given key. Key can be tokenGroupKey, tokenKey or currency symbol
+  proc getCurrencyFormat*(self: Service, key: string): CurrencyFormatDto =
+    if key.len == 0:
+      return newCurrencyFormatDto()
+    if not self.currencyFormatCache.hasKey(key):
+      let groupedTokens = self.tokenService.getTokensByGroupKey(key)
+      if groupedTokens.len > 0: # it means that the provided key is a token group key
+        return newCurrencyFormatDto(groupedTokens[0].key, groupedTokens[0].symbol) # since all tokens in the same group have the same symbol and currency format
+      let token = self.tokenService.getTokenByKey(key)
+      if not token.isNil: # it means that the provided key is has a token key
+        return newCurrencyFormatDto(token.key, token.symbol)
+      return newCurrencyFormatDto(key, key) # it means that the provided key is a currency symbol
+    return self.currencyFormatCache[key]
 
   proc toFloat(amountInt: UInt256): float64 =
     return float64(amountInt.truncate(uint64))
@@ -120,21 +129,10 @@ QtObject:
 
     return i.toFloat() + r.toFloat() / p.toFloat()
 
-  # TODO: left this for activity controller as it uses token symbol
-  # which may not be unique needs to be refactored. Also needed for
-  # hasGas api which also needs to be rethought
-  # https://github.com/status-im/status-app/issues/13505
-  proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
-    let token = self.tokenService.findTokenBySymbol(symbol)
+  proc getCurrencyValueForToken*(self: Service, tokenKey: string, amountInt: UInt256): float64 =
+    let token = self.tokenService.getTokenByKey(tokenKey)
     var decimals: int = 0
-    if token != nil:
-      decimals = token.decimals
-    return u256ToFloat(decimals, amountInt)
-
-  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
-    let token = self.tokenService.getTokenBySymbolByTokensKey(tokensKey)
-    var decimals: int = 0
-    if token != nil:
+    if not token.isNil:
       decimals = token.decimals
     return u256ToFloat(decimals, amountInt)
 
