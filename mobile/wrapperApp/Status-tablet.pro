@@ -21,9 +21,14 @@ QML_IMPORT_PATH += $$PWD/../../ui/imports \
 QMLPATHS += $$QML_IMPORT_PATH
 LIB_PREFIX = $$(APP_VARIANT)
 
+i18n.files = $$files($$PWD/../../bin/i18n/*.qm)
+
 android {
+    i18n.path = test_i18n
+    INSTALLS += i18n
+
     message("cofiguring for android $${QT_ARCH}, $$(ANDROID_ABI)")
-    
+
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/qt$$QT_MAJOR_VERSION
 
     LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client
@@ -37,6 +42,9 @@ android {
 }
 
 ios {
+    i18n.path = test_i18n
+    QMAKE_BUNDLE_DATA += i18n
+
     CONFIG += add_ios_ffmpeg_libraries
 
     QMAKE_INFO_PLIST = $$PWD/../ios/Info.plist
