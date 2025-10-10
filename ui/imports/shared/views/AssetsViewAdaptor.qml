@@ -145,13 +145,15 @@ QObject {
                 sourceModel: rootModel.balances
 
                 filters: [
-                    FastExpressionFilter {
-                        expression: root.chains.includes(model.chainId)
-                        expectedRoles: ["chainId"]
+                    OneOfFilter {
+                        roleName: "chainId"
+                        array: root.chains
+                        separator: ":"
                     },
-                    FastExpressionFilter {
-                        expression: root.accounts.includes(model.account)
-                        expectedRoles: ["account"]
+                    OneOfFilter {
+                        roleName: "account"
+                        array: root.accounts
+                        separator: ":"
                     }
                 ]
             }

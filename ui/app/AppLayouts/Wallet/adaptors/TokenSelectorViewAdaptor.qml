@@ -201,9 +201,9 @@ QObject {
                         caseSensitivity: Qt.CaseInsensitive
                         enabled: root.accountAddress !== ""
                     },
-                    FastExpressionFilter {
-                        expression: root.enabledChainIds.includes(model.chainId)
-                        expectedRoles: ["chainId"]
+                    OneOfFilter {
+                        roleName: "chainId"
+                        array: root.enabledChainIds
                         enabled: root.enabledChainIds.length
                     }
                 ]

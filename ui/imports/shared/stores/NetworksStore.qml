@@ -50,7 +50,6 @@ QtObject {
 
     /* This property holds networks currently selected in the Wallet Main layout  */
     readonly property var networkFilters: networksModuleInst.enabledChainIds
-    readonly property var networkFiltersArray: root.networkFilters.split(":").filter(Boolean).map(Number)
 
     readonly property var rpcProviders: networksModuleInst.rpcProviders
 

@@ -172,7 +172,6 @@ ColumnLayout {
         readonly property bool hasCommunityCollectibles: d.communityModel.count || d.loadingItemsModel.count
         readonly property bool onlyRegularCollectiblesType: hasRegularCollectibles && !hasCommunityCollectibles
 
-        readonly property var nwFilters: root.networkFilters.split(":")
         readonly property var addrFilters: root.addressFilters.split(":")
 
         function getFirstUserOwnedAddress(ownershipModel) {
@@ -285,11 +284,10 @@ ColumnLayout {
             }
         ]
         filters: [
-            FastExpressionFilter {
-                expression: {
-                    return d.nwFilters.includes(model.chainId+"")
-                }
-                expectedRoles: ["chainId"]
+            OneOfFilter {
+                roleName: "chainId"
+                array: root.networkFilters
+                separator: ":"
             },
             ValueFilter {
                 roleName: "balance"

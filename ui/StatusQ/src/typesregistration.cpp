@@ -2,6 +2,7 @@
 #include "StatusQ/clipboardutils.h"
 #include "StatusQ/constantrole.h"
 #include "StatusQ/fastexpressionfilter.h"
+#include "StatusQ/oneoffilter.h"
 #include "StatusQ/fastexpressionrole.h"
 #include "StatusQ/fastexpressionsorter.h"
 #include "StatusQ/formatteddoubleproperty.h"
@@ -56,6 +57,7 @@ void registerStatusQTypes() {
     qmlRegisterType<FastExpressionFilter>("StatusQ", 0, 1, "FastExpressionFilter");
     qmlRegisterType<FastExpressionRole>("StatusQ", 0, 1, "FastExpressionRole");
     qmlRegisterType<FastExpressionSorter>("StatusQ", 0, 1, "FastExpressionSorter");
+    qmlRegisterType<OneOfFilter>("StatusQ", 0, 1, "OneOfFilter");
     qmlRegisterType<UndefinedFilter>("StatusQ", 0, 1, "UndefinedFilter");
     qmlRegisterType<ConstantRole>("StatusQ", 0, 1, "ConstantRole");
 

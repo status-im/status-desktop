@@ -146,9 +146,9 @@ QObject {
                 minimumValue: 1
             },
             // remove tokens not available on selected network(s)
-            FastExpressionFilter {
-                expression: root.enabledChainIds.includes(model.chainId)
-                expectedRoles: ["chainId"]
+            OneOfFilter {
+                roleName: "chainId"
+                array: root.enabledChainIds
                 enabled: root.enabledChainIds.length
             },
             ValueFilter {
