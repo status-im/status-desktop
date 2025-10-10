@@ -8,7 +8,6 @@ import app/core/eventemitter
 import app/modules/shared_models/currency_amount
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/token/dto
 import app_service/service/currency/service
 import app_service/service/settings/service as settings_service
 import app_service/service/community_tokens/service as community_tokens_service
@@ -100,37 +99,32 @@ method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
 
 # Interfaces for getting lists from the service files into the abstract models
 
-method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDataSource =
+method getTokenListsModelDataSource*(self: Module): TokenListsModelDataSource =
   return (
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] = self.controller.getSourcesOfTokensList()
+    getAllTokenLists: proc(): var seq[TokenListItem] = self.controller.getAllTokenLists(),
   )
 
-method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
+method getTokensModelDataSource*(self: Module): TokensModelDataSource =
   return (
-    getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
-    getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
-    getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
+    getAllTokens: proc(): var seq[TokenItem] = self.controller.getAllTokens(),
+  )
+
+method getTokenGroupsModelDataSource*(self: Module): TokenGroupsModelDataSource =
+  return (
+    getAllTokenGroups: proc(): var seq[TokenGroupItem] = self.controller.getAllTokenGroups(),
+    getTokenDetails: proc(tokenKey: string): TokenDetailsItem = self.controller.getTokenDetails(tokenKey),
+    getTokenPreferences: proc(groupKey: string): TokenPreferencesItem = self.controller.getTokenPreferences(groupKey),
     getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
     getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
-    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
-  )
-
-method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSource =
-  return (
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
-    getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
-    getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
-    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string = self.controller.getCommunityTokenDescription(addressPerChain),
-    getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
-    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
+    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading(),
   )
 
 method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSource =
   return (
-    getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem = self.controller.getMarketValuesBySymbol(symbol),
-    getPriceBySymbol: proc(symbol: string): float64 = self.controller.getPriceBySymbol(symbol),
+    getMarketValuesForToken: proc(tokenKey: string): TokenMarketValuesItem = self.controller.getMarketValuesForToken(tokenKey),
+    getPriceForToken: proc(tokenKey: string): float64 = self.controller.getPriceForToken(tokenKey),
     getCurrentCurrencyFormat: proc(): CurrencyFormatDto = self.controller.getCurrentCurrencyFormat(),
-    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
+    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading(),
   )
 
 method filterChanged*(self: Module, addresses: seq[string]) =

@@ -305,26 +305,32 @@ QtObject:
     if route.len > 0:
       chainId = route[0].fromChain.chainId
     let network = self.networkService.getNetworkByChainId(chainId)
-    var nativeTokenSymbol = network.nativeCurrencySymbol
-    let nativeTokenFormat = self.currencyService.getCurrencyFormat(nativeTokenSymbol)
+
+    var nativeToken = createTokenItem(TokenDto(
+      chainId: chainId,
+      address: wallet_constants.ZERO_ADDRESS,
+    ))
+
+    let nativeTokenFormat = self.currencyService.getCurrencyFormat(nativeToken.key)
     let currencyFormat = self.currencyService.getCurrencyFormat(self.settingsService.getCurrency())
-    let fiatPriceForSymbol = self.tokenService.getPriceBySymbol(nativeTokenSymbol)
+    let fiatPriceForToken = self.tokenService.getPriceForToken(nativeToken.key)
+
     var totalFee: UInt256
     for p in route:
       let decimalFee = wei2Eth(p.txTotalFee)
       let decimalFeeAsFloat = parseFloat(decimalFee)
-      let fiatFeeAsFloat = decimalFeeAsFloat * fiatPriceForSymbol
+      let fiatFeeAsFloat = decimalFeeAsFloat * fiatPriceForToken
       data.costPerPath.add(CostPerPath(
         contractUniqueKey: common_utils.contractUniqueKey(p.fromChain.chainId, p.usedContractAddress),
-        costNativeCryptoCurrency: newCurrencyAmount(decimalFeeAsFloat, nativeTokenFormat.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes),
-        costFiatCurrency: newCurrencyAmount(fiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
+        costNativeCryptoCurrency: newCurrencyAmount(decimalFeeAsFloat, nativeTokenFormat.key, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes),
+        costFiatCurrency: newCurrencyAmount(fiatFeeAsFloat, currencyFormat.key, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
       ))
       totalFee += p.txTotalFee
     let decimalTotalFee = wei2Eth(totalFee)
     let decimalTotalFeeAsFloat = parseFloat(decimalTotalFee)
-    data.totalCostNativeCryptoCurrency = newCurrencyAmount(decimalTotalFeeAsFloat, nativeTokenFormat.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes)
-    let totalFiatFeeAsFloat = decimalTotalFeeAsFloat * fiatPriceForSymbol
-    data.totalCostFiatCurrency = newCurrencyAmount(totalFiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
+    data.totalCostNativeCryptoCurrency = newCurrencyAmount(decimalTotalFeeAsFloat, nativeTokenFormat.key, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes)
+    let totalFiatFeeAsFloat = decimalTotalFeeAsFloat * fiatPriceForToken
+    data.totalCostFiatCurrency = newCurrencyAmount(totalFiatFeeAsFloat, currencyFormat.key, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
 
   proc emitSuggestedRoutesReadySignal*(self: Service, data: SuggestedRoutesArgs) =
     if self.lastRequestForSuggestedRoutes.uuid != data.uuid:

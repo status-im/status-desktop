@@ -369,7 +369,7 @@ method onChatsLoaded*(
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
-  
+
   self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
 
@@ -451,7 +451,7 @@ method activeItemSet*(self: Module, itemId: string) =
     # Should never be here
     error "chat-view unexisting item id: ", itemId, methodName="activeItemSet"
     return
-  
+
   if not self.chatContentModules[itemId].isLoaded:
     self.chatContentModules[itemId].load(chat_item)
 
@@ -834,7 +834,7 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   let activeChatId = self.controller.getActiveChatId()
   if chatId == activeChatId:
     self.setFirstChannelAsActive()
-  
+
   self.updateParentBadgeNotifications()
 
 proc refreshHiddenBecauseNotPermittedState(self: Module) =
@@ -1487,8 +1487,9 @@ method createOrEditCommunityTokenPermission*(self: Module, permissionId: string,
 
     let tokenKey = tokenCriteria{"key"}.getStr()
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
-    if tokenCriteriaDto.`type` == TokenType.ERC20:
-      tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenKey)
+    # if tokenCriteriaDto.`type` == TokenType.ERC20:
+      ## TODO: implement this - figure out token usage here
+      # tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenKey)
 
     let contractAddresses = self.controller.getContractAddressesForToken(tokenKey)
     if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
@@ -1536,7 +1537,7 @@ method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
   for id, chat_item in self.view.chatsModel().items():
     if self.view.chatsModel().getItemPermissionsRequired(chat_item.id):
       self.view.chatsModel().updatePermissionsCheckOngoing(chat_item.id, true)
-  
+
 method onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Module) =
   self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(true)
 

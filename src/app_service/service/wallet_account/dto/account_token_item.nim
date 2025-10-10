@@ -1,25 +1,13 @@
-import stint, stew/shims/strformat
+import stint
 
 type BalanceItem* = ref object of RootObj
   account*: string
+  tokenKey*: string
   chainId*: int
+  tokenAddress*: string
   balance*: Uint256
-
-proc `$`*(self: BalanceItem): string =
-  result = fmt"""BalanceItem[
-    account: {self.account},
-    chainId: {self.chainId},
-    balance: {self.balance}]"""
 
 type
   GroupedTokenItem* = ref object of RootObj
-    tokensKey*: string
-    symbol*: string
+    key*: string # crossChainId or tokenKey if crossChainId is empty
     balancesPerAccount*: seq[BalanceItem]
-
-proc `$`*(self: GroupedTokenItem): string =
-  result = fmt"""GroupedTokenItem[
-    tokensKey: {self.tokensKey},
-    symbol: {self.symbol},
-    balancesPerAccount: {self.balancesPerAccount}]"""
-

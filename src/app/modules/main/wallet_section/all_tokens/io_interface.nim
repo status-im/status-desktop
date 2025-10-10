@@ -1,36 +1,37 @@
-import app_service/service/token/service_items
-import app_service/service/currency/dto
+import app_service/service/token/items/types as token_items
+import app_service/service/currency/dto as currency_dto
 import app/modules/shared_models/currency_amount
 
+export token_items, currency_dto
+
 type
-  SourcesOfTokensModelDataSource* = tuple[
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem]
+  TokenListsModelDataSource* = tuple[
+    getAllTokenLists: proc(): var seq[TokenListItem],
   ]
+
 type
-  FlatTokenModelDataSource* = tuple[
-    getFlatTokensList: proc(): var seq[TokenItem],
-    getTokenDetails: proc(symbol: string): TokenDetailsItem,
-    getTokenPreferences: proc(symbol: string): TokenPreferencesItem,
+  TokensModelDataSource* = tuple[
+    getAllTokens: proc(): var seq[TokenItem],
+  ]
+
+type
+  TokenGroupsModelDataSource* = tuple[
+    getAllTokenGroups: proc(): var seq[TokenGroupItem],
+    getTokenDetails: proc(tokenKey: string): TokenDetailsItem,
+    getTokenPreferences: proc(groupKey: string): TokenPreferencesItem,
     getCommunityTokenDescription: proc(chainId: int, address: string): string,
     getTokensDetailsLoading: proc(): bool,
     getTokensMarketValuesLoading: proc(): bool,
   ]
-type
-  TokenBySymbolModelDataSource* = tuple[
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem],
-    getTokenDetails: proc(symbol: string): TokenDetailsItem,
-    getTokenPreferences: proc(symbol: string): TokenPreferencesItem,
-    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string,
-    getTokensDetailsLoading: proc(): bool,
-    getTokensMarketValuesLoading: proc(): bool,
-  ]
+
 type
   TokenMarketValuesDataSource* = tuple[
-    getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem,
-    getPriceBySymbol: proc(symbol: string): float64,
+    getMarketValuesForToken: proc(tokenKey: string): TokenMarketValuesItem,
+    getPriceForToken: proc(tokenKey: string): float64,
     getCurrentCurrencyFormat: proc(): CurrencyFormatDto,
-    getTokensMarketValuesLoading: proc(): bool
+    getTokensMarketValuesLoading: proc(): bool,
   ]
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -50,13 +51,13 @@ method getHistoricalDataForToken*(self: AccessInterface, symbol: string, currenc
 method tokenHistoricalDataResolved*(self: AccessInterface, tokenDetails: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getSourcesOfTokensModelDataSource*(self: AccessInterface): SourcesOfTokensModelDataSource {.base.} =
+method getTokenListsModelDataSource*(self: AccessInterface): TokenListsModelDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getFlatTokenModelDataSource*(self: AccessInterface): FlatTokenModelDataSource {.base.} =
+method getTokensModelDataSource*(self: AccessInterface): TokensModelDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokenBySymbolModelDataSource*(self: AccessInterface): TokenBySymbolModelDataSource {.base.} =
+method getTokenGroupsModelDataSource*(self: AccessInterface): TokenGroupsModelDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getTokenMarketValuesDataSource*(self: AccessInterface): TokenMarketValuesDataSource {.base.} =
