@@ -15,6 +15,9 @@ const GIT_COMMIT* {.strdefine.} = ""
 
 const APP_VERSION* = DESKTOP_VERSION
 
+const DATE_TIME_FORMAT_1* = "yyyy-MM-dd'T'HH:mm:ss'.'fffzzz"
+const DATE_TIME_FORMAT_2* = "yyyy-MM-dd'T'HH:mm:ss'.'ffffffzzz"
+
 const sep* = when defined(windows): "\\" else: "/"
 
 ################################################################################

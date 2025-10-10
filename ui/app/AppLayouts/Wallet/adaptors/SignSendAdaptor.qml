@@ -18,8 +18,8 @@ QObject {
     required property string accountKey
     /** network chainId used for filtering **/
     required property int chainId
-    /** token key used for filtering **/
-    required property string tokenKey
+    /** group key used for filtering **/
+    required property string groupKey
     /** amount selected in send modal for sending **/
     required property string selectedAmountInBaseUnit
     /** recipient address selected in send modal for sending **/
@@ -44,11 +44,11 @@ QObject {
     /**
       Expected model structure:
 
-        key                   [int]    - unique id of token
+        key                   [int]    - group key
         symbol                [int]    - symbol of token
         decimals              [string] - decimals of token
     **/
-    required property var tokenBySymbolModel
+    required property var tokenGroupsModel
 
     /**
       Expected model structure:
@@ -68,6 +68,7 @@ QObject {
     readonly property var selectedNetwork: selectedNetworkEntry.item
     /** output property of the asset (ERC20) selected **/
     readonly property var selectedAsset: selectedAssetEntry.item
+    readonly property var selectedAssetEntry: selectedAssetContractEntry.item
     /** output property of the localised amount to send **/
     readonly property string selectedAmount: {
         const decimals = !!root.selectedAsset ? root.selectedAsset.decimals: 0
@@ -124,8 +125,8 @@ QObject {
 
     ModelEntry {
         id: selectedAssetEntry
-        sourceModel: root.tokenBySymbolModel
-        value: root.tokenKey
+        sourceModel: root.tokenGroupsModel
+        value: root.groupKey
         key: "key"
     }
 
@@ -133,7 +134,7 @@ QObject {
         id: selectedAssetContractEntry
         sourceModel: selectedAssetEntry.available &&
                      !!selectedAssetEntry.item ?
-                         selectedAssetEntry.item.addressPerChain: null
+                         selectedAssetEntry.item.tokens: null
         value: root.chainId
         key: "chainId"
     }

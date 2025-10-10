@@ -22,6 +22,7 @@ export stickers_dto
 const DEFAULT_CURRENCY* = "USD"
 
 # Signals:
+const SIGNAL_NETWORK_MODE_UPDATED* = "networkModeUpdated"
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
 const SIGNAL_DISPLAY_NAME_UPDATED* = "displayNameUpdated"
 const SIGNAL_BIO_UPDATED* = "bioUpdated"
@@ -449,7 +450,7 @@ QtObject:
     let newValue = not self.settings.testNetworksEnabled
     if(self.saveSetting(KEY_TEST_NETWORKS_ENABLED, newValue)):
       self.settings.testNetworksEnabled = newValue
-      self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
+      self.events.emit(SIGNAL_NETWORK_MODE_UPDATED, SettingsBoolValueArgs(value: self.settings.testNetworksEnabled))
       return true
     return false
 
@@ -966,10 +967,10 @@ QtObject:
         return
 
       lastTokensUpdate = response.result.getStr
-      let dateTime = parse(lastTokensUpdate, DateTimeFormat)
+      let dateTime = parse(lastTokensUpdate, DATE_TIME_FORMAT_2)
       self.settings.lastTokensUpdate = dateTime.toTime().toUnix()
-    except ValueError:
-      error "parse lastTokensUpdate: ", lastTokensUpdate
+    except Exception as e:
+      error "parse lastTokensUpdate: ", data=lastTokensUpdate, errName = e.name, errDesription = e.msg
     return self.settings.lastTokensUpdate
 
   ### News Feed Settings ###
@@ -1089,7 +1090,7 @@ QtObject:
     read = getNewsRSSEnabled
     write = setNewsRSSEnabled
     notify = newsRSSEnabledChanged
-  
+
   # BACKUP
   proc setBackupPath*(self: Service, value: string) {.slot.} =
     if self.settings.backupPath == value:

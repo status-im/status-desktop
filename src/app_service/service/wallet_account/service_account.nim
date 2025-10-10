@@ -189,6 +189,9 @@ proc init*(self: Service) =
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.buildAllTokens(self.getWalletAddresses(), forceRefresh = false)
 
+  self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e:Args):
+    self.buildAllTokens(self.getWalletAddresses(), forceRefresh = false)
+
   self.events.on(SIGNAL_PASSWORD_PROVIDED) do(e: Args):
     let args = AuthenticationArgs(e)
     self.cleanKeystoreFiles(args.password)
@@ -795,9 +798,6 @@ proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
 
 proc getEnabledChainIds*(self: Service): seq[int] =
   return self.networkService.getEnabledChainIds()
-
-proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
-  return self.currencyService.getCurrencyFormat(symbol)
 
 proc areTestNetworksEnabled*(self: Service): bool =
   return self.settingsService.areTestNetworksEnabled()

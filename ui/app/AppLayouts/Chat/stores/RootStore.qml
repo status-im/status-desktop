@@ -115,7 +115,7 @@ QtObject {
         sourceModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
 
         delegate: QtObject {
-            readonly property string key: model.symbol ?? ""
+            readonly property string key: model.collectionUid
             readonly property string shortName: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
             readonly property string symbol: shortName
             readonly property string name: shortName

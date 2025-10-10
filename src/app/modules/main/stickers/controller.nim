@@ -131,6 +131,3 @@ proc getWalletDefaultAddress*(self: Controller): string =
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
-
-proc getStatusTokenKey*(self: Controller): string =
-  return self.tokenService.getStatusTokenKey()

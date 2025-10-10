@@ -71,7 +71,7 @@ method viewDidLoad*(self: Module) =
 
 method getGroupedAccountAssetsDataSource*(self: Module): GroupedAccountAssetsDataSource =
   return (
-    getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem] = self.controller.getGroupedAccountsAssetsList()
+    getGroupedAssetsList: proc(): var seq[AssetGroupItem] = self.controller.getGroupedAssetsList()
   )
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =

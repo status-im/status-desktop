@@ -12,6 +12,11 @@ Q_DECLARE_LOGGING_CATEGORY(manageTokens)
 
 namespace
 {
+const auto kKeyRoleName = "key";
+const auto kTokenKeyRoleName = "tokenKey";
+const auto kCrossChainIdRoleName = "crossChainId";
+const auto kChainIdRoleName = "chainId";
+const auto kAddressRoleName = "address";
 const auto kSymbolRoleName = "symbol";
 const auto kNameRoleName = "name";
 const auto kCommunityIdRoleName = "communityId";
@@ -44,7 +49,12 @@ class ManageTokensModel : public QAbstractListModel
 
 public:
     enum TokenDataRoles {
-        SymbolRole = Qt::UserRole + 1,
+        KeyRole = Qt::UserRole + 1,
+        TokenKeyRole,
+        CrossChainIdRole,
+        ChainIdRole,
+        AddressRole,
+        SymbolRole,
         NameRole,
         CommunityIdRole,
         CommunityNameRole,
@@ -70,7 +80,7 @@ public:
     Q_INVOKABLE void moveItem(int fromRow, int toRow);
 
     void addItem(const TokenData& item, bool append = true);
-    std::optional<TokenData> takeItem(const QString& symbol);
+    std::optional<TokenData> takeItem(const QString& key);
     QList<TokenData> takeAllItems(const QString& groupId);
     void clear();
 

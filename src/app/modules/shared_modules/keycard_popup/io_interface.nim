@@ -233,7 +233,7 @@ method syncKeycardBasedOnAppState*(self: AccessInterface, keyUid: string, pin: s
 method getPin*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onTokensRebuilt*(self: AccessInterface, accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]) {.base.} =
+method onTokensRebuilt*(self: AccessInterface, accountAddresses: seq[string], assets: seq[AssetGroupItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method remainingAccountCapacity*(self: AccessInterface): int {.base.} =

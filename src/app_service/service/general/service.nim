@@ -15,10 +15,6 @@ import ../accounts/dto/accounts
 
 include async_tasks
 
-const TimerIntervalInMilliseconds = 1000 # 1 second
-
-const SIGNAL_GENERAL_TIMEOUT* = "timeoutSignal"
-
 
 logScope:
   topics = "general-app-service"
@@ -64,27 +60,6 @@ QtObject:
       return response.result["score"].getInt()
     except Exception as e:
       error "error: ", methodName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg
-
-  proc runTimer(self: Service) =
-    let arg = TimerTaskArg(
-      tptr: timerTask,
-      vptr: cast[uint](self.vptr),
-      slot: "onTimeout",
-      timeoutInMilliseconds: TimerIntervalInMilliseconds
-    )
-    self.threadpool.start(arg)
-
-  proc runTimer*(self: Service, timeoutInMilliseconds: int) =
-    ## Runs timer only once. Each 1000ms we check for timeout in order to have non blocking app closing.
-    self.timeoutInMilliseconds = timeoutInMilliseconds
-    self.runTimer()
-
-  proc onTimeout(self: Service, response: string) {.slot.} =
-    self.timeoutInMilliseconds = self.timeoutInMilliseconds - TimerIntervalInMilliseconds
-    if self.timeoutInMilliseconds <= 0:
-      self.events.emit(SIGNAL_GENERAL_TIMEOUT, Args())
-    else:
-      self.runTimer()
 
   proc asyncImportLocalBackupFile*(self: Service, filePath: string) =
     let formattedFilePath = singletonInstance.utils.fromPathUri(filePath)

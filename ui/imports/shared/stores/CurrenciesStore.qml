@@ -24,49 +24,52 @@ QtObject {
         walletSection.updateCurrency(shortName)
     }
 
-    function getCurrencyAmount(amount, symbol) {
+    function getCurrencyAmount(amount, key) {
         try {
-            let jsonData = walletSection.getCurrencyAmount(amount, symbol)
+            let jsonData = walletSection.getCurrencyAmount(amount, key)
             let obj = JSON.parse(jsonData)
             return obj
         } catch (e) {
             console.warn("Error parsing prepared currency amount: " + e)
-            return {amount: 0, symbol: symbol, displayDecimals: 2, stripTrailingZeroes: false}
+            return {amount: 0, tokenKey: key, symbol: "", displayDecimals: 2, stripTrailingZeroes: false}
         }
     }
 
-    function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
+    // key - token group key or token key or currency symbol
+    function formatCurrencyAmount(amount, key, options = null, locale = null) {
         if (isNaN(amount)) {
             return qsTr("N/A")
         }
-        var currencyAmount = getCurrencyAmount(amount, symbol)
+        var currencyAmount = getCurrencyAmount(amount, key)
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }
 
-    function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
+    // key - token group key or token key or currency symbol
+    function formatCurrencyAmountFromBigInt(balance, key, decimals, options = null) {
         let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
         let decimalBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
-        return formatCurrencyAmount(decimalBalance, symbol, options)
+        return formatCurrencyAmount(decimalBalance, key, options)
     }
 
-    function formatBigNumber(number: string, symbol: string, noSymbolOption: bool): string  {
+    // key - token group key or token key or currency symbol
+    function formatBigNumber(number: string, key: string, noSymbolOption: bool): string  {
         if (!number)
             return "N/A"
-        if (!symbol)
-            symbol = root.currentCurrency
+        if (!key)
+            key = root.currentCurrency
         let options = {}
         if (!!noSymbolOption)
             options = {noSymbol: true}
-        return formatCurrencyAmount(parseFloat(number), symbol, options)
+        return formatCurrencyAmount(parseFloat(number), key, options)
     }
 
-    function getFiatValue(cryptoAmount, cryptoSymbol) {
-        var amount = _profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol)
+    function getFiatValue(cryptoAmount, tokenKey) {
+        var amount = _profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, tokenKey)
         return parseFloat(amount)
     }
 
-    function getCryptoValue(fiatAmount, cryptoSymbol) {
-        var amount = _profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, cryptoSymbol)
+    function getCryptoValue(fiatAmount, tokenKey) {
+        var amount = _profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, tokenKey)
         return parseFloat(amount)
     }
 

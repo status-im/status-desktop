@@ -48,7 +48,7 @@ ColumnLayout {
     property var usersModel
 
     signal openStickerPackPopup(string stickerPackId)
-    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+    signal tokenPaymentRequested(string recipientAddress, string tokenKey, string rawAmount)
 
     property bool isBlocked: false
     property bool isUserAllowedToSendMessage: root.rootStore.isUserAllowedToSendMessage
@@ -137,7 +137,7 @@ ColumnLayout {
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
-            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
+            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, tokenKey, rawAmount)
             onEditModeChanged: {
                 if (!editModeOn)
                     root.forceInputFocus()

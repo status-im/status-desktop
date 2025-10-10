@@ -4,6 +4,7 @@ import chronicles
 import ./collectibles_item
 import web3/eth_api_types as eth
 import backend/activity as backend_activity
+import backend/collectibles_types as backend_collectibles_types
 import app_service/common/types
 
 type
@@ -39,7 +40,7 @@ QtObject:
   proc countChanged(self: CollectiblesModel) {.signal.}
   proc getCount*(self: CollectiblesModel): int {.slot.} =
     return self.items.len
-    
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -125,19 +126,19 @@ QtObject:
     self.items.insert(newItems, startIdx)
     self.endInsertRows()
     self.countChanged()
-  
+
   proc removeCollectibleItems(self: CollectiblesModel) =
     if self.items.len <= 0:
       return
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
-  
+
     # Start from the beginning
     let startIdx = 0
     # End at the last real item
     let endIdx = startIdx + self.items.len - 1
-  
+
     self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
     self.items = @[]
     self.endRemoveRows()
@@ -182,7 +183,7 @@ QtObject:
         if tokenId > 0:
           result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenId)))
         return result
-    
+
     # Fallback, use data from id
     var parts = id.split("+")
     if len(parts) == 3:
@@ -199,7 +200,7 @@ QtObject:
         return item.getId()
     # Fallback, create uid from data, because it still might not be fetched
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
-      return $chainId & "+" & tokenAddress & "+" & tokenId
+      return backend_collectibles_types.makeCollectibleUniqueID(chainId, tokenAddress, tokenId)
     return ""
 
   proc delete(self: CollectiblesModel) =

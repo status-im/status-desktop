@@ -17,14 +17,14 @@ Control {
 
     readonly property bool isSelected: button.selected
 
-    signal selected(string key)
+    signal selected(string groupKey)
 
-    function setSelection(name: string, icon: url, key: string) {
+    function setSelection(name: string, icon: url, tokenGroupKey: string) {
         button.name = name
         button.icon = icon
         button.selected = true
 
-        searchableAssetsPanel.highlightedKey = key ?? ""
+        searchableAssetsPanel.highlightedKey = tokenGroupKey ?? ""
     }
 
     function reset() {
@@ -78,7 +78,11 @@ Control {
             }
 
             onSelected: function(key) {
-                const entry = ModelUtils.getByKey(root.model, "tokensKey", key)
+                const entry = ModelUtils.getByKey(root.model, "key", key) // refers to group key
+                if (!entry) {
+                    console.error("asset couldn't be resolved for the key", key)
+                    return
+                }
                 highlightedKey = key
 
                 setCurrentAndClose(entry.symbol, entry.iconSource)

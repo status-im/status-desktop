@@ -20,6 +20,7 @@ import shared.views.chat
 import utils
 
 import SortFilterProxyModel
+import QtModelsToolkit
 
 import AppLayouts.Communities.popups
 import AppLayouts.Communities.panels
@@ -69,7 +70,7 @@ Item {
     property string myPublicKey
 
     signal openStickerPackPopup(string stickerPackId)
-    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+    signal tokenPaymentRequested(string recipientAddress, string tokenKey, string rawAmount)
 
     // Unfurling related requests:
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
@@ -222,11 +223,31 @@ Item {
             Qt.callLater(d.restoreInputState, preservedText)
         }
 
-        function formatBalance(amount, symbol) {
-            let asset = ModelUtils.getByKey(WalletStore.RootStore.tokensStore.flatTokensModel, "symbol", symbol)
-            if (!asset)
+        // key can be either a group key or token key
+        function formatBalance(amount, key) {
+            let decimals = 0
+            let symbol = ""
+            const tokenGroup = ModelUtils.getByKey(WalletStore.RootStore.tokensStore.tokenGroupsModel, "key", key)
+            if (!!tokenGroup) {
+                decimals = tokenGroup.decimals
+                symbol = tokenGroup.symbol
+            } else {
+                for (let i = 0; i < WalletStore.RootStore.tokensStore.tokenGroupsModel.ModelCount.count; i++) {
+                    let tG = ModelUtils.get(WalletStore.RootStore.tokensStore.tokenGroupsModel, i)
+                    const token = ModelUtils.getByKey(tG.tokens, "key", key)
+                    if (!!token) {
+                        decimals = token.decimals
+                        symbol = token.symbol
+                        break
+                    }
+                }
+            }
+
+            if (!symbol) {
                 return "0"
-            const num = AmountsArithmetic.toNumber(amount, asset.decimals)
+            }
+
+            const num = AmountsArithmetic.toNumber(amount, decimals)
             return root.rootStore.currencyStore.formatCurrencyAmount(num, symbol, {noSymbol: true})
         }
     }
@@ -287,7 +308,7 @@ Item {
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
-                        onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
+                        onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, tokenKey, rawAmount)
                         onShowReplyArea: (messageId) => {
                                             d.showReplyArea(messageId)
                                         }

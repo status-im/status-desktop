@@ -62,7 +62,7 @@ Item {
     property bool neverAskAboutUnfurlingAgain
 
     signal openStickerPackPopup(string stickerPackId)
-    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+    signal tokenPaymentRequested(string recipientAddress, string tokenKey, string rawAmount)
     signal showReplyArea(string messageId, string author)
     signal editModeChanged(bool editModeOn)
 
@@ -403,7 +403,7 @@ Item {
                 root.openStickerPackPopup(stickerPackId);
             }
 
-            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
+            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, tokenKey, rawAmount)
 
             onShowReplyArea: {
                 root.showReplyArea(messageId, author)

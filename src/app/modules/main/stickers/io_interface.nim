@@ -83,10 +83,6 @@ method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
 method getCurrentCurrency*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-
-method getStatusTokenKey*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method stickerTransactionSent*(self: AccessInterface, chainId: int, packId: string, txHash: string, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

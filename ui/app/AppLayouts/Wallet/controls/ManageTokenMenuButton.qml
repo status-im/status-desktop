@@ -22,11 +22,11 @@ StatusFlatButton {
     property bool isCommunityToken
     property bool isCollectible
 
-    readonly property bool hideEnabled: model.symbol !== Constants.ethToken
+    readonly property bool hideEnabled: model.key !== Constants.ethGroupKey
     readonly property bool menuVisible: menuLoader.active
 
     signal moveRequested(int from, int to)
-    signal showHideRequested(string symbol, bool flag)
+    signal showHideRequested(string key, bool flag)
     signal showHideGroupRequested(string groupId, bool flag)
 
     icon.name: "more"
@@ -85,14 +85,14 @@ StatusFlatButton {
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: root.isCollectible ? qsTr("Hide collectible") : qsTr("Hide asset")
-                onTriggered: root.showHideRequested(model.symbol, false)
+                onTriggered: root.showHideRequested(model.key, false)
             }
             StatusAction {
                 objectName: "miShowToken"
                 enabled: root.inHidden && !root.isGroup
                 icon.name: "show"
                 text: root.isCollectible ? qsTr("Show collectible") : qsTr("Show asset")
-                onTriggered: root.showHideRequested(model.symbol, true)
+                onTriggered: root.showHideRequested(model.key, true)
             }
 
             // (hide) community tokens
@@ -107,7 +107,7 @@ StatusFlatButton {
                     objectName: "miHideCommunityToken"
                     text: root.isCollectible ? qsTr("This collectible") : qsTr("This asset")
                     onTriggered: {
-                        root.showHideRequested(model.symbol, false)
+                        root.showHideRequested(model.key, false)
                         communitySubmenu.dismiss()
                     }
                 }
@@ -133,7 +133,7 @@ StatusFlatButton {
                     objectName: "miHideCollectionToken"
                     text: qsTr("This collectible")
                     onTriggered: {
-                        root.showHideRequested(model.symbol, false)
+                        root.showHideRequested(model.key, false)
                         communitySubmenu.dismiss()
                     }
                 }

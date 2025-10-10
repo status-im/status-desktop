@@ -120,7 +120,7 @@ StackView {
             preferredContentWidth: root.preferredContentWidth
             internalRightPadding: root.internalRightPadding
 
-            onEditPermissionRequested: {
+            onEditPermissionRequested: (index) => {
                 const item = ModelUtils.get(root.permissionsModel, index)
 
                 const properties = {
@@ -134,7 +134,7 @@ StackView {
                 root.pushEditView(properties);
             }
 
-            onDuplicatePermissionRequested: {
+            onDuplicatePermissionRequested: (index) => {
                 const item = ModelUtils.get(root.permissionsModel, index)
 
                 const properties = {
@@ -147,7 +147,7 @@ StackView {
                 root.pushEditView(properties);
             }
 
-            onRemovePermissionRequested: {
+            onRemovePermissionRequested: (index) => {
                 const key = ModelUtils.get(root.permissionsModel, index, "key")
                 root.removePermissionRequested(key)
             }

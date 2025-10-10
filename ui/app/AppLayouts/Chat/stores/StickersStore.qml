@@ -23,12 +23,5 @@ QtObject {
             return ""
         return stickersModule.getCurrentCurrency()
     }
-
-
-    function getStatusTokenKey() {
-        if(!root.stickersModule)
-            return ""
-        return stickersModule.getStatusTokenKey()
-    }
 }
 

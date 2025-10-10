@@ -39,11 +39,12 @@ SortFilterProxyModel {
             }
 
             function getText(type, key, amount, defaultText) {
+                const collectibles = type !== Constants.TokenType.ERC20
                 const model = type === Constants.TokenType.ERC20
                             ? assetsModel
                             : collectiblesModel
 
-                let item = PermissionsHelpers.getTokenByKey(model, key)
+                let item = PermissionsHelpers.getTokenByKey(model, collectibles, key)
                 let name = getName(type, item, key)
                 const decimals = getDecimals(type, item)
 
@@ -70,10 +71,11 @@ SortFilterProxyModel {
                 if (type === Constants.TokenType.ENS)
                     return Assets.png("tokens/ENS")
 
+                const collectibles = type !== Constants.TokenType.ERC20
                 const model = type === Constants.TokenType.ERC20
                             ? assetsModel : collectiblesModel
 
-                return PermissionsHelpers.getTokenIconByKey(model, key)
+                return PermissionsHelpers.getTokenIconByKey(model, collectibles, key)
             }
 
             expression: {

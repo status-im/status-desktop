@@ -3,9 +3,9 @@ import QtQuick
 import Models
 
 ListModel {
-    readonly property string uniswap: "uniswap" //SourceOfTokensModel.uniswap
-    readonly property string status: "status" //SourceOfTokensModel.status
-    readonly property string custom: "custom" //SourceOfTokensModel.custom
+    readonly property string uniswap: "uniswap" //TokenListsModel.uniswap
+    readonly property string status: "status" //TokenListsModel.status
+    readonly property string custom: "custom" //TokenListsModel.custom
 
 
     readonly property var data: [

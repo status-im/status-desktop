@@ -46,7 +46,7 @@ ColumnLayout {
     property alias selectedFilterGroupIds: cmbFilter.selectedFilterGroupIds
 
     signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid, int tokenType, string communityId)
-    signal sendRequested(string symbol, int tokenType, string fromAddress)
+    signal sendRequested(string collectionUid, int tokenType, string fromAddress)
     signal receiveRequested(string symbol)
     signal switchToCommunityRequested(string communityId)
     signal manageTokensRequested()
@@ -176,7 +176,7 @@ ColumnLayout {
 
         function getFirstUserOwnedAddress(ownershipModel) {
             if (!ownershipModel) return ""
-            
+
             for (let i = 0; i < ownershipModel.rowCount(); i++) {
                 const accountAddress = ModelUtils.get(ownershipModel, i, "accountAddress")
                 if (ModelUtils.contains(root.ownedAccountsModel, "address", accountAddress, Qt.CaseInsensitive))
@@ -237,7 +237,7 @@ ColumnLayout {
             FastExpressionFilter {
                 expression: {
                     root.controller.revision
-                    return (customFilter.isCommunity ? !!model.communityId : !model.communityId) && root.controller.filterAcceptsSymbol(model.symbol)
+                    return (customFilter.isCommunity ? !!model.communityId : !model.communityId) && root.controller.filterAcceptsKey(model.symbol) // TODO: use token/group key
                 }
                 expectedRoles: ["symbol", "communityId"]
             },
@@ -508,7 +508,7 @@ ColumnLayout {
             onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType, model.communityId ?? "")
             onContextMenuRequested: function(x, y) {
                 const userOwnedAddress = d.getFirstUserOwnedAddress(model.ownership)
-                tokenContextMenu.createObject(this, {symbol: model.symbol, chainId: model.chainId, tokenName: model.name, tokenImage: model.imageUrl,
+                tokenContextMenu.createObject(this, {collectionUid: model.collectionUid, key: model.key, symbol: model.symbol, chainId: model.chainId, tokenName: model.name, tokenImage: model.imageUrl,
                                                   communityId: model.communityId, communityName: model.communityName,
                                                   communityImage: model.communityImage, tokenType: model.tokenType,
                                                   soulbound: model.soulbound, userOwnedAddress}).popup(x, y)
@@ -523,6 +523,8 @@ ColumnLayout {
             id: tokenMenu
             onClosed: destroy()
 
+            property string collectionUid
+            property string key
             property string symbol
             property int chainId
             property string tokenName
@@ -544,7 +546,7 @@ ColumnLayout {
                     visibleOnDisabled: true
                     icon.name: "send"
                     text: qsTr("Send")
-                    onTriggered: root.sendRequested(tokenMenu.symbol, tokenMenu.tokenType, tokenMenu.userOwnedAddress)
+                    onTriggered: root.sendRequested(tokenMenu.collectionUid, tokenMenu.tokenType, tokenMenu.userOwnedAddress)
                 }
                 onObjectAdded: (index, object) => tokenMenu.insertAction(0, object)
                 onObjectRemoved: (index, object) => tokenMenu.removeAction(0)
