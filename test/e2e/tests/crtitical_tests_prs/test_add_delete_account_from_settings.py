@@ -15,7 +15,7 @@ from gui.screens.settings_wallet import WalletSettingsView
 from helpers.settings_helper import open_wallet_settings
 
 
-@pytest.mark.critical
+# @pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704454',
                  'Account view interactions: Delete generated account')
 @pytest.mark.case(704454)

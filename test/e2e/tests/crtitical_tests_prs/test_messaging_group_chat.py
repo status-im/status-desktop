@@ -22,7 +22,7 @@ from scripts.utils.generators import random_text_message
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014, 738735, 738736, 738739, 738740)
-@pytest.mark.critical
+# @pytest.mark.critical
 @pytest.mark.smoke
 @pytest.mark.parametrize('community_name, domain_link, domain_link_2',
                          [pytest.param('Status', 'status.app', 'github.com')
