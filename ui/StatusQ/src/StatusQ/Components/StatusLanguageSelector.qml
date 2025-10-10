@@ -22,6 +22,10 @@ Button {
 
     signal languageSelected(string languageCode)
 
+    function close() {
+        dropdown.close()
+    }
+
     font.family: Theme.baseFont.name
     font.weight: Font.Medium
     font.pixelSize: Theme.additionalTextSize

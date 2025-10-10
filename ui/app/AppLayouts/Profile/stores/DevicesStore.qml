@@ -2,6 +2,7 @@ import QtQuick
 import utils
 
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Backpressure
 
 QtObject {
     id: root
@@ -26,7 +27,7 @@ QtObject {
     readonly property int backupDataState: syncModule ? syncModule.backupDataState : 0
     readonly property string backupImportError: syncModule ? syncModule.backupImportError : ""
     readonly property string backupDataError: syncModule ? syncModule.backupDataError : ""
-    readonly property url backupPath: d.appSettingsInst.backupPath
+    readonly property url backupPath: toFileUri(d.appSettingsInst.backupPath)
     readonly property bool messagesBackupEnabled: d.appSettingsInst.messagesBackupEnabled
 
     readonly property QtObject _d: StatusQUtils.QObject {
@@ -35,11 +36,15 @@ QtObject {
         readonly property var globalUtilsInst: globalUtils
     }
 
+    signal localBackupExportCompleted(bool success)
     signal localBackupImportCompleted(bool success)
 
     readonly property Connections syncModuleConnections: Connections {
         target: root.syncModule
 
+        function onLocalBackupExportCompleted(success: bool) {
+            root.localBackupExportCompleted(success)
+        }
         function onLocalBackupImportCompleted(success: bool) {
             root.localBackupImportCompleted(success)
         }
@@ -103,6 +108,9 @@ QtObject {
 
     function performLocalBackup() {
         root.syncModule.performLocalBackup()
+        Backpressure.debounce(this, 5000, () => {
+            resetBackupDataState()
+        })()
     }
 
     function resetBackupDataState() {

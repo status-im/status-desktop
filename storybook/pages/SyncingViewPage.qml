@@ -1,4 +1,3 @@
-import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -36,41 +35,18 @@ SplitView {
 
         contentWidth: 664
 
-        isProduction: ctrlIsProduction.checked
-        localBackupEnabled: localBackupEnabledSwitch.checked
-        backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
-        messagesBackupEnabled: false
-        onBackupPathSet: function(path) {
-            logs.logEvent("SyncingView::onBackupPathSet", ["path"], arguments)
-            backupPath = path
-        }
-        onBackupMessagesEnabledToggled: function(enabled) {
-            logs.logEvent("SyncingView::backupMessagesEnabledToggled", ["enabled"], arguments)
-            messagesBackupEnabled = enabled
-        }
         advancedStore: ProfileStores.AdvancedStore {
             readonly property bool isDebugEnabled: ctrlDebugEnabled.checked
         }
 
         devicesStore: ProfileStores.DevicesStore {
-            function generateConnectionStringAndRunSetupSyncingPopup() {
-                logs.logEvent("devicesStore::generateConnectionStringAndRunSetupSyncingPopup")
+            function generateConnectionStringAndRunSetupSyncingPopup(enabled) {
+                logs.logEvent("devicesStore::generateConnectionStringAndRunSetupSyncingPopup", ["enabled"], arguments)
+                devicesModule.openPopupWithConnectionStringSignal("0xdeadbeef")
             }
 
             function setInstallationName(installationId, name) {
                 logs.logEvent("devicesStore::setInstallationName", ["installationId", "name"], arguments)
-            }
-
-            function performLocalBackup() {
-                logs.logEvent("devicesStore::performLocalBackup")
-            }
-
-            function importLocalBackupFile(filePath) {
-                logs.logEvent("devicesStore::importLocalBackupFile", ["filePath"], arguments)
-            }
-
-            function toFileUri(path) {
-                return UrlUtils.urlFromUserInput(path)
             }
 
             readonly property bool isDeviceSetup: ctrlDevicesLoaded.checked
@@ -80,6 +56,9 @@ SplitView {
 
                 function pairDevice(installationId) {
                     logs.logEvent("devicesStore::devicesModule::pairDevice", ["installationId"], arguments)
+                }
+                function unpairDevice(installationId) {
+                    logs.logEvent("devicesStore::devicesModule::unpairDevice", ["installationId"], arguments)
                 }
                 signal openPopupWithConnectionStringSignal(string rawConnectionString)
             }
@@ -162,18 +141,6 @@ SplitView {
                 id: ctrlDebugEnabled
                 text: "Debug enabled"
             }
-
-            Switch {
-                id: ctrlIsProduction
-                text: "Is production"
-                checked: true
-            }
-
-            Switch {
-                id: localBackupEnabledSwitch
-                text: "Local backup enabled"
-                checked: true
-            }
         }
     }
 }
@@ -181,3 +148,4 @@ SplitView {
 // category: Views
 // status: good
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=1592-128606&mode=design&t=1xZLPCet6yRCZCuz-0
+// https://www.figma.com/design/idUoxN7OIW2Jpp3PMJ1Rl8/Settings----Desktop-Legacy?node-id=1592-128590&m=dev

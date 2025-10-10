@@ -8,24 +8,18 @@ import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Popups
-import StatusQ.Popups.Dialog
-import StatusQ.Core.Utils as StatusQUtils
-import StatusQ.Core.Backpressure
 
 import utils
 
 import shared.panels
 import shared.popups
 import shared.controls
-import shared.controls.chat
 import shared.status
 
 import SortFilterProxyModel
 
 import AppLayouts.Profile.stores as ProfileStores
 import "../popups"
-import "../controls"
-import "../../stores"
 
 SettingsContentBase {
     id: root
@@ -34,14 +28,6 @@ SettingsContentBase {
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.PrivacyStore privacyStore
     property ProfileStores.AdvancedStore advancedStore
-
-    required property bool isProduction
-    required property bool localBackupEnabled
-    required property bool messagesBackupEnabled
-    required property url backupPath
-
-    signal backupPathSet(url path)
-    signal backupMessagesEnabledToggled(bool enabled)
 
     ColumnLayout {
         id: layout
@@ -164,96 +150,94 @@ SettingsContentBase {
             }
         }
 
-        Rectangle {
+        Control {
+            Layout.preferredWidth: parent.width * .75
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 17
+            Layout.topMargin: Theme.padding
 
-            implicitWidth: instructionsLayout.implicitWidth
-                           + instructionsLayout.anchors.leftMargin
-                           + instructionsLayout.anchors.rightMargin
+            horizontalPadding: Theme.padding
+            verticalPadding: Theme.bigPadding
 
-            implicitHeight: instructionsLayout.implicitHeight
-                            + instructionsLayout.anchors.topMargin
-                            + instructionsLayout.anchors.bottomMargin
+            background: Rectangle {
+                color: Theme.palette.primaryColor3
+                radius: Theme.radius
+            }
 
-            color: Theme.palette.primaryColor3
-            radius: 8
+            contentItem: ColumnLayout {
+                spacing: Theme.padding
 
-            ColumnLayout {
-                id: instructionsLayout
-
-                anchors {
-                    fill: parent
-                    topMargin: 24
-                    bottomMargin: 24
-                    leftMargin: 16
-                    rightMargin: 16
-                }
-
-                spacing: 17
-
-                Item {
+                RowLayout {
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
-                    height: syncNewDeviceText.height
-                    width: syncNewDeviceText.width
-                    Layout.topMargin: -8
 
                     StatusBaseText {
-                        id: syncNewDeviceText
+                        Layout.preferredWidth: parent.width - betaTag.width - parent.spacing
                         objectName: "syncNewDeviceTextLabel"
-
+                        elide: Text.ElideRight
                         color: Theme.palette.primaryColor1
                         font.pixelSize: Theme.secondaryAdditionalTextSize
                         font.weight: Font.Bold
                         text: qsTr("Sync a New Device")
-
-                        StatusBetaTag {
-                            anchors.left: parent.right
-                            anchors.leftMargin: 8
-                            anchors.verticalCenter: parent.verticalCenter
-                            tooltipText: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
-                        }
+                    }
+                    StatusBetaTag {
+                        id: betaTag
+                        tooltipText: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
                     }
                 }
 
                 StatusBaseText {
-
                     objectName: "syncNewDeviceSubTitleTextLabel"
 
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.Wrap
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Theme.primaryTextFontSize
                     font.weight: Font.Medium
                     text: qsTr("You own your data. Sync it among your devices.")
                 }
 
-                GridLayout {
-                    Layout.alignment: Qt.AlignHCenter
-                    rows: d.instructionsModel.length
-                    flow: GridLayout.TopToBottom
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Theme.padding
 
                     Repeater {
                         model: d.instructionsModel
-
-                        StatusBaseText {
-                            Layout.alignment: Qt.AlignVCenter
-                            color: Theme.palette.baseColor1
-                            font.pixelSize: Theme.additionalTextSize
-                            font.weight: Font.Medium
-                            text: index + 1
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 12
+                            StatusBaseText {
+                                color: Theme.palette.baseColor1
+                                font.pixelSize: Theme.additionalTextSize
+                                font.weight: Font.Medium
+                                text: index + 1
+                            }
+                            StatusBaseText {
+                                Layout.fillWidth: true
+                                text: modelData
+                                wrapMode: Text.Wrap
+                            }
                         }
                     }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Theme.halfPadding
 
-                    Repeater {
-                        model: d.instructionsModel
+                        StatusCheckBox {
+                            Layout.fillWidth: true
+                            objectName: "enableMessageSyncingCheckBox"
 
-                        StatusBaseText {
-                            Layout.alignment: Qt.AlignVCenter
-                            horizontalAlignment: Text.AlignLeft
-                            color: Theme.palette.directColor1
-                            font.pixelSize: Theme.primaryTextFontSize
-                            text: modelData
+                            text: qsTr("Enable message syncing")
+                            leftSide: true
+                            checked: false
+                            onToggled: d.messageSyncingEnabled = checked
+                        }
+
+                        StatusFlatRoundButton {
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: width
+                            radius: width/2
+                            icon.name: "help"
+                            tooltip.text: qsTr("Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.")
                         }
                     }
                 }
@@ -262,36 +246,9 @@ SettingsContentBase {
                     objectName: "setupSyncingStatusButton"
 
                     Layout.alignment: Qt.AlignHCenter
-                    normalColor: Theme.palette.primaryColor1
-                    hoverColor: Theme.palette.miscColor1;
-                    textColor: Theme.palette.indirectColor1
-                    font.weight: Font.Medium
+                    type: StatusBaseButton.Type.Primary
                     text: qsTr("Setup Syncing")
-                    onClicked: {
-                        d.setupSyncing()
-                    }
-                }
-
-                RowLayout {
-                    Layout.alignment: Qt.AlignHCenter
-                    spacing: Theme.halfPadding
-
-                    StatusCheckBox {
-                        objectName: "enableMessageSyncingCheckBox"
-
-                        Layout.fillWidth: true
-                        Layout.maximumWidth: implicitWidth
-                        text: qsTr("Enable message syncing")
-                        leftSide: true
-                        checked: false
-                        onToggled: d.messageSyncingEnabled = checked
-                    }
-
-                    StatusNavBarTabButton {
-                        icon.name: "help"
-                        tooltip.text: qsTr("Enabling this will allow all your messages to be sent to the new device during the local pairing.")
-                        thirdpartyServicesEnabled: thirdpartyServicesCtrl.checked
-                    }
+                    onClicked: d.setupSyncing()
                 }
 
                 StatusBaseText {
@@ -300,6 +257,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                     font.pixelSize: Theme.additionalTextSize
                     text: "* " + qsTr("This is best done in private. The code will grant access to your profile.")
+                    wrapMode: Text.Wrap
                 }
             }
         }
@@ -309,83 +267,6 @@ SettingsContentBase {
             text: qsTr("How to get a sync code")
             icon.name: "info"
             onClicked: Global.openPopup(getSyncCodeInstructionsPopup)
-        }
-
-        StatusSettingsLineButton {
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            visible: root.localBackupEnabled
-            text: qsTr("Directory of the local backup files")
-            currentValue: root.backupPath
-            onClicked: backupPathDialog.open()
-        }
-
-        StatusSettingsLineButton {
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            visible: root.localBackupEnabled
-            text: qsTr("Backup messages locally")
-            isSwitch: true
-            switchChecked: root.messagesBackupEnabled
-            onClicked: {
-                if (root.messagesBackupEnabled) {
-                    root.backupMessagesEnabledToggled(false)
-                    return
-                }
-                Global.openPopup(enableMessagesBackupDialog)
-            }
-        }
-
-        StatusButton {
-            objectName: "setupSyncLocalBackupDataButton"
-
-            visible: root.localBackupEnabled
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Backup Data Locally")
-            asset.emoji: {
-                if (root.devicesStore.backupDataState !== Constants.BackupImportState.Completed) {
-                    return ""
-                }
-                if (root.devicesStore.backupDataError) {
-                    return "❌"
-                }
-                return "✅"
-            }
-            loading: root.devicesStore.backupDataState === Constants.BackupImportState.InProgress
-            onClicked : {
-                root.devicesStore.performLocalBackup()
-                Backpressure.debounce(this, 5000, () => {
-                    root.devicesStore.resetBackupDataState()
-                })()
-            }
-        }
-
-        StatusButton {
-            objectName: "importLocalBackupFileButton"
-
-            id: importBackupBtn
-            visible: root.localBackupEnabled
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Import Local Backup File")
-            loading: root.devicesStore.backupImportState === Constants.BackupImportState.InProgress
-            onClicked : importBackupFileDialog.open()
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            color: Theme.palette.successColor1
-            visible: root.devicesStore.backupImportState === Constants.BackupImportState.Completed && !root.devicesStore.backupImportError
-            text: qsTr("Success importing local data")
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
-            color: Theme.palette.dangerColor1
-            visible: !!root.devicesStore.backupImportError
-            wrapMode: Text.WordWrap
-            text: qsTr("Error importing backup file: %1").arg(root.devicesStore.backupImportError)
         }
 
         Component {
@@ -456,35 +337,6 @@ SettingsContentBase {
             GetSyncCodeInstructionsPopup {
                 destroyOnClose: true
             }
-        }
-
-        Component {
-            id: enableMessagesBackupDialog
-            EnableMessagesBackupDialog {
-                destroyOnClose: true
-                onEnableRequested: {
-                    root.backupMessagesEnabledToggled(true)
-                    Global.closePopup()
-                }
-            }
-        }
-
-        StatusFileDialog {
-            id: importBackupFileDialog
-
-            title: qsTr("Select your backup file")
-            nameFilters: [qsTr("Supported backup formats (%1)").arg("*.bkp")]
-            currentFolder: root.devicesStore.toFileUri(root.backupPath)
-            selectMultiple: false
-            onAccepted: root.devicesStore.importLocalBackupFile(importBackupFileDialog.selectedFile)
-        }
-
-        StatusFolderDialog {
-            id: backupPathDialog
-
-            title: qsTr("Select your backup directory")
-            currentFolder: root.devicesStore.toFileUri(root.backupPath)
-            onAccepted: root.backupPathSet(backupPathDialog.selectedFolder)
         }
 
         Item {

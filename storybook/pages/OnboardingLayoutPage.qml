@@ -85,6 +85,8 @@ SplitView {
             property int syncState: Onboarding.ProgressState.Idle
             readonly property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
+            readonly property url backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
+
             property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
             property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
 

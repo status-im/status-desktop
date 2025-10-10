@@ -154,6 +154,7 @@ StatusSectionLayout {
         showBackUpSeed: !root.privacyStore.mnemonicBackedUp
         backUpSeedBadgeCount: root.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
         isKeycardEnabled: root.isKeycardEnabled
+        localBackupEnabled: root.devicesStore.localBackupEnabled
 
         syncingBadgeCount: root.devicesStore.devicesModel.count -
                            root.devicesStore.devicesModel.pairedCount
@@ -419,22 +420,12 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                isProduction: root.isProduction
                 profileStore: root.profileStore
                 devicesStore: root.devicesStore
                 privacyStore: root.privacyStore
                 advancedStore: root.advancedStore
-                localBackupEnabled: root.devicesStore.localBackupEnabled
-                backupPath: root.devicesStore.backupPath
-                messagesBackupEnabled: root.devicesStore.messagesBackupEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
-                onBackupPathSet: function(path) {
-                    root.devicesStore.setBackupPath(path)
-                }
-                onBackupMessagesEnabledToggled: function(enabled) {
-                    root.devicesStore.setMessagesBackupEnabled(enabled)
-                }
             }
         }
 
@@ -609,6 +600,30 @@ StatusSectionLayout {
                 }
                 onOpenThirdpartyServicesInfoPopupRequested: root.openThirdpartyServicesInfoPopupRequested()
                 onOpenDiscussPageRequested: root.openDiscussPageRequested()
+            }
+        }
+
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: BackupView {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+                contentWidth: d.contentWidth
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.backupSettings)
+
+                backupDataState: root.devicesStore.backupDataState
+                backupDataError: root.devicesStore.backupDataError
+
+                backupImportState: root.devicesStore.backupImportState
+                backupImportError: root.devicesStore.backupImportError
+
+                backupPath: root.devicesStore.backupPath
+                messagesBackupEnabled: root.devicesStore.messagesBackupEnabled
+                onBackupPathSet: path => root.devicesStore.setBackupPath(path)
+                onBackupMessagesEnabledToggled: enabled => root.devicesStore.setMessagesBackupEnabled(enabled)
+                onPerformLocalBackupRequested: root.devicesStore.performLocalBackup()
+                onImportLocalBackupFileRequested: selectedFile => root.devicesStore.importLocalBackupFile(selectedFile)
             }
         }
     }

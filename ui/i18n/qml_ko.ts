@@ -2383,6 +2383,81 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     </message>
 </context>
 <context>
+    <name>BackupView</name>
+    <message>
+        <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored&#xa0;&lt;b&gt;only&lt;/b&gt;&#xa0;on your device).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Instant backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By default, backups run automatically every 30 minutes, but you can trigger one instantly with Backup now.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By default, Status backs up your chat list and contacts, joined community IDs and descriptions, app settings, profile data, and wallet watch accounts. To also back up your 1-on-1, group chat, and community messages, enable Back up your messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup your messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose a folder to store your backup files or use the default one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore your Status profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click Import backup file, then locate and select the backup file for your Status profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import backup file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Success importing local data</source>
+        <translation type="unfinished">로컬 데이터 가져오기 성공</translation>
+    </message>
+    <message>
+        <source>Error importing backup file: %1</source>
+        <translation type="unfinished">백업 파일 가져오기 오류: %1</translation>
+    </message>
+    <message>
+        <source>Select your backup directory</source>
+        <translation type="unfinished">백업 디렉터리를 선택하세요</translation>
+    </message>
+    <message>
+        <source>Select your backup file</source>
+        <translation type="unfinished">백업 파일을 선택하세요</translation>
+    </message>
+    <message>
+        <source>Supported backup formats (%1)</source>
+        <translation type="unfinished">지원되는 백업 형식(%1)</translation>
+    </message>
+</context>
+<context>
     <name>BalanceExceeded</name>
     <message>
         <source>Balance exceeded</source>
@@ -6686,26 +6761,6 @@ Remember your password and don&apos;t share it with anyone.</source>
 <context>
     <name>EnableMessageBackupPopup</name>
     <message>
-        <source>Do you wish to enable message backup?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can now enable message backup to keep your messages on your device.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will allow you to restore your messages if you reinstall the app or switch devices.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Just remember to keep your backup file safe and secure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can change your mind in the Syncing settings later.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Skip</source>
         <translation type="unfinished">건너 뛰기</translation>
     </message>
@@ -6713,28 +6768,17 @@ Remember your password and don&apos;t share it with anyone.</source>
         <source>Enable</source>
         <translation type="unfinished">사용</translation>
     </message>
-</context>
-<context>
-    <name>EnableMessagesBackupDialog</name>
     <message>
-        <source>Enable Local Messages Backup</source>
-        <translation>로컬 메시지 백업 사용</translation>
+        <source>Enable on-device message backup?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enabling local message backup will store all your messages on your device in an encrypted backup file.</source>
-        <translation>로컬 메시지 백업을 활성화하면, 모든 메시지가 기기에 암호화된 백업 파일로 저장됩니다.</translation>
+        <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Make sure to keep this file secure.</source>
-        <translation>이 파일은 반드시 안전하게 보관하세요.</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>취소</translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation>사용</translation>
+        <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8470,24 +8514,20 @@ L2 fee: %2</source>
         <translation>로컬 백업 가져오기</translation>
     </message>
     <message>
-        <source>Here you can select a local file from your computer and import your previously backed up contacts, etc...</source>
-        <translation>여기에서 컴퓨터의 로컬 파일을 선택해, 이전에 백업해 둔 연락처 등 데이터를 가져올 수 있습니다...</translation>
-    </message>
-    <message>
-        <source>You can skip this step and do it anytime later under Settings &gt; Syncing</source>
-        <translation>이 단계는 건너뛰고, 나중에 설정 &gt; 동기화에서 언제든지 할 수 있어요</translation>
-    </message>
-    <message>
-        <source>Import from file...</source>
-        <translation>파일에서 가져오기...</translation>
-    </message>
-    <message>
         <source>Skip</source>
         <translation>건너 뛰기</translation>
     </message>
     <message>
         <source>Backup files (%1)</source>
         <translation>백업 파일 (%1)</translation>
+    </message>
+    <message>
+        <source>Import the backup file for your Status profile, or skip this step and import it later from Settings &gt; On-device backups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import backup file</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10327,18 +10367,6 @@ to load</source>
         <translation>비밀번호를 잊으셨나요?</translation>
     </message>
     <message>
-        <source>To recover your password follow these steps:</source>
-        <translation>비밀번호를 복구하려면 다음 단계를 따르세요:</translation>
-    </message>
-    <message>
-        <source>1. Remove the Status app</source>
-        <translation>1. Status 앱을 제거하세요</translation>
-    </message>
-    <message>
-        <source>This will erase all of your data from the device, including your password</source>
-        <translation>이 작업을 수행하면 비밀번호를 포함해 기기에서 모든 데이터가 삭제됩니다</translation>
-    </message>
-    <message>
         <source>2. Reinstall the Status app</source>
         <translation>2. Status 앱 재설치</translation>
     </message>
@@ -10347,20 +10375,28 @@ to load</source>
         <translation>%1 %2에서 앱을 다시 다운로드하세요</translation>
     </message>
     <message>
-        <source>3. Sign up with your existing keys</source>
-        <translation>3. 기존 키로 가입하기</translation>
+        <source>Copy instructions</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Access with your recovery phrase or Keycard</source>
-        <translation>리커버리 구문 또는 Keycard로 액세스</translation>
+        <source>To recover your profile and data follow these steps:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>4. Create a new password</source>
-        <translation>4. 새 비밀번호 만들기</translation>
+        <source>1. Copy backup file</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter a new password and you’re all set! You will be able to use your new password</source>
-        <translation>새 비밀번호를 입력하면 준비 완료! 이제 새 비밀번호를 사용할 수 있어요</translation>
+        <source>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.&lt;br&gt;Backup file path: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3. Restore your Status profile(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you have multiple profiles, repeat for each one:&lt;ul&gt;&lt;li&gt;On the Welcome screen, open the profile menu → Log in.&lt;li&gt;Select Log in with Recovery Phrase.&lt;li&gt;Enter your recovery phrase.&lt;li&gt;Create a new password.&lt;li&gt;Import the backup file from Step 1, or skip and import later from &lt;i&gt;Settings &gt; On-device backup&lt;/i&gt;.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15259,6 +15295,10 @@ to load</source>
         <source>Sign out &amp; Quit</source>
         <translation>로그아웃 및 종료</translation>
     </message>
+    <message>
+        <source>On-device backup</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsLeftTabView</name>
@@ -17028,26 +17068,6 @@ access to your webcam</source>
         <translation>동기화 코드 받는 방법</translation>
     </message>
     <message>
-        <source>Directory of the local backup files</source>
-        <translation>로컬 백업 파일 디렉터리</translation>
-    </message>
-    <message>
-        <source>Backup Data Locally</source>
-        <translation>데이터를 로컬에 백업</translation>
-    </message>
-    <message>
-        <source>Import Local Backup File</source>
-        <translation>로컬 백업 파일 가져오기</translation>
-    </message>
-    <message>
-        <source>Success importing local data</source>
-        <translation>로컬 데이터 가져오기 성공</translation>
-    </message>
-    <message>
-        <source>Error importing backup file: %1</source>
-        <translation>백업 파일 가져오기 오류: %1</translation>
-    </message>
-    <message>
         <source>Pair Device</source>
         <translation>기기 연결</translation>
     </message>
@@ -17080,27 +17100,11 @@ access to your webcam</source>
         <translation>디바이스 페어링 해제 오류: %1</translation>
     </message>
     <message>
-        <source>Select your backup file</source>
-        <translation>백업 파일을 선택하세요</translation>
-    </message>
-    <message>
-        <source>Supported backup formats (%1)</source>
-        <translation>지원되는 백업 형식(%1)</translation>
-    </message>
-    <message>
-        <source>Select your backup directory</source>
-        <translation>백업 디렉터리를 선택하세요</translation>
-    </message>
-    <message>
-        <source>Backup messages locally</source>
-        <translation>메시지를 로컬에 백업</translation>
-    </message>
-    <message>
         <source>Enable message syncing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enabling this will allow all your messages to be sent to the new device during the local pairing.</source>
+        <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17292,12 +17296,20 @@ access to your webcam</source>
         <translation>%1의 신뢰 표시가 제거됨</translation>
     </message>
     <message>
-        <source>Local backup import completed</source>
-        <translation>로컬 백업 가져오기가 완료되었습니다</translation>
+        <source>Your data backed up successfully</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Local backup import failed</source>
-        <translation>로컬 백업 가져오기 실패</translation>
+        <source>Backup failed, please try again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your data backup restored successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import failed. Make sure the backup file matches your profile name.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

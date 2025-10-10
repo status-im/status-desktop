@@ -39,6 +39,9 @@ SortFilterProxyModel {
     // Determines if keycard-related entries should be included
     property bool isKeycardEnabled: true
 
+    // Determines if local (on-device) backup entries are included
+    property bool localBackupEnabled: true
+
     // Badge count for the syncing entry
     property int syncingBadgeCount: 0
 
@@ -90,6 +93,12 @@ SortFilterProxyModel {
             icon: "rotate",
             isExperimental: true,
             experimentalTooltip: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
+        },
+        {
+            subsection: Constants.settingsSubsection.backupSettings,
+            text: qsTr("On-device backup"),
+            icon: "download",
+            isExperimental: false
         },
         {
             subsection: Constants.settingsSubsection.messaging,
@@ -216,6 +225,8 @@ SortFilterProxyModel {
                         return root.isKeycardEnabled
                     case Constants.settingsSubsection.contacts:
                         return root.showSubSubSections
+                    case Constants.settingsSubsection.backupSettings:
+                        return root.localBackupEnabled
 
                     default: return true
                 }

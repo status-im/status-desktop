@@ -27,6 +27,7 @@ SplitView {
             showBackUpSeed: ctrlShowBackUpSeed.checked
             syncingBadgeCount: ctrlSyncingBadgeCount.value
             messagingBadgeCount: ctrlMessagingBadgeCount.value
+            localBackupEnabled: ctrlLocalBackupEnabled.checked
         }
         onMenuItemClicked: (event) => logs.logEvent("onMenuItemClicked", ["event"], [event])
     }
@@ -76,6 +77,11 @@ SplitView {
                 id: ctrlIsKeycardEnabled
                 checked: true
                 text: "Is keycard enabled"
+            }
+            Switch {
+                id: ctrlLocalBackupEnabled
+                checked: true
+                text: "Local (on-device) backup enabled"
             }
         }
     }

@@ -2397,6 +2397,81 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     </message>
 </context>
 <context>
+    <name>BackupView</name>
+    <message>
+        <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored&#xa0;&lt;b&gt;only&lt;/b&gt;&#xa0;on your device).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Instant backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By default, backups run automatically every 30 minutes, but you can trigger one instantly with Backup now.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By default, Status backs up your chat list and contacts, joined community IDs and descriptions, app settings, profile data, and wallet watch accounts. To also back up your 1-on-1, group chat, and community messages, enable Back up your messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup your messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose a folder to store your backup files or use the default one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore your Status profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click Import backup file, then locate and select the backup file for your Status profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import backup file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Success importing local data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error importing backup file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select your backup directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select your backup file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supported backup formats (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BalanceExceeded</name>
     <message>
         <source>Balance exceeded</source>
@@ -6734,26 +6809,6 @@ Remember your password and don&apos;t share it with anyone.</source>
 <context>
     <name>EnableMessageBackupPopup</name>
     <message>
-        <source>Do you wish to enable message backup?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can now enable message backup to keep your messages on your device.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will allow you to restore your messages if you reinstall the app or switch devices.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Just remember to keep your backup file safe and secure!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can change your mind in the Syncing settings later.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Skip</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6761,27 +6816,16 @@ Remember your password and don&apos;t share it with anyone.</source>
         <source>Enable</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>EnableMessagesBackupDialog</name>
     <message>
-        <source>Enable Local Messages Backup</source>
+        <source>Enable on-device message backup?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enabling local message backup will store all your messages on your device in an encrypted backup file.</source>
+        <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Make sure to keep this file secure.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Zrušit</translation>
-    </message>
-    <message>
-        <source>Enable</source>
+        <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8529,23 +8573,19 @@ L2 poplatek: %2</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Here you can select a local file from your computer and import your previously backed up contacts, etc...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can skip this step and do it anytime later under Settings &gt; Syncing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import from file...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Skip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Backup files (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import the backup file for your Status profile, or skip this step and import it later from Settings &gt; On-device backups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import backup file</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10421,18 +10461,6 @@ to load</source>
         <translation>Zapomněli jste heslo?</translation>
     </message>
     <message>
-        <source>To recover your password follow these steps:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1. Remove the Status app</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will erase all of your data from the device, including your password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>2. Reinstall the Status app</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10441,19 +10469,27 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>3. Sign up with your existing keys</source>
+        <source>Copy instructions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Access with your recovery phrase or Keycard</source>
+        <source>To recover your profile and data follow these steps:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>4. Create a new password</source>
+        <source>1. Copy backup file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter a new password and you’re all set! You will be able to use your new password</source>
+        <source>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.&lt;br&gt;Backup file path: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3. Restore your Status profile(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you have multiple profiles, repeat for each one:&lt;ul&gt;&lt;li&gt;On the Welcome screen, open the profile menu → Log in.&lt;li&gt;Select Log in with Recovery Phrase.&lt;li&gt;Enter your recovery phrase.&lt;li&gt;Create a new password.&lt;li&gt;Import the backup file from Step 1, or skip and import later from &lt;i&gt;Settings &gt; On-device backup&lt;/i&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -15385,6 +15421,10 @@ to load</source>
         <source>Sign out &amp; Quit</source>
         <translation>Odhlásit se a ukončit</translation>
     </message>
+    <message>
+        <source>On-device backup</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsLeftTabView</name>
@@ -17176,26 +17216,6 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Directory of the local backup files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backup Data Locally</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import Local Backup File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Success importing local data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error importing backup file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Pair Device</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17228,27 +17248,11 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select your backup file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Supported backup formats (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select your backup directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backup messages locally</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enable message syncing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enabling this will allow all your messages to be sent to the new device during the local pairing.</source>
+        <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17440,11 +17444,19 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Local backup import completed</source>
+        <source>Your data backed up successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Local backup import failed</source>
+        <source>Backup failed, please try again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your data backup restored successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import failed. Make sure the backup file matches your profile name.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
