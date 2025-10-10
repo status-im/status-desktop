@@ -13199,6 +13199,11 @@
       <comment>ManageTokensView</comment>
       <translation>Last check %1</translation>
     </message>
+    <message>
+      <source>Available if third-party services enabled</source>
+      <comment>ManageTokensView</comment>
+      <translation>Available if third-party services enabled</translation>
+    </message>
   </context>
   <context>
     <name>MarkAsIDVerifiedDialog</name>

@@ -24,6 +24,8 @@ SignTransactionModalBase {
     required property string tokenAmount
     /** Input property holding selected token contract address **/
     required property string tokenContractAddress
+    /** Input property holding selected token icon **/
+    required property string tokenIcon
 
     /** Input property holding selected account name **/
     required property string accountName
@@ -164,7 +166,7 @@ SignTransactionModalBase {
     fromImageSmartIdenticon.asset.isLetterIdenticon: !!root.accountEmoji
 
     // In case if selected token is an asset then this displays the token selected
-    toImageSource: Constants.tokenIcon(root.tokenSymbol)
+    toImageSource: root.tokenIcon
 
     // Collectible data in header in case a collectible is selected
     collectibleMedia.backgroundColor: root.collectibleBackgroundColor
@@ -418,7 +420,7 @@ SignTransactionModalBase {
         primaryText: "%1 %2".arg(root.tokenAmount).arg(root.tokenSymbol)
         secondaryText: root.tokenSymbol !== d.nativeTokenSymbol ?
                            SQUtils.Utils.elideAndFormatWalletAddress(root.tokenContractAddress) : ""
-        icon: Constants.tokenIcon(root.tokenSymbol)
+        icon: root.tokenIcon
         badge: root.networkIconPath
         highlighted: contractInfoButtonWithMenu.hovered
         components: [

@@ -78,7 +78,7 @@ Flow {
             amount: {
                 if (!root.formatBalance)
                     return model.amount
-                return root.formatBalance(model.amount, model.symbol)
+                return root.formatBalance(model.amount, model.tokenKey)
             }
             symbol: model.symbol
             address: model.receiver

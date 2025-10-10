@@ -3,7 +3,7 @@ import json, json_serialization, stew/shims/strformat
 import options
 
 include app_service/common/json_utils
-import app_service/service/token/dto
+import app_service/service/token/dto/token
 
 type
   CryptoRampDto* = ref object of RootObj

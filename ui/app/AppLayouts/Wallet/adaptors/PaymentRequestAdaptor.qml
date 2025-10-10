@@ -13,7 +13,7 @@ QObject {
 
     // Input API
     /** Plain tokens model without balances **/
-    required property var plainTokensBySymbolModel
+    required property var tokenGroupsModel
     /** All networks model **/
     required property var flatNetworksModel
     /** Selected network chain id **/
@@ -25,32 +25,24 @@ QObject {
 
         readonly property string networkName: ModelUtils.getByKey(root.flatNetworksModel, "chainId", root.selectedNetworkChainId, "chainName")
 
-        sourceModel: RolesRenamingModel {
+        sourceModel: SortFilterProxyModel {
             objectName: "PaymentRequestAdaptor_allTokensPlain"
-            sourceModel: SortFilterProxyModel {
-                sourceModel: root.plainTokensBySymbolModel
-                filters: [
-                    FastExpressionFilter {
-                        function isPresentOnEnabledNetwork(addressPerChain, selectedChainId) {
-                            if(!addressPerChain || selectedChainId < 0)
-                                return true
-                            return !!ModelUtils.getFirstModelEntryIf(
-                                        addressPerChain,
-                                        (addPerChain) => {
-                                            return selectedChainId === addPerChain.chainId
-                                        })
-                        }
-                        expression: {
-                            return isPresentOnEnabledNetwork(model.addressPerChain, root.selectedNetworkChainId)
-                        }
-                        expectedRoles: ["addressPerChain"]
+            sourceModel: root.tokenGroupsModel
+            filters: [
+                FastExpressionFilter {
+                    function isPresentOnEnabledNetwork(tokens, selectedChainId) {
+                        if(selectedChainId < 0)
+                            return true
+                        return !!ModelUtils.getFirstModelEntryIf(
+                                    tokens,
+                                    (t) => {
+                                        return selectedChainId === t.chainId
+                                    })
                     }
-                ]
-            }
-            mapping: [
-                RoleRename {
-                    from: "key"
-                    to: "tokensKey"
+                    expression: {
+                        return isPresentOnEnabledNetwork(model.tokens, root.selectedNetworkChainId)
+                    }
+                    expectedRoles: ["tokens"]
                 }
             ]
         }
@@ -65,8 +57,8 @@ QObject {
                     return Constants.tokenIcon(symbol)
                 }
                 name: "iconSource"
-                expression: model.image || tokenIcon(model.symbol)
-                expectedRoles: ["image", "symbol"]
+                expression: model.logoUri || tokenIcon(model.symbol)
+                expectedRoles: ["logoUri", "symbol"]
             }
         ]
 

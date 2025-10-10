@@ -37,10 +37,10 @@ void ManageTokensModel::addItem(const TokenData& item, bool append)
     endInsertRows();
 }
 
-std::optional<TokenData> ManageTokensModel::takeItem(const QString& symbol)
+std::optional<TokenData> ManageTokensModel::takeItem(const QString& key)
 {
     const auto token =
-        std::find_if(m_data.cbegin(), m_data.cend(), [symbol](const auto& item) { return symbol == item.symbol; });
+        std::find_if(m_data.cbegin(), m_data.cend(), [key](const auto& item) { return key == item.key; });
     const auto row = std::distance(m_data.cbegin(), token);
 
     if (row < 0 || row >= rowCount())
@@ -94,8 +94,8 @@ SerializedTokenData ManageTokensModel::save(bool isVisible, bool itemsAreGroups)
         const auto& token = itemAt(i);
         const auto isCommunityGroup = !token.communityId.isEmpty();
         const auto isCollectionGroup = !token.collectionUid.isEmpty();
-        result.insert(token.symbol,
-                      TokenOrder{token.symbol,
+        result.insert(token.key,
+                      TokenOrder{token.key,
                                  i,
                                  isVisible,
                                  isCommunityGroup,
@@ -113,6 +113,11 @@ int ManageTokensModel::rowCount(const QModelIndex& parent) const { return m_data
 QHash<int, QByteArray> ManageTokensModel::roleNames() const
 {
     static const QHash<int, QByteArray> roles{
+        {KeyRole, kKeyRoleName},
+        {TokenKeyRole, kTokenKeyRoleName},
+        {CrossChainIdRole, kCrossChainIdRoleName},
+        {ChainIdRole, kChainIdRoleName},
+        {AddressRole, kAddressRoleName},
         {SymbolRole, kSymbolRoleName},
         {NameRole, kNameRoleName},
         {CommunityIdRole, kCommunityIdRoleName},
@@ -145,6 +150,16 @@ QVariant ManageTokensModel::data(const QModelIndex& index, int role) const
     const auto& token = m_data.at(index.row());
 
     switch (static_cast<TokenDataRoles>(role)) {
+    case KeyRole:
+        return token.key;
+    case TokenKeyRole:
+        return token.tokenKey;
+    case CrossChainIdRole:
+        return token.crossChainId;
+    case ChainIdRole:
+        return token.chainId;
+    case AddressRole:
+        return token.address;
     case SymbolRole:
         return token.symbol;
     case NameRole:

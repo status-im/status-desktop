@@ -2047,7 +2047,7 @@ Item {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
-                            onSendTokenRequested: (senderAddress, tokenId, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
+                            onSendTokenRequested: (senderAddress, gorupKey, tokenType) => popupRequestsHandler.sendModalHandler.sendToken(senderAddress, gorupKey, tokenType)
                             onBridgeTokenRequested: (tokenId, tokenType) => popupRequestsHandler.sendModalHandler.bridgeToken(tokenId, tokenType)
                             onOpenSwapModalRequested: (swapFormData) => popupRequestsHandler.swapModalHandler.launchSwapSpecific(swapFormData)
                         }

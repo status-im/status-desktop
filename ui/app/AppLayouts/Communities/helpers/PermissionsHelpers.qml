@@ -130,7 +130,7 @@ QtObject {
     }
 
     function getCollectionUidFromKey(key) {
-        const parts = key.split('+');
+        const parts = key.split('-');
         if(parts.length === 2)
             return key
         else if(parts.length === 3)

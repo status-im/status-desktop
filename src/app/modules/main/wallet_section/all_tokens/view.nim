@@ -1,6 +1,6 @@
 import nimqml, sequtils, strutils, chronicles
 
-import ./io_interface, ./sources_of_tokens_model, ./flat_tokens_model, ./token_by_symbol_model
+import io_interface, token_lists_model, token_groups_model
 
 QtObject:
   type
@@ -8,32 +8,25 @@ QtObject:
       delegate: io_interface.AccessInterface
       marketHistoryIsLoading: bool
 
-      # This contains the different sources for the tokens list
-      # ex. uniswap list, status tokens list
-      sourcesOfTokensModel: SourcesOfTokensModel
-      # this list contains the complete list of tokens with separate
-      # entry per token which has a unique address + network pair */
-      flatTokensModel: FlatTokensModel
-      # this list contains list of tokens grouped by symbol
-      # EXCEPTION: We may have different entries for the same symbol in case
-      # of symbol clash when minting community tokens
-      tokensBySymbolModel: TokensBySymbolModel
+      tokenListsModel: TokenListsModel
+      tokenGroupsModel: TokenGroupsModel
 
+  ## Forward declaration
+  proc modelsUpdated*(self: View)
   proc delete*(self: View)
+
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
     result.marketHistoryIsLoading = false
-    result.sourcesOfTokensModel = newSourcesOfTokensModel(delegate.getSourcesOfTokensModelDataSource())
-    result.flatTokensModel = newFlatTokensModel(
-      delegate.getFlatTokenModelDataSource(),
-      delegate.getTokenMarketValuesDataSource())
-    result.tokensBySymbolModel = newTokensBySymbolModel(
-      delegate.getTokenBySymbolModelDataSource(),
+    result.tokenListsModel = newTokenListsModel(delegate.getTokenListsModelDataSource())
+    result.tokenGroupsModel = newTokenGroupsModel(
+      delegate.getTokenGroupsModelDataSource(),
       delegate.getTokenMarketValuesDataSource())
 
   proc load*(self: View) =
+    self.modelsUpdated()
     self.delegate.viewDidLoad()
 
   proc marketHistoryIsLoadingChanged*(self: View) {.signal.}
@@ -57,9 +50,9 @@ QtObject:
     read = getTokenListUpdatedAt
     notify = tokenListUpdatedAtChanged
 
-  proc getHistoricalDataForToken*(self: View, symbol: string, currency: string) {.slot.} =
+  proc getHistoricalDataForToken*(self: View, tokenKey: string, currency: string) {.slot.} =
     self.setMarketHistoryIsLoading(true)
-    self.delegate.getHistoricalDataForToken(symbol, currency)
+    self.delegate.getHistoricalDataForToken(tokenKey, currency)
 
   proc tokenHistoricalDataReady*(self: View, tokenDetails: string) {.signal.}
 
@@ -67,55 +60,41 @@ QtObject:
     self.setMarketHistoryIsLoading(false)
     self.tokenHistoricalDataReady(tokenDetails)
 
-  proc sourcesOfTokensModelChanged*(self: View) {.signal.}
-  proc getSourcesOfTokensModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.sourcesOfTokensModel)
-  QtProperty[QVariant] sourcesOfTokensModel:
-    read = getSourcesOfTokensModel
-    notify = sourcesOfTokensModelChanged
+  proc tokenListsModelChanged*(self: View) {.signal.}
+  proc getTokenListsModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.tokenListsModel)
+  QtProperty[QVariant] tokenListsModel:
+    read = getTokenListsModel
+    notify = tokenListsModelChanged
 
-  proc flatTokensModelChanged*(self: View) {.signal.}
-  proc getFlatTokensModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.flatTokensModel)
-  QtProperty[QVariant] flatTokensModel:
-    read = getFlatTokensModel
-    notify = flatTokensModelChanged
-
-  proc tokensBySymbolModelChanged*(self: View) {.signal.}
-  proc getTokensBySymbolModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.tokensBySymbolModel)
-  QtProperty[QVariant] tokensBySymbolModel:
-    read = getTokensBySymbolModel
-    notify = tokensBySymbolModelChanged
+  proc tokenGroupsModelChanged*(self: View) {.signal.}
+  proc getTokenGroupsModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.tokenGroupsModel)
+  QtProperty[QVariant] tokenGroupsModel:
+    read = getTokenGroupsModel
+    notify = tokenGroupsModelChanged
 
   proc modelsUpdated*(self: View) =
-    self.sourcesOfTokensModel.modelsUpdated()
-    self.flatTokensModel.modelsUpdated()
-    self.tokensBySymbolModel.modelsUpdated()
+    self.tokenListsModel.modelsUpdated()
+    self.tokenGroupsModel.modelsUpdated()
 
   proc tokensMarketValuesUpdated*(self: View) =
-    self.flatTokensModel.tokensMarketValuesUpdated()
-    self.tokensBySymbolModel.tokensMarketValuesUpdated()
+    self.tokenGroupsModel.tokensMarketValuesUpdated()
 
   proc tokensMarketValuesAboutToUpdate*(self: View) =
-    self.flatTokensModel.tokensMarketValuesAboutToUpdate()
-    self.tokensBySymbolModel.tokensMarketValuesAboutToUpdate()
+    self.tokenGroupsModel.tokensMarketValuesAboutToUpdate()
 
   proc tokensDetailsAboutToUpdate*(self: View) =
-    self.flatTokensModel.tokensDetailsAboutToUpdate()
-    self.tokensBySymbolModel.tokensDetailsAboutToUpdate()
+    self.tokenGroupsModel.tokensDetailsAboutToUpdate()
 
   proc tokensDetailsUpdated*(self: View) =
-    self.flatTokensModel.tokensDetailsUpdated()
-    self.tokensBySymbolModel.tokensDetailsUpdated()
+    self.tokenGroupsModel.tokensDetailsUpdated()
 
   proc currencyFormatsUpdated*(self: View) =
-    self.flatTokensModel.currencyFormatsUpdated()
-    self.tokensBySymbolModel.currencyFormatsUpdated()
+    self.tokenGroupsModel.currencyFormatsUpdated()
 
   proc tokenPreferencesUpdated*(self: View) =
-    self.flatTokensModel.tokenPreferencesUpdated()
-    self.tokensBySymbolModel.tokenPreferencesUpdated()
+    self.tokenGroupsModel.tokenPreferencesUpdated()
 
   proc updateTokenPreferences*(self: View, tokenPreferencesJson: string) {.slot.} =
     self.delegate.updateTokenPreferences(tokenPreferencesJson)
@@ -205,6 +184,9 @@ QtObject:
   QtProperty[bool] autoRefreshTokensLists:
     read = getAutoRefreshTokensLists
     notify = autoRefreshTokensListsChanged
+
+  proc tokenAvailableForBridgingViaHop(self: View, tokenChainId: int, tokenAddress: string): bool {.slot.} =
+    return self.delegate.tokenAvailableForBridgingViaHop(tokenChainId, tokenAddress)
 
   proc delete*(self: View) =
     self.QObject.delete

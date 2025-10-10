@@ -73,7 +73,7 @@ QtObject {
     - symbol: symbol of the token,
     - decimals: decimals for the token
     */
-    required property var plainTokensBySymbolModel
+    required property var tokenGroupsModel
     /** Expected model structure:
     - symbol              [string] - unique identifier of a collectible
     - collectionUid       [string] - unique identifier of a collection
@@ -164,7 +164,7 @@ QtObject {
     property var simpleSendParams
 
     /** signal to request launch of buy crypto modal **/
-    signal launchBuyFlowRequested(string accountAddress, int chainId, string tokenKey)
+    signal launchBuyFlowRequested(string accountAddress, int chainId, string groupKey)
 
     function openSend(params = {}, forceLaunchOldSend = false) {
         // TODO remove once simple send is feature complete
@@ -342,32 +342,37 @@ QtObject {
         openSend(params, true)
     }
 
-    function sendToken(senderAddress, tokenId, tokenType) {
+    function sendToken(senderAddress, gorupKey, tokenType) {
         let sendType = Constants.SendType.Transfer
         let selectedChainId = 0
         if (tokenType === Constants.TokenType.ERC721)  {
             sendType = Constants.SendType.ERC721Transfer
             selectedChainId =
-                    SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", tokenId, "chainId")
+                    SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", gorupKey, "chainId")
         }
         else if(tokenType === Constants.TokenType.ERC1155) {
             sendType = Constants.SendType.ERC1155Transfer
             selectedChainId =
-                    SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", tokenId, "chainId")
+                    SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", gorupKey, "chainId")
         }
         else {
             let layer1chainId = SQUtils.ModelUtils.getByKey(root.filteredFlatNetworksModel, "layer", "1", "chainId")
             let networksChainIdArray = SQUtils.ModelUtils.modelToFlatArray(root.filteredFlatNetworksModel, "chainId")
-            let selectedAssetAddressPerChain =
-                SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", tokenId, "addressPerChain")
-            // check if layer address is found
-            selectedChainId = SQUtils.ModelUtils.getByKey(selectedAssetAddressPerChain, "chainId", layer1chainId, "chainId")
+            const tokensForSelectedAsset = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", gorupKey)
+            if (!!tokensForSelectedAsset) {
+                let chainToken = SQUtils.ModelUtils.getByKey(tokensForSelectedAsset.tokens, "chainId", layer1chainId)
+                if (!chainToken) {
+                    chainToken = SQUtils.ModelUtils.get(tokensForSelectedAsset.tokens, 0)
+                }
+
+                selectedChainId = chainToken.chainId
+            }
             // if not layer 1 chain id found, select the first one is list
             if (!selectedChainId) {
                 selectedChainId = SQUtils.ModelUtils.getFirstModelEntryIf(
-                            selectedAssetAddressPerChain,
-                            (addPerChain) => {
-                                return networksChainIdArray.includes(addPerChain.chainId)
+                            tokensForSelectedAsset,
+                            (token) => {
+                                return networksChainIdArray.includes(token.chainId)
                             })
             }
         }
@@ -376,25 +381,25 @@ QtObject {
             params = {
                 sendType: sendType,
                 selectedAccountAddress: senderAddress,
-                selectedTokenKey: tokenId,
+                selectedGroupKey: gorupKey,
                 selectedChainId: selectedChainId,
             }
         } else {
             params = {
                 preSelectedSendType: sendType,
                 preSelectedAccountAddress: senderAddress,
-                preSelectedHoldingID: tokenId,
+                selectedGroupKey: gorupKey,
                 preSelectedHoldingType: tokenType,
             }
         }
         openSend(params)
     }
 
-    function openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId) {
+    function openTokenPaymentRequest(recipientAddress, groupKey, rawAmount, chainId) {
         let params = {}
         if (root.simpleSendEnabled) {
             params = {
-                selectedTokenKey: symbol,
+                selectedGroupKey: groupKey,
                 selectedRawAmount: rawAmount,
                 selectedChainId: chainId,
                 selectedRecipientAddress: recipientAddress,
@@ -403,7 +408,7 @@ QtObject {
             }
         } else {
             params = {
-                preSelectedHoldingID: symbol,
+                selectedGroupKey: groupKey,
                 preSelectedHoldingType: Constants.TokenType.ERC20,
                 preDefinedRawAmountToSend: rawAmount,
                 preSelectedChainId: chainId,
@@ -435,7 +440,7 @@ QtObject {
 
             accountsModel: handler.accountsSelectorAdaptor.processedWalletAccounts
             assetsModel: handler.assetsSelectorViewAdaptor.outputAssetsModel
-            flatAssetsModel: root.plainTokensBySymbolModel
+            groupedAccountAssetsModel: root.groupedAccountAssetsModel
             flatCollectiblesModel: handler.collectiblesSelectionAdaptor.filteredFlatModel
             collectiblesModel: handler.collectiblesSelectionAdaptor.model
             networksModel: root.filteredFlatNetworksModel
@@ -462,8 +467,8 @@ QtObject {
                         !!root.simpleSendParams.selectedAccountAddress) {
                     selectedAccountAddress = root.simpleSendParams.selectedAccountAddress
                 }
-                if(isValidParameter(root.simpleSendParams.selectedTokenKey)) {
-                    selectedTokenKey = root.simpleSendParams.selectedTokenKey
+                if(isValidParameter(root.simpleSendParams.selectedGroupKey)) {
+                    selectedGroupKey = root.simpleSendParams.selectedGroupKey
                 }
                 if(isValidParameter(root.simpleSendParams.selectedChainId)) {
                     selectedChainId = root.simpleSendParams.selectedChainId
@@ -511,18 +516,18 @@ QtObject {
                 if(allValuesFilledCorrectly) {
                     handler.uuid = Utils.uuid()
                     simpleSendModal.routesLoading = true
-                    let tokenKey = selectedTokenKey
+                    let groupKey = selectedGroupKey
                     /** TODO: This special handling for collectibles should ideally not
                     be needed, howver is needed because of current implementation and
                     collectible token id is contractAddress:tokenId **/
                     if(sendType === Constants.SendType.ERC1155Transfer ||
                             sendType === Constants.SendType.ERC721Transfer) {
                         const selectedCollectible =
-                                                  SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", selectedTokenKey)
+                                                  SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", selectedGroupKey)
                         if(!!selectedCollectible &&
                                 !!selectedCollectible.contractAddress &&
                                 !!selectedCollectible.tokenId) {
-                            tokenKey = "%1:%2".arg(
+                            groupKey = "%1:%2".arg(
                                         selectedCollectible.contractAddress).arg(
                                         selectedCollectible.tokenId)
                         }
@@ -533,7 +538,7 @@ QtObject {
                                                                   selectedAccountAddress,
                                                                   selectedRecipientAddress,
                                                                   selectedRawAmount,
-                                                                  tokenKey,
+                                                                  groupKey,
                                                                   /*amountOut = */ "0",
                                                                   /*toToken =*/ "",
                                                                   /*slippagePercentage*/ "",
@@ -546,7 +551,7 @@ QtObject {
                 if(sendType === Constants.SendType.ERC1155Transfer ||
                         sendType === Constants.SendType.ERC721Transfer) {
                     const selectedCollectible =
-                                              SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", selectedTokenKey)
+                                              SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", selectedGroupKey)
                     if(!!selectedCollectible &&
                             !!selectedCollectible.contractAddress &&
                             !!selectedCollectible.tokenId) {
@@ -562,7 +567,7 @@ QtObject {
             }
 
             onLaunchBuyFlow: {
-                root.launchBuyFlowRequested(selectedAccountAddress, selectedChainId, selectedTokenKey)
+                root.launchBuyFlowRequested(selectedAccountAddress, selectedChainId, selectedGroupKey)
             }
 
             ModelEntry {
@@ -582,8 +587,8 @@ QtObject {
                 readonly property bool marketDataNotAvailable: {
                     if (root.networkConnectionStore.networkConnectionModuleInst.marketValuesNetworkConnection.completelyDown)
                         return true
-                    const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                    const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
+                    const nativeTokenGroupKey = Utils.getNativeTokenGroupKey(simpleSendModal.selectedChainId)
+                    const nativeToken = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", nativeTokenGroupKey)
                     const price = nativeToken?.marketDetails?.currencyPrice
                     return !!price && (price.amount == null || price.amount === 0)
                 }
@@ -718,10 +723,10 @@ QtObject {
                 readonly property var accountsSelectorAdaptor: WalletAccountsSelectorAdaptor {
                     accounts: root.walletAccountsModel
                     assetsModel: root.groupedAccountAssetsModel
-                    tokensBySymbolModel: root.plainTokensBySymbolModel
+                    tokenGroupsModel: root.tokenGroupsModel
                     filteredFlatNetworksModel: root.filteredFlatNetworksModel
 
-                    selectedTokenKey: simpleSendModal.selectedTokenKey
+                    selectedGroupKey: simpleSendModal.selectedGroupKey
                     selectedNetworkChainId: simpleSendModal.selectedChainId
 
                     fnFormatCurrencyAmountFromBigInt: root.fnFormatCurrencyAmountFromBigInt
@@ -770,12 +775,12 @@ QtObject {
                                         }
 
                     onValueChanged: {
-                        const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                        const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
+                        const nativeTokenGroupKey = Utils.getNativeTokenGroupKey(simpleSendModal.selectedChainId)
+                        const nativeToken = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", nativeTokenGroupKey)
                         let nativeTokenFiatValue = !!nativeToken ? nativeToken.marketDetails.currencyPrice.amount: 1
                         let totalFees = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, value)
 
-                        simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), nativeTokenSymbol)
+                        simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), nativeToken.symbol)
 
                         // Use GWEI fees as fiat fees when market data is not available
                         if (handler.marketDataNotAvailable) {
@@ -846,8 +851,8 @@ QtObject {
                 recipientModel: handler.recipientViewAdaptor.recipientsModel
                 chainId: simpleSendModal.selectedChainId
                 networksModel: root.flatNetworksModel
-                tokenKey: simpleSendModal.selectedTokenKey
-                tokenBySymbolModel: root.plainTokensBySymbolModel
+                groupKey: simpleSendModal.selectedGroupKey
+                tokenGroupsModel: root.tokenGroupsModel
                 selectedAmountInBaseUnit: simpleSendModal.selectedRawAmount
                 selectedRecipientAddress: simpleSendModal.selectedRecipientAddress
             }
@@ -867,6 +872,9 @@ QtObject {
                                          signSendAdaptor.selectedAsset.symbol: ""
                     tokenAmount: signSendAdaptor.selectedAmount
                     tokenContractAddress: signSendAdaptor.selectedAssetContractAddress
+                    tokenIcon: !!signSendAdaptor.selectedAsset &&
+                               !!signSendAdaptor.selectedAsset.logoUri ?
+                                   signSendAdaptor.selectedAsset.logoUri: ""
 
                     accountName: signSendAdaptor.selectedAccount.name
                     accountAddress: signSendAdaptor.selectedAccount.address
@@ -934,9 +942,9 @@ QtObject {
                             return roundedGwei.toString() + " " + feeSymbol
                         }
 
-                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                        const feeTokenGroupKey = Utils.getNativeTokenGroupKey(simpleSendModal.selectedChainId)
+                        const feeToken = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", feeTokenGroupKey)
                         const decimalFee = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawFee)
-                        const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
                         const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
                         return root.fnFormatCurrencyAmount(feeTokenPrice*decimalFee, root.currentCurrency).toString()
                     }
@@ -945,8 +953,8 @@ QtObject {
                         if (!rawFee) {
                             return ""
                         }
-                        const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
-                        return root.fnFormatCurrencyAmount(rawFee, feeSymbol).toString()
+                        const feeTokenGroupKey = Utils.getNativeTokenGroupKey(simpleSendModal.selectedChainId)
+                        return root.fnFormatCurrencyAmount(rawFee, feeTokenGroupKey).toString()
                     }
 
                     fnGetEstimatedTime: function(gasPrice, rawBaseFee, rawPriorityFee) {
@@ -1106,16 +1114,17 @@ QtObject {
                             const feeSymbol = Utils.getNativeGasTokenSymbol(simpleSendModal.selectedChainId)
                             return totalFeesInGwei.toString() + " " + feeSymbol
                         } else {
-                            const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                            const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
+                            const feeTokenGroupKey = Utils.getNativeTokenGroupKey(simpleSendModal.selectedChainId)
+                            const feeToken = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", feeTokenGroupKey)
                             const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
                             return root.fnFormatCurrencyAmount(feeTokenPrice*decimalTotalFees, root.currentCurrency).toString()
                         }
                     }
 
                     cryptoFees: {
-                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
-                        return root.fnFormatCurrencyAmount(decimalTotalFees.toString(), feeSymbol)
+                        const feeTokenGroupKey = Utils.getNativeTokenGroupKey(simpleSendModal.selectedChainId)
+                        const feeToken = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", feeTokenGroupKey)
+                        return root.fnFormatCurrencyAmount(decimalTotalFees.toString(), feeToken.symbol)
                     }
 
                     estimatedTime: {

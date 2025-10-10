@@ -18,14 +18,14 @@ ColumnLayout {
     // required properties
     required property var assetsModel
     required property var selectedProvider
-    required property string selectedTokenKey
+    required property string selectedTokenGroupKey
     required property int selectedNetworkChainId
     required property var filteredFlatNetworksModel
 
     signal networkSelected(int chainId)
-    signal tokenSelected(string tokensKey)
+    signal tokenSelected(string tokenGroupKey)
 
-    onSelectedTokenKeyChanged: assetSelector.update()
+    onSelectedTokenGroupKeyChanged: assetSelector.update()
     onSelectedNetworkChainIdChanged: assetSelector.update()
 
     spacing: 20
@@ -100,16 +100,16 @@ ColumnLayout {
 
             function update() {
                 Qt.callLater(()=> {
-                    if (!root.assetsModel || !root.selectedTokenKey
+                    if (!root.assetsModel || !root.selectedTokenGroupKey
                         || root.selectedNetworkChainId === -1)
                         return
 
                     const entry = ModelUtils.getByKey(root.assetsModel,
-                                                      "tokensKey", root.selectedTokenKey)
+                                                      "key", root.selectedTokenGroupKey)
                     if (entry) {
                         assetSelector.setSelection(entry.name, entry.symbol,
-                                                   entry.iconSource, entry.tokensKey)
-                        root.tokenSelected(entry.tokensKey)
+                                                   entry.iconSource, entry.key)
+                        root.tokenSelected(entry.key)
                     } else {
                         assetSelector.reset()
                         root.tokenSelected("")

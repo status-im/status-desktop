@@ -146,7 +146,7 @@ StatusSectionLayout {
     signal invitationPendingClicked
 
     signal buyStickerPackRequested(string packId, int price)
-    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+    signal tokenPaymentRequested(string recipientAddress, string tokenKey, string rawAmount)
 
     // Unfurling related requests:
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
@@ -346,7 +346,7 @@ StatusSectionLayout {
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
             }
-            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
+            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, tokenKey, rawAmount)
 
             // Unfurling related requests:
             onSetNeverAskAboutUnfurlingAgain: root.setNeverAskAboutUnfurlingAgain(neverAskAgain)

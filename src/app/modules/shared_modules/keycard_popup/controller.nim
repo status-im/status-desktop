@@ -185,7 +185,7 @@ proc init*(self: Controller, fullConnect = true) =
 
     handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
       let arg = TokensPerAccountArgs(e)
-      self.delegate.onTokensRebuilt(arg.accountAddresses, arg.accountTokens)
+      self.delegate.onTokensRebuilt(arg.accountAddresses, arg.assets)
     self.connectionIds.add(handlerId)
 
 proc switchToWalletSection*(self: Controller) =
@@ -811,13 +811,13 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
 proc tryToStoreDataToKeychain*(self: Controller, password: string) =
   self.events.emit(SIGNAL_KEYCHAIN_STORE_CREDENTIAL, AuthenticationArgs(password: password))
 
-proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
+proc getCurrencyFormat*(self: Controller, key: string): CurrencyFormatDto =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.getCurrencyFormat(symbol)
+  return self.walletAccountService.getCurrencyFormat(key)
 
-proc parseCurrencyValueByTokensKey*(self: Controller, tokensKey: string, amountInt: UInt256): float64 =
-  return self.walletAccountService.parseCurrencyValueByTokensKey(tokensKey, amountInt)
+proc getCurrencyValueForToken*(self: Controller, tokenKey: string, amountInt: UInt256): float64 =
+  return self.walletAccountService.getCurrencyValueForToken(tokenKey, amountInt)
 
 proc remainingAccountCapacity*(self: Controller): int =
   return self.walletAccountService.remainingAccountCapacity()

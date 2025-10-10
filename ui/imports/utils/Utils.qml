@@ -776,6 +776,16 @@ QtObject {
         return false
     }
 
+    function getNativeTokenGroupKey(chainId) {
+        switch (chainId) {
+            case Constants.chains.binanceSmartChainMainnetChainId:
+            case Constants.chains.binanceSmartChainTestnetChainId:
+                return Constants.bnbGroupKey
+            default:
+                return Constants.ethGroupKey
+        }
+    }
+
     // Get NativeTokenSymbol for ChainID
     function getNativeTokenSymbol(chainID) {
         switch (+chainID) {

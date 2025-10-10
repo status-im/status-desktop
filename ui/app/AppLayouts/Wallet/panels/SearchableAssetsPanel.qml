@@ -19,19 +19,6 @@ import SortFilterProxyModel
 Control {
     id: root
 
-    /**
-     Expected model structure:
-
-        tokensKey               [string] - unique asset's identifier
-        name                    [string] - asset's name
-        symbol                  [string] - asset's symbol
-        iconSource              [url]    - asset's icon
-        currencyBalanceAsString [string] - formatted balance
-        balances                [model]  - submodel of balances per chain
-            balanceAsString     [string] - formatted balance per chain
-            iconUrl             [url]    - chain's icon
-        sectionName (optional)  [string] - text to be rendered as a section
-    **/
     property alias model: sfpm.sourceModel
     property string highlightedKey
     property string nonInteractiveKey
@@ -122,18 +109,18 @@ Control {
 
                 width: ListView.view.width
 
-                highlighted: model.tokensKey === root.highlightedKey
-                enabled: model.tokensKey !== root.nonInteractiveKey
+                highlighted: model.key === root.highlightedKey
+                enabled: model.key !== root.nonInteractiveKey
                 balancesListInteractive: !ListView.view.moving
                 isAutoHovered: d.validSearchResultExists && index === 0 && !listViewHoverHandler.hovered
 
                 name: model.name
                 symbol: model.symbol
                 currencyBalanceAsString: model.currencyBalanceAsString ?? ""
-                iconSource: model.iconSource
+                iconSource: model.logoUri
                 balancesModel: model.balances
 
-                onClicked: root.selected(model.tokensKey)
+                onClicked: root.selected(model.key)
             }
 
             Keys.onReturnPressed: {

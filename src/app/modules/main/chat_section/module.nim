@@ -5,34 +5,36 @@ import ../io_interface as delegate_interface
 import view, controller, active_item
 import model as chats_model
 import item as chat_item
-import ../../shared_models/message_item as member_msg_item
-import ../../shared_models/message_model as member_msg_model
-import ../../shared_models/user_item as user_item
-import ../../shared_models/user_model as user_model
-import ../../shared_models/[token_permissions_model, token_permission_item, token_criteria_item, token_criteria_model, token_permission_chat_list_model, contacts_utils]
+
+import app/modules/shared_models/message_item as member_msg_item
+import app/modules/shared_models/message_model as member_msg_model
+import app/modules/shared_models/user_item as user_item
+import app/modules/shared_models/user_model as user_model
+import app/modules/shared_models/[token_permissions_model, token_permission_item, token_criteria_item, token_criteria_model, token_permission_chat_list_model, contacts_utils]
 
 import chat_content/module as chat_content_module
 import chat_content/users/module as users_module
 
-import ../../../global/global_singleton
-import ../../../core/eventemitter
-import ../../../core/unique_event_emitter
-import ../../../core/notifications/details as notification_details
-import ../../../../app_service/common/types
-import ../../../../app_service/service/settings/service as settings_service
-import ../../../../app_service/service/node_configuration/service as node_configuration_service
-import ../../../../app_service/service/contacts/service as contact_service
-import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/network/service as network_service
-import ../../../../app_service/service/community/service as community_service
-import ../../../../app_service/service/message/service as message_service
-import ../../../../app_service/service/mailservers/service as mailservers_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/token/service as token_service
-import ../../../../app_service/service/community_tokens/service as community_tokens_service
-import ../../../../app_service/service/shared_urls/service as shared_urls_service
-import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
-import ../../../../app/core/signals/types
+import app/global/global_singleton
+import app/core/eventemitter
+import app/core/unique_event_emitter
+import app/core/notifications/details as notification_details
+import app_service/common/types
+import app_service/common/utils as service_common_utils
+import app_service/service/settings/service as settings_service
+import app_service/service/node_configuration/service as node_configuration_service
+import app_service/service/contacts/service as contact_service
+import app_service/service/chat/service as chat_service
+import app_service/service/network/service as network_service
+import app_service/service/community/service as community_service
+import app_service/service/message/service as message_service
+import app_service/service/mailservers/service as mailservers_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/service as token_service
+import app_service/service/community_tokens/service as community_tokens_service
+import app_service/service/shared_urls/service as shared_urls_service
+import app_service/service/contacts/dto/contacts as contacts_dto
+import app/core/signals/types
 
 export io_interface
 
@@ -369,7 +371,7 @@ method onChatsLoaded*(
     sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
-  
+
   self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
 
@@ -451,7 +453,7 @@ method activeItemSet*(self: Module, itemId: string) =
     # Should never be here
     error "chat-view unexisting item id: ", itemId, methodName="activeItemSet"
     return
-  
+
   if not self.chatContentModules[itemId].isLoaded:
     self.chatContentModules[itemId].load(chat_item)
 
@@ -834,7 +836,7 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   let activeChatId = self.controller.getActiveChatId()
   if chatId == activeChatId:
     self.setFirstChannelAsActive()
-  
+
   self.updateParentBadgeNotifications()
 
 proc refreshHiddenBecauseNotPermittedState(self: Module) =
@@ -1482,19 +1484,23 @@ method createOrEditCommunityTokenPermission*(self: Module, permissionId: string,
   let tokenCriteriaJsonObj = tokenCriteriaJson.parseJson
   for tokenCriteria in tokenCriteriaJsonObj:
 
-    let tokenKey = tokenCriteria{"key"}.getStr()
+    let communityTokenKey = tokenCriteria{"key"}.getStr()
+    var contractAddresses = initTable[int, string]()
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
-    if tokenCriteriaDto.`type` == TokenType.ERC20:
-      tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenKey)
 
-    let contractAddresses = self.controller.getContractAddressesForToken(tokenKey)
-    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
-      let communityId = self.controller.getMySectionId()
-      if permissionId == "":
-        self.onCommunityTokenPermissionCreationFailed(communityId)
+    if tokenCriteriaDto.`type` != TokenType.ENS:
+      let tokenKey = service_common_utils.communityKeyToTokenKey(communityTokenKey)
+      let token = self.controller.getTokenByKey(tokenKey)
+      if token.isNil and tokenCriteriaDto.`type` != TokenType.ENS:
+        error "unexisting token key: ", tokenKey, methodName="createOrEditCommunityTokenPermission"
+        let communityId = self.controller.getMySectionId()
+        if permissionId == "":
+          self.onCommunityTokenPermissionCreationFailed(communityId)
+          return
+        self.onCommunityTokenPermissionUpdateFailed(communityId)
         return
-      self.onCommunityTokenPermissionUpdateFailed(communityId)
-      return
+      contractAddresses[token.chainId] = token.address
+      tokenCriteriaDto.decimals = token.decimals
 
     tokenCriteriaDto.amountInWei = tokenCriteria{"amount"}.getStr
     tokenCriteriaDto.contractAddresses = contractAddresses
@@ -1533,7 +1539,7 @@ method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
   for id, chat_item in self.view.chatsModel().items():
     if self.view.chatsModel().getItemPermissionsRequired(chat_item.id):
       self.view.chatsModel().updatePermissionsCheckOngoing(chat_item.id, true)
-  
+
 method onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Module) =
   self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(true)
 

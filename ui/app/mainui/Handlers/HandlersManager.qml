@@ -110,7 +110,7 @@ QtObject {
         flatNetworksModel: root.networksStore.allNetworks
         areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
         groupedAccountAssetsModel: root.walletAssetsStore.groupedAccountAssetsModel
-        plainTokensBySymbolModel: root.tokensStore.plainTokensBySymbolModel
+        tokenGroupsModel: root.tokensStore.tokenGroupsModel
         showCommunityAssetsInSend: root.tokensStore.showCommunityAssetsInSend
         collectiblesBySymbolModel: root.walletRootStore.collectiblesStore.jointCollectiblesBySymbolModel
         savedAddressesModel: root.walletRootStore.savedAddresses

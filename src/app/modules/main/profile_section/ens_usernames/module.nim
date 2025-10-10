@@ -171,36 +171,33 @@ method getWalletDefaultAddress*(self: Module): string =
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string): string =
+method getFiatValue*(self: Module, cryptoBalance: string, tokenKey: string): string =
   var floatCryptoBalance: float = 0
   try:
     floatCryptoBalance = parseFloat(cryptoBalance)
   except ValueError:
     return "0.00"
 
-  if (cryptoBalance == "" or cryptoSymbol == ""):
+  if (cryptoBalance == "" or tokenKey == ""):
     return "0.00"
 
-  let price = self.controller.getPriceBySymbol(cryptoSymbol)
+  let price = self.controller.getPriceForToken(tokenKey)
   let value = floatCryptoBalance * price
   return fmt"{value}"
 
-method getCryptoValue*(self: Module, fiatAmount: string, cryptoSymbol: string): string =
+method getCryptoValue*(self: Module, fiatAmount: string, tokenKey: string): string =
   var fiatAmountBalance: float = 0
   try:
     fiatAmountBalance = parseFloat(fiatAmount)
   except ValueError:
     return "0.00"
 
-  if (fiatAmount == "" or cryptoSymbol == ""):
+  if (fiatAmount == "" or tokenKey == ""):
     return "0.00"
 
-  let price = self.controller.getPriceBySymbol(cryptoSymbol)
+  let price = self.controller.getPriceForToken(tokenKey)
   let value = fiatAmountBalance / price
   return fmt"{value}"
-
-method getStatusTokenKey*(self: Module): string =
-  return self.controller.getStatusTokenKey()
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)

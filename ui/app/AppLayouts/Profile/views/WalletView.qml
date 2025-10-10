@@ -36,6 +36,8 @@ SettingsContentBase {
     property string myPublicKey: ""
     property alias currencySymbol: manageTokensView.currencySymbol
 
+    required property bool thirdpartyServicesEnabled
+
     property int settingsSubSubsection
     readonly property alias backButtonName: priv.backButtonName
 
@@ -385,15 +387,16 @@ SettingsContentBase {
             Layout.fillWidth: true
 
             tokensStore: root.tokensStore
+            thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
             tokenListUpdatedAt: tokensStore.tokenListUpdatedAt
             assetsController: root.assetsStore.assetsController
             collectiblesController: root.collectiblesStore.collectiblesController
-            sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
-            tokensListModel: tokensStore.extendedFlatTokensModel
+            tokenListsModel: tokensStore.tokenListsModel
+            allNetworks: root.networksStore.allNetworks
             baseWalletAssetsModel: root.assetsStore.groupedAccountAssetsModel
             baseWalletCollectiblesModel: root.collectiblesStore.allCollectiblesModel
-            getCurrencyAmount: function (balance, symbol) {
-                return RootStore.currencyStore.getCurrencyAmount(balance, symbol)
+            getCurrencyAmount: function (balance, key) {
+                return RootStore.currencyStore.getCurrencyAmount(balance, key)
             }
 
             getCurrentCurrencyAmount: function (balance) {

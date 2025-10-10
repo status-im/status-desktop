@@ -167,30 +167,24 @@ QtObject {
     }
 
     function resetCurrentViewedHolding(type) {
-        currentViewedHoldingTokensKey = ""
-        currentViewedHoldingID = ""
+        currentViewedHoldingTokenGroupKey = ""
         currentViewedHoldingCommunityId = ""
         currentViewedHoldingType = type
     }
 
     function setCurrentViewedHoldingType(type) {
-        currentViewedHoldingTokensKey = ""
-        currentViewedHoldingID = ""
+        currentViewedHoldingTokenGroupKey = ""
         currentViewedHoldingCommunityId = ""
         currentViewedHoldingType = type
     }
 
-    function setCurrentViewedHolding(id, tokensKey, type, communityId) {
-        currentViewedHoldingTokensKey = tokensKey
-        currentViewedHoldingID = id
+    function setCurrentViewedHolding(tokenGroupKey, type, communityId) {
+        currentViewedHoldingTokenGroupKey = tokenGroupKey
         currentViewedHoldingType = type
         currentViewedHoldingCommunityId = communityId
     }
 
-    property string currentViewedHoldingTokensKey: ""
-    /* TODO: should get rid if this eventually, we shouldnt be using token symbols
-    everywhere. Adding a new one currentViewedHoldingTokensKey aboce to not impact send/bridge flows */
-    property string currentViewedHoldingID: ""
+    property string currentViewedHoldingTokenGroupKey: ""
     property int currentViewedHoldingType
     property string currentViewedHoldingCommunityId: ""
     readonly property var currentViewedCollectible: collectiblesStore.detailedCollectible

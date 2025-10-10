@@ -4,6 +4,8 @@ import community_tokens_types
 
 include app_service/common/json_utils
 
+const COLLECTIBLE_UNIQUE_ID_SEPARATOR = "-"
+
 # follows the ContractType declared in status go status-go/services/wallet/common/const.go
 type ContractType* {.pure.} = enum
   ContractTypeUnknown = 0,
@@ -145,10 +147,10 @@ proc fromJson*(t: JsonNode, T: typedesc[ref ContractID]): ref ContractID {.inlin
   result[] = fromJson(t, ContractID)
 
 proc toString*(t: ContractID): string =
-  return fmt"{t.chainID}+{t.address}"
+  return $t.chainID & COLLECTIBLE_UNIQUE_ID_SEPARATOR & t.address
 
 proc toContractID*(t: string): ContractID =
-  var parts = t.split("+")
+  var parts = t.split(COLLECTIBLE_UNIQUE_ID_SEPARATOR)
   return ContractID(chainID: parts[0].parseInt(), address: parts[1])
 
 proc isContractID*(t: string): bool =
@@ -187,10 +189,14 @@ proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleUniqueID]): ref Collectib
   result[] = fromJson(t, CollectibleUniqueID)
 
 proc toString*(t: CollectibleUniqueID): string =
-  return fmt"{t.contractID.chainID}+{t.contractID.address}+{t.tokenID.toString()}"
+  return $t.contractID.chainID &
+    COLLECTIBLE_UNIQUE_ID_SEPARATOR &
+    t.contractID.address &
+    COLLECTIBLE_UNIQUE_ID_SEPARATOR &
+    t.tokenID.toString()
 
 proc toCollectibleUniqueID*(t: string): CollectibleUniqueID =
-  var parts = t.split("+")
+  var parts = t.split(COLLECTIBLE_UNIQUE_ID_SEPARATOR)
   return CollectibleUniqueID(
     contractID: ContractID(
         chainID: parts[0].parseInt(),

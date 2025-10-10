@@ -1277,7 +1277,7 @@ proc checkIfWeHaveNotifications[T](self: Module[T]) =
   let sectionWithUnread = self.view.model().isThereASectionWithUnreadMessages()
   let activtyCenterNotifications = self.activityCenterModule.unreadActivityCenterNotificationsCountFromView() > 0
   self.view.setNotificationAvailable(sectionWithUnread or activtyCenterNotifications)
-  
+
   # Update Activity Center section item related notifications properties
   let activityCenterNotificationsCount = self.activityCenterModule.unreadActivityCenterNotificationsCount()
   self.view.model().updateNotifications(

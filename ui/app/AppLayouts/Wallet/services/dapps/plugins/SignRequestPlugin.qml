@@ -92,12 +92,12 @@ SQUtils.QObject {
             store: root.store
             estimatedTimeCategory: feesSubscriber.estimatedTimeResponse
             feesInfo: feesSubscriber.feesInfo
-            haveEnoughFunds: d.hasEnoughBalance(request.chainId, request.accountAddress, request.value, request.nativeTokenSymbol)
-            haveEnoughFees: haveEnoughFunds && d.hasEnoughBalance(request.chainId, request.accountAddress, request.nativeTokenMaxFees, request.nativeTokenSymbol)
-            nativeTokenSymbol: Utils.getNativeTokenSymbol(request.chainId)
+            haveEnoughFunds: d.hasEnoughBalance(request.chainId, request.accountAddress, request.value, request.nativeTokenGroupKey)
+            haveEnoughFees: haveEnoughFunds && d.hasEnoughBalance(request.chainId, request.accountAddress, request.nativeTokenMaxFees, request.nativeTokenGroupKey)
+            nativeTokenGroupKey: Utils.getNativeTokenGroupKey(request.chainId)
             nativeTokenMaxFees: feesSubscriber.maxEthFee ? SQUtils.AmountsArithmetic.div(feesSubscriber.maxEthFee, SQUtils.AmountsArithmetic.fromNumber(1, 9)) : null
             fiatSymbol: root.fiatSymbol
-            fiatMaxFees: nativeTokenMaxFees ? SQUtils.AmountsArithmetic.fromString(root.getFiatValue(nativeTokenMaxFees.toString(), request.nativeTokenSymbol)) : null
+            fiatMaxFees: nativeTokenMaxFees ? SQUtils.AmountsArithmetic.fromString(root.getFiatValue(nativeTokenMaxFees.toString(), Utils.getNativeTokenSymbol(request.chainId))) : null
             function signedHandler(topic, id, data) {
                 if (topic != request.topic || id != request.requestId) {
                     return
@@ -287,7 +287,7 @@ SQUtils.QObject {
             }
         }
 
-        function hasEnoughBalance(chainId, accountAddress, requiredBalance, tokenSymbol) {
+        function hasEnoughBalance(chainId, accountAddress, requiredBalance, tokenGroupKey) {
             if (!requiredBalance) {
                 return true
             }
@@ -296,7 +296,7 @@ SQUtils.QObject {
                 return true
             }
 
-            const token = SQUtils.ModelUtils.getByKey(root.groupedAccountAssetsModel, "tokensKey", tokenSymbol)
+            const token = SQUtils.ModelUtils.getByKey(root.groupedAccountAssetsModel, "key", tokenGroupKey)
             const balance = getBalance(chainId, accountAddress, token)
             
             if (!balance) {

@@ -125,9 +125,9 @@ RowLayout {
         assetsModel: root.assetsModel
         collectiblesModel: root.displayOnlyAssets ? null: root.collectiblesModel
 
-        onCollectibleSelected: root.collectibleSelected(key)
-        onCollectionSelected: root.collectionSelected(key)
-        onAssetSelected: root.assetSelected(key)
+        onCollectibleSelected: (key) => root.collectibleSelected(key)
+        onCollectionSelected: (key) => root.collectionSelected(key)
+        onAssetSelected: (key) => root.assetSelected(key)
     }
 
     // Horizontal spacer
@@ -170,6 +170,6 @@ RowLayout {
             }
         }
 
-        onToggleNetwork: root.networkSelected(chainId)
+        onToggleNetwork: (chainId) => root.networkSelected(chainId)
     }
 }

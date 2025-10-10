@@ -36,8 +36,8 @@ proc getTotalCurrencyBalance*(self: Controller, addresses: seq[string], chainIds
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
 
-proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
-  return self.currencyService.getCurrencyFormat(symbol)
+proc getCurrencyFormat*(self: Controller, key: string): CurrencyFormatDto =
+  return self.currencyService.getCurrencyFormat(key)
 
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   return self.walletAccountService.getTokensMarketValuesLoading()

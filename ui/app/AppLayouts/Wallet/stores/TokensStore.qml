@@ -22,100 +22,83 @@ QtObject {
 
     readonly property bool marketHistoryIsLoading: Global.appIsReady ? walletSectionAllTokens.marketHistoryIsLoading : false
 
-    /* This contains the different sources for the tokens list
-       ex. uniswap list, status tokens list */
-    readonly property var sourcesOfTokensModel: SortFilterProxyModel {
-        sourceModel: !!root._allTokensModule ? root._allTokensModule.sourcesOfTokensModel : null
-        proxyRoles: FastExpressionRole {
-            function sourceImage(name) {
-                return Constants.getSupportedTokenSourceImage(name)
-            }
-            name: "image"
-            expression: sourceImage(model.name)
-            expectedRoles: ["name"]
-        }
+
+    /* This contains all token lists, except native, custom and community, if you need them, refer to `root._allTokensModule.tokenListsModel` */
+    readonly property var tokenListsModel: SortFilterProxyModel {
+        sourceModel: !!root._allTokensModule ? root._allTokensModule.tokenListsModel : null
+
         filters: FastExpressionFilter {
-            function shouldDisplayList(listName, tokensCount) {
-                return listName !== Constants.supportedTokenSources.nativeList &&
-                        listName !== Constants.supportedTokenSources.custom &&
-                        tokensCount > 0
+            function shouldDisplayList(listId) {
+                return listId !== Constants.hiddenTokenLists.nativeList &&
+                        listId !== Constants.hiddenTokenLists.custom &&
+                        listId !== Constants.hiddenTokenLists.community
             }
 
             expression: {
-                return shouldDisplayList(model.name, model.tokensCount)
+                return shouldDisplayList(model.id)
             }
-            expectedRoles: ["name", "tokensCount"]
+
+            expectedRoles: ["id"]
         }
     }
 
-    /* This list contains the complete list of tokens with separate
-       entry per token which has a unique [address + network] pair */
-    readonly property var flatTokensModel: !!root._allTokensModule ? root._allTokensModule.flatTokensModel : null
 
-    /* PRIVATE: This model just combines tokens and network information in one */
-    readonly property LeftJoinModel _joinFlatTokensModel : LeftJoinModel {
-        leftModel: root.flatTokensModel
-        rightModel: root.networksStore.allNetworks
+    /*
+        This list contains all token groups (key is a group key (which is crossChainId if set, otherwise token key)
 
-        joinRole: "chainId"
-    }
+        Exposed fields:
+        key                         [string]    - refers to token group key
+        name                        [string]    - token's name
+        symbol                      [string]    - token's symbol
+        decimals                    [int]       - token's decimals
+        logoUri                     [string]    - token's image
+        tokens                      [model]     - contains tokens that belong to the same token group (a single token per chain), has at least a single token
+            key                     [string]    - token key
+            groupKey                [string]    - token group key
+            crossChainId            [string]    - cross chain id
+            address                 [string]    - token's address
+            name:                   [string]    - token's name
+            symbol:                 [string]    - token's symbol
+            decimals:               [int]       - token's decimals
+            chainId:                [int]       - token's chain id
+            image:                  [string]    - token's image
+            customToken             [bool]      - `true` if the it's a custom token
+            communityId             [string]    - contains community id if the token is a community token
+        communityId                 [string]    - contains community id if the token is a community token
+        websiteUrl                  [string]    - token's website
+        description                 [string]    - token's description
+        marketDetails               [object]    - contains market data
+            changePctHour           [double]    - percentage change hour
+            changePctDay            [double]    - percentage change day
+            changePct24hour         [double]    - percentage change 24 hrs
+            change24hour            [double]    - change 24 hrs
+            marketCap               [object]
+                amount              [double]    - market capitalization value
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+            highDay                 [object]
+                amount              [double]    - the highest value for day
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+            lowDay                  [object]
+                amount              [double]    - the lowest value for day
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+            currencyPrice           [object]
+                amount              [double]    - token's price
+                symbol              [string]    - currency, eg. "USD"
+                displayDecimals     [int]       - decimals to display
+                stripTrailingZeroes [bool]      - strip leading zeros
+        detailsLoading              [bool]      - `true` if details are still being loaded
+        marketDetailsLoading        [bool]      - `true` if market details are still being loaded
+        visible                     [bool]      - determines if token is displayed or not
+        position                    [int]       - token's position
+    */
+    readonly property var tokenGroupsModel: !!root._allTokensModule ? root._allTokensModule.tokenGroupsModel : null
 
-    /* This list contains the complete list of tokens with separate
-       entry per token which has a unique [address + network] pair including extended information
-       about the specific network per entry */
-    readonly property var extendedFlatTokensModel: SortFilterProxyModel {
-        sourceModel: root._joinFlatTokensModel
-
-        proxyRoles:  [
-            JoinRole {
-                name: "explorerUrl"
-                roleNames: ["blockExplorerURL", "address"]
-                separator: "/token/"
-            },
-            FastExpressionRole {
-                function tokenIcon(symbol) {
-                    return Constants.tokenIcon(symbol)
-                }
-                name: "image"
-                expression: tokenIcon(model.symbol)
-                expectedRoles: ["symbol"]
-            }
-        ]
-    }
-
-    /* This list contains list of tokens grouped by symbol
-       EXCEPTION: We may have different entries for the same symbol in case
-       of symbol clash when minting community tokens, so in case of community tokens
-       there will be one entry per address + network pair */
-    // TODO in #12513
-    readonly property var plainTokensBySymbolModel: !!root._allTokensModule ? root._allTokensModule.tokensBySymbolModel : null
-    readonly property var assetsBySymbolModel: SortFilterProxyModel {
-        sourceModel: plainTokensBySymbolModel
-        proxyRoles: [
-            FastExpressionRole {
-                function tokenIcon(symbol) {
-                    return Constants.tokenIcon(symbol)
-                }
-                name: "iconSource"
-                expression: tokenIcon(model.symbol)
-                expectedRoles: ["symbol"]
-            },
-            // TODO: Review if it can be removed
-            FastExpressionRole {
-                name: "shortName"
-                expression: model.symbol
-                expectedRoles: ["symbol"]
-            },
-            FastExpressionRole {
-                function getCategory(index) {
-                    return 0
-                }
-                name: "category"
-                expression: getCategory(model.communityId)
-                expectedRoles: ["communityId"]
-            }
-        ]
-    }
 
     // Property and methods below are used to apply advanced token management settings to the SendModal
 
@@ -126,8 +109,8 @@ QtObject {
 
     signal displayAssetsBelowBalanceThresholdChanged()
 
-    function getHistoricalDataForToken(symbol, currency) {
-        root._allTokensModule.getHistoricalDataForToken(symbol, currency)
+    function getHistoricalDataForToken(tokenKey, currency) {
+        root._allTokensModule.getHistoricalDataForToken(tokenKey, currency)
     }
 
     function getDisplayAssetsBelowBalanceThresholdCurrency() {
@@ -170,5 +153,9 @@ QtObject {
 
     function getTokenPreferencesJson(jsonData) {
         return root._allTokensModule.getTokenPreferencesJson(jsonData)
+    }
+
+    function tokenAvailableForBridgingViaHop(tokenChainId, tokenAddress) {
+        return root._allTokensModule.tokenAvailableForBridgingViaHop(tokenChainId, tokenAddress)
     }
 }

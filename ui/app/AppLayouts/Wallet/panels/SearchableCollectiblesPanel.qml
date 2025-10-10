@@ -120,7 +120,7 @@ Control {
 
                     name: model.groupName
                     balance: showCount ? subitemsCount : ""
-                    image: model.icon
+                    image: model.imageUrl || model.mediaUrl
                     goDeeperIconVisible: subitemsCount > 1
                                          || isCommunity
                     networkIcon: model.iconUrl

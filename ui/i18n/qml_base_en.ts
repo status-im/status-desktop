@@ -10840,6 +10840,10 @@ to load</source>
         <source>Last check %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Available if third-party services enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MarkAsIDVerifiedDialog</name>

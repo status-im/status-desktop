@@ -1,7 +1,7 @@
 import nimqml, json, strutils, sequtils
 
 import ./io_interface
-import ../../shared_models/[section_model, section_item, token_list_model, token_list_item,
+import ../../shared_models/[section_model, section_item, token_list_model,
   token_permissions_model, keypair_model]
 import ./models/curated_community_model
 import ./models/discord_file_list_model
@@ -701,9 +701,6 @@ QtObject:
   QtProperty[QVariant] tokenList:
     read = getTokenListModel
 
-  proc setTokenListItems*(self: View, tokenListItems: seq[TokenListItem]) =
-    self.tokenListModel.setItems(tokenListItems)
-
   proc collectiblesListModel*(self: View): TokenListModel =
     result = self.collectiblesListModel
 
@@ -712,9 +709,6 @@ QtObject:
 
   QtProperty[QVariant] collectiblesModel:
     read = getCollectiblesListModel
-
-  proc setCollectiblesListItems*(self: View, tokenListItems: seq[TokenListItem]) =
-    self.collectiblesListModel.setItems(tokenListItems)
 
   proc shareCommunityUrlWithChatKey*(self: View, communityId: string): string {.slot.} =
     return self.delegate.shareCommunityUrlWithChatKey(communityId)

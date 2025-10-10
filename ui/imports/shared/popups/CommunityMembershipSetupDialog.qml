@@ -52,7 +52,7 @@ StatusStackModal {
     property string currentAirdropAddress: ""
     onCurrentAirdropAddressChanged: d.reEvaluateModels()
 
-    property var getCurrencyAmount: function (balance, symbol){}
+    property var getCurrencyAmount: function (balance, key){}
 
     property var canProfileProveOwnershipOfProvidedAddressesFn: function(addresses) { return false }
 
@@ -386,14 +386,14 @@ StatusStackModal {
                 root.close()
             }
 
-            onToggleAddressSelection: {
+            onToggleAddressSelection: (keyUid, address) => {
                 d.toggleAddressSelection(keyUid, address)
 
                 const obj = d.getSelectedAddresses()
                 root.sharedAddressesUpdated(obj.addresses)
             }
 
-            onAirdropAddressSelected: {
+            onAirdropAddressSelected: (address) => {
                 d.selectAirdropAddress(address)
             }
 
@@ -401,8 +401,8 @@ StatusStackModal {
                 d.proceedToSigningOrSubmitRequest(d.shareAddressesUid)
             }
 
-            getCurrencyAmount: function (balance, symbol){
-                return root.getCurrencyAmount(balance, symbol)
+            getCurrencyAmount: (balance, key) => {
+                return root.getCurrencyAmount(balance, key)
             }
         }
     }

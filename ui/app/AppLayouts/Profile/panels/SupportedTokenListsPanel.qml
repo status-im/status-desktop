@@ -7,7 +7,8 @@ import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core.Theme
 
-import SortFilterProxyModel
+import QtModelsToolkit
+
 import shared.controls
 import utils
 
@@ -16,11 +17,11 @@ import AppLayouts.Profile.popups
 StatusListView {
     id: root
 
-    required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
-    required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
+    required property var tokenListsModel // Expected roles: id, name, timestamp, source, logoUri, version, tokens
+    required property var allNetworks
 
     implicitHeight: contentHeight
-    model: root.sourcesOfTokensModel
+    model: root.tokenListsModel
     spacing: Theme.halfPadding
 
     delegate: StatusListItem {
@@ -28,9 +29,9 @@ StatusListView {
         width: ListView.view.width
         title: model.name
         forceDefaultCursor: true
-        subTitle: qsTr("%n token(s) · Last updated %1", "", model.tokensCount).arg(LocaleUtils.getTimeDifference(new Date(model.updatedAt * 1000), new Date()))
+        subTitle: qsTr("%n token(s) · Last updated %1", "", model.tokens.count).arg(LocaleUtils.getTimeDifference(new Date(model.timestamp * 1000), new Date()))
         statusListItemSubTitle.font.pixelSize: Theme.additionalTextSize
-        asset.name: model.image
+        asset.name: model.logoUri
         asset.isImage: true
         border.width: 1
         border.color: Theme.palette.baseColor5
@@ -40,62 +41,45 @@ StatusListView {
                 id: viewButton
 
                 text: qsTr("View")
-                onClicked: keyFilter.value = model.key
+                onClicked: popup.open()
             }
         ]
-    }
 
-    Instantiator {
-        model: SortFilterProxyModel {
-            sourceModel: sourcesOfTokensModel
+        Loader {
+            id: popup
 
-            filters: ValueFilter {
-                id: keyFilter
+            active: false
 
-                roleName: "key"
-                value : ""
+            function open() {
+                popup.active = true
             }
-        }
 
-        delegate: QtObject {
-            id: delegate
+            function close() {
+                popup.active = false
+            }
 
-            required property string name
-            required property string image
-            required property string source
-            required property double updatedAt
-            required property string version
-            required property int tokensCount
-        }
-        onObjectAdded: function(index, delegate) {
-            popupComp.createObject(root, {
-                                       title: delegate.name,
-                                       sourceImage: delegate.image,
-                                       sourceUrl: delegate.source,
-                                       sourceVersion: delegate.version,
-                                       updatedAt: delegate.updatedAt,
-                                       tokensCount: delegate.tokensCount
-                                   }).open()
-        }
-    }
+            onLoaded: {
+                popup.item.open()
+            }
 
-    Component {
-        id: popupComp
-        TokenListPopup {
-            destroyOnClose: true
+            sourceComponent: TokenListPopup {
 
-            tokensListModel: SortFilterProxyModel {
-                sourceModel: root.tokensListModel
+                sourceImage: model.logoUri
+                sourceUrl: model.source
+                sourceVersion: model.version
+                updatedAt: model.timestamp
 
-                // Filter by source
-                filters: RegExpFilter {
-                    roleName: "sources"
-                    pattern: "\;" + keyFilter.value + "\;"
+                title: model.name
+
+                tokensListModel: LeftJoinModel {
+                    leftModel: model.tokens
+                    rightModel: root.allNetworks
+
+                    joinRole: "chainId"
                 }
-            }
 
-            onLinkClicked: (link) => Global.requestOpenLink(link)
-            onClosed: keyFilter.value = ""
+                onLinkClicked: (link) => Global.requestOpenLink(link)
+            }
         }
     }
 }

@@ -64,16 +64,16 @@ StatusDialog {
         readonly property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {
             selectedWalletAddress: root.swapInputParamsForm.selectedAccountAddress
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-            selectedTokenKey: root.swapInputParamsForm.fromTokensKey
+            selectedTokenGroupKey: root.swapInputParamsForm.fromTokensKey  // TOOD: update!!!!
         }
 
         readonly property WalletAccountsSelectorAdaptor accountsSelectorAdaptor : WalletAccountsSelectorAdaptor {
             accounts: root.swapAdaptor.swapStore.accounts
             assetsModel: root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel
-            tokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+            tokenGroupsModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel
             filteredFlatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
 
-            selectedTokenKey: root.swapInputParamsForm.fromTokensKey
+            selectedGroupKey: root.swapInputParamsForm.fromTokensKey
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
 
             fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
