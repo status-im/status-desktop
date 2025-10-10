@@ -61,11 +61,21 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
+
     stage('Fetch submodules') {
       steps {
         sh 'git submodule update --init --recursive'
       }
     }
+
+    stage('Check Translations') {
+      steps {
+        script {
+          checkTranslations()
+        }
+      }
+    }
+
     stage('Build StatusQ Tests') {
       steps {
         sh 'make statusq-tests'
@@ -151,5 +161,13 @@ pipeline {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
     cleanup { cleanWs(disableDeferredWipeout: true) }
+  }
+}
+
+def checkTranslations() {
+  sh 'make update-translations'
+  def changes = sh(script: 'git diff --name-only ui/i18n/*.ts', returnStdout: true).trim()
+  if (changes) {
+    error("Translation files out of date.\n\nModified files:\n${changes}\n\nTo fix: run 'make update-translations' and commit changes.")
   }
 }
