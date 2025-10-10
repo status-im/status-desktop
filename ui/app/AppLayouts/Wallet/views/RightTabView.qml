@@ -304,7 +304,7 @@ RightTabBaseView {
                             id: assetsViewAdaptor
 
                             accounts: RootStore.addressFilters
-                            chains: root.networksStore.networkFiltersArray
+                            chains: root.networksStore.networkFilters
 
                             marketValueThreshold:
                                 RootStore.tokensStore.displayAssetsBelowBalance
