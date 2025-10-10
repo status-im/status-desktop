@@ -6,7 +6,6 @@ import QtQuick.Controls
 import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils as SQUtils
 
 import utils
 import shared.controls

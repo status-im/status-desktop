@@ -80,8 +80,6 @@ SignTransactionModalBase {
     required property string collectibleContractAddress
     /** Input property holding selected collectible background color **/
     required property string collectibleBackgroundColor
-    /** Input property holding selected if collectible meta data is valid **/
-    required property bool collectibleIsMetadataValid
 
     /** Input property holding function openSea explorer url for the collectible **/
     required property var fnGetOpenSeaExplorerUrl
@@ -171,7 +169,6 @@ SignTransactionModalBase {
 
     // Collectible data in header in case a collectible is selected
     collectibleMedia.backgroundColor: root.collectibleBackgroundColor
-    collectibleMedia.isMetadataValid: root.collectibleIsMetadataValid
     collectibleMedia.mediaUrl: root.collectibleMediaUrl
     collectibleMedia.mediaType: root.collectibleMediaType
     collectibleMedia.fallbackImageUrl: root.collectibleFallbackImageUrl
@@ -456,7 +453,6 @@ SignTransactionModalBase {
             Layout.bottomMargin: Theme.bigPadding
             name: !!root.collectibleName ? root.collectibleName: qsTr("Unknown")
             backgroundColor: root.collectibleBackgroundColor
-            isMetadataValid: root.collectibleIsMetadataValid
             fallbackImageUrl: root.collectibleFallbackImageUrl
             contractAddress: root.collectibleContractAddress
             tokenId: root.collectibleTokenId

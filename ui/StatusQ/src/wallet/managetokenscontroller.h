@@ -68,6 +68,9 @@ public:
     Q_INVOKABLE int compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const;
     Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
 
+    // utils
+    Q_INVOKABLE QJsonObject getOwnershipTotalBalanceAndLastTimestamp(QAbstractItemModel *model, const QStringList& filterList) const;
+
 protected:
     void classBegin() override;
     void componentComplete() override;

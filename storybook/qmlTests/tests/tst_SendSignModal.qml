@@ -103,7 +103,6 @@ Item {
             collectibleTokenId: ""
             collectibleName: ""
             collectibleBackgroundColor: ""
-            collectibleIsMetadataValid: false
             collectibleMediaUrl: ""
             collectibleMediaType: ""
             collectibleFallbackImageUrl: ""
@@ -245,7 +244,6 @@ Item {
                             tokenId: "403",
                             name: "Punx not dead!",
                             backgroundColor: "ivory",
-                            isMetadataValid: true,
                             mediaUrl: "https://i.seadn.io/gcs/files/4a875f997063f4f3772190852c1c44f0.png?w=128&auto=format",
                             mediaType: "image",
                             fallbackImageUrl: "https://i.seadn.io/gcs/files/4a875f997063f4f3772190852c1c44f0.png?w=128&auto=format"
@@ -255,7 +253,6 @@ Item {
                             tokenId: "403",
                             name: "",
                             backgroundColor: "ivory",
-                            isMetadataValid: true,
                             mediaUrl: "",
                             mediaType: "",
                             fallbackImageUrl: ""
@@ -285,7 +282,6 @@ Item {
             controlUnderTest.collectibleTokenId = data.tokenId
             controlUnderTest.collectibleName = data.name
             controlUnderTest.collectibleBackgroundColor = data.backgroundColor
-            controlUnderTest.collectibleIsMetadataValid = data.isMetadataValid
             controlUnderTest.collectibleMediaUrl = data.mediaUrl
             controlUnderTest.collectibleMediaType = data.mediaType
             controlUnderTest.collectibleFallbackImageUrl = data.fallbackImageUrl
