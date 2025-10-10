@@ -1346,7 +1346,7 @@ QtObject {
                 isBuyProvidersModelLoading: root.buyCryptoStore.areProvidersLoading
                 currentCurrency: root.currencyStore.currentCurrency
                 walletAccountsModel: root.rootStore.accounts
-                plainTokensBySymbolModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+                tokenGroupsModel: root.walletAssetsStore.walletTokensStore.tokenGroupsModel
                 groupedAccountAssetsModel: root.walletAssetsStore.groupedAccountAssetsModel
                 networksModel: root.networksStore.activeNetworks
                 Component.onCompleted: {
@@ -1386,7 +1386,7 @@ QtObject {
             PaymentRequestModal {
                 id: paymentRequestModal
                 readonly property var paymentRequestAdaptor: PaymentRequestAdaptor {
-                    plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
+                    tokenGroupsModel: WalletStores.RootStore.tokensStore.tokenGroupsModel
                     selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
                     flatNetworksModel: root.networksStore.allNetworks
                 }

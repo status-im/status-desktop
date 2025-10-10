@@ -105,8 +105,8 @@ proc getChainIds*(self: Controller): seq[int] =
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
 
-proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
-  return self.currencyService.getCurrencyFormat(symbol)
+proc getCurrencyFormat*(self: Controller, key: string): CurrencyFormatDto =
+  return self.currencyService.getCurrencyFormat(key)
 
 proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
@@ -117,8 +117,8 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc getWalletAccountByIndex*(self: Controller, accountIndex: int): WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-proc getTokenBalance*(self: Controller, address: string, chainId: int, tokensKey: string): CurrencyAmount =
-  return currencyAmountToItem(self.walletAccountService.getTokenBalance(address, chainId, tokensKey), self.walletAccountService.getCurrencyFormat(tokensKey))
+proc getTokenBalance*(self: Controller, walletAccount: string, tokenKey: string): CurrencyAmount =
+  return currencyAmountToItem(self.walletAccountService.getTokenBalance(walletAccount, tokenKey), self.walletAccountService.getCurrencyFormat(tokenKey))
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER,

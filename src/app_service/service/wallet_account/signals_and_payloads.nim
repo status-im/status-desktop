@@ -69,7 +69,7 @@ type DerivedAddressesArgs* = ref object of Args
 
 type TokensPerAccountArgs* = ref object of Args
   accountAddresses*: seq[string]
-  accountTokens*: seq[GroupedTokenItem]
+  assets*: seq[AssetGroupItem]
   timestamp*: int64
 
 type KeycardActivityArgs* = ref object of Args

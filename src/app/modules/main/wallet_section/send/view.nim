@@ -151,9 +151,9 @@ QtObject:
       self.toNetworksRouteModel.enableRouteUnpreferredChains()
 
   proc updateNetworksTokenBalance(self: View) =
-    for chainId in self.toNetworksRouteModel.getAllNetworksChainIds():
-      self.fromNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, chainId, self.selectedAssetKey))
-      self.toNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, chainId, self.selectedAssetKey))
+    for chainId in self.toNetworksRouteModel.getAllNetworksChainIds(): # TODO: remove this, cause selected asset key already determines the chain id
+      self.fromNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, self.selectedAssetKey))
+      self.toNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, self.selectedAssetKey))
 
   proc setNetworkItems*(self: View, fromNetworks: seq[NetworkRouteItem], toNetworks: seq[NetworkRouteItem]) =
     self.fromNetworksRouteModel.setItems(fromNetworks)

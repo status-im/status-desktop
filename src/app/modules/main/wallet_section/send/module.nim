@@ -45,7 +45,7 @@ type
     tmpClearLocalDataLater: bool
 
 # Forward declaration
-method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount
+method getTokenBalance*(self: Module, walletAccount: string, tokenKey: string): CurrencyAmount
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -99,7 +99,7 @@ proc convertNetworkDtoToNetworkRouteItem(self: Module, network: network_service_
       true,
       false,
       true,
-      self.getTokenBalance(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetKey())
+      self.getTokenBalance(self.view.getSelectedSenderAccountAddress(), self.view.getSelectedAssetKey())
       )
 
 proc convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDto): GasFeesItem =
@@ -172,8 +172,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.sendModuleDidLoad()
 
-method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount =
-  return self.controller.getTokenBalance(address, chainId, tokensKey)
+method getTokenBalance*(self: Module, walletAccount: string, tokenKey: string): CurrencyAmount =
+  return self.controller.getTokenBalance(walletAccount, tokenKey)
 
 proc buildTransactionsFromRoute(self: Module) =
   let err = self.controller.buildTransactionsFromRoute(self.tmpSendTransactionDetails.uuid)

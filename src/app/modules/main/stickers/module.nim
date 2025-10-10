@@ -137,14 +137,6 @@ method getWalletDefaultAddress*(self: Module): string =
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-
-
-
-
-
-method getStatusTokenKey*(self: Module): string =
-  return self.controller.getStatusTokenKey()
-
 method stickerTransactionSent*(self: Module, chainId: int, packId: string, txHash: string, error: string) =
   self.view.stickerPacks.updateStickerPackInList(packId, installed = false, pending = true)
   self.view.transactionWasSent(chainId, txHash, error)

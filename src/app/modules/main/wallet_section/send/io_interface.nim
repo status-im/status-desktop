@@ -18,7 +18,7 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokenBalance*(self: AccessInterface, address: string, chainId: int, tokensKey: string): CurrencyAmount {.base.} =
+method getTokenBalance*(self: AccessInterface, walletAccount: string, tokenKey: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method suggestedRoutes*(self: AccessInterface,

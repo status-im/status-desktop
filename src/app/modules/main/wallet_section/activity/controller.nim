@@ -204,7 +204,7 @@ QtObject:
       self.status.setLoadingCollectibles(false)
       error "error fetching collectibles: ", error = res.error
       return
-      
+
   proc resetFilter*(self: Controller) {.slot.} =
     self.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
@@ -376,23 +376,24 @@ QtObject:
   # Depends on self.filterTokenCodes and self.chainIds, so should be called after updating them
   proc updateAssetsIdentities(self: Controller) =
     var assets = newSeq[backend_activity.Token]()
-    for tokenCode in self.filterTokenCodes:
-      for chainId in self.chainIds:
-        let network = self.networkService.getNetworkByChainId(chainId)
-        if network == nil:
-          error "network not found for chainId: ", chainId
-          continue
-        # TODO: remove this call once the activity filter mechanism uses tokenKeys instead of the token
-        # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
-        let token = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
-        if token != nil:
-          let tokenType = if token.symbol == network.nativeCurrencySymbol: TokenType.Native else: TokenType.ERC20
-          for addrPerChain in token.addressPerChainId:
-            assets.add(backend_activity.Token(
-              tokenType: tokenType,
-              chainId: backend_activity.ChainId(addrPerChain.chainId),
-              address: some(decodeHexAddress(addrPerChain.address))
-            ))
+    ## TODO: implement this - check `findTokenBySymbolAndChainId` and `tokenCode`
+    # for tokenCode in self.filterTokenCodes:
+    #   for chainId in self.chainIds:
+    #     let network = self.networkService.getNetworkByChainId(chainId)
+    #     if network == nil:
+    #       error "network not found for chainId: ", chainId
+    #       continue
+    #     # TODO: remove this call once the activity filter mechanism uses tokenKeys instead of the token
+    #     # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
+    #     let token = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
+    #     if token != nil:
+    #       let tokenType = if token.symbol == network.nativeCurrencySymbol: TokenType.Native else: TokenType.ERC20
+    #       for addrPerChain in token.addressPerChainId:
+    #         assets.add(backend_activity.Token(
+    #           tokenType: tokenType,
+    #           chainId: backend_activity.ChainId(addrPerChain.chainId),
+    #           address: some(decodeHexAddress(addrPerChain.address))
+    #         ))
 
     self.currentActivityFilter.assets = assets
 

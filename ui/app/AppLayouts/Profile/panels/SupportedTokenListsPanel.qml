@@ -6,9 +6,9 @@ import StatusQ.Core
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils as SQUtils
 
-import SortFilterProxyModel
+import QtModelsToolkit
+
 import shared.controls
 import utils
 
@@ -17,22 +17,22 @@ import AppLayouts.Profile.popups
 StatusListView {
     id: root
 
-    required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
-    required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
+    required property var tokenListsModel // Expected roles: id, name, timestamp, source, logoUri, version, tokens
+    required property var allNetworks
 
     signal itemClicked(string key)
 
     implicitHeight: contentHeight
-    model: root.sourcesOfTokensModel
+    model: root.tokenListsModel
     spacing: Theme.halfPadding
     delegate: StatusListItem {
         height: ProfileUtils.defaultDelegateHeight
         width: ListView.view.width
         title: model.name
         forceDefaultCursor: true
-        subTitle: qsTr("%n token(s) · Last updated %1", "", model.tokensCount).arg(LocaleUtils.getTimeDifference(new Date(model.updatedAt * 1000), new Date()))
+        subTitle: qsTr("%n token(s) · Last updated %1", "", model.tokens.count).arg(LocaleUtils.getTimeDifference(new Date(model.timestamp * 1000), new Date()))
         statusListItemSubTitle.font.pixelSize: Theme.additionalTextSize
-        asset.name: model.image
+        asset.name: model.logoUri
         asset.isImage: true
         border.width: 1
         border.color: Theme.palette.baseColor5
@@ -42,59 +42,46 @@ StatusListView {
                 id: viewButton
 
                 text: qsTr("View")
-                onClicked: keyFilter.value = model.key
+                onClicked: popup.open()
             }
         ]
-    }
 
-    Instantiator {
-        model: SortFilterProxyModel {
-            sourceModel: sourcesOfTokensModel
+        Loader {
+            id: popup
 
-            filters: ValueFilter {
-                id: keyFilter
+            active: false
 
-                roleName: "key"
-                value : ""
+            function open() {
+                popup.active = true
+            }
+
+            function close() {
+                popup.active = false
+            }
+
+            onLoaded: {
+                popup.item.open()
+            }
+
+            sourceComponent: TokenListPopup {
+
+                sourceImage: model.logoUri
+                sourceUrl: model.source
+                sourceVersion: model.version
+                updatedAt: model.timestamp
+
+                title: model.name
+
+                tokensListModel: LeftJoinModel {
+                    leftModel: model.tokens
+                    rightModel: root.allNetworks
+
+                    joinRole: "chainId"
+                }
+
+                onLinkClicked: (link) => Global.openLink(link)
+                onClosed: popup.close()
             }
         }
-
-        delegate: QtObject {
-            id: delegate
-
-            required property string name
-            required property string image
-            required property string source
-            required property int updatedAt
-            required property string version
-            required property int tokensCount
-
-            Component.onCompleted: popup.open()
-        }
-    }
-
-    TokenListPopup {
-        id: popup
-
-        sourceImage: delegate.image
-        sourceUrl: delegate.source
-        sourceVersion: delegate.version
-        updatedAt: delegate.updatedAt
-        tokensCount: delegate.tokensCount
-
-        title: delegate.name
-
-        tokensListModel: SortFilterProxyModel {
-            sourceModel: root.tokensListModel
-
-            // Filter by source
-            filters: RegExpFilter {
-                roleName: "sources"
-                pattern: "\;" + keyFilter.value + "\;"
-            }
-        }
-
-        onLinkClicked: (link) => Global.openLink(link)
-        onClosed: keyFilter.value = ""
     }
 }

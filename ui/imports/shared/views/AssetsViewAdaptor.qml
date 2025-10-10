@@ -65,7 +65,7 @@ QObject {
         All roles from the source model are passed directly to the output model,
         additionally:
 
-        key         [string] - renamed from tokensKey
+        key         [string] - refers to token group key
         icon        [url]    - from image or fetched by symbol for well-known tokens
         balance     [double] - tokens balance is the commonly used unit, e.g. 1.2 for 1.2 ETH,
                                computed from balances according to provided criteria
@@ -97,8 +97,6 @@ QObject {
 
             // Read-only roles exposed to the model:
 
-            readonly property string key: model.tokensKey
-
             readonly property string error:
                 root.chainsError(chainsAggregator.uniqueChains)
 
@@ -125,7 +123,7 @@ QObject {
             }
 
             readonly property url icon:
-                !!model.image ? model.image
+                !!model.logoUri ? model.logoUri
                               : Constants.tokenIcon(model.symbol, false)
 
             readonly property url communityIcon: model.communityImage ?? ""
@@ -182,11 +180,11 @@ QObject {
         }
 
         expectedRoles:
-            ["tokensKey", "symbol", "image", "balances", "decimals",
+            ["key", "symbol", "logoUri", "balances", "decimals",
              "detailsLoading", "marketDetails", "communityId", "communityImage",
              "visible"]
         exposedRoles:
-            ["key", "error", "balance", "balanceText", "icon",
+            ["error", "balance", "balanceText", "icon",
              "visible", "canBeHidden", "marketDetailsAvailable", "marketDetailsLoading",
              "marketPrice", "marketChangePct24hour", "communityIcon"]
     }

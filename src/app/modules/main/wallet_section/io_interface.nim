@@ -30,7 +30,7 @@ method getCurrentCurrency*(self: AccessInterface): string {.base.} =
 method setTotalCurrencyBalance*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCurrencyAmount*(self: AccessInterface, amount: float64, symbol: string): CurrencyAmount {.base.} =
+method getCurrencyAmount*(self: AccessInterface, amount: float64, key: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

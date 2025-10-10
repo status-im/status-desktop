@@ -243,8 +243,8 @@ proc notifyFilterChanged(self: Module) =
   self.updateViewWithAddressFilterChanged()
   self.notifyModulesOnFilterChanged()
 
-method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
-  return self.controller.getCurrencyAmount(amount, symbol)
+method getCurrencyAmount*(self: Module, amount: float64, key: string): CurrencyAmount =
+  return self.controller.getCurrencyAmount(amount, key)
 
 proc setKeypairOperabilityForObservedAccount(self: Module, address: string) =
   let keypair = self.controller.getKeypairByAccountAddress(address)
