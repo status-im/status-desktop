@@ -177,20 +177,12 @@ ColumnLayout {
 
     StatusGridView {
         id: grid
-        readonly property var wordIndex: [
-            ["1", "3", "5", "7", "9", "11", "2", "4", "6", "8", "10", "12"]
-            ,["1", "4", "7", "10", "13", "16", "2", "5", "8",
-              "11", "14", "17", "3", "6", "9", "12", "15", "18"]
-            ,["1", "5", "9", "13", "17", "21", "2", "6", "10", "14", "18", "22",
-              "3", "7", "11", "15", "19", "23", "4", "8", "12", "16", "20", "24"]
-        ]
 
         objectName: "enterSeedPhraseGridView"
         Layout.fillWidth: true
         Layout.preferredHeight: 312
         Layout.topMargin: Theme.halfPadding
         Layout.alignment: Qt.AlignHCenter
-        flow: GridView.FlowTopToBottom
         cellWidth: (parent.width/(count/6))
         cellHeight: 52
         interactive: false
@@ -267,7 +259,7 @@ ColumnLayout {
             }
 
             required property int index
-            readonly property int mnemonicIndex: grid.wordIndex[(grid.count / 6) - 2][index]
+            readonly property int mnemonicIndex: index + 1
 
             leftComponentText: mnemonicIndex
             isError: d.incorrectWordAtIndex.includes(mnemonicIndex) & !!text
@@ -289,7 +281,6 @@ ColumnLayout {
                     for (let i = 0; i < grid.count; i++) {
                         if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex - 1) >= 0 ? (mnemonicIndex - 1) : 0)) {
                             grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.BacktabFocusReason)
-                            textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit
                             event.accepted = true
                             break
                         }
