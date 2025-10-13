@@ -62,7 +62,7 @@ void LanguageService::fetchAvailableLanguages()
     qCDebug(languageService) << Q_FUNC_INFO << "!!! appDirPath BIN PATH:" << appDirPath;
 
     QDir qmDir(appDirPath);
-    const auto pathsToProbe = {"i18n", "../i18n", "../resources/i18n"};
+    const auto pathsToProbe = {"i18n", "../i18n", "../resources/i18n", "Resources/i18n", "../../assets/i18n"};
 
     for (const auto& probePath: pathsToProbe) {
         qmDir.setPath(appDirPath % '/' % probePath);
