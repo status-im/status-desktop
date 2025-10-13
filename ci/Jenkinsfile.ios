@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@sign-ios-app'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -91,7 +91,11 @@ pipeline {
 
     stage('Build iOS App') {
       steps {
-        sh 'make mobile-build'
+        script {
+          app.withIOSSigningCredentials {
+            sh 'make mobile-build'
+          }
+        }
       }
     }
 
