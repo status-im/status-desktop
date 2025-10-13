@@ -2046,24 +2046,44 @@ Item {
                         restoreMode: Binding.RestoreNone
                     }
 
-                    sourceComponent: BrowserLayout {
-                        id: browserLayout
-                        userUID: appMain.profileStore.pubKey
-                        thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
-                        navBar: appMain.navBar
-                        bookmarksStore: BrowserStores.BookmarksStore {}
-                        downloadsStore: BrowserStores.DownloadsStore {}
-                        browserRootStore: BrowserStores.BrowserRootStore {}
-                        browserWalletStore: BrowserStores.BrowserWalletStore {}
-                        web3ProviderStore: BrowserStores.Web3ProviderStore {
-                            dappBrowserAccountAddress: browserLayout.browserWalletStore.dappBrowserAccount.address
-                        }
+                    sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? browserLayout: browserPrivacyWall
 
-                        transactionStore: appMain.transactionStore
-                        assetsStore: appMain.walletAssetsStore
-                        currencyStore: appMain.currencyStore
-                        tokensStore: appMain.tokensStore
-                        onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
+                    Component {
+                        id: browserPrivacyWall
+
+                        BrowserPrivacyWall {
+                            navBar: appMain.navBar
+
+                            onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                            onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
+                                                            Constants.statusDiscussPageUrl,
+                                                            SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                        }
+                    }
+
+                    Component {
+                        id: browserLayout
+
+                        BrowserLayout {
+                            id: browserLayoutItem
+
+                            userUID: appMain.profileStore.pubKey
+                            thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
+                            navBar: appMain.navBar
+                            bookmarksStore: BrowserStores.BookmarksStore {}
+                            downloadsStore: BrowserStores.DownloadsStore {}
+                            browserRootStore: BrowserStores.BrowserRootStore {}
+                            browserWalletStore: BrowserStores.BrowserWalletStore {}
+                            web3ProviderStore: BrowserStores.Web3ProviderStore {
+                                dappBrowserAccountAddress: browserLayoutItem.browserWalletStore.dappBrowserAccount.address
+                            }
+
+                            transactionStore: appMain.transactionStore
+                            assetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
+                            tokensStore: appMain.tokensStore
+                            onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
+                        }
                     }
                 }
 
