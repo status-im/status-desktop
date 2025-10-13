@@ -44,8 +44,8 @@ ios {
 
     QMAKE_INFO_PLIST = $$PWD/../ios/Info.plist
     QMAKE_IOS_DEPLOYMENT_TARGET=16.0
-    QMAKE_TARGET_BUNDLE_PREFIX = im.status
-    QMAKE_BUNDLE = app
+    QMAKE_TARGET_BUNDLE_PREFIX = app.status
+    QMAKE_BUNDLE = mobile
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
     QMAKE_IOS_LAUNCH_SCREEN = $$PWD/../ios/launch-image-universal.storyboard
 

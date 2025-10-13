@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ef pipefail
+set -eo pipefail
 
 CWD=$(realpath "$(dirname "$0")")
 
@@ -10,6 +10,7 @@ BIN_DIR=${BIN_DIR:-"$CWD/../bin/ios"}
 BUILD_DIR=${BUILD_DIR:-"$CWD/../build"}
 ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
 BUILD_TYPE=${BUILD_TYPE:-"apk"}
+SIGN_IOS=${SIGN_IOS:-"false"}
 
 echo "Building wrapperApp for ${OS}, ${ANDROID_ABI}"
 
@@ -60,27 +61,8 @@ if [[ "${OS}" == "android" ]]; then
       exit 1
     fi
 
-    # Note: androiddeployqt --sign does not work for AAB files, so we sign with jarsigner
-    echo "Signing AAB with jarsigner..."
-    jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
-      -keystore "$KEYSTORE_PATH" \
-      -storepass "$KEYSTORE_PASSWORD" \
-      -keypass "$KEY_PASSWORD" \
-      "$OUTPUT_FILE" "$KEY_ALIAS"
-
-    if [[ $? -ne 0 ]]; then
-      echo "Error: AAB signing failed"
-      exit 1
-    fi
-
-    VERIFY_OUTPUT=$(jarsigner -verify "$OUTPUT_FILE" 2>&1)
-    if echo "$VERIFY_OUTPUT" | grep -q "jar verified"; then
-      echo "AAB signature verification: PASSED"
-    else
-      echo "Error: AAB signature verification failed"
-      echo "Verify output: $VERIFY_OUTPUT"
-      exit 1
-    fi
+    # Sign the AAB file (androiddeployqt --sign does not work for AAB files)
+    "$CWD/android/sign.sh" "$OUTPUT_FILE"
 
     ANDROID_OUTPUT_DIR="bin/android/qt6"
     BIN_DIR_ANDROID=${BIN_DIR:-"$CWD/$ANDROID_OUTPUT_DIR"}
@@ -128,17 +110,32 @@ if [[ "${OS}" == "android" ]]; then
     fi
   fi
 else
+  BUILD_VERSION=$(($(date +%s) * 1000 / 60000))
+
+  if [[ -n "${CHANGE_ID:-}" ]]; then
+    VERSION_STRING="${CHANGE_ID}.${BUILD_VERSION}"
+  else
+    VERSION_STRING="${BUILD_VERSION}"
+  fi
+
+  echo "Using version: $VERSION_STRING"
+
   QMAKE_BIN="${QMAKE:-qmake}"
-  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
+  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device VERSION="$VERSION_STRING" -after
+
   # Compile resources
   xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcbeautify
   # Compile the app
   xcodebuild -configuration Release -target Status install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcbeautify
 
-  if [[ -e "$BIN_DIR/Status.app/Info.plist" ]]; then
-    echo "Build succeeded"
-  else
+  if [[ ! -e "$BIN_DIR/Status.app/Info.plist" ]]; then
     echo "Build failed"
     exit 1
   fi
+
+  if [[ "$SIGN_IOS" == "true" ]]; then
+    "$CWD/ios/sign.sh"
+  fi
+
+  echo "Build succeeded"
 fi

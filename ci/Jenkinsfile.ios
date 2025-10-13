@@ -1,9 +1,8 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.29'
+library 'status-jenkins-lib@v1.9.30'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
-def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
 
@@ -19,6 +18,16 @@ pipeline {
       name: 'VERBOSE',
       description: 'Level of verbosity based on nimbus-build-system setup.',
       choices: ['0','1','2','3']
+    )
+    string(
+      name: 'TESTFLIGHT_POLL_TIMEOUT',
+      description: 'TestFlight build polling timeout in minutes.',
+      defaultValue: '30'
+    )
+    string(
+      name: 'TESTFLIGHT_POLL_INTERVAL',
+      description: 'TestFlight build polling interval in seconds.',
+      defaultValue: '30'
     )
   }
 
@@ -65,8 +74,11 @@ pipeline {
     IPHONE_SDK = "iphoneos"
     ARCH = "x86_64"
     /* iOS app paths */
-    STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'app.zip', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'ipa', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_IOS_APP = "${WORKSPACE}/mobile/bin/ios/qt6/Status.app"
+    STATUS_IOS_IPA = "${WORKSPACE}/mobile/bin/ios/qt6/Status.ipa"
+    TESTFLIGHT_POLL_TIMEOUT = "${params.TESTFLIGHT_POLL_TIMEOUT}"
+    TESTFLIGHT_POLL_INTERVAL = "${params.TESTFLIGHT_POLL_INTERVAL}"
   }
 
   stages {
@@ -91,25 +103,41 @@ pipeline {
 
     stage('Build iOS App') {
       steps {
-        sh 'make mobile-build'
+        script {
+          app.buildSignedIOS(target='mobile-build', verbose=params.VERBOSE)
+        }
       }
     }
 
     stage('Package iOS App') {
       steps {
         sh 'mkdir -p pkg'
-        sh "cd mobile/bin/ios/qt6 && zip -r ${env.WORKSPACE}/${env.STATUS_IOS_APP_ARTIFACT} Status.app"
-        sh "ls -la ${env.STATUS_IOS_APP_ARTIFACT}"
+        sh "cp ${env.STATUS_IOS_IPA} ${env.STATUS_IOS_APP_ARTIFACT}"
+        sh "ls -lh ${env.STATUS_IOS_APP_ARTIFACT}"
       }
     }
 
     stage('Parallel Upload') {
       parallel {
-        stage('Upload') {
+        stage('Upload to TestFlight') {
+          steps {
+            script {
+              def changelog = sh(script: './scripts/generate-changelog.sh', returnStdout: true).trim()
+
+              app.uploadToTestFlight(
+                ipaPath=env.STATUS_IOS_APP_ARTIFACT,
+                changelog=changelog,
+                pollTimeout=env.TESTFLIGHT_POLL_TIMEOUT,
+                pollInterval=env.TESTFLIGHT_POLL_INTERVAL
+              )
+            }
+          }
+        }
+        stage('Upload to S3') {
           steps {
             script {
               env.PKG_URL = s5cmd.upload(env.STATUS_IOS_APP_ARTIFACT)
-              jenkins.setBuildDesc(APP: env.PKG_URL)
+              jenkins.setBuildDesc(IPA: env.PKG_URL)
             }
           }
         }
