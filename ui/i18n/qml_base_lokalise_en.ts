@@ -9073,6 +9073,14 @@
     </message>
   </context>
   <context>
+    <name>EnterSeedPhraseNew</name>
+    <message>
+      <source>The phrase you’ve entered is invalid</source>
+      <comment>EnterSeedPhraseNew</comment>
+      <translation>The phrase you’ve entered is invalid</translation>
+    </message>
+  </context>
+  <context>
     <name>EnterSeedPhraseWord</name>
     <message>
       <source>Step %1 of 4</source>
@@ -20020,6 +20028,24 @@
       <source>In: </source>
       <comment>StatusSearchPopup</comment>
       <translation>In:</translation>
+    </message>
+  </context>
+  <context>
+    <name>StatusSeedPhraseTabBar</name>
+    <message>
+      <source>12 word</source>
+      <comment>StatusSeedPhraseTabBar</comment>
+      <translation>12 word</translation>
+    </message>
+    <message>
+      <source>18 word</source>
+      <comment>StatusSeedPhraseTabBar</comment>
+      <translation>18 word</translation>
+    </message>
+    <message>
+      <source>24 word</source>
+      <comment>StatusSeedPhraseTabBar</comment>
+      <translation>24 word</translation>
     </message>
   </context>
   <context>
