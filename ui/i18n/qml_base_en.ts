@@ -7405,6 +7405,13 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
+    <name>EnterSeedPhraseNew</name>
+    <message>
+        <source>The phrase you’ve entered is invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EnterSeedPhraseWord</name>
     <message>
         <source>Step %1 of 4</source>
@@ -16430,6 +16437,21 @@ to load</source>
     </message>
     <message>
         <source>In: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StatusSeedPhraseTabBar</name>
+    <message>
+        <source>12 word</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>18 word</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>24 word</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

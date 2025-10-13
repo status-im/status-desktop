@@ -6,10 +6,12 @@ DidYouKnowSplashScreen 1.0 DidYouKnowSplashScreen.qml
 DropAndEditImagePanel 1.0 DropAndEditImagePanel.qml
 EditCroppedImagePanel 1.0 EditCroppedImagePanel.qml
 EnterSeedPhrase 1.0 EnterSeedPhrase.qml
+EnterSeedPhraseNew 1.0 EnterSeedPhraseNew.qml
 ImageLoader 1.0 ImageLoader.qml
 MockedKeycardLibControllerWindow 1.0 MockedKeycardLibControllerWindow.qml
 ModuleWarning 1.0 ModuleWarning.qml
 NoImageUploadedPanel 1.0 NoImageUploadedPanel.qml
+PrivacyWallCarousel 1.0 PrivacyWallCarousel.qml
 RoundedIcon 1.0 RoundedIcon.qml
 RoundedImage 1.0 RoundedImage.qml
 SVGImage 1.0 SVGImage.qml
@@ -18,4 +20,4 @@ Separator 1.0 Separator.qml
 SequenceColumnLayout 1.0 SequenceColumnLayout.qml
 SequenceColumnLayoutSeparator 1.0 SequenceColumnLayoutSeparator.qml
 StyledText 1.0 StyledText.qml
-PrivacyWallCarousel 1.0 PrivacyWallCarousel.qml
+SuggestionsBar 1.0 SuggestionsBar.qml
