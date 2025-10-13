@@ -12,5 +12,7 @@
         <file>wallet/placeholders/collectiblesView-dark-small.png</file>
         <file>wallet/placeholders/buyView-dark-small.png</file>
         <file>wallet/placeholders/swapView-dark-small.png</file>
+        <file>browser/placeholders/browser-light-small.png</file>
+        <file>browser/placeholders/browser-dark-small.png</file>
     </qresource>
 </RCC>
