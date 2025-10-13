@@ -23,7 +23,7 @@ LIB_PREFIX = $$(APP_VARIANT)
 
 android {
     message("cofiguring for android $${QT_ARCH}, $$(ANDROID_ABI)")
-    
+
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/qt$$QT_MAJOR_VERSION
 
     LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client
@@ -37,6 +37,10 @@ android {
 }
 
 ios {
+    i18n.files = $$files($$PWD/../../bin/i18n/*.qm)
+    i18n.path = Resources/i18n
+    QMAKE_BUNDLE_DATA += i18n
+
     CONFIG += add_ios_ffmpeg_libraries
 
     QMAKE_INFO_PLIST = $$PWD/../ios/Info.plist
