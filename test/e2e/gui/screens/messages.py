@@ -173,7 +173,16 @@ class Message:
     @allure.step('Hover message')
     def hover_message(self):
         self.delegate_button.hover()
-        return MessageQuickActions()
+        quick_actions = MessageQuickActions()
+        # Verify that quick actions actually appeared after hover (important for Windows)
+        try:
+            driver.waitFor(lambda: quick_actions.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        except:
+            # If quick actions didn't appear, try hovering again
+            time.sleep(0.2)
+            self.delegate_button.hover()
+            driver.waitFor(lambda: quick_actions.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        return quick_actions
 
     @allure.step('Get color of message background')
     def get_message_color(self) -> str:
@@ -408,9 +417,27 @@ class ChatMessagesView(QObject):
 
     @allure.step('Confirm sending message')
     def confirm_sending_message(self):
+        # Get the message text area object and store initial text
+        message_area = driver.waitForObject(self._message_input_area.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        initial_text = str(getattr(message_area, 'text', ''))
+        
+        # Send message using driver.type with the object (works better on Windows than nativeType)
         self._message_input_area.click()
         for i in range(2):
-            driver.nativeType('<Return>')
+            driver.type(message_area, '<Return>')
+        
+        # Verify message was sent by checking that input field cleared
+        try:
+            driver.waitFor(
+                lambda: str(getattr(driver.waitForObject(self._message_input_area.real_name, 1000), 'text', '')) == '',
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+            )
+        except Exception as ex:
+            current_text = str(getattr(driver.waitForObject(self._message_input_area.real_name, 1000), 'text', ''))
+            raise AssertionError(
+                f'Message was not sent. Input field was not cleared. '
+                f'Initial text: "{initial_text}", current text: "{current_text}"'
+            ) from ex
 
     @allure.step('Click options combobox')
     def click_options(self):
@@ -464,8 +491,26 @@ class ChatMessagesView(QObject):
 
     @allure.step('Confirm sending message')
     def send_message(self):
+        # Get the message text area object and store initial text
+        message_area = driver.waitForObject(self._message_input_area.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        initial_text = str(getattr(message_area, 'text', ''))
+        
+        # Send message using driver.type with the object (works better on Windows than nativeType)
         for i in range(2):
-            driver.nativeType('<Return>')
+            driver.type(message_area, '<Return>')
+        
+        # Verify message was sent by checking that input field cleared
+        try:
+            driver.waitFor(
+                lambda: str(getattr(driver.waitForObject(self._message_input_area.real_name, 1000), 'text', '')) == '',
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+            )
+        except Exception as ex:
+            current_text = str(getattr(driver.waitForObject(self._message_input_area.real_name, 1000), 'text', ''))
+            raise AssertionError(
+                f'Message was not sent. Input field was not cleared. '
+                f'Initial text: "{initial_text}", current text: "{current_text}"'
+            ) from ex
 
     @allure.step('Remove member from chat')
     def remove_member_from_chat(self, member):
@@ -536,8 +581,26 @@ class MessageQuickActions(QObject):
         self._reply_button.click()
         assert self._reply_area.exists
         self._message_input_area.type_text(text)
+        
+        # Get the message text area object
+        message_area = driver.waitForObject(self._message_input_area.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        
+        # Send reply using driver.type with the object (works better on Windows than nativeType)
         for i in range(2):
-            driver.nativeType('<Return>')
+            driver.type(message_area, '<Return>')
+        
+        # Verify reply was sent by checking that input field cleared
+        try:
+            driver.waitFor(
+                lambda: str(getattr(driver.waitForObject(self._message_input_area.real_name, 1000), 'text', '')) == '',
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+            )
+        except Exception as ex:
+            current_text = str(getattr(driver.waitForObject(self._message_input_area.real_name, 1000), 'text', ''))
+            raise AssertionError(
+                f'Reply was not sent. Input field was not cleared. '
+                f'Current text: "{current_text}"'
+            ) from ex
 
     @allure.step('Delete button is visible')
     def is_delete_button_visible(self) -> bool:
