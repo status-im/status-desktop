@@ -2632,6 +2632,21 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
+    <name>BrowserPrivacyWall</name>
+    <message>
+        <source>Enable third-party services for browser features to work.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dapp browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse decentralized apps</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrowserSettingsMenu</name>
     <message>
         <source>New Tab</source>

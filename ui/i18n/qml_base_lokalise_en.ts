@@ -3214,6 +3214,24 @@
     </message>
   </context>
   <context>
+    <name>BrowserPrivacyWall</name>
+    <message>
+      <source>Enable third-party services for browser features to work.</source>
+      <comment>BrowserPrivacyWall</comment>
+      <translation>Enable third-party services for browser features to work.</translation>
+    </message>
+    <message>
+      <source>Dapp browser</source>
+      <comment>BrowserPrivacyWall</comment>
+      <translation>Dapp browser</translation>
+    </message>
+    <message>
+      <source>Browse decentralized apps</source>
+      <comment>BrowserPrivacyWall</comment>
+      <translation>Browse decentralized apps</translation>
+    </message>
+  </context>
+  <context>
     <name>BrowserSettingsMenu</name>
     <message>
       <source>New Tab</source>
