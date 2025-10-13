@@ -12,7 +12,7 @@ Item {
 
         readonly property var seedWords:
             ["apple", "banana", "cat", "country", "catalog", "catch", "category",
-            "cattle", "dog", "elephant", "fish", "grape"]
+            "cattle", "dog", "elephant", "fish", "cat"]
 
         function isSeedPhraseValid(mnemonic: string): bool {
             return mnemonic === seedWords.join(" ")
@@ -25,6 +25,10 @@ Item {
         isSeedPhraseValid: mockDriver.isSeedPhraseValid
 
         dictionary: BIP39_en {}
+
+        onSeedPhraseUpdated: (valid, phrase) => {
+            console.log(valid, phrase)
+        }
     }
 
     Row {
