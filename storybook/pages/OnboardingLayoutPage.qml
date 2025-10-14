@@ -105,7 +105,7 @@ SplitView {
                 }
             }
 
-            function setPuk(puk: string) { // -> bool
+            function setPuk(puk: string): bool {
                 logs.logEvent("OnboardingStore.setPuk", ["puk"], arguments)
                 const valid = puk === mockDriver.puk
                 if (!valid)
@@ -125,11 +125,11 @@ SplitView {
                     authorizationState = Onboarding.AuthorizationState.WrongPin
             }
 
-            function loadMnemonic(mnemonic: string) { // -> void
+            function loadMnemonic(mnemonic: string) {
                 logs.logEvent("OnboardingStore.loadMnemonic", ["mnemonic"], arguments)
             }
 
-            function exportRecoverKeys() { // -> void
+            function exportRecoverKeys() {
                 logs.logEvent("OnboardingStore.exportRecoverKeys")
             }
 
@@ -143,33 +143,33 @@ SplitView {
             }
 
             // password
-            function getPasswordStrengthScore(password: string) { // -> int
+            function getPasswordStrengthScore(password: string): int {
                 logs.logEvent("OnboardingStore.getPasswordStrengthScore", ["password"], arguments)
                 return Math.min(password.length-1, 4)
             }
 
             // seedphrase/mnemonic
-            function validMnemonic(mnemonic: string) { // -> bool
+            function validMnemonic(mnemonic: string): bool {
                 logs.logEvent("OnboardingStore.validMnemonic", ["mnemonic"], arguments)
                 return mnemonic === mockDriver.mnemonic
             }
 
-            function isMnemonicDuplicate(mnemonic: string) { // -> bool
+            function isMnemonicDuplicate(mnemonic: string): bool {
                 logs.logEvent("OnboardingStore.isMnemonicDuplicate", ["mnemonic"], arguments)
                 return false
             }
 
-            function generateMnemonic() { // -> string
+            function generateMnemonic(): string {
                 logs.logEvent("OnboardingStore.generateMnemonic()")
                 return mockDriver.mnemonic
             }
 
-            function validateLocalPairingConnectionString(connectionString: string) { // -> bool
+            function validateLocalPairingConnectionString(connectionString: string): bool {
                 logs.logEvent("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"], arguments)
                 return !Number.isNaN(parseInt(connectionString))
             }
 
-            function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
+            function inputConnectionStringForBootstrapping(connectionString: string) {
                 logs.logEvent("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"], arguments)
             }
 
