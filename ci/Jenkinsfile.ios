@@ -114,7 +114,7 @@ pipeline {
           steps {
             script {
               env.PKG_URL = s5cmd.upload(env.STATUS_IOS_APP_ARTIFACT)
-              jenkins.setBuildDesc(APP: env.PKG_URL)
+              jenkins.setBuildDesc(IPA: env.PKG_URL)
             }
           }
         }

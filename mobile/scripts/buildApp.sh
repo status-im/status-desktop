@@ -112,6 +112,10 @@ else
 
         echo "Installed provisioning profile: $PROFILE_UUID"
 
+        # Embed provisioning profile into the app bundle
+        echo "Embedding provisioning profile into app..."
+        cp "$IOS_PROVISIONING_PROFILE" "$BIN_DIR/Status-tablet.app/embedded.mobileprovision"
+
         # Get signing identity (support both old "iPhone Distribution" and new "Apple Distribution")
         echo "Searching for signing identity in keychain..."
         security find-identity -v -p codesigning "$KEYCHAIN_NAME"
@@ -127,8 +131,9 @@ else
 
         echo "Signing with identity: $SIGNING_IDENTITY"
 
-        # Sign the app
-        codesign --force --sign "$SIGNING_IDENTITY" --timestamp=none "$BIN_DIR/Status-tablet.app"
+        # Sign the app with embedded provisioning profile
+        codesign --force --sign "$SIGNING_IDENTITY" --entitlements "$BIN_DIR/Status-tablet.app/archived-expanded-entitlements.xcent" "$BIN_DIR/Status-tablet.app" 2>/dev/null || \
+        codesign --force --sign "$SIGNING_IDENTITY" "$BIN_DIR/Status-tablet.app"
 
         # Verify signature
         codesign --verify --verbose "$BIN_DIR/Status-tablet.app"
