@@ -103,7 +103,17 @@ else
         echo "Installed provisioning profile: $PROFILE_UUID"
 
         # Get signing identity (support both old "iPhone Distribution" and new "Apple Distribution")
+        echo "Searching for signing identity in keychain..."
+        security find-identity -v -p codesigning "$KEYCHAIN_NAME"
+
         SIGNING_IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN_NAME" | grep -E "iPhone Distribution|Apple Distribution" | head -1 | awk '{print $2}')
+
+        if [[ -z "$SIGNING_IDENTITY" ]]; then
+            echo "ERROR: No Distribution certificate found in keychain!"
+            echo "Available identities:"
+            security find-identity -v -p codesigning "$KEYCHAIN_NAME"
+            exit 1
+        fi
 
         echo "Signing with identity: $SIGNING_IDENTITY"
 
