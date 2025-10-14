@@ -327,10 +327,12 @@ StatusWindow {
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
-        if (languageStore.currentLanguage === "" && // if we haven't configured the language yet...
-                languageStore.availableLanguages.includes(Qt.uiLanguage)) { // ...and we have a translation for it
-            // set the language to the user's OS default
-            languageStore.changeLanguage(Qt.uiLanguage, true /*shouldRetranslate*/)
+        if (languageStore.currentLanguage === "") { // if we haven't configured the language yet...
+            // ...and we have a translation for it
+            if (languageStore.availableLanguages.includes(Qt.uiLanguage)) {
+                // set the language to the user's OS default
+                languageStore.changeLanguage(Qt.uiLanguage, true /*shouldRetranslate*/)
+            }
         } else {
             // set the configured language
             languageStore.changeLanguage(languageStore.currentLanguage, true /*shouldRetranslate*/)

@@ -8,7 +8,6 @@ mkdir -p \
   "${APP_DIR}/usr/bin" \
   "${APP_DIR}/usr/lib" \
   "${APP_DIR}/usr/qml" \
-  "${APP_DIR}/usr/i18n" \
   "${APP_DIR}/usr/plugins/platforminputcontexts" \
   "${APP_DIR}/etc/reader.conf.d" \
   "${APP_DIR}/usr/lib/pcsc/drivers" \
@@ -21,7 +20,6 @@ cp nim-status.desktop "${APP_DIR}/."
 cp status.png "${APP_DIR}/status.png"
 cp status.png "${APP_DIR}/usr/"
 cp -R resources.rcc "${APP_DIR}/usr/"
-cp bin/i18n/* "${APP_DIR}/usr/i18n"
 cp vendor/status-go/build/bin/libstatus.so "${APP_DIR}/usr/lib/"
 cp vendor/status-go/build/bin/libstatus.so.0 "${APP_DIR}/usr/lib/"
 cp "${STATUSKEYCARDGO}" "${APP_DIR}/usr/lib/"

@@ -4,7 +4,7 @@ This section is for developers who want full control over the build environment.
 
 ### iOS Development Setup
 
-### Prerequisites
+#### Prerequisites
 
 - Python 3.x
 - Qt 6.9.2
@@ -50,7 +50,7 @@ make mobile-run
 Note: It's best to install the qt architecture matching the system architecture
 
 ```bash
-# For Qt6 (includesdesktoptools)
+# For Qt6 (includes desktop tools)
 # arm host
 aqt install-qt mac android 6.9.2 android_arm64_v8a -O $HOME/qt -m all --autodesktop
 # x64 host
@@ -71,8 +71,7 @@ export ANDROID_NDK_ROOT=/path/to/android-ndk/27.2.12479018
 # Add Android tools to PATH
 export PATH="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
 
-
-# Add Qt to PATH. Qt6 needs both ios bin and host libexec and host bin (in this order!)
+# Add Qt to PATH. Qt6 needs both android bin and host libexec and host bin (in this order!)
 export QTDIR='/your/Qt/Preferred/Folder' # CHANGE ME
 export QTTARGET='yourQtHostTarget' # CHANGE ME
 export PATH="$QTDIR/6.9.2/$QTTARGET/bin:$QTDIR/6.9.2/$QTTARGET/libexec:$QTDIR/6.9.2/$QTTARGET/bin:${PATH}"
@@ -106,8 +105,10 @@ The build system uses several environment variables to control the build process
 - `USE_SYSTEM_NIM=1`: Use system-installed Nim instead of building from source. Make sure `nim` and `nimble` are available
 
 #### Platform Configuration
-- `OS`: Target platform (`ios` or `android`) - qmake driven
-- `ARCH`: Target architecture - defaults to host arch for android and `x86_64` for ios simulator
+- `OS`: Target platform (`ios` or `android`)
+	- qmake driven
+- `ARCH`: Target architecture
+	- defaults to host arch for android and `x86_64` for ios simulator
 	- iOS: `arm64` (device) or `x86_64` (simulator)
 	- Android: `arm64` (arm64-v8a), `arm` (armeabi-v7a), `x86_64`, or `x86`
 - `PATH`: Should contain the path to Android or iOS Qt installation `bin` folder

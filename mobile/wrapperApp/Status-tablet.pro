@@ -12,7 +12,7 @@ SOURCES += \
 
 # Add all status-desktop qrc files
 RESOURCES += \
-    ../../ui/resources.qrc
+    $$PWD/../../ui/resources.qrc
 
 QML_IMPORT_PATH += $$PWD/../../ui/imports \
                    $$PWD/../../ui/app \
@@ -22,8 +22,8 @@ QMLPATHS += $$QML_IMPORT_PATH
 LIB_PREFIX = $$(APP_VARIANT)
 
 android {
-    message("cofiguring for android $${QT_ARCH}, $$(ANDROID_ABI)")
-    
+    message("Configuring for android $${QT_ARCH}, $$(ANDROID_ABI)")
+
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/qt$$QT_MAJOR_VERSION
 
     LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client

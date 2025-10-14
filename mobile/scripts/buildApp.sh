@@ -35,7 +35,7 @@ if [[ "${OS}" == "android" ]]; then
 
     # call androiddeployqt
     androiddeployqt --input "$BUILD_DIR/android-Status-tablet-deployment-settings.json" --output "$BUILD_DIR/android-build" --apk "$BUILD_DIR/android-build/Status-tablet.apk" --android-platform "$ANDROID_PLATFORM"
-   
+
     ANDROID_OUTPUT_DIR="bin/android/qt6"
     BIN_DIR_ANDROID=${BIN_DIR:-"$CWD/$ANDROID_OUTPUT_DIR"}
     mkdir -p "$BIN_DIR_ANDROID"

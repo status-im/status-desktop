@@ -520,7 +520,7 @@ endif
 
 UI_RESOURCES := resources.rcc
 
-$(UI_RESOURCES): $(UI_SOURCES) | check-qt-dir
+$(UI_RESOURCES): $(UI_SOURCES) | check-qt-dir compile-translations
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
@@ -605,7 +605,7 @@ $(NIM_STATUS_CLIENT): update-qmake-previous
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) rcc compile-translations deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) rcc deps
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--mm:refc \
@@ -735,8 +735,6 @@ $(STATUS_CLIENT_DMG): nim_status_client
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status-macos.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
-	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
-	cp bin/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 
 	echo -e $(BUILD_MSG) "app"
 	MAC_QTQMLDIR=$(shell $(QMAKE) -query QT_INSTALL_QML) && \
@@ -785,10 +783,9 @@ $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_EXE): INSTALLER_OUTPUT := pkg
 $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_launcher
 	rm -rf pkg/*.exe tmp/windows/dist
-	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n $(OUTPUT)/bin/plugins/tls
+	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/bin/plugins/tls
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
 	cp status.ico status.png resources.rcc $(OUTPUT)/resources/
-	cp bin/i18n/* $(OUTPUT)/resources/i18n
 	cp cacert.pem $(OUTPUT)/bin/cacert.pem
 	cp bin/nim_status_client.exe $(OUTPUT)/bin/Status.exe
 	cp bin/nim_windows_launcher.exe $(OUTPUT)/Status.exe
