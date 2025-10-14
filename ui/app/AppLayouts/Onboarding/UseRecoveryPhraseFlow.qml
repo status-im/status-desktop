@@ -36,8 +36,6 @@ OnboardingStackView {
     Component {
         id: seedPhrasePage
         SeedphrasePage {
-            isSeedPhraseValid: root.isSeedPhraseValid
-
             title: {
                 switch (root.type) {
                 case UseRecoveryPhraseFlow.Type.NewProfile:
@@ -51,17 +49,21 @@ OnboardingStackView {
                 return ""
             }
 
-            onSeedphraseUpdated: function(valid, seedphrase) {
+            onSeedphraseProvided: seedPhrase => {
+                const seedPhraseStr = seedPhrase.join(" ")
+                const valid = root.isSeedPhraseValid(seedPhraseStr)
+
                 if (root.type === UseRecoveryPhraseFlow.Type.KeycardRecovery) {
-                    if (!valid)
-                        setWrongSeedPhraseMessage(qsTr("Recovery phrase doesn’t match the profile of an existing Keycard user on this device"))
-                    else
-                        setWrongSeedPhraseMessage("")
+                    setSeedPhraseError(valid ? "" : qsTr("Recovery phrase doesn’t match the profile of an existing Keycard user on this device"))
                 } else {  // different error messages when trying to import a duplicate seedphrase
-                    if (valid && root.isSeedPhraseDuplicate(seedphrase)) {
-                        setWrongSeedPhraseMessage(qsTr("The entered recovery phrase is already added"))
-                    } else if (valid) {
-                        setWrongSeedPhraseMessage("")
+                    const isDuplicate = root.isSeedPhraseDuplicate(seedPhraseStr)
+
+                    if (valid && isDuplicate) {
+                        setSeedPhraseError(qsTr("The entered recovery phrase is already added"))
+                    } else if (!valid) {
+                        setSeedPhraseError(qsTr("Invalid recovery phrase"))
+                    } else {
+                        setSeedPhraseError("")
                     }
                 }
             }

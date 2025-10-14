@@ -11,6 +11,7 @@ import AppLayouts.Onboarding.enums
 
 import shared
 import shared.panels
+import utils
 
 OnboardingPage {
     id: root
@@ -19,57 +20,69 @@ OnboardingPage {
     property string subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")
     property alias btnContinueText: btnContinue.text
 
-    property var isSeedPhraseValid: (mnemonic) => { console.error("isSeedPhraseValid IMPLEMENT ME"); return false }
-
     signal seedphraseSubmitted(string seedphrase)
-    signal seedphraseUpdated(bool valid, string seedphrase)
+    signal seedphraseProvided(var seedPhrase)
 
-    function setWrongSeedPhraseMessage(err: string) {
-        seedPanel.setWrongSeedPhraseMessage(err)
+    function setSeedPhraseError(errorMessage: string) {
+        seedPanel.setError(errorMessage)
     }
 
-    contentItem: Item {
-        ColumnLayout {
-            anchors.centerIn: parent
-            width: Math.min(610, root.availableWidth)
-            spacing: Theme.bigPadding
+    contentItem: StatusScrollView {
+        id: scrollView
 
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: root.title
-                font.pixelSize: Theme.fontSize22
-                font.bold: true
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-            }
-            StatusBaseText {
-                Layout.fillWidth: true
-                Layout.topMargin: -Theme.padding
-                text: root.subtitle
-                color: Theme.palette.baseColor1
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-            }
+        contentWidth: availableWidth
 
-            EnterSeedPhrase {
-                id: seedPanel
-                Layout.preferredWidth: 580
-                Layout.alignment: Qt.AlignHCenter
+        Item {
+            width: scrollView.availableWidth
+            implicitHeight: content.implicitHeight
 
-                dictionary: BIP39_en {}
-                isSeedPhraseValid: root.isSeedPhraseValid
-                onSubmitSeedPhrase: root.seedphraseSubmitted(getSeedPhraseAsString())
-                onSeedPhraseUpdated: (valid, seedphrase) => root.seedphraseUpdated(valid, seedphrase)
-            }
+            ColumnLayout {
+                id: content
 
-            StatusButton {
-                id: btnContinue
-                objectName: "btnContinue"
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: -Theme.halfPadding
-                enabled: seedPanel.seedPhraseIsValid
-                text: qsTr("Continue")
-                onClicked: root.seedphraseSubmitted(seedPanel.getSeedPhraseAsString())
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                width: Math.min(610, parent.width)
+                spacing: Theme.bigPadding
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: root.title
+                    font.pixelSize: Theme.fontSize22
+                    font.bold: true
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    Layout.topMargin: -Theme.padding
+                    text: root.subtitle
+                    color: Theme.palette.baseColor1
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                EnterSeedPhraseNew {
+                    id: seedPanel
+
+                    Layout.fillWidth: true
+                    flickable: scrollView.flickable
+
+                    dictionary: BIP39_en {}
+
+                    onSeedPhraseAccepted: root.seedphraseSubmitted(seedPhrase.join(" "))
+                    onSeedPhraseProvided: seedPhrase => root.seedphraseProvided(seedPhrase)
+
+                }
+
+                StatusButton {
+                    id: btnContinue
+                    objectName: "btnContinue"
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: -Theme.halfPadding
+                    enabled: seedPanel.seedPhraseIsValid
+                    text: qsTr("Continue")
+                    onClicked: root.seedphraseSubmitted(seedPanel.seedPhrase.join(" "))
+                }
             }
         }
     }

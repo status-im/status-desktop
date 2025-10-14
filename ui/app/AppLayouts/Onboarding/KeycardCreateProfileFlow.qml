@@ -145,7 +145,11 @@ OnboardingStackView {
         SeedphrasePage {
             title: qsTr("Create profile on empty Keycard using a recovery phrase")
 
-            isSeedPhraseValid: root.isSeedPhraseValid
+            onSeedphraseProvided: seedphrase => {
+                const valid = root.isSeedPhraseValid(seedphrase.join(" "))   
+                setSeedPhraseError(valid ? "" : qsTr("Invalid recovery phrase"))
+            }
+
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
                 d.handleCreatePINPage()

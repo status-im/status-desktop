@@ -65,7 +65,11 @@ OnboardingStackView {
         SeedphrasePage {
             title: qsTr("Enter recovery phrase of lost Keycard")
 
-            isSeedPhraseValid: root.isSeedPhraseValid
+            onSeedphraseProvided: seedphrase => {
+                const valid = root.isSeedPhraseValid(seedphrase.join(" "))
+                setSeedPhraseError(valid ? "" : qsTr("Invalid recovery phrase"))
+            }
+
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
                 root.push(keycardCreatePinPage)
