@@ -94,6 +94,10 @@ else
 
         # Extract UUID from provisioning profile and copy with UUID as filename
         PROFILE_UUID=$(security cms -D -i "$IOS_PROVISIONING_PROFILE" 2>/dev/null | grep -A1 "<key>UUID</key>" | grep "<string>" | sed 's/.*<string>\(.*\)<\/string>.*/\1/')
+
+        # Remove existing profile if it exists (may have read-only permissions)
+        rm -f "$PROFILE_DIR/$PROFILE_UUID.mobileprovision"
+
         cp "$IOS_PROVISIONING_PROFILE" "$PROFILE_DIR/$PROFILE_UUID.mobileprovision"
 
         echo "Installed provisioning profile: $PROFILE_UUID"
