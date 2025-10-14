@@ -7,7 +7,7 @@ def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
 
-  agent { label 'macos && arm64 && nix-2.24 && xcode-16.2' }
+  agent { label 'macm1-01' }
 
   parameters {
     booleanParam(
