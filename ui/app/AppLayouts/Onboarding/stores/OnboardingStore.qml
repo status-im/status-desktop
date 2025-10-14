@@ -51,7 +51,7 @@ QtObject {
         d.onboardingModuleInst.setPin(pin)
     }
 
-    function setPuk(puk: string) { // -> bool
+    function setPuk(puk: string): bool{
         return d.onboardingModuleInst.setPuk(puk)
     }
 
@@ -60,10 +60,10 @@ QtObject {
     }
 
     readonly property int addKeyPairState: d.onboardingModuleInst.addKeyPairState // cf. enum Onboarding.ProgressState
-    function loadMnemonic(mnemonic: string) { // -> void
+    function loadMnemonic(mnemonic: string) {
         d.onboardingModuleInst.loadMnemonic(mnemonic)
     }
-    function exportRecoverKeys() { // -> void
+    function exportRecoverKeys() {
         d.onboardingModuleInst.exportRecoverKeys()
     }
 
@@ -79,10 +79,10 @@ QtObject {
     }
 
     // seedphrase/mnemonic
-    function validMnemonic(mnemonic: string) { // -> bool
+    function validMnemonic(mnemonic: string) : bool {
         return d.onboardingModuleInst.validMnemonic(mnemonic)
     }
-    function isMnemonicDuplicate(mnemonic: string) { // -> bool
+    function isMnemonicDuplicate(mnemonic: string) : bool {
         return d.onboardingModuleInst.isMnemonicDuplicate(mnemonic)
     }
     function generateMnemonic() { // -> string as per BIP-39 (space-separated list of words)
@@ -91,10 +91,10 @@ QtObject {
 
     // sync
     readonly property int syncState: d.onboardingModuleInst.syncState // cf. enum Onboarding.ProgressState
-    function validateLocalPairingConnectionString(connectionString: string) { // -> bool
+    function validateLocalPairingConnectionString(connectionString: string) : bool {
         return d.onboardingModuleInst.validateLocalPairingConnectionString(connectionString)
     }
-    function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
+    function inputConnectionStringForBootstrapping(connectionString: string) {
         d.onboardingModuleInst.inputConnectionStringForBootstrapping(connectionString)
     }
 }
