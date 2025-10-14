@@ -8946,11 +8946,19 @@ Are you sure you want to do this?</source>
         <source>Create profile on empty Keycard using a recovery phrase</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Invalid recovery phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>KeycardCreateReplacementFlow</name>
     <message>
         <source>Enter recovery phrase of lost Keycard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid recovery phrase</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -18250,6 +18258,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <source>Unblock Keycard</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Invalid recovery phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UseRecoveryPhraseFlow</name>
@@ -18271,6 +18283,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>The entered recovery phrase is already added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid recovery phrase</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -271,7 +271,7 @@ SplitView {
         }
 
         Button {
-            text: "Paste seed phrase"
+            text: "Copy seed phrase to keyboard"
             focusPolicy: Qt.NoFocus
 
             anchors.bottom: parent.bottom
@@ -280,20 +280,7 @@ SplitView {
 
             visible: onboarding.focusedObjectName.startsWith("enterSeedPhraseInputField")
 
-            onClicked: {
-                const words = Utils.splitWords(mockDriver.mnemonic)
-
-                for (let i = 1;; i++) {
-                    const input = StorybookUtils.findChild(
-                                    onboarding.currentPage,
-                                    `enterSeedPhraseInputField${i}`)
-
-                    if (input === null)
-                        break
-
-                    input.text = words[i - 1]
-                }
-            }
+            onClicked: ClipboardUtils.setText(mockDriver.mnemonic)
         }
 
         Button {

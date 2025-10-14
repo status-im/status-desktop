@@ -10865,6 +10865,11 @@
       <comment>KeycardCreateProfileFlow</comment>
       <translation>Create profile on empty Keycard using a recovery phrase</translation>
     </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>KeycardCreateProfileFlow</comment>
+      <translation>Invalid recovery phrase</translation>
+    </message>
   </context>
   <context>
     <name>KeycardCreateReplacementFlow</name>
@@ -10872,6 +10877,11 @@
       <source>Enter recovery phrase of lost Keycard</source>
       <comment>KeycardCreateReplacementFlow</comment>
       <translation>Enter recovery phrase of lost Keycard</translation>
+    </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>KeycardCreateReplacementFlow</comment>
+      <translation>Invalid recovery phrase</translation>
     </message>
   </context>
   <context>
@@ -22101,6 +22111,11 @@
       <comment>UnblockWithSeedphraseFlow</comment>
       <translation>Unblock Keycard</translation>
     </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>UnblockWithSeedphraseFlow</comment>
+      <translation>Invalid recovery phrase</translation>
+    </message>
   </context>
   <context>
     <name>UseRecoveryPhraseFlow</name>
@@ -22128,6 +22143,11 @@
       <source>The entered recovery phrase is already added</source>
       <comment>UseRecoveryPhraseFlow</comment>
       <translation>The entered recovery phrase is already added</translation>
+    </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>UseRecoveryPhraseFlow</comment>
+      <translation>Invalid recovery phrase</translation>
     </message>
   </context>
   <context>

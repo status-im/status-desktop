@@ -18,7 +18,11 @@ OnboardingStackView {
     initialItem: SeedphrasePage {
         title: qsTr("Unblock Keycard using the recovery phrase")
         btnContinueText: qsTr("Unblock Keycard")
-        isSeedPhraseValid: root.isSeedPhraseValid
+
+        onSeedphraseProvided: seedphrase => {
+            const valid = root.isSeedPhraseValid(seedphrase.join(" "))
+            setSeedPhraseError(valid ? "" : qsTr("Invalid recovery phrase"))
+        }
 
         onSeedphraseSubmitted: (seedphrase) => {
             root.seedphraseSubmitted(seedphrase)
