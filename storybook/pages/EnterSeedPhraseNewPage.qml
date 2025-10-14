@@ -53,6 +53,8 @@ Item {
 
                 property var validSeedPhrase: []
 
+                flickable: scrollView.flickable
+
                 width: scrollView.availableWidth
                 dictionary: BIP39_en {}
 
