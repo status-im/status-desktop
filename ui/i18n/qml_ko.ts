@@ -8897,12 +8897,20 @@ Are you sure you want to do this?</source>
         <source>Create profile on empty Keycard using a recovery phrase</source>
         <translation>복구 구문으로 비어 있는 Keycard에 프로필 생성</translation>
     </message>
+    <message>
+        <source>Invalid recovery phrase</source>
+        <translation type="unfinished">잘못된 복구 구문</translation>
+    </message>
 </context>
 <context>
     <name>KeycardCreateReplacementFlow</name>
     <message>
         <source>Enter recovery phrase of lost Keycard</source>
         <translation>분실한 Keycard의 복구 구문을 입력하세요</translation>
+    </message>
+    <message>
+        <source>Invalid recovery phrase</source>
+        <translation type="unfinished">잘못된 복구 구문</translation>
     </message>
 </context>
 <context>
@@ -18127,6 +18135,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <source>Unblock Keycard</source>
         <translation>Keycard 잠금 해제</translation>
     </message>
+    <message>
+        <source>Invalid recovery phrase</source>
+        <translation type="unfinished">잘못된 복구 구문</translation>
+    </message>
 </context>
 <context>
     <name>UseRecoveryPhraseFlow</name>
@@ -18149,6 +18161,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>The entered recovery phrase is already added</source>
         <translation>입력한 복구 구문이 이미 추가되어 있습니다</translation>
+    </message>
+    <message>
+        <source>Invalid recovery phrase</source>
+        <translation type="unfinished">잘못된 복구 구문</translation>
     </message>
 </context>
 <context>
