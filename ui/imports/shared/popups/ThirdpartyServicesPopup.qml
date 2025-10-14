@@ -124,7 +124,7 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 type: StatusBaseButton.Type.Primary
-                normalColor: Theme.palette.privacyModeColor
+                normalColor: Theme.palette.privacyModeColors.navBarColor
                 textColor: Theme.palette.white
                 text: {
                     if(root.thirdPartyServicesEnabled) {
