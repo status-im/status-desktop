@@ -19,6 +19,7 @@ OnboardingPage {
     id: root
 
     required property bool networkChecksEnabled
+    required property bool thirdpartyServicesEnabled
 
     property bool isKeycardEnabled: true
 
@@ -126,7 +127,7 @@ OnboardingPage {
 
     NetworkChecker {
         id: netChecker
-        active: root.networkChecksEnabled
+        active: root.networkChecksEnabled && root.thirdpartyServicesEnabled
     }
 
     Component {
