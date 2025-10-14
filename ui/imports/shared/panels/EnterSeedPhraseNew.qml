@@ -38,6 +38,10 @@ Control {
     // and last word is accepted by keyboard.
     signal seedPhraseAccepted
 
+    // An optional Flickable whose content will be automatically positioned to
+    // make the focused field visible.
+    property Flickable flickable
+
     // Sets error by providing error message or clears it by setting empty string.
     function setError(errorMessage: string) {
         d.customErrorString = errorMessage
@@ -55,6 +59,19 @@ Control {
 
         property int currentIndex
         property Item currentItem
+
+        // automatically position current item in a visible area
+        onCurrentItemChanged: {
+            if (!root.flickable || !currentItem)
+                return
+
+            const rect = Qt.rect(0, -currentItem.height - spacing,
+                                 currentItem.width,
+                                 currentItem.height + currentItem.height + spacing)
+            Utils.ensureVisible(
+                        flickable, flickable.contentItem.mapFromItem(
+                            currentItem, rect))
+        }
 
         property string filteringPrefix
 
@@ -382,6 +399,20 @@ Control {
                   : d.customErrorString
 
             visible: !!text
+
+            onVisibleChanged: {
+                if (!visible)
+                    return
+
+                Qt.callLater(() => {
+                    if (!flickable || !flickable.contentItem)
+                        return
+
+                    const rect = Qt.rect(0, 0, errorText.width, errorText.height)
+                    Utils.ensureVisible(flickable, flickable.contentItem.mapFromItem(errorText, rect))
+                })
+            }
+
             Layout.topMargin: Theme.padding
             Layout.fillWidth: true
             Layout.fillHeight: true
