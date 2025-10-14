@@ -9,9 +9,12 @@ QtObject {
     readonly property var availableLanguages: LanguageService.availableLanguages
 
     function changeLanguage(languageCode, shouldRetranslate = false) {
-        const result = LanguageService.setLanguage(languageCode, shouldRetranslate)
-        if (result)
-            localAppSettings.language = languageCode
-        return result
+        localAppSettings.language = languageCode
+
+        if (shouldRetranslate) {
+            // let the QQmlApplicationEngine handle the retranslation, as our QM files are in the expected `:/i18n` prefix
+            Qt.uiLanguage = languageCode
+        }
+        return true
     }
 }

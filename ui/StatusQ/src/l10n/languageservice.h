@@ -2,32 +2,23 @@
 
 #include <QLoggingCategory>
 #include <QObject>
-#include <QQmlEngine>
-#include <QTranslator>
-
-#include <memory>
 
 Q_DECLARE_LOGGING_CATEGORY(languageService)
 
 class LanguageService : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList availableLanguages READ availableLanguages CONSTANT FINAL)
+    Q_PROPERTY(QStringList availableLanguages READ availableLanguages NOTIFY availableLanguagesChanged FINAL)
 
 public:
-    explicit LanguageService(QQmlEngine *engine, QObject* parent = nullptr);
+    explicit LanguageService(QObject* parent = nullptr);
 
-    Q_INVOKABLE bool setLanguage(const QString &newCurrentLanguage, bool shouldRetranslate = false);
+    Q_INVOKABLE void fetchAvailableLanguages();
+
+signals:
+    void availableLanguagesChanged();
 
 private:
-    QString m_currentLanguage;
-
     QStringList m_availableLanguages;
     QStringList availableLanguages() const;
-    void fetchAvailableLanguages();
-
-    QString m_qmDirPath;
-
-    std::unique_ptr<QTranslator> m_translator;
-    QQmlEngine* m_engine;
 };

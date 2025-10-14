@@ -32,6 +32,7 @@ nim_status_client.log
 .flatpak-builder
 /ui/StatusQ/sandbox/android/.gradle/
 .qmake_previous
+*.qm
 
 # Squish test ================================================================
 
@@ -51,7 +52,6 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Testing
-Makefile
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json

@@ -33,9 +33,9 @@ qt6_add_lrelease(
         ${CMAKE_SOURCE_DIR}/qml_en.ts
         ${CMAKE_SOURCE_DIR}/qml_cs.ts
         ${CMAKE_SOURCE_DIR}/qml_ko.ts
-    QM_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../bin/i18n
+    QM_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}
     MERGE_QT_TRANSLATIONS
-    QT_TRANSLATION_CATALOGS qtbase qtmultimedia qtwebengine
+    QT_TRANSLATION_CATALOGS qtbase qtmultimedia qtwebengine qtdeclarative
 )
 
 # Ideally at the toplevel it could be done sth like this in one pass/target:

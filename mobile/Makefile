@@ -58,7 +58,7 @@ $(QRCODEGEN_LIB): $(QRCODEGEN_FILES)
 	@QRCODEGEN=$(QRCODEGEN) $(QRCODEGEN_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "QRCodeGen built $(QRCODEGEN_LIB)"
 
-$(STATUS_DESKTOP_RCC): $(STATUS_DESKTOP_UI_FILES)
+$(STATUS_DESKTOP_RCC): $(STATUS_DESKTOP_UI_FILES) compile-translations
 	@echo "Building Status Desktop rcc"
 	@make -C $(STATUS_DESKTOP) rcc $(HANDLE_OUTPUT)
 	@echo "Status Desktop rcc built"
@@ -78,6 +78,11 @@ $(TARGET): $(APP_SCRIPT) $(STATUS_GO_LIB) $(STATUS_Q_LIB) $(DOTHERSIDE_LIB) $(OP
 .PHONY: makedir
 makedir:
 	@mkdir -p $(BIN_PATH) $(LIB_PATH) $(BUILD_PATH)
+
+.PHONY: compile-translations
+compile-translations:
+	@echo "Building translations"
+	@make -C $(STATUS_DESKTOP) compile-translations $(HANDLE_OUTPUT)
 
 .PHONY: all
 all: $(TARGET)

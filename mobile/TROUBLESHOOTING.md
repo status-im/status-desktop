@@ -5,11 +5,11 @@
 1. **CMake Qt5 Error**
 ```
 CMake Error at CMakeLists.txt:36 (find_package):
-By not providing "FindQt5.cmake" in CMAKE_MODULE_PATH this project has
-asked CMake to find a package configuration file provided by "Qt5", but
+By not providing "FindQt6.cmake" in CMAKE_MODULE_PATH this project has
+asked CMake to find a package configuration file provided by "Qt6", but
 CMake did not find one.
 ```
-**Fix**: Ensure `QTDIR` environment variable points to the Qt installation folder.
+**Fix**: Ensure `QTDIR` environment variable points to the Qt 6 installation folder.
 
 2. **Python Interpreter Error**
 ```
