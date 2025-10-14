@@ -2064,20 +2064,39 @@ Item {
                         restoreMode: Binding.RestoreNone
                     }
 
-                    sourceComponent: BrowserLayout {
-                        id: browserLayout
-                        userUID: appMain.profileStore.pubKey
-                        thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
-                        navBar: appMain.navBar
-                        bookmarksStore: BrowserStores.BookmarksStore {}
-                        downloadsStore: BrowserStores.DownloadsStore {}
-                        browserRootStore: BrowserStores.BrowserRootStore {}
-                        browserWalletStore: BrowserStores.BrowserWalletStore {}
-                        connectorController: WalletStores.RootStore.dappsConnectorController
-                        isDebugEnabled: appMain.advancedStore.isDebugEnabled
+                    sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? browserLayout: browserPrivacyWall
 
-                        transactionStore: appMain.transactionStore
-                        onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
+
+                    Component {
+                        id: browserPrivacyWall
+
+                        BrowserPrivacyWall {
+                            navBar: appMain.navBar
+
+                            onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
+                            onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
+                                                            Constants.statusDiscussPageUrl,
+                                                            SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                        }
+                    }
+
+                    Component {
+                        id: browserLayout
+
+                        BrowserLayout {
+                            userUID: appMain.profileStore.pubKey
+                            thirdpartyServicesEnabled: appMain.rootStore.thirdpartyServicesEnabled
+                            navBar: appMain.navBar
+                            bookmarksStore: BrowserStores.BookmarksStore {}
+                            downloadsStore: BrowserStores.DownloadsStore {}
+                            browserRootStore: BrowserStores.BrowserRootStore {}
+                            browserWalletStore: BrowserStores.BrowserWalletStore {}
+                            connectorController: WalletStores.RootStore.dappsConnectorController
+                            isDebugEnabled: appMain.advancedStore.isDebugEnabled
+
+                            transactionStore: appMain.transactionStore
+                            onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
+                        }
                     }
                 }
 

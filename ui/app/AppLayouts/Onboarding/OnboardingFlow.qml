@@ -287,6 +287,7 @@ OnboardingStackView {
         NewAccountLoginPage {
             networkChecksEnabled: root.networkChecksEnabled
             isKeycardEnabled: root.isKeycardEnabled
+            thirdpartyServicesEnabled: root.thirdpartyServicesEnabled
 
             onLoginWithSyncingRequested: root.push(logInBySyncingFlow)
             onLoginWithKeycardRequested: root.push(loginWithKeycardFlow)
