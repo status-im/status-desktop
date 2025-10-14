@@ -134,6 +134,20 @@ else
         codesign --verify --verbose "$BIN_DIR/Status-tablet.app"
 
         echo "iOS app signed successfully"
+
+        # Create IPA file
+        echo "Creating IPA file..."
+        IPA_DIR=$(mktemp -d)
+        mkdir -p "$IPA_DIR/Payload"
+        cp -R "$BIN_DIR/Status-tablet.app" "$IPA_DIR/Payload/"
+
+        # Create IPA (which is just a zip with .ipa extension)
+        cd "$IPA_DIR"
+        zip -r "$BIN_DIR/Status-tablet.ipa" Payload
+        cd -
+
+        rm -rf "$IPA_DIR"
+        echo "IPA created at $BIN_DIR/Status-tablet.ipa"
     fi
 
     echo "Build succeeded"

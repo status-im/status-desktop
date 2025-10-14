@@ -65,8 +65,9 @@ pipeline {
     IPHONE_SDK = "iphoneos"
     ARCH = "x86_64"
     /* iOS app paths */
-    STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'app.zip', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'ipa', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_IOS_APP = "${WORKSPACE}/mobile/bin/ios/qt6/Status-tablet.app"
+    STATUS_IOS_IPA = "${WORKSPACE}/mobile/bin/ios/qt6/Status-tablet.ipa"
   }
 
   stages {
@@ -102,8 +103,8 @@ pipeline {
     stage('Package iOS App') {
       steps {
         sh 'mkdir -p pkg'
-        sh "cd mobile/bin/ios/qt6 && zip -r ${env.WORKSPACE}/${env.STATUS_IOS_APP_ARTIFACT} Status-tablet.app"
-        sh "ls -la ${env.STATUS_IOS_APP_ARTIFACT}"
+        sh "cp ${env.STATUS_IOS_IPA} ${env.STATUS_IOS_APP_ARTIFACT}"
+        sh "ls -lh ${env.STATUS_IOS_APP_ARTIFACT}"
       }
     }
 
