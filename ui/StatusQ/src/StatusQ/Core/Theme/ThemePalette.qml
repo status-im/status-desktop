@@ -226,7 +226,11 @@ QtObject {
         customisationColors.camel
     ]
 
-    readonly property color privacyModeColor: customisationColors.purple
+    property QtObject privacyModeColors: QtObject {
+        readonly property color navBarColor: customisationColors.purple
+        readonly property color navButtonColor: getColor('white', 0.4)
+        readonly property color navButtonHighlightedColor: getColor('white')
+    }
 
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
