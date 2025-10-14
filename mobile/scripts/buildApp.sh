@@ -85,6 +85,16 @@ else
         security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
         security set-keychain-settings -t 3600 -u "$KEYCHAIN_NAME"
         security list-keychains -s "$KEYCHAIN_NAME" login.keychain
+
+        # Import Apple WWDR G3 intermediate certificate to establish trust chain
+        echo "Importing Apple WWDR G3 certificate..."
+        WWDR_TEMP_DIR=$(mktemp -d)
+        curl -sS -o "$WWDR_TEMP_DIR/AppleWWDRCAG3.cer" https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+        security import "$WWDR_TEMP_DIR/AppleWWDRCAG3.cer" -k "$KEYCHAIN_NAME" -T /usr/bin/codesign
+        rm -rf "$WWDR_TEMP_DIR"
+        echo "Apple WWDR G3 certificate imported"
+
+        # Import user's certificate with private key
         security import "$IOS_CERT_PATH" -k "$KEYCHAIN_NAME" -P "$IOS_CERT_PASSWORD" -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
 
