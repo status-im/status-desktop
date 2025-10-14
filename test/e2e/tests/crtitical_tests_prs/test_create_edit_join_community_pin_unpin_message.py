@@ -3,6 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from configs import get_platform
 from constants.community import Channel
 from gui.main_window import MainWindow
 from helpers.multiple_instances_helper import (
@@ -26,6 +27,7 @@ from gui.screens.messages import MessagesScreen
 @pytest.mark.communities
 @pytest.mark.smoke
 @pytest.mark.critical
+@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 def test_create_edit_join_community_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()

@@ -7,6 +7,7 @@ from allure_commons._allure import step
 
 import configs.testpath
 import driver
+from configs import get_platform
 from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
 from constants import UserAccount, RandomUser
 from constants.syncing import SyncingSettings
@@ -19,6 +20,7 @@ from gui.screens.onboarding import OnboardingWelcomeToStatusView, SyncResultView
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592, 738760)
 @pytest.mark.critical
+@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18846 on Windows")
 @pytest.mark.smoke
 def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instances):
     user: UserAccount = RandomUser()
