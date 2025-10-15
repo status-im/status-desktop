@@ -965,15 +965,11 @@ Item {
             if (!d.isBrowserEnabled)
                 return Qt.openUrlExternally(link)
 
-            if (appMain.rootStore.showBrowserSelector) {
-                popups.openChooseBrowserPopup(link)
+            if (appMain.rootStore.openLinksInStatus) {
+                globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
+                globalConns.onOpenLinkInBrowser(link)
             } else {
-                if (appMain.rootStore.openLinksInStatus) {
-                    globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
-                    globalConns.onOpenLinkInBrowser(link)
-                } else {
-                    Qt.openUrlExternally(link)
-                }
+                Qt.openUrlExternally(link)
             }
         }
 

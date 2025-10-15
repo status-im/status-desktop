@@ -3173,25 +3173,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>ChooseBrowserPopup</name>
-    <message>
-        <source>Choose browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in my default browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remember my choice. To override it, go to Settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CollectibleDetailView</name>
     <message>
         <source>Unknown</source>

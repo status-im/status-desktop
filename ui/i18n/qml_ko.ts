@@ -3155,25 +3155,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>ChooseBrowserPopup</name>
-    <message>
-        <source>Choose browser</source>
-        <translation>브라우저 선택</translation>
-    </message>
-    <message>
-        <source>Open in Status</source>
-        <translation>스테이터스로 열기</translation>
-    </message>
-    <message>
-        <source>Open in my default browser</source>
-        <translation>기본 브라우저에서 열기</translation>
-    </message>
-    <message>
-        <source>Remember my choice. To override it, go to Settings.</source>
-        <translation>내 선택을 기억합니다. 변경하려면 설정으로 이동하세요.</translation>
-    </message>
-</context>
-<context>
     <name>CollectibleDetailView</name>
     <message>
         <source>Unknown</source>

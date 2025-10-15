@@ -34,7 +34,6 @@ const LSS_KEY_ACTIVE_SECTION* = "activeSection"
 const DEFAULT_ACTIVE_SECTION = ""
 const LAST_SECTION_CHAT = "LastSectionChat"
 const DEFAULT_ACTIVE_CHAT = ""
-const LSS_KEY_SHOW_BROWSER_SELECTOR* = "showBrowserSelector"
 const DEFAULT_SHOW_BROWSER_SELECTOR = true
 const LSS_KEY_OPEN_LINKS_IN_STATUS* = "openLinksInStatus"
 const DEFAULT_OPEN_LINKS_IN_STATUS = true
@@ -325,19 +324,6 @@ QtObject:
     write = setActiveSection
     notify = activeSectionChanged
 
-  proc showBrowserSelectorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getShowBrowserSelector*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_SHOW_BROWSER_SELECTOR, newQVariant(DEFAULT_SHOW_BROWSER_SELECTOR))
-  proc setShowBrowserSelector*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_SHOW_BROWSER_SELECTOR, newQVariant(value)):
-      self.showBrowserSelectorChanged()
-
-  QtProperty[bool] showBrowserSelector:
-    read = getShowBrowserSelector
-    write = setShowBrowserSelector
-    notify = showBrowserSelectorChanged
-
-
   proc openLinksInStatusChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getOpenLinksInStatus*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_OPEN_LINKS_IN_STATUS, newQVariant(DEFAULT_OPEN_LINKS_IN_STATUS))
@@ -603,7 +589,6 @@ QtObject:
       of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING: self.showDeleteMessageWarningChanged()
       of LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED: self.downloadChannelMessagesEnabledChanged()
       of LSS_KEY_ACTIVE_SECTION: self.activeSectionChanged()
-      of LSS_KEY_SHOW_BROWSER_SELECTOR: self.showBrowserSelectorChanged()
       of LSS_KEY_OPEN_LINKS_IN_STATUS: self.openLinksInStatusChanged()
       of LSS_KEY_SHOULD_SHOW_FAVORITES_BAR: self.shouldShowFavoritesBarChanged()
       of LSS_KEY_BROWSER_HOMEPAGE: self.browserHomepageChanged()
