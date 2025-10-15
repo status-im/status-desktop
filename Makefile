@@ -143,9 +143,9 @@ BOTTLES_DIR := $(shell pwd)/bottles
 BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@3)
 ifeq ($(QT_ARCH),arm64)
 # keep in sync with MACOSX_DEPLOYMENT_TARGET
-	BOTTLE_MACOS_VERSION := 'arm64_ventura'
+	BOTTLE_MACOS_VERSION := 'arm64_sonoma'
 else
-	BOTTLE_MACOS_VERSION := 'ventura'
+	BOTTLE_MACOS_VERSION := 'sonoma'
 endif
 $(BOTTLES):
 	echo -e "\033[92mFetching:\033[39m $(notdir $@) bottle arch $(QT_ARCH) $(BOTTLE_MACOS_VERSION)"
