@@ -43,7 +43,7 @@ onboardingImportSeedPhraseView = {"container": onboardingLayout, "type": "Seedph
 tab12WordsButton = {"container": onboardingImportSeedPhraseView, "objectName": "12SeedButton", "type": "StatusSwitchTabButton"}
 tab18WordsButton = {"container": onboardingImportSeedPhraseView, "objectName": "18SeedButton", "type": "StatusSwitchTabButton"}
 tab24WordsButton = {"container": onboardingImportSeedPhraseView, "objectName": "24SeedButton", "type": "StatusSwitchTabButton"}
-seedPhraseInputField = {"container": onboardingImportSeedPhraseView, "objectName": "enterSeedPhraseInputField", "type": "TextEdit"}
+seedPhraseInputField = {"container": onboardingImportSeedPhraseView, "objectName": "enterSeedPhraseInputField", "type": "TextField"}
 onboardingImportSeedPhraseContinueButton = {"container": onboardingImportSeedPhraseView, "objectName": "btnContinue", "type": "StatusButton", "visible": True}
 invalidSeedText = {"container": onboardingImportSeedPhraseView, "objectName": "enterSeedPhraseInvalidSeedText", "type": "StatusBaseText", "visible": True}
 
@@ -84,7 +84,7 @@ switchTabBar_18_words_Button = {"container": mainWindow_SeedPhraseInputView, "ob
                                 "type": "StatusSwitchTabButton"}
 switchTabBar_24_words_Button = {"container": mainWindow_SeedPhraseInputView, "objectName": "24SeedButton",
                                 "type": "StatusSwitchTabButton"}
-mainWindow_statusSeedPhraseInputField_TextEdit = {"container": statusDesktop_mainWindow, "objectName": "enterSeedPhraseInputField", "type": "TextEdit", "visible": True}
+mainWindow_statusSeedPhraseInputField_TextEdit = {"container": statusDesktop_mainWindow, "objectName": "enterSeedPhraseInputField", "type": "TextField", "visible": True}
 
 mainWindow_Import_StatusButton = {"checkable": False, "container": mainWindow_SeedPhraseInputView,
                                   "objectName": "seedPhraseViewSubmitButton", "type": "StatusButton",
