@@ -48,7 +48,7 @@ StatusStackModal {
         if(uuid === d.uuid) {
             d.urlIsBeingFetched = false
             if (!!d.selectedProviderEntry.item && !!url)
-                Global.openLinkWithConfirmation(url, d.selectedProviderEntry.item.hostname)
+                Global.requestOpenLink(url)
             root.close()
         }
     }

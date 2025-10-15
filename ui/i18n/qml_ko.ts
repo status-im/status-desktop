@@ -13686,15 +13686,15 @@ to load</source>
     <name>ProfileLayout</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished">연락처</translation>
+        <translation>연락처</translation>
     </message>
     <message>
         <source>Status Keycard</source>
-        <translation type="unfinished"></translation>
+        <translation>스테이터스 키카드</translation>
     </message>
     <message>
         <source>The Keycard module is still busy, please try again</source>
-        <translation type="unfinished"></translation>
+        <translation>Keycard 모듈이 아직 사용 중입니다. 다시 시도해 주세요</translation>
     </message>
 </context>
 <context>

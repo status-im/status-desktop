@@ -67,9 +67,7 @@ ColumnLayout {
             horizontalPadding: 0
             verticalPadding: 0
             text: StringUtils.extractDomainFromLink(dAppUrl)
-            onClicked: {
-                Global.openLinkWithConfirmation(dAppUrl, text)
-            }
+            onClicked: Global.requestOpenLink(dAppUrl)
         }
         ConnectionStatusTag {
             Layout.alignment: Qt.AlignHCenter

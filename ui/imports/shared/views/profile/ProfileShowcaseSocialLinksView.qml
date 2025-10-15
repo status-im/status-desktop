@@ -77,7 +77,7 @@ Item {
                     icon.color: socialLinksInfoDelegate.hovered && !hovered ? Theme.palette.baseColor1 : Theme.palette.directColor1
 
                     onClicked: {
-                        Global.openLinkWithConfirmation(model.url, StatusQUtils.StringUtils.extractDomainFromLink(model.url));
+                        Global.requestOpenLink(model.url)
                     }
                 }
             }

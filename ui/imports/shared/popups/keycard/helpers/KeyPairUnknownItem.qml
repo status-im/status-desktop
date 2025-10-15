@@ -145,7 +145,7 @@ Rectangle {
                                     let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet,
                                                                                WalletStore.RootStore.areTestNetworksEnabled,
                                                                                model.account.address)
-                                    Global.openLink(link)
+                                    Global.requestOpenLink(link)
                                 }
                             }
                         }

@@ -109,11 +109,11 @@ Item {
                 Global.switchToCommunity(collectible.communityId)
             }
             else {
-                Global.openLinkWithConfirmation(d.collectionLink, root.walletRootStore.getOpenseaDomainName())
+                Global.requestOpenLink(d.collectionLink)
             }
         }
-        onOpenCollectibleExternally: Global.openLinkWithConfirmation(d.collectibleLink, root.walletRootStore.getOpenseaDomainName())
-        onOpenCollectibleOnExplorer: Global.openLinkWithConfirmation(d.blockExplorerLink, Utils.getExplorerDomain(networkShortName))
+        onOpenCollectibleExternally: Global.requestOpenLink(d.collectibleLink)
+        onOpenCollectibleOnExplorer: Global.requestOpenLink(d.blockExplorerLink)
     }
 
     ColumnLayout {
@@ -321,21 +321,21 @@ Item {
                             secondaryText: !!collectible ? collectible.website : ""
                             visible: !!collectible && !!collectible.website && !!collectible.collectionName
                             enabled: !!collectible ? Utils.getUrlStatus(collectible.website): false
-                            onClicked: Global.openLinkWithConfirmation(collectible.website, collectible.website)
+                            onClicked: Global.requestOpenLink(collectible.website)
                         }
                         CollectibleLinksTags {
                             asset.name: "tiny/opensea"
                             primaryText: qsTr("Opensea")
                             secondaryText: d.collectionLink
                             visible: Utils.getUrlStatus(d.collectionLink)
-                            onClicked: Global.openLinkWithConfirmation(d.collectionLink, root.walletRootStore.getOpenseaDomainName())
+                            onClicked: Global.requestOpenLink(d.collectionLink)
                         }
                         CollectibleLinksTags {
                             asset.name: "xtwitter"
                             primaryText: qsTr("Twitter")
                             secondaryText: !!collectible ? collectible.twitterHandle : ""
                             visible: !!collectible && collectible.twitterHandle
-                            onClicked: Global.openLinkWithConfirmation(root.walletRootStore.getTwitterLink(collectible.twitterHandle), Constants.socialLinkPrefixesByType[Constants.socialLinkType.twitter])
+                            onClicked: Global.requestOpenLink(root.walletRootStore.getTwitterLink(collectible.twitterHandle))
                         }
                     }
                 }

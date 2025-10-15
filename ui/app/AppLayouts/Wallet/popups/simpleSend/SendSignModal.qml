@@ -436,7 +436,7 @@ SignTransactionModalBase {
                 networkName: root.networkName
                 networkShortName: root.networkShortName
                 networkBlockExplorerUrl: root.networkBlockExplorerUrl
-                onOpenLink: (link) => root.openLinkWithConfirmation(link)
+                onOpenLink: (link) => root.requestOpenLink(link)
             }
         ]
         visible: !root.isCollectible
@@ -464,7 +464,7 @@ SignTransactionModalBase {
             networkBlockExplorerUrl: root.networkBlockExplorerUrl
             loading: root.isCollectibleLoading
             openSeaExplorerUrl: root.fnGetOpenSeaExplorerUrl(root.networkShortName)
-            onOpenLink: (link) => root.openLinkWithConfirmation(link)
+            onOpenLink: (link) => root.requestOpenLink(link)
         }
         visible: root.isCollectible
         enabled: !root.internalPopupActive
@@ -504,7 +504,7 @@ SignTransactionModalBase {
                 networkName: root.networkName
                 networkShortName: root.networkShortName
                 networkBlockExplorerUrl: root.networkBlockExplorerUrl
-                onOpenLink: (link) => root.openLinkWithConfirmation(link)
+                onOpenLink: (link) => root.requestOpenLink(link)
             }
         ]
         enabled: !root.internalPopupActive

@@ -111,8 +111,8 @@ StatusDialog {
 
     closePolicy: Popup.NoAutoClose
 
-    function openLinkWithConfirmation(linkUrl) {
-        Global.openLinkWithConfirmation(linkUrl, SQUtils.StringUtils.extractDomainFromLink(linkUrl))
+    function requestOpenLink(linkUrl) {
+        Global.requestOpenLink(linkUrl)
     }
 
     header: StatusDialogHeader {

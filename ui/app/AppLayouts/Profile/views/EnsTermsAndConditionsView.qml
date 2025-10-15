@@ -155,7 +155,7 @@ Item {
                     .arg(root.ensUsernamesStore.getEnsRegisteredAddress())
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    onLinkActivated: Global.openLink(link)
+                    onLinkActivated: Global.requestOpenLink(link)
                     color: Theme.palette.directColor1
                     StatusMouseArea {
                         anchors.fill: parent
@@ -179,7 +179,7 @@ Item {
                     .arg(root.ensUsernamesStore.getEnsRegistry())
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    onLinkActivated: Global.openLink(link)
+                    onLinkActivated: Global.requestOpenLink(link)
                     color: Theme.palette.directColor1
                     StatusMouseArea {
                         anchors.fill: parent

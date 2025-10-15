@@ -1187,7 +1187,7 @@ QtObject {
                 onFinaliseOwnershipClicked: signPopup.open()
 
                 onVisitCommunityClicked: communitiesStore.navigateToCommunity(finalisePopup.communityId)
-                onOpenControlNodeDocClicked: Global.openLink(link)
+                onOpenControlNodeDocClicked: Global.requestOpenLink(link)
 
                 onCalculateFees: {
                     feesBroker.registerSetSignerFeesSubscriber(feeSubscriber)
@@ -1352,7 +1352,7 @@ QtObject {
                 content {
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
-                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                    onLinkActivated: Global.requestOpenLink(link)
                 }
                 destroyOnClose: true
             }
@@ -1364,7 +1364,7 @@ QtObject {
                 content {
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/terms-of-use.mdwn")
-                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                    onLinkActivated: Global.requestOpenLink(link)
                 }
                 destroyOnClose: true
             }
@@ -1400,7 +1400,7 @@ QtObject {
 
             NewsMessagePopup {
                 activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
-                onLinkClicked: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
+                onLinkClicked: (link) => Global.requestOpenLink(link)
             }
         },
         Component {

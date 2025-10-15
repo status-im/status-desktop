@@ -13808,11 +13808,11 @@ to load</source>
     <name>ProfileLayout</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished">Kontakty</translation>
+        <translation>Kontakty</translation>
     </message>
     <message>
         <source>Status Keycard</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Keycard</translation>
     </message>
     <message>
         <source>The Keycard module is still busy, please try again</source>

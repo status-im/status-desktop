@@ -68,7 +68,7 @@ Item {
         localBackupEnabled: appMain.featureFlagsStore.localBackupEnabled
         thirdpartyServicesEnabled: appMain.featureFlagsStore.privacyModeFeatureEnabled ?
                                    appMain.privacyStore.thirdpartyServicesEnabled: true
-        onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+        onOpenUrl: (link) => Global.requestOpenLink(link)
     }
 
     // Global cross-domain stores (just references from `rootStore`)
@@ -844,6 +844,16 @@ Item {
             }
             return username
         }
+
+        function openLinkInBrowser(link: string) {
+            if (appMain.rootStore.openLinksInStatus && d.isBrowserEnabled) {
+                globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
+                changeAppSectionBySectionId(Constants.appSection.browser)
+                Qt.callLater(() => browserLayoutContainer.item.openUrlInNewTab(link));
+            } else {
+                Qt.openUrlExternally(link)
+            }
+        }
     }
 
     Settings {
@@ -900,7 +910,7 @@ Item {
 
         isDevBuild: !appMain.rootStore.isProduction
 
-        onOpenExternalLink: (link) => globalConns.onOpenLink(link)
+        onOpenExternalLink: (link) => d.openLinkInBrowser(link)
         onSaveDomainToUnfurledWhitelist: function(domain) {
             const whitelistedHostnames = appMainLocalSettings.whitelistedUnfurledDomains || []
             if (!whitelistedHostnames.includes(domain)) {
@@ -940,11 +950,6 @@ Item {
         id: globalConns
         target: Global
 
-        function onOpenLinkInBrowser(link: string) {
-            changeAppSectionBySectionId(Constants.appSection.browser)
-            Qt.callLater(() => browserLayoutContainer.item.openUrlInNewTab(link));
-        }
-
         function onOpenCreateChatView() {
             createChatView.opened = true
         }
@@ -953,26 +958,17 @@ Item {
             createChatView.opened = false
         }
 
-        function onOpenLink(link: string) {
+        function onRequestOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = SQUtils.StringUtils.plainText(link)
+            const domain = SQUtils.StringUtils.extractDomainFromLink(link)
 
-            if (!d.isBrowserEnabled)
-                return Qt.openUrlExternally(link)
-
-            if (appMain.rootStore.openLinksInStatus) {
-                globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
-                globalConns.onOpenLinkInBrowser(link)
+            if (appMainLocalSettings.whitelistedUnfurledDomains.includes(domain) ||
+                    link.startsWith("mailto:")) {
+                d.openLinkInBrowser(link)
             } else {
-                Qt.openUrlExternally(link)
-            }
-        }
-
-        function onOpenLinkWithConfirmation(link: string, domain: string) {
-            if (appMainLocalSettings.whitelistedUnfurledDomains.includes(domain) || link.startsWith("mailto:"))
-                globalConns.onOpenLink(link)
-            else
                 popups.openConfirmExternalLinkPopup(link, domain)
+            }
         }
 
         function onActivateDeepLink(link: string) {
@@ -1987,9 +1983,7 @@ Item {
                             navBar: appMain.navBar
 
                             onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
-                            onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
-                                                            Constants.statusDiscussPageUrl,
-                                                            SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                            onOpenDiscussPageRequested: Global.requestOpenLink(Constants.statusDiscussPageUrl)
                         }
                     }
 
@@ -2145,7 +2139,7 @@ Item {
                                                                                   appMain.communitiesStore.communitiesProfileModule,
                                                                                   null)
                         onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
-                        onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                        onOpenDiscussPageRequested: Global.requestOpenLink(Constants.statusDiscussPageUrl)
 
                         onRemoveWhitelistedDomain: function(index) {
                             // in order to notify changes in this model, we need to re assign to this model
@@ -2182,9 +2176,7 @@ Item {
                             navBar: appMain.navBar
 
                             onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
-                            onOpenDiscussPageRequested: Global.openLinkWithConfirmation(
-                                                            Constants.statusDiscussPageUrl,
-                                                            SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+                            onOpenDiscussPageRequested: Global.requestOpenLink(Constants.statusDiscussPageUrl)
                         }
                     }
 
@@ -2529,7 +2521,7 @@ Item {
                     Global.changeAppSectionBySectionType(section, subsection, subsubsection)
                 }
                 else
-                    Global.openLink(link)
+                    Global.requestOpenLink(link)
             }
             onClose: {
                 appMain.rootStore.removeEphemeralNotification(model.timestamp)
@@ -2870,7 +2862,7 @@ Item {
                     if (connectorId == Constants.DAppConnectors.WalletConnect) {
                         dappsWorkflow.openPairing()
                     } else if (connectorId == Constants.DAppConnectors.StatusConnect) {
-                        Global.openLink("https://chromewebstore.google.com/detail/a-wallet-connector-by-sta/kahehnbpamjplefhpkhafinaodkkenpg")
+                        Global.requestOpenLink("https://chromewebstore.google.com/detail/a-wallet-connector-by-sta/kahehnbpamjplefhpkhafinaodkkenpg")
                     }
                 }
 

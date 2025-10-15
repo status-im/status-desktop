@@ -217,7 +217,7 @@ StackLayout {
             }
             onImportControlNodeClicked: root.importControlNodeClicked()
             onFinaliseOwnershipTransferClicked: root.finaliseOwnershipClicked()
-            onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "communities/about-the-control-node-in-status-communities")
+            onLearnMoreClicked: Global.requestOpenLink(Constants.statusHelpLinkPrefix + "communities/about-the-control-node-in-status-communities")
         }
     }
 

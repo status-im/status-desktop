@@ -44,7 +44,7 @@ StatusMenu {
         flatNetworks: root.flatNetworks
         onNetworkClicked: {
             let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, root.selectedAccount.address ?? "");
-            Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+            Global.requestOpenLink(link);
         }
     }
 

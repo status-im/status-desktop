@@ -483,7 +483,7 @@ StatusSectionLayout {
                 qtRuntimeVersion: SystemUtils.qtRuntimeVersion()
 
                 onCheckForUpdates: root.aboutStore.checkForUpdates()
-                onOpenLink: (url) => Global.openLink(url)
+                onOpenLink: (url) => Global.requestOpenLink(url)
             }
         }
 
@@ -563,7 +563,7 @@ StatusSectionLayout {
                     wrapMode: Text.Wrap
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/terms-of-use.mdwn")
-                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                    onLinkActivated: Global.requestOpenLink(link)
                 }
             }
         }
@@ -584,7 +584,7 @@ StatusSectionLayout {
                     wrapMode: Text.Wrap
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
-                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                    onLinkActivated: Global.requestOpenLink(link)
                 }
             }
         }

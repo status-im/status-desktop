@@ -1249,7 +1249,7 @@ Rectangle {
                     }
                     onImageClicked: (chatImage) => Global.openImagePopup(chatImage, "", false)
                     onLinkReload: (link) => control.linkPreviewReloaded(link)
-                    onLinkClicked: (link) => Global.openLink(link)
+                    onLinkClicked: (link) => Global.requestOpenLink(link)
                     onEnableLinkPreview: () => control.enableLinkPreview()
                     onEnableLinkPreviewForThisMessage: () => control.enableLinkPreviewForThisMessage()
                     onDisableLinkPreview: () => control.disableLinkPreview()
