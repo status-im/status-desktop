@@ -3908,24 +3908,24 @@ file format</source>
 <context>
     <name>ConfirmExternalLinkPopup</name>
     <message>
-        <source>Before you go</source>
-        <translation>가기 전에</translation>
-    </message>
-    <message>
-        <source>This link is taking you to the following site. Be careful to double check the URL before you go.</source>
-        <translation>이 링크는 다음 사이트로 이동합니다. 이동하기 전에 URL을 다시 한 번 확인하세요.</translation>
-    </message>
-    <message>
-        <source>Trust &lt;b&gt;%1&lt;/b&gt; links from now on</source>
-        <translation>지금부터 &lt;b&gt;%1&lt;/b&gt; 링크를 신뢰하세요</translation>
-    </message>
-    <message>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <source>Visit site</source>
-        <translation>사이트 방문</translation>
+        <source>Opening external link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always trust links to &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished">열기</translation>
     </message>
 </context>
 <context>

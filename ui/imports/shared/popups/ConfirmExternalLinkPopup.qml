@@ -1,15 +1,13 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
-import QtQml.Models
-
-import utils
 
 import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Popups.Dialog
 import StatusQ.Core
+
+import shared.controls
 
 StatusDialog {
     id: root
@@ -20,10 +18,11 @@ StatusDialog {
     signal openExternalLink(string link)
     signal saveDomainToUnfurledWhitelist(string domain)
 
-    width: 521
+    implicitWidth: 521
+    padding: Theme.padding
 
     header: StatusDialogHeader {
-        headline.title: qsTr("Before you go")
+        headline.title: qsTr("Opening external link")
         actions.closeButton.onClicked: root.close()
         leftComponent: StatusRoundIcon {
             asset.name: "browser"
@@ -32,11 +31,11 @@ StatusDialog {
     }
 
     contentItem: ColumnLayout {
-        spacing: 20
+        spacing: Theme.padding
         StatusBaseText {
             Layout.fillWidth: true
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            text: qsTr("This link is taking you to the following site. Be careful to double check the URL before you go.")
+            text: qsTr("Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.")
         }
         Rectangle {
             Layout.fillWidth: true
@@ -44,21 +43,31 @@ StatusDialog {
             radius: Theme.halfPadding
             color: Theme.palette.baseColor4
 
-            StatusBaseText {
+            RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: Theme.padding
-                anchors.rightMargin: Theme.padding
-                anchors.topMargin: 11
-                anchors.bottomMargin: Theme.halfPadding
-                text: root.link
-                wrapMode: Text.WrapAnywhere
-                elide: Text.ElideRight
+                anchors.margins: Theme.padding
+
+                spacing: Theme.padding
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: root.link
+                    wrapMode: Text.WrapAnywhere
+                    elide: Text.ElideRight
+                }
+                CopyButton {
+                    Layout.alignment: Qt.AlignTop
+                    textToCopy: root.link
+                }
+
             }
         }
         StatusCheckBox {
             id: trustDomainCheckbox
+
+            Layout.margins: 12
             Layout.fillWidth: true
-            text: qsTr("Trust <b>%1</b> links from now on").arg(root.domain)
+            text: qsTr("Always trust links to <b>%1</b>").arg(root.domain)
         }
     }
 
@@ -69,7 +78,7 @@ StatusDialog {
                 onClicked: root.close()
             }
             StatusButton {
-                text: qsTr("Visit site")
+                text: qsTr("Open")
                 onClicked: {
                     // (optionally) save the domain to whitelist
                     if (trustDomainCheckbox.checked) {
