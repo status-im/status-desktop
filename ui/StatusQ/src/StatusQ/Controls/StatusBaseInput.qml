@@ -350,8 +350,8 @@ Item {
                     id: flick
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.topMargin: root.topPadding
-                    Layout.bottomMargin: root.bottomPadding
+                    Layout.topMargin: root.multiline ? root.topPadding : 0
+                    Layout.bottomMargin: root.multiline ? root.bottomPadding : 0
 
                     contentWidth: edit.paintedWidth
                     contentHeight: edit.paintedHeight
@@ -370,6 +370,9 @@ Item {
                         id: edit
                         property string previousText: text
                         property var keyEvent
+
+                        topPadding: root.multiline ? 0 : root.topPadding
+                        bottomPadding: root.multiline ? 0: root.bottomPadding
                         width: flick.width
                         height: multiline ? implicitHeight : flick.height
                         verticalAlignment: TextEdit.AlignVCenter
