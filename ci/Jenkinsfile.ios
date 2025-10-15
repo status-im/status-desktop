@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.24'
+library 'status-jenkins-lib@sign-ios-app'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -7,7 +7,7 @@ def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
 
-  agent { label 'macos && arm64 && nix-2.24 && xcode-16.2' }
+  agent { label 'macm1-01' }
 
   parameters {
     booleanParam(
@@ -65,8 +65,9 @@ pipeline {
     IPHONE_SDK = "iphoneos"
     ARCH = "x86_64"
     /* iOS app paths */
-    STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'app.zip', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    STATUS_IOS_APP_ARTIFACT = "pkg/${utils.pkgFilename(ext: 'ipa', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_IOS_APP = "${WORKSPACE}/mobile/bin/ios/qt6/Status-tablet.app"
+    STATUS_IOS_IPA = "${WORKSPACE}/mobile/bin/ios/qt6/Status-tablet.ipa"
   }
 
   stages {
@@ -91,15 +92,19 @@ pipeline {
 
     stage('Build iOS App') {
       steps {
-        sh 'make mobile-build'
+        script {
+          app.withIOSSigningCredentials {
+            sh 'make mobile-build V=3'
+          }
+        }
       }
     }
 
     stage('Package iOS App') {
       steps {
         sh 'mkdir -p pkg'
-        sh "cd mobile/bin/ios/qt6 && zip -r ${env.WORKSPACE}/${env.STATUS_IOS_APP_ARTIFACT} Status-tablet.app"
-        sh "ls -la ${env.STATUS_IOS_APP_ARTIFACT}"
+        sh "cp ${env.STATUS_IOS_IPA} ${env.STATUS_IOS_APP_ARTIFACT}"
+        sh "ls -lh ${env.STATUS_IOS_APP_ARTIFACT}"
       }
     }
 
@@ -109,7 +114,7 @@ pipeline {
           steps {
             script {
               env.PKG_URL = s5cmd.upload(env.STATUS_IOS_APP_ARTIFACT)
-              jenkins.setBuildDesc(APP: env.PKG_URL)
+              jenkins.setBuildDesc(IPA: env.PKG_URL)
             }
           }
         }
