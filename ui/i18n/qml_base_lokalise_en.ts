@@ -3868,29 +3868,6 @@
     </message>
   </context>
   <context>
-    <name>ChooseBrowserPopup</name>
-    <message>
-      <source>Choose browser</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Choose browser</translation>
-    </message>
-    <message>
-      <source>Open in Status</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Open in Status</translation>
-    </message>
-    <message>
-      <source>Open in my default browser</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Open in my default browser</translation>
-    </message>
-    <message>
-      <source>Remember my choice. To override it, go to Settings.</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Remember my choice. To override it, go to Settings.</translation>
-    </message>
-  </context>
-  <context>
     <name>CollectibleDetailView</name>
     <message>
       <source>Unknown</source>
