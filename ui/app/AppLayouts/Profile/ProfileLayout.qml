@@ -87,6 +87,8 @@ StatusSectionLayout {
 
     required property int theme // Theme.Style.xxx
     required property int fontSize // Theme.FontSize.xxx
+
+    required property var whitelistedDomainsModel
     
     signal addressWasShownRequested(string address)
     signal connectUsernameRequested(string ensName, string ownerAddress)
@@ -101,6 +103,7 @@ StatusSectionLayout {
 
     signal openThirdpartyServicesInfoPopupRequested()
     signal openDiscussPageRequested()
+    signal removeWhitelistedDomain(int index)
 
     backButtonName: d.backButtonName
     onBackButtonClicked: {
@@ -114,6 +117,9 @@ StatusSectionLayout {
             break;
         case Constants.settingsSubsection.wallet:
             walletView.item.resetStack()
+            break;
+        case Constants.settingsSubsection.privacyAndSecurity:
+            privacyAndSecurityView.item.resetStack()
             break;
         case Constants.settingsSubsection.keycard:
             keycardView.item.handleBackAction()
@@ -204,6 +210,8 @@ StatusSectionLayout {
                 d.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
             } else if (currentIndex === Constants.settingsSubsection.wallet) {
                 walletView.item.resetStack()
+            } else if (currentIndex === Constants.settingsSubsection.privacyAndSecurity) {
+                privacyAndSecurityView.item.resetStack()
             } else if (currentIndex === Constants.settingsSubsection.keycard) {
                 keycardView.item.handleBackAction()
             }
@@ -583,9 +591,12 @@ StatusSectionLayout {
         }
 
         Loader {
+            id: privacyAndSecurityView
+
             active: false
             asynchronous: true
             sourceComponent: PrivacyAndSecurityView {
+                whitelistedDomainsModel: root.whitelistedDomainsModel
                 isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
                 isCentralizedMetricsEnabled: root.isCentralizedMetricsEnabled
                 thirdpartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
@@ -593,7 +604,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
+                privacySectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
                 contentWidth: d.contentWidth
 
                 onSetNewsRSSEnabledRequested: function (isStatusNewsViaRSSEnabled) {
@@ -601,6 +612,9 @@ StatusSectionLayout {
                 }
                 onOpenThirdpartyServicesInfoPopupRequested: root.openThirdpartyServicesInfoPopupRequested()
                 onOpenDiscussPageRequested: root.openDiscussPageRequested()
+
+                onBackButtonTextChanged: d.backButtonName = backButtonText
+                onRemoveWhitelistedDomain: index => root.removeWhitelistedDomain(index)
             }
         }
 

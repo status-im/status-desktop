@@ -2556,6 +2556,16 @@
       <comment>AppMain</comment>
       <translation>%1 was successfully removed from your saved addresses</translation>
     </message>
+    <message>
+      <source>%1 added to your trusted sites.</source>
+      <comment>AppMain</comment>
+      <translation>%1 added to your trusted sites.</translation>
+    </message>
+    <message>
+      <source>%1 was removed from your trusted sites.</source>
+      <comment>AppMain</comment>
+      <translation>%1 was removed from your trusted sites.</translation>
+    </message>
   </context>
   <context>
     <name>AppSearch</name>
@@ -16403,6 +16413,16 @@
       <comment>PrivacyAndSecurityView</comment>
       <translation>From all profiles on device</translation>
     </message>
+    <message>
+      <source>Trusted sites</source>
+      <comment>PrivacyAndSecurityView</comment>
+      <translation>Trusted sites</translation>
+    </message>
+    <message>
+      <source>Manage trusted sites. Their links open without confirmation.</source>
+      <comment>PrivacyAndSecurityView</comment>
+      <translation>Manage trusted sites. Their links open without confirmation.</translation>
+    </message>
   </context>
   <context>
     <name>PrivacyStore</name>
@@ -23302,6 +23322,24 @@
       <source>Privacy Policy</source>
       <comment>WelcomePage</comment>
       <translation>Privacy Policy</translation>
+    </message>
+  </context>
+  <context>
+    <name>WhitelistedDomainsView</name>
+    <message>
+      <source>Trusted sites</source>
+      <comment>WhitelistedDomainsView</comment>
+      <translation>Trusted sites</translation>
+    </message>
+    <message>
+      <source>Manage trusted sites. Their links open without confirmation.</source>
+      <comment>WhitelistedDomainsView</comment>
+      <translation>Manage trusted sites. Their links open without confirmation.</translation>
+    </message>
+    <message>
+      <source>No trusted sites added yet</source>
+      <comment>WhitelistedDomainsView</comment>
+      <translation>No trusted sites added yet</translation>
     </message>
   </context>
   <context>

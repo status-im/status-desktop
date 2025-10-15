@@ -21,6 +21,7 @@ SplitView {
             SplitView.fillHeight: true
             contentWidth: parent.width
 
+            whitelistedDomainsModel: ["example1.com", "example2.com", "example3.com"]
             isStatusNewsViaRSSEnabled: true
             isCentralizedMetricsEnabled: true
             thirdpartyServicesEnabled: ctrlThirdpartyServicesEnabled.checked

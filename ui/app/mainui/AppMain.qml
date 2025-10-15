@@ -911,6 +911,7 @@ Item {
             if (!whitelistedHostnames.includes(domain)) {
                 whitelistedHostnames.push(domain)
                 appMainLocalSettings.whitelistedUnfurledDomains = whitelistedHostnames
+                Global.displaySuccessToastMessage(qsTr("%1 added to your trusted sites.").arg(domain))
             }
         }
         onTransferOwnershipRequested: (tokenId, senderAddress) => popupRequestsHandler.sendModalHandler.transferOwnership(tokenId, senderAddress)
@@ -2132,6 +2133,8 @@ Item {
                         theme: appMainLocalSettings.theme
                         fontSize: appMainLocalSettings.fontSize
 
+                        whitelistedDomainsModel: appMainLocalSettings.whitelistedUnfurledDomains
+
                         onAddressWasShownRequested: (address) => WalletStores.RootStore.addressWasShown(address)
                         onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
                         onConnectUsernameRequested: (ensName, ownerAddress) => popupRequestsHandler.sendModalHandler.connectUsername(ensName, ownerAddress)
@@ -2154,6 +2157,15 @@ Item {
                                                                                   null)
                         onOpenThirdpartyServicesInfoPopupRequested: popupRequestsHandler.thirdpartyServicesPopupHandler.openPopup()
                         onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
+
+                        onRemoveWhitelistedDomain: function(index) {
+                            // in order to notify changes in this model, we need to re assign to this model
+                            const domainRemoved = appMainLocalSettings.whitelistedUnfurledDomains[index]
+                            const whitelistedUnfurledDomainsCpy = appMainLocalSettings.whitelistedUnfurledDomains.slice()
+                            whitelistedUnfurledDomainsCpy.splice(index, 1)
+                            appMainLocalSettings.whitelistedUnfurledDomains = whitelistedUnfurledDomainsCpy
+                            Global.displaySuccessToastMessage(qsTr("%1 was removed from your trusted sites.").arg(domainRemoved))
+                        }
                     }
                     onLoaded: {
                         item.settingsSubsection = profileLoader.settingsSubsection
