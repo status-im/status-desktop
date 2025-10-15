@@ -167,7 +167,7 @@ Control {
                             font.pixelSize: Theme.primaryTextFontSize
                             font.weight: Font.Normal
                             text: draggableDelegate.asideText
-                            onClicked: Global.openLink(model.url)
+                            onClicked: Global.requestOpenLink(model.url)
                         },
                         StatusFlatRoundButton {
                             icon.name: "edit_pencil"

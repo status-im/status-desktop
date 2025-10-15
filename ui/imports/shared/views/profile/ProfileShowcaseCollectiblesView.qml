@@ -59,13 +59,13 @@ Item {
             }
             function openCollectibleURL() {
                 const link = getCollectibleURL();
-                Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+                Global.requestOpenLink(link)
             }
 
             function openCollectionURL() {
                 const networkShortName = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "chainId", model.chainId, "shortName")
                 let link = root.walletStore.getOpenSeaCollectionUrl(networkShortName, model.contractAddress)
-                Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+                Global.requestOpenLink(link)
             }
 
             width: GridView.view.cellWidth - Theme.padding
@@ -206,7 +206,7 @@ Item {
                 enabled: contextMenu.communityId === ""
                 icon.name: "link"
                 onTriggered: {
-                    Global.openLinkWithConfirmation(contextMenu.url,  StatusQUtils.StringUtils.extractDomainFromLink(contextMenu.url));
+                    Global.requestOpenLink(contextMenu.url)
                 }
             }
         }

@@ -98,7 +98,7 @@ SettingsContentBase {
                 tagPrimaryLabel.textFormat: Text.RichText
                 tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
                 tagPrimaryLabel.text: qsTr("Share feedback or suggest improvements on our %1.")
-                .arg(Utils.getStyledLink("Discuss page", "#", tagPrimaryLabel.hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
+                    .arg(Utils.getStyledLink("Discuss page", "#", tagPrimaryLabel.hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
                 tagPrimaryLabel.onLinkActivated: root.openDiscussPageRequested()
                 visible: root.privacyModeFeatureEnabled
             }

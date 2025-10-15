@@ -13,6 +13,8 @@ ColumnLayout {
 
     signal removeWhitelistedDomain(int index)
 
+    spacing: Theme.bigPadding
+
     StatusBaseText {
         text: qsTr("Trusted sites")
         font.pixelSize: 28

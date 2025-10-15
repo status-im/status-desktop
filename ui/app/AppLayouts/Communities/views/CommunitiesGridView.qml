@@ -227,10 +227,8 @@ StatusScrollView {
             PromotionalCommunityCard {
                 width: d.delegateWidth
 
-                onLearnMore: Global.openLinkWithConfirmation(d.learnAboutCommunitiesVoteLink,
-                                                             StringUtils.extractDomainFromLink(d.learnAboutCommunitiesVoteLink))
-                onInitiateVote: Global.openLinkWithConfirmation(d.voteCommunityLink,
-                                                                StringUtils.extractDomainFromLink(d.voteCommunityLink))
+                onLearnMore: Global.requestOpenLink(d.learnAboutCommunitiesVoteLink)
+                onInitiateVote: Global.requestOpenLink(d.voteCommunityLink)
             }
 
             Repeater {

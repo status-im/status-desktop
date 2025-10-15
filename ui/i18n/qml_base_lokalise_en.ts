@@ -1894,8 +1894,8 @@
       <source>%n key pair(s) successfully imported</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform>%n key pair successfully imported</numerusform>
-        <numerusform>%n key pairs successfully imported</numerusform>
+        <numerusform></numerusform>
+        <numerusform></numerusform>
       </translation>
     </message>
     <message>
@@ -2264,6 +2264,11 @@
       <translation>Sync in process. Keep device powered and app open.</translation>
     </message>
     <message>
+      <source>%1 added to your trusted sites.</source>
+      <comment>AppMain</comment>
+      <translation>%1 added to your trusted sites.</translation>
+    </message>
+    <message>
       <source>This device is now the control node for the %1 Community</source>
       <comment>AppMain</comment>
       <translation>This device is now the control node for the %1 Community</translation>
@@ -2352,8 +2357,8 @@
       <source>%n issue(s)</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform>%n issue</numerusform>
-        <numerusform>%n issues</numerusform>
+        <numerusform></numerusform>
+        <numerusform></numerusform>
       </translation>
     </message>
     <message>
@@ -2517,6 +2522,11 @@
       <translation>Error loading chats, try closing the app and restarting</translation>
     </message>
     <message>
+      <source>%1 was removed from your trusted sites.</source>
+      <comment>AppMain</comment>
+      <translation>%1 was removed from your trusted sites.</translation>
+    </message>
+    <message>
       <source>Where do you want to go?</source>
       <comment>AppMain</comment>
       <translation>Where do you want to go?</translation>
@@ -2555,16 +2565,6 @@
       <source>%1 was successfully removed from your saved addresses</source>
       <comment>AppMain</comment>
       <translation>%1 was successfully removed from your saved addresses</translation>
-    </message>
-    <message>
-      <source>%1 added to your trusted sites.</source>
-      <comment>AppMain</comment>
-      <translation>%1 added to your trusted sites.</translation>
-    </message>
-    <message>
-      <source>%1 was removed from your trusted sites.</source>
-      <comment>AppMain</comment>
-      <translation>%1 was removed from your trusted sites.</translation>
     </message>
   </context>
   <context>
@@ -23348,11 +23348,6 @@
       <source>Status Desktop</source>
       <comment>main</comment>
       <translation>Status Desktop</translation>
-    </message>
-    <message>
-      <source>Hello World</source>
-      <comment>main</comment>
-      <translation>Hello World</translation>
     </message>
   </context>
   <context>

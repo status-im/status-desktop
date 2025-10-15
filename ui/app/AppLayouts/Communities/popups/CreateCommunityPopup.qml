@@ -158,7 +158,7 @@ StatusStackModal {
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
                         text: qsTr("Export your Discord JSON data using %1").arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter/releases/tag/2.40.4'>DiscordChatExporter</a>")
-                        onLinkActivated: link => Global.openLink(link)
+                        onLinkActivated: link => Global.requestOpenLink(link)
                         HoverHandler {
                             id: handler1
                         }
@@ -172,7 +172,7 @@ StatusStackModal {
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
                         text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'>documentation</a> if you have any queries")
-                        onLinkActivated: link => Global.openLink(link)
+                        onLinkActivated: link => Global.requestOpenLink(link)
                         HoverHandler {
                             id: handler2
                         }

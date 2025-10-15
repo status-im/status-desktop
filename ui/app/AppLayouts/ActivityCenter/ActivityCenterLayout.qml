@@ -679,7 +679,7 @@ StatusSectionLayout {
         id: newsMessagePopup
 
         NewsMessagePopup {
-            onLinkClicked: Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+            onLinkClicked: (link) => Global.requestOpenLink(link)
         }
     }
 

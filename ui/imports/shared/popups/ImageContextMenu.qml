@@ -10,7 +10,6 @@ StatusMenu {
     property string url
     property string imageSource
     property string domain
-    property bool requireConfirmationOnOpen: false
     property bool isGif: root.imageSource.toLowerCase().endsWith(".gif")
     property bool isVideo: root.imageSource.toLowerCase().endsWith(".mp4")
 
@@ -48,6 +47,6 @@ StatusMenu {
         text: qsTr("Open link")
         icon.name: "browser"
         enabled: d.isUnfurled
-        onTriggered: requireConfirmationOnOpen ? Global.openLinkWithConfirmation(root.url, root.domain) : Global.openLink(root.url)
+        onTriggered: Global.requestOpenLink(root.url)
     }
 }

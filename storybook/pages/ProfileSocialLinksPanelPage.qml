@@ -73,8 +73,8 @@ SplitView {
 
     Connections {
         target: Global
-        function onOpenLink(link) {
-            logs.logEvent("Global::openLink", ["link"], [link])
+        function onRequestOpenLink(link) {
+            logs.logEvent("Global::onRequestOpenLink", ["link"], [link])
         }
     }
 

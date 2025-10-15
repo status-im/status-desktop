@@ -74,8 +74,8 @@ SignTransactionModalBase {
             }
             SwapProvidersTermsAndConditionsText {
                 serviceProviderName: root.serviceProviderName
-                onLinkClicked: root.openLinkWithConfirmation(root.serviceProviderURL)
-                onTermsAndConditionClicked: root.openLinkWithConfirmation(root.serviceProviderTandCUrl)
+                onLinkClicked: root.requestOpenLink(root.serviceProviderURL)
+                onTermsAndConditionClicked: root.requestOpenLink(root.serviceProviderTandCUrl)
             }
         }
     ]
@@ -185,7 +185,7 @@ SignTransactionModalBase {
                 networkName: root.networkName
                 networkShortName: root.networkShortName
                 networkBlockExplorerUrl: root.networkBlockExplorerUrl
-                onOpenLink: (link) => root.openLinkWithConfirmation(link)
+                onOpenLink: (link) => root.requestOpenLink(link)
             }
         ]
     }
@@ -206,7 +206,7 @@ SignTransactionModalBase {
                 networkName: root.serviceProviderName
                 networkShortName: root.networkShortName
                 networkBlockExplorerUrl: root.networkBlockExplorerUrl
-                onOpenLink: (link) => root.openLinkWithConfirmation(link)
+                onOpenLink: (link) => root.requestOpenLink(link)
             }
         ]
     }

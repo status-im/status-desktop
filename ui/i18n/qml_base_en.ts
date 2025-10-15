@@ -1848,6 +1848,10 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>%1 added to your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>This device is now the control node for the %1 Community</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2051,6 +2055,10 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>%1 was removed from your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Where do you want to go?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2080,14 +2088,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>%1 was successfully removed from your saved addresses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 added to your trusted sites.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 was removed from your trusted sites.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -19188,10 +19188,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>main</name>
     <message>
         <source>Status Desktop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hello World</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

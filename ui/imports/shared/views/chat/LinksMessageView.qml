@@ -125,7 +125,7 @@ Flow {
                 }
 
                 if(previewType === Constants.LinkPreviewType.Standard) {
-                    Global.openLinkWithConfirmation(url, linkData.domain)
+                    Global.requestOpenLink(url)
                     return
                 }
 

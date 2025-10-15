@@ -1847,10 +1847,14 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Device paired</source>
-        <translation>Zařízení spárováno</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sync in process. Keep device powered and app open.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 added to your trusted sites.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1875,39 +1879,39 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Invite People</source>
-        <translation>Pozvat lidi</translation>
+        <translation type="unfinished">Pozvat lidi</translation>
     </message>
     <message>
         <source>Community Info</source>
-        <translation>Info o komunitě</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Community Rules</source>
-        <translation>Komunitní pravidla</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mute Community</source>
-        <translation>Ztlumit komunitu</translation>
+        <translation type="unfinished">Ztlumit komunitu</translation>
     </message>
     <message>
         <source>Unmute Community</source>
-        <translation>Zrušit ztlumení</translation>
+        <translation type="unfinished">Zrušit ztlumení</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation>Označit jako přečtěné</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Edit Shared Addresses</source>
-        <translation>Upravit sdílené adresy</translation>
+        <translation type="unfinished">Upravit sdílené adresy</translation>
     </message>
     <message>
         <source>Close Community</source>
-        <translation>Zavřít komunitu</translation>
+        <translation type="unfinished">Zavřít komunitu</translation>
     </message>
     <message>
         <source>Leave Community</source>
-        <translation>Opustit komunitu</translation>
+        <translation type="unfinished">Opustit komunitu</translation>
     </message>
     <message>
         <source>The import of ‘%1’ from Discord to Status was stopped: &lt;a href=&apos;#&apos;&gt;Critical issues found&lt;/a&gt;</source>
@@ -1919,7 +1923,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Details (%1)</source>
-        <translation>Podrobnosti (%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n issue(s)</source>
@@ -1931,7 +1935,7 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>Details</source>
-        <translation>Podrobnosti</translation>
+        <translation type="unfinished">Podrobnosti</translation>
     </message>
     <message>
         <source>Importing ‘%1’ from Discord to Status</source>
@@ -2058,6 +2062,10 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>%1 was removed from your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Where do you want to go?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2087,14 +2095,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     </message>
     <message>
         <source>%1 was successfully removed from your saved addresses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 added to your trusted sites.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 was removed from your trusted sites.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13791,11 +13791,11 @@ to load</source>
     <name>ProfileLayout</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished">Kontakty</translation>
+        <translation>Kontakty</translation>
     </message>
     <message>
         <source>Status Keycard</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Keycard</translation>
     </message>
     <message>
         <source>The Keycard module is still busy, please try again</source>
@@ -19270,10 +19270,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Status Desktop</source>
         <translation>Status Desktop</translation>
-    </message>
-    <message>
-        <source>Hello World</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

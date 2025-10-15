@@ -268,10 +268,7 @@ Page {
         target: onboardingFlow.topLevelItem
         ignoreUnknownSignals: true
 
-        function onOpenLink(link: string) {
-            Qt.openUrlExternally(link)
-        }
-        function onOpenLinkWithConfirmation(link: string, domain: string) {
+        function onRequestOpenLink(link: string) {
             Qt.openUrlExternally(link)
         }
     }

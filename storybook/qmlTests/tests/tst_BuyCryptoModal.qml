@@ -111,7 +111,7 @@ Item {
     SignalSpy {
         id: notificationSpy
         target: Global
-        signalName: "openLinkWithConfirmation"
+        signalName: "requestOpenLink"
     }
 
     TestCase {
@@ -249,7 +249,6 @@ Item {
             verify(controlUnderTest.rightButtons[0].loading)
             tryCompare(notificationSpy, "count", 1)
             compare(notificationSpy.signalArguments[0][0], "xxxx")
-            compare(notificationSpy.signalArguments[0][1], modelData.hostname)
             notificationSpy.clear()
 
             // popup should be closed
@@ -273,7 +272,6 @@ Item {
             verify(loadingIndicator.visible)
             tryCompare(notificationSpy, "count", 1)
             compare(notificationSpy.signalArguments[0][0], "xxxx")
-            compare(notificationSpy.signalArguments[0][1], modelData.hostname)
             notificationSpy.clear()
 
             // popup should be closed

@@ -129,7 +129,7 @@ Item {
     SignalSpy {
         id: signalSpyOpenLink
         target: Global
-        signalName: "openLinkWithConfirmation"
+        signalName: "requestOpenLink"
     }
 
     property SendSignModal controlUnderTest: null

@@ -57,6 +57,6 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: Global.openLink(root.url)
+        onClicked: Global.requestOpenLink(root.url)
     }
 }
