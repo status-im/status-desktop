@@ -1,26 +1,49 @@
 # E2E Testing Framework
 
-Automated end-to-end testing for Status Desktop using Appium and LambdaTest.
+Automated end-to-end testing for Status Desktop Android tablet/mobile using Appium and LambdaTest.
 
-## Quick Start
+## ⚡ Quick Start
 
-### 1. Setup
+### 🤖 GitHub Actions (5 min)
+1. **Build APK**: Use `android-build.yml` workflow with `x86_64` architecture
+2. **Get APK details**: LambdaTest app URL or GitHub workflow run id (from URL) or APK artifact URL  
+3. **Run Tests**: Use `e2e-appium-android.yml` workflow with default settings (specify APK source)
+4. **View Results**: Check workflow artifacts and summary
+
+### ☁️ Run tests on LambdaTest cloud (10 min)
 ```bash
 cd test/e2e_appium
 pip install -r requirements.txt
+
+# Set credentials and run on cloud devices
+export LT_USERNAME="your_lambdatest_username"
+export LT_ACCESS_KEY="your_lambdatest_access_key" 
+export STATUS_APP_URL="lt://your_app_id"
+pytest -m onboarding --env=lambdatest -v
 ```
 
-### 2. Configure LambdaTest (GitHub Secrets)
-Repository administrators need to set:
-- `LT_USERNAME` - Your LambdaTest username
-- `LT_ACCESS_KEY` - Your LambdaTest access key
+### 💻 Local Setup (30+ min) 
+**Advanced users** - See [Local Testing Setup](#local-testing-setup-advanced) section below
 
-### 3. Run Tests via GitHub Actions
-1. Build APK using `android-build.yml` workflow (architecture: `x86_64`)
-2. Run tests using `e2e-appium-android.yml` workflow
-3. Use artifact name: `Status-tablet-x86_64`
+## 📋 Prerequisites
 
-## Test Selection
+**For Cloud Testing (Recommended):**
+- Python 3.11+
+- LambdaTest account with credentials:
+  ```bash
+  export LT_USERNAME="your_lambdatest_username"  
+  export LT_ACCESS_KEY="your_lambdatest_access_key"
+  export STATUS_APP_URL="lt://your_app_id"  # Upload APK to LambdaTest first
+  ```
+
+**For Local Testing (Advanced):**
+- Python 3.11+ 
+- Android SDK with `adb` command available
+- Appium server: `npm install -g appium && appium driver install uiautomator2`
+- Android emulator running or physical device connected
+- Status Desktop APK file
+
+## 🧪 Test Selection
 
 **By markers:**
 ```bash
@@ -32,25 +55,24 @@ pytest -m performance    # Performance validation tests
 
 **Specific tests:**
 ```bash
-# Run onboarding tests with fixture
-pytest tests/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_flow_with_fixture
+# Run onboarding tests
+pytest tests/test_onboarding_flow.py
 
-# (Legacy examples removed for v1)
-
-# Run tests that depend on onboarding
-pytest tests/test_onboarding_dependent_features.py
+# Run specific test method
+pytest tests/test_onboarding_flow.py::TestOnboardingFlow::test_onboarding_new_password_skip_analytics
 ```
 
-## Local Testing
+## ☁️ LambdaTest Setup Details
 
-```bash
-# Setup local environment
-python scripts/local_setup.py
-
-# Run tests with local APK
-export LOCAL_APP_PATH="/path/to/Status-tablet.apk"
-pytest -m onboarding --env=local -v
-```
+1. **Get Credentials**: Create account at [lambdatest.com](https://lambdatest.com) → Settings → Password & Security
+2. **Upload APK**: Upload Status-tablet.apk via LambdaTest App Upload → Copy app ID (format: `lt://APP123...`)
+3. **Run Tests**:
+   ```bash
+   export LT_USERNAME="your_lambdatest_username"
+   export LT_ACCESS_KEY="your_lambdatest_access_key"
+   export STATUS_APP_URL="lt://APP10160232441755188546651464"  # Your app ID
+   pytest -m onboarding --env=lambdatest -v
+   ```
 
 ## GitHub Actions Workflows
 
@@ -82,25 +104,37 @@ pytest -m onboarding --env=local -v
 - **smoke**: Quick critical functionality tests
 - **critical**: Essential features that must pass
 
-## Onboarding Fixture
+## ✍️ Writing Tests
 
-The framework includes a reusable onboarding fixture that eliminates code duplication:
+### Using Onboarding Fixture
+The framework includes a reusable onboarding fixture:
 
 ```python
-# Simple usage - fixture handles complete onboarding
-def test_my_feature(self, onboarded_user):
-    user_data = onboarded_user['user_data']
-    assert onboarded_user['success']
-    # Test your feature here
+class TestMyFeature(BaseTest):
+    
+    @pytest.mark.onboarding
+    def test_my_feature(self, onboarded_user):
+        # User is already onboarded, test your feature
+        assert onboarded_user['success']
+        user_data = onboarded_user['user_data']
+        # Your test logic here
 
-# Advanced usage with custom configuration  
-@pytest.mark.onboarding_config(custom_display_name="MyUser")
-def test_with_custom_onboarding(self, onboarded_user):
-    assert onboarded_user['user_data']['display_name'] == "MyUser"
+    # Custom onboarding configuration
+    @pytest.mark.onboarding_config(custom_display_name="MyUser")
+    def test_with_custom_user(self, onboarded_user):
+        assert onboarded_user['user_data']['display_name'] == "MyUser"
 ```
 
-📖 **[Quick Guide: Using Onboarding Fixtures](docs/USING_ONBOARDING_FIXTURES.md)**  
-📖 **[Complete Onboarding Fixture Documentation](docs/ONBOARDING_FIXTURE.md)**
+### Page Object Pattern
+```python
+from pages.onboarding import WelcomePage
+
+class TestWelcome(BaseTest):
+    def test_welcome_screen(self, app_driver):
+        welcome_page = WelcomePage(app_driver)
+        success = welcome_page.click_create_profile()
+        assert success, "Should successfully click create profile button"
+```
 
 ## Environment Configuration
 
@@ -117,7 +151,7 @@ export LOCAL_APP_PATH="/path/to/Status-tablet.apk"
 export CURRENT_TEST_ENVIRONMENT="local"
 ```
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
 **APK Build Issues:**
 - Verify x86_64 architecture selected in android-build.yml
@@ -133,41 +167,55 @@ export CURRENT_TEST_ENVIRONMENT="local"
 - Verify Android emulator running with correct device name
 - Check LOCAL_APP_PATH points to valid APK file
 
-## Framework Structure
+## 🤝 Contributing
 
+### Code Guidelines
+- Follow PEP 8 style guidelines
+- Use type hints for all function parameters and return values
+- Place all imports at the top of files
+- Inherit from `BaseTest` for test classes
+- Use Page Object Model for UI interactions
+- Add pytest markers for test categorization
+
+### Pull Request Process
+1. Fork repository and create feature branch
+2. Write tests following existing patterns
+3. Run tests locally: `pytest -m onboarding --env=local -v`
+4. Submit PR with clear description
+
+**📖 Complete Guide**: See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development guidelines, code standards, and workflow instructions.
+
+### Framework Structure
 ```
 test/e2e_appium/
 ├── tests/              # Test files
-├── pages/              # Page object models
-├── config/             # Configuration files
-├── scripts/            # Automation and setup scripts
-├── docs/               # Documentation
-└── .github/actions/    # Reusable workflow actions
+├── pages/              # Page object models  
+├── locators/           # UI element locators
+├── fixtures/           # Test fixtures (onboarding, etc.)
+├── config/             # Environment configurations
+├── scripts/            # Automation scripts
+└── utils/              # Helper utilities
 ```
 
-## Contributing
+## 💻 Local Testing Setup (Advanced)
 
-- **[Contributing Guide](CONTRIBUTING.md)** - Complete guide for new contributors
-- **[Framework Architecture](docs/FRAMEWORK_ARCHITECTURE.md)** - Technical design and patterns
-- **[Code Guidelines](docs/CODE_GUIDELINES.md)** - Coding standards and best practices
+**Prerequisites:** Android SDK, Appium server, emulator/device, Status Desktop APK
 
-## Documentation
+**Quick Setup:**
+```bash
+# 1. Start services
+appium &                          # In background
+adb devices                       # Verify device connection
 
-### Getting Started
-- **[Quick Start Guide](docs/QUICK_START.md)** - 5-minute setup
-- **[Local Setup Guide](docs/LOCAL_SETUP.md)** - Detailed development setup
-- **[Environment Management](docs/ENVIRONMENT_MANAGEMENT.md)** - Configuration system
+# 2. Run tests  
+export LOCAL_APP_PATH="/path/to/Status-tablet.apk"
+pytest -m onboarding --env=local -v
+```
 
-### Workflow & CI/CD
-- **[Workflow Quick Reference](docs/WORKFLOW_QUICKREF.md)** - GitHub Actions reference
-- **[GitHub Actions Guide](docs/github-actions.md)** - CI/CD workflows
-- **[Test Reporting](docs/REPORTING_RESULTS.md)** - Understanding results
+**Full Setup Guide:** See [Prerequisites](#-prerequisites) section above for detailed requirements.
 
-### Framework Usage
-- **[Using Onboarding Fixtures](docs/USING_ONBOARDING_FIXTURES.md)** - Fixture patterns
-- **[Onboarding Fixture Documentation](docs/ONBOARDING_FIXTURE.md)** - Detailed fixture guide
-- **[Logging Guide](docs/LOGGING.md)** - Logging system
+## 📞 Help & Support
 
-### Reference
-- **[Framework Architecture](docs/FRAMEWORK_ARCHITECTURE.md)** - Technical architecture
-- **[Code Guidelines](docs/CODE_GUIDELINES.md)** - Development standards 
+- **Issues**: Report bugs or request features in GitHub Issues
+- **Discussions**: Ask questions in GitHub Discussions  
+- **Framework Status**: See [Epic #18436](https://github.com/status-im/status-desktop/issues/18436) for roadmap
