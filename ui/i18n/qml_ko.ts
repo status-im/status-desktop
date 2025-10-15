@@ -2079,6 +2079,14 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <source>%1 was successfully removed from your saved addresses</source>
         <translation>%1이(가) 저장된 주소에서 성공적으로 제거되었어요</translation>
     </message>
+    <message>
+        <source>%1 added to your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 was removed from your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AppSearch</name>
@@ -13426,6 +13434,14 @@ to load</source>
         <source>From all profiles on device</source>
         <translation>이 기기의 모든 프로필에서</translation>
     </message>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrivacyStore</name>
@@ -13670,15 +13686,15 @@ to load</source>
     <name>ProfileLayout</name>
     <message>
         <source>Contacts</source>
-        <translation>연락처</translation>
+        <translation type="unfinished">연락처</translation>
     </message>
     <message>
         <source>Status Keycard</source>
-        <translation>스테이터스 키카드</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The Keycard module is still busy, please try again</source>
-        <translation>Keycard 모듈이 아직 사용 중입니다. 다시 시도해 주세요</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19073,6 +19089,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Privacy Policy</source>
         <translation>개인 정보 보호 정책</translation>
+    </message>
+</context>
+<context>
+    <name>WhitelistedDomainsView</name>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No trusted sites added yet</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
