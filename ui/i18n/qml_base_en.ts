@@ -2082,6 +2082,14 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <source>%1 was successfully removed from your saved addresses</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 added to your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 was removed from your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AppSearch</name>
@@ -13468,6 +13476,14 @@ to load</source>
         <source>From all profiles on device</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrivacyStore</name>
@@ -19150,6 +19166,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Privacy Policy</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WhitelistedDomainsView</name>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No trusted sites added yet</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
