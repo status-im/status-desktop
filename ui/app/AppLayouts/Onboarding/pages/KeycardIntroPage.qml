@@ -77,7 +77,7 @@ KeycardBasePage {
                 icon.name: "external-link"
                 icon.width: 24
                 icon.height: 24
-                onClicked: openLink("https://keycard.tech/")
+                onClicked: requestOpenLink("https://keycard.tech/")
             }
         }
     }

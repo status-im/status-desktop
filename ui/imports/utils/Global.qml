@@ -10,7 +10,6 @@ QtObject {
     signal openPinnedMessagesPopupRequested(var store, var messageStore, var pinnedMessagesModel, string messageToPin, string chatId)
     signal openCommunityProfilePopupRequested(var store, var community, var chatCommunitySectionModule)
 
-    signal openLinkInBrowser(string link)
     signal openCreateChatView()
     signal closeCreateChatView()
 
@@ -59,8 +58,7 @@ QtObject {
     signal openConfirmHideAssetPopup(string assetSymbol, string assetName, string assetImage, bool isCommunityToken)
     signal openConfirmHideCollectiblePopup(string collectibleSymbol, string collectibleName, string collectibleImage, bool isCommunityToken)
 
-    signal openLink(string link)
-    signal openLinkWithConfirmation(string link, string domain)
+    signal requestOpenLink(string link)
     signal activateDeepLink(string link)
 
     signal setNthEnabledSectionActive(int nthSection)

@@ -172,8 +172,8 @@ QtObject {
             root.privacyStore.toggleThirdpartyServicesEnabledRequested()
             Backpressure.debounce(root, 200, () => { SystemUtils.restartApplication() })()
         }
-        onOpenDiscussPageRequested: Global.openLinkWithConfirmation(Constants.statusDiscussPageUrl, SQUtils.StringUtils.extractDomainFromLink(Constants.statusDiscussPageUrl))
-        onOpenThirdpartyServicesArticleRequested: Global.openLinkWithConfirmation(Constants.statusThirdpartyServicesArticle, SQUtils.StringUtils.extractDomainFromLink(Constants.statusThirdpartyServicesArticle))
+        onOpenDiscussPageRequested: Global.requestOpenLink(Constants.statusDiscussPageUrl)
+        onOpenThirdpartyServicesArticleRequested: Global.requestOpenLink(Constants.statusThirdpartyServicesArticle)
     }
 
     readonly property Component enableMessageBackupPopupComponent: Component {

@@ -94,7 +94,7 @@ StatusListView {
                 }
             }
 
-            onLinkClicked: (link) => Global.openLink(link)
+            onLinkClicked: (link) => Global.requestOpenLink(link)
             onClosed: keyFilter.value = ""
         }
     }

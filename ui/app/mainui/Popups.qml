@@ -1148,8 +1148,8 @@ QtObject {
             id: confirmExternalLinkPopup
             ConfirmExternalLinkPopup {
                 destroyOnClose: true
-                onOpenExternalLink: root.openExternalLink(link)
-                onSaveDomainToUnfurledWhitelist: root.saveDomainToUnfurledWhitelist(domain)
+                onOpenExternalLink: (link) => root.openExternalLink(link)
+                onSaveDomainToUnfurledWhitelist: (domain) => root.saveDomainToUnfurledWhitelist(domain)
             }
         },
 
@@ -1189,7 +1189,7 @@ QtObject {
                 onFinaliseOwnershipClicked: signPopup.open()
 
                 onVisitCommunityClicked: communitiesStore.navigateToCommunity(finalisePopup.communityId)
-                onOpenControlNodeDocClicked: Global.openLink(link)
+                onOpenControlNodeDocClicked:(link) => Global.requestOpenLink(link)
 
                 onCalculateFees: {
                     feesBroker.registerSetSignerFeesSubscriber(feeSubscriber)
@@ -1354,7 +1354,7 @@ QtObject {
                 content {
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
-                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                    onLinkActivated: (link) => Global.requestOpenLink(link)
                 }
                 destroyOnClose: true
             }
@@ -1366,7 +1366,7 @@ QtObject {
                 content {
                     textFormat: Text.MarkdownText
                     text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/terms-of-use.mdwn")
-                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                    onLinkActivated: (link) => Global.requestOpenLink(link)
                 }
                 destroyOnClose: true
             }
@@ -1402,7 +1402,7 @@ QtObject {
 
             NewsMessagePopup {
                 activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
-                onLinkClicked: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link));
+                onLinkClicked: (link) => Global.requestOpenLink(link)
             }
         },
         Component {

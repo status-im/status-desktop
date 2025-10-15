@@ -23,7 +23,7 @@ SettingsContentBase {
     titleRowComponentLoader.sourceComponent: StatusButton {
         text: qsTr("Get Keycard")
         onClicked: {
-            Global.openLink(Constants.keycard.general.purchasePage)
+            Global.requestOpenLink(Constants.keycard.general.purchasePage)
         }
     }
 

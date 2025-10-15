@@ -4,8 +4,7 @@ import QtQuick.Controls
 import StatusQ.Core.Theme
 
 Page {
-    signal openLink(string link)
-    signal openLinkWithConfirmation(string link, string domain)
+    signal requestOpenLink(string link)
 
     implicitWidth: 1200
     implicitHeight: 700

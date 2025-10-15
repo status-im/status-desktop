@@ -217,7 +217,7 @@ StatusListItem {
             flatNetworks: root.activeNetworks
             onNetworkClicked: {
                 let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, d.visibleAddress ? d.visibleAddress : root.ens);
-                Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+                Global.requestOpenLink(link)
             }
         }
 

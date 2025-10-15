@@ -80,7 +80,7 @@ Item {
                     enabled: root.sendToAccountEnabled
                     onClicked: {
                         //TODO check this open on CoinGecko
-                        Global.openLink(model.url);
+                        Global.requestOpenLink(model.url);
                     }
                 }
             }
@@ -123,7 +123,7 @@ Item {
                 onTriggered: {
                     //TODO: Get coingecko link for token
                     // let link = "";
-                    // Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+                    // Global.requestOpenLink(link);
                 }
             }
         }

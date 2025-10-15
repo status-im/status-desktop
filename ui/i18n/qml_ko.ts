@@ -1508,579 +1508,579 @@
     <name>AppMain</name>
     <message>
         <source>&quot;%1&quot; successfully added</source>
-        <translation>&quot;%1&quot;가 성공적으로 추가됨</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&quot;%1&quot; successfully removed</source>
-        <translation>&quot;%1&quot;이(가) 성공적으로 제거되었습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>You successfully renamed your key pair
 from &quot;%1&quot; to &quot;%2&quot;</source>
-        <translation>키 쌍 이름을 &quot;%1&quot;에서 &quot;%2&quot;(으)로 성공적으로 변경했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Test network settings for %1 updated</source>
-        <translation>%1의 테스트 네트워크 설정이 업데이트됨</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Live network settings for %1 updated</source>
-        <translation>%1의 라이브 네트워크 설정이 업데이트되었습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>“%1” key pair and its derived accounts were successfully removed from all devices</source>
-        <translation>“%1” 키 쌍과 그로부터 파생된 계정이 모든 기기에서 성공적으로 제거되었습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Please re-generate QR code and try importing again</source>
-        <translation>QR 코드를 다시 생성한 뒤, 가져오기를 다시 시도해 주세요</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Make sure you&apos;re importing the exported key pair on paired device</source>
-        <translation>페어링된 기기에서 내보낸 키 페어를 가져오는지 확인하세요</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 key pair successfully imported</source>
-        <translation>%1 키 쌍이 성공적으로 가져와졌습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n key pair(s) successfully imported</source>
-        <translation>
-            <numerusform>%n개의 키 쌍을 성공적으로 가져왔습니다</numerusform>
+        <translation type="unfinished">
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <source>unknown</source>
-        <translation>알 수 없음</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>View on %1</source>
-        <translation>%1에서 보기</translation>
+        <translation type="unfinished">%1에서 보기</translation>
     </message>
     <message>
         <source>Sending %1 from %2 to %3</source>
-        <translation>%2에서 %3로 %1 전송 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Registering %1 ENS name using %2</source>
-        <translation>%2로 %1 ENS 이름 등록 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Releasing %1 ENS username using %2</source>
-        <translation>%2을(를) 사용하여 %1 ENS 사용자 이름 해제</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Setting public key %1 using %2</source>
-        <translation>%2을(를) 사용해 공개 키 %1 설정 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Purchasing %1 sticker pack using %2</source>
-        <translation>%2로 %1 스티커 팩 구매 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bridging %1 from %2 to %3 in %4</source>
-        <translation>%4 안에 %2에서 %3(으)로 %1 브릿지 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Setting spending cap: %1 in %2 for %3</source>
-        <translation>지출 한도 설정: %3에 대해 %2에서 %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sending %1 %2 from %3 to %4</source>
-        <translation>%3에서 %4로 %1 %2 전송 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Swapping %1 to %2 in %3</source>
-        <translation>%3에서 %1을(를) %2로 스왑하는 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minting infinite %1 tokens for %2 using %3</source>
-        <translation>%3을(를) 사용해 %2에 무한 %1 토큰 발행</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minting %1 %2 tokens for %3 using %4</source>
-        <translation>%4를 사용해 %3에 %1 %2 토큰 민팅</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minting %1 and %2 tokens for %3 using %4</source>
-        <translation>%4를 사용해 %3에 %1 및 %2 토큰 민팅 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropping %1x %2 to %3 using %4</source>
-        <translation>%4을 사용해 %3에게 %1x %2 Airdropping</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropping %1x %2 to %3 addresses using %4</source>
-        <translation>%4를 사용해 %3개 주소에 %1x %2 에어드롭 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropping %1x %2 and %3x %4 to %5 using %6</source>
-        <translation>%6을 사용해 %5에게 %1x %2 및 %3x %4 Airdrop 진행</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropping %1x %2 and %3x %4 to %5 addresses using %6</source>
-        <translation>%6을 사용해 %5개의 주소로 %1x %2와 %3x %4 를 Airdrop 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropping %1 tokens to %2 using %3</source>
-        <translation>%3를 사용해 %2에게 %1 토큰 Airdrop 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Destroying %1x %2 at %3 using %4</source>
-        <translation>%4를 사용하여 %3에서 %1x %2 파기</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Destroying %1x %2 at %3 addresses using %4</source>
-        <translation>%4을 사용하여 %3 주소에서 %1x %2 파기</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Burning %1x %2 for %3 using %4</source>
-        <translation>%1x %2을(를) %3로, %4을 사용해 소각</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Finalizing ownership for %1 using %2</source>
-        <translation>%2을(를) 사용해 %1의 소유권을 최종 확정하는 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sent %1 from %2 to %3</source>
-        <translation>%2에서 %3로 %1 전송함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Registered %1 ENS name using %2</source>
-        <translation>%2을(를) 사용해 %1 ENS 이름을 등록함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Released %1 ENS username using %2</source>
-        <translation>%2을(를) 사용해 %1 ENS 사용자 이름을 릴리스했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Set public key %1 using %2</source>
-        <translation>공개 키 %1을(를) %2로 설정</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Purchased %1 sticker pack using %2</source>
-        <translation>%2로 %1 스티커 팩을 구매함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bridged %1 from %2 to %3 in %4</source>
-        <translation>%2에서 %3로 %1 브릿지 완료, 소요 시간 %4</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Spending spending cap: %1 in %2 for %3</source>
-        <translation>지출 한도: %3에 대해 %2에서 %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sent %1 %2 from %3 to %4</source>
-        <translation>%3에서 %4로 %1 %2 전송함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Swapped %1 to %2 in %3</source>
-        <translation>%3에서 %1을(를) %2(으)로 스왑했어요</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Spending cap set: %1 in %2 for %3</source>
-        <translation>지출 한도 설정됨: %3의 %2에서 %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minted infinite %1 tokens for %2 using %3</source>
-        <translation>%3를 사용해 %2에 무한 %1 토큰을 민팅했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minted %1 %2 tokens for %3 using %4</source>
-        <translation>%4을 사용해 %3에 %1 %2 토큰을 민트했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minted %1 and %2 tokens for %3 using %4</source>
-        <translation>%4을 사용하여 %3에 %1 및 %2 토큰을 민팅했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropped %1x %2 to %3 using %4</source>
-        <translation>%4를 사용해 %3에 %2를 %1x 에어드랍함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropped %1x %2 to %3 addresses using %4</source>
-        <translation>%4을 사용해 %1x %2를 %3 개 주소로 Airdrop했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropped %1x %2 and %3x %4 to %5 using %6</source>
-        <translation>%1x %2와 %3x %4을(를) %6을(를) 사용해 %5에게 Airdrop함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropped %1x %2 and %3x %4 to %5 addresses using %6</source>
-        <translation>%6를 사용해 %5개 주소로 %1x %2 및 %3x %4를 Airdrop했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdropped %1 tokens to %2 using %3</source>
-        <translation>%3를 사용해 %2에게 %1개의 토큰을 Airdrop했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Destroyed %1x %2 at %3 using %4</source>
-        <translation>%1x %2을(를) %3에서 %4로 파괴함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Destroyed %1x %2 at %3 addresses using %4</source>
-        <translation>%4를 사용해 %3개의 주소에서 %1x %2 파괴함</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Burned %1x %2 for %3 using %4</source>
-        <translation>%1x %2을(를) %3에 소각, 사용 도구: %4</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Finalized ownership for %1 using %2</source>
-        <translation>%2 를 사용해 %1의 소유권을 최종 확정했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Send failed: %1 from %2 to %3</source>
-        <translation>전송 실패: %2의 %1 → %3</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>ENS username registeration failed: %1 using %2</source>
-        <translation>ENS 사용자 이름 등록 실패: %1, %2 사용 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>ENS username release failed: %1 using %2</source>
-        <translation>ENS 사용자 이름 해제 실패: %1, %2 사용 중</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Set public key failed: %1 using %2</source>
-        <translation>공개 키 설정 실패: %1, 사용 중인 %2</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sticker pack purchase failed: %1 using %2</source>
-        <translation>스티커 팩 구매 실패: %1 을(를) %2로 사용</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bridge failed: %1 from %2 to %3 in %4</source>
-        <translation>브릿지 실패: %2에서 %3로 %1 전송 중, %4에서 오류 발생</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Spending spending failed: %1 in %2 for %3</source>
-        <translation>지출 실패: %1, %2에서 %3</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Send failed: %1 %2 from %3 to %4</source>
-        <translation>전송 실패: %1 %2, %3에서 %4로</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Swap failed: %1 to %2 in %3</source>
-        <translation>스왑 실패: %1 → %2, 소요 시간 %3</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Spending cap failed: %1 in %2 for %3</source>
-        <translation>지출 한도 실패: %2에서 %1, 대상 %3</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mint failed: infinite %1 tokens for %2 using %3</source>
-        <translation>민팅 실패: %3를 사용해 %2에 무한 %1 토큰</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mint failed: %1 %2 tokens for %3 using %4</source>
-        <translation>민팅 실패: %3에 대해 %4을(를) 사용해 %1 %2 토큰</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mint failed: %1 and %2 tokens for %3 using %4</source>
-        <translation>민팅 실패: %3에 대해 %1 및 %2 토큰을 %4 사용하여</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdrop failed: %1x %2 to %3 using %4</source>
-        <translation>Airdrop 실패: %1x %2를 %3에 %4로 전송 실패</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdrop failed: %1x %2 to %3 addresses using %4</source>
-        <translation>Airdrop 실패: %1x %2을(를) %3개 주소에 %4으로 전송하지 못했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdrop failed: %1x %2 and %3x %4 to %5 using %6</source>
-        <translation>Airdrop 실패: %1x %2 및 %3x %4을(를) %6을(를) 사용하여 %5에 전송하지 못했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdrop failed: %1x %2 and %3x %4 to %5 addresses using %6</source>
-        <translation>Airdrop 실패: %1x %2 및 %3x %4을(를) %5개의 주소로 %6을(를) 사용해 전송하지 못했습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Airdrop failed: %1 tokens to %2 using %3</source>
-        <translation>Airdrop 실패: %3을(를) 사용해 %2에 %1 토큰 전송 실패</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Destruction failed: %1x %2 at %3 using %4</source>
-        <translation>파기 실패: %1x %2, %3에서 %4 사용</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Destruction failed: %1x %2 at %3 addresses using %4</source>
-        <translation>파기 실패: %1x %2, %3개의 주소에서 %4 사용</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Burn failed: %1x %2 for %3 using %4</source>
-        <translation>소각 실패: %1x %2, 대상 %3, 방법 %4</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Finalize ownership failed: %1 using %2</source>
-        <translation>소유권 최종화 실패: %2를 사용한 %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unknown error resolving community</source>
-        <translation>커뮤니티를 확인하는 중 알 수 없는 오류가 발생했어요</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 was banned from %2</source>
-        <translation>%1이(가) %2에서 차단되었습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 unbanned from %2</source>
-        <translation>%1 님이 %2에서 차단 해제됨</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 was kicked from %2</source>
-        <translation>%2에서 %1이(가) 강퇴되었습니다</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Device paired</source>
-        <translation>기기 페어링 완료</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sync in process. Keep device powered and app open.</source>
-        <translation>동기화 중입니다. 기기를 켜 두고 앱을 열어 두세요.</translation>
-    </message>
-    <message>
-        <source>This device is now the control node for the %1 Community</source>
-        <translation>이 기기는 이제 %1 커뮤니티의 제어 Node입니다</translation>
-    </message>
-    <message>
-        <source>&apos;%1&apos; community imported</source>
-        <translation>&apos;%1&apos; 커뮤니티를 가져왔습니다</translation>
-    </message>
-    <message>
-        <source>Importing community is in progress</source>
-        <translation>커뮤니티 가져오기가 진행 중입니다</translation>
-    </message>
-    <message>
-        <source>Failed to import community &apos;%1&apos;</source>
-        <translation>커뮤니티 &apos;%1&apos; 가져오기 실패</translation>
-    </message>
-    <message>
-        <source>Import community &apos;%1&apos; was canceled</source>
-        <translation>커뮤니티 &apos;%1&apos; 가져오기가 취소되었습니다</translation>
-    </message>
-    <message>
-        <source>Invite People</source>
-        <translation>사람들 초대하기</translation>
-    </message>
-    <message>
-        <source>Community Info</source>
-        <translation>커뮤니티 정보</translation>
-    </message>
-    <message>
-        <source>Community Rules</source>
-        <translation>커뮤니티 규칙</translation>
-    </message>
-    <message>
-        <source>Mute Community</source>
-        <translation>커뮤니티 음소거</translation>
-    </message>
-    <message>
-        <source>Unmute Community</source>
-        <translation>커뮤니티 소리 켜기</translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation>읽음으로 표시</translation>
-    </message>
-    <message>
-        <source>Edit Shared Addresses</source>
-        <translation>공유 주소 편집</translation>
-    </message>
-    <message>
-        <source>Close Community</source>
-        <translation>닫기 커뮤니티</translation>
-    </message>
-    <message>
-        <source>Leave Community</source>
-        <translation>커뮤니티 나가기</translation>
-    </message>
-    <message>
-        <source>The import of ‘%1’ from Discord to Status was stopped: &lt;a href=&apos;#&apos;&gt;Critical issues found&lt;/a&gt;</source>
-        <translation>Discord에서 Status로 ‘%1’ 가져오기가 중단되었습니다: &lt;a href=&apos;#&apos;&gt;치명적인 문제가 발견됨&lt;/a&gt;</translation>
-    </message>
-    <message>
-        <source>‘%1’ was successfully imported from Discord to Status</source>
-        <translation>‘%1’이(가) Discord에서 Status로 성공적으로 가져와졌습니다</translation>
-    </message>
-    <message>
-        <source>Details (%1)</source>
-        <translation>자세히 (%1)</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n issue(s)</source>
-        <translation>
-            <numerusform>%n개 이슈</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Details</source>
-        <translation>상세</translation>
-    </message>
-    <message>
-        <source>Importing ‘%1’ from Discord to Status</source>
-        <translation>Discord에서 Status로 ‘%1’ 가져오기</translation>
-    </message>
-    <message>
-        <source>Check progress (%1)</source>
-        <translation>진행 상황 확인 (%1)</translation>
-    </message>
-    <message>
-        <source>Check progress</source>
-        <translation>진행 상황 확인</translation>
-    </message>
-    <message>
-        <source>Visit your new channel</source>
-        <translation>새 채널로 이동</translation>
-    </message>
-    <message>
-        <source>Visit your Community</source>
-        <translation>커뮤니티 방문</translation>
-    </message>
-    <message>
-        <source>Can not connect to store node. Retrying automatically</source>
-        <translation>스토어 Node에 연결할 수 없습니다. 자동으로 다시 시도합니다</translation>
-    </message>
-    <message>
-        <source>Pocket Network (POKT) &amp; Infura are currently both unavailable for %1. Balances for those chains are as of %2.</source>
-        <translation>Pocket Network (POKT) 및 Infura가 현재 %1에 대해 모두 사용할 수 없습니다. 해당 체인의 잔액은 %2 기준입니다.</translation>
-    </message>
-    <message>
-        <source>Pocket Network (POKT) connection successful</source>
-        <translation>Pocket Network (POKT) 연결 성공</translation>
-    </message>
-    <message>
-        <source>POKT &amp; Infura down. Token balances are as of %1.</source>
-        <translation>POKT와 Infura 장애. 토큰 잔액은 %1 기준입니다.</translation>
-    </message>
-    <message>
-        <source>POKT &amp; Infura down. Token balances cannot be retrieved.</source>
-        <translation>POKT 및 Infura 장애. 토큰 잔액을 불러올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>POKT &amp; Infura down for &lt;a href=&apos;#&apos;&gt;multiple chains &lt;/a&gt;. Token balances for those chains cannot be retrieved.</source>
-        <translation>POKT 및 Infura가 &lt;a href=&apos;#&apos;&gt;여러 체인에서 &lt;/a&gt; 중단되었습니다. 해당 체인의 토큰 잔액을 가져올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>POKT &amp; Infura down for %1. %1 token balances are as of %2.</source>
-        <translation>POKT 및 Infura가 %1에 오류가 발생했습니다. %1 토큰 잔액은 %2 기준입니다.</translation>
-    </message>
-    <message>
-        <source>POKT &amp; Infura down for %1. %1 token balances cannot be retrieved.</source>
-        <translation>%1에 대해 POKT 및 Infura가 중단됨. %1 토큰 잔액을 가져올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Retrying connection to POKT Network (grove.city).</source>
-        <translation>POKT Network(grove.city)에 다시 연결하는 중입니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers are currently unavailable for %1. Collectibles for those chains are as of %2.</source>
-        <translation>수집품 제공자는 현재 %1에 사용할 수 없습니다. 해당 체인의 수집품은 %2 기준입니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers are currently unavailable for %1.</source>
-        <translation>수집품 제공자는 현재 %1에서 사용할 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers connection successful</source>
-        <translation>콜렉터블 제공자 연결 성공</translation>
-    </message>
-    <message>
-        <source>Collectibles providers down. Collectibles are as of %1.</source>
-        <translation>수집품 제공자가 중단됨. 수집품은 %1 기준입니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers down. Collectibles cannot be retrieved.</source>
-        <translation>수집품 제공자가 다운되었습니다. 수집품을 가져올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers down for &lt;a href=&apos;#&apos;&gt;multiple chains&lt;/a&gt;. Collectibles for these chains cannot be retrieved.</source>
-        <translation>&lt;a href=&apos;#&apos;&gt;여러 체인&lt;/a&gt;의 컬렉티블 제공자가 다운되었습니다. 해당 체인의 컬렉티블을 가져올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers down for %1. Collectibles for this chain are as of %2.</source>
-        <translation>%1에 대한 수집품 제공자가 중단되었습니다. 이 체인의 수집품은 %2 기준입니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers down for %1. Collectibles for this chain cannot be retrieved.</source>
-        <translation>%1용 콜렉터블 제공자가 다운되었습니다. 이 체인의 콜렉터블을 불러올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers down for %1. Collectibles for these chains are as of %2.</source>
-        <translation>%1에 대한 수집품 제공자가 다운되었습니다. 이 체인의 수집품은 %2 기준입니다.</translation>
-    </message>
-    <message>
-        <source>Collectibles providers down for %1. Collectibles for these chains cannot be retrieved.</source>
-        <translation>%1의 수집품 제공자가 현재 중단되었습니다. 이 체인의 수집품을 불러올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Retrying connection to collectibles providers...</source>
-        <translation>수집품 제공자에 다시 연결하는 중...</translation>
-    </message>
-    <message>
-        <source>CryptoCompare and CoinGecko connection successful</source>
-        <translation>Cryptocompare 및 Coingecko 연결 성공</translation>
-    </message>
-    <message>
-        <source>CryptoCompare and CoinGecko down. Market values are as of %1.</source>
-        <translation>Cryptocompare와 Coingecko가 다운되었습니다. 시장 가치는 %1 기준입니다.</translation>
-    </message>
-    <message>
-        <source>CryptoCompare and CoinGecko down. Market values cannot be retrieved.</source>
-        <translation>Cryptocompare와 Coingecko에 장애가 발생했습니다. 시장 가치를 가져올 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Retrying connection to CryptoCompare and CoinGecko...</source>
-        <translation>Cryptocompare 및 Coingecko에 다시 연결 시도 중...</translation>
-    </message>
-    <message>
-        <source>Loading sections...</source>
-        <translation>섹션 불러오는 중...</translation>
-    </message>
-    <message>
-        <source>Error loading chats, try closing the app and restarting</source>
-        <translation>채팅을 불러오지 못했습니다. 앱을 닫았다가 다시 시작해 주세요</translation>
-    </message>
-    <message>
-        <source>Where do you want to go?</source>
-        <translation>어디로 가고 싶어요?</translation>
-    </message>
-    <message>
-        <source>adding</source>
-        <translation>추가하는 중</translation>
-    </message>
-    <message>
-        <source>editing</source>
-        <translation>편집 중</translation>
-    </message>
-    <message>
-        <source>An error occurred while %1 %2 address</source>
-        <translation>%1 %2 주소를 처리하는 중 오류가 발생했습니다</translation>
-    </message>
-    <message>
-        <source>%1 successfully added to your saved addresses</source>
-        <translation>저장된 주소에 %1을(를) 성공적으로 추가했어요</translation>
-    </message>
-    <message>
-        <source>%1 saved address successfully edited</source>
-        <translation>%1 저장된 주소가 성공적으로 수정되었습니다</translation>
-    </message>
-    <message>
-        <source>An error occurred while removing %1 address</source>
-        <translation>%1 주소를 제거하는 동안 오류가 발생했습니다</translation>
-    </message>
-    <message>
-        <source>%1 was successfully removed from your saved addresses</source>
-        <translation>%1이(가) 저장된 주소에서 성공적으로 제거되었어요</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 added to your trusted sites.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>This device is now the control node for the %1 Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&apos;%1&apos; community imported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Importing community is in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to import community &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import community &apos;%1&apos; was canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite People</source>
+        <translation type="unfinished">사람 초대</translation>
+    </message>
+    <message>
+        <source>Community Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Community Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mute Community</source>
+        <translation type="unfinished">커뮤니티 음소거</translation>
+    </message>
+    <message>
+        <source>Unmute Community</source>
+        <translation type="unfinished">커뮤니티 음소거 해제</translation>
+    </message>
+    <message>
+        <source>Mark as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Shared Addresses</source>
+        <translation type="unfinished">공유 주소 편집</translation>
+    </message>
+    <message>
+        <source>Close Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Leave Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The import of ‘%1’ from Discord to Status was stopped: &lt;a href=&apos;#&apos;&gt;Critical issues found&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>‘%1’ was successfully imported from Discord to Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Details (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n issue(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation type="unfinished">세부 정보</translation>
+    </message>
+    <message>
+        <source>Importing ‘%1’ from Discord to Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check progress (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Visit your new channel</source>
+        <translation type="unfinished">새 채널로 이동</translation>
+    </message>
+    <message>
+        <source>Visit your Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can not connect to store node. Retrying automatically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pocket Network (POKT) &amp; Infura are currently both unavailable for %1. Balances for those chains are as of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pocket Network (POKT) connection successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>POKT &amp; Infura down. Token balances are as of %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>POKT &amp; Infura down. Token balances cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>POKT &amp; Infura down for &lt;a href=&apos;#&apos;&gt;multiple chains &lt;/a&gt;. Token balances for those chains cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>POKT &amp; Infura down for %1. %1 token balances are as of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>POKT &amp; Infura down for %1. %1 token balances cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retrying connection to POKT Network (grove.city).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers are currently unavailable for %1. Collectibles for those chains are as of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers are currently unavailable for %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers connection successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers down. Collectibles are as of %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers down. Collectibles cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers down for &lt;a href=&apos;#&apos;&gt;multiple chains&lt;/a&gt;. Collectibles for these chains cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers down for %1. Collectibles for this chain are as of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers down for %1. Collectibles for this chain cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers down for %1. Collectibles for these chains are as of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collectibles providers down for %1. Collectibles for these chains cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retrying connection to collectibles providers...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CryptoCompare and CoinGecko connection successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CryptoCompare and CoinGecko down. Market values are as of %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CryptoCompare and CoinGecko down. Market values cannot be retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retrying connection to CryptoCompare and CoinGecko...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading sections...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error loading chats, try closing the app and restarting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>%1 was removed from your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where do you want to go?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>adding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>editing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred while %1 %2 address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 successfully added to your saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 saved address successfully edited</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred while removing %1 address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 was successfully removed from your saved addresses</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13671,15 +13671,15 @@ to load</source>
     <name>ProfileLayout</name>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished">연락처</translation>
+        <translation>연락처</translation>
     </message>
     <message>
         <source>Status Keycard</source>
-        <translation type="unfinished"></translation>
+        <translation>스테이터스 키카드</translation>
     </message>
     <message>
         <source>The Keycard module is still busy, please try again</source>
-        <translation type="unfinished"></translation>
+        <translation>Keycard 모듈이 아직 사용 중입니다. 다시 시도해 주세요</translation>
     </message>
 </context>
 <context>
@@ -19115,10 +19115,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Status Desktop</source>
         <translation>스테이터스 데스크톱</translation>
-    </message>
-    <message>
-        <source>Hello World</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -182,9 +182,7 @@ Rectangle {
             alertNote.text: infoBox.note
             alertNote.color: Theme.palette.baseColor1
 
-            onCancelClicked: {
-                Qt.openUrlExternally(infoBox.url)
-            }
+            onCancelClicked: Global.requestOpenLink(infoBox.url)
 
             onClosed: {
                 infoBox.active = false

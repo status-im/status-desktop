@@ -55,7 +55,7 @@ OnboardingPage {
                 color: Theme.palette.baseColor1
                 horizontalAlignment: Text.AlignHCenter
                 visible: !!text
-                onLinkActivated: openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                onLinkActivated: (link) => requestOpenLink(link)
 
                 HoverHandler {
                     // Qt CSS doesn't support custom cursor shape
