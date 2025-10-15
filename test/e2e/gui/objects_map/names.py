@@ -975,7 +975,7 @@ o_StatusListItemTag = {"container": statusDesktop_mainWindow_overlay, "type": "S
 radioButton_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "radioButton",
                                  "type": "StatusRadioButton", "unnamed": 1, "visible": True}
 statusSeedPhraseInputField_TextEdit = {"container": statusDesktop_mainWindow_overlay,
-                                       "objectName": "enterSeedPhraseInputField", "type": "TextEdit", "visible": True}
+                                       "objectName": "enterSeedPhraseInputField", "type": "TextField", "visible": True}
 switchTabBar_StatusSwitchTabBar = {"container": statusDesktop_mainWindow_overlay,
                                    "objectName": "enterSeedPhraseSwitchBar", "type": "StatusSwitchTabBar",
                                    "visible": True}
