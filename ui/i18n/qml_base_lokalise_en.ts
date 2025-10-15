@@ -4786,29 +4786,29 @@
   <context>
     <name>ConfirmExternalLinkPopup</name>
     <message>
-      <source>Before you go</source>
-      <comment>ConfirmExternalLinkPopup</comment>
-      <translation>Before you go</translation>
-    </message>
-    <message>
-      <source>This link is taking you to the following site. Be careful to double check the URL before you go.</source>
-      <comment>ConfirmExternalLinkPopup</comment>
-      <translation>This link is taking you to the following site. Be careful to double check the URL before you go.</translation>
-    </message>
-    <message>
-      <source>Trust &lt;b&gt;%1&lt;/b&gt; links from now on</source>
-      <comment>ConfirmExternalLinkPopup</comment>
-      <translation>Trust &lt;b&gt;%1&lt;/b&gt; links from now on</translation>
-    </message>
-    <message>
       <source>Cancel</source>
       <comment>ConfirmExternalLinkPopup</comment>
       <translation>Cancel</translation>
     </message>
     <message>
-      <source>Visit site</source>
+      <source>Opening external link</source>
       <comment>ConfirmExternalLinkPopup</comment>
-      <translation>Visit site</translation>
+      <translation>Opening external link</translation>
+    </message>
+    <message>
+      <source>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</source>
+      <comment>ConfirmExternalLinkPopup</comment>
+      <translation>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</translation>
+    </message>
+    <message>
+      <source>Always trust links to &lt;b&gt;%1&lt;/b&gt;</source>
+      <comment>ConfirmExternalLinkPopup</comment>
+      <translation>Always trust links to &lt;b&gt;%1&lt;/b&gt;</translation>
+    </message>
+    <message>
+      <source>Open</source>
+      <comment>ConfirmExternalLinkPopup</comment>
+      <translation>Open</translation>
     </message>
   </context>
   <context>
