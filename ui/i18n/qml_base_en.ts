@@ -19175,10 +19175,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
         <source>Status Desktop</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Hello World</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>tst_StatusInput</name>
