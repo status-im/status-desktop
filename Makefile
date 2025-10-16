@@ -94,13 +94,13 @@ ifeq ($(mkspecs),)
 endif
 
 ifeq ($(mkspecs),macx)
- CFLAGS := -mmacosx-version-min=13.0
+ CFLAGS := -mmacosx-version-min=14.0
  export CFLAGS
- CGO_CFLAGS := -mmacosx-version-min=13.0
+ CGO_CFLAGS := -mmacosx-version-min=14.0
  export CGO_CFLAGS
  LIB_EXT := dylib
   # keep in sync with BOTTLE_MACOS_VERSION
- MACOSX_DEPLOYMENT_TARGET := 13.0
+ MACOSX_DEPLOYMENT_TARGET := 14.0
  export MACOSX_DEPLOYMENT_TARGET
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos

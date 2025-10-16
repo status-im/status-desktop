@@ -26,8 +26,8 @@ if hostOS == "macosx":
   switch("passL", "bottles/openssl@3/lib/libssl.a")
   # https://code.videolan.org/videolan/VLCKit/-/issues/232
   switch("passL", "-Wl,-no_compact_unwind")
-  # set the minimum supported macOS version to 13.0
-  switch("passC", "-mmacosx-version-min=13.0")
+  # set the minimum supported macOS version to 14.0
+  switch("passC", "-mmacosx-version-min=14.0")
 elif hostOS == "windows":
   echo "Building for Windows"
   --app:gui
