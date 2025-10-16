@@ -58,6 +58,8 @@ pipeline {
       artifactNumToKeepStr: '50',
     ))
     disableRestartFromStage()
+    /* Lock the agent so we run only one e2e build at a time */
+    lock(resource: "e2e-windows", quantity: 1)
   }
 
   environment {
