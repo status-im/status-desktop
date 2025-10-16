@@ -26,6 +26,8 @@ SplitView {
             enabled: ctrlEnabled.checked
             currentLanguage: ctrlCurrentLanguage.text
             languageCodes: ctrlLanguageCodes.text.split(',')
+            lokalisedLanguageScores: LanguageService.lokaliseLanguages
+            filterThreshold: ctrlFilterThreshold.value
             onLanguageSelected: function(languageCode) {
                 logs.logEvent("onChangeLanguageRequested", ["languageCode"], arguments)
                 currentLanguage = languageCode
@@ -66,6 +68,18 @@ SplitView {
                     id: ctrlLanguageCodes
                     text: "de,cs,en,en_CA,ko,ar,fr,fr_CA,pt_BR,pt,uk,ja,el"
                     placeholderText: "Comma separated list of language codes"
+                }
+            }
+            RowLayout {
+                Layout.fillWidth: true
+                Label { text: "Filter threshold:" }
+                SpinBox {
+                    Layout.preferredWidth: 150
+                    id: ctrlFilterThreshold
+                    from: 0
+                    to: 100
+                    value: 0
+                    stepSize: 10
                 }
             }
         }

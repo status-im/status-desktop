@@ -1,6 +1,6 @@
 #include "languagemodel.h"
 
-#include <QLocale>
+using namespace Qt::Literals::StringLiterals;
 
 namespace
 {
@@ -8,9 +8,11 @@ constexpr auto kLanguageCodeRoleName = "code";
 constexpr auto kfullIsoCodeCodeRoleName = "fullIsoCode";
 constexpr auto kLanguageNameRoleName = "name";
 constexpr auto kLanguagenativeNameRoleName = "nativeName";
+constexpr auto kPercentRoleName = "percent";
 }
 
-LanguageModel::LanguageModel(QObject* parent) : QAbstractListModel(parent)
+LanguageModel::LanguageModel(QObject* parent)
+    : QAbstractListModel(parent)
 {
 }
 
@@ -28,6 +30,7 @@ QHash<int, QByteArray> LanguageModel::roleNames() const
         {CodeRole, kLanguageCodeRoleName},
         {NameRole, kLanguageNameRoleName},
         {NativeNameRole, kLanguagenativeNameRoleName},
+        {PercentRole, kPercentRoleName},
     };
 
     return roles;
@@ -51,8 +54,19 @@ QVariant LanguageModel::data(const QModelIndex& index, int role) const
         return language.name;
     case NativeNameRole:
         return language.nativeName;
+    case PercentRole:
+        return m_lokalisedLanguageScores.value(language.code, -1).toInt();
     }
     return {};
+}
+
+QString LanguageModel::formattedNativeLanguageName(const QString &code, const QLocale& loc) const
+{
+    if (code == "en"_L1)
+        return loc.languageToString(loc.language()); // just "English"
+    if (code == "pt_BR"_L1) // differentiate between "pt" and "pt_BR"
+        return u"Português Brasileiro"_s;
+    return loc.nativeLanguageName(); // native language name, e.g. "français" for "fr" or "français canadien" for "fr_CA"
 }
 
 QStringList LanguageModel::languageCodes() const
@@ -86,15 +100,23 @@ void LanguageModel::rebuildModel()
         data.code = langCode; // just the translation language, e.g. "fr"
         data.fullIsoCode = loc.name(); // including country, e.g. "fr_CA"
         data.name = QLocale::languageToString(loc.language()); // english language name, e.g. "French" for "fr"
-
-        if (data.code == "en")
-            data.nativeName = data.name; // just "English"
-        else if (data.code == "pt_BR") // differentiate between "pt" and "pt_BR"
-            data.nativeName = "português brasileiro";
-        else
-            data.nativeName = loc.nativeLanguageName(); // native language name, e.g. "français" for "fr" or "français canadien" for "fr_CA"
+        data.nativeName = formattedNativeLanguageName(data.code, loc);
 
         m_data.append(data);
     }
     endResetModel();
+}
+
+QVariantMap LanguageModel::lokalisedLanguageScores() const
+{
+    return m_lokalisedLanguageScores;
+}
+
+void LanguageModel::setLokalisedLanguageScores(const QVariantMap &newLokalisedLanguageScores)
+{
+    if (m_lokalisedLanguageScores == newLokalisedLanguageScores)
+        return;
+    m_lokalisedLanguageScores = newLokalisedLanguageScores;
+    emit lokalisedLanguageScoresChanged();
+    emit dataChanged(createIndex(0, 0), createIndex(rowCount()-1, 0), {LanguageDataRoles::PercentRole});
 }

@@ -7,7 +7,6 @@ import StatusQ.Core.Utils as SQUtils
 import utils
 
 import QtModelsToolkit
-import SortFilterProxyModel
 
 
 QtObject {

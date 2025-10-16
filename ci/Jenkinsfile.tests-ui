@@ -47,7 +47,7 @@ pipeline {
   environment {
     PLATFORM = 'tests/ui'
     /* Improve make performance */
-    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/6.9.2/gcc_64"
     PATH = "${env.QTDIR}/bin:${env.PATH}"

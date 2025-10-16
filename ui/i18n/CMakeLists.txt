@@ -13,6 +13,7 @@ file(GLOB_RECURSE
     COLLECTED_SOURCE_FILES
     ${CMAKE_SOURCE_DIR}/../*.qml
 )
+list(FILTER COLLECTED_SOURCE_FILES EXCLUDE REGEX "${CMAKE_SOURCE_DIR}/../StatusQ/build/.*" )
 
 qt6_add_lupdate(
     LUPDATE_TARGET update_application_translations # name of the cmake target

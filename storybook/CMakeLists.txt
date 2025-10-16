@@ -29,7 +29,7 @@ if(MSVC)
 endif()
 
 if (APPLE)
-    set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=11.0)
+    set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=14.0)
 endif()
 
 find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)

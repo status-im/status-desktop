@@ -16205,6 +16205,15 @@ to load</source>
         <source>Search</source>
         <translation type="unfinished">검색</translation>
     </message>
+    <message>
+        <source>N/A</source>
+        <comment>not available</comment>
+        <translation type="unfinished">해당 없음</translation>
+    </message>
+    <message>
+        <source>%1% done</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StatusListPicker</name>

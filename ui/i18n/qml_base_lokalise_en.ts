@@ -19804,6 +19804,16 @@
       <comment>StatusLanguageSelector</comment>
       <translation>Search</translation>
     </message>
+    <message>
+      <source>N/A</source>
+      <comment>not available</comment>
+      <translation>N/A</translation>
+    </message>
+    <message>
+      <source>%1% done</source>
+      <comment>StatusLanguageSelector</comment>
+      <translation>%1% done</translation>
+    </message>
   </context>
   <context>
     <name>StatusListPicker</name>
