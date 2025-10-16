@@ -1,4 +1,4 @@
-package im.status.tablet;
+package im.status.app;
 
 import android.app.Activity;
 import android.content.Context;

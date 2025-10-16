@@ -68,15 +68,15 @@ class TestOnboardingImportSeed(BaseTest):
         base_page = base
         restarted = False
         try:
-            restarted = base_page.restart_app("im.status.tablet")
+            restarted = base_page.restart_app("im.status.app")
         except Exception:
             restarted = False
 
         if not restarted:
             try:
-                self.driver.terminate_app("im.status.tablet")
+                self.driver.terminate_app("im.status.app")
                 self.driver.start_activity(
-                    "im.status.tablet", "org.qtproject.qt.android.bindings.QtActivity"
+                    "im.status.app", "org.qtproject.qt.android.bindings.QtActivity"
                 )
             except Exception:
                 pass

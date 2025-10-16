@@ -104,8 +104,8 @@ jobs:
         if: steps.detect_source.outputs.source_type == 'github_artifact'
         uses: actions/download-artifact@v4
         with:
-          # Your build workflow uploads "Status-tablet-${{ inputs.architecture }}-${{ github.run_number }}"
-          pattern: Status-tablet-*
+          # Your build workflow uploads "Status-${{ inputs.architecture }}-${{ github.run_number }}"
+          pattern: Status-*
           merge-multiple: true
           run-id: ${{ steps.detect_source.outputs.artifact_run_id }}
           path: ./apk/
