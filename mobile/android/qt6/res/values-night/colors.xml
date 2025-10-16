@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Night palette: ensure splash background is dark -->
+  <color name="alert_background">#000000</color>
+  <color name="alert_text">#ffffff</color>
+  <color name="splash_background">#000000</color>
+  <color name="splash_status_bar_color">#000000</color>
+  <color name="notification_icon_color">#4360DF</color>
+</resources>

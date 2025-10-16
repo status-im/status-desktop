@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Night mode keeps existing white logo for contrast on dark background -->
+    <item name="splash_logo_themed" type="drawable">@drawable/splash_logo</item>
+</resources>

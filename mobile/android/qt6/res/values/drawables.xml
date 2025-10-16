@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light mode uses dark logo for contrast on white background -->
+    <item name="splash_logo_themed" type="drawable">@drawable/splash_logo_dark</item>
+</resources>
