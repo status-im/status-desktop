@@ -1,3 +1,7 @@
+#ifdef Q_OS_ANDROID
+#include <QJniObject>
+#include <QtCore/qnativeinterface.h>
+#endif
 #include "StatusQ/systemutilsinternal.h"
 
 #include <QDir>
@@ -162,6 +166,35 @@ Qt::KeyboardModifiers SystemUtilsInternal::queryKeyboardModifiers()
 Qt::MouseButtons SystemUtilsInternal::mouseButtons()
 {
     return QGuiApplication::mouseButtons();
+}
+
+void SystemUtilsInternal::setAndroidStatusBarIconColor(bool lightIcons)
+{
+#ifdef Q_OS_ANDROID
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
+    if (activity.isValid()) {
+        QJniObject::callStaticMethod<void>(
+            "im/status/app/StatusBarUtil",
+            "setStatusBarIconColor",
+            "(Landroid/app/Activity;Z)V",
+            activity.object<jobject>(),
+            lightIcons
+        );
+    }
+#else
+    Q_UNUSED(lightIcons);
+#endif
+}
+
+void SystemUtilsInternal::setAndroidSplashScreenReady()
+{
+#ifdef Q_OS_ANDROID
+    QJniObject::callStaticMethod<void>(
+        "im/status/app/StatusQtActivity",
+        "hideSplashScreen",
+        "()V"
+    );
+#endif
 }
 
 #include "systemutilsinternal.moc"

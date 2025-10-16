@@ -183,7 +183,7 @@ fi
 
 echo "App installed. Starting app"
 
-DEFAULT_ACTIVITY_NAME="${APP_PACKAGE}/org.qtproject.qt.android.bindings.QtActivity"
+DEFAULT_ACTIVITY_NAME="${APP_PACKAGE}/im.status.app.StatusQtActivity"
 $ADB -s $ANDROID_SERIAL shell am start -a android.intent.action.MAIN -n $DEFAULT_ACTIVITY_NAME
 # wait for the app to start and then start logcat
 echo "Waiting for the app to start"

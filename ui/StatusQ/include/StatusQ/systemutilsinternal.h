@@ -18,6 +18,11 @@ public:
     Q_INVOKABLE Qt::KeyboardModifiers queryKeyboardModifiers();
     Q_INVOKABLE Qt::MouseButtons mouseButtons();
 
+    // Set Android status bar icon color (true = light/white icons, false = dark/black icons)
+    Q_INVOKABLE void setAndroidStatusBarIconColor(bool lightIcons);
+    // Notify Android splash screen to hide (for custom activity)
+    Q_INVOKABLE void setAndroidSplashScreenReady();
+
 signals:
     // Emitted when event of type QEvent::Quit is detected by event filter on
     // QGuiApplication. It's helpful to handle close requests on mac coming from

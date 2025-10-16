@@ -47,6 +47,7 @@ ios {
     QMAKE_TARGET_BUNDLE_PREFIX = im.status
     QMAKE_BUNDLE = app
     QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
+    QMAKE_IOS_LAUNCH_SCREEN = $$PWD/../ios/launch-image-universal.storyboard
 
     LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_3 -lcrypto_3 -lqzxing -lresolv -lqrcodegen
 

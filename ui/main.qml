@@ -46,6 +46,7 @@ StatusWindow {
     readonly property MetricsStore metricsStore: MetricsStore {}
     readonly property UtilsStore utilsStore: UtilsStore {}
     readonly property LanguageStore languageStore: LanguageStore {}
+    readonly property bool appThemeDark: Theme.isDarkTheme
 
     objectName: "mainWindow"
     color: Theme.palette.background
@@ -58,10 +59,24 @@ StatusWindow {
         Qt.application.version = aboutModule.getCurrentVersion()
         return Qt.application.displayName
     }
-    visible: true
+    visible: false
 
     flags: Qt.platform.os === SQUtils.Utils.windows ? Qt.Window // extending the content in title is buggy on Windows
               : Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
+
+    onAppThemeDarkChanged: {
+        // Set Android status bar icons to dark (black) if on Android and background is light
+        if (SQUtils.Utils.isAndroid) {
+            SystemUtils.setAndroidStatusBarIconColor(applicationWindow.appThemeDark)
+        }
+    }
+
+    function contentLoaded() {
+        if (SQUtils.Utils.isAndroid) {
+            SystemUtils.setAndroidSplashScreenReady()
+        }
+        applicationWindow.visible = true
+    }
 
     function updatePaddings() {
         if (applicationWindow.width < Theme.portraitBreakpoint.width) {
@@ -307,23 +322,6 @@ StatusWindow {
         }
     }
 
-    //TODO: Remove once qt 6.9.2 is available
-    //https://bugreports.qt.io/browse/QTBUG-135808
-    function applySafeAreaDirtyHack() {
-        if (Qt.platform.os === SQUtils.Utils.android) {
-            //First fix the safe area margins
-            applicationWindow.visibility = Window.FullScreen
-            Qt.callLater(() => {
-                applicationWindow.visibility = Window.Maximized
-            })
-
-            //Then create a dummy header with the system accent color
-            //Otherwise the system toolbar is invisible
-            macOSSafeAreaLoader.sourceComponent = androidHeaderComponent
-            macOSSafeAreaLoader.active = true
-        }
-    }
-
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
@@ -338,9 +336,11 @@ StatusWindow {
             languageStore.changeLanguage(languageStore.currentLanguage, true /*shouldRetranslate*/)
         }
 
-        Theme.changeTheme(Theme.Style.System)
+        // Set Android status bar icons to dark (black) if on Android and background is light
+        if (SQUtils.Utils.isAndroid) {
+            SystemUtils.setAndroidStatusBarIconColor(Theme.isDarkTheme)
+        }
 
-        applySafeAreaDirtyHack()
         restoreAppState()
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
@@ -406,6 +406,9 @@ StatusWindow {
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
 
             keychain: appKeychain
+            Component.onCompleted: {
+                applicationWindow.contentLoaded()
+            }
         }
     }
 
@@ -519,6 +522,10 @@ StatusWindow {
                 }
             }
 
+            Component.onCompleted: {
+                applicationWindow.contentLoaded()
+            }
+
             Component {
                 id: convertingKeycardAccountPage
 
@@ -558,17 +565,6 @@ StatusWindow {
         height: active ? parent.SafeArea.margins.top : 0
         active: Qt.platform.os === SQUtils.Utils.mac && applicationWindow.visibility !== Window.FullScreen
         sourceComponent: macHeaderComponent
-    }
-    //TODO: Remove once qt 6.9.2 is available
-    //To verify before removing:
-    //Toolbar icons are visible on both mobile and tablet
-    //SafeArea is applied correctly
-    Component {
-        id: androidHeaderComponent
-        Rectangle {
-            SystemPalette { id: sysPalette; colorGroup: SystemPalette.Active }
-            color: sysPalette.accent
-        }
     }
 
     Component {

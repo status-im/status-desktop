@@ -20,10 +20,12 @@ SQUtils.QObject {
         System
     }
 
-    property ThemePalette palette: StatusLightTheme {}
+    property ThemePalette palette: Application.styleHints.colorScheme === Qt.ColorScheme.Dark ? statusQDarkTheme : statusQLightTheme
 
     readonly property ThemePalette statusQLightTheme: StatusLightTheme {}
     readonly property ThemePalette statusQDarkTheme: StatusDarkTheme {}
+
+    readonly property bool isDarkTheme: palette === statusQDarkTheme
 
     readonly property string assetPath: Qt.resolvedUrl("../../../assets/")
 
