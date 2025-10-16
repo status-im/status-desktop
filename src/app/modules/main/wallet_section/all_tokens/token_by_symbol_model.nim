@@ -151,13 +151,8 @@ QtObject:
 
   proc tokensMarketValuesAboutToUpdate*(self: TokensBySymbolModel) =
     if self.delegate.getTokenBySymbolList().len > 0:
-      let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       for marketDetails in self.tokenMarketDetails:
         marketDetails.update()
-      self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
 
   proc tokensDetailsAboutToUpdate*(self: TokensBySymbolModel) =
     if self.delegate.getTokenBySymbolList().len > 0:
