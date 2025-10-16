@@ -1,10 +1,12 @@
 import QtQuick
+import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
 
 import shared
 import utils
+
 import shared.panels as SharedPanels
 
 Item {
@@ -19,52 +21,64 @@ Item {
 
         property bool wrongSeedPhrase: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.wrongSeedPhrase
         onWrongSeedPhraseChanged: {
-            seedPhrase.setWrongSeedPhraseMessage(wrongSeedPhrase? qsTr("The phrase you’ve entered does not match this Keycard’s recovery phrase") : "")
+            seedPhrase.setError(wrongSeedPhrase? qsTr("The phrase you’ve entered does not match this Keycard’s recovery phrase") : "")
         }
 
     }
 
-    StatusBaseText {
-        id: title
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+    StatusScrollView {
+        id: scrollView
+
+        anchors.fill: parent
+        contentWidth: availableWidth
+
         anchors.topMargin: Theme.padding
         anchors.leftMargin: Theme.xlPadding
         anchors.rightMargin: Theme.xlPadding
-        visible: text != ""
-        font.pixelSize: Constants.keycard.general.fontSize1
-        font.weight: Font.Bold
-        horizontalAlignment: Text.AlignHCenter
-        wrapMode: Text.WordWrap
-    }
 
-    SharedPanels.EnterSeedPhrase {
-        id: seedPhrase
-        anchors.top: title.visible? title.bottom : parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.topMargin: Theme.xlPadding
-        anchors.bottomMargin: Theme.halfPadding
-        anchors.leftMargin: Theme.xlPadding
-        anchors.rightMargin: Theme.xlPadding
+        ColumnLayout {
 
-        dictionary: BIP39_en {}
+            spacing: Theme.xlPadding
+            width: scrollView.availableWidth
 
-        isSeedPhraseValid: function(mnemonic) {
-            return root.sharedKeycardModule.validSeedPhrase(mnemonic)
-        }
+            StatusBaseText {
+                id: title
 
-        onSeedPhraseUpdated: {
-            if (valid) {
-                root.sharedKeycardModule.setSeedPhrase(seedPhrase)
+                Layout.fillWidth: true
+
+                visible: text !== ""
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
             }
-            root.validation(valid)
-        }
 
-        onSubmitSeedPhrase: {
-            root.sharedKeycardModule.currentState.doPrimaryAction()
+            SharedPanels.EnterSeedPhraseNew {
+                id: seedPhrase
+
+                Layout.fillWidth: true
+
+                dictionary: BIP39_en {}
+                flickable: scrollView.flickable
+
+                onSeedPhraseProvided: seedPhrase => {
+                    const phrase = seedPhrase.join(" ")
+                    const valid = root.sharedKeycardModule.validSeedPhrase(phrase)
+
+                    if (valid) {
+                        setError("")
+                        root.sharedKeycardModule.setSeedPhrase(phrase)
+                    } else {
+                        setError(qsTr("Invalid recovery phrase"))
+                    }
+
+                    root.validation(valid)
+                }
+
+                onSeedPhraseAccepted: {
+                    root.sharedKeycardModule.currentState.doPrimaryAction()
+                }
+            }
         }
     }
 
