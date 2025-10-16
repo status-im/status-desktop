@@ -3478,36 +3478,6 @@
       <translation>Biometric login and transaction authentication</translation>
     </message>
     <message>
-      <source>Disable biometrics</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Disable biometrics</translation>
-    </message>
-    <message>
-      <source>Do you want to enable biometrics for login and transaction authentication?</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Do you want to enable biometrics for login and transaction authentication?</translation>
-    </message>
-    <message>
-      <source>Are you sure you want to disable biometrics for login and transaction authentication?</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Are you sure you want to disable biometrics for login and transaction authentication?</translation>
-    </message>
-    <message>
-      <source>Cancel</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Cancel</translation>
-    </message>
-    <message>
-      <source>Yes, enable biometrics</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Yes, enable biometrics</translation>
-    </message>
-    <message>
-      <source>Yes, disable biometrics</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Yes, disable biometrics</translation>
-    </message>
-    <message>
       <source>Biometric login and transaction authentication disabled for this device</source>
       <comment>ChangePasswordView</comment>
       <translation>Biometric login and transaction authentication disabled for this device</translation>
