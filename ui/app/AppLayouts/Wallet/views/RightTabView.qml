@@ -434,14 +434,14 @@ RightTabBaseView {
                                                      Constants.settingsSubsection.wallet,
                                                      Constants.walletSettingsSubsection.manageAssets)
                         onAssetClicked: (key) => {
-                            const token = SQUtils.ModelUtils.getByKey(model, "key", key)
+                            const tokenGroup = SQUtils.ModelUtils.getByKey(model, "key", key)
 
-                            RootStore.tokensStore.getHistoricalDataForToken(
-                                                token.symbol, RootStore.currencyStore.currentCurrency)
+                            const firstTokenInGroup = SQUtils.ModelUtils.get(tokenGroup.tokens, 0) // for fetching market data a token key of the first token from the list of grouped tokens can be used, cause they share the same set of data
 
-                            assetDetailView.token = token
-                            RootStore.setCurrentViewedHolding(
-                                                token.symbol, token.key, Constants.TokenType.ERC20, token.communityId ?? "")
+                            RootStore.tokensStore.getHistoricalDataForToken(firstTokenInGroup.key, RootStore.currencyStore.currentCurrency)
+
+                            assetDetailView.tokenGroup = tokenGroup
+                            RootStore.setCurrentViewedHolding(tokenGroup.key, Constants.TokenType.ERC20, tokenGroup.communityId ?? "")
                             stack.currentIndex = 2
                         }
                     }
@@ -500,7 +500,7 @@ RightTabBaseView {
                         bannerComponent: buyReceiveBannerComponent
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                            RootStore.setCurrentViewedHolding(uid, uid, tokenType, communityId)
+                            RootStore.setCurrentViewedHolding(uid, tokenType, communityId)
                             d.detailedCollectibleActivityController.resetFilter()
                             d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")))
                             d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)

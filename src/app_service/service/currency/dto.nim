@@ -3,30 +3,30 @@ include  ../../common/json_utils
 
 type
   CurrencyFormatDto* = object
-    symbol*: string
+    key*: string
     displayDecimals*: uint
     stripTrailingZeroes*: bool
 
 proc newCurrencyFormatDto*(
-  symbol: string,
+  key: string,
   displayDecimals: uint,
   stripTrailingZeroes: bool,
 ): CurrencyFormatDto =
   return CurrencyFormatDto(
-    symbol: symbol,
+    key: key,
     displayDecimals: displayDecimals,
     stripTrailingZeroes: stripTrailingZeroes
   )
 
-proc newCurrencyFormatDto*(symbol: string = ""): CurrencyFormatDto =
+proc newCurrencyFormatDto*(key: string = ""): CurrencyFormatDto =
   return CurrencyFormatDto(
-    symbol: symbol,
-    displayDecimals: if len(symbol) == 0: 0 else: 8,
+    key: key,
+    displayDecimals: if len(key) == 0: 0 else: 8,
     stripTrailingZeroes: true
   )
 
 proc toCurrencyFormatDto*(jsonObj: JsonNode): CurrencyFormatDto =
   result = CurrencyFormatDto()
-  discard jsonObj.getProp("symbol", result.symbol)
+  discard jsonObj.getProp("key", result.key)
   discard jsonObj.getProp("displayDecimals", result.displayDecimals)
   discard jsonObj.getProp("stripTrailingZeroes", result.stripTrailingZeroes)

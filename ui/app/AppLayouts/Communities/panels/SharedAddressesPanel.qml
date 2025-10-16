@@ -286,8 +286,8 @@ Control {
                 root.airdropAddressSelected(address)
             }
 
-            getCurrencyAmount: function (balance, symbol) {
-                return root.getCurrencyAmount(balance, symbol)
+            getCurrencyAmount: function (balance, key) {
+                return root.getCurrencyAmount(balance, key)
             }
 
             Component.onCompleted: {

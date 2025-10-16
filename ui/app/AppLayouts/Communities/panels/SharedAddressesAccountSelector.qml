@@ -28,7 +28,7 @@ StatusListView {
     property var communityCollectiblesModel
     property string communityId
 
-    property var getCurrencyAmount: function (balance, symbol){}
+    property var getCurrencyAmount: function (balance, key){}
 
     signal toggleAddressSelection(string keyUid, string address)
     signal airdropAddressSelected (string address)

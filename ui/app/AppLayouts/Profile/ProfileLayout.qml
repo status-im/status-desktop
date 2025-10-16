@@ -349,6 +349,7 @@ StatusSectionLayout {
                 networksStore: root.networksStore
                 contactsStore: root.contactsStore
 
+                thirdpartyServicesEnabled: root.privacyStore.thirdpartyServicesEnabled
                 myPublicKey: root.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup

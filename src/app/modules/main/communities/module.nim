@@ -513,7 +513,7 @@ method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string
   self.controller.requestCancelDiscordChannelImport(discordChannelId)
 
 proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
-    infiniteSupply: bool, privilegesLevel: int): TokenListItem =
+    infiniteSupply: bool, privilegesLevel: int): token_list_item.TokenListItem =
   let communityTokenDecimals = if token.tokenType == TokenType.ERC20: 18 else: 0
   let key = if token.tokenType == TokenType.ERC721: token.getContractIdFromFirstAddress() else: token.symbol
   result = initTokenListItem(
@@ -531,7 +531,7 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
   )
 
 proc buildCommunityTokenItemFallback(self: Module, communityTokens: seq[CommunityTokenDto],
-    token: CommunityTokensMetadataDto, communityId: string): TokenListItem =
+    token: CommunityTokensMetadataDto, communityId: string): token_list_item.TokenListItem =
   # Set fallback supply to infinite in case we don't have it
   var supply = "1"
   var infiniteSupply = true
@@ -545,8 +545,8 @@ proc buildCommunityTokenItemFallback(self: Module, communityTokens: seq[Communit
   return self.createCommunityTokenItem(token, communityId, supply, infiniteSupply, privilegesLevel)
 
 proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto]) =
-  var tokenListItems: seq[TokenListItem]
-  var collectiblesListItems: seq[TokenListItem]
+  var tokenListItems: seq[token_list_item.TokenListItem]
+  var collectiblesListItems: seq[token_list_item.TokenListItem]
 
   let communityTokens = self.controller.getAllCommunityTokens()
   for community in communities:
@@ -571,34 +571,34 @@ proc buildTokensAndCollectiblesFromAllCommunities(self: Module) =
   self.buildTokensAndCollectiblesFromCommunities(communities)
 
 proc buildTokensAndCollectiblesFromWallet(self: Module) =
-  var tokenListItems: seq[TokenListItem]
+  var tokenListItems: seq[token_list_item.TokenListItem]
 
-  # Common ERC20 tokens
-  let allNetworks = self.controller.getCurrentNetworksChainIds()
-  let erc20Tokens = self.controller.getTokenBySymbolList().filter(t => (block:
-    let filteredChains = t.addressPerChainId.filter(apC => allNetworks.contains(apc.chainId))
-    return filteredChains.len != 0
-    ))
-  for token in erc20Tokens:
-    let communityTokens = self.controller.getCommunityTokens(token.communityId)
-    var privilegesLevel = PrivilegesLevel.Community.int
-    for communityToken in communityTokens:
-      if communityToken.symbol == token.symbol:
-        privilegesLevel = communityToken.privilegesLevel.int
-        break
+  # # Common ERC20 tokens
+  # let allNetworks = self.controller.getCurrentNetworksChainIds()
+  # let erc20Tokens = self.controller.getTokenBySymbolList().filter(t => (block:
+  #   let filteredChains = t.addressPerChainId.filter(apC => allNetworks.contains(apc.chainId))
+  #   return filteredChains.len != 0
+  #   ))
+  # for token in erc20Tokens:
+  #   let communityTokens = self.controller.getCommunityTokens(token.communityId)
+  #   var privilegesLevel = PrivilegesLevel.Community.int
+  #   for communityToken in communityTokens:
+  #     if communityToken.symbol == token.symbol:
+  #       privilegesLevel = communityToken.privilegesLevel.int
+  #       break
 
-    let tokenListItem = initTokenListItem(
-      key = token.symbol,
-      name = token.name,
-      symbol = token.symbol,
-      color = "",
-      communityId = token.communityId,
-      image = "",
-      category = ord(TokenListItemCategory.General),
-      decimals = token.decimals,
-      privilegesLevel = privilegesLevel
-    )
-    tokenListItems.add(tokenListItem)
+  #   let tokenListItem = initTokenListItem(
+  #     key = token.symbol,
+  #     name = token.name,
+  #     symbol = token.symbol,
+  #     color = "",
+  #     communityId = token.communityId,
+  #     image = "",
+  #     category = ord(TokenListItemCategory.General),
+  #     decimals = token.decimals,
+  #     privilegesLevel = privilegesLevel
+  #   )
+  #   tokenListItems.add(tokenListItem)
 
   self.view.tokenListModel.setWalletTokenItems(tokenListItems)
 

@@ -16,7 +16,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       totalCurrencyBalance: CurrencyAmount
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
-      tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
+      tmpKey: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
       tmpActivityControllers: ActivityControllerArray
       collectibleDetailsController: collectible_detailsc.Controller
@@ -101,14 +101,14 @@ QtObject:
 #    return newQVariant(self.delegate.getCurrencyAmount(amount, symbol))
 
 # As a workaround, we do it in two steps: First call prepareCurrencyAmount, then getPreparedCurrencyAmount
-  proc prepareCurrencyAmount*(self: View, amount: float, symbol: string) {.slot.} =
+  proc prepareCurrencyAmount*(self: View, amount: float, key: string) {.slot.} =
     self.tmpAmount = amount
-    self.tmpSymbol = symbol
+    self.tmpKey = key # tokenGroupKey or tokenKey or currency symbol
 
   proc getPreparedCurrencyAmount*(self: View): QVariant {.slot.} =
-    let currencyAmount = self.delegate.getCurrencyAmount(self.tmpAmount, self.tmpSymbol)
+    let currencyAmount = self.delegate.getCurrencyAmount(self.tmpAmount, self.tmpKey)
     self.tmpAmount = 0
-    self.tmpSymbol = "ERROR"
+    self.tmpKey = "ERROR"
     return newQVariant(currencyAmount)
 
   proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =

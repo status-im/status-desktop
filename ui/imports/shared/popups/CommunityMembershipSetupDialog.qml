@@ -52,7 +52,7 @@ StatusStackModal {
     property string currentAirdropAddress: ""
     onCurrentAirdropAddressChanged: d.reEvaluateModels()
 
-    property var getCurrencyAmount: function (balance, symbol){}
+    property var getCurrencyAmount: function (balance, key){}
 
     property var canProfileProveOwnershipOfProvidedAddressesFn: function(addresses) { return false }
 
@@ -402,7 +402,7 @@ StatusStackModal {
             }
 
             getCurrencyAmount: function (balance, symbol){
-                return root.getCurrencyAmount(balance, symbol)
+                return root.getCurrencyAmount(balance, symbol) // TODO: update to tokenGroupKey or tokenKey
             }
         }
     }

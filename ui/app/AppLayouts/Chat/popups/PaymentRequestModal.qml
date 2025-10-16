@@ -44,9 +44,9 @@ StatusDialog {
     // input / output
     property int selectedNetworkChainId: Constants.chains.mainnetChainId
     property string selectedAccountAddress
-    property string selectedTokenKey: defaultTokenKey
+    property string selectedTokenGroupKey: defaultTokenGroupKey
 
-    readonly property string defaultTokenKey: Utils.getNativeTokenSymbol(selectedNetworkChainId)
+    readonly property string defaultTokenGroupKey: Utils.getNativeTokenGroupKey(selectedNetworkChainId)
     // output
     readonly property string amount: {
         if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
@@ -65,8 +65,8 @@ StatusDialog {
     title: qsTr("Payment request")
 
     onAboutToShow: {
-        if (!!root.selectedTokenKey && d.selectedHolding.available) {
-            holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
+        if (!!root.selectedTokenGroupKey && d.selectedHolding.available) {
+            holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.key)
         }
         amountToSendInput.forceActiveFocus()
     }
@@ -75,18 +75,18 @@ StatusDialog {
         id: d
 
         function resetSelectedToken() {
-            root.selectedTokenKey = root.defaultTokenKey
+            root.selectedTokenGroupKey = root.defaultTokenGroupKey
         }
 
         readonly property ModelEntry selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
-            key: "tokensKey"
-            value: root.selectedTokenKey
+            key: "key"
+            value: root.selectedTokenGroupKey
             onValueChanged: {
                 if (value !== undefined && !available) {
                     Qt.callLater(d.resetSelectedToken)
                 } else {
-                    holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
+                    holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.key)
                 }
             }
             onAvailableChanged: {
@@ -114,7 +114,7 @@ StatusDialog {
                          && amountToSendInput.amount > 0
                          && root.selectedAccountAddress !== ""
                          && root.selectedNetworkChainId > 0
-                         && root.selectedTokenKey !== ""
+                         && root.selectedTokenGroupKey !== ""
                 interactive: true
                 onClicked: root.accept()
             }
@@ -137,7 +137,7 @@ StatusDialog {
             formatFiat: amount => root.formatCurrencyAmount(
                             amount, root.currentCurrency)
             formatBalance: amount => root.formatCurrencyAmount(
-                               amount, root.selectedTokenKey)
+                               amount, root.selectedTokenGroupKey)
 
             dividerVisible: true
             selectedSymbol: amountToSendInput.fiatMode ?
@@ -157,7 +157,7 @@ StatusDialog {
 
                 model: root.assetsModel
                 onSelected: {
-                    root.selectedTokenKey = key
+                    root.selectedTokenGroupKey = groupKey
                 }
             }
         }

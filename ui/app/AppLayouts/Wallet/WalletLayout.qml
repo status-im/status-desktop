@@ -208,8 +208,8 @@ Item {
 
             d.buyFormData.selectedWalletAddress = d.getSelectedOrFirstNonWatchedAddress()
             d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
-            if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
-                d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokensKey
+            if(!!walletStore.currentViewedHoldingTokenGroupKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
+                d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokenGroupKey
             }
             Global.openBuyCryptoModalRequested(d.buyFormData)
         }
@@ -322,7 +322,7 @@ Item {
                 if (!rightPanelStackView.currentItem || rightPanelStackView.currentItem.currentTabIndex !== WalletLayout.RightPanelSelection.Collectibles) {
                     return false
                 }
-                return !!walletStore.currentViewedCollectible && walletStore.currentViewedHoldingID !== ""
+                return !!walletStore.currentViewedCollectible && walletStore.currentViewedHoldingTokenGroupKey !== ""
             }
             readonly property bool isCommunityCollectible: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityId !== "" : false
             readonly property bool isOwnerCommunityCollectible: isCommunityCollectible ? (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
@@ -369,18 +369,18 @@ Item {
 
                                    // Common send modal popup:
                                    root.sendTokenRequested(fromAddress,
-                                                             walletStore.currentViewedHoldingTokensKey,
+                                                             walletStore.currentViewedHoldingTokenGroupKey,
                                                              walletStore.currentViewedHoldingType)
                                }
             onLaunchBridgeModal: {
-                root.bridgeTokenRequested(walletStore.currentViewedHoldingID,
+                root.bridgeTokenRequested(walletStore.currentViewedHoldingTokenGroupKey,
                                           walletStore.currentViewedHoldingType)
             }
             onLaunchSwapModal: {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
-                if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
-                    d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
+                if(!!walletStore.currentViewedHoldingTokenGroupKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
+                    d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokenGroupKey
                 }
                 root.openSwapModalRequested(d.swapFormData)
             }

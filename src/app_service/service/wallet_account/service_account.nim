@@ -796,9 +796,6 @@ proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
 proc getEnabledChainIds*(self: Service): seq[int] =
   return self.networkService.getEnabledChainIds()
 
-proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
-  return self.currencyService.getCurrencyFormat(symbol)
-
 proc areTestNetworksEnabled*(self: Service): bool =
   return self.settingsService.areTestNetworksEnabled()
 

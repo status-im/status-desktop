@@ -1,12 +1,12 @@
 import nimqml, stew/shims/strformat, tables, sequtils
-import ../../../app_service/service/message/dto/payment_request
+import app_service/service/message/dto/payment_request
 
 type
   ModelRole {.pure.} = enum
-    Symbol = UserRole + 1
+    TokenKey = UserRole + 1
+    Symbol
     Amount
     ReceiverAddress
-    ChainId
 
 QtObject:
   type
@@ -38,10 +38,10 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
+      ModelRole.TokenKey.int: "tokenKey",
       ModelRole.Symbol.int: "symbol",
       ModelRole.Amount.int: "amount",
       ModelRole.ReceiverAddress.int: "receiver",
-      ModelRole.ChainId.int: "chainId",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -55,14 +55,14 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
+    of ModelRole.TokenKey:
+      result = newQVariant(item.tokenKey)
     of ModelRole.Symbol:
       result = newQVariant(item.symbol)
     of ModelRole.Amount:
       result = newQVariant(item.amount)
     of ModelRole.ReceiverAddress:
       result = newQVariant(item.receiver)
-    of ModelRole.ChainId:
-      result = newQVariant(item.chainId)
     else:
       result = newQVariant()
 
@@ -85,8 +85,8 @@ QtObject:
     self.items.add(paymentRequest)
     self.endInsertRows()
 
-  proc addPaymentRequest*(self: Model, receiver: string, amount: string, symbol: string, chainId: int) {.slot.}=
-    let paymentRequest = newPaymentRequest(receiver, amount, symbol, chainId)
+  proc addPaymentRequest*(self: Model, receiver: string, amount: string, tokenKey: string, symbol: string) {.slot.}=
+    let paymentRequest = newPaymentRequest(receiver, amount, tokenKey, symbol)
     self.insertItem(paymentRequest)
 
   proc clearItems*(self: Model) =
@@ -94,7 +94,7 @@ QtObject:
     self.items = @[]
     self.endResetModel()
 
-  proc delete*(self: Model) = 
+  proc delete*(self: Model) =
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =

@@ -63,7 +63,7 @@ StatusDialog {
         readonly property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {
             selectedWalletAddress: root.swapInputParamsForm.selectedAccountAddress
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-            selectedTokenKey: root.swapInputParamsForm.fromTokensKey
+            selectedTokenGroupKey: root.swapInputParamsForm.fromTokensKey  // TOOD: update!!!!
         }
 
         readonly property WalletAccountsSelectorAdaptor accountsSelectorAdaptor : WalletAccountsSelectorAdaptor {
