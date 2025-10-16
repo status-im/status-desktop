@@ -1179,7 +1179,7 @@ Item {
         id: statusEmojiPopup
         active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusEmojiPopup {
-            directParent: root.window.contentItem
+            directParent: appMain.Window.window.contentItem
             height: 440
             settings: appMainLocalSettings
             emojiModel: SQUtils.Emoji.emojiModel
@@ -1190,7 +1190,7 @@ Item {
         id: statusStickersPopupLoader
         active: appMain.rootStore.sectionsLoaded
         sourceComponent: StatusStickersPopup {
-            directParent: root.window.contentItem
+            directParent: appMain.Window.contentItem
             store: appMain.rootChatStore
             isWalletEnabled: appMain.walletProfileStore.isWalletEnabled
             onBuyClicked: popupRequestsHandler.sendModalHandler.buyStickerPack(packId, price)

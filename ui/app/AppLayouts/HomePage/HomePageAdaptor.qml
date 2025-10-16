@@ -89,7 +89,7 @@ QObject {
     Component.onCompleted: {
         Qt.callLater(function() {
             d.homePageEntriesModel = filteredCombinedModel // FIXME bug in SFPM or OPM
-            load()
+            root.load()
         })
     }
 

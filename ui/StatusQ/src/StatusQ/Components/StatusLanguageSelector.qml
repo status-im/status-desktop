@@ -131,7 +131,6 @@ Button {
                 Layout.preferredWidth: userSelectorPanel.width - userSelectorPanel.leftMargin - userSelectorPanel.rightMargin
                 Layout.alignment: Qt.AlignHCenter
                 placeholderText: qsTr("Search")
-                   .arg(root.languageCodes.length).arg(root.currentLanguage).arg(Qt.uiLanguage)
                 input.asset.name: "search"
                 input.clearable: true
                 KeyNavigation.tab: userSelectorPanel
