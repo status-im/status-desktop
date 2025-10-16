@@ -18,7 +18,7 @@ Repository administrators need to set:
 ### 3. Run Tests via GitHub Actions
 1. Build APK using `android-build.yml` workflow (architecture: `x86_64`)
 2. Run tests using `e2e-appium-android.yml` workflow
-3. Use artifact name: `Status-tablet-x86_64`
+3. Use artifact name: `Status-x86_64`
 
 ## Test Selection
 
@@ -48,7 +48,7 @@ pytest tests/test_onboarding_dependent_features.py
 python scripts/local_setup.py
 
 # Run tests with local APK
-export LOCAL_APP_PATH="/path/to/Status-tablet.apk"
+export LOCAL_APP_PATH="/path/to/Status.apk"
 pytest -m onboarding --env=local -v
 ```
 
@@ -57,7 +57,7 @@ pytest -m onboarding --env=local -v
 ### Build APK Workflow
 - **File**: `android-build.yml`
 - **Architecture**: `x86_64` (required for LambdaTest)
-- **Output**: `Status-tablet-x86_64` artifact
+- **Output**: `Status-x86_64` artifact
 
 ### E2E Testing Workflow
 - **File**: `e2e-appium-android.yml`
@@ -68,7 +68,7 @@ pytest -m onboarding --env=local -v
 ## Workflow Input Options
 
 ### APK Sources
-- **GitHub artifacts**: `Status-tablet-x86_64` (recommended)
+- **GitHub artifacts**: `Status-x86_64` (recommended)
 - **Direct URLs**: `https://example.com/app.apk`
 - **LambdaTest IDs**: `lt://APP123456789`
 
@@ -113,7 +113,7 @@ LT_ACCESS_KEY=your_access_key
 
 ### For Local Testing
 ```bash
-export LOCAL_APP_PATH="/path/to/Status-tablet.apk"
+export LOCAL_APP_PATH="/path/to/Status.apk"
 export CURRENT_TEST_ENVIRONMENT="local"
 ```
 
@@ -125,7 +125,7 @@ export CURRENT_TEST_ENVIRONMENT="local"
 
 **Test Execution Issues:**
 - Verify LambdaTest credentials in repository secrets
-- Check APK artifact name matches exactly: `Status-tablet-x86_64`
+- Check APK artifact name matches exactly: `Status-x86_64`
 - Review workflow logs for detailed error messages
 
 **Local Testing Issues:**

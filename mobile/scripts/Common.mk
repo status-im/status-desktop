@@ -35,7 +35,7 @@ OPENSSL?=$(ROOT_DIR)/vendors/openssl
 QRCODEGEN?=$(STATUS_DESKTOP)/vendor/QR-Code-generator/c
 
 # compile macros
-TARGET_PREFIX := Status-tablet
+TARGET_PREFIX := Status
 
 TARGET_NAME := $(TARGET_PREFIX).$(shell if [ $(OS) = "ios" ]; then echo "app"; else echo "apk"; fi )
 

@@ -396,4 +396,4 @@ RUN apt update -yq && apt install -yq software-properties-common \
 
 ENV PATH="/root/go/bin:${PATH}"
 
-LABEL description="Build image for the Status-tablet Android APK."
+LABEL description="Build image for the Status Android APK."

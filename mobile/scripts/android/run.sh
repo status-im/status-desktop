@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 CWD=$(realpath `dirname $0`)
-APP=${APP:="$CWD/../bin/$OS/Status-tablet.apk"}
-APP_PACKAGE=${APP_PACKAGE:="im.status.tablet"}
+APP=${APP:="$CWD/../bin/$OS/Status.apk"}
+APP_PACKAGE=${APP_PACKAGE:="im.status.app"}
 ARCH=${ARCH:="arm64-v8a"}
 ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:=""}
 EMULATOR=${EMULATOR:="$ANDROID_SDK_ROOT/emulator/emulator"}

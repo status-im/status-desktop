@@ -17,7 +17,7 @@ class AppLifecycleManager:
         self.driver = driver
         self.logger = get_logger("app_lifecycle")
 
-    def restart_app(self, app_package: str = "im.status.tablet") -> bool:
+    def restart_app(self, app_package: str = "im.status.app") -> bool:
         """
         Restart the app within the current session.
 
@@ -44,7 +44,7 @@ class AppLifecycleManager:
             return False
 
     def restart_app_with_data_cleared(
-        self, app_package: str = "im.status.tablet"
+        self, app_package: str = "im.status.app"
     ) -> bool:
         """
         Restart the app with all app data cleared (fresh app state).
@@ -104,7 +104,7 @@ class AppLifecycleManager:
             self.logger.error(f"❌ App restart with data cleared failed: {e}")
             return False
 
-    def terminate_app(self, app_package: str = "im.status.tablet") -> bool:
+    def terminate_app(self, app_package: str = "im.status.app") -> bool:
         """Terminate the specified app."""
         try:
             self.driver.terminate_app(app_package)
@@ -114,7 +114,7 @@ class AppLifecycleManager:
             self.logger.error(f"❌ Failed to terminate app: {e}")
             return False
 
-    def activate_app(self, app_package: str = "im.status.tablet") -> bool:
+    def activate_app(self, app_package: str = "im.status.app") -> bool:
         """Activate the specified app."""
         try:
             self.driver.activate_app(app_package)

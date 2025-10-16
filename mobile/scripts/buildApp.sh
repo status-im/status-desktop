@@ -28,29 +28,29 @@ if [[ "${OS}" == "android" ]]; then
 
     QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
     QMAKE_BIN="${QMAKE:-qmake}"
-    "$QMAKE_BIN" "$CWD/../wrapperApp/Status-tablet.pro" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" -after
+    "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" -after
 
     # Build the app
     make -j"$(nproc)" apk_install_target
 
     # call androiddeployqt
-    androiddeployqt --input "$BUILD_DIR/android-Status-tablet-deployment-settings.json" --output "$BUILD_DIR/android-build" --apk "$BUILD_DIR/android-build/Status-tablet.apk" --android-platform "$ANDROID_PLATFORM"
+    androiddeployqt --input "$BUILD_DIR/android-Status-deployment-settings.json" --output "$BUILD_DIR/android-build" --apk "$BUILD_DIR/android-build/Status.apk" --android-platform "$ANDROID_PLATFORM"
 
     ANDROID_OUTPUT_DIR="bin/android/qt6"
     BIN_DIR_ANDROID=${BIN_DIR:-"$CWD/$ANDROID_OUTPUT_DIR"}
     mkdir -p "$BIN_DIR_ANDROID"
-    cp ./android-build/Status-tablet.apk "$BIN_DIR_ANDROID/Status-tablet.apk"
+    cp ./android-build/Status.apk "$BIN_DIR_ANDROID/Status.apk"
 
-    echo "Build succeeded. APK is available at $BIN_DIR_ANDROID/Status-tablet.apk"
+    echo "Build succeeded. APK is available at $BIN_DIR_ANDROID/Status.apk"
 else
     QMAKE_BIN="${QMAKE:-qmake}"
-    "$QMAKE_BIN" "$CWD/../wrapperApp/Status-tablet.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
+    "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device -after
     # Compile resources
     xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcbeautify
     # Compile the app
-    xcodebuild -configuration Release -target Status-tablet install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcbeautify
+    xcodebuild -configuration Release -target Status install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcbeautify
 
-    if [[ -e "$BIN_DIR/Status-tablet.app/Info.plist" ]]; then
+    if [[ -e "$BIN_DIR/Status.app/Info.plist" ]]; then
         echo "Build succeeded"
     else
         echo "Build failed"

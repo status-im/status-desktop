@@ -142,7 +142,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Determined version: $VERSION"
           
-          SRC_APK="mobile/bin/android/qt6/Status-tablet.apk"
+          SRC_APK="mobile/bin/android/qt6/Status.apk"
           DEST_APK="mobile/bin/android/qt6/Status-android-${{ inputs.architecture }}-${VERSION}.apk"
 
           if [ ! -f "$SRC_APK" ]; then
