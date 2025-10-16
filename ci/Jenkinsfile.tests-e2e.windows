@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.16'
+library 'status-jenkins-lib@v1.9.28'
 
 pipeline {
 
@@ -87,7 +87,7 @@ pipeline {
     STATUS_RUNTIME_TEST_MODE = 1
 
     /* Logging rules let you enable or disable logging for categories */
-    QT_LOGGING_RULES = '*.warning=true'
+    /* QT_LOGGING_RULES = '*.warning=true' */
 
     /* Set to a non-zero value to make Qt print out diagnostic information about the each (C++) plugin it tries to load. */
     /* QT_DEBUG_PLUGINS = 0 */
@@ -99,6 +99,8 @@ pipeline {
     TESTRAIL_RUN_NAME = "${params.TESTRAIL_RUN_NAME}"
     LOG_LEVEL =         "${params.LOG_LEVEL}"
 
+    /* Forces QT to use OpenGL for rendering instead of default Direct3D 11 */
+    QSG_RHI_BACKEND = 'opengl'
   }
 
   stages {
