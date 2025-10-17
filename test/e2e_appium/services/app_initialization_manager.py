@@ -12,9 +12,18 @@ class AppInitializationManager:
         self.logger = get_logger("app_initialization")
 
     def perform_initial_activation(
-        self, timeout: float = 15.0, interval: float = 2.0
+        self,
+        timeout: float = 15.0,
+        interval: float = 2.0,
+        force_activation: bool = True,
     ) -> bool:
         """Perform initial app activation until UI appears or timeout is reached.
+
+        Args:
+            timeout: Maximum time in seconds to attempt activation taps.
+            interval: Delay between activation checks while waiting for UI response.
+            force_activation: When True, always perform an activation tap before
+                checking for UI visibility.
 
         Raises:
             RuntimeError: If the UI never surfaces before the timeout expires.
@@ -26,7 +35,7 @@ class AppInitializationManager:
         deadline = time.time() + timeout
 
         while time.time() < deadline:
-            if not self._should_perform_activation_tap():
+            if not force_activation and not self._should_perform_activation_tap():
                 self.logger.debug("↷ UI already present - skipping activation")
                 return True
 
@@ -130,10 +139,12 @@ class AppInitializationManager:
     def _get_safe_tap_coordinates(self) -> tuple:
         try:
             size = self.driver.get_window_size()
-            return (size["width"] // 2, size["height"] // 2)
+            tap_x = int(size["width"] * 0.2)
+            tap_y = int(size["height"] * 0.2)
+            return (tap_x, tap_y)
         except Exception:
             self.logger.warning("⚠ Could not get window size; using fallback coords")
-            return (500, 300)
+            return (400, 300)
 
     def _wait_for_ui_response(
         self, timeout: int = 5, poll_interval: float = 0.5
