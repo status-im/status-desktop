@@ -89,6 +89,9 @@ pipeline {
     /* To store user configuratiin files in temp dir */
     XDG_CONFIG_HOME = "${WORKSPACE_TMP}/config"
 
+    /* To remove QML cache */
+    QML_DISABLE_CACHE = 1
+
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
     TESTRAIL_PROJECT_ID = 18
     /* Override QT xcb plugin with linux to avoid errors like:
