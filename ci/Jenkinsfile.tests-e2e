@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.9.30'
 pipeline {
   agent {
     dockerfile {
-      label 'linuxcontainer'
+      label getAgentLabel()
       filename 'tests.Dockerfile'
       dir 'ci'
       args '--network=host ' +
@@ -55,6 +55,16 @@ pipeline {
       name: 'LOG_LEVEL',
       description: 'Log level for pytest.',
       choices: ['INFO', 'DEBUG', 'TRACE', 'WARNING', 'CRITICAL']
+    )
+    choice(
+      name: 'AGENT_NODE',
+      description: 'Which Linux worker to run on (leave default for random selection)',
+      choices: [
+        '',
+        'linux-01',
+        'linux-02',
+        'linux-03'
+      ],
     )
   }
 
@@ -301,3 +311,10 @@ def getDefaultTestScopeFlag() {
 }
 
 def getTestStageTimeout() { params.TEST_SCOPE_FLAG == '-m=critical' ? 30 : 120 }
+
+def getAgentLabel() {
+  if (params.AGENT_NODE && params.AGENT_NODE != '') {
+    return "linuxcontainer && ${params.AGENT_NODE}"
+  }
+  return 'linuxcontainer'
+}

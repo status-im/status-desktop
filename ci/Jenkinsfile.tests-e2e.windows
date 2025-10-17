@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.9.30'
 pipeline {
 
   agent {
-    label 'windows && x86_64 && qt-6.9.2 && windows-e2e'
+    label getAgentLabel()
   }
 
   parameters {
@@ -44,6 +44,17 @@ pipeline {
       name: 'LOG_LEVEL',
       description: 'Log level for pytest.',
       choices: ['INFO', 'DEBUG', 'TRACE', 'WARNING', 'CRITICAL']
+    )
+    choice(
+      name: 'AGENT_NODE',
+      description: 'Which Windows host to run on (leave default for random selection)',
+      choices: [
+        '',
+        'windows-01-vm',
+        'windows-02-vm',
+        'windows-03-vm',
+        'windows-04-vm'
+      ],
     )
   }
 
@@ -294,3 +305,11 @@ def getDefaultTestScopeFlag() {
 }
 
 def getTestStageTimeout() { params.TEST_SCOPE_FLAG == '-m=critical' ? 30 : 120 }
+
+def getAgentLabel() {
+  def baseLabel = 'windows && x86_64 && qt-6.9.2 && windows-e2e'
+  if (params.AGENT_NODE && params.AGENT_NODE != '') {
+    return "${baseLabel} && ${params.AGENT_NODE}"
+  }
+  return baseLabel
+}
