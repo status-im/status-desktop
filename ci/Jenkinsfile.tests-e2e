@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.9.16'
 pipeline {
   agent {
     dockerfile {
-      label 'linuxcontainer'
+      label "linuxcontainer && ${params.AGENT_NODE}"
       filename 'tests.Dockerfile'
       dir 'ci'
       args '--network=host ' +
@@ -55,6 +55,15 @@ pipeline {
       name: 'LOG_LEVEL',
       description: 'Log level for pytest.',
       choices: ['INFO', 'DEBUG', 'TRACE', 'WARNING', 'CRITICAL']
+    )
+    choice(
+      name: 'AGENT_NODE',
+      description: 'Which Linux worker to run on',
+      choices: [
+        'linux-03.he-eu-hel1.ci.devel',
+        'linux-02.he-eu-hel1.ci.devel',
+        'linux-01.he-eu-hel1.ci.devel'
+      ],
     )
   }
 
