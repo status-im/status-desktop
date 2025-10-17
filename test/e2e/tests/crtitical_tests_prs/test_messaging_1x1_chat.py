@@ -7,6 +7,9 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from configs import get_platform
+from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
+    LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
 from constants.messaging import Messaging
 from constants.wallet import WalletAddress
 from ext.test_files.base64_images import BASE_64_IMAGE_JPEG
@@ -25,6 +28,7 @@ from scripts.utils.generators import random_text_message
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')
 @pytest.mark.case(703087, 738732, 738734, 738742, 738744, 738745)
 @pytest.mark.critical
+@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 @pytest.mark.smoke
 def test_1x1_chat_add_contact_in_settings(multiple_instances):
     user_one: UserAccount = RandomUser()

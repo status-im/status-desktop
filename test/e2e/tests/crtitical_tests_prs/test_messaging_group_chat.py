@@ -6,6 +6,7 @@ import pytest
 from allure_commons._allure import step
 
 import driver
+from configs import get_platform
 from constants.links import external_link, link_to_status_community
 
 import configs.testpath
@@ -23,6 +24,7 @@ from scripts.utils.generators import random_text_message
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014, 738735, 738736, 738739, 738740)
 @pytest.mark.critical
+@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 @pytest.mark.smoke
 @pytest.mark.parametrize('community_name, domain_link, domain_link_2',
                          [pytest.param('Status', 'status.app', 'github.com')

@@ -4,6 +4,7 @@ import os
 import allure
 import pytest
 import shortuuid
+import sys
 
 from tests import test_data
 from PIL import ImageGrab
@@ -12,6 +13,9 @@ from fixtures.path import generate_test_info
 from scripts.utils.system_path import SystemPath
 
 # Send logs to pytest.log as well
+# Ensure log directory exists
+log_dir = os.path.dirname(configs.PYTEST_LOG)
+os.makedirs(log_dir, exist_ok=True)
 handler = logging.FileHandler(filename=configs.PYTEST_LOG)
 logging.basicConfig(
     level=os.getenv('LOG_LEVEL', 'INFO'),
@@ -29,8 +33,30 @@ pytest_plugins = [
 
 
 @pytest.fixture(scope='session', autouse=True)
+def generate_allure_environment():
+    """Generate allure environment.properties with dynamic platform information"""
+    env_dir = configs.testpath.ROOT / 'ext' / 'allure_files'
+    env_file = env_dir / 'environment.properties'
+    
+    # Ensure directory exists
+    env_dir.mkdir(parents=True, exist_ok=True)
+    
+    platform_name = get_platform()
+    python_version = f"Python {sys.version_info.major}.{sys.version_info.minor}"
+    
+    content = f"""os_platform = {platform_name}
+python_version = {python_version}
+"""
+    
+    env_file.write_text(content)
+    LOG.info(f'Generated allure environment.properties with platform={platform_name}, python={python_version}')
+    yield
+
+
+@pytest.fixture(scope='session', autouse=True)
 def setup_session_scope(
         # init_testrail_api, TODO: https://github.com/status-im/status-desktop/issues/18288
+        generate_allure_environment,
         prepare_test_directory,
         start_squish_server
 ):
