@@ -113,8 +113,7 @@ ColumnLayout {
                 text: qsTr("Learn more about token-gating")
                 font.pixelSize: Theme.primaryTextFontSize
                 normalColor: linkColor
-                onClicked: Global.openLinkWithConfirmation(d.aboutPermissionsLink,
-                                                           StatusQUtils.StringUtils.extractDomainFromLink(d.aboutPermissionsLink))
+                onClicked: Global.requestOpenLink(d.aboutPermissionsLink)
             }
 
             StatusIcon {
@@ -127,8 +126,7 @@ ColumnLayout {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
 
-                    onClicked: Global.openLinkWithConfirmation(d.aboutPermissionsLink,
-                                                               StatusQUtils.StringUtils.extractDomainFromLink(d.aboutPermissionsLink))
+                    onClicked: Global.requestOpenLink(d.aboutPermissionsLink)
                 }
             }
         }
@@ -139,7 +137,7 @@ ColumnLayout {
         id: messageHistoryInfoPopupComponent
 
         EnableFullMessageHistoryPopup {
-            onAccepted: Global.openLinkWithConfirmation(d.aboutHistoryServiceLink, StatusQUtils.StringUtils.extractDomainFromLink(d.aboutHistoryServiceLink))
+            onAccepted: Global.requestOpenLink(d.aboutHistoryServiceLink)
             onClosed: destroy()
         }
     }

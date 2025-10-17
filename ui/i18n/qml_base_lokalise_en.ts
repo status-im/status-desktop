@@ -2561,6 +2561,16 @@
       <comment>AppMain</comment>
       <translation>%1 was successfully removed from your saved addresses</translation>
     </message>
+    <message>
+      <source>%1 added to your trusted sites.</source>
+      <comment>AppMain</comment>
+      <translation>%1 added to your trusted sites.</translation>
+    </message>
+    <message>
+      <source>%1 was removed from your trusted sites.</source>
+      <comment>AppMain</comment>
+      <translation>%1 was removed from your trusted sites.</translation>
+    </message>
   </context>
   <context>
     <name>AppSearch</name>
@@ -3916,29 +3926,6 @@
     </message>
   </context>
   <context>
-    <name>ChooseBrowserPopup</name>
-    <message>
-      <source>Choose browser</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Choose browser</translation>
-    </message>
-    <message>
-      <source>Open in Status</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Open in Status</translation>
-    </message>
-    <message>
-      <source>Open in my default browser</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Open in my default browser</translation>
-    </message>
-    <message>
-      <source>Remember my choice. To override it, go to Settings.</source>
-      <comment>ChooseBrowserPopup</comment>
-      <translation>Remember my choice. To override it, go to Settings.</translation>
-    </message>
-  </context>
-  <context>
     <name>CollectibleDetailView</name>
     <message>
       <source>Unknown</source>
@@ -4857,29 +4844,29 @@
   <context>
     <name>ConfirmExternalLinkPopup</name>
     <message>
-      <source>Before you go</source>
-      <comment>ConfirmExternalLinkPopup</comment>
-      <translation>Before you go</translation>
-    </message>
-    <message>
-      <source>This link is taking you to the following site. Be careful to double check the URL before you go.</source>
-      <comment>ConfirmExternalLinkPopup</comment>
-      <translation>This link is taking you to the following site. Be careful to double check the URL before you go.</translation>
-    </message>
-    <message>
-      <source>Trust &lt;b&gt;%1&lt;/b&gt; links from now on</source>
-      <comment>ConfirmExternalLinkPopup</comment>
-      <translation>Trust &lt;b&gt;%1&lt;/b&gt; links from now on</translation>
-    </message>
-    <message>
       <source>Cancel</source>
       <comment>ConfirmExternalLinkPopup</comment>
       <translation>Cancel</translation>
     </message>
     <message>
-      <source>Visit site</source>
+      <source>Opening external link</source>
       <comment>ConfirmExternalLinkPopup</comment>
-      <translation>Visit site</translation>
+      <translation>Opening external link</translation>
+    </message>
+    <message>
+      <source>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</source>
+      <comment>ConfirmExternalLinkPopup</comment>
+      <translation>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</translation>
+    </message>
+    <message>
+      <source>Always trust links to &lt;b&gt;%1&lt;/b&gt;</source>
+      <comment>ConfirmExternalLinkPopup</comment>
+      <translation>Always trust links to &lt;b&gt;%1&lt;/b&gt;</translation>
+    </message>
+    <message>
+      <source>Open</source>
+      <comment>ConfirmExternalLinkPopup</comment>
+      <translation>Open</translation>
     </message>
   </context>
   <context>
@@ -16446,6 +16433,16 @@
       <comment>PrivacyAndSecurityView</comment>
       <translation>From all profiles on device</translation>
     </message>
+    <message>
+      <source>Trusted sites</source>
+      <comment>PrivacyAndSecurityView</comment>
+      <translation>Trusted sites</translation>
+    </message>
+    <message>
+      <source>Manage trusted sites. Their links open without confirmation.</source>
+      <comment>PrivacyAndSecurityView</comment>
+      <translation>Manage trusted sites. Their links open without confirmation.</translation>
+    </message>
   </context>
   <context>
     <name>PrivacyStore</name>
@@ -23322,6 +23319,24 @@
       <source>Privacy Policy</source>
       <comment>WelcomePage</comment>
       <translation>Privacy Policy</translation>
+    </message>
+  </context>
+  <context>
+    <name>WhitelistedDomainsView</name>
+    <message>
+      <source>Trusted sites</source>
+      <comment>WhitelistedDomainsView</comment>
+      <translation>Trusted sites</translation>
+    </message>
+    <message>
+      <source>Manage trusted sites. Their links open without confirmation.</source>
+      <comment>WhitelistedDomainsView</comment>
+      <translation>Manage trusted sites. Their links open without confirmation.</translation>
+    </message>
+    <message>
+      <source>No trusted sites added yet</source>
+      <comment>WhitelistedDomainsView</comment>
+      <translation>No trusted sites added yet</translation>
     </message>
   </context>
   <context>

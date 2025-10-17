@@ -30,8 +30,7 @@ Item {
             displayPromoBanner: ctrlDisplayPromo.checked
             onEmptyKeycardDetected: console.warn("!!! EMPTY DETECTED")
             onNotEmptyKeycardDetected: console.warn("!!! NOT EMPTY DETECTED")
-            onOpenLink: Qt.openUrlExternally(link)
-            onOpenLinkWithConfirmation: Qt.openUrlExternally(link)
+            onRequestOpenLink: Qt.openUrlExternally(link)
             onKeycardFactoryResetRequested: console.warn("!!! FACTORY RESET")
             onUnblockWithSeedphraseRequested: console.warn("!!! UNBLOCK WITH SEEDPHRASE")
             onUnblockWithPukRequested: console.warn("!!! UNBLOCK WITH PUK")

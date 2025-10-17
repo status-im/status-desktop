@@ -98,7 +98,7 @@ ColumnLayout {
         onLinkActivated: {
             const explorerUrl = root.walletRootStore.showAllAccounts ? link
                                                                         : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.walletRootStore.selectedAddress)
-            Global.openLinkWithConfirmation(explorerUrl, SQUtils.StringUtils.extractDomainFromLink(explorerUrl))
+            Global.requestOpenLink(explorerUrl)
         }
     }
 
@@ -295,7 +295,7 @@ ColumnLayout {
 
             onViewTxOnExplorerRequested: {
                 let link = Utils.getUrlForTxOnNetwork(networkShortName, isNetworkTestnet, firstTxHash)
-                Global.openLink(link)
+                Global.requestOpenLink(link)
             }
         }
     }

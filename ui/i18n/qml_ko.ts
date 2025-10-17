@@ -2079,6 +2079,14 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <source>%1 was successfully removed from your saved addresses</source>
         <translation>%1이(가) 저장된 주소에서 성공적으로 제거되었어요</translation>
     </message>
+    <message>
+        <source>%1 added to your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 was removed from your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AppSearch</name>
@@ -3194,25 +3202,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>ChooseBrowserPopup</name>
-    <message>
-        <source>Choose browser</source>
-        <translation>브라우저 선택</translation>
-    </message>
-    <message>
-        <source>Open in Status</source>
-        <translation>스테이터스로 열기</translation>
-    </message>
-    <message>
-        <source>Open in my default browser</source>
-        <translation>기본 브라우저에서 열기</translation>
-    </message>
-    <message>
-        <source>Remember my choice. To override it, go to Settings.</source>
-        <translation>내 선택을 기억합니다. 변경하려면 설정으로 이동하세요.</translation>
-    </message>
-</context>
-<context>
     <name>CollectibleDetailView</name>
     <message>
         <source>Unknown</source>
@@ -3966,24 +3955,24 @@ file format</source>
 <context>
     <name>ConfirmExternalLinkPopup</name>
     <message>
-        <source>Before you go</source>
-        <translation>가기 전에</translation>
-    </message>
-    <message>
-        <source>This link is taking you to the following site. Be careful to double check the URL before you go.</source>
-        <translation>이 링크는 다음 사이트로 이동합니다. 이동하기 전에 URL을 다시 한 번 확인하세요.</translation>
-    </message>
-    <message>
-        <source>Trust &lt;b&gt;%1&lt;/b&gt; links from now on</source>
-        <translation>지금부터 &lt;b&gt;%1&lt;/b&gt; 링크를 신뢰하세요</translation>
-    </message>
-    <message>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <source>Visit site</source>
-        <translation>사이트 방문</translation>
+        <source>Opening external link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always trust links to &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished">열기</translation>
     </message>
 </context>
 <context>
@@ -13445,6 +13434,14 @@ to load</source>
         <source>From all profiles on device</source>
         <translation>이 기기의 모든 프로필에서</translation>
     </message>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrivacyStore</name>
@@ -19092,6 +19089,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Privacy Policy</source>
         <translation>개인 정보 보호 정책</translation>
+    </message>
+</context>
+<context>
+    <name>WhitelistedDomainsView</name>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No trusted sites added yet</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

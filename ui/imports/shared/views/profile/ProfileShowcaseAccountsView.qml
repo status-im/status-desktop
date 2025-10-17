@@ -154,7 +154,7 @@ Item {
                 flatNetworks: root.networksStore.activeNetworks
                 onNetworkClicked: (shortname, isTestnet) => {
                     let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, contextMenu.accountAddress);
-                    Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+                    Global.requestOpenLink(link)
                 }
             }
         }

@@ -2086,6 +2086,14 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <source>%1 was successfully removed from your saved addresses</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 added to your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 was removed from your trusted sites.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AppSearch</name>
@@ -3203,25 +3211,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>ChooseBrowserPopup</name>
-    <message>
-        <source>Choose browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in my default browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remember my choice. To override it, go to Settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CollectibleDetailView</name>
     <message>
         <source>Unknown</source>
@@ -3980,23 +3969,23 @@ file format</source>
 <context>
     <name>ConfirmExternalLinkPopup</name>
     <message>
-        <source>Before you go</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This link is taking you to the following site. Be careful to double check the URL before you go.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trust &lt;b&gt;%1&lt;/b&gt; links from now on</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Visit site</source>
+        <source>Opening external link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always trust links to &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13503,6 +13492,14 @@ to load</source>
         <source>From all profiles on device</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrivacyStore</name>
@@ -19166,6 +19163,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Privacy Policy</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WhitelistedDomainsView</name>
+    <message>
+        <source>Trusted sites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage trusted sites. Their links open without confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No trusted sites added yet</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -449,7 +449,7 @@ Item {
                             StatusMouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Global.openLink(token.websiteUrl)
+                                onClicked: Global.requestOpenLink(token.websiteUrl)
                             }
                         }
                     }

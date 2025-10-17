@@ -147,7 +147,6 @@ QtObject {
     property real volume: !!appSettings ? appSettings.volume * 0.01 : 0.5
     property bool notificationSoundsEnabled: !!appSettings ? appSettings.notificationSoundsEnabled : true
 
-    readonly property bool showBrowserSelector: localAccountSensitiveSettings.showBrowserSelector
     readonly property bool openLinksInStatus: localAccountSensitiveSettings.openLinksInStatus
 
     readonly property QtObject _d: QtObject {

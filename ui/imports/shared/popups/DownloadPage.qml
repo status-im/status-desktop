@@ -79,7 +79,7 @@ Rectangle {
         anchors.top: newVersionAvailableText.bottom
         anchors.topMargin: 32
         onClicked: {
-            Global.openLink(root.downloadURL)
+            Global.requestOpenLink(root.downloadURL)
             root.closed()
         }
     }

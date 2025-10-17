@@ -329,7 +329,7 @@ RowLayout {
                     break;
                 }
             }
-            onLinkActivated: Global.openLink(link)
+            onLinkActivated: Global.requestOpenLink(link)
         }
     }
 

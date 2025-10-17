@@ -838,7 +838,7 @@ Loader {
                     const linkPreviewType = root.linkPreviewModel.getLinkPreviewType(link)
 
                     if (linkPreviewType === Constants.LinkPreviewType.Standard || !Utils.isStatusDeepLink(link)) {
-                        Global.openLink(link)
+                        Global.requestOpenLink(link)
                         return
                     }
 
@@ -1033,7 +1033,7 @@ Loader {
                             d.onImageClicked(image, mouse, imageSource, url)
                         }
                         onOpenContextMenu: (item, url, domain) => {
-                            Global.openMenu(imageContextMenuComponent, item, { url: url, domain: domain, requireConfirmationOnOpen: true })
+                            Global.openMenu(imageContextMenuComponent, item, { url: url, domain: domain })
                         }
                         onHoveredLinkChanged: delegate.highlightedLink = linksMessageView.hoveredLink
                         gifUnfurlingEnabled: root.gifUnfurlingEnabled

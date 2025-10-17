@@ -192,7 +192,7 @@ StatusMenu {
                         icon.width: 16
                         icon.height: 16
                         onClicked: {
-                            Global.openLink("https://etherscan.io/address/%1".arg(model.addressDetails.address))
+                            Global.requestOpenLink("https://etherscan.io/address/%1".arg(model.addressDetails.address))
                         }
                     }
                 }
