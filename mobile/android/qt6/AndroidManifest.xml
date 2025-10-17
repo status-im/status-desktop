@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="im.status.app"
+    package="app.status.mobile"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="1.0.1">
     <!-- non-dangerous permissions -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.NFC"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -43,7 +41,7 @@
         android:hasFragileUserData="true"
         android:fullBackupOnly="false">
         <activity
-            android:name="im.status.app.StatusQtActivity"
+            android:name="app.status.mobile.StatusQtActivity"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
             android:launchMode="singleTop"
             android:resizeableActivity="false"

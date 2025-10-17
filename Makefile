@@ -905,8 +905,13 @@ mobile-run: deps-common
 
 mobile-build: USE_SYSTEM_NIM=1
 mobile-build: | deps-common
-	echo -e "\033[92mBuilding:\033[39m mobile app"
-	$(MAKE) -C mobile
+	echo -e "\033[92mBuilding:\033[39m mobile APK"
+	$(MAKE) -C mobile apk
+
+mobile-bundle: USE_SYSTEM_NIM=1
+mobile-bundle: | deps-common
+	echo -e "\033[92mBuilding:\033[39m mobile AAB (release bundle)"
+	$(MAKE) -C mobile aab
 
 mobile-clean:
 	echo -e "\033[92mCleaning:\033[39m mobile app"

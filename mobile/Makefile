@@ -74,6 +74,14 @@ $(TARGET): $(APP_SCRIPT) $(STATUS_GO_LIB) $(STATUS_Q_LIB) $(DOTHERSIDE_LIB) $(OP
 	@BIN_DIR=$(BIN_PATH) BUILD_DIR=$(BUILD_PATH) QT_MAJOR=$(QT_MAJOR) $(APP_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "Built $(TARGET)"
 
+# AAB target for Android release builds
+ifeq ($(OS),android)
+$(AAB_TARGET): $(APP_SCRIPT) $(STATUS_GO_LIB) $(STATUS_Q_LIB) $(DOTHERSIDE_LIB) $(OPENSSL_LIB) $(QRCODEGEN_LIB) $(NIM_STATUS_CLIENT_LIB) $(STATUS_DESKTOP_RCC) $(WRAPPER_APP_FILES)
+	@echo "Building Android App Bundle"
+	@BUILD_TYPE=aab BIN_DIR=$(BIN_PATH) BUILD_DIR=$(BUILD_PATH) QT_MAJOR=$(QT_MAJOR) $(APP_SCRIPT) $(HANDLE_OUTPUT)
+	@echo "Built $(AAB_TARGET)"
+endif
+
 # phony rules
 .PHONY: makedir
 makedir:
@@ -83,6 +91,28 @@ makedir:
 compile-translations:
 	@echo "Building translations"
 	@make -C $(STATUS_DESKTOP) compile-translations $(HANDLE_OUTPUT)
+
+.PHONY: apk
+ifeq ($(OS),android)
+apk: $(TARGET)
+	@echo "✓ APK built successfully"
+else ifeq ($(OS),ios)
+apk: $(TARGET)
+	@echo "✓ iOS app built successfully"
+else
+apk:
+	@echo "APK target is only available for Android/iOS"
+endif
+
+.PHONY: aab
+ifeq ($(OS),android)
+aab: $(AAB_TARGET)
+	@echo "✓ AAB built successfully"
+else
+aab:
+	@echo "Error: AAB target is only available for Android"
+	@exit 1
+endif
 
 .PHONY: all
 all: $(TARGET)
