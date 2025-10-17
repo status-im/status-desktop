@@ -70,7 +70,7 @@ pipeline {
   environment {
     PLATFORM = "macos/${getArch()}${(params.USE_NWAKU ?: false) ? '-nwaku' : ''}"
     /* Improve make performance */
-    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     QT_VERSION="6.9.2"
     QMAKE = "/Users/admin/${QT_VERSION}/macos/bin/qmake"
     /* QMAKE = sh(script: "which qmake", returnStdout: true).trim() */

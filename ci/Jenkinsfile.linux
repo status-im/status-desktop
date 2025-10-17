@@ -76,7 +76,7 @@ pipeline {
   environment {
     PLATFORM = "linux/${getArch()}${(params.USE_NWAKU ?: false) ? '-nwaku' : ''}"
     /* Improve make performance */
-    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Set USE_NWAKU before VERSION since version.sh uses it */

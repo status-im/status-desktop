@@ -20,6 +20,10 @@ Button {
     required property string currentLanguage
     // list of language/locale codes, e.g. ["cs_CZ","ko","fr"]
     required property var languageCodes
+    // map of language codes and a translation percent score, e.g. {[{"cs_CZ": 20}, {"ko": 100}, {"fr": -1}]}; -1 meaning the language is unknown to Lokalise
+    property var lokalisedLanguageScores
+    // filter out languages whose translation score is below the threshold; 0 effectively disables the threshold
+    property int filterThreshold
 
     signal languageSelected(string languageCode)
 
@@ -47,11 +51,14 @@ Button {
         readonly property int maxPopupHeight: 400
         readonly property int delegateHeight: 70
 
+        readonly property LanguageModel baseLanguageModel: LanguageModel {
+            languageCodes: root.languageCodes
+            lokalisedLanguageScores: root.lokalisedLanguageScores
+        }
+
         readonly property SortFilterProxyModel languageModel: SortFilterProxyModel {
             id: languageModel
-            sourceModel: LanguageModel {
-                languageCodes: root.languageCodes
-            }
+            sourceModel: d.baseLanguageModel
             filters: [
                 AnyOf {
                     enabled: searchField.text !== ""
@@ -66,6 +73,17 @@ Button {
                     SearchFilter {
                         roleName: "nativeName"
                         searchPhrase: searchField.text
+                    }
+                },
+                AnyOf {
+                    enabled: root.filterThreshold
+                    ValueFilter {
+                        roleName: "percent"
+                        value: -1
+                    }
+                    RangeFilter {
+                        roleName: "percent"
+                        minimumValue: root.filterThreshold
                     }
                 }
             ]
@@ -103,6 +121,11 @@ Button {
             icon: "chevron-down"
             color: Theme.palette.primaryColor1
         }
+    }
+
+    StatusToolTip {
+        text: d.baseLanguageModel.formattedNativeLanguageName(d.selectedLanguage, Qt.locale(d.selectedLanguage))
+        visible: root.hovered
     }
 
     onClicked: dropdown.opened ? dropdown.close() : dropdown.open()
@@ -169,7 +192,7 @@ Button {
                                 text: model.nativeName
                                 font.capitalization: Font.Capitalize
                                 font.pixelSize: root.font.pixelSize
-                                font.weight: root.font.weight
+                                font.weight: checked ? Font.DemiBold : Font.Normal
                             }
                             StatusBaseText {
                                 Layout.fillWidth: true
@@ -178,12 +201,22 @@ Button {
                                 color: Theme.palette.baseColor1
                             }
                         }
-                        StatusIcon {
-                            Layout.preferredHeight: 20
+                        ColumnLayout {
+                            Layout.fillHeight: true
                             Layout.alignment: Qt.AlignRight
-                            visible: checked
-                            icon: "tiny/checkmark"
-                            color: Theme.palette.primaryColor1
+                            StatusIcon {
+                                Layout.preferredHeight: 20
+                                Layout.alignment: Qt.AlignRight
+                                visible: checked
+                                icon: "tiny/checkmark"
+                                color: Theme.palette.primaryColor1
+                            }
+                            StatusBaseText {
+                                visible: !!root.lokalisedLanguageScores
+                                text: model.percent === -1 ? qsTr("N/A", "not available") : qsTr("%1% done").arg(model.percent)
+                                color: Theme.palette.baseColor1
+                                font.pixelSize: Theme.tertiaryTextFontSize
+                            }
                         }
                     }
                     onClicked: {

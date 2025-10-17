@@ -99,6 +99,7 @@ SettingsContentBase {
                 enabled: root.languageSelectionEnabled
                 currentLanguage: root.currentLanguage
                 languageCodes: root.availableLanguages
+                lokalisedLanguageScores: LanguageService.lokaliseLanguages
                 onLanguageSelected: (languageCode) =>
                                     languageConfirmationDialog.createObject(root, {oldCode: root.currentLanguage, newCode: languageCode}).open()
 

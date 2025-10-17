@@ -318,6 +318,7 @@ OnboardingPage {
         currentLanguage: root.currentLanguage
         languageCodes: root.availableLanguages
         onLanguageSelected: (languageCode) => root.changeLanguageRequested(languageCode)
+        lokalisedLanguageScores: LanguageService.lokaliseLanguages
     }
 
     Component {
