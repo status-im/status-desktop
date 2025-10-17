@@ -199,9 +199,20 @@ class QObject:
 
         while time.time() - start_time < timeout_sec:
             try:
-                if not self.is_visible:
+                # Use short timeout for faster check when object disappears
+                obj = driver.waitForObjectExists(self.real_name, 100)
+                # Object exists, check if it's visible
+                if not obj.visible:
                     LOG.info('%s: is hidden', self)
                     return self
+            except (LookupError, RuntimeError):
+                # Object not found - it's hidden
+                LOG.info('%s: is hidden (not found)', self)
+                return self
+            except AttributeError:
+                # Object has no visible attribute - consider it hidden
+                LOG.info('%s: is hidden (no visible attribute)', self)
+                return self
             except Exception as e:
                 LOG.warning("Exception during visibility check: %s", e)
             time.sleep(check_interval)

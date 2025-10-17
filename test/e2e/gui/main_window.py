@@ -14,6 +14,7 @@ from gui.components.activity_center import ActivityCenter
 from helpers.chat_helper import skip_message_backup_popup_if_visible
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.context_menu import ContextMenu
+from gui.components.splash_screen import SplashScreen
 from gui.components.toast_message import ToastMessage
 from gui.components.online_identifier import OnlineIdentifier
 from gui.elements.button import Button
@@ -213,9 +214,8 @@ class MainWindow(Window):
         welcome_screen = OnboardingWelcomeToStatusView().wait_until_appears()
         profile_view = welcome_screen.open_create_your_profile_view()
         create_password_view = profile_view.open_password_view()
-        splash_screen = create_password_view.create_password(user_account.password)
-        splash_screen.wait_until_appears()
-        splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
+        create_password_view.create_password(user_account.password)
+        SplashScreen().wait_until_appears().wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
 
         # since we now struggle with 3 words names, I need to change display name first
         left_panel = MainLeftPanel()

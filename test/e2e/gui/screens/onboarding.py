@@ -533,14 +533,14 @@ class OnboardingCreatePasswordView(OnboardingView):
         self.password_component_indicator = QObject(onboarding_names.passwordComponentIndicator)
 
     @allure.step('Set password and open Confirmation password view')
-    def create_password(self, value: str) -> 'SplashScreen':
+    def create_password(self, value: str):
         self.set_password_in_first_field(value)
         self.set_password_in_repeat_field(value)
         self.confirm_password_button.click()
         if configs.system.get_platform() == "Darwin":
-            assert OnboardingBiometricsView().wait_until_appears().yes_use_biometrics_button.is_visible, f"Use biometrics button is not found"
-            OnboardingBiometricsView().wait_until_appears().maybe_later()
-        return SplashScreen()
+            biometrics_view = OnboardingBiometricsView().wait_until_appears()
+            assert biometrics_view.yes_use_biometrics_button.is_visible, f"Use biometrics button is not found"
+            biometrics_view.maybe_later()
 
     @allure.step('Fill in choose password field')
     def set_password_in_first_field(self, value: str):
