@@ -2842,30 +2842,6 @@ Do you wish to override the security check and continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Disable biometrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Do you want to enable biometrics for login and transaction authentication?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to disable biometrics for login and transaction authentication?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yes, enable biometrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yes, disable biometrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Biometric login and transaction authentication disabled for this device</source>
         <translation type="unfinished"></translation>
     </message>

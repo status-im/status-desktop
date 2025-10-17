@@ -273,6 +273,13 @@ static void jni_nativeCredentialError(JNIEnv*, jobject, jint code, jstring jMsg)
 
     const QString msg = QJniObject(jMsg).toString();
 
+    if (code == -11) { // "User cancelled"
+        QMetaObject::invokeMethod(s_keychain, [msg]{
+            emit s_keychain->getCredentialRequestCompleted(Keychain::StatusCancelled, QString());
+        }, Qt::QueuedConnection);
+        return;
+    }
+
     QMetaObject::invokeMethod(s_keychain, [msg]{
         emit s_keychain->getCredentialRequestCompleted(Keychain::StatusGenericError, QString());
     }, Qt::QueuedConnection);

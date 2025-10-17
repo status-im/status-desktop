@@ -2834,30 +2834,6 @@ Do you wish to override the security check and continue?</source>
         <translation>생체 인증 로그인과 트랜잭션 인증</translation>
     </message>
     <message>
-        <source>Disable biometrics</source>
-        <translation>생체 인증 비활성화</translation>
-    </message>
-    <message>
-        <source>Do you want to enable biometrics for login and transaction authentication?</source>
-        <translation>로그인 및 트랜잭션 인증에 생체인식을 활성화할까요?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to disable biometrics for login and transaction authentication?</source>
-        <translation>로그인 및 트랜잭션 인증을 위한 생체인증을 비활성화하시겠어요?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>취소</translation>
-    </message>
-    <message>
-        <source>Yes, enable biometrics</source>
-        <translation>예, 생체 인증 사용</translation>
-    </message>
-    <message>
-        <source>Yes, disable biometrics</source>
-        <translation>예, 생체인식 비활성화</translation>
-    </message>
-    <message>
         <source>Biometric login and transaction authentication disabled for this device</source>
         <translation>이 기기에서 생체 로그인과 거래 인증이 비활성화되었습니다</translation>
     </message>
