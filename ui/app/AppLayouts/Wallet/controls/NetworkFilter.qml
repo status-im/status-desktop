@@ -104,12 +104,9 @@ StatusComboBox {
                 id: chainRepeater
                 model: SortFilterProxyModel {
                     sourceModel: root.multiSelection ? root.flatNetworks : null
-                    filters: FastExpressionFilter {
-                        expression: {
-                            root.selection
-                            return root.selection.includes(model.chainId) 
-                        } 
-                        expectedRoles: ["chainId"] 
+                    filters: OneOfFilter {
+                        roleName: "chainId"
+                        array: root.selection
                     }
                 }
                 delegate: StatusRoundedImage {

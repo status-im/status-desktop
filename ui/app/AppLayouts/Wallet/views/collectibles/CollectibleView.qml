@@ -21,13 +21,12 @@ Control {
     property string unknownTitle: "..."
     property string subTitle: ""
     property alias subTitleColor: subTitleItem.customColor
-    property string backgroundColor: "transparent"
+    property color backgroundColor: "transparent"
     property url mediaUrl : ""
     property string mediaType: ""
     property url fallbackImageUrl : ""
     property bool isLoading: false
     property bool navigationIconVisible: false
-    property bool isMetadataValid: false
     property string communityId: ""
     property string communityName
     property string communityImage
@@ -92,7 +91,6 @@ Control {
 
             backgroundColor: root.isLoading ? "transparent" : root.backgroundColor
             visible: !specialCollectible.visible
-            isMetadataValid: root.isMetadataValid
             mediaUrl: root.mediaUrl
             mediaType: root.mediaType
             fallbackImageUrl: root.fallbackImageUrl

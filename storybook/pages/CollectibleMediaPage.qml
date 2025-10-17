@@ -71,9 +71,8 @@ SplitView {
                 active: false
 
                 sourceComponent: CollectibleMedia {
-                    backgroundColor: d.currentCollectible.backgroundColor
+                    backgroundColor: d.currentCollectible.backgroundColor ? d.currentCollectible.backgroundColor : "transparent"
                     isCollectibleLoading: isLoadingCheckbox.checked
-                    isMetadataValid: !d.currentCollectible.isMetadataValid
                     mediaUrl: d.currentCollectible.mediaUrl ?? ""
                     fallbackImageUrl: d.currentCollectible.imageUrl
                     interactive: isInteractiveCheckbox.checked
@@ -127,3 +126,4 @@ SplitView {
 }
 
 // category: Wallet
+// status: good

@@ -304,7 +304,7 @@ RightTabBaseView {
                             id: assetsViewAdaptor
 
                             accounts: RootStore.addressFilters
-                            chains: root.networksStore.networkFiltersArray
+                            chains: root.networksStore.networkFilters
 
                             marketValueThreshold:
                                 RootStore.tokensStore.displayAssetsBelowBalance
@@ -498,7 +498,7 @@ RightTabBaseView {
                         filterVisible: filterButton.checked
                         customOrderAvailable: controller.hasSettings
                         bannerComponent: buyReceiveBannerComponent
-                        onCollectibleClicked: {
+                        onCollectibleClicked: function (chainId, contractAddress, tokenId, uid, tokenType, communityId) {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
                             RootStore.setCurrentViewedHolding(uid, uid, tokenType, communityId)
                             d.detailedCollectibleActivityController.resetFilter()
@@ -509,26 +509,26 @@ RightTabBaseView {
 
                             stack.currentIndex = 1
                         }
-                        onSendRequested: (symbol, tokenType, fromAddress) => {
-                                             const collectible = SQUtils.ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
-                                             if (!!collectible && collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
-                                                 Global.openTransferOwnershipPopup(collectible.communityId,
-                                                                                   collectible.communityName,
-                                                                                   collectible.communityImage,
-                                                                                   {
-                                                                                       key: collectible.tokenId,
-                                                                                       privilegesLevel: collectible.communityPrivilegesLevel,
-                                                                                       chainId: collectible.chainId,
-                                                                                       name: collectible.name,
-                                                                                       artworkSource: collectible.communityImage,
-                                                                                       accountAddress: fromAddress,
-                                                                                       tokenAddress: collectible.contractAddress
-                                                                                   })
-                                                 return
-                                             }
+                        onSendRequested: function (symbol, tokenType, fromAddress) {
+                            const collectible = SQUtils.ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
+                            if (!!collectible && collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
+                                Global.openTransferOwnershipPopup(collectible.communityId,
+                                                                  collectible.communityName,
+                                                                  collectible.communityImage,
+                                                                  {
+                                                                      key: collectible.tokenId,
+                                                                      privilegesLevel: collectible.communityPrivilegesLevel,
+                                                                      chainId: collectible.chainId,
+                                                                      name: collectible.name,
+                                                                      artworkSource: collectible.communityImage,
+                                                                      accountAddress: fromAddress,
+                                                                      tokenAddress: collectible.contractAddress
+                                                                  })
+                                return
+                            }
 
-                                             root.sendTokenRequested(fromAddress, symbol, tokenType)
-                                         }
+                            root.sendTokenRequested(fromAddress, symbol, tokenType)
+                        }
                         onReceiveRequested: (symbol) => root.launchShareAddressModal()
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
                         onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,

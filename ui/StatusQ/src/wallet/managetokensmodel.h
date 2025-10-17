@@ -12,25 +12,28 @@ Q_DECLARE_LOGGING_CATEGORY(manageTokens)
 
 namespace
 {
-const auto kSymbolRoleName = QByteArrayLiteral("symbol");
-const auto kNameRoleName = QByteArrayLiteral("name");
-const auto kCommunityIdRoleName = QByteArrayLiteral("communityId");
-const auto kCommunityNameRoleName = QByteArrayLiteral("communityName");
-const auto kCommunityImageRoleName = QByteArrayLiteral("communityImage");
-const auto kCollectionUidRoleName = QByteArrayLiteral("collectionUid");
-const auto kCollectionNameRoleName = QByteArrayLiteral("collectionName");
-const auto kEnabledNetworkBalanceRoleName = QByteArrayLiteral("enabledNetworkBalance"); // TODO add an extra (separate role) for group->childCount
-const auto kEnabledNetworkCurrencyBalanceRoleName = QByteArrayLiteral("enabledNetworkCurrencyBalance");
-const auto kCustomSortOrderNoRoleName = QByteArrayLiteral("customSortOrderNo");
-const auto kTokenImageUrlRoleName = QByteArrayLiteral("imageUrl");
-const auto kTokenImageRoleName = QByteArrayLiteral("image");
-const auto kCollectibleMediaUrlRoleName = QByteArrayLiteral("mediaUrl");
-const auto kBackgroundColorRoleName = QByteArrayLiteral("backgroundColor");
-const auto kBalancesRoleName = QByteArrayLiteral("balances");
-const auto kDecimalsRoleName = QByteArrayLiteral("decimals");
-const auto kMarketDetailsRoleName = QByteArrayLiteral("marketDetails");
-const auto kIsSelfCollectionRoleName = QByteArrayLiteral("isSelfCollection");
+const auto kSymbolRoleName = "symbol";
+const auto kNameRoleName = "name";
+const auto kCommunityIdRoleName = "communityId";
+const auto kCommunityNameRoleName = "communityName";
+const auto kCommunityImageRoleName = "communityImage";
+const auto kCollectionUidRoleName = "collectionUid";
+const auto kCollectionNameRoleName = "collectionName";
+const auto kEnabledNetworkBalanceRoleName = "enabledNetworkBalance"; // TODO add an extra (separate role) for group->childCount
+const auto kEnabledNetworkCurrencyBalanceRoleName = "enabledNetworkCurrencyBalance";
+const auto kCustomSortOrderNoRoleName = "customSortOrderNo";
+const auto kTokenImageUrlRoleName = "imageUrl";
+const auto kTokenImageRoleName = "image";
+const auto kCollectibleMediaUrlRoleName = "mediaUrl";
+const auto kBackgroundColorRoleName = "backgroundColor";
+const auto kBalancesRoleName = "balances";
+const auto kDecimalsRoleName = "decimals";
+const auto kMarketDetailsRoleName = "marketDetails";
+const auto kIsSelfCollectionRoleName = "isSelfCollection";
 // TODO add communityPrivilegesLevel for collectibles
+
+// proxy roles
+const auto kGroupNameRoleName = "groupName";
 } // namespace
 
 class ManageTokensModel : public QAbstractListModel
@@ -57,6 +60,8 @@ public:
         TokenDecimalsRole,
         TokenMarketDetailsRole,
         IsSelfCollectionRole,
+        //proxy roles
+        GroupNameRole,
     };
     Q_ENUM(TokenDataRoles)
 
