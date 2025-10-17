@@ -9073,6 +9073,14 @@
     </message>
   </context>
   <context>
+    <name>EnterSeedPhraseNew</name>
+    <message>
+      <source>The phrase you’ve entered is invalid</source>
+      <comment>EnterSeedPhraseNew</comment>
+      <translation>The phrase you’ve entered is invalid</translation>
+    </message>
+  </context>
+  <context>
     <name>EnterSeedPhraseWord</name>
     <message>
       <source>Step %1 of 4</source>
@@ -10887,6 +10895,11 @@
       <comment>KeycardCreateProfileFlow</comment>
       <translation>Create profile on empty Keycard using a recovery phrase</translation>
     </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>KeycardCreateProfileFlow</comment>
+      <translation>Invalid recovery phrase</translation>
+    </message>
   </context>
   <context>
     <name>KeycardCreateReplacementFlow</name>
@@ -10894,6 +10907,11 @@
       <source>Enter recovery phrase of lost Keycard</source>
       <comment>KeycardCreateReplacementFlow</comment>
       <translation>Enter recovery phrase of lost Keycard</translation>
+    </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>KeycardCreateReplacementFlow</comment>
+      <translation>Invalid recovery phrase</translation>
     </message>
   </context>
   <context>
@@ -20023,6 +20041,24 @@
     </message>
   </context>
   <context>
+    <name>StatusSeedPhraseTabBar</name>
+    <message>
+      <source>12 word</source>
+      <comment>StatusSeedPhraseTabBar</comment>
+      <translation>12 word</translation>
+    </message>
+    <message>
+      <source>18 word</source>
+      <comment>StatusSeedPhraseTabBar</comment>
+      <translation>18 word</translation>
+    </message>
+    <message>
+      <source>24 word</source>
+      <comment>StatusSeedPhraseTabBar</comment>
+      <translation>24 word</translation>
+    </message>
+  </context>
+  <context>
     <name>StatusStackModal</name>
     <message>
       <source>StackModal</source>
@@ -22105,6 +22141,11 @@
       <comment>UnblockWithSeedphraseFlow</comment>
       <translation>Unblock Keycard</translation>
     </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>UnblockWithSeedphraseFlow</comment>
+      <translation>Invalid recovery phrase</translation>
+    </message>
   </context>
   <context>
     <name>UseRecoveryPhraseFlow</name>
@@ -22132,6 +22173,11 @@
       <source>The entered recovery phrase is already added</source>
       <comment>UseRecoveryPhraseFlow</comment>
       <translation>The entered recovery phrase is already added</translation>
+    </message>
+    <message>
+      <source>Invalid recovery phrase</source>
+      <comment>UseRecoveryPhraseFlow</comment>
+      <translation>Invalid recovery phrase</translation>
     </message>
   </context>
   <context>
@@ -23330,6 +23376,11 @@
       <source>Status Desktop</source>
       <comment>main</comment>
       <translation>Status Desktop</translation>
+    </message>
+    <message>
+      <source>Hello World</source>
+      <comment>main</comment>
+      <translation>Hello World</translation>
     </message>
   </context>
   <context>

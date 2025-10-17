@@ -9,7 +9,6 @@ import StatusQ.Controls
 import StatusQ.Controls.Validators
 
 import utils
-import shared.stores
 import shared.controls
 
 ColumnLayout {
@@ -22,7 +21,7 @@ ColumnLayout {
 
     readonly property bool seedPhraseIsValid: d.allEntriesValid && invalidSeedTxt.text === ""
     property var isSeedPhraseValid: function (mnemonic) { return false }
-    property ListModel dictionary: BIP39_en {}
+    property var dictionary
 
     signal submitSeedPhrase()
     signal seedPhraseUpdated(bool valid, string seedPhrase)
@@ -46,7 +45,6 @@ ColumnLayout {
         property var mnemonicInput: []
         property var incorrectWordAtIndex: [] // 1-based
         readonly property var tabs: [12, 18, 24]
-        readonly property alias seedPhrases_en: root.dictionary
 
         onIncorrectWordAtIndexChanged: d.validate()
 
@@ -86,13 +84,13 @@ ColumnLayout {
         }
 
         function checkWordExistence(word, pos) {
-            if (word !== "" && !ModelUtils.contains(d.seedPhrases_en, "seedWord", word)) {
+            if (word !== "" && !ModelUtils.contains(root.dictionary, "seedWord", word)) {
                 const incorrectWordAtIndex = d.incorrectWordAtIndex
                 incorrectWordAtIndex.push(pos)
                 d.incorrectWordAtIndex = [...new Set(incorrectWordAtIndex)] // remove dupes
                 return
             }
-            
+
             d.incorrectWordAtIndex = d.incorrectWordAtIndex.filter(function(value) {
                 return value !== pos
             })
@@ -103,7 +101,7 @@ ColumnLayout {
 
             // Split words separated by commas and or blank spaces (spaces, enters, tabs)
             const words = clipboardText.trim().split(/[, \s]+/)
-            
+
             let index = d.tabs.indexOf(words.length)
             if (index === -1) {
                 return false
@@ -179,20 +177,12 @@ ColumnLayout {
 
     StatusGridView {
         id: grid
-        readonly property var wordIndex: [
-            ["1", "3", "5", "7", "9", "11", "2", "4", "6", "8", "10", "12"]
-            ,["1", "4", "7", "10", "13", "16", "2", "5", "8",
-              "11", "14", "17", "3", "6", "9", "12", "15", "18"]
-            ,["1", "5", "9", "13", "17", "21", "2", "6", "10", "14", "18", "22",
-              "3", "7", "11", "15", "19", "23", "4", "8", "12", "16", "20", "24"]
-        ]
-        
+
         objectName: "enterSeedPhraseGridView"
         Layout.fillWidth: true
         Layout.preferredHeight: 312
         Layout.topMargin: Theme.halfPadding
         Layout.alignment: Qt.AlignHCenter
-        flow: GridView.FlowTopToBottom
         cellWidth: (parent.width/(count/6))
         cellHeight: 52
         interactive: false
@@ -230,7 +220,7 @@ ColumnLayout {
                         continue
                     }
 
-                    grid.currentIndex = item.itemIndex
+                    grid.currentIndex = item.index
                     item.textEdit.input.edit.forceActiveFocus()
 
                     if (grid.currentIndex !== 12) {
@@ -268,12 +258,12 @@ ColumnLayout {
                 return ""
             }
 
-            readonly property int itemIndex: index
-            readonly property int mnemonicIndex: grid.wordIndex[(grid.count / 6) - 2][index]
+            required property int index
+            readonly property int mnemonicIndex: index + 1
 
             leftComponentText: mnemonicIndex
             isError: d.incorrectWordAtIndex.includes(mnemonicIndex) & !!text
-            inputList: d.seedPhrases_en
+            inputList: root.dictionary
 
             onDoneInsertingWord: (word) => grid.addWord(mnemonicIndex, word)
             onEditingFinished: {
@@ -291,7 +281,6 @@ ColumnLayout {
                     for (let i = 0; i < grid.count; i++) {
                         if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex - 1) >= 0 ? (mnemonicIndex - 1) : 0)) {
                             grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.BacktabFocusReason)
-                            textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit
                             event.accepted = true
                             break
                         }

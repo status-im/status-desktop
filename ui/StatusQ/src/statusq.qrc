@@ -134,7 +134,9 @@
         <file>StatusQ/Controls/StatusRadioButton.qml</file>
         <file>StatusQ/Controls/StatusRoundButton.qml</file>
         <file>StatusQ/Controls/StatusScrollBar.qml</file>
+        <file>StatusQ/Controls/StatusSeedPhraseField.qml</file>
         <file>StatusQ/Controls/StatusSeedPhraseInput.qml</file>
+        <file>StatusQ/Controls/StatusSeedPhraseTabBar.qml</file>
         <file>StatusQ/Controls/StatusSelect.qml</file>
         <file>StatusQ/Controls/StatusSelectableText.qml</file>
         <file>StatusQ/Controls/StatusSlider.qml</file>

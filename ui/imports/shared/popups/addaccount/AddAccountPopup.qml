@@ -205,7 +205,6 @@ StatusModal {
             Component {
                 id: enterSeedPhraseComponent
                 EnterSeedPhrase {
-                    height: Constants.addAccountPopup.contentHeight2
                     store: root.store
                 }
             }
