@@ -174,7 +174,7 @@ void SystemUtilsInternal::setAndroidStatusBarIconColor(bool lightIcons)
     QJniObject activity = QNativeInterface::QAndroidApplication::context();
     if (activity.isValid()) {
         QJniObject::callStaticMethod<void>(
-            "im/status/app/StatusBarUtil",
+            "app/status/mobile/StatusBarUtil",
             "setStatusBarIconColor",
             "(Landroid/app/Activity;Z)V",
             activity.object<jobject>(),
@@ -190,7 +190,7 @@ void SystemUtilsInternal::setAndroidSplashScreenReady()
 {
 #ifdef Q_OS_ANDROID
     QJniObject::callStaticMethod<void>(
-        "im/status/app/StatusQtActivity",
+        "app/status/mobile/StatusQtActivity",
         "hideSplashScreen",
         "()V"
     );
