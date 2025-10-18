@@ -47,7 +47,7 @@ capabilities:
   automationName: "UiAutomator2"
   newCommandTimeout: 300
   noReset: false
-  appPackage: "im.status.app"
+  appPackage: "app.status.mobile"
   appActivity: "org.qtproject.qt.android.bindings.QtActivity"
   unicodeKeyboard: true
   resetKeyboard: true
