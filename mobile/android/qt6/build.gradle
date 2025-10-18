@@ -86,6 +86,8 @@ android {
         minSdkVersion qtMinSdkVersion
         targetSdkVersion qtTargetSdkVersion
         ndk.abiFilters = qtTargetAbiList.split(",")
+        // Generate unique versionCode based on minutes since epoch
+        versionCode = (System.currentTimeMillis() / 60000).toInteger()
     }
 
     buildTypes {
