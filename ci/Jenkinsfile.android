@@ -65,8 +65,6 @@ pipeline {
     STATUS_ARTIFACT = "pkg/${utils.pkgFilename(ext: env.PACKAGE_TYPE, arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_BINARY = "${WORKSPACE}/mobile/bin/android/qt6/Status.${env.PACKAGE_TYPE}"
     BUILD_CMD = "${isReleaseBranch ? 'mobile-bundle' : 'mobile-build'}"
-    /* generate unique versionCode */
-    ORG_GRADLE_PROJECT_versionCode = sh(script: 'echo $(($(date +%s) / 60))', returnStdout: true).trim()
   }
 
   stages {
