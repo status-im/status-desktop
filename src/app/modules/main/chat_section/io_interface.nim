@@ -258,9 +258,6 @@ method createGroupChat*(self: AccessInterface, communityID: string, groupName: s
 method createGroupChat*(self: AccessInterface, groupName: string, pubKeys: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method joinGroupChatFromInvitation*(self: AccessInterface, groupName: string, chatId: string, adminPK: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method acceptRequestToJoinCommunity*(self: AccessInterface, requestId: string, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

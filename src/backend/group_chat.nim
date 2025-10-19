@@ -14,11 +14,6 @@ proc createGroupChat*(communityID: string, name: string, members: seq[string]): 
 
   return core.callPrivateRPC("chat_createGroupChat", payload)
 
-proc createGroupChatFromInvitation*(name: string, chatID: string, adminPK: string): RpcResponse[JsonNode] =
-  let payload = %* [name, chatID, adminPK]
-
-  return core.callPrivateRPC("chat_createGroupChatFromInvitation", payload)
-
 proc leaveChat*(communityID: string, chatID: string, remove: bool): RpcResponse[JsonNode] =
   let payload = %* [communityID, chatID, remove]
 
@@ -43,21 +38,6 @@ proc renameChat*(communityID: string, chatID: string, name: string): RpcResponse
   let payload = %* [communityID, chatID, name]
 
   return core.callPrivateRPC("chat_renameChat", payload)
-
-proc sendGroupChatInvitationRequest*(communityID: string, chatID: string, adminPK: string, message: string): RpcResponse[JsonNode] =
-  let payload = %* [communityID, chatID, adminPK, message]
-
-  return core.callPrivateRPC("chat_sendGroupChatInvitationRequest", payload)
-
-proc getGroupChatInvitations*(): RpcResponse[JsonNode] =
-  let payload = %* []
-
-  return core.callPrivateRPC("chat_getGroupChatInvitations", payload)
-
-proc sendGroupChatInvitationRejection*(invitationRequestID: string): RpcResponse[JsonNode] =
-  let payload = %* [invitationRequestID]
-
-  return core.callPrivateRPC("chat_sendGroupChatInvitationRejection", payload)
 
 proc startGroupChat*(communityID: string, name: string, members: seq[string]): RpcResponse[JsonNode] =
   let payload = %* [communityID, name, members]

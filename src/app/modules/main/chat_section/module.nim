@@ -1250,9 +1250,6 @@ method createGroupChat*(self: Module, communityID: string, groupName: string, pu
 method createGroupChat*(self: Module, groupName: string, pubKeys: seq[string]) =
   self.controller.createGroupChat("", groupName, pubKeys)
 
-method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: string, adminPK: string) =
-  self.controller.joinGroupChatFromInvitation(groupName, chatId, adminPK)
-
 method onChatRenamed*(self: Module, chatId: string, newName: string) =
   self.view.chatsModel().renameItemById(chatId, newName)
   self.view.tokenPermissionsModel().renameChatById(chatId, newName)

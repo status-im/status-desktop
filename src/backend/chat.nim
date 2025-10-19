@@ -42,7 +42,7 @@ proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[Json
   result = callPrivateRPC("chat_createOneToOneChat", payload)
 
 proc leaveGroupChat*(chatId: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("leaveGroupChat".prefix, %* [nil, chatId, true])
+  result = callPrivateRPC("leaveGroupChat".prefix, %* [chatId, true])
 
 proc deactivateChat*(chatId: string, preserveHistory: bool = false): RpcResponse[JsonNode] =
   callPrivateRPC("deactivateChat".prefix, %* [{ "ID": chatId, "preserveHistory": preserveHistory }])
@@ -122,24 +122,20 @@ proc deleteMessagesByChatId*(chatId: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("deleteMessagesByChatID".prefix, payload)
 
 proc addGroupMembers*(communityID: string, chatId: string, pubKeys: seq[string]): RpcResponse[JsonNode] =
-  let payload = %* [nil, communityID, chatId, pubKeys]
+  let payload = %* [communityID, chatId, pubKeys]
   result = callPrivateRPC("addMembersToGroupChat".prefix, payload)
 
 proc removeMemberFromGroupChat*(communityID: string, chatId: string, pubKey: string): RpcResponse[JsonNode] =
-  let payload = %* [nil, communityID, chatId, pubKey]
+  let payload = %* [communityID, chatId, pubKey]
   result = callPrivateRPC("removeMemberFromGroupChat".prefix, payload)
 
 proc renameGroupChat*(communityID: string, chatId: string, newName: string): RpcResponse[JsonNode] =
-  let payload = %* [nil, communityID, chatId, newName]
+  let payload = %* [communityID, chatId, newName]
   result = callPrivateRPC("changeGroupChatName".prefix, payload)
 
 proc makeAdmin*(communityID: string, chatId: string, pubKey: string): RpcResponse[JsonNode] =
-  let payload = %* [nil, communityID, chatId, [pubKey]]
+  let payload = %* [communityID, chatId, [pubKey]]
   result = callPrivateRPC("addAdminsToGroupChat".prefix, payload)
-
-proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: string): RpcResponse[JsonNode] =
-  let payload = %* [groupName, chatId, adminPK]
-  result = callPrivateRPC("createGroupChatFromInvitation".prefix, payload)
 
 proc editChat*(communityID: string, chatID: string, name: string, color: string, imageJson: string): RpcResponse[JsonNode] =
   let croppedImage = newCroppedImage(imageJson)
