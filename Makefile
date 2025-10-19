@@ -477,8 +477,6 @@ $(STATUSGO): | deps status-go-deps
 status-go: $(STATUSGO)
 
 status-go-deps:
-	go install go.uber.org/mock/mockgen@v0.4.0
-	go install github.com/kevinburke/go-bindata/v4/...@v4.0.2
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.34.1
 
 status-go-clean:
