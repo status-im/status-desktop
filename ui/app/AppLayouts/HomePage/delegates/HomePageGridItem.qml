@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import StatusQ.Core
 import StatusQ.Controls
@@ -43,9 +43,12 @@ AbstractButton {
 
     signal pinRequested
 
-    layer.enabled: true
-    layer.effect: Glow {
-        samples: 33
+    RectangularShadow {
+        anchors.fill: background
+        z: background.z - 1
+        offset.x: 5
+        offset.y: 10
+        radius: Theme.defaultPadding
         spread: 0.1
         color: root.hovered ? Theme.palette.backdropColor : Theme.palette.dropShadow
         Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
