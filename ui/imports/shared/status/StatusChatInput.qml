@@ -1440,7 +1440,7 @@ Rectangle {
                                 implicitWidth: 32
                                 icon.name: "send"
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                                visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0
+                                visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0 || !!control.paymentRequestModel
                                 onClicked: {
                                     control.onKeyPress({modifiers: d.kbdModifierToSendMessage, key: Qt.Key_Return})
                                 }
