@@ -58,6 +58,7 @@ env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c "${PLATFORM
     --cpu:"$CARCH" \
     --noMain:on \
     -d:release \
+    -d:production \
     --clang.exe="$CC" \
     --clang.linkerexe="$CC" \
     --dynlibOverrideAll \
@@ -67,4 +68,3 @@ env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c "${PLATFORM
 mkdir -p "$LIB_DIR"
 
 cp "$STATUS_DESKTOP/bin/libnim_status_client$LIB_EXT" "$LIB_DIR/libnim_status_client$LIB_EXT"
-
