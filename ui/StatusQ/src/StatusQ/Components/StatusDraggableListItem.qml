@@ -227,9 +227,10 @@ AbstractButton {
     /*!
        \qmlproperty bool StatusDraggableListItem::dragByHandleOnly
        This property holds if drag is activated only via drag handler (true) or
-       the whole area of the delegate (false)
+       the whole area of the delegate (false). By default false on desktop, true
+       on mobile.
     */
-    property bool dragByHandleOnly: false
+    property bool dragByHandleOnly: Utils.isMobile
 
     /*!
        \qmlproperty bool StatusDraggableListItem::drawBackgroundBorder
