@@ -90,7 +90,7 @@ Control {
         id: dropdown
         objectName: "dropdown"
 
-        closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnEscape
+        bottomSheetAllowed: false
 
         directParent: root
         relativeY: root.height + 2
