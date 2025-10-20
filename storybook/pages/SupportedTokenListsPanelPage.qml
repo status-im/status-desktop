@@ -6,7 +6,6 @@ import Storybook
 import Models
 
 import AppLayouts.Profile.panels
-import AppLayouts.Profile.stores
 
 import StatusQ
 
@@ -39,7 +38,6 @@ SplitView {
 
     Logs { id: logs }
 
-
     Pane {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
@@ -48,8 +46,6 @@ SplitView {
             anchors.fill: parent
             sourcesOfTokensModel: root.sourcesOfTokensModel
             tokensListModel: root.tokensProxyModel
-
-            onItemClicked: logs.logEvent("SupportedTokenListsPanel::onItemClicked --> Key --> " + key)
         }
     }
 

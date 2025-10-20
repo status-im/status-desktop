@@ -6,7 +6,6 @@ import StatusQ.Core
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils as SQUtils
 
 import SortFilterProxyModel
 import shared.controls
@@ -20,11 +19,10 @@ StatusListView {
     required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
     required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
 
-    signal itemClicked(string key)
-
     implicitHeight: contentHeight
     model: root.sourcesOfTokensModel
     spacing: Theme.halfPadding
+
     delegate: StatusListItem {
         height: ProfileUtils.defaultDelegateHeight
         width: ListView.view.width
@@ -65,36 +63,39 @@ StatusListView {
             required property string name
             required property string image
             required property string source
-            required property int updatedAt
+            required property double updatedAt
             required property string version
             required property int tokensCount
-
-            Component.onCompleted: popup.open()
+        }
+        onObjectAdded: function(index, delegate) {
+            popupComp.createObject(root, {
+                                       title: delegate.name,
+                                       sourceImage: delegate.image,
+                                       sourceUrl: delegate.source,
+                                       sourceVersion: delegate.version,
+                                       updatedAt: delegate.updatedAt,
+                                       tokensCount: delegate.tokensCount
+                                   }).open()
         }
     }
 
-    TokenListPopup {
-        id: popup
+    Component {
+        id: popupComp
+        TokenListPopup {
+            destroyOnClose: true
 
-        sourceImage: delegate.image
-        sourceUrl: delegate.source
-        sourceVersion: delegate.version
-        updatedAt: delegate.updatedAt
-        tokensCount: delegate.tokensCount
+            tokensListModel: SortFilterProxyModel {
+                sourceModel: root.tokensListModel
 
-        title: delegate.name
-
-        tokensListModel: SortFilterProxyModel {
-            sourceModel: root.tokensListModel
-
-            // Filter by source
-            filters: RegExpFilter {
-                roleName: "sources"
-                pattern: "\;" + keyFilter.value + "\;"
+                // Filter by source
+                filters: RegExpFilter {
+                    roleName: "sources"
+                    pattern: "\;" + keyFilter.value + "\;"
+                }
             }
-        }
 
-        onLinkClicked: (link) => Global.openLink(link)
-        onClosed: keyFilter.value = ""
+            onLinkClicked: (link) => Global.openLink(link)
+            onClosed: keyFilter.value = ""
+        }
     }
 }
