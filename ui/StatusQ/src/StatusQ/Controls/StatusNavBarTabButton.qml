@@ -1,9 +1,9 @@
 import QtQuick
+import QtQuick.Controls
 
 import StatusQ.Core
 import StatusQ.Components
 import StatusQ.Controls
-import StatusQ.Popups
 import StatusQ.Core.Theme
     
 StatusIconTabButton {
@@ -62,36 +62,14 @@ StatusIconTabButton {
         border.width: 2
     }
 
-    StatusMouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: function(mouse) {
-            if (mouse.button === Qt.RightButton) {
-                if (!!popupMenuSlot.sourceComponent && !popupMenuSlot.active)
-                    popupMenuSlot.active = true
-                if (popupMenuSlot.active) {
-                    statusNavBarTabButton.highlighted = true
-                    let btnWidth = statusNavBarTabButton.width
-                    popupMenuSlot.item.popup(parent.x + btnWidth + 4, -2)
-                }
-            } else if (mouse.button === Qt.LeftButton) {
-                statusNavBarTabButton.toggle()
-                statusNavBarTabButton.clicked()
-            }
-        }
+    function openContextMenu(pos) {
+        if (!popupMenu)
+            return
+        const menu = popupMenu.createObject(statusNavBarTabButton)
+        statusTooltip.hide()
+        menu.popup(pos)
     }
 
-    Loader {
-        id: popupMenuSlot
-        sourceComponent: statusNavBarTabButton.popupMenu
-        active: false
-        onLoaded: {
-            popupMenuSlot.item.closeHandler = function () {
-                statusNavBarTabButton.highlighted = false
-                popupMenuSlot.active = false
-            }
-        }
-    }
+    ContextMenu.onRequested: pos => openContextMenu(pos)
+    onPressAndHold: openContextMenu(Qt.point(statusNavBarTabButton.pressX, statusNavBarTabButton.pressY))
 }
-

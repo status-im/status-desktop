@@ -4,6 +4,9 @@ import QtQuick.Controls
 import StatusQ.Controls
 import StatusQ.Components.private
 import StatusQ.Core.Theme
+import StatusQ.Popups
+
+import shared.controls.chat.menuItems
 
 import Models
 import Storybook
@@ -13,6 +16,7 @@ SplitView {
 
     ButtonGroup {
         buttons: column.children
+        onClicked: button => console.info("Clicked button:", button.tooltip.text)
     }
 
     Rectangle {
@@ -81,6 +85,38 @@ SplitView {
                 //     value: StatusNewItemGradient {}
                 //     when: ctrlNewBadgeGradient.checked
                 // }
+            }
+            StatusNavBarTabButton {
+                icon.name: "info"
+                tooltip.text: "With context menu"
+                thirdpartyServicesEnabled: thirdpartyServicesCtrl.checked
+                popupMenu: popupMenuComp
+            }
+        }
+    }
+
+    Component {
+        id: popupMenuComp
+        StatusMenu {
+            StatusAction {
+                text: qsTr("Invite People")
+                icon.name: "share-ios"
+            }
+
+            StatusAction {
+                text: qsTr("Community Info")
+                icon.name: "info"
+            }
+
+            StatusAction {
+                text: qsTr("Community Rules")
+                icon.name: "text"
+            }
+
+            StatusMenuSeparator {}
+
+            MuteChatMenuItem {
+                title: qsTr("Mute Community")
             }
         }
     }

@@ -4,8 +4,6 @@ import QtQuick.Controls
 import utils
 
 import StatusQ.Popups
-import shared.controls.chat.menuItems
-
 
 StatusMenu {
     property bool isCommunityChat: false
