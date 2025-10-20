@@ -45,10 +45,8 @@ SettingsContentBase {
                 anchors.rightMargin: Theme.padding
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
             StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
+                width: parent.width
                 text: qsTr("Search engine used in the address bar")
                 currentValue: {
                     switch (accountSettings.shouldShowBrowserSearchEngine) {

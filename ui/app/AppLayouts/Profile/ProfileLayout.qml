@@ -455,6 +455,7 @@ StatusSectionLayout {
                 advancedStore: root.advancedStore
                 walletStore: root.walletStore
                 isFleetSelectionEnabled: fleetSelectionEnabled
+                isBrowserEnabled: root.isBrowserEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
             }
