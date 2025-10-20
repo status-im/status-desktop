@@ -36,6 +36,7 @@ SettingsContentBase {
     property WalletStore walletStore
 
     property bool isFleetSelectionEnabled
+    property bool isBrowserEnabled: true
 
     Item {
         id: advancedContainer
@@ -54,6 +55,7 @@ SettingsContentBase {
             width: root.contentWidth
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Fleet")
                 currentValue: root.advancedStore.fleet
                 onClicked: fleetModal.open()
@@ -62,12 +64,14 @@ SettingsContentBase {
 
             StatusSettingsLineButton {
                 id: labelScrolling
+                width: parent.width
                 text: qsTr("Chat scrolling")
                 currentValue: root.advancedStore.isCustomScrollingEnabled ? qsTr("Custom") : qsTr("System")
                 onClicked: scrollingModal.open()
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Minimize on close")
                 isSwitch: true
                 checked: !localAccountSensitiveSettings.quitOnClose
@@ -75,6 +79,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Mainnet data verified by Nimbus")
                 isSwitch: true
                 checked: root.advancedStore.isNimbusProxyEnabled
@@ -125,9 +130,11 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                visible: root.isBrowserEnabled // feature flag
+                width: parent.width
                 text: qsTr("Web/dApp Browser")
                 isSwitch: true
-                checked: localAccountSensitiveSettings.isBrowserEnabled
+                checked: localAccountSensitiveSettings.isBrowserEnabled // user setting
                 onToggled: {
                     if (checked) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.browser
@@ -139,6 +146,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Node Management")
                 isSwitch: true
                 checked: localAccountSensitiveSettings.nodeManagementEnabled
@@ -153,6 +161,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Archive Protocol Enabled")
                 visible: !SQUtils.Utils.isMobile
                 isSwitch: true
@@ -163,6 +172,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("ENS Community Permissions Enabled")
                 isSwitch: true
                 checked: root.advancedStore.ensCommunityPermissionsEnabled
@@ -186,6 +196,8 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                visible: !SQUtils.Utils.isMobile
+                width: parent.width
                 text: qsTr("Enable creation of sharded communities")
                 isSwitch: true
                 checked: root.advancedStore.isWakuV2ShardedCommunitiesEnabled
@@ -287,6 +299,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Full developer mode")
                 enabled: {
                     return !localAccountSensitiveSettings.downloadChannelMessagesEnabled ||
@@ -303,6 +316,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Enable translations")
                 isSwitch: true
                 checked: localAppSettings.translationsEnabled
@@ -325,6 +339,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Download messages")
                 isSwitch: true
                 checked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
@@ -334,6 +349,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Debug")
                 isSwitch: true
                 enabled: !root.advancedStore.isRuntimeLogLevelSet
@@ -359,6 +375,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Auto message")
                 isSwitch: true
                 checked: root.advancedStore.isAutoMessageEnabled
@@ -368,6 +385,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 objectName: "manageCommunitiesOnTestnetButton"
                 text: qsTr("Manage communities on testnet")
                 isSwitch: true
@@ -378,6 +396,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("Enable community tokens refreshing")
                 isSwitch: true
                 checked: root.advancedStore.refreshTokenEnabled
@@ -387,6 +406,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 text: qsTr("How many log files to keep archived")
                 currentValue: root.advancedStore.logMaxBackups.toString()
                 onClicked: {
@@ -395,6 +415,7 @@ SettingsContentBase {
             }
 
             StatusSettingsLineButton {
+                width: parent.width
                 id: rpcStatsButton
                 text: qsTr("RPC statistics")
                 onClicked: rpcStatsModal.open()

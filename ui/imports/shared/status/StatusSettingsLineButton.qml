@@ -15,6 +15,8 @@ ItemDelegate {
     property int badgeValue
     property int badgeRadius: 9
 
+    implicitHeight: 64
+
     horizontalPadding: Theme.padding
     spacing: Theme.padding
 
