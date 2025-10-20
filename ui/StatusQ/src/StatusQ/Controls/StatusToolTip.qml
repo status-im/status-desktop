@@ -2,10 +2,11 @@ import QtQuick
 import QtQuick.Controls
 
 import StatusQ.Core
+import StatusQ.Core.Utils
 import StatusQ.Core.Theme
 
 ToolTip {
-    id: statusToolTip
+    id: root
 
     enum Orientation {
         Top,
@@ -20,18 +21,24 @@ ToolTip {
     property alias arrow: arrow
     property color color: Theme.palette.black
 
-    implicitWidth: Math.min(maxWidth, implicitContentWidth + 16)
-    padding: 8
-    margins: 8
-    delay: 200
+    implicitWidth: Math.min(maxWidth,
+                            Math.max(implicitBackgroundWidth + leftInset + rightInset,
+                                     implicitContentWidth + leftPadding + rightPadding)
+                            )
+    padding: Theme.halfPadding
+    horizontalPadding: padding + 4
+    margins: Theme.halfPadding
+    delay: Utils.isMobile ? Application.styleHints.mousePressAndHoldInterval
+                          : 200
+
     background: Item {
         id: statusToolTipBackground
         Rectangle {
             id: statusToolTipContentBackground
-            color: statusToolTip.color
-            radius: 8
+            color: root.color
+            radius: Theme.radius
             anchors.fill: parent
-            anchors.bottomMargin: 8
+            anchors.bottomMargin: Theme.halfPadding
         }
         Rectangle {
             id: arrow
@@ -45,10 +52,10 @@ ToolTip {
                     return statusToolTipBackground.width / 2 - width / 2 + offset
                 }
                 if (orientation === StatusToolTip.Orientation.Left) {
-                    return statusToolTipContentBackground.width - (width / 2) - 8 + offset
+                    return statusToolTipContentBackground.width - (width / 2) - root.padding + offset
                 }
                 if (orientation === StatusToolTip.Orientation.Right) {
-                    return -width/2 + 8 + offset
+                    return -width/2 + root.padding + offset
                 }
             }
             y: {
@@ -65,14 +72,14 @@ ToolTip {
         }
     }
     contentItem: StatusBaseText {
-        text: statusToolTip.text
+        text: root.text
         color: Theme.palette.white
         linkColor: Theme.palette.white
         wrapMode: Text.Wrap
         font.pixelSize: Theme.additionalTextSize
         font.weight: Font.Medium
         horizontalAlignment: Text.AlignHCenter
-        bottomPadding: 8
+        bottomPadding: Theme.halfPadding
         textFormat: Text.RichText
         elide: Text.ElideRight
     }
