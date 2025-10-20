@@ -15,7 +15,6 @@ import backend/group_chat as status_group_chat
 import app/global/[global_singleton, utils]
 import app/core/eventemitter
 import app/core/signals/types
-import constants
 
 import ../../common/message as message_common
 
@@ -428,7 +427,6 @@ QtObject:
         slot: "onAsyncSendImagesDone",
         chatId: chatId,
         imagePathsJson: imagePathsJson,
-        tempDir: TMPDIR.replace("\\", "\\\\"), # Escape backslashes so that the JSON sent is valid (Windows issue)
         msg: msg,
         replyTo: replyTo,
         preferredUsername: preferredUsername,
