@@ -105,7 +105,6 @@ type
   AsyncSendImagesTaskArg = ref object of QObjectTaskArg
     chatId: string
     imagePathsJson: string
-    tempDir: string
     msg: string
     replyTo: string
     preferredUsername: string
@@ -118,14 +117,12 @@ const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   try:
     var images = Json.decode(arg.imagePathsJson, seq[string])
     var imagePaths: seq[string] = @[]
-    var tempPaths: seq[string] = @[]
 
     for imagePathOrSource in images.mitems:
       if utils.isBase64DataUrl(imagePathOrSource):
-        let imagePath = save_byte_image_to_file(imagePathOrSource, arg.tempDir)
+        let imagePath = save_byte_image_to_file(imagePathOrSource)
         if imagePath != "":
           imagePaths.add(imagePath)
-          tempPaths.add(imagePath)
       else:
         imagePaths.add(imagePathOrSource)
 
@@ -139,9 +136,6 @@ const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       arg.statusLinkPreviews,
       arg.paymentRequests
     )
-
-    for imagePath in tempPaths:
-      removeFile(imagePath)
 
     arg.finish(%* {
       "response": response,
