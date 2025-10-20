@@ -80,11 +80,39 @@ pipeline {
             }
           }
         }
-        stage('Windows/x86_64') { steps { script {
-          windows_x86_64 = getArtifacts(
-            'Windows', jenkins.Build('status-desktop/systems/windows/x86_64/package')
-          )
-        } } }
+        stage('Windows/x86_64 and E2E') {
+          stages {
+            stage('Windows/x86_64') {
+              steps {
+                script {
+                  windows_x86_64 = getArtifacts(
+                    'Windows', jenkins.Build('status-desktop/systems/windows/x86_64/package')
+                  )
+                }
+              }
+            }
+            stage('E2E') {
+              when { 
+                expression { 
+                  env.JOB_NAME.toLowerCase().contains('nightly') 
+                } 
+              }
+              steps {
+                script {
+                  windows_e2e = build(
+                    job: 'status-desktop/systems/windows/x86_64/tests-e2e',
+                    parameters: jenkins.mapToParams([
+                      BUILD_SOURCE:       windows_x86_64.fullProjectName,
+                      TESTRAIL_RUN_NAME:  utils.pkgFilename(),
+                      TEST_SCOPE_FLAG:    utils.isReleaseBuild() ? '-m=critical' : '',
+                      GIT_REF:            env.BRANCH_NAME,
+                    ]),
+                  )
+                }
+              }
+            }
+          }
+        }
         stage('MacOS/aarch64') { steps { script {
           macos_aarch64 = getArtifacts(
             'MacOS/aarch64', jenkins.Build('status-desktop/systems/macos/aarch64/package')
