@@ -441,6 +441,7 @@ StatusWindow {
         anchors.topMargin: Qt.platform.os === SQUtils.Utils.mac ? 0 : parent.SafeArea.margins.top
         anchors.leftMargin: parent.SafeArea.margins.left
         anchors.rightMargin: parent.SafeArea.margins.right
+        anchors.bottomMargin: parent.SafeArea.margins.bottom
 
         sourceComponent: onboardingV2
     }
@@ -478,8 +479,6 @@ StatusWindow {
         OnboardingLayout {
             id: onboardingLayout
             objectName: "startupOnboardingLayout"
-
-            bottomPadding: applicationWindow.SafeArea.margins.bottom
 
             isKeycardEnabled: featureFlagsStore.keycardEnabled
             networkChecksEnabled: true
