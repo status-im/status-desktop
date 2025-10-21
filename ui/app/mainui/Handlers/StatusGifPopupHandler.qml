@@ -26,7 +26,7 @@ QtObject {
         _d.popupParent = params.popupParent
         _d.closeAfterSelection = params.closeAfterSelection
 
-        let gifPopupInst = gifPopupComponent.createObject()
+        let gifPopupInst = gifPopupComponent.createObject(_d.popupParent)
         gifPopupInst.open()
     }
 
