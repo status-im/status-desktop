@@ -1239,6 +1239,11 @@ Item {
                         value: Constants.appSection.browser
                         enabled: d.isBrowserEnabled
                     }
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.node
+                        enabled: localAccountSensitiveSettings.nodeManagementEnabled
+                    }
                 },
                 ValueFilter {
                     roleName: "enabled"
