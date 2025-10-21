@@ -7377,13 +7377,6 @@ Please add it and try again.</source>
         <source>The phrase you’ve entered is invalid</source>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <source>%n word(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
     <message>
         <source>Enter recovery phrase</source>
         <translation type="unfinished"></translation>
@@ -7425,13 +7418,6 @@ Please add it and try again.</source>
     </message>
     <message>
         <source>Enter recovery phrase for %1 key pair</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>EnterSeedPhraseNew</name>
-    <message>
-        <source>The phrase you’ve entered is invalid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -19211,10 +19197,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>main</name>
     <message>
         <source>Status Desktop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hello World</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

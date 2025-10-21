@@ -6,7 +6,6 @@ DidYouKnowSplashScreen 1.0 DidYouKnowSplashScreen.qml
 DropAndEditImagePanel 1.0 DropAndEditImagePanel.qml
 EditCroppedImagePanel 1.0 EditCroppedImagePanel.qml
 EnterSeedPhrase 1.0 EnterSeedPhrase.qml
-EnterSeedPhraseNew 1.0 EnterSeedPhraseNew.qml
 ImageLoader 1.0 ImageLoader.qml
 MockedKeycardLibControllerWindow 1.0 MockedKeycardLibControllerWindow.qml
 ModuleWarning 1.0 ModuleWarning.qml

@@ -53,7 +53,7 @@ Item {
                 wrapMode: Text.WordWrap
             }
 
-            SharedPanels.EnterSeedPhraseNew {
+            SharedPanels.EnterSeedPhrase {
                 id: seedPhrase
 
                 Layout.fillWidth: true
