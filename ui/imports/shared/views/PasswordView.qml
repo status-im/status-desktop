@@ -89,6 +89,9 @@ ColumnLayout {
         readonly property string validatorErrMessage: qsTr("Only ASCII letters, numbers, and symbols are allowed")
         readonly property string passTooLongErrMessage: qsTr("Maximum %n character(s)", "", Constants.maxPasswordLength)
 
+        // Read-only flag that turns true when the component enters a “compact” layout automatically on resize.
+        readonly property bool compactMode: root.width < 300
+
         // Password strength categorization / validation
         function lowerCaseValidator(text) { return (/[a-z]/.test(text)) }
         function upperCaseValidator(text) { return (/[A-Z]/.test(text)) }
@@ -155,12 +158,16 @@ ColumnLayout {
     z: root.zFront
 
     StatusBaseText {
-        Layout.alignment: root.contentAlignment
+        Layout.fillWidth: true
         visible: root.titleVisible
         text: root.title
         font.pixelSize: root.titleSize
         font.bold: true
         color: Theme.palette.directColor1
+        elide: Text.ElideRight
+        wrapMode: Text.Wrap
+        maximumLineCount: 2
+        horizontalAlignment: root.contentAlignment
     }
 
     ColumnLayout {
@@ -240,20 +247,27 @@ ColumnLayout {
 
         RowLayout {
             StatusBaseText {
+                Layout.fillWidth: true
                 text: qsTr("Choose password")
+                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                maximumLineCount: 2
             }
             Item { Layout.fillWidth: true }
-            StatusBaseText {
-                text: {
-                    if (d.isTooLong)
-                        return d.passTooLongErrMessage
-                    if (d.isTooShort)
-                        return root.strengthenText
-                    return "✓ " + root.strengthenText
-                }
-                font.pixelSize: Theme.tertiaryTextFontSize
-                color: d.isTooLong ? Theme.palette.dangerColor1 : d.isTooShort ? Theme.palette.baseColor1 : Theme.palette.successColor1
+
+            LayoutItemProxy {
+                visible: !d.compactMode
+
+                target: minCharsText
             }
+        }
+
+        LayoutItemProxy {
+            visible: d.compactMode
+
+            Layout.fillWidth: true
+
+            target: minCharsText
         }
 
         StatusPasswordInput {
@@ -304,7 +318,11 @@ ColumnLayout {
 
         RowLayout {
             StatusBaseText {
+                Layout.fillWidth: true
                 text: qsTr("Repeat password")
+                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                maximumLineCount: 2
             }
             Item { Layout.fillWidth: true }
             StatusBaseText {
@@ -378,29 +396,37 @@ ColumnLayout {
         to: Constants.minPasswordLength
     }
 
-    RowLayout {
+    Item {
         Layout.fillWidth: true
-        spacing: Theme.padding
-        Layout.alignment: Qt.AlignHCenter
+        implicitHeight: indicators.implicitHeight
 
-        PasswordComponentIndicator {
-            caption: qsTr("Lower case")
-            checked: d.lowerCaseValidator(newPswInput.text)
-        }
+        Flow {
+            id: indicators
+            width: parent.width
+            anchors.centerIn: parent
+            spacing: Theme.padding
+            flow: Flow.LeftToRight
 
-        PasswordComponentIndicator {
-            caption: qsTr("Upper case")
-            checked: d.upperCaseValidator(newPswInput.text)
-        }
 
-        PasswordComponentIndicator {
-            caption: qsTr("Numbers")
-            checked: d.numbersValidator(newPswInput.text)
-        }
+            PasswordComponentIndicator {
+                caption: qsTr("Lower case")
+                checked: d.lowerCaseValidator(newPswInput.text)
+            }
 
-        PasswordComponentIndicator {
-            caption: qsTr("Symbols")
-            checked: d.symbolsValidator(newPswInput.text)
+            PasswordComponentIndicator {
+                caption: qsTr("Upper case")
+                checked: d.upperCaseValidator(newPswInput.text)
+            }
+
+            PasswordComponentIndicator {
+                caption: qsTr("Numbers")
+                checked: d.numbersValidator(newPswInput.text)
+            }
+
+            PasswordComponentIndicator {
+                caption: qsTr("Symbols")
+                checked: d.symbolsValidator(newPswInput.text)
+            }
         }
     }
 
@@ -411,5 +437,23 @@ ColumnLayout {
         horizontalAlignment: root.contentAlignment
         font.pixelSize: Theme.tertiaryTextFontSize
         color: Theme.palette.dangerColor1
+    }
+
+
+    // Here there are defined the components used inside layout item proxy components:
+    StatusBaseText {
+        id: minCharsText
+        text: {
+            if (d.isTooLong)
+                return d.passTooLongErrMessage
+            if (d.isTooShort)
+                return root.strengthenText
+            return "✓ " + root.strengthenText
+        }
+        font.pixelSize: Theme.tertiaryTextFontSize
+        color: d.isTooLong ? Theme.palette.dangerColor1 : d.isTooShort ? Theme.palette.baseColor1 : Theme.palette.successColor1
+        elide: Text.ElideRight
+        wrapMode: Text.Wrap
+        maximumLineCount: 2
     }
 }

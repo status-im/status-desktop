@@ -26,10 +26,8 @@ SplitView {
         ChangePasswordView {
             id: passwordView
 
-            implicitWidth: parent.width
-            implicitHeight: parent.height
+            contentWidth: panelWidth.value
 
-            contentWidth: 560
             sectionTitle: "Password"
 
             passwordStrengthScoreFunction: (newPass) => Math.min(newPass.length-1, 4)
@@ -88,6 +86,13 @@ SplitView {
         logsView.logText: logs.logText
 
         ColumnLayout {
+            Slider {
+                id: panelWidth
+
+                from: 200
+                to: 700
+                value: 365
+            }
             RowLayout {
                 Switch {
                     id: ctrlChangePassSuccess

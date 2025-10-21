@@ -6,6 +6,8 @@ import shared.views
 
 import Storybook
 
+import utils
+
 SplitView {
     orientation: Qt.Vertical
 
@@ -21,13 +23,15 @@ SplitView {
 
             readonly property string existingPassword: "Somepassword1."
 
-            anchors.centerIn: parent
-            onReturnPressed: logs.logEvent("Return pressed", ["Current Password", "New Password", "Confirmation Password"], [passwordView.currentPswText, passwordView.newPswText, passwordView.confirmationPswText])
+            anchors.centerIn: wrapper
 
+            width: slider.value
             createNewPsw: createNewPassword.checked
             titleVisible: titleVisibleSwitch.checked
             highSizeIntro: highSizeIntroSwitch.checked
             passwordStrengthScoreFunction: (newPass) => Math.min(newPass.length-1, 4)
+
+            onReturnPressed: logs.logEvent("Return pressed", ["Current Password", "New Password", "Confirmation Password"], [passwordView.currentPswText, passwordView.newPswText, passwordView.confirmationPswText])
         }
     }
 
@@ -88,6 +92,13 @@ SplitView {
 
                     input1.text = input2.text = passwordView.existingPassword
                 }
+            }
+
+            Slider {
+                id: slider
+                from: 50
+                to: 600
+                value: 350
             }
         }
     }
