@@ -9,7 +9,6 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')
 @pytest.mark.case(703505)
 @pytest.mark.skip(reason='we need to move this to QML tests level')
 def test_switch_testnet_mode(main_screen: MainWindow):
@@ -61,8 +60,6 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is on when it should not"
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703621',
-                 'Network: Enable testnet toggle and click cross button in confirmation')
 @pytest.mark.case(703621)
 @pytest.mark.skip(reason='we need to move this to QML tests level')
 def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWindow):
@@ -90,8 +87,6 @@ def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWi
             f"Testnet toggle is turned on when it should not"
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703622',
-                 'Network:  Network: Enable Testnets, toggle testnet toggle OFF, click cancel in confirmation')
 @pytest.mark.case(703622)
 @pytest.mark.skip(reason='we need to move this to QML tests level')
 def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: MainWindow):

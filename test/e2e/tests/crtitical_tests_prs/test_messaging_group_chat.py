@@ -21,7 +21,6 @@ from gui.screens.messages import MessagesScreen
 from scripts.utils.generators import random_text_message
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014, 738735, 738736, 738739, 738740)
 @pytest.mark.critical
 @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")

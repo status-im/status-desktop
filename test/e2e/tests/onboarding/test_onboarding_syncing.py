@@ -21,7 +21,6 @@ def sync_screen(main_window) -> OnboardingSyncCodeView:
         return welcome_screen.sync_existing_user()
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703631', 'Wrong sync code')
 @pytest.mark.case(703631)
 @pytest.mark.parametrize('wrong_sync_code', [
     pytest.param('9rhfjgfkgfj890tjfgtjfgshjef900')
@@ -37,7 +36,6 @@ def test_wrong_sync_code(sync_screen, wrong_sync_code):
             f'Wrong sync code message did not appear'
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703591', 'Generate sync code. Negative')
 @pytest.mark.case(703591)
 def test_cancel_setup_syncing(main_screen: MainWindow, user_account):
     with step('Open syncing settings'):

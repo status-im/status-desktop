@@ -13,8 +13,6 @@ from constants.wallet import WalletAccountPopup
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703598',
-                 'Add new account from wallet settings screen')
 @pytest.mark.case(703598)
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [

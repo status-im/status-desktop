@@ -11,7 +11,6 @@ from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703628', 'Factory reset a Keycard')
 @pytest.mark.case(703628)
 @pytest.mark.keycard
 def test_factory_reset_keycard(main_screen: MainWindow, user_account):
@@ -63,8 +62,6 @@ def test_factory_reset_keycard(main_screen: MainWindow, user_account):
                               timeout), f"There is no correct keycard instruction in {keycard_popup.keycard_instructions}"
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704606',
-                 'Factory reset a Keycard: incorrect PIN')
 @pytest.mark.case(704606)
 @pytest.mark.keycard
 def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_account):

@@ -11,7 +11,6 @@ import driver
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703029', 'Manage a private key imported account')
 @pytest.mark.case(703029)
 @pytest.mark.parametrize('address_pair', [constants.user.private_key_address_pair_1])
 def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, user_account, address_pair):

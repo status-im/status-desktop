@@ -13,8 +13,6 @@ from helpers.wallet_helper import authenticate_with_password, open_send_modal_fo
 from scripts.utils.generators import random_network
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704527',
-                 'Send: can send 0 ETH to address pasted into receiver field with Simple flow')
 @pytest.mark.case(704527, 738784)
 @pytest.mark.transaction
 @pytest.mark.smoke

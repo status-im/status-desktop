@@ -10,8 +10,6 @@ from gui.main_window import MainWindow
 from gui.screens.settings_wallet import AccountDetailsView
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704433',
-                 'Account view interactions: Edit Status default account')
 @pytest.mark.case(704433, 738789)
 @pytest.mark.smoke
 @pytest.mark.parametrize('new_name', [

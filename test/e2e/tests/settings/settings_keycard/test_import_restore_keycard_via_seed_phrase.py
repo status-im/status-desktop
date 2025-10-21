@@ -14,8 +14,6 @@ from gui.mocked_keycard_controller import MockedKeycardController
 from scripts.utils.generators import random_mnemonic
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703625',
-                 'Import or restore a Keycard via a seed phrase')
 @pytest.mark.case(703625)
 @pytest.mark.keycard
 def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow):

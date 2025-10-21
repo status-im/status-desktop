@@ -16,7 +16,6 @@ from gui.screens.onboarding import ReturningLoginView, OnboardingWelcomeToStatus
 pytestmark = marks
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702991', 'Login with an invalid password')
 @pytest.mark.case(702991)
 @pytest.mark.parametrize('error', [OnboardingMessages.PASSWORD_INCORRECT.value
                                    ])
@@ -40,8 +39,6 @@ def test_login_with_wrong_password(aut: AUT, main_screen: MainWindow, user_accou
         assert error in str(login_view.password_box.object.validationError)
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702993',
-                 'Sign up with password shorter than 10 chars')
 @pytest.mark.case(702993)
 @pytest.mark.parametrize('error', [
     pytest.param(OnboardingMessages.WRONG_PASSWORD.value),
@@ -61,8 +58,6 @@ def test_sign_up_with_wrong_password_length(user_account, error: str, aut: AUT, 
         assert str(create_password_view.create_password_view.object.strengthenText) == error
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702999',
-                 'Sign up with wrong imported seed phrase')
 @pytest.mark.case(702999)
 @pytest.mark.parametrize('seed_phrase', [
     pytest.param('pelican chief sudden oval media rare swamp elephant lawsuit wheal knife initial'),

@@ -8,7 +8,6 @@ from scripts.utils.generators import random_wallet_acc_keypair_name
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703022', 'Edit default wallet account')
 @pytest.mark.case(703022)
 def test_context_menu_edit_default_account(main_screen: MainWindow, user_account):
     name = WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value

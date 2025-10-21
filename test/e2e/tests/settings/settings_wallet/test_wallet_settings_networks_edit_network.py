@@ -9,8 +9,6 @@ from constants.wallet import WalletNetworkNaming, WalletEditNetworkErrorMessages
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703515',
-                 'Network:  Network: Editing network -> Restore defaults')
 @pytest.mark.case(703515)
 @pytest.mark.parametrize('network_tab', [
     pytest.param(WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value),

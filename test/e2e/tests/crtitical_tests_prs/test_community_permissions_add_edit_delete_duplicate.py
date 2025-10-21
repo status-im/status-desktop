@@ -13,8 +13,6 @@ from gui.main_window import MainWindow
 from gui.screens.community_settings import PermissionsIntroView
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703632',
-                 'Manage community: Adding new permissions, Editing permissions, Deleting permission')
 @pytest.mark.case(703632, 705014, 705016)
 @pytest.mark.critical
 def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):

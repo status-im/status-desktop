@@ -12,8 +12,6 @@ from gui.main_window import MainWindow
 from helpers.settings_helper import open_wallet_settings
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704620',
-                 'Saved addresses: Add new saved address (ethereum address)')
 @pytest.mark.parametrize('name, address',
                          [
                              pytest.param(

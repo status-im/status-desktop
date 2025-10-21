@@ -13,8 +13,6 @@ from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703508',
-                 'Watched addresses: Excl. / Include in total balance functionality for watched address')
 @pytest.mark.case(703508)
 @pytest.mark.parametrize('watched_address, name', [
     pytest.param('0x7f1502605A2f2Cc01f9f4E7dd55e549954A8cD0C', ''.join(random.choices(string.ascii_letters +

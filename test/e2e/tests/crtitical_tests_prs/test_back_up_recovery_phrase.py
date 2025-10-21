@@ -10,7 +10,6 @@ from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanne
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703421, 703010, 738725, 738758, 738771)
 @pytest.mark.critical  # TODO 'https://github.com/status-im/status-desktop/issues/13013'
 @pytest.mark.smoke

@@ -12,9 +12,6 @@ from gui.main_window import MainWindow
 from helpers.chat_helper import skip_message_backup_popup_if_visible
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703272', 'Member role cannot add category')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703273', 'Member role cannot edit category')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703274', 'Member role cannot remove category')
 @pytest.mark.case(703272, 703273, 703274)
 @pytest.mark.communities
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'member'])
@@ -47,7 +44,6 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen, user_data, 
             assert not community_screen.left_panel.open_more_options().delete_category_item.is_visible
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704622', 'Community category clicking')
 @pytest.mark.case(704622)
 @pytest.mark.parametrize('category_name, general_checkbox',
                          [pytest.param('Category in general', True)])

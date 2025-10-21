@@ -6,11 +6,6 @@ from constants import RandomCommunity
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703226', 'Add category')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703227', 'Remove category')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703233', 'Edit category title')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703234', 'Edit category - add channel')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703235', 'Edit category - remove channel')
 @pytest.mark.case(703226, 703233, 703234, 703235, 703227)
 @pytest.mark.parametrize(
     'category_name, general_checkbox, channel_name, channel_description, channel_emoji, second_channel_name, '
