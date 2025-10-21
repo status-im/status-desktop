@@ -13,6 +13,8 @@ class SettingsLocators(BaseLocators):
     BACKUP_RECOVERY_MENU_ITEM = BaseLocators.content_desc_contains("[tid:19-MenuItem]")
 
     PROFILE_MENU_ITEM = BaseLocators.xpath("//*[contains(@resource-id,'0-MenuItem')]")
+    PASSWORD_MENU_ITEM = BaseLocators.content_desc_contains("[tid:1-MenuItem]")
+    PASSWORD_MENU_ITEM_TEXT = BaseLocators.text_contains("Password")
 
     SIGN_OUT_AND_QUIT = BaseLocators.text_contains("Sign out & Quit")
     SIGN_OUT_AND_QUIT_ALT = BaseLocators.xpath(

@@ -9,6 +9,7 @@ from .onboarding import (
     CreateProfilePage,
     PasswordPage,
     SplashScreen,
+    WelcomeBackPage,
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "CreateProfilePage",
     "PasswordPage",
     "SplashScreen",
+    "WelcomeBackPage",
 ]

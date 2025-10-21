@@ -175,14 +175,11 @@ class TestContext:
 
     @property
     def welcome_back(self):
-        class SimpleWelcomeBack:
-            def is_welcome_back_screen_displayed(self, timeout=10):
-                return False
+        if not self._welcome_back:
+            from pages.onboarding import WelcomeBackPage
 
-            def perform_login(self, password):
-                return False
-
-        return SimpleWelcomeBack()
+            self._welcome_back = WelcomeBackPage(self.driver)
+        return self._welcome_back
 
     @property
     def user_service(self) -> UserProfileService:
@@ -267,8 +264,15 @@ class TestContext:
                 self.logger.error("App restart failed")
                 return False
 
-            # Wait for app to stabilize and present either home or auth
-            self.wait_for_app_post_restart()
+            try:
+                manager = self._app_initialization or AppInitializationManager(self.driver)
+                if not self._app_initialization:
+                    self._app_initialization = manager
+                manager.perform_initial_activation(timeout=3)
+            except Exception as activation_err:
+                self.logger.debug(
+                    "Post-restart activation attempt failed: %s", activation_err
+                )
 
             # Detect new state and handle authentication
             self.app_state_manager.detect_current_state()
@@ -289,7 +293,7 @@ class TestContext:
 
             if not self.app_state.is_home_loaded:
                 # Try existing-user login if authentication is required
-                if self.app_state.requires_authentication:
+                if self.app_state.requires_authentication and self.user_service.current_user:
                     try:
                         self.logger.info(
                             "Auth required - attempting existing user login"
@@ -297,6 +301,10 @@ class TestContext:
                         self.login_existing_user()
                     except Exception as e:
                         self.logger.warning(f"Existing user login failed: {e}")
+                elif self.app_state.requires_authentication:
+                    self.logger.info(
+                        "Auth required but no known test user; skipping auto-login"
+                    )
 
                 # If still not loaded and allowed, create a user
                 if not self.app_state.is_home_loaded and auto_create:
@@ -347,6 +355,7 @@ class TestContext:
             self._user_service = None
             self._app_state_manager = None
             self._app_initialization = None
+            self._welcome_back = None
 
             self.logger.info("✅ TestContext cleanup completed")
 
@@ -417,26 +426,6 @@ class TestContext:
                 self.logger.error(f"Post-restart authentication failed: {e}")
 
         return False
-
-    def wait_for_app_post_restart(
-        self, timeout: Optional[int] = None, poll_interval: float = 0.5
-    ) -> bool:
-        """Public helper to wait for app readiness after a restart using YAML defaults."""
-        effective_timeout = timeout
-        try:
-            if (
-                effective_timeout is None
-                and self._session_manager
-                and self._session_manager.env_config
-            ):
-                effective_timeout = self._session_manager.env_config.timeouts.get(
-                    "default", 30
-                )
-        except Exception:
-            effective_timeout = effective_timeout or 30
-        return self._wait_for_app_ready(
-            timeout=int(effective_timeout or 30), poll_interval=poll_interval
-        )
 
     def _wait_for_app_ready(
         self, timeout: int = 30, poll_interval: float = 0.5

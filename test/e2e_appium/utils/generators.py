@@ -1,9 +1,13 @@
 import logging
 import random
+import secrets
 import string
 from typing import Optional
 from eth_account.hdaccount import Language, generate_mnemonic, Mnemonic
 from eth_account import Account
+
+
+_SECURE_RANDOM = random.SystemRandom()
 
 try:
     Account.enable_unaudited_hdwallet_features()
@@ -66,3 +70,27 @@ def get_wallet_address_from_mnemonic(
 ) -> str:
     account = Account.from_mnemonic(seed_phrase, account_path=derivation_path)
     return account.address
+
+
+def generate_secure_password(length: int = 16) -> str:
+    """Generate a strong password that meets basic complexity requirements."""
+    # Desktop UI enforces a 12-character minimum password; mirror that here.
+    length = max(length, 12)
+
+    lowercase = string.ascii_lowercase
+    uppercase = string.ascii_uppercase
+    digits = string.digits
+    symbols = "!@#$%^&*"
+
+    password_chars = [
+        secrets.choice(lowercase),
+        secrets.choice(uppercase),
+        secrets.choice(digits),
+        secrets.choice(symbols),
+    ]
+
+    all_chars = lowercase + uppercase + digits + symbols
+    password_chars += [secrets.choice(all_chars) for _ in range(length - 4)]
+
+    _SECURE_RANDOM.shuffle(password_chars)
+    return "".join(password_chars)
