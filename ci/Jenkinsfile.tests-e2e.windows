@@ -61,7 +61,7 @@ pipeline {
   }
 
   environment {
-    PLATFORM = 'tests/e2e'
+    PLATFORM = 'tests/e2e-windows'
 
     SQUISH_DIR = 'C:\\squish-runner-9.0.1-qt-6.9'
     PYTHONPATH = "${SQUISH_DIR}\\lib;${SQUISH_DIR}\\bin;${SQUISH_DIR}\\lib\\python;${PYTHONPATH}"
@@ -232,10 +232,8 @@ pipeline {
 }
 
 def setNewBuildName() {
-  if (currentBuild.upstreamBuilds) {
-    def parent = utils.parentOrCurrentBuild()
-    currentBuild.displayName = parent.getFullDisplayName().minus('status-desktop » ')
-  }
+  def prMatch = params.BUILD_SOURCE =~ /PR-(\d+)/
+  currentBuild.displayName = "PR${prMatch[0][1]}"
 }
 
 def setBuildDescFromFile(fileNameOrPath) {
