@@ -371,6 +371,11 @@ Item {
                         property string previousText: text
                         property var keyEvent
 
+                        // This workaround prevents entering new line on mobile when it's not desired.
+                        // Qt.ImhSensitiveData prevents entering new line, instead Keys.returnPressed
+                        // is emitted and can be handled in a regular way.
+                        inputMethodHints: Utils.isMobile && !multiline ? Qt.ImhSensitiveData : Qt.ImhNone
+
                         topPadding: root.multiline ? 0 : root.topPadding
                         bottomPadding: root.multiline ? 0: root.bottomPadding
                         width: flick.width
