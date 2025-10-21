@@ -30,6 +30,11 @@ SettingsContentBase {
     QtObject {
         id: d
 
+        readonly property int maxContentWidth: 507 // By design
+
+        // Read-only flag that turns true when the footer row component enters a “compact” layout automatically on resize.
+        readonly property bool compactFooterMode: flatButton.implicitWidth + confirmBtnFirstRowItem.implicitWidth + 2 * Theme.padding > root.width
+
         property int reevaluateTrigger
         function reevaluateHasCredential() {
             reevaluateTrigger++
@@ -92,62 +97,56 @@ SettingsContentBase {
 
     property var passwordStrengthScoreFunction: function () {}
 
-    titleRowComponentLoader.sourceComponent: Item {
-        implicitWidth: 226
-        implicitHeight: 38
-        visible: (Qt.platform.os === SQUtils.Utils.mac || SQUtils.Utils.isMobile)
+    titleRowComponentLoader.sourceComponent: StatusSwitch {
+        id: biometricsSwitch
 
-        StatusSwitch {
-            id: biometricsSwitch
+        LayoutMirroring.enabled: true
+        LayoutMirroring.childrenInherit: true
 
-            LayoutMirroring.enabled: true
-            LayoutMirroring.childrenInherit: true
+        visible: (Qt.platform.os === SQUtils.Utils.mac || SQUtils.Utils.isMobile) && root.keychain.available
 
-            text: qsTr("Enable biometrics")
-            textColor: Theme.palette.baseColor1
+        text: qsTr("Enable biometrics")
+        textColor: Theme.palette.baseColor1
 
-            visible: root.keychain.available
-
-            checkable: false
-            checked: root.keychain.available && d.biometricsEnabled
-            onClicked: {
-                // Enable Biometrics flow
-                if (!biometricsSwitch.checked) {
-                    root.privacyStore.tryStoreToKeyChain()
-                    return
-                }
-
-                // Disable biometrics flow
-                const status = root.keychain.deleteCredential(root.privacyStore.keyUid)
-
-                switch (status) {
-                case Keychain.StatusSuccess:
-                    Global.displayToastMessage(
-                                qsTr("Biometric login and transaction authentication disabled for this device"),
-                                "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
-                    break
-                default:
-                    Global.displayToastMessage(
-                                qsTr("Failed to disable biometric login and transaction authentication for this device"),
-                                errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
-                }
-                d.reevaluateHasCredential()
+        checkable: false
+        checked: root.keychain.available && d.biometricsEnabled
+        onClicked: {
+            // Enable Biometrics flow
+            if (!biometricsSwitch.checked) {
+                root.privacyStore.tryStoreToKeyChain()
+                return
             }
-            StatusToolTip {
-                x: 15
-                orientation: StatusToolTip.Bottom
-                visible: (!root.checked && biometricsSwitch.hovered)
-                text: qsTr("Biometric login and transaction authentication")
+
+            // Disable biometrics flow
+            const status = root.keychain.deleteCredential(root.privacyStore.keyUid)
+
+            switch (status) {
+            case Keychain.StatusSuccess:
+                Global.displayToastMessage(
+                            qsTr("Biometric login and transaction authentication disabled for this device"),
+                            "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                break
+            default:
+                Global.displayToastMessage(
+                            qsTr("Failed to disable biometric login and transaction authentication for this device"),
+                            errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
             }
+            d.reevaluateHasCredential()
+        }
+        StatusToolTip {
+            x: 15
+            orientation: StatusToolTip.Bottom
+            visible: (!root.checked && biometricsSwitch.hovered)
+            text: qsTr("Biometric login and transaction authentication")
         }
     }
 
     ColumnLayout {
+        width: Math.min(d.maxContentWidth, root.contentWidth)
         PasswordView {
             id: choosePasswordForm
 
-            width: 507
-            height: 660
+            Layout.fillWidth: true
 
             createNewPsw: false
             title: qsTr("Change your password")
@@ -171,18 +170,29 @@ SettingsContentBase {
 
         RowLayout {
             Layout.fillWidth: true
+
             StatusFlatButton {
+                id: flatButton
                 text: qsTr("Clear & cancel")
                 onClicked: choosePasswordForm.reset()
             }
+
             Item { Layout.fillWidth: true }
-            StatusButton {
+
+            LayoutItemProxy {
+                id: confirmBtnFirstRowItem
+                visible: !d.compactFooterMode
                 Layout.alignment: Qt.AlignRight
-                objectName: "changePasswordModalSubmitButton"
-                text: qsTr("Change password")
-                enabled: choosePasswordForm.ready
-                onClicked: { confirmPasswordChangePopup.open(); }
+
+                target: confirmButton
             }
+        }
+
+        LayoutItemProxy {
+            visible: d.compactFooterMode
+            Layout.alignment: Qt.AlignLeft
+
+            target: confirmButton
         }
 
         ConfirmChangePasswordModal {
@@ -207,5 +217,14 @@ SettingsContentBase {
                 }
             }
         }
+    }
+
+    // Here there are defined the components used inside layout item proxy components:
+    StatusButton {
+        id: confirmButton
+        objectName: "changePasswordModalSubmitButton"
+        text: qsTr("Change password")
+        enabled: choosePasswordForm.ready
+        onClicked: { confirmPasswordChangePopup.open(); }
     }
 }
