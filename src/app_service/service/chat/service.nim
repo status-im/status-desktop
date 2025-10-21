@@ -640,13 +640,6 @@ QtObject:
     except Exception as e:
       error "error while making user admin: ", msg = e.msg
 
-  proc createGroupChatFromInvitation*(self: Service, groupName: string, chatId: string, adminPK: string): tuple[chatDto: ChatDto, success: bool]  =
-    try:
-      let response = status_group_chat.createGroupChatFromInvitation(groupName, chatId, adminPK)
-      result = self.createChatFromResponse(response)
-    except Exception as e:
-      error "error while creating group from invitation: ", msg = e.msg
-
   proc createGroupChat*(self: Service, communityID: string, name: string, members: seq[string]): tuple[chatDto: ChatDto, success: bool] =
     try:
       let response = status_group_chat.createGroupChat(communityID, name, members)

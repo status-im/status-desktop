@@ -588,13 +588,6 @@ proc createGroupChat*(self: Controller, communityID: string, groupName: string, 
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.mailserversService, self.sharedUrlsService)
 
-proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
-  let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
-  if response.success:
-    discard self.delegate.addOrUpdateChat(response.chatDto, CommunityDto(), false, self.events, self.settingsService, self.nodeConfigurationService,
-      self.contactService, self.chatService, self.communityService, self.messageService,
-      self.mailserversService, self.sharedUrlsService)
-
 proc acceptRequestToJoinCommunity*(self: Controller, requestId: string, communityId: string) =
   self.communityService.asyncAcceptRequestToJoinCommunity(communityId, requestId)
 
