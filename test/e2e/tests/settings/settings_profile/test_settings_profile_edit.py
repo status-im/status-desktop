@@ -12,8 +12,6 @@ from gui.components.changes_detected_popup import ChangesDetectedToastMessage
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703006',
-                 'Set display name, bio and social links')
 @pytest.mark.case(703006, 738755)
 @pytest.mark.parametrize('bio, links', [pytest.param('This is my bio', constants.social_links)])
 @pytest.mark.smoke

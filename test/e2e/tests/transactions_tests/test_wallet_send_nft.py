@@ -10,8 +10,6 @@ from helpers.settings_helper import enable_testnet_mode
 from helpers.wallet_helper import authenticate_with_password, open_send_modal_for_account
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704602',
-                 'Send: can send ERC 721 token (collectible) to address pasted into receiver field with Simple flow')
 @pytest.mark.case(704602)
 @pytest.mark.transaction
 @pytest.mark.parametrize('receiver_account_address, amount, asset', [

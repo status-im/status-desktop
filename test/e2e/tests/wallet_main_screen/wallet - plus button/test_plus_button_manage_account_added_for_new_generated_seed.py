@@ -11,8 +11,6 @@ from gui.main_window import MainWindow
 
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703036',
-                 'Manage an account created from the generated seed phrase')
 @pytest.mark.case(703036)
 def test_plus_button_manage_account_added_for_new_seed(main_screen: MainWindow, user_account):
     wallet_account = RandomWalletAccount()

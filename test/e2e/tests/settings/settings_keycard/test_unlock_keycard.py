@@ -11,7 +11,6 @@ from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704607', 'Unlock Keycard')
 @pytest.mark.case(704607)
 @pytest.mark.keycard
 def test_unlock_keycard_using_correct_puk(main_screen: MainWindow, user_account):
@@ -75,7 +74,6 @@ def test_unlock_keycard_using_correct_puk(main_screen: MainWindow, user_account)
             f"There is no correct keycard instruction in {keycard_popup.keycard_instructions}"
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704608', 'Unlock Keycard: incorrect PUK')
 @pytest.mark.case(704608)
 @pytest.mark.keycard
 def test_unlock_keycard_using_incorrect_puk(main_screen: MainWindow, user_account):

@@ -17,7 +17,6 @@ from gui.screens.onboarding import OnboardingWelcomeToStatusView, SyncResultView
     OnboardingBiometricsView
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592, 738760)
 @pytest.mark.critical
 @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18846 on Windows")

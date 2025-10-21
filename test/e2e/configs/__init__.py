@@ -3,7 +3,7 @@ import os
 
 from os import path
 from scripts.utils.system_path import SystemPath
-from . import testpath, timeouts, testrail, squish, system
+from . import testpath, timeouts, squish, system
 from .system import get_platform
 
 LOG = logging.getLogger(__name__)

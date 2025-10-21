@@ -28,7 +28,6 @@ pytest_plugins = [
     'fixtures.aut',
     'fixtures.path',
     'fixtures.squish',
-    'fixtures.testrail',
 ]
 
 
@@ -55,7 +54,6 @@ python_version = {python_version}
 
 @pytest.fixture(scope='session', autouse=True)
 def setup_session_scope(
-        # init_testrail_api, TODO: https://github.com/status-im/status-desktop/issues/18288
         generate_allure_environment,
         prepare_test_directory,
         start_squish_server
@@ -68,7 +66,6 @@ def setup_session_scope(
 def setup_function_scope(
         caplog,
         generate_test_data,
-        # check_result, TODO: https://github.com/status-im/status-desktop/issues/18288
         application_logs,
         launch_keycard_controller
 ):

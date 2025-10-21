@@ -16,8 +16,6 @@ from gui.components.wallet.send_popup import SendPopup
 from gui.screens.settings_ens_usernames import ENSRegisteredView
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704597',
-                 'Settings -> ENS usernames: buy ENS name on testnet')
 @pytest.mark.case(704597)
 @pytest.mark.transaction
 @pytest.mark.parametrize('ens_name', [pytest.param(random_ens_string())])

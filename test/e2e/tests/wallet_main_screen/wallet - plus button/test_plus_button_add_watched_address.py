@@ -12,7 +12,6 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026', 'Manage a watch-only account')
 @pytest.mark.case(703026, 738788, 738815)
 @pytest.mark.smoke
 # TODO: to add a step of account removal

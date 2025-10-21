@@ -13,8 +13,6 @@ import configs.testpath
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703252', 'Kick user')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736991', 'Owner can ban member')
 @pytest.mark.case(703252, 703252, 736991)
 @pytest.mark.communities
 def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):

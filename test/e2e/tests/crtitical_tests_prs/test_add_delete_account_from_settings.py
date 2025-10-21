@@ -16,8 +16,6 @@ from helpers.settings_helper import open_wallet_settings
 
 
 @pytest.mark.critical
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704454',
-                 'Account view interactions: Delete generated account')
 @pytest.mark.case(704454)
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [

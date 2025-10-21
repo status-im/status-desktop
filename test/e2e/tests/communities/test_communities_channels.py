@@ -16,9 +16,6 @@ from gui.screens.messages import MessagesScreen
 from scripts.utils.parsers import remove_tags
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703049', 'Create community channel')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703050', 'Edit community channel')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703051', 'Delete community channel')
 @pytest.mark.case(703049, 703050, 703051)
 @pytest.mark.communities
 @pytest.mark.parametrize(
@@ -75,9 +72,6 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
         assert len(community_screen.left_panel.channels) == 0
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703269', 'Member role cannot add channels')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703270', 'Member role cannot edit channels')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703271', 'Member role cannot delete channels')
 @pytest.mark.case(703269, 703270, 703271)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'member'])
 @pytest.mark.parametrize('user_account', [constants.user.community_member])
@@ -111,8 +105,6 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
                 f'Delete channel option is present when it should not'
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/737079',
-                 'Member not holding permission cannot see channel (view-only permission)')
 @pytest.mark.case(737079)
 @pytest.mark.parametrize('user_data_one, user_data_two, asset, amount, channel_description', [
     (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'ETH', '10',
@@ -163,10 +155,6 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/737070',
-                 'Owner can view and post in a non restricted channel')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/737074',
-                 'Member can view and post in a non restricted channel')
 @pytest.mark.case(737070, 737074)
 @pytest.mark.parametrize('user_data_one, user_data_two, channel_name, channel_description', [
     (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'Channel_',

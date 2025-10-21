@@ -31,8 +31,6 @@ def _verify_account_order(account_order, main_screen, default_name, order):
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
-                 'Account order: account order could be changed with drag&drop')
 @pytest.mark.case(703415)
 @pytest.mark.skip("To check if we need that test at all in e2e")
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account):
@@ -85,8 +83,6 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
         )
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703416',
-                 'Account order: reordering is not possible having a single account')
 @pytest.mark.case(703416)
 @pytest.mark.parametrize('default_name, text_on_top', [
     pytest.param('Account 1', 'This account looks a little lonely. Add another account'

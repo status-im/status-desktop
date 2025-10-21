@@ -12,8 +12,6 @@ from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703624',
-                 'Create a new keycard account with a new seed phrase')
 @pytest.mark.case(703624)
 @pytest.mark.keycard
 @pytest.mark.parametrize(

@@ -18,11 +18,6 @@ from gui.screens.community_settings import CommunitySettingsScreen
 from gui.screens.messages import MessagesScreen
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703255',
-                 'Edit chat - Add pinned message (when any member can pin is disabled)')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703256',
-                 'Edit chat - Remove pinned message (when any member can pin is disabled)')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
 @pytest.mark.case(703255, 703256, 703510, 738743, 738754, 738798, 738799)
 @pytest.mark.communities
 @pytest.mark.smoke

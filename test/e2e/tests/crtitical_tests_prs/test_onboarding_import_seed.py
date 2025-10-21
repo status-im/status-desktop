@@ -14,8 +14,6 @@ from gui.screens.onboarding import ReturningLoginView
 from helpers.settings_helper import open_wallet_settings, open_profile_settings
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736372', 'Re-importing seed-phrase')
 @pytest.mark.case(703040, 736372, 738726)
 @pytest.mark.critical
 @pytest.mark.smoke

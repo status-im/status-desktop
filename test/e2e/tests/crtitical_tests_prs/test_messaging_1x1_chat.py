@@ -25,7 +25,6 @@ from gui.main_window import MainWindow
 from scripts.utils.generators import random_text_message
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')
 @pytest.mark.case(703087, 738732, 738734, 738742, 738744, 738745)
 @pytest.mark.critical
 @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")

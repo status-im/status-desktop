@@ -9,8 +9,6 @@ from constants.community import LimitWarnings
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/739309',
-                 'Can create up to 5 member role permissions')
 @pytest.mark.case(739309)
 @pytest.mark.communities
 def test_add_5_member_role_permissions(main_screen: MainWindow):

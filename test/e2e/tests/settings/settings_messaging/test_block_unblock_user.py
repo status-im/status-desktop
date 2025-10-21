@@ -12,8 +12,6 @@ import configs
 from gui.screens.messages import ToolBar
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/738772',
-                 "Block or unblock someone in Status")
 @pytest.mark.case(738772, 738772)
 @pytest.mark.smoke
 @pytest.mark.settings_messaging

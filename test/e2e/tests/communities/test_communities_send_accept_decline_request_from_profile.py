@@ -11,8 +11,6 @@ import configs
 from constants import UserAccount, RandomUser, RandomCommunity
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736170',
-                 "Add a contact from community's member list")
 @pytest.mark.case(736170, 738776, 738777)
 @pytest.mark.smoke
 @pytest.mark.communities

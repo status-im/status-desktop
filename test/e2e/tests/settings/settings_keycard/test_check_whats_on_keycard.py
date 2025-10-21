@@ -13,7 +13,6 @@ from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703627', 'Check whats on a Keycard')
 @pytest.mark.case(703627)
 @pytest.mark.keycard
 def test_check_whats_on_keycard(main_screen: MainWindow, user_account):

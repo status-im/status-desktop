@@ -8,8 +8,6 @@ from constants.messaging import Messaging
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704610',
-                 'Reject a contact request with a chat key')
 @pytest.mark.case(704610)
 @pytest.mark.settings_messaging
 def test_messaging_settings_rejecting_request(multiple_instances):

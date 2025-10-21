@@ -13,16 +13,6 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727223',
-                 'Sort by Asset balance value')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727224',
-                 'Sort by Asset balance')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727225',
-                 'Sort by Asset value')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727226',
-                 'Sort by 1d change: balance value')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727227',
-                 'Sort by Asset name')
 @pytest.mark.case(727223, 727224, 727225, 727226, 727227)
 @pytest.mark.parametrize('address, name, dai, wrappedeth, stt, eth', [
     pytest.param('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 'AssetsCollectibles', 'Dai Stablecoin', 'Wrapped Ether',
@@ -135,12 +125,6 @@ def test_wallet_sort_assets(main_screen: MainWindow, address, name, dai, wrapped
         assert driver.waitFor(lambda: assets_order[3].title == dai, 6000)
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704709',
-                 'Create custom order')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704731',
-                 'Select custom order')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704732',
-                 'Edit custom order')
 @pytest.mark.case(704709, 704731, 704732)
 @pytest.mark.parametrize('address, name, dai, wrappedeth, stt, eth', [
     pytest.param('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 'AssetsCollectibles', 'Dai Stablecoin', 'Wrapped Ether',

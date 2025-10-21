@@ -16,7 +16,6 @@ from gui.screens.community_settings_tokens import MintedTokensView
 from scripts.utils.generators import random_network
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.transaction
 @pytest.mark.parametrize('network_name', [pytest.param(random_network())])

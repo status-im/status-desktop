@@ -16,8 +16,6 @@ from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703623',
-                 'Setup a keycard with an existing account')
 @pytest.mark.case(703623)
 @pytest.mark.parametrize('account_name', [pytest.param('Account 1')])
 @pytest.mark.timeout(timeout=210)

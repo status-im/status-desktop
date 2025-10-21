@@ -9,12 +9,6 @@ from constants.images_paths import AIRDROPS_WELCOME_IMAGE_PATH, TOKENS_WELCOME_I
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703198',
-                 'Manage community: Manage Permissions screen overview')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703199',
-                 'Manage community: Manage Mint Tokens screen overview')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703200',
-                 'Manage community: Manage Airdrops screen overview')
 @pytest.mark.case(703198, 703199, 703200)
 def test_manage_community_screens_overview(main_screen: MainWindow):
     with step('Create community and select it'):
