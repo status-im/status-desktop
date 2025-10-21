@@ -1,60 +1,94 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml
+
+import StatusQ
+import StatusQ.Core
+import StatusQ.Core.Utils
+import StatusQ.Controls
+import StatusQ.Components
+import StatusQ.Core.Theme
+
+import Models
+import Storybook
+
+import SortFilterProxyModel
+import QtModelsToolkit
 
 import shared
 import shared.panels
-
-import Storybook
+import utils
 
 Item {
-    QtObject {
-        id: mockDriver
+    id: root
 
-        readonly property var seedWords:
-            ["apple", "banana", "cat", "country", "catalog", "catch", "category",
-            "cattle", "dog", "elephant", "fish", "cat"]
+    MouseArea {
+        anchors.fill: parent
 
-        function isSeedPhraseValid(mnemonic: string): bool {
-            return mnemonic === seedWords.join(" ")
+        onClicked: root.focus = true
+    }
+
+    function isValid(mnemonic) {
+        return mnemonic === sampleValidPhrase
+    }
+
+    readonly property string sampleValidPhrase:
+        "abandon baby cat dad eager fabric gadget habit ice jacket kangaroo lab"
+
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 150
+        border.width: 1
+        color: "transparent"
+
+        StatusScrollView {
+            id: scrollView
+
+            anchors.fill: parent
+            contentWidth: availableWidth
+
+            EnterSeedPhrase {
+                id: enterSeedPhrase
+
+                property var validSeedPhrase: []
+
+                flickable: scrollView.flickable
+
+                width: scrollView.availableWidth
+                dictionary: BIP39_en {}
+
+                onSeedPhraseProvided: seedPhrase => {
+                    const valid = seedPhrase.join(" ") === sampleValidPhrase
+                    setError(valid ? "" : "Invalid seed phrase!")
+                }
+
+                onSeedPhraseAccepted: validSeedPhrase = seedPhrase
+            }
         }
     }
 
-    EnterSeedPhrase {
-        id: panel
-        anchors.centerIn: parent
-        isSeedPhraseValid: mockDriver.isSeedPhraseValid
-
-        dictionary: BIP39_en {}
-
-        onSeedPhraseUpdated: (valid, phrase) => {
-            console.log(valid, phrase)
-        }
-    }
-
-    Row {
+    ColumnLayout {
         anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.margins: 10
-        spacing: 8
+
+        Button {
+            text: "Copy valid seed phrase to keyboard: " + root.sampleValidPhrase
+
+            onClicked: ClipboardUtils.setText(root.sampleValidPhrase)
+        }
 
         Label {
-            anchors.verticalCenter: parent.verticalCenter
-            text: "Valid: %1".arg(panel.seedPhraseIsValid ? "yes" : "no")
+            text: "is seedphrase valid: " + enterSeedPhrase.seedPhraseIsValid
         }
-        Button {
-            text: "Paste seed phrase"
-            focusPolicy: Qt.NoFocus
-            onClicked: {
-                for (let i = 1;; i++) {
-                    const input = StorybookUtils.findChild(
-                                    panel, `enterSeedPhraseInputField${i}`)
 
-                    if (input === null)
-                        break
+        Label {
+            text: "valid seed phrase provided: " + enterSeedPhrase.validSeedPhrase.toString()
+        }
 
-                    input.text = mockDriver.seedWords[i-1]
-                }
-            }
+        Label {
+            text: JSON.stringify(enterSeedPhrase.seedPhrase)
+
+            Layout.bottomMargin: 20
         }
     }
 }

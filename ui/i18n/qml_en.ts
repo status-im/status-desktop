@@ -244,13 +244,6 @@
 <context>
     <name>EnterSeedPhrase</name>
     <message numerus="yes">
-        <source>%n word(s)</source>
-        <translation>
-            <numerusform>%n word</numerusform>
-            <numerusform>%n words</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
         <source>Key pair name must be at least %n character(s)</source>
         <translation>
             <numerusform>Key pair name must be at least %n character</numerusform>

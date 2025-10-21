@@ -7327,12 +7327,6 @@ Please add it and try again.</source>
         <source>The phrase you’ve entered is invalid</source>
         <translation>입력한 구문이 올바르지 않습니다</translation>
     </message>
-    <message numerus="yes">
-        <source>%n word(s)</source>
-        <translation>
-            <numerusform>%n단어</numerusform>
-        </translation>
-    </message>
     <message>
         <source>Enter recovery phrase</source>
         <translation>복구 구문 입력</translation>
@@ -7374,13 +7368,6 @@ Please add it and try again.</source>
     <message>
         <source>Enter recovery phrase for %1 key pair</source>
         <translation>%1 키 페어의 복구 구문을 입력하세요</translation>
-    </message>
-</context>
-<context>
-    <name>EnterSeedPhraseNew</name>
-    <message>
-        <source>The phrase you’ve entered is invalid</source>
-        <translation type="unfinished">입력한 구문이 올바르지 않습니다</translation>
     </message>
 </context>
 <context>
@@ -19113,10 +19100,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Status Desktop</source>
         <translation>스테이터스 데스크톱</translation>
-    </message>
-    <message>
-        <source>Hello World</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

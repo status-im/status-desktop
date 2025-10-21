@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ
@@ -6,333 +7,419 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils
 import StatusQ.Controls
-import StatusQ.Controls.Validators
 
-import utils
-import shared.controls
+import QtModelsToolkit
+import SortFilterProxyModel
 
-ColumnLayout {
+Control {
     id: root
 
-    //**************************************************************************
-    //* This component is not refactored, just pulled out to a shared location *
-    //**************************************************************************
-    spacing: Theme.padding
+    // Model representing dictionary of valid words. Single role "seedWord" of
+    // string type is expected.
+    property alias dictionary: suggestionsModel.sourceModel
 
-    readonly property bool seedPhraseIsValid: d.allEntriesValid && invalidSeedTxt.text === ""
-    property var isSeedPhraseValid: function (mnemonic) { return false }
-    property var dictionary
+    // Error text presented by the component. Set internally when provided words
+    // are not present in the dictionary or externally via setError method.
+    readonly property alias errorText: errorText.text
 
-    signal submitSeedPhrase()
-    signal seedPhraseUpdated(bool valid, string seedPhrase)
+    // Indicates if correct words are provided and no external error is set.
+    readonly property alias seedPhraseIsValid: d.isValid
 
-    function setWrongSeedPhraseMessage(message) {
-        invalidSeedTxt.text = message
-        // Validate again the recovery phrase
-        // This is needed because the message can be set to empty and the recovery phrase is still invalid
-        if (message === "")
-            d.validate()
-    }
+    // Seed phrase as an array of words from a dictionary.
+    readonly property alias seedPhrase: d.seedPhrase
 
-    function getSeedPhraseAsString() {
-        return d.buildMnemonicString()
+    // Emitted when all fields are filled with words from dictionary.
+    // "seedPhrase" contains array of provided words. Handler is responsible
+    // for further validation and setting error via setError message or calling
+    // setError with empty string to clear previous error if phrase is valid.
+    signal seedPhraseProvided(var seedPhrase)
+
+    // Emitted when seed phrase is marked as valid, suggestions bar not visible
+    // and last word is accepted by keyboard.
+    signal seedPhraseAccepted
+
+    // An optional Flickable whose content will be automatically positioned to
+    // make the focused field visible.
+    property Flickable flickable
+
+    // Sets error by providing error message or clears it by setting empty string.
+    function setError(errorMessage: string) {
+        d.customErrorString = errorMessage
+        d.isValid = errorMessage === ""
     }
 
     QtObject {
         id: d
 
-        property bool allEntriesValid: false
-        property var mnemonicInput: []
-        property var incorrectWordAtIndex: [] // 1-based
-        readonly property var tabs: [12, 18, 24]
+        readonly property alias markedAsInvalidCount: validityAggregator.value
 
-        onIncorrectWordAtIndexChanged: d.validate()
+        property var seedPhrase: []
+        property bool isValid
+        property string customErrorString
 
-        onAllEntriesValidChanged: {
-            let mnemonicString = ""
+        property int currentIndex
+        property Item currentItem
 
-            if (d.allEntriesValid) {
-                mnemonicString = buildMnemonicString()
-                if (!Utils.isMnemonic(mnemonicString) || !root.isSeedPhraseValid(mnemonicString)) {
-                    root.setWrongSeedPhraseMessage(qsTr("Invalid recovery phrase"))
-                    d.allEntriesValid = false
-                }
-            }
-            root.seedPhraseUpdated(d.allEntriesValid, mnemonicString)
+        // automatically position current item in a visible area
+        onCurrentItemChanged: {
+            if (!root.flickable || !currentItem)
+                return
+
+            const rect = Qt.rect(0, -currentItem.height - spacing,
+                                 currentItem.width,
+                                 currentItem.height + currentItem.height + spacing)
+            Utils.ensureVisible(
+                        flickable, flickable.contentItem.mapFromItem(
+                            currentItem, rect))
         }
 
-        function validate() {
-            if (d.incorrectWordAtIndex.length > 0) {
-                invalidSeedTxt.text = qsTr("The phrase you’ve entered is invalid")
+        property string filteringPrefix
+
+        readonly property int twoColsThreshold: 450
+        readonly property int oneColThreshold: 400
+
+        readonly property int spacing: 8
+        readonly property int rowHeight: 44
+
+        function isInDictionary(word: string) : bool {
+            return ModelUtils.contains(root. dictionary, "seedWord", word)
+        }
+    }
+
+    ListModel {
+        id: inputModel
+
+        function setEntry(idx: int, phrase: string, valid: bool) {
+            setProperty(idx, "currentPhrase", phrase)
+            setProperty(idx, "committedValidPhrase", valid ? phrase : "")
+            setProperty(idx, "markAsInvalid", !valid)
+        }
+
+        Component.onCompleted: {
+            const emptyEntry = {
+                currentPhrase: "",
+                committedValidPhrase: "",
+                markAsInvalid: false
+            }
+
+            append(Array(24).fill(emptyEntry))
+        }
+    }
+
+    SortFilterProxyModel {
+        id: filteredInputModel
+
+        filters: IndexFilter {
+            maximumIndex: lengthBar.selectedLength - 1
+        }
+
+        sourceModel: inputModel
+    }
+
+    SortFilterProxyModel {
+        id: suggestionsModel
+
+        function takeFirst() {
+            return get(0).seedWord
+        }
+
+        filters: RegExpFilter {
+            id: filter
+
+            syntax: RegExpFilter.Wildcard
+            pattern: `${d.filteringPrefix || "-"}*`
+        }
+    }
+
+    FunctionAggregator {
+        id: validityAggregator
+
+        model: filteredInputModel
+        initialValue: 0
+        roleName: "markAsInvalid"
+        aggregateFunction: (aggr, value) => aggr + value
+    }
+
+    FunctionAggregator {
+        id: contentAggregator
+
+        model: filteredInputModel
+        initialValue: []
+        roleName: "committedValidPhrase"
+        aggregateFunction: (aggr, value) => [...aggr, value]
+
+        onValueChanged: {
+            d.seedPhrase = value
+
+            if (d.seedPhrase.length === 0)
+                return
+
+            if (d.seedPhrase.every(d.isInDictionary))
+                root.seedPhraseProvided(seedPhrase)
+        }
+    }
+
+    SuggestionsBar {
+        id: suggestionsBar
+        objectName: "suggestionsBar"
+
+        visible: false
+
+        model: suggestionsModel
+
+        onWordSelected: word => {
+            inputModel.setEntry(d.currentIndex, word, true)
+
+            // don't loos focust on the list entry, close suggestions
+            if (d.currentIndex === repeater.count - 1) {
+                d.filteringPrefix = ""
                 return
             }
 
-            invalidSeedTxt.text = ""
-        }
-
-        function checkMnemonicLength() {
-            d.allEntriesValid = d.mnemonicInput.length === d.tabs[switchTabBar.currentIndex] && d.incorrectWordAtIndex.length === 0
-        }
-
-        function buildMnemonicString() {
-            const sortTable = mnemonicInput.sort((a, b) => a.pos - b.pos)
-            return sortTable.map(x => x.seed).join(" ")
-        }
-
-        function isWordAtPosition(word, pos) {
-            return mnemonicInput.some(entry => entry.pos === pos && entry.seed === word);
-        }
-
-        function checkWordExistence(word, pos) {
-            if (word !== "" && !ModelUtils.contains(root.dictionary, "seedWord", word)) {
-                const incorrectWordAtIndex = d.incorrectWordAtIndex
-                incorrectWordAtIndex.push(pos)
-                d.incorrectWordAtIndex = [...new Set(incorrectWordAtIndex)] // remove dupes
-                return
-            }
-
-            d.incorrectWordAtIndex = d.incorrectWordAtIndex.filter(function(value) {
-                return value !== pos
-            })
-        }
-
-        function pasteWords () {
-            const clipboardText = ClipboardUtils.text
-
-            // Split words separated by commas and or blank spaces (spaces, enters, tabs)
-            const words = clipboardText.trim().split(/[, \s]+/)
-
-            let index = d.tabs.indexOf(words.length)
-            if (index === -1) {
-                return false
-            }
-
-            let timeout = 0
-            if (switchTabBar.currentIndex !== index) {
-                switchTabBar.currentIndex = index
-                // Set the timeout to 100 so the grid has time to generate the new items
-                timeout = 100
-            }
-
-            d.mnemonicInput = []
-            timer.setTimeout(() => {
-                                 // Populate mnemonicInput
-                                 for (let i = 0; i <  words.length; i++) {
-                                     grid.addWord(i + 1, words[i], true)
-                                 }
-                                 // Populate grid
-                                 for (let j = 0; j <  grid.count; j++) {
-                                     const item = grid.itemAtIndex(j)
-                                     if (!item || !item.leftComponentText) {
-                                         // The grid has gaps in it and also sometimes doesn't return the item correctly when offscreen
-                                         // in those cases, we just add the word in the array but not in the grid.
-                                         // The button will still work and import correctly. The Grid itself will be partly empty, but offscreen
-                                         // With the re-design of the grid, this should be fixed
-                                         continue
-                                     }
-                                     const pos = item.mnemonicIndex
-                                     item.setWord(words[pos - 1])
-                                 }
-
-                                 // position on the last field
-                                 const lastItem = grid.itemAtIndex(grid.count - 1)
-                                 if (!!lastItem)
-                                     lastItem.textEdit.input.edit.forceActiveFocus()
-
-                                 d.checkMnemonicLength()
-                             }, timeout)
-            return true
+            const next = d.currentItem.nextItemInFocusChain(true)
+            if (next)
+                next.forceActiveFocus()
         }
     }
 
 
+    contentItem: ColumnLayout {
+        spacing: d.spacing
 
-    Timer {
-        id: timer
-    }
+        StatusSeedPhraseTabBar {
+            id: lengthBar
 
-    StatusSwitchTabBar {
-        id: switchTabBar
-        objectName: "enterSeedPhraseSwitchBar"
-        Layout.alignment: Qt.AlignHCenter
-        Repeater {
-            model: d.tabs
-            StatusSwitchTabButton {
-                readonly property int wordCount: modelData
-                text: qsTr("%n word(s)", "", wordCount)
-                id: seedPhraseWords
-                objectName: `${modelData}SeedButton`
-            }
-        }
-        onCurrentIndexChanged: {
-            d.mnemonicInput = d.mnemonicInput.filter(function(value) {
-                return value.pos <= d.tabs[switchTabBar.currentIndex]
-            })
-            d.incorrectWordAtIndex = d.incorrectWordAtIndex.filter(function(value) {
-                return value <= d.tabs[switchTabBar.currentIndex]
-            })
-            d.checkMnemonicLength()
-        }
-    }
+            objectName: "enterSeedPhraseSwitchBar"
 
-    StatusGridView {
-        id: grid
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: 458
+            Layout.fillWidth: parent.width <= Layout.preferredWidth
 
-        objectName: "enterSeedPhraseGridView"
-        Layout.fillWidth: true
-        Layout.preferredHeight: 312
-        Layout.topMargin: Theme.halfPadding
-        Layout.alignment: Qt.AlignHCenter
-        cellWidth: (parent.width/(count/6))
-        cellHeight: 52
-        interactive: false
-        model: switchTabBar.currentItem.wordCount
-
-        function addWord(pos, word, ignoreGoingNext = false) {
-
-            // if the word is already added at given pos, we return
-            if(d.isWordAtPosition(word, pos)) {
-                return
-            }
-
-            const words = d.mnemonicInput
-
-            words.push({pos: pos, seed: word.replace(/\s/g, '')})
-
-            for (let j = 0; j < words.length; j++) {
-                if (words[j].pos === pos && words[j].seed !== word) {
-                    words[j].seed = word
-                    break
-                }
-            }
-            //remove duplicates
-            const valueArr = words.map(item => item.pos)
-            const isDuplicate = valueArr.some((item, idx) => {
-                                                  if (valueArr.indexOf(item) !== idx) {
-                                                      words.splice(idx, 1)
-                                                  }
-                                                  return valueArr.indexOf(item) !== idx
-                                              })
-            if (!ignoreGoingNext) {
-                for (let i = 0; i < grid.count; i++) {
-                    const item = grid.itemAtIndex(i)
-                    if (!item || item.mnemonicIndex !== (pos + 1)) {
-                        continue
-                    }
-
-                    grid.currentIndex = item.index
-                    item.textEdit.input.edit.forceActiveFocus()
-
-                    if (grid.currentIndex !== 12) {
-                        continue
-                    }
-
-                    grid.positionViewAtEnd()
-
-                    if (grid.count === 20) {
-                        grid.contentX = 1500
-                    }
-                }
-            }
-            d.mnemonicInput = words
-            d.checkWordExistence(word, pos)
-            d.checkMnemonicLength()
-            root.seedPhraseUpdated(d.allEntriesValid, d.buildMnemonicString())
+            contentHeight: d.rowHeight
         }
 
-        delegate: StatusSeedPhraseInput {
-            id: seedWordInput
+        GridLayout {
+            id: grid
 
-            textEdit.input.edit.objectName: `enterSeedPhraseInputField${seedWordInput.leftComponentText}`
-            width: (grid.cellWidth - 8)
-            height: (grid.cellHeight - 8)
-            Behavior on width { NumberAnimation { duration: 150 } }
-            textEdit.text: {
-                const pos = seedWordInput.mnemonicIndex
-                for (let i in d.mnemonicInput) {
-                    const p = d.mnemonicInput[i]
-                    if (p.pos === pos) {
-                        return p.seed
+            columnSpacing: d.spacing
+            rowSpacing: d.spacing
+
+            columns: {
+                if (width < d.oneColThreshold)
+                    return 1
+                else if (width < d.twoColsThreshold || lengthBar.selectedLength === 12)
+                    return 2
+                else
+                    return 3
+            }
+
+            uniformCellWidths: true
+
+            Repeater {
+                id: repeater
+
+                model: filteredInputModel
+
+                onCountChanged: {
+                    if (count) {
+                        repeater.itemAt(0).forceActiveFocus()
+                        d.filteringPrefix = ""
                     }
                 }
-                return ""
-            }
 
-            required property int index
-            readonly property int mnemonicIndex: index + 1
+                delegate: StatusSeedPhraseField {
+                    objectName: `enterSeedPhraseInputField${displayIndex}`
 
-            leftComponentText: mnemonicIndex
-            isError: d.incorrectWordAtIndex.includes(mnemonicIndex) & !!text
-            inputList: root.dictionary
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: d.rowHeight
 
-            onDoneInsertingWord: (word) => grid.addWord(mnemonicIndex, word)
-            onEditingFinished: {
-                if (text === "") {
-                    return
-                }
+                    activeFocusOnTab: true
+                    focus: false
 
-                grid.addWord(mnemonicIndex, text, true)
-            }
-            onEditClicked: {
-                grid.currentIndex = index
-            }
-            onKeyPressed: function(event) {
-                if (event.key === Qt.Key_Backtab) {
-                    for (let i = 0; i < grid.count; i++) {
-                        if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex - 1) >= 0 ? (mnemonicIndex - 1) : 0)) {
-                            grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.BacktabFocusReason)
-                            event.accepted = true
-                            break
+                    text: model.currentPhrase
+                    displayIndex: index + 1
+                    valid: !text || !model.markAsInvalid
+
+                    onTextChanged: {
+                        if (model.currentPhrase !== text)
+                            model.currentPhrase = text
+                    }
+
+                    LayoutItemProxy {
+                        id: proxy
+
+                        visible: parent.activeFocus && suggestionsModel.count
+
+                        x: -parent.x
+                        y: -parent.height - grid.rowSpacing
+                        width: grid.width
+                        height: parent.height
+
+                        target: suggestionsBar
+                    }
+
+                    property bool backspaceOrDeletePressed
+
+                    Keys.onPressed: event => {
+                        // this info is stored in order to distingush regular changes
+                        // done by inserting content, from those done by removing via
+                        // backspace or delete
+                        backspaceOrDeletePressed =
+                                        event.key === Qt.Key_Backspace ||
+                                        event.key === Qt.Key_Delete
+
+                        // insert words when pasted in any field
+                        if (event.matches(StandardKey.Paste)) {
+                            const words = ClipboardUtils.text.trim().split(/[, \s]+/)
+                            const length = words.length
+
+                            if (lengthBar.lengths.includes(length)) {
+                                words.forEach((word, idx) => {
+                                    inputModel.setEntry(idx, word, d.isInDictionary(word))
+                                })
+
+                                repeater.itemAt(length - 1).forceActiveFocus()
+                                d.filteringPrefix = ""
+
+                                lengthBar.selectLength(length)
+                                event.accepted = true
+                            }
                         }
                     }
-                } else if (event.key === Qt.Key_Tab) {
-                    for (let i = 0; i < grid.count; i++) {
-                        if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex + 1) <= grid.count ? (mnemonicIndex + 1) : grid.count)) {
-                            grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason)
-                            textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit
-                            event.accepted = true
-                            break
-                        }
-                    }
-                }
 
-                if (event.matches(StandardKey.Paste)) {
-                    if (d.pasteWords()) {
-                        // Paste was done by splitting the words
+                    onActiveFocusChanged: {
+                        if (activeFocus) {
+                            d.currentIndex = index
+                            d.currentItem = this
+
+                            d.filteringPrefix = d.isInDictionary(text) ? "" : text
+                        }
+
+                        if (!activeFocus && text)
+                            inputModel.setEntry(index, text, d.isInDictionary(text))
+                    }
+
+                    onAccepted: {
+                        if (suggestionsModel.count === 0) {
+                            // for last entry accepting closes suggestions therefore
+                            // it's possible to have no suggestions and valid text
+                            // entered. For that reason extra check in dictionary is
+                            // is needed
+                            if (text && !d.isInDictionary(text))
+                                inputModel.setEntry(index, text, false)
+
+                            const isTheSame = model.currentPhrase
+                                            === model.committedValidPhrase
+
+                            if (root.seedPhraseIsValid && isTheSame)
+                                root.seedPhraseAccepted()
+
+                            return
+                        }
+
+                        inputModel.setEntry(index, suggestionsModel.takeFirst(), true)
+
+                        // close suggestions bar
+                        d.filteringPrefix = ""
+
+                        // don't pass focus to next item in the chain in case of last item
+                        if (index === repeater.count - 1)
+                            return
+
+                        const next = nextItemInFocusChain(true)
+
+                        if (next)
+                            next.forceActiveFocus()
+                    }
+
+                    Keys.onTabPressed: event => {
+                        // auto-complete with first suggestion if available
+                        if (suggestionsModel.count)
+                            inputModel.setEntry(index, suggestionsModel.takeFirst(), true)
+
+                        // close suggestions
+                        d.filteringPrefix = ""
+
+                        // stop forward traversal on the last input
+                        event.accepted = index === repeater.count - 1
+                    }
+
+                    Keys.onBacktabPressed: event => {
+                        // stop backward traversal on the first input
+                        event.accepted = index === 0
+                    }
+
+                    // block spaces
+                    Keys.onSpacePressed: event => {
                         event.accepted = true
                     }
-                    return
-                }
 
-                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                    event.accepted = true
-                    if (d.allEntriesValid) {
-                        root.submitSeedPhrase()
-                        return
+                    onTextEdited: {
+                        d.customErrorString = ""
+                        d.isValid = false
+                        d.filteringPrefix = text
+
+                        if (!text)
+                            inputModel.setEntry(index, "", true)
+                        else
+                            model.committedValidPhrase = ""
+
+                        if (backspaceOrDeletePressed)
+                            return
+
+                        if (suggestionsModel.count === 1 &&
+                                text === suggestionsModel.takeFirst()) {
+
+                            if (index !== repeater.count - 1) {
+                                const next = nextItemInFocusChain(true)
+
+                                if (next)
+                                    next.forceActiveFocus()
+                            } else {
+                                inputModel.setEntry(index, text, d.isInDictionary(text))
+                                d.filteringPrefix = ""
+                            }
+                        }
                     }
                 }
 
-                if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace) {
-                    const wordIndex = d.mnemonicInput.findIndex(x => x.pos === mnemonicIndex)
-                    if (wordIndex > -1) {
-                        d.mnemonicInput.splice(wordIndex, 1)
-                        d.checkMnemonicLength()
-                    }
-                }
-            }
-            Component.onCompleted: {
-                const item = grid.itemAtIndex(0)
-                if (item) {
-                    item.textEdit.input.edit.forceActiveFocus()
+                Component.onCompleted: {
+                    repeater.itemAt(0).forceActiveFocus()
                 }
             }
         }
-    }
 
-    StatusBaseText {
-        id: invalidSeedTxt
-        objectName: "enterSeedPhraseInvalidSeedText"
-        Layout.alignment: Qt.AlignHCenter
-        color: Theme.palette.dangerColor1
+        StatusBaseText {
+            id: errorText
+
+            objectName: "enterSeedPhraseInvalidSeedText"
+
+            text: d.markedAsInvalidCount
+                  ? qsTr("The phrase you’ve entered is invalid")
+                  : d.customErrorString
+
+            visible: !!text
+
+            onVisibleChanged: {
+                if (!visible)
+                    return
+
+                Qt.callLater(() => {
+                    if (!flickable || !flickable.contentItem)
+                        return
+
+                    const rect = Qt.rect(0, 0, errorText.width, errorText.height)
+                    Utils.ensureVisible(flickable, flickable.contentItem.mapFromItem(errorText, rect))
+                })
+            }
+
+            Layout.topMargin: Theme.padding
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            color: Theme.palette.dangerColor1
+        }
     }
 }

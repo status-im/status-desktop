@@ -31,7 +31,7 @@ ColumnLayout {
         elide: Text.ElideRight
     }
 
-    SharedPanels.EnterSeedPhraseNew {
+    SharedPanels.EnterSeedPhrase {
         id: enterSeedPhrase
 
         Layout.fillWidth: true

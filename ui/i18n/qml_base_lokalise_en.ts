@@ -8980,14 +8980,6 @@
       <comment>EnterSeedPhrase</comment>
       <translation>The phrase you’ve entered is invalid</translation>
     </message>
-    <message numerus="yes">
-      <source>%n word(s)</source>
-      <comment>EnterSeedPhrase</comment>
-      <translation>
-        <numerusform>%n word</numerusform>
-        <numerusform>%n words</numerusform>
-      </translation>
-    </message>
     <message>
       <source>Enter recovery phrase</source>
       <comment>EnterSeedPhrase</comment>
@@ -9040,14 +9032,6 @@
       <source>Enter recovery phrase for %1 key pair</source>
       <comment>EnterSeedPhrase</comment>
       <translation>Enter recovery phrase for %1 key pair</translation>
-    </message>
-  </context>
-  <context>
-    <name>EnterSeedPhraseNew</name>
-    <message>
-      <source>The phrase you’ve entered is invalid</source>
-      <comment>EnterSeedPhraseNew</comment>
-      <translation>The phrase you’ve entered is invalid</translation>
     </message>
   </context>
   <context>
@@ -23346,11 +23330,6 @@
       <source>Status Desktop</source>
       <comment>main</comment>
       <translation>Status Desktop</translation>
-    </message>
-    <message>
-      <source>Hello World</source>
-      <comment>main</comment>
-      <translation>Hello World</translation>
     </message>
   </context>
   <context>

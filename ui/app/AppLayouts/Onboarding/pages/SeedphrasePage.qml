@@ -61,7 +61,7 @@ OnboardingPage {
                     horizontalAlignment: Text.AlignHCenter
                 }
 
-                EnterSeedPhraseNew {
+                EnterSeedPhrase {
                     id: seedPanel
 
                     Layout.fillWidth: true

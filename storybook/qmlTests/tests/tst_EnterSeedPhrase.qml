@@ -1,36 +1,40 @@
-import QtQuick
-import QtQuick.Controls
-import QtQml
-import QtQml.Models
-
-import StatusQ
-import StatusQ.Core.Utils
-
 import QtTest
 
+import QtQuick
+import StatusQ
+
 import shared.panels
-import utils
 
 Item {
     id: root
+
     width: 600
     height: 400
+
+    Component {
+        id: enterSeedPhraseComponent
+
+        EnterSeedPhrase {
+            id: enterSeedPhrase
+
+            anchors.fill: parent
+            dictionary: ListModel {}
+
+            readonly property SignalSpy acceptedSpy: SignalSpy {
+                target: enterSeedPhrase
+                signalName: "seedPhraseAccepted"
+            }
+
+            readonly property SignalSpy seedPhraseProvidedSpy: SignalSpy {
+                target: enterSeedPhrase
+                signalName: "seedPhraseProvided"
+            }
+        }
+    }
 
     TestCase {
         name: "EnterSeedPhraseTest"
         when: windowShown
-
-        Component {
-            id: enterSeedPhraseComponent
-            EnterSeedPhrase {
-                id: enterSeedPhrase
-                anchors.fill: parent
-                dictionary: ListModel {}
-                
-                readonly property SignalSpy submitSpy: SignalSpy { target: enterSeedPhrase; signalName: "submitSeedPhrase" }
-                readonly property SignalSpy seedPhraseUpdatedSpy: SignalSpy { target: enterSeedPhrase; signalName: "seedPhraseUpdated" }
-            }
-        }
 
         property EnterSeedPhrase itemUnderTest: null
 
@@ -57,18 +61,12 @@ Item {
             const expectedSeedPhrase = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", commonPrefixToTest]
             const baseDictionary = [...expectedSeedPhrase, "cow", "catalog", "catch", "category", "cattle"]
 
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
-
             itemUnderTest.dictionary.append(baseDictionary.map((word) => ({seedWord: word})))
 
             //Type the seed phrase except the last word
             const str = expectedSeedPhrase.join(" ")
             for (let i = 0; i < str.length - commonPrefixToTest.length; i++) {
+                console.log(str.charAt(i))
                 keyPress(str.charAt(i))
             }
 
@@ -85,14 +83,16 @@ Item {
 
             // hit Enter to accept "cat"
             keyClick(Qt.Key_Enter)
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+
+            // This signal is emitted one time when all words are provided
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 1)
+
+            itemUnderTest.setError("")
 
             // hit Enter to submit the form
             keyClick(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was not emitted")
-            // This signal is emitted multiple times due to the way the seed phrase is updated and validated
-            // The minimum is the length if the seed phrase
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+
+            tryCompare(itemUnderTest.acceptedSpy, "count", 1)
         }
 
         function test_componentCreation() {
@@ -106,15 +106,9 @@ Item {
             //generate a seed phrase
             const expectedSeedPhrase = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             expectedSeedPhrase.sort();
-            
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
 
             itemUnderTest.dictionary.append(expectedSeedPhrase.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError(""))
 
             //Type the seed phrase. No space is needed between words
             const str = expectedSeedPhrase.join("")
@@ -122,13 +116,12 @@ Item {
                 keyPress(str.charAt(i))
             }
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+            // This signal is emitted one time when all words are provided
+            // (no additional enter is needed because provided word is not ambiguous)
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 1)
 
             keyClick(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was not emitted")
-            // This signal is emitted multiple times due to the way the seed phrase is updated and validated
-            // The minimum is the length if the seed phrase
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            tryCompare(itemUnderTest.acceptedSpy, "count", 1)
         }
 
         // Test seed phrase input by typing on the keyboard
@@ -138,15 +131,9 @@ Item {
             //generate a seed phrase
             const expectedSeedPhrase = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             expectedSeedPhrase.sort();
-            
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
 
             itemUnderTest.dictionary.append(expectedSeedPhrase.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError(""))
 
             //Type the seed phrase. A space is needed between words
             const str = expectedSeedPhrase.join(" ")
@@ -154,12 +141,13 @@ Item {
                 keyPress(str.charAt(i))
             }
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+            // This signal is emitted once when all words are provided
+            // (no additional enter is needed because provided word is not ambiguous)
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 1)
+
             keyClick(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was not emitted")
-            // This signal is emitted multiple times due to the way the seed phrase is updated and validated
-            // The minimum is the length if the seed phrase
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+
+            tryCompare(itemUnderTest.acceptedSpy, "count", 1)
         }
 
         // Test seed phrase input by pasting from clipboard
@@ -171,14 +159,8 @@ Item {
 
             expectedSeedPhrase.sort();
             
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
-
             itemUnderTest.dictionary.append(expectedSeedPhrase.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError(""))
 
             ClipboardUtils.setText(expectedSeedPhrase.join(" "))
 
@@ -190,13 +172,12 @@ Item {
             verify(!!lastInputField)
             tryCompare(lastInputField, "activeFocus", true)
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+            // This signal is emitted once when all words are provided
+            // (no additional enter is needed because provided word is not ambiguous)
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 1)
 
             keyClick(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was not emitted")
-            // This signal is emitted multiple times due to the way the seed phrase is updated and validated
-            // The minimum is the length if the seed phrase
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            tryCompare(itemUnderTest.acceptedSpy, "count", 1)
         }
 
         // Test the seed phrase by choosing from the suggestions
@@ -209,33 +190,27 @@ Item {
             const baseDictionary = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             let dictionaryVariation = generateDictionaryVariation(baseDictionary)
 
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
-
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError(""))
 
             // Suggestions dialog is expected to receive key events when there's multiple suggestions
             let downKeyEvents = 0
             for (let i = 0; i < expectedSeedPhrase.length; i++) {
                 keySequence(expectedSeedPhrase[i].substring(0, 4).split('').join(','))
-                for (let j = 0; j < downKeyEvents; j++) {
-                    keyClick(Qt.Key_Down)
-                }
+
+                const bar = findChild(itemUnderTest, "suggestionsBar")
+                waitForRendering(bar)
+
+                const suggestion = findChild(bar, `seedWordSuggestion${downKeyEvents}`)
+                mouseClick(suggestion)
+
                 downKeyEvents = downKeyEvents === 3 ? 0 : downKeyEvents + 1
-                keyClick(Qt.Key_Tab)
             }
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 1)
 
             keyPress(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was not emitted")
-            // This signal is emitted multiple times due to the way the seed phrase is updated and validated
-            // The minimum is the length if the seed phrase
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            tryCompare(itemUnderTest.acceptedSpy, "count", 1)
         }
 
         // Test seed phrase input by typing on the keyboard
@@ -248,14 +223,8 @@ Item {
             const baseDictionary = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             let dictionaryVariation = generateDictionaryVariation(baseDictionary)
 
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return false
-            }
-
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError("error"))
 
             //Type the seed phrase
             const str = expectedSeedPhrase.join("")
@@ -263,11 +232,10 @@ Item {
                 keyPress(str.charAt(i))
             }
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 1)
 
             keyClick(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 0, "submitSeedPhrase signal was emitted")
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            verify(itemUnderTest.acceptedSpy.count === 0, "submitSeedPhrase signal was emitted")
         }
 
         // Test seed phrase input by pasting from clipboard
@@ -280,25 +248,18 @@ Item {
             const baseDictionary = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             let dictionaryVariation = generateDictionaryVariation(baseDictionary)
 
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return false
-            }
-
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError("error"))
 
             ClipboardUtils.setText(expectedSeedPhrase.join(" "))
 
             // Trigger the paste action
             keyClick("v", Qt.ControlModifier)
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 1)
 
             keyClick(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 0, "submitSeedPhrase signal was emitted")
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            verify(itemUnderTest.acceptedSpy.count === 0, "submitSeedPhrase signal was emitted")
         }
 
         // Test seed phrase input by typing on the keyboard
@@ -310,13 +271,6 @@ Item {
             const baseDictionary = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             let dictionaryVariation = generateDictionaryVariation(baseDictionary)
 
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
-
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
 
             //Type the seed phrase
@@ -325,10 +279,10 @@ Item {
                 keyPress(str.charAt(i))
             }
 
+            verify(itemUnderTest.seedPhraseProvidedSpy.count === 0)
+
             keyClick(Qt.Key_Enter)
-            verify(!isSeedPhraseValidCalled, "isSeedPhraseValid was called when it should not have been")
-            verify(itemUnderTest.submitSpy.count === 0, "submitSeedPhrase signal was emitted")
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            verify(itemUnderTest.acceptedSpy.count === 0, "submitSeedPhrase signal was emitted")
         }
 
         // Test seed phrase input by typing on the keyboard
@@ -341,14 +295,8 @@ Item {
             const baseDictionary = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             let dictionaryVariation = generateDictionaryVariation(baseDictionary)
 
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
-
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError(""))
 
             //Type the seed phrase
             const str = expectedSeedPhrase.join("")
@@ -361,8 +309,8 @@ Item {
             }
 
             keyClick(Qt.Key_Enter)
-            verify(itemUnderTest.submitSpy.count === 0, "submitSeedPhrase signal was emitted")
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            verify(itemUnderTest.acceptedSpy.count === 0, "submitSeedPhrase signal was emitted")
+            verify(itemUnderTest.seedPhraseProvidedSpy.count === 0, "seedPhraseUpdate signal was emitted")
         }
 
         // Test suggestions are active after the seed phrase word is updated
@@ -373,39 +321,28 @@ Item {
             const baseDictionary = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             let dictionaryVariation = generateDictionaryVariation(baseDictionary)
 
-            let isSeedPhraseValidCalled = false
             let lastVerifiedSeedPhrase = ""
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                lastVerifiedSeedPhrase = seedPhrase
-                isSeedPhraseValidCalled = true
-                return true
-            }
 
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
 
-            // Suggestions dialog is expected to receive key events when there's multiple suggestions
+            // Suggestions panel is expected to receive events when there's multiple suggestions
             let downKeyEvents = 0
             for (let i = 0; i < expectedSeedPhrase.length; i++) {
                 keySequence(expectedSeedPhrase[i].substring(0, 4).split('').join(','))
-                for (let j = 0; j < downKeyEvents; j++) {
-                    keyClick(Qt.Key_Down)
-                }
-                downKeyEvents = downKeyEvents === 3 ? 0 : downKeyEvents + 1
-                keyClick(Qt.Key_Tab)
+
+                const bar = findChild(itemUnderTest, "suggestionsBar")
+                waitForRendering(bar)
+
+                const suggestion = findChild(bar, `seedWordSuggestion${downKeyEvents}`)
+                mouseClick(suggestion)
             }
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+            const bar = findChild(itemUnderTest, "suggestionsBar")
 
-            isSeedPhraseValidCalled = false
+            tryCompare(bar, "visible", false)
 
             keyPress(Qt.Key_Backspace)
-            wait (500) // Wait for the suggestions to appear
-            keyClick(Qt.Key_Tab)
-            keyClick(Qt.Key_Enter)
-
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
-            verify(lastVerifiedSeedPhrase === expectedSeedPhrase.join(" ").slice(0, -1) + "a", "Seed phrase is not updated")
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
+            tryCompare(bar, "visible", true)
         }
 
         // Test suggestions are active after the seed phrase word is fixed
@@ -416,43 +353,34 @@ Item {
             const baseDictionary = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident"]
             let dictionaryVariation = generateDictionaryVariation(baseDictionary)
 
-            let isSeedPhraseValidCalled = false
-            let lastVerifiedSeedPhrase = ""
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                lastVerifiedSeedPhrase = seedPhrase
-                isSeedPhraseValidCalled = true
-                return true
-            }
-
             itemUnderTest.dictionary.append(dictionaryVariation.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError(""))
 
-            // Suggestions dialog is expected to receive key events when there's multiple suggestions
+            // Suggestions bar is expected to receive events when there's multiple suggestions
             let downKeyEvents = 0
             for (let i = 0; i < expectedSeedPhrase.length; i++) {
                 keySequence(expectedSeedPhrase[i].substring(0, 4).split('').join(','))
-                for (let j = 0; j < downKeyEvents; j++) {
-                    keyClick(Qt.Key_Down)
-                }
-                downKeyEvents = downKeyEvents === 3 ? 0 : downKeyEvents + 1
-                keyClick(Qt.Key_Tab)
+
+                const bar = findChild(itemUnderTest, "suggestionsBar")
+                waitForRendering(bar)
+
+                const suggestion = findChild(bar, `seedWordSuggestion${downKeyEvents}`)
+                mouseClick(suggestion)
             }
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid is not called")
+            keyPress(Qt.Key_Backspace)
+            keyPress(Qt.Key_Backspace)
 
-            isSeedPhraseValidCalled = false
+            const bar = findChild(itemUnderTest, "suggestionsBar")
+            waitForRendering(bar)
 
-            for (let i = 0; i < 2; i++) {
-                keyPress(Qt.Key_Backspace)
-            }
+            tryCompare(bar, "visible", true)
 
-            wait (500) // Wait for the suggestions to appear
             keyClick(Qt.Key_Tab)
             keyClick(Qt.Key_Enter)
 
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
-            verify(lastVerifiedSeedPhrase === expectedSeedPhrase.join(" ").slice(0, -3) + "ta", "Seed phrase is not updated")
-            verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
-            verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was emitted")
+            tryCompare(itemUnderTest.seedPhraseProvidedSpy, "count", 2)
+            tryCompare(itemUnderTest.acceptedSpy, "count", 1)
         }
 
         function test_doubleClickWordAndDelete_data() {
@@ -469,22 +397,14 @@ Item {
             const expectedSeedPhrase = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "asphalt"]
             const baseDictionary = [...expectedSeedPhrase, "cow", "catalog", "catch", "category", "cattle"]
 
-            let isSeedPhraseValidCalled = false
-            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
-                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
-                isSeedPhraseValidCalled = true
-                return true
-            }
-
             itemUnderTest.dictionary.append(baseDictionary.map((word) => ({seedWord: word})))
+            itemUnderTest.seedPhraseProvided.connect(() => itemUnderTest.setError(""))
 
             // Type the seed phrase. No space is needed between words
             const str = expectedSeedPhrase.join("")
             for (let i = 0; i < str.length; i++) {
                 keyPress(str.charAt(i))
             }
-
-            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
 
             // move to the first field, double click to select the whole text there
             const firstInputField = findChild(itemUnderTest, "enterSeedPhraseInputField1")
