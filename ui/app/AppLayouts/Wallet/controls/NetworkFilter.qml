@@ -224,8 +224,6 @@ StatusComboBox {
 
             return ""
         }
-        property var window: root.control.Window
-        property int windowWidth: window ? window.width: Screen.width
-        property int windowHeight: window ? window.height: Screen.height
+        readonly property var window: root.control.Window
     }
 }

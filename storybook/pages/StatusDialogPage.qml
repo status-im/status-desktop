@@ -33,6 +33,19 @@ SplitView {
             }
         }
 
+        StatusDialogHeader {
+            id: customHeader
+            color: !!ctrlHeaderBgColor.text ? ctrlHeaderBgColor.text : Theme.palette.statusModal.backgroundColor
+            dropShadowEnabled: ctrlHeaderDropShadow.checked
+
+            visible: dialog.title || dialog.subtitle
+            headline.title: dialog.title
+            headline.subtitle: dialog.subtitle
+            actions.closeButton.onClicked: dialog.closeHandler()
+
+            leftComponent: ctrlHeaderIconComponent.checked ? headerIconComponent : null
+        }
+
         StatusDialog {
             id: dialog
 
@@ -66,17 +79,7 @@ SplitView {
             }
 
             // custom header; not needed unless you want to override the icon or the (close) button(s)
-            header: StatusDialogHeader {
-                color: !!ctrlHeaderBgColor.text ? ctrlHeaderBgColor.text : Theme.palette.statusModal.backgroundColor
-                dropShadowEnabled: ctrlHeaderDropShadow.checked
-
-                visible: dialog.title || dialog.subtitle
-                headline.title: dialog.title
-                headline.subtitle: dialog.subtitle
-                actions.closeButton.onClicked: dialog.closeHandler()
-
-                leftComponent: ctrlHeaderIconComponent.checked ? headerIconComponent : null
-            }
+            header: ctrlHeaderEnabled.checked ? customHeader : null
 
             Component {
                 id: headerIconComponent
@@ -133,6 +136,7 @@ SplitView {
 
                 errorTags: ctrlAddErrorTags.checked ? errorTagsModel: null
             }
+            onClosed: logs.logEvent("Popup closed!")
         }
     }
 
@@ -150,12 +154,15 @@ SplitView {
         }
     }
 
+    Logs { id: logs }
+
     LogsAndControlsPanel {
+        logsView.logText: logs.logText
         SplitView.preferredWidth: 320
         SplitView.fillHeight: true
 
         ColumnLayout {
-            Layout.fillWidth: true
+            anchors.fill: parent
 
             RowLayout {
                 Layout.fillWidth: true
@@ -166,6 +173,13 @@ SplitView {
                     Layout.fillWidth: true
                     id: ctrlTitle
                     text: "Remove me to hide the header"
+                    enabled: ctrlHeaderEnabled.checked
+                }
+                CheckBox {
+                    id: ctrlHeaderEnabled
+                    checked: ctrlTitle.text
+                    ToolTip.text: "Header enabled"
+                    ToolTip.visible: hovered
                 }
             }
 
