@@ -4,6 +4,7 @@ import QtQuick.Controls
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Controls.Validators
@@ -26,7 +27,7 @@ Item {
     }
 
     onStateChanged: {
-        password.focus = true
+        password.focus = !SQUtils.Utils.isMobile
     }
 
     Component.onCompleted: timer.start()
@@ -86,7 +87,7 @@ Item {
             Layout.maximumWidth: parent.width
             placeholderText: qsTr("Password")
             selectByMouse: true
-            focus: true
+            focus: !SQUtils.Utils.isMobile
 
             onTextChanged: {
                 root.sharedKeycardModule.keycardData = ""

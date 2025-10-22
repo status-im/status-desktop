@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Controls
 
 import utils
@@ -100,7 +101,7 @@ Item {
         anchors.top: signingPhrase.bottom
         anchors.topMargin: Theme.bigPadding
         textField.objectName: "transactionSignerPasswordInput"
-        focus: true
+        focus: !SQUtils.Utils.isMobile
         customHeight: 56
         label: qsTr("Password")
         placeholderText: qsTr("Enter password")

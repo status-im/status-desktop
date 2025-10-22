@@ -4,6 +4,7 @@ import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Controls.Validators
+import StatusQ.Core.Utils
 
 /*!
    \qmltype StatusPinInput
@@ -157,6 +158,8 @@ Item {
         Convenient method to force active focus in case it gets stolen by any other component.
     */
     function forceFocus() {
+        if (Utils.isMobile)
+            return
         inputText.forceActiveFocus()
         d.activateBlink()
     }
@@ -206,7 +209,7 @@ Item {
         id: inputText
         objectName: "pinInputTextInput"
         visible: false
-        focus: true
+        focus: !Utils.isMobile
         maximumLength: root.pinLen
         validator: d.statusValidator.validatorObj
         onTextChanged: {

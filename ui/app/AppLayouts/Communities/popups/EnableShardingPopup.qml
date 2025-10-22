@@ -4,6 +4,7 @@ import QtQuick.Controls
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Controls
 import StatusQ.Controls.Validators
 import StatusQ.Components
@@ -52,7 +53,7 @@ StatusStackModal {
 
     rightButtons: [cancelButton, nextButton, finishButton]
 
-    onAboutToShow: shardIndexEdit.focus = true
+    onAboutToShow: shardIndexEdit.focus = !SQUtils.Utils.isMobile
     onShardingInProgressChanged: if (!root.shardingInProgress && root.currentIndex == 0) {
         root.currentIndex++
     }

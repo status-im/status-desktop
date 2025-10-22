@@ -132,6 +132,8 @@ Control {
     }
 
     function forceActiveFocus() {
+        if (SQUtils.Utils.isMobile)
+            return
         textField.forceActiveFocus()
     }
 

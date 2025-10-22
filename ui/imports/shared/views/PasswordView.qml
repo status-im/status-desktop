@@ -7,6 +7,7 @@ import utils
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Components
 import StatusQ.Popups
 
@@ -56,6 +57,9 @@ ColumnLayout {
         errorTxt.text = ""
 
         // Update focus:
+        if (SQUtils.Utils.isMobile)
+            return
+
         if(root.createNewPsw)
             newPswInput.forceActiveFocus(Qt.MouseFocusReason)
         else

@@ -1,6 +1,7 @@
 import QtQuick
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import SortFilterProxyModel
 
@@ -124,6 +125,8 @@ Item {
     }
 
     onActiveFocusChanged: {
+        if (SQUtils.Utils.isMobile)
+            return
         if (root.activeFocus) {
             seedWordInput.input.edit.forceActiveFocus();
         }
