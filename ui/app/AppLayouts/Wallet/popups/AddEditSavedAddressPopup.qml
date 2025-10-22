@@ -35,6 +35,7 @@ StatusModal {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     width: 477
+    fillHeightOnBottomSheet: true
 
     headerSettings.title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
     headerSettings.subTitle: d.editMode? d.name : ""

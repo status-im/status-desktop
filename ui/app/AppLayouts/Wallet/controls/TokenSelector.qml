@@ -73,6 +73,7 @@ Control {
         directParent: root
         relativeY: parent.height + 4
         width: 448
+        fillHeightOnBottomSheet: true
 
         horizontalPadding: 0
         bottomPadding: Theme.halfPadding / 2

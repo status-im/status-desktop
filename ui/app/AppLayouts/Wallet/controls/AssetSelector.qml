@@ -60,6 +60,7 @@ Control {
 
         width: 448
         height: Math.min(implicitHeight, d.windowHeight - button.mapToItem(null, 0, button.height).y - d.bottomPadding)
+        fillHeightOnBottomSheet: true
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         padding: 0

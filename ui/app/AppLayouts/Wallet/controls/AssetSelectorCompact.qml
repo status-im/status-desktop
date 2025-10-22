@@ -46,6 +46,7 @@ Control {
         directParent: root
         relativeY: root.height + 4
         width: root.width
+        fillHeightOnBottomSheet: true
 
         padding: 0
 

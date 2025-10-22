@@ -116,6 +116,7 @@ Button {
         relativeX: root.width - width
         relativeY: root.height + 2
         width: 300
+        fillHeightOnBottomSheet: true
         margins: Theme.halfPadding
 
         padding: 0
@@ -194,6 +195,11 @@ Button {
                         cursorShape: hovered ? Qt.PointingHandCursor : undefined
                     }
                 }
+            }
+
+            // Just a filler
+            Item {
+                Layout.fillHeight: true
             }
         }
     }

@@ -72,11 +72,24 @@ QC.Popup {
                                             d.windowHeight > d.windowWidth
                                             && d.windowWidth <= Theme.portraitBreakpoint.width
 
+    /*!
+       \qmlproperty bool fillHeightOnBottomSheet
+        This property decides the height of the dialog when `bottomSheet` is active:
+          * If active: it fills the 90% of the screen viewport.
+          * If not active: the height is the minimum value between the implicitHeight and the 90% of the screen viewport.
+    */
+    property bool fillHeightOnBottomSheet: false
+
     QtObject {
        id: d
        readonly property var window: root.contentItem.Window.window
        readonly property int windowWidth: window ? window.width: Screen.width
        readonly property int windowHeight: window ? window.height: Screen.height
+
+       // Set to 85% since some dropdowns are opened as children of Status dialogs.
+       // Keeping a small gap at the top lets users tap to return to the underlying dialog
+       // instead of closing the entire flow.
+       readonly property real bottomSheetHeightRatio: 0.85
     }
 
     Binding {
@@ -108,7 +121,7 @@ QC.Popup {
             x: 0
             y: d.windowHeight - height
             width: d.windowWidth
-            height: Math.min(implicitHeight, d.windowHeight * 0.9)
+            height: root.fillHeightOnBottomSheet ? d.windowHeight * d.bottomSheetHeightRatio : Math.min(implicitHeight, d.windowHeight * d.bottomSheetHeightRatio)
             bottomPadding: !!d.window ? d.window.SafeArea.margins.bottom: 0
             margins: 0
         }

@@ -473,6 +473,7 @@ StatusDialog {
     padding: 0
     horizontalPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
+    fillHeightOnBottomSheet: true
 
     Behavior on height {
         id: modalHeightBehavior
