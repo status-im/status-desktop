@@ -1,3 +1,4 @@
+import QtQml
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -137,6 +138,15 @@ Control {
         textField.forceActiveFocus()
     }
 
+    TapHandler {
+        enabled: root.interactive
+        onTapped: {
+            textField.forceActiveFocus()
+            if (SQUtils.Utils.isMobile && !Qt.inputMethod.visible)
+                Qt.inputMethod.show()
+        }
+    }
+
     QtObject {
         id: d
 
@@ -256,8 +266,8 @@ Control {
                     anchors.fill: parent
                     enabled: textField.focus
                     cursorShape: Qt.IBeamCursor
-                    onClicked: {
-                        textField.cursorPosition = textField.positionAt(mouseX,mouseY)
+                    onClicked: (mouse) => {
+                        textField.cursorPosition = textField.positionAt(mouse.x,mouse.y)
                         textField.forceActiveFocus()
                     }
                     onWheel: {
