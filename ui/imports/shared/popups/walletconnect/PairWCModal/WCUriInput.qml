@@ -4,6 +4,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Popups
 import StatusQ.Controls
 import StatusQ.Components
@@ -97,7 +98,7 @@ ColumnLayout {
 
                 onClicked: {
                     input.edit.paste()
-                    input.edit.focus = true
+                    input.edit.focus = !SQUtils.Utils.isMobile
                 }
             }
         }

@@ -48,7 +48,8 @@ StatusDropdown {
     }
 
     onOpened: {
-        searchBox.input.edit.forceActiveFocus()
+        if (!StatusQUtils.Utils.isMobile)
+            searchBox.input.edit.forceActiveFocus()
         emojiGrid.positionViewAtBeginning()
     }
 

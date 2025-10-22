@@ -135,6 +135,8 @@ StatusDropdown {
         listView.currentIndex = 0
         listView.selectByHover = false
         searchBox.text = ""
+        if (Utils.isMobile)
+            return
         searchBox.input.edit.forceActiveFocus()
     }
 }

@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import StatusQ.Controls
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import shared.controls
 
@@ -115,7 +116,7 @@ Rectangle {
             leftPadding: Theme.padding
             rightPadding: addFavoriteBtn.width + reloadBtn.width + Theme.bigPadding
             placeholderText: qsTr("Enter URL")
-            focus: true
+            focus: !SQUtils.Utils.isMobile
             color: Theme.palette.textColor
             onActiveFocusChanged: {
                 if (activeFocus) {

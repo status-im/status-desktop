@@ -300,7 +300,7 @@ SettingsContentBase {
 
                 Layout.fillWidth: true
 
-                displayName.focus: !isEnsName
+                displayName.focus: !isEnsName && !Utils.isMobile
                 displayName.input.edit.readOnly: isEnsName
                 displayName.text: profileStore.displayName
                 displayName.validationMode: StatusInput.ValidationMode.Always

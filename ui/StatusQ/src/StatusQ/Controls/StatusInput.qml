@@ -439,6 +439,8 @@ Control {
     }
 
     onFocusChanged: {
+        if (Utils.isMobile)
+            return
         if(focus)
             statusBaseInput.forceActiveFocus()
     }

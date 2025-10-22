@@ -8,6 +8,7 @@ import StatusQ.Components.private as SQP
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Popups.Dialog
 
 import AppLayouts.Wallet.controls
@@ -68,7 +69,8 @@ StatusDialog {
         if (!!root.selectedTokenKey && d.selectedHolding.available) {
             holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
         }
-        amountToSendInput.forceActiveFocus()
+        if (!SQUtils.Utils.isMobile)
+            amountToSendInput.forceActiveFocus()
     }
 
     QtObject {

@@ -7,6 +7,7 @@ import StatusQ.Core.Theme
 import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Popups
+import StatusQ.Core.Utils
 
 
 StatusModal {
@@ -58,10 +59,14 @@ StatusModal {
     }
 
     function forceActiveFocus() {
+        if (Utils.isMobile)
+            return
         contentItem.searchInput.input.edit.forceActiveFocus()
     }
 
     onOpened: {
+        if (Utils.isMobile)
+            return
         forceActiveFocus();
     }
 
@@ -93,7 +98,7 @@ StatusModal {
                     anchors.left: statusIcon.right
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    focus: true
+                    focus: !Utils.isMobile
                     font.pixelSize: Theme.fontSize28
                     leftPadding: 5
                     topPadding: 5 //smaller padding to handle bigger font

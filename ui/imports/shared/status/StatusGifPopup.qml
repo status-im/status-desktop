@@ -8,6 +8,7 @@ import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Core.Backpressure
+import StatusQ.Core.Utils as SQUtils
 
 import utils
 import shared.panels
@@ -77,7 +78,8 @@ StatusDropdown {
 
     onAboutToShow: {
         searchBox.text = ""
-        searchBox.input.edit.forceActiveFocus()
+        if (!SQUtils.Utils.isMobile)
+            searchBox.input.edit.forceActiveFocus()
         if (root.gifUnfurlingEnabled) {
             root.getTrendingsGifs()
         }
