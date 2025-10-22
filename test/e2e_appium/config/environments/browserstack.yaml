@@ -1,0 +1,82 @@
+extends: "base.yaml"
+
+metadata:
+  name: "browserstack"
+  description: "BrowserStack cloud environment"
+
+provider:
+  name: "browserstack"
+  options:
+    app:
+      source: "cloud_upload"
+      app_id_template: "${BROWSERSTACK_APP_ID:-}"
+    auth:
+      username: "${BROWSERSTACK_USERNAME:-}"
+      access_key: "${BROWSERSTACK_ACCESS_KEY:-}"
+    build_name_template: "Status_E2E_Mobile"
+    build_identifier_template: "${BROWSERSTACK_BUILD_IDENTIFIER:-${GIT_COMMIT:-local}}"
+    session_name_template: "${TEST_NAME:-Status Test}"
+    project_name: "Status E2E Appium"
+    hub_url: "https://hub-cloud.browserstack.com/wd/hub"
+    max_parallel_sessions: 5
+    sdk:
+      enable_reporting: true
+
+device_defaults:
+  capabilities:
+    platformName: "android"
+    automationName: "UiAutomator2"
+    newCommandTimeout: 300
+    bstack:options:
+      deviceOrientation: "landscape"
+      "appiumVersion" : "2.19.0"
+    orientation: "LANDSCAPE"
+    appium:unicodeKeyboard: true
+    appium:resetKeyboard: true
+
+
+devices:
+  default: "galaxy_tab_s10p_android_15"
+  matrix:
+    - id: "galaxy_tab_s10p_android_15"
+      display_name: "Galaxy Tab S10 Plus – Android 15"
+      tags: ["android", "tablet", "cloud"]
+      capabilities:
+        platformVersion: "15.0"
+        deviceName: "Samsung Galaxy Tab S10 Plus"
+    - id: "pixel_8_android_14"
+      display_name: "Pixel 8 - Android 14"
+      tags: ["android", "phone", "cloud"]
+      capabilities:
+        platformName: "android"
+        platformVersion: "14"
+        deviceName: "Google Pixel 8"
+    - id: "pixel_7_android_13"
+      display_name: "Pixel 7 - Android 13"
+      tags: ["android", "phone", "cloud"]
+      capabilities:
+        platformName: "android"
+        platformVersion: "13"
+        deviceName: "Google Pixel 7"
+    - id: "samsung_s23_android_13"
+      display_name: "Samsung Galaxy S23 - Android 13"
+      tags: ["android", "phone", "cloud"]
+      capabilities:
+        platformName: "android"
+        platformVersion: "13"
+        deviceName: "Samsung Galaxy S23"
+
+execution:
+  concurrency:
+    max_sessions: 5
+    per_device_limit: 2
+  retry_failed_tests: 1
+  pytest:
+    addopts: ["-n", "auto"]
+
+logging:
+  level: "INFO"
+  enable_video_recording: true
+  enable_screenshots: true
+  enable_xml_report: true
+  enable_html_report: true

@@ -1,62 +1,96 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["metadata", "device", "app", "timeouts"],
+  "required": ["metadata", "provider", "devices"],
   "properties": {
     "metadata": {
       "type": "object",
-      "required": ["environment"],
+      "required": ["name"],
       "properties": {
-        "environment": {
+        "name": {
           "type": "string",
-          "enum": ["local", "lambdatest", "staging"]
+          "minLength": 1
         },
         "description": {
           "type": "string"
         }
       }
     },
-    "device": {
+    "provider": {
       "type": "object",
-      "required": ["name", "platform_name"],
+      "required": ["name"],
       "properties": {
         "name": {
           "type": "string",
           "minLength": 1
         },
-        "platform_name": {
-          "type": "string",
-          "enum": ["android", "ios"]
-        },
-        "platform_version": {
-          "type": "string"
+        "options": {
+          "type": "object"
         }
       }
     },
-    "app": {
+    "execution": {
       "type": "object",
-      "required": ["source_type"],
       "properties": {
-        "source_type": {
-          "type": "string",
-          "enum": ["local_file", "cloud_upload", "url"]
+        "concurrency": {
+          "type": "object",
+          "properties": {
+            "max_sessions": { "type": "integer", "minimum": 1 },
+            "per_device_limit": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "retry_failed_tests": { "type": "integer", "minimum": 0 },
+        "pytest": {
+          "type": "object",
+          "properties": {
+            "addopts": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "device_defaults": {
+      "type": "object",
+      "properties": {
+        "capabilities": { "type": "object" }
+      }
+    },
+    "devices": {
+      "type": "object",
+      "required": ["matrix"],
+      "properties": {
+        "default": { "type": "string" },
+        "matrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "capabilities"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "display_name": { "type": "string" },
+              "tags": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "capabilities": { "type": "object" },
+              "provider_overrides": { "type": "object" }
+            }
+          }
         }
       }
     },
     "timeouts": {
       "type": "object",
       "properties": {
-        "default": {
-          "type": "integer",
-          "minimum": 5,
-          "maximum": 300
-        },
-        "element_wait": {
-          "type": "integer",
-          "minimum": 5,
-          "maximum": 300
-        }
+        "default": { "type": "integer", "minimum": 5 },
+        "element_wait": { "type": "integer", "minimum": 5 },
+        "element_click": { "type": "integer", "minimum": 1 },
+        "element_find": { "type": "integer", "minimum": 1 }
       }
-    }
+    },
+    "logging": { "type": "object" },
+    "directories": { "type": "object" }
   }
-} 
+}

@@ -1,53 +1,61 @@
 extends: "base.yaml"
 
 metadata:
-  environment: "local"
+  name: "local"
   description: "Local development environment"
 
-device:
-  name: "sdk_gphone64_arm64"
-  platform_version: "15"
-  platform_name: "android"
+provider:
+  name: "local"
+  options:
+    server_url: "http://localhost:4723"
+    app:
+      source: "local_file"
+      path_template: "${LOCAL_APP_PATH:-./.sandbox/Status-tablet.apk}"
+
+execution:
+  concurrency:
+    max_sessions: 1
+    per_device_limit: 1
+  retry_failed_tests: 0
 
 devices:
-  - name: "sdk_gphone64_arm64"
-    platform_name: "android"
-    platform_version: "12L"
-    tags: ["emulator", "phone", "android"]
-  - name: "sdk_google_atv64_arm64"
-    platform_name: "android"
-    platform_version: "14"
-    tags: ["emulator", "android", "tv"]
-  
-appium:
-  server_url: "http://localhost:4723"
-  
-app:
-  # Prefer attaching to already-installed package when path not provided
-  source_type: "local_file"
-  path_template: "${LOCAL_APP_PATH:-}"
-  
+  default: "pixel_8_emulator"
+  matrix:
+    - id: "pixel_8_emulator"
+      display_name: "Pixel 8 Emulator"
+      tags: ["emulator", "phone", "android"]
+      capabilities:
+        platformName: "android"
+        platformVersion: "15"
+        deviceName: "sdk_gphone64_arm64"
+        automationName: "UiAutomator2"
+        newCommandTimeout: 300
+        noReset: false
+        appPackage: "im.status.tablet"
+        appActivity: "org.qtproject.qt.android.bindings.QtActivity"
+        unicodeKeyboard: true
+        resetKeyboard: true
+    - id: "android_tv_emulator"
+      display_name: "Android TV Emulator"
+      tags: ["emulator", "android", "tv"]
+      capabilities:
+        platformName: "android"
+        platformVersion: "14"
+        deviceName: "sdk_google_atv64_arm64"
+        automationName: "UiAutomator2"
+        newCommandTimeout: 300
+
 timeouts:
   default: 60
   element_wait: 30
   element_find: 10
   element_click: 10
-  
+
 logging:
   level: "DEBUG"
   enable_video_recording: false
-  
+
 directories:
   logs: "logs/local"
   reports: "reports/local"
   screenshots: "screenshots/local"
-
-capabilities:
-  platformName: "android"
-  automationName: "UiAutomator2"
-  newCommandTimeout: 300
-  noReset: false
-  appPackage: "im.status.app"
-  appActivity: "org.qtproject.qt.android.bindings.QtActivity"
-  unicodeKeyboard: true
-  resetKeyboard: true
