@@ -1,210 +1,137 @@
-import os
-from datetime import datetime
-from appium import webdriver
-from appium.options.common import AppiumOptions
-from appium.webdriver.appium_connection import AppiumConnection
-from selenium.webdriver.remote.client_config import ClientConfig
+from typing import Any, Dict, List, Optional
 
-try:
-    from config import get_logger, log_session_info
-    from core import EnvironmentSwitcher, ConfigurationError
-except ImportError:
-    from config import get_logger, log_session_info
-    from core import EnvironmentSwitcher, ConfigurationError
+from appium.webdriver.webdriver import WebDriver
+
+from config import get_logger, log_session_info
+from core import EnvironmentSwitcher, ConfigurationError
+
+from .environment import DeviceConfig
+from .providers import SessionMetadata, create_provider
 
 
 class SessionManager:
-    """Manages Appium driver sessions and environment configuration"""
+    """Manages Appium sessions across different providers and device types."""
 
-    def __init__(self, environment="lambdatest", device_override=None):
+    def __init__(
+        self,
+        environment: str = "browserstack",
+        device_override: Optional[Dict[str, Any]] = None,
+        device_id: Optional[str] = None,
+        device_tags: Optional[List[str]] = None,
+    ):
         self.environment = environment
-        self.driver = None
         self.logger = get_logger("session")
+        self.driver: Optional[WebDriver] = None
         self._device_override = device_override or None
+        self._explicit_device_id = device_id
+        self._device_tags = device_tags or []
+        self.metadata = SessionMetadata()
 
-        # Load YAML-based configuration (simplified)
-        try:
-            switcher = EnvironmentSwitcher()
-            self.env_config = switcher.switch_to(environment)
+        switcher = EnvironmentSwitcher()
+        self.env_config = switcher.switch_to(environment)
+        self.provider = create_provider(self.env_config)
+        self.device_config = self._select_device()
 
-            self.logger.info(f"✅ Configuration loaded for {environment}")
-            self.logger.info(
-                f"   Device: {self.env_config.device_name} ({self.env_config.platform_name} {self.env_config.platform_version})"
-            )
-            self.logger.info(f"   App: {self.env_config.get_resolved_app_path()}")
-
-            # Log timeout configuration
-            timeouts = self.env_config.timeouts
-            self.logger.info(
-                f"   Timeouts: default={timeouts.get('default')}s, wait={timeouts.get('element_wait')}s"
-            )
-
-            # Apply device override if provided
-            if self._device_override:
-                self._apply_device_override(self._device_override)
-
-        except ConfigurationError as e:
-            self.logger.error(f"❌ Configuration error: {e}")
-            self.logger.error("💡 Ensure YAML configuration files are properly set up")
-            raise
-
-    def _apply_device_override(self, override: dict) -> None:
-        """Override device fields from a device entry (name, platform_name, platform_version, tags)."""
-        try:
-            name = override.get("name")
-            platform_name = override.get("platform_name", self.env_config.platform_name)
-            platform_version = override.get(
-                "platform_version", self.env_config.platform_version
-            )
-            if name:
-                self.env_config.device_name = name
-            if platform_name:
-                self.env_config.platform_name = platform_name
-            if platform_version:
-                self.env_config.platform_version = platform_version
-            self.logger.info(
-                f"🔧 Device override applied → {self.env_config.device_name} ({self.env_config.platform_name} {self.env_config.platform_version})"
-            )
-        except Exception as e:
-            self.logger.warning(f"Failed to apply device override: {e}")
-
-    def _get_lambdatest_naming(self) -> dict:
-        """Generate LambdaTest build and test names from YAML config."""
-        if not self.env_config or not self.env_config.lambdatest_config:
-            # Use sensible defaults if config missing
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-            return {
-                "build": f"Status E2E Tests - {timestamp}",
-                "name": "Automated Test",
-                "project": "Status E2E_Appium",
-            }
-
-        lt_config = self.env_config.lambdatest_config
-
-        # Get templates with defaults
-        build_template = lt_config.get(
-            "build_name_template", "Status E2E Tests - ${BUILD_NUMBER:-${TIMESTAMP}}"
+        merged_caps = self._get_merged_capabilities(self.device_config)
+        self.logger.info(
+            "OK Configuration loaded",
+            extra={
+                "environment": environment,
+                "device": merged_caps.get("deviceName"),
+                "platform": merged_caps.get("platformName"),
+                "platform_version": merged_caps.get("platformVersion"),
+            },
         )
-        test_template = lt_config.get(
-            "test_name_template", "${TEST_NAME:-Automated Test}"
+
+    def _select_device(self) -> DeviceConfig:
+        device: DeviceConfig
+        if self._explicit_device_id:
+            device = self.env_config.get_device(self._explicit_device_id)
+        elif self._device_tags:
+            matches = self.env_config.find_devices_by_tags(self._device_tags)
+            if not matches:
+                raise ConfigurationError(
+                    f"No devices matched tags {self._device_tags} for environment {self.environment}"
+                )
+            device = matches[0]
+        else:
+            device = self.env_config.get_device()
+
+        if self._device_override:
+            device = self._apply_device_override(device, self._device_override)
+        return device
+
+    def _apply_device_override(
+        self, base_device: DeviceConfig, override: Dict[str, Any]
+    ) -> DeviceConfig:
+        base_caps = self._get_merged_capabilities(base_device)
+        new_caps = dict(base_caps)
+        capability_mapping = {
+            "name": "deviceName",
+            "deviceName": "deviceName",
+            "platform_name": "platformName",
+            "platformName": "platformName",
+            "platform_version": "platformVersion",
+            "platformVersion": "platformVersion",
+        }
+        for key, target in capability_mapping.items():
+            if key in override:
+                new_caps[target] = override[key]
+
+        if "capabilities" in override and isinstance(override["capabilities"], dict):
+            new_caps.update(override["capabilities"])
+
+        tags = list({*base_device.tags, *override.get("tags", [])})
+        return DeviceConfig(
+            id=f"{base_device.id}-override",
+            display_name=override.get("display_name", base_device.display_name),
+            capabilities=new_caps,
+            tags=tags,
+            provider_overrides=base_device.provider_overrides,
         )
-        project_name = lt_config.get("project", "Status E2E_Appium")
 
-        # Add timestamp as fallback for build number
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-        os.environ.setdefault("TIMESTAMP", timestamp)
+    def _get_merged_capabilities(self, device: DeviceConfig) -> Dict[str, Any]:
+        return device.merged_capabilities(
+            self.env_config.device_defaults.get("capabilities", {})
+        )
 
-        # Resolve templates
-        build_name = self.env_config._resolve_template(build_template)
-        test_name = self.env_config._resolve_template(test_template)
-
-        # Add branch info if available
-        git_branch = os.getenv("GIT_BRANCH")
-        if git_branch and git_branch not in test_name:
-            test_name += f" ({git_branch})"
-
-        return {"build": build_name, "name": test_name, "project": project_name}
-
-    def get_driver(self):
+    def get_driver(self, metadata: Optional[SessionMetadata] = None) -> WebDriver:
         if self.driver:
             return self.driver
 
-        if self.environment in ["lt", "lambdatest"]:
-            self.driver = self._create_lambdatest_driver()
-        elif self.environment == "local":
-            self.driver = self._create_local_driver()
-        else:
-            raise ValueError(f"Unsupported environment: {self.environment}")
+        if metadata:
+            self.metadata = metadata
 
-        return self.driver
+        try:
+            self.driver = self.provider.create_driver(self.device_config, self.metadata)
+            session_id = getattr(self.driver, "session_id", "unknown")
+            log_session_info(session_id, "created", environment=self.environment)
+            return self.driver
+        except Exception as exc:
+            self.logger.error("Failed to create driver: %s", exc)
+            raise
 
-    def _create_lambdatest_driver(self):
-        options = AppiumOptions()
+    def report_result(self, status: str, reason: Optional[str] = None) -> None:
+        if not self.driver:
+            return
+        try:
+            self.provider.report_session_status(self.driver, status, reason)
+        except Exception as exc:  # pragma: no cover - defensive
+            self.logger.debug(f"Failed to report session status: {exc}")
 
-        if self.env_config:
-            # Use new YAML-based configuration
-            capabilities = self.env_config.get_device_capabilities()
-            server_url = self.env_config.get_appium_server_url()
-
-            if self.env_config.environment == "lambdatest":
-                # Get LambdaTest naming configuration
-                naming = self._get_lambdatest_naming()
-
-                capabilities.setdefault("lt:options", {}).update(
-                    {
-                        "app": self.env_config.get_resolved_app_path(),
-                        "build": naming["build"],
-                        "name": naming["name"],
-                        "project": naming["project"],
-                    }
-                )
-
-            # Get LambdaTest credentials (still from environment variables)
-            username = os.getenv("LT_USERNAME")
-            access_key = os.getenv("LT_ACCESS_KEY")
-
-        else:
-            raise ConfigurationError("Environment configuration not available")
-
-        options.load_capabilities(capabilities)
-
-        client_config = ClientConfig(
-            remote_server_addr=server_url, username=username, password=access_key
-        )
-
-        # Simple retry for transient hub failures
-        last_error = None
-        for attempt in range(2):  # 2 attempts total
-            try:
-                driver = webdriver.Remote(
-                    command_executor=AppiumConnection(client_config=client_config),
-                    options=options,
-                )
-                session_id = driver.session_id if driver else "unknown"
-                log_session_info(session_id, "created", environment=self.environment)
-                return driver
-            except Exception as e:
-                self.logger.warning(
-                    f"LambdaTest session creation attempt {attempt + 1} failed: {e}"
-                )
-                last_error = e
-        # Raise last error if retries exhausted
-        raise last_error
-
-    def _create_local_driver(self):
-        options = AppiumOptions()
-
-        if self.env_config:
-            # Use new YAML-based configuration
-            capabilities = self.env_config.get_device_capabilities()
-            server_url = self.env_config.get_appium_server_url()
-        else:
-            raise ConfigurationError(
-                "Environment configuration not available for local driver"
-            )
-
-        options.load_capabilities(capabilities)
-
-        return webdriver.Remote(server_url, options=options)
-
-    def cleanup_driver(self):
+    def cleanup_driver(self) -> None:
         if self.driver:
-            session_id = (
-                self.driver.session_id
-                if hasattr(self.driver, "session_id")
-                else "unknown"
-            )
+            session_id = getattr(self.driver, "session_id", "unknown")
             log_session_info(session_id, "cleanup", environment=self.environment)
-            self.driver.quit()
-            self.driver = None
+            try:
+                self.provider.cleanup_driver(self.driver)
+            finally:
+                self.driver = None
 
-    def get_configuration_summary(self):
-        if self.env_config:
-            return {
-                "environment": self.env_config.environment,
-                "device": f"{self.env_config.device_name} ({self.env_config.platform_name} {self.env_config.platform_version})",
-                "app_source": self.env_config.app_source["source_type"],
-                "app_path": self.env_config.get_resolved_app_path(),
-                "appium_server": self.env_config.get_appium_server_url(),
-            }
-        return {"environment": self.environment}
+    @property
+    def concurrency_limit(self) -> Dict[str, int]:
+        return self.env_config.concurrency_limits()
+
+    @property
+    def capabilities(self) -> Dict[str, Any]:
+        return self._get_merged_capabilities(self.device_config)

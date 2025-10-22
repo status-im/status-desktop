@@ -13,6 +13,8 @@ from core.config_manager import ConfigurationManager
 
 
 class TestRunContext:
+    __test__ = False
+
     def __init__(self, contexts: List[TestContext]):
         self.contexts = contexts
         self.logger = get_logger("test_run_context")
@@ -21,7 +23,7 @@ class TestRunContext:
     def create(
         cls,
         number: int = 2,
-        environment: str = "lambdatest",
+        environment: str = "browserstack",
         config: Optional[TestConfiguration] = None,
         device_overrides: Optional[List[Dict[str, Any]]] = None,
         device_tags: Optional[List[str]] = None,
@@ -66,7 +68,6 @@ class TestRunContext:
             except Exception:
                 pass
 
-    # Reporting helpers (LambdaTest-compatible via execute_script)
     def report_all(
         self,
         status: str,
@@ -74,23 +75,7 @@ class TestRunContext:
         test_name: Optional[str] = None,
     ) -> None:
         for ctx in self.contexts:
-            try:
-                # Set status
-                ctx.driver.execute_script(f"lambda-status={status}")
-                # Optionally set test name
-                if test_name:
-                    ctx.driver.execute_script(f"lambda-name={test_name}")
-                # Optionally set description for failures
-                if error_message and status != "passed":
-                    clean_error = error_message.replace('"', '\\"').replace(
-                        "\n", "\\n"
-                    )[:500]
-                    ctx.driver.execute_script(
-                        f"lambda-description=Test failed: {clean_error}"
-                    )
-            except Exception:
-                # Avoid masking primary failures
-                continue
+            ctx.report(status, error_message=error_message, test_name=test_name)
 
     # Convenience iterators
     def __iter__(self):
