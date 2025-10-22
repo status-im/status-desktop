@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -23,6 +24,9 @@ StatusSelect {
     model: root.originModel
 
     selectedItemComponent: StatusListItem {
+
+        Layout.fillWidth: true
+
         objectName: "AddAccountPopup-SelectedOrigin"
         title: Utils.appTranslation(root.selectedOrigin.name)
         statusListItemTitle.color: Theme.palette.directColor1
@@ -68,6 +72,8 @@ StatusSelect {
         id: menu
         objectName: "AddAccountPopup-OriginOption-" +
                     (model.keyPair.pairType === Constants.addAccountPopup.keyPairType.unknown? model.keyPair.keyUid : model.keyPair.name)
+
+        width: root.width
 
         property bool isProfileKeypair: model.keyPair.pairType === Constants.addAccountPopup.keyPairType.profile
         property bool isOption: model.keyPair.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddNewMasterKey ||

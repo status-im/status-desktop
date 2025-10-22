@@ -93,6 +93,9 @@ Menu {
 
         ColumnLayout {
             spacing: 0
+
+            width: root.availableWidth
+
             Repeater {
                 model: root.contentModel
 
