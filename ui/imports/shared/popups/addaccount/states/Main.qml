@@ -98,16 +98,18 @@ Item {
             sourceComponent: spacer
         }
 
-        Column {
+        ColumnLayout {
             Layout.fillWidth: true
             spacing: Theme.padding
-            topPadding: Theme.padding
-            bottomPadding: Theme.padding
+
+            Layout.margins: Theme.padding
 
             StatusInput {
                 id: accountName
                 objectName: "AddAccountPopup-AccountName"
-                anchors.horizontalCenter: parent.horizontalCenter
+
+                Layout.fillWidth: true
+
                 placeholderText: qsTr("Account name")
                 label: qsTr("Name")
                 charLimit: 20
@@ -160,7 +162,8 @@ Item {
             StatusColorSelectorGrid {
                 id: colorSelection
                 objectName: "AddAccountPopup-AccountColor"
-                anchors.horizontalCenter: parent.horizontalCenter
+
+                Layout.fillWidth: true
                 model: Theme.palette.customisationColorsArray
                 title.color: Theme.palette.directColor1
                 title.font.pixelSize: Constants.addAccountPopup.labelFontSize1
@@ -173,7 +176,7 @@ Item {
             }
 
             SelectOrigin {
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.fillWidth: true
 
                 userProfilePublicKey: root.store.userProfilePublicKey
                 originModel: root.store.editMode? [] : root.store.originModel
@@ -201,7 +204,10 @@ Item {
             }
 
             WatchOnlyAddressSection {
-                width: parent.width - 2 * Theme.padding
+                Layout.fillWidth: true
+                Layout.leftMargin: Theme.padding
+                Layout.rightMargin:  Theme.padding
+
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: Theme.padding
                 visible: !root.store.editMode &&
