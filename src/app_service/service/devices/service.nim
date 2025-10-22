@@ -236,6 +236,7 @@ QtObject:
       },
       "clientConfig": %* {}
     }
+    debug "<<< calling inputConnectionStringForBootstrapping", configJSON
     self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
 
     let arg = AsyncInputConnectionStringArg(

@@ -286,6 +286,7 @@ proc addPeer*(peer: string): RpcResponse[JsonNode] =
 proc createAccountAndLogin*(request: CreateAccountRequest): RpcResponse[JsonNode] =
   try:
     let payload = request.toJson()
+    debug "<<< calling createAccountAndLogin", payload
     let response = status_go.createAccountAndLogin($payload)
     result.result = Json.decode(response, JsonNode)
 
