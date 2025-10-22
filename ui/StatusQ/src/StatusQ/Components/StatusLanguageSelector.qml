@@ -120,6 +120,8 @@ Button {
 
         padding: 0
 
+        bottomSheetAllowed: false
+
         onOpened: if (!Utils.isMobile) searchField.forceActiveFocus()
         onClosed: searchField.input.edit.clear()
 

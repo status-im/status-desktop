@@ -77,6 +77,8 @@ StatusDialog {
 
     readonly property string uuid: d.uuid
 
+    bottomSheetAllowed: false
+
     QtObject {
         id: d
 

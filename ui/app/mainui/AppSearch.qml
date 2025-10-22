@@ -82,6 +82,7 @@ Item {
         defaultSearchLocationText: qsTr("Anywhere")
         searchOptionsPopupMenu: searchPopupMenu
         searchResults: root.store.resultModel
+        bottomSheetAllowed: false
         formatTimestampFn: function (ts) {
             return LocaleUtils.formatDateTime(parseInt(ts, 10))
         }

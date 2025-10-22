@@ -39,8 +39,17 @@ Dialog {
     */
     property string okButtonText: qsTr("OK")
 
-    readonly property bool bottomSheet: d.windowHeight > d.windowWidth
-                                        && d.windowWidth <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
+    /*!
+        \qmlproperty bool StatusDropdown::bottomSheetAllowed
+        Controls whether the dropdown may switch to a bottom-sheet presentation when vertical
+        space is limited. Set to false to force classic anchored dropdown behavior.
+        Default: true.
+    */
+    property bool bottomSheetAllowed: true
+
+    readonly property bool bottomSheet: !bottomSheetAllowed ? false:
+                                                              d.windowHeight > d.windowWidth
+                                                              && d.windowWidth <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
 
     readonly property real desiredY: root.bottomSheet ? d.windowHeight - root.height
                                                       : (root.Overlay.overlay.height - root.height) / 2

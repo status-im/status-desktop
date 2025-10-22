@@ -79,6 +79,8 @@ Control {
 
         onClosed: tokenSelectorPanel.clear()
 
+        bottomSheetAllowed: false
+
         contentItem: Item {
             implicitHeight: Math.min(tokenSelectorPanel.implicitHeight, d.maxPopupHeight)
 

@@ -49,6 +49,8 @@ StatusDropdown {
         d.selectedChannelsChanged()
     }
 
+    bottomSheetAllowed: false
+
     onAboutToHide: {
         searcher.text = ""
         listView.positionViewAtBeginning()

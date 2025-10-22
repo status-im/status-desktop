@@ -41,6 +41,7 @@ StatusDialog {
     implicitWidth: 556
     topPadding: Theme.xlPadding
     backgroundColor: Theme.palette.baseColor3
+    bottomSheetAllowed: false
 
     QtObject {
         id: d

@@ -64,6 +64,8 @@ Control {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         padding: 0
 
+        bottomSheetAllowed: false
+
         contentItem: SearchableAssetsPanel {
             id: searchableAssetsPanel
 

@@ -47,6 +47,8 @@ Control {
         relativeY: root.height + 4
         width: root.width
 
+        bottomSheetAllowed: false
+
         padding: 0
 
         contentItem: SearchableAssetsPanel {

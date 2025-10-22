@@ -63,6 +63,8 @@ StatusDropdown {
     padding: 11
     bottomPadding: padding + bottomInset
 
+    bottomSheetAllowed: false
+
     onOpened: {
         listView.positionViewAtBeginning()
         filterInput.text = ""
