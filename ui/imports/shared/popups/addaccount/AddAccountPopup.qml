@@ -23,6 +23,7 @@ StatusModal {
     property bool isKeycardEnabled: true
 
     width: Constants.addAccountPopup.popupWidth
+    fillHeightOnBottomSheet: true
 
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !root.store.disablePopup

@@ -59,6 +59,7 @@ StatusDropdown {
     signal addButtonClicked
 
     width: 295
+    fillHeightOnBottomSheet: true
 
     padding: 11
     bottomPadding: padding + bottomInset
@@ -261,6 +262,11 @@ StatusDropdown {
             }
 
             onClicked: root.addButtonClicked()
+        }
+
+        // Just a filler
+        Item {
+            Layout.fillHeight: true
         }
     }
 }

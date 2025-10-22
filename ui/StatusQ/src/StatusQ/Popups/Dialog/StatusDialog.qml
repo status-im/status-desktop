@@ -45,12 +45,22 @@ Dialog {
     readonly property real desiredY: root.bottomSheet ? d.windowHeight - root.height
                                                       : (root.Overlay.overlay.height - root.height) / 2
 
+    /*!
+       \qmlproperty bool fillHeightOnBottomSheet
+        This property decides the height of the dialog when `bottomSheet` is active:
+          * If active: it fills the 90% of the screen viewport.
+          * If not active: the height is the minimum value between the implicitHeight and the 90% of the screen viewport.
+    */
+    property bool fillHeightOnBottomSheet: false
+
     QtObject {
         id: d
 
         // NB: needs to be delayed for the `contentItem` to be not null
         property int windowWidth
         property int windowHeight
+
+        readonly property real bottomSheetHeightRatio: 0.90
     }
 
     onAboutToShow: {
@@ -107,7 +117,8 @@ Dialog {
     }
     Binding on height {
         when: root.bottomSheet && !enterTransition.running
-        value: Math.min(root.implicitHeight, d.windowHeight * 0.9)
+        value: root.fillHeightOnBottomSheet ? d.windowHeight * d.bottomSheetHeightRatio : Math.min(implicitHeight, d.windowHeight * d.bottomSheetHeightRatio)
+
     }
     Binding on y {
         when: root.bottomSheet && !enterTransition.running

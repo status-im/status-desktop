@@ -39,6 +39,7 @@ StatusDialog {
     objectName: "swapModal"
 
     implicitWidth: 556
+    fillHeightOnBottomSheet: true
     topPadding: Theme.xlPadding
     backgroundColor: Theme.palette.baseColor3
 

@@ -78,6 +78,7 @@ Item {
 
     StatusSearchPopup {
         id: searchPopup
+        fillHeightOnBottomSheet: true
         noResultsLabel: qsTr("No results")
         defaultSearchLocationText: qsTr("Anywhere")
         searchOptionsPopupMenu: searchPopupMenu

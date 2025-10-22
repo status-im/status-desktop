@@ -20,6 +20,7 @@ StatusDropdown {
 
     width: 289
     padding: 8
+    fillHeightOnBottomSheet: true
 
     // force keeping within the bounds of the enclosing window
     margins: 0
@@ -227,7 +228,7 @@ StatusDropdown {
             Layout.fillWidth: true
             Layout.minimumHeight: Math.min(d.maxHeightCountNo * d.itemStandardHeight,
                                            contentHeight)
-            Layout.maximumHeight: Layout.minimumHeight
+            Layout.fillHeight: true
             Layout.bottomMargin: d.defaultVMargin
             Layout.topMargin: !root.allowChoosingEntireCommunity
                               && !root.allowChoosingEntireCommunity ? d.defaultVMargin : 0
@@ -338,5 +339,6 @@ StatusDropdown {
                 root.channelsSelected(Array.from(d.selectedChannels.values()))
             }
         }
-    }
+
+   }
 }

@@ -248,6 +248,7 @@ StatusDialog {
         value: popup.store.selectedSenderAccountAddress
     }
 
+    fillHeightOnBottomSheet: true
     topMargin: margins + accountSelector.height + Theme.padding
     padding: Theme.xlPadding
     background: StatusDialogBackground {
