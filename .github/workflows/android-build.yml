@@ -1,5 +1,5 @@
 name: Android Build APK
-run-name: Android Build APK (${{ inputs.architecture || 'arm64' }} testmode=${{ inputs.testmode || 'false' }})
+run-name: Android Build APK (${{ inputs.architecture || 'arm64' }} statusq_testmode=${{ inputs.statusq_testmode || 'false' }})
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
           - 'x86_64'
           - 'arm'
           - 'x86'
-      testmode:
+      statusq_testmode:
         description: 'Enable QML test hooks (STATUSQ_TESTMODE)'
         required: false
         default: 'false'
@@ -95,7 +95,7 @@ jobs:
 
           echo "QT_ANDROID_PATH=$QT_ANDROID_PATH" >> $GITHUB_ENV
           echo "ANDROID_ABI=$ANDROID_ABI" >> $GITHUB_ENV
-          echo "TESTMODE=${{ inputs.testmode }}" >> $GITHUB_ENV
+          echo "STATUSQ_TESTMODE=${{ inputs.statusq_testmode }}" >> $GITHUB_ENV
           echo "ARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
 
           echo "PKG_CONFIG_PATH=$QT_ANDROID_PATH/lib/pkgconfig" >> $GITHUB_ENV
@@ -126,12 +126,12 @@ jobs:
           set -e
           unset GOARCH
           echo "Using QMAKE: $QMAKE"
-          echo "STATUSQ_TESTMODE: $TESTMODE"
+          echo "STATUSQ_TESTMODE: $STATUSQ_TESTMODE"
           make mobile-clean
           make mobile-build \
             V=${{ inputs.verbosity }} \
             USE_SYSTEM_NIM=1 \
-            STATUSQ_TESTMODE=${{ env.TESTMODE }} \
+            STATUSQ_TESTMODE=${{ env.STATUSQ_TESTMODE }} \
             -j$(nproc)
 
       - name: Rename APK with version
