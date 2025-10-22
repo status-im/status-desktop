@@ -2,11 +2,12 @@ import os
 import pytest
 from datetime import datetime
 from pathlib import Path
+from typing import List
 
 from .config import setup_logging, log_test_start, log_test_end
 from .config.logging_config import get_logger
 from .core import EnvironmentSwitcher
-from .utils.lambdatest_reporter import LambdaTestReporter
+from .utils.cloud_reporter import CloudResultReporter
 from .utils.screenshot import save_screenshot, save_page_source
 
 
@@ -17,6 +18,7 @@ pytest_plugins = [
 
 
 _logging_setup = None
+_saved_failure_logs: List[Path] = []
 
 
 def pytest_configure(config):
@@ -27,28 +29,27 @@ def pytest_configure(config):
     try:
         cli_env = getattr(config.option, "env", None)
         if cli_env:
-            normalized_env = (
-                "lambdatest" if cli_env in ("lt", "lambdatest") else "local"
-            )
-            os.environ["CURRENT_TEST_ENVIRONMENT"] = normalized_env
+            os.environ["CURRENT_TEST_ENVIRONMENT"] = cli_env
     except Exception:
         # Do not block test runs if normalization fails
         pass
 
     # Use YAML-based configuration
-    env_name = os.getenv("CURRENT_TEST_ENVIRONMENT", "lambdatest")
+    switcher = EnvironmentSwitcher()
+    env_name = (
+        os.getenv("CURRENT_TEST_ENVIRONMENT") or switcher.auto_detect_environment()
+    )
 
     try:
-        switcher = EnvironmentSwitcher()
         env_config = switcher.switch_to(env_name)
 
         # Use directories from YAML config
         reports_dir = Path(env_config.directories.get("reports", "reports"))
-        enable_xml_report = env_config.logging_config.get("enable_xml_report", True)
-        enable_html_report = env_config.logging_config.get("enable_html_report", True)
+        enable_xml_report = env_config.logging.get("enable_xml_report", True)
+        enable_html_report = env_config.logging.get("enable_html_report", True)
 
         logger = get_logger("conftest")
-        logger.info(f"📁 Using reports directory from {env_name} config: {reports_dir}")
+        logger.info("Using reports directory from %s config: %s", env_name, reports_dir)
 
     except Exception as e:
         # Simplified fallback using defaults
@@ -57,8 +58,8 @@ def pytest_configure(config):
         enable_html_report = True
 
         logger = get_logger("conftest")
-        logger.warning(f"⚠️ Using default configuration: {e}")
-        logger.warning("💡 Ensure YAML config files are properly set up")
+        logger.warning("Using default configuration: %s", e)
+        logger.warning("Ensure YAML config files are properly set up")
 
     reports_dir.mkdir(exist_ok=True)
 
@@ -77,19 +78,19 @@ def pytest_configure(config):
 
     logger = _logging_setup["loggers"]["main"] if _logging_setup else None
     if logger:
-        logger.info("📊 Automatic report generation enabled:")
+        logger.info("Automatic report generation enabled:")
         if hasattr(config.option, "xmlpath") and config.option.xmlpath:
-            logger.info(f"  📄 XML Report: {config.option.xmlpath}")
+            logger.info("  XML report: %s", config.option.xmlpath)
         if hasattr(config.option, "htmlpath") and config.option.htmlpath:
-            logger.info(f"  🌐 HTML Report: {config.option.htmlpath}")
+            logger.info("  HTML report: %s", config.option.htmlpath)
 
 
 def pytest_addoption(parser):
     parser.addoption(
         "--env",
         action="store",
-        default="lt",
-        help="Test environment: local or lt (LambdaTest)",
+        default="browserstack",
+        help="Test environment defined in config/environments (e.g. local, browserstack)",
     )
 
 
@@ -154,17 +155,19 @@ def pytest_runtest_makereport(item, call):
 
     setattr(item, "rep_" + rep.when, rep)
 
-    # Report setup/call/teardown so setup failures are reflected in LT
+    # Report setup/call/teardown so setup failures are reflected in the cloud dashboard
     if rep.when in ("setup", "call", "teardown"):
         try:
-            LambdaTestReporter.report_test_result(item, rep)
+            CloudResultReporter.report_test_result(item, rep)
         except Exception as e:
             logger = get_logger("session")
-            logger.error(f"Failed to report test result to LambdaTest: {e}")
+            logger.error(f"Failed to report test result to cloud provider: {e}")
 
     # Get screenshot and page source artifacts
     try:
-        if getattr(rep, "failed", False) and not getattr(item, "_failure_artifacts_saved", False):
+        if getattr(rep, "failed", False) and not getattr(
+            item, "_failure_artifacts_saved", False
+        ):
             driver = None
             try:
                 if hasattr(item, "instance") and hasattr(item.instance, "driver"):
@@ -175,23 +178,36 @@ def pytest_runtest_makereport(item, call):
             if driver:
                 # Resolve screenshots directory from environment config; fallback to 'screenshots'
                 try:
-                    env_name = os.getenv("CURRENT_TEST_ENVIRONMENT", "lambdatest")
-                    switcher = EnvironmentSwitcher()
-                    env_config = switcher.switch_to(env_name)
-                    screenshots_dir = env_config.directories.get("screenshots", "screenshots")
+                    env_switcher = EnvironmentSwitcher()
+                    env_name = (
+                        os.getenv("CURRENT_TEST_ENVIRONMENT")
+                        or env_switcher.auto_detect_environment()
+                    )
+                    env_config = env_switcher.switch_to(env_name)
+                    screenshots_dir = env_config.directories.get(
+                        "screenshots", "screenshots"
+                    )
+                    logs_dir = env_config.directories.get("logs", "logs")
                 except Exception:
                     screenshots_dir = "screenshots"
+                    logs_dir = "logs"
 
-                test_id = getattr(item, "name", "test") + (f"__{rep.when}" if getattr(rep, "when", None) else "")
+                test_id = getattr(item, "name", "test") + (
+                    f"__{rep.when}" if getattr(rep, "when", None) else ""
+                )
 
                 s_path = None
                 x_path = None
                 try:
-                    s_path = save_screenshot(driver, str(screenshots_dir), f"FAILED_{test_id}")
+                    s_path = save_screenshot(
+                        driver, str(screenshots_dir), f"FAILED_{test_id}"
+                    )
                 except Exception:
                     pass
                 try:
-                    x_path = save_page_source(driver, str(screenshots_dir), f"FAILED_{test_id}")
+                    x_path = save_page_source(
+                        driver, str(screenshots_dir), f"FAILED_{test_id}"
+                    )
                 except Exception:
                     pass
 
@@ -200,6 +216,56 @@ def pytest_runtest_makereport(item, call):
                     log.info(f"Saved failure screenshot: {s_path}")
                 if x_path:
                     log.info(f"Saved failure page source: {x_path}")
+
+                # Capture Appium server/logcat logs for deeper diagnostics
+                log_paths: List[Path] = []
+                try:
+                    log_types = set(getattr(driver, "log_types", []) or [])
+                except Exception:
+                    log_types = set()
+
+                desired_types = [
+                    log_type
+                    for log_type in ("server", "logcat")
+                    if log_type in log_types
+                ]
+                if desired_types:
+                    logs_root = Path(logs_dir)
+                    logs_root.mkdir(parents=True, exist_ok=True)
+                    for log_type in desired_types:
+                        try:
+                            entries = driver.get_log(log_type) or []
+                        except Exception as err:
+                            log.warning(
+                                f"Failed to fetch '{log_type}' log for {test_id}: {err}"
+                            )
+                            continue
+
+                        if not entries:
+                            continue
+
+                        log_file = logs_root / f"FAILED_{test_id}_{log_type}.log"
+                        try:
+                            with log_file.open("w", encoding="utf-8") as handle:
+                                for entry in entries:
+                                    timestamp = (
+                                        entry.get("timestamp")
+                                        or entry.get("time")
+                                        or ""
+                                    )
+                                    level = entry.get("level") or ""
+                                    message = entry.get("message") or ""
+                                    handle.write(f"{timestamp}\t{level}\t{message}\n")
+                            log.info(f"Saved failure {log_type} log: {log_file}")
+                            log_paths.append(log_file)
+                        except Exception as err:
+                            log.warning(
+                                f"Failed to persist {log_type} log for {test_id}: {err}"
+                            )
+
+                if log_paths:
+                    global _saved_failure_logs
+                    _saved_failure_logs.extend(log_paths)
 
                 setattr(item, "_failure_artifacts_saved", True)
     except Exception as e:
@@ -221,37 +287,37 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
     total = passed + failed + skipped + errors
 
     logger.info("=" * 60)
-    logger.info("🎯 TEST EXECUTION SUMMARY")
+    logger.info("TEST EXECUTION SUMMARY")
     logger.info("=" * 60)
-    logger.info(f"Total Tests: {total}")
-    logger.info(f"✅ Passed: {passed}")
-    logger.info(f"❌ Failed: {failed}")
-    logger.info(f"⏭️  Skipped: {skipped}")
-    logger.info(f"💥 Errors: {errors}")
+    logger.info("Total tests: %s", total)
+    logger.info("Passed: %s", passed)
+    logger.info("Failed: %s", failed)
+    logger.info("Skipped: %s", skipped)
+    logger.info("Errors: %s", errors)
 
     if total > 0:
         success_rate = (passed / total) * 100
-        logger.info(f"📊 Success Rate: {success_rate:.1f}%")
+        logger.info("Success rate: %.1f%%", success_rate)
 
     logger.info("Reports Generated:")
     if hasattr(config.option, "xmlpath") and config.option.xmlpath:
         xml_file = Path(config.option.xmlpath)
         if xml_file.exists():
-            logger.info(f"  📄 XML Report: {xml_file}")
+            logger.info("  XML report: %s", xml_file)
         else:
-            logger.warning(f"  ⚠️ XML Report expected but not found: {xml_file}")
+            logger.warning("  XML report expected but not found: %s", xml_file)
 
     if hasattr(config.option, "htmlpath") and config.option.htmlpath:
         html_file = Path(config.option.htmlpath)
         if html_file.exists():
-            logger.info(f"  🌐 HTML Report: {html_file}")
+            logger.info("  HTML report: %s", html_file)
         else:
-            logger.warning(f"  ⚠️ HTML Report expected but not found: {html_file}")
+            logger.warning("  HTML report expected but not found: %s", html_file)
 
     logger.info("=" * 60)
 
     if failed > 0:
-        logger.warning(f"⚠️ {failed} test(s) failed. Check reports for details.")
+        logger.warning("%s test(s) failed. Check reports for details.", failed)
 
         failed_tests = terminalreporter.stats.get("failed", [])
         for test_report in failed_tests[:5]:
@@ -262,13 +328,13 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
                     if test_report.longrepr
                     else "Unknown error"
                 )
-                logger.error(f"  ❌ {test_name}: {error_msg}")
+                logger.error("  %s: %s", test_name, error_msg)
 
         if len(failed_tests) > 5:
             logger.error(f"  ... and {len(failed_tests) - 5} more failures")
 
     if errors > 0:
-        logger.error(f"💥 {errors} test(s) had errors. Check reports for details.")
+        logger.error("%s test(s) had errors. Check reports for details.", errors)
 
         error_tests = terminalreporter.stats.get("error", [])
         for test_report in error_tests[:3]:
@@ -279,12 +345,17 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
                     if test_report.longrepr
                     else "Unknown error"
                 )
-                logger.error(f"  💥 {test_name}: {error_msg}")
+                logger.error("  %s: %s", test_name, error_msg)
 
         if len(error_tests) > 3:
             logger.error(f"  ... and {len(error_tests) - 3} more errors")
 
     if passed == total and total > 0:
-        logger.info("🎉 All tests passed successfully!")
+        logger.info("All tests passed successfully!")
 
     logger.info("=" * 60)
+
+    if _saved_failure_logs:
+        logger.info("Failure log artifacts:")
+        for path in _saved_failure_logs:
+            logger.info("  %s", path)

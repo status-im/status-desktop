@@ -1,15 +1,16 @@
 import os
+import json
 from functools import wraps
 
+from core.config_manager import EnvironmentSwitcher
 from core.test_context import TestContext, TestConfiguration
 from config.logging_config import get_logger
 
-# Constants
-CLOUD_ENVIRONMENTS = ["lt", "lambdatest"]
+# Known cloud providers handled via the provider abstraction
+CLOUD_PROVIDERS = {"browserstack"}
 
 
-def lambdatest_reporting(func):
-
+def cloud_reporting(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         try:
@@ -26,6 +27,9 @@ def lambdatest_reporting(func):
     return wrapper
 
 
+lambdatest_reporting = cloud_reporting  # Backward-compatible alias for older tests
+
+
 class BaseTest:
     def setup_method(self, method):
         # Initialize logger for test instance
@@ -35,20 +39,35 @@ class BaseTest:
         self._result_reported = False
 
         # Get environment from pytest config or environment variable
-        test_env = os.getenv("CURRENT_TEST_ENVIRONMENT", "lambdatest")
+        switcher = EnvironmentSwitcher()
+        detected_env = os.getenv("CURRENT_TEST_ENVIRONMENT") or os.getenv(
+            "TEST_ENVIRONMENT"
+        )
+        if not detected_env:
+            detected_env = switcher.auto_detect_environment()
 
         # Try to get environment from pytest if available
+        test_env = detected_env
         if hasattr(self, "request") and hasattr(self.request, "config"):
-            test_env = self.request.config.getoption("--env", default=test_env)
+            test_env = self.request.config.getoption("--env", default=detected_env)
+
+        os.environ["CURRENT_TEST_ENVIRONMENT"] = test_env
+
+        self.test_name = method.__name__
 
         # Initialize test context (owns session/driver)
         self.ctx = TestContext(environment=test_env).initialize(
-            TestConfiguration(environment=test_env)
+            TestConfiguration(environment=test_env),
+            test_name=self.test_name,
         )
 
         self.session_manager = self.ctx._session_manager
+        self.provider_name = (
+            self.session_manager.provider.name
+            if hasattr(self.session_manager, "provider")
+            else "local"
+        )
         self.driver = self.ctx.driver
-        self.test_name = method.__name__
 
         if not hasattr(self.__class__, "_active_drivers"):
             self.__class__._active_drivers = {}
@@ -68,7 +87,8 @@ class BaseTest:
             except Exception as e:
                 logger = get_logger("session")
                 logger.error(
-                    f"⚠️ Error in teardown: {e}",
+                    "Error in teardown: %s",
+                    e,
                     extra={"error": str(e), "test_name": self.test_name},
                 )
             finally:
@@ -89,17 +109,18 @@ class BaseTest:
                         pass
 
     def _validate_result_reporting(self):
-        if self.session_manager.environment in CLOUD_ENVIRONMENTS:
+        provider = getattr(self, "provider_name", "local").lower()
+        if provider in CLOUD_PROVIDERS:
             if not self._result_reported:
                 error_msg = f"Test '{self.test_name}' failed to report result."
-                self.logger.error(f"❌ {error_msg}")
+                self.logger.error(error_msg)
                 raise RuntimeError(error_msg)
 
     def report_test_result(
         self, passed: bool = None, error_message: str = None, status: str = None
     ):
         """
-        Report test result to LambdaTest.
+        Report test result to the active cloud provider.
 
         Args:
             passed: Whether the test passed
@@ -108,63 +129,66 @@ class BaseTest:
         """
         self._result_reported = True
 
-        if self.driver and self.session_manager.environment in CLOUD_ENVIRONMENTS:
+        provider = getattr(self, "provider_name", "local").lower()
+        if self.driver and provider in CLOUD_PROVIDERS:
             try:
                 final_status = status or ("passed" if passed else "failed")
-                self._report_to_lambdatest(
-                    self.driver, self.test_name, final_status, error_message
+                self._report_to_cloud(
+                    self.session_manager,
+                    self.driver,
+                    self.test_name,
+                    final_status,
+                    error_message,
                 )
                 logger = get_logger("session")
                 logger.info(
-                    f"✅ Reported to LambdaTest: {self.test_name} = {final_status.upper()}"
+                    "Reported to %s: %s = %s",
+                    self.provider_name,
+                    self.test_name,
+                    final_status.upper(),
                 )
             except Exception as e:
                 logger = get_logger("session")
-                logger.error(f"⚠️ Failed to report result to LambdaTest: {e}")
+                logger.error("Failed to report result: %s", e)
 
     @classmethod
-    def _report_to_lambdatest(cls, driver, test_name, status, error_message=None):
-        logger = get_logger("session")
+    def _report_to_cloud(
+        cls, session_manager, driver, test_name, status, error_message=None
+    ):
+        reason = error_message[:250] if error_message else None
 
         try:
-            driver.execute_script(f"lambda-status={status}")
-        except Exception:
-            pass
-        try:
-            driver.execute_script(f"lambda-name={test_name}")
+            if session_manager:
+                session_manager.metadata.test_name = test_name
+                session_manager.report_result(status, reason)
+                return
         except Exception:
             pass
 
-        # Optional description (not supported on all drivers)
-        is_passed = status == "passed"
-        if not is_passed and error_message:
+        # Fallback to BrowserStack executor if direct reporting failed
+        if driver:
             try:
-                clean_error = error_message.replace('"', '\\"').replace("\n", "\\n")[
-                    :500
-                ]
-                driver.execute_script(f"lambda-description=Test failed: {clean_error}")
+                payload = {
+                    "action": "setSessionStatus",
+                    "arguments": {"status": status, "reason": reason or ""},
+                }
+                driver.execute_script(
+                    "browserstack_executor: {payload}".format(
+                        payload=json.dumps(payload)
+                    )
+                )
+                driver.execute_script(
+                    "browserstack_executor: {payload}".format(
+                        payload=json.dumps(
+                            {
+                                "action": "setSessionName",
+                                "arguments": {"name": test_name},
+                            }
+                        )
+                    )
+                )
             except Exception:
                 pass
-
-        log_data = {
-            "test_name": test_name,
-            "lambdatest_status": status,
-            "success": is_passed,
-        }
-        if error_message:
-            log_data["error_message"] = error_message[:200]
-
-        if is_passed:
-            logger.info(f"✅ LambdaTest Report: {test_name} = PASSED", extra=log_data)
-        else:
-            logger.warning(
-                f"❌ LambdaTest Report: {test_name} = FAILED", extra=log_data
-            )
-            if error_message:
-                logger.error(
-                    f"   Error Details: {error_message[:200]}...",
-                    extra={"test_name": test_name, "full_error": error_message},
-                )
 
     @classmethod
     def get_active_driver_for_test(cls, test_instance_id):

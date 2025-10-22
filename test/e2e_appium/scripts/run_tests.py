@@ -1,51 +1,74 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import subprocess
 import sys
-import os
 from datetime import datetime
 from pathlib import Path
+from typing import List
+
 from config import get_config
+from core.config_manager import ConfigurationManager
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 
-
-
 def run_command(cmd, description):
-    print(f"\n🚀 {description}")
+    print(f"\nRunning {description}")
     print(f"Command: {' '.join(cmd)}")
     print("-" * 60)
 
     try:
         _ = subprocess.run(cmd, check=True, capture_output=False)
-        print(f"✅ {description} completed successfully")
+        print(f"{description} completed successfully")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"❌ {description} failed with exit code {e.returncode}")
+        print(f"{description} failed with exit code {e.returncode}")
         return False
 
 
+def _remove_pytest_option(arguments: List[str], option: str) -> List[str]:
+    cleaned: List[str] = []
+    skip_next = False
+    for value in arguments:
+        if skip_next:
+            skip_next = False
+            continue
+        if value == option:
+            skip_next = True
+            continue
+        cleaned.append(value)
+    return cleaned
+
+
 def validate_environment():
-    print("\n🔍 Validating environment configuration")
+    print("\nValidating environment configuration")
 
     try:
-        config = get_config()
-        print("✅ Configuration loaded successfully")
+        config = get_config(refresh=True)
+        print(f"Configuration loaded for provider '{config.provider_name}'")
         print(
-            f"Device: {config.device_name} ({config.platform_name} {config.platform_version})"
+            f"Device: {config.device_name} "
+            f"({config.platform_name} {config.platform_version})"
         )
-        print(f"LambdaTest User: {config.lt_username}")
-        print(f"App URL: {config.status_app_url}")
+        if config.app_reference:
+            print(f"App Reference: {config.app_reference}")
+        concurrency = config.concurrency
+        print(f"Concurrency: up to {concurrency.get('max_sessions', 1)} sessions")
         return True
     except Exception as e:
-        print(f"❌ Configuration validation failed: {e}")
+        print(f"Configuration validation failed: {e}")
         return False
 
 
 def main():
+    manager = ConfigurationManager()
+    available_envs = manager.list_available_environments()
+    if not available_envs:
+        available_envs = ["local"]
+
     parser = argparse.ArgumentParser(description="Test Runner with XML/HTML Reports")
     parser.add_argument(
         "--category",
@@ -64,7 +87,7 @@ def main():
     parser.add_argument(
         "--env",
         "-e",
-        choices=["local", "lambdatest", "template", "lt"],
+        choices=available_envs,
         default=None,
         help="Environment to run tests in (default: auto-detect)",
     )
@@ -72,6 +95,16 @@ def main():
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     parser.add_argument(
         "--retry", "-r", action="store_true", help="Enable retry for flaky tests"
+    )
+    parser.add_argument(
+        "--device-id",
+        help="Override the device id defined in the environment configuration",
+    )
+    parser.add_argument(
+        "--device-tag",
+        action="append",
+        dest="device_tags",
+        help="Filter available devices by tag (can be specified multiple times)",
     )
     parser.add_argument(
         "--test",
@@ -95,14 +128,17 @@ def main():
 
     args = parser.parse_args()
 
-    if args.env == "lt":
-        args.env = "lambdatest"
-
     if args.env:
         os.environ["TEST_ENVIRONMENT"] = args.env
 
+    if args.device_id:
+        os.environ["TEST_DEVICE_ID"] = args.device_id
+
+    if args.device_tags:
+        os.environ["TEST_DEVICE_TAGS"] = ",".join(args.device_tags)
+
     try:
-        config = get_config()
+        config = get_config(refresh=True)
 
         if args.reports_dir:
             config.reports_dir = args.reports_dir
@@ -113,10 +149,10 @@ def main():
             config.enable_html_report = False
 
         if not validate_environment():
-            print("\n💥 Environment validation failed!")
+            print("\nEnvironment validation failed!")
             return 1
         if args.validate_only:
-            print("\n✅ Configuration validation completed successfully!")
+            print("\nConfiguration validation completed successfully!")
             return 0
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -124,15 +160,22 @@ def main():
         reports_dir = Path(config.reports_dir)
         reports_dir.mkdir(exist_ok=True)
 
-        cmd = ["python", "-m", "pytest"]
-        cmd.extend(["--env", args.env or "lambdatest"])
+        cmd: List[str] = ["python", "-m", "pytest"]
+        if config.pytest_addopts:
+            cmd.extend(config.pytest_addopts)
+        cmd.extend(["--env", config.environment_name])
 
         if args.category != "all":
             cmd.extend(["-m", args.category])
 
-        parallel_processes = args.parallel or 1
-        if parallel_processes > 1:
+        parallel_processes = args.parallel
+        if parallel_processes:
+            cmd = _remove_pytest_option(cmd, "-n")
             cmd.extend(["-n", str(parallel_processes)])
+        else:
+            parallel_processes = config.concurrency.get("max_sessions", 1)
+            if "-n" not in cmd and parallel_processes > 1:
+                cmd.extend(["-n", str(parallel_processes)])
 
         if args.retry:
             cmd.extend(["--reruns", "2", "--reruns-delay", "1"])
@@ -158,9 +201,11 @@ def main():
         cmd.append("test/e2e_appium/tests")
 
         print("=" * 60)
-        print("🎯 E2E TEST RUNNER")
+        print("E2E TEST RUNNER")
         print("=" * 60)
-        print(f"Environment: {args.env or 'lambdatest'}")
+        print(
+            f"Environment: {config.environment_name} (provider {config.provider_name})"
+        )
         print(f"Category: {args.category}")
         print(f"Parallel: {parallel_processes} processes")
         print(f"Retry: {'Enabled' if args.retry else 'Disabled'}")
@@ -169,33 +214,33 @@ def main():
             print(f"Specific Test: {args.test}")
         print("Reports:")
         if config.enable_xml_report:
-            print(f"  📄 XML (JUnit): {xml_file}")
+            print(f"  XML (JUnit): {xml_file}")
         if config.enable_html_report:
-            print(f"  🌐 HTML: {html_file}")
+            print(f"  HTML: {html_file}")
         print("=" * 60)
 
         success = run_command(cmd, f"Running {args.category} tests")
         if success:
-            print("\n🎉 All tests completed successfully!")
-            print("📊 Generated Reports:")
+            print("\nAll tests completed successfully!")
+            print("Generated reports:")
             if config.enable_xml_report and xml_file and xml_file.exists():
-                print(f"  ✅ XML Report: {xml_file}")
+                print(f"  XML report: {xml_file}")
             if config.enable_html_report and html_file and html_file.exists():
-                print(f"  ✅ HTML Report: {html_file}")
+                print(f"  HTML report: {html_file}")
             return 0
         else:
-            print("\n💥 Some tests failed!")
-            print("📊 Reports available for analysis:")
+            print("\nSome tests failed.")
+            print("Reports available for analysis:")
             if config.enable_xml_report and xml_file and xml_file.exists():
-                print(f"  📄 XML Report: {xml_file}")
+                print(f"  XML report: {xml_file}")
             if config.enable_html_report and html_file and html_file.exists():
-                print(f"  🌐 HTML Report: {html_file}")
+                print(f"  HTML report: {html_file}")
             return 1
     except ValueError as e:
-        print(f"\n💥 Configuration error: {e}")
+        print(f"\nConfiguration error: {e}")
         return 1
     except Exception as e:
-        print(f"\n💥 Unexpected error: {e}")
+        print(f"\nUnexpected error: {e}")
         return 1
 
 
