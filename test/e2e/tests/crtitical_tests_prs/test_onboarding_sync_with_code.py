@@ -19,7 +19,7 @@ from gui.screens.onboarding import OnboardingWelcomeToStatusView, SyncResultView
 
 @pytest.mark.case(703592, 738760)
 @pytest.mark.critical
-@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18846 on Windows")
+# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18846 on Windows")
 @pytest.mark.smoke
 def test_sync_devices_during_onboarding_change_settings_unpair(multiple_instances):
     user: UserAccount = RandomUser()
