@@ -151,15 +151,17 @@ class QObject:
     def hover(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         def _hover():
             try:
-                driver.mouseMove(self.object)
+                obj = driver.waitForObject(self.real_name, 500)
+                driver.mouseMove(obj)
                 LOG.info('%s: mouse hovered', self)
-                return getattr(self.object, 'hovered', True)
-            except RuntimeError as err:
-                LOG.error(err)
-                time.sleep(1)
+                return True
+            except (RuntimeError, LookupError) as err:
+                LOG.warning('%s: hover failed - %s', self, err)
+                time.sleep(0.3)
                 return False
 
-        assert driver.waitFor(lambda: _hover(), timeout_msec)
+        assert driver.waitFor(lambda: _hover(), timeout_msec), \
+            f'Failed to hover over {self} within {timeout_msec}ms'
         return self
 
     @allure.step('Right click on {0}')

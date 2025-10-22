@@ -172,8 +172,38 @@ class Message:
 
     @allure.step('Hover message')
     def hover_message(self):
-        self.delegate_button.hover()
-        return MessageQuickActions()
+        # Try to hover over delegate button if found, otherwise hover over the message object itself
+        if self.delegate_button is not None:
+            try:
+                driver.waitFor(lambda: self.delegate_button.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                # Try standard hover first
+                try:
+                    self.delegate_button.hover()
+                except AssertionError:
+                    # Fallback to native mouse move
+                    bounds = driver.object.globalBounds(self.delegate_button.object)
+                    driver.nativeMouseMove(int(bounds.x + bounds.width // 2), int(bounds.y + bounds.height // 2))
+                    time.sleep(1)  # Increased wait time
+            except LookupError:
+                # Fallback to hovering over the main message object
+                message_obj = QObject(real_name=driver.objectMap.realName(self.object))
+                bounds = driver.object.globalBounds(message_obj.object)
+                driver.nativeMouseMove(int(bounds.x + bounds.width // 2), int(bounds.y + bounds.height // 2))
+                time.sleep(1)  # Increased wait time
+        else:
+            # Hover over the main message object using native mouse move
+            message_obj = QObject(real_name=driver.objectMap.realName(self.object))
+            bounds = driver.object.globalBounds(message_obj.object)
+            driver.nativeMouseMove(int(bounds.x + bounds.width // 2), int(bounds.y + bounds.height // 2))
+            time.sleep(1)  # Increased wait time
+        
+        # Wait for quick actions to appear and be ready
+        quick_actions = MessageQuickActions()
+        # Wait for the quick actions container to be visible first
+        driver.waitFor(lambda: quick_actions.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        # Then wait for edit button specifically
+        driver.waitFor(lambda: quick_actions._edit_button.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        return quick_actions
 
     @allure.step('Get color of message background')
     def get_message_color(self) -> str:
@@ -343,6 +373,7 @@ class ChatMessagesView(QObject):
         self._message_input_area = QObject(messaging_names.inputScrollView_messageInputField_TextArea)
         self._message_field = TextEdit(messaging_names.inputScrollView_Message_PlaceholderText)
         self._emoji_button = Button(messaging_names.mainWindow_statusChatInputEmojiButton_StatusFlatRoundButton)
+        self._send_message_button = Button(messaging_names.sendMessageButton)
         self._image_button = Button(messaging_names.mainWindow_imageBtn_StatusFlatRoundButton)
         self._link_preview_title = QObject(messaging_names.mainWindow_linkPreviewTitleText_StatusBaseText)
         self._link_preview_preview_subtitle = QObject(messaging_names.mainWindow_linkPreviewSubtitleText_StatusBaseText)
@@ -408,9 +439,8 @@ class ChatMessagesView(QObject):
 
     @allure.step('Confirm sending message')
     def confirm_sending_message(self):
-        self._message_input_area.click()
-        for i in range(2):
-            driver.nativeType('<Return>')
+        self._send_message_button.click()
+        time.sleep(1)
 
     @allure.step('Click options combobox')
     def click_options(self):
@@ -464,8 +494,8 @@ class ChatMessagesView(QObject):
 
     @allure.step('Confirm sending message')
     def send_message(self):
-        for i in range(2):
-            driver.nativeType('<Return>')
+        self._send_message_button.click()
+        time.sleep(1)
 
     @allure.step('Remove member from chat')
     def remove_member_from_chat(self, member):
@@ -536,8 +566,10 @@ class MessageQuickActions(QObject):
         self._reply_button.click()
         assert self._reply_area.exists
         self._message_input_area.type_text(text)
+        time.sleep(0.5)
         for i in range(2):
             driver.nativeType('<Return>')
+            time.sleep(0.5)
 
     @allure.step('Delete button is visible')
     def is_delete_button_visible(self) -> bool:

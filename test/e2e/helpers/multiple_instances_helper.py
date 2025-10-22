@@ -2,6 +2,7 @@
 Helper functions for common operations with multiple instances.
 Reduces code duplication across test files.
 """
+import time
 import allure
 from allure_commons._allure import step
 
@@ -19,6 +20,8 @@ def switch_to_aut(aut, main_window):
     """
     aut.attach()
     main_window.prepare()
+    main_window.set_focus()  # Ensure window has focus
+    time.sleep(0.5)  # Give time for focus to be set
 
 
 @allure.step('Switch to AUT and hide main window')
@@ -32,6 +35,8 @@ def switch_to_aut_and_hide(aut, main_window):
     """
     aut.attach()
     main_window.prepare()
+    main_window.set_focus()  # Ensure window has focus before hiding
+    time.sleep(0.5)
     main_window.hide()
 
 
@@ -47,6 +52,8 @@ def authorize_user_in_aut(aut, main_window, user_account):
     """
     aut.attach()
     main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
+    main_window.set_focus()  # Ensure window has focus
+    time.sleep(0.5)
     main_window.authorize_user(user_account)
     main_window.hide()
 
@@ -65,6 +72,8 @@ def get_chat_key(aut, main_window):
     """
     aut.attach()
     main_window.prepare()
+    main_window.set_focus()  # Ensure window has focus
+    time.sleep(0.5)
     profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
     chat_key = profile_popup.copy_chat_key
     main_window.left_panel.click()
