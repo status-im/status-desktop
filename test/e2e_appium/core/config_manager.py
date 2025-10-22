@@ -1,9 +1,16 @@
-import yaml
 import json
 import os
 from pathlib import Path
-from typing import Dict, Any, List
-from .environment import EnvironmentConfig, ConfigurationError
+from typing import Any, Dict, List
+
+import yaml
+
+from .environment import (
+    ConfigurationError,
+    DeviceConfig,
+    EnvironmentConfig,
+    ProviderConfig,
+)
 
 
 class ConfigurationManager:
@@ -25,7 +32,6 @@ class ConfigurationManager:
         self._validate_schema(merged_config)
         config = self._create_config_object(merged_config)
         config.validate()
-
         return config
 
     def list_available_environments(self) -> List[str]:
@@ -34,13 +40,19 @@ class ConfigurationManager:
 
     def _load_yaml(self, file_path: Path) -> Dict[str, Any]:
         try:
-            with open(file_path, "r") as f:
-                return yaml.safe_load(f)
-        except yaml.YAMLError as e:
-            raise ConfigurationError(f"Invalid YAML in {file_path}: {e}")
+            with open(file_path, "r", encoding="utf-8") as handle:
+                return yaml.safe_load(handle) or {}
+        except yaml.YAMLError as exc:
+            raise ConfigurationError(f"Invalid YAML in {file_path}: {exc}") from exc
+        except FileNotFoundError as exc:
+            raise ConfigurationError(
+                f"Configuration file not found: {file_path}"
+            ) from exc
 
-    def _deep_merge(self, base: Dict, override: Dict) -> Dict:
-        result = base.copy()
+    def _deep_merge(
+        self, base: Dict[str, Any], override: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        result = dict(base)
 
         for key, value in override.items():
             if key == "extends":
@@ -65,28 +77,51 @@ class ConfigurationManager:
         try:
             import jsonschema
 
-            with open(schema_file, "r") as f:
-                schema = json.load(f)
+            with open(schema_file, "r", encoding="utf-8") as handle:
+                schema = json.load(handle)
             jsonschema.validate(config, schema)
         except ImportError:
-            pass
-        except (jsonschema.ValidationError, jsonschema.SchemaError) as e:
-            raise ConfigurationError(f"Configuration validation failed: {e}")
+            return
+        except (jsonschema.ValidationError, jsonschema.SchemaError) as exc:
+            raise ConfigurationError(f"Configuration validation failed: {exc}") from exc
 
     def _create_config_object(self, config: Dict[str, Any]) -> EnvironmentConfig:
-        return EnvironmentConfig(
-            environment=config["metadata"]["environment"],
-            device_name=config["device"]["name"],
-            platform_name=config["device"]["platform_name"],
-            platform_version=config["device"]["platform_version"],
-            app_source=config["app"],
-            appium_config=config["appium"],
-            capabilities=config["capabilities"],
-            timeouts=config["timeouts"],
-            directories=config["directories"],
-            logging_config=config["logging"],
-            lambdatest_config=config.get("lambdatest", {}),
+        metadata = config.get("metadata", {})
+        provider_cfg = config.get("provider", {})
+        execution = config.get("execution", {})
+        device_defaults = config.get("device_defaults", {})
+        devices_section = config.get("devices", {})
+        device_matrix = devices_section.get("matrix", [])
+
+        devices: Dict[str, DeviceConfig] = {}
+        for entry in device_matrix:
+            device_id = entry["id"]
+            devices[device_id] = DeviceConfig(
+                id=device_id,
+                display_name=entry.get("display_name"),
+                capabilities=entry.get("capabilities", {}),
+                tags=entry.get("tags", []) or [],
+                provider_overrides=entry.get("provider_overrides", {}),
+            )
+
+        env_config = EnvironmentConfig(
+            name=metadata.get("name", "unknown"),
+            description=metadata.get("description", ""),
+            provider=ProviderConfig(
+                name=provider_cfg.get("name", "local"),
+                options=provider_cfg.get("options", {}),
+            ),
+            execution=execution,
+            timeouts=config.get("timeouts", {}),
+            logging=config.get("logging", {}),
+            directories=config.get("directories", {}),
+            device_defaults=device_defaults,
+            devices=devices,
+            default_device_id=devices_section.get("default"),
+            config_root=self.config_dir.parent,
         )
+
+        return env_config
 
 
 class EnvironmentSwitcher:
@@ -103,19 +138,27 @@ class EnvironmentSwitcher:
 
         config = self.config_manager.load_environment(environment)
         os.environ["CURRENT_TEST_ENVIRONMENT"] = environment
-
         return config
 
     def auto_detect_environment(self) -> str:
-        if os.getenv("LT_USERNAME") and os.getenv("LT_ACCESS_KEY"):
-            return "lambdatest"
+        available = self.config_manager.list_available_environments()
+
+        browserstack_creds_present = bool(
+            os.getenv("BROWSERSTACK_USERNAME") and os.getenv("BROWSERSTACK_ACCESS_KEY")
+        )
+        if browserstack_creds_present and "browserstack" in available:
+            return "browserstack"
 
         try:
             import requests
 
             requests.get("http://localhost:4723/status", timeout=2)
-            return "local"
+            if "local" in available:
+                return "local"
         except Exception:
             pass
 
-        return "local"
+        if "local" in available:
+            return "local"
+
+        return available[0] if available else "local"
