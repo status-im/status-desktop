@@ -112,7 +112,7 @@ proc getPasswordStrengthScore*(self: Controller, password, userName: string): in
 proc storeToKeychain*(self: Controller, data: string) =
   let myKeyUid = singletonInstance.userProfile.getKeyUid()
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if not main_constants.SUPPORTS_FINGERPRINT or # Dealing with Keychain is the MacOS only feature
+  if not main_constants.SUPPORTS_FINGERPRINT or # Dealing with Keychain is the MacOS/iOS/Android feature
     data.len == 0 or
     value == LS_VALUE_STORE or
     myKeyUid.len == 0:
@@ -123,7 +123,7 @@ proc storeToKeychain*(self: Controller, data: string) =
 
 proc removeFromKeychain*(self: Controller, key: string) =
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if not main_constants.IS_MACOS or # Dealing with Keychain is the MacOS only feature
+  if not main_constants.SUPPORTS_FINGERPRINT or # Dealing with Keychain is the MacOS/iOS/Android feature
     key.len == 0 or
     value != LS_VALUE_STORE:
       self.delegate.onStoreToKeychainError("", "")
