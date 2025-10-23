@@ -1205,7 +1205,7 @@
     </message>
     <message>
         <source>Application Logs</source>
-        <translation>애플리케이션 로그</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Experimental features</source>
@@ -8419,8 +8419,8 @@ L2 fee: %2</source>
         <translation>지원하지 않는 이미지 형식입니다</translation>
     </message>
     <message>
-        <source>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension.</source>
-        <translation>선택한 이미지의 형식은 지원되지 않습니다. 아마도 잘못된 파일, 손상된 파일이거나 파일 확장자가 올바르지 않은 경우일 수 있습니다.</translation>
+        <source>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension. The requested file was: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Supported image extensions: %1</source>
@@ -15850,6 +15850,10 @@ to load</source>
     <message>
         <source>Format not supported.</source>
         <translation>지원되지 않는 형식입니다.</translation>
+    </message>
+    <message>
+        <source>Format not supported. File: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Upload %1 only</source>

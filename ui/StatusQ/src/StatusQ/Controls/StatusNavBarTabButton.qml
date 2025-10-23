@@ -28,7 +28,7 @@ StatusIconTabButton {
         visible: statusNavBarTabButton.hovered && !!statusTooltip.text
         delay: 50
         orientation: StatusToolTip.Orientation.Right
-        x: statusNavBarTabButton.width + 16
+        x: statusNavBarTabButton.width + Theme.padding
         y: statusNavBarTabButton.height / 2 - height / 2 + 4
     }
 

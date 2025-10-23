@@ -44,24 +44,29 @@ Item {
         nameFilters: [qsTr("Supported image formats (%1)").arg(UrlUtils.validImageNameFilters)]
         onAccepted: {
             if (fileDialog.selectedFiles.length > 0) {
-                const url = fileDialog.selectedFiles[0]
+                const url = fileDialog.selectedFile
                 if (Utils.isValidDragNDropImage(url))
                     cropImage(url)
-                else
+                else {
+                    errorDialog.fileOpened = url
                     errorDialog.open()
+                }
             }
         }
     } // FileDialog
 
     StatusDialog {
         id: errorDialog
+
+        property string fileOpened
+
         title: qsTr("Image format not supported")
         width: 480
         contentItem: ColumnLayout {
             StatusBaseText {
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
-                text: qsTr("Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension.")
+                text: qsTr("Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension. The requested file was: %1").arg(errorDialog.fileOpened)
             }
             StatusBaseText {
                 Layout.fillWidth: true

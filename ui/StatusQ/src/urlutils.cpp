@@ -1,10 +1,14 @@
 #include "StatusQ/urlutils.h"
 
+#include <QDir>
 #include <QFile>
 #include <QImageReader>
+#include <QStandardPaths>
 #include <QUrl>
 
+#ifdef Q_OS_IOS
 #include "ios_utils.h"
+#endif
 
 namespace {
 constexpr auto webpMime = "image/webp";
@@ -30,33 +34,64 @@ UrlUtils::UrlUtils(QObject *parent): QObject(parent) {
 
 bool UrlUtils::isValidImageUrl(const QUrl &url) const
 {
-    QString mimeType;
-    if (url.isLocalFile())
-        mimeType = m_mimeDb.mimeTypeForFile(url.toLocalFile(), QMimeDatabase::MatchContent).name();
-    else
-        mimeType = m_mimeDb.mimeTypeForUrl(url).name();
+    // don't convert "content:/" like URLs to an empty path
+    const auto filePath = url.isLocalFile() ? url.toLocalFile() : url.toString();
+    const auto mimeType = m_mimeDb.mimeTypeForFile(filePath, QMimeDatabase::MatchContent).name();
 
     return m_validImageMimeTypes.contains(mimeType);
 }
 
 qint64 UrlUtils::getFileSize(const QUrl& url)
 {
-    if (url.isLocalFile())
-        return QFile(url.toLocalFile()).size();
-
-    return 0;
+    // don't convert "content:/" like URLs to an empty path
+    const auto filePath = url.isLocalFile() ? url.toLocalFile() : url.toString();
+    return QFile(filePath).size(); // will return 0 for unknown file paths
 }
 
 QString UrlUtils::convertUrlToLocalPath(const QString &url) const {
+#ifdef Q_OS_ANDROID
+    return resolveAndroidContentUrl(url);
+#endif
+
     const auto localFileOrUrl = urlFromUserInput(url); // accept both "file:/foo/bar" and "/foo/bar"
     if (localFileOrUrl.isLocalFile()) {
-        #ifdef Q_OS_IOS
+#ifdef Q_OS_IOS
         return resolveIOSPhotoAsset(localFileOrUrl.toLocalFile());
-        #endif // Q_OS_IOS
+#endif
         return localFileOrUrl.toLocalFile();
     }
     return {};
 }
+
+#ifdef Q_OS_ANDROID
+QString UrlUtils::resolveAndroidContentUrl(const QString& urlPath) const {
+    // test if we already have a real (resolved) path
+    if (urlPath.startsWith('/'))
+        return urlPath;
+
+    // test if we already have a real (resolved) path in URL form
+    if (urlPath.startsWith(QStringLiteral("file:/")))
+        return urlFromUserInput(urlPath).toLocalFile();
+
+    QDir dir(urlPath);
+    if (urlPath.endsWith('/') || dir.exists())
+        return urlPath; // a directory, just return it
+
+    QFile fileIn(urlPath);
+    if (!fileIn.open(QIODevice::ReadOnly))
+        return urlPath;
+
+    // save to a temp file, and return the filepath
+    const auto newFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + '/' + QUuid::createUuid().toString(QUuid::WithoutBraces);
+    QFile fileOut(newFilePath);
+    if (!fileOut.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return urlPath;
+    if (fileOut.write(fileIn.readAll()) != -1)
+        return fileOut.fileName(); // return the real filename, not the virtual "content:/" URI
+
+    return urlPath;
+}
+#endif
 
 QStringList UrlUtils::convertUrlsToLocalPaths(const QStringList &urls) const {
     QStringList result;

@@ -8474,7 +8474,7 @@ L2 poplatek: %2</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension.</source>
+        <source>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension. The requested file was: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -15981,6 +15981,10 @@ to load</source>
     <name>StatusChatImageExtensionValidator</name>
     <message>
         <source>Format not supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format not supported. File: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

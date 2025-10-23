@@ -1,3 +1,4 @@
+import QtCore
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
@@ -933,6 +934,7 @@ QtObject {
 
                 title: qsTr("Please choose a directory")
                 modality: Qt.NonModal
+                currentFolder: StandardPaths.writableLocation(StandardPaths.PicturesLocation)
 
                 onAccepted: {
                     SystemUtils.downloadImageByUrl(imageSource, selectedFolder)

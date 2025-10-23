@@ -11,6 +11,7 @@ import shared.popups
 import shared.status
 import shared.controls
 
+import StatusQ
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Controls.Validators
@@ -93,20 +94,26 @@ SettingsContentBase {
                 anchors.right: parent.right
                 anchors.leftMargin: Theme.padding
                 anchors.rightMargin: Theme.padding
-                text: qsTr("Application Logs")
+                text: qsTr("Application Logs") + " (" + root.advancedStore.logDir() + ")"
                 font.underline: mouseArea.containsMouse
                 color: Theme.palette.primaryColor1
                 topPadding: 23
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
 
                 StatusMouseArea {
                     id: mouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        Qt.openUrlExternally(root.advancedStore.logDir())
-                    }
+                    onClicked: logsFolderDialog.open()
                 }
+            }
+
+            StatusFolderDialog {
+                id: logsFolderDialog
+                title: qsTr("Application Logs")
+                currentFolder: root.advancedStore.logDir()
             }
 
             Item {

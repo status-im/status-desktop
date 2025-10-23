@@ -21,6 +21,8 @@ import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Components
 import StatusQ.Controls as StatusQ
 
+import QtModelsToolkit
+
 Rectangle {
     id: control
     objectName: "statusChatInput"
@@ -1440,7 +1442,8 @@ Rectangle {
                                 implicitWidth: 32
                                 icon.name: "send"
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                                visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0 || !!control.paymentRequestModel
+                                visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0 ||
+                                         (!!control.paymentRequestModel && control.paymentRequestModel.ModelCount.count > 0)
                                 onClicked: {
                                     control.onKeyPress({modifiers: d.kbdModifierToSendMessage, key: Qt.Key_Return})
                                 }

@@ -25,8 +25,8 @@ ToolTip {
                             Math.max(implicitBackgroundWidth + leftInset + rightInset,
                                      implicitContentWidth + leftPadding + rightPadding)
                             )
-    padding: Theme.halfPadding
-    horizontalPadding: padding + 4
+    horizontalPadding: Theme.padding
+    verticalPadding: Theme.halfPadding
     margins: Theme.halfPadding
     delay: Utils.isMobile ? Application.styleHints.mousePressAndHoldInterval
                           : 200
@@ -43,8 +43,8 @@ ToolTip {
         Rectangle {
             id: arrow
             color: statusToolTipContentBackground.color
-            height: 20
-            width: 20
+            height: Theme.padding
+            width: Theme.padding
             rotation: 45
             radius: 1
             x: {
@@ -52,10 +52,10 @@ ToolTip {
                     return statusToolTipBackground.width / 2 - width / 2 + offset
                 }
                 if (orientation === StatusToolTip.Orientation.Left) {
-                    return statusToolTipContentBackground.width - (width / 2) - root.padding + offset
+                    return statusToolTipContentBackground.width - statusToolTipContentBackground.radius - radius*2 + offset
                 }
                 if (orientation === StatusToolTip.Orientation.Right) {
-                    return -width/2 + root.padding + offset
+                    return -width/2 + radius*2 + offset
                 }
             }
             y: {
