@@ -61,7 +61,7 @@ QtObject:
     read = getIsKeycardUser
 
   proc getUsingBiometricLogin*(self: UserProfile): bool {.slot.} =
-    if(not main_constants.IS_MACOS):
+    if(not main_constants.SUPPORTS_FINGERPRINT):
       return false
     return self.localAccountSettings.getStoreToKeychainValue() == LS_VALUE_STORE
   QtProperty[bool] usingBiometricLogin:
