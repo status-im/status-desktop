@@ -1,0 +1,6 @@
+module DAppBrowserCore
+
+ConnectorBridge 1.0 qml/ConnectorBridge.qml
+ConnectorManager 1.0 qml/ConnectorManager.qml
+Eip1193ProviderAdapter 1.0 qml/Eip1193ProviderAdapter.qml
+singleton Utils 1.0 qml/Utils.js
