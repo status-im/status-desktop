@@ -17,7 +17,7 @@ OnboardingStackView {
     initialItem: LoginBySyncingPage {
         validateConnectionString: root.validateConnectionString
 
-        onSyncProceedWithConnectionString: {
+        onSyncProceedWithConnectionString: (connectionString) => {
             root.syncProceedWithConnectionString(connectionString)
             root.push(syncProgressPage)
         }

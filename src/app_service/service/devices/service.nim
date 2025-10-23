@@ -1,4 +1,4 @@
-import nimqml, json, sequtils, system, chronicles, uuids
+import nimqml, json, sequtils, system, chronicles, uuids, strutils
 
 import std/os
 
@@ -172,14 +172,22 @@ QtObject:
   #
 
   proc inputConnectionStringForBootstrappingFinished*(self: Service, responseJson: string) {.slot.} =
-    var currentError = ""
-    if self.localPairingStatus.state == LocalPairingState.Error:
-      # The error was already returned by an event, keep it to reuse
-      currentError = self.localPairingStatus.error
+    try:
+      var currentError = ""
+      if self.localPairingStatus.state == LocalPairingState.Error:
+        # The error was already returned by an event, keep it to reuse
+        currentError = self.localPairingStatus.error
 
-    let response = responseJson.parseJson
-    let errorDescription = response["error"].getStr
-    if len(errorDescription) == 0:
+      let response = responseJson.parseJson
+
+      if response["error"].kind != JNull:
+        var errorDescription = response["error"].getStr
+        if len(errorDescription) == 0:
+          # Error is not a string
+          error "non-string error during inputConnectionStringForBootstrappingFinished", error = response["error"]
+          errorDescription = "error occurred"
+        raise newException(CatchableError, errorDescription)
+
       var installation = InstallationDto()
       installation.id = response["installationId"].getStr # Set the installation with the ID (only info we have for now)
       let data = LocalPairingEventArgs(
@@ -190,15 +198,16 @@ QtObject:
         error: currentError,
       )
       self.updateLocalPairingStatus(data)
-      return
-    error "failed to start bootstrapping device", errorDescription
-    let data = LocalPairingEventArgs(
-      eventType: EventConnectionError,
-      action: ActionUnknown,
-      accountData: LocalPairingAccountData(),
-      error: errorDescription,
-    )
-    self.updateLocalPairingStatus(data)
+
+    except Exception as e:
+      error "failed to start bootstrapping device", error = e.msg
+      let data = LocalPairingEventArgs(
+        eventType: EventConnectionError,
+        action: ActionUnknown,
+        accountData: LocalPairingAccountData(),
+        error: e.msg,
+      )
+      self.updateLocalPairingStatus(data)
 
   proc validateConnectionString*(self: Service, connectionString: string): string =
     if connectionString.len == 0:
@@ -230,6 +239,7 @@ QtObject:
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string) =
+
     let configJSON = %* {
       "receiverConfig": %* {
         "createAccount": %*accounts_service.defaultCreateAccountRequest(),
@@ -237,7 +247,6 @@ QtObject:
       "clientConfig": %* {}
     }
     self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
-
     let arg = AsyncInputConnectionStringArg(
       tptr: asyncInputConnectionStringTask,
       vptr: cast[uint](self.vptr),
@@ -246,6 +255,7 @@ QtObject:
       configJSON: $configJSON
     )
     self.threadpool.start(arg)
+
 
   proc validateKeyUids*(self: Service, keyUids: seq[string], validateForExport: bool): tuple[finalKeyUids: seq[string], err: string] =
     if keyUids.len > 0:
