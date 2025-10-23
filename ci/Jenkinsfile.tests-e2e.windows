@@ -233,7 +233,9 @@ pipeline {
 
 def setNewBuildName() {
   def prMatch = params.BUILD_SOURCE =~ /PR-(\d+)/
-  currentBuild.displayName = "PR${prMatch[0][1]}"
+  if (prMatch) {
+    currentBuild.displayName = "PR${prMatch[0][1]}"
+  }
 }
 
 def setBuildDescFromFile(fileNameOrPath) {
