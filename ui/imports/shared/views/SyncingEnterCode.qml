@@ -81,7 +81,7 @@ ColumnLayout {
                         validate: root.validateConnectionString
                     }
                 ]
-                onConnectionStringFound: {
+                onConnectionStringFound: connectionString => {
                     root.proceed(connectionString)
                 }
             }

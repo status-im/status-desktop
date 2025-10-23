@@ -26,7 +26,7 @@ proc asyncLoadDevicesTask(argEncoded: string) {.gcsafe, nimcall.} =
 proc asyncInputConnectionStringTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncInputConnectionStringArg](argEncoded)
   try:
-    let response = status_go.inputConnectionStringForBootstrapping(arg.connectionString, arg.configJSON)
+    let response = status_go.inputConnectionStringForBootstrapping(arg.connectionString, arg.configJSON.replace("\\", "\\\\"))
     arg.finish(response)
   except Exception as e:
     arg.finish(%* {
