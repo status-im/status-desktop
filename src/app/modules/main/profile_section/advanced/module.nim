@@ -63,7 +63,7 @@ method onFleetSet*(self: Module) =
   quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
 method getLogDir*(self: Module): string =
-  return url_fromLocalFile(constants.LOGDIR)
+  return constants.LOGDIR
 
 method getWakuV2LightClientEnabled*(self: Module): bool =
   return self.controller.getWakuV2LightClientEnabled()

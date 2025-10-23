@@ -40,4 +40,8 @@ private:
     // ["jpg", "jpe", "jp", "jpeg", "png", "webp", "gif", "svg"]
     QStringList m_allImgExtensions;
     QStringList allValidImageExtensions() const { return m_allImgExtensions; }
+
+#ifdef Q_OS_ANDROID
+    QString resolveAndroidContentUrl(const QString& urlPath) const;
+#endif
 };

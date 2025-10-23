@@ -10311,9 +10311,9 @@
       <translation>Image format not supported</translation>
     </message>
     <message>
-      <source>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension.</source>
+      <source>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension. The requested file was: %1</source>
       <comment>ImageCropWorkflow</comment>
-      <translation>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension.</translation>
+      <translation>Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension. The requested file was: %1</translation>
     </message>
     <message>
       <source>Supported image extensions: %1</source>
@@ -19372,6 +19372,11 @@
       <source>Format not supported.</source>
       <comment>StatusChatImageExtensionValidator</comment>
       <translation>Format not supported.</translation>
+    </message>
+    <message>
+      <source>Format not supported. File: %1</source>
+      <comment>StatusChatImageExtensionValidator</comment>
+      <translation>Format not supported. File: %1</translation>
     </message>
     <message>
       <source>Upload %1 only</source>

@@ -257,6 +257,13 @@ Page {
         onClicked: onboardingFlow.popTopLevelItem()
     }
 
+    Keys.onPressed: function(e) {
+        if (e.key === Qt.Key_Back && backButton.visible) {
+            e.accepted = true
+            onboardingFlow.popTopLevelItem()
+        }
+    }
+
     Connections {
         target: onboardingFlow.topLevelItem
         ignoreUnknownSignals: true

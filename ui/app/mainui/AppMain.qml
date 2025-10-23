@@ -827,7 +827,7 @@ Item {
         id: d
 
         readonly property int activeSectionType: appMain.rootStore.activeSectionType
-        readonly property bool isBrowserEnabled: featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
+        readonly property bool isBrowserEnabled: appMain.featureFlagsStore.browserEnabled && localAccountSensitiveSettings.isBrowserEnabled
 
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)

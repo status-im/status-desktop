@@ -18,7 +18,9 @@ QObject {
     property alias currentFolder: dlg.currentFolder
 
     property string picturesShortcut: Utils.isIOS ? "assets-library://" :
-                            StandardPaths.writableLocation(StandardPaths.PicturesLocation)
+                            d.standardPictureLocations.length > 1 ? d.standardPictureLocations[1] // [0] is writable, don't need it here, we have StatusSaveFileDialog for that
+                                                                  : d.standardPictureLocations.length > 0 ? d.standardPictureLocations[0]
+                                                                                                          : ""
 
     signal accepted
     signal rejected
@@ -33,6 +35,9 @@ QObject {
 
     QtObject {
         id: d
+
+        readonly property list<url> standardPictureLocations: StandardPaths.standardLocations(StandardPaths.PicturesLocation)
+
         readonly property url resolvedFile: resolveFile(dlg.selectedFile)
         readonly property var resolvedFiles: resolveSelectedFiles(dlg.selectedFiles)
 
@@ -45,6 +50,7 @@ QObject {
                 resolvedLocalFile = "file:" + resolvedLocalFile
             return resolvedLocalFile
         }
+
         function resolveSelectedFiles(selectedFiles) {
             if (selectedFiles.length === 0)
                 return []

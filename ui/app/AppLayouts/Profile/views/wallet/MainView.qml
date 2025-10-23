@@ -150,7 +150,7 @@ Column {
             id: accountOrderBetaTag
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: accountOrderItem.statusListItemTitle.width + parent.leftPadding
+            anchors.leftMargin: accountOrderItem.statusListItemTitle.width + parent.leftPadding + Theme.bigPadding
             tooltipText: qsTr("Under construction, you might experience some minor issues")
             cursorShape: Qt.PointingHandCursor
         }
@@ -177,7 +177,7 @@ Column {
             id: manageTokensBetaTag
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: manageTokensItem.statusListItemTitle.width + parent.leftPadding
+            anchors.leftMargin: manageTokensItem.statusListItemTitle.width + parent.leftPadding + Theme.bigPadding
             tooltipText: qsTr("Under construction, you might experience some minor issues")
             cursorShape: Qt.PointingHandCursor
         }

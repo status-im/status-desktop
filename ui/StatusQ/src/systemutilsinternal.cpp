@@ -1,23 +1,21 @@
-#ifdef Q_OS_ANDROID
-#include <QJniObject>
-#include <QtCore/qnativeinterface.h>
-#endif
 #include "StatusQ/systemutilsinternal.h"
 
-#include <QDir>
 #include <QGuiApplication>
 #include <QMimeDatabase>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QProcess>
 #include <QSaveFile>
+#include <QStandardPaths>
 
 #ifdef Q_OS_ANDROID
 #include <QJniObject>
 #include <QtCore/qnativeinterface.h>
 #endif
 
+#ifdef Q_OS_IOS
 #include "ios_utils.h"
+#endif
 
 class QuitFilter : public QObject
 {
@@ -26,7 +24,7 @@ class QuitFilter : public QObject
 public:
     using QObject::QObject;
 
-    bool eventFilter(QObject* obj, QEvent* ev)
+    bool eventFilter(QObject* obj, QEvent* ev) override
     {
         if (ev->type() == QEvent::Quit)
             emit quit(ev->spontaneous());
@@ -60,15 +58,8 @@ void SystemUtilsInternal::restartApplication() const
     QMetaObject::invokeMethod(QCoreApplication::instance(), &QCoreApplication::exit, Qt::QueuedConnection, EXIT_SUCCESS);
 }
 
-#if defined(Q_OS_IOS)
-void save(const QByteArray& imageData)
-{
-    saveImageToPhotosAlbum(imageData);
-}
-#else
 void save(const QByteArray& imageData, const QString& targetDir)
 {
-
     // Get current Date/Time information to use in naming of the image file
     const auto dateTimeString = QDateTime::currentDateTime().toString(
                 QStringLiteral("dd-MM-yyyy_hh-mm-ss"));
@@ -99,7 +90,6 @@ void save(const QByteArray& imageData, const QString& targetDir)
                         "Downloading image failed while saving to file:"
                     << targetFile;
 }
-#endif
 
 void SystemUtilsInternal::downloadImageByUrl(
         const QUrl& url, const QString& path) const
@@ -110,10 +100,15 @@ void SystemUtilsInternal::downloadImageByUrl(
     QNetworkReply *reply = manager.get(QNetworkRequest(url));
 
     // accept both "file:/foo/bar" and "/foo/bar"
-    auto targetDir = QUrl::fromUserInput(path).toLocalFile();
+    auto targetDir = QUrl::fromUserInput(path)
+#ifndef Q_OS_ANDROID
+                         .toLocalFile();
+#else
+                         .toString(); // don't touch the "content://" URI
+#endif
 
     if (targetDir.isEmpty())
-        targetDir = QDir::homePath();
+        targetDir = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
 
     QObject::connect(reply, &QNetworkReply::finished, this, [reply, targetDir] {
         if(reply->error() != QNetworkReply::NoError) {
@@ -125,11 +120,11 @@ void SystemUtilsInternal::downloadImageByUrl(
         // Extract the image data to be able to load and save it
         const auto btArray = reply->readAll();
         Q_ASSERT(!btArray.isEmpty());
-        #ifdef Q_OS_IOS
-        save(btArray);
-        #else
+#ifdef Q_OS_IOS
+        saveImageToPhotosAlbum(btArray);
+#else
         save(btArray, targetDir);
-        #endif
+#endif
     });
 }
 

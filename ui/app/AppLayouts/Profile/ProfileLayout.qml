@@ -150,7 +150,7 @@ StatusSectionLayout {
         id: settingsEntriesModel
 
         showWalletEntries: root.walletStore.isWalletEnabled
-        showBrowserEntries: root.isBrowserEnabled
+        showBrowserEntries: root.isBrowserEnabled && localAccountSensitiveSettings.isBrowserEnabled
         showBackUpSeed: !root.privacyStore.mnemonicBackedUp
         backUpSeedBadgeCount: root.profileStore.userDeclinedBackupBanner ? 0 : showBackUpSeed
         isKeycardEnabled: root.isKeycardEnabled

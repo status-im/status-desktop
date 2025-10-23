@@ -217,7 +217,7 @@ SortFilterProxyModel {
                     case Constants.settingsSubsection.ensUsernames:
                     case Constants.settingsSubsection.wallet:
                         return root.showWalletEntries
-                    case Constants.settingsSubsection.browser:
+                    case Constants.settingsSubsection.browserSettings:
                         return root.showBrowserEntries
                     case Constants.settingsSubsection.backUpSeed:
                         return root.showBackUpSeed

@@ -19,8 +19,10 @@
     <uses-feature android:name="android.hardware.fingerprint" android:required="false" />
 
     <!-- dangerous permissions -->
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -36,7 +38,6 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.AppSplash"
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:hasFragileUserData="true"
         android:fullBackupOnly="false">

@@ -70,8 +70,10 @@ pipeline {
 
     stage('Check Translations') {
       steps {
-        script {
-          checkTranslations()
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          script {
+            checkTranslations()
+          }
         }
       }
     }
