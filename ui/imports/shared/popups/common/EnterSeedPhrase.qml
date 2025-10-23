@@ -50,7 +50,7 @@ ColumnLayout {
             const valid = root.store.validSeedPhrase(seedPhraseStr)
 
             if (valid)
-                root.store.changeSeedPhrase(seedPhrase)
+                root.store.changeSeedPhrase(seedPhraseStr)
 
             root.store.enteredSeedPhraseIsValid = valid
 
