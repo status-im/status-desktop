@@ -1,0 +1,55 @@
+function accountsDidChange(oldAccounts, newAccounts) {
+    const a = oldAccounts || []
+    const b = newAccounts || []
+    
+    if (a.length !== b.length) return true
+    
+    const setA = new Set(a.map(addr => addr.toLowerCase()))
+    const setB = new Set(b.map(addr => addr.toLowerCase()))
+    
+    return setA.size !== setB.size || ![...setA].every(addr => setB.has(addr))
+}
+
+function normalizeOrigin(url) {
+    if (!url) return ""
+    let normalized = url.toString()
+    // Remove trailing slash from origin
+    if (normalized.endsWith("/")) {
+        normalized = normalized.slice(0, -1)
+    }
+    return normalized
+}
+
+// Convert decimal chainId to hex string (e.g., 1 -> "0x1", 137 -> "0x89")
+function chainIdToHex(chainIdDecimal) {
+    if (typeof chainIdDecimal !== "number" || chainIdDecimal < 0) {
+        console.error("[Utils] Invalid chainId:", chainIdDecimal)
+        return "0x1"  // Default to Mainnet
+    }
+    return "0x" + chainIdDecimal.toString(16)
+}
+
+// Parse chainId from any format (hex string or decimal) to decimal number
+function parseChainId(chainId) {
+    if (typeof chainId === "number") {
+        return chainId
+    }
+    if (typeof chainId === "string") {
+        if (chainId.startsWith("0x")) {
+            return parseInt(chainId, 16)
+        }
+        return parseInt(chainId, 10)
+    }
+    return 1  // Default to Mainnet
+}
+
+// Extract domain name from URL string
+function extractDomainName(urlString) {
+    try {
+        const urlObj = new URL(urlString)
+        return urlObj.hostname || "Unknown dApp"
+    } catch (e) {
+        return "Unknown dApp"
+    }
+}
+

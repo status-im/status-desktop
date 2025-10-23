@@ -1,9 +1,7 @@
 "use strict";
 
 // IIFE start (https://developer.mozilla.org/ru/docs/Glossary/IIFE)
-// Guard against multiple script loads
 const EthereumWrapper = (function() {
-    // If already loaded, return existing instance
     if (window.__ETHEREUM_WRAPPER_INSTANCE__) {
         return window.__ETHEREUM_WRAPPER_INSTANCE__;
     }
@@ -29,7 +27,9 @@ const EthereumWrapper = (function() {
             // Set up EIP-1193 properties
             this.isStatus = true;
             this.isMetaMask = false;
-            this.chainId = null;  // Will be set on first eth_chainId request or chainChanged event
+            this.chainId = null;  // Will be set on first eth_chainId request or providerStateChanged event
+            this.networkVersion = null;  // decimal string format (deprecated)
+            this.selectedAddress = null;  // current active address
             this._connected = false;
         }
 
@@ -45,15 +45,10 @@ const EthereumWrapper = (function() {
 
         _wireSignals() {
             this._connectSignal('connectEvent', (info) => {
-                this._connected = true;
-                if (info && info.chainId) {
-                    this.chainId = info.chainId;
-                }
                 this._emit('connect', info);
             });
 
             this._connectSignal('disconnectEvent', (error) => {
-                this._connected = false;
                 this._emit('disconnect', error);
             });
 
@@ -62,7 +57,6 @@ const EthereumWrapper = (function() {
             });
 
             this._connectSignal('chainChangedEvent', (chainId) => {
-                this.chainId = chainId;
                 this._emit('chainChanged', chainId);
             });
 
@@ -70,15 +64,16 @@ const EthereumWrapper = (function() {
                 this._emit('accountsChanged', accounts);
             });
 
-            const hasAsyncEvents = this._connectSignal('requestCompletedEvent', 
-                this.handleRequestCompleted.bind(this)
-            );
-            
-            if (!hasAsyncEvents) {
-                console.warn('[Ethereum Wrapper] requestCompletedEvent not available on native provider');
-            }
-            
-            this._hasAsyncEvents = hasAsyncEvents;
+            // Provider state changed - update all properties at once
+            this._connectSignal('providerStateChanged', () => {
+                this.chainId = this.nativeEthereum.chainId || this.chainId;
+                this.networkVersion = this.nativeEthereum.networkVersion || this.networkVersion;
+                this.selectedAddress = this.nativeEthereum.selectedAddress || null;
+                this._connected = this.nativeEthereum.connected !== undefined ? this.nativeEthereum.connected : this._connected;
+            });
+
+            // Handle async RPC responses
+            this._connectSignal('requestCompletedEvent', this.handleRequestCompleted.bind(this));
         }
 
         _emit(event, ...args) {
@@ -91,6 +86,10 @@ const EthereumWrapper = (function() {
                     console.error("[Ethereum Wrapper] handler error", e); 
                 }
             }
+        }
+
+        isConnected() {
+            return this._connected;
         }
 
         request(args) {
@@ -108,21 +107,13 @@ const EthereumWrapper = (function() {
                     if (nativeResp && typeof nativeResp === 'object' && nativeResp.error) {
                         this.pendingRequests.delete(requestId);
                         reject(nativeResp.error);
-                    } else if (nativeResp && nativeResp.result !== undefined && !this._hasAsyncEvents) {
-                        this.pendingRequests.delete(requestId);
-                        resolve(nativeResp.result);
                     }
+                    // Response will come via requestCompletedEvent
                 } catch (e) {
                     this.pendingRequests.delete(requestId);
                     reject(e);
                 }
             });
-        }
-
-        _updateStateFromResponse(method, result) {
-            if (method === 'eth_chainId' && result && this.chainId !== result) {
-                this.chainId = result;
-            }
         }
 
         _processResponse(resp, method, entry) {
@@ -139,7 +130,6 @@ const EthereumWrapper = (function() {
             if (resp && resp.error) {
                 entry.reject(resp.error);
             } else if (resp && resp.result !== undefined) {
-                this._updateStateFromResponse(method, resp.result);
                 entry.resolve(resp.result);
             } else {
                 entry.resolve(resp);
