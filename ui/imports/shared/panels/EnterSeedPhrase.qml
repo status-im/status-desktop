@@ -170,7 +170,7 @@ Control {
         onWordSelected: word => {
             inputModel.setEntry(d.currentIndex, word, true)
 
-            // don't loos focust on the list entry, close suggestions
+            // don't lose focus on the list entry, close suggestions
             if (d.currentIndex === repeater.count - 1) {
                 d.filteringPrefix = ""
                 return
@@ -300,27 +300,24 @@ Control {
                     }
 
                     onAccepted: {
-                        if (suggestionsModel.count === 0) {
-                            // for last entry accepting closes suggestions therefore
-                            // it's possible to have no suggestions and valid text
-                            // entered. For that reason extra check in dictionary is
-                            // is needed
-                            if (text && !d.isInDictionary(text))
-                                inputModel.setEntry(index, text, false)
-
-                            const isTheSame = model.currentPhrase
-                                            === model.committedValidPhrase
-
-                            if (root.seedPhraseIsValid && isTheSame)
-                                root.seedPhraseAccepted()
-
+                        // do nothing if word is empty
+                        if (!text)
                             return
-                        }
 
-                        inputModel.setEntry(index, suggestionsModel.takeFirst(), true)
+                        // auto-fill with suggestion or accept whatever is provided
+                        if (suggestionsModel.count)
+                            inputModel.setEntry(index, suggestionsModel.takeFirst(), true)
+                        else
+                            inputModel.setEntry(index, text, d.isInDictionary(text))
 
                         // close suggestions bar
                         d.filteringPrefix = ""
+
+                        // if all words are from dictionary, accept the entire seed phrase
+                        if (root.seedPhraseIsValid) {
+                            root.seedPhraseAccepted()
+                            return
+                        }
 
                         // don't pass focus to next item in the chain in case of last item
                         if (index === repeater.count - 1)
