@@ -234,11 +234,13 @@ ifeq ($(mkspecs),macx)
 endif
 
 ifeq ($(USE_NWAKU), true)
-	STATUSGO_MAKE_PARAMS += USE_NWAKU=true
-	LIBWAKU := vendor/status-go/vendor/github.com/waku-org/waku-go-bindings/third_party/nwaku/build/libwaku.$(LIB_EXT)
-	LIBWAKU_LIBDIR := $(shell pwd)/$(shell dirname "$(LIBWAKU)")
-	export LIBWAKU
-	NIM_EXTRA_PARAMS +=	--passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
+    ifndef NWAKU_SOURCE_DIR
+        $(error NWAKU_SOURCE_DIR must be set when USE_NWAKU is true)
+    endif
+    STATUSGO_MAKE_PARAMS += USE_NWAKU=true NWAKU_SOURCE_DIR="$(NWAKU_SOURCE_DIR)"
+    LIBWAKU := $(NWAKU_SOURCE_DIR)/build/libwaku.$(LIB_EXT)
+    LIBWAKU_LIBDIR := $(NWAKU_SOURCE_DIR)/build
+    NIM_EXTRA_PARAMS += --passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
 endif
 
 INCLUDE_DEBUG_SYMBOLS ?= false
@@ -459,6 +461,26 @@ dotherside-clean:
 dotherside: | dotherside-build
 
 ##
+##  nwaku
+##
+
+$(LIBWAKU):
+ifeq ($(USE_NWAKU),true)
+	echo -e "\033[92mBuilding:\033[39m nwaku"
+	+ $(MAKE) -C $(NWAKU_SOURCE_DIR) libwaku $(HANDLE_OUTPUT)
+endif
+
+nwaku: $(LIBWAKU)
+
+clean-nwaku:
+	echo -e "\033[92mCleaning:\033[39m nwaku"
+	rm -f $(LIBWAKU)
+
+clone-nwaku:
+	echo -e "\033[92mCloning:\033[39m nwaku"
+	+ $(MAKE) -C vendor/status-go clone-nwaku NWAKU_SOURCE_DIR="$(NWAKU_SOURCE_DIR)" $(HANDLE_OUTPUT)
+
+##
 ##	status-go
 ##
 
@@ -469,10 +491,10 @@ export STATUSGO_LIBDIR
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
-	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
+	$(STATUSGO_MAKE_PARAMS) $(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
 		SENTRY_CONTEXT_NAME="status-desktop" \
 		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
-		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
+		 $(HANDLE_OUTPUT)
 
 status-go: $(STATUSGO)
 
