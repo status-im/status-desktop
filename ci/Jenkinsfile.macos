@@ -133,16 +133,10 @@ pipeline {
       }
     }
 
-    stage('Clone nwaku') {
-      when { expression { params.USE_NWAKU == true } }
-      steps {
-        sh 'make clone-nwaku NWAKU_SOURCE_DIR="${NWAKU_SOURCE_DIR}"'
-      }
-    }
-
     stage('nwaku') {
       when { expression { params.USE_NWAKU == true } }
       steps {
+        sh 'make clone-nwaku NWAKU_SOURCE_DIR="${NWAKU_SOURCE_DIR}"'
         sh 'make nwaku'
       }
     }
