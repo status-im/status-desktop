@@ -3,7 +3,11 @@ package app.status.mobile;
 import org.qtproject.qt.android.bindings.QtActivity;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class StatusQtActivity extends QtActivity {

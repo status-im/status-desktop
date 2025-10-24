@@ -70,6 +70,7 @@ StatusModal {
     headerSettings.title: replaceLoader.item && typeof(replaceLoader.item.title) != "undefined"
                                                 ? replaceLoader.item.title : stackTitle
     padding: Theme.padding
+    fullScreenSheet: false
 
     leftButtons: [ backButton ]
 

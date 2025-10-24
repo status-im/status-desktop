@@ -51,7 +51,6 @@ StatusModal {
         id: scrollView
 
         anchors.fill: parent
-        padding: 0
         contentWidth: availableWidth
 
         Item {

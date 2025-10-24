@@ -188,7 +188,8 @@ StatusDialog {
     signal editButtonClicked()
     signal headerImageClicked()
 
-    fullScreenSheet: hasCloseButton
+    // Simple popups for now. The complex ones need more work
+    fullScreenSheet: hasCloseButton && !showAdvancedHeader
 
     width: 480
 

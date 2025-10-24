@@ -49,6 +49,7 @@ StatusWindow {
     readonly property UtilsStore utilsStore: UtilsStore {}
     readonly property LanguageStore languageStore: LanguageStore {}
     readonly property bool appThemeDark: Theme.isDarkTheme
+    readonly property bool portraitLayout: height > width
     property bool biometricFlowPending: false
 
     objectName: "mainWindow"
@@ -141,6 +142,13 @@ StatusWindow {
 
     onXChanged: Qt.callLater(storeAppState)
     onYChanged: Qt.callLater(storeAppState)
+    onPortraitLayoutChanged: {
+        // Android looses status bar icon color when switching orientation
+        if (SQUtils.Utils.isAndroid) {
+            SystemUtils.setAndroidStatusBarIconColor(applicationWindow.appThemeDark)
+        }
+    }
+
     onWidthChanged: {
         updatePaddings()
         Qt.callLater(storeAppState)

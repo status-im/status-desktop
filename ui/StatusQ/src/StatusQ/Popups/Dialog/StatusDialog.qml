@@ -132,7 +132,7 @@ Dialog {
     }
 
     Binding on y {
-        when: root.bottomSheet && !enterTransition.running
+        when: root.bottomSheet && !enterTransition.running && !root.fullScreenSheet
         value: root.desiredY
     }
 
