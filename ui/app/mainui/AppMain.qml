@@ -1179,7 +1179,8 @@ Item {
         sourceComponent: StatusEmojiPopup {
             directParent: appMain.Window.window.contentItem
             height: 440
-            settings: appMainLocalSettings
+            recentEmojis: appMainLocalSettings.recentEmojis
+            skinColor: appMainLocalSettings.skinColor
             emojiModel: SQUtils.Emoji.emojiModel
         }
     }

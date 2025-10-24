@@ -19,7 +19,8 @@ StatusDropdown {
     id: root
 
     required property StatusEmojiModel emojiModel
-    required property var settings
+    required property var recentEmojis
+    required property string skinColor
 
     property alias searchString: searchBox.text
     property string emojiSize: ""
@@ -48,7 +49,7 @@ StatusDropdown {
     }
 
     Component.onCompleted: {
-        root.emojiModel.recentEmojis = settings.recentEmojis
+        root.emojiModel.recentEmojis = root.recentEmojis
     }
 
     onOpened: {
@@ -60,7 +61,7 @@ StatusDropdown {
     onClosed: {
         const recent = root.emojiModel.recentEmojis
         if (recent.length)
-            settings.recentEmojis = recent
+            root.recentEmojis = recent
         searchBox.text = ""
         root.emojiSize = ""
         skinToneEmoji.expandSkinColorOptions = false
@@ -98,7 +99,7 @@ StatusDropdown {
                         roleName: "skinColor"
                         value: root.emojiModel.baseSkinColorName
                     }
-                    enabled: settings.skinColor === ""
+                    enabled: root.skinColor === ""
                 },
                 AnyOf {
                     ValueFilter {
@@ -107,9 +108,9 @@ StatusDropdown {
                     }
                     ValueFilter {
                         roleName: "skinColor"
-                        value: settings.skinColor
+                        value: root.skinColor
                     }
-                    enabled: settings.skinColor !== ""
+                    enabled: root.skinColor !== ""
                 }
             ]
 
@@ -165,7 +166,7 @@ StatusDropdown {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
                             onClicked: {
-                                settings.skinColor = (index === 5) ? "" : modelData.split("-")[1];
+                                root.skinColor = (index === 5) ? "" : modelData.split("-")[1];
                                 skinToneEmoji.expandSkinColorOptions = false;
                             }
                         }
@@ -180,7 +181,7 @@ StatusDropdown {
                 anchors.right: parent.right
                 anchors.rightMargin: d.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
-                emojiId: "1f590" + ((settings.skinColor !== "" && visible) ? ("-" + settings.skinColor) : "")
+                emojiId: "1f590" + ((root.skinColor !== "" && visible) ? ("-" + root.skinColor) : "")
                 StatusMouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent
