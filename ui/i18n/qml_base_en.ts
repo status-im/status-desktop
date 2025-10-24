@@ -6732,6 +6732,36 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
 </context>
 <context>
+    <name>EnableBiometricsPopup</name>
+    <message>
+        <source>Enable biometrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maybe later</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes, use biometrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EnableBiometricsPopupHandler</name>
+    <message>
+        <source>Biometric login and transaction authentication enabled for this device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Biometric setup failed. Try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EnableFullMessageHistoryPopup</name>
     <message>
         <source>Enable full message history</source>

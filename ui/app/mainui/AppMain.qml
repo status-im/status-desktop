@@ -139,6 +139,10 @@ Item {
 
     required property bool isCentralizedMetricsEnabled
 
+    function showEnableBiometricsFlow() {
+        popupRequestsHandler.enableBiometricsPopupHandler.openPopup()
+    }
+
     AllContactsAdaptor {
         id: allContacsAdaptor
 
@@ -933,6 +937,7 @@ Item {
         rootChatStore: appMain.rootChatStore
         ensUsernamesStore: appMain.ensUsernamesStore
         privacyStore: appMain.privacyStore
+        keychain: appMain.keychain
     }
 
     Connections {

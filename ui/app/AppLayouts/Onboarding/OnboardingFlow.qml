@@ -80,6 +80,8 @@ OnboardingStackView {
     required property bool thirdpartyServicesEnabled
     signal toggleThirdpartyServicesEnabledRequested()
 
+    signal skippedBiometricFlow()
+
     function restart() {
         replace(null, loginAccountsModel.ModelCount.empty ? welcomePage : loginScreenComponent)
     }
@@ -104,6 +106,12 @@ OnboardingStackView {
         }
 
         function pushOrSkipBiometricsPage() {
+            if (d.flow === Onboarding.OnboardingFlow.LoginWithSyncing) {
+                root.skippedBiometricFlow()
+                root.finished(d.flow)
+                return
+            }
+
             if (root.biometricsAvailable) {
                 root.replace(null, enableBiometricsPage)
             } else {
