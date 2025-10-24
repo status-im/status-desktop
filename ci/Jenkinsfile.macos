@@ -82,6 +82,8 @@ pipeline {
     QML_DISABLE_DISK_CACHE = "true"
     /* Set USE_NWAKU before VERSION since version.sh uses it */
     USE_NWAKU = "${params.USE_NWAKU}"
+    /* nwaku source directory */
+    NWAKU_SOURCE_DIR = "${WORKSPACE}/../nwaku"
     /* Controls the App version in Settings */
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     /* Control output the filename */
@@ -107,6 +109,8 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+        // Clean up any existing nwaku directory
+        sh "rm -rf ${NWAKU_SOURCE_DIR} || true"
       }
     }
     stage('Fetch submodules') {
@@ -126,6 +130,13 @@ pipeline {
         ]) {
           sh 'make deps'
         }
+      }
+    }
+
+    stage('Clone nwaku') {
+      when { expression { params.USE_NWAKU == true } }
+      steps {
+        sh 'make clone-nwaku NWAKU_SOURCE_DIR="${NWAKU_SOURCE_DIR}"'
       }
     }
 
@@ -174,7 +185,10 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup { cleanWs(disableDeferredWipeout: true) }
+    cleanup { 
+      cleanWs(disableDeferredWipeout: true)
+      sh "rm -rf ${env.NWAKU_SOURCE_DIR} || true"
+    }
   }
 }
 
