@@ -50,7 +50,6 @@ type
     DeletedByContactIcon
     Links
     LinkPreviewModel
-    DefaultEmojiReactionsModel
     TransactionParameters
     MentionedUsersPks
     SenderTrustStatus
@@ -161,7 +160,6 @@ QtObject:
       ModelRole.DeletedByContactIcon.int: "deletedByContactIcon",
       ModelRole.Links.int: "links",
       ModelRole.LinkPreviewModel.int: "linkPreviewModel",
-      ModelRole.DefaultEmojiReactionsModel.int: "defaultEmojiReactionsModel",
       ModelRole.TransactionParameters.int: "transactionParameters",
       ModelRole.MentionedUsersPks.int: "mentionedUsersPks",
       ModelRole.SenderTrustStatus.int: "senderTrustStatus",
@@ -331,8 +329,6 @@ QtObject:
       result = newQVariant(item.links.join(" "))
     of ModelRole.LinkPreviewModel:
       result = newQVariant(item.linkPreviewModel)
-    of ModelRole.DefaultEmojiReactionsModel:
-      result = newQVariant(item.defaultEmojiReactionsModel)
     of ModelRole.TransactionParameters:
       result = newQVariant($(%*{
         "id": item.transactionParameters.id,

@@ -295,8 +295,6 @@ QtObject {
 
     property MessageStore messageStore: MessageStore { }
 
-    property var defaultEmojiReactionsModel
-
     property var globalUtilsInst: globalUtils
 
     property var mainModuleInst: mainModule

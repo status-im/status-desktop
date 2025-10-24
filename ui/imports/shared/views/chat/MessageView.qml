@@ -80,7 +80,6 @@ Loader {
     property var paymentRequestModel
     property string messageAttachments: ""
     property var transactionParams
-    property var defaultEmojiReactionsModel
     property var formatBalance
 
     // These 2 properties can be dropped when the new unfurling flow supports GIFs
@@ -1281,7 +1280,6 @@ Loader {
         MessageContextMenuView {
             id: messageContextMenuView
             emojiReactionLimitReached: root.emojiReactionLimitReached
-            defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
             emojiModel: emojiPopup.emojiModel
             recentEmojis: emojiPopup.recentEmojis
             skinColor: emojiPopup.skinColor

@@ -7,7 +7,6 @@ import ../../../app_service/service/message/dto/link_preview
 import ../../../app_service/service/message/dto/payment_request
 import ./link_preview_model as link_preview_model
 import ./payment_request_model as payment_request_model
-import ./default_emoji_reactions_model as default_emoji_reactions_model
 
 export types.ContentType
 import message_reaction_model, message_transaction_parameters_item
@@ -53,7 +52,6 @@ type
     deletedByContactDetails: ContactDetails
     links: seq[string]
     linkPreviewModel: link_preview_model.Model
-    defaultEmojiReactionsModel: default_emoji_reactions_model.Model
     transactionParameters: TransactionParametersItem
     mentionedUsersPks: seq[string]
     senderTrustStatus: TrustStatus
@@ -172,7 +170,6 @@ proc initMessageItem*(
     result.pinned = true
   result.links = links
   result.linkPreviewModel = newLinkPreviewModel(linkPreviews)
-  result.defaultEmojiReactionsModel = newDefaultEmojiReactionsModel()
   result.transactionParameters = transactionParameters
   result.mentionedUsersPks = mentionedUsersPks
   result.gapFrom = 0
@@ -515,11 +512,9 @@ proc getReactionId*(self: Item, emoji: string, userPublicKey: string): string =
 proc addReaction*(self: Item, emoji: string, didIReactWithThisEmoji: bool, userPublicKey: string,
   userDisplayName: string, reactionId: string) =
   self.reactionsModel.addReaction(emoji, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
-  self.defaultEmojiReactionsModel.setItemDidIReactWithThisEmoji(emoji, didIReactWithThisEmoji)
 
 proc removeReaction*(self: Item, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =
   self.reactionsModel.removeReaction(emoji, reactionId, didIRemoveThisReaction)
-  self.defaultEmojiReactionsModel.setItemDidIReactWithThisEmoji(emoji, not didIRemoveThisReaction)
 
 proc messageAttachments*(self: Item): seq[string] {.inline.} =
   self.messageAttachments
@@ -535,9 +530,6 @@ proc linkPreviewModel*(self: Item): link_preview_model.Model {.inline.} =
 
 proc paymentRequestModel*(self: Item): payment_request_model.Model {.inline.} =
   return self.paymentRequestModel
-
-proc defaultEmojiReactionsModel*(self: Item): default_emoji_reactions_model.Model {.inline.} =
-  return self.defaultEmojiReactionsModel
 
 proc mentionedUsersPks*(self: Item): seq[string] {.inline.} =
   self.mentionedUsersPks

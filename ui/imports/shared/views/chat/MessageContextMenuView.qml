@@ -12,8 +12,6 @@ import shared.controls.chat
 StatusMenu {
     id: root
 
-    // expected roles: emoji:string, filename:string, didIReactWithThisEmoji:bool
-    property var defaultEmojiReactionsModel
     property StatusEmojiModel emojiModel
     property var recentEmojis
     property string skinColor
@@ -54,7 +52,6 @@ StatusMenu {
     MessageReactionsRow {
         id: emojiRow
         visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions) && !!root.recentEmojis && root.recentEmojis.length > 0
-        defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
         emojiModel: root.emojiModel
         recentEmojis: root.recentEmojis
         skinColor: root.skinColor

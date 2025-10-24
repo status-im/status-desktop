@@ -11,7 +11,6 @@ import SortFilterProxyModel
 Row {
     id: root
 
-    property var defaultEmojiReactionsModel
     required property StatusEmojiModel emojiModel
     required property var recentEmojis
     required property string skinColor
