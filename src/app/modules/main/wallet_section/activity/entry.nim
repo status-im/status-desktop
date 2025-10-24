@@ -1,6 +1,8 @@
 import nimqml, json, stew/shims/strformat, sequtils, strutils, chronicles, stint, options
 
-import backend/activity as backend
+import backend/backend as backend_backend
+import backend/activity as backend_activity
+
 import app/modules/shared_models/currency_amount
 
 import app/global/global_singleton
@@ -11,13 +13,13 @@ import app/modules/shared/wallet_utils
 
 import web3/eth_api_types as eth
 
-import ./transaction_identities_model as txid
+import ./transaction
 
 # Additional data needed to build an Entry, which is
 # not included in the metadata and needs to be
 # fetched from a different source.
 type
-  ChainId = backend.ChainId
+  ChainId = backend_activity.ChainId
 
   ExtraData* = object
     inAmount*: float64
@@ -27,10 +29,10 @@ type
 QtObject:
   type
     ActivityEntry* = ref object of QObject
-      metadata: backend.ActivityEntry
+      metadata: backend_activity.ActivityEntry
       extradata: ExtraData
 
-      transactions: txid.Model
+      transaction: transaction.TransactionIdentity
 
       amountCurrency: CurrencyAmount
       noAmount: CurrencyAmount
@@ -44,7 +46,7 @@ QtObject:
   proc setup(self: ActivityEntry)
   proc delete*(self: ActivityEntry)
   proc isInTransactionType(self: ActivityEntry): bool =
-    return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
+    return self.metadata.activityType == backend_activity.ActivityType.Receive or self.metadata.activityType == backend_activity.ActivityType.Mint
 
   proc extractCurrencyAmount(self: ActivityEntry, currencyService: Service): CurrencyAmount =
     let amount = if self.isInTransactionType(): self.metadata.amountIn else: self.metadata.amountOut
@@ -54,26 +56,17 @@ QtObject:
       currencyService.getCurrencyFormat(symbol),
     )
 
-  proc newMultiTransactionActivityEntry*(metadata: backend.ActivityEntry, extradata: ExtraData, currencyService: Service): ActivityEntry =
+  proc newTransactionActivityEntry*(metadata: backend_activity.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, currencyService: Service): ActivityEntry =
     new(result, delete)
     result.metadata = metadata
     result.extradata = extradata
 
-    result.transactions = txid.newModel()
-    result.transactions.setItems(metadata.transactions)
 
-    result.noAmount = newCurrencyAmount()
-    result.amountCurrency = result.extractCurrencyAmount(currencyService)
+    var txIdentity: backend_backend.TransactionIdentity
+    if metadata.transaction.isSome():
+      txIdentity = metadata.transaction.get()
+    result.transaction = newTransactionIdentity(txIdentity)
 
-    result.highlight = metadata.isNew
-
-    result.setup()
-
-  proc newTransactionActivityEntry*(metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, currencyService: Service): ActivityEntry =
-    new(result, delete)
-    result.metadata = metadata
-    result.extradata = extradata
-    result.transactions = txid.newModel()
     result.noAmount = newCurrencyAmount()
 
     result.amountCurrency = result.extractCurrencyAmount(currencyService)
@@ -82,19 +75,19 @@ QtObject:
 
     result.setup()
 
-  proc buildMultiTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
+  proc buildMultiTransactionExtraData(metadata: backend_activity.ActivityEntry, currencyService: Service): ExtraData =
     if metadata.symbolIn.isSome():
       result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
     if metadata.symbolOut.isSome():
       result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
 
-  proc buildTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
+  proc buildTransactionExtraData(metadata: backend_activity.ActivityEntry, currencyService: Service): ExtraData =
     if metadata.symbolIn.isSome() or metadata.amountIn > 0:
       result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
     if metadata.symbolOut.isSome() or metadata.amountOut > 0:
       result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
 
-  proc buildExtraData(backendEntry: backend.ActivityEntry, currencyService: Service): ExtraData =
+  proc buildExtraData(backendEntry: backend_activity.ActivityEntry, currencyService: Service): ExtraData =
     var extraData: ExtraData
     case backendEntry.getPayloadType():
       of MultiTransaction:
@@ -103,28 +96,27 @@ QtObject:
         extraData = buildTransactionExtraData(backendEntry, currencyService)
     return extraData
 
-  proc newActivityEntry*(backendEntry: backend.ActivityEntry, addresses: seq[string], currencyService: Service): ActivityEntry =
-    var ae: entry.ActivityEntry
+  proc newActivityEntry*(backendEntry: backend_activity.ActivityEntry, addresses: seq[string], currencyService: Service): ActivityEntry =
     let extraData = buildExtraData(backendEntry, currencyService)
     case backendEntry.getPayloadType():
       of MultiTransaction:
-        ae = newMultiTransactionActivityEntry(backendEntry, extraData, currencyService)
+        error "MultiTransaction - old type - not supported anymore"
+        return nil
       of SimpleTransaction, PendingTransaction:
-        ae = newTransactionActivityEntry(backendEntry, addresses, extraData, currencyService)
-    return ae
+        return newTransactionActivityEntry(backendEntry, addresses, extraData, currencyService)
 
   proc resetAmountCurrency*(self: ActivityEntry, service: Service) =
     self.extraData = buildExtraData(self.metadata, service)
     self.amountCurrency = self.extractCurrencyAmount(service)
 
   proc isMultiTransaction*(self: ActivityEntry): bool {.slot.} =
-    return self.metadata.getPayloadType() == backend.PayloadType.MultiTransaction
+    return self.metadata.getPayloadType() == backend_activity.PayloadType.MultiTransaction
 
   QtProperty[bool] isMultiTransaction:
     read = isMultiTransaction
 
   proc isPendingTransaction*(self: ActivityEntry): bool {.slot.} =
-    return self.metadata.getPayloadType() == backend.PayloadType.PendingTransaction
+    return self.metadata.getPayloadType() == backend_activity.PayloadType.PendingTransaction
 
   QtProperty[bool] isPendingTransaction:
     read = isPendingTransaction
@@ -133,7 +125,9 @@ QtObject:
     return fmt"""ActivityEntry(
       metadata:{$self.metadata},
       extradata:{$self.extradata},
-      transactions:{$self.transactions},
+      transactionHash:{$self.transaction.getHash()},
+      transactionAddress:{$self.transaction.getAddress()},
+      transactionChainId:{$self.transaction.getChainId()},
     )"""
 
   proc getId*(self: ActivityEntry): string {.slot.} =
@@ -142,13 +136,12 @@ QtObject:
   QtProperty[string] id:
     read = getId
 
-  proc getTransactions*(self: ActivityEntry): QVariant {.slot.} =
-    return newQVariant(self.transactions)
+  proc getTransaction*(self: ActivityEntry): QVariant {.slot.} =
+    return newQVariant(self.transaction)
+  QtProperty[QVariant] transaction:
+    read = getTransaction
 
-  QtProperty[QVariant] transactions:
-    read = getTransactions
-  
-  proc getMetadata*(self: ActivityEntry): backend.ActivityEntry =
+  proc getMetadata*(self: ActivityEntry): backend_activity.ActivityEntry =
     return self.metadata
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
@@ -294,7 +287,7 @@ QtObject:
     read = getTokenAddress
 
   proc getTokenID*(self: ActivityEntry): string {.slot.} =
-    if self.metadata.getPayloadType() == backend.PayloadType.MultiTransaction:
+    if self.metadata.getPayloadType() == backend_activity.PayloadType.MultiTransaction:
       error "getTokenID: ActivityEntry is not a transaction"
       return ""
 
