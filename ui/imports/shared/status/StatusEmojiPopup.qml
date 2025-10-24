@@ -36,6 +36,8 @@ StatusDropdown {
             iconCodePoint = iconCodePoint.substring(0, extensionIndex)
         }
 
+        root.emojiModel.addRecentEmoji(hexcode)
+
         const encodedIcon = StatusQUtils.Emoji.getEmojiCodepoint(iconCodePoint)
 
         root.emojiModel.addRecentEmoji(hexcode)
