@@ -6708,6 +6708,36 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
 </context>
 <context>
+    <name>EnableBiometricsPopup</name>
+    <message>
+        <source>Enable biometrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
+        <translation type="unfinished">비밀번호 입력을 생체인증으로 자동 채우게 할까요? 앞으로 Status 로그인과 트랜잭션 서명에 생체인증을 사용하게 됩니다.</translation>
+    </message>
+    <message>
+        <source>Maybe later</source>
+        <translation type="unfinished">나중에</translation>
+    </message>
+    <message>
+        <source>Yes, use biometrics</source>
+        <translation type="unfinished">네, 생체인증 사용</translation>
+    </message>
+</context>
+<context>
+    <name>EnableBiometricsPopupHandler</name>
+    <message>
+        <source>Biometric login and transaction authentication enabled for this device</source>
+        <translation type="unfinished">이 기기에서 생체인증 로그인과 트랜잭션 인증이 활성화되었습니다</translation>
+    </message>
+    <message>
+        <source>Biometric setup failed. Try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EnableFullMessageHistoryPopup</name>
     <message>
         <source>Enable full message history</source>

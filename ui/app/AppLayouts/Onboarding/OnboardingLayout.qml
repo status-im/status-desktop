@@ -46,6 +46,7 @@ Page {
     signal changeLanguageRequested(string newLanguageCode)
 
     signal shareUsageDataRequested(bool enabled)
+    signal skippedBiometricFlow()
 
     // flow: Onboarding.OnboardingFlow
     signal finished(int flow, var data)
@@ -222,6 +223,8 @@ Page {
         onToggleThirdpartyServicesEnabledRequested: {
             d.thirdpartyServicesEnabled = !d.thirdpartyServicesEnabled
         }
+
+        onSkippedBiometricFlow: root.skippedBiometricFlow()
     }
 
     // needs to be on top of the stack

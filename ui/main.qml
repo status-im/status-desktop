@@ -186,6 +186,8 @@ StatusWindow {
         }
 
         property int lastNonMinVisibility
+
+        property bool showSkippedBiometricFlow: false
     }
 
     Binding {
@@ -392,12 +394,20 @@ StatusWindow {
         Behavior on opacity { NumberAnimation { duration: 120 }}
         /* only unload splash screen once appmain is loaded else we see
         an empty screen for a sec until it is loaded */
-        onLoaded: startupOnboardingLoader.active = false
+        onLoaded: {
+            startupOnboardingLoader.active = false
+            if (item && item.objectName === "appMain" && d.showSkippedBiometricFlow) {
+                // IN case of Login via syncing, request to show Biometrics Page after onboarding
+                item.showEnableBiometricsFlow()
+            }
+        }
     }
 
     Component {
         id: app
         AppMain {
+            objectName: "appMain"
+
             utilsStore: applicationWindow.utilsStore
             featureFlagsStore: applicationWindow.featureFlagsStore
             languageStore: applicationWindow.languageStore
@@ -521,6 +531,10 @@ StatusWindow {
                     Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
                 }
             }
+
+            onSkippedBiometricFlow: () => {
+                                        d.showSkippedBiometricFlow = true
+                                    }
 
             Component.onCompleted: {
                 applicationWindow.contentLoaded()

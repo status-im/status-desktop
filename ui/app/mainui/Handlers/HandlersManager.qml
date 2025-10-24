@@ -1,5 +1,6 @@
 import QtQuick
 
+import StatusQ
 import StatusQ.Core.Utils as SQUtils
 import StatusQ.Core.Backpressure
 import StatusQ.Core
@@ -44,6 +45,8 @@ QtObject {
 
     required property ProfileStores.EnsUsernamesStore ensUsernamesStore
     required property ProfileStores.PrivacyStore privacyStore
+
+    required property Keychain keychain
 
     readonly property SwapModalHandler swapModalHandler: SwapModalHandler {
 
@@ -188,5 +191,11 @@ QtObject {
             return true
         }
         return false
+    }
+
+    readonly property EnableBiometricsPopupHandler enableBiometricsPopupHandler: EnableBiometricsPopupHandler {
+        popupParent: root.popupParent
+        privacyStore: root.privacyStore
+        keychain: root.keychain
     }
 }
