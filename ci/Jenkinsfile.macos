@@ -129,6 +129,13 @@ pipeline {
       }
     }
 
+    stage('nwaku') {
+      when { expression { params.USE_NWAKU == true } }
+      steps {
+        sh 'make nwaku'
+      }
+    }
+
     stage('status-go') {
       steps {
         sh 'make status-go'
