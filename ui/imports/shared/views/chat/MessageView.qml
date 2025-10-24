@@ -1313,6 +1313,7 @@ Loader {
             onCopyToClipboard: (text) => {
                 ClipboardUtils.setText(text)
             }
+            onOpenEmojiPopup: (parent, mouse) => d.addReactionClicked(parent, mouse)
             onOpened: {
                 root.setMessageActive(model.id, true)
             }

@@ -2,6 +2,7 @@ import QtQuick
 
 import StatusQ
 import StatusQ.Core.Theme
+import StatusQ.Controls
 
 import shared.controls.chat
 
@@ -16,6 +17,7 @@ Row {
     required property string skinColor
 
     signal toggleReaction(string emoji)
+    signal openEmojiPopup(var parent, var mouse)
 
     spacing: Theme.halfPadding
     leftPadding: Theme.halfPadding
@@ -87,5 +89,13 @@ Row {
                 root.toggleReaction(emojiReaction.emoji.emoji)
             }
         }
+    }
+
+    StatusFlatRoundButton {
+        height: parent.height
+        width: height
+        icon.name: "reaction-b"
+        type: StatusFlatRoundButton.Type.Tertiary
+        onClicked: mouse => root.openEmojiPopup(this, mouse)
     }
 }

@@ -49,6 +49,7 @@ StatusMenu {
     signal editClicked()
     signal markMessageAsUnread()
     signal copyToClipboard(string text)
+    signal openEmojiPopup(var parent, var mouse)
 
     MessageReactionsRow {
         id: emojiRow
@@ -57,8 +58,12 @@ StatusMenu {
         emojiModel: root.emojiModel
         recentEmojis: root.recentEmojis
         skinColor: root.skinColor
-        onToggleReaction: (emoji) => {
+        onToggleReaction: emoji => {
             root.toggleReaction(emoji)
+            root.close()
+        }
+        onOpenEmojiPopup: (parent, mouse) => {
+            root.openEmojiPopup(parent, mouse)
             root.close()
         }
     }
