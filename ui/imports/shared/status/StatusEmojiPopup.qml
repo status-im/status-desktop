@@ -26,6 +26,8 @@ StatusDropdown {
     property string emojiSize: ""
 
     signal emojiSelected(string emoji, bool atCu, string hexcode)
+    signal setSkinColor(string skinColor)
+    signal setRecentEmojis(var recentEmojis)
 
     width: 370
     padding: 0
@@ -61,7 +63,7 @@ StatusDropdown {
     onClosed: {
         const recent = root.emojiModel.recentEmojis
         if (recent.length)
-            root.recentEmojis = recent
+            root.setRecentEmojis(recent)
         searchBox.text = ""
         root.emojiSize = ""
         skinToneEmoji.expandSkinColorOptions = false
@@ -166,7 +168,7 @@ StatusDropdown {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
                             onClicked: {
-                                root.skinColor = (index === 5) ? "" : modelData.split("-")[1];
+                                root.setSkinColor((index === 5) ? "" : modelData.split("-")[1]);
                                 skinToneEmoji.expandSkinColorOptions = false;
                             }
                         }
