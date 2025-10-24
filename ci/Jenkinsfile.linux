@@ -82,7 +82,7 @@ pipeline {
     /* Set USE_NWAKU before VERSION since version.sh uses it */
     USE_NWAKU = "${params.USE_NWAKU}"
     /* nwaku source directory */
-    NWAKU_SOURCE_DIR = "${WORKSPACE}/../nwaku"
+    NWAKU_SOURCE_DIR = "${env.WORKSPACE_TMP}/nwaku"
     /* sets App Version in Settings */  
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     /* Control output the filename */
@@ -123,7 +123,7 @@ pipeline {
       }
     }
 
-    stage('Clone nwaku') {
+    stage('nwaku') {
       when { expression { params.USE_NWAKU == true } }
       steps {
         sh 'make clone-nwaku NWAKU_SOURCE_DIR="${NWAKU_SOURCE_DIR}"'
