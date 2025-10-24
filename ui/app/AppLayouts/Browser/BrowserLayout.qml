@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtWebEngine
-import QtWebChannel
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -42,7 +41,6 @@ StatusSectionLayout {
     required property BrowserStores.DownloadsStore downloadsStore
     required property BrowserStores.BrowserRootStore browserRootStore
     required property BrowserStores.BrowserWalletStore browserWalletStore
-    required property BrowserStores.Web3ProviderStore web3ProviderStore
 
     signal sendToRecipientRequested(string address)
 
@@ -63,14 +61,10 @@ StatusSectionLayout {
         property Component accessDialogComponent: BrowserConnectionModal {
             browserRootStore: root.browserRootStore
             browserWalletStore: root.browserWalletStore
-            web3ProviderStore: root.web3ProviderStore
 
             parent: browserWindow
             x: browserWindow.width - width - Theme.halfPadding
             y: browserWindow.y + browserHeader.height + Theme.halfPadding
-            web3Response: function(message) {
-                provider.web3Response(message)
-            }
         }
 
         property Component sendTransactionModalComponent: SendModal {
@@ -97,12 +91,6 @@ StatusSectionLayout {
             standardButtons: Dialog.Ok
         }
 
-        readonly property var script: ({
-            injectionPoint: WebEngineScript.DocumentCreation,
-            sourceUrl: Qt.resolvedUrl("./helpers/provider.js"), // FIXME needs to be revisited (see https://github.com/status-im/status-desktop/issues/18545)
-            worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop
-        })
-
         property QtObject defaultProfile: WebEngineProfile {
             storageName: "Profile_%1".arg(root.userUID)
             offTheRecord: false
@@ -113,8 +101,6 @@ StatusSectionLayout {
                 }
                 return ""
             }
-            // FIXME script disabled as it crashes the browser (https://github.com/status-im/status-desktop/issues/18545)
-            //userScripts.collection: [_internal.script]
         }
 
         property QtObject otrProfile: WebEngineProfile {
@@ -122,8 +108,6 @@ StatusSectionLayout {
             offTheRecord: true
             persistentCookiesPolicy: WebEngineProfile.NoPersistentCookies
             httpUserAgent: _internal.defaultProfile.httpUserAgent
-            // FIXME script disabled as it crashes the browser (https://github.com/status-im/status-desktop/issues/18545)
-            //userScripts.collection: [_internal.script]
         }
 
         function addNewDownloadTab() {
@@ -146,12 +130,12 @@ StatusSectionLayout {
         }
 
         function determineRealURL(url) {
-            return root.web3ProviderStore.determineRealURL(url)
+            return root.browserRootStore.determineRealURL(url)
         }
 
         onCurrentWebViewChanged: {
             findBar.reset();
-            browserHeader.addressBar.text = root.web3ProviderStore.obtainAddress(currentWebView.url)
+            browserHeader.addressBar.text = root.browserRootStore.obtainAddress(currentWebView.url)
         }
     }
 
@@ -160,49 +144,6 @@ StatusSectionLayout {
         anchors.fill: parent
         color: Theme.palette.baseColor2
 
-        WebProviderObj {
-            id: provider
-            web3ProviderStore: root.web3ProviderStore
-            browserRootStore: root.browserRootStore
-            browserWalletStore: root.browserWalletStore
-
-            createAccessDialogComponent: function() {
-                return _internal.accessDialogComponent.createObject(root)
-            }
-            createSendTransactionModalComponent: function(request) {
-                return _internal.sendTransactionModalComponent.createObject(root, {
-                                                                                preSelectedRecipient: request.payload.params[0].to,
-                                                                                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(root.browserRootStore.getWei2Eth(request.payload.params[0].value, 18)),
-                                                                            })
-            }
-            createSignMessageModalComponent: function(request) {
-                return _internal.signMessageModalComponent.createObject(root, {
-                                                                            request,
-                                                                            selectedAccount: {
-                                                                                name: root.browserWalletStore.dappBrowserAccount.name,
-                                                                                iconColor: Utils.getColorForId(root.browserWalletStore.dappBrowserAccount.colorId)
-                                                                            }
-                                                                        })
-            }
-            showSendingError: function(message) {
-                _internal.sendingError.text = message
-                return _internal.sendingError.open()
-            }
-            showSigningError: function(message) {
-                _internal.signingError.text = message
-                return _internal.signingError.open()
-            }
-            showToastMessage: function(result, chainId) {
-                let url = "%1/%2".arg(root.browserWalletStore.getEtherscanLink(chainId)).arg(result)
-                Global.displayToastMessage(qsTr("Transaction pending..."),
-                                           qsTr("View on etherscan"),
-                                           "",
-                                           true,
-                                           Constants.ephemeralNotificationType.normal,
-                                           url);
-            }
-        }
-
         BrowserShortcutActions {
             id: keyboardShortcutActions
             currentWebView: _internal.currentWebView
@@ -210,11 +151,6 @@ StatusSectionLayout {
             browserHeaderComponent: browserHeader
             onAddNewDownloadTab: _internal.addNewDownloadTab()
             onRemoveView: tabs.removeView(tabs.currentIndex)
-        }
-
-        WebChannel {
-            id: channel
-            registeredObjects: [provider]
         }
 
         BrowserHeader {
@@ -286,7 +222,7 @@ StatusSectionLayout {
                 _internal.otrProfile.downloadRequested.connect(_internal.onDownloadRequested);
                 var tab = createEmptyTab(_internal.defaultProfile, true);
                 // For Devs: Uncomment the next line if you want to use the simpledapp on first load
-                // tab.url = root.web3ProviderStore.determineRealURL("https://simpledapp.eth");
+                // tab.url = root.browserRootStore.determineRealURL("https://simpledapp.eth");
             }
         }
 
@@ -421,7 +357,6 @@ StatusSectionLayout {
                 tokensStore: root.tokensStore
                 currentTabConnected: root.browserRootStore.currentTabConnected
                 browserWalletStore: root.browserWalletStore
-                web3ProviderStore: root.web3ProviderStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
                 x: (parent.width - width - Theme.halfPadding)
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
@@ -433,8 +368,6 @@ StatusSectionLayout {
                     }
                 }
                 onDisconnect: {
-                    root.web3ProviderStore.disconnect(Utils.getHostname(browserHeader.addressBar.text))
-                    provider.postMessage("web3-disconnect-account", "{}");
                     _internal.currentWebView.reload()
                     close()
                 }
@@ -606,8 +539,8 @@ StatusSectionLayout {
     Connections {
         target: _internal.currentWebView
         function onUrlChanged() {
-            browserHeader.addressBar.text = root.web3ProviderStore.obtainAddress(_internal.currentWebView.url)
-            root.browserRootStore.currentTabConnected = root.web3ProviderStore.hasWalletConnected(Utils.getHostname(_internal.currentWebView.url))
+            browserHeader.addressBar.text = root.browserRootStore.obtainAddress(_internal.currentWebView.url)
+            root.browserRootStore.currentTabConnected = false // TODO: Will be handled by connector
         }
     }
 

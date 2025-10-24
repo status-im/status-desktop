@@ -1,11 +1,14 @@
 import QtQuick
 
+import StatusQ
+
 import utils
 
 QtObject {
     id: root
 
     property bool currentTabConnected: false
+    property var urlENSDictionary: ({})
 
     function getAscii2Hex(input) {
         return globalUtils.ascii2Hex(input)
@@ -60,5 +63,17 @@ QtObject {
         case Constants.browserSearchEngineDuckDuckGo: tempUrl = "https://duckduckgo.com/?q=" + url; break;
         }
         return tempUrl
+    }
+
+    // ENS resolution functions (stubbed until connector integration)
+    function determineRealURL(text) {
+        const url = UrlUtils.urlFromUserInput(text)
+        // TODO: ENS resolution will be handled by connector in next PR
+        return url
+    }
+
+    function obtainAddress(url) {
+        // TODO: ENS resolution will be handled by connector in next PR
+        return url
     }
 }

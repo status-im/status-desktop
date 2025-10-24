@@ -18,7 +18,6 @@ StatusSectionLayout {
     property BrowserStores.DownloadsStore downloadsStore
     property BrowserStores.BrowserRootStore browserRootStore
     property BrowserStores.BrowserWalletStore browserWalletStore
-    property BrowserStores.Web3ProviderStore web3ProviderStore
 
     signal sendToRecipientRequested(string address)
 }

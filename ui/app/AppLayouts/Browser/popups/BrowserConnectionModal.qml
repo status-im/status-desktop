@@ -21,12 +21,10 @@ StatusModal {
 
     required property BrowserStores.BrowserRootStore browserRootStore
     required property BrowserStores.BrowserWalletStore browserWalletStore
-    required property BrowserStores.Web3ProviderStore web3ProviderStore
 
     property var request: ({"hostname": "", "address": "", "title": "", "permission": ""})
     property string currentAddress: ""
     property bool interactedWith: false
-    property var web3Response: function(){}
 
     width: 360
     height: 480
@@ -40,9 +38,9 @@ StatusModal {
         interactedWith = true
         root.browserRootStore.currentTabConnected = isAllowed
         if(isAllowed){
-            root.web3ProviderStore.addPermission(request.hostname, request.address, request.permission)
+            dappPermissionsModule.addPermission(request.hostname, request.address, request.permission)
         }
-        root.web3ProviderStore.web3ProviderInst.postMessage("", Constants.api_request, JSON.stringify(request))
+        // TODO: Will be handled by connector in next PR
     }
 
     onClosed: {
@@ -127,10 +125,8 @@ StatusModal {
                     }
 
                     root.currentAddress = currentAccountAddress
-                    root.web3ProviderStore.web3ProviderInst.dappsAddress = currentAccountAddress;
 
                     if (currentAccountAddress) {
-                        root.web3ProviderStore.web3ProviderInst.dappsAddress = currentAccountAddress;
                         root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
                     }
                 }
