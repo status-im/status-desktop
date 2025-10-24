@@ -19,6 +19,9 @@ method bookmarkDidLoad*(self: AccessInterface) {.base.} =
 method dappsDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method ensResolverDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method providerDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

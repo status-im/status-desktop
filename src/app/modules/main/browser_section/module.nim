@@ -7,6 +7,7 @@ import ../../../core/eventemitter
 import bookmark/module as bookmark_module
 import dapps/module as dapps_module
 import current_account/module as current_account_module
+import ens_resolver/module as ens_resolver_module
 import ../../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/network/service as network_service
@@ -14,6 +15,7 @@ import ../../../../app_service/service/dapp_permissions/service as dapp_permissi
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/currency/service as currency_service
+import ../../../../app_service/service/ens/service as ens_service
 
 export io_interface
 
@@ -27,6 +29,7 @@ type
     bookmarkModule: bookmark_module.AccessInterface
     dappsModule: dapps_module.AccessInterface
     currentAccountModule: current_account_module.AccessInterface
+    ensResolverModule: ens_resolver_module.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
@@ -36,7 +39,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     dappPermissionsService: dapp_permissions_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
-    currencyService: currency_service.Service
+    currencyService: currency_service.Service,
+    ensService: ens_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -47,6 +51,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.bookmarkModule = bookmark_module.newModule(result, events, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
+  result.ensResolverModule = ens_resolver_module.newModule(result, events, ensService)
 
 method delete*(self: Module) =
   self.view.delete
@@ -54,12 +59,14 @@ method delete*(self: Module) =
   self.bookmarkModule.delete
   self.dappsModule.delete
   self.currentAccountModule.delete
+  self.ensResolverModule.delete
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("browserSection", self.viewVariant)
   self.currentAccountModule.load()
   self.bookmarkModule.load()
   self.dappsModule.load()
+  self.ensResolverModule.load()
   self.view.load()
 
 method onActivated*(self: Module) =
@@ -79,6 +86,9 @@ proc checkIfModuleDidLoad(self: Module) =
   if(not self.currentAccountModule.isLoaded()):
     return
 
+  if(not self.ensResolverModule.isLoaded()):
+    return
+
   self.moduleLoaded = true
   self.delegate.browserSectionDidLoad()
 
@@ -89,6 +99,9 @@ method dappsDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method ensResolverDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method openUrl*(self: Module, url: string) =
