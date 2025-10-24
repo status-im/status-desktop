@@ -2,20 +2,20 @@ import QtQuick
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Components
 
 import utils
 import shared
 import shared.panels
 
 Rectangle {
-    property alias source: reactionImage.source
-    property string emoji
+    required property string emojiId
     property bool reactedByUser: false
     property bool isHovered: false
-    signal closeModal()
+    signal toggleReaction()
 
     id: root
-    width: reactionImage.width + Theme.halfPadding
+    width: statusEmoji.width + Theme.halfPadding
     height: width
     color: reactedByUser ? Theme.palette.secondaryBackground :
                            (isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent)
@@ -23,11 +23,12 @@ Rectangle {
     border.color: Theme.palette.primaryColor1
     radius: Theme.radius
 
-    SVGImage {
-        id: reactionImage
-        width: 32
-        fillMode: Image.PreserveAspectFit
+    StatusEmoji {
+        id: statusEmoji
         anchors.centerIn: parent
+        width: 32
+        height: 32
+        emojiId: root.emojiId
     }
 
     StatusMouseArea {
@@ -36,8 +37,6 @@ Rectangle {
         hoverEnabled: !reactedByUser
         onEntered: root.isHovered = true
         onExited: root.isHovered = false
-        onClicked: {
-            root.closeModal();
-        }
+        onClicked: root.toggleReaction()
     }
 }

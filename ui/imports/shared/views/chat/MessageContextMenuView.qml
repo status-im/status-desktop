@@ -14,6 +14,9 @@ StatusMenu {
 
     // expected roles: emoji:string, filename:string, didIReactWithThisEmoji:bool
     property var defaultEmojiReactionsModel
+    property StatusEmojiModel emojiModel
+    property var recentEmojis
+    property string skinColor
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
@@ -49,9 +52,11 @@ StatusMenu {
 
     MessageReactionsRow {
         id: emojiRow
-        visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions)
+        visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions) && !!root.recentEmojis && root.recentEmojis.length > 0
         defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
-        bottomPadding: Theme.halfPadding
+        emojiModel: root.emojiModel
+        recentEmojis: root.recentEmojis
+        skinColor: root.skinColor
         onToggleReaction: (emoji) => {
             root.toggleReaction(emoji)
             root.close()
@@ -59,6 +64,7 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
+        // FIXME there is a padding on each side
         visible: emojiRow.visible && !root.disabledForChat
     }
 

@@ -1282,6 +1282,9 @@ Loader {
             id: messageContextMenuView
             emojiReactionLimitReached: root.emojiReactionLimitReached
             defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
+            emojiModel: emojiPopup.emojiModel
+            recentEmojis: emojiPopup.recentEmojis
+            skinColor: emojiPopup.skinColor
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
             forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
             isDebugEnabled: root.rootStore && root.rootStore.isDebugEnabled
