@@ -188,6 +188,8 @@ StatusDialog {
     signal editButtonClicked()
     signal headerImageClicked()
 
+    fullScreenSheet: hasCloseButton
+
     width: 480
 
     padding: 0

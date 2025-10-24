@@ -53,6 +53,12 @@ Dialog {
     */
     property bool fillHeightOnBottomSheet: false
 
+    /*!
+       \qmlproperty bool fullScreen
+        This property decides whether the dialog should take the full screen size.
+    */
+    property bool fullScreenSheet: false
+
     QtObject {
         id: d
 
@@ -116,10 +122,15 @@ Dialog {
         value: d.windowWidth
     }
     Binding on height {
-        when: root.bottomSheet && !enterTransition.running
+        when: root.bottomSheet && !enterTransition.running && !root.fullScreenSheet
         value: root.fillHeightOnBottomSheet ? d.windowHeight * d.bottomSheetHeightRatio : Math.min(implicitHeight, d.windowHeight * d.bottomSheetHeightRatio)
 
     }
+    Binding on height {
+        when: root.bottomSheet && root.fullScreenSheet
+        value: d.windowHeight
+    }
+
     Binding on y {
         when: root.bottomSheet && !enterTransition.running
         value: root.desiredY
