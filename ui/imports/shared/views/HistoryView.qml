@@ -276,12 +276,8 @@ ColumnLayout {
         TransactionContextMenu {
             required property var modelData
 
-            readonly property var firstTx: SQUtils.ModelUtils.get(modelData.transactions, 0)
-            readonly property int firstTxChainId: !!firstTx ? firstTx.chainId : 0
-            readonly property string firstTxHash: !!firstTx ? firstTx.txHash : ""
-
-            readonly property string networkShortName: Utils.getNetworkShortName(firstTxChainId)
-            readonly property bool isNetworkTestnet: Utils.isChainIDTestnet(firstTxChainId)
+            readonly property string networkShortName: Utils.getNetworkShortName(modelData.transaction.chainId)
+            readonly property bool isNetworkTestnet: Utils.isChainIDTestnet(modelData.transaction.chainId)
 
             hideDisabledItems: true
 
@@ -290,11 +286,11 @@ ColumnLayout {
             onClosed: destroy()
 
             onCopyTxHashRequested: {
-                ClipboardUtils.setText(firstTxHash)
+                ClipboardUtils.setText(modelData.transaction.hash)
             }
 
             onViewTxOnExplorerRequested: {
-                let link = Utils.getUrlForTxOnNetwork(networkShortName, isNetworkTestnet, firstTxHash)
+                let link = Utils.getUrlForTxOnNetwork(networkShortName, isNetworkTestnet, modelData.transaction.hash)
                 Global.openLink(link)
             }
         }

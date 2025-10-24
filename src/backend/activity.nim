@@ -298,10 +298,8 @@ type
     # Identification
     payloadType: PayloadType
     key: string
-    transaction: Option[TransactionIdentity]
+    transaction*: Option[TransactionIdentity]
     id: int
-
-    transactions*: seq[TransactionIdentity]
 
     timestamp*: int
 
@@ -333,8 +331,6 @@ type
     key*: string
     transaction*: Option[TransactionIdentity]
     id*: Option[int]
-
-    transactions*: seq[TransactionIdentity]
 
     timestamp*: Option[int]
 
@@ -406,11 +402,6 @@ proc getMultiTransactionId*(ae: ActivityEntry): Option[int] =
     return none(int)
   return some(ae.id)
 
-proc getTransactions*(ae: ActivityEntry): seq[TransactionIdentity] =
-  if ae.payloadType != PayloadType.MultiTransaction:
-    return @[]
-  return ae.transactions
-
 proc toJson*(ae: ActivityEntry): JsonNode {.inline.} =
   return %*(ae)
 
@@ -418,7 +409,6 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
   const keyField = "key"
   const transactionField = "transaction"
   const idField = "id"
-  const transactionsField = "transactions"
   const activityTypeField = "activityType"
   const activityStatusField = "activityStatus"
   const timestampField = "timestamp"
@@ -447,10 +437,6 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
                   else:
                     none(TransactionIdentity),
     id: if e.hasKey(idField): some(e[idField].getInt()) else: none(int),
-    transactions: if e.hasKey(transactionsField):
-                    fromJson(e[transactionsField], seq[TransactionIdentity])
-                  else:
-                    @[],
     activityType: if e.hasKey(activityTypeField):
                     some(fromJson(e[activityTypeField], ActivityType))
                   else:
@@ -515,7 +501,6 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     key: data.key,
     transaction: data.transaction,
     id: if data.id.isSome: data.id.get() else: 0,
-    transactions: data.transactions,
     activityType: data.activityType.get(),
     activityStatus: data.activityStatus.get(),
     timestamp: data.timestamp.get(),
@@ -544,7 +529,6 @@ proc `$`*(self: ActivityEntry): string =
     key:{$self.key},
     transaction:{transactionStr},
     id:{self.id},
-    transactions:{self.transactions},
     timestamp:{self.timestamp},
     activityType* {$self.activityType},
     activityStatus* {$self.activityStatus},
