@@ -10,14 +10,18 @@ import StatusQ.Components
 Control {
     id: root
 
+    property bool compactMode: false
+
     QtObject {
         id: d
 
-        // Split into 5 different columns of equal width
+        property int columnNum: root.compactMode ? 2 : 5
+
+        // Split into 2 or 5 different columns of equal width
         readonly property int columnWidth:
-            (root.width - indexText.width - iconWidth - Theme.xlPadding) / 5
+            (root.width - indexText.width - iconWidth - Theme.xlPadding) / d.columnNum
         // Minimum width of a column
-        readonly property int minColumnWidth: 130
+        readonly property int minColumnWidth: root.compactMode ? 80 : 130
         // Derived from MarketTokenDelegate
         readonly property int iconWidth: 32
     }
@@ -95,6 +99,7 @@ Control {
                 Layout.preferredWidth: d.columnWidth
                 Layout.minimumWidth: d.minColumnWidth
 
+                visible: !root.compactMode
                 text: qsTr("24hr")
                 color: Theme.palette.baseColor1
                 font.weight: Font.Medium
@@ -109,6 +114,7 @@ Control {
                 Layout.preferredWidth: d.columnWidth
                 Layout.minimumWidth: d.minColumnWidth
 
+                visible: !root.compactMode
                 text: qsTr("24hr Volume")
                 color: Theme.palette.baseColor1
                 font.weight: Font.Medium
@@ -123,6 +129,7 @@ Control {
                 Layout.preferredWidth: d.columnWidth
                 Layout.minimumWidth: d.minColumnWidth
                 Layout.preferredHeight: childrenRect.height
+                visible: !root.compactMode
 
                 StatusSortableColumnHeader {
                     anchors.right: parent.right

@@ -35,14 +35,18 @@ StatusItemDelegate {
     /** Input property holding if token is last item in the list **/
     property bool isLastItem
 
+    property bool compactMode: false
+
     QtObject {
         id: d
 
-        // Split into 5 different columns of equal width
+        property int columnNum: root.compactMode ? 2 : 5
+
+        // Split into 2 or 5 different columns of equal width
         readonly property int columnWidth:
-            (root.width - indexText.width - icon.width - Theme.xlPadding) /5
+            (root.width - indexText.width - icon.width - Theme.xlPadding) / d.columnNum
         // Minimum width of a column
-        readonly property int minColumnWidth: 130
+        readonly property int minColumnWidth: root.compactMode ? 80 : 130
     }
 
     implicitHeight: 76
@@ -157,6 +161,7 @@ StatusItemDelegate {
 
             // Change 24 Hour
             StatusTextWithLoadingState {
+                visible: !root.compactMode
                 objectName: "changePct24HrText"
 
                 Layout.preferredWidth: d.columnWidth
@@ -174,6 +179,7 @@ StatusItemDelegate {
 
             // 24 hour Volume
             StatusTextWithLoadingState {
+                visible: !root.compactMode
                 objectName: "volume24HrText"
 
                 Layout.preferredWidth: d.columnWidth
@@ -190,6 +196,7 @@ StatusItemDelegate {
 
             // Market Cap
             StatusTextWithLoadingState {
+                visible: !root.compactMode
                 objectName: "marketCapText"
 
                 Layout.preferredWidth: d.columnWidth
