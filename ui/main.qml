@@ -47,6 +47,7 @@ StatusWindow {
     readonly property UtilsStore utilsStore: UtilsStore {}
     readonly property LanguageStore languageStore: LanguageStore {}
     readonly property bool appThemeDark: Theme.isDarkTheme
+    property bool biometricFlowPending: false
 
     objectName: "mainWindow"
     color: Theme.palette.background
@@ -442,8 +443,23 @@ StatusWindow {
         // These signal handlers keep the compatibility with the old keychain approach,
         // which is used by `keycard_popup` (any auth inside the app) and the old onboarding.
         // NOTE: this hack won't work if changes are made with another Keychain instance.
-        onCredentialSaved: (account) => localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
+        onCredentialSaved: function (account) {
+            applicationWindow.biometricFlowPending = false
+            // load appMain if not already after biometric flow is complete
+            if(loader.sourceComponent !== app && applicationWindow.appIsReady) {
+                moveToAppMain()
+            }
+            localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
+        }
         onCredentialDeleted: (account) => localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never
+        onGetCredentialRequestCompleted: function(status, secret) {
+            // Handle Failure to safely move on to appMain
+            if (status !== Keychain.StatusSuccess &&
+                    loader.sourceComponent !== app &&
+                    applicationWindow.appIsReady) {
+                moveToAppMain()
+            }
+        }
     }
 
     Component {
@@ -464,12 +480,17 @@ StatusWindow {
                 onAppLoaded: {
                     applicationWindow.appIsReady = true
                     applicationWindow.storeAppState()
-                    moveToAppMain()
+
+                    // only load appMain if biometrics flow is complete
+                    if(!applicationWindow.biometricFlowPending) {
+                        moveToAppMain()
+                    }
                 }
                 onAccountLoginError: function (error, wrongPassword) {
                     onboardingLayout.unwindToLoginScreen() // error handled internally
                 }
                 onSaveBiometricsRequested: (account, credential) => {
+                    applicationWindow.biometricFlowPending = true
                     appKeychain.saveCredential(account, credential)
                 }
                 onDeleteBiometricsRequested: (account) => {
