@@ -42,6 +42,9 @@ StatusSectionLayout {
         id: d
         readonly property int pageSize: 100
         property int startIndex: ((root.currentPage - 1) * d.pageSize) + 1
+
+        // Read-only flag that turns true when the component enters a “compact” layout automatically on resize.
+        readonly property bool compactMode: root.width < 600
     }
 
     onCurrentPageChanged: listView.positionViewAtBeginning()
@@ -86,6 +89,7 @@ StatusSectionLayout {
 
             headerPositioning: ListView.OverlayHeader
             header: MarketTokenHeader {
+                compactMode: d.compactMode
                 width: listView.width
             }
 
@@ -98,6 +102,7 @@ StatusSectionLayout {
                 onSwitchPage: root.fetchMarketTokens(pageNumber, d.pageSize)
                 visible: listView.count > 0 && !root.loading
                 height: visible ? implicitHeight : 0
+                compactMode: d.compactMode
             }
 
             model: root.loading ? loadingModel: regularModel
@@ -128,6 +133,7 @@ StatusSectionLayout {
             delegate: MarketTokenDelegate {
                 width: listView.width
 
+                compactMode: d.compactMode
                 indexString: d.startIndex + index
                 tokenName: model.name
                 tokenSymbol: model.symbol.toUpperCase()

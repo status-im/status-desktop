@@ -15,6 +15,8 @@ Control {
     /** required property representing current page set from outside **/
     required property int currentPage
 
+    property bool compactMode
+
     /** signla to update next page **/
     signal switchPage(int pageNumber)
 
@@ -71,6 +73,7 @@ Control {
             pageSize: root.pageSize
             totalCount: root.totalCount
             currentPage: root.currentPage
+            compactMode: root.compactMode
             onRequestPage: root.switchPage(pageNumber)
         }
     }
