@@ -212,16 +212,16 @@ QtObject:
 
   proc connectorCallRPC*(self: Service, requestId: int, message: string) =
     try:
-	    let arg = ConnectorCallRPCTaskArg(
-	      tptr: connectorCallRPCTask,
-	      vptr: cast[uint](self.vptr),
-	      slot: "onConnectorCallRPCResolved",
-	      requestId: requestId,
-	      message: message
-	    )
-	    self.threadpool.start(arg)
+      let arg = ConnectorCallRPCTaskArg(
+        tptr: connectorCallRPCTask,
+        vptr: cast[uint](self.vptr),
+        slot: "onConnectorCallRPCResolved",
+        requestId: requestId,
+        message: message
+      )
+      self.threadpool.start(arg)
     except:
-        error "connectorCallRPC: starting async background task failed", requestId=requestId
+      error "connectorCallRPC: starting async background task failed", requestId=requestId
 
   proc delete*(self: Service) =
     self.QObject.delete

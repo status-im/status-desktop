@@ -43,7 +43,6 @@ import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/bookmarks/service as bookmark_service
 import app_service/service/dapp_permissions/service as dapp_permissions_service
-import app_service/service/provider/service as provider_service
 import app_service/service/profile/service as profile_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/accounts/utils as accounts_utils
@@ -160,7 +159,6 @@ proc newModule*[T](
   aboutService: about_service.Service,
   dappPermissionsService: dapp_permissions_service.Service,
   privacyService: privacy_service.Service,
-  providerService: provider_service.Service,
   stickersService: stickers_service.Service,
   activityCenterService: activity_center_service.Service,
   savedAddressService: saved_address_service.Service,
@@ -232,7 +230,7 @@ proc newModule*[T](
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,
-    dappPermissionsService, providerService, walletAccountService,
+    dappPermissionsService, walletAccountService,
     tokenService, currencyService
   )
   result.profileSectionModule = profile_section_module.newModule(

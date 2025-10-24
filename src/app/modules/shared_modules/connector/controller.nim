@@ -149,12 +149,12 @@ QtObject:
 
   proc parseSingleUInt(chainIDsString: string): uint =
     try:
-        let chainIds = parseJson(chainIDsString)
-        if chainIds.kind == JArray and chainIds.len > 0 and chainIds[0].kind == JInt:
-          return uint(chainIds[0].getInt())
-        else:
+      let chainIds = parseJson(chainIDsString)
+      if chainIds.kind == JArray and chainIds.len > 0 and chainIds[0].kind == JInt:
+        return uint(chainIds[0].getInt())
+      else:
         raise newException(ValueError, "Invalid JSON array format")
-      except JsonParsingError:
+    except JsonParsingError:
       raise newException(ValueError, "Failed to parse JSON")
 
   proc approveConnection*(self: Controller, requestId: string, account: string, chainIDString: string): bool {.slot.} =

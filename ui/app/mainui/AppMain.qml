@@ -2055,9 +2055,6 @@ Item {
                         downloadsStore: BrowserStores.DownloadsStore {}
                         browserRootStore: BrowserStores.BrowserRootStore {}
                         browserWalletStore: BrowserStores.BrowserWalletStore {}
-                        web3ProviderStore: BrowserStores.Web3ProviderStore {
-                            dappBrowserAccountAddress: browserLayout.browserWalletStore.dappBrowserAccount.address
-                        }
 
                         transactionStore: appMain.transactionStore
                         assetsStore: appMain.walletAssetsStore

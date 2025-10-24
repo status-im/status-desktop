@@ -18,7 +18,6 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/bookmarks/service as bookmark_service
 import app_service/service/dapp_permissions/service as dapp_permissions_service
 import app_service/service/privacy/service as privacy_service
-import app_service/service/provider/service as provider_service
 import app_service/service/node/service as node_service
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
@@ -83,7 +82,6 @@ type
     walletAccountService: wallet_account_service.Service
     bookmarkService: bookmark_service.Service
     dappPermissionsService: dapp_permissions_service.Service
-    providerService: provider_service.Service
     profileService: profile_service.Service
     settingsService: settings_service.Service
     stickersService: stickers_service.Service
@@ -228,7 +226,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.networkService, result.transactionService, result.tokenService, result.settingsService, result.walletAccountService,
     result.activityCenterService, result.communityService, result.currencyService)
-  result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
   result.networkConnectionService = network_connection_service.newService(statusFoundation.events,
     result.walletAccountService, result.networkService, result.nodeService, result.tokenService)
   result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)
@@ -266,7 +263,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.aboutService,
     result.dappPermissionsService,
     result.privacyService,
-    result.providerService,
     result.stickersService,
     result.activityCenterService,
     result.savedAddressService,
@@ -325,7 +321,6 @@ proc delete*(self: AppController) =
   self.networkService.delete
   self.activityCenterService.delete
   self.dappPermissionsService.delete
-  self.providerService.delete
   self.nodeConfigurationService.delete
   self.nodeService.delete
   self.settingsService.delete
@@ -388,11 +383,9 @@ proc load(self: AppController) =
   self.chatService.init()
   self.messageService.init()
   self.communityService.init()
-  self.providerService.init()
   self.rampService.init()
   self.bookmarkService.init()
   self.dappPermissionsService.init()
-  self.providerService.init()
   self.transactionService.init()
   self.stickersService.init()
   self.activityCenterService.init()
