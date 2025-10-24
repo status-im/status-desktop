@@ -49,6 +49,7 @@ Item {
         }
         browserRootStore: BrowserStores.BrowserRootStore {
             property bool currentTabConnected
+            property var urlENSDictionary: ({})
 
             function get0xFormedUrl(browserExplorer, url) {
                 var tempUrl = ""
@@ -84,6 +85,14 @@ Item {
                 }
                 return tempUrl
             }
+
+            function determineRealURL(text) {
+                return UrlUtils.urlFromUserInput(text)
+            }
+            
+            function obtainAddress(url) {
+                return url
+            }
         }
         browserWalletStore: BrowserStores.BrowserWalletStore {
             property var dappBrowserAccount: ({address:"0xdeadbeef", name: "Foobar", colorId: 0})
@@ -97,22 +106,6 @@ Item {
 
             function switchAccountByAddress(address) {
                 dappBrowserAccount.address = adress
-            }
-        }
-        web3ProviderStore: BrowserStores.Web3ProviderStore {
-            property string dappBrowserAccountAddress: browserLayout.browserWalletStore.dappBrowserAccount.address
-
-            function determineRealURL(text) {
-                return UrlUtils.urlFromUserInput(text)
-            }
-            function obtainAddress(url) {
-                return url
-            }
-            function hasPermission(hostname, address, permission){
-                return false
-            }
-            function hasWalletConnected(hostname) {
-                return hasPermission(hostname, dappBrowserAccountAddress, "web3")
             }
         }
 

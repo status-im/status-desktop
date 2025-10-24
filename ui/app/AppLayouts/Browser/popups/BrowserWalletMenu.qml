@@ -24,7 +24,6 @@ Dialog {
 
     required property bool currentTabConnected
     required property BrowserStores.BrowserWalletStore browserWalletStore
-    required property BrowserStores.Web3ProviderStore web3ProviderStore
 
     signal sendTriggered(string address)
     signal disconnect()
@@ -60,14 +59,19 @@ Dialog {
     Item {
         id: walletHeader
         width: parent.width
-        height: networkText.height
+        height: disconnectBtn.height
 
+        // TODO: Uncomment and connect to connector in next PR
+        // Network indicator showing current chain
+        /*
         Rectangle {
             id: networkColorCircle
             width: 8
             height: 8
             radius: width / 2
             color: {
+                // TODO: Get chainId from connectorBridge instead of web3ProviderStore
+                // Example: connectorBridge.chainId
                 switch (root.web3ProviderStore.chainName) {
                     case Constants.networkMainnet: return Theme.palette.successColor1
                     case Constants.networkRopsten: return Theme.palette.mentionColor1
@@ -80,6 +84,8 @@ Dialog {
         StatusBaseText {
             id: networkText
             text: {
+                // TODO: Get chainId from connectorBridge and map to chainName
+                // Example: getChainName(connectorBridge.chainId)
                 switch (root.web3ProviderStore.chainName) {
                     case Constants.networkMainnet: return qsTr("Mainnet");
                     case Constants.networkRopsten: return qsTr("Ropsten");
@@ -89,10 +95,13 @@ Dialog {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: networkColorCircle.right
             anchors.leftMargin: Theme.halfPadding
+            color: Theme.palette.directColor1
+            font.pixelSize: 13
         }
+        */
 
         StatusBaseText {
-            id: disconectBtn
+            id: disconnectBtn
             text: qsTr("Disconnect")
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -145,7 +154,6 @@ Dialog {
                 }
 
                 accountSelectorRow.currentAddress = currentAccountAddress
-                root.web3ProviderStore.web3ProviderInst.dappsAddress = currentAccountAddress;
                 root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
                 reload()
             }
