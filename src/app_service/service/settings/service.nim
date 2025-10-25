@@ -128,7 +128,7 @@ QtObject:
     try:
       let response = status_settings.getSettings()
       self.settings = response.result.toSettingsDto()
-      self.settings.newsFeedEnabled = status_newsfeed.enabled().getBool
+      self.settings.newsFeedEnabled = status_newsfeed.enabled().result.getBool
       self.settings.newsNotificationsEnabled = status_newsfeed.notificationsEnabled().result.getBool
       self.settings.newsRSSEnabled = status_newsfeed.rssEnabled().result.getBool
       self.initNotificationSettings()
@@ -963,13 +963,18 @@ QtObject:
   ### News Feed Settings ###
   proc notifSettingStatusNewsChanged*(self: Service) {.signal.}
 
-  proc toggleNewsFeedEnabled*(self: Service, value: bool): bool =
+  proc toggleNewsFeedEnabled*(self: Service, enabled: bool, notificationsEnabled: bool): bool =
     try:
-      let response = status_newsfeed.setEnabled(value)
+      var response = status_newsfeed.setEnabled(enabled)
       if not response.error.isNil:
         raise newException(RpcException, response.error.message)
 
-      self.settings.newsFeedEnabled = value
+      response = status_newsfeed.setNotificationsEnabled(notificationsEnabled)
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+
+      self.settings.newsFeedEnabled = enabled
+      self.settings.newsNotificationsEnabled = notificationsEnabled
       self.notifSettingStatusNewsChanged()
       return true
     except Exception as e:
@@ -1035,10 +1040,7 @@ QtObject:
       return
 
     # toggleNewsFeedEnabled changes the value and calls the signals
-    if not self.toggleNewsFeedEnabled(newsFeedEnabled):
-      return
-
-    self.settings.newsNotificationsEnabled = newsOSNotificationsEnabled
+    discard self.toggleNewsFeedEnabled(newsFeedEnabled, newsOSNotificationsEnabled)
 
   QtProperty[string] notifSettingStatusNews:
     read = getNotifSettingStatusNews
