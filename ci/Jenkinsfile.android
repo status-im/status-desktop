@@ -8,7 +8,7 @@ def isReleaseBranch = (env.CHANGE_BRANCH ?: env.BRANCH_NAME)?.startsWith('releas
 
 pipeline {
   agent {
-    /* Image with Ubuntu 22.04, QT 6.9.2, Android SDK/NDK, Go, and Nim */
+    /* Image with Ubuntu 22.04, QT 6.9.2, Android SDK/NDK, Go, and Nim 2.2.4 */
     docker {
       label 'linuxcontainer'
       image 'harbor.status.im/status-im/status-desktop-build:1.0.6-qt6.9.2-android'
