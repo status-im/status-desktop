@@ -30,6 +30,11 @@ pipeline {
       description: 'Level of verbosity based on nimbus-build-system setup.',
       choices: ['0','1','2','3']
     )
+    choice(
+      name: 'PACKAGE_TYPE',
+      description: 'Package type to build.',
+      choices: ['auto', 'apk', 'aab']
+    )
   }
 
   options {
@@ -61,7 +66,8 @@ pipeline {
     QT_VERSION = "6.9.2"
     QT_ANDROID_PATH = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a"
     QMAKE = "/opt/qt/${env.QT_VERSION}/android_arm64_v8a/bin/qmake"
-    PACKAGE_TYPE = "${isReleaseBranch ? 'aab' : 'apk'}"
+    /* override package type if set, otherwise auto-select based on branch */
+    PACKAGE_TYPE = "${params.PACKAGE_TYPE != 'auto' ? params.PACKAGE_TYPE : (isReleaseBranch ? 'aab' : 'apk')}"
     STATUS_ARTIFACT = "pkg/${utils.pkgFilename(ext: env.PACKAGE_TYPE, arch: 'arm64', version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_BINARY = "${WORKSPACE}/mobile/bin/android/qt6/Status.${env.PACKAGE_TYPE}"
   }
