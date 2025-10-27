@@ -29,8 +29,6 @@ Row {
         root.emojiModel.recentEmojis = root.recentEmojis
     }
 
-    visible: root.recentEmojis.length > 0
-
     QtObject {
         id: d
 
@@ -38,10 +36,6 @@ Row {
             sourceModel: root.emojiModel
 
             filters: [
-                FastExpressionFilter {
-                    expression: model.category === root.emojiModel.recentCategoryName
-                    expectedRoles: ["category"]
-                },
                 AnyOf {
                     ValueFilter {
                         roleName: "skinColor"

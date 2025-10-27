@@ -51,7 +51,7 @@ StatusMenu {
 
     MessageReactionsRow {
         id: emojiRow
-        visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions) && !!root.recentEmojis && root.recentEmojis.length > 0
+        visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions)
         emojiModel: root.emojiModel
         recentEmojis: root.recentEmojis
         skinColor: root.skinColor
