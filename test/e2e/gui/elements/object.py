@@ -20,11 +20,12 @@ class QObject:
     @property
     @allure.step('Get object {0}')
     def object(self):
+        timeout = configs.timeouts.WIN_UI_LOAD_TIMEOUT_MSEC if configs.system.get_platform() == "Windows" else configs.timeouts.UI_LOAD_TIMEOUT_MSEC
         try:
-            return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            return driver.waitForObject(self.real_name, timeout)
         except LookupError as e:
             raise Exception(
-                f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC} ms") from e
+                f"Object {self.real_name} was not found within {timeout} ms") from e
 
     def set_text_property(self, text):
         self.object.forceActiveFocus()
