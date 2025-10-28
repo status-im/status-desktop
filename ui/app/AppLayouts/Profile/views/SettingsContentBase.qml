@@ -17,7 +17,7 @@ FocusScope {
     readonly property int contentHeight: root.height - titleRow.height - Theme.padding
 
     property alias titleRowLeftComponentLoader: leftLoader
-    property alias titleRowComponentLoader: loader
+    property alias titleRowComponentLoader: additionalTitleActionsLoader
     property list<Item> headerComponents
     property alias bottomHeaderComponents: secondHeaderRow.contentItem
     default property alias content: contentWrapper.data
@@ -55,6 +55,14 @@ FocusScope {
 
         readonly property int titleRowHeight: 56
         readonly property int bottomDirtyToastMargin: 36
+
+        // Read-only flag that turns true when the row component enters a “compact” layout automatically on resize.
+        readonly property bool compactRowMode: sectionTitleText.implicitWidth + titleFirstRowItem.implicitWidth + 2 * Theme.padding > root.contentWidth
+    }
+
+    Loader {
+        id: additionalTitleActionsLoader
+        visible: false
     }
 
     StatusMouseArea {
@@ -87,6 +95,7 @@ FocusScope {
             }
 
             StatusBaseText {
+                id: sectionTitleText
                 Layout.fillWidth: !root.stickTitleRowComponentLoader
                 text: root.sectionTitle
                 font.weight: Font.Bold
@@ -94,11 +103,27 @@ FocusScope {
                 color: Theme.palette.directColor1
             }
 
-            Loader {
-                id: loader
+            // filler
+            Item {
+                Layout.fillWidth: true
+            }
+
+            LayoutItemProxy {
+                id: titleFirstRowItem
+                visible: !d.compactRowMode
+
                 Layout.leftMargin: root.stickTitleRowComponentLoader ? 8 : 0
+
+                target: additionalTitleActionsLoader.item
             }
         }
+
+        LayoutItemProxy {
+            visible: d.compactRowMode
+
+            target: additionalTitleActionsLoader.item
+        }
+
         Control {
             id: secondHeaderRow
             Layout.fillWidth: true
