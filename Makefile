@@ -10,6 +10,8 @@ SHELL := bash # the shell used internally by Make
 # used inside the included makefiles
 BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 
+GIT_ROOT ?= $(shell git rev-parse --show-toplevel 2>/dev/null || echo .)
+
 # we don't want an error here, so we can handle things later, in the ".DEFAULT" target
 -include $(BUILD_SYSTEM_DIR)/makefiles/variables.mk
 
@@ -234,11 +236,8 @@ ifeq ($(mkspecs),macx)
 endif
 
 ifeq ($(USE_NWAKU), true)
-    ifndef NWAKU_SOURCE_DIR
-        $(error NWAKU_SOURCE_DIR must be set when USE_NWAKU is true)
-    endif
+    NWAKU_SOURCE_DIR ?= $(GIT_ROOT)/../nwaku
     STATUSGO_MAKE_PARAMS += USE_NWAKU=true NWAKU_SOURCE_DIR="$(NWAKU_SOURCE_DIR)"
-    LIBWAKU := $(NWAKU_SOURCE_DIR)/build/libwaku.$(LIB_EXT)
     LIBWAKU_LIBDIR := $(NWAKU_SOURCE_DIR)/build
     NIM_EXTRA_PARAMS += --passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
 endif
@@ -459,26 +458,6 @@ dotherside-clean:
 	rm -rf $(DOTHERSIDE_BUILD_PATH)
 
 dotherside: | dotherside-build
-
-##
-##  nwaku
-##
-
-$(LIBWAKU):
-ifeq ($(USE_NWAKU),true)
-	echo -e "\033[92mBuilding:\033[39m nwaku"
-	+ $(MAKE) -C $(NWAKU_SOURCE_DIR) libwaku $(HANDLE_OUTPUT)
-endif
-
-nwaku: $(LIBWAKU)
-
-clean-nwaku:
-	echo -e "\033[92mCleaning:\033[39m nwaku"
-	rm -f $(LIBWAKU)
-
-clone-nwaku:
-	echo -e "\033[92mCloning:\033[39m nwaku"
-	+ $(MAKE) -C vendor/status-go clone-nwaku NWAKU_SOURCE_DIR="$(NWAKU_SOURCE_DIR)" $(HANDLE_OUTPUT)
 
 ##
 ##	status-go

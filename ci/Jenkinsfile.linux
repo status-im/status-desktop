@@ -107,8 +107,6 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
-        // Clean up any existing nwaku directory
-        sh "rm -rf ${NWAKU_SOURCE_DIR} || true"
       }
     }
     stage('Fetch submodules') {
@@ -120,14 +118,6 @@ pipeline {
       steps {
         sh 'make update'
         sh 'make deps'
-      }
-    }
-
-    stage('nwaku') {
-      when { expression { params.USE_NWAKU == true } }
-      steps {
-        sh 'make clone-nwaku NWAKU_SOURCE_DIR="${NWAKU_SOURCE_DIR}"'
-        sh 'make nwaku'
       }
     }
 
@@ -176,10 +166,7 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup { 
-      cleanWs(disableDeferredWipeout: true)
-      sh "rm -rf ${env.NWAKU_SOURCE_DIR} || true"
-    }
+    cleanup { cleanWs(disableDeferredWipeout: true) }
   }
 }
 
