@@ -46,20 +46,39 @@ if [[ "${OS}" == "android" ]]; then
       exit 1
     fi
 
-    echo "Building signed AAB..."
+    echo "Building AAB..."
     androiddeployqt \
       --input "$BUILD_DIR/android-Status-deployment-settings.json" \
       --output "$BUILD_DIR/android-build" \
       --aab \
       --release \
-      --android-platform "$ANDROID_PLATFORM" \
-      --sign "$KEYSTORE_PATH" "$KEY_ALIAS" \
-      --storepass "$KEYSTORE_PASSWORD" \
-      --keypass "$KEY_PASSWORD"
+      --android-platform "$ANDROID_PLATFORM"
 
     OUTPUT_FILE=$(find "$BUILD_DIR/android-build/build/outputs/bundle" -name "*.aab" | head -n 1)
     if [[ ! -f "$OUTPUT_FILE" ]]; then
       echo "Error: Could not find generated AAB file"
+      exit 1
+    fi
+
+    # Note: androiddeployqt --sign does not work for AAB files, so we sign with jarsigner
+    echo "Signing AAB with jarsigner..."
+    jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
+      -keystore "$KEYSTORE_PATH" \
+      -storepass "$KEYSTORE_PASSWORD" \
+      -keypass "$KEY_PASSWORD" \
+      "$OUTPUT_FILE" "$KEY_ALIAS"
+
+    if [[ $? -ne 0 ]]; then
+      echo "Error: AAB signing failed"
+      exit 1
+    fi
+
+    VERIFY_OUTPUT=$(jarsigner -verify "$OUTPUT_FILE" 2>&1)
+    if echo "$VERIFY_OUTPUT" | grep -q "jar verified"; then
+      echo "AAB signature verification: PASSED"
+    else
+      echo "Error: AAB signature verification failed"
+      echo "Verify output: $VERIFY_OUTPUT"
       exit 1
     fi
 
