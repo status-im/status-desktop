@@ -87,30 +87,30 @@ Release Epic: https://github.com/status-im/status-desktop/issues/18029
   - Runs parallel to other features and doesn't need to be shipped to any particular milestones
   - No API changes are expected until the Chat SDK is integrated
   - [Roadmap, Documentation and FURPS](https://zealous-polka-dc7.notion.site/Backend-Refactoring-2078f96fb65c80d8954ae8fc651b3a33)
-  - In Progress ⏳ 🟩🟩⬜⬜⬜ 44% (estimated progress as not all subtasks are created)
+  - In Progress ⏳ 🟩🟩⬜⬜⬜ 46% (estimated progress as not all subtasks are created)
 - [Mobile build](https://github.com/status-im/status-desktop/issues/18082)
   - [FURPS](/docs/FURPS/mobile-build.md)
   - Progress is also inherited from the Tablet Epic above
-  - In Progress ⏳ 🟩🟩⬜⬜⬜ 49%
+  - In Progress ⏳ 🟩🟩🟩🟨⬜ 77%
 - [Memory and Performance improvements](https://github.com/status-im/status-desktop/issues/18296)
   - No provided FURPS at the moment as this is mostly about profiling and fixing issues found.
-  - In Progress ⏳ 🟩🟩🟨⬜⬜ 53%
+  - In Progress ⏳ 🟩🟩🟨⬜⬜ 56%
 - [Privacy mode](https://github.com/status-im/status-desktop/issues/17619)
   - [FURPS](/docs/FURPS/privacy-mode.md)
-  - In Progress ⏳ 🟩🟩🟩🟨⬜ 77%
+  - In Progress ⏳ 🟩🟩🟩🟩⬜ 84%
 - [Dapp Browser](https://github.com/status-im/status-desktop/issues/17970)
   - [FURPS](/docs/FURPS/dapp-browser.md)
-  - In Progress ⏳ 🟩⬜⬜⬜⬜ 25%
+  - In Progress ⏳ 🟨⬜⬜⬜⬜ 14%
 - [Local Backup finishing touches](https://github.com/status-im/status-desktop/issues/18583)
-  - In Progress ⏳ 🟩🟩🟩🟩⬜ 81%
+  - Done ✅ 🟩🟩🟩🟩🟩 100%
 - [Opt-in Messages local backup](https://github.com/status-im/status-desktop/issues/18527)
   - In Testing ⏳ 🟩🟩🟩🟩🟩 100%
 - [Opt-in Messages Sync during local pairing](https://github.com/status-im/status-desktop/issues/18892)
-  - In Progress ⏳ 🟩🟩🟩🟩⬜ 85%
+  - Done ✅ 🟩🟩🟩🟩🟩 100%
 - [External Activity fetching](https://github.com/status-im/status-desktop/issues/17188)
   - Done ✅ 🟩🟩🟩🟩🟩 100%
 - [Translation initiative](https://github.com/status-im/status-desktop/issues/18293)
-  - In Progress ⏳ 🟩🟩🟩🟨⬜ 73%
+  - In Progress ⏳ 🟩🟩🟩🟩⬜ 84%
 - [Full Emoji list in Reactions](https://github.com/status-im/status-desktop/issues/18766)
   - In Progress ⏳ 🟩🟩🟩🟩⬜ 82%
 - Improve Token List and Support custom tokens
