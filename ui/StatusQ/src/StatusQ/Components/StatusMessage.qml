@@ -396,6 +396,7 @@ Control {
                     Loader {
                         active: !!root.reactionsModel && root.reactionsModel.ModelCount.count > 0
                         visible: active
+                        Layout.fillWidth: true
                         sourceComponent: StatusMessageEmojiReactions {
                             id: emojiReactionsPanel
                             enabled: !root.disableEmojis

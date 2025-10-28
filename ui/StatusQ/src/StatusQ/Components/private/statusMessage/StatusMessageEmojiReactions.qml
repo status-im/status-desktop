@@ -7,11 +7,10 @@ import StatusQ.Core.Utils
 import StatusQ.Controls
 import StatusQ.Components
 
-Item {
+Flow {
     id: root
 
-    implicitHeight: 22
-    implicitWidth: childrenRect.width
+    spacing: 4
 
     property int imageMargin: 4
     signal addEmojiClicked(var sender, var mouse)
@@ -25,11 +24,16 @@ Item {
     QtObject {
         id: d
 
+        readonly property string addReactionButtonName: "addReactionButton"
+
         function lastTwoItems(nodes) {
             return nodes.join(qsTr(" and "));
         }
 
         function showReactionAuthors(jsonArrayOfUsersReactedWithThisEmoji, emoji) {
+            if (!jsonArrayOfUsersReactedWithThisEmoji) {
+                return
+            }
             const listOfUsers = JSON.parse(jsonArrayOfUsersReactedWithThisEmoji)
             if (listOfUsers.error) {
                 console.error("error parsing users who reacted to a message, error: ", obj.error)
@@ -65,120 +69,102 @@ Item {
         }
     }
 
-    Row {
-        spacing: root.imageMargin
+    Repeater {
+        model: root.reactionsModel
 
-        Repeater {
-            id: reactionRepeater
+        Control {
+            id: reactionDelegate
 
-            width: childrenRect.width
-            model: root.reactionsModel
+            topPadding: 3
+            bottomPadding: 3
+            leftPadding: 4
+            rightPadding: 5
 
-            Control {
-                id: reactionDelegate
-
-                topPadding: 2
-                bottomPadding: 2
-                leftPadding: 2
-                rightPadding: 6
-
-                background: Rectangle {
-                    radius: 10
-                    color: model.didIReactWithThisEmoji
-                               ? (reactionDelegate.hovered ? Theme.palette.statusMessage.emojiReactionActiveBackgroundHovered
-                                                         : Theme.palette.statusMessage.emojiReactionActiveBackground)
-                               : (reactionDelegate.hovered ? Theme.palette.statusMessage.emojiReactionBackgroundHovered
-                                                         : Theme.palette.statusMessage.emojiReactionBackground)
-
-                    // Rounded corner to cover one corner
-                    Rectangle {
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        width: 10
-                        height: 10
-                        radius: 2
-                        color: parent.color
+            background: Rectangle {
+                radius: 8
+                color: {
+                    if (reactionDelegate.hovered) {
+                        return Theme.palette.statusMessage.emojiReactionBackgroundHovered
                     }
+                    return model.didIReactWithThisEmoji ? Theme.palette.primaryColor2 : Theme.palette.statusMessage.emojiReactionBackground
                 }
-
-                contentItem: Row {
-                    spacing: 4
-
-                    StatusBaseText {
-                        objectName: "emojiReaction"
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: model.emoji
-                    }
-
-                    StatusBaseText {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: model.numberOfReactions
-                        font.pixelSize: Theme.tertiaryTextFontSize
-                        color: model.didIReactWithThisEmoji ? Theme.palette.white : Theme.palette.directColor1
-                    }
-
-                }
-
-                StatusToolTip {
-                    visible: reactionDelegate.hovered
-                    maxWidth: 400
-                    text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emoji)
-                }
-
-                StatusMouseArea {
-                    id: mouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onEntered: {
-                        root.hoverChanged(true)
-                    }
-                    onExited: {
-                        root.hoverChanged(false)
-                    }
-                    onClicked: {
-                        root.toggleReaction(model.emoji)
-                    }
-                }
-            }
-        }
-
-        Item {
-            width: addEmojiButton.width + addEmojiButton.anchors.leftMargin // there is more margin between the button and the emojis than between each emoji
-            height: addEmojiButton.height
-            visible: root.enabled
-
-            StatusIcon {
-                id: addEmojiButton
-
-                readonly property bool isHovered: addEmojiButtonMouseArea.containsMouse
-
-                anchors.left: parent.left
-                anchors.leftMargin: 2.5
-
-                icon: "reaction-b"
-                width: 16.5
-                height: 16.5
-
-                color: addEmojiButton.isHovered && !root.limitReached ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                border.width: model.didIReactWithThisEmoji || reactionDelegate.hovered ? 1 : 0
+                border.color: reactionDelegate.hovered ? Theme.palette.statusMessage.emojiReactionBorderHovered : Theme.palette.primaryColor1
             }
 
-            StatusMouseArea {
-                id: addEmojiButtonMouseArea
-                anchors.fill: addEmojiButton
-                cursorShape: !root.limitReached ? Qt.PointingHandCursor : Qt.ArrowCursor
-                hoverEnabled: true
-                onClicked: (mouse) => {
-                    if (root.limitReached)
-                        return
-                    root.addEmojiClicked(this, mouse);
+            contentItem: Row {
+                spacing: 4
+
+                StatusBaseText {
+                    objectName: "emojiReaction"
+                    font.pixelSize: Theme.fontSize17
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: model.emoji
+                }
+
+                StatusBaseText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: model.numberOfReactions
+                    font.pixelSize: Theme.fontSize14
                 }
             }
 
             StatusToolTip {
-                visible: addEmojiButton.isHovered
-                text: root.limitReached ? qsTr("Maximum number of different reactions reached") : qsTr("Add reaction")
+                visible: reactionDelegate.hovered
+                maxWidth: 400
+                text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emoji) || ""
             }
+
+            StatusMouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onEntered: {
+                    root.hoverChanged(true)
+                }
+                onExited: {
+                    root.hoverChanged(false)
+                }
+                onClicked: {
+                    root.toggleReaction(model.emoji)
+                }
+            }
+        }
+    }
+
+    Item {
+        width: addEmojiButton.width
+        height: addEmojiButton.height
+        visible: root.enabled
+
+        StatusIcon {
+            id: addEmojiButton
+
+            readonly property bool isHovered: addEmojiButtonMouseArea.containsMouse
+
+            icon: "reaction-b"
+            width: 22
+            height: 22
+
+            color: addEmojiButton.isHovered && !root.limitReached ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+        }
+
+        StatusMouseArea {
+            id: addEmojiButtonMouseArea
+            anchors.fill: addEmojiButton
+            cursorShape: !root.limitReached ? Qt.PointingHandCursor : Qt.ArrowCursor
+            hoverEnabled: true
+            onClicked: (mouse) => {
+                if (root.limitReached)
+                    return
+                root.addEmojiClicked(this, mouse);
+            }
+        }
+
+        StatusToolTip {
+            visible: addEmojiButton.isHovered
+            text: root.limitReached ? qsTr("Maximum number of different reactions reached") : qsTr("Add reaction")
         }
     }
 }

@@ -95,9 +95,9 @@ QtObject:
 
   proc addReaction*(self: MessageReactionModel, emoji: string, didIReactWithThisEmoji: bool, userPublicKey: string,
     userDisplayName: string, reactionId: string) =
-    if(self.reactionItemWithEmojiExists(emoji)):
+    if self.reactionItemWithEmojiExists(emoji):
       let ind = self.getIndexOfTheItemWithEmoji(emoji)
-      if(ind == -1):
+      if ind == -1:
         return
       self.items[ind].addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
       let index = self.createIndex(ind, 0, nil)

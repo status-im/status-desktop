@@ -180,9 +180,8 @@ QtObject {
 
     property QtObject statusMessage: QtObject {
         property color emojiReactionBackground
+        property color emojiReactionBorderHovered
         property color emojiReactionBackgroundHovered
-        property color emojiReactionActiveBackground
-        property color emojiReactionActiveBackgroundHovered
     }
 
     property QtObject customisationColors: QtObject {
