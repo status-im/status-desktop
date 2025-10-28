@@ -14,10 +14,12 @@ Row {
     required property StatusEmojiModel emojiModel
     required property var recentEmojis
     required property string skinColor
+    property int buttonSize
 
     signal toggleReaction(string emoji)
     signal openEmojiPopup(var parent, var mouse)
 
+    height: buttonSize
     spacing: Theme.halfPadding
     leftPadding: Theme.halfPadding
     rightPadding: Theme.halfPadding
@@ -71,15 +73,16 @@ Row {
     }
 
     Repeater {
+        id: recentEmojisRepeater
         model: 5 // Only show up to 5 recent emojis
         delegate: EmojiReaction {
             id: emojiReaction
 
             required property int index
-            property var emoji: visible ? d.recentEmojisModel.get(index) : null
+            property var emoji: d.recentEmojisModel.get(index)
 
-            visible: index < d.recentEmojisModel.count
-            emojiId: visible ? emojiReaction.emoji.unicode : ""
+            emojiId: emojiReaction.emoji.unicode
+            anchors.verticalCenter: parent.verticalCenter
             // TODO not implemented yet. We'll need to pass this info
             // reactedByUser: model.didIReactWithThisEmoji
             onToggleReaction: {
@@ -89,7 +92,7 @@ Row {
     }
 
     StatusFlatRoundButton {
-        height: parent.height
+        height: root.buttonSize ? buttonSize : parent.height
         width: height
         icon.name: "reaction-b"
         type: StatusFlatRoundButton.Type.Tertiary

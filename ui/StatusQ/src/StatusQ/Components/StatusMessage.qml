@@ -419,7 +419,7 @@ Control {
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
-            anchors.topMargin: -8
+            anchors.topMargin: -4
             sourceComponent: StatusMessageQuickActions {
                 items: root.quickActions
             }

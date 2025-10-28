@@ -164,7 +164,7 @@ ThemePalette {
     }
 
     statusSelect: QtObject {
-        property color menuItemBackgroundColor: baseColor2
+        property color menuItemBackgroundColor: baseColor3
         property color menuItemHoverBackgroundColor: directColor7
     }
 

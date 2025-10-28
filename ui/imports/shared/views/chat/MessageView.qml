@@ -74,7 +74,12 @@ Loader {
     property bool pinnedMessage: false
     property string messagePinnedBy: ""
     property var reactionsModel
-    readonly property bool emojiReactionLimitReached: !!root.reactionsModel && root.reactionsModel.ModelCount.count >= Constants.maxEmojiReactionsPerMessage
+    readonly property bool emojiReactionLimitReached: {
+        if (!root.reactionsModel) {
+            return true
+        }
+        return root.reactionsModel.ModelCount.count >= Constants.maxEmojiReactionsPerMessage
+    }
 
     property var linkPreviewModel
     property var paymentRequestModel
@@ -1059,25 +1064,22 @@ Loader {
                 }
 
                 quickActions: [
-                    Loader {
-                        active: d.addReactionAllowed && delegate.hovered && !root.isViewMemberMessagesePopup
-
-                        visible: active
-                        sourceComponent: StatusFlatRoundButton {
-                            width: d.chatButtonSize
-                            height: d.chatButtonSize
-                            icon.name: "reaction-b"
-                            type: StatusFlatRoundButton.Type.Tertiary
-                            enabled: !root.emojiReactionLimitReached
-                            tooltip.text: {
-                                if (root.emojiReactionLimitReached) {
-                                    return qsTr("Maximum number of different reactions reached")
-                                }
-                                return qsTr("Add reaction")
-                            }
-                            onClicked: (mouse) => {
-                                d.addReactionClicked(this, mouse)
-                            }
+                    MessageReactionsRow {
+                        visible: {
+                            root.emojiReactionLimitReached
+                            return !root.emojiReactionLimitReached && !root.isViewMemberMessagesePopup
+                        }
+                        buttonSize: d.chatButtonSize
+                        leftPadding: 0
+                        rightPadding: 0
+                        emojiModel: emojiPopup.emojiModel
+                        recentEmojis: emojiPopup.recentEmojis
+                        skinColor: emojiPopup.skinColor
+                        onToggleReaction: emoji => {
+                            root.messageStore.toggleReaction(root.messageId, emoji)
+                        }
+                        onOpenEmojiPopup: (parent, mouse) => {
+                            d.addReactionClicked(parent, mouse)
                         }
                     },
                     Loader {
