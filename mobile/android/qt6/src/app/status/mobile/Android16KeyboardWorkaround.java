@@ -51,7 +51,7 @@ public class Android16KeyboardWorkaround {
      * @return The workaround instance, or null if not needed
      */
     public static Android16KeyboardWorkaround install(Activity activity) {
-        if (!ENABLED || Build.VERSION.SDK_INT < 35) { // Android 16 is API 35
+        if (!ENABLED || Build.VERSION.SDK_INT < 36) { // Android 16 is API 36
             return null;
         }
         
