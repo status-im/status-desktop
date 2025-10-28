@@ -83,11 +83,6 @@ StatusSectionLayout {
                 Layout.fillWidth: true
             }
 
-            StatusBetaTag {
-                tooltipText: qsTr("Under construction.<br>More notification types to be coming soon.")
-                tooltipOrientation: StatusToolTip.Orientation.Bottom
-            }
-
             StatusFlatRoundButton {
                 id: markAllReadBtn
                 objectName: "markAllReadButton"

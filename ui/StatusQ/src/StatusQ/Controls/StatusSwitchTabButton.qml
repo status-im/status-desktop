@@ -10,8 +10,6 @@ import StatusQ.Core.Theme
 TabButton {
     id: root
 
-    property bool showBetaTag: false
-
     font.pixelSize: Theme.primaryTextFontSize
 
     contentItem: RowLayout {
@@ -28,13 +26,6 @@ TabButton {
             font.weight: Font.Medium
             font.pixelSize: root.font.pixelSize
             elide: Text.ElideRight
-        }
-
-        StatusBetaTag {
-            visible: root.showBetaTag
-            fgColor: root.checked ? Theme.palette.statusSwitchTab.selectedTextColor
-                                  : Theme.palette.baseColor1
-            cursorShape: hovered ? Qt.PointingHandCursor : undefined
         }
     }
 

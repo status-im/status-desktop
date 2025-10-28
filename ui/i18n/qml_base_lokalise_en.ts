@@ -299,11 +299,6 @@
       <translation>Notifications</translation>
     </message>
     <message>
-      <source>Under construction.&lt;br&gt;More notification types to be coming soon.</source>
-      <comment>ActivityCenterLayout</comment>
-      <translation>Under construction.&lt;br&gt;More notification types to be coming soon.</translation>
-    </message>
-    <message>
       <source>Mark all as Read</source>
       <comment>ActivityCenterLayout</comment>
       <translation>Mark all as Read</translation>
@@ -9395,14 +9390,6 @@
     </message>
   </context>
   <context>
-    <name>FeeRow</name>
-    <message>
-      <source>Max.</source>
-      <comment>FeeRow</comment>
-      <translation>Max.</translation>
-    </message>
-  </context>
-  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -10951,11 +10938,6 @@
       <source>PIN correct</source>
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
-    </message>
-    <message>
-      <source>Keycard blocked</source>
-      <comment>KeycardEnterPinPage</comment>
-      <translation>Keycard blocked</translation>
     </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>
@@ -12961,11 +12943,6 @@
       <source>Account order</source>
       <comment>MainView</comment>
       <translation>Account order</translation>
-    </message>
-    <message>
-      <source>Under construction, you might experience some minor issues</source>
-      <comment>MainView</comment>
-      <translation>Under construction, you might experience some minor issues</translation>
     </message>
     <message>
       <source>Manage Tokens</source>
@@ -20863,11 +20840,6 @@
       <translation>Sync a New Device</translation>
     </message>
     <message>
-      <source>Connection problems can happen.&lt;br&gt;If they do, please use the Enter a Recovery Phrase feature instead.</source>
-      <comment>SyncingView</comment>
-      <translation>Connection problems can happen.&lt;br&gt;If they do, please use the Enter a Recovery Phrase feature instead.</translation>
-    </message>
-    <message>
       <source>You own your data. Sync it among your devices.</source>
       <comment>SyncingView</comment>
       <translation>You own your data. Sync it among your devices.</translation>
@@ -23227,11 +23199,6 @@
       <source>Add new account</source>
       <comment>WalletView</comment>
       <translation>Add new account</translation>
-    </message>
-    <message>
-      <source>Under construction, you might experience some minor issues</source>
-      <comment>WalletView</comment>
-      <translation>Under construction, you might experience some minor issues</translation>
     </message>
     <message>
       <source>Testnet mode</source>

@@ -47,8 +47,6 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 validateConnectionString: root.validateConnectionString
 
-                showBetaTag: false
-
                 onDisplayInstructions: instructionsPopup.createObject(root).open()
                 onProceed: (connectionString) => root.syncProceedWithConnectionString(connectionString)
             }

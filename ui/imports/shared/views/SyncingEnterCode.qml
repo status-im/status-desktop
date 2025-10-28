@@ -19,7 +19,6 @@ ColumnLayout {
     property string  syncQrErrorMessage: qsTr("This does not look like a pairing QR code")
     property string  syncCodeErrorMessage: qsTr("This does not look like a pairing code")
     property string  syncCodeLabel: qsTr("Type or paste pairing code")
-    property alias showBetaTag: betaTag.visible
 
     property var validateConnectionString: function(stringValue) { return false }
 
@@ -52,10 +51,6 @@ ColumnLayout {
                 objectName: "secondTab_StatusSwitchTabButton"
                 text: root.secondTabName
             }
-        }
-
-        StatusBetaTag {
-            id: betaTag
         }
     }
 

@@ -245,10 +245,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Under construction.&lt;br&gt;More notification types to be coming soon.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mark all as Read</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7719,13 +7715,6 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
-    <name>FeeRow</name>
-    <message>
-        <source>Max.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -9015,10 +9004,6 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>PIN correct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Keycard blocked</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
@@ -10695,10 +10680,6 @@ to load</source>
     </message>
     <message>
         <source>Account order</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Under construction, you might experience some minor issues</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17228,10 +17209,6 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connection problems can happen.&lt;br&gt;If they do, please use the Enter a Recovery Phrase feature instead.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You own your data. Sync it among your devices.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -19172,10 +19149,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Add new account</source>
         <translation>Přidat nový účet</translation>
-    </message>
-    <message>
-        <source>Under construction, you might experience some minor issues</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Testnet mode</source>

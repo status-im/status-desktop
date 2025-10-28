@@ -52,12 +52,6 @@ Item {
         font.weight: Font.Bold
         font.pixelSize: Theme.fontSize20
         color: Theme.palette.directColor1
-
-        StatusBetaTag {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.right
-            anchors.leftMargin: 7
-        }
     }
 
     // TODO: Replace with StatusModal
