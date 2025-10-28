@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ef pipefail
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 OPENSSL=${OPENSSL:-"../vendors/openssl"}
 OS=${OS:-"ios"}
@@ -20,34 +20,34 @@ SSL_OUTPUT_LIB=${LIB_PATH}/libssl_3${LIB_EXT}
 PLATFORM_ARGS=""
 
 if [[ "$OS" == "ios" ]]; then
-    if [[ "$SDK" == "iphonesimulator" ]]; then
-        case ${ARCH} in
-            "x86_64") TARGET="iossimulator-x86_64-xcrun";;
-            "arm64")  TARGET="iossimulator-arm64-xcrun";;
-            "x86")    TARGET="iossimulator-i386-xcrun";;
-            # default to system architecture
-            # missing armv7 support for ios simulator
-            *)        TARGET="iossimulator-xcrun";;
-        esac
-    elif [[ "$SDK" == "iphoneos" ]]; then
-        case ${ARCH} in
-            "arm64")  TARGET="ios64-xcrun";;
-            *)        TARGET="ios-xcrun";;
-        esac
-    fi
+  if [[ "$SDK" == "iphonesimulator" ]]; then
+    case ${ARCH} in
+    "x86_64") TARGET="iossimulator-x86_64-xcrun" ;;
+    "arm64") TARGET="iossimulator-arm64-xcrun" ;;
+    "x86") TARGET="iossimulator-i386-xcrun" ;;
+    # default to system architecture
+    # missing armv7 support for ios simulator
+    *) TARGET="iossimulator-xcrun" ;;
+    esac
+  elif [[ "$SDK" == "iphoneos" ]]; then
+    case ${ARCH} in
+    "arm64") TARGET="ios64-xcrun" ;;
+    *) TARGET="ios-xcrun" ;;
+    esac
+  fi
 fi
 
 if [[ "$OS" == "android" ]]; then
-    PLATFORM_CONFIG_ARGS="-U__ANDROID_API__ -D__ANDROID_API__=${ANDROID_API}"
-    PLATFORM_BUILD_ARGS="SHLIB_VERSION_NUMBER="
-    cleanup() {
-        if [[ "$OS" == "android" ]]; then
-            patch -d ${OPENSSL} -R -p0 < "${SCRIPT_DIR}/openssl-patch.diff"
-        fi
-    }
+  PLATFORM_CONFIG_ARGS="-U__ANDROID_API__ -D__ANDROID_API__=${ANDROID_API}"
+  PLATFORM_BUILD_ARGS="SHLIB_VERSION_NUMBER="
+  cleanup() {
+    if [[ "$OS" == "android" ]]; then
+      patch -d ${OPENSSL} -R -p0 <"${SCRIPT_DIR}/openssl-patch.diff"
+    fi
+  }
 
-    trap cleanup EXIT
-    patch -d ${OPENSSL} -p0 < "${SCRIPT_DIR}/openssl-patch.diff"
+  trap cleanup EXIT
+  patch -d ${OPENSSL} -p0 <"${SCRIPT_DIR}/openssl-patch.diff"
 fi
 
 echo "Building OpenSSL for $TARGET with platform config args $PLATFORM_CONFIG_ARGS"
@@ -55,13 +55,24 @@ echo "Building OpenSSL for $TARGET with platform config args $PLATFORM_CONFIG_AR
 mkdir -p ${SSL_BUILD_DIR}
 
 (
-    cd ${SSL_BUILD_DIR}
-    ${OPENSSL}/Configure --release "$TARGET" $PLATFORM_CONFIG_ARGS
-    # Rebuilding isn't working with the default target, so we need to clean and build again
-    make clean
-    make -j$(sysctl -n hw.ncpu) $PLATFORM_BUILD_ARGS build_libs
+  cd ${SSL_BUILD_DIR}
+  ${OPENSSL}/Configure --release "$TARGET" $PLATFORM_CONFIG_ARGS
+  # Rebuilding isn't working with the default target, so we need to clean and build again
+  make clean
+  make -j$(sysctl -n hw.ncpu) $PLATFORM_BUILD_ARGS build_libs
 )
 
-echo "Copying $CRYPTO_OUTPUT_LIB and $SSL_OUTPUT_LIB to $LIB_PATH"
-cp "${SSL_BUILD_DIR}/libcrypto${LIB_EXT}" "$CRYPTO_OUTPUT_LIB"
-cp "${SSL_BUILD_DIR}/libssl${LIB_EXT}" "$SSL_OUTPUT_LIB"
+mkdir -p "$LIB_PATH"
+
+# For shared libraries (.so), OpenSSL creates libcrypto_3.so and libssl_3.so
+# For static libraries (.a), it creates libcrypto.a and libssl.a
+if [[ "$LIB_EXT" == ".so" ]]; then
+  SRC_CRYPTO="${SSL_BUILD_DIR}/libcrypto_3${LIB_EXT}"
+  SRC_SSL="${SSL_BUILD_DIR}/libssl_3${LIB_EXT}"
+else
+  SRC_CRYPTO="${SSL_BUILD_DIR}/libcrypto${LIB_EXT}"
+  SRC_SSL="${SSL_BUILD_DIR}/libssl${LIB_EXT}"
+fi
+
+cp "${SRC_CRYPTO}" "$CRYPTO_OUTPUT_LIB"
+cp "${SRC_SSL}" "$SSL_OUTPUT_LIB"
