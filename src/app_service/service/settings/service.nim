@@ -3,6 +3,7 @@ import nimqml, chronicles, json, strutils, sequtils, tables, times
 import app/core/eventemitter
 import app/core/signals/types
 import app_service/common/types as common_types
+import backend/newsfeed as status_newsfeed
 import backend/mailservers as status_mailservers
 import backend/settings as status_settings
 import backend/status_update as status_update
@@ -127,6 +128,9 @@ QtObject:
     try:
       let response = status_settings.getSettings()
       self.settings = response.result.toSettingsDto()
+      self.settings.newsFeedEnabled = status_newsfeed.enabled().result.getBool
+      self.settings.newsNotificationsEnabled = status_newsfeed.notificationsEnabled().result.getBool
+      self.settings.newsRSSEnabled = status_newsfeed.rssEnabled().result.getBool
       self.initNotificationSettings()
     except Exception as e:
       let errDesription = e.msg
@@ -959,13 +963,18 @@ QtObject:
   ### News Feed Settings ###
   proc notifSettingStatusNewsChanged*(self: Service) {.signal.}
 
-  proc toggleNewsFeedEnabled*(self: Service, value: bool): bool =
+  proc toggleNewsFeedEnabled*(self: Service, enabled: bool, notificationsEnabled: bool): bool =
     try:
-      let response = status_settings.toggleNewsFeedEnabled(value)
+      var response = status_newsfeed.setEnabled(enabled)
       if not response.error.isNil:
         raise newException(RpcException, response.error.message)
 
-      self.settings.newsFeedEnabled = value
+      response = status_newsfeed.setNotificationsEnabled(notificationsEnabled)
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+
+      self.settings.newsFeedEnabled = enabled
+      self.settings.newsNotificationsEnabled = notificationsEnabled
       self.notifSettingStatusNewsChanged()
       return true
     except Exception as e:
@@ -983,13 +992,13 @@ QtObject:
       newsOSNotificationsEnabled = self.settings.newsNotificationsEnabled
     else:
       try:
-        var response = status_settings.newsFeedEnabled()
+        var response = status_newsfeed.enabled()
         if not response.error.isNil:
           error "error reading news feed enabled setting: ", errDescription = response.error.message
           return
         newsFeedEnabled = response.result.getBool
 
-        response = status_settings.newsNotificationsEnabled()
+        response = status_newsfeed.notificationsEnabled()
         if not response.error.isNil:
           error "error reading news notifications enabled setting: ", errDescription = response.error.message
           return
@@ -1030,12 +1039,9 @@ QtObject:
       error "error: ", procName="setNotifSettingStatusNews", errDescription = "Unknown value: ", value
       return
 
-    if not self.saveSetting(KEY_NEWS_NOTIFICATIONS_ENABLED, newsOSNotificationsEnabled):
-      return
-    self.settings.newsNotificationsEnabled = newsOSNotificationsEnabled
-
     # toggleNewsFeedEnabled changes the value and calls the signals
-    discard self.toggleNewsFeedEnabled(newsFeedEnabled)
+    discard self.toggleNewsFeedEnabled(newsFeedEnabled, newsOSNotificationsEnabled)
+
   QtProperty[string] notifSettingStatusNews:
     read = getNotifSettingStatusNews
     write = setNotifSettingStatusNews
@@ -1048,7 +1054,7 @@ QtObject:
 
     result = true #default value
     try:
-      let response = status_settings.newsRSSEnabled()
+      let response = status_newsfeed.rssEnabled()
       if(not response.error.isNil):
         raise newException(RpcException, response.error.message)
       result = response.result.getBool
@@ -1058,7 +1064,7 @@ QtObject:
 
   proc setNewsRSSEnabled*(self: Service, value: bool) {.slot.} =
     try:
-      let response = status_settings.toggleNewsRSSEnabled(value)
+      let response = status_newsfeed.setRSSEnabled(value)
       if not response.error.isNil:
         raise newException(RpcException, response.error.message)
 
