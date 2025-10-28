@@ -42,6 +42,7 @@ StatusDialog {
     width: 800
     height: 428
     padding: 0
+    fillHeightOnBottomSheet: true
 
     title: root.messageToPin ? qsTr("Pin limit reached") : qsTr("Pinned messages")
     subtitle: root.messageToPin ? qsTr("Unpin a previous message first")
