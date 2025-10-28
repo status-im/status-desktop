@@ -178,8 +178,6 @@ StatusScrollView {
                     hasNotification: model.hasNotification
                     notificationsCount: model.notificationsCount
                     pinned: model.pinned
-
-                    isExperimental: model.isExperimental ?? false
                 }
             }
 

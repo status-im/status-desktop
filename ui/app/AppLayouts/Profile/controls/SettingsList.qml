@@ -44,15 +44,7 @@ StatusListView {
         selected: root.currenctSubsection === model.subsection
         badge.value: model.badgeCount
 
-        statusListItemTitleIcons.sourceComponent: model.isExperimental ? betaTagComponent : null
-
-        Component {
-            id: betaTagComponent
-            StatusBetaTag {
-                tooltipText: model.experimentalTooltip
-                cursorShape: Qt.PointingHandCursor
-            }
-        }
+        statusListItemTitleIcons.sourceComponent: null
 
         onClicked: root.clicked(model.subsection)
     }

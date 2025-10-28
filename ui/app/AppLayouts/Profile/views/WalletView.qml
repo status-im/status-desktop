@@ -195,14 +195,12 @@ SettingsContentBase {
             } else if(currentIndex === root.accountOrderViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
-                root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
 
             } else if(currentIndex === root.manageTokensViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
-                root.titleRowComponentLoader.sourceComponent = experimentalTagComponent
                 root.stickTitleRowComponentLoader = true
             } else if(currentIndex === root.savedAddressesViewIndex) {
                 priv.backButtonName = root.walletSectionTitle
@@ -410,13 +408,6 @@ SettingsContentBase {
                 objectName: "settings_Wallet_MainView_AddNewAccountButton"
                 text: qsTr("Add new account")
                 onClicked: root.walletStore.runAddAccountPopup()
-            }
-        }
-
-        Component {
-            id: experimentalTagComponent
-            StatusBetaTag {
-                tooltipText: qsTr("Under construction, you might experience some minor issues")
             }
         }
 

@@ -245,10 +245,6 @@
         <translation>알림</translation>
     </message>
     <message>
-        <source>Under construction.&lt;br&gt;More notification types to be coming soon.</source>
-        <translation>공사 중입니다.&lt;br&gt;더 많은 알림 유형이 곧 제공될 예정입니다.</translation>
-    </message>
-    <message>
         <source>Mark all as Read</source>
         <translation>모두 읽은 것으로 표시</translation>
     </message>
@@ -7665,13 +7661,6 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
-    <name>FeeRow</name>
-    <message>
-        <source>Max.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -8945,10 +8934,6 @@ Are you sure you want to do this?</source>
     <message>
         <source>PIN correct</source>
         <translation>PIN이 올바릅니다</translation>
-    </message>
-    <message>
-        <source>Keycard blocked</source>
-        <translation>Keycard가 차단됨</translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
@@ -10602,10 +10587,6 @@ to load</source>
     <message>
         <source>Account order</source>
         <translation>계정 순서</translation>
-    </message>
-    <message>
-        <source>Under construction, you might experience some minor issues</source>
-        <translation>공사 중입니다. 일부 작은 문제가 발생할 수 있어요</translation>
     </message>
     <message>
         <source>Manage Tokens</source>
@@ -17082,10 +17063,6 @@ access to your webcam</source>
         <translation>새 기기 동기화</translation>
     </message>
     <message>
-        <source>Connection problems can happen.&lt;br&gt;If they do, please use the Enter a Recovery Phrase feature instead.</source>
-        <translation>연결 문제가 발생할 수 있어요.&lt;br&gt;그럴 경우, 대신 복구 문구 입력 기능을 사용해주세요.</translation>
-    </message>
-    <message>
         <source>You own your data. Sync it among your devices.</source>
         <translation>데이터는 내 소유. 내 기기들끼리 동기화하세요.</translation>
     </message>
@@ -19007,10 +18984,6 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <message>
         <source>Add new account</source>
         <translation>새 계정 추가</translation>
-    </message>
-    <message>
-        <source>Under construction, you might experience some minor issues</source>
-        <translation>공사 중입니다. 약간의 문제를 겪을 수 있습니다</translation>
     </message>
     <message>
         <source>Testnet mode</source>

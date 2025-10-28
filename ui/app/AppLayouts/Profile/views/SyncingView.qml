@@ -166,23 +166,14 @@ SettingsContentBase {
             contentItem: ColumnLayout {
                 spacing: Theme.padding
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-
-                    StatusBaseText {
-                        Layout.preferredWidth: parent.width - betaTag.width - parent.spacing
-                        objectName: "syncNewDeviceTextLabel"
-                        elide: Text.ElideRight
-                        color: Theme.palette.primaryColor1
-                        font.pixelSize: Theme.secondaryAdditionalTextSize
-                        font.weight: Font.Bold
-                        text: qsTr("Sync a New Device")
-                    }
-                    StatusBetaTag {
-                        id: betaTag
-                        tooltipText: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
-                    }
+                StatusBaseText {
+                    Layout.preferredWidth: parent.width - betaTag.width - parent.spacing
+                    objectName: "syncNewDeviceTextLabel"
+                    elide: Text.ElideRight
+                    color: Theme.palette.primaryColor1
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
+                    font.weight: Font.Bold
+                    text: qsTr("Sync a New Device")
                 }
 
                 StatusBaseText {

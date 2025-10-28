@@ -38,7 +38,6 @@ Item {
                 StatusSwitchTabButton {
                     width: customTabBar.buttonWidth ?? implicitWidth
                     text: "%1 words".arg(modelData)
-                    showBetaTag: index === repeater.count - 1
                 }
             }
         }

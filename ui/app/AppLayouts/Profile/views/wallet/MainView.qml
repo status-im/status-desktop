@@ -145,15 +145,6 @@ Column {
                 color: Theme.palette.baseColor1
             }
         ]
-
-        StatusBetaTag {
-            id: accountOrderBetaTag
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: accountOrderItem.statusListItemTitle.width + parent.leftPadding + Theme.bigPadding
-            tooltipText: qsTr("Under construction, you might experience some minor issues")
-            cursorShape: Qt.PointingHandCursor
-        }
     }
 
     Separator {}
@@ -172,15 +163,6 @@ Column {
                 color: Theme.palette.baseColor1
             }
         ]
-
-        StatusBetaTag {
-            id: manageTokensBetaTag
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: manageTokensItem.statusListItemTitle.width + parent.leftPadding + Theme.bigPadding
-            tooltipText: qsTr("Under construction, you might experience some minor issues")
-            cursorShape: Qt.PointingHandCursor
-        }
     }
 
     Separator {}

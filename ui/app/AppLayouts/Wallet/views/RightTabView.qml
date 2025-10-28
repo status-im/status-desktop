@@ -257,16 +257,6 @@ RightTabBaseView {
                         rightPadding: 0
                         width: implicitWidth
                         text: qsTr("Activity")
-
-                        StatusBetaTag {
-                            // TODO remove me when Activity is no longer experimental
-                            // Keep Activity as the last tab for now as the Experimental tag don't flow
-                            anchors.top: parent.top
-                            anchors.topMargin: parent.verticalPadding
-                            anchors.left: parent.right
-                            anchors.leftMargin: 5
-                            cursorShape: Qt.PointingHandCursor
-                        }
                     }
                     onCurrentIndexChanged: {
                         RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.TokenType.ERC721 : Constants.TokenType.ERC20)
