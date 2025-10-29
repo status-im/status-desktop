@@ -5,16 +5,15 @@ import QtWebChannel
 
 import StatusQ.Core.Theme
 import utils
-
 import "Utils.js" as BrowserUtils
 
 /**
  * ConnectorBridge
- * 
+ *
  * Simplified connector infrastructure for BrowserLayout.
- * Provides WebEngine profiles with script injection, WebChannel, 
+ * Provides WebEngine profiles with script injection, WebChannel,
  * ConnectorManager, and direct connection to Nim backend.
- * 
+ *
  * This component bridges the Browser UI with the Connector backend system.
  */
 QtObject {
@@ -26,13 +25,13 @@ QtObject {
 
     readonly property alias webChannel: channel
     readonly property alias manager: connectorManager
-    
+
     property alias dappUrl: connectorManager.dappUrl
     property alias dappOrigin: connectorManager.dappOrigin
     property alias dappName: connectorManager.dappName
     property alias dappIconUrl: connectorManager.dappIconUrl
     property alias clientId: connectorManager.clientId
-    
+
     function hasWalletConnected(hostname, address) {
         if (!connectorController) return false
 
@@ -54,10 +53,10 @@ QtObject {
         if (!connectorController) return false
         return connectorController.disconnect(hostname)
     }
-    
+
     function updateDAppUrl(url, name) {
         if (!url) return
-        
+
         const urlStr = url.toString()
         connectorManager.dappUrl = urlStr
         connectorManager.dappOrigin = Utils.normalizeOrigin(urlStr)
@@ -99,7 +98,7 @@ QtObject {
 
     readonly property ConnectorManager connectorManager: ConnectorManager {
         connectorController: root.connectorController  // (shared_modules/connector/controller.nim)
-        
+
         dappUrl: ""
         dappOrigin: ""
         dappName: ""
@@ -124,16 +123,14 @@ QtObject {
 
     readonly property Eip1193ProviderAdapter eip1193ProviderAdapter: Eip1193ProviderAdapter {
         WebChannel.id: "ethereumProvider"
-        
+
         chainId: BrowserUtils.chainIdToHex(connectorManager.dappChainId)
         networkVersion: connectorManager.dappChainId.toString()
         selectedAddress: connectorManager.accounts.length > 0 ? connectorManager.accounts[0] : ""
         accounts: connectorManager.accounts
         connected: connectorManager.connected
 
-        function request(args) {
-            return connectorManager.request(args)
-        }
+        onRequestInternal: (args) => connectorManager.request(args)
     }
 }
 

@@ -116,6 +116,14 @@ QtObject {
                 }
             }
 
+            const onDestructionHandler = () => {
+                if(!d.managedSubscriptions.hasOwnProperty(subscriptionId))
+                    return
+                
+                root.unsubscribed.disconnect(onUnsubscribedHandler) //object is destroyed, no need to listen to the signal anymore
+                unsubscribe(subscriptionId)
+            }
+
             const onUnsubscribedHandler = (subscriptionId) => {
                 if(subscriptionId !== subscription.subscriptionId)
                     return
@@ -123,14 +131,6 @@ QtObject {
                 subscription.Component.onDestruction.disconnect(onDestructionHandler)
                 subscription.isReadyChanged.disconnect(onReadyChangeHandler)
                 subscription.topicChanged.disconnect(onTopicChangeHandler)
-            }
-
-            const onDestructionHandler = () => {
-                if(!d.managedSubscriptions.hasOwnProperty(subscriptionId))
-                    return
-                
-                root.unsubscribed.disconnect(onUnsubscribedHandler) //object is destroyed, no need to listen to the signal anymore
-                unsubscribe(subscriptionId)
             }
 
             subscription.Component.onDestruction.connect(onDestructionHandler)
