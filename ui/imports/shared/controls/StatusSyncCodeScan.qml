@@ -30,7 +30,7 @@ import StatusQ.Core.Theme
     I think this can only be improved by moving the OS requests to another thread from C++.
 
     We also don't yet have ability to auto-detect if the camera access was already enabled.
-    So we show `Enable camera` button everytime.
+    So we show `Scan QR` button everytime.
 */
 
 Column {
@@ -120,7 +120,7 @@ Column {
                 StatusButton {
                     id: button
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Enable camera access")
+                    text: qsTr("Scan QR")
                     onClicked: {
                         loading = true
                         cameraPermission.request()
