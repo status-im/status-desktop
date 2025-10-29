@@ -154,6 +154,8 @@ Button {
                 }
 
                 delegate: ItemDelegate {
+
+                    objectName: "itemDelegate_" + model.code
                     width: ListView.view.width - ListView.view.leftMargin - ListView.view.rightMargin
                     height: d.delegateHeight
                     checked: model.code === d.selectedLanguage
