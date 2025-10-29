@@ -17,6 +17,8 @@ StatusModal {
     property var sharedKeycardModule
     property var emojiPopup
 
+    fillHeightOnBottomSheet: true
+
     width: Constants.keycard.general.popupWidth
     closePolicy: root.sharedKeycardModule.forceFlow || d.disableActionPopupButtons || d.disableCloseButton?
                      Popup.NoAutoClose :
