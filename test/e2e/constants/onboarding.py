@@ -20,6 +20,10 @@ class KeysExistText(Enum):
     KEYS_EXIST_TEXT = (
         "Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your recovery phrase. In case of Keycard try recovering using PUK or reinstall the app and try login with the Keycard option.")
 
+class LanguageCodes(Enum):
+    CZECH = 'CS'
+    ENGLISH = 'EN'
+    KOREAN = 'KO'
 
 password_strength_elements = namedtuple('Password_Strength_Elements',
                                         ['strength_indicator', 'strength_color', 'strength_messages'])

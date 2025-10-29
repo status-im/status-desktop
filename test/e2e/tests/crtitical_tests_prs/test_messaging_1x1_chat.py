@@ -8,8 +8,6 @@ from allure_commons._allure import step
 
 import driver
 from configs import get_platform
-from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
-    LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
 from constants.messaging import Messaging
 from constants.wallet import WalletAddress
 from ext.test_files.base64_images import BASE_64_IMAGE_JPEG
