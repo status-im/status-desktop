@@ -3,6 +3,8 @@
         <item name="colorPrimary">#4360df</item>
         <item name="colorPrimaryDark">#ffffff</item>
         <item name="colorControlActivated">#4360df</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
     <style name="LightTheme" parent="AppTheme">

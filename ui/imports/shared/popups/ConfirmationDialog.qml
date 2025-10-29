@@ -29,6 +29,7 @@ StatusModal {
 
     headerSettings.title: qsTr("Confirm your action")
     focus: visible
+    fullScreenSheet: false
 
     signal confirmButtonClicked()
     signal rejectButtonClicked()

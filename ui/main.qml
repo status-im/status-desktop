@@ -51,6 +51,33 @@ StatusWindow {
     readonly property bool appThemeDark: Theme.isDarkTheme
     readonly property bool portraitLayout: height > width
     property bool biometricFlowPending: false
+    
+    // Store the native SafeArea bottom margin (e.g., iOS home indicator)
+    // Must be set in Component.onCompleted before any additionalMargins are applied
+    property real nativeSafeAreaBottom: 0
+    
+    // Use native Android keyboard tracking via WindowInsets API
+    // This bypasses Qt's unreliable inputMethod and works with any windowSoftInputMode
+    // Both Android and iOS keyboard heights are in physical pixels and need devicePixelRatio conversion
+    // iOS: Native code converts (nativePoints × nativeScale) to pixels for Qt to convert to its logical points
+    // Android: WindowInsets provides pixels directly
+    property real keyboardHeight: SQUtils.Utils.isAndroid ? SystemUtils.androidKeyboardHeight / Screen.devicePixelRatio :
+                                    SQUtils.Utils.isIOS ? SystemUtils.iosKeyboardHeight / Screen.devicePixelRatio :
+                                    Qt.inputMethod.visible ? Qt.inputMethod.keyboardRectangle.height : 0
+    
+    // Calculate additional margin so that total = max(nativeSafeAreaBottom, keyboardHeight)
+    // When keyboard shows, we want the keyboard height to replace the native safe area, not add to it
+    // The Behavior animation ensures smooth transitions even during rapid keyboard show/hide sequences
+    property real additionalBottomMargin: Math.max(0, keyboardHeight - nativeSafeAreaBottom)
+
+    SafeArea.additionalMargins.bottom: additionalBottomMargin
+
+    Behavior on additionalBottomMargin {
+        NumberAnimation {
+            duration: 250
+            easing.type: Easing.OutCubic
+        }
+    }
 
     objectName: "mainWindow"
     color: Theme.palette.background
@@ -353,7 +380,7 @@ StatusWindow {
                 return
 
             safeArea.additionalMargins.top = 0
-            safeArea.additionalMargins.bottom = 0
+            safeArea.additionalMargins.bottom = Qt.binding(() => applicationWindow.additionalBottomMargin)
             safeArea.additionalMargins.left = 0
             safeArea.additionalMargins.right = 0
 
@@ -362,6 +389,7 @@ StatusWindow {
     }
 
     Component.onCompleted: {
+        
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
         if (languageStore.currentLanguage === "") { // if we haven't configured the language yet...
@@ -388,6 +416,8 @@ StatusWindow {
         // Without this the paddings are not updated correctly when launched in portrait mode
         updatePaddings()
 
+        nativeSafeAreaBottom = mobileUI.safeAreaBottom + mobileUI.navbarHeight
+
         // SafeArea margins works well out of the box when app uses regular qml Window as a top level
         // window. When custom window derived from QQuickWindow is used, SafeArea's margins are all 0
         // till first screen rotation or virtual keyboard usage (Android 15, 16, not and issue on Android 14).
@@ -396,7 +426,7 @@ StatusWindow {
         const safeArea = applicationWindow.contentItem.SafeArea
 
         if (safeArea.margins.bottom === 0 && mobileUI.safeAreaBottom + mobileUI.navbarHeight > 0)
-            safeArea.additionalMargins.bottom = Qt.binding(() => mobileUI.safeAreaBottom + mobileUI.navbarHeight)
+            safeArea.additionalMargins.bottom = Qt.binding(() => mobileUI.safeAreaBottom + mobileUI.navbarHeight + applicationWindow.additionalBottomMargin)
 
         if (safeArea.margins.top === 0 && mobileUI.safeAreaTop > 0)
             safeArea.additionalMargins.top = Qt.binding(() => mobileUI.safeAreaTop)
