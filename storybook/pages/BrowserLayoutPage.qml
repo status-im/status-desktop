@@ -13,6 +13,7 @@ import utils
 
 import AppLayouts.Browser
 import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.Browser.nim as BrowserNim
 
 import AppLayouts.Wallet.stores
 import shared.stores
@@ -26,10 +27,8 @@ Item {
         anchors.fill: parent
         userUID: "0xdeadbeef"
         transactionStore: TransactionStore {}
-        assetsStore: WalletAssetsStore {}
-        currencyStore: CurrenciesStore {}
-        tokensStore: TokensStore {}
         thirdpartyServicesEnabled: true
+        connectorController: BrowserNim.ConnectorController {}
 
         bookmarksStore: BrowserStores.BookmarksStore {
             property var bookmarksModel: ListModel {}
@@ -105,7 +104,7 @@ Item {
             }
 
             function switchAccountByAddress(address) {
-                dappBrowserAccount.address = adress
+                dappBrowserAccount.address = address
             }
         }
 

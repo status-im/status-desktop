@@ -2057,11 +2057,9 @@ Item {
                         downloadsStore: BrowserStores.DownloadsStore {}
                         browserRootStore: BrowserStores.BrowserRootStore {}
                         browserWalletStore: BrowserStores.BrowserWalletStore {}
+                        connectorController: WalletStores.RootStore.dappsConnectorController
 
                         transactionStore: appMain.transactionStore
-                        assetsStore: appMain.walletAssetsStore
-                        currencyStore: appMain.currencyStore
-                        tokensStore: appMain.tokensStore
                         onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)
                     }
                 }
