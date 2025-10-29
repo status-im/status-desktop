@@ -956,7 +956,7 @@ Rectangle {
 
     DropAreaPanel {
         enabled: control.visible && control.enabled
-        parent: Overlay.overlay
+        parent: control.Overlay.overlay
         anchors.fill: parent
         onDroppedOnValidScreen: (drop) => {
             let dropUrls = drop.urls
@@ -967,9 +967,10 @@ Rectangle {
                 }
             }
 
-            if (validateImagesAndShowImageArea(dropUrls)) {
+            if (validateImagesAndShowImageArea(dropUrls))
                 drop.acceptProposedAction()
-            }
+            else
+                console.warn("Invalid drop with URLs:", dropUrls)
         }
     }
 
@@ -1301,6 +1302,9 @@ Rectangle {
                             // This is needed to make sure the text area is disabled when the input is disabled
                             Binding on enabled {
                                 value: control.enabled
+                            }
+                            Keys.onShortcutOverride: function (event) {
+                                event.accepted = event.matches(StandardKey.Paste)
                             }
                             Keys.onUpPressed: function(event) {
                                 if (isEdit && !activeFocus) {

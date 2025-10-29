@@ -7,7 +7,6 @@ import utils
 DropArea {
     id: root
 
-    property bool enabled: false
     property alias droppedUrls: rptDraggedPreviews.model
 
     signal droppedOnValidScreen(var drop)
@@ -24,7 +23,7 @@ DropArea {
                 }
                 cleanup()
             }
-    onEntered: {
+    onEntered: function(drag) {
         if (!enabled || !!drag.source) {
             drag.accepted = false
             return
@@ -33,7 +32,7 @@ DropArea {
         // needed because drag.urls is not a normal js array
         rptDraggedPreviews.model = drag.urls.filter(img => Utils.isValidDragNDropImage(img))
     }
-    onPositionChanged: {
+    onPositionChanged: function(drag) {
         rptDraggedPreviews.x = drag.x
         rptDraggedPreviews.y = drag.y
     }

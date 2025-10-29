@@ -34,8 +34,19 @@ UrlUtils::UrlUtils(QObject *parent): QObject(parent) {
 
 bool UrlUtils::isValidImageUrl(const QUrl &url) const
 {
+    const auto urlEndsWithSupportedExtension = [&](const QString& url) {
+        const auto suffix = url.mid(url.lastIndexOf('.')+1);
+        if (suffix.isEmpty())
+            return false;
+        return m_allImgExtensions.contains(suffix, Qt::CaseInsensitive);
+    };
+
     // don't convert "content:/" like URLs to an empty path
     const auto filePath = url.isLocalFile() ? url.toLocalFile() : url.toString();
+
+    if (url.scheme().startsWith(QLatin1String("http"))) // truly remote URLs, not virtual like Android content://
+        return urlEndsWithSupportedExtension(filePath); // QMimeDatabase::mimeTypeForUrl(url) returns 'application/octet-stream'
+
     const auto mimeType = m_mimeDb.mimeTypeForFile(filePath, QMimeDatabase::MatchContent).name();
 
     return m_validImageMimeTypes.contains(mimeType);
