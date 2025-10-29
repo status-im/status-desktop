@@ -8017,10 +8017,6 @@ L2 poplatek: %2</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable camera access</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>encrypted key pairs code</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8050,6 +8046,10 @@ L2 poplatek: %2</translation>
     </message>
     <message>
         <source>Scan or enter the code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan QR</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8107,10 +8107,6 @@ L2 poplatek: %2</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>encrypted key pairs code</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8140,6 +8136,10 @@ L2 poplatek: %2</translation>
     </message>
     <message>
         <source>Scan or enter the code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan QR</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16639,11 +16639,11 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable camera access</source>
+        <source>Ensure that the QR code is in focus to scan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ensure that the QR code is in focus to scan</source>
+        <source>Scan QR</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

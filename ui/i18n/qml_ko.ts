@@ -7962,10 +7962,6 @@ L2 fee: %2</source>
         <translation>복사</translation>
     </message>
     <message>
-        <source>Enable camera access</source>
-        <translation>카메라 접근 허용</translation>
-    </message>
-    <message>
         <source>encrypted key pairs code</source>
         <translation>암호화된 키 페어 코드</translation>
     </message>
@@ -7996,6 +7992,10 @@ L2 fee: %2</source>
     <message>
         <source>Scan or enter the code</source>
         <translation>코드를 스캔하거나 입력하세요</translation>
+    </message>
+    <message>
+        <source>Scan QR</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8052,10 +8052,6 @@ L2 fee: %2</source>
         <translation>복사</translation>
     </message>
     <message>
-        <source>Enable camera</source>
-        <translation>카메라 사용 설정</translation>
-    </message>
-    <message>
         <source>encrypted key pairs code</source>
         <translation>암호화된 키 쌍 코드</translation>
     </message>
@@ -8086,6 +8082,10 @@ L2 fee: %2</source>
     <message>
         <source>Scan or enter the code</source>
         <translation>코드를 스캔하거나 입력하세요</translation>
+    </message>
+    <message>
+        <source>Scan QR</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16499,12 +16499,12 @@ access to your webcam</source>
         <translation>QR를 스캔하려면 Status가 웹캠에 접근할 수 있어야 합니다</translation>
     </message>
     <message>
-        <source>Enable camera access</source>
-        <translation>카메라 접근을 허용</translation>
-    </message>
-    <message>
         <source>Ensure that the QR code is in focus to scan</source>
         <translation>QR 코드를 선명하게 맞춰 스캔하세요</translation>
+    </message>
+    <message>
+        <source>Scan QR</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

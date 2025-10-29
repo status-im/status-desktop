@@ -71,7 +71,7 @@ Column {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
                     return qsTr("Copy the")
                 }
-                return qsTr("Enable camera access")
+                return qsTr("Scan QR")
             }
             return qsTr("Click")
         }
@@ -122,7 +122,7 @@ Column {
                 }
                 return ""
             }
-            return qsTr("Enable camera access")
+            return qsTr("Scan QR")
         }
         text2Color: Theme.palette.directColor1
         text3: {

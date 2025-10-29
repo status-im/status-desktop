@@ -9754,11 +9754,6 @@
       <translation>Copy the</translation>
     </message>
     <message>
-      <source>Enable camera access</source>
-      <comment>GetSyncCodeDesktopInstructions</comment>
-      <translation>Enable camera access</translation>
-    </message>
-    <message>
       <source>encrypted key pairs code</source>
       <comment>GetSyncCodeDesktopInstructions</comment>
       <translation>encrypted key pairs code</translation>
@@ -9797,6 +9792,11 @@
       <source>Scan or enter the code</source>
       <comment>GetSyncCodeDesktopInstructions</comment>
       <translation>Scan or enter the code</translation>
+    </message>
+    <message>
+      <source>Scan QR</source>
+      <comment>GetSyncCodeDesktopInstructions</comment>
+      <translation>Scan QR</translation>
     </message>
   </context>
   <context>
@@ -9865,11 +9865,6 @@
       <translation>Copy the</translation>
     </message>
     <message>
-      <source>Enable camera</source>
-      <comment>GetSyncCodeMobileInstructions</comment>
-      <translation>Enable camera</translation>
-    </message>
-    <message>
       <source>encrypted key pairs code</source>
       <comment>GetSyncCodeMobileInstructions</comment>
       <translation>encrypted key pairs code</translation>
@@ -9908,6 +9903,11 @@
       <source>Scan or enter the code</source>
       <comment>GetSyncCodeMobileInstructions</comment>
       <translation>Scan or enter the code</translation>
+    </message>
+    <message>
+      <source>Scan QR</source>
+      <comment>GetSyncCodeMobileInstructions</comment>
+      <translation>Scan QR</translation>
     </message>
   </context>
   <context>
@@ -20153,14 +20153,14 @@
       <translation>To scan a QR, Status needs&#xA;access to your webcam</translation>
     </message>
     <message>
-      <source>Enable camera access</source>
-      <comment>StatusSyncCodeScan</comment>
-      <translation>Enable camera access</translation>
-    </message>
-    <message>
       <source>Ensure that the QR code is in focus to scan</source>
       <comment>StatusSyncCodeScan</comment>
       <translation>Ensure that the QR code is in focus to scan</translation>
+    </message>
+    <message>
+      <source>Scan QR</source>
+      <comment>StatusSyncCodeScan</comment>
+      <translation>Scan QR</translation>
     </message>
   </context>
   <context>
