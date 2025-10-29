@@ -4,13 +4,9 @@
 #include <QClipboard>
 #include <QFile>
 #include <QGuiApplication>
-#include <QImage>
 #include <QMimeData>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QUrl>
-
-#include <algorithm>
 
 ClipboardUtils::ClipboardUtils()
 {
@@ -76,11 +72,14 @@ QList<QUrl> ClipboardUtils::urls() const
 
 void ClipboardUtils::setText(const QString &text)
 {
+    QGuiApplication::clipboard()->clear();
     QGuiApplication::clipboard()->setText(text);
 }
 
 void ClipboardUtils::setImageByUrl(const QUrl &url)
 {
+    QGuiApplication::clipboard()->clear();
+
     static thread_local QNetworkAccessManager manager;
     manager.setAutoDeleteReplies(true);
 
