@@ -21,6 +21,8 @@
 #include <qtmodelstoolkit/registerqmltypes.h>
 #include <qqmlsortfilterproxymodeltypes.h>
 
+#include <MobileUI>
+
 #include "l10n/languagemodel.h"
 #include "l10n/languageservice.h"
 #include "wallet/managetokenscontroller.h"
@@ -108,4 +110,5 @@ void registerStatusQTypes() {
     qtmt::registerQmlTypes();
     QZXing::registerQMLTypes();
     qqsfpm::registerTypes();
+    MobileUI::registerQML();
 }

@@ -251,6 +251,14 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(QtModelsToolkit)
 
+FetchContent_Declare(
+  MobileUI
+
+  GIT_REPOSITORY https://github.com/status-im/MobileUI.git
+  GIT_TAG 223b7b1f4ee07521e6ce312e96bcf609c6cdfc37
+)
+FetchContent_MakeAvailable(MobileUI)
+
 target_link_libraries(StatusQ PRIVATE
         Qt::Core
         Qt::Qml
@@ -259,6 +267,7 @@ target_link_libraries(StatusQ PRIVATE
         Qt::QuickControls2
         SortFilterProxyModel
         QtModelsToolkit
+        MobileUI
         qzxing
         )
 
