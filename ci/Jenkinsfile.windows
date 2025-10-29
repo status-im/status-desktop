@@ -71,7 +71,10 @@ pipeline {
     MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Explicitly set the QT version */
     QTDIR = "/c/Qt/6.9.2/msvc2022_64"
-    PATH = "${env.QTDIR}/bin:${goPath()}/bin:${env.PATH}"
+    GOPATH = "${WORKSPACE_TMP}/go"
+    GOCACHE = "${WORKSPACE_TMP}/gocache"
+    GOTMPDIR = "${WORKSPACE_TMP}/gotmp"
+    PATH = "${PATH}:${GOPATH}/bin:${env.QTDIR}/bin:/c/Users/jenkins/go/bin"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = 1
     /* Control output the filename */
@@ -99,6 +102,7 @@ pipeline {
     stage('Cleanup Workspace') {
       steps {
         sh './scripts/clean-git.sh'
+        sh 'mkdir -p "${WORKSPACE_TMP}/gotmp"'
       }
     }
     stage('Fetch submodules') {
@@ -180,8 +184,4 @@ def getArch() {
     for (def arch in ['x86_64', 'aarch64']) {
       if (tokens.contains(arch)) { return arch }
     }
-}
-
-def goPath() {
-  return sh(script: 'go env GOPATH', returnStdout: true).trim().replace('C:', '/c')
 }
