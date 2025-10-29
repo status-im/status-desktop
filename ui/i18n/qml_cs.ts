@@ -11394,14 +11394,6 @@ to load</source>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
-    <message>
-        <source>Maximum number of different reactions reached</source>
-        <translation type="unfinished">Dosažen maximální počet různých reakcí</translation>
-    </message>
-    <message>
-        <source>Add reaction</source>
-        <translation type="unfinished">Přidat reakci</translation>
-    </message>
 </context>
 <context>
     <name>MessagingView</name>

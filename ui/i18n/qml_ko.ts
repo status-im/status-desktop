@@ -11271,10 +11271,6 @@ to load</source>
         <translation>알 수 없는 메시지입니다. 더 많은 메시지를 불러와 보세요</translation>
     </message>
     <message>
-        <source>Add reaction</source>
-        <translation>반응 추가</translation>
-    </message>
-    <message>
         <source>Reply</source>
         <translation>답장</translation>
     </message>
@@ -11297,10 +11293,6 @@ to load</source>
     <message>
         <source>Delete</source>
         <translation>삭제</translation>
-    </message>
-    <message>
-        <source>Maximum number of different reactions reached</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

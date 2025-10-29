@@ -133,38 +133,23 @@ Flow {
         }
     }
 
-    Item {
-        width: addEmojiButton.width
-        height: addEmojiButton.height
+    StatusFlatButton {
         visible: root.enabled
+        icon.name: "reaction-b"
+        size: StatusBaseButton.Size.Tiny
+        icon.color: hovered && !root.limitReached ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+        tooltip.text: root.limitReached ? qsTr("Maximum number of different reactions reached") : qsTr("Add reaction")
 
-        StatusIcon {
-            id: addEmojiButton
-
-            readonly property bool isHovered: addEmojiButtonMouseArea.containsMouse
-
-            icon: "reaction-b"
-            width: 22
-            height: 22
-
-            color: addEmojiButton.isHovered && !root.limitReached ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
-        }
-
+        // We use a MouseArea because we need to pass the mouse event to the signal
         StatusMouseArea {
-            id: addEmojiButtonMouseArea
-            anchors.fill: addEmojiButton
+            anchors.fill: parent
             cursorShape: !root.limitReached ? Qt.PointingHandCursor : Qt.ArrowCursor
-            hoverEnabled: true
             onClicked: (mouse) => {
+                mouse.accepted = true
                 if (root.limitReached)
                     return
-                root.addEmojiClicked(this, mouse);
+                root.addEmojiClicked(this, mouse)
             }
-        }
-
-        StatusToolTip {
-            visible: addEmojiButton.isHovered
-            text: root.limitReached ? qsTr("Maximum number of different reactions reached") : qsTr("Add reaction")
         }
     }
 }
