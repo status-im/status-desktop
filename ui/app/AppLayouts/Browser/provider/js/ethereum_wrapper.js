@@ -359,7 +359,10 @@ const EthereumWrapper = (function() {
             if (attempts < maxAttempts) {
                 setTimeout(retry, retryInterval * Math.min(attempts, 5));
             } else {
-                console.error('[Ethereum Wrapper] Failed to install after', maxAttempts, 'attempts');
+                const isIframe = window.self !== window.top;
+                if (!isIframe) {
+                    console.error('[Ethereum Wrapper] Failed to install after', maxAttempts, 'attempts');
+                }
             }
         };
         

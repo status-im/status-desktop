@@ -18,10 +18,6 @@ import AppLayouts.Browser.stores as BrowserStores
 Dialog {
     id: root
 
-    required property var assetsStore
-    required property var currencyStore
-    required property var tokensStore
-
     required property bool currentTabConnected
     required property BrowserStores.BrowserWalletStore browserWalletStore
 
@@ -193,42 +189,11 @@ Dialog {
         anchors.topMargin: Theme.bigPadding
         anchors.bottom: parent.bottom
 
-        StatusTabBar {
-            id: walletTabBar
-            width: parent.width
-            anchors.top: parent.top
-
-            StatusTabButton {
-                id: assetBtn
-                width: implicitWidth
-                text: qsTr("Assets")
-            }
-            StatusTabButton {
-                id: historyBtn
-                width: implicitWidth
-                text: qsTr("History")
-            }
-        }
-
-        StackLayout {
-            id: stackLayout
-            width: parent.width
-            anchors.top: walletTabBar.bottom
-            anchors.topMargin: Theme.bigPadding
-            anchors.bottom: parent.bottom
-            currentIndex: walletTabBar.currentIndex
-
-            // FIXME integrate
-            // AssetsView {
-            //    id: assetsTab
-            //    controller: root.assetsStore.assetsController
-            //    currencyStore: root.currencyStore
-            //    tokensStore: root.tokensStore
-            // }
-            HistoryView {
-                id: historyTab
-                overview: root.browserWalletStore.dappBrowserAccount
-            }
+        // TODO: Add Assets and History tabs when ready
+        StatusBaseText {
+            anchors.centerIn: parent
+            text: qsTr("Wallet info will appear here")
+            color: Theme.palette.baseColor1
         }
     }
     onClosed: {

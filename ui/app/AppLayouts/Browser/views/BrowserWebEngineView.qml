@@ -8,6 +8,7 @@ import shared.controls
 import utils
 
 import "../panels"
+import "ScriptUtils.js" as ScriptUtils
 
 import AppLayouts.Browser.stores as BrowserStores
 
@@ -24,6 +25,7 @@ WebEngineView {
     property var downloadsMenu
     property var determineRealURLFn: function(url){}
     property bool isDownloadView
+    property bool enableJsLogs: false
 
     signal setCurrentWebUrl(url url)
 
@@ -100,6 +102,14 @@ WebEngineView {
         if(request.url.toString().startsWith("file:/")){
             console.log("Local file browsing is disabled" )
             request.reject()
+        }
+    }
+
+    onJavaScriptConsoleMessage: function(level, message, lineNumber, sourceID) {
+        // Check if the message is from our injected scripts
+        const isOurScript = ScriptUtils.isOurInjectedScript(sourceID, root.profile);
+        if (isOurScript || root.enableJsLogs) {
+            console.log("[WebEngine]", sourceID + ":" + lineNumber, message);
         }
     }
 

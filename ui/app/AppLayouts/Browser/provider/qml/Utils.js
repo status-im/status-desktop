@@ -1,3 +1,5 @@
+.pragma library
+
 function accountsDidChange(oldAccounts, newAccounts) {
     const a = oldAccounts || []
     const b = newAccounts || []
@@ -55,6 +57,6 @@ function extractDomainName(urlString) {
         return urlObj.hostname || "Unknown dApp"
     } catch (e) {
         return "Unknown dApp"
-    }
+}
 }
 

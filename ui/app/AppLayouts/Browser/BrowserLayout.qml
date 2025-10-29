@@ -18,6 +18,7 @@ import shared.stores.send
 
 import AppLayouts.Browser.stores as BrowserStores
 
+import "provider/qml"
 import "popups"
 import "controls"
 import "views"
@@ -33,20 +34,32 @@ StatusSectionLayout {
     required property bool thirdpartyServicesEnabled
 
     required property TransactionStore transactionStore
-    required property var assetsStore
-    required property var currencyStore
-    required property var tokensStore
 
     required property BrowserStores.BookmarksStore bookmarksStore
     required property BrowserStores.DownloadsStore downloadsStore
     required property BrowserStores.BrowserRootStore browserRootStore
     required property BrowserStores.BrowserWalletStore browserWalletStore
+    required property var connectorController
 
     signal sendToRecipientRequested(string address)
 
     function openUrlInNewTab(url) {
         var tab = _internal.addNewTab()
         tab.url = _internal.determineRealURL(url)
+    }
+
+    ConnectorBridge {
+        id: connectorBridge
+
+        userUID: root.userUID
+        connectorController: root.connectorController
+        httpUserAgent: {
+            if (localAccountSensitiveSettings.compatibilityMode) {
+                // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
+                return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+            }
+            return ""
+        }
     }
 
     QtObject {
@@ -91,32 +104,13 @@ StatusSectionLayout {
             standardButtons: Dialog.Ok
         }
 
-        property QtObject defaultProfile: WebEngineProfile {
-            storageName: "Profile_%1".arg(root.userUID)
-            offTheRecord: false
-            httpUserAgent: {
-                if (localAccountSensitiveSettings.compatibilityMode) {
-                    // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
-                    return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
-                }
-                return ""
-            }
-        }
-
-        property QtObject otrProfile: WebEngineProfile {
-            storageName: "IncognitoProfile_%1".arg(root.userUID)
-            offTheRecord: true
-            persistentCookiesPolicy: WebEngineProfile.NoPersistentCookies
-            httpUserAgent: _internal.defaultProfile.httpUserAgent
-        }
-
         function addNewDownloadTab() {
-            tabs.createDownloadTab(tabs.count !== 0 ? currentWebView.profile : defaultProfile);
+            tabs.createDownloadTab(tabs.count !== 0 ? currentWebView.profile : connectorBridge.defaultProfile);
             tabs.currentIndex = tabs.count - 1;
         }
 
         function addNewTab() {
-            var tab = tabs.createEmptyTab(tabs.count !== 0 ? currentWebView.profile : defaultProfile);
+            var tab = tabs.createEmptyTab(tabs.count !== 0 ? currentWebView.profile : connectorBridge.defaultProfile);
             browserHeader.addressBar.forceActiveFocus();
             browserHeader.addressBar.selectAll();
 
@@ -218,9 +212,9 @@ StatusSectionLayout {
             }
             onOpenNewTabTriggered: _internal.addNewTab()
             Component.onCompleted: {
-                _internal.defaultProfile.downloadRequested.connect(_internal.onDownloadRequested);
-                _internal.otrProfile.downloadRequested.connect(_internal.onDownloadRequested);
-                var tab = createEmptyTab(_internal.defaultProfile, true);
+                connectorBridge.defaultProfile.downloadRequested.connect(_internal.onDownloadRequested);
+                connectorBridge.otrProfile.downloadRequested.connect(_internal.onDownloadRequested);
+                var tab = createEmptyTab(connectorBridge.defaultProfile, true);
                 // For Devs: Uncomment the next line if you want to use the simpledapp on first load
                 // tab.url = root.browserRootStore.determineRealURL("https://simpledapp.eth");
             }
@@ -312,11 +306,11 @@ StatusSectionLayout {
             id: settingsMenu
             x: parent.width - width
             y: browserHeader.y + browserHeader.height
-            isIncognito: _internal.currentWebView && _internal.currentWebView.profile === _internal.otrProfile
+            isIncognito: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
             onAddNewTab: _internal.addNewTab()
             onGoIncognito: function (checked) {
                 if (_internal.currentWebView) {
-                    _internal.currentWebView.profile = checked ? _internal.otrProfile : _internal.defaultProfile;
+                    _internal.currentWebView.profile = checked ? connectorBridge.otrProfile : connectorBridge.defaultProfile;
                 }
             }
             onZoomIn: {
@@ -352,9 +346,6 @@ StatusSectionLayout {
         Component  {
             id: browserWalletMenu
             BrowserWalletMenu {
-                assetsStore: root.assetsStore
-                currencyStore: root.currencyStore
-                tokensStore: root.tokensStore
                 currentTabConnected: root.browserRootStore.currentTabConnected
                 browserWalletStore: root.browserWalletStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
@@ -362,7 +353,7 @@ StatusSectionLayout {
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
                     browserHeader.anchors.topMargin + Theme.halfPadding)
                 onSendTriggered: (address) => root.sendToRecipientRequested(address)
-                onAccountChanged: (newAddress) => connectorBridge.manager.changeAccount(newAddress)
+                onAccountChanged: (newAddress) => connectorBridge.connectorManager.changeAccount(newAddress)
                 onReload: {
                     for (let i = 0; i < tabs.count; ++i){
                         tabs.getTab(i).reload();
@@ -455,7 +446,7 @@ StatusSectionLayout {
             bookmarksStore: root.bookmarksStore
             downloadsStore: root.downloadsStore
             currentWebView: _internal.currentWebView
-            webChannel: channel
+            webChannel: connectorBridge.channel
             findBarComp: findBar
             favMenu: favoriteMenu
             addFavModal: addFavoriteModal
@@ -542,6 +533,15 @@ StatusSectionLayout {
         function onUrlChanged() {
             browserHeader.addressBar.text = root.browserRootStore.obtainAddress(_internal.currentWebView.url)
             root.browserRootStore.currentTabConnected = false // TODO: Will be handled by connector https://github.com/status-im/status-desktop/issues/19223
+
+            // Update ConnectorBridge with current dApp metadata
+            if (_internal.currentWebView && _internal.currentWebView.url) {
+                connectorBridge.connectorManager.updateDAppUrl(
+                    _internal.currentWebView.url, 
+                    _internal.currentWebView.title,
+                    _internal.currentWebView.icon
+                )
+            }
         }
     }
 
