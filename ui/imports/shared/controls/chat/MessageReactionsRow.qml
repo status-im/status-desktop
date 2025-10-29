@@ -36,6 +36,10 @@ Row {
             sourceModel: root.emojiModel
 
             filters: [
+                IndexFilter {
+                    // Only show the first 5 emojis
+                    maximumIndex: 4
+                },
                 AnyOf {
                     ValueFilter {
                         roleName: "skinColor"

@@ -66,8 +66,8 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
-        // FIXME there is a padding on each side
         visible: emojiRow.visible && !root.disabledForChat
+        horizontalPadding: 0
     }
 
     StatusAction {
@@ -150,6 +150,7 @@ StatusMenu {
                   editMessageAction.enabled ||
                   pinAction.enabled ||
                   markMessageAsUnreadAction.enabled)
+        horizontalPadding: 0
     }
 
     StatusAction {
