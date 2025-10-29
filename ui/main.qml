@@ -21,6 +21,8 @@ import StatusQ.Core.Theme
 import StatusQ.Core.Utils as SQUtils
 import StatusQ.Platform
 
+import MobileUI
+
 StatusWindow {
     id: applicationWindow
 
@@ -325,6 +327,32 @@ StatusWindow {
         }
     }
 
+    // Clear additional SafeArea's margins when regular margins are intialized. Doing cleanup
+    // this way prevents binding loop between margins and additional margins.
+    Connections {
+        id: safeMarginsCleanupConnections
+
+        enabled: false
+        target: applicationWindow.contentItem.SafeArea
+
+        function onMarginsChanged() {
+            const safeArea = applicationWindow.contentItem.SafeArea
+
+            if (safeArea.margins.top === mobileUI.safeAreaTop &&
+                    safeArea.margins.bottom === (mobileUI.safeAreaBottom + mobileUI.navbarHeight) &&
+                    safeArea.margins.left === mobileUI.safeAreaLeft &&
+                    safeArea.margins.right === mobileUI.safeAreaRight)
+                return
+
+            safeArea.additionalMargins.top = 0
+            safeArea.additionalMargins.bottom = 0
+            safeArea.additionalMargins.left = 0
+            safeArea.additionalMargins.right = 0
+
+            safeMarginsCleanupConnections.enabled = false
+        }
+    }
+
     Component.onCompleted: {
         console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
 
@@ -351,6 +379,27 @@ StatusWindow {
 
         // Without this the paddings are not updated correctly when launched in portrait mode
         updatePaddings()
+
+        // SafeArea margins works well out of the box when app uses regular qml Window as a top level
+        // window. When custom window derived from QQuickWindow is used, SafeArea's margins are all 0
+        // till first screen rotation or virtual keyboard usage (Android 15, 16, not and issue on Android 14).
+        // This workaround initializes margins by adding addtionalMargins using values read directly from
+        // via native API. When the margins are initialized, binding is cleared.
+        const safeArea = applicationWindow.contentItem.SafeArea
+
+        if (safeArea.margins.bottom === 0 && mobileUI.safeAreaBottom + mobileUI.navbarHeight > 0)
+            safeArea.additionalMargins.bottom = Qt.binding(() => mobileUI.safeAreaBottom + mobileUI.navbarHeight)
+
+        if (safeArea.margins.top === 0 && mobileUI.safeAreaTop > 0)
+            safeArea.additionalMargins.top = Qt.binding(() => mobileUI.safeAreaTop)
+
+        if (safeArea.margins.right === 0 && mobileUI.safeAreaRight > 0)
+            safeArea.additionalMargins.right = Qt.binding(() => mobileUI.safeAreaRight)
+
+        if (safeArea.margins.left === 0 && mobileUI.safeAreaLeft > 0)
+            safeArea.additionalMargins.left = Qt.binding(() => mobileUI.safeAreaLeft)
+
+        safeMarginsCleanupConnections.enabled = true
     }
 
     signal navigateTo(string path)
@@ -612,5 +661,9 @@ StatusWindow {
                 mouse.accepted = false
             }
         }
+    }
+
+    MobileUI {
+        id: mobileUI
     }
 }
