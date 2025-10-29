@@ -1,5 +1,6 @@
 from objectmaphelper import *
 
+
 # MAIN NAMES
 
 statusDesktop_mainWindow = {"name": "mainWindow", "type": "QQuickWindow"}

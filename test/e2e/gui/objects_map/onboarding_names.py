@@ -1,3 +1,5 @@
+from objectmaphelper import RegularExpression
+
 from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
 
 # Welcome to status view
@@ -7,6 +9,7 @@ startupNewsPage = {"container": startupOnboardingLayout, "id": "newsPage", "type
 startupCreateProfileButton = {"container": startupOnboardingLayout, "objectName": "btnCreateProfile", "type": "StatusButton", "visible": True}
 startupLoginButton = {"container": startupOnboardingLayout, "objectName": "btnLogin", "type": "StatusButton", "visible": True}
 startupApprovalLinks = {"container": startupOnboardingLayout, "objectName": "approvalLinks", "type": "StatusBaseText", "visible": True}
+startupLanguageSelector = {"container": statusDesktop_mainWindow, "type": "StatusLanguageSelector", "unnamed": 1, "visible": True}
 
 # Sign in view
 enterRecoveryPhraseButton = {"container": startupOnboardingLayout, "objectName": "btnWithSeedphrase", "type": "StatusButton", "visible": True}
@@ -185,6 +188,8 @@ userLoginItem = {"container": statusDesktop_mainWindow_overlay, "type": "LoginUs
 createProfileButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createProfileDelegate", "type": "LoginUserSelectorDelegate", "visible": True}
 returningLoginButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "logInDelegate", "type": "LoginUserSelectorDelegate", "visible": True}
 statusDropdown = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusDropdown", "type": "PopupItem", "visible": True}
+startupLanguageSelector_item = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("itemDelegate_*"), "type": "ItemDelegate", "visible": True}
+
 
 # Touch ID Auth View
 mainWindow_TouchIDAuthView = {"container": statusDesktop_mainWindow, "type": "TouchIDAuthView", "unnamed": 1, "visible": True}

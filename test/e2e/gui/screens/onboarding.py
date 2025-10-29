@@ -11,6 +11,7 @@ from constants.onboarding import OnboardingScreensHeaders
 import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
+from gui.components.onboarding.language_selector import LanguageSelector
 from gui.components.onboarding.login_by_syncing_checklist import LogInBySyncingChecklist
 from gui.components.onboarding.login_users_list_popup import OnboardingLoginUsersPopup
 from gui.components.onboarding.share_usage_data_popup import HelpUsImproveStatusView
@@ -35,6 +36,12 @@ class OnboardingWelcomeToStatusView(QObject):
         self.create_profile_button = Button(onboarding_names.startupCreateProfileButton)
         self.log_in_button = Button(onboarding_names.startupLoginButton)
         self.approval_links = QObject(onboarding_names.startupApprovalLinks)
+        self.language_selector = QObject(onboarding_names.startupLanguageSelector)
+
+    @allure.step('Open language selector')
+    def open_language_selector(self):
+        self.language_selector.click()
+        return LanguageSelector().wait_until_appears()
 
     @allure.step('Open Create your profile view')
     def open_create_your_profile_view(self) -> 'CreateYourProfileViewOnboarding':
