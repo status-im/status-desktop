@@ -10,6 +10,8 @@ SHELL := bash # the shell used internally by Make
 # used inside the included makefiles
 BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 
+GIT_ROOT ?= $(shell git rev-parse --show-toplevel 2>/dev/null || echo .)
+
 # we don't want an error here, so we can handle things later, in the ".DEFAULT" target
 -include $(BUILD_SYSTEM_DIR)/makefiles/variables.mk
 
@@ -234,11 +236,10 @@ ifeq ($(mkspecs),macx)
 endif
 
 ifeq ($(USE_NWAKU), true)
-	STATUSGO_MAKE_PARAMS += USE_NWAKU=true
-	LIBWAKU := vendor/status-go/vendor/github.com/waku-org/waku-go-bindings/third_party/nwaku/build/libwaku.$(LIB_EXT)
-	LIBWAKU_LIBDIR := $(shell pwd)/$(shell dirname "$(LIBWAKU)")
-	export LIBWAKU
-	NIM_EXTRA_PARAMS +=	--passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
+    NWAKU_SOURCE_DIR ?= $(GIT_ROOT)/../nwaku
+    STATUSGO_MAKE_PARAMS += USE_NWAKU=true NWAKU_SOURCE_DIR="$(NWAKU_SOURCE_DIR)"
+    LIBWAKU_LIBDIR := $(NWAKU_SOURCE_DIR)/build
+    NIM_EXTRA_PARAMS += --passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
 endif
 
 INCLUDE_DEBUG_SYMBOLS ?= false
@@ -469,10 +470,10 @@ export STATUSGO_LIBDIR
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
-	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
+	$(STATUSGO_MAKE_PARAMS) $(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
 		SENTRY_CONTEXT_NAME="status-desktop" \
 		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
-		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
+		 $(HANDLE_OUTPUT)
 
 status-go: $(STATUSGO)
 
