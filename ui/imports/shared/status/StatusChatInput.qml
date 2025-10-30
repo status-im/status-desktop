@@ -1446,9 +1446,10 @@ Rectangle {
                                 implicitWidth: 32
                                 icon.name: "send"
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                                visible: messageInputField.length > 0 || control.fileUrlsAndSources.length > 0 ||
+                                visible: messageInputField.length > 0 || messageInputField.preeditText || control.fileUrlsAndSources.length > 0 ||
                                          (!!control.paymentRequestModel && control.paymentRequestModel.ModelCount.count > 0)
                                 onClicked: {
+                                    InputMethod.commit()
                                     control.onKeyPress({modifiers: d.kbdModifierToSendMessage, key: Qt.Key_Return})
                                 }
                                 tooltip.text: qsTr("Send message")
