@@ -8,8 +8,6 @@ from allure_commons._allure import step
 
 import driver
 from configs import get_platform
-from constants.images_paths import HEART_EMOJI_PATH, ANGRY_EMOJI_PATH, THUMBSUP_EMOJI_PATH, THUMBSDOWN_EMOJI_PATH, \
-    LAUGHING_EMOJI_PATH, SAD_EMOJI_PATH
 from constants.messaging import Messaging
 from constants.wallet import WalletAddress
 from ext.test_files.base64_images import BASE_64_IMAGE_JPEG
@@ -38,7 +36,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     emoji = 'sunglasses'
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     local_picture = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
-    picture = random.choice([BASE_64_IMAGE_JPEG, local_picture])
+    picture = BASE_64_IMAGE_JPEG
 
     EMOJI_PATHES = ["❤️", "👍", "👎", "😂", "😢", "😡"]
 
