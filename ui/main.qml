@@ -338,12 +338,6 @@ StatusWindow {
         function onMarginsChanged() {
             const safeArea = applicationWindow.contentItem.SafeArea
 
-            if (safeArea.margins.top === mobileUI.safeAreaTop &&
-                    safeArea.margins.bottom === (mobileUI.safeAreaBottom + mobileUI.navbarHeight) &&
-                    safeArea.margins.left === mobileUI.safeAreaLeft &&
-                    safeArea.margins.right === mobileUI.safeAreaRight)
-                return
-
             safeArea.additionalMargins.top = 0
             safeArea.additionalMargins.bottom = 0
             safeArea.additionalMargins.left = 0
