@@ -227,7 +227,16 @@ pipeline {
         cred: 'discord-status-desktop-e2e-webhook',
       )
     } }
-    cleanup { cleanWs(disableDeferredWipeout: true) }
+    cleanup {
+      script {
+        powershell '''
+          if (Test-Path "C:\\Users\\jenkins\\AppData\\Local\\Status") {
+            Remove-Item "C:\\Users\\jenkins\\AppData\\Local\\Status" -Recurse -Force -ErrorAction SilentlyContinue
+          }
+        '''
+      }
+      cleanWs(disableDeferredWipeout: true) 
+    }
   }
 }
 
