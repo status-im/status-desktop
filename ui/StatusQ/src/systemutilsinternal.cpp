@@ -7,7 +7,6 @@
 #include <QProcess>
 #include <QSaveFile>
 #include <QStandardPaths>
-#include <QTimer>
 
 #ifdef Q_OS_ANDROID
 #include <QJniObject>
@@ -45,64 +44,6 @@ SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
     app->installEventFilter(filter);
 
     QObject::connect(filter, &QuitFilter::quit, this, &SystemUtilsInternal::quit);
-
-#ifdef Q_OS_ANDROID
-    // Poll keyboard state on Android and emit property change signals
-    auto keyboardTimer = new QTimer(this);
-    keyboardTimer->setInterval(50); // 20 FPS polling rate
-    QObject::connect(keyboardTimer, &QTimer::timeout, this, [this]() {
-        // Get the Android activity
-        auto activity = QNativeInterface::QAndroidApplication::context();
-        
-        int height = QJniObject::callStaticMethod<jint>(
-            "app/status/mobile/KeyboardUtil",
-            "getKeyboardHeight",
-            "(Landroid/app/Activity;)I",
-            activity.object()
-        );
-        bool visible = QJniObject::callStaticMethod<jboolean>(
-            "app/status/mobile/KeyboardUtil",
-            "isKeyboardVisible",
-            "(Landroid/app/Activity;)Z",
-            activity.object()
-        );
-        
-        if (m_androidKeyboardHeight != height) {
-            m_androidKeyboardHeight = height;
-            emit androidKeyboardHeightChanged();
-        }
-        
-        if (m_androidKeyboardVisible != visible) {
-            m_androidKeyboardVisible = visible;
-            emit androidKeyboardVisibleChanged();
-        }
-    });
-    keyboardTimer->start();
-#endif
-
-#ifdef Q_OS_IOS
-    // Set up iOS keyboard tracking
-    ::setupIOSKeyboardTracking();
-    
-    // Poll iOS keyboard state and emit property change signals
-    m_iosKeyboardPollTimer = new QTimer(this);
-    m_iosKeyboardPollTimer->setInterval(50); // 20 FPS polling rate
-    QObject::connect(m_iosKeyboardPollTimer, &QTimer::timeout, this, [this]() {
-        int height = ::getIOSKeyboardHeight();
-        bool visible = ::isIOSKeyboardVisible();
-        
-        if (m_iosKeyboardHeight != height) {
-            m_iosKeyboardHeight = height;
-            emit iosKeyboardHeightChanged();
-        }
-        
-        if (m_iosKeyboardVisible != visible) {
-            m_iosKeyboardVisible = visible;
-            emit iosKeyboardVisibleChanged();
-        }
-    });
-    m_iosKeyboardPollTimer->start();
-#endif
 }
 
 QString SystemUtilsInternal::qtRuntimeVersion() const {
@@ -248,41 +189,6 @@ void SystemUtilsInternal::setAndroidSplashScreenReady()
         "hideSplashScreen",
         "()V"
     );
-#endif
-}
-
-int SystemUtilsInternal::androidKeyboardHeight() const
-{
-    return m_androidKeyboardHeight;
-}
-
-bool SystemUtilsInternal::androidKeyboardVisible() const
-{
-    return m_androidKeyboardVisible;
-}
-
-int SystemUtilsInternal::iosKeyboardHeight() const
-{
-#ifdef Q_OS_IOS
-    return m_iosKeyboardHeight;
-#else
-    return 0;
-#endif
-}
-
-bool SystemUtilsInternal::iosKeyboardVisible() const
-{
-#ifdef Q_OS_IOS
-    return m_iosKeyboardVisible;
-#else
-    return false;
-#endif
-}
-
-void SystemUtilsInternal::setupIOSKeyboardTracking()
-{
-#ifdef Q_OS_IOS
-    ::setupIOSKeyboardTracking();
 #endif
 }
 

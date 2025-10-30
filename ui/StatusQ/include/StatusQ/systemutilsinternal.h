@@ -7,11 +7,6 @@
 class SystemUtilsInternal : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int androidKeyboardHeight READ androidKeyboardHeight NOTIFY androidKeyboardHeightChanged)
-    Q_PROPERTY(bool androidKeyboardVisible READ androidKeyboardVisible NOTIFY androidKeyboardVisibleChanged)
-    Q_PROPERTY(int iosKeyboardHeight READ iosKeyboardHeight NOTIFY iosKeyboardHeightChanged)
-    Q_PROPERTY(bool iosKeyboardVisible READ iosKeyboardVisible NOTIFY iosKeyboardVisibleChanged)
-
 public:
     explicit SystemUtilsInternal(QObject *parent = nullptr);
 
@@ -27,30 +22,10 @@ public:
     Q_INVOKABLE void setAndroidStatusBarIconColor(bool lightIcons);
     // Notify Android splash screen to hide (for custom activity)
     Q_INVOKABLE void setAndroidSplashScreenReady();
-    
-    // Get Android keyboard state (uses WindowInsets API, works Android 11-16+)
-    Q_INVOKABLE int androidKeyboardHeight() const;
-    Q_INVOKABLE bool androidKeyboardVisible() const;
-    
-    // Get iOS keyboard state
-    Q_INVOKABLE int iosKeyboardHeight() const;
-    Q_INVOKABLE bool iosKeyboardVisible() const;
-    Q_INVOKABLE void setupIOSKeyboardTracking();
 
 signals:
     // Emitted when event of type QEvent::Quit is detected by event filter on
     // QGuiApplication. It's helpful to handle close requests on mac coming from
     // various sources (shortcut, menu bar close icon, tray icon menu).
     void quit(bool spontaneous);
-    void androidKeyboardHeightChanged();
-    void androidKeyboardVisibleChanged();
-    void iosKeyboardHeightChanged();
-    void iosKeyboardVisibleChanged();
-
-private:
-    int m_androidKeyboardHeight = 0;
-    bool m_androidKeyboardVisible = false;
-    int m_iosKeyboardHeight = 0;
-    bool m_iosKeyboardVisible = false;
-    QTimer* m_iosKeyboardPollTimer = nullptr;
 };

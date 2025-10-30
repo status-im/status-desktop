@@ -176,9 +176,9 @@ StatusDialog {
     property bool showAdvancedFooter: false
     /*!
        \qmlproperty hasCloseButton
-        This property decides whether the standard header has a close button.
+        This property decides whether the standard header has a close button.s
     */
-    property bool hasCloseButton: true
+    property alias hasCloseButton: headerImpl.hasCloseButton
     /*!
        \qmlproperty hasFloatingButtons
         This property decides whether the advanced header has floating buttons on top of the Modal
@@ -187,9 +187,6 @@ StatusDialog {
 
     signal editButtonClicked()
     signal headerImageClicked()
-
-    // Simple popups for now. The complex ones need more work
-    fullScreenSheet: hasCloseButton && !showAdvancedHeader
 
     width: 480
 
@@ -215,7 +212,6 @@ StatusDialog {
             popupMenu: headerSettings.popupMenu
             headerImageEditable: headerSettings.headerImageEditable
             editable: headerSettings.editable
-            hasCloseButton: root.hasCloseButton
 
             onEditButtonClicked: root.editButtonClicked()
             onHeaderImageClicked: root.headerImageClicked()
