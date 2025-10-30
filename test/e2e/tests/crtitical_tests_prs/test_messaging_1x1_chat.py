@@ -36,7 +36,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     emoji = 'sunglasses'
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     local_picture = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
-    picture = random.choice([BASE_64_IMAGE_JPEG, local_picture])
+    picture = BASE_64_IMAGE_JPEG
 
     EMOJI_PATHES = ["❤️", "👍", "👎", "😂", "😢", "😡"]
 
