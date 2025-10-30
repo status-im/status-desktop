@@ -29,6 +29,7 @@ StatusDialog {
     signal removeLinkRequested(string index)
 
     implicitWidth: 480 // design
+    fillHeightOnBottomSheet: true
 
     title: ProfileUtils.linkTypeToText(linkType) ? qsTr("Edit %1 link").arg(ProfileUtils.linkTypeToText(linkType)) : qsTr("Edit custom Link")
 
@@ -137,6 +138,11 @@ StatusDialog {
 
             onValidChanged: {customTitle.validate(true)}
             onTextChanged: {customTitle.validate(true)}
+        }
+
+        // Filler
+        Item {
+            Layout.fillHeight: true
         }
     }
 }

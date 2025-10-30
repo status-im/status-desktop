@@ -22,6 +22,7 @@ StatusStackModal {
     implicitWidth: 480 // design
     implicitHeight: 512 // design
     padding: currentIndex === 0 ? 0 : Theme.padding
+    fillHeightOnBottomSheet: true
 
     headerSettings.title: currentIndex === 0 ? qsTr("Add a link") :
                                                qsTr("Add %1 link").arg(ProfileUtils.linkTypeToText(d.selectedLinkType) || qsTr("custom"))
