@@ -1094,10 +1094,10 @@ Item {
     }
 
     Connections {
-        target: Window.window
+        target: appMain.Window.window
 
         function onActiveChanged() {
-            if (Window.window.active)
+            if (appMain.Window.window.active)
                 appMain.rootStore.windowActivated()
             else
                 appMain.rootStore.windowDeactivated()
