@@ -18,6 +18,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/communities as status_go
+import ../../../backend/shared_urls as shared_urls
 import ../../../backend/community_tokens as tokens_backend
 
 import ../../../app_service/common/types
@@ -2266,28 +2267,28 @@ QtObject:
 
   proc shareCommunityUrlWithChatKey*(self: Service, communityId: string): string =
     try:
-      let response = status_go.shareCommunityUrlWithChatKey(communityId)
+      let response = shared_urls.shareCommunityUrlWithChatKey(communityId)
       return response.result.getStr
     except Exception as e:
       error "error while getting community url with chat key", msg = e.msg
 
   proc shareCommunityUrlWithData*(self: Service, communityId: string): string =
     try:
-      let response = status_go.shareCommunityUrlWithData(communityId)
+      let response = shared_urls.shareCommunityUrlWithData(communityId)
       return response.result.getStr
     except Exception as e:
       error "error while getting community url with data", msg = e.msg
 
   proc shareCommunityChannelUrlWithChatKey*(self: Service, communityId: string, chatId: string): string =
     try:
-      let response = status_go.shareCommunityChannelUrlWithChatKey(communityId, chatId)
+      let response = shared_urls.shareCommunityChannelUrlWithChatKey(communityId, chatId)
       return response.result.getStr
     except Exception as e:
       error "error while getting community channel url with chat key ", msg = e.msg
 
   proc shareCommunityChannelUrlWithData*(self: Service, communityId: string, chatId: string): string =
     try:
-      let response = status_go.shareCommunityChannelUrlWithData(communityId, chatId)
+      let response = shared_urls.shareCommunityChannelUrlWithData(communityId, chatId)
       return response.result.getStr
     except Exception as e:
       error "error while getting community channel url with data ", msg = e.msg
