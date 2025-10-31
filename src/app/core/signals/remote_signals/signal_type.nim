@@ -75,6 +75,7 @@ type SignalType* {.pure.} = enum
   ConnectorRevokeDAppPermission = "connector.dAppPermissionRevoked"
   ConnectorSign = "connector.Sign"
   ConnectorDAppChainIdSwitched = "connector.dAppChainIdSwitched"
+  ConnectorAccountChanged = "connector.dAppAccountChanged"
   LocalMessageBackupDone = "local.message.backup.done"
   Unknown
 

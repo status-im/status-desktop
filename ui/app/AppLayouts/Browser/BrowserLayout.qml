@@ -362,6 +362,7 @@ StatusSectionLayout {
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
                     browserHeader.anchors.topMargin + Theme.halfPadding)
                 onSendTriggered: (address) => root.sendToRecipientRequested(address)
+                onAccountChanged: (newAddress) => connectorBridge.manager.changeAccount(newAddress)
                 onReload: {
                     for (let i = 0; i < tabs.count; ++i){
                         tabs.getTab(i).reload();

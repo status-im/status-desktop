@@ -31,6 +31,11 @@ type SignAcceptedArgs* = ref object of RootObj
   requestId* {.serializedFieldName("requestId").}: string
   signature* {.serializedFieldName("signature").}: string
 
+type ChangeAccountArgs* = ref object of RootObj
+  url* {.serializedFieldName("url").}: string
+  account* {.serializedFieldName("account").}: string
+  clientID* {.serializedFieldName("clientId").}: string
+
 rpc(requestAccountsAccepted, "connector"):
   args: RequestAccountsAcceptedArgs
 
@@ -58,6 +63,9 @@ rpc(signRejected, "connector"):
 rpc(callRPC, "connector"):
   inputJSON: string
 
+rpc(changeAccount, "connector"):
+  args: ChangeAccountArgs
+
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil
 
@@ -84,3 +92,6 @@ proc sendSignRejectedFinishedRpc*(args: RejectedArgs): bool =
 
 proc connectorCallRPC*(inputJSON: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callRPC(inputJSON)
+
+proc changeAccountFinishedRpc*(args: ChangeAccountArgs): bool =
+  return isSuccessResponse(changeAccount(args))

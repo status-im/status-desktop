@@ -14,6 +14,7 @@ const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
 const SIGNAL_CONNECTOR_SIGN* = "ConnectorSign"
 const SIGNAL_CONNECTOR_CALL_RPC_RESULT* = "ConnectorCallRPCResult"
 const SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED* = "ConnectorDAppChainIdSwitched"
+const SIGNAL_CONNECTOR_ACCOUNT_CHANGED* = "ConnectorAccountChanged"
 
 logScope:
   topics = "connector-controller"
@@ -32,6 +33,7 @@ QtObject:
   proc emitSign*(self: Controller, requestId: string, payload: string)
   proc emitConnectorCallRPCResult*(self: Controller, requestId: int, payload: string)
   proc emitChainIdSwitched*(self: Controller, payload: string)
+  proc emitAccountChanged*(self: Controller, payload: string)
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -107,12 +109,27 @@ QtObject:
       controller.emitConnectorCallRPCResult(params.requestId, params.payload)
 
     result.events.on(SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED) do(e: Args):
-      let params = ConnectorDAppChainIdSwitchedSignal(e)
-      let chainInfo = %*{
-        "url": params.url,
-        "chainId": params.chainId
-      }
-      controller.emitChainIdSwitched(chainInfo.toJson())
+      try:
+        let params = ConnectorDAppChainIdSwitchedSignal(e)
+        let chainInfo = %*{
+          "url": params.url,
+          "chainId": params.chainId
+        }
+        controller.emitChainIdSwitched(chainInfo.toJson())
+      except Exception as ex:
+        error "error processing SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED", error=ex.msg, exceptionName=ex.name
+
+    result.events.on(SIGNAL_CONNECTOR_ACCOUNT_CHANGED) do(e: Args):
+      try:
+        let params = ConnectorAccountChangedSignal(e)
+        let accountInfo = %*{
+          "url": params.url,
+          "clientId": params.clientId,
+          "sharedAccount": params.sharedAccount
+        }
+        controller.emitAccountChanged(accountInfo.toJson())
+      except Exception as ex:
+        error "error processing SIGNAL_CONNECTOR_ACCOUNT_CHANGED", error=ex.msg, exceptionName=ex.name
 
     result.QObject.setup
 
@@ -126,6 +143,7 @@ QtObject:
   proc rejectConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
   proc connectorCallRPCResult*(self: Controller, requestId: int, payload: string) {.signal.}
   proc chainIdSwitched*(self: Controller, payload: string) {.signal.}
+  proc accountChanged*(self: Controller, payload: string) {.signal.}
 
   proc approveTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
   proc rejectTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
@@ -134,18 +152,27 @@ QtObject:
 
   proc emitConnectRequested*(self: Controller, requestId: string, payload: string) =
     self.connectRequested(requestId, payload)
+
   proc emitConnected*(self: Controller, payload: string) =
     self.connected(payload)
+
   proc emitDisconnected*(self: Controller, payload: string) =
     self.disconnected(payload)
+
   proc emitSendTransaction*(self: Controller, requestId: string, payload: string) =
     self.sendTransaction(requestId, payload)
+
   proc emitSign*(self: Controller, requestId: string, payload: string) =
     self.sign(requestId, payload)
+
   proc emitConnectorCallRPCResult*(self: Controller, requestId: int, payload: string) =
     self.connectorCallRPCResult(requestId, payload)
+
   proc emitChainIdSwitched*(self: Controller, payload: string) =
     self.chainIdSwitched(payload)
+
+  proc emitAccountChanged*(self: Controller, payload: string) =
+    self.accountChanged(payload)
 
   proc parseSingleUInt(chainIDsString: string): uint =
     try:
@@ -199,3 +226,6 @@ QtObject:
 
   proc connectorCallRPC*(self: Controller, requestId: int, message: string) {.slot.} =
     self.service.connectorCallRPC(requestId, message)
+
+  proc changeAccount*(self: Controller, url: string, clientId: string, newAccount: string) {.slot.} =
+    self.service.changeAccount(url, clientId, newAccount)
