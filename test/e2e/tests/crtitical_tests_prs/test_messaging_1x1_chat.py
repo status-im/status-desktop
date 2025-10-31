@@ -48,9 +48,12 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
                 authorize_user_in_aut(aut, main_window, account)
 
         with step(f'User {user_two.name}, get chat key'):
+            switch_to_aut(aut_two, main_window)
             chat_key = get_chat_key(aut_two, main_window)
+            main_window.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
+            switch_to_aut(aut_one, main_window)
             contacts_settings = send_contact_request_from_settings(aut_one, main_window, chat_key, f'Hello {user_two.name}')
 
         with step('Verify that contact request was sent and is in pending requests'):
@@ -109,6 +112,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             switch_to_aut(aut_two, main_window)
             messages_screen = main_window.left_panel.open_messages_screen()
             assert user_one.name in messages_screen.left_panel.get_chats_names
+            main_window.hide()
 
         with step(f'User {user_one.name} send  a message to {user_two.name}'):
             switch_to_aut(aut_one, main_window)
@@ -126,8 +130,8 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         # with step(f'User {user_one.name}, click address / ens link in message and verify send modal appears'):
         #     send_modal = chat.open_send_modal_from_link(chat_message1)
         #     assert str(send_modal.send_modal_recipient_panel.object.selectedRecipientAddress) == chat_message1
-            left_panel_chat.click()
-            skip_message_backup_popup_if_visible()
+            #left_panel_chat.click()
+            #skip_message_backup_popup_if_visible()
 
         with step(f'User {user_one.name}, edit message and verify it was changed'):
             message_actions = message.hover_message()
@@ -233,7 +237,6 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             assert len(messages) != 0, f"The history of messages is empty"
 
         with step(f'User {user_two.name} close chat'):
-            switch_to_aut(aut_two, main_window)
             messages_screen.group_chat.close_chat()
             assert user_one.name not in messages_screen.left_panel.get_chats_names, f'{chat} is present in chats list'
             main_window.hide()
