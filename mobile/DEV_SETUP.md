@@ -36,11 +36,17 @@ make mobile-run
 
 #### Prerequisites - can be installed using the Android Studio
 - JDK 17
+  - Settings > Build, Execution, Deployment > Build Tools > Gradle: Gradle JDK - Download JDK - Select 17 
 - Android SDK
+  - Settings > Languages & Framework > Android SDK - Select Android 15 - Apply
 - Android NDK 27.2.12479018
+  - Settings > Languages & Framework > Android SDK > SDK Tools tab - Check Show Package Details - NDK (Side by side) > Select 27.2.12479018 - Apply
 - Platform android-35
+	- Installed with Android 15
 - Android emulator (optional)
+  - Installed with Android Studio
 - Android command-line tools
+  - Settings > Languages & Framework > Android SDK > SDK Tools tab - Select Android SDK Command-line Tools - Apply
 
 #### Setup Steps
 
