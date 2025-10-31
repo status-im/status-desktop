@@ -22,6 +22,7 @@ const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN* = "ConnectorSign"
 const SIGNAL_CONNECTOR_CALL_RPC_RESULT* = "ConnectorCallRPCResult"
 const SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED* = "ConnectorDAppChainIdSwitched"
+const SIGNAL_CONNECTOR_ACCOUNT_CHANGED* = "ConnectorAccountChanged"
 
 # Enum with events
 type Event* = enum
@@ -110,8 +111,21 @@ QtObject:
       if self.eventHandler == nil:
         return
 
-      var data = ConnectorDAppChainIdSwitchedSignal(e)
-      self.events.emit(SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED, data)
+      try:
+        var data = ConnectorDAppChainIdSwitchedSignal(e)
+        self.events.emit(SIGNAL_CONNECTOR_DAPP_CHAIN_ID_SWITCHED, data)
+      except Exception as ex:
+        error "failed to process ConnectorDAppChainIdSwitched", error=ex.msg, exceptionName=ex.name
+    )
+    self.events.on(SignalType.ConnectorAccountChanged.event, proc(e: Args) =
+      if self.eventHandler == nil:
+        return
+
+      try:
+        var data = ConnectorAccountChangedSignal(e)
+        self.events.emit(SIGNAL_CONNECTOR_ACCOUNT_CHANGED, data)
+      except Exception as ex:
+        error "failed to process ConnectorAccountChanged", error=ex.msg, exceptionName=ex.name
     )
 
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
@@ -222,6 +236,20 @@ QtObject:
       self.threadpool.start(arg)
     except:
       error "connectorCallRPC: starting async background task failed", requestId=requestId
+
+  proc changeAccount*(self: Service, url: string, clientId: string, newAccount: string): bool =
+    try:
+      var args = ChangeAccountArgs(
+        url: url,
+        account: newAccount,
+        clientID: clientId
+      )
+      
+      return status_go.changeAccountFinishedRpc(args)
+
+    except Exception as e:
+      error "changeAccount failed", error=e.msg
+      return false
 
   proc delete*(self: Service) =
     self.QObject.delete

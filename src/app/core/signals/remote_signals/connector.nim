@@ -42,6 +42,11 @@ type ConnectorDAppChainIdSwitchedSignal* = ref object of Signal
   url*: string
   chainId*: string
 
+type ConnectorAccountChangedSignal* = ref object of Signal
+  url*: string
+  clientId*: string
+  sharedAccount*: string
+
 proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, event: JsonNode): ConnectorSendRequestAccountsSignal =
   result = ConnectorSendRequestAccountsSignal()
   result.signalType = SignalType.ConnectorSendRequestAccounts
@@ -92,3 +97,10 @@ proc fromEvent*(T: type ConnectorDAppChainIdSwitchedSignal, event: JsonNode): Co
   result.signalType = SignalType.ConnectorDAppChainIdSwitched
   result.url = event["event"]{"url"}.getStr()
   result.chainId = event["event"]{"chainId"}.getStr()
+
+proc fromEvent*(T: type ConnectorAccountChangedSignal, event: JsonNode): ConnectorAccountChangedSignal =
+  result = ConnectorAccountChangedSignal()
+  result.signalType = SignalType.ConnectorAccountChanged
+  result.url = event["event"]{"url"}.getStr()
+  result.clientId = event["event"]{"clientId"}.getStr()
+  result.sharedAccount = event["event"]{"sharedAccount"}.getStr()

@@ -28,6 +28,7 @@ Dialog {
     signal sendTriggered(string address)
     signal disconnect()
     signal reload()
+    signal accountChanged(string newAddress)
 
     modal: false
 
@@ -155,6 +156,7 @@ Dialog {
 
                 accountSelectorRow.currentAddress = currentAccountAddress
                 root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
+                root.accountChanged(currentAccountAddress)
                 reload()
             }
         }
