@@ -55,9 +55,9 @@ if [[ "${OS}" == "android" ]]; then
       --release \
       --android-platform "$ANDROID_PLATFORM"
 
-    OUTPUT_FILE=$(find "$BUILD_DIR/android-build/build/outputs/bundle" -name "*.aab" | head -n 1)
+    OUTPUT_FILE="$BUILD_DIR/android-build/build/outputs/bundle/release/android-build-release.aab"
     if [[ ! -f "$OUTPUT_FILE" ]]; then
-      echo "Error: Could not find generated AAB file"
+      echo "Error: Could not find generated AAB file at $OUTPUT_FILE"
       exit 1
     fi
 
