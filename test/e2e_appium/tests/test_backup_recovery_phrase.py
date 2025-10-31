@@ -90,8 +90,7 @@ class TestBackupRecoveryPhrase(BaseAppReadyTest):
 
         # If requested, immediately perform the delete path in the same test
         if remove_phrase:
-            driver = self.driver
-            driver.quit
+           
             modal = self.ctx.settings.open_backup_recovery_phrase()
 
             assert modal.reveal_seed_phrase(), "Failed to reveal seed phrase (2nd pass)"

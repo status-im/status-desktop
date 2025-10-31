@@ -78,7 +78,7 @@ execution:
     per_device_limit: 2
   retry_failed_tests: 1
   pytest:
-    addopts: ["-n", "auto"]
+    addopts: ["-n", "5"]
 
 logging:
   level: "INFO"
