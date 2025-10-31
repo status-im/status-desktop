@@ -528,15 +528,16 @@ QtObject:
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     let chainIds = self.networkService.getCurrentNetworksChainIds()
-    var token = self.tokenService.findTokenByAddress(chainIds[0], ZERO_ADDRESS)
+    var tokenOpt = self.tokenService.findTokenByAddress(chainIds[0], ZERO_ADDRESS)
+    var token = if tokenOpt.isSome: tokenOpt.get() else: TokenBySymbolItem()
 
     if message.transactionParameters.contract != "":
       for chainId in chainIds:
-        let tokenFound = self.tokenService.findTokenByAddress(chainId, message.transactionParameters.contract)
-        if tokenFound == nil:
+        let tokenFoundOpt = self.tokenService.findTokenByAddress(chainId, message.transactionParameters.contract)
+        if tokenFoundOpt.isNone:
           continue
 
-        token = tokenFound
+        token = tokenFoundOpt.get()
         break
 
     let tokenStr = $(Json.encode(token))

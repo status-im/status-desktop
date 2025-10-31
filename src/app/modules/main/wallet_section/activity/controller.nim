@@ -384,8 +384,9 @@ QtObject:
           continue
         # TODO: remove this call once the activity filter mechanism uses tokenKeys instead of the token
         # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
-        let token = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
-        if token != nil:
+        let tokenOpt = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
+        if tokenOpt.isSome:
+          let token = tokenOpt.get()
           let tokenType = if token.symbol == network.nativeCurrencySymbol: TokenType.Native else: TokenType.ERC20
           for addrPerChain in token.addressPerChainId:
             assets.add(backend_activity.Token(

@@ -1,8 +1,9 @@
 import app_service/service/wallet_account/dto/account_token_item
+import app/core/cow_seq  # CoW container
 
 type
   GroupedAccountAssetsDataSource* = tuple[
-    getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem]
+    getGroupedAccountsAssetsList: proc(): CowSeq[GroupedTokenItem]  # CoW for model isolation!
   ]
 
 type

@@ -3,6 +3,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/currency/service as currency_service
+import app/core/cow_seq  # CoW container
 
 type
   Controller* = ref object of RootObj
@@ -45,7 +46,8 @@ proc getCurrentCurrency*(self: Controller): string =
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
 
-proc getGroupedAccountsAssetsList*(self: Controller): var seq[GroupedTokenItem] =
+proc getGroupedAccountsAssetsList*(self: Controller): CowSeq[GroupedTokenItem] =
+  ## Returns a CowSeq (O(1) copy via CoW)
   return self.walletAccountService.getGroupedAccountsAssetsList()
 
 proc getHasBalanceCache*(self: Controller): bool =

@@ -3,6 +3,7 @@ import ./io_interface
 
 import app/core/signals/types
 import app/core/eventemitter
+import app/core/cow_seq
 import app_service/service/chat/dto/chat
 import app_service/service/community/service as community_service
 import app_service/service/chat/service as chat_service
@@ -354,7 +355,7 @@ proc getAllCommunityTokens*(self: Controller): seq[CommunityTokenDto] =
 proc getNetworkByChainId*(self:Controller, chainId: int): NetworkItem =
   self.networksService.getNetworkByChainId(chainId)
 
-proc getTokenBySymbolList*(self: Controller): seq[TokenBySymbolItem] =
+proc getTokenBySymbolList*(self: Controller): CowSeq[TokenBySymbolItem] =
   return self.tokenService.getTokenBySymbolList()
 
 proc shareCommunityUrlWithChatKey*(self: Controller, communityId: string): string =

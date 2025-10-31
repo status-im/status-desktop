@@ -2,6 +2,7 @@ import nimqml, tables, strutils, stew/shims/strformat
 
 import item
 import app_service/common/account_constants
+import ../../../shared/model_sync
 
 export item
 
@@ -77,10 +78,28 @@ QtObject:
       result = newQVariant(item.getIsTest())
 
   proc setItems*(self: Model, items: seq[Item]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
+    self.setItemsWithSync(
+      self.items,
+      items,
+      getId = proc(item: Item): string =
+        # Unique ID: address + isTest flag
+        item.getAddress() & (if item.getIsTest(): "_test" else: "_main"),
+      getRoles = proc(old, new: Item): seq[int] =
+        var roles: seq[int]
+        if old.getName() != new.getName():
+          roles.add(ModelRole.Name.int)
+        if old.getMixedcaseAddress() != new.getMixedcaseAddress():
+          roles.add(ModelRole.MixedcaseAddress.int)
+        if old.getEns() != new.getEns():
+          roles.add(ModelRole.Ens.int)
+        if old.getColorId() != new.getColorId():
+          roles.add(ModelRole.ColorId.int)
+        if old.getIsTest() != new.getIsTest():
+          roles.add(ModelRole.IsTest.int)
+        return roles,
+      useBulkOps = true,
+      countChanged = proc() = self.countChanged()
+    )
 
     for item in items:
         self.itemChanged(item.getAddress())

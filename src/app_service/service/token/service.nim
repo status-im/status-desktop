@@ -40,6 +40,9 @@ type
   TokenHistoricalDataArgs* = ref object of Args
     result*: string
 
+import app/core/cow_seq
+import options
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -48,8 +51,8 @@ QtObject:
     settingsService: settings_service.Service
 
     sourcesOfTokensList: seq[SupportedSourcesItem]
-    flatTokenList: seq[TokenItem]
-    tokenBySymbolList: seq[TokenBySymbolItem]
+    flatTokenList: CowSeq[TokenItem]  # CoW for efficient model updates
+    tokenBySymbolList: CowSeq[TokenBySymbolItem]  # CoW for efficient model updates
     tokenDetailsTable: Table[string, TokenDetailsItem]
     tokenMarketValuesTable: Table[string, TokenMarketValuesItem]
     tokenPriceTable: Table[string, float64]
@@ -81,8 +84,8 @@ QtObject:
     result.settingsService = settingsService
 
     result.sourcesOfTokensList = @[]
-    result.flatTokenList = @[]
-    result.tokenBySymbolList = @[]
+    result.flatTokenList = newCowSeq[TokenItem]()
+    result.tokenBySymbolList = newCowSeq[TokenBySymbolItem]()
     result.tokenDetailsTable = initTable[string, TokenDetailsItem]()
     result.tokenMarketValuesTable = initTable[string, TokenMarketValuesItem]()
     result.tokenPriceTable = initTable[string, float64]()
@@ -220,8 +223,11 @@ QtObject:
 
     var updated = false
     let unique_key = token.flatModelKey()
-    if not any(self.flatTokenList, proc (x: TokenItem): bool = x.key == unique_key):
-      self.flatTokenList.add(TokenItem(
+    let flatList = self.flatTokenList.asSeq()
+    if not any(flatList, proc (x: TokenItem): bool = x.key == unique_key):
+      # Need to convert to seq, add, then back to CowSeq
+      var tempList = flatList
+      tempList.add(TokenItem(
         key: unique_key,
         name: token.name,
         symbol: token.symbol,
@@ -232,12 +238,16 @@ QtObject:
         image: token.image,
         `type`: tokenType,
         communityId: token.communityID))
-      self.flatTokenList.sort(cmpTokenItem)
+      tempList.sort(cmpTokenItem)
+      self.flatTokenList = toCowSeq(tempList)  # Convert back to CowSeq
       updated = true
 
     let token_by_symbol_key = token.bySymbolModelKey()
-    if not any(self.tokenBySymbolList, proc (x: TokenBySymbolItem): bool = x.key == token_by_symbol_key):
-      self.tokenBySymbolList.add(TokenBySymbolItem(
+    let tokenList = self.tokenBySymbolList.asSeq()
+    if not any(tokenList, proc (x: TokenBySymbolItem): bool = x.key == token_by_symbol_key):
+      # Need to convert to seq, add, then back to CowSeq
+      var tempList = tokenList
+      tempList.add(TokenBySymbolItem(
           key: token_by_symbol_key,
           name: token.name,
           symbol: token.symbol,
@@ -247,7 +257,8 @@ QtObject:
           image: token.image,
           `type`: tokenType,
           communityId: token.communityID))
-      self.tokenBySymbolList.sort(cmpTokenBySymbolItem)
+      tempList.sort(cmpTokenBySymbolItem)
+      self.tokenBySymbolList = toCowSeq(tempList)  # Convert back to CowSeq
       updated = true
 
     if updated:
@@ -325,15 +336,19 @@ QtObject:
             # with same symbol and cannot be avoided
             let token_by_symbol_key = token.bySymbolModelKey()
             if tokenBySymbolList.hasKey(token_by_symbol_key):
-              if not tokenBySymbolList[token_by_symbol_key].sources.contains(s.name):
-                tokenBySymbolList[token_by_symbol_key].sources.add(s.name)
+              # Value type: get, modify, set pattern
+              var existingToken = tokenBySymbolList[token_by_symbol_key]
+              if not existingToken.sources.contains(s.name):
+                existingToken.sources.add(s.name)
               # this logic is to check if an entry for same chainId as been made already,
               # in that case we simply add it to address per chain
               var addedChains: seq[int] = @[]
-              for addressPerChain in tokenBySymbolList[token_by_symbol_key].addressPerChainId:
+              for addressPerChain in existingToken.addressPerChainId:
                 addedChains.add(addressPerChain.chainId)
               if not addedChains.contains(token.chainID):
-                tokenBySymbolList[token_by_symbol_key].addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
+                existingToken.addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
+              # Update the table with modified value
+              tokenBySymbolList[token_by_symbol_key] = existingToken
             else:
               let tokenType = if s.name == "native": TokenType.Native
                               else: TokenType.ERC20
@@ -353,10 +368,13 @@ QtObject:
       self.fetchTokensMarketValues(tokenSymbols)
       self.fetchTokensDetails(tokenSymbols)
       self.fetchTokensPrices(tokenSymbols)
-      self.flatTokenList = toSeq(flatTokensList.values)
-      self.flatTokenList.sort(cmpTokenItem)
-      self.tokenBySymbolList = toSeq(tokenBySymbolList.values)
-      self.tokenBySymbolList.sort(cmpTokenBySymbolItem)
+      # Convert to seq, sort, then convert to CoW
+      var flatSeq = toSeq(flatTokensList.values)
+      flatSeq.sort(cmpTokenItem)
+      self.flatTokenList = toCowSeq(flatSeq)
+      var tokenBySymbolSeq = toSeq(tokenBySymbolList.values)
+      tokenBySymbolSeq.sort(cmpTokenBySymbolItem)
+      self.tokenBySymbolList = toCowSeq(tokenBySymbolSeq)  # Convert to CoW
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -385,10 +403,12 @@ QtObject:
   proc getSourcesOfTokensList*(self: Service): var seq[SupportedSourcesItem] =
     return self.sourcesOfTokensList
 
-  proc getFlatTokensList*(self: Service): var seq[TokenItem] =
+  proc getFlatTokensList*(self: Service): CowSeq[TokenItem] =
     return self.flatTokenList
 
-  proc getTokenBySymbolList*(self: Service): var seq[TokenBySymbolItem] =
+  proc getTokenBySymbolList*(self: Service): CowSeq[TokenBySymbolItem] =
+    ## Returns a CowSeq that shares memory until mutation (O(1) copy)
+    ## Models get their own isolated copy via Copy-on-Write
     return self.tokenBySymbolList
 
   proc getTokenDetails*(self: Service, symbol: string): TokenDetailsItem =
@@ -416,19 +436,19 @@ QtObject:
     return self.hasMarketDetailsCache and self.hasPriceValuesCache
 
   proc rebuildMarketData*(self: Service) =
-    let symbols = self.tokenBySymbolList.map(a => a.symbol)
+    let symbols = self.tokenBySymbolList.asSeq().map(a => a.symbol)
     if symbols.len > 0:
       self.fetchTokensMarketValues(symbols)
       self.fetchTokensPrices(symbols)
 
   proc getTokenByFlatTokensKey*(self: Service, key: string): TokenItem =
-    for t in self.flatTokenList:
+    for t in self.flatTokenList.asSeq():
       if t.key == key:
         return t
     return
 
   proc getTokenMarketPrice*(self: Service, key: string): float64 =
-    let token = self.flatTokenList.filter(t => t.key == key)
+    let token = self.flatTokenList.asSeq().filter(t => t.key == key)
     var symbol: string = ""
     for t in token:
       symbol = t.symbol
@@ -437,57 +457,56 @@ QtObject:
     else:
       return self.tokenPriceTable[symbol]
 
-  proc getTokenBySymbolByTokensKey*(self: Service, key: string): TokenBySymbolItem =
+  proc getTokenBySymbolByTokensKey*(self: Service, key: string): Option[TokenBySymbolItem] =
     for token in self.tokenBySymbolList:
       if token.key == key:
-        return token
-    return nil
+        return some(token)
+    return none(TokenBySymbolItem)
 
-  proc getTokenBySymbolByContractAddr(self: Service, contractAddr: string): TokenBySymbolItem =
+  proc getTokenBySymbolByContractAddr(self: Service, contractAddr: string): Option[TokenBySymbolItem] =
     for token in self.tokenBySymbolList:
       for addrPerChainId in token.addressPerChainId:
         if addrPerChainId.address.toLower() == contractAddr.toLower():
-          return token
-    return nil
+          return some(token)
+    return none(TokenBySymbolItem)
 
   proc getStatusTokenKey*(self: Service): string =
-    var token: TokenBySymbolItem
-    if self.settingsService.areTestNetworksEnabled():
-      token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS_SEPOLIA)
+    let tokenOpt = if self.settingsService.areTestNetworksEnabled():
+                      self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS_SEPOLIA)
+                    else:
+                      self.getTokenBySymbolByContractAddr(SNT_CONTRACT_ADDRESS)
+    if tokenOpt.isSome:
+      return tokenOpt.get().key
     else:
-      token = self.getTokenBySymbolByContractAddr(SNT_CONTRACT_ADDRESS)
-    if token != nil:
-      return token.key
-    else:
-        return ""
+      return ""
 
   # TODO: needed in token permission right now, and activity controller which needs
   # to consider that token symbol may not be unique
   # https://github.com/status-im/status-desktop/issues/13505
-  proc findTokenBySymbol*(self: Service, symbol: string): TokenBySymbolItem =
+  proc findTokenBySymbol*(self: Service, symbol: string): Option[TokenBySymbolItem] =
     for token in self.tokenBySymbolList:
       if token.symbol == symbol:
-        return token
-    return nil
+        return some(token)
+    return none(TokenBySymbolItem)
 
   # TODO: remove this call once the activty filter mechanism uses tokenKeys instead of the token
   # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
   # https://github.com/status-im/status-desktop/issues/13505
-  proc findTokenBySymbolAndChainId*(self: Service, symbol: string, chainId: int): TokenBySymbolItem =
+  proc findTokenBySymbolAndChainId*(self: Service, symbol: string, chainId: int): Option[TokenBySymbolItem] =
     for token in self.tokenBySymbolList:
       if token.symbol == symbol:
         for addrPerChainId in token.addressPerChainId:
           if addrPerChainId.chainId == chainId:
-            return token
-    return nil
+            return some(token)
+    return none(TokenBySymbolItem)
 
   # TODO: Perhaps will be removed after transactions in chat is refactored
-  proc findTokenByAddress*(self: Service, networkChainId: int, address: string): TokenBySymbolItem =
+  proc findTokenByAddress*(self: Service, networkChainId: int, address: string): Option[TokenBySymbolItem] =
     for token in self.tokenBySymbolList:
       for addrPerChainId in token.addressPerChainId:
         if addrPerChainId.chainId == networkChainId and addrPerChainId.address == address:
-          return token
-    return nil
+          return some(token)
+    return none(TokenBySymbolItem)
 
   # History Data
   proc tokenHistoricalDataResolved*(self: Service, response: string) {.slot.} =
