@@ -20,6 +20,53 @@ _logging_setup = None
 _saved_failure_logs: List[Path] = []
 
 
+def _extract_summary_details(test_report) -> dict[str, str | int | None]:
+    result = {"path": None, "lineno": None, "message": "Unknown error"}
+
+    longrepr = getattr(test_report, "longrepr", None)
+    if not longrepr:
+        return result
+
+    reprcrash = getattr(longrepr, "reprcrash", None)
+    if reprcrash:
+        result["path"] = getattr(reprcrash, "path", None)
+        result["lineno"] = getattr(reprcrash, "lineno", None)
+        message = getattr(reprcrash, "message", None)
+        if message:
+            result["message"] = message
+            return result
+
+        if isinstance(reprcrash, tuple) and len(reprcrash) >= 3:
+            result["message"] = reprcrash[2]
+            return result
+
+    longreprtext = getattr(longrepr, "longreprtext", None)
+    if longreprtext:
+        last_line = _last_nonempty_line(longreprtext)
+        if last_line:
+            result["message"] = last_line
+            return result
+
+    last_line = _last_nonempty_line(str(longrepr))
+    if last_line:
+        result["message"] = last_line
+
+    return result
+
+
+def _last_nonempty_line(text: str) -> str | None:
+    text = (text or "").strip()
+    if not text:
+        return None
+
+    for line in reversed(text.splitlines()):
+        line = line.strip()
+        if line:
+            return line
+
+    return None
+
+
 def pytest_configure(config):
     global _logging_setup
 
@@ -321,13 +368,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         failed_tests = terminalreporter.stats.get("failed", [])
         for test_report in failed_tests[:5]:
             test_name = test_report.nodeid.split("::")[-1]
-            if hasattr(test_report, "longrepr") and test_report.longrepr:
-                error_msg = (
-                    str(test_report.longrepr).split("\n")[-2]
-                    if test_report.longrepr
-                    else "Unknown error"
-                )
-                logger.error("  %s: %s", test_name, error_msg)
+            details = _extract_summary_details(test_report)
+            logger.error("  %s: %s", test_name, details["message"])
 
         if len(failed_tests) > 5:
             logger.error(f"  ... and {len(failed_tests) - 5} more failures")
@@ -338,13 +380,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         error_tests = terminalreporter.stats.get("error", [])
         for test_report in error_tests[:3]:
             test_name = test_report.nodeid.split("::")[-1]
-            if hasattr(test_report, "longrepr") and test_report.longrepr:
-                error_msg = (
-                    str(test_report.longrepr).split("\n")[-2]
-                    if test_report.longrepr
-                    else "Unknown error"
-                )
-                logger.error("  %s: %s", test_name, error_msg)
+            details = _extract_summary_details(test_report)
+            logger.error("  %s: %s", test_name, details["message"])
 
         if len(error_tests) > 3:
             logger.error(f"  ... and {len(error_tests) - 3} more errors")

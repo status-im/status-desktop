@@ -240,7 +240,7 @@ class AppLifecycleManager:
             self.logger.warning(
                 "AUT package not found in capabilities; falling back to legacy default"
             )
-            package = "im.status.app"
+            package = "app.status.mobile"
 
         if activity:
             self.logger.debug(f"Detected AUT launch activity: {activity}")
