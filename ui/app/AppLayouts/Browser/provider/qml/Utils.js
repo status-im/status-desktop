@@ -12,12 +12,17 @@ function accountsDidChange(oldAccounts, newAccounts) {
 
 function normalizeOrigin(url) {
     if (!url) return ""
-    let normalized = url.toString()
-    // Remove trailing slash from origin
-    if (normalized.endsWith("/")) {
-        normalized = normalized.slice(0, -1)
+    try {
+        const urlObj = new URL(url.toString())
+        // This ensures https://opensea.io/ and https://opensea.io/path both become https://opensea.io
+        return urlObj.origin
+    } catch (e) {
+        let normalized = url.toString()
+        if (normalized.endsWith("/")) {
+            normalized = normalized.slice(0, -1)
+        }
+        return normalized
     }
-    return normalized
 }
 
 // Convert decimal chainId to hex string (e.g., 1 -> "0x1", 137 -> "0x89")

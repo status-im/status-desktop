@@ -31,30 +31,30 @@ QtObject {
     signal messageEvent(var message)
     signal requestCompletedEvent(var payload)
 
-    // PUBLIC API - EIP-1193 REQUEST
-    function request(args) {
-        if (!args || !args.method) {
-            console.error("[ConnectorManager] Invalid request")
-            return JSON.stringify({
-                error: { code: -32600, message: "Missing method" }
-            })
-        }
-        
-        const method = args.method
-        const requestId = args.requestId || 0
-        
-        var rpcRequest = {
-            "jsonrpc": "2.0",
-            "id": requestId,
-            "method": method,
-            "params": args.params || [],
-            "url": dappOrigin || dappUrl || "",
-            "name": dappName || "Unknown dApp",
-            "clientId": clientId,
-            "chainId": dappChainId,
-            "iconUrl": dappIconUrl || ""
-        }
-        
+	// PUBLIC API - EIP-1193 REQUEST
+	function request(args) {
+		if (!args || !args.method) {
+			console.error("[ConnectorManager] Invalid request - missing method")
+			return JSON.stringify({
+				error: { code: -32600, message: "Missing method" }  // EIP-1193: Invalid Request
+			})
+		}
+
+		const method = args.method
+		const requestId = args.requestId || 0
+
+		var rpcRequest = {
+			"jsonrpc": "2.0",
+			"id": requestId,
+			"method": method,
+			"params": args.params || [],
+			"url": dappOrigin || "",
+			"name": dappName || "Unknown dApp",
+			"clientId": clientId,
+			"chainId": dappChainId,
+			"iconUrl": dappIconUrl || ""
+		}
+
         // Direct call to Nim connectorCallRPC -> status-go connector/api.go
         if (!connectorController) {
             console.error("[ConnectorManager] connectorController not available")
@@ -84,13 +84,13 @@ QtObject {
         accounts = newAccounts
         
         providerStateChanged()
-        accountsChangedEvent(accounts)
+		accuntsChangedEvent(accounts)
         console.log("[ConnectorManager] Accounts updated:", JSON.stringify(accounts))
-        return true
-    }
-    
-    function setConnected(isConnected) {
-        if (connected === isConnected) {
+		return true
+	}
+
+	function setConnected(isConnected) {
+		if (connected === isConnected) {
             return false
         }
         
@@ -120,27 +120,29 @@ QtObject {
         _initialConnectionDone = false
         
         providerStateChanged()
-        disconnectEvent({ code: 4900, message: "User disconnected" })  // EIP-1193: Disconnected
-        accountsChangedEvent([])
-        console.log("[ConnectorManager] State cleared")
-        return true
-    }
-    
-    // PUBLIC API
-    function disconnect() {
-        console.log("[ConnectorManager] Disconnecting dApp")
-        
-        clearState()
-        
-        if (connectorController) {
-            const effectiveUrl = dappOrigin || dappUrl
-            console.log("[ConnectorManager] Calling backend disconnect for:", effectiveUrl)
-            connectorController.disconnect(effectiveUrl)
-        }
-    }
-    
-    // HELPER FUNCTIONS
-    function shouldProcessSignal(event) {
+		disconnectEvent({ code: 4900, message: "User disconnected" })  // EIP-1193: Disconnected
+		accountsChangedEvent([])
+		console.log("[ConnectorManager] State cleared")
+		return true
+	}
+
+	// PUBLIC API
+	function disconnect() {
+		clearState()
+
+		if (connectorController) {
+			connectorController.disconnect(dappOrigin)
+		}
+	}
+
+	function changeAccount(newAccount) {
+		if (connectorController) {
+			connectorController.changeAccount(dappOrigin, clientId, newAccount)
+		}
+	}
+
+	// HELPER FUNCTIONS
+	function shouldProcessSignal(event) {
         // Filter by origin
         if (event.url && Utils.normalizeOrigin(event.url) !== Utils.normalizeOrigin(dappOrigin)) {
             console.log("[ConnectorManager] Ignoring signal for other origin:", event.url, "expected:", dappOrigin)
@@ -218,12 +220,23 @@ QtObject {
                     const chainIdHex = Utils.chainIdToHex(chainIdDecimal)
                     
                     providerStateChanged()
-                    chainChangedEvent(chainIdHex)
-                    console.log("[ConnectorManager] Chain switched to:", chainIdHex)
-                }
-            } catch (error) {
-                console.error("[ConnectorManager] Error processing chainIdSwitched signal:", error)
-            }
-        }
-    }
+					chainChangedEvent(chainIdHex)
+					console.log("[ConnectorManager] Chain switched to:", chainIdHex)
+				}
+			} catch (error) {
+				console.error("[ConnectorManager] Error processing chainIdSwitched signal:", error)
+			}
+		}
+
+		function onAccountChanged(payload) {
+			try {
+				const data = JSON.parse(payload)
+				if (!shouldProcessSignal(data)) return
+				const newAccounts = data.sharedAccount ? [data.sharedAccount] : []
+				updateAccounts(newAccounts)
+			} catch (error) {
+				console.error("[ConnectorManager] Error processing accountChanged signal:", error)
+			}
+		}
+	}
 }

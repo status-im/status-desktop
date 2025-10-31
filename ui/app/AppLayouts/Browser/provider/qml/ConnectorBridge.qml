@@ -56,7 +56,7 @@ QtObject {
         
         const urlStr = url.toString()
         connectorManager.dappUrl = urlStr
-        connectorManager.dappOrigin = urlStr
+        connectorManager.dappOrigin = Utils.normalizeOrigin(urlStr)
         connectorManager.dappName = name || BrowserUtils.extractDomainName(urlStr)
         connectorManager.dappChainId = 1
     }

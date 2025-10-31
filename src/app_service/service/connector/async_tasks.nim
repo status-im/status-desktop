@@ -16,7 +16,7 @@ proc connectorCallRPCTask*(argEncoded: string) {.gcsafe, nimcall.} =
     let rpcResponse = status_go.connectorCallRPC(arg.message)
     let responseJson = %* {
       "requestId": arg.requestId,
-      "result": $rpcResponse.result,
+      "result": rpcResponse.result,
       "error": if rpcResponse.error.isNil: "" else: rpcResponse.error.message
     }
     
