@@ -21,6 +21,8 @@ onboardingLayout = {"container": statusDesktop_mainWindow, "objectName": "Onboar
 helpUsImproveStatusPage = {"container": onboardingLayout, "type": "HelpUsImproveStatusPage", "unnamed": 1, "visible": True}
 shareUsageDataButton = {"container": helpUsImproveStatusPage, "objectName": "btnShare", "type": "StatusButton", "visible": True}
 notNowButton = {"container": statusDesktop_mainWindow, "objectName": "btnDontShare", "type": "StatusButton", "visible": True}
+infoButton = {"container": statusDesktop_mainWindow, "objectName": "infoButton", "type": "OnboardingInfoButton", "visible": True}
+gotItButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 
 # CreateYourProfileView
 onboardingFrame = {"container": onboardingLayout, "type": "OnboardingFrame", "unnamed": 1, "visible": True}
