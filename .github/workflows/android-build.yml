@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Android APK
     container:
-      image: harbor.status.im/status-im/status-desktop-build:1.0.5-qt6.9.2-android
+      image: harbor.status.im/status-im/status-desktop-build:1.0.6-qt6.9.2-android
       options: --user jenkins
     env:
       USE_SYSTEM_NIM: 1
