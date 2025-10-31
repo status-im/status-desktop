@@ -34,9 +34,6 @@ StatusSectionLayout {
     required property bool thirdpartyServicesEnabled
 
     required property TransactionStore transactionStore
-    required property var assetsStore
-    required property var currencyStore
-    required property var tokensStore
 
     required property BrowserStores.BookmarksStore bookmarksStore
     required property BrowserStores.DownloadsStore downloadsStore
@@ -351,9 +348,6 @@ StatusSectionLayout {
         Component  {
             id: browserWalletMenu
             BrowserWalletMenu {
-                assetsStore: root.assetsStore
-                currencyStore: root.currencyStore
-                tokensStore: root.tokensStore
                 currentTabConnected: root.browserRootStore.currentTabConnected
                 browserWalletStore: root.browserWalletStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
