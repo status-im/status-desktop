@@ -227,5 +227,5 @@ QtObject:
   proc connectorCallRPC*(self: Controller, requestId: int, message: string) {.slot.} =
     self.service.connectorCallRPC(requestId, message)
 
-  proc changeAccount*(self: Controller, url: string, clientId: string, newAccount: string) {.slot.} =
-    self.service.changeAccount(url, clientId, newAccount)
+  proc changeAccount*(self: Controller, url: string, clientId: string, newAccount: string): bool {.slot.} =
+    result = self.service.changeAccount(url, clientId, newAccount)
