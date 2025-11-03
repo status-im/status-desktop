@@ -4,9 +4,9 @@ include env_cli_vars
 ## on other platform if we just change the value here
 const IS_MACOS* = defined(macosx)
 const IS_INTEL* = defined(amd64)
-const IS_MOBILE* = defined(ios) or defined(android)
+const IS_IOS* = defined(ios)
 # For future supporting fingerprints on other platforms
-const SUPPORTS_FINGERPRINT* = IS_MACOS or IS_MOBILE
+const SUPPORTS_FINGERPRINT* = IS_MACOS or IS_IOS
 # This is changed during compilation by reading the VERSION file
 const DESKTOP_VERSION {.strdefine.} = "0.0.0"
 const STATUSGO_VERSION* {.strdefine.} = "0.0.0"
