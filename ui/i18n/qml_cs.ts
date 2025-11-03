@@ -9832,10 +9832,6 @@ access to your funds.</source>
         <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
-        <source>Use biometrics instead</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use password instead</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9956,10 +9952,6 @@ access to your funds.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Try biometrics again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Sign</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10005,6 +9997,10 @@ access to your funds.</source>
     </message>
     <message>
         <source>Restart App &amp; Sign In Using Your Keycard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retry biometrics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

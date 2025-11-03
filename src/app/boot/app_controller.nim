@@ -1,7 +1,6 @@
 import nimqml, sequtils, chronicles
 
 import app_service/service/general/service as general_service
-import app_service/service/keychain/service as keychain_service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/keycardV2/service as keycard_serviceV2
 import app_service/service/accounts/service as accounts_service
@@ -69,7 +68,6 @@ type
     generalService: general_service.Service
     keycardService*: keycard_service.Service
     keycardServiceV2*: keycard_serviceV2.Service
-    keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     contactsService: contacts_service.Service
     chatService: chat_service.Service
@@ -163,7 +161,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.events)
-  result.keychainService = keychain_service.newService(statusFoundation.events)
   result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
@@ -248,7 +245,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result,
     statusFoundation.events,
     statusFoundation.urlsManager,
-    result.keychainService,
     result.accountsService,
     result.chatService,
     result.communityService,
@@ -295,7 +291,6 @@ proc delete*(self: AppController) =
 
   singletonInstance.delete
   self.notificationsManager.delete
-  self.keychainService.delete
   self.contactsService.delete
   self.bookmarkService.delete
   self.gifService.delete
@@ -367,7 +362,6 @@ proc mainDidLoad*(self: AppController) =
 
 proc start*(self: AppController) =
   self.keycardServiceV2.init()
-  self.keychainService.init()
   self.generalService.init()
   self.accountsService.init()
   self.devicesService.init()

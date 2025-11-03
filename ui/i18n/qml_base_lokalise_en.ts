@@ -11930,11 +11930,6 @@
       <translation>Cancel</translation>
     </message>
     <message>
-      <source>Use biometrics instead</source>
-      <comment>KeycardPopupDetails</comment>
-      <translation>Use biometrics instead</translation>
-    </message>
-    <message>
       <source>Use password instead</source>
       <comment>KeycardPopupDetails</comment>
       <translation>Use password instead</translation>
@@ -12085,11 +12080,6 @@
       <translation>Update PIN &amp; authenticate</translation>
     </message>
     <message>
-      <source>Try biometrics again</source>
-      <comment>KeycardPopupDetails</comment>
-      <translation>Try biometrics again</translation>
-    </message>
-    <message>
       <source>Sign</source>
       <comment>KeycardPopupDetails</comment>
       <translation>Sign</translation>
@@ -12148,6 +12138,11 @@
       <source>Restart App &amp; Sign In Using Your Keycard</source>
       <comment>KeycardPopupDetails</comment>
       <translation>Restart App &amp; Sign In Using Your Keycard</translation>
+    </message>
+    <message>
+      <source>Retry biometrics</source>
+      <comment>KeycardPopupDetails</comment>
+      <translation>Retry biometrics</translation>
     </message>
   </context>
   <context>

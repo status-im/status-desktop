@@ -925,24 +925,12 @@ Item {
             verify(!!btnSkipImport)
             mouseClick(btnSkipImport)
 
-            // PAGE 8: Enable Biometrics
-            if (data.biometrics) {
-                page = getCurrentPage(stack, EnableBiometricsPage)
-
-                const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
-                dynamicSpy.setup(page, "enableBiometricsRequested")
-                mouseClick(enableBioButton)
-                tryCompare(dynamicSpy, "count", 1)
-                compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
-            }
-
             // FINISH
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.LoginWithKeycard)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, "")
-            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, "")
             compare(resultData.backupImportFileUrl, "")

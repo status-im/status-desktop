@@ -471,6 +471,12 @@ method getSectionId*(self: AccessInterface, sectionType: SectionType): string {.
 method getSectionName*(self: AccessInterface, sectionId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method requestGetCredentialFromKeychainResult*(self: AccessInterface, success: bool, secret: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method credentialStoredToKeychainResult*(self: AccessInterface, success: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

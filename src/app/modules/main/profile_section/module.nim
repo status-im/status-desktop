@@ -20,7 +20,6 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 import ../../../../app_service/service/general/service as general_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/keycard/service as keycard_service
-import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/node/service as node_service
 
@@ -81,7 +80,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   communityService: community_service.Service,
   networkService: network_service.Service,
   keycardService: keycard_service.Service,
-  keychainService: keychain_service.Service,
   tokenService: token_service.Service,
   nodeService: node_service.Service
 ): Module =
@@ -95,7 +93,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.profileModule = profile_module.newModule(result, events, profileService, settingsService, communityService,
     walletAccountService, tokenService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService, networkService)
-  result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService,
+  result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService,
     generalService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
   result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService,
@@ -111,7 +109,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
   result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, networkService,
-    privacyService, accountsService, walletAccountService, keychainService)
+    privacyService, accountsService, walletAccountService)
 
   result.walletModule = wallet_module.newModule(result, events, accountsService, walletAccountService, settingsService,
     networkService, devicesService, nodeService)

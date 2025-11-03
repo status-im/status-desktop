@@ -19,7 +19,6 @@ import app_service/service/network/service as network_service
 import app_service/service/privacy/service as privacy_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/keychain/service as keychain_service
 
 export io_interface
 
@@ -54,15 +53,14 @@ proc newModule*[T](delegate: T,
   networkService: network_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  keychainService: keychain_service.Service):
+  walletAccountService: wallet_account_service.Service):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, uniqueIdentifier, events, keycardService, settingsService,
-    networkService, privacyService, accountsService, walletAccountService, keychainService)
+    networkService, privacyService, accountsService, walletAccountService)
   result.initialized = false
   result.authenticationPopupIsAlreadyRunning = false
   result.runningFlow = FlowType.General

@@ -324,6 +324,8 @@ QtObject:
   proc showToastKeypairRemoved*(self: View, keypairName: string) {.signal.}
   proc showToastKeypairsImported*(self: View, keypairName: string, keypairsCount: int, error: string) {.signal.}
   proc showToastPairingFallbackCompleted*(self: View) {.signal.}
+  proc requestGetCredentialFromKeychain*(self: View, key: string) {.signal.}
+  proc requestStoreCredentialToKeychain*(self: View, key: string, password: string) {.signal.}
 
   proc showTransactionToast*(self: View,
     uuid: string,
@@ -417,3 +419,9 @@ QtObject:
 
   proc delete*(self: View) =
     self.QObject.delete
+
+  proc requestGetCredentialFromKeychainResult*(self: View, success: bool, secret: string) {.slot.} =
+    self.delegate.requestGetCredentialFromKeychainResult(success, secret)
+
+  proc credentialStoredToKeychainResult*(self: View, success: bool) {.slot.} =
+    self.delegate.credentialStoredToKeychainResult(success)

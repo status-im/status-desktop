@@ -3,6 +3,7 @@ import QtQuick.Layouts
 
 import StatusQ.Controls
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import utils
 
@@ -78,6 +79,7 @@ QtObject {
             normalColor: "transparent"
             text: qsTr("Cancel")
             visible: {
+                if(SQUtils.Utils.isMobile) return false
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.noPCSCService) {
                     return true
                 }
@@ -441,7 +443,7 @@ QtObject {
 
                         case Constants.keycardSharedState.enterPassword:
                         case Constants.keycardSharedState.wrongPassword:
-                            return qsTr("Use biometrics instead")
+                            return qsTr("Use biometrics")
 
                         case Constants.keycardSharedState.biometricsPasswordFailed:
                             return qsTr("Use password instead")
@@ -887,7 +889,7 @@ QtObject {
                     case Constants.keycardSharedState.biometricsPasswordFailed:
                     case Constants.keycardSharedState.biometricsPinFailed:
                     case Constants.keycardSharedState.biometricsPinInvalid:
-                        return qsTr("Try biometrics again")
+                        return qsTr("Retry biometrics")
 
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:
@@ -920,7 +922,7 @@ QtObject {
 
                     case Constants.keycardSharedState.biometricsPinFailed:
                     case Constants.keycardSharedState.biometricsPinInvalid:
-                        return qsTr("Try biometrics again")
+                        return qsTr("Retry biometrics")
 
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:

@@ -14,6 +14,8 @@ import AppLayouts.stores.Messaging as MessagingStores
 QtObject {
     id: root
 
+    required property Keychain keychain
+
     // Global properties that have to remain on `RootStore` (the module instances must be private properties and just used to initialize the
     // rest and specific stores
     readonly property bool isProduction: production
@@ -540,6 +542,30 @@ QtObject {
         function onDestroyKeycardSharedModuleFlow() {
             root.destroyKeycardSharedModuleFlow()
         }
+
+        function onRequestGetCredentialFromKeychain(key: string) {
+            keychain.requestGetCredential("authenticate", key)
+        }
+
+        function onRequestStoreCredentialToKeychain(key: string, password: string) {
+            const result = keychain.updateCredential(key, password)
+            if(result === Keychain.StatusSuccess) {
+                internal.mainModuleInst.credentialStoredToKeychainResult(true)
+            } else {
+                internal.mainModuleInst.credentialStoredToKeychainResult(false)
+            }
+        }
     }
     // End of Keycard related stuff
+
+    readonly property Connections keychainConnections: Connections {
+        target: root.keychain
+        function onGetCredentialRequestCompleted(status: int, secret: string) {
+            if (status === Keychain.StatusSuccess) {
+                internal.mainModuleInst.requestGetCredentialFromKeychainResult(true, secret)
+            } else {
+                internal.mainModuleInst.requestGetCredentialFromKeychainResult(false, "")
+            }
+        }
+    }
 }

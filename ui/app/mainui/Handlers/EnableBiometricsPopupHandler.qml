@@ -29,6 +29,8 @@ QtObject {
         EnableBiometricsPopup {
             id: popup
 
+            onClosed: destroy()
+
             onEnableBiometricsRequested: () => {
                 // Enable Biometrics flow
                 popup.loading = true

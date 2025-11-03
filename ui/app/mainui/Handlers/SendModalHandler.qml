@@ -25,12 +25,12 @@ QtObject {
     id: root
 
     required property var popupParent
-    required property int loginType
     required property TransactionStore transactionStore
     required property WalletStores.CollectiblesStore walletCollectiblesStore
     required property WalletStores.TransactionStoreNew transactionStoreNew
     required property SharedStores.NetworksStore networksStore
     required property SharedStores.NetworkConnectionStore networkConnectionStore
+    property var fnGetLoginType: function() {}
 
     /** for ens flows **/
     required property string myPublicKey
@@ -417,7 +417,7 @@ QtObject {
 
         // TODO: Update the API to be explicit and avoid direct store access
         SendModal {
-            loginType: root.loginType
+            loginType: root.fnGetLoginType()
 
             store: root.transactionStore
             collectiblesStore: root.walletCollectiblesStore
@@ -660,7 +660,8 @@ QtObject {
                     if(uuid !== handler.uuid) {
                         return
                     }
-                    simpleSendModal.close()
+                    // TODO: commented this out as closing this popup rests the variables on nim side and tx fails
+                    // simpleSendModal.close()
                 }
 
                 function sendMetricsEvent(eventName, data = "") {
@@ -1127,7 +1128,7 @@ QtObject {
                         return WalletUtils.formatEstimatedTime(0)
                     }
 
-                    loginType: root.loginType
+                    loginType: root.fnGetLoginType()
 
                     isCollectible: simpleSendModal.sendType === Constants.SendType.ERC1155Transfer ||
                                    simpleSendModal.sendType === Constants.SendType.ERC721Transfer
