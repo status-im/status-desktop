@@ -197,7 +197,7 @@ Item {
                 d.primaryButtonEnabled = false
             }
 
-            onPinUpdated: {
+            onPinUpdated: function(pin) {
                 d.primaryButtonEnabled = pin.length === Constants.keycard.general.keycardPinLength
             }
         }

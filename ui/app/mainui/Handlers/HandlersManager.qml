@@ -84,7 +84,7 @@ QtObject {
 
         popupParent: root.popupParent
 
-        loginType: root.rootStore.loginType
+        fnGetLoginType: root.rootStore.getLoginType
         transactionStore: root.transactionStore
         walletCollectiblesStore: root.walletCollectiblesStore
         transactionStoreNew: root.transactionStoreNew

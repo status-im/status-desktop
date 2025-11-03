@@ -121,7 +121,7 @@ Item {
                         root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongKeychainPin) {
                     image.source = Theme.png("keycard/enter-pin-%1".arg(pinInput.length))
                 }
-                if(pinInput.length == 0) {
+                if(pinInput.length === 0) {
                     return
                 }
                 if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPin ||

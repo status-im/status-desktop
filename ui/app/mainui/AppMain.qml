@@ -69,6 +69,7 @@ Item {
         thirdpartyServicesEnabled: appMain.featureFlagsStore.privacyModeFeatureEnabled ?
                                    appMain.privacyStore.thirdpartyServicesEnabled: true
         onOpenUrl: (link) => Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+        keychain: appMain.keychain
     }
 
     // Global cross-domain stores (just references from `rootStore`)
@@ -2848,7 +2849,7 @@ Item {
 
                 enabled: dAppsService.isServiceOnline
                 visualParent: appMain
-                loginType: appMain.rootStore.loginType
+                loginType: appMain.rootStore.getLoginType()
                 selectedAccountAddress: WalletStores.RootStore.selectedAddress
                 dAppsModel: dAppsService.dappsModel
                 accountsModel: WalletStores.RootStore.nonWatchAccounts

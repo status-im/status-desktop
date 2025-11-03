@@ -31,7 +31,6 @@ import market_section/module as market_module
 import app_service/service/contacts/dto/contacts
 import app_service/service/community_tokens/community_collectible_owner
 
-import app_service/service/keychain/service as keychain_service
 import app_service/service/chat/service as chat_service
 import app_service/service/community/service as community_service
 import app_service/service/message/service as message_service
@@ -102,7 +101,6 @@ type
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
     savedAddressService: saved_address_service.Service
-    keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     stickersService: stickers_service.Service
     communityTokensService: community_tokens_service.Service
@@ -142,7 +140,6 @@ proc newModule*[T](
   delegate: T,
   events: EventEmitter,
   urlsManager: UrlsManager,
-  keychainService: keychain_service.Service,
   accountsService: accounts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -217,7 +214,6 @@ proc newModule*[T](
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.savedAddressService = savedAddressService
-  result.keychainService = keychainService
   result.stickersService = stickersService
   result.communityTokensService = communityTokensService
 
@@ -239,7 +235,7 @@ proc newModule*[T](
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, privacyService, nodeConfigurationService,
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
-    networkService, keycardService, keychainService, tokenService, nodeService
+    networkService, keycardService, tokenService, nodeService
   )
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService,
     networkService, tokenService)
@@ -652,6 +648,13 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
 
   self.events.on(SIGNAL_PAIRING_FALLBACK_COMPLETED) do(e:Args):
     self.view.showToastPairingFallbackCompleted()
+
+  self.events.on(SIGNAL_KEYCHAIN_GET_CREDENTIAL) do(e:Args):
+    self.view.requestGetCredentialFromKeychain(singletonInstance.userProfile.getKeyUid())
+
+  self.events.on(SIGNAL_KEYCHAIN_STORE_CREDENTIAL) do(e:Args):
+    let args = AuthenticationArgs(e)
+    self.view.requestStoreCredentialToKeychain(singletonInstance.userProfile.getKeyUid(), args.password)
 
 method load*[T](
   self: Module[T],
@@ -1938,7 +1941,7 @@ method getKeycardSharedModuleForAuthenticationOrSigning*[T](self: Module[T]): QV
 proc createSharedKeycardModuleForAuthenticationOrSigning[T](self: Module[T], identifier: string) =
   self.keycardSharedModuleForAuthenticationOrSigning = keycard_shared_module.newModule[Module[T]](self, identifier,
     self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+    self.walletAccountService)
 
 method onSharedKeycarModuleForAuthenticationOrSigningTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
   if self.isSharedKeycardModuleForAuthenticationOrSigningRunning():
@@ -1971,7 +1974,7 @@ method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], las
 method tryKeycardSync*[T](self: Module[T], keyUid: string, pin: string) =
   self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER,
     self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+    self.walletAccountService)
   if self.keycardSharedModuleKeycardSyncPurpose.isNil:
     return
   self.keycardSharedModuleKeycardSyncPurpose.syncKeycardBasedOnAppState(keyUid, pin)
@@ -2003,7 +2006,7 @@ proc runStopUsingKeycardForProfilePopup[T](self: Module[T]) =
     return
   self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER,
     self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+    self.walletAccountService)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromKeycardToApp,
     singletonInstance.userProfile.getKeyUid(), bip44Paths = @[], txHash = "", forceFlow = true)
 
@@ -2013,7 +2016,7 @@ proc runStartUsingKeycardForProfilePopup[T](self: Module[T]) =
     return
   self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER,
     self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+    self.walletAccountService)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromAppToKeycard,
     singletonInstance.userProfile.getKeyUid(), bip44Paths = @[], txHash = "", forceFlow = true)
 ################################################################################
@@ -2253,5 +2256,17 @@ method authenticateLoggedInUser*[T](self: Module[T], requestedBy: string) =
 method onLoggedInUserAuthenticated*[T](self: Module[T], requestedBy: string, password: string, pin: string, keyUid: string,
   keycardUid: string) =
   self.view.emitLoggedInUserAuthenticated(requestedBy, password, pin, keyUid, keycardUid)
+
+method requestGetCredentialFromKeychainResult*[T](self: Module[T], success: bool, secret: string) =
+  if success:
+    self.events.emit(SIGNAL_KEYCHAIN_SERVICE_SUCCESS, AuthenticationArgs(password: secret))
+  else:
+    self.events.emit(SIGNAL_KEYCHAIN_SERVICE_ERROR, AuthenticationErrorArgs())
+
+method credentialStoredToKeychainResult*[T](self: Module[T], success: bool) =
+  if success:
+    self.events.emit(SIGNAL_KEYCHAIN_SERVICE_SUCCESS, AuthenticationArgs())
+  else:
+    self.events.emit(SIGNAL_KEYCHAIN_SERVICE_ERROR, AuthenticationErrorArgs())
 
 {.pop.}

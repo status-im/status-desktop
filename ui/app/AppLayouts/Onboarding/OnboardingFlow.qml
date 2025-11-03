@@ -106,7 +106,8 @@ OnboardingStackView {
         }
 
         function pushOrSkipBiometricsPage() {
-            if (d.flow === Onboarding.OnboardingFlow.LoginWithSyncing) {
+            if (d.flow === Onboarding.OnboardingFlow.LoginWithSyncing
+                    || d.flow === Onboarding.OnboardingFlow.LoginWithKeycard) {
                 root.skippedBiometricFlow()
                 root.finished(d.flow)
                 return

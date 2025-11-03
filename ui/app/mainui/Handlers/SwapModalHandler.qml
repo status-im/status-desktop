@@ -70,7 +70,7 @@ QtObject {
                 }
             }
             swapInputParamsForm: d.swapInputParams
-            loginType: root.rootStore.loginType
+            loginType: root.rootStore.getLoginType()
             onAddMetricsEvent: (subEvent) => d.addMetricsEvent(subEvent)
             onClosed: {
                 destroy()

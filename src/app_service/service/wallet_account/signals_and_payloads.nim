@@ -36,6 +36,10 @@ const SIGNAL_KEYCARD_LOCKED* = "keycardLocked"
 const SIGNAL_KEYCARD_UNLOCKED* = "keycardUnlocked"
 const SIGNAL_KEYCARD_UID_UPDATED* = "keycardUidUpdated"
 const SIGNAL_KEYCARD_NAME_CHANGED* = "keycardNameChanged"
+const SIGNAL_KEYCHAIN_GET_CREDENTIAL* = "keychainGetCredential"
+const SIGNAL_KEYCHAIN_STORE_CREDENTIAL* = "keychainStoreCredential"
+const SIGNAL_KEYCHAIN_SERVICE_SUCCESS* = "keychainServiceSuccess"
+const SIGNAL_KEYCHAIN_SERVICE_ERROR* = "keychainServiceError"
 
 #################################################
 # Payload sent via above defined signals
@@ -44,6 +48,11 @@ const SIGNAL_KEYCARD_NAME_CHANGED* = "keycardNameChanged"
 type AuthenticationArgs* = ref object of Args
   keyUid*: string
   password*: string
+
+type AuthenticationErrorArgs* = ref object of Args
+  errCode*: int
+  errType*: string
+  errDescription*: string
 
 type AccountArgs* = ref object of Args
   account*: WalletAccountDto

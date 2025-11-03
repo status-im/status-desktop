@@ -195,6 +195,13 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
         "deleteCredential", "(Ljava/lang/String;)Z",
         QJniObject::fromString(account).object<jstring>());
 
+
+    if (ok) {
+        QMetaObject::invokeMethod(s_keychain, [account]{
+            emit s_keychain->credentialDeleted(account);
+        }, Qt::QueuedConnection);
+    }
+
     return ok ? StatusSuccess : StatusNotFound;
 }
 

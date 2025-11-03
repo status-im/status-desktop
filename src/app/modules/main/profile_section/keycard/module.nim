@@ -13,7 +13,6 @@ import app_service/service/network/service as network_service
 import app_service/service/privacy/service as privacy_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/keychain/service as keychain_service
 
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/modules/shared_modules/keycard_popup/models/keycard_model
@@ -37,7 +36,6 @@ type
     privacyService: privacy_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
-    keychainService: keychain_service.Service
     keycardSharedModule: keycard_shared_module.AccessInterface
 
 ## Forward declarations
@@ -50,8 +48,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   networkService: network_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  keychainService: keychain_service.Service): Module =
+  walletAccountService: wallet_account_service.Service
+  ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
@@ -61,7 +59,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.privacyService = privacyService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
-  result.keychainService = keychainService
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, walletAccountService)
@@ -103,7 +100,7 @@ proc createSharedKeycardModule(self: Module) =
     return
   self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER,
     self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+    self.walletAccountService)
 
 method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlow: bool, nextFlow: keycard_shared_module.FlowType,
   forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) =

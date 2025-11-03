@@ -7,16 +7,10 @@ import ../io_interface as delegate_interface
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/keychain/service as keychain_service
 import ../../../../../app_service/service/privacy/service as privacy_service
 import ../../../../../app_service/service/general/service as general_service
 
 export io_interface
-
-type
-  KeychainActivityReason {.pure.} = enum
-    StoreTo = 0
-    RemoveFrom
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -25,11 +19,9 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
-    keychainActivityReason: KeychainActivityReason
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service,
-  keychainService: keychain_service.Service,
   privacyService: privacy_service.Service,
   generalService: general_service.Service):
   Module =
@@ -37,7 +29,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, keychainService, privacyService, generalService)
+  result.controller = controller.newController(result, events, settingsService, privacyService, generalService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -97,23 +89,8 @@ method setUrlUnfurlingMode*(self: Module, value: int) =
 method getPasswordStrengthScore*(self: Module, password: string): int =
   return self.controller.getPasswordStrengthScore(password, singletonInstance.userProfile.getUsername())
 
-method onStoreToKeychainError*(self: Module, errorDescription: string, errorType: string) =
-  self.view.emitStoreToKeychainError(errorDescription)
-
-method onStoreToKeychainSuccess*(self: Module, data: string) =
-  if self.keychainActivityReason == KeychainActivityReason.StoreTo:
-    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
-  elif self.keychainActivityReason == KeychainActivityReason.RemoveFrom:
-    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
-  self.view.emitStoreToKeychainSuccess()
-
 method tryStoreToKeyChain*(self: Module) =
   self.controller.authenticateLoggedInUser()
-
-method tryRemoveFromKeyChain*(self: Module) =
-  self.keychainActivityReason = KeychainActivityReason.RemoveFrom
-  let myKeyUid = singletonInstance.userProfile.getKeyUid()
-  self.controller.removeFromKeychain(myKeyUid)
 
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
   let credential = if pin.len > 0: pin else: password

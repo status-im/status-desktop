@@ -9758,10 +9758,6 @@ access to your funds.</source>
         <translation>취소</translation>
     </message>
     <message>
-        <source>Use biometrics instead</source>
-        <translation>대신 생체인증 사용</translation>
-    </message>
-    <message>
         <source>Use password instead</source>
         <translation>대신 비밀번호 사용</translation>
     </message>
@@ -9882,10 +9878,6 @@ access to your funds.</source>
         <translation>PIN 업데이트 및 인증</translation>
     </message>
     <message>
-        <source>Try biometrics again</source>
-        <translation>생체 인증을 다시 시도</translation>
-    </message>
-    <message>
         <source>Sign</source>
         <translation>서명</translation>
     </message>
@@ -9932,6 +9924,10 @@ access to your funds.</source>
     <message>
         <source>Restart App &amp; Sign In Using Your Keycard</source>
         <translation>앱을 다시 시작하고 Keycard로 로그인하세요</translation>
+    </message>
+    <message>
+        <source>Retry biometrics</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

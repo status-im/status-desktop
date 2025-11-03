@@ -15,7 +15,6 @@ import app_service/service/network/service as network_service
 import app_service/service/privacy/service as privacy_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/keychain/service as keychain_service
 import app_service/service/currency/dto
 
 import app/modules/shared_models/[keypair_item]
@@ -34,7 +33,6 @@ type
     privacyService: privacy_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
-    keychainService: keychain_service.Service
     connectionIds: seq[UUID]
     keychainConnectionIds: seq[UUID]
     connectionKeycardResponse: UUID
@@ -80,8 +78,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   networkService: network_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  keychainService: keychain_service.Service):
+  walletAccountService: wallet_account_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate
@@ -93,7 +90,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.privacyService = privacyService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
-  result.keychainService = keychainService
   result.tmpKeycardContainsMetadata = false
   result.tmpPinMatch = false
   result.tmpValidPuk = false
@@ -127,12 +123,12 @@ proc connectKeycardSyncSignal(self: Controller) =
 
 proc connectKeychainSignals*(self: Controller) =
   var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
-    let args = KeyChainServiceArg(e)
-    self.delegate.keychainObtainedDataSuccess(args.data)
+    let args = AuthenticationArgs(e)
+    self.delegate.keychainObtainedDataSuccess(args.password)
   self.keychainConnectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
-    let args = KeyChainServiceArg(e)
+    let args = AuthenticationErrorArgs(e)
     self.delegate.keychainObtainedDataFailure(args.errDescription, args.errType)
   self.keychainConnectionIds.add(handlerId)
 
@@ -810,16 +806,10 @@ proc removeProfileMnemonic*(self: Controller) =
   self.privacyService.removeMnemonic()
 
 proc tryToObtainDataFromKeychain*(self: Controller) =
-  if not serviceApplicable(self.keychainService):
-    return
-  if(not singletonInstance.userProfile.getUsingBiometricLogin()):
-    return
-  self.keychainService.tryToObtainData(singletonInstance.userProfile.getKeyUid())
+  self.events.emit(SIGNAL_KEYCHAIN_GET_CREDENTIAL, Args())
 
 proc tryToStoreDataToKeychain*(self: Controller, password: string) =
-  if not serviceApplicable(self.keychainService):
-    return
-  self.keychainService.storeData(singletonInstance.userProfile.getKeyUid(), password)
+  self.events.emit(SIGNAL_KEYCHAIN_STORE_CREDENTIAL, AuthenticationArgs(password: password))
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   if not serviceApplicable(self.walletAccountService):
@@ -857,6 +847,4 @@ proc serviceApplicable[T](service: T): bool =
     serviceName = "NetworkService"
   when (service is accounts_service.Service):
     serviceName = "AccountsService"
-  when (service is keychain_service.Service):
-    serviceName = "KeychainService"
   debug "service is not set, check the context shared keycard popup module is used", service=serviceName
