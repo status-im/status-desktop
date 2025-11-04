@@ -7,6 +7,7 @@ import app/core/eventemitter
 import app_service/service/general/service as general_service
 import app_service/service/settings/service as settings_service
 import app_service/service/node_configuration/service as node_configuration_service
+import app_service/service/devices/service as devices_service
 
 export io_interface
 
@@ -27,12 +28,13 @@ proc newModule*(
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
     generalService: general_service.Service,
+    devicesService: devices_service.Service,
   ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService, generalService)
+  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService, generalService, devicesService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

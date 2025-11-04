@@ -86,17 +86,6 @@ QtObject:
     else:
       self.runTimer()
 
-  proc performLocalBackup*(self: Service): string =
-    try:
-      let response =  status_go.performLocalBackup()
-      let rpcResponseObj = response.parseJson
-
-      if rpcResponseObj.hasKey("error") and rpcResponseObj{"error"}.getStr != "":
-        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
-    except Exception as e:
-      error "error: ", procName="performLocalBackup", errName = e.name, errDesription = e.msg
-      return e.msg
-
   proc asyncImportLocalBackupFile*(self: Service, filePath: string) =
     let formattedFilePath = singletonInstance.utils.fromPathUri(filePath)
     let arg = AsyncImportLocalBackupFileTaskArg(

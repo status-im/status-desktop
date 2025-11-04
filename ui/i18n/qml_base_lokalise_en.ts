@@ -2936,11 +2936,6 @@
   <context>
     <name>BackupView</name>
     <message>
-      <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</source>
-      <comment>BackupView</comment>
-      <translation>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</translation>
-    </message>
-    <message>
       <source>Instant backup</source>
       <comment>BackupView</comment>
       <translation>Instant backup</translation>
@@ -3024,6 +3019,11 @@
       <source>Supported backup formats (%1)</source>
       <comment>BackupView</comment>
       <translation>Supported backup formats (%1)</translation>
+    </message>
+    <message>
+      <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</source>
+      <comment>BackupView</comment>
+      <translation>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</translation>
     </message>
   </context>
   <context>

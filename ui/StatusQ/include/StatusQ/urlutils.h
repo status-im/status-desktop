@@ -21,6 +21,11 @@ public:
 
     Q_INVOKABLE QUrl urlFromUserInput(const QString& input) const;
 
+    // Returns a user-friendly label to show for a backup location.
+    // On Android for SAF tree URIs (content://) this will map to a readable form like
+    // "Internal storage/Documents/...". Otherwise returns a local path if applicable.
+    Q_INVOKABLE QString displayPathLabel(const QString& path) const;
+
 private:
     QMimeDatabase m_mimeDb;
 

@@ -38,7 +38,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding
             wrapMode: Text.Wrap
-            text: qsTr("Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored <b>only</b> on your device).")
+            text: qsTr("Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored <b>only</b> on your device).")
         }
 
         Separator { Layout.fillWidth: true }
@@ -142,7 +142,8 @@ SettingsContentBase {
             StatusInput {
                 Layout.fillWidth: true
                 input.edit.enabled: false
-                text: UrlUtils.convertUrlToLocalPath(root.backupPath)
+                // Use a user-friendly label for display only; underlying value remains the URI/path
+                text: UrlUtils.displayPathLabel(root.backupPath)
             }
             StatusButton {
                 text: qsTr("Browse")

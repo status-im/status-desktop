@@ -2389,10 +2389,6 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
 <context>
     <name>BackupView</name>
     <message>
-        <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored&#xa0;&lt;b&gt;only&lt;/b&gt;&#xa0;on your device).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Instant backup</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2459,6 +2455,10 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     <message>
         <source>Supported backup formats (%1)</source>
         <translation type="unfinished">지원되는 백업 형식(%1)</translation>
+    </message>
+    <message>
+        <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

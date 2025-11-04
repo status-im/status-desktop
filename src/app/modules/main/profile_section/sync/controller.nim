@@ -3,6 +3,7 @@ import io_interface
 
 import ../../../../core/eventemitter
 import app_service/service/general/service as general_service
+import app_service/service/devices/service as devices_service
 import app_service/service/settings/service as settings_service
 import app_service/service/node_configuration/service as node_configuration_service
 import app_service/common/types
@@ -17,6 +18,7 @@ type
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
     generalService: general_service.Service
+    devicesService: devices_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -24,6 +26,7 @@ proc newController*(
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
     generalService: general_service.Service,
+    devicesService: devices_service.Service,
   ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -31,6 +34,7 @@ proc newController*(
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
   result.generalService = generalService
+  result.devicesService = devicesService
 
 proc delete*(self: Controller) =
   discard
@@ -47,7 +51,7 @@ proc setUseMailservers*(self: Controller, value: bool): bool =
   return self.settingsService.toggleUseMailservers(value)
 
 proc performLocalBackup*(self: Controller): string =
-  return self.generalService.performLocalBackup()
+  return self.devicesService.performLocalBackup()
 
 proc importLocalBackupFile*(self: Controller, filePath: string) =
   self.generalService.asyncImportLocalBackupFile(filePath)
