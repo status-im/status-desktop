@@ -1500,14 +1500,14 @@ QtObject {
         /* TODO: https://github.com/status-im/status-desktop/issues/15329
         This is only added temporarily until we have an api from the backend in order to get
         this list dynamically */
-        readonly property string paraswapName: "Paraswap"
+        readonly property string paraswapName: "Velora"
         readonly property string paraswapIcon: "paraswap"
-        readonly property string paraswapHostname: "app.paraswap.io"
-        readonly property string paraswapUrl: "https://www.paraswap.io/"
+        readonly property string paraswapHostname: "app.velora.xyz"
+        readonly property string paraswapUrl: "https://www.velora.xyz/"
         readonly property string paraswapV5ApproveContractAddress: "0x216B4B4Ba9F3e719726886d34a177484278Bfcae"
         readonly property string paraswapV5SwapContractAddress: "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"
         readonly property string paraswapV6_2ContractAddress: "0x6a000f20005980200259b80c5102003040001068"
-        readonly property string paraswapTermsAndConditionUrl: "https://files.paraswap.io/tos_v4.pdf"
+        readonly property string paraswapTermsAndConditionUrl: "https://www.velora.xyz/terms/terms-of-use"
     }
 
     // Mirrors src/app_service/service/transaction/service.nim -> EstimatedTime
