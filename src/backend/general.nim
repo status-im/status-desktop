@@ -64,7 +64,7 @@ proc importLocalBackupFile*(filePath: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("importLocalBackupFile".prefix, payload)
 
 proc parseSharedUrl*(url: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("parseSharedURL".sharedUrlsPrefix, %*[url])
+  result = callPrivateRPC("parseSharedURL".prefix, %*[url])
 
 proc hashMessageForSigning*(message: string): string =
   try:

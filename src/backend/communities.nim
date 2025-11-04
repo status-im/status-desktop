@@ -506,16 +506,22 @@ proc shareCommunityToUsers*(communityId: string, pubKeys: seq[string], inviteMes
   }])
 
 proc shareCommunityUrlWithChatKey*(communityId: string): RpcResponse[JsonNode] =
-  return callPrivateRPC("shareCommunityURLWithChatKey".sharedUrlsPrefix, %*[communityId])
+  return callPrivateRPC("shareCommunityURLWithChatKey".prefix, %*[communityId])
 
 proc shareCommunityUrlWithData*(communityId: string): RpcResponse[JsonNode] =
-  return callPrivateRPC("shareCommunityURLWithData".sharedUrlsPrefix, %*[communityId])
+  return callPrivateRPC("shareCommunityURLWithData".prefix, %*[communityId])
 
 proc shareCommunityChannelUrlWithChatKey*(communityId: string, channelId: string): RpcResponse[JsonNode] =
-  return callPrivateRPC("shareCommunityChannelURLWithChatKey".sharedUrlsPrefix, %*[communityId, channelId])
+  return callPrivateRPC("shareCommunityChannelURLWithChatKey".prefix, %*[{
+    "communityId": communityId,
+    "channelId": channelId
+  }])
 
 proc shareCommunityChannelUrlWithData*(communityId: string, channelId: string): RpcResponse[JsonNode] =
-  return callPrivateRPC("shareCommunityChannelURLWithData".sharedUrlsPrefix, %*[communityId, channelId])
+  return callPrivateRPC("shareCommunityChannelURLWithData".prefix, %*[{
+    "communityId": communityId,
+    "channelId": channelId
+  }])
 
 proc getCommunitiesSettings*(): RpcResponse[JsonNode] =
   return callPrivateRPC("getCommunitiesSettings".prefix, %*[])

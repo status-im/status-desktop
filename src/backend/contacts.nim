@@ -89,13 +89,13 @@ proc requestContactInfo*(pubkey: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("requestContactInfoFromMailserver".prefix, %*[pubkey])
 
 proc shareUserUrlWithData*(pubkey: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("shareUserURLWithData".sharedUrlsPrefix, %*[pubkey])
+  result = callPrivateRPC("shareUserURLWithData".prefix, %*[pubkey])
 
 proc shareUserUrlWithChatKey*(pubkey: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("shareUserURLWithChatKey".sharedUrlsPrefix, %*[pubkey])
+  result = callPrivateRPC("shareUserURLWithChatKey".prefix, %*[pubkey])
 
 proc shareUserUrlWithENS*(pubkey: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("shareUserURLWithENS".sharedUrlsPrefix, %*[pubkey])
+  result = callPrivateRPC("shareUserURLWithENS".prefix, %*[pubkey])
 
 proc getProfileShowcaseForContact*(contactId: string, validate: bool): RpcResponse[JsonNode] =
   let payload = %* [contactId, validate]
