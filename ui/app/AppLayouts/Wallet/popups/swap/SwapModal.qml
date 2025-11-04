@@ -592,7 +592,7 @@ StatusDialog {
 
             estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
 
-            serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
+            serviceProviderName: Constants.swap.paraswapName
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderIcon: Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
@@ -661,7 +661,7 @@ StatusDialog {
 
             slippage: root.swapInputParamsForm.selectedSlippage
 
-            serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
+            serviceProviderName: Constants.swap.paraswapName
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
 
