@@ -231,6 +231,7 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
     target_sources(StatusQ PRIVATE
         src/keychain_android.cpp
+        src/safutils_android.cpp
     )
 else ()
     target_sources(StatusQ PRIVATE

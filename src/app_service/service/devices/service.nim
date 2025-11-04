@@ -16,6 +16,8 @@ import app/core/[main]
 import app/core/signals/types
 import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
+when defined(android):
+  import app/android/safutils
 import backend/installations as status_installations
 import app_service/common/utils as utils
 import constants as main_constants
@@ -418,6 +420,38 @@ QtObject:
         raise newException(CatchableError, e.message)
     except Exception as e:
       error "error in pairDevice: ", desription = e.msg
+      return e.msg
+
+  proc performLocalBackup*(self: Service): string =
+    try:
+      let response =  status_go.performLocalBackup()
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj.hasKey("error") and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+
+      # Android SAF: if user-selected backup path is a content:// tree URI, copy the produced
+      # backup file from our default directory into that tree using SAF helper.
+      when defined(android):
+        try:
+          let backupPath = self.settingsService.getBackupPath()
+
+          if backupPath.len > 0 and backupPath.startsWith("content://"):
+            # Get file path from the RPC response and copy into the SAF tree
+            let srcPath = rpcResponseObj["filePath"].getStr
+            if srcPath.len == 0:
+              # No source file found; surface an error so UI shows failure
+              raise newException(CatchableError, "Backup created but source file not found for SAF export")
+
+            let fileName = splitFile(srcPath).name & splitFile(srcPath).ext
+            let destUri = safCopyFromPathToTree(srcPath, backupPath, "application/octet-stream", fileName)
+            if destUri.len == 0:
+              raise newException(CatchableError, "Failed to export backup into selected folder (SAF)")
+        except Exception as e:
+          error "error: ", procName="performLocalBackup/SAF", errName = e.name, errDesription = e.msg
+          return e.msg
+    except Exception as e:
+      error "error: ", procName="performLocalBackup", errName = e.name, errDesription = e.msg
       return e.msg
 
   proc delete*(self: Service) =

@@ -1,4 +1,6 @@
 #include "StatusQ/urlutils.h"
+#include "StatusQ/safutils.h"
+#include <cstdlib>
 
 #include <QDir>
 #include <QFile>
@@ -117,4 +119,100 @@ QStringList UrlUtils::convertUrlsToLocalPaths(const QStringList &urls) const {
 QUrl UrlUtils::urlFromUserInput(const QString &input) const
 {
     return QUrl::fromUserInput(input);
+}
+
+QString UrlUtils::displayPathLabel(const QString& path) const
+{
+    if (path.isEmpty())
+        return QString();
+
+#ifdef Q_OS_ANDROID
+    // Handle cases where a content URI gets wrapped inside a file URL/path, e.g.:
+    // "file:///data/.../content:/com.android.externalstorage.documents/tree/primary%3ADocuments%2FBackups"
+    int contentIdx = path.indexOf(QLatin1String("content:"));
+    if (contentIdx >= 0) {
+        QString content = path.mid(contentIdx); // e.g. "content:/com.android.externalstorage.documents/tree/primary%3ADocuments%2FBackups"
+
+        // Normalize to content://
+        if (content.startsWith(QLatin1String("content:/")) && !content.startsWith(QLatin1String("content://"))) {
+            content = QLatin1String("content://") + content.mid(9); // skip "content:/"
+        }
+
+        // First, try to produce a friendly label locally by parsing the tree docId
+        const int treePos = content.indexOf(QLatin1String("/tree/"));
+        if (treePos > 0) {
+            const QString docIdEnc = content.mid(treePos + 6); // after "/tree/"
+            const QString docId = QUrl::fromPercentEncoding(docIdEnc.toUtf8()); // e.g. "primary:Documents/patate"
+
+            const int colon = docId.indexOf(':');
+            const QString volume = colon >= 0 ? docId.left(colon) : QString();
+            QString relPath = colon >= 0 ? docId.mid(colon + 1) : docId;
+            while (relPath.startsWith('/')) relPath.remove(0, 1);
+
+            QString volLabel;
+            if (volume.compare(QLatin1String("primary"), Qt::CaseInsensitive) == 0)
+                volLabel = QLatin1String("Internal storage");
+            else if (!volume.isEmpty())
+                volLabel = QLatin1String("SD card");
+            else
+                volLabel = QLatin1String("Storage");
+
+            return relPath.isEmpty() ? volLabel : volLabel + QLatin1Char('/') + relPath;
+        }
+
+        // Fallback to Java helper if present
+        const char* c = statusq_saf_getReadableTreePath(content.toUtf8().constData());
+        if (c) {
+            QString s = QString::fromUtf8(c);
+            std::free((void*)c);
+            if (!s.isEmpty()) return s;
+        }
+        // Fallback to showing the normalized content URI
+        return content;
+    }
+
+    // Native content:// (not wrapped)
+    if (path.startsWith(QLatin1String("content://"))) {
+        // Try local parse first
+        const int treePos = path.indexOf(QLatin1String("/tree/"));
+        if (treePos > 0) {
+            const QString docIdEnc = path.mid(treePos + 6);
+            const QString docId = QUrl::fromPercentEncoding(docIdEnc.toUtf8());
+            const int colon = docId.indexOf(':');
+            const QString volume = colon >= 0 ? docId.left(colon) : QString();
+            QString relPath = colon >= 0 ? docId.mid(colon + 1) : docId;
+            while (relPath.startsWith('/')) relPath.remove(0, 1);
+            QString volLabel;
+            if (volume.compare(QLatin1String("primary"), Qt::CaseInsensitive) == 0)
+                volLabel = QLatin1String("Internal storage");
+            else if (!volume.isEmpty())
+                volLabel = QLatin1String("SD card");
+            else
+                volLabel = QLatin1String("Storage");
+            return relPath.isEmpty() ? volLabel : volLabel + QLatin1Char('/') + relPath;
+        }
+
+        const char* c = statusq_saf_getReadableTreePath(path.toUtf8().constData());
+        if (c) {
+            QString s = QString::fromUtf8(c);
+            std::free((void*)c);
+            if (!s.isEmpty()) return s;
+        }
+        return path;
+    }
+#endif
+
+    // Desktop and non-SAF: show a local filesystem path if possible
+    // Don't call urlFromUserInput on paths that are already absolute file paths
+    if (path.startsWith('/') || path.startsWith(QLatin1String("file://"))) {
+        QUrl url(path);
+        if (url.isLocalFile())
+            return url.toLocalFile();
+        return path;
+    }
+
+    const auto localFileOrUrl = urlFromUserInput(path);
+    if (localFileOrUrl.isLocalFile())
+        return localFileOrUrl.toLocalFile();
+    return path;
 }

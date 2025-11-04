@@ -100,7 +100,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     nodeConfigurationService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
   result.syncModule = sync_module.newModule(result, events, settingsService, nodeConfigurationService,
-    generalService)
+    generalService, devicesService)
   result.wakuModule = waku_module.newModule(result, events, settingsService, nodeConfigurationService)
   result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService,
     contactsService, communityService)

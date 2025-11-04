@@ -2,6 +2,8 @@ import nimqml, chronicles, json, strutils, sequtils, tables, times
 
 import app/core/eventemitter
 import app/core/signals/types
+when defined(android):
+  import app/android/safutils
 import app_service/common/types as common_types
 import backend/newsfeed as status_newsfeed
 import backend/mailservers as status_mailservers
@@ -1103,7 +1105,13 @@ QtObject:
     if self.settings.backupPath == value:
       return
     try:
-      let formattedPath = singletonInstance.utils.fromPathUri(value)
+      var formattedPath = value
+      when defined(android):
+        # If the user selected a SAF folder, persist the URI permission immediately.
+        if value.len > 0 and value.startsWith("content://"):
+          safTakePersistablePermission(value)
+      else:
+        formattedPath = singletonInstance.utils.fromPathUri(value)
       if self.saveSetting(KEY_BACKUP_PATH, formattedPath):
         self.settings.backupPath = formattedPath
         self.backupPathChanged()
