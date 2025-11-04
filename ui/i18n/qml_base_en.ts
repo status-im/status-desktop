@@ -2790,17 +2790,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>BuyCryptoProvidersListPanel</name>
-    <message>
-        <source>One time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Recurrent</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>BuyReceiveBanner</name>
     <message>
         <source>Ways to buy</source>
@@ -19187,6 +19176,10 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     <name>main</name>
     <message>
         <source>Status Desktop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hello World</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -3415,19 +3415,6 @@
     </message>
   </context>
   <context>
-    <name>BuyCryptoProvidersListPanel</name>
-    <message>
-      <source>One time</source>
-      <comment>BuyCryptoProvidersListPanel</comment>
-      <translation>One time</translation>
-    </message>
-    <message>
-      <source>Recurrent</source>
-      <comment>BuyCryptoProvidersListPanel</comment>
-      <translation>Recurrent</translation>
-    </message>
-  </context>
-  <context>
     <name>BuyReceiveBanner</name>
     <message>
       <source>Ways to buy</source>
@@ -23346,6 +23333,11 @@
       <source>Status Desktop</source>
       <comment>main</comment>
       <translation>Status Desktop</translation>
+    </message>
+    <message>
+      <source>Hello World</source>
+      <comment>main</comment>
+      <translation>Hello World</translation>
     </message>
   </context>
   <context>

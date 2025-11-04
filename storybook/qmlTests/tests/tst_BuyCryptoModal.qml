@@ -7,7 +7,6 @@ import SortFilterProxyModel
 import StatusQ
 import StatusQ.Core.Utils
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils as SQUtils
 import StatusQ.Core.Backpressure
 
 import Models
@@ -312,26 +311,26 @@ Item {
 
             verify(controlUnderTest.stackTitle, qsTr("Ways to buy assets for %1").arg(!!controlUnderTest.selectedAccountEntry.item ? controlUnderTest.selectedAccountEntry.item.name: ""))
 
-            // find tab bar
-            const tabBar = findChild(controlUnderTest, "tabBar")
-            verify(!!tabBar)
+            // // find tab bar
+            // const tabBar = findChild(controlUnderTest, "tabBar")
+            // verify(!!tabBar)
 
             // find providers list
             const providersList = findChild(controlUnderTest, "providersList")
             waitForRendering(providersList)
             verify(!!providersList)
 
-            // should have 2 items
-            compare(tabBar.count, 2)
+            // // should have 2 items
+            // compare(tabBar.count, 2)
 
-            // current index set should be to 0
-            compare(tabBar.currentIndex, 0)
+            // // current index set should be to 0
+            // compare(tabBar.currentIndex, 0)
 
-            // item 0 should have text "One time"
-            compare(tabBar.itemAt(0).text, qsTr("One time"))
+            // // item 0 should have text "One time"
+            // compare(tabBar.itemAt(0).text, qsTr("One time"))
 
-            // item 1 should have text "Recurrent"
-            compare(tabBar.itemAt(1).text, qsTr("Recurrent"))
+            // // item 1 should have text "Recurrent"
+            // compare(tabBar.itemAt(1).text, qsTr("Recurrent"))
 
             // close popup
             controlUnderTest.close()
@@ -343,9 +342,9 @@ Item {
             // Launch modal
             launchPopup()
 
-            // find tab bar
-            const tabBar = findChild(controlUnderTest, "tabBar")
-            verify(!!tabBar)
+            // // find tab bar
+            // const tabBar = findChild(controlUnderTest, "tabBar")
+            // verify(!!tabBar)
 
             // find providers list
             const providersList = findChild(controlUnderTest, "providersList")
@@ -353,8 +352,8 @@ Item {
 
             tryCompare(controlUnderTest, "isBuyProvidersModelLoading", false)
 
-            mouseClick(tabBar.itemAt(0))
-            compare(tabBar.currentIndex, 0)
+            // mouseClick(tabBar.itemAt(0))
+            // compare(tabBar.currentIndex, 0)
 
             // verify that 4 items are listed
             compare(providersList.count, 4)
@@ -398,74 +397,74 @@ Item {
             controlUnderTest.close()
         }
 
-        function test_modalContent_recurrent_tab() {
-            skip("to be fixed in 16462")
-            notificationSpy.clear()
-            // Launch modal
-            launchPopup()
+        // function test_modalContent_recurrent_tab() {
+        //     skip("to be fixed in 16462")
+        //     notificationSpy.clear()
+        //     // Launch modal
+        //     launchPopup()
 
-            // find tab bar
-            const tabBar = findChild(controlUnderTest, "tabBar")
-            verify(!!tabBar)
+        //     // find tab bar
+        //     const tabBar = findChild(controlUnderTest, "tabBar")
+        //     verify(!!tabBar)
 
-            // find providers list
-            const providersList = findChild(controlUnderTest, "providersList")
-            verify(!!providersList)
+        //     // find providers list
+        //     const providersList = findChild(controlUnderTest, "providersList")
+        //     verify(!!providersList)
 
-            tryCompare(controlUnderTest, "isBuyProvidersModelLoading", false)
+        //     tryCompare(controlUnderTest, "isBuyProvidersModelLoading", false)
 
-            // check data in "Recurrent" tab --------------------------------------------------------
-            mouseClick(tabBar.itemAt(1))
-            compare(tabBar.currentIndex, 1)
-            waitForRendering(providersList)
-            verify(!!providersList)
+        //     // check data in "Recurrent" tab --------------------------------------------------------
+        //     mouseClick(tabBar.itemAt(1))
+        //     compare(tabBar.currentIndex, 1)
+        //     waitForRendering(providersList)
+        //     verify(!!providersList)
 
-            // verify that 1 item is listed
-            compare(providersList.count, 1)
+        //     // verify that 1 item is listed
+        //     compare(providersList.count, 1)
 
-            // check if delegate contents are as expected
-            testDelegateItems(providersList, controlUnderTest.recurrentOnRampProvidersModel)
-            controlUnderTest.close()
-        }
+        //     // check if delegate contents are as expected
+        //     testDelegateItems(providersList, controlUnderTest.recurrentOnRampProvidersModel)
+        //     controlUnderTest.close()
+        // }
 
-        function test_modalContent_Recurrent_tab_mouseClicks() {
-            notificationSpy.clear()
-            // Launch modal
-            launchPopup()
+        // function test_modalContent_Recurrent_tab_mouseClicks() {
+        //     notificationSpy.clear()
+        //     // Launch modal
+        //     launchPopup()
 
-            // find tab bar
-            const tabBar = findChild(controlUnderTest, "tabBar")
-            verify(!!tabBar)
+        //     // find tab bar
+        //     const tabBar = findChild(controlUnderTest, "tabBar")
+        //     verify(!!tabBar)
 
-            // find providers list
-            const providersList = findChild(controlUnderTest, "providersList")
-            verify(!!providersList)
+        //     // find providers list
+        //     const providersList = findChild(controlUnderTest, "providersList")
+        //     verify(!!providersList)
 
-            mouseClick(tabBar.itemAt(1))
-            compare(tabBar.currentIndex, 1)
-            waitForRendering(providersList)
-            verify(!!providersList)
+        //     mouseClick(tabBar.itemAt(1))
+        //     compare(tabBar.currentIndex, 1)
+        //     waitForRendering(providersList)
+        //     verify(!!providersList)
 
-            for(let i =0; i< controlUnderTest.recurrentOnRampProvidersModel.count; i++) {
-                notificationSpy.clear()
-                launchPopup()
-                verify(controlUnderTest.opened)
+        //     for(let i =0; i< controlUnderTest.recurrentOnRampProvidersModel.count; i++) {
+        //         notificationSpy.clear()
+        //         launchPopup()
+        //         verify(controlUnderTest.opened)
 
-                tryCompare(controlUnderTest, "isBuyProvidersModelLoading", false)
+        //         tryCompare(controlUnderTest, "isBuyProvidersModelLoading", false)
 
-                let delegateUnderTest = providersList.itemAtIndex(i)
-                verify(!!delegateUnderTest)
-                waitForRendering(delegateUnderTest)
+        //         let delegateUnderTest = providersList.itemAtIndex(i)
+        //         verify(!!delegateUnderTest)
+        //         waitForRendering(delegateUnderTest)
 
-                // test provider that need parameters like network and token to be selected
-                const modelData = controlUnderTest.recurrentOnRampProvidersModel.get(i)
-                verify(!!modelData)
-                if (modelData.urlsNeedParameters) {
-                    testDelegateMouseClicksForProvidersThatNeedParams(delegateUnderTest, modelData)
-                } else {
-                    testDelegateMouseClicksForProvidersThatNeedNoParams(delegateUnderTest, modelData)
-                }
-            }
-        }
+        //         // test provider that need parameters like network and token to be selected
+        //         const modelData = controlUnderTest.recurrentOnRampProvidersModel.get(i)
+        //         verify(!!modelData)
+        //         if (modelData.urlsNeedParameters) {
+        //             testDelegateMouseClicksForProvidersThatNeedParams(delegateUnderTest, modelData)
+        //         } else {
+        //             testDelegateMouseClicksForProvidersThatNeedNoParams(delegateUnderTest, modelData)
+        //         }
+        //     }
+        // }
     }
 }
