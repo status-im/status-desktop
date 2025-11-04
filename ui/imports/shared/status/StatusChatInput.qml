@@ -532,6 +532,13 @@ Rectangle {
                     ("<div style='white-space: pre-wrap'>" + StatusQUtils.StringUtils.escapeHtml(ClipboardUtils.text) + "</div>")
                     : StatusQUtils.Emoji.deparse(ClipboardUtils.html)));
                 }
+                
+                // Reset readOnly immediately after paste completes
+                // Don't wait for onRelease which might not fire on mobile
+                if (StatusQUtils.Utils.isMobile) {
+                    messageInputField.readOnly = false
+                    messageInputField.cursorPosition = (d.copyTextStart + ClipboardUtils.text.length + d.nbEmojisInClipboard)
+                }
                 event.accepted = true
             }
         }
