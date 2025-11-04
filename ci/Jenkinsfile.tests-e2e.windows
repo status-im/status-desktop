@@ -63,7 +63,7 @@ pipeline {
   environment {
     PLATFORM = 'tests/e2e-windows'
 
-    SQUISH_DIR = 'C:\\squish-runner-9.0.1-qt-6.9'
+    SQUISH_DIR = 'C:\\squish-runner-9.1.0-qt-6.9'
     PYTHONPATH = "${SQUISH_DIR}\\lib;${SQUISH_DIR}\\bin;${SQUISH_DIR}\\lib\\python;${PYTHONPATH}"
 
     /* To stop e2e tests using port 8545 */
@@ -80,7 +80,7 @@ pipeline {
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
     TESTRAIL_PROJECT_ID = 18
     /* Override QT xcb plugin with linux to avoid errors like:
-     * "Could not load the Qt platform plugin "xcb" in "" even though it was found." 
+     * "Could not load the Qt platform plugin "xcb" in "" even though it was found."
     QT_QPA_PLATFORM = "linuxfb"*/
 
     /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
@@ -235,7 +235,7 @@ pipeline {
           }
         '''
       }
-      cleanWs(disableDeferredWipeout: true) 
+      cleanWs(disableDeferredWipeout: true)
     }
   }
 }
