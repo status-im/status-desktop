@@ -21,7 +21,9 @@ ColumnLayout {
     required property string selectedProviderId
 
     // exposed api
-    property alias currentTabIndex: tabBar.currentIndex
+    // property alias currentTabIndex: tabBar.currentIndex
+    property int currentTabIndex: 0 // temporary replacement for tab bar
+
     signal providerSelected(string id)
 
     QtObject {
@@ -31,18 +33,21 @@ ColumnLayout {
 
     spacing: 20
 
-    StatusSwitchTabBar {
-        id: tabBar
-        objectName: "tabBar"
-        Layout.alignment: Qt.AlignHCenter
-        Layout.fillWidth: true
-        StatusSwitchTabButton {
-            text: qsTr("One time")
-        }
-        StatusSwitchTabButton {
-            text: qsTr("Recurrent")
-        }
-    }
+    // TODO: add recurrent tab button when we have recurrent support
+    // discussed in Discord: https://discord.com/channels/1210237582470807632/1412407350857302077/1435214002191077397
+
+    // StatusSwitchTabBar {
+    //     id: tabBar
+    //     objectName: "tabBar"
+    //     Layout.alignment: Qt.AlignHCenter
+    //     Layout.fillWidth: true
+    //     StatusSwitchTabButton {
+    //         text: qsTr("One time")
+    //     }
+    //     StatusSwitchTabButton {
+    //         text: qsTr("Recurrent")
+    //     }
+    // }
 
     StatusListView {
         objectName: "providersList"
@@ -54,7 +59,7 @@ ColumnLayout {
             model: SortFilterProxyModel {
                 sourceModel: root.providersModel
                 filters: ValueFilter {
-                    enabled: tabBar.currentIndex
+                    enabled: root.currentTabIndex
                     roleName: "supportsRecurrentPurchase"
                     value: true
                 }
