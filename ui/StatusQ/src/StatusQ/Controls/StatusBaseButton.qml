@@ -66,6 +66,8 @@ AbstractButton {
 
     property bool isRoundIcon: false
 
+    focusPolicy: Utils.isMobile ? Qt.NoFocus : Qt.StrongFocus
+
     QtObject {
         id: d
 
