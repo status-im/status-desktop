@@ -23,6 +23,9 @@ proc hashPassword*(password: string, lower: bool = true): string =
 proc prefix*(methodName: string): string =
   result = "wakuext_" & methodName
 
+proc sharedUrlsPrefix*(methodName: string): string =
+  result = "sharedurls_" & methodName
+
 proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
   if jArray == nil:
     return nil
