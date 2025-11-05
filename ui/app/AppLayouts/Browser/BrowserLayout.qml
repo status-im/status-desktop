@@ -17,6 +17,7 @@ import shared.popups.send
 import shared.stores.send
 
 import AppLayouts.Browser.stores as BrowserStores
+import AppLayouts.Wallet.services.dapps
 
 import "provider/qml"
 import "popups"
@@ -40,6 +41,7 @@ StatusSectionLayout {
     required property BrowserStores.BrowserRootStore browserRootStore
     required property BrowserStores.BrowserWalletStore browserWalletStore
     required property var connectorController
+    property bool isDebugEnabled: false
 
     signal sendToRecipientRequested(string address)
 
@@ -60,6 +62,12 @@ StatusSectionLayout {
             }
             return ""
         }
+    }
+
+    BCBrowserDappsProvider {
+        id: browserDappsProvider
+        connectorController: root.connectorController
+        clientId: connectorBridge.clientId  // "status-desktop/dapp-browser"
     }
 
     QtObject {
@@ -163,11 +171,21 @@ StatusSectionLayout {
             canGoBack: (!!_internal.currentWebView && _internal.currentWebView.canGoBack)
             canGoForward: (!!_internal.currentWebView && _internal.currentWebView.canGoForward)
             currentTabConnected: root.browserRootStore.currentTabConnected
+            browserDappsModel: browserDappsProvider.model
+            browserDappsCount: browserDappsProvider.model ? browserDappsProvider.model.count : 0
             onOpenHistoryPopup: (xPos, yPos) => historyMenu.popup(xPos, yPos)
             onGoBack: _internal.currentWebView.goBack()
             onGoForward: _internal.currentWebView.goForward()
             onReload: _internal.currentWebView.reload()
             onStopLoading: _internal.currentWebView.stop()
+            onOpenDappUrl: function(url) {
+                if (_internal.currentWebView) {
+                    _internal.currentWebView.url = _internal.determineRealURL(url)
+                }
+            }
+            onDisconnectDapp: function(dappUrl) {
+                connectorBridge.disconnect(dappUrl)
+            }
             onAddNewFavoriteClicked: function(xPos) {
                 Global.openPopup(addFavoriteModal,
                                  {
@@ -360,6 +378,7 @@ StatusSectionLayout {
                     }
                 }
                 onDisconnect: {
+                    connectorBridge.disconnectCurrentTab()
                     _internal.currentWebView.reload()
                     close()
                 }
@@ -451,6 +470,8 @@ StatusSectionLayout {
             favMenu: favoriteMenu
             addFavModal: addFavoriteModal
             downloadsMenu: downloadMenu
+            enableJsLogs: root.isDebugEnabled
+
             determineRealURLFn: function(url) {
                 return _internal.determineRealURL(url)
             }
@@ -532,12 +553,23 @@ StatusSectionLayout {
         target: _internal.currentWebView
         function onUrlChanged() {
             browserHeader.addressBar.text = root.browserRootStore.obtainAddress(_internal.currentWebView.url)
-            root.browserRootStore.currentTabConnected = false // TODO: Will be handled by connector https://github.com/status-im/status-desktop/issues/19223
 
+            if (_internal.currentWebView && _internal.currentWebView.url) {
+                const urlStr = _internal.currentWebView.url.toString()
+                const hostname = Utils.getHostname(urlStr)
+
+                root.browserRootStore.currentTabConnected = connectorBridge.hasWalletConnected(
+                    hostname,
+                    root.browserWalletStore.dappBrowserAccount.address
+                )
+            } else {
+                root.browserRootStore.currentTabConnected = false
+            }
+            
             // Update ConnectorBridge with current dApp metadata
             if (_internal.currentWebView && _internal.currentWebView.url) {
                 connectorBridge.connectorManager.updateDAppUrl(
-                    _internal.currentWebView.url, 
+                    _internal.currentWebView.url,
                     _internal.currentWebView.title,
                     _internal.currentWebView.icon
                 )

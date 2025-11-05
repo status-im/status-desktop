@@ -19,6 +19,10 @@ ComboBox {
     signal dappListRequested()
     signal connectDapp()
     signal disconnectDapp(string dappUrl)
+    signal dappClicked(string dappUrl)
+
+    property bool showConnectButton: true
+    property bool dappClickable: true
 
     implicitHeight: 38
     implicitWidth: 38
@@ -58,9 +62,14 @@ ComboBox {
 
     delegate: DAppDelegate {
         width: ListView.view.width
+        clickable: root.dappClickable
 
         onDisconnectDapp: (dappUrl) => {
             root.disconnectDapp(dappUrl)
+        }
+        
+        onDappClicked: (dappUrl) => {
+            root.dappClicked(dappUrl)
         }
     }
 
@@ -80,6 +89,7 @@ ComboBox {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
         delegateModel: root.delegateModel
+        showConnectButton: root.showConnectButton
 
         onConnectDapp: {
             root.connectDapp()

@@ -7,6 +7,7 @@ import StatusQ.Core.Theme
 import StatusQ.Core.Utils as SQUtils
 
 import shared.controls
+import AppLayouts.Wallet.controls
 
 import utils
 
@@ -29,6 +30,9 @@ Rectangle {
     property string dappBrowserAccIcon: ""
     property var settingMenu
 
+    property var browserDappsModel: null
+    property int browserDappsCount: 0
+
     signal addNewFavoriteClicked(int xPos)
     signal launchInBrowser(string url)
     signal openHistoryPopup(int xPos, int yPos)
@@ -37,6 +41,8 @@ Rectangle {
     signal reload()
     signal stopLoading()
     signal openWalletMenu()
+    signal openDappUrl(string url)
+    signal disconnectDapp(string dappUrl)
 
     QtObject {
         id: _internal
@@ -155,6 +161,30 @@ Rectangle {
                 color: "transparent"
                 type: StatusFlatRoundButton.Type.Tertiary
                 onClicked: isLoading ? stopLoading(): reload()
+            }
+        }
+
+        DappsComboBox {
+            Layout.preferredWidth: 38
+            Layout.preferredHeight: 38
+            spacing: 8
+            
+            visible: true
+            enabled: true
+            model: root.browserDappsModel
+            showConnectButton: false
+            
+            onDisconnectDapp: function(dappUrl) {
+                root.disconnectDapp(dappUrl)
+            }
+            
+            onDappClicked: function(dappUrl) {
+                root.openDappUrl(dappUrl)
+            }
+            
+            onConnectDapp: {
+                console.log("[Browser] Connect new dApp requested")
+                // Can open a modal or use DAppsWorkflow in the future
             }
         }
 

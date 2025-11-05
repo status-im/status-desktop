@@ -2058,6 +2058,7 @@ Item {
                         browserRootStore: BrowserStores.BrowserRootStore {}
                         browserWalletStore: BrowserStores.BrowserWalletStore {}
                         connectorController: WalletStores.RootStore.dappsConnectorController
+                        isDebugEnabled: appMain.advancedStore.isDebugEnabled
 
                         transactionStore: appMain.transactionStore
                         onSendToRecipientRequested: (address) => popupRequestsHandler.sendModalHandler.sendToRecipient(address)

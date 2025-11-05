@@ -18,6 +18,7 @@ StatusDropdown {
     objectName: "dappsPopup"
 
     required property DelegateModel delegateModel
+    property bool showConnectButton: true
 
     signal connectDapp()
 
@@ -115,6 +116,7 @@ StatusDropdown {
             Layout.bottomMargin: Layout.leftMargin
             Layout.topMargin: 4
 
+            visible: root.showConnectButton
             size: StatusButton.Size.Small
 
             text: qsTr("Connect a dApp")

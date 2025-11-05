@@ -1,4 +1,5 @@
 BCDappsProvider 1.0 BCDappsProvider.qml
+BCBrowserDappsProvider 1.0 BCBrowserDappsProvider.qml
 DappsConnectorSDK 1.0 DappsConnectorSDK.qml
 DAppsHelpers 1.0 helpers.js
 DAppsMetrics 1.0 DAppsMetrics.qml

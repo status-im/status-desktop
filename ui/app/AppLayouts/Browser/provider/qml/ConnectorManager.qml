@@ -64,9 +64,9 @@ QtObject {
                 error: { code: -32603, message: "Internal error: connector not available" }
             })
         }
-        
+
         connectorController.connectorCallRPC(requestId, JSON.stringify(rpcRequest))
-        
+
         // Return immediately - response comes via connectorCallRPCResult signal
         return JSON.stringify({
             jsonrpc: "2.0",
@@ -85,7 +85,6 @@ QtObject {
         
         providerStateChanged()
         accountsChangedEvent(accounts)
-        console.log("[ConnectorManager] Accounts updated:", JSON.stringify(accounts))
         return true
     }
 
@@ -122,7 +121,6 @@ QtObject {
         providerStateChanged()
         disconnectEvent({ code: 4900, message: "User disconnected" })  // EIP-1193: Disconnected
         accountsChangedEvent([])
-        console.log("[ConnectorManager] State cleared")
         return true
     }
 
@@ -131,15 +129,16 @@ QtObject {
         clearState()
 
         if (connectorController) {
-            connectorController.disconnect(dappOrigin)
+            connectorController.disconnect(dappOrigin, clientId)
         }
     }
 
-    function changeAccount(newAccount) {
-        if (connectorController) {
-            connectorController.changeAccount(dappOrigin, clientId, newAccount)
-        }
-    }
+	function changeAccount(newAccount) {
+		if (connectorController) {
+			connectorController.disconnect(dappOrigin, clientId)
+			connectorController.changeAccount(dappOrigin, clientId, newAccount)
+		}
+	}
 
     function updateDAppUrl(url, name, iconUrl) {
         if (!url) return
@@ -190,7 +189,6 @@ QtObject {
                         
                         providerStateChanged()
                         chainChangedEvent(chainIdHex)
-                        console.log("[ConnectorManager] Chain updated:", chainIdHex)
                     }
                 }
                 
@@ -232,7 +230,6 @@ QtObject {
                     
                     providerStateChanged()
                     chainChangedEvent(chainIdHex)
-                    console.log("[ConnectorManager] Chain switched to:", chainIdHex)
                 }
             } catch (error) {
                 console.error("[ConnectorManager] Error processing chainIdSwitched signal:", error)

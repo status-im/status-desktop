@@ -61,7 +61,7 @@ QtObject:
 
       var data = ConnectorSendRequestAccountsSignal(e)
 
-      if not data.requestId.len() == 0:
+      if data.requestId.len() == 0:
         error "ConnectorSendRequestAccountsSignal failed, requestId is empty"
         return
 
@@ -73,7 +73,7 @@ QtObject:
  
       var data = ConnectorSendTransactionSignal(e)
 
-      if not data.requestId.len() == 0:
+      if data.requestId.len() == 0:
         error "ConnectorSendTransactionSignal failed, requestId is empty"
         return
 
@@ -101,10 +101,13 @@ QtObject:
 
       var data = ConnectorSignSignal(e)
 
-      if not data.requestId.len() == 0:
+      debug "ConnectorSign received", requestId=data.requestId, requestIdLen=data.requestId.len()
+      
+      if data.requestId.len() == 0:
         error "ConnectorSignSignal failed, requestId is empty"
         return
 
+      debug "ConnectorSign emitting signal", requestId=data.requestId
       self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN, data)
     )
     self.events.on(SignalType.ConnectorDAppChainIdSwitched.event, proc(e: Args) =
@@ -175,9 +178,9 @@ QtObject:
   proc rejectDappConnect*(self: Service, requestId: string): bool =
     rejectRequest(self, requestId, status_go.requestAccountsRejectedFinishedRpc, "requestAccountsRejectedFinishedRpc failed: ")
 
-  proc recallDAppPermission*(self: Service, dAppUrl: string): bool =
+  proc recallDAppPermission*(self: Service, dAppUrl: string, clientId: string = ""): bool =
     try:
-      return status_go.recallDAppPermissionFinishedRpc(dAppUrl)
+      return status_go.recallDAppPermissionFinishedRpc(dAppUrl, clientId)
 
     except Exception as e:
       error "recallDAppPermissionFinishedRpc failed: ", err=e.msg
@@ -194,6 +197,29 @@ QtObject:
       return if jsonArray != "null": jsonArray else: "[]"
     except Exception as e:
       error "getDApps failed: ", err=e.msg
+      return "[]"
+
+  proc getDAppsByClientId*(self: Service, clientId: string): string =
+    try:
+      let response = status_go.getPermittedDAppsList()
+      if not response.error.isNil:
+        raise newException(Exception, "Error getting connector dapp list: " & response.error.message)
+      
+      let jsonArray = $response.result
+      if jsonArray == "null":
+        return "[]"
+      
+      # Parse and filter by clientId
+      let allDapps = parseJson(jsonArray)
+      var filteredDapps = newJArray()
+      
+      for dapp in allDapps:
+        if dapp.hasKey("clientId") and dapp["clientId"].getStr() == clientId:
+          filteredDapps.add(dapp)
+      
+      return $filteredDapps
+    except Exception as e:
+      error "getDAppsByClientId failed: ", err=e.msg
       return "[]"
 
   proc approveSignRequest*(self: Service, requestId: string, signature: string): bool =
