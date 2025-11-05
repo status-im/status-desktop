@@ -23,7 +23,7 @@ import StatusQ.Platform
 
 import MobileUI
 
-StatusWindow {
+Window {
     id: applicationWindow
 
     property bool appIsReady: false

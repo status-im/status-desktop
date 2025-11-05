@@ -1,7 +1,7 @@
 from scripts.global_names import *
 
 # Main:
-mainWindow_StatusWindow = {"name": "mainWindow", "type": "StatusWindow", "visible": True}
+mainWindow_Window = {"name": "mainWindow", "type": "Window", "visible": True}
 mainWindow_communityColumnView_CommunityColumnView = {"container": statusDesktop_mainWindow, "objectName": "communityColumnView", "type": "CommunityColumnView", "visible": True}
 mainWindow_communityHeader_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectName": "communityHeaderButton", "type": "StatusChatInfoButton", "visible": True}
 community_ChatInfo_Name_Text = {"container": mainWindow_communityHeader_StatusChatInfoButton, "objectName": "statusChatInfoButtonNameText", "type": "StatusBaseText", "visible": True}
@@ -98,7 +98,7 @@ community_welcome_screen_checkList_element3 = {"container": statusDesktop_mainWi
 community_welcome_screen_add_new_item = {"container": statusDesktop_mainWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
 
 # Permissions view
-mainWindow_editPermissionView_EditPermissionView = {"container": mainWindow_StatusWindow, "id": "stackLayout", "type": "StackLayout", "unnamed": 1, "visible": True}
+mainWindow_editPermissionView_EditPermissionView = {"container": mainWindow_Window, "id": "stackLayout", "type": "StackLayout", "unnamed": 1, "visible": True}
 mainWindow_editPermissionView_EditPermissionView_2 = {"container": statusDesktop_mainWindow, "id": "editPermissionView", "type": "EditPermissionView", "unnamed": 1, "visible": True}
 editPermissionView_Who_holds_StatusItemSelector = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "tokensSelector", "type": "StatusItemSelector", "unnamed": 1, "visible": True}
 editPermissionView_Is_allowed_to_StatusFlowSelector = {"container": mainWindow_editPermissionView_EditPermissionView_2, "id": "permissionsSelector", "type": "StatusFlowSelector", "unnamed": 1, "visible": True}
@@ -112,5 +112,5 @@ CustomPermissionListItem = {"container": statusDesktop_mainWindow_overlay, "obje
 communityItem_CommunityListItem = {"container": statusDesktop_mainWindow_overlay, "id": "communityItem", "type": "CommunityListItem", "unnamed": 1, "visible": True}
 editPermissionView_switchItem_StatusSwitch = {"checkable": True, "container": mainWindow_editPermissionView_EditPermissionView, "id": "switchItem", "type": "StatusSwitch", "unnamed": 1, "visible": True}
 editPermissionView_Create_permission_StatusButton = {"checkable": False, "container": mainWindow_editPermissionView_EditPermissionView, "text": "Create permission", "type": "StatusButton", "unnamed": 1, "visible": True}
-mainWindow_PermissionsView = {"container": mainWindow_StatusWindow, "type": "PermissionsView", "unnamed": 1, "visible": True}
+mainWindow_PermissionsView = {"container": mainWindow_Window, "type": "PermissionsView", "unnamed": 1, "visible": True}
 o_StatusListItemTag = {"container": mainWindow_PermissionsView, "type": "StatusListItemTag", "visible": True}
