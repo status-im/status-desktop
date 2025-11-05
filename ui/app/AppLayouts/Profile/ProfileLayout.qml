@@ -89,9 +89,10 @@ StatusSectionLayout {
 
     required property int theme // Theme.Style.xxx
     required property int fontSize // Theme.FontSize.xxx
+    required property int paddingFactor // Theme.PaddingFactor.xxx
 
     required property var whitelistedDomainsModel
-    
+ 
     signal addressWasShownRequested(string address)
     signal connectUsernameRequested(string ensName, string ownerAddress)
     signal registerUsernameRequested(string ensName)
@@ -99,6 +100,7 @@ StatusSectionLayout {
 
     signal themeChangeRequested(int theme)
     signal fontSizeChangeRequested(int fontSize)
+    signal paddingFactorChangeRequested(int paddingFactor)
     signal leaveCommunityRequest(string communityId)
     signal setCommunityMutedRequest(string communityId, int mutedType)
     signal inviteFriends(var communityData)
@@ -384,8 +386,10 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
                 theme: root.theme
                 fontSize: root.fontSize
+                paddingFactor: root.paddingFactor
                 onThemeChangeRequested: (theme) => root.themeChangeRequested(theme)
                 onFontSizeChangeRequested: (fontSize) => root.fontSizeChangeRequested(fontSize)
+                onPaddingFactorChangeRequested: (paddingFactor) => root.paddingFactorChangeRequested(paddingFactor)
             }
         }
 

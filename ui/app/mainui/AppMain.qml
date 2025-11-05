@@ -869,11 +869,23 @@ Item {
         property var recentEmojis
         property string skinColor // NB: must be a string for the twemoji lib to work; we don't want the `#` in the name
         property int theme: Theme.Style.System
-        property int fontSize: Theme.FontSize.FontSizeM
+        property int fontSize: {
+            if (appMain.width < Theme.portraitBreakpoint.width) {
+                return Theme.FontSize.FontSizeS
+            }
+            return Theme.FontSize.FontSizeM
+        }
+        property int paddingFactor: {
+            if (appMain.width < Theme.portraitBreakpoint.width) {
+                return Theme.PaddingFactor.PaddingXXS
+            }
+            return Theme.PaddingFactor.PaddingM
+        }
 
         Component.onCompleted: {
             Theme.changeTheme(appMainLocalSettings.theme)
             Theme.changeFontSize(appMainLocalSettings.fontSize)
+            Theme.changePaddingFactor(appMainLocalSettings.paddingFactor)
         }
     }
 
@@ -2128,6 +2140,7 @@ Item {
 
                         theme: appMainLocalSettings.theme
                         fontSize: appMainLocalSettings.fontSize
+                        paddingFactor: appMainLocalSettings.paddingFactor
 
                         whitelistedDomainsModel: appMainLocalSettings.whitelistedUnfurledDomains
 
@@ -2144,6 +2157,10 @@ Item {
                         onFontSizeChangeRequested: function(fontSize) {
                             appMainLocalSettings.fontSize = fontSize
                             Theme.changeFontSize(fontSize)
+                        }
+                        onPaddingFactorChangeRequested: function(paddingFactor) {
+                            appMainLocalSettings.paddingFactor = paddingFactor
+                            Theme.changePaddingFactor(paddingFactor)
                         }
                         // Communities related settings view:
                         onLeaveCommunityRequest: appMain.communitiesStore.leaveCommunity(communityId)

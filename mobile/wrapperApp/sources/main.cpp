@@ -11,7 +11,6 @@ int main(int argc, char* argv[])
 {
     Q_INIT_RESOURCE(resources);
     qputenv("QT_FILE_SELECTORS", "noWebEngine");
-    qputenv("QT_SCALE_FACTOR", "0.8");
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     qmlRegisterModule("Qt.labs.settings", 1, 1);

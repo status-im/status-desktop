@@ -2628,6 +2628,16 @@
       <translation>Mode</translation>
     </message>
     <message>
+      <source>Padding factor</source>
+      <comment>AppearanceView</comment>
+      <translation>Padding factor</translation>
+    </message>
+    <message>
+      <source>XXS</source>
+      <comment>AppearanceView</comment>
+      <translation>XXS</translation>
+    </message>
+    <message>
       <source>Light</source>
       <comment>AppearanceView</comment>
       <translation>Light</translation>
