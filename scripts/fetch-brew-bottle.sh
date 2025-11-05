@@ -10,7 +10,10 @@ function get_gh_pkgs_token() {
 }
 
 function get_bottle_json() {
-    brew info --json=v1 "${1}" | jq ".[0].bottle.stable.files[\"${2}\"]"
+    BOTTLE_INFO=$(brew info --json=v1 "${1}")
+    {
+        echo "${BOTTLE_INFO}" | jq ".[0].bottle.stable.files[\"${2}\"]"
+    } || echo -e "Failed to get bottle files from:\n${BOTTLE_INFO}"
 }
 
 function fetch_bottle() {
