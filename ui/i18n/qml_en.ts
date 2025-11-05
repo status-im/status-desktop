@@ -571,7 +571,7 @@
     </message>
 </context>
 <context>
-    <name>RenameAccontModal</name>
+    <name>RenameAccountModal</name>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>
         <translation>
