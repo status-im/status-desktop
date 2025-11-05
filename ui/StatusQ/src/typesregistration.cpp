@@ -13,7 +13,6 @@
 #include "StatusQ/rxvalidator.h"
 #include "StatusQ/statusemojimodel.h"
 #include "StatusQ/statussyntaxhighlighter.h"
-#include "StatusQ/statuswindow.h"
 #include "StatusQ/stringutilsinternal.h"
 #include "StatusQ/systemutilsinternal.h"
 #include "StatusQ/undefinedfilter.h"
@@ -35,7 +34,6 @@
 #include <QQmlEngine>
 
 void registerStatusQTypes() {
-    qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
     qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
 

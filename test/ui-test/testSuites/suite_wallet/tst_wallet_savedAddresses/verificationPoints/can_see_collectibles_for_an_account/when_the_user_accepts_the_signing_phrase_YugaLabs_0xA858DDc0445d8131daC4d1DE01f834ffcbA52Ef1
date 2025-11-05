@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VerificationPoint version="5" type="Visual">
   <Description/>
-  <Verification object="{container={name='mainWindow' type='StatusWindow' visible='true'} objectName='mainRightView' type='ColumnLayout' visible='true'}">
+  <Verification object="{container={name='mainWindow' type='Window' visible='true'} objectName='mainRightView' type='ColumnLayout' visible='true'}">
     <visual>
       <ui version="1.0">
         <execution>
