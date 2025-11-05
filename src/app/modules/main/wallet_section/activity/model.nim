@@ -139,6 +139,9 @@ QtObject:
   proc refreshAmountCurrency*(self: Model, currencyService: Service) =
     for i in 0..self.entries.high:
       self.entries[i].resetAmountCurrency(currencyService)
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.ActivityEntryRole.int])
 
   proc delete(self: Model) =
     self.QAbstractListModel.delete

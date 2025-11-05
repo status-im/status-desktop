@@ -1,6 +1,7 @@
 import nimqml, chronicles, strutils, tables, json, stint
 
 import ../../../backend/backend as backend
+import ../../../backend/activity as backend_activity
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -121,22 +122,28 @@ QtObject:
     return i.toFloat() + r.toFloat() / p.toFloat()
 
   # TODO: left this for activity controller as it uses token symbol
-  # which may not be unique needs to be refactored. Also needed for
-  # hasGas api which also needs to be rethought
-  # https://github.com/status-im/status-desktop/issues/13505
-  proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
-    let token = self.tokenService.findTokenBySymbol(symbol)
-    var decimals: int = 0
-    if token != nil:
-      decimals = token.decimals
-    return u256ToFloat(decimals, amountInt)
-
   proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
     let token = self.tokenService.getTokenBySymbolByTokensKey(tokensKey)
     var decimals: int = 0
     if token != nil:
       decimals = token.decimals
     return u256ToFloat(decimals, amountInt)
+
+  proc parseCurrencyValueAndSymbolByToken*(self: Service, activityToken: Option[backend_activity.Token], amountInt: UInt256): (float64, string) =
+    if activityToken.isNone():
+      return (u256ToFloat(0, amountInt), "")
+
+    let t = activityToken.get()
+    if t.address.isNone():
+      return (u256ToFloat(0, amountInt), "")
+
+    let fullTokenData = self.tokenService.findTokenByAddress(int(t.chainId), $t.address.get())
+    var decimals: int = 0
+    var symbol: string = ""
+    if fullTokenData != nil:
+      decimals = fullTokenData.decimals
+      symbol = fullTokenData.symbol
+    return (u256ToFloat(decimals, amountInt), symbol)
 
   proc delete*(self: Service) =
     self.QObject.delete

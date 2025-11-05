@@ -24,6 +24,8 @@ type
   ExtraData* = object
     inAmount*: float64
     outAmount*: float64
+    symbolIn*: string
+    symbolOut*: string
 
 # Used to display an activity history header entry in the QML UI
 QtObject:
@@ -50,10 +52,16 @@ QtObject:
 
   proc extractCurrencyAmount(self: ActivityEntry, currencyService: Service): CurrencyAmount =
     let amount = if self.isInTransactionType(): self.metadata.amountIn else: self.metadata.amountOut
-    let symbol = if self.isInTransactionType(): self.metadata.symbolIn.get("") else: self.metadata.symbolOut.get("")
+    let token = if self.isInTransactionType(): self.metadata.tokenIn else: self.metadata.tokenOut
+    let cachedSymbol = if self.isInTransactionType(): self.metadata.symbolIn.get("") else: self.metadata.symbolOut.get("")
+
+    let (formattedAmount, tokenSymbol) = currencyService.parseCurrencyValueAndSymbolByToken(token, amount)
+
+    let finalSymbol = if tokenSymbol != "": tokenSymbol else: cachedSymbol
+
     return currencyAmountToItem(
-      currencyService.parseCurrencyValue(symbol, amount),
-      currencyService.getCurrencyFormat(symbol),
+      formattedAmount,
+      currencyService.getCurrencyFormat(finalSymbol),
     )
 
   proc newTransactionActivityEntry*(metadata: backend_activity.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, currencyService: Service): ActivityEntry =
@@ -77,15 +85,23 @@ QtObject:
 
   proc buildMultiTransactionExtraData(metadata: backend_activity.ActivityEntry, currencyService: Service): ExtraData =
     if metadata.symbolIn.isSome():
-      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+      let (amount, symbol) = currencyService.parseCurrencyValueAndSymbolByToken(metadata.tokenIn, metadata.amountIn)
+      result.inAmount = amount
+      result.symbolIn = symbol
     if metadata.symbolOut.isSome():
-      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
+      let (amount, symbol) = currencyService.parseCurrencyValueAndSymbolByToken(metadata.tokenOut, metadata.amountOut)
+      result.outAmount = amount
+      result.symbolOut = symbol
 
   proc buildTransactionExtraData(metadata: backend_activity.ActivityEntry, currencyService: Service): ExtraData =
     if metadata.symbolIn.isSome() or metadata.amountIn > 0:
-      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
+      let (amount, symbol) = currencyService.parseCurrencyValueAndSymbolByToken(metadata.tokenIn, metadata.amountIn)
+      result.inAmount = amount
+      result.symbolIn = symbol
     if metadata.symbolOut.isSome() or metadata.amountOut > 0:
-      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
+      let (amount, symbol) = currencyService.parseCurrencyValueAndSymbolByToken(metadata.tokenOut, metadata.amountOut)
+      result.outAmount = amount
+      result.symbolOut = symbol
 
   proc buildExtraData(backendEntry: backend_activity.ActivityEntry, currencyService: Service): ExtraData =
     var extraData: ExtraData
@@ -157,12 +173,16 @@ QtObject:
     read = getRecipient
 
   proc getInSymbol*(self: ActivityEntry): string {.slot.} =
+    if self.extraData.symbolIn != "":
+      return self.extraData.symbolIn
     return self.metadata.symbolIn.get("")
 
   QtProperty[string] inSymbol:
     read = getInSymbol
 
   proc getOutSymbol*(self: ActivityEntry): string {.slot.} =
+    if self.extraData.symbolOut != "":
+      return self.extraData.symbolOut
     return self.metadata.symbolOut.get("")
 
   QtProperty[string] outSymbol:
