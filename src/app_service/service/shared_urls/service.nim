@@ -1,6 +1,6 @@
 import nimqml, json, chronicles, strutils
 
-import ../../../backend/general as status_general
+import ../../../backend/shared_urls as shared_urls
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/threadpool
 
@@ -23,7 +23,7 @@ QtObject:
 
   proc parseSharedUrl*(self: Service, url: string): UrlDataDto =
     try:
-      let response = status_general.parseSharedUrl(url)
+      let response = shared_urls.parseSharedUrl(url)
       if  response.result.contains("error"):
         let errMsg = response.result["error"].getStr()
         raise newException(Exception, errMsg)

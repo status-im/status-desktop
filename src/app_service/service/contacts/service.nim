@@ -21,6 +21,7 @@ import ./dto/profile_showcase
 
 import backend/contacts as status_contacts
 import backend/accounts as status_accounts
+import backend/shared_urls as status_shared_urls
 
 export contacts_dto, status_update_dto, contact_details
 
@@ -661,21 +662,21 @@ QtObject:
 
   proc shareUserUrlWithData*(self: Service, pubkey: string): string =
     try:
-      let response = status_contacts.shareUserUrlWithData(pubkey)
+      let response = status_shared_urls.shareUserUrlWithData(pubkey)
       return response.result.getStr
     except Exception as e:
       error "Error getting user url with data", msg = e.msg, pubkey
 
   proc shareUserUrlWithChatKey*(self: Service, pubkey: string): string =
     try:
-      let response = status_contacts.shareUserUrlWithChatKey(pubkey)
+      let response = status_shared_urls.shareUserUrlWithChatKey(pubkey)
       return response.result.getStr
     except Exception as e:
       error "Error getting user url with chat key", msg = e.msg, pubkey
 
   proc shareUserUrlWithENS*(self: Service, pubkey: string): string =
     try:
-      let response = status_contacts.shareUserUrlWithENS(pubkey)
+      let response = status_shared_urls.shareUserUrlWithENS(pubkey)
       return response.result.getStr
     except Exception as e:
       error "Error getting user url with ens name", msg = e.msg, pubkey

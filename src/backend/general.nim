@@ -63,9 +63,6 @@ proc importLocalBackupFile*(filePath: string): RpcResponse[JsonNode] =
   let payload = %* [filePath]
   result = callPrivateRPC("importLocalBackupFile".prefix, payload)
 
-proc parseSharedUrl*(url: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("parseSharedURL".sharedUrlsPrefix, %*[url])
-
 proc hashMessageForSigning*(message: string): string =
   try:
     let response = status_go.hashMessage(message)
