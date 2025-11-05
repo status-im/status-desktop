@@ -109,15 +109,6 @@ Window {
         applicationWindow.visible = true
     }
 
-    function updatePaddings() {
-        if (applicationWindow.width < Theme.portraitBreakpoint.width) {
-            const coefficient = applicationWindow.width / Theme.portraitBreakpoint.width;
-            Theme.updatePaddings(Theme.defaultPadding * coefficient);
-        } else {
-            Theme.updatePaddings(Theme.defaultPadding);
-        }
-    }
-
     function restoreAppState() {
         let geometry = localAppSettings.geometry;
         let visibility = localAppSettings.visibility;
@@ -177,7 +168,6 @@ Window {
     }
 
     onWidthChanged: {
-        updatePaddings()
         Qt.callLater(storeAppState)
     }
     onHeightChanged: Qt.callLater(storeAppState)
@@ -406,9 +396,6 @@ Window {
 
         Global.openMetricsEnablePopupRequested.connect(openMetricsEnablePopup)
         Global.addCentralizedMetricIfEnabled.connect(metricsStore.addCentralizedMetricIfEnabled)
-
-        // Without this the paddings are not updated correctly when launched in portrait mode
-        updatePaddings()
 
         nativeSafeAreaBottom = mobileUI.safeAreaBottom + mobileUI.navbarHeight
 

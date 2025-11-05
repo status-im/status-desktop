@@ -17,25 +17,26 @@ SettingsContentBase {
 
     required property int theme // Theme.Style.xxx
     required property int fontSize // Theme.FontSize.xxx
+    required property int paddingFactor // Theme.PaddingFactor.xxx
 
     signal themeChangeRequested(int theme)
     signal fontSizeChangeRequested(int fontSize)
+    signal paddingFactorChangeRequested(int paddingFactor)
 
-    Item {
+    content: ColumnLayout {
         id: appearanceContainer
-        anchors.left: !!parent ? parent.left : undefined
-        anchors.leftMargin: Theme.padding
+
         width: root.contentWidth - 2 * Theme.padding
-        height: childrenRect.height
+        spacing: Theme.padding
 
         Rectangle {
             id: preview
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: placeholderMessage.implicitHeight +
-                    placeholderMessage.anchors.leftMargin +
-                    placeholderMessage.anchors.rightMargin
+
+            Layout.preferredHeight: placeholderMessage.implicitHeight +
+                                    placeholderMessage.anchors.leftMargin +
+                                    placeholderMessage.anchors.rightMargin
+            Layout.fillWidth: true
+
             radius: Theme.radius
             border.color: Theme.palette.border
             color: Theme.palette.transparent
@@ -45,7 +46,8 @@ SettingsContentBase {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: Theme.smallPadding
+                anchors.margins: Theme.padding
+
                 isMessage: true
                 shouldRepeatHeader: true
                 messageTimestamp: Date.now()
@@ -60,17 +62,14 @@ SettingsContentBase {
         StatusSectionHeadline {
             id: sectionHeadlineFontSize
             text: qsTr("Text size")
-            anchors.top: preview.bottom
-            anchors.topMargin: Theme.bigPadding*2
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.topMargin: 2 * Theme.padding
         }
 
         StatusQ.StatusLabeledSlider {
             id: fontSizeSlider
-            anchors.top: sectionHeadlineFontSize.bottom
-            anchors.topMargin: Theme.padding
-            width: parent.width
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.smallPadding
+            Layout.rightMargin: Layout.leftMargin
 
             textRole: "name"
             valueRole: "value"
@@ -88,36 +87,51 @@ SettingsContentBase {
             onMoved: root.fontSizeChangeRequested(value)
         }
 
+        StatusSectionHeadline {
+            text: qsTr("Padding factor")
+            Layout.topMargin: 2 * Theme.padding
+        }
+
+        StatusQ.StatusLabeledSlider {
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.smallPadding
+            Layout.rightMargin: Layout.leftMargin
+
+            textRole: "name"
+            valueRole: "value"
+            model: ListModel {
+                ListElement { name: qsTr("XXS"); value: Theme.PaddingFactor.PaddingXXS }
+                ListElement { name: qsTr("XS"); value: Theme.PaddingFactor.PaddingXS }
+                ListElement { name: qsTr("S"); value: Theme.PaddingFactor.PaddingS }
+                ListElement { name: qsTr("M"); value: Theme.PaddingFactor.PaddingM }
+                ListElement { name: qsTr("L"); value: Theme.PaddingFactor.PaddingL }
+            }
+
+            value: root.paddingFactor
+
+            onMoved: root.paddingFactorChangeRequested(value)
+        }
+
         Rectangle {
-            id: modeSeparator
-            anchors.top: fontSizeSlider.bottom
-            anchors.topMargin: Theme.padding*3
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 1
+            Layout.topMargin: Theme.xlPadding
+            Layout.preferredHeight: 1
+            Layout.fillWidth: true
             color: Theme.palette.separator
         }
 
         StatusSectionHeadline {
-            id: sectionHeadlineAppearance
             text: qsTr("Mode")
-            anchors.top: modeSeparator.bottom
-            anchors.topMargin: Theme.padding*3
-            anchors.left: parent.left
-            anchors.right: parent.right
+            Layout.topMargin: Theme.xlPadding
         }
 
         RowLayout {
-            id: appearanceSection
-            anchors.top: sectionHeadlineAppearance.bottom
-            anchors.topMargin: Theme.padding
-            anchors.left: parent.left
-            anchors.right: parent.right
+            id: modeRow
+
+            Layout.fillWidth: true
             spacing: Theme.halfPadding
 
             StatusImageRadioButton {
-                Layout.preferredWidth: parent.width/3 - parent.spacing
-                Layout.preferredHeight: implicitHeight
+                Layout.fillWidth: true
                 image.source: Theme.png("appearance-light")
                 control.text: qsTr("Light")
                 control.checked: root.theme === Theme.Style.Light
@@ -129,7 +143,7 @@ SettingsContentBase {
             }
 
             StatusImageRadioButton {
-                Layout.preferredWidth: parent.width/3 - parent.spacing
+                Layout.fillWidth: true
                 image.source: Theme.png("appearance-dark")
                 control.text: qsTr("Dark")
                 control.checked: root.theme === Theme.Style.Dark
@@ -141,7 +155,7 @@ SettingsContentBase {
             }
 
             StatusImageRadioButton {
-                Layout.preferredWidth: parent.width/3 - parent.spacing
+                Layout.fillWidth: true
                 image.source: Theme.png("appearance-system")
                 control.text: qsTr("System")
                 control.checked: root.theme === Theme.Style.System

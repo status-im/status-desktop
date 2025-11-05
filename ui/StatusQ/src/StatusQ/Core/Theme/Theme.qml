@@ -20,6 +20,14 @@ SQUtils.QObject {
         System
     }
 
+    enum PaddingFactor {
+        PaddingXXS,
+        PaddingXS,
+        PaddingS,
+        PaddingM,
+        PaddingL
+    }
+
     property ThemePalette palette: Application.styleHints.colorScheme === Qt.ColorScheme.Dark ? statusQDarkTheme : statusQLightTheme
 
     readonly property ThemePalette statusQLightTheme: StatusLightTheme {}
@@ -47,6 +55,10 @@ SQUtils.QObject {
 
     function changeFontSize(fontSize:int) {
         updateFontSize(fontSize)
+    }
+
+    function changePaddingFactor(paddingFactor:int) {
+        updatePaddingFactor(paddingFactor)
     }
 
     readonly property var baseFont: FontLoader {
@@ -179,11 +191,11 @@ SQUtils.QObject {
 
 
     // Responsive properties used for responsive components (e.g. containers)
-    property int xlPadding: defaultXlPadding
-    property int bigPadding: defaultBigPadding
-    property int padding: defaultPadding
-    property int halfPadding: defaultHalfPadding
-    property int smallPadding: defaultSmallPadding
+    property int xlPadding: defaultXlPadding * dynamicPaddingFactorUnit
+    property int bigPadding: defaultBigPadding * dynamicPaddingFactorUnit
+    property int padding: defaultPadding * dynamicPaddingFactorUnit
+    property int halfPadding: defaultHalfPadding * dynamicPaddingFactorUnit
+    property int smallPadding: defaultSmallPadding * dynamicPaddingFactorUnit
     property int radius: defaultRadius
 
     // Constant properties used for non-responsive components (e.g. buttons)
@@ -200,8 +212,10 @@ SQUtils.QObject {
     readonly property real pressedOpacity: 0.7
 
     property int dynamicFontUnits: 0
+    property real dynamicPaddingFactorUnit: 1.0
 
     readonly property int currentFontSize: d.fontSize
+    readonly property real currentPaddingFactor: d.paddingFactor
 
     function updateFontSize(fontSize:int) {
         d.fontSize = fontSize
@@ -232,12 +246,28 @@ SQUtils.QObject {
         }
     }
 
-    function updatePaddings(basePadding:int) {
-        xlPadding = basePadding * 2
-        bigPadding = basePadding * 1.5
-        padding = basePadding
-        halfPadding = basePadding / 2
-        smallPadding = basePadding * 0.625
+    function updatePaddingFactor(paddingFactor:int) {
+        d.paddingFactor = paddingFactor
+        switch (paddingFactor) {
+        case Theme.PaddingXXS:
+            dynamicPaddingFactorUnit = 0.4
+            break;
+        case Theme.PaddingXS:
+            dynamicPaddingFactorUnit = 0.6
+            break;
+
+        case Theme.PaddingS:
+            dynamicPaddingFactorUnit = 0.8
+            break;
+
+        case Theme.PaddingM:
+            dynamicPaddingFactorUnit = 1
+            break;
+
+        case Theme.PaddingL:
+            dynamicPaddingFactorUnit = 1.2
+            break;
+        }
     }
 
     enum AnimationDuration {
@@ -262,5 +292,6 @@ SQUtils.QObject {
         id: d
 
         property int fontSize: Theme.FontSizeM
+        property int paddingFactor: Theme.PaddingM
     }
 }

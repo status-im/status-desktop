@@ -2148,16 +2148,24 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation>Režim</translation>
     </message>
     <message>
+        <source>Padding factor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XXS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Light</source>
-        <translation>Světlý</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Dark</source>
-        <translation>Tmavý</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>System</source>
-        <translation>Systémový</translation>
+        <translation type="unfinished">Systémový</translation>
     </message>
 </context>
 <context>

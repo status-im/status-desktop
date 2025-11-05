@@ -2134,16 +2134,24 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation>모드</translation>
     </message>
     <message>
+        <source>Padding factor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XXS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Light</source>
-        <translation>라이트</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Dark</source>
-        <translation>다크</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>System</source>
-        <translation>시스템</translation>
+        <translation type="unfinished">시스템</translation>
     </message>
 </context>
 <context>
