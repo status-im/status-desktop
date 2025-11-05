@@ -14419,14 +14419,14 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>RenameAccontModal</name>
+    <name>RenameAccountModal</name>
     <message>
         <source>Rename %1</source>
         <translation>%1 이름 변경</translation>
     </message>
     <message>
         <source>Enter an account name...</source>
-        <translation>계정 이름을 입력하세요...</translation>
+        <translation>계정 이름 입력...</translation>
     </message>
     <message numerus="yes">
         <source>Account name must be at least %n character(s)</source>

@@ -17633,20 +17633,20 @@
     </message>
   </context>
   <context>
-    <name>RenameAccontModal</name>
+    <name>RenameAccountModal</name>
     <message>
       <source>Rename %1</source>
-      <comment>RenameAccontModal</comment>
+      <comment>RenameAccountModal</comment>
       <translation>Rename %1</translation>
     </message>
     <message>
       <source>Enter an account name...</source>
-      <comment>RenameAccontModal</comment>
+      <comment>RenameAccountModal</comment>
       <translation>Enter an account name...</translation>
     </message>
     <message numerus="yes">
       <source>Account name must be at least %n character(s)</source>
-      <comment>RenameAccontModal</comment>
+      <comment>RenameAccountModal</comment>
       <translation>
         <numerusform>Account name must be at least %n character</numerusform>
         <numerusform>Account name must be at least %n characters</numerusform>
@@ -17654,22 +17654,22 @@
     </message>
     <message>
       <source>This is not a valid account name</source>
-      <comment>RenameAccontModal</comment>
+      <comment>RenameAccountModal</comment>
       <translation>This is not a valid account name</translation>
     </message>
     <message>
       <source>COLOUR</source>
-      <comment>RenameAccontModal</comment>
+      <comment>RenameAccountModal</comment>
       <translation>COLOUR</translation>
     </message>
     <message>
       <source>Change Name</source>
-      <comment>RenameAccontModal</comment>
+      <comment>RenameAccountModal</comment>
       <translation>Change Name</translation>
     </message>
     <message>
       <source>Changing settings failed</source>
-      <comment>RenameAccontModal</comment>
+      <comment>RenameAccountModal</comment>
       <translation>Changing settings failed</translation>
     </message>
   </context>

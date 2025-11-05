@@ -4,7 +4,7 @@ AddSocialLinkModal 1.0 AddSocialLinkModal.qml
 ModifySocialLinkModal 1.0 ModifySocialLinkModal.qml
 ProfileShowcaseInfoPopup 1.0 ProfileShowcaseInfoPopup.qml
 RenameKeypairPopup 1.0 RenameKeypairPopup.qml
-RenameAccontModal 1.0 RenameAccontModal.qml
+RenameAccountModal 1.0 RenameAccountModal.qml
 RemoveKeypairPopup 1.0 RemoveKeypairPopup.qml
 SendContactRequestToChatKeyModal 1.0 SendContactRequestToChatKeyModal.qml
 TokenListPopup 1.0 TokenListPopup.qml

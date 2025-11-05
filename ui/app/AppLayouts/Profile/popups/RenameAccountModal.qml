@@ -20,11 +20,15 @@ import "../stores"
 StatusModal {
     id: popup
 
-    property WalletStore walletStore
-    property var account
     property var emojiPopup
 
-    headerSettings.title: qsTr("Rename %1").arg(popup.account.name)
+    property string accountName
+    property string accountEmoji
+    property string accountColorId
+
+    signal renameAccountRequested(string newName, string newColorId, string newEmoji)
+
+    headerSettings.title: qsTr("Rename %1").arg(popup.accountName)
 
     property int marginBetweenInputs: 30
 
@@ -55,10 +59,10 @@ StatusModal {
             input.edit.objectName: "renameAccountNameInput"
             input.isIconSelectable: true
             placeholderText: qsTr("Enter an account name...")
-            input.text: popup.account.name
-            input.asset.emoji: popup.account.emoji
-            input.asset.color: Utils.getColorForId(popup.account.colorId)
-            input.asset.name: !popup.account.emoji ? "filled-account": ""
+            input.text: popup.accountName
+            input.asset.emoji: popup.accountEmoji
+            input.asset.color: Utils.getColorForId(popup.accountColorId)
+            input.asset.name: !popup.accountEmoji ? "filled-account": ""
 
             validationMode: StatusInput.ValidationMode.Always
 
@@ -87,16 +91,16 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             model: Theme.palette.customisationColorsArray
             titleText: qsTr("COLOUR")
-            selectedColor: Utils.getColorForId(popup.account.colorId)
+            selectedColor: Utils.getColorForId(popup.accountColorId)
             selectedColorIndex: {
                 for (let i = 0; i < model.length; i++) {
-                    if(model[i] === popup.account.color)
+                    if(model[i] === popup.accountColorId)
                         return i
                 }
                 return -1
             }
             onSelectedColorChanged: {
-                if(selectedColor !== popup.account.color) {
+                if(selectedColor !== popup.accountColorId) {
                     accountNameInput.input.asset.color = selectedColor
                 }
             }
@@ -116,9 +120,9 @@ StatusModal {
 
             enabled: accountNameInput.text !== "" &&
                      accountNameInput.valid &&
-                     (accountNameInput.text !== popup.account.name ||
-                      accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== popup.account.color ||
-                      accountNameInput.input.asset.emoji !== popup.account.emoji)
+                     (accountNameInput.text !== popup.accountName ||
+                      accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== popup.accountColorId ||
+                      accountNameInput.input.asset.emoji !== popup.accountEmoji)
 
             StatusMessageDialog {
                 id: changeError
@@ -131,15 +135,8 @@ StatusModal {
                      return
                  }
 
-                const error = walletStore.updateAccount(popup.account.address, accountNameInput.text, Utils.getIdForColor(accountColorInput.selectedColor), accountNameInput.input.asset.emoji);
-
-                if (error) {
-                    Global.playErrorSound();
-                    changeError.text = error
-                    changeError.open()
-                    return
-                }
-                popup.close();
+                popup.renameAccountRequested(accountNameInput.text, Utils.getIdForColor(accountColorInput.selectedColor), accountNameInput.input.asset.emoji)
+                popup.close()
             }
         }
     ]

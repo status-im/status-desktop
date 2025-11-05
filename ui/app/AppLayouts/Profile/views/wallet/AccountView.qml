@@ -78,7 +78,11 @@ ColumnLayout {
             objectName: "walletAccountViewEditAccountButton"
             text: d.watchOnlyAccount ? qsTr("Edit watched address") : qsTr("Edit account")
             icon.name: "edit_pencil"
-            onClicked: Global.openPopup(renameAccountModalComponent)
+            onClicked: Global.openPopup(renameAccountModalComponent, {
+                accountName: !!root.account ? root.account.name : "",
+                accountEmoji: !!root.account ? root.account.emoji : "",
+                accountColorId: !!root.account ? root.account.colorId : ""
+            })
         }
     }
 
@@ -305,10 +309,18 @@ ColumnLayout {
 
     Component {
         id: renameAccountModalComponent
-        RenameAccontModal {
-            account: root.account
+        RenameAccountModal {
+            onRenameAccountRequested: function(newName, newColorId, newEmoji) {
+                const error = root.walletStore.updateAccount(root.account.address, newName, newColorId, newEmoji);
+
+                if (error) {
+                    Global.playErrorSound();
+                    changeError.text = error
+                    changeError.open()
+                    return
+                }
+            }
             onClosed: destroy()
-            walletStore: root.walletStore
             emojiPopup: root.emojiPopup
         }
     }

@@ -14478,7 +14478,7 @@ to load</source>
     </message>
 </context>
 <context>
-    <name>RenameAccontModal</name>
+    <name>RenameAccountModal</name>
     <message>
         <source>Rename %1</source>
         <translation type="unfinished"></translation>

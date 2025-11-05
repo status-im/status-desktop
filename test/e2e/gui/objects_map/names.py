@@ -798,7 +798,7 @@ addAccountPopup_PrivateKeyName_StatusInput = {"container": statusDesktop_mainWin
                                               "visible": True}
 
 # Edit Account from settings popup
-renameAccountModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "RenameAccontModal",
+renameAccountModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "RenameAccountModal",
                       "type": "PopupItem", "visible": True}
 editWalletSettings_renameButton = {"container": statusDesktop_mainWindow_overlay,
                                    "objectName": "renameAccountModalSaveBtn", "type": "StatusButton"}
