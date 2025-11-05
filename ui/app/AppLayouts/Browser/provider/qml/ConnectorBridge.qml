@@ -98,8 +98,20 @@ QtObject {
     }
 
     function disconnect(hostname) {
-        if (!connectorController) return false
-        return connectorController.disconnect(hostname)
+        if (!connectorController) {
+            return false
+        }
+        
+        const result = connectorController.disconnect(hostname, clientId)
+        return result
+    }
+
+    function disconnectCurrentTab() {
+        if (!dappOrigin) {
+            return false
+        }
+        
+        return disconnect(dappOrigin)
     }
 
     function updateDAppUrl(url, name) {

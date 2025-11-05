@@ -20,58 +20,85 @@ StatusMouseArea {
     required property url url
     required property url iconUrl
     required property url connectorBadge
+    property bool clickable: true
 
     signal disconnectDapp(string dappUrl)
+    signal dappClicked(string dappUrl)
 
     RowLayout {
         anchors.fill: parent
         anchors.margins: 8
 
         Item {
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            RoundImageWithBadge {
-                id: iconImage
+            TapHandler {
+                id: dappTapHandler
+                enabled: root.clickable
+                onTapped: {
+                    root.dappClicked(root.url)
+                }
+            }
 
+            HoverHandler {
+                id: dappHoverHandler
+                enabled: root.clickable
+                cursorShape: root.clickable ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
+
+            RowLayout {
                 anchors.fill: parent
+                spacing: 0
 
-                imageUrl: root.iconUrl
-                badgeIcon: root.connectorBadge
-                badgeSize: 14
-                badgeMargin: 2
-            }
-        }
+                Item {
+                    Layout.preferredWidth: 40
+                    Layout.preferredHeight: 40
 
-        ColumnLayout {
-            Layout.leftMargin: 12
-            Layout.rightMargin: 12
+                    RoundImageWithBadge {
+                        id: iconImage
 
-            StatusBaseText {
-                id: dAppCaption
+                        anchors.fill: parent
 
-                text: root.name ? root.name : SQUtils.StringUtils.extractDomainFromLink(root.url)
+                        imageUrl: root.iconUrl
+                        badgeIcon: root.connectorBadge
+                        badgeSize: 14
+                        badgeMargin: 2
+                    }
+                }
 
-                Layout.fillWidth: true
+                ColumnLayout {
+                    Layout.leftMargin: 12
+                    Layout.rightMargin: 12
+                    Layout.fillWidth: true
 
-                font.pixelSize: Theme.additionalTextSize
-                font.bold: true
+                    StatusBaseText {
+                        id: dAppCaption
 
-                elide: Text.ElideRight
+                        text: root.name ? root.name : SQUtils.StringUtils.extractDomainFromLink(root.url)
 
-                clip: true
-            }
-            StatusBaseText {
-                text: root.url
+                        Layout.fillWidth: true
 
-                Layout.fillWidth: true
+                        font.pixelSize: Theme.additionalTextSize
+                        font.bold: true
 
-                font.pixelSize: Theme.tertiaryTextFontSize
-                color: Theme.palette.baseColor1
+                        elide: Text.ElideRight
 
-                elide: Text.ElideRight
+                        clip: true
+                    }
+                    StatusBaseText {
+                        text: root.url
 
-                clip: true
+                        Layout.fillWidth: true
+
+                        font.pixelSize: Theme.tertiaryTextFontSize
+                        color: Theme.palette.baseColor1
+
+                        elide: Text.ElideRight
+
+                        clip: true
+                    }
+                }
             }
         }
 
@@ -87,7 +114,7 @@ StatusMouseArea {
 
             onClicked: {
                 root.disconnectDapp(root.url)
-            }
+        }
         }
     }
 }

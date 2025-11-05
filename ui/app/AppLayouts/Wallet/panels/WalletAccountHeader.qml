@@ -218,6 +218,7 @@ Control {
             visible: root.dAppsVisible
             enabled: root.dAppsEnabled
             model: root.dAppsModel
+            dappClickable: false
             onDappListRequested: root.dappListRequested()
             onDisconnectDapp: (dappUrl) => root.dappDisconnectRequested(dappUrl)
             onConnectDapp: root.dappConnectRequested()

@@ -11,6 +11,7 @@ QObject {
     // iconUrl: string
     // topic: string
     // connectorId: int
+    // connectorBadge: string
     // accountAddressses: [{address: string}]
     // chains: string
     // rawSessions: [{session: object}]
@@ -18,10 +19,10 @@ QObject {
 
     // Appending a new DApp to the model
     // Required properties: url, topic, connectorId, accountAddresses
-    // Optional properties: name, iconUrl, chains, rawSessions
+    // Optional properties: name, iconUrl, connectorBadge, chains, rawSessions
     function append(dapp) {
         try {
-            let {name, url, iconUrl, topic, accountAddresses, connectorId, rawSessions } = dapp
+            let {name, url, iconUrl, topic, accountAddresses, connectorId, connectorBadge, rawSessions } = dapp
             if (!url || !topic || !connectorId || !accountAddresses) {
                 console.warn("DAppsModel - Failed to append dapp, missing required fields", JSON.stringify(dapp))
                 return
@@ -29,6 +30,7 @@ QObject {
 
             name = name || ""
             iconUrl = iconUrl || ""
+            connectorBadge = connectorBadge || ""
             accountAddresses = accountAddresses || []
             rawSessions = rawSessions || []
 
@@ -38,6 +40,7 @@ QObject {
                 iconUrl,
                 topic,
                 connectorId,
+                connectorBadge,
                 accountAddresses,
                 rawSessions
             })
@@ -77,6 +80,7 @@ QObject {
                 iconUrl: dapp.iconUrl,
                 topic: dapp.topic,
                 connectorId: dapp.connectorId,
+                connectorBadge: dapp.connectorBadge || "",
                 accountAddresses: dapp.accountAddresses,
                 rawSessions: dapp.rawSessions
             }

@@ -77,6 +77,7 @@ QtObject:
         "url": params.url,
         "chains": params.chains,
         "sharedAccount": params.sharedAccount,
+        "clientId": params.clientId
       }
 
       controller.emitConnected(dappInfo.toJson())
@@ -87,6 +88,7 @@ QtObject:
         "icon": params.iconUrl,
         "name": params.name,
         "url": params.url,
+        "clientId": params.clientId
       }
 
       controller.emitDisconnected(dappInfo.toJson())
@@ -113,7 +115,8 @@ QtObject:
         let params = ConnectorDAppChainIdSwitchedSignal(e)
         let chainInfo = %*{
           "url": params.url,
-          "chainId": params.chainId
+          "chainId": params.chainId,
+          "clientId": params.clientId
         }
         controller.emitChainIdSwitched(chainInfo.toJson())
       except Exception as ex:
@@ -206,11 +209,14 @@ QtObject:
     result = self.service.rejectTransactionSigning(requestId)
     self.rejectTransactionResponse(sessionTopic, requestId, not result)
 
-  proc disconnect*(self: Controller, dAppUrl: string): bool {.slot.} =
-    result = self.service.recallDAppPermission(dAppUrl)
+  proc disconnect*(self: Controller, dAppUrl: string, clientId: string = ""): bool {.slot.} =
+    result = self.service.recallDAppPermission(dAppUrl, clientId)
 
   proc getDApps*(self: Controller): string {.slot.} =
     return self.service.getDApps()
+
+  proc getDAppsByClientId*(self: Controller, clientId: string): string {.slot.} =
+    return self.service.getDAppsByClientId(clientId)
 
   proc approveSigning*(self: Controller, sessionTopic: string, requestId: string, signature: string): bool {.slot.} =
     result = self.service.approveSignRequest(requestId, signature)
