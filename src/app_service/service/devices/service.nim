@@ -437,6 +437,8 @@ QtObject:
           let backupPath = self.settingsService.getBackupPath()
 
           if backupPath.len > 0 and backupPath.startsWith("content://"):
+            # Take persistable permission for the selected tree URI
+            safTakePersistablePermission(backupPath)
             # Get file path from the RPC response and copy into the SAF tree
             let srcPath = rpcResponseObj["filePath"].getStr
             if srcPath.len == 0:

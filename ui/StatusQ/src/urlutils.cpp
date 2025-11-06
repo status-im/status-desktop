@@ -151,11 +151,11 @@ QString UrlUtils::displayPathLabel(const QString& path) const
 
             QString volLabel;
             if (volume.compare(QLatin1String("primary"), Qt::CaseInsensitive) == 0)
-                volLabel = QLatin1String("Internal storage");
+                volLabel = tr("Internal storage");
             else if (!volume.isEmpty())
-                volLabel = QLatin1String("SD card");
+                volLabel = tr("SD card");
             else
-                volLabel = QLatin1String("Storage");
+                volLabel = tr("Storage");
 
             return relPath.isEmpty() ? volLabel : volLabel + QLatin1Char('/') + relPath;
         }
@@ -164,7 +164,7 @@ QString UrlUtils::displayPathLabel(const QString& path) const
         const char* c = statusq_saf_getReadableTreePath(content.toUtf8().constData());
         if (c) {
             QString s = QString::fromUtf8(c);
-            std::free((void*)c);
+            delete [] c;
             if (!s.isEmpty()) return s;
         }
         // Fallback to showing the normalized content URI
@@ -195,7 +195,7 @@ QString UrlUtils::displayPathLabel(const QString& path) const
         const char* c = statusq_saf_getReadableTreePath(path.toUtf8().constData());
         if (c) {
             QString s = QString::fromUtf8(c);
-            std::free((void*)c);
+            delete [] c;
             if (!s.isEmpty()) return s;
         }
         return path;
