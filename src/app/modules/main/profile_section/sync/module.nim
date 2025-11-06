@@ -63,11 +63,14 @@ method setUseMailservers*(self: Module, value: bool) =
   if self.controller.setUseMailservers(value):
     self.view.useMailserversChanged()
 
-method performLocalBackup*(self: Module): string =
-  return self.controller.performLocalBackup()
+method performLocalBackup*(self: Module) =
+  self.controller.performLocalBackup()
 
 method importLocalBackupFile*(self: Module, filePath: string) =
   self.controller.importLocalBackupFile(filePath)
+
+method onBackupCompleted*(self: Module, error: string) =
+  self.view.onBackupCompleted(error)
 
 method onLocalBackupImportCompleted*(self: Module, error: string) =
   self.view.onLocalBackupImportCompleted(error)

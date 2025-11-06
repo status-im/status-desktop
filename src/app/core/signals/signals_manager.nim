@@ -132,6 +132,7 @@ QtObject:
       # backup sync
       of SignalType.BackedUpProfile: BackedUpProfileSignal.fromEvent(jsonSignal)
       of SignalType.BackedUpSettings: BackedUpSettingsSignal.fromEvent(jsonSignal)
+      of SignalType.BackUpCompleted: BackUpCompletedSignal.fromEvent(jsonSignal)
       # pairing
       of SignalType.LocalPairing: LocalPairingSignal.fromEvent(jsonSignal)
       of SignalType.CommunityTokenTransactionStatusChanged: CommunityTokenTransactionStatusChangedSignal.fromEvent(jsonSignal)
