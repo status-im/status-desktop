@@ -131,7 +131,9 @@ QtObject:
     self.setBackupDataState(BackupImportState.InProgress)
     self.setBackupDataError("")
 
-    let error = self.delegate.performLocalBackup()
+    self.delegate.performLocalBackup()
+
+  proc onBackupCompleted*(self: View, error: string) = # not a slot
     self.setBackupDataState(BackupImportState.Completed)
     self.setBackupDataError(error)
     self.localBackupExportCompleted(error.len == 0)

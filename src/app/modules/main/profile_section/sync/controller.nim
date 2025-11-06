@@ -44,14 +44,18 @@ proc init*(self: Controller) =
     let args = LocalBackupImportArg(e)
     self.delegate.onLocalBackupImportCompleted(args.error)
 
+  self.events.on(SIGNAL_BACKUP_COMPLETED) do(e: Args):
+    let args = BackupCompletedArg(e)
+    self.delegate.onBackupCompleted(args.error)
+
 proc getUseMailservers*(self: Controller): bool =
   return self.settingsService.getUseMailservers()
 
 proc setUseMailservers*(self: Controller, value: bool): bool =
   return self.settingsService.toggleUseMailservers(value)
 
-proc performLocalBackup*(self: Controller): string =
-  return self.devicesService.performLocalBackup()
+proc performLocalBackup*(self: Controller) =
+  self.devicesService.performLocalBackup()
 
 proc importLocalBackupFile*(self: Controller, filePath: string) =
   self.generalService.asyncImportLocalBackupFile(filePath)

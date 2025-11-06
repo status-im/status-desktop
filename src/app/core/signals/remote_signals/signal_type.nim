@@ -64,6 +64,7 @@ type SignalType* {.pure.} = enum
   MemberReevaluationStatus = "community.memberReevaluationStatus"
   BackedUpProfile = "backedup.profile"
   BackedUpSettings = "backedup.settings"
+  BackUpCompleted = "backup.local.completed"
   LocalPairing = "localPairing"
   DBReEncryptionStarted = "db.reEncryption.started"
   DBReEncryptionFinished = "db.reEncryption.finished"

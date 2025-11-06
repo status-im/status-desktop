@@ -46,6 +46,10 @@ type
   DevicesArg* = ref object of Args
     devices*: seq[InstallationDto]
 
+type
+  BackupCompletedArg* = ref object of Args
+    error*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_UPDATE_DEVICE* = "updateDevice"
 const SIGNAL_DEVICES_LOADED* = "devicesLoaded"
@@ -53,6 +57,7 @@ const SIGNAL_ERROR_LOADING_DEVICES* = "devicesErrorLoading"
 const SIGNAL_LOCAL_PAIRING_STATUS_UPDATE* = "localPairingStatusUpdate"
 const SIGNAL_INSTALLATION_NAME_UPDATED* = "installationNameUpdated"
 const SIGNAL_PAIRING_FALLBACK_COMPLETED* = "pairingFallbackCompleted"
+const SIGNAL_BACKUP_COMPLETED* = "backupCompleted"
 
 QtObject:
   type Service* = ref object of QObject
@@ -106,6 +111,36 @@ QtObject:
           error: signalData.error,
           transferredKeypairs: signalData.transferredKeypairs)
         self.updateLocalPairingStatus(data)
+
+    # Android SAF: if user-selected backup path is a content:// tree URI, copy the produced
+    # backup file from our default directory into that tree using SAF helper.
+    when defined(android):
+      self.events.on(SignalType.BackUpCompleted.event) do(e:Args):
+        try:
+          let receivedData = BackUpCompletedSignal(e)
+          
+          if receivedData.fileName.len == 0:
+            raise newException(CatchableError, "no backup file name received")
+
+          let backupPath = singletonInstance.localAccountSensitiveSettings.getLocalBackupChosenPath()
+
+
+          if backupPath.len == 0 or not backupPath.startsWith("content://"):
+            raise newException(CatchableError, "invalid backup path for SAF copy")
+
+          # Take persistable permission for the selected tree URI
+          safTakePersistablePermission(backupPath)
+
+          let fileName = splitFile(receivedData.fileName).name & splitFile(receivedData.fileName).ext
+          # TODO overwrite existing file
+          let destUri = safCopyFromPathToTree(receivedData.fileName, backupPath, "application/octet-stream", fileName)
+          if destUri.len == 0:
+            raise newException(CatchableError, "Failed to export backup into selected folder (SAF)")
+
+          self.events.emit(SIGNAL_BACKUP_COMPLETED, BackupCompletedArg(error: ""))
+        except Exception as e:
+          error "error: ", procName="performLocalBackup/SAF", errName = e.name, errDesription = e.msg
+          self.events.emit(SIGNAL_BACKUP_COMPLETED, BackupCompletedArg(error: e.msg))
 
   proc init*(self: Service) =
     self.doConnect()
@@ -422,7 +457,7 @@ QtObject:
       error "error in pairDevice: ", desription = e.msg
       return e.msg
 
-  proc performLocalBackup*(self: Service): string =
+  proc performLocalBackup*(self: Service) =
     try:
       let response =  status_go.performLocalBackup()
       let rpcResponseObj = response.parseJson
@@ -430,31 +465,13 @@ QtObject:
       if rpcResponseObj.hasKey("error") and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
-      # Android SAF: if user-selected backup path is a content:// tree URI, copy the produced
-      # backup file from our default directory into that tree using SAF helper.
-      when defined(android):
-        try:
-          let backupPath = singletonInstance.localAccountSensitiveSettings.getLocalBackupChosenPath()
-
-          if backupPath.len > 0 and backupPath.startsWith("content://"):
-            # Take persistable permission for the selected tree URI
-            safTakePersistablePermission(backupPath)
-            # Get file path from the RPC response and copy into the SAF tree
-            let srcPath = rpcResponseObj["filePath"].getStr
-            if srcPath.len == 0:
-              # No source file found; surface an error so UI shows failure
-              raise newException(CatchableError, "Backup created but source file not found for SAF export")
-
-            let fileName = splitFile(srcPath).name & splitFile(srcPath).ext
-            let destUri = safCopyFromPathToTree(srcPath, backupPath, "application/octet-stream", fileName)
-            if destUri.len == 0:
-              raise newException(CatchableError, "Failed to export backup into selected folder (SAF)")
-        except Exception as e:
-          error "error: ", procName="performLocalBackup/SAF", errName = e.name, errDesription = e.msg
-          return e.msg
+      when not defined(android):
+        # On Android, the BackUpCompleted signal handler will do the emitting after SAF copy
+        # All other platforms just emit here because the backup file is already in the desired location
+        self.events.emit(SIGNAL_BACKUP_COMPLETED, BackupCompletedArg(error: ""))
     except Exception as e:
       error "error: ", procName="performLocalBackup", errName = e.name, errDesription = e.msg
-      return e.msg
+      self.events.emit(SIGNAL_BACKUP_COMPLETED, BackupCompletedArg(error: e.msg))
 
   proc delete*(self: Service) =
     self.QObject.delete
