@@ -34,50 +34,6 @@ public final class SafHelper {
     }
 
     /**
-     * Create a document (file) inside the given tree URI. Returns the created document URI string or empty on failure.
-     */
-    public static String createFileInTree(Context context, String treeUriString, String mime, String displayName) {
-        if (context == null || treeUriString == null || treeUriString.isEmpty()) return "";
-        Uri treeUri = Uri.parse(treeUriString);
-        DocumentFile tree = DocumentFile.fromTreeUri(context, treeUri);
-        if (tree == null) return "";
-        if (mime == null || mime.isEmpty()) mime = "application/octet-stream";
-        if (displayName == null || displayName.isEmpty()) displayName = "backup.bkp";
-        DocumentFile file = tree.createFile(mime, displayName);
-        return file != null ? file.getUri().toString() : "";
-    }
-
-    /**
-     * Write the provided bytes into an existing document URI. Returns true on success.
-     */
-    public static boolean writeBytesToUri(Context context, String documentUriString, byte[] data) {
-        if (context == null || documentUriString == null || documentUriString.isEmpty() || data == null) return false;
-        Uri uri = Uri.parse(documentUriString);
-        try (OutputStream os = context.getContentResolver().openOutputStream(uri, "w")) {
-            if (os == null) return false;
-            os.write(data);
-            os.flush();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Open a writable file descriptor for an existing document URI and return its raw UNIX fd.
-     * Caller is responsible for closing the fd at native side.
-     */
-    public static int openWritableFd(Context context, String documentUriString) throws IOException {
-        if (context == null || documentUriString == null || documentUriString.isEmpty())
-            throw new IOException("Invalid context or URI");
-        Uri uri = Uri.parse(documentUriString);
-        ContentResolver cr = context.getContentResolver();
-        android.os.ParcelFileDescriptor pfd = cr.openFileDescriptor(uri, "w");
-        if (pfd == null) throw new IOException("openFileDescriptor returned null");
-        return pfd.detachFd();
-    }
-
-    /**
      * Convenience: copy a file from a temporary filesystem path into a destination SAF tree.
      * Returns the created document URI string, or empty on failure.
      */
