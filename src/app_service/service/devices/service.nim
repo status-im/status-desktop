@@ -132,7 +132,6 @@ QtObject:
           safTakePersistablePermission(backupPath)
 
           let fileName = splitFile(receivedData.fileName).name & splitFile(receivedData.fileName).ext
-          # TODO overwrite existing file
           let destUri = safCopyFromPathToTree(receivedData.fileName, backupPath, "application/octet-stream", fileName)
           if destUri.len == 0:
             raise newException(CatchableError, "Failed to export backup into selected folder (SAF)")

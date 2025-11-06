@@ -20,6 +20,15 @@ import java.io.OutputStream;
 public final class SafHelper {
     private SafHelper() {}
 
+    // Find a direct child file by name (non-recursive)
+    private static DocumentFile findDirectChildByName(DocumentFile dir, String name) {
+        if (dir == null || name == null) return null;
+        for (DocumentFile f : dir.listFiles()) {
+            if (name.equals(f.getName())) return f;
+        }
+        return null;
+    }
+
     /**
      * Persist read/write permission to a previously selected tree URI.
      */
@@ -44,6 +53,13 @@ public final class SafHelper {
         if (tree == null) return "";
         if (mime == null || mime.isEmpty()) mime = "application/octet-stream";
         if (displayName == null || displayName.isEmpty()) displayName = "backup.bkp";
+
+        // Overwrite behavior: if a file already exists with this name, delete it first
+        DocumentFile existing = findDirectChildByName(tree, displayName);
+        if (existing != null) {
+            try { existing.delete(); } catch (Throwable ignored) {}
+        }
+
         DocumentFile file = tree.createFile(mime, displayName);
         if (file == null) return "";
         Uri destUri = file.getUri();
