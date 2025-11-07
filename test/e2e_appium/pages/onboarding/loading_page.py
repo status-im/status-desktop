@@ -6,7 +6,12 @@ Page object for splash during onboarding.
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    TimeoutException,
+    WebDriverException,
+    NoSuchWindowException,
+    InvalidSessionIdException,
+)
 
 from ..base_page import BasePage
 from locators.onboarding.loading_screen_locators import LoadingScreenLocators
@@ -34,6 +39,21 @@ class SplashScreen(BasePage):
             )
             self.logger.info("Loading completed - screen disappeared")
             return True
+        except (NoSuchWindowException, InvalidSessionIdException) as e:
+            self.logger.error(
+                f"WebDriver session ended during loading wait: {type(e).__name__}: {e}"
+            )
+            return False
+        except WebDriverException as e:
+            self.logger.warning(
+                f"WebDriver error during loading wait: {type(e).__name__}: {e}"
+            )
+            try:
+                _ = self.driver.current_url
+            except (WebDriverException, InvalidSessionIdException, NoSuchWindowException):
+                self.logger.error("WebDriver session appears to be dead")
+                return False
+            return False
         except TimeoutException:
             self.logger.warning(
                 f"Loading did not complete within {timeout} seconds; checking main app state"
