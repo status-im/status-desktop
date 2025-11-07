@@ -66,6 +66,7 @@ QtObject {
     }
 
     // ENS resolution functions (stubbed until connector integration)
+    // See: https://github.com/status-im/status-desktop/issues/19137
     function determineRealURL(text) {
         const url = UrlUtils.urlFromUserInput(text)
         // TODO: ENS resolution will be handled by connector in next PR

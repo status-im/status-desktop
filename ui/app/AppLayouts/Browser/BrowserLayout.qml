@@ -540,7 +540,7 @@ StatusSectionLayout {
         target: _internal.currentWebView
         function onUrlChanged() {
             browserHeader.addressBar.text = root.browserRootStore.obtainAddress(_internal.currentWebView.url)
-            root.browserRootStore.currentTabConnected = false // TODO: Will be handled by connector
+            root.browserRootStore.currentTabConnected = false // TODO: Will be handled by connector https://github.com/status-im/status-desktop/issues/19223
         }
     }
 
