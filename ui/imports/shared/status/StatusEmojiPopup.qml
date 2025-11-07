@@ -26,7 +26,7 @@ StatusDropdown {
 
     signal emojiSelected(string emoji, bool atCu, string hexcode)
 
-    width: 360
+    width: 370
     padding: 0
 
     function addEmoji(hexcode) {
@@ -37,6 +37,8 @@ StatusDropdown {
         }
 
         const encodedIcon = StatusQUtils.Emoji.getEmojiCodepoint(iconCodePoint)
+
+        root.emojiModel.addRecentEmoji(hexcode)
 
         // Adding a space because otherwise, some emojis would fuse since emoji is just a string
         root.emojiSelected(StatusQUtils.Emoji.parse(encodedIcon, root.emojiSize || undefined) + ' ', true, hexcode)
@@ -65,28 +67,25 @@ StatusDropdown {
     QtObject {
         id: d
 
-        readonly property string searchStringLowercase: searchBox.text.toLowerCase()
+        readonly property string searchString: searchBox.text
         readonly property int headerMargin: 8
-        readonly property int imageWidth: 26
-        readonly property int imageMargin: 4
+        readonly property int imageWidth: 32
+        readonly property int imageMargin: 6
 
         readonly property var filteredModel: SortFilterProxyModel {
             sourceModel: root.emojiModel
 
             filters: [
-                FastExpressionFilter {
-                    expression: {
-                        if (model.category === root.emojiModel.recentCategoryName) // don't show/duplicate recents when searching
-                            return false
-
-                        d.searchStringLowercase
-                        return model.name.toLowerCase().includes(d.searchStringLowercase) ||
-                                model.shortname.toLowerCase().includes(d.searchStringLowercase) ||
-                                model.aliases.some(a => a.includes(d.searchStringLowercase)) ||
-                                model.keywords.some(k => k.includes(d.searchStringLowercase))
+                AnyOf {
+                    enabled: d.searchString !== ""
+                    StatusQUtils.SearchFilter {
+                        roleName: "name"
+                        searchPhrase: d.searchString
                     }
-                    expectedRoles: ["name", "shortname", "aliases", "keywords", "category"]
-                    enabled: !!d.searchStringLowercase
+                    StatusQUtils.SearchFilter {
+                        roleName: "shortname"
+                        searchPhrase: d.searchString
+                    }
                 },
                 AnyOf {
                     ValueFilter {
@@ -198,7 +197,7 @@ StatusDropdown {
             font.weight: Font.Medium
             color: Theme.palette.secondaryText
             font.pixelSize: Theme.additionalTextSize
-            text: d.searchStringLowercase ? (d.filteredModel.count ? qsTr("Search Results") : qsTr("No results found"))
+            text: d.searchString ? (d.filteredModel.count ? qsTr("Search Results") : qsTr("No results found"))
                                           : emojiGrid.currentCategory
             font.capitalization: Font.AllUppercase
         }
@@ -253,11 +252,11 @@ StatusDropdown {
             spacing: 0
 
             Repeater {
-                model: StatusQUtils.Emoji.emojiJSON.emojiCategories
+                model: root.emojiModel.categoryIcons
 
                 StatusTabBarIconButton {
                     icon.name: modelData
-                    highlighted: !!d.searchStringLowercase ? index === 0 : index == emojiGrid.currentCategoryIndex
+                    highlighted: !!d.searchString ? index === 0 : index == emojiGrid.currentCategoryIndex
                     onClicked: {
                         const offset = d.filteredModel.mapFromSource(root.emojiModel.getCategoryOffset(index))
                         emojiGrid.positionViewAtIndex(offset, GridView.Beginning)

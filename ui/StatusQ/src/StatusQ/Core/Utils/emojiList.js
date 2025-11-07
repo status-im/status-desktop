@@ -1,17 +1,5 @@
 .pragma library
 
-const emojiCategories = [
-    "time",
-    "smileys-and-people",
-    "animals-and-nature",
-    "food-and-drinks",
-    "activity",
-    "travel-and-places",
-    "objects",
-    "symbols",
-    "flags",
-]
-
 const emoji_json =
 [
     {

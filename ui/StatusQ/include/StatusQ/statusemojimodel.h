@@ -9,6 +9,7 @@ class StatusEmojiModel : public QAbstractListModel
     Q_PROPERTY(QJsonArray emojiJson READ emojiJson WRITE setEmojiJson NOTIFY emojiJsonChanged
                    REQUIRED FINAL)
     Q_PROPERTY(QStringList categories READ categories CONSTANT FINAL)
+    Q_PROPERTY(QStringList categoryIcons READ categoryIcons CONSTANT FINAL)
     Q_PROPERTY(QStringList recentEmojis READ recentEmojis WRITE setRecentEmojis NOTIFY
                    recentEmojisChanged FINAL)
     Q_PROPERTY(QString recentCategoryName READ recentCategoryName CONSTANT FINAL)
@@ -49,6 +50,7 @@ private:
     QJsonArray m_emojiJson;
 
     QStringList categories() const;
+    QStringList categoryIcons() const;
 
     QStringList recentEmojis() const;
     void setRecentEmojis(const QStringList &newRecentEmojis);

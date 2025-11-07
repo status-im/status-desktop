@@ -50,13 +50,18 @@ SplitView {
             id: emojiPopup
 
             directParent: topPane
+            relativeX: (parent.width - width) / 2
+            relativeY: (parent.height - height) / 2
 
             height: 440
             visible: true
             modal: false
             settings: settings
             emojiModel: StatusQUtils.Emoji.emojiModel
-            onEmojiSelected: (emoji) => d.lastSelectedEmoji = emoji
+            onEmojiSelected: function(emoji, atCu, hexcode) {
+                logs.logEvent("onEmojiSelected", ["emoji", "atCu", "hexcode"], arguments)
+                d.lastSelectedEmoji = emoji
+            }
         }
     }
 
