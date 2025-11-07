@@ -373,9 +373,7 @@ method load*(self: Module) =
   self.assetsModule.load()
   info "wallet-section: loading savedAddressesModule"
   self.savedAddressesModule.load()
-  info "wallet-section about to load followingAddressesModule"
   self.followingAddressesModule.load()
-  info "wallet-section followingAddressesModule.load() completed"
   self.buySellCryptoModule.load()
   self.overviewModule.load()
   self.sendModule.load()
@@ -430,13 +428,6 @@ proc checkIfModuleDidLoad(self: Module) =
   self.moduleLoaded = true
   self.delegate.walletSectionDidLoad()
   self.view.setWalletReady()
-  
-  # Lazy pre-fetch EFP following addresses for primary wallet account
-  let walletAccounts = self.controller.getWalletAccounts()
-  if walletAccounts.len > 0:
-    let primaryAccount = walletAccounts[0]  # First account is primary
-    info "Pre-fetching EFP following addresses for primary account", address = primaryAccount.address
-    self.followingAddressesModule.fetchFollowingAddresses(primaryAccount.address)
 
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()

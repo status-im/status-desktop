@@ -88,6 +88,10 @@ Item {
         }
     }
 
+    Component.onCompleted: {
+        d.refresh()  // Load data when user navigates to this page
+    }
+
     Timer {
         id: searchDebounceTimer
         interval: 250
@@ -140,7 +144,7 @@ Item {
             id: noFollowingAddresses
             Layout.fillWidth: true
             Layout.preferredHeight: 44
-            visible: RootStore.followingAddresses.count === 0
+            visible: RootStore.followingAddresses.count === 0 && !d.isPaginationLoading
             text: qsTr("Your EFP onchain friends will appear here")
         }
 
@@ -148,15 +152,8 @@ Item {
             id: emptySearchResult
             Layout.fillWidth: true
             Layout.preferredHeight: 44
-            visible: RootStore.followingAddresses.count > 0 && listView.count === 0
+            visible: RootStore.followingAddresses.count > 0 && listView.count === 0 && !d.isPaginationLoading
             text: qsTr("No following addresses found. Check spelling or address is correct.")
-        }
-
-        StatusLoadingIndicator {
-            id: loadingIndicator
-            Layout.alignment: Qt.AlignHCenter
-            visible: RootStore.loadingFollowingAddresses
-            color: Theme.palette.directColor4
         }
 
         Item {

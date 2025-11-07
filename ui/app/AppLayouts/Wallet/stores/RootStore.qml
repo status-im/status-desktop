@@ -65,7 +65,6 @@ QtObject {
     }
 
     readonly property var followingAddresses: walletSectionFollowingAddresses ? walletSectionFollowingAddresses.model : null
-    property bool loadingFollowingAddresses: false
 
     function refreshFollowingAddresses(search, limit, offset) {
         if (!walletSectionFollowingAddresses) return
