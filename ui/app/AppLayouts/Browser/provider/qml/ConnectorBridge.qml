@@ -135,7 +135,7 @@ Item {
         id: eip1193ProviderAdapter
         WebChannel.id: "ethereumProvider"
         
-        chainId: "0x" + connectorManager.dappChainId.toString(16)  // Convert decimal to hex
+        chainId: Utils.chainIdToHex(connectorManager.dappChainId)
         networkVersion: connectorManager.dappChainId.toString()
         selectedAddress: connectorManager.accounts.length > 0 ? connectorManager.accounts[0] : ""
         accounts: connectorManager.accounts
