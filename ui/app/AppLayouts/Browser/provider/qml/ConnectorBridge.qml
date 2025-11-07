@@ -17,7 +17,7 @@ import "Utils.js" as Utils
  * 
  * This component bridges the Browser UI with the Connector backend system.
  */
-Item {
+QtObject {
     id: root
 
     required property string userUID
@@ -25,9 +25,6 @@ Item {
     property string httpUserAgent: ""          // Custom user agent for web profiles
 
     readonly property alias webChannel: channel
-    readonly property alias defaultProfile: defaultProfile
-    readonly property alias otrProfile: otrProfile
-    
     readonly property alias manager: connectorManager
     
     property alias dappUrl: connectorManager.dappUrl
@@ -85,16 +82,14 @@ Item {
         createScript("ethereum_injector.js", true)
     ]
 
-    WebEngineProfile {
-        id: defaultProfile
+    readonly property WebEngineProfile defaultProfile: WebEngineProfile {
         storageName: "Profile_%1".arg(root.userUID)
         offTheRecord: false
         httpUserAgent: root.httpUserAgent
         userScripts.collection: root._scripts
     }
 
-    WebEngineProfile {
-        id: otrProfile
+    readonly property WebEngineProfile otrProfile: WebEngineProfile {
         storageName: "IncognitoProfile_%1".arg(root.userUID)
         offTheRecord: true
         persistentCookiesPolicy: WebEngineProfile.NoPersistentCookies
@@ -102,8 +97,7 @@ Item {
         userScripts.collection: root._scripts
     }
 
-    ConnectorManager {
-        id: connectorManager
+    readonly property ConnectorManager connectorManager: ConnectorManager {
         connectorController: root.connectorController  // (shared_modules/connector/controller.nim)
         
         dappUrl: ""
@@ -124,13 +118,11 @@ Item {
         onProviderStateChanged: () => eip1193ProviderAdapter.providerStateChanged()
     }
 
-    WebChannel {
-        id: channel
+    readonly property WebChannel channel: WebChannel {
         registeredObjects: [eip1193ProviderAdapter]
     }
 
-    Eip1193ProviderAdapter {
-        id: eip1193ProviderAdapter
+    readonly property Eip1193ProviderAdapter eip1193ProviderAdapter: Eip1193ProviderAdapter {
         WebChannel.id: "ethereumProvider"
         
         chainId: Utils.chainIdToHex(connectorManager.dappChainId)
