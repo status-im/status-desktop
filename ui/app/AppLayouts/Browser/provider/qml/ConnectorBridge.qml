@@ -133,4 +133,3 @@ QtObject {
         onRequestInternal: (args) => connectorManager.request(args)
     }
 }
-
