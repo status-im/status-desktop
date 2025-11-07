@@ -6,6 +6,8 @@
 #include <array>
 #include <algorithm>
 
+using namespace Qt::Literals::StringLiterals;
+
 namespace {
 constexpr auto kAliases = "aliases";
 constexpr auto kAliasesAscii = "aliases_ascii";
@@ -24,7 +26,7 @@ const auto skinColors = std::array<const char*, 5>{"1f3fb", "1f3fc", "1f3fd", "1
 
 constexpr auto MAX_EMOJI_NUMBER = 36;
 
-constexpr auto kRecentCategoryName = "recent";
+constexpr auto kRecentCategoryName = "recent"_L1;
 }
 
 StatusEmojiModel::StatusEmojiModel(QObject *parent)
@@ -33,7 +35,7 @@ StatusEmojiModel::StatusEmojiModel(QObject *parent)
 
 int StatusEmojiModel::rowCount(const QModelIndex &parent) const
 {
-    return m_recentEmojis.size() + m_emojiJson.size();
+    return m_recentEmojiJson.size() + m_emojiJson.size();
 }
 
 QVariant StatusEmojiModel::data(const QModelIndex &index, int role) const
@@ -151,15 +153,32 @@ int StatusEmojiModel::getCategoryOffset(int categoryIndex) const {
 QStringList StatusEmojiModel::categories() const
 {
     static const QStringList categories{kRecentCategoryName,
-                                        QStringLiteral("smileys, people & body"),
-                                        QStringLiteral("animals & nature"),
-                                        QStringLiteral("food & drink"),
-                                        QStringLiteral("travel & places"),
-                                        QStringLiteral("activities"),
-                                        QStringLiteral("objects"),
-                                        QStringLiteral("symbols"),
-                                        QStringLiteral("flags")};
+        "smileys, people & body"_L1,
+        "animals & nature"_L1,
+        "food & drink"_L1,
+        "travel & places"_L1,
+        "activities"_L1,
+        "objects"_L1,
+        "symbols"_L1,
+        "flags"_L1
+    };
     return categories;
+}
+
+QStringList StatusEmojiModel::categoryIcons() const
+{
+    static const QStringList categoryIcons{
+        "time"_L1,
+        "smileys-and-people"_L1,
+        "animals-and-nature"_L1,
+        "food-and-drinks"_L1,
+        "activity"_L1,
+        "travel-and-places"_L1,
+        "objects"_L1,
+        "symbols"_L1,
+        "flags"_L1
+    };
+    return categoryIcons;
 }
 
 QStringList StatusEmojiModel::recentEmojis() const
