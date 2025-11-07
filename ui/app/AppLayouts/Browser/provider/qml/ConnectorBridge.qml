@@ -23,9 +23,6 @@ QtObject {
     required property var connectorController
     property string httpUserAgent: ""          // Custom user agent for web profiles
 
-    readonly property alias webChannel: channel
-    readonly property alias manager: connectorManager
-
     property alias dappUrl: connectorManager.dappUrl
     property alias dappOrigin: connectorManager.dappOrigin
     property alias dappName: connectorManager.dappName

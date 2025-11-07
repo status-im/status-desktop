@@ -355,7 +355,7 @@ StatusSectionLayout {
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
                     browserHeader.anchors.topMargin + Theme.halfPadding)
                 onSendTriggered: (address) => root.sendToRecipientRequested(address)
-                onAccountChanged: (newAddress) => connectorBridge.manager.changeAccount(newAddress)
+                onAccountChanged: (newAddress) => connectorBridge.connectorManager.changeAccount(newAddress)
                 onReload: {
                     for (let i = 0; i < tabs.count; ++i){
                         tabs.getTab(i).reload();
@@ -448,7 +448,7 @@ StatusSectionLayout {
             bookmarksStore: root.bookmarksStore
             downloadsStore: root.downloadsStore
             currentWebView: _internal.currentWebView
-            webChannel: connectorBridge.webChannel
+            webChannel: connectorBridge.channel
             findBarComp: findBar
             favMenu: favoriteMenu
             addFavModal: addFavoriteModal
