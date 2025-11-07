@@ -12,7 +12,6 @@ LOG = logging.getLogger(__name__)
 class Window(QObject):
 
     def prepare(self) -> 'Window':
-        self.show()
         self.maximize()
         self.on_top_level()
         return self

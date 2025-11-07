@@ -38,7 +38,6 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, na
         assert PLUG_IN_KEYCARD_IMAGE_PATH == actual_image_path, f"Image path {actual_image_path} is wrong"
 
     with step('Plug in reader'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears().plugin_reader()
         main_screen.show()
 
@@ -51,7 +50,6 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, na
         assert INSERT_KEYCARD_IMAGE_PATH == actual_image_path, f"Image path {actual_image_path} is wrong"
 
     with step('Register and insert keycard'):
-        main_screen.hide()
         keycard_controller.register_keycard().insert_keycard_1()
         main_screen.show()
 

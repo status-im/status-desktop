@@ -67,7 +67,6 @@ def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_accou
         assert not keycard_popup.is_next_button_enabled
 
     with step('Plug in reader'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears()
         keycard_controller.plugin_reader()
         main_screen.show()
@@ -78,7 +77,6 @@ def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_accou
             timeout), f"There is no correct keycard instruction in {keycard_popup.keycard_instructions}"
 
     with step('Register and insert custom emtpy keycard with custom details'):
-        main_screen.hide()
         keycard_controller.choose_custom_keycard()
         keycard_controller.input_custom_keycard_details(first_details, 0)
         keycard_controller.input_custom_keycard_details(second_details, 1)

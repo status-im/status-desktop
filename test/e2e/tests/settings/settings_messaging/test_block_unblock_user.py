@@ -30,7 +30,6 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
                 aut.attach()
                 main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
                 main_screen.authorize_user(account)
-                main_screen.hide()
 
             with step(f'User {user_two.name}, get chat key'):
                 aut_two.attach()
@@ -38,7 +37,6 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
                 profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
                 user_2_chat_key = profile_popup.copy_chat_key
                 main_screen.left_panel.click()
-                main_screen.hide()
 
             with step(f'User {user_one.name}, send contact request to {user_two.name}'):
                 aut_one.attach()
@@ -54,7 +52,6 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
                 request = activity_center.find_contact_request_in_list(user_one.name, timeout)
                 activity_center.accept_contact_request(request)
                 main_screen.left_panel.click()
-                main_screen.hide()
 
         with step(
                 f'User {user_one.name}, block contact {user_two.name} from user profile and verify button Block '
@@ -81,14 +78,12 @@ def test_block_and_unblock_user_from_settings_and_profile(multiple_instances):
                                   timeout), f"Toast message {message_1} is incorrect, current message is {toast_messages}"
             assert driver.waitFor(lambda: message_2 in toast_messages,
                                   timeout), f"Toast message {message_2} is incorrect, current message is {toast_messages}"
-            main_screen.hide()
 
         with step(f'User {user_two.name} does not see {user_one.name} in contacts list'):
             aut_two.attach()
             main_screen.prepare()
             contacts_settings = main_screen.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             assert contacts_settings.invite_friends_button.wait_until_appears().is_visible
-            main_screen.hide()
 
         with step(
                 f'User {user_one.name}, unblock {user_two.name} from contact settings and verify {user_two.name} was '
