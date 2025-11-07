@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import "Utils.js" as Utils
 
-Item {
+QtObject {
     id: root
     
     property var connectorController: null
