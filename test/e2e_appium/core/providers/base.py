@@ -52,6 +52,15 @@ class Provider(ABC):
         """Default implementation does nothing."""
         return None
 
+    def report_session_status_via_api(
+        self,
+        session_id: Optional[str],
+        status: str,
+        reason: Optional[str] = None,
+    ) -> None:
+        """Default REST API reporting implementation does nothing."""
+        return None
+
     def cleanup_driver(self, driver: Optional[WebDriver]) -> None:
         if driver:
             driver.quit()
