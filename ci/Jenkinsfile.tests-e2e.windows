@@ -8,17 +8,10 @@ pipeline {
   }
 
   parameters {
-    gitParameter(
+    string(
       name: 'GIT_REF',
       description: 'Git branch to checkout.',
-      branchFilter: 'origin/(.*)',
-      branch: '',
-      defaultValue: 'master',
-      quickFilterEnabled: false,
-      selectedValue: 'DEFAULT',
-      sortMode: 'ASCENDING_SMART',
-      tagFilter: '*',
-      type: 'PT_BRANCH'
+      defaultValue: 'master'
     )
     string(
       name: 'BUILD_SOURCE',
