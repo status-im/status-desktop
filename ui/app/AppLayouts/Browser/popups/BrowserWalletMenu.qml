@@ -59,7 +59,7 @@ Dialog {
     Item {
         id: walletHeader
         width: parent.width
-        height: disconectBtn.height
+        height: disconnectBtn.height
 
         // TODO: Uncomment and connect to connector in next PR
         // Network indicator showing current chain
@@ -101,7 +101,7 @@ Dialog {
         */
 
         StatusBaseText {
-            id: disconectBtn
+            id: disconnectBtn
             text: qsTr("Disconnect")
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
