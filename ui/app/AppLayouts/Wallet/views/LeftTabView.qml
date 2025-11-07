@@ -54,7 +54,6 @@ Rectangle {
     Loader {
         id: addAccount
         active: false
-        asynchronous: true
 
         sourceComponent: AddAccountPopup {
             isKeycardEnabled: root.isKeycardEnabled

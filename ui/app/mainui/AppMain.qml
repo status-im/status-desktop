@@ -1150,7 +1150,6 @@ Item {
     Loader {
         id: appSearch
         active: false
-        asynchronous: true
 
         function openSearchPopup() {
             if (homePageLoader.active)
@@ -1844,7 +1843,6 @@ Item {
                 }
 
                 Loader {
-                    asynchronous: true
                     active: false
                     sourceComponent: {
                         if (appMain.rootChatStore.chatsLoadingFailed) {
@@ -1970,7 +1968,6 @@ Item {
 
                 Loader {
                     active: appView.currentIndex === Constants.appViewStackIndex.communitiesPortal
-                    asynchronous: true
                     sourceComponent: CommunitiesPortalLayout {
                         anchors.fill: parent
                         createCommunityEnabled: !SQUtils.Utils.isMobile
@@ -1984,7 +1981,6 @@ Item {
 
                 Loader {
                     active: appView.currentIndex === Constants.appViewStackIndex.wallet
-                    asynchronous: true
                     sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? walletLayout: walletPrivacyWall
 
                     Component {
@@ -2041,7 +2037,6 @@ Item {
                 Loader {
                     id: browserLayoutContainer
 
-                    asynchronous: true
                     Binding on active {
                         when: appView.currentIndex === Constants.appViewStackIndex.browser
                         value: d.isBrowserEnabled && !localAppSettings.testEnvironment
@@ -2165,7 +2160,6 @@ Item {
 
                 Loader {
                     active: appView.currentIndex === Constants.appViewStackIndex.node
-                    asynchronous: true
                     sourceComponent: NodeLayout {
                         navBar: appMain.navBar
                     }
@@ -2173,7 +2167,6 @@ Item {
 
                 Loader {
                     active: appView.currentIndex === Constants.appViewStackIndex.market
-                    asynchronous: true
                     sourceComponent: appMain.rootStore.thirdpartyServicesEnabled ? marketLayout : marketPrivacyWall
 
                     Component {
@@ -2226,7 +2219,6 @@ Item {
 
                 Loader {
                     active: appView.currentIndex === Constants.appViewStackIndex.activityCenter
-                    asynchronous: true
                     sourceComponent: ActivityCenterLayout {
                         id: activityCenterPopup
 
@@ -2266,7 +2258,6 @@ Item {
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
 
-                        asynchronous: true
                         active: false
 
                         // Do not unload section data from the memory in order not
@@ -2374,7 +2365,6 @@ Item {
                          anchors.rightMargin - anchors.leftMargin
                 active: appMain.rootStore.sectionsLoaded && opened
 
-                asynchronous: true
                 anchors.top: parent.top
                 anchors.topMargin: 8
                 anchors.rightMargin: 8
@@ -2453,7 +2443,6 @@ Item {
     Loader {
         id: channelPickerLoader
         active: false
-        asynchronous: true
         sourceComponent: StatusSearchListPopup {
             directParent: appMain
             relativeX: appMain.width/2 - width/2

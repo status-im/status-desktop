@@ -392,7 +392,6 @@ AbstractButton {
                 Loader {
                     id: secondaryTitleIconLoader
                     anchors.verticalCenter: parent.verticalCenter
-                    asynchronous: true
                     active: !!root.secondaryTitleIcon
                     visible: active
                     sourceComponent: secondaryTitleIconComponent

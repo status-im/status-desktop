@@ -119,7 +119,6 @@ StatusModal {
             Loader {
                 id: limitPopup
                 active: false
-                asynchronous: true
 
                 sourceComponent: StatusDialog {
                     width: root.width - 2*Theme.padding

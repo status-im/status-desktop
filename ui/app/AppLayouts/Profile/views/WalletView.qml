@@ -519,7 +519,6 @@ SettingsContentBase {
         Loader {
             id: keypairImport
             active: false
-            asynchronous: true
 
             sourceComponent: KeypairImportPopup {
                 store.keypairImportModule: root.walletStore.walletModule.keypairImportModule
