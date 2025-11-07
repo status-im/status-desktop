@@ -3175,16 +3175,6 @@
       <translation>Error signing message</translation>
     </message>
     <message>
-      <source>Transaction pending...</source>
-      <comment>BrowserLayout</comment>
-      <translation>Transaction pending...</translation>
-    </message>
-    <message>
-      <source>View on etherscan</source>
-      <comment>BrowserLayout</comment>
-      <translation>View on etherscan</translation>
-    </message>
-    <message>
       <source>Server&#39;s certificate not trusted</source>
       <comment>BrowserLayout</comment>
       <translation>Server&#39;s certificate not trusted</translation>
@@ -3292,34 +3282,14 @@
   <context>
     <name>BrowserWalletMenu</name>
     <message>
-      <source>Mainnet</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Mainnet</translation>
-    </message>
-    <message>
-      <source>Ropsten</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Ropsten</translation>
-    </message>
-    <message>
-      <source>Unknown</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Unknown</translation>
-    </message>
-    <message>
       <source>Disconnect</source>
       <comment>BrowserWalletMenu</comment>
       <translation>Disconnect</translation>
     </message>
     <message>
-      <source>Assets</source>
+      <source>Wallet info will appear here</source>
       <comment>BrowserWalletMenu</comment>
-      <translation>Assets</translation>
-    </message>
-    <message>
-      <source>History</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>History</translation>
+      <translation>Wallet info will appear here</translation>
     </message>
   </context>
   <context>
@@ -9364,6 +9334,14 @@
     </message>
   </context>
   <context>
+    <name>FeeRow</name>
+    <message>
+      <source>Max.</source>
+      <comment>FeeRow</comment>
+      <translation>Max.</translation>
+    </message>
+  </context>
+  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -10913,6 +10891,11 @@
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
     </message>
+    <message>
+      <source>Keycard blocked</source>
+      <comment>KeycardEnterPinPage</comment>
+      <translation>Keycard blocked</translation>
+    </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>
       <comment>KeycardEnterPinPage</comment>
@@ -10989,24 +10972,6 @@
       <source>Factory reset Keycard</source>
       <comment>KeycardErrorPage</comment>
       <translation>Factory reset Keycard</translation>
-    </message>
-  </context>
-  <context>
-    <name>KeycardExtractingKeysPage</name>
-    <message>
-      <source>Extracting keys from Keycard</source>
-      <comment>KeycardExtractingKeysPage</comment>
-      <translation>Extracting keys from Keycard</translation>
-    </message>
-    <message>
-      <source>You will now require this Keycard to log into Status and transact with any accounts derived from this key pair</source>
-      <comment>KeycardExtractingKeysPage</comment>
-      <translation>You will now require this Keycard to log into Status and transact with any accounts derived from this key pair</translation>
-    </message>
-    <message>
-      <source>Please keep the Keycard plugged in until the extraction is complete</source>
-      <comment>KeycardExtractingKeysPage</comment>
-      <translation>Please keep the Keycard plugged in until the extraction is complete</translation>
     </message>
   </context>
   <context>
