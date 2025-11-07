@@ -21,20 +21,6 @@ def switch_to_aut(aut, main_window):
     main_window.prepare()
 
 
-@allure.step('Switch to AUT and hide main window')
-def switch_to_aut_and_hide(aut, main_window):
-    """
-    Switch to the given AUT, prepare and hide main window.
-    
-    Args:
-        aut: The AUT to switch to
-        main_window: MainWindow instance
-    """
-    aut.attach()
-    main_window.prepare()
-    main_window.hide()
-
-
 @allure.step('Authorize user in AUT')
 def authorize_user_in_aut(aut, main_window, user_account):
     """
@@ -48,7 +34,6 @@ def authorize_user_in_aut(aut, main_window, user_account):
     aut.attach()
     main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
     main_window.authorize_user(user_account)
-    main_window.hide()
 
 
 @allure.step('Get chat key from user')
@@ -68,7 +53,6 @@ def get_chat_key(aut, main_window):
     profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
     chat_key = profile_popup.copy_chat_key
     main_window.left_panel.click()
-    main_window.hide()
     return chat_key
 
 

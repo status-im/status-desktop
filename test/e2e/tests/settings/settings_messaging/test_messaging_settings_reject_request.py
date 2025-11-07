@@ -21,7 +21,6 @@ def test_messaging_settings_rejecting_request(multiple_instances):
                 aut.attach()
                 main_window.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
                 main_window.authorize_user(account)
-                main_window.hide()
 
         with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
@@ -30,7 +29,6 @@ def test_messaging_settings_rejecting_request(multiple_instances):
             profile_popup = online_identifier.open_profile_popup_from_online_identifier()
             chat_key = profile_popup.copy_chat_key
             main_window.left_panel.click()
-            main_window.hide()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             aut_one.attach()
@@ -40,8 +38,6 @@ def test_messaging_settings_rejecting_request(multiple_instances):
             contacts_settings = messaging_settings.open_contacts_settings()
             contact_request_popup = contacts_settings.open_contact_request_form()
             contact_request_popup.send(chat_key, f'Hello {user_two.name}')
-
-            main_window.hide()
 
         with step(f'Verify that contact request from user {user_two.name} was received and reject contact request'):
             aut_two.attach()
@@ -57,7 +53,6 @@ def test_messaging_settings_rejecting_request(multiple_instances):
             contacts_settings.open_contacts()
             assert str(contacts_settings.no_friends_item_text) == Messaging.NO_FRIENDS_ITEM.value
             assert contacts_settings.invite_friends_button.is_visible
-            main_window.hide()
 
         with step(f'Verify that contacts list of {user_one.name} is empty in messaging settings'):
             aut_one.attach()

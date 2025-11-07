@@ -21,7 +21,6 @@ def test_unlock_keycard_using_correct_puk(main_screen: MainWindow, user_account)
     main_screen.prepare()
 
     with step('Plug in reader and insert keycard'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears()
         keycard_controller.plugin_reader().choose_mnemonic_metadata_keycard().register_keycard().insert_keycard_1()
         main_screen.show()
@@ -84,7 +83,6 @@ def test_unlock_keycard_using_incorrect_puk(main_screen: MainWindow, user_accoun
     main_screen.prepare()
 
     with step('Plug in reader and insert keycard'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears()
         keycard_controller.plugin_reader().choose_mnemonic_metadata_keycard().register_keycard().insert_keycard_1()
         main_screen.show()

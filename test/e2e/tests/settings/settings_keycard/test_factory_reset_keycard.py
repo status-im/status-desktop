@@ -24,7 +24,6 @@ def test_factory_reset_keycard(main_screen: MainWindow, user_account):
         keycard_popup = keycard_settings.click_factory_reset_keycard()
 
     with step('Insert keycard with accounts on it'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears()
         keycard_controller.plugin_reader().choose_mnemonic_metadata_keycard().register_keycard().insert_keycard_1()
         main_screen.show()
@@ -74,7 +73,6 @@ def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_accou
         keycard_popup = keycard_settings.click_factory_reset_keycard()
 
     with step('Insert keycard with accounts on it'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears()
         keycard_controller.plugin_reader().choose_mnemonic_metadata_keycard().register_keycard().insert_keycard_1()
         main_screen.show()

@@ -62,7 +62,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             request = activity_center.find_contact_request_in_list(user_one.name)
             activity_center.accept_contact_request(request)
             main_window.left_panel.click()
-            main_window.hide()
+            main_window.minimize()
 
         with step(f'User {user_three.name}, get chat key'):
             user_3_chat_key = get_chat_key(aut_three, main_window)
@@ -79,7 +79,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             request = activity_center.find_contact_request_in_list(user_one.name, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
             activity_center.accept_contact_request(request)
             main_window.left_panel.click()
-            main_window.hide()
+            main_window.minimize()
 
         with step(f'User {user_one.name}, start chat and add {members}'):
             switch_to_aut(aut_one, main_window)
@@ -133,7 +133,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 assert driver.waitFor(lambda: user_three.name not in messages_screen.right_panel.members,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 assert len(messages_screen.right_panel.members) == 2
-                main_window.hide()
+                main_window.minimize()
 
         with step(f'Check group members and message for {user_two.name}'):
             switch_to_aut(aut_two, main_window)
@@ -254,7 +254,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             with step('Check that group name is not displayed on left panel'):
                 assert driver.waitFor(lambda: group_chat_new_name not in messages_screen.left_panel.get_chats_names,
                                       configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            main_window.hide()
+            main_window.minimize()
 
         with step(f'Check group members and message for {user_three.name}'):
             switch_to_aut(aut_three, main_window)
@@ -279,7 +279,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
 
             with step('Check that group name is not displayed on left panel'):
                 assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
-            main_window.hide()
+            main_window.minimize()
 
         with step(f'Get back to {user_one.name} and check members list'):
             switch_to_aut(aut_one, main_window)

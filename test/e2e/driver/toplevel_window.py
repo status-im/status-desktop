@@ -7,7 +7,7 @@ import configs
 def maximize(object_name):
     def _maximize() -> bool:
         try:
-            toplevelwindow.ToplevelWindow(squish.waitForObjectExists(object_name)).maximize()
+            toplevelwindow.ToplevelWindow.byName(object_name).maximize()
             return True
         except RuntimeError:
             return False
@@ -18,7 +18,7 @@ def maximize(object_name):
 def minimize(object_name):
     def _minimize() -> bool:
         try:
-            toplevelwindow.ToplevelWindow(squish.waitForObjectExists(object_name)).minimize()
+            toplevelwindow.ToplevelWindow.byName(object_name).minimize()
             return True
         except RuntimeError:
             return False
@@ -29,7 +29,7 @@ def minimize(object_name):
 def set_focus(object_name):
     def _set_focus() -> bool:
         try:
-            toplevelwindow.ToplevelWindow(squish.waitForObjectExists(object_name)).setFocus()
+            toplevelwindow.ToplevelWindow.byName(object_name).setFocus()
             return True
         except RuntimeError:
             return False
@@ -40,7 +40,7 @@ def set_focus(object_name):
 def on_top_level(object_name):
     def _on_top() -> bool:
         try:
-            toplevelwindow.ToplevelWindow(squish.waitForObjectExists(object_name)).setForeground()
+            toplevelwindow.ToplevelWindow.byName(object_name).setForeground()
             return True
         except RuntimeError:
             return False

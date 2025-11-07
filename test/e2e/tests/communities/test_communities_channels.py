@@ -125,7 +125,6 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
                 aut.attach()
                 main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
                 main_screen.authorize_user(account)
-                main_screen.hide()
 
         with step(f'User {user_two.name}, select non-restricted channel and can send message'):
             aut_two.attach()
@@ -146,7 +145,6 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
             channel = community_screen.left_panel.get_channel_parameters(channel_name)
             assert driver.waitFor(lambda: channel in community_screen.left_panel.channels,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            main_screen.hide()
 
         with step(f'User {user_one.name}, cannot see hidden channel in the list'):
             aut_one.attach()
@@ -174,7 +172,6 @@ def test_view_and_post_in_non_restricted_channel(multiple_instances, user_data_o
                 aut.attach()
                 main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
                 main_screen.authorize_user(account)
-                main_screen.hide()
 
         with step(f'User {user_two.name}, select non-restricted channel and can send message'):
             aut_two.attach()
@@ -185,7 +182,6 @@ def test_view_and_post_in_non_restricted_channel(multiple_instances, user_data_o
             messages_screen = MessagesScreen()
             message_text = "Hi"
             messages_screen.group_chat.send_message_to_group_chat(message_text)
-            main_screen.hide()
 
         with step(
                 f'User {user_one.name}, select non-restricted channel, verify that can view other messages and also '
@@ -199,7 +195,6 @@ def test_view_and_post_in_non_restricted_channel(multiple_instances, user_data_o
             assert 'Hi' in str(message_object.text), f"Message text is not found in last message"
             message_text = "Hi hi"
             messages_screen.group_chat.send_message_to_group_chat(message_text)
-            main_screen.hide()
 
         with step(f'User {user_two.name}, verify that can see sent by member message'):
             aut_two.attach()

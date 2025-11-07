@@ -32,7 +32,6 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
         assert PLUG_IN_KEYCARD_IMAGE_PATH == actual_image_path, f"Image path {actual_image_path} is wrong"
 
     with step('Plug in reader'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears().plugin_reader()
         main_screen.show()
 
@@ -45,7 +44,6 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
         assert INSERT_KEYCARD_IMAGE_PATH == actual_image_path, f"Image path {actual_image_path} is wrong"
 
     with step('Register and insert not status keycard'):
-        main_screen.hide()
         keycard_controller.choose_not_status_keycard().register_keycard().insert_keycard_1()
         main_screen.show()
 
@@ -59,7 +57,6 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
         keycard_popup.cancel()
 
     with step('Insert empty keycard'):
-        main_screen.hide()
         keycard_controller.choose_empty_keycard().register_keycard().insert_keycard_1()
         main_screen.show()
 
@@ -76,7 +73,6 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
         keycard_popup.click_next()
 
     with step('Insert locked keycard'):
-        main_screen.hide()
         keycard_controller.choose_max_slots_reached_keycard().register_keycard().insert_keycard_1()
         main_screen.show()
 
@@ -91,7 +87,6 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
         keycard_popup.cancel()
 
     with (step('Remove keycard and insert keycard with accounts on it')):
-        main_screen.hide()
         keycard_controller.remove_keycard()
         keycard_controller.choose_mnemonic_metadata_keycard().register_keycard().insert_keycard_1()
         main_screen.show()

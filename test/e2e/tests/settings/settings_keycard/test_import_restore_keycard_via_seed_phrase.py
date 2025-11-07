@@ -36,7 +36,6 @@ def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow):
         assert PLUG_IN_KEYCARD_IMAGE_PATH == actual_image_path
 
     with step('Plug in reader'):
-        main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears(10000)
         keycard_controller.plugin_reader()
         main_screen.show()
@@ -49,7 +48,6 @@ def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow):
         assert INSERT_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Register and insert keycard'):
-        main_screen.hide()
         keycard_controller.register_keycard().insert_keycard_1()
         main_screen.show()
 
