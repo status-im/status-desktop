@@ -24,9 +24,9 @@ const EthereumWrapper = (function() {
             // Wire native signals to events
             this._wireSignals();
             
-            // Set up EIP-1193 properties
-            this.isStatus = true;
-            this.isMetaMask = false;
+            // Set up EIP-1193 properties from QML
+            this.isStatus = nativeEthereum.isStatus !== undefined ? nativeEthereum.isStatus : true;
+            this.isMetaMask = nativeEthereum.isMetaMask !== undefined ? nativeEthereum.isMetaMask : false;
             this.chainId = null;  // Will be set on first eth_chainId request or providerStateChanged event
             this.networkVersion = null;  // decimal string format (deprecated)
             this.selectedAddress = null;  // current active address
@@ -66,6 +66,8 @@ const EthereumWrapper = (function() {
 
             // Provider state changed - update all properties at once
             this._connectSignal('providerStateChanged', () => {
+                this.isStatus = this.nativeEthereum.isStatus !== undefined ? this.nativeEthereum.isStatus : this.isStatus;
+                this.isMetaMask = this.nativeEthereum.isMetaMask !== undefined ? this.nativeEthereum.isMetaMask : this.isMetaMask;
                 this.chainId = this.nativeEthereum.chainId || this.chainId;
                 this.networkVersion = this.nativeEthereum.networkVersion || this.networkVersion;
                 this.selectedAddress = this.nativeEthereum.selectedAddress || null;

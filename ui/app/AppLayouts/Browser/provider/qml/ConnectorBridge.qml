@@ -20,10 +20,8 @@ import "Utils.js" as Utils
 Item {
     id: root
 
-    property string userUID: ""
-    property var connectorController: null
-    property string defaultAccountAddress: ""
-    property var accountsModel: null
+    required property string userUID
+    required property var connectorController
     property string httpUserAgent: ""          // Custom user agent for web profiles
 
     readonly property alias webChannel: channel
