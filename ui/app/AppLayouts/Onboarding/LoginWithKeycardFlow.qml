@@ -85,7 +85,7 @@ OnboardingStackView {
             remainingAttempts: root.remainingPinAttempts
             unblockWithPukAvailable: root.remainingPukAttempts > 0
 
-            onAuthorizationRequested: root.authorizationRequested(pin)
+            onAuthorizationRequested: pin => root.authorizationRequested(pin)
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
 
@@ -112,8 +112,10 @@ OnboardingStackView {
     Component {
         id: keycardExtractingKeysPage
 
-        KeycardExtractingKeysPage {
+        KeycardIntroPage {
             id: page
+
+            keycardState: Onboarding.KeycardState.ReadingKeycard
 
             Connections {
                 target: root
