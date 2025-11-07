@@ -18,7 +18,6 @@ logScope:
 
 # Signals which may be emitted by this service:
 const SIGNAL_FOLLOWING_ADDRESSES_UPDATED* = "followingAddressesUpdated"
-const SIGNAL_FOLLOWING_ADDRESSES_ABOUT_TO_BE_UPDATED* = "followingAddressesAboutToBeUpdated"
 
 type
   FollowingAddressesArgs* = ref object of Args
@@ -30,8 +29,6 @@ QtObject:
     threadpool: ThreadPool
     events: EventEmitter
     followingAddressesTable: Table[string, seq[FollowingAddressDto]]
-    followingAddressesLoading: bool
-    hasCacheData: bool
     networkService: network_service.Service
     totalFollowingCount: int
 
@@ -45,8 +42,6 @@ QtObject:
     result.events = events
     result.networkService = networkService
     result.followingAddressesTable = initTable[string, seq[FollowingAddressDto]]()
-    result.followingAddressesLoading = false
-    result.hasCacheData = false
     result.totalFollowingCount = 0
 
   proc init*(self: Service) =
@@ -61,9 +56,6 @@ QtObject:
     return @[]
 
   proc fetchFollowingAddresses*(self: Service, userAddress: string, search: string = "", limit: int = 10, offset: int = 0) =
-    self.followingAddressesLoading = true
-    defer: self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_ABOUT_TO_BE_UPDATED, Args())
-    
     # Fetch stats only when not searching (to get total count for pagination)
     if search.len == 0:
       self.fetchFollowingStats(userAddress)
@@ -80,11 +72,8 @@ QtObject:
     self.threadpool.start(arg)
 
   proc onFollowingAddressesFetched(self: Service, response: string) {.slot.} =
-    info "onFollowingAddressesFetched called", responseLength = response.len
-    self.followingAddressesLoading = false
     try:
       let parsedJson = response.parseJson
-      info "onFollowingAddressesFetched parsed JSON"
       
       var errorString: string
       var userAddress: string
@@ -92,11 +81,6 @@ QtObject:
       discard parsedJson.getProp("followingAddresses", followingAddressesJson)
       discard parsedJson.getProp("userAddress", userAddress)
       discard parsedJson.getProp("error", errorString)
-      
-      info "onFollowingAddressesFetched extracted props", 
-        userAddress = userAddress,
-        hasError = not errorString.isEmptyOrWhitespace,
-        hasFollowingJson = not followingAddressesJson.isNil
 
       if not errorString.isEmptyOrWhitespace:
         error "onFollowingAddressesFetched got error from backend", errorString = errorString
@@ -115,13 +99,8 @@ QtObject:
 
       let addresses = followingResult.getElems().map(proc(x: JsonNode): FollowingAddressDto = x.toFollowingAddressDto())
       
-      info "onFollowingAddressesFetched successfully parsed addresses with ENS data from API", 
-        userAddress = userAddress,
-        addressCount = addresses.len
-      
       # Update cache with complete data (ENS names and avatars already included from API)
       self.followingAddressesTable[userAddress] = addresses
-      self.hasCacheData = true
       
       # Emit signal to refresh UI - data is complete
       let args = FollowingAddressesArgs(userAddress: userAddress, addresses: addresses)
@@ -131,12 +110,6 @@ QtObject:
       error "onFollowingAddressesFetched exception", msg = e.msg, stack = e.getStackTrace()
       self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, Args())
 
-  proc isFollowingAddressesLoading*(self: Service): bool =
-    return self.followingAddressesLoading
-
-  proc hasFollowingAddressesCache*(self: Service): bool =
-    return self.hasCacheData
-
   proc getTotalFollowingCount*(self: Service): int =
     return self.totalFollowingCount
 
@@ -145,7 +118,6 @@ QtObject:
       let response = following_addresses.getFollowingStats(userAddress)
       if response.error.isNil:
         self.totalFollowingCount = response.result.getInt()
-        info "fetchFollowingStats: total count", count = self.totalFollowingCount
       else:
         error "fetchFollowingStats: error", error = response.error
     except Exception as e:

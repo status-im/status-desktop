@@ -21,14 +21,11 @@ RightTabBaseView {
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property SharedStores.NetworksStore networksStore
 
-    // Note: Following addresses are pre-fetched when wallet loads,
-    // so data should already be available when user navigates here
-
     header: WalletFollowingAddressesHeader {
         lastReloadedTime: !!root.rootStore.lastReloadTimestamp ?
                               LocaleUtils.formatRelativeTimestamp(
                                   root.rootStore.lastReloadTimestamp * 1000) : ""
-        loading: root.rootStore.isAccountTokensReloading
+        loading: followingAddresses.isPaginationLoading
 
         onReloadRequested: followingAddresses.refresh()
         onAddViaEFPClicked: Global.openLinkWithConfirmation("https://efp.app", "efp.app")

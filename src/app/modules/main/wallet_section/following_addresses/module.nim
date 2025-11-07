@@ -25,14 +25,12 @@ proc newModule*(
   events: EventEmitter,
   followingAddressService: following_address_service.Service,
 ): Module =
-  info "following_addresses newModule called"
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = newController(result, events, followingAddressService)
   result.moduleLoaded = false
-  info "following_addresses newModule completed"
 
 method delete*(self: Module) =
   self.viewVariant.delete
@@ -40,18 +38,6 @@ method delete*(self: Module) =
 
 method loadFollowingAddresses*(self: Module, userAddress: string) =
   let followingAddresses = self.controller.getFollowingAddresses(userAddress)
-  info "loadFollowingAddresses: loading data into view",
-    userAddress = userAddress,
-    addressCount = followingAddresses.len
-  
-  # Log first few items for debugging
-  for i in 0 ..< min(3, followingAddresses.len):
-    info "loadFollowingAddresses: item details",
-      index = i,
-      address = followingAddresses[i].address,
-      ensName = followingAddresses[i].ensName,
-      ensNameLength = followingAddresses[i].ensName.len
-  
   self.view.setItems(
     followingAddresses.map(f => initItem(
       f.address,
@@ -60,26 +46,13 @@ method loadFollowingAddresses*(self: Module, userAddress: string) =
       f.avatar,
     ))
   )
-  info "loadFollowingAddresses: view.setItems completed"
-  
-  # Emit signal to update total count in QML
   self.view.totalFollowingCountChanged()
 
 method load*(self: Module) =
-  info "following_addresses load() called"
   try:
-    info "following_addresses setting root context property"
     singletonInstance.engine.setRootContextProperty("walletSectionFollowingAddresses", self.viewVariant)
-    info "following_addresses root context property set successfully"
-
-    # We'll load following addresses when user navigates to the section
-    info "following_addresses initializing controller"
     self.controller.init()
-    info "following_addresses controller initialized"
-    
-    info "following_addresses loading view"
     self.view.load()
-    info "following_addresses load() completed successfully"
   except Exception as e:
     error "following_addresses load() failed", msg=e.msg
 

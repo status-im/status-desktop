@@ -79,17 +79,6 @@ QtObject:
       result = newQVariant(item.getAvatar())
 
   proc setItems*(self: Model, items: seq[Item]) =
-    info "model.setItems called", itemCount = items.len
-    
-    # Log first few items
-    for i in 0 ..< min(3, items.len):
-      info "model.setItems item details",
-        index = i,
-        address = items[i].getAddress(),
-        ensName = items[i].getEnsName(),
-        ensNameLength = items[i].getEnsName().len,
-        name = items[i].getName()
-    
     self.beginResetModel()
     self.items = items
     self.endResetModel()
@@ -97,8 +86,6 @@ QtObject:
 
     for item in items:
         self.itemChanged(item.getAddress())
-    
-    info "model.setItems completed"
 
   proc getItemByAddress*(self: Model, address: string): Item =
     if address.len == 0:
