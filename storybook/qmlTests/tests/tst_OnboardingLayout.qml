@@ -914,7 +914,8 @@ Item {
             tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 6: Extracting keys from Keycard
-            page = getCurrentPage(stack, KeycardExtractingKeysPage)
+            page = getCurrentPage(stack, KeycardIntroPage)
+            tryCompare(page, "keycardState", Onboarding.KeycardState.ReadingKeycard)
             mockDriver.restoreKeysExportState = Onboarding.ProgressState.Success
 
             // PAGE 7: Local import
