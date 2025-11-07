@@ -13,7 +13,7 @@ const EthereumWrapper = (function() {
             
             if (!nativeEthereum) {
                 console.error("[Ethereum Wrapper] nativeEthereum is not available");
-                return null;
+                throw new Error("nativeEthereum is required");
             }
 
             this.listeners = new Map(); // event -> Set<handler>
@@ -210,9 +210,11 @@ const EthereumWrapper = (function() {
             return true;
         }
         
-        const provider = new EthereumProvider(window.ethereumProvider);
-        if (!provider) {
-            console.error('[Ethereum Wrapper] Failed to create EthereumProvider');
+        let provider;
+        try {
+            provider = new EthereumProvider(window.ethereumProvider);
+        } catch (error) {
+            console.error('[Ethereum Wrapper] Failed to create EthereumProvider:', error);
             return false;
         }
 
