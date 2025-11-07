@@ -6,7 +6,7 @@ import QtWebChannel
 import StatusQ.Core.Theme
 import utils
 
-import "Utils.js" as Utils
+import "Utils.js" as BrowserUtils
 
 /**
  * ConnectorBridge
@@ -61,7 +61,7 @@ QtObject {
         const urlStr = url.toString()
         connectorManager.dappUrl = urlStr
         connectorManager.dappOrigin = urlStr
-        connectorManager.dappName = name || Utils.extractDomainName(urlStr)
+        connectorManager.dappName = name || BrowserUtils.extractDomainName(urlStr)
         connectorManager.dappChainId = 1
     }
 
@@ -125,7 +125,7 @@ QtObject {
     readonly property Eip1193ProviderAdapter eip1193ProviderAdapter: Eip1193ProviderAdapter {
         WebChannel.id: "ethereumProvider"
         
-        chainId: Utils.chainIdToHex(connectorManager.dappChainId)
+        chainId: BrowserUtils.chainIdToHex(connectorManager.dappChainId)
         networkVersion: connectorManager.dappChainId.toString()
         selectedAddress: connectorManager.accounts.length > 0 ? connectorManager.accounts[0] : ""
         accounts: connectorManager.accounts
