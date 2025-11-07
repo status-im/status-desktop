@@ -398,7 +398,6 @@ Item {
     Loader {
         id: keypairImport
         active: false
-        asynchronous: true
 
         sourceComponent: KeypairImportPopup {
             store.keypairImportModule: RootStore.keypairImportModule

@@ -85,7 +85,6 @@ Item {
         Loader {
             id: messageOriginInfoLoader
             active: root.messageOriginInfo
-            asynchronous: true
             sourceComponent: StatusBaseText {
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.baseColor1
@@ -97,7 +96,6 @@ Item {
         Loader {
             id: verificationIconsLoader
             active: !root.amISender
-            asynchronous: true
             sourceComponent: StatusContactVerificationIcons {
                 isContact: root.isContact
                 trustIndicator: root.trustIndicator
@@ -108,7 +106,6 @@ Item {
             id: secondaryDisplayNameLoader
             active: !root.amISender && !!root.sender.secondaryName
             visible: active
-            asynchronous: true
             sourceComponent: StatusBaseText {
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.baseColor1
@@ -121,14 +118,12 @@ Item {
             id: dotLoader
             sourceComponent: dotComponent
             active: secondaryDisplayNameLoader.active && tertiaryDetailTextLoader.active
-            asynchronous: true
         }
 
         Loader {
             id: tertiaryDetailTextLoader
             active: !root.amISender && root.messageOriginInfo === "" && !!root.tertiaryDetail
             visible: active
-            asynchronous: true
             sourceComponent: StatusBaseText {
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: Theme.asideTextFontSize
@@ -143,7 +138,6 @@ Item {
             id: secondDotLoader
             sourceComponent: dotComponent
             active: verificationIconsLoader.active && verificationIconsLoader.item.width <= 0 || secondaryDisplayNameLoader.active || root.amISender || tertiaryDetailTextLoader.active
-            asynchronous: true
         }
 
         StatusTimeStampLabel {
@@ -167,7 +161,6 @@ Item {
             id: deliveryStatusLoader
             Layout.alignment: Qt.AlignVCenter
             active: root.outgoingStatus !== StatusMessage.OutgoingStatus.Unknown
-            asynchronous: true
             sourceComponent: RowLayout {
                 spacing: 0
                 StatusIcon {
@@ -194,7 +187,6 @@ Item {
                 }
                 Loader {
                     active: root.showOutgointStatusLabel
-                    asynchronous: true
                     sourceComponent: StatusBaseText {
                         Layout.alignment: Qt.AlignVCenter
                         color: d.outgoingStatusColor
@@ -223,7 +215,6 @@ Item {
         Loader {
             id: resendButtonLoader
             active: root.showOutgointStatusLabel && d.expired
-            asynchronous: true
             sourceComponent: StatusButton {
                 Layout.fillHeight: true
                 verticalPadding: 1

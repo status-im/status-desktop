@@ -44,7 +44,6 @@ Control {
             active: !!root.primarySideText
             width: Math.min(implicitWidth, parent.width)
             visible: active
-            asynchronous: true
             sourceComponent: StatusBaseText {
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.baseColor1
@@ -56,7 +55,6 @@ Control {
 
         Loader {
             id: iconsLoader
-            asynchronous: true
         }
 
         Loader {
@@ -64,7 +62,6 @@ Control {
             active: !!root.secondaryText
             width: Math.min(implicitWidth, parent.width)
             visible: active
-            asynchronous: true
             sourceComponent: StatusBaseText {
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.baseColor1
@@ -78,14 +75,12 @@ Control {
             id: dotLoader
             sourceComponent: dotComponent
             active: secondaryTextLoader.active && tertiaryTextLoader.active
-            asynchronous: true
         }
 
         Loader {
             id: tertiaryTextLoader
             active: !!root.tertiaryText
             visible: active
-            asynchronous: true
             sourceComponent: StatusBaseText {
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: Theme.asideTextFontSize

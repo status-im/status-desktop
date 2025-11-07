@@ -265,12 +265,10 @@ Item {
     Loader {
         id: popupMenuSlot
         active: !!sourceComponent
-        asynchronous: true
     }
 
     Loader {
         id: categoryPopupMenuSlot
         active: !!sourceComponent
-        asynchronous: true
     }
 }

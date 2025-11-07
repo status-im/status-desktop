@@ -274,8 +274,6 @@ Loader {
 
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
-    asynchronous: true
-
     sourceComponent: {
         if (root.deleted) {
             return deletedMessageComponent

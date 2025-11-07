@@ -114,7 +114,6 @@ Item {
 
                         Loader {
                             Layout.fillWidth: true
-                            asynchronous: true
                             active: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
                             visible: active
                             sourceComponent: StatusTextMessage {
@@ -130,7 +129,6 @@ Item {
 
                         Loader {
                             Layout.fillWidth: true
-                            asynchronous: true
                             active: replyDetails.contentType === StatusMessage.ContentType.Image
                             visible: active
                             sourceComponent: StatusMessageImageAlbum {
@@ -146,7 +144,6 @@ Item {
                         }
 
                         StatusSticker {
-                            asynchronous: true
                             active: replyDetails.contentType === StatusMessage.ContentType.Sticker
                             visible: active
                             asset.width: 48

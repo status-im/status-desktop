@@ -118,7 +118,6 @@ ColumnLayout {
         id: filterPanelLoader
         active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || root.walletRootStore.currentActivityFiltersStore.filtersSet)
         visible: active && !noTxs.visible
-        asynchronous: true
         Layout.fillWidth: true
         sourceComponent: ActivityFilterPanel {
             activityFilterStore: root.walletRootStore.currentActivityFiltersStore

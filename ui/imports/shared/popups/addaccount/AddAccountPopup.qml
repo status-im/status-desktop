@@ -64,7 +64,6 @@ StatusModal {
             Loader {
                 id: limitPopup
                 active: false
-                asynchronous: true
 
                 property string title
                 property string content

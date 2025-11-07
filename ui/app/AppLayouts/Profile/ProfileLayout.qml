@@ -268,7 +268,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: ChangePasswordView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -284,7 +283,6 @@ StatusSectionLayout {
             id: contactsView
 
             active: false
-            asynchronous: true
             sourceComponent: ContactsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -304,7 +302,6 @@ StatusSectionLayout {
         Loader {
             id: ensContainer
             active: false
-            asynchronous: true
             sourceComponent: EnsView {
                 // TODO: we need to align structure for the entire this part using `SettingsContentBase` as root component
                 // TODO: handle structure for this subsection to match style used in onther sections
@@ -325,7 +322,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: MessagingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -371,7 +367,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: AppearanceView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -386,7 +381,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: LanguageView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -409,7 +403,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: NotificationsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -423,7 +416,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: SyncingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -439,7 +431,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: BrowserView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -454,7 +445,6 @@ StatusSectionLayout {
             id: advancedView
 
             active: false
-            asynchronous: true
             sourceComponent: AdvancedView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -471,7 +461,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: AboutView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -492,7 +481,6 @@ StatusSectionLayout {
             id: communitiesView
             
             active: false
-            asynchronous: true
             Layout.fillWidth: true
             Layout.fillHeight: true
             sourceComponent: CommunitiesView {
@@ -534,7 +522,6 @@ StatusSectionLayout {
         Loader {
             id: keycardView
             active: false
-            asynchronous: true
             sourceComponent: KeycardView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
@@ -550,7 +537,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             Layout.fillWidth: true
             Layout.fillHeight: true
             sourceComponent: SettingsContentBase {
@@ -571,7 +557,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             Layout.fillWidth: true
             Layout.fillHeight: true
             sourceComponent: SettingsContentBase {
@@ -594,7 +579,6 @@ StatusSectionLayout {
             id: privacyAndSecurityView
 
             active: false
-            asynchronous: true
             sourceComponent: PrivacyAndSecurityView {
                 whitelistedDomainsModel: root.whitelistedDomainsModel
                 isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
@@ -620,7 +604,6 @@ StatusSectionLayout {
 
         Loader {
             active: false
-            asynchronous: true
             sourceComponent: BackupView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height

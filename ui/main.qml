@@ -470,7 +470,6 @@ StatusWindow {
         anchors.bottomMargin: parent.SafeArea.margins.bottom
         anchors.leftMargin: parent.SafeArea.margins.left
         anchors.rightMargin: parent.SafeArea.margins.right
-        asynchronous: true
         opacity: active ? 1.0 : 0.0
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}
