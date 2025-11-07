@@ -7,12 +7,12 @@ QtObject {
     property var connectorController: null
     
     // dApp metadata
-    required property string dappUrl
-    required property string dappOrigin
-    required property string dappName
-    required property string dappIconUrl
-    required property int dappChainId
-    required property string clientId
+    property string dappUrl: ""
+    property string dappOrigin: ""
+    property string dappName: ""
+    property string dappIconUrl: ""
+    property int dappChainId: 1
+    property string clientId: "status-desktop/dapp-browser"
     
     // STATE
     property bool connected: false
@@ -137,6 +137,17 @@ QtObject {
         if (connectorController) {
             connectorController.changeAccount(dappOrigin, clientId, newAccount)
         }
+    }
+
+    function updateDAppUrl(url, name, iconUrl) {
+        if (!url) return
+
+        const urlStr = url.toString()
+        dappUrl = urlStr
+        dappOrigin = Utils.normalizeOrigin(urlStr)
+        dappName = name || Utils.extractDomainName(urlStr)
+        dappIconUrl = iconUrl ? iconUrl.toString() : ""
+        dappChainId = 1
     }
 
     // HELPER FUNCTIONS

@@ -53,8 +53,6 @@ StatusSectionLayout {
 
         userUID: root.userUID
         connectorController: root.connectorController
-        defaultAccountAddress: root.browserWalletStore.dappBrowserAccount.address
-        accountsModel: root.browserWalletStore.accounts
         httpUserAgent: {
             if (localAccountSensitiveSettings.compatibilityMode) {
                 // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
@@ -538,7 +536,11 @@ StatusSectionLayout {
 
             // Update ConnectorBridge with current dApp metadata
             if (_internal.currentWebView && _internal.currentWebView.url) {
-                connectorBridge.updateDAppUrl(_internal.currentWebView.url, _internal.currentWebView.title)
+                connectorBridge.connectorManager.updateDAppUrl(
+                    _internal.currentWebView.url, 
+                    _internal.currentWebView.title,
+                    _internal.currentWebView.icon
+                )
             }
         }
     }

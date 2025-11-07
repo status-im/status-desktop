@@ -23,52 +23,36 @@ QtObject {
     required property var connectorController
     property string httpUserAgent: ""          // Custom user agent for web profiles
 
-    property alias dappUrl: connectorManager.dappUrl
-    property alias dappOrigin: connectorManager.dappOrigin
-    property alias dappName: connectorManager.dappName
-    property alias dappIconUrl: connectorManager.dappIconUrl
-    property alias clientId: connectorManager.clientId
+    readonly property alias dappUrl: connectorManager.dappUrl
+    readonly property alias dappOrigin: connectorManager.dappOrigin
+    readonly property alias dappName: connectorManager.dappName
+    readonly property alias dappIconUrl: connectorManager.dappIconUrl
+    readonly property alias clientId: connectorManager.clientId
 
-    function hasWalletConnected(hostname, address) {
-        if (!connectorController) return false
+    readonly property ConnectorManager connectorManager: ConnectorManager {
+        id: connectorManager
+        connectorController: root.connectorController  // (shared_modules/connector/controller.nim)
 
-        const dApps = connectorController.getDApps()
-        try {
-            const dAppsObj = JSON.parse(dApps)
-            if (Array.isArray(dAppsObj)) {
-                return dAppsObj.some(function(dapp) {
-                    return dapp.url && dapp.url.indexOf(hostname) >= 0
-                })
-            }
-        } catch (e) {
-            console.warn("[ConnectorBridge] Error checking wallet connection:", e)
-        }
-        return false
+        // Forward events to Eip1193ProviderAdapter
+        onConnectEvent: (info) => eip1193ProviderAdapter.connectEvent(info)
+        onAccountsChangedEvent: (accounts) => eip1193ProviderAdapter.accountsChangedEvent(accounts)
+        onChainChangedEvent: (chainId) => eip1193ProviderAdapter.chainChangedEvent(chainId)
+        onRequestCompletedEvent: (payload) => eip1193ProviderAdapter.requestCompletedEvent(payload)
+        onDisconnectEvent: (error) => eip1193ProviderAdapter.disconnectEvent(error)
+        onMessageEvent: (message) => eip1193ProviderAdapter.messageEvent(message)
+        onProviderStateChanged: () => eip1193ProviderAdapter.providerStateChanged()
     }
 
-    function disconnect(hostname) {
-        if (!connectorController) return false
-        return connectorController.disconnect(hostname)
-    }
+    readonly property Eip1193ProviderAdapter eip1193ProviderAdapter: Eip1193ProviderAdapter {
+        WebChannel.id: "ethereumProvider"
 
-    function updateDAppUrl(url, name) {
-        if (!url) return
+        chainId: BrowserUtils.chainIdToHex(connectorManager.dappChainId)
+        networkVersion: connectorManager.dappChainId.toString()
+        selectedAddress: connectorManager.accounts.length > 0 ? connectorManager.accounts[0] : ""
+        accounts: connectorManager.accounts
+        connected: connectorManager.connected
 
-        const urlStr = url.toString()
-        connectorManager.dappUrl = urlStr
-        connectorManager.dappOrigin = Utils.normalizeOrigin(urlStr)
-        connectorManager.dappName = name || BrowserUtils.extractDomainName(urlStr)
-        connectorManager.dappChainId = 1
-    }
-
-    function createScript(scriptName, runOnSubframes = true) {
-        return {
-            name: scriptName,
-            sourceUrl: Qt.resolvedUrl("../js/" + scriptName),
-            injectionPoint: WebEngineScript.DocumentCreation,
-            worldId: WebEngineScript.MainWorld,
-            runOnSubframes: runOnSubframes
-        }
+        onRequestInternal: (args) => connectorManager.request(args)
     }
 
     readonly property var _scripts: [
@@ -93,40 +77,43 @@ QtObject {
         userScripts.collection: root._scripts
     }
 
-    readonly property ConnectorManager connectorManager: ConnectorManager {
-        connectorController: root.connectorController  // (shared_modules/connector/controller.nim)
-
-        dappUrl: ""
-        dappOrigin: ""
-        dappName: ""
-        dappIconUrl: ""
-        dappChainId: 1
-        clientId: "status-desktop/dapp-browser"
-
-        // Forward events to Eip1193ProviderAdapter
-        onConnectEvent: (info) => eip1193ProviderAdapter.connectEvent(info)
-        onAccountsChangedEvent: (accounts) => eip1193ProviderAdapter.accountsChangedEvent(accounts)
-        onChainChangedEvent: (chainId) => eip1193ProviderAdapter.chainChangedEvent(chainId)
-        onRequestCompletedEvent: (payload) => eip1193ProviderAdapter.requestCompletedEvent(payload)
-        onDisconnectEvent: (error) => eip1193ProviderAdapter.disconnectEvent(error)
-        onMessageEvent: (message) => eip1193ProviderAdapter.messageEvent(message)
-
-        onProviderStateChanged: () => eip1193ProviderAdapter.providerStateChanged()
-    }
-
     readonly property WebChannel channel: WebChannel {
         registeredObjects: [eip1193ProviderAdapter]
     }
 
-    readonly property Eip1193ProviderAdapter eip1193ProviderAdapter: Eip1193ProviderAdapter {
-        WebChannel.id: "ethereumProvider"
+    function hasWalletConnected(hostname, address) {
+        if (!connectorController) return false
 
-        chainId: BrowserUtils.chainIdToHex(connectorManager.dappChainId)
-        networkVersion: connectorManager.dappChainId.toString()
-        selectedAddress: connectorManager.accounts.length > 0 ? connectorManager.accounts[0] : ""
-        accounts: connectorManager.accounts
-        connected: connectorManager.connected
+        const dApps = connectorController.getDApps()
+        try {
+            const dAppsObj = JSON.parse(dApps)
+            if (Array.isArray(dAppsObj)) {
+                return dAppsObj.some(function(dapp) {
+                    return dapp.url && dapp.url.indexOf(hostname) >= 0
+                })
+            }
+        } catch (e) {
+            console.warn("[ConnectorBridge] Error checking wallet connection:", e)
+        }
+        return false
+    }
 
-        onRequestInternal: (args) => connectorManager.request(args)
+    function disconnect(hostname) {
+        if (!connectorController) return false
+        return connectorController.disconnect(hostname)
+    }
+
+    function updateDAppUrl(url, name) {
+        connectorManager.updateDAppUrl(url, name)
+    }
+
+    function createScript(scriptName, runOnSubframes = true) {
+        return {
+            name: scriptName,
+            sourceUrl: Qt.resolvedUrl("../js/" + scriptName),
+            injectionPoint: WebEngineScript.DocumentCreation,
+            worldId: WebEngineScript.MainWorld,
+            runOnSubframes: runOnSubframes
+        }
     }
 }
