@@ -44,6 +44,8 @@ QtObject {
     }
 
     readonly property Eip1193ProviderAdapter eip1193ProviderAdapter: Eip1193ProviderAdapter {
+        id: eip1193Provider
+        objectName: "ethereumProvider"
         WebChannel.id: "ethereumProvider"
 
         chainId: BrowserUtils.chainIdToHex(connectorManager.dappChainId)
