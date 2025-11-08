@@ -17,7 +17,6 @@ This section is for users who want to get up and running quickly with minimal te
 
 ### Prerequisites
 - Docker
-- [act](https://github.com/nektos/act) (GitHub Actions local runner)
 - ADB (Android Debug Bridge)
 - Android Emulator
 
@@ -30,7 +29,7 @@ This section is for users who want to get up and running quickly with minimal te
 brew install docker --cask
 # Start docker
 open -a Docker
-brew install act android-platform-tools android-commandlinetools xcbeautify
+brew install android-platform-tools android-commandlinetools xcbeautify
 ```
 
 ```bash
@@ -47,24 +46,28 @@ sdkmanager --install \
 "system-images;android-35;google_apis;arm64-v8a"
 ```
 
-- Install [act](https://nektosact.com/installation/index.html)
-
 2. **Verify installation:**
 ```bash
+docker --version
 adb --version
 emulator --version
 avdmanager --version
 sdkmanager --version
-act --version
 ```
 
-2. **Running the app**
+3. **Building the app**
+```bash
+make -f mobile/ContainerBuilds.mk
+```
+
+4. **Running the app**
 ```bash
 # Linux and MacOS
 make -f mobile/ContainerBuilds.mk run
 ```
 
 ### What Happens Behind the Scenes
-- The build process uses GitHub Actions containers to ensure consistent builds
-- All required tools and dependencies are provided by the container
-- The built APK is copied from the container to the local `bin` directory
+- The build process uses the same pre-built Docker image as the CI pipeline (`harbor.status.im/status-im/status-desktop-build:1.0.6-qt6.9.2-android`)
+- All required tools and dependencies (Qt 6.9.2, Android SDK/NDK, Go, Nim) are provided by the container
+- The container runs on linux/amd64 platform for consistency, even on ARM macOS machines
+- The built APK/AAB is available in the `mobile/bin/android/qt6/` directory
