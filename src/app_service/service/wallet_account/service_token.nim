@@ -5,18 +5,12 @@ proc onAllTokensBuilt(self: Service, response: string) {.slot.} =
   var accountAddresses: seq[string] = @[]
   var groupedAssets: seq[AssetGroupItem] = @[]
   defer:
-    self.fetchingBalancesInProgress = false
     let timestamp = getTime().toUnix()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(
       accountAddresses:accountAddresses,
       assets: groupedAssets,
       timestamp: timestamp
     ))
-
-    if self.addressesWaitingForBalanceToFetch.len > 0:
-      let addressesToFetch = self.addressesWaitingForBalanceToFetch
-      self.addressesWaitingForBalanceToFetch = @[]
-      self.buildAllTokens(addressesToFetch, forceRefresh = true)
 
   try:
     let responseObj = response.parseJson
@@ -91,16 +85,10 @@ proc onAllTokensBuilt(self: Service, response: string) {.slot.} =
   except Exception as e:
     error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
-proc buildAllTokens*(self: Service, accounts: seq[string], forceRefresh: bool) =
+proc buildAllTokensInternal(self: Service, accounts: seq[string], forceRefresh: bool) =
   if not main_constants.WALLET_ENABLED or
     accounts.len == 0:
       return
-
-  if self.fetchingBalancesInProgress:
-    self.addressesWaitingForBalanceToFetch.add(accounts)
-    return
-
-  self.fetchingBalancesInProgress = true
 
   # set assetsLoading to true as the tokens are being loaded
   for waddress in accounts:
@@ -115,6 +103,9 @@ proc buildAllTokens*(self: Service, accounts: seq[string], forceRefresh: bool) =
     forceRefresh: forceRefresh
   )
   self.threadpool.start(arg)
+
+proc buildAllTokens*(self: Service, accounts: seq[string], forceRefresh: bool) =
+  self.buildTokensDebouncer.call(accounts, forceRefresh)
 
 # Returns the total currency balance for the given wallet accounts and chain ids
 proc getTotalCurrencyBalance*(self: Service, walletAccounts: seq[string], chainIds: seq[int]): float64 =
