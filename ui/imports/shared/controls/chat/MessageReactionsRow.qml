@@ -11,9 +11,7 @@ import SortFilterProxyModel
 Row {
     id: root
 
-    required property StatusEmojiModel emojiModel
-    required property var recentEmojis
-    required property string skinColor
+    required property SortFilterProxyModel emojiModel
     property int buttonSize
 
     signal toggleReaction(string emoji)
@@ -24,11 +22,14 @@ Row {
     leftPadding: Theme.halfPadding
     rightPadding: Theme.halfPadding
 
-    Component.onCompleted: {
-        if (!root.recentEmojis) {
-            return
+    Connections {
+        target: root.emojiModel
+        onCountChanged: {
+            // Force re-evaluation of recentEmojisRepeater
+            recentEmojisRepeater.model = 0
+            recentEmojisRepeater.model = 5
+
         }
-        root.emojiModel.recentEmojis = root.recentEmojis
     }
 
     QtObject {
@@ -41,34 +42,8 @@ Row {
                 IndexFilter {
                     // Only show the first 5 emojis
                     maximumIndex: 4
-                },
-                AnyOf {
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: ""
-                    }
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: root.emojiModel.baseSkinColorName
-                    }
-                    enabled: root.skinColor === ""
-                },
-                AnyOf {
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: ""
-                    }
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: root.skinColor
-                    }
-                    enabled: root.skinColor !== ""
                 }
             ]
-
-            sorters: RoleSorter {
-                roleName: "emoji_order"
-            }
         }
     }
 

@@ -24,8 +24,6 @@ Flow {
     QtObject {
         id: d
 
-        readonly property string addReactionButtonName: "addReactionButton"
-
         function lastTwoItems(nodes) {
             return nodes.join(qsTr(" and "));
         }
@@ -75,10 +73,10 @@ Flow {
         Control {
             id: reactionDelegate
 
-            topPadding: 3
-            bottomPadding: 3
-            leftPadding: 4
-            rightPadding: 5
+            topPadding: Theme.padding / 2.5
+            bottomPadding: Theme.padding / 2.5
+            leftPadding: Theme.padding / 2
+            rightPadding: Theme.padding / 2
 
             background: Rectangle {
                 radius: 8
@@ -93,7 +91,7 @@ Flow {
             }
 
             contentItem: Row {
-                spacing: 4
+                spacing: Theme.padding / 2
 
                 StatusBaseText {
                     objectName: "emojiReaction"

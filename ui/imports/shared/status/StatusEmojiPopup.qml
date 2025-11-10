@@ -29,6 +29,50 @@ StatusDropdown {
     signal setSkinColorRequested(string skinColor)
     signal setRecentEmojisRequested(var recentEmojis)
 
+    readonly property var fullModel: SortFilterProxyModel {
+        sourceModel: root.emojiModel
+
+        filters: [
+            AnyOf {
+                enabled: d.searchString !== ""
+                StatusQUtils.SearchFilter {
+                    roleName: "name"
+                    searchPhrase: d.searchString
+                }
+                StatusQUtils.SearchFilter {
+                    roleName: "shortname"
+                    searchPhrase: d.searchString
+                }
+            },
+            AnyOf {
+                ValueFilter {
+                    roleName: "skinColor"
+                    value: ""
+                }
+                ValueFilter {
+                    roleName: "skinColor"
+                    value: root.emojiModel.baseSkinColorName
+                }
+                enabled: root.skinColor === ""
+            },
+            AnyOf {
+                ValueFilter {
+                    roleName: "skinColor"
+                    value: ""
+                }
+                ValueFilter {
+                    roleName: "skinColor"
+                    value: root.skinColor
+                }
+                enabled: root.skinColor !== ""
+            }
+        ]
+
+        sorters: RoleSorter {
+            roleName: "emoji_order"
+        }
+    }
+
     width: 370
     padding: 0
 
@@ -50,9 +94,7 @@ StatusDropdown {
         root.close()
     }
 
-    Component.onCompleted: {
-        root.emojiModel.recentEmojis = root.recentEmojis
-    }
+    Component.onCompleted: root.emojiModel.recentEmojis = root.recentEmojis
 
     onOpened: {
         if (!StatusQUtils.Utils.isMobile)
@@ -76,50 +118,6 @@ StatusDropdown {
         readonly property int headerMargin: 8
         readonly property int imageWidth: 32
         readonly property int imageMargin: 6
-
-        readonly property var filteredModel: SortFilterProxyModel {
-            sourceModel: root.emojiModel
-
-            filters: [
-                AnyOf {
-                    enabled: d.searchString !== ""
-                    StatusQUtils.SearchFilter {
-                        roleName: "name"
-                        searchPhrase: d.searchString
-                    }
-                    StatusQUtils.SearchFilter {
-                        roleName: "shortname"
-                        searchPhrase: d.searchString
-                    }
-                },
-                AnyOf {
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: ""
-                    }
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: root.emojiModel.baseSkinColorName
-                    }
-                    enabled: root.skinColor === ""
-                },
-                AnyOf {
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: ""
-                    }
-                    ValueFilter {
-                        roleName: "skinColor"
-                        value: root.skinColor
-                    }
-                    enabled: root.skinColor !== ""
-                }
-            ]
-
-            sorters: RoleSorter {
-                roleName: "emoji_order"
-            }
-        }
     }
 
     contentItem: ColumnLayout {
@@ -204,7 +202,7 @@ StatusDropdown {
             font.weight: Font.Medium
             color: Theme.palette.secondaryText
             font.pixelSize: Theme.additionalTextSize
-            text: d.searchString ? (d.filteredModel.count ? qsTr("Search Results") : qsTr("No results found"))
+            text: d.searchString ? (d.fullModel.count ? qsTr("Search Results") : qsTr("No results found"))
                                           : emojiGrid.currentCategory
             font.capitalization: Font.AllUppercase
         }
@@ -222,7 +220,7 @@ StatusDropdown {
             }
             readonly property string currentCategoryIndex: root.emojiModel.categories.indexOf(currentCategory)
 
-            model: d.filteredModel
+            model: root.fullModel
 
             cellWidth: d.imageWidth + d.imageMargin * 2
             cellHeight: d.imageWidth + d.imageMargin * 2
@@ -265,7 +263,7 @@ StatusDropdown {
                     icon.name: modelData
                     highlighted: !!d.searchString ? index === 0 : index == emojiGrid.currentCategoryIndex
                     onClicked: {
-                        const offset = d.filteredModel.mapFromSource(root.emojiModel.getCategoryOffset(index))
+                        const offset = root.fullModel.mapFromSource(root.emojiModel.getCategoryOffset(index))
                         emojiGrid.positionViewAtIndex(offset, GridView.Beginning)
                     }
                 }

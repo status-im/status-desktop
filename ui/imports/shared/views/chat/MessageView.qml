@@ -483,7 +483,7 @@ Loader {
         target: emojiPopup
 
         function onEmojiSelected(text: string, atCursor: bool, hexcode: string) {
-            root.emojiReactionToggled(root.messageId, StatusQUtils.Emoji.fromCodePoint(hexcode))
+            root.emojiReactionToggled(root.messageId, text)
         }
         function onClosed() {
             // Debounce so that the popup doesn't immediately reopen when clicking the button
@@ -861,7 +861,7 @@ Loader {
                         return
                     }
 
-                    root.messageStore.toggleReaction(root.messageId, emoji)
+                    root.emojiReactionToggled(root.messageId, emoji)
                 }
 
                 onAddReactionClicked: (sender, mouse) => {
@@ -1072,12 +1072,8 @@ Loader {
                         buttonSize: d.chatButtonSize
                         leftPadding: 0
                         rightPadding: 0
-                        emojiModel: emojiPopup.emojiModel
-                        recentEmojis: emojiPopup.recentEmojis
-                        skinColor: emojiPopup.skinColor
-                        onToggleReaction: emoji => {
-                            root.messageStore.toggleReaction(root.messageId, emoji)
-                        }
+                        emojiModel: emojiPopup.fullModel
+                        onToggleReaction: emoji => root.emojiReactionToggled(root.messageId, emoji)
                         onOpenEmojiPopup: (parent, mouse) => {
                             d.addReactionClicked(parent, mouse)
                         }
@@ -1282,9 +1278,7 @@ Loader {
         MessageContextMenuView {
             id: messageContextMenuView
             emojiReactionLimitReached: root.emojiReactionLimitReached
-            emojiModel: emojiPopup.emojiModel
-            recentEmojis: emojiPopup.recentEmojis
-            skinColor: emojiPopup.skinColor
+            emojiModel: emojiPopup.fullModel
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
             forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
             isDebugEnabled: root.rootStore && root.rootStore.isDebugEnabled
@@ -1302,9 +1296,7 @@ Loader {
                                                         root.chatId)
             }
             onMarkMessageAsUnread: root.messageStore.markMessageAsUnread(messageContextMenuView.messageId)
-            onToggleReaction: (emoji) => {
-                root.messageStore.toggleReaction(messageContextMenuView.messageId, emoji)
-            }
+            onToggleReaction: (emoji) => root.emojiReactionToggled(root.messageId, emoji)
             onDeleteMessage: root.messageStore.warnAndDeleteMessage(messageContextMenuView.messageId)
             onEditClicked: root.messageStore.setEditModeOn(messageContextMenuView.messageId)
             onShowReplyArea: (senderId) => {

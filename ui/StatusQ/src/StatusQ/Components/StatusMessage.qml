@@ -417,9 +417,8 @@ Control {
         Loader {
             active: root.hovered && root.quickActions.length > 0
             anchors.right: parent.right
-            anchors.rightMargin: 20
-            anchors.top: parent.top
-            anchors.topMargin: -4
+            anchors.rightMargin: Theme.padding
+            anchors.top: root.top
             sourceComponent: StatusMessageQuickActions {
                 items: root.quickActions
             }

@@ -20,143 +20,39 @@ SplitView {
 
         readonly property var exampleAlbum: [ModelsData.banners.coinbase, ModelsData.icons.status]
 
-        readonly property var messageWithReactions: [{
+        readonly property var reactionsModels: ReactionsModels {}
+
+        readonly property var messageWithThreeReactions: [{
             timestamp: 1667937830123,
             senderId: "zq123456790",
             senderDisplayName: "Alice",
             contentType: StatusMessage.ContentType.Text,
-            message: "This message has reactions",
+            message: "This message has 3 reactions",
             isContact: true,
             isAReply: false,
             trustIndicator: StatusContactVerificationIcons.TrustedType.None,
             outgoingStatus: StatusMessage.OutgoingStatus.Delivered,
-            reactionsModel: [
-                {
-                    emoji: "😄",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 1,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\"]"
-                },
-                {
-                    emoji: "🕵️‍♀",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 232,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Bob\", \"John\"]"
-                },
-                {
-                    emoji: "😂",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 5,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Sally\", \"Tom\", \"Eve\", \"Raj\"]"
-                },
-                {
-                    emoji: "❤️",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 8,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Mia\", \"Noah\", \"Liam\", \"Olivia\", \"Ava\", \"Emma\", \"Lucas\", \"Zoe\"]"
-                },
-                {
-                    emoji: "👍",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 3,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Ben\", \"Claire\"]"
-                },
-                {
-                    emoji: "🎉",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 4,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Ivy\", \"Ken\", \"Lara\", \"Omar\"]"
-                },
-                {
-                    emoji: "😮",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 1,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Zed\"]"
-                },
-                {
-                    emoji: "😢",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 2,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Martha\", \"Gus\"]"
-                },
-                {
-                    emoji: "🔥",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 6,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Alex\", \"Sam\", \"Nina\", \"Pax\", \"Rae\"]"
-                },
-                {
-                    emoji: "🙏",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 2,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Hana\", \"Ike\"]"
-                },
-                {
-                    emoji: "😅",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 2,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Pete\"]"
-                },
-                {
-                    emoji: "😎",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 3,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Ruth\", \"Vik\", \"Jill\"]"
-                },
-                {
-                    emoji: "🤔",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 1,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Oli\"]"
-                },
-                {
-                    emoji: "🤯",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 7,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Abe\", \"Maya\", \"Noel\", \"Cory\", \"Lina\", \"Zara\"]"
-                },
-                {
-                    emoji: "🎶",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 2,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Tess\", \"Bea\"]"
-                },
-                {
-                    emoji: "💯",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 9,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Gabe\", \"Rin\", \"Seth\", \"Moe\", \"Luz\", \"Ira\", \"Noa\", \"Pam\"]"
-                },
-                {
-                    emoji: "👀",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 1,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Kai\"]"
-                },
-                {
-                    emoji: "😜",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 3,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Dot\", \"Max\"]"
-                },
-                {
-                    emoji: "🥳",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 4,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"June\", \"Fay\", \"Roy\", \"Skye\"]"
-                },
-                {
-                    emoji: "🤝",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 2,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Ivy\", \"Omar\"]"
-                }
-
-            ]
+            reactionsModel: d.reactionsModels.threeReactions
+        }]
+        readonly property var messageWithTwentyReactions: [{
+            timestamp: 1667937830125,
+            senderId: "zq123456790",
+            senderDisplayName: "Alice",
+            contentType: StatusMessage.ContentType.Text,
+            message: "This message has 20 reactions",
+            isContact: true,
+            isAReply: false,
+            trustIndicator: StatusContactVerificationIcons.TrustedType.None,
+            outgoingStatus: StatusMessage.OutgoingStatus.Delivered,
+            reactionsModel: d.reactionsModels.twentyReactions
         }]
 
+
         readonly property var messagesModel: ListModel {
-            Component.onCompleted: append(d.messageWithReactions)
+            Component.onCompleted:  {
+                append(d.messageWithThreeReactions)
+                append(d.messageWithTwentyReactions)
+            }
 
             ListElement {
                 timestamp: 1656937930123
