@@ -20,15 +20,19 @@ import AppLayouts.Wallet.controls
 Item {
     id: root
 
-    property AppLayoutStores.ContactsStore contactsStore
-    property SharedStores.NetworkConnectionStore networkConnectionStore
-    property SharedStores.NetworksStore networksStore
+    required property AppLayoutStores.ContactsStore contactsStore
+    required property SharedStores.NetworkConnectionStore networkConnectionStore
+    required property SharedStores.NetworksStore networksStore
+    property var followingAddressesModel
+    property int totalFollowingCount
 
     signal sendToAddressRequested(string address)
+    signal refreshRequested(string search, int limit, int offset)
+    signal followingAddressesUpdated()
 
-    readonly property bool showPagination: !d.currentSearch && walletSectionFollowingAddresses && walletSectionFollowingAddresses.totalFollowingCount > d.pageSize
+    readonly property bool showPagination: !d.currentSearch && root.totalFollowingCount > d.pageSize
     readonly property int pageSize: d.pageSize
-    readonly property int totalCount: walletSectionFollowingAddresses ? walletSectionFollowingAddresses.totalFollowingCount : 0
+    readonly property int totalCount: root.totalFollowingCount
     readonly property int currentPage: d.currentPage
     readonly property bool isPaginationLoading: d.isPaginationLoading
 
@@ -57,7 +61,7 @@ Item {
         function performSearch() {
             var offset = (currentPage - 1) * pageSize
             isPaginationLoading = true
-            RootStore.refreshFollowingAddresses(currentSearch, pageSize, offset)
+            root.refreshRequested(currentSearch, pageSize, offset)
         }
 
         function goToPage(pageNumber) {
@@ -70,22 +74,13 @@ Item {
             currentSearch = ""
             searchBox.text = ""
             isPaginationLoading = true
-            RootStore.refreshFollowingAddresses("", pageSize, 0)
+            root.refreshRequested("", pageSize, 0)
         }
     }
 
-    Connections {
-        target: walletSectionFollowingAddresses
-        function onFollowingAddressesUpdated() {
-            d.isPaginationLoading = false
-        }
-    }
-
-    Connections {
-        target: RootStore.followingAddresses
-        function onCountChanged() {
-            d.isPaginationLoading = false
-        }
+    // Called from parent when following addresses are updated
+    onFollowingAddressesUpdated: {
+        d.isPaginationLoading = false
     }
 
     Component.onCompleted: {
@@ -144,7 +139,7 @@ Item {
             id: noFollowingAddresses
             Layout.fillWidth: true
             Layout.preferredHeight: 44
-            visible: RootStore.followingAddresses.count === 0 && !d.isPaginationLoading
+            visible: root.followingAddressesModel && root.followingAddressesModel.count === 0 && !d.isPaginationLoading
             text: qsTr("Your EFP onchain friends will appear here")
         }
 
@@ -152,7 +147,7 @@ Item {
             id: emptySearchResult
             Layout.fillWidth: true
             Layout.preferredHeight: 44
-            visible: RootStore.followingAddresses.count > 0 && listView.count === 0 && !d.isPaginationLoading
+            visible: root.followingAddressesModel && root.followingAddressesModel.count > 0 && listView.count === 0 && !d.isPaginationLoading
             text: qsTr("No following addresses found. Check spelling or address is correct.")
         }
 
@@ -173,11 +168,12 @@ Item {
                 spacing: 8
                 visible: !d.isPaginationLoading
 
-                model: RootStore.followingAddresses
+                model: root.followingAddressesModel
 
                 delegate: FollowingAddressesDelegate {
                     id: followingAddressDelegate
                     objectName: "followingAddressView_Delegate_" + name
+                    width: ListView.view.width
                     name: model.name
                     address: model.address
                     ensName: model.ensName
@@ -186,6 +182,12 @@ Item {
                     networkConnectionStore: root.networkConnectionStore
                     activeNetworks: root.networksStore.activeNetworks
                     onOpenSendModal: root.sendToAddressRequested(recipient)
+                    onMenuRequested: (menuModel) => {
+                        followingAddressMenu.openMenu(followingAddressDelegate, 
+                            followingAddressDelegate.width - followingAddressMenu.width,
+                            followingAddressDelegate.height + Theme.halfPadding,
+                            menuModel)
+                    }
                 }
             }
 
@@ -194,6 +196,11 @@ Item {
                 visible: d.isPaginationLoading
                 color: Theme.palette.directColor4
             }
+        }
+
+        FollowingAddressMenu {
+            id: followingAddressMenu
+            activeNetworks: root.networksStore.activeNetworks
         }
     }
 }

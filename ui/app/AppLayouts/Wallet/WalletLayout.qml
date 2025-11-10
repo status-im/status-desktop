@@ -249,6 +249,7 @@ Item {
         id: cmpSavedAddresses
 
         SavedAddressesView {
+            rootStore: RootStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
 
@@ -261,7 +262,8 @@ Item {
     Component {
         id: cmpFollowingAddresses
         FollowingAddressesView {
-            rootStore: root.store
+            rootStore: RootStore
+            contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
 
