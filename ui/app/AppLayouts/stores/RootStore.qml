@@ -300,7 +300,7 @@ QtObject {
     // Wallet related properties and functions that shall be moved to `WalletRootStore`
     property var walletSectionSendInst: walletSectionSend
     property var savedAddressesModel: walletSectionSavedAddresses.model
-    property var followingAddressesModel: walletSectionFollowingAddresses.model
+    readonly property var followingAddressesModel: walletSectionFollowingAddresses.model
     readonly property var accounts: walletSectionAccounts.accounts
     property var walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
 

@@ -102,7 +102,6 @@ type
     walletAccountService: wallet_account_service.Service
     savedAddressService: saved_address_service.Service
     followingAddressService: following_address_service.Service
-    keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     stickersService: stickers_service.Service
     communityTokensService: community_tokens_service.Service
@@ -217,7 +216,6 @@ proc newModule*[T](
   result.walletAccountService = walletAccountService
   result.savedAddressService = savedAddressService
   result.followingAddressService = followingAddressService
-  result.keychainService = keychainService
   result.stickersService = stickersService
   result.communityTokensService = communityTokensService
 

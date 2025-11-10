@@ -39,15 +39,13 @@ StatusListItem {
     property alias sendButton: sendButton
     property alias starButton: starButton
 
-    signal aboutToOpenPopup()
     signal openSendModal(string recipient)
+    signal menuRequested(var menuModel)
 
     enum Usage {
         Delegate,
         Item
     }
-
-    implicitWidth: ListView.view ? ListView.view.width : 0
 
     title: name
     objectName: name || "followingAddressDelegate"
@@ -151,134 +149,14 @@ StatusListItem {
             radius: 8
             icon.name: "more"
             onClicked: {
-                menu.openMenu(this, x + width - menu.width - statusListItemComponentsSlot.spacing, y + height + Theme.halfPadding,
-                    {
-                        name: root.name,
-                        address: root.address,
-                        ensName: root.ensName,
-                        tags: root.tags,
-                    }
-                );
+                root.menuRequested({
+                    name: root.name,
+                    address: root.address,
+                    ensName: root.ensName,
+                    tags: root.tags,
+                })
             }
 
         }
     ]
-
-    StatusMenu {
-        id: menu
-        property string name
-        property string address
-        property string ensName
-        property var tags
-
-        readonly property int maxHeight: 341
-        height: implicitHeight > maxHeight ? maxHeight : implicitHeight
-
-        function openMenu(parent, x, y, model) {
-            menu.name = model.name;
-            menu.address = model.address;
-            menu.ensName = model.ensName;
-            menu.tags = model.tags;
-            popup(parent, x, y);
-        }
-        onClosed: {
-            menu.name = "";
-            menu.address = "";
-            menu.ensName = ""
-            menu.tags = []
-        }
-
-        StatusSuccessAction {
-            id: copyAddressAction
-            objectName: "copyFollowingAddressAction"
-            successText: qsTr("Address copied")
-            text: qsTr("Copy address")
-            icon.name: "copy"
-            timeout: 1500
-            autoDismissMenu: true
-            onTriggered: ClipboardUtils.setText(d.visibleAddress)
-        }
-
-        StatusAction {
-            text: qsTr("Show address QR")
-            objectName: "showQrFollowingAddressAction"
-            assetSettings.name: "qr"
-            onTriggered: {
-                if (root.usage === FollowingAddressesDelegate.Usage.Item) {
-                    root.aboutToOpenPopup()
-                }
-                Global.openShowQRPopup({
-                                           showSingleAccount: true,
-                                           showForSavedAddress: false,
-                                           switchingAccounsEnabled: false,
-                                           hasFloatingButtons: false,
-                                           name: menu.name,
-                                           address: menu.address
-                                       })
-            }
-        }
-
-        StatusAction {
-            text: qsTr("View activity")
-            objectName: "viewActivityFollowingAddressAction"
-            assetSettings.name: "wallet"
-            onTriggered: {
-                if (root.usage === FollowingAddressesDelegate.Usage.Item) {
-                    root.aboutToOpenPopup()
-                }
-                Global.changeAppSectionBySectionType(Constants.appSection.wallet,
-                                                     WalletLayout.LeftPanelSelection.AllAddresses,
-                                                     WalletLayout.RightPanelSelection.Activity,
-                                                     {savedAddress: menu.address})
-            }
-        }
-
-        StatusMenuSeparator {}
-
-        BlockchainExplorersMenu {
-            id: blockchainExplorersMenu
-            flatNetworks: root.activeNetworks
-            onNetworkClicked: {
-                let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, d.visibleAddress ? d.visibleAddress : root.ensName);
-                Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
-            }
-        }
-
-        StatusMenuSeparator { }
-
-        StatusAction {
-            text: {
-                var savedAddr = WalletStores.RootStore.getSavedAddress(menu.address)
-                var isSaved = savedAddr && savedAddr.address !== ""
-                return isSaved ? qsTr("Already in saved addresses") : qsTr("Add to saved addresses")
-            }
-            assetSettings.name: {
-                var savedAddr = WalletStores.RootStore.getSavedAddress(menu.address)
-                var isSaved = savedAddr && savedAddr.address !== ""
-                return isSaved ? "star-icon" : "star-icon-outline"
-            }
-            objectName: "addToSavedAddressesAction"
-            enabled: {
-                var savedAddr = WalletStores.RootStore.getSavedAddress(menu.address)
-                return !(savedAddr && savedAddr.address !== "")
-            }
-            onTriggered: {
-                if (root.usage === FollowingAddressesDelegate.Usage.Item) {
-                    root.aboutToOpenPopup()
-                }
-                
-                var nameToUse = menu.ensName || menu.address
-                if (menu.ensName && menu.ensName.includes(".")) {
-                    nameToUse = menu.ensName.split(".")[0]
-                }
-                
-                Global.openAddEditSavedAddressesPopup({
-                    addAddress: true,
-                    address: menu.address,
-                    name: nameToUse,
-                    ens: menu.ensName
-                })
-            }
-        }
-    }
 }
