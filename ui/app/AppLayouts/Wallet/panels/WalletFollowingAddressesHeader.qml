@@ -46,7 +46,7 @@ Control {
 
         Layout.preferredHeight: 38
 
-        text: qsTr("+Add via EFP")
+        text: qsTr("Add via EFP")
         size: StatusBaseButton.Size.Small
         normalColor: Theme.palette.primaryColor3
         hoverColor: Theme.palette.primaryColor2

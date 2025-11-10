@@ -78,10 +78,7 @@ QtObject {
     }
 
     function getPrimaryAccountAddress() {
-        var firstAccount = SQUtils.ModelUtils.getFirstModelEntryIf(root.accounts, (account) => {
-            return true  // Get the first account
-        })
-        return firstAccount ? firstAccount.address : ""
+        return SQUtils.ModelUtils.get(root.accounts, 0, "address") || ""
     }
 
     property var nonWatchAccounts: SortFilterProxyModel {

@@ -17,8 +17,9 @@ RightTabBaseView {
 
     signal sendToAddressRequested(string address)
 
-    property WalletStores.RootStore rootStore
-    property SharedStores.NetworkConnectionStore networkConnectionStore
+    required property WalletStores.RootStore rootStore
+    required property var contactsStore
+    required property SharedStores.NetworkConnectionStore networkConnectionStore
     required property SharedStores.NetworksStore networksStore
 
     header: WalletFollowingAddressesHeader {
@@ -28,7 +29,7 @@ RightTabBaseView {
         loading: followingAddresses.isPaginationLoading
 
         onReloadRequested: followingAddresses.refresh()
-        onAddViaEFPClicked: Global.openLinkWithConfirmation("https://efp.app", "efp.app")
+        onAddViaEFPClicked: Global.requestOpenLink("https://efp.app")
     }
 
     Item {
@@ -42,11 +43,25 @@ RightTabBaseView {
             anchors.top: parent.top
             anchors.bottom: paginationFooter.visible ? paginationFooter.top : parent.bottom
 
-            contactsStore: root.rootStore.contactStore
+            contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             networksStore: root.networksStore
+            followingAddressesModel: root.rootStore.followingAddresses
+            totalFollowingCount: walletSectionFollowingAddresses ? 
+                                 walletSectionFollowingAddresses.totalFollowingCount : 0
 
             onSendToAddressRequested: root.sendToAddressRequested(address)
+            
+            onRefreshRequested: (search, limit, offset) => {
+                root.rootStore.refreshFollowingAddresses(search, limit, offset)
+            }
+            
+            Connections {
+                target: walletSectionFollowingAddresses
+                function onFollowingAddressesUpdated() {
+                    followingAddresses.followingAddressesUpdated()
+                }
+            }
         }
 
         // Full-width divider above pagination (extends beyond content padding)

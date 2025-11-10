@@ -47,6 +47,7 @@ method loadFollowingAddresses*(self: Module, userAddress: string) =
     ))
   )
   self.view.totalFollowingCountChanged()
+  self.view.followingAddressesUpdated(userAddress)
 
 method load*(self: Module) =
   try:
