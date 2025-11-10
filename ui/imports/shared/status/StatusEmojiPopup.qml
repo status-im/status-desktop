@@ -22,14 +22,9 @@ StatusDropdown {
     required property var recentEmojis
     required property string skinColor
 
-    property alias searchString: searchBox.text
-    property string emojiSize: ""
-
-    signal emojiSelected(string emoji, bool atCursor, string hexcode)
-    signal setSkinColorRequested(string skinColor)
-    signal setRecentEmojisRequested(var recentEmojis)
-
     readonly property var fullModel: SortFilterProxyModel {
+        signal recentEmojisUpdated
+
         sourceModel: root.emojiModel
 
         filters: [
@@ -73,6 +68,18 @@ StatusDropdown {
         }
     }
 
+    property alias searchString: searchBox.text
+    property string emojiSize: ""
+
+    signal emojiSelected(string emoji, bool atCursor, string hexcode)
+    signal setSkinColorRequested(string skinColor)
+    signal setRecentEmojisRequested(var recentEmojis)
+
+    function updateRecentEmoji(recentEmojis) {
+        root.setRecentEmojisRequested(recentEmojis)
+        root.fullModel.recentEmojisUpdated()
+    }
+
     width: 370
     padding: 0
 
@@ -82,8 +89,6 @@ StatusDropdown {
         if (extensionIndex > -1) {
             iconCodePoint = iconCodePoint.substring(0, extensionIndex)
         }
-
-        root.emojiModel.addRecentEmoji(hexcode)
 
         const encodedIcon = StatusQUtils.Emoji.getEmojiCodepoint(iconCodePoint)
 
@@ -105,7 +110,7 @@ StatusDropdown {
     onClosed: {
         const recent = root.emojiModel.recentEmojis
         if (recent.length)
-            root.setRecentEmojisRequested(recent)
+            root.updateRecentEmoji(recent)
         searchBox.text = ""
         root.emojiSize = ""
         skinToneEmoji.expandSkinColorOptions = false
@@ -202,7 +207,7 @@ StatusDropdown {
             font.weight: Font.Medium
             color: Theme.palette.secondaryText
             font.pixelSize: Theme.additionalTextSize
-            text: d.searchString ? (d.fullModel.count ? qsTr("Search Results") : qsTr("No results found"))
+            text: d.searchString ? (root.fullModel.count ? qsTr("Search Results") : qsTr("No results found"))
                                           : emojiGrid.currentCategory
             font.capitalization: Font.AllUppercase
         }

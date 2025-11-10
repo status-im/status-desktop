@@ -24,7 +24,7 @@ Row {
 
     Connections {
         target: root.emojiModel
-        onCountChanged: {
+        onRecentEmojisUpdated: {
             // Force re-evaluation of recentEmojisRepeater
             recentEmojisRepeater.model = 0
             recentEmojisRepeater.model = 5
