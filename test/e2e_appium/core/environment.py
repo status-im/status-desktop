@@ -1,40 +1,84 @@
 import os
 import re
-from dataclasses import dataclass
-from typing import Dict, Any, List, Optional
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class ConfigurationError(Exception):
-    pass
+    """Raised when environment configuration is invalid."""
+
+
+@dataclass(frozen=True)
+class ProviderConfig:
+    name: str
+    options: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class DeviceConfig:
+    id: str
+    display_name: Optional[str] = None
+    capabilities: Dict[str, Any] = field(default_factory=dict)
+    tags: List[str] = field(default_factory=list)
+    provider_overrides: Dict[str, Any] = field(default_factory=dict)
+
+    def merged_capabilities(
+        self, defaults: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        merged: Dict[str, Any] = {}
+        if defaults:
+            merged.update(defaults)
+        merged.update(self.capabilities)
+        return merged
 
 
 @dataclass
 class EnvironmentConfig:
-    environment: str
-    device_name: str
-    platform_name: str
-    platform_version: str
-    app_source: Dict[str, Any]
-    appium_config: Dict[str, Any]
-    capabilities: Dict[str, Any]
-    timeouts: Dict[str, int]
-    directories: Dict[str, str]
-    logging_config: Dict[str, Any]
-    lambdatest_config: Dict[str, Any] = None
-    available_devices: Optional[List[Dict[str, Any]]] = None
+    name: str
+    description: str
+    provider: ProviderConfig
+    execution: Dict[str, Any]
+    timeouts: Dict[str, Any]
+    logging: Dict[str, Any]
+    directories: Dict[str, Any]
+    device_defaults: Dict[str, Any]
+    devices: Dict[str, DeviceConfig]
+    default_device_id: Optional[str] = None
+    config_root: Path = Path(".")
 
     def validate(self) -> None:
-        if self.environment == "local":
-            self._validate_local_config()
-        elif self.environment == "lambdatest":
-            self._validate_lambdatest_config()
+        if self.default_device_id and self.default_device_id not in self.devices:
+            raise ConfigurationError(
+                f"Default device '{self.default_device_id}' not declared in device matrix"
+            )
 
-    def _validate_local_config(self):
-        app_path = self.app_source.get("path_template", "")
-        resolved_path = self._resolve_template(app_path)
+        if not self.devices:
+            raise ConfigurationError("No devices configured for environment")
 
-        # Only enforce path existence if one is provided; otherwise assume appPackage/appActivity launch
+        for device in self.devices.values():
+            caps = device.merged_capabilities(self.device_defaults.get("capabilities"))
+            if "platformName" not in caps:
+                raise ConfigurationError(
+                    f"Device '{device.id}' missing required capability 'platformName'"
+                )
+            if "deviceName" not in caps:
+                raise ConfigurationError(
+                    f"Device '{device.id}' missing required capability 'deviceName'"
+                )
+
+        provider_name = self.provider.name.lower()
+        if provider_name == "local":
+            self._validate_local()
+        elif provider_name == "browserstack":
+            self._validate_browserstack()
+
+    def _validate_local(self) -> None:
+        server_url = self.provider.options.get("server_url", "http://localhost:4723")
+        app_config = self.provider.options.get("app", {})
+        path_template = app_config.get("path_template")
+
+        resolved_path = self.resolve_path(path_template) if path_template else ""
         if resolved_path:
             if not Path(resolved_path).exists():
                 raise ConfigurationError(f"Local app not found: {resolved_path}")
@@ -42,98 +86,135 @@ class EnvironmentConfig:
         try:
             import requests
 
-            server_url = self.appium_config.get("server_url", "http://localhost:4723")
-            response = requests.get(f"{server_url}/status", timeout=5)
+            response = requests.get(f"{server_url.rstrip('/')}/status", timeout=5)
             if response.status_code != 200:
                 raise ConfigurationError("Appium server not responding correctly")
-        except requests.RequestException:
-            raise ConfigurationError("Cannot connect to Appium server")
+        except ImportError:
+            # If requests is unavailable, skip connectivity validation
+            return
+        except requests.RequestException as exc:  # type: ignore[attr-defined]
+            raise ConfigurationError(
+                f"Cannot connect to Appium server at {server_url}: {exc}"
+            ) from exc
 
-    def _validate_lambdatest_config(self):
-        required_vars = ["LT_USERNAME", "LT_ACCESS_KEY"]
-        missing = [var for var in required_vars if not os.getenv(var)]
+    def _validate_browserstack(self) -> None:
+        auth_cfg = self.provider.options.get("auth", {})
+        username = self.resolve_template(auth_cfg.get("username", ""))
+        access_key = self.resolve_template(auth_cfg.get("access_key", ""))
 
-        if missing:
-            raise ConfigurationError(f"Missing LambdaTest variables: {missing}")
+        if not username or not access_key:
+            raise ConfigurationError(
+                "BrowserStack credentials missing. Set BROWSERSTACK_USERNAME and "
+                "BROWSERSTACK_ACCESS_KEY or provide overrides in config."
+            )
 
-        app_id = self.app_source.get("app_id_template", "")
-        resolved_app_id = self._resolve_template(app_id)
-        if not resolved_app_id or resolved_app_id == "lt://":
-            raise ConfigurationError("STATUS_APP_URL must be provided for LambdaTest")
+        app_cfg = self.provider.options.get("app", {})
+        app_id = self.resolve_template(app_cfg.get("app_id_template", ""))
+        if not app_id:
+            raise ConfigurationError(
+                "BrowserStack app id missing. Provide BROWSERSTACK_APP_ID or set"
+                " provider.options.app.app_id_template."
+            )
 
-    def _resolve_template(self, template: str) -> str:
+    def resolve_template(self, template: Optional[str]) -> str:
         if not template:
             return ""
 
-        def replace_var(match):
+        def replace_var(match: re.Match) -> str:
             var_name = match.group(1)
             default_part = (
                 match.group(2) if len(match.groups()) > 1 and match.group(2) else ""
             )
 
-            # Handle nested variable resolution in defaults
             if default_part.startswith("${") and default_part.endswith("}"):
-                default = self._resolve_template(default_part)
+                default = self.resolve_template(default_part)
             else:
                 default = default_part
 
             return os.getenv(var_name, default)
 
-        # Handle ${VAR:-default} syntax - need to be careful with nested braces
+        pattern = r"\$\{([^}:-]+)(?::-([^${}]*(?:\$\{[^}]*\}[^${}]*)*))?\}"
         result = template
         while "${" in result:
-            # Find variable patterns, handling nested braces properly
-            pattern = r"\$\{([^}:-]+)(?::-([^${}]*(?:\$\{[^}]*\}[^${}]*)*))?\}"
             new_result = re.sub(pattern, replace_var, result)
             if new_result == result:
-                # No more substitutions possible, break to avoid infinite loop
                 break
             result = new_result
-
         return result
 
-    def get_resolved_app_path(self) -> str:
-        if self.app_source["source_type"] == "local_file":
-            return self._resolve_template(self.app_source["path_template"])
-        elif self.app_source["source_type"] == "cloud_upload":
-            return self._resolve_template(self.app_source["app_id_template"])
-        return ""
+    def resolve_path(self, template: Optional[str]) -> str:
+        resolved = self.resolve_template(template)
+        if not resolved:
+            return ""
 
-    def get_appium_server_url(self) -> str:
-        return self.appium_config["server_url"]
+        path = Path(resolved)
+        if not path.is_absolute():
+            path = (self.config_root / path).resolve()
+        return str(path)
 
-    def get_device_capabilities(self) -> Dict[str, Any]:
-        if self.environment == "lambdatest":
-            # For LambdaTest, structure capabilities according to their expected format
-            base_caps = {}
+    def get_device(self, device_id: Optional[str] = None) -> DeviceConfig:
+        if device_id:
+            try:
+                return self.devices[device_id]
+            except KeyError as exc:
+                raise ConfigurationError(
+                    f"Device '{device_id}' not found in environment '{self.name}'"
+                ) from exc
 
-            # Start with any existing capabilities from YAML
-            base_caps.update(self.capabilities)
+        if self.default_device_id:
+            return self.devices[self.default_device_id]
 
-            # Ensure lt:options exists and add device-specific capabilities
-            lt_options = base_caps.setdefault("lt:options", {})
-            lt_options.update(
+        # fallback to first declared
+        return next(iter(self.devices.values()))
+
+    def find_devices_by_tags(self, tags: List[str]) -> List[DeviceConfig]:
+        if not tags:
+            return list(self.devices.values())
+
+        tag_set = {tag.lower() for tag in tags}
+        matched = []
+        for device in self.devices.values():
+            device_tags = {tag.lower() for tag in device.tags}
+            if tag_set.issubset(device_tags):
+                matched.append(device)
+        return matched
+
+    @property
+    def available_devices(self) -> List[Dict[str, Any]]:
+        devices: List[Dict[str, Any]] = []
+        defaults = self.device_defaults.get("capabilities", {})
+        for device in self.devices.values():
+            devices.append(
                 {
-                    "platformName": self.platform_name,
-                    "platformVersion": self.platform_version,
-                    "deviceName": self.device_name,
+                    "id": device.id,
+                    "display_name": device.display_name or device.id,
+                    "tags": list(device.tags),
+                    "capabilities": device.merged_capabilities(defaults),
                 }
             )
+        return devices
 
-            return base_caps
-        else:
-            # For local and other environments, use traditional structure
-            base_caps = {
-                "platformName": self.platform_name,
-                "platformVersion": self.platform_version,
-                "deviceName": self.device_name,
-            }
+    def concurrency_limits(self) -> Dict[str, int]:
+        concurrency = self.execution.get("concurrency", {})
+        return {
+            "max_sessions": concurrency.get("max_sessions", 1),
+            "per_device_limit": concurrency.get("per_device_limit", 1),
+        }
 
-            if self.environment == "local":
-                app_path = self.get_resolved_app_path()
-                if app_path:
-                    base_caps["app"] = app_path  # Use APK if provided
-                # If no app path resolved, rely on provided appPackage/appActivity
+    def get_provider_option(self, key: str, default: Any = None) -> Any:
+        return self.provider.options.get(key, default)
 
-            base_caps.update(self.capabilities)
-            return base_caps
+    def get_reports_directory(self) -> str:
+        return self.directories.get("reports", "reports")
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "description": self.description,
+            "provider": self.provider.name,
+            "execution": self.execution,
+            "timeouts": self.timeouts,
+            "logging": self.logging,
+            "directories": self.directories,
+            "devices": self.available_devices,
+        }

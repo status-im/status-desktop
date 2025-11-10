@@ -2,7 +2,7 @@
 Unified Test Execution Context for Appium-based E2E tests.
 """
 
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 from contextlib import contextmanager
 
 from appium.webdriver.webdriver import WebDriver
@@ -26,8 +26,10 @@ from .user_manager import UserManager
 class TestContext:
     """Consolidates session, user, app state, and configuration management."""
 
+    __test__ = False
+
     def __init__(
-        self, environment: str = "lambdatest", logger_name: str = "test_context"
+        self, environment: str = "browserstack", logger_name: str = "test_context"
     ):
         self.environment = environment
         self.logger = get_logger(logger_name)
@@ -64,15 +66,25 @@ class TestContext:
             self.users = TestContext.UserManager(self)
         return self.users
 
-    def initialize(self, config: TestConfiguration) -> "TestContext":
+    def initialize(
+        self,
+        config: TestConfiguration,
+        test_name: Optional[str] = None,
+    ) -> "TestContext":
         self.config = config
         self.environment = config.environment
 
         try:
             # Create session manager
             self._session_manager = SessionManager(
-                self.environment, device_override=config.device_override
+                self.environment,
+                device_override=config.device_override,
+                device_id=config.device_id,
+                device_tags=config.device_tags,
             )
+            if test_name:
+                self._session_manager.metadata.test_name = test_name
+
             self._driver = self._session_manager.get_driver()
             self._gestures = Gestures(self._driver)
             self._app = App(self._driver)
@@ -82,16 +94,20 @@ class TestContext:
             self._app_state_manager = AppStateManager(self._driver)
             self._app_initialization = AppInitializationManager(self._driver)
 
+            activation_timeout = self._resolve_activation_timeout()
+
             # Initial app activation
-            self._app_initialization.perform_initial_activation()
+            self._app_initialization.perform_initial_activation(
+                timeout=activation_timeout
+            )
 
             self._initialized = True
-            self.logger.info(f"✅ TestContext initialized for {self.environment}")
+            self.logger.info("TestContext initialized for %s", self.environment)
 
             return self
 
         except Exception as e:
-            self.logger.error(f"❌ TestContext initialization failed: {e}")
+            self.logger.error("TestContext initialization failed: %s", e)
             raise SessionManagementError(
                 f"Failed to initialize test context: {e}"
             ) from e
@@ -101,6 +117,7 @@ class TestContext:
         driver: WebDriver,
         session_manager: Optional[SessionManager] = None,
         config: Optional[TestConfiguration] = None,
+        test_name: Optional[str] = None,
     ) -> "TestContext":
         """
         Attach to an existing driver (and optional session manager).
@@ -123,17 +140,35 @@ class TestContext:
             self._app_state_manager = AppStateManager(self._driver)
             self._app_initialization = AppInitializationManager(self._driver)
 
+            activation_timeout = self._resolve_activation_timeout()
+
+            if test_name and self._session_manager:
+                self._session_manager.metadata.test_name = test_name
+
             # Perform initial app activation
-            self._app_initialization.perform_initial_activation()
+            self._app_initialization.perform_initial_activation(
+                timeout=activation_timeout
+            )
 
             self._initialized = True
-            self.logger.info("✅ TestContext attached to existing session")
+            self.logger.info("TestContext attached to existing session")
             return self
         except Exception as e:
-            self.logger.error(f"❌ TestContext attach failed: {e}")
+            self.logger.error("TestContext attach failed: %s", e)
             raise SessionManagementError(
                 f"Failed to attach to existing context: {e}"
             ) from e
+
+    def _resolve_activation_timeout(self) -> float:
+        try:
+            if self._session_manager and self._session_manager.env_config:
+                timeout = self._session_manager.env_config.timeouts.get(
+                    "activation", 15
+                )
+                return float(timeout)
+        except Exception:
+            pass
+        return 15.0
 
     @property
     def driver(self) -> WebDriver:
@@ -257,7 +292,7 @@ class TestContext:
             )
 
         with self.performance.measure_operation("restart_app_and_login"):
-            self.logger.info("🔄 Restarting app and handling authentication")
+            self.logger.info("Restarting app and handling authentication")
 
             # Restart app
             if not self.main_app.restart_app():
@@ -265,7 +300,9 @@ class TestContext:
                 return False
 
             try:
-                manager = self._app_initialization or AppInitializationManager(self.driver)
+                manager = self._app_initialization or AppInitializationManager(
+                    self.driver
+                )
                 if not self._app_initialization:
                     self._app_initialization = manager
                 manager.perform_initial_activation(timeout=3)
@@ -280,7 +317,7 @@ class TestContext:
             if self.app_state.requires_authentication:
                 return self._handle_post_restart_authentication()
             elif self.app_state.is_home_loaded:
-                self.logger.info("✅ Auto-login successful")
+                self.logger.info("Auto-login successful")
                 return True
             else:
                 self.logger.error("Unknown app state after restart")
@@ -293,7 +330,10 @@ class TestContext:
 
             if not self.app_state.is_home_loaded:
                 # Try existing-user login if authentication is required
-                if self.app_state.requires_authentication and self.user_service.current_user:
+                if (
+                    self.app_state.requires_authentication
+                    and self.user_service.current_user
+                ):
                     try:
                         self.logger.info(
                             "Auth required - attempting existing user login"
@@ -345,7 +385,7 @@ class TestContext:
     def cleanup(self):
         try:
             if self._session_manager:
-                self.logger.info("🧹 Cleaning up test context")
+                self.logger.info("Cleaning up test context")
                 self._session_manager.cleanup_driver()
                 self._session_manager = None
                 self._driver = None
@@ -357,31 +397,27 @@ class TestContext:
             self._app_initialization = None
             self._welcome_back = None
 
-            self.logger.info("✅ TestContext cleanup completed")
+            self.logger.info("TestContext cleanup completed")
 
         except Exception as e:
-            self.logger.warning(f"⚠️ TestContext cleanup warning: {e}")
+            self.logger.warning("TestContext cleanup warning: %s", e)
 
-    # Per-context reporting helper (LambdaTest)
+    # Per-context reporting helper routed through provider abstraction
     def report(
         self,
         status: str,
         error_message: Optional[str] = None,
         test_name: Optional[str] = None,
     ) -> None:
-        try:
-            if test_name:
-                self.driver.execute_script(f"lambda-name={test_name}")
-            self.driver.execute_script(f"lambda-status={status}")
-            if error_message and status != "passed":
-                clean_error = error_message.replace('"', '\\"').replace("\n", "\\n")[
-                    :500
-                ]
-                self.driver.execute_script(
-                    f"lambda-description=Test failed: {clean_error}"
-                )
-        except Exception:
-            pass
+        if not self._session_manager:
+            self.logger.warning(
+                "Session manager not initialized; skipping session status report"
+            )
+            return
+
+        if test_name:
+            self._session_manager.metadata.test_name = test_name
+        self._session_manager.report_result(status, error_message)
 
     def get_summary(self) -> Dict[str, Any]:
         return {
@@ -434,7 +470,7 @@ class TestContext:
 
 
 @contextmanager
-def test_context(environment: str = "lambdatest", config: TestConfiguration = None):
+def test_context(environment: str = "browserstack", config: TestConfiguration = None):
     context = TestContext(environment)
     try:
         if config:
