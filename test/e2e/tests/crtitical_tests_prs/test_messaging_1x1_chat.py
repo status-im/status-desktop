@@ -38,7 +38,8 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     local_picture = configs.testpath.TEST_IMAGES / 'comm_logo.jpeg'
     picture = BASE_64_IMAGE_JPEG
 
-    EMOJI_PATHES = ["❤️", "👍", "👎", "😂", "😢", "😡"]
+    # First five emojis in the reactions before there are custom ones
+    EMOJI_PATHES = ["😀", "😃", "😄", "😁", "😆"]
 
     with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
@@ -186,7 +187,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
                 f"Last message does not have reply corner"
 
         with step(f'User {user_one.name}, add reaction to the last message and verify it was added'):
-            occurrence = random.randint(1, 6)
+            occurrence = random.randint(1, 5)
             message.open_context_menu_for_message().add_reaction_to_message(occurrence)
             assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] in str(message.get_emoji_reactions_pathes()[0]),
                                   timeout), \
