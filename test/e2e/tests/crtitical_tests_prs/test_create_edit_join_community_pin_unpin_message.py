@@ -22,7 +22,7 @@ from gui.screens.messages import MessagesScreen
 @pytest.mark.communities
 @pytest.mark.smoke
 @pytest.mark.critical
-@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
+# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 def test_create_edit_join_community_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
