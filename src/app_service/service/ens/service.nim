@@ -115,7 +115,7 @@ QtObject:
   proc formatUsername(self: Service, username: string, isStatus: bool): string =
     result = username
     if isStatus:
-      result = result & ens_utils.STATUS_DOMAIN
+      result = ens_utils.addDomain(result)
 
   proc updateEnsUsernames(self: Service, chainId: int, transactionHash: string, status: string) =
     if status == TxStatusPending:
