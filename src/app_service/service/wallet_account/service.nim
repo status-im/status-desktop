@@ -4,6 +4,7 @@ import web3/eth_api_types
 
 import app/global/global_singleton
 
+import app_service/service/general/debouncer as debouncer_service
 import app_service/service/settings/service as settings_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/token/service as token_service
@@ -48,11 +49,11 @@ QtObject:
     keypairs: Table[string, KeypairDto] ## [keyUid, KeypairDto]
     groupedAssets: seq[AssetGroupItem]
     hasBalanceCache: bool
-    fetchingBalancesInProgress: bool
-    addressesWaitingForBalanceToFetch: seq[string]
+    buildTokensDebouncer: debouncer_service.Debouncer
 
   # Forward declaration
   proc buildAllTokens*(self: Service, accounts: seq[string], forceRefresh: bool)
+  proc buildAllTokensInternal(self: Service, accounts: seq[string], forceRefresh: bool)
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc updateAccountsPositions(self: Service)
