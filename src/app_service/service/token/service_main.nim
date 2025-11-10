@@ -37,9 +37,9 @@ proc init*(self: Service) =
     # this is the delay before the first call to the callback, this is an action that doesn't need to be called immediately, but it's pretty expensive in terms of time/performances
     # for example `wallet-tick-reload` event is emitted for every single chain-account pair, and at the app start can be more such signals received from the statusgo side if the balance have changed.
     # Means it the app contains more accounts the likelihood of having more `wallet-tick-reload` signals is higher, so we need to delay the rebuildMarketData call to avoid unnecessary calls.
-    delayMs = 3000,
-    checkIntervalMs = 500,
-    callback = proc() = self.rebuildMarketDataInternal())
+    delayMs = 1500,
+    checkIntervalMs = 500)
+  self.rebuildMarketDataDebouncer.registerCall0(callback = proc() = self.rebuildMarketDataInternal())
 
   self.events.on(SignalType.Wallet.event) do(e:Args):
     var data = WalletSignal(e)
