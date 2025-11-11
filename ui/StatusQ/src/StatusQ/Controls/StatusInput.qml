@@ -233,6 +233,16 @@ Control {
         This property sets the pending validators to be considered.
     */
     property var pendingValidators: []
+    /*!
+        \qmlproperty bool StatusInput::warningMode
+        This property sets warning mode on the input
+    */
+    property bool warningMode: false
+    /*!
+        \qmlproperty string StatusInput::warningMessage
+        This property sets the warning message text.
+    */
+    property string warningMessage: ""
 
     /*!
         \qmlsignal
@@ -522,6 +532,7 @@ Control {
             Layout.bottomMargin: bottomRow.height > 0 ? labelPadding : 0
             maximumLength: root.charLimit
             font: root.font
+            warningMode: root.warningMode
             onTextChanged: root.validate()
             Keys.forwardTo: [root]
             onIconClicked: root.iconClicked()
@@ -586,7 +597,18 @@ Control {
                 color: Theme.palette.dangerColor1
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignRight
-            }            
+            }
+
+            StatusBaseText {
+                id: warningMessage
+                Layout.fillWidth: true
+                visible: !!text && root.warningMode && !errorMessage.visible
+                font.pixelSize: Theme.tertiaryTextFontSize
+                color: Theme.palette.warningColor1
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignRight
+                text: root.warningMessage
+            }
 
             StatusBaseText {
                 id: bottomLabelMessageRight
