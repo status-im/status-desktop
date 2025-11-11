@@ -12,12 +12,22 @@
         rdns: "app.status"
     };
     
+    let retryCount = 0;
+    const MAX_RETRIES = 50;
+    const RETRY_DELAY = 100;
+    
     function announceProvider() {
         // Wait for window.ethereum to be available (injected by ethereum_wrapper.js)
         if (!window.ethereum) {
-            console.log('[EIP-6963] window.ethereum not yet available, deferring announcement');
-            // Retry after ethereum_wrapper.js has run
-            setTimeout(announceProvider, 10);
+            if (retryCount >= MAX_RETRIES) {
+                console.error('[EIP-6963] Max retries reached, window.ethereum not available');
+                return;
+            }
+            
+            retryCount++;
+            console.log(`[EIP-6963] window.ethereum not yet available, retry ${retryCount}/${MAX_RETRIES}`);
+
+            setTimeout(announceProvider, RETRY_DELAY);
             return;
         }
         

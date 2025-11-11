@@ -19,10 +19,16 @@ const EthereumWrapper = (function() {
             this.listeners = new Map(); // event -> Set<handler>
             this.nativeEthereum = nativeEthereum;
             this.requestIdCounter = 1; // async requests
-            this.pendingRequests = new Map(); // requestId -> { resolve, reject }
+            this.pendingRequests = new Map(); // requestId -> { resolve, reject, timestamp }
+            this.requestTimeout = 600000; // 10min timeout for pending requests. (nim side has it's own timeouts)
+            this.timeoutCheckInterval = 10000;
             
             // Wire native signals to events
             this._wireSignals();
+            
+            // Setup page unload handler
+            this._setupPageUnloadHandler();
+            this._startTimeoutChecker();
             
             // Set up EIP-1193 properties from QML
             this.isStatus = nativeEthereum.isStatus !== undefined ? nativeEthereum.isStatus : true;
@@ -42,6 +48,77 @@ const EthereumWrapper = (function() {
             return false;
         }
 
+        _rejectRequests(requestsToReject, deleteFromPending = false) {
+            for (const [requestId, entry, error] of requestsToReject) {
+                try {
+                    entry.reject(error);
+                } catch (e) {
+                    console.error('[Ethereum Wrapper] Error rejecting request:', e);
+                }
+                if (deleteFromPending) {
+                    this.pendingRequests.delete(requestId);
+                }
+            }
+        }
+
+        _rejectAllPendingRequests(error) {
+            const requestsToReject = Array.from(this.pendingRequests.entries())
+                .map(([requestId, entry]) => [requestId, entry, error]);
+            this.pendingRequests.clear();
+            this._rejectRequests(requestsToReject, false);
+        }
+
+        _checkTimedOutRequests() {
+            const now = Date.now();
+            const timedOutRequests = [];
+            
+            for (const [requestId, entry] of this.pendingRequests.entries()) {
+                if (now - entry.timestamp > this.requestTimeout) {
+                    timedOutRequests.push([
+                        requestId, 
+                        entry, 
+                        {
+                            code: -32603,
+                            message: `Request timed out after ${this.requestTimeout}ms`
+                        }
+                    ]);
+                }
+            }
+            
+            if (timedOutRequests.length > 0) {
+                console.warn('[Ethereum Wrapper] Found', timedOutRequests.length, 'timed out requests');
+                this._rejectRequests(timedOutRequests, true);
+            }
+        }
+
+        _startTimeoutChecker() {
+            if (this.timeoutCheckIntervalId) {
+                return;
+            }
+            
+            this.timeoutCheckIntervalId = setInterval(() => {
+                if (this.pendingRequests.size > 0) {
+                    this._checkTimedOutRequests();
+                }
+            }, this.timeoutCheckInterval);
+        }
+
+        _stopTimeoutChecker() {
+            if (this.timeoutCheckIntervalId) {
+                clearInterval(this.timeoutCheckIntervalId);
+                this.timeoutCheckIntervalId = null;
+            }
+        }
+
+        _setupPageUnloadHandler() {
+            window.addEventListener('beforeunload', () => {
+                this._stopTimeoutChecker();
+                this._rejectAllPendingRequests({
+                    code: -32603,
+                    message: 'Page is being unloaded'
+                });
+            });
+        }
 
         _wireSignals() {
             this._connectSignal('connectEvent', (info) => {
@@ -49,6 +126,11 @@ const EthereumWrapper = (function() {
             });
 
             this._connectSignal('disconnectEvent', (error) => {
+                this._rejectAllPendingRequests({
+                    code: 4900,
+                    message: 'Provider disconnected'
+                });
+                
                 this._emit('disconnect', error);
             });
 
@@ -96,26 +178,46 @@ const EthereumWrapper = (function() {
 
         request(args) {
             if (!args || typeof args !== 'object' || !args.method) {
-                return Promise.reject(new Error('Invalid request: missing method'));
+                return Promise.reject({
+                    code: -32602,
+                    message: 'Invalid params: missing method'
+                });
             }
             const requestId = this.requestIdCounter++;
             const payload = Object.assign({}, args, { requestId });
             
             return new Promise((resolve, reject) => {
-                this.pendingRequests.set(requestId, { resolve, reject, method: args.method });
+                this.pendingRequests.set(requestId, { 
+                    resolve, 
+                    reject, 
+                    method: args.method,
+                    timestamp: Date.now()
+                });
                 
                 try {
                     const nativeResp = this.nativeEthereum.request(payload);
-                    if (nativeResp && typeof nativeResp === 'object' && nativeResp.error) {
-                        this.pendingRequests.delete(requestId);
-                        reject(nativeResp.error);
+                    
+                    if (nativeResp && typeof nativeResp === 'string') {
+                        try {
+                            const parsedResp = JSON.parse(nativeResp);
+                            if (parsedResp?.error) {
+                                this.pendingRequests.delete(requestId);
+                                reject(parsedResp.error);
+                                return;
+                            }
+                        } catch {}
                     }
-                    // Response will come via requestCompletedEvent
                 } catch (e) {
+                    // Only catch synchronous exceptions (e.g., invalid payload)
                     this.pendingRequests.delete(requestId);
                     reject(e);
                 }
             });
+        }
+
+        // Method for backward compatibility with older dApps
+        enable() {
+            return this.request({ method: 'eth_requestAccounts' });
         }
 
         _processResponse(resp, method, entry) {
@@ -139,8 +241,8 @@ const EthereumWrapper = (function() {
         }
 
         handleRequestCompleted(payload) {
+            const requestId = payload && (payload.requestId || (payload.response && payload.response.id)) || 0;
             try {
-                const requestId = payload && (payload.requestId || (payload.response && payload.response.id)) || 0;
                 const entry = this.pendingRequests.get(requestId);
                 
                 if (!entry) {
@@ -148,10 +250,13 @@ const EthereumWrapper = (function() {
                     return;
                 }
                 
-                this.pendingRequests.delete(requestId);
                 this._processResponse(payload && payload.response, entry.method, entry);
             } catch (e) {
                 console.error('[Ethereum Wrapper] requestCompletedEvent handler error', e);
+            } finally {
+                if (requestId) {
+                    this.pendingRequests.delete(requestId);
+                }
             }
         }
 

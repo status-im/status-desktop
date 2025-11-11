@@ -1,10 +1,6 @@
 import QtQuick
-import QtQuick.Controls
 import QtWebEngine
 import QtWebChannel
-
-import StatusQ.Core.Theme
-import utils
 
 import "Utils.js" as BrowserUtils
 

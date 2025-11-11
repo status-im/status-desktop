@@ -17,7 +17,6 @@ QtObject {
     // STATE
     property bool connected: false
     property var accounts: []
-    property bool _hasPermission: false
     property bool _initialConnectionDone: false
 
     // SIGNALS
@@ -57,11 +56,16 @@ QtObject {
         }
         
         // Direct call to Nim connectorCallRPC -> status-go connector/api.go
-        if (connectorController) {
-            connectorController.connectorCallRPC(requestId, JSON.stringify(rpcRequest))
-        } else {
+        if (!connectorController) {
             console.error("[ConnectorManager] connectorController not available")
+            return JSON.stringify({
+                jsonrpc: "2.0",
+                id: requestId,
+                error: { code: -32603, message: "Internal error: connector not available" }
+            })
         }
+        
+        connectorController.connectorCallRPC(requestId, JSON.stringify(rpcRequest))
         
         // Return immediately - response comes via connectorCallRPCResult signal
         return JSON.stringify({
@@ -78,7 +82,6 @@ QtObject {
         }
         
         accounts = newAccounts
-        _hasPermission = newAccounts.length > 0
         
         providerStateChanged()
         accountsChangedEvent(accounts)
@@ -108,12 +111,11 @@ QtObject {
     }
     
     function clearState() {
-        if (accounts.length === 0 && !_hasPermission && !connected) {
+        if (accounts.length === 0 && !connected) {
             return false
         }
         
         accounts = []
-        _hasPermission = false
         connected = false
         _initialConnectionDone = false
         
