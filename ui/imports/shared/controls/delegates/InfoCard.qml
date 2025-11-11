@@ -12,7 +12,7 @@ import AppLayouts.Wallet.controls
 
 import utils
 
-Control {
+AbstractButton {
     id: root
 
     padding: 12
@@ -23,7 +23,8 @@ Control {
     property string tagIcon: ""
     property bool loading: false
     property alias rightSideButtons: rightSideButtonsLoader.sourceComponent
-    signal clicked(var mouse)
+
+    signal contextMenuRequested(real x, real y)
     signal communityTagClicked(var mouse)
 
     property StatusAssetSettings asset: StatusAssetSettings {
@@ -32,13 +33,16 @@ Control {
         bgRadius: bgWidth / 2
     }
 
+    ContextMenu.onRequested: pos => root.contextMenuRequested(pos.x, pos.y)
+    onPressAndHold: root.contextMenuRequested(pressX, pressY)
+
     background: Rectangle {
         anchors.fill: parent
         color: Theme.palette.background
         radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.baseColor2
-        layer.enabled: sensor.hovered || root.highlight
+        layer.enabled: root.hovered || root.highlight
         layer.effect: DropShadow {
             horizontalOffset: 0
             verticalOffset: 2
@@ -49,17 +53,7 @@ Control {
         }
     }
 
-    HoverHandler {
-        id: sensor
-    }
-
     contentItem: Item {
-        StatusMouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.LeftButton|Qt.RightButton
-            hoverEnabled: true
-            onClicked: mouse => root.clicked(mouse)
-        }
         ColumnLayout {
             id: titleColumn
             anchors.fill: parent

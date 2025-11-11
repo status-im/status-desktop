@@ -60,6 +60,15 @@ Item {
             asset.letterSize: 14
             asset.bgColor: Theme.palette.primaryColor3
             asset.isImage: asset.emoji
+
+            function createMenu() {
+                return delegatesActionsMenu.createObject(accountInfoDelegate, {
+                                                             accountAddress: model.address,
+                                                             accountName: model.name,
+                                                             accountColorId: model.colorId
+                                                         })
+            }
+
             rightSideButtons: RowLayout {
                 StatusFlatRoundButton {
                     Layout.preferredWidth: 32
@@ -70,7 +79,6 @@ Item {
                     icon.color: !hovered ? Theme.palette.baseColor1 : Theme.palette.directColor1
                     enabled: root.sendToAccountEnabled
                     onClicked: root.sendToAccountRequested(model.address)
-                    onHoveredChanged: accountInfoDelegate.highlight = hovered
                 }
                 StatusFlatRoundButton {
                     id: moreButton
@@ -79,29 +87,11 @@ Item {
                     visible: accountInfoDelegate.hovered
                     type: StatusFlatRoundButton.Type.Secondary
                     icon.name: "more"
-                    icon.color: (hovered || d.menuOpened) ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                    highlighted: d.menuOpened
-                    onClicked: mouse => {
-                        Global.openMenu(delegatesActionsMenu, accountInfoDelegate, { 
-                            x: moreButton.x, 
-                            y : moreButton.y, 
-                            accountAddress: model.address,
-                            accountName: model.name,
-                            accountColorId: model.colorId
-                        });
-                    }
-                    onHoveredChanged: accountInfoDelegate.highlight = hovered
+                    icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    onClicked: accountInfoDelegate.createMenu().popup()
                 }
             }
-            onClicked: mouse => {
-                if (mouse.button === Qt.RightButton) {
-                    Global.openMenu(delegatesActionsMenu, this, {
-                        accountAddress: model.address,
-                        accountName: model.name,
-                        accountColorId: model.colorId
-                    });
-                }
-            }
+            onContextMenuRequested: (x, y) => accountInfoDelegate.createMenu().popup(x, y)
         }
     }
 
@@ -113,8 +103,7 @@ Item {
             property string accountName: ""
             property string accountColorId: ""
 
-            onOpened: { d.menuOpened = true; }
-            onClosed: { d.menuOpened = false; }
+            onClosed: destroy()
 
             StatusSuccessAction {
                 id: copyAddressAction
@@ -158,10 +147,5 @@ Item {
                 }
             }
         }
-    }
-
-    QtObject {
-        id: d
-        property bool menuOpened: false
     }
 }

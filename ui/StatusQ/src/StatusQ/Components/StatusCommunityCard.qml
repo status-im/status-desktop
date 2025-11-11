@@ -169,7 +169,7 @@ Rectangle {
         \qmlsignal StatusCommunityCard::rightClicked(string communityId)
         This signal is emitted when the card item is clicked with RMB.
     */
-    signal rightClicked(string communityId)
+    signal rightClicked(string communityId, real x, real y)
 
     QtObject {
         id: d
@@ -525,11 +525,11 @@ Rectangle {
         enabled: root.loaded
         acceptedButtons: Qt.LeftButton
         onTapped: root.clicked(root.communityId)
-        onLongPressed: root.rightClicked(root.communityId)
+        onLongPressed: root.rightClicked(root.communityId, point.pressPosition.x, point.pressPosition.y)
     }
     TapHandler {
         enabled: root.loaded
         acceptedButtons: Qt.RightButton
-        onTapped: root.rightClicked(root.communityId)
+        onTapped: root.rightClicked(root.communityId, point.pressPosition.x, point.pressPosition.y)
     }
 }

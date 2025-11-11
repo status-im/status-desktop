@@ -2,12 +2,14 @@ import QtQuick
 
 import utils
 
+import Models
+
 ListModel {
     Component.onCompleted:
         append([{
                     id: "0x0001",
                     name: "I am 0wner!1!!",
-                    description: "Lorem ipsum dolor sit amet",
+                    description: ModelsData.descriptions.shortLoremIpsum,
                     introMessage: "Welcome to ze club",
                     outroMessage: "Sad to see you go",
                     joined: true,
@@ -19,6 +21,7 @@ ListModel {
                     muted: false,
                     members: [ { pubKey: "0xdeadbeef" } ],
                     membersCount: 1,
+                    activeMembersCount: 1,
                     loading: false,
                     permissionsModel: [],
                     allTokenRequirementsMet: false
@@ -26,7 +29,7 @@ ListModel {
                 {
                     id: "0x0002",
                     name: "Test community 2",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.",
+                    description: ModelsData.descriptions.longLoremIpsum,
                     introMessage: "Welcome to ze club",
                     outroMessage: "Sad to see you go",
                     joined: true,
@@ -38,6 +41,7 @@ ListModel {
                     muted: false,
                     members: [ { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" } ],
                     membersCount: 3,
+                    activeMembersCount: 3,
                     loading: false,
                     permissionsModel: [],
                     allTokenRequirementsMet: false
@@ -46,7 +50,7 @@ ListModel {
                     id: "0x0003",
                     name: "Free to join",
                     introMessage: "Welcome to ze club",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.",
+                    description: ModelsData.descriptions.longLoremIpsum,
                     outroMessage: "Sad to see you go",
                     joined: false,
                     spectated: true,
@@ -57,6 +61,7 @@ ListModel {
                     muted: false,
                     members: [ { pubKey: "0xdeadbeef" } ],
                     membersCount: 1,
+                    activeMembersCount: 1,
                     loading: false,
                     permissionsModel: PermissionsModel.moreThanTwoInitialShortPermissionsModel,
                     allTokenRequirementsMet: false
@@ -65,7 +70,7 @@ ListModel {
                     id: "0x0004",
                     name: "Muted community",
                     introMessage: "Welcome to ze club",
-                    description: "Lorem ipsum dolor sit amet",
+                    description: ModelsData.descriptions.shortLoremIpsum,
                     outroMessage: "Sad to see you go",
                     joined: true,
                     spectated: false,
@@ -76,6 +81,7 @@ ListModel {
                     muted: true,
                     members: [],
                     membersCount: 0,
+                    activeMembersCount: 0,
                     loading: false,
                     permissionsModel: [],
                     allTokenRequirementsMet: false
@@ -83,7 +89,7 @@ ListModel {
                 {
                     id: "0x0005",
                     name: "Admin test community",
-                    description: "Lorem ipsum dolor sit amet",
+                    description: ModelsData.descriptions.shortLoremIpsum,
                     introMessage: "Welcome to ze club",
                     outroMessage: "Sad to see you go",
                     joined: true,
@@ -95,6 +101,7 @@ ListModel {
                     muted: false,
                     members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
                     membersCount: 4,
+                    activeMembersCount: 4,
                     loading: false,
                     permissionsModel: [],
                     allTokenRequirementsMet: false
@@ -102,7 +109,7 @@ ListModel {
                 {
                     id: "0x0006",
                     name: "Pending request here",
-                    description: "Lorem ipsum dolor sit amet",
+                    description: ModelsData.descriptions.shortLoremIpsum,
                     introMessage: "Welcome to ze club",
                     outroMessage: "Sad to see you go",
                     joined: false,
@@ -114,6 +121,7 @@ ListModel {
                     muted: false,
                     members: [{ pubKey: "0xdeadbeef" }],
                     membersCount: 1,
+                    activeMembersCount: 1,
                     loading: false,
                     permissionsModel: PermissionsModel.privatePermissionsMemberNotMetModel,
                     allTokenRequirementsMet: false
@@ -121,7 +129,7 @@ ListModel {
                 {
                     id: "0x0007",
                     name: "Token Master Club",
-                    description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi",
+                    description: ModelsData.descriptions.mediumLoremIpsum,
                     introMessage: "Welcome to ze club",
                     outroMessage: "Sad to see you go",
                     joined: true,
@@ -132,6 +140,7 @@ ListModel {
                     muted: false,
                     members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
                     membersCount: 2,
+                    activeMembersCount: 2,
                     loading: false,
                     permissionsModel: [],
                     allTokenRequirementsMet: false

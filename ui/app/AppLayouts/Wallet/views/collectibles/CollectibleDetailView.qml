@@ -51,7 +51,7 @@ Item {
         readonly property string blockExplorerLink: !!collectible ? root.walletRootStore.getExplorerUrl(collectible.networkShortName, collectible.contractAddress, collectible.tokenId): ""
         readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
         readonly property int imageStackSpacing: 4
-        property bool activityLoading: walletRootStore.tmpActivityController0.status.loadingData
+        readonly property bool activityLoading: walletRootStore.tmpActivityController0.status.loadingData
 
         property Component balanceTag: Component {
             CollectibleBalanceTag {
@@ -366,8 +366,8 @@ Item {
             enabled: interactive
             onImageClicked: (image, plain) => Global.openImagePopup(image, "", plain)
             onVideoClicked: (url) => Global.openVideoPopup(url)
-            onOpenImageContextMenu: (url, isGif) => imageContextMenu.createObject(this, { imageSource: url, isGif: isGif, isVideo: false }).popup()
-            onOpenVideoContextMenu: (url) => imageContextMenu.createObject(this, { imageSource: url, url: url, isVideo: true, isGif: false }).popup()
+            onOpenImageContextMenu: (url, isGif, x, y) => imageContextMenu.createObject(this, { imageSource: url, isGif: isGif, isVideo: false }).popup(x, y)
+            onOpenVideoContextMenu: (url, x, y) => imageContextMenu.createObject(this, { imageSource: url, url: url, isVideo: true, isGif: false }).popup(x, y)
         }
     }
 

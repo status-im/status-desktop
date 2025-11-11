@@ -89,12 +89,11 @@ Item {
                 root.closeRequested();
             }
             onClicked: {
-                if ((mouse.button === Qt.LeftButton) && (model.communityId !== "")) {
+                if (model.communityId !== "") {
                     root.visitCommunity(model)
-                } else if (mouse.button === Qt.RightButton) {
-                    Global.openMenu(delegatesActionsMenu, this, { accountAddress: model.address, communityId: model.communityId });
                 }
             }
+            onContextMenuRequested: (x, y) => delegatesActionsMenu.createObject(assetsInfoDelegate, { accountAddress: model.address, communityId: model.communityId }).popup(x, y)
         }
     }
 
@@ -105,6 +104,8 @@ Item {
 
             property string communityId
             property string accountAddress: ""
+
+            onClosed: destroy()
 
             StatusAction {
                 text: qsTr("Visit community")

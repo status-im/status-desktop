@@ -7,7 +7,7 @@ import utils
 StatusMenu {
     id: root
 
-    property string url
+    property url url
     property string imageSource
     property string domain
     property bool isGif: root.imageSource.toLowerCase().endsWith(".gif")
@@ -15,7 +15,7 @@ StatusMenu {
 
     QtObject {
         id: d
-        readonly property bool isUnfurled: (!!url&&url!=="")
+        readonly property bool isUnfurled: (!!root.url && root.url.toString() !== "")
     }
 
     StatusAction {
@@ -32,7 +32,7 @@ StatusMenu {
         icon.name: "download"
         enabled: !!root.imageSource
         onTriggered: {
-            Global.openDownloadImageDialog(root.imageSource);
+            Global.openDownloadImageDialog(root.imageSource)
         }
     }
 
@@ -40,13 +40,13 @@ StatusMenu {
         text: qsTr("Copy link")
         icon.name: "copy"
         enabled: d.isUnfurled
-        onTriggered: ClipboardUtils.setText(url)
+        onTriggered: ClipboardUtils.setText(root.url.toString())
     }
 
     StatusAction {
         text: qsTr("Open link")
         icon.name: "browser"
         enabled: d.isUnfurled
-        onTriggered: Global.requestOpenLink(root.url)
+        onTriggered: Global.requestOpenLink(root.url.toString())
     }
 }

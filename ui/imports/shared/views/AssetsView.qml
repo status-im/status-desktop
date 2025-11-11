@@ -120,12 +120,12 @@ Control {
             },
             FastExpressionRole {
                 name: "marketBalance"
-                expression: balance * marketPrice
+                expression: model.balance * model.marketPrice
                 expectedRoles: ["balance", "marketPrice"]
             },
             FastExpressionRole {
                 name: "change1DayFiat"
-                expression: marketBalance * (1 - (1 / (marketChangePct24hour / 100 + 1)))
+                expression: model.marketBalance * (1 - (1 / (model.marketChangePct24hour / 100 + 1)))
                 expectedRoles: ["marketBalance", "marketChangePct24hour"]
             }
         ]
