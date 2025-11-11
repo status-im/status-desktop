@@ -2711,10 +2711,6 @@ Do you wish to override the security check and continue?</source>
         <source>Disconnect</source>
         <translation>Desconectar</translation>
     </message>
-    <message>
-        <source>Wallet info will appear here</source>
-        <translation>La información de la billetera aparecerá aquí</translation>
-    </message>
 </context>
 <context>
     <name>BrowserWebEngineView</name>

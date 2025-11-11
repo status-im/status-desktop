@@ -1894,8 +1894,8 @@
       <source>%n key pair(s) successfully imported</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform></numerusform>
-        <numerusform></numerusform>
+        <numerusform>%n key pair successfully imported</numerusform>
+        <numerusform>%n key pairs successfully imported</numerusform>
       </translation>
     </message>
     <message>
@@ -2357,8 +2357,8 @@
       <source>%n issue(s)</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform></numerusform>
-        <numerusform></numerusform>
+        <numerusform>%n issue</numerusform>
+        <numerusform>%n issues</numerusform>
       </translation>
     </message>
     <message>
@@ -3313,11 +3313,6 @@
       <source>Disconnect</source>
       <comment>BrowserWalletMenu</comment>
       <translation>Disconnect</translation>
-    </message>
-    <message>
-      <source>Wallet info will appear here</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Wallet info will appear here</translation>
     </message>
   </context>
   <context>

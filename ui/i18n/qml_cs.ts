@@ -2714,10 +2714,6 @@ Do you wish to override the security check and continue?</source>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Wallet info will appear here</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>BrowserWebEngineView</name>
