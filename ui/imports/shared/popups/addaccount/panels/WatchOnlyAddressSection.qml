@@ -60,27 +60,16 @@ Column {
         label: qsTr("Ethereum address or ENS name")
         placeholderText: qsTr("Type or paste ETH address")
         input.multiline: true
-        input.rightComponent: Row {
-            spacing: 8
-
-            StatusIconWithTooltip {
-                visible: d.incorrectChecksum
-                icon: "warning"
-                width: 20
-                height: 20
-                color: Theme.palette.warningColor1
-                tooltipText: qsTr("Checksum of the entered address is incorrect")
-            }
-
-            StatusButton {
-                anchors.verticalCenter: parent.verticalCenter
-                borderColor: Theme.palette.primaryColor1
-                size: StatusBaseButton.Size.Tiny
-                text: qsTr("Paste")
-                onClicked: {
-                    addressInput.text = ""
-                    addressInput.input.edit.paste()
-                }
+        warningMode: d.incorrectChecksum
+        warningMessage: qsTr("Checksum of the entered address is incorrect")
+        input.rightComponent: StatusButton {
+            anchors.verticalCenter: parent.verticalCenter
+            borderColor: Theme.palette.primaryColor1
+            size: StatusBaseButton.Size.Tiny
+            text: qsTr("Paste")
+            onClicked: {
+                addressInput.text = ""
+                addressInput.input.edit.paste()
             }
         }
         validators: [
