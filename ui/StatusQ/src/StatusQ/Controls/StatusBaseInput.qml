@@ -222,7 +222,11 @@ Item {
         This property sets the visibility of the background. Default value is true.
     */
     property bool showBackground: true
-
+    /*!
+        \qmlproperty bool StatusBaseInput::warningMode
+        This property sets warning mode on the input
+    */
+    property bool warningMode: false
     /*!
         \qmlproperty StatusAssetSettings StatusBaseInput::icon
         This property holds a set of settings for the icon of the StatusBaseInput.
@@ -305,6 +309,9 @@ Item {
             }
             if (!root.valid && root.dirty) {
                 return Theme.palette.dangerColor1
+            }
+            if(root.warningMode) {
+                return Theme.palette.warningColor1
             }
             if (edit.cursorVisible) {
                 return Theme.palette.primaryColor1
