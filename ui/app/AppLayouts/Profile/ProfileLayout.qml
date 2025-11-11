@@ -73,6 +73,8 @@ StatusSectionLayout {
 
     required property Keychain keychain
 
+    property bool forceSubsectionNavigation: false
+
     property bool isKeycardEnabled: true
     property bool isBrowserEnabled: true
     required property bool privacyModeFeatureEnabled
@@ -127,6 +129,14 @@ StatusSectionLayout {
         }
 
         root.settingsSubSubsection = -1
+    }
+
+    // In portrait mode, it automatically swipes to the detailed content
+    onForceSubsectionNavigationChanged: {
+        if(root.forceSubsectionNavigation) {
+            root.goToNextPanel()
+            root.forceSubsectionNavigation = false
+        }
     }
 
     Component.onCompleted: {
