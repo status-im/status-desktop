@@ -21,6 +21,8 @@ splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScre
                 "visible": True}
 mainWindow_LoadingAnimation = {"container": statusDesktop_mainWindow, "objectName": "loadingAnimation",
                                "type": "LoadingAnimation", "visible": True}
+keycardPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "KeycardPopup", "type": "PopupItem", "visible": True}
+keycardPopupCloseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 
 # Common names
 settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton",

@@ -16,10 +16,11 @@ from gui.elements.text_label import TextLabel
 from gui.objects_map import names
 
 
-class KeycardPopup(BasePopup):
+class KeycardPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.keycardPopup)
+        self.close_button = Button(names.keycardPopupCloseButton)
         self._keycard_image = QObject(names.img_Image)
         self._keycard_popup_header = TextLabel(names.headerTitle)
         self._keycard_instruction_text = TextLabel(names.keycard_reader_instruction_text)

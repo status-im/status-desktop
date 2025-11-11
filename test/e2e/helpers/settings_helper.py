@@ -2,10 +2,13 @@
 Helper functions for common settings operations.
 Reduces code duplication across test files.
 """
+import time
+
 import allure
 from allure_commons._allure import step
 
 from constants.dock_buttons import DockButtons
+from gui.components.settings.keycard_popup import KeycardPopup
 
 
 @allure.step('Enable testnet mode')
@@ -70,4 +73,14 @@ def verify_toast_notification(main_window, expected_message):
     """
     messages = main_window.wait_for_toast_notifications()
     return expected_message in messages
+
+
+@allure.step('Skip Keycard error popup')
+def skip_pcsc_error_popup_if_visible():
+    time.sleep(0.1)
+
+    pcsc_error_popup = KeycardPopup()
+    if pcsc_error_popup.is_visible:
+        pcsc_error_popup.close_button.click()
+        time.sleep(0.1)
 

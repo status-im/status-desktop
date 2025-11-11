@@ -6,6 +6,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants.wallet import WalletRenameKeypair, WalletAccountPopup
+from helpers.settings_helper import skip_pcsc_error_popup_if_visible
 from helpers.wallet_helper import authenticate_with_password
 from scripts.utils.generators import random_wallet_acc_keypair_name
 
@@ -57,6 +58,8 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
 
     with step('Click 3 dots menu on private key account, open rename keypair popup and verify it was renamed'):
         pk_new_name = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
+        settings.click_open_menu_button(pk_name)
+        skip_pcsc_error_popup_if_visible()
         settings.click_open_menu_button(pk_name)
         rename_keypair_popup = settings.click_rename_keypair()
         rename_keypair_popup.rename_keypair(pk_new_name)
