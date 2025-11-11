@@ -150,6 +150,9 @@ Item {
                 RootStore.currentActivityFiltersStore.toggleSavedAddress(savedAddress)
             }
         }
+
+        // In portrait mode, it automatically swipes to the detailed content
+        walletSectionLayout.goToNextPanel()
     }
 
     QtObject {
