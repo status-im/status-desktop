@@ -1,9 +1,6 @@
 import QtQuick
 
 import AppLayouts.Wallet.services.dapps
-import StatusQ.Core.Utils
-
-import shared.stores
 import utils
 
 DAppsModel {
