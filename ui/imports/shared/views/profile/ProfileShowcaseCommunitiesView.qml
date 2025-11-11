@@ -139,10 +139,10 @@ Item {
                 Global.switchToCommunity(model.id)
                 root.closeRequested()
             }
-            onRightClicked: {
+            onRightClicked: function (communityId, x, y) {
                 if (root.readOnly)
                     return
-                Global.openMenu(delegatesActionsMenu, this, { communityId: model.id, url: Utils.getCommunityShareLink(model.id) })
+                delegatesActionsMenu.createObject(profileDialogCommunityCard, { communityId: model.id, url: Utils.getCommunityShareLink(model.id) }).popup(x, y)
             }
         }
     }

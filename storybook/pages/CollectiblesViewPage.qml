@@ -122,6 +122,7 @@ SplitView {
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked
+        customOrderAvailable: controller.hasSettings
         onCollectibleClicked: logs.logEvent("onCollectibleClicked", ["chainId", "contractAddress", "tokenId", "uid", "tokenType", "communityId"], arguments)
         onSendRequested: logs.logEvent("onSendRequested", ["symbol", "tokenType", "fromAddress"], arguments)
         onReceiveRequested: logs.logEvent("onReceiveRequested", ["symbol"], arguments)

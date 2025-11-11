@@ -57,12 +57,7 @@ Item {
             asset.bgHeight: 32
             asset.isImage: false
             subTitle: model.url
-            onClicked: mouse => {
-                if (mouse.button === Qt.RightButton) {
-                    Global.openMenu(delegatesActionsMenu, this, { url: model.url });
-                }
-            }
-            highlight: hovered
+            onContextMenuRequested: (x, y) => delegatesActionsMenu.createObject(socialLinksInfoDelegate, { url: model.url }).popup(x,y)
             rightSideButtons: RowLayout {
                 StatusFlatRoundButton {
                     implicitWidth: 24
@@ -120,8 +115,9 @@ Item {
 
             property string url
 
+            onClosed: destroy()
+
             StatusSuccessAction {
-                id: copyAddressAction
                 successText: qsTr("Copied")
                 text: qsTr("Copy link")
                 icon.name: "copy"

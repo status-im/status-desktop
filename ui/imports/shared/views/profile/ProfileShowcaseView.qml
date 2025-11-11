@@ -142,7 +142,7 @@ Control {
             communitiesProxyModel: communitiesProxyModel
 
             onCloseRequested: root.closeRequested()
-            onCopyToClipboard: root.copyToClipboard(text)
+            onCopyToClipboard: text => root.copyToClipboard(text)
         }
 
         ProfileShowcaseAccountsView {
@@ -157,8 +157,8 @@ Control {
             cellWidth: d.delegateWidthM
             cellHeight: d.delegateHeightM
 
-            onCopyToClipboard: root.copyToClipboard(text)
-            onSendToAccountRequested: root.sendToAccountRequested(recipientAddress)
+            onCopyToClipboard: text => root.copyToClipboard(text)
+            onSendToAccountRequested: recipientAddress => root.sendToAccountRequested(recipientAddress)
         }
 
         ProfileShowcaseCollectiblesView {
@@ -174,11 +174,9 @@ Control {
             networksStore: root.networksStore
 
             onCloseRequested: root.closeRequested()
-            onVisitCommunity: {
-                Global.openPopup(visitComunityPopupComponent, {communityId: model.communityId, communityName: model.communityName,
-                                                communityLogo: model.communityImage, tokenName: model.name,
-                                                tokenImage: model.imageUrl, isAssetType: false });
-            }
+            onVisitCommunity: model => visitComunityPopupComponent.createObject(this, {communityId: model.communityId, communityName: model.communityName,
+                                                                                    communityLogo: model.communityImage, tokenName: model.name,
+                                                                                    tokenImage: model.imageUrl, isAssetType: false}).open()
         }
 
         ProfileShowcaseSocialLinksView {
@@ -191,7 +189,7 @@ Control {
             mainDisplayName: d.displayNameVerySmallEmoji
             socialLinksModel: socialLinksProxyModel
 
-            onCopyToClipboard: root.copyToClipboard(text)
+            onCopyToClipboard: text => root.copyToClipboard(text)
         }
     }
 

@@ -12,7 +12,7 @@ import AppLayouts.Wallet.controls
 
 import utils
 
-Control {
+AbstractButton {
     id: root
 
     objectName: "collectibleViewControl"
@@ -46,8 +46,7 @@ Control {
         readonly property bool unknownCommunityName: root.communityName.startsWith("0x") && root.communityId === root.communityName
     }
 
-    signal clicked
-    signal rightClicked
+    signal contextMenuRequested(real x, real y)
     signal switchToCommunityRequested(string communityId)
 
     background: Rectangle {
@@ -56,15 +55,15 @@ Control {
         visible: !root.isLoading && root.hovered
     }
 
-    TapHandler {
-        acceptedButtons: Qt.LeftButton
-        enabled: !root.isLoading
-        onTapped: root.clicked()
+    ContextMenu.onRequested: function(pos) {
+        if (root.isLoading)
+            return
+        root.contextMenuRequested(pos.x, pos.y)
     }
-    TapHandler {
-        acceptedButtons: Qt.RightButton
-        enabled: !root.isLoading
-        onTapped: root.rightClicked()
+    onPressAndHold: {
+        if (root.isLoading)
+            return
+        root.contextMenuRequested(pressX, pressY)
     }
 
     HoverHandler {

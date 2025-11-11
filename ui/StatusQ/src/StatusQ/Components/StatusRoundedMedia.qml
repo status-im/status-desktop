@@ -100,18 +100,17 @@ StatusRoundedComponent {
     property bool isEmpty: false
 
     readonly property int componentMediaType: {
-        if (root.mediaType.startsWith("image")) {
+        if (root.mediaType.startsWith("image"))
             return StatusRoundedMedia.MediaType.Image
-        } else if (root.mediaType.startsWith("video")) {
+        if (root.mediaType.startsWith("video"))
             return StatusRoundedMedia.MediaType.Video
-        }
         return StatusRoundedMedia.MediaType.Unknown
     }
 
     signal imageClicked(var image, bool plain)
-    signal videoClicked(var mediaUrl)
-    signal openImageContextMenu(var url, bool isGif)
-    signal openVideoContextMenu(var url)
+    signal videoClicked(url mediaUrl)
+    signal openImageContextMenu(url url, bool isGif, real x, real y)
+    signal openVideoContextMenu(url url, real x, real y)
 
     isLoading: {
         if (mediaLoader.status === Loader.Ready) {
@@ -159,14 +158,14 @@ StatusRoundedComponent {
         if(!!mediaLoader.item && (mediaLoader.item.paintedWidth > 0 || mediaLoader.item.paintedHeight > 0)) {
             return mediaLoader.item.paintedWidth
         }
-        else return root.manualMaxDimension
+        return root.manualMaxDimension
     }
     implicitHeight: {
         // Use Painted height so that the rectangle follows height of the image actually painted
         if(!!mediaLoader.item && (mediaLoader.item.paintedWidth > 0 || mediaLoader.item.paintedHeight > 0)) {
             return mediaLoader.item.paintedHeight
         }
-        else return root.manualMaxDimension
+        return root.manualMaxDimension
     }
 
     StatusMouseArea {
@@ -180,9 +179,9 @@ StatusRoundedComponent {
             }
             if (mouse.button === Qt.RightButton) {
                 if (d.isFallback || componentMediaType === StatusRoundedMedia.MediaType.Image) {
-                    root.openImageContextMenu(mediaLoader.item.source, !!mediaLoader.item.playing)
+                    root.openImageContextMenu(mediaLoader.item.source, !!mediaLoader.item.playing, mouse.x, mouse.y)
                 } else if (componentMediaType === StatusRoundedMedia.MediaType.Video) {
-                    root.openVideoContextMenu(mediaUrl)
+                    root.openVideoContextMenu(mediaUrl, mouse.x, mouse.y)
                 }
 
                 return
@@ -213,7 +212,7 @@ StatusRoundedComponent {
 
     function updateMediaLoader() {
         d.reset()
-        if (root.mediaUrl !== "") {
+        if (root.mediaUrl.toString() !== "") {
             if (componentMediaType === StatusRoundedMedia.MediaType.Image) {
                 mediaLoader.setSource("StatusAnimatedImage.qml",
                                     {
@@ -225,7 +224,7 @@ StatusRoundedComponent {
             } else if (componentMediaType === StatusRoundedMedia.MediaType.Video) {
                 mediaLoader.setSource("StatusVideo.qml",
                                     {
-                                        "player.source": root.mediaUrl,
+                                        "source": root.mediaUrl,
                                         "fillMode": root.fillMode
                                     });
                 return

@@ -68,6 +68,10 @@ Item {
                 Global.requestOpenLink(link)
             }
 
+            function openContextMenu(x, y) {
+                delegatesActionsMenu.createObject(delegateItem, {communityId: model.communityId, url: getCollectibleURL()}).popup(x, y)
+            }
+
             width: GridView.view.cellWidth - Theme.padding
             height: GridView.view.cellHeight - Theme.padding
 
@@ -75,6 +79,20 @@ Item {
                 id: hoverHandler
                 cursorShape: hovered ? Qt.PointingHandCursor : undefined
             }
+
+            TapHandler {
+                acceptedButtons: Qt.LeftButton
+                onSingleTapped: function (eventPoint, button) {
+                    if (!!model.communityId)
+                        root.visitCommunity(model)
+                    else
+                        delegateItem.openCollectibleURL()
+                }
+                onLongPressed: delegateItem.openContextMenu(point.pressPosition.x, point.pressPosition.y)
+            }
+
+            ContextMenu.onRequested: pos => delegateItem.openContextMenu(pos.x, pos.y)
+
             StatusRoundedImage {
                 id: collectibleImage
                 anchors.fill: parent
@@ -84,21 +102,6 @@ Item {
                 isLoading: image.isLoading || !model.imageUrl
                 image.fillMode: Image.PreserveAspectCrop
                 image.source: model.imageUrl ?? ""
-                TapHandler {
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onSingleTapped: function (eventPoint, button) {
-                        if ((button === Qt.LeftButton) && (model.communityId !== "")) {
-                            root.visitCommunity(model)
-                        } else {
-                            if (button === Qt.LeftButton) {
-                                delegateItem.openCollectibleURL()
-                            } else {
-                                Global.openMenu(delegatesActionsMenu, collectibleImage, { communityId: model.communityId, url: getCollectibleURL()});
-                            }
-                        }
-                    }
-                    onLongPressed: Global.openMenu(delegatesActionsMenu, collectibleImage, { communityId: model.communityId, url: getCollectibleURL()});
-                }
             }
 
             Image {
@@ -190,6 +193,8 @@ Item {
 
             property string url
             property string communityId
+
+            onClosed: destroy()
 
             StatusAction {
                 text: qsTr("Visit community")

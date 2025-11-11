@@ -48,7 +48,7 @@ SplitView {
             }
 
             onClicked: logs.logEvent("StatusCommunityCard::onClicked", ["communityId"], arguments)
-            onRightClicked: logs.logEvent("StatusCommunityCard::onRightClicked", ["communityId"], arguments)
+            onRightClicked: logs.logEvent("StatusCommunityCard::onRightClicked", ["communityId", "x", "y"], arguments)
         }
     }
 

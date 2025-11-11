@@ -14,7 +14,7 @@ import StatusQ.Core.Utils as StatusQUtils
 import AppLayouts.stores as AppLayoutStores
 import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Profile.helpers
-import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.stores as WalletStores
 
 import Storybook
 import Models
@@ -23,6 +23,7 @@ SplitView {
     id: root
 
     property bool globalUtilsReady: false
+    property bool globalCommunitiesModuleInstReady: false
 
     // globalUtilsInst mock
     QtObject {
@@ -42,6 +43,23 @@ SplitView {
         Component.onDestruction: {
             root.globalUtilsReady = false
             Utils.globalUtilsInst = {}
+        }
+    }
+
+    // communitiesModuleInst mock
+    QtObject {
+        function shareCommunityUrlWithData(communityId) {
+            return "https://status.app/0x" + communityId
+        }
+
+        Component.onCompleted: {
+            Utils.communitiesModuleInst = this
+            root.globalCommunitiesModuleInstReady = true
+
+        }
+        Component.onDestruction: {
+            root.globalCommunitiesModuleInstReady = false
+            Utils.communitiesModuleInst = {}
         }
     }
 
@@ -117,7 +135,7 @@ SplitView {
                 clip: true
 
                 Loader {
-                    active: root.globalUtilsReady
+                    active: root.globalUtilsReady && root.globalCommunitiesModuleInstReady
                     width: parent.availableWidth
                     height: parent.availableHeight
 
@@ -125,7 +143,7 @@ SplitView {
                         implicitWidth: 640
 
                         contactDetails: ContactDetails {
-                            publicKey: "0x0000x"
+                            publicKey: "0xdeadbeef"
 
                             displayName: displayNameTextField.text
                             localNickname: localNicknameTextField.text
@@ -134,15 +152,21 @@ SplitView {
                             name: ensNameTextField.text
 
                             isCurrentUser: ownProfileSwitch.checked
+                            isContact: ctrlIsContact.checked
+                            contactRequestState: ctrlContactRequestState.currentValue
 
                             largeImage: userImageCheckBox.checked ? Theme.png("status-logo") : ""
 
                             onlineStatus: onlineStatusComboBox.currentValue
 
+                            trustStatus: ctrlTrustStatus.currentValue
+                            isVerified: ctrlTrustStatus.currentValue === Constants.trustStatus.trusted
+                            isUntrustworthy: ctrlTrustStatus.currentValue === Constants.trustStatus.untrustworthy
                             isBlocked: isBlockedCheckBox.checked
 
                             colorId: colorIdSpinBox.value
 
+                            bio: ctrlBio.text
                         }
 
                         readOnly: ctrlReadOnly.checked
@@ -238,6 +262,7 @@ SplitView {
                         }
 
                         networksStore: SharedStores.NetworksStore {}
+                        walletStore: WalletStores.RootStore
                     }
                 }
             }
@@ -272,6 +297,7 @@ SplitView {
                     Label { text: "localNickname:" }
 
                     TextField {
+                        Layout.preferredWidth: 100
                         id: localNicknameTextField
 
                         text: "Alex"
@@ -283,6 +309,7 @@ SplitView {
                     }
 
                     TextField {
+                        Layout.preferredWidth: 100
                         id: displayNameTextField
 
                         text: "Alex Pella"
@@ -301,6 +328,7 @@ SplitView {
                     }
 
                     TextField {
+                        Layout.preferredWidth: 100
                         id: ensNameTextField
 
                         enabled: ensVerifiedCheckBox.checked
@@ -398,46 +426,10 @@ SplitView {
                 }
                 RowLayout {
                     Layout.fillWidth: true
-
-                    Button {
-                        text: "Send ID request"
-                        onClicked: {
-                            ctrlIsContact.checked = true
-                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                        }
-                    }
-                    Button {
-                        text: "Reply to ID request"
-                        onClicked: {
-                            ctrlIsContact.checked = true
-                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
-                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                        }
-                    }
-                    Button {
-                        text: "Pending ID request"
-                        onClicked: {
-                            ctrlIsContact.checked = true
-                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
-                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
-                        }
-                    }
-                    Button {
-                        text: "Review ID reply"
-                        onClicked: {
-                            ctrlIsContact.checked = true
-                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.verified)
-                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
-                        }
-                    }
-                }
-                RowLayout {
-                    Layout.fillWidth: true
                     Label { text: "Bio:" }
                     TextField {
                         Layout.fillWidth: true
-                        id: bio
+                        id: ctrlBio
                         selectByMouse: true
                         text: "
 
@@ -473,4 +465,4 @@ Say hi, or find me on Twitter, GitHub, or Mastodon.
 // https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=6%3A16845&t=h8DUW6Eysawqe5u0-0
 // https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=4%3A25437&t=h8DUW6Eysawqe5u0-0
 
-// status: decent
+// status: good

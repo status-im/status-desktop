@@ -506,13 +506,12 @@ ColumnLayout {
             balance: model.balance ?? 1
 
             onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType, model.communityId ?? "")
-            onRightClicked: {
+            onContextMenuRequested: function(x, y) {
                 const userOwnedAddress = d.getFirstUserOwnedAddress(model.ownership)
-                Global.openMenu(tokenContextMenu, this,
-                                {symbol: model.symbol, chainId: model.chainId, tokenName: model.name, tokenImage: model.imageUrl,
-                                    communityId: model.communityId, communityName: model.communityName,
-                                    communityImage: model.communityImage, tokenType: model.tokenType,
-                                    soulbound: model.soulbound, userOwnedAddress: userOwnedAddress})
+                tokenContextMenu.createObject(this, {symbol: model.symbol, chainId: model.chainId, tokenName: model.name, tokenImage: model.imageUrl,
+                                                  communityId: model.communityId, communityName: model.communityName,
+                                                  communityImage: model.communityImage, tokenType: model.tokenType,
+                                                  soulbound: model.soulbound, userOwnedAddress}).popup(x, y)
             }
             onSwitchToCommunityRequested: (communityId) => root.switchToCommunityRequested(communityId)
         }

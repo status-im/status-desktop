@@ -525,10 +525,8 @@ Pane {
                     networksStore: root.networksStore
 
                     onCloseRequested: root.closeRequested()
-                    onCopyToClipboard: ClipboardUtils.setText(text)
-                    onSendToAccountRequested: {
-                        Global.sendToRecipientRequested(recipientAddress)
-                    }
+                    onCopyToClipboard: text => ClipboardUtils.setText(text)
+                    onSendToAccountRequested: recipientAddress => Global.sendToRecipientRequested(recipientAddress)
                 }
             }
         }
