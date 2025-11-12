@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Controls
+import StatusQ.Components
 import StatusQ.Core.Utils as SQUtils
 
 import utils
@@ -150,7 +151,16 @@ FocusScope {
                     sourceSize: Qt.size(width, height)
                     icon: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).icon.toString().replace("image://favicon/", "")
                                                               : "globe"
+                    visible: !loadingIndicator.visible
                 }
+                StatusLoadingIndicator {
+                    id: loadingIndicator
+                    Layout.preferredWidth: 13
+                    Layout.preferredHeight: 13
+                    opacity: tabButton.checked || tabButton.hovered ? 1 : Theme.disabledOpacity
+                    visible: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).loading : false
+                }
+
                 StatusBaseText {
                     Layout.fillWidth: true
                     elide: Qt.ElideRight
@@ -165,7 +175,7 @@ FocusScope {
                     opacity: tabButton.checked || tabButton.hovered ? 1 : Theme.disabledOpacity
                     Behavior on opacity {OpacityAnimator {duration: Theme.AnimationDuration.Fast}}
                     icon: "hide"
-                    visible: root.getTab(tabButton.TabBar.index).profile.offTheRecord
+                    visible: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).profile.offTheRecord : false
                 }
                 StatusFlatButton {
                     Layout.alignment: Qt.AlignRight
