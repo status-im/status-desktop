@@ -1333,7 +1333,14 @@ QtObject {
     ]
 
     function tokenIcon(symbol, useDefault=true) {
-        const tmpSymbol = uniqueSymbolToTokenSymbol(symbol)
+        let tmpSymbol = symbol
+        let index = symbol.indexOf(" (EVM)")
+        if (index === -1) {
+            index = symbol.indexOf(" (BSC)")
+        }
+        if (index !== -1) {
+            tmpSymbol = symbol.substring(0, index)
+        }
 
         if (!!tmpSymbol && knownTokenPNGs.indexOf(tmpSymbol) !== -1)
             return Assets.png("tokens/" + tmpSymbol)
@@ -1533,52 +1540,6 @@ QtObject {
     readonly property int maxActiveNetworks: 5
 
     readonly property int maxEmojiReactionsPerMessage: 20
-
-    /*
-        Hacky workaround functions to deal with token collision workaround https://github.com/status-im/status-go/pull/6538
-        We use unique symbols with the form "symbol(decimals)" to avoid bundling tokens with different decimals.
-        Remove these functions when the status-go PR is reverted.
-    */
-    function tokenSymbolToUniqueSymbol(symbol, chainId) {
-        if (symbol === "USDT" || symbol === "USDC") {
-            if (chainId === Constants.chains.binanceSmartChainMainnetChainId || chainId === Constants.chains.binanceSmartChainTestnetChainId) {
-                return symbol + " (BSC)"
-            }
-            return symbol + " (EVM)"
-        } else if (symbol === "SWFTC") {
-            if (chainId === Constants.chains.binanceSmartChainMainnetChainId || chainId === Constants.chains.binanceSmartChainTestnetChainId) {
-                return symbol + " (BSC)"
-            }
-            return symbol + " (EVM)"
-        } else if (symbol === "FLUX") {
-            return symbol + " (EVM)"
-        }
-
-        return symbol
-    }
-
-    readonly property QtObject uniqueSymbols: QtObject {
-        readonly property string usdtEvm: "USDT (EVM)"
-        readonly property string usdtBsc: "USDT (BSC)"
-        readonly property string usdcEvm: "USDC (EVM)"
-        readonly property string usdcBsc: "USDC (BSC)"
-        readonly property string swftcEvm: "SWFTC (EVM)"
-        readonly property string swftcBsc: "SWFTC (BSC)"
-        readonly property string fluxEvm: "FLUX (EVM)"
-    }
-
-    function uniqueSymbolToTokenSymbol(uniqueSymbol) {
-        if (uniqueSymbol === uniqueSymbols.usdtEvm || uniqueSymbol === uniqueSymbols.usdtBsc) {
-            return "USDT"
-        } else if (uniqueSymbol === uniqueSymbols.usdcEvm || uniqueSymbol === uniqueSymbols.usdcBsc) {
-            return "USDC"
-        } else if (uniqueSymbol === uniqueSymbols.swftcEvm || uniqueSymbol === uniqueSymbols.swftcBsc) {
-            return "SWFTC"
-        } else if (uniqueSymbol === uniqueSymbols.fluxEvm) {
-            return "FLUX"
-        }
-        return uniqueSymbol
-    }
 
     enum BackupImportState {
         None,

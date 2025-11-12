@@ -9,6 +9,9 @@ export response_type
 rpc(getAllTokenLists, "wallet"):
   discard
 
+rpc(getTokensOfInterestForActiveNetworksMode, "wallet"):
+  discard
+
 rpc(getTokensForActiveNetworksMode, "wallet"):
   discard
 
@@ -50,6 +53,18 @@ proc getAllTokenLists*(resultOut: var JsonNode): string =
     return prepareResponse(resultOut, response)
   except Exception as e:
     warn "error getting all token lists", err = e.msg
+    return e.msg
+
+
+## Gets all tokens of interest for the active networks mode
+## `resultOut` represents a json object that contains the tokens if the call was successful, or `nil`
+## returns the error message if any, or an empty string
+proc getTokensOfInterestForActiveNetworksMode*(resultOut: var JsonNode): string =
+  try:
+    let response = getTokensOfInterestForActiveNetworksMode()
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn "error getting all tokens of interest for the active networks mode", err = e.msg
     return e.msg
 
 

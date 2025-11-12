@@ -30,18 +30,21 @@ QtObject:
     tokensModel: TokensModel
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource
     tokenMarketDetails: seq[MarketDetailsItem]
+    allowEmptyMarketDetails: bool
 
   proc setup(self: TokenGroupsModel)
   proc delete(self: TokenGroupsModel)
   proc newTokenGroupsModel*(
     delegate: io_interface.TokenGroupsModelDataSource,
-    marketValuesDelegate: io_interface.TokenMarketValuesDataSource
+    marketValuesDelegate: io_interface.TokenMarketValuesDataSource,
+    allowEmptyMarketDetails: bool
     ): TokenGroupsModel =
     new(result, delete)
     result.setup
     result.delegate = delegate
     result.marketValuesDelegate = marketValuesDelegate
     result.tokenMarketDetails = @[]
+    result.allowEmptyMarketDetails = allowEmptyMarketDetails
 
   method rowCount(self: TokenGroupsModel, index: QModelIndex = nil): int =
     return self.delegate.getAllTokenGroups().len
@@ -81,7 +84,7 @@ QtObject:
     if not index.isValid:
       return
     if index.row < 0 or index.row >= self.delegate.getAllTokenGroups().len or
-      index.row >= self.tokenMarketDetails.len:
+      (not self.allowEmptyMarketDetails and index.row >= self.tokenMarketDetails.len):
       return
 
     let item = self.delegate.getAllTokenGroups()[index.row]
@@ -122,6 +125,8 @@ QtObject:
         let tokenKey = item.tokens[0].key
         return newQVariant(self.delegate.getTokenDetails(tokenKey).description)
       of ModelRole.MarketDetails:
+        if self.allowEmptyMarketDetails:
+          return newQVariant("")
         return newQVariant(self.tokenMarketDetails[index.row])
       of ModelRole.DetailsLoading:
         return newQVariant(self.delegate.getTokensDetailsLoading())
@@ -134,6 +139,11 @@ QtObject:
 
   proc modelsUpdated*(self: TokenGroupsModel) =
     self.beginResetModel()
+    defer: self.endResetModel()
+
+    if self.allowEmptyMarketDetails:
+      return
+
     self.tokenMarketDetails = @[]
     let tokensList = self.delegate.getAllTokenGroups()
     let currencyFormat = self.marketValuesDelegate.getCurrentCurrencyFormat()
@@ -145,9 +155,10 @@ QtObject:
         self.marketValuesDelegate.getMarketValuesForToken(tokenKey),
         currencyFormat)
       self.tokenMarketDetails.add(item)
-    self.endResetModel()
 
   proc tokensMarketValuesUpdated*(self: TokenGroupsModel) =
+    if self.allowEmptyMarketDetails:
+      return
     if not self.delegate.getTokensMarketValuesLoading():
       for marketDetails in self.tokenMarketDetails:
         marketDetails.updateTokenPrice(self.marketValuesDelegate.getPriceForToken(marketDetails.tokenKey))
@@ -162,15 +173,6 @@ QtObject:
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.MarketDetailsLoading.int])
 
-  proc tokensDetailsAboutToUpdate*(self: TokenGroupsModel) =
-    let tokenGroupsListLength = self.delegate.getAllTokenGroups().len
-    if tokenGroupsListLength > 0:
-      let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(tokenGroupsListLength-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
-      self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
-
   proc tokensDetailsUpdated*(self: TokenGroupsModel) =
     let tokenGroupsListLength = self.delegate.getAllTokenGroups().len
     if tokenGroupsListLength > 0:
@@ -181,6 +183,8 @@ QtObject:
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
   proc currencyFormatsUpdated*(self: TokenGroupsModel) =
+    if self.allowEmptyMarketDetails:
+      return
     let currencyFormat = self.marketValuesDelegate.getCurrentCurrencyFormat()
     for marketDetails in self.tokenMarketDetails:
         marketDetails.updateCurrencyFormat(currencyFormat)

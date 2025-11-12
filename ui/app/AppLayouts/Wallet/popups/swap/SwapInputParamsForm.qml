@@ -13,24 +13,24 @@ QtObject {
 
     property string selectedAccountAddress: ""
     property int selectedNetworkChainId: -1
-    property string fromTokensKey: root.defaultFromTokenKey
+    property string fromGroupKey: root.defaultFromGroupKey
     property string fromTokenAmount: ""
-    property string toTokenKey: root.defaultToTokenKey
+    property string toGroupKey: root.defaultToGroupKey
     property string toTokenAmount: ""
     property double selectedSlippage: 0.5
 
     // default to token key
-    property string defaultToTokenKey: Utils.getNativeTokenSymbol(root.selectedNetworkChainId)
-    // default from token key
-    property string defaultFromTokenKey: Constants.tokenSymbolToUniqueSymbol(Constants.usdcToken, root.selectedNetworkChainId)
+    property string defaultToGroupKey: Utils.getNativeTokenGroupKey(root.selectedNetworkChainId)
+    // default from group key
+    property string defaultFromGroupKey: root.getDefaultFromGroupKey(root.selectedNetworkChainId)
     // 15 seconds
     property int autoRefreshTime: 15000
 
     onSelectedAccountAddressChanged: root.formValuesChanged()
     onSelectedNetworkChainIdChanged: root.formValuesChanged()
-    onFromTokensKeyChanged: root.formValuesChanged()
+    onFromGroupKeyChanged: root.formValuesChanged()
     onFromTokenAmountChanged: root.formValuesChanged()
-    onToTokenKeyChanged: root.formValuesChanged()
+    onToGroupKeyChanged: root.formValuesChanged()
     onToTokenAmountChanged: root.formValuesChanged()
     onSelectedSlippageChanged: root.formValuesChanged()
 
@@ -44,18 +44,18 @@ QtObject {
 
     function resetFromTokenValues(keepDefault = true) {
         if(keepDefault) {
-            root.fromTokensKey = root.defaultFromTokenKey
+            root.fromGroupKey = root.defaultFromGroupKey
         } else {
-            root.fromTokensKey = ""
+            root.fromGroupKey = ""
         }
         root.fromTokenAmount = ""
     }
 
     function resetToTokenValues(keepDefault = true) {
         if(keepDefault) {
-            root.toTokenKey = root.defaultToTokenKey
+            root.toGroupKey = root.defaultToGroupKey
         } else {
-            root.toTokenKey = ""
+            root.toGroupKey = ""
         }
         root.toTokenAmount = ""
     }
@@ -64,8 +64,19 @@ QtObject {
         let bigIntNumber = SQUtils.AmountsArithmetic.fromString(root.fromTokenAmount)
         return !!root.selectedAccountAddress &&
                 root.selectedNetworkChainId !== -1 &&
-                !!root.fromTokensKey && !!root.toTokenKey &&
+                !!root.fromGroupKey && !!root.toGroupKey &&
                 (!!root.fromTokenAmount && !isNaN(bigIntNumber) && bigIntNumber.gt(0)) &&
                 root.selectedSlippage > 0
     }
+
+    function getDefaultFromGroupKey(chainId) {
+        switch (chainId) {
+            case Constants.chains.binanceSmartChainMainnetChainId:
+            case Constants.chains.binanceSmartChainTestnetChainId:
+                return Constants.usdcGroupKeyBsc
+            default:
+                return Constants.usdcGroupKeyEvm
+        }
+    }
+
 }

@@ -53,8 +53,6 @@ method load*(self: Module) =
   self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
     self.view.modelsUpdated()
     self.view.emitTokenListUpdatedAtSignal()
-  self.events.on(SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED) do(e: Args):
-    self.view.tokensDetailsAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_DETAILS_UPDATED) do(e: Args):
     self.view.tokensDetailsUpdated()
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED) do(e: Args):
@@ -103,7 +101,17 @@ method getTokenListsModelDataSource*(self: Module): TokenListsModelDataSource =
 
 method getTokenGroupsModelDataSource*(self: Module): TokenGroupsModelDataSource =
   return (
-    getAllTokenGroups: proc(): var seq[TokenGroupItem] = self.controller.getAllTokenGroups(),
+    getAllTokenGroups: proc(): var seq[TokenGroupItem] = self.controller.getGroupsOfInterest(),
+    getTokenDetails: proc(tokenKey: string): TokenDetailsItem = self.controller.getTokenDetails(tokenKey),
+    getTokenPreferences: proc(groupKey: string): TokenPreferencesItem = self.controller.getTokenPreferences(groupKey),
+    getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
+    getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
+    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading(),
+  )
+
+method getTokenGroupsForChainModelDataSource*(self: Module): TokenGroupsModelDataSource =
+  return (
+    getAllTokenGroups: proc(): var seq[TokenGroupItem] = self.controller.getGroupsForChain(),
     getTokenDetails: proc(tokenKey: string): TokenDetailsItem = self.controller.getTokenDetails(tokenKey),
     getTokenPreferences: proc(groupKey: string): TokenPreferencesItem = self.controller.getTokenPreferences(groupKey),
     getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
@@ -118,6 +126,9 @@ method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSourc
     getCurrentCurrencyFormat: proc(): CurrencyFormatDto = self.controller.getCurrentCurrencyFormat(),
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading(),
   )
+
+method buildGroupsForChain*(self: Module, chainId: int) =
+  self.controller.buildGroupsForChain(chainId)
 
 method filterChanged*(self: Module, addresses: seq[string]) =
   if addresses == self.addresses:

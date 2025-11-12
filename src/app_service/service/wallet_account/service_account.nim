@@ -143,8 +143,8 @@ proc init*(self: Service) =
       # this is the delay before the first call to the callback, this is an action that doesn't need to be called immediately, but it's pretty expensive in terms of time/performances
       # for example `wallet-tick-reload` event is emitted for every single chain-account pair, and at the app start can be more such signals received from the statusgo side if the balance have changed.
       # Means it the app contains more accounts the likelihood of having more `wallet-tick-reload` signals is higher, so we need to delay the rebuildMarketData call to avoid unnecessary calls.
-      delayMs = 3000,
-      checkIntervalMs = 1000)
+      delayMs = 1000,
+      checkIntervalMs = 500)
     self.buildTokensDebouncer.registerCall2(callback = proc(accounts: seq[string], forceRefresh: bool) = self.buildAllTokensInternal(accounts, forceRefresh))
 
     var addressesToGetENSName: seq[string] = @[]
@@ -205,6 +205,9 @@ proc init*(self: Service) =
     let args = AuthenticationArgs(e)
     self.cleanKeystoreFiles(args.password)
     self.importPartiallyOperableAccounts(args.keyUid, args.password)
+
+  let addresses = self.getWalletAddresses()
+  self.buildAllTokens(addresses, forceRefresh = true)
 
 proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = true) =
   var addressesToFetchBalanceFor: seq[string] = @[]

@@ -64,7 +64,7 @@ StatusDialog {
         readonly property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {
             selectedWalletAddress: root.swapInputParamsForm.selectedAccountAddress
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-            selectedTokenGroupKey: root.swapInputParamsForm.fromTokensKey  // TOOD: update!!!!
+            selectedTokenGroupKey: root.swapInputParamsForm.fromGroupKey
         }
 
         readonly property WalletAccountsSelectorAdaptor accountsSelectorAdaptor : WalletAccountsSelectorAdaptor {
@@ -73,7 +73,7 @@ StatusDialog {
             tokenGroupsModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel
             filteredFlatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
 
-            selectedGroupKey: root.swapInputParamsForm.fromTokensKey
+            selectedGroupKey: root.swapInputParamsForm.fromGroupKey
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
 
             fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
@@ -102,15 +102,17 @@ StatusDialog {
         }
 
         function onSelectedNetworkChainIdChanged() {
+            root.swapAdaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(root.swapInputParamsForm.selectedNetworkChainId)
+
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
         }
 
-        function onFromTokensKeyChanged() {
-            payPanel.tokenKey = root.swapInputParamsForm.fromTokensKey
+        function onFromGroupKeyChanged() {
+            payPanel.groupKey = root.swapInputParamsForm.fromGroupKey
         }
 
-        function onToTokenKeyChanged() {
-            receivePanel.tokenKey = root.swapInputParamsForm.toTokenKey
+        function onToGroupKeyChanged() {
+            receivePanel.groupKey = root.swapInputParamsForm.toGroupKey
         }
     }
 
@@ -119,6 +121,10 @@ StatusDialog {
         target: root.swapAdaptor
         property: "amountEnteredGreaterThanBalance"
         value: payPanel.amountEnteredGreaterThanBalance
+    }
+
+    Component.onCompleted: {
+        root.swapAdaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(root.swapInputParamsForm.selectedNetworkChainId)
     }
 
     onOpened: {
@@ -213,11 +219,11 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
-                    plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+                    tokenGroupsModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
 
-                    tokenKey: root.swapInputParamsForm.fromTokensKey
-                    defaultTokenKey: root.swapInputParamsForm.defaultFromTokenKey
-                    oppositeSideTokenKey: root.swapInputParamsForm.toTokenKey
+                    groupKey: root.swapInputParamsForm.fromGroupKey
+                    defaultGroupKey: root.swapInputParamsForm.defaultFromGroupKey
+                    oppositeSideGroupKey: root.swapInputParamsForm.toGroupKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
 
                     cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
@@ -225,17 +231,17 @@ StatusDialog {
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
 
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
-                    nonInteractiveTokensKey: receivePanel.selectedHoldingId
+                    nonInteractiveGroupKey: receivePanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Pay
                     swapExchangeButtonWidth: swapExchangeButton.width
 
                     bottomTextLoading: root.swapAdaptor.swapProposalLoading
 
-                    onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
+                    onSelectedHoldingIdChanged: root.swapInputParamsForm.fromGroupKey = selectedHoldingId
 
                     onRawValueChanged: {
-                        if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
+                        if(root.swapInputParamsForm.fromGroupKey === selectedHoldingId) {
                             const zero = SQUtils.AmountsArithmetic.fromString("0")
                             const bigIntRawValue = SQUtils.AmountsArithmetic.fromString(rawValue)
                             const amount = !tokenAmount && SQUtils.AmountsArithmetic.cmp(bigIntRawValue, zero) === 0 ? "" :
@@ -259,17 +265,17 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
-                    plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+                    tokenGroupsModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
 
-                    tokenKey: root.swapInputParamsForm.toTokenKey
-                    defaultTokenKey: root.swapInputParamsForm.defaultToTokenKey
-                    oppositeSideTokenKey: root.swapInputParamsForm.fromTokensKey
+                    groupKey: root.swapInputParamsForm.toGroupKey
+                    defaultGroupKey: root.swapInputParamsForm.defaultToGroupKey
+                    oppositeSideGroupKey: root.swapInputParamsForm.fromGroupKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
 
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
-                    
+
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
-                    nonInteractiveTokensKey: payPanel.selectedHoldingId
+                    nonInteractiveGroupKey: payPanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Receive
                     swapExchangeButtonWidth: swapExchangeButton.width
@@ -277,7 +283,7 @@ StatusDialog {
                     mainInputLoading: root.swapAdaptor.swapProposalLoading
                     bottomTextLoading: root.swapAdaptor.swapProposalLoading
 
-                    onSelectedHoldingIdChanged: root.swapInputParamsForm.toTokenKey = selectedHoldingId
+                    onSelectedHoldingIdChanged: root.swapInputParamsForm.toGroupKey = selectedHoldingId
 
                     /* TODO: keep this input as disabled until the work for adding a param to handle to
                     and from tokens inputed is supported by backend under
@@ -289,13 +295,13 @@ StatusDialog {
                     id: swapExchangeButton
                     objectName: "swapExchangeButton"
                     anchors.centerIn: parent
-                    enabled: !!root.swapInputParamsForm.fromTokensKey || !!root.swapInputParamsForm.toTokenKey
+                    enabled: !!root.swapInputParamsForm.fromGroupKey || !!root.swapInputParamsForm.toGroupKey
                     onClicked: {
-                        const tempPayToken = root.swapInputParamsForm.fromTokensKey
+                        const tempPayToken = root.swapInputParamsForm.fromGroupKey
                         const tempPayAmount = root.swapInputParamsForm.fromTokenAmount
-                        root.swapInputParamsForm.fromTokensKey = root.swapInputParamsForm.toTokenKey
+                        root.swapInputParamsForm.fromGroupKey = root.swapInputParamsForm.toGroupKey
                         root.swapInputParamsForm.fromTokenAmount = !!root.swapAdaptor.swapOutputData.toTokenAmount ? root.swapAdaptor.swapOutputData.toTokenAmount : root.swapInputParamsForm.toTokenAmount
-                        root.swapInputParamsForm.toTokenKey = tempPayToken
+                        root.swapInputParamsForm.toGroupKey = tempPayToken
                         root.swapInputParamsForm.toTokenAmount = tempPayAmount
                         payPanel.forceActiveFocus()
                     }
@@ -306,11 +312,11 @@ StatusDialog {
                 id: approximationRow
                 property bool inversedOrder: false
                 readonly property SwapInputPanel leftPanel: inversedOrder ? receivePanel : payPanel
-                readonly property SwapInputPanel rightPanel: inversedOrder ? payPanel : receivePanel 
+                readonly property SwapInputPanel rightPanel: inversedOrder ? payPanel : receivePanel
 
-                readonly property string lhsSymbol: leftPanel.tokenKey ?? ""
+                readonly property string lhsSymbol: leftPanel.groupKey ?? ""
                 readonly property double lhsAmount: leftPanel.value
-                readonly property string rhsSymbol: rightPanel.tokenKey ?? ""
+                readonly property string rhsSymbol: rightPanel.groupKey ?? ""
                 readonly property double rhsAmount: rightPanel.value
                 readonly property int rhsDecimals: rightPanel.rawValueMultiplierIndex
                 readonly property bool amountLoading: receivePanel.mainInputLoading || payPanel.mainInputLoading
@@ -410,7 +416,7 @@ StatusDialog {
                     d.buyFormData.selectedWalletAddress = root.swapInputParamsForm.selectedAccountAddress
                     d.buyFormData.selectedNetworkChainId = root.swapInputParamsForm.selectedNetworkChainId
                     d.buyFormData.selectedTokenKey = root.swapAdaptor.isTokenBalanceInsufficient ?
-                                root.swapInputParamsForm.fromTokensKey :
+                                root.swapInputParamsForm.fromGroupKey :
                                 d.nativeTokenSymbol
                     Global.openBuyCryptoModalRequested(d.buyFormData)
                 }
@@ -510,7 +516,7 @@ StatusDialog {
                     objectName: "signButton"
                     readonly property string fromTokenSymbol: !!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol ?? "" : ""
                     loadingWithText: root.swapAdaptor.approvalPending
-                    icon.name: d.selectedAccount.migratedToKeycard ? Constants.authenticationIconByType[Constants.LoginType.Keycard]
+                    icon.name: !!d.selectedAccount && d.selectedAccount.migratedToKeycard ? Constants.authenticationIconByType[Constants.LoginType.Keycard]
                                                                                   : Constants.authenticationIconByType[root.loginType]
                     text: {
                         if(root.swapAdaptor.validSwapProposalReceived) {
@@ -562,14 +568,25 @@ StatusDialog {
 
             formatBigNumber: (number, symbol, noSymbolOption) => root.swapAdaptor.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
-            loginType: d.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            loginType: !!d.selectedAccount && d.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             feesLoading: root.swapAdaptor.swapProposalLoading
 
             fromTokenSymbol: root.swapAdaptor.fromToken.symbol
             fromTokenAmount: root.swapInputParamsForm.fromTokenAmount
-            fromTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.fromToken.addressPerChain,
-                                                                  "chainId", root.swapInputParamsForm.selectedNetworkChainId,
-                                                                  "address")
+            fromTokenContractAddress: {
+                let selectedGroup = SQUtils.ModelUtils.getByKey(payPanel.tokenGroupsModel,
+                                                                "key",
+                                                                root.swapAdaptor.swapFormData.fromGroupKey)
+                if (!selectedGroup.tokens) {
+                    return ""
+                }
+
+                let tokenAddress = SQUtils.ModelUtils.getByKey(selectedGroup.tokens,
+                                                               "chainId",
+                                                               root.swapInputParamsForm.selectedNetworkChainId,
+                                                               "address")
+                return tokenAddress
+            }
 
             accountName: d.selectedAccount.name
             accountAddress: d.selectedAccount.address
@@ -617,20 +634,42 @@ StatusDialog {
 
             formatBigNumber: (number, symbol, noSymbolOption) => root.swapAdaptor.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
-            loginType: d.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            loginType: !!d.selectedAccount && d.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             feesLoading: root.swapAdaptor.swapProposalLoading
 
             fromTokenSymbol: root.swapAdaptor.fromToken.symbol
             fromTokenAmount: root.swapInputParamsForm.fromTokenAmount
-            fromTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.fromToken.addressPerChain,
-                                                                  "chainId", root.swapInputParamsForm.selectedNetworkChainId,
-                                                                  "address")
+            fromTokenContractAddress: {
+                let selectedGroup = SQUtils.ModelUtils.getByKey(payPanel.tokenGroupsModel,
+                                                                "key",
+                                                                root.swapAdaptor.swapFormData.fromGroupKey)
+                if (!selectedGroup.tokens) {
+                    return ""
+                }
+
+                let tokenAddress = SQUtils.ModelUtils.getByKey(selectedGroup.tokens,
+                                                               "chainId",
+                                                               root.swapInputParamsForm.selectedNetworkChainId,
+                                                               "address")
+                return tokenAddress
+            }
 
             toTokenSymbol: root.swapAdaptor.toToken.symbol
             toTokenAmount: root.swapAdaptor.swapOutputData.toTokenAmount
-            toTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.toToken.addressPerChain,
-                                                                "chainId", root.swapInputParamsForm.selectedNetworkChainId,
-                                                                "address")
+            toTokenContractAddress: {
+                let selectedGroup = SQUtils.ModelUtils.getByKey(receivePanel.tokenGroupsModel,
+                                                                "key",
+                                                                root.swapAdaptor.swapFormData.toGroupKey)
+                if (!selectedGroup.tokens) {
+                    return ""
+                }
+
+                let tokenAddress = SQUtils.ModelUtils.getByKey(selectedGroup.tokens,
+                                                               "chainId",
+                                                               root.swapInputParamsForm.selectedNetworkChainId,
+                                                               "address")
+                return tokenAddress
+            }
 
             accountName: d.selectedAccount.name
             accountAddress: d.selectedAccount.address
