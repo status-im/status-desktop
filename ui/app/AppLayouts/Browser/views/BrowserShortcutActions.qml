@@ -59,15 +59,6 @@ Item {
     property var findBarComponent
     property var browserHeaderComponent
 
-    signal addNewDownloadTab()
-    signal removeView()
-
-    Action {
-        shortcut: "Ctrl+D"
-        onTriggered: {
-            addNewDownloadTab()
-        }
-    }
     Shortcut {
         sequences: ["Ctrl+L", "F6"]
         onActivated: {
