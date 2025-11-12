@@ -2625,6 +2625,10 @@ Do you wish to override the security check and continue?</source>
         <translation>맞춤 확대</translation>
     </message>
     <message>
+        <source>Downloads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Find</source>
         <translation>찾기</translation>
     </message>

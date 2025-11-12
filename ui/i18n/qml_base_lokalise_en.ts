@@ -3223,6 +3223,11 @@
       <translation>Zoom Fit</translation>
     </message>
     <message>
+      <source>Downloads</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Downloads</translation>
+    </message>
+    <message>
       <source>Find</source>
       <comment>BrowserSettingsMenu</comment>
       <translation>Find</translation>
