@@ -452,5 +452,15 @@
         <file>icons/action-sync-fail.svg</file>
         <file>icons/action-sync.svg</file>
         <file>icons/action-warn.svg</file>
+        <file>icons/search_engines/none.svg</file>
+        <file>icons/search_engines/duckduckgo.svg</file>
+        <file>icons/search_engines/brave_search.svg</file>
+        <file>icons/search_engines/bing.svg</file>
+        <file>icons/search_engines/qwant.svg</file>
+        <file>icons/search_engines/starpage.svg</file>
+        <file>icons/search_engines/mojeek.svg</file>
+        <file>icons/search_engines/ecosia.svg</file>
+        <file>icons/search_engines/google.svg</file>
+        <file>icons/search_engines/custom.svg</file>
     </qresource>
 </RCC>

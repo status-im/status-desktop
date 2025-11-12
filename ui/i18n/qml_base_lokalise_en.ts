@@ -3282,11 +3282,6 @@
   <context>
     <name>BrowserView</name>
     <message>
-      <source>None</source>
-      <comment>BrowserView</comment>
-      <translation>None</translation>
-    </message>
-    <message>
       <source>Show Favorites Bar</source>
       <comment>BrowserView</comment>
       <translation>Show Favorites Bar</translation>
@@ -18008,9 +18003,42 @@
       <translation>Search engine</translation>
     </message>
     <message>
-      <source>None</source>
+      <source>https://example.com/search?q=</source>
       <comment>SearchEngineModal</comment>
+      <translation>https://example.com/search?q=</translation>
+    </message>
+    <message>
+      <source>Custom search engine URL prefix</source>
+      <comment>SearchEngineModal</comment>
+      <translation>Custom search engine URL prefix</translation>
+    </message>
+    <message>
+      <source>URL must start with http:// or https://</source>
+      <comment>SearchEngineModal</comment>
+      <translation>URL must start with http:// or https://</translation>
+    </message>
+  </context>
+  <context>
+    <name>SearchEnginesConfig</name>
+    <message>
+      <source>None</source>
+      <comment>SearchEnginesConfig</comment>
       <translation>None</translation>
+    </message>
+    <message>
+      <source>valid URLs open directly; non-addresses won&#39;t be searched.</source>
+      <comment>SearchEnginesConfig</comment>
+      <translation>valid URLs open directly; non-addresses won&#39;t be searched.</translation>
+    </message>
+    <message>
+      <source>Custom</source>
+      <comment>SearchEnginesConfig</comment>
+      <translation>Custom</translation>
+    </message>
+    <message>
+      <source>Plug in your own search engine that follows the OpenSearch URL format</source>
+      <comment>SearchEnginesConfig</comment>
+      <translation>Plug in your own search engine that follows the OpenSearch URL format</translation>
     </message>
   </context>
   <context>

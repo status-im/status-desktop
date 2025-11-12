@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 import StatusQ.Core.Theme
 import StatusQ.Popups.Dialog
+import StatusQ.Controls
+import StatusQ.Controls.Validators
 
 import utils
 import shared.controls
@@ -23,61 +25,79 @@ StatusDialog {
         destroy()
     }
 
-    contentItem: ColumnLayout {
-        spacing: 0
+    contentItem: ScrollView {
+        clip: true
+        contentWidth: availableWidth
 
-        ButtonGroup {
-            id: searchEnginGroup
-        }
+        ColumnLayout {
+            width: parent.width
+            spacing: 0
 
-        RadioButtonSelector {
-            Layout.fillWidth: true
-            title: qsTr("None")
-            buttonGroup: searchEnginGroup
-            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
-            onCheckedChanged: {
-                if (checked) {
-                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
-                    popup.close()
-                }
+            ButtonGroup {
+                id: searchEnginGroup
             }
-        }
 
-        RadioButtonSelector {
-            Layout.fillWidth: true
-            title: "Google"
-            buttonGroup: searchEnginGroup
-            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
-            onCheckedChanged: {
-                if (checked) {
-                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
-                    popup.close()
-                }
-            }
-        }
+            Repeater {
+                model: SearchEnginesConfig.engines
 
-        RadioButtonSelector {
-            Layout.fillWidth: true
-            title: "Yahoo!"
-            buttonGroup: searchEnginGroup
-            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
-            onCheckedChanged: {
-                if (checked) {
-                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
-                    popup.close()
-                }
-            }
-        }
-
-        RadioButtonSelector {
-            Layout.fillWidth: true
-            title: "DuckDuckGo"
-            buttonGroup: searchEnginGroup
-            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
-            onCheckedChanged: {
-                if (checked) {
-                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
-                    popup.close()
+                delegate: ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 0
+                    
+                    RadioButtonSelector {
+                        Layout.fillWidth: true
+                        implicitHeight: model.description ? 80 : 52
+                        title: model.name
+                        subTitle: model.description
+                        asset.name: Theme.svg(model.iconUrl)
+                        asset.isImage: true
+                        buttonGroup: searchEnginGroup
+                        checked: accountSettings.selectedBrowserSearchEngineId === model.engineId
+                        onCheckedChanged: {
+                            if (checked && model.engineId !== SearchEnginesConfig.browserSearchEngineCustom) {
+                                accountSettings.selectedBrowserSearchEngineId = model.engineId
+                                popup.close()
+                            } else if (checked) {
+                                accountSettings.selectedBrowserSearchEngineId = model.engineId
+                            }
+                        }
+                    }
+                    
+                    // Custom URL input field (shown only for Custom engine row)
+                    StatusInput {
+                        id: customUrlInput
+                        Layout.fillWidth: true
+                        Layout.leftMargin: Theme.xlPadding
+                        Layout.rightMargin: Theme.xlPadding
+                        Layout.topMargin: Theme.halfPadding
+                        Layout.bottomMargin: Theme.padding
+                        visible: accountSettings.selectedBrowserSearchEngineId === SearchEnginesConfig.browserSearchEngineCustom &&
+                                 model.engineId === SearchEnginesConfig.browserSearchEngineCustom
+                        placeholderText: qsTr("https://example.com/search?q=")
+                        label: qsTr("Custom search engine URL prefix")
+                        text: accountSettings.customSearchEngineUrl
+                        input.clearable: true
+                        validationMode: StatusInput.ValidationMode.Always
+                        validators: [
+                            StatusRegularExpressionValidator {
+                                regularExpression: /^$|^https?:\/\/.+/
+                                errorMessage: qsTr("URL must start with http:// or https://")
+                            }
+                        ]
+                        onTextChanged: {
+                            accountSettings.customSearchEngineUrl = text
+                        }
+                        Keys.onReturnPressed: {
+                            if (valid && text.length > 0) {
+                                popup.close()
+                            }
+                        }
+                        Keys.onEnterPressed: {
+                            if (valid && text.length > 0) {
+                                popup.close()
+                            }
+                        }
+                    }
                 }
             }
         }

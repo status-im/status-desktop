@@ -43,15 +43,7 @@ SettingsContentBase {
                 leftPadding: 0
                 background: null
                 text: qsTr("Search engine for address bar")
-                currentValue: {
-                    switch (accountSettings.shouldShowBrowserSearchEngine) {
-                    case Constants.browserSearchEngineGoogle: return "Google"
-                    case Constants.browserSearchEngineYahoo: return "Yahoo!"
-                    case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
-                    case Constants.browserSearchEngineNone:
-                    default: return qsTr("None")
-                    }
-                }
+                currentValue: SearchEnginesConfig.getEngineName(accountSettings.selectedBrowserSearchEngineId)
                 onClicked: searchEngineModal.createObject(root).open()
             }
 

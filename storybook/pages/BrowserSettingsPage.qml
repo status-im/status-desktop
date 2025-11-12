@@ -15,7 +15,8 @@ SplitView {
     property QtObject mockData: QtObject {
         property QtObject accountSettings: QtObject {
             property string browserHomepage: "https://status.app"
-            property int shouldShowBrowserSearchEngine: Constants.browserSearchEngineDuckDuckGo
+            property int selectedBrowserSearchEngineId: SearchEnginesConfig.browserSearchEngineDuckDuckGo
+            property string customSearchEngineUrl: "https://example.com/search?q="
             property bool shouldShowFavoritesBar: true
             property int useBrowserEthereumExplorer: 1
         }
@@ -68,12 +69,22 @@ SplitView {
 
             TextField {
                 Layout.fillWidth: true
-                text: mockData.accountSettings.shouldShowBrowserSearchEngine
+                text: mockData.accountSettings.selectedBrowserSearchEngineId
                 onTextChanged: {
                     if (text !== "") {
-                        mockData.accountSettings.shouldShowBrowserSearchEngine = parseInt(text)
+                        mockData.accountSettings.selectedBrowserSearchEngineId = parseInt(text)
                     }
                 }
+            }
+
+            Label {
+                text: "Custom Search Engine URL"
+            }
+
+            TextField {
+                Layout.fillWidth: true
+                text: mockData.accountSettings.customSearchEngineUrl
+                onTextChanged: mockData.accountSettings.customSearchEngineUrl = text
             }
 
             Label {

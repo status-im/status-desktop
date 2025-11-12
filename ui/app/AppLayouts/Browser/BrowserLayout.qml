@@ -217,8 +217,8 @@ StatusSectionLayout {
                     _internal.currentWebView.url = root.browserRootStore.get0xFormedUrl(localAccountSensitiveSettings.useBrowserEthereumExplorer, url)
                     return
                 }
-                if (localAccountSensitiveSettings.shouldShowBrowserSearchEngine !== Constants.browserSearchEngineNone && !Utils.isURL(url) && !Utils.isURLWithOptionalProtocol(url)) {
-                    _internal.currentWebView.url = root.browserRootStore.getFormedUrl(localAccountSensitiveSettings.shouldShowBrowserSearchEngine, url)
+                if (localAccountSensitiveSettings.selectedBrowserSearchEngineId !== SearchEnginesConfig.browserSearchEngineNone && !Utils.isURL(url) && !Utils.isURLWithOptionalProtocol(url)) {
+                    _internal.currentWebView.url = root.browserRootStore.getFormedUrl(localAccountSensitiveSettings.selectedBrowserSearchEngineId, url)
                     return
                 } else if (Utils.isURLWithOptionalProtocol(url)) {
                     url = "https://" + url
