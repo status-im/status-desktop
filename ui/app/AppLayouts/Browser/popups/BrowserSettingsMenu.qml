@@ -9,6 +9,7 @@ StatusMenu {
     property bool isIncognito: false
 
     signal addNewTab()
+    signal addNewDownloadTab()
     signal goIncognito(bool checked)
     signal zoomIn()
     signal zoomOut()
@@ -56,6 +57,12 @@ StatusMenu {
     }
 
     StatusMenuSeparator {}
+
+    Action {
+        text: qsTr("Downloads")
+        shortcut: "Ctrl+D"
+        onTriggered: addNewDownloadTab()
+    }
 
     Action {
         text: qsTr("Find")

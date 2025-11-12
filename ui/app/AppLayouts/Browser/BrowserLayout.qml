@@ -151,8 +151,6 @@ StatusSectionLayout {
             currentWebView: _internal.currentWebView
             findBarComponent: findBar
             browserHeaderComponent: browserHeader
-            onAddNewDownloadTab: _internal.addNewDownloadTab()
-            onRemoveView: tabs.removeView(tabs.currentIndex)
         }
 
         BrowserHeader {
@@ -326,6 +324,7 @@ StatusSectionLayout {
             y: browserHeader.y + browserHeader.height
             isIncognito: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
             onAddNewTab: _internal.addNewTab()
+            onAddNewDownloadTab: _internal.addNewDownloadTab()
             onGoIncognito: function (checked) {
                 if (_internal.currentWebView) {
                     _internal.currentWebView.profile = checked ? connectorBridge.otrProfile : connectorBridge.defaultProfile;
