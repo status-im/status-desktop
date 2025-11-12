@@ -3932,16 +3932,16 @@ file format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Always trust links to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open</source>
         <translation type="unfinished">Otevřít</translation>
+    </message>
+    <message>
+        <source>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings/Browser/Open links in</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12551,6 +12551,21 @@ to load</source>
     </message>
     <message>
         <source>Fetching credentials failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OpenLinksInView</name>
+    <message>
+        <source>Open links in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status Browser (default)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System Browser</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

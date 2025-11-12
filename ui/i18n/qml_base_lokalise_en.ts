@@ -4781,11 +4781,6 @@
       <translation>Opening external link</translation>
     </message>
     <message>
-      <source>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</source>
-      <comment>ConfirmExternalLinkPopup</comment>
-      <translation>Status asks before opening links to protect your privacy, as websites may collect your IP address or device information. Copy the link to open it elsewhere, or tap Open to continue in your default browser.</translation>
-    </message>
-    <message>
       <source>Always trust links to &lt;b&gt;%1&lt;/b&gt;</source>
       <comment>ConfirmExternalLinkPopup</comment>
       <translation>Always trust links to &lt;b&gt;%1&lt;/b&gt;</translation>
@@ -4794,6 +4789,11 @@
       <source>Open</source>
       <comment>ConfirmExternalLinkPopup</comment>
       <translation>Open</translation>
+    </message>
+    <message>
+      <source>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings/Browser/Open links in</source>
+      <comment>ConfirmExternalLinkPopup</comment>
+      <translation>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings/Browser/Open links in</translation>
     </message>
   </context>
   <context>
@@ -15216,6 +15216,24 @@
       <source>Fetching credentials failed.</source>
       <comment>OnboardingLayout</comment>
       <translation>Fetching credentials failed.</translation>
+    </message>
+  </context>
+  <context>
+    <name>OpenLinksInView</name>
+    <message>
+      <source>Open links in</source>
+      <comment>OpenLinksInView</comment>
+      <translation>Open links in</translation>
+    </message>
+    <message>
+      <source>Status Browser (default)</source>
+      <comment>OpenLinksInView</comment>
+      <translation>Status Browser (default)</translation>
+    </message>
+    <message>
+      <source>System Browser</source>
+      <comment>OpenLinksInView</comment>
+      <translation>System Browser</translation>
     </message>
   </context>
   <context>

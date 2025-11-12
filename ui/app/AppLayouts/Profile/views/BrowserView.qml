@@ -82,6 +82,10 @@ SettingsContentBase {
                 ]
                 onClicked: accountSettings.shouldShowFavoritesBar = !accountSettings.shouldShowFavoritesBar
             }
+
+            OpenLinksInView {
+                accountSettings: root.accountSettings
+            }
         }
     }
 }
