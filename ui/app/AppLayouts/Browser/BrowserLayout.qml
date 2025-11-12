@@ -171,11 +171,14 @@ StatusSectionLayout {
         anchors.fill: parent
         color: Theme.palette.baseColor2
 
-        BrowserShortcutActions {
-            id: keyboardShortcutActions
-            currentWebView: _internal.currentWebView
-            findBarComponent: findBar
-            browserHeaderComponent: browserHeader
+        Loader {
+            // Only load the shortcuts when the browser is visible, to avoid interfering with other app sections
+            active: root.visible
+            sourceComponent: BrowserShortcutActions {
+                currentWebView: _internal.currentWebView
+                findBarComponent: findBar
+                browserHeaderComponent: browserHeader
+            }
         }
 
         BrowserHeader {
