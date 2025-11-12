@@ -2503,6 +2503,17 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     </message>
 </context>
 <context>
+    <name>BiometricsSectionView</name>
+    <message>
+        <source>Enable biometrics to fill in your password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Biometrics unavailable — it may not be supported, set up, or allowed by your OS settings or app permissions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BlockContactConfirmationDialog</name>
     <message>
         <source>Block user</source>
@@ -2807,14 +2818,6 @@ Do you wish to override the security check and continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable biometrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Biometric login and transaction authentication</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Biometric login and transaction authentication disabled for this device</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2827,11 +2830,11 @@ Do you wish to override the security check and continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Clear &amp; cancel</source>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change password</source>
+        <source>Change</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6677,15 +6680,15 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yes, use biometrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Maybe later</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use biometrics to fill in your password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6696,15 +6699,15 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Maybe later</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Yes, use biometrics</source>
+        <source>Use biometrics to fill in your password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12791,10 +12794,6 @@ to load</source>
     </message>
     <message>
         <source>Create a password to unlock Status on this device &amp; sign transactions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change password used to unlock Status on this device &amp; sign transactions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

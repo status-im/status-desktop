@@ -39,7 +39,7 @@ StatusDialog {
         }
         StatusBaseText {
             Layout.fillWidth: true
-            text: qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.")
+            text: qsTr("Use biometrics to fill in your password")
             color: Theme.palette.baseColor1
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
@@ -58,7 +58,7 @@ StatusDialog {
             }
             StatusButton {
                 objectName: "btnEnableBiometrics"
-                text: qsTr("Yes, use biometrics")
+                text: qsTr("Enable")
                 loading: root.loading
                 onClicked: root.enableBiometricsRequested()
             }

@@ -2496,6 +2496,17 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
     </message>
 </context>
 <context>
+    <name>BiometricsSectionView</name>
+    <message>
+        <source>Enable biometrics to fill in your password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Biometrics unavailable — it may not be supported, set up, or allowed by your OS settings or app permissions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BlockContactConfirmationDialog</name>
     <message>
         <source>Block user</source>
@@ -2799,14 +2810,6 @@ Do you wish to override the security check and continue?</source>
         <translation>이 기기에서 생체 로그인 및 트랜잭션 인증을 활성화하지 못했습니다</translation>
     </message>
     <message>
-        <source>Enable biometrics</source>
-        <translation>생체인증 활성화</translation>
-    </message>
-    <message>
-        <source>Biometric login and transaction authentication</source>
-        <translation>생체 인증 로그인과 트랜잭션 인증</translation>
-    </message>
-    <message>
         <source>Biometric login and transaction authentication disabled for this device</source>
         <translation>이 기기에서 생체 로그인과 거래 인증이 비활성화되었습니다</translation>
     </message>
@@ -2819,12 +2822,12 @@ Do you wish to override the security check and continue?</source>
         <translation>비밀번호 변경</translation>
     </message>
     <message>
-        <source>Clear &amp; cancel</source>
-        <translation>지우기 및 취소</translation>
+        <source>Cancel</source>
+        <translation type="unfinished">취소</translation>
     </message>
     <message>
-        <source>Change password</source>
-        <translation>비밀번호 변경</translation>
+        <source>Change</source>
+        <translation type="unfinished">변경</translation>
     </message>
 </context>
 <context>
@@ -6653,35 +6656,35 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation>생체 인증 사용</translation>
     </message>
     <message>
-        <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
-        <translation>비밀번호 입력을 생체인증으로 자동 채우게 할까요? 앞으로 Status 로그인과 트랜잭션 서명에 생체인증을 사용하게 됩니다.</translation>
-    </message>
-    <message>
-        <source>Yes, use biometrics</source>
-        <translation>네, 생체인증 사용</translation>
-    </message>
-    <message>
         <source>Maybe later</source>
         <translation>나중에</translation>
+    </message>
+    <message>
+        <source>Use biometrics to fill in your password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished">사용</translation>
     </message>
 </context>
 <context>
     <name>EnableBiometricsPopup</name>
     <message>
         <source>Enable biometrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
-        <translation type="unfinished">비밀번호 입력을 생체인증으로 자동 채우게 할까요? 앞으로 Status 로그인과 트랜잭션 서명에 생체인증을 사용하게 됩니다.</translation>
+        <translation type="unfinished">생체 인증 사용</translation>
     </message>
     <message>
         <source>Maybe later</source>
         <translation type="unfinished">나중에</translation>
     </message>
     <message>
-        <source>Yes, use biometrics</source>
-        <translation type="unfinished">네, 생체인증 사용</translation>
+        <source>Use biometrics to fill in your password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished">사용</translation>
     </message>
 </context>
 <context>
@@ -12740,10 +12743,6 @@ to load</source>
     <message>
         <source>Create a password to unlock Status on this device &amp; sign transactions.</source>
         <translation>이 기기에서 Status를 잠금 해제하고 트랜잭션에 서명하려면 비밀번호를 생성하세요.</translation>
-    </message>
-    <message>
-        <source>Change password used to unlock Status on this device &amp; sign transactions.</source>
-        <translation>이 기기에서 Status 잠금 해제와 트랜잭션 서명에 사용하는 비밀번호를 변경합니다.</translation>
     </message>
     <message>
         <source>You will not be able to recover this password if it is lost.</source>
