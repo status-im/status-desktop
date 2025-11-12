@@ -19,5 +19,8 @@ StatusSectionLayout {
     property BrowserStores.BrowserRootStore browserRootStore
     property BrowserStores.BrowserWalletStore browserWalletStore
 
+    required property var connectorController
+    property bool isDebugEnabled: false
+
     signal sendToRecipientRequested(string address)
 }
