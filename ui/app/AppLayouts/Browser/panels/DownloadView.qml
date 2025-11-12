@@ -1,11 +1,12 @@
 import QtQuick
+import QtWebEngine
 
 import StatusQ.Core
 import StatusQ.Core.Theme
 
 import utils
 
-import "../controls"
+import AppLayouts.Browser.controls
 
 Rectangle {
     id: downloadView
@@ -37,6 +38,7 @@ Rectangle {
 
             width: parent.width
             isPaused: downloadItem?.isPaused ?? false
+            isCanceled: downloadItem?.state === WebEngineDownloadRequest.DownloadCancelled ?? false
             primaryText: downloadItem?.downloadFileName ?? ""
             downloadText: {
                 if (isCanceled) {
@@ -48,26 +50,16 @@ Rectangle {
                 return "%1/%2".arg(Qt.locale().formattedDataSize(downloadItem?.receivedBytes ?? 0, 2, Locale.DataSizeTraditionalFormat)) //e.g. 14.4/109 MB
                               .arg(Qt.locale().formattedDataSize(downloadItem?.totalBytes ?? 0, 2, Locale.DataSizeTraditionalFormat))
             }
-            downloadComplete: {
-                // listView.count ensures a value is returned even when index is undefined
-                return listView.count > 0 && !!downloadsModel.downloads && !!downloadItem && downloadItem.receivedBytes >= downloadItem.totalBytes
-            }
+            downloadComplete: downloadItem?.state === WebEngineDownloadRequest.DownloadCompleted ?? false
             onItemClicked: {
                 openDownloadClicked(downloadComplete, index)
             }
             onOptionsButtonClicked: function(xVal) {
                 downloadsMenu.index = index
-                downloadsMenu.downloadComplete = Qt.binding(function() { return downloadElement.downloadComplete })
                 downloadsMenu.parent = downloadElement
                 downloadsMenu.x = xVal
                 downloadsMenu.y = downloadView.y - downloadsMenu.height
                 downloadsMenu.open()
-            }
-            Connections {
-                target: downloadsMenu
-                function onCancelClicked() {
-                    isCanceled = true
-                }
             }
         }
     }

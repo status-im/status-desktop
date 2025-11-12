@@ -126,9 +126,9 @@ StatusSectionLayout {
         }
 
         function onDownloadRequested(download) {
-            downloadBar.isVisible = true
             download.accept();
             root.downloadsStore.addDownload(download)
+            downloadBar.active = true
         }
 
         function determineRealURL(url) {
@@ -277,19 +277,31 @@ StatusSectionLayout {
                                      ogName: favoriteMenu.currentFavorite ? favoriteMenu.currentFavorite.name : _internal.currentWebView.title})
             }
         }
-        DownloadBar {
+
+        Loader {
             id: downloadBar
+            active: false
+            width: parent.width
             anchors.bottom: parent.bottom
             z: 60
-            downloadsModel: root.downloadsStore.downloadModel
-            downloadsMenu: downloadMenu
-            onOpenDownloadClicked: function (downloadComplete, index) {
-                if (downloadComplete) {
-                    return root.downloadsStore.openFile(index)
+            sourceComponent: DownloadBar {
+                downloadsModel: root.downloadsStore.downloadModel
+                downloadsMenu: downloadMenu
+                onOpenDownloadClicked: function (downloadComplete, index) {
+                    if (downloadComplete) {
+                        return root.downloadsStore.openFile(index)
+                    }
+                    root.downloadsStore.openDirectory(index)
                 }
-                root.downloadsStore.openDirectory(index)
+                onAddNewDownloadTab: _internal.addNewDownloadTab()
+                onClose: downloadBar.active = false
+                Connections {
+                    target: root.downloadsStore
+                    function onAllItemsOpened() {
+                        downloadBar.active = false
+                    }
+                }
             }
-            onAddNewDownloadTab: _internal.addNewDownloadTab()
         }
 
         FindBar {

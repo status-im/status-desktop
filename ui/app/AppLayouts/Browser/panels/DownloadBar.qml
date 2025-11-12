@@ -1,4 +1,5 @@
 import QtQuick
+import QtWebEngine
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -6,22 +7,20 @@ import StatusQ.Controls
 
 import utils
 
-import "../controls"
+import AppLayouts.Browser.controls
 
 Rectangle {
-    id: downloadBar
+    id: root
 
-    property bool isVisible: false
     property var downloadsModel
     property var downloadsMenu
 
     signal openDownloadClicked(bool downloadComplete, int index)
     signal addNewDownloadTab()
+    signal close()
 
-    visible: isVisible && !!listView.count
     color: Theme.palette.background
-    width: parent.width
-    height: 56
+    implicitHeight: 56
     border.width: 1
     border.color: Theme.palette.border
 
@@ -37,6 +36,7 @@ Rectangle {
 
         StatusListView {
             id: listView
+
             orientation: ListView.Horizontal
             model: downloadsModel
             height: currentItem ? currentItem.height : 0
@@ -59,6 +59,8 @@ Rectangle {
                 readonly property var downloadItem: downloadsModel.downloads[index]
 
                 isPaused: downloadItem?.isPaused ?? false
+                isCanceled: downloadItem?.state === WebEngineDownloadRequest.DownloadCancelled ?? false
+                downloadComplete: downloadItem?.state === WebEngineDownloadRequest.DownloadCompleted ?? false
                 primaryText: downloadItem?.downloadFileName ?? ""
                 downloadText: {
                     if (isCanceled) {
@@ -70,26 +72,15 @@ Rectangle {
                     return "%1/%2".arg(Qt.locale().formattedDataSize(downloadItem?.receivedBytes ?? 0, 2, Locale.DataSizeTraditionalFormat)) //e.g. 14.4/109 MB
                                   .arg(Qt.locale().formattedDataSize(downloadItem?.totalBytes ?? 0, 2, Locale.DataSizeTraditionalFormat))
                 }
-                downloadComplete: {
-                    // listView.count ensures a value is returned even when index is undefined
-                    return listView.count > 0 && !!downloadsModel.downloads && !!downloadItem && downloadItem.receivedBytes >= downloadItem.totalBytes
-                }
                 onItemClicked: {
                     openDownloadClicked(downloadComplete, index)
                 }
                 onOptionsButtonClicked: function (xVal) {
                     downloadsMenu.index = index
-                    downloadsMenu.downloadComplete = Qt.binding(function() {return downloadElement.downloadComplete})
                     downloadsMenu.parent = downloadElement
                     downloadsMenu.x = xVal + 20
                     downloadsMenu.y = -downloadsMenu.height
                     downloadsMenu.open()
-                }
-                Connections {
-                    target: downloadsMenu
-                    function onCancelClicked() {
-                        isCanceled = true
-                    }
                 }
             }
         }
@@ -116,6 +107,6 @@ Rectangle {
         anchors.rightMargin: Theme.smallPadding
         icon.name: "close"
         type: StatusFlatRoundButton.Type.Quaternary
-        onClicked:  downloadBar.isVisible = false
+        onClicked: root.close()
     }
 }

@@ -122,7 +122,7 @@ WebEngineView {
             id: downloadView
             downloadsModel: root.downloadsStore.downloadModel
             downloadsMenu: root.downloadsMenu
-            onOpenDownloadClicked: {
+            onOpenDownloadClicked: function(downloadComplete, index) {
                 if (downloadComplete) {
                     return root.downloadsStore.openFile(index)
                 }
