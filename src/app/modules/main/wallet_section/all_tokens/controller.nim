@@ -70,8 +70,14 @@ proc getHistoricalDataForToken*(self: Controller, tokenKey: string, currency: st
 proc getAllTokenLists*(self: Controller): var seq[TokenListItem] =
   return self.tokenService.getAllTokenLists()
 
-proc getAllTokenGroups*(self: Controller): var seq[TokenGroupItem] =
-  return self.tokenService.getAllTokenGroups()
+proc buildGroupsForChain*(self: Controller, chainId: int) =
+  self.tokenService.buildGroupsForChain(chainId)
+
+proc getGroupsForChain*(self: Controller): var seq[TokenGroupItem] =
+  return self.tokenService.getGroupsForChain()
+
+proc getGroupsOfInterest*(self: Controller): var seq[TokenGroupItem] =
+  return self.tokenService.getGroupsOfInterest()
 
 proc getTokenDetails*(self: Controller, tokenKey: string): TokenDetailsItem =
   return self.tokenService.getTokenDetails(tokenKey)

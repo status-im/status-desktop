@@ -106,16 +106,16 @@ QObject {
 
     ModelEntry {
         id: fromTokenEntry
-        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+        sourceModel: root.walletAssetsStore.walletTokensStore.tokenGroupsModel
         key: "key"
-        value: root.swapFormData.fromTokensKey
+        value: root.swapFormData.fromGroupKey
     }
 
     ModelEntry {
         id: toTokenEntry
-        sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+        sourceModel: root.walletAssetsStore.walletTokensStore.tokenGroupsModel
         key: "key"
-        value: root.swapFormData.toTokenKey
+        value: root.swapFormData.toGroupKey
     }
 
     Connections {
@@ -220,7 +220,7 @@ QObject {
             let accountAddress = root.swapFormData.selectedAccountAddress
 
             root.swapStore.fetchSuggestedRoutes(d.uuid, accountAddress, accountAddress,
-                                                cryptoValueInRaw, "0", root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
+                                                cryptoValueInRaw, "0", root.swapFormData.fromGroupKey, root.swapFormData.toGroupKey,
                                                 root.swapFormData.selectedNetworkChainId, root.swapFormData.selectedNetworkChainId,
                                                 Constants.SendType.Swap, root.swapFormData.selectedSlippage)
         } else {

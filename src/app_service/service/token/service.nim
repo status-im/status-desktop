@@ -42,9 +42,10 @@ QtObject:
     # local storage, fulfilled by need, empty at the start
     tokensForBridgingViaHop: Table[string, bool] # [tokenKey, bool]
     # local storage
-    allTokensByKey: Table[string, TokenItem] # [tokenKey, TokenItem]
-    allGroupsByKey: Table[string, TokenGroupItem] # [tokenGroupKey, TokenGroupItem]
-    allGroups: seq[TokenGroupItem]
+    tokensOfInterestByKey: Table[string, TokenItem] # [tokenKey, TokenItem]
+    groupsOfInterestByKey: Table[string, TokenGroupItem] # [tokenGroupKey, TokenGroupItem]
+    groupsOfInterest: seq[TokenGroupItem] # refers to groups for tokens of interest
+    groupsForChain: seq[TokenGroupItem] # refers to groups for a specific chain
     allTokenLists: seq[TokenListItem] # TODO: remove this, fetch async when needed, don't store it
     tokenDetailsTable: Table[string, TokenDetailsItem] # [tokenKey, TokenDetailsItem]
     tokenMarketValuesTable: Table[string, TokenMarketValuesItem] # [tokenKey, TokenMarketValuesItem]
@@ -86,8 +87,8 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
 
-    result.allTokensByKey = initTable[string, TokenItem]()
-    result.allGroupsByKey = initTable[string, TokenGroupItem]()
+    result.tokensOfInterestByKey = initTable[string, TokenItem]()
+    result.groupsOfInterestByKey = initTable[string, TokenGroupItem]()
     result.tokenDetailsTable = initTable[string, TokenDetailsItem]()
     result.tokenMarketValuesTable = initTable[string, TokenMarketValuesItem]()
     result.tokenPriceTable = initTable[string, float64]()

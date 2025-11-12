@@ -375,12 +375,12 @@ Item {
                 recipientChainName = toChainName
             }
 
-            const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromAsset)
+            const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.tokenGroupsModel, "key", fromAsset)
             if (!!fromToken) {
                 sentAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
             }
 
-            const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toAsset)
+            const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.tokenGroupsModel, "key", toAsset)
             if (!!toToken) {
                 receivedAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
             }

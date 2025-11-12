@@ -55,7 +55,7 @@ RightTabBaseView {
 
     signal launchShareAddressModal()
     signal launchBuyCryptoModal()
-    signal launchSwapModal(string tokensKey)
+    signal launchSwapModal(string groupKey)
     signal sendTokenRequested(string senderAddress, string gorupKey, int tokenType)
     signal manageNetworksRequested()
 
