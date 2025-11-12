@@ -25,7 +25,7 @@ from scripts.utils.generators import random_text_message
 
 @pytest.mark.case(703087, 738732, 738734, 738742, 738744, 738745)
 @pytest.mark.critical
-@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
+# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 @pytest.mark.smoke
 def test_1x1_chat_add_contact_in_settings(multiple_instances):
     user_one: UserAccount = RandomUser()
@@ -48,6 +48,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
 
         with step(f'User {user_two.name}, get chat key'):
             chat_key = get_chat_key(aut_two, main_window)
+            main_window.minimize()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             contacts_settings = send_contact_request_from_settings(aut_one, main_window, chat_key, f'Hello {user_two.name}')
@@ -57,6 +58,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             assert Messaging.CONTACT_REQUEST_SENT.value == contacts_settings.contact_items[0].object.contactText
             assert len(contacts_settings.contact_items) == 1
             assert str(contacts_settings.section_header.object.text) == 'Sent'
+            main_window.minimize()
 
         with step(f'Verify that contact request was received by {user_two.name}'):
             switch_to_aut(aut_two, main_window)
@@ -87,6 +89,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             assert str(contacts_settings.section_header.object.text) == 'Contacts'
             assert user_one.name == contacts_settings.contact_items[0].contact
             assert len(contacts_settings.contact_items) == 1
+            main_window.minimize()
 
         with step(f'Verify that contact appeared in contacts list of {user_one.name} in messaging settings'):
             switch_to_aut(aut_one, main_window)
@@ -100,11 +103,13 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             # Test is in contact settings, so we need to open messages from left panel
             messages_screen = main_window.left_panel.open_messages_screen()
             assert user_two.name in messages_screen.left_panel.get_chats_names
+            main_window.minimize()
 
         with step(f'Verify that 1X1 chat with {user_one.name} appeared for {user_two.name}'):
             switch_to_aut(aut_two, main_window)
             messages_screen = main_window.left_panel.open_messages_screen()
             assert user_one.name in messages_screen.left_panel.get_chats_names
+            main_window.minimize()
 
         with step(f'User {user_one.name} send  a message to {user_two.name}'):
             switch_to_aut(aut_one, main_window)
@@ -133,6 +138,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
                 f"Message text is not found in last message"
             assert message_object.delegate_button.object.isEdited, \
                 f"Message status was not changed to edited"
+            main_window.minimize()
 
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name}'):
             switch_to_aut(aut_two, main_window)
@@ -192,6 +198,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] in str(message.get_emoji_reactions_pathes()[0]),
                                   timeout), \
                 f"Emoji reaction is not correct"
+            main_window.minimize()
 
         with step(f'User {user_two.name}, also see emoji reaction on the last message'):
             switch_to_aut(aut_two, main_window)
@@ -217,6 +224,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             messages = messages_screen.chat.messages(index=None)
             assert len(messages) == 0, f"The history of messages is not empty"
             assert user_two.name in messages_screen.left_panel.get_chats_names, f'{chat} is not present in chats list'
+            main_window.minimize()
 
         with step(f'Verify chat history was not cleared for {user_two.name} '):
             switch_to_aut(aut_two, main_window)
@@ -225,9 +233,9 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             assert len(messages) != 0, f"The history of messages is empty"
 
         with step(f'User {user_two.name} close chat'):
-            switch_to_aut(aut_two, main_window)
             messages_screen.group_chat.close_chat()
             assert user_one.name not in messages_screen.left_panel.get_chats_names, f'{chat} is present in chats list'
+            main_window.minimize()
 
         with step(f'User {user_one.name} sees chat in the list'):
             switch_to_aut(aut_one, main_window)

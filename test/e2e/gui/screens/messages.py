@@ -391,9 +391,7 @@ class ChatMessagesView(QObject):
 
     @allure.step('Choose leave group option')
     def leave_group(self):
-        time.sleep(2)
         self.open_more_options()
-        time.sleep(2)
         self._leave_group_item.click()
         return LeaveGroupPopup().wait_until_appears()
 

@@ -22,7 +22,7 @@ from gui.screens.messages import MessagesScreen
 @pytest.mark.communities
 @pytest.mark.smoke
 @pytest.mark.critical
-@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
+# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 def test_create_edit_join_community_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -35,9 +35,11 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
 
         with step(f'User {user_two.name}, get chat key'):
             chat_key = get_chat_key(aut_two, main_screen)
+            main_screen.minimize()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             send_contact_request_from_settings(aut_one, main_screen, chat_key, f'Hello {user_two.name}')
+            main_screen.minimize()
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
             accept_contact_request_from_settings(aut_two, main_screen, user_one.name)
@@ -121,6 +123,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
                 community_screen = main_screen.left_panel.select_community(new_name)
                 add_members = community_screen.left_panel.open_add_members_popup()
                 add_members.invite([user_one.name], message=random_text_message())
+                main_screen.minimize()
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
             switch_to_aut(aut_one, main_screen)
@@ -139,6 +142,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
         with step(f'User {user_one.name}, see two members in community members list'):
             assert driver.waitFor(lambda: user_two.name in community_screen.right_panel.members, 10000)
             assert driver.waitFor(lambda: '2' in community_screen.left_panel.members)
+            main_screen.minimize()
 
         with step(f'User {user_two.name}, see two members in community members list'):
             switch_to_aut(aut_two, main_screen)
@@ -166,6 +170,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
         with step(f'Hover message {second_message_text} and pin it'):
             message = messages_screen.chat.find_message_by_text(second_message_text, 0)
             message.hover_message().pin_message()
+            main_screen.minimize()
 
         with step(f'User {user_one.name} see the {second_message_text} as pinned'):
             switch_to_aut(aut_one, main_screen)
@@ -173,11 +178,13 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             assert driver.waitFor(lambda: message.message_is_pinned, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
             assert message.pinned_info_text + message.user_name_in_pinned_message == 'Pinned by' + user_two.name
             assert message.get_message_color() == ColorCodes.ORANGE.value
+            main_screen.minimize()
 
         with step(f'User {user_two.name} unpin message from pinned messages popup'):
             switch_to_aut(aut_two, main_screen)
             pinned_msgs = messages_screen.tool_bar.open_pinned_messages_popup()
             pinned_msgs.unpin_message().close()
+            main_screen.minimize()
 
         with step(f'User {user_one.name} see the {second_message_text} as unpinned'):
             switch_to_aut(aut_one, main_screen)

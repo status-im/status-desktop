@@ -27,8 +27,9 @@ class Window(QObject):
 
     @allure.step("Minimize {0}")
     def minimize(self):
+        title = self.title
         assert driver.toplevel_window.minimize(self.real_name), 'Minimize failed'
-        LOG.info('Window %s was minimized', self.title)
+        LOG.info('Window %s was minimized', title)
 
     @allure.step("Set focus on {0}")
     def set_focus(self):

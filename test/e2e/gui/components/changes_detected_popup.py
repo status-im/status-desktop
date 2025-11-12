@@ -31,7 +31,7 @@ class PermissionsChangesDetectedToastMessage(QObject):
     @allure.step('Update permission')
     def update_permission(self):
         self._update_permission_button.click()
-        self.wait_until_hidden()
+        self.wait_until_hidden(timeout_msec=configs.timeouts.PROCESS_TIMEOUT_SEC * 1000)
 
 
 class CustomSortOrderChangesDetectedToastMessage(ChangesDetectedToastMessage):
