@@ -256,7 +256,7 @@ Item {
             onLaunchSwapModal: {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
-                d.swapFormData.fromTokensKey = tokensKey
+                d.swapFormData.fromGroupKey = groupKey
                 root.openSwapModalRequested(d.swapFormData)
             }
             onDappListRequested: root.dappListRequested()
@@ -383,7 +383,7 @@ Item {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokenGroupKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
-                    d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokenGroupKey
+                    d.swapFormData.fromGroupKey =  walletStore.currentViewedHoldingTokenGroupKey
                 }
                 root.openSwapModalRequested(d.swapFormData)
             }
