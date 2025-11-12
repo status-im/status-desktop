@@ -2585,14 +2585,6 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
         <translation>메시지 서명 오류</translation>
     </message>
     <message>
-        <source>Transaction pending...</source>
-        <translation>트랜잭션 대기 중...</translation>
-    </message>
-    <message>
-        <source>View on etherscan</source>
-        <translation>Etherscan에서 보기</translation>
-    </message>
-    <message>
         <source>Server&apos;s certificate not trusted</source>
         <translation>서버의 인증서를 신뢰할 수 없습니다</translation>
     </message>
@@ -2631,6 +2623,10 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Zoom Fit</source>
         <translation>맞춤 확대</translation>
+    </message>
+    <message>
+        <source>Downloads</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Find</source>
@@ -2682,28 +2678,12 @@ Do you wish to override the security check and continue?</source>
 <context>
     <name>BrowserWalletMenu</name>
     <message>
-        <source>Mainnet</source>
-        <translation>Mainnet</translation>
-    </message>
-    <message>
-        <source>Ropsten</source>
-        <translation>Ropsten</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation>알 수 없음</translation>
-    </message>
-    <message>
         <source>Disconnect</source>
         <translation>연결 해제</translation>
     </message>
     <message>
-        <source>Assets</source>
-        <translation>자산</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <translation>기록</translation>
+        <source>Wallet info will appear here</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7639,6 +7619,13 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
+    <name>FeeRow</name>
+    <message>
+        <source>Max.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -8913,6 +8900,10 @@ Are you sure you want to do this?</source>
         <source>PIN correct</source>
         <translation>PIN이 올바릅니다</translation>
     </message>
+    <message>
+        <source>Keycard blocked</source>
+        <translation type="unfinished">Keycard가 차단됨</translation>
+    </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
         <translation>
@@ -8974,21 +8965,6 @@ Are you sure you want to do this?</source>
     <message>
         <source>Factory reset Keycard</source>
         <translation>Keycard 공장 초기화</translation>
-    </message>
-</context>
-<context>
-    <name>KeycardExtractingKeysPage</name>
-    <message>
-        <source>Extracting keys from Keycard</source>
-        <translation>Keycard에서 키 추출 중</translation>
-    </message>
-    <message>
-        <source>You will now require this Keycard to log into Status and transact with any accounts derived from this key pair</source>
-        <translation>이제 이 Keycard가 있어야 Status에 로그인하고, 이 키 쌍에서 파생된 모든 계정으로 트랜잭션을 수행할 수 있습니다</translation>
-    </message>
-    <message>
-        <source>Please keep the Keycard plugged in until the extraction is complete</source>
-        <translation>추출이 완료될 때까지 Keycard를 분리하지 마세요</translation>
     </message>
 </context>
 <context>

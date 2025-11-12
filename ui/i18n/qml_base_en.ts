@@ -2592,14 +2592,6 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Transaction pending...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View on etherscan</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Server&apos;s certificate not trusted</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2637,6 +2629,10 @@ Do you wish to override the security check and continue?</source>
     </message>
     <message>
         <source>Zoom Fit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Downloads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2689,27 +2685,11 @@ Do you wish to override the security check and continue?</source>
 <context>
     <name>BrowserWalletMenu</name>
     <message>
-        <source>Mainnet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ropsten</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Assets</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>History</source>
+        <source>Wallet info will appear here</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7666,6 +7646,13 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
+    <name>FeeRow</name>
+    <message>
+        <source>Max.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -8948,6 +8935,10 @@ Are you sure you want to do this?</source>
         <source>PIN correct</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Keycard blocked</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
         <translation type="unfinished">
@@ -9010,21 +9001,6 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>Factory reset Keycard</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>KeycardExtractingKeysPage</name>
-    <message>
-        <source>Extracting keys from Keycard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You will now require this Keycard to log into Status and transact with any accounts derived from this key pair</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please keep the Keycard plugged in until the extraction is complete</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
