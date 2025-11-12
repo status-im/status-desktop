@@ -30,22 +30,22 @@ Control {
     required property CurrenciesStore currencyStore
     required property var flatNetworksModel
     required property var processedAssetsModel
-    property var plainTokensBySymbolModel
+    property var tokenGroupsModel
 
     property int selectedNetworkChainId: -1
     onSelectedNetworkChainIdChanged: reevaluateSelectedId()
     property string selectedAccountAddress
     onSelectedAccountAddressChanged: reevaluateSelectedId()
-    property string nonInteractiveTokensKey
+    property string nonInteractiveGroupKey
 
-    property string tokenKey
-    onTokenKeyChanged: {
-        d.selectedHoldingId = tokenKey
+    property string groupKey
+    onGroupKeyChanged: {
+        d.selectedHoldingId = groupKey
         reevaluateSelectedId()
     }
 
-    property string defaultTokenKey
-    property string oppositeSideTokenKey
+    property string defaultGroupKey
+    property string oppositeSideGroupKey
 
     property string tokenAmount
     onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
@@ -67,7 +67,7 @@ Control {
     readonly property string selectedHoldingId: d.selectedHoldingId
     readonly property double value: amountToSendInput.asNumber
     readonly property string rawValue: {
-        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
+        if (!d.isSelectedHoldingValidAsset) {
             return "0"
         }
         return amountToSendInput.amount
@@ -99,31 +99,21 @@ Control {
     QtObject {
         id: d
 
-        property string selectedHoldingId: root.tokenKey
+        property string selectedHoldingId: root.groupKey
+
 
         function reevaluateSelectedId() {
-            const tokenSymbol = Constants.uniqueSymbolToTokenSymbol(d.selectedHoldingId)
-            let uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(tokenSymbol, root.selectedNetworkChainId)
-            if (uniqueSymbol === "" || uniqueSymbol === root.oppositeSideTokenKey) {
-                if (root.defaultTokenKey !== root.oppositeSideTokenKey) {
-                    uniqueSymbol = root.defaultTokenKey
-                } else {
-                    uniqueSymbol = ""
-                }
-            }
-
-            const entry = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", uniqueSymbol)
-            if (entry && SQUtils.ModelUtils.contains(entry.addressPerChain, "chainId", root.selectedNetworkChainId)) {
-                d.selectedHoldingId = uniqueSymbol
-            } else {
+            const entry = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", d.selectedHoldingId)
+            if (!entry) {
                 // Token doesn't exist in destination chain
-                d.selectedHoldingId = root.defaultTokenKey
+                d.selectedHoldingId = root.defaultGroupKey
             }
         }
 
+
         readonly property var selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
-            key: "tokensKey"
+            key: "key"
             value: d.selectedHoldingId
             onValueChanged: d.setHoldingToSelector()
             onAvailableChanged: d.setHoldingToSelector()
@@ -131,7 +121,7 @@ Control {
 
         function setHoldingToSelector() {
             if (selectedHolding.available && !!selectedHolding.item) {
-                holdingSelector.setSelection(selectedHolding.item.symbol, selectedHolding.item.iconSource, selectedHolding.item.tokensKey)
+                holdingSelector.setSelection(selectedHolding.item.symbol, selectedHolding.item.iconSource, selectedHolding.item.key)
             } else {
                 holdingSelector.reset()
             }
@@ -146,7 +136,7 @@ Control {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
-            tokenGroupsModel: root.plainTokensBySymbolModel
+            tokenGroupsModel: root.tokenGroupsModel
             flatNetworksModel: root.flatNetworksModel
             currentCurrency: root.currencyStore.currentCurrency
 
@@ -297,7 +287,7 @@ Control {
                 Layout.alignment: Qt.AlignRight
 
                 model: d.adaptor.outputAssetsModel
-                nonInteractiveKey: root.nonInteractiveTokensKey
+                nonInteractiveKey: root.nonInteractiveGroupKey
 
                 onSelected: function(key) {
                     // Token existance checked with plainTokensBySymbolModel
