@@ -61,6 +61,8 @@ Menu {
 
     property bool hideDisabledItems: true
 
+    property bool visualizeShortcuts
+
     property var openHandler
     property var closeHandler
 
@@ -85,6 +87,7 @@ Menu {
     delegate: StatusMenuItem {
         visible: root.hideDisabledItems && !visibleOnDisabled ? enabled : true
         height: visible ? implicitHeight : 0
+        visualizeShortcuts: root.visualizeShortcuts
     }
 
     contentItem: StatusScrollView {

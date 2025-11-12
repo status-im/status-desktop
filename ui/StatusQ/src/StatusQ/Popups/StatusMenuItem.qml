@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Components
+import StatusQ.Core.Utils
 
 MenuItem {
     id: root
@@ -17,6 +18,8 @@ MenuItem {
     hoverEnabled: enabled
 
     property bool visibleOnDisabled: d.isStatusAction ? action.visibleOnDisabled : false
+
+    property bool visualizeShortcuts
 
     QtObject {
         id: d
@@ -133,6 +136,12 @@ MenuItem {
             font.bold: d.fontSettings ? d.fontSettings.bold : d.defaultFontSettings.bold
             font.italic: d.fontSettings ? d.fontSettings.italic : d.defaultFontSettings.italic
             elide: Text.ElideRight
+        }
+        StatusBaseText {
+            Layout.alignment: Qt.AlignRight
+            visible: root.visualizeShortcuts && !!text
+            font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
+            text: d.hasAction && !!root.action.shortcut ? StringUtils.shortcutToText(root.action.shortcut) : StringUtils.shortcutToText(root.shortcut)
         }
         StatusIcon {
             Layout.preferredHeight: 16
