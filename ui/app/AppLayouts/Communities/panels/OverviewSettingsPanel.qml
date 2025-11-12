@@ -170,7 +170,7 @@ StackLayout {
 
             OverviewSettingsChart {
                 model: JSON.parse(root.overviewChartData)
-                onCollectCommunityMetricsMessagesCount: (intervals) => {
+                onCollectCommunityMetricsMessagesCount: intervals => {
                     root.collectCommunityMetricsMessagesCount(intervals)
                 }
                 Layout.topMargin: 16
