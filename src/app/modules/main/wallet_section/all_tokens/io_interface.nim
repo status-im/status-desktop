@@ -60,6 +60,9 @@ method getTokensModelDataSource*(self: AccessInterface): TokensModelDataSource {
 method getTokenGroupsModelDataSource*(self: AccessInterface): TokenGroupsModelDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getTokenGroupsForChainModelDataSource*(self: AccessInterface): TokenGroupsModelDataSource {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getTokenMarketValuesDataSource*(self: AccessInterface): TokenMarketValuesDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -73,6 +76,9 @@ method getTokenPreferencesJson*(self: AccessInterface): string {.base.} =
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.
 method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method buildGroupsForChain*(self: AccessInterface, chainId: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method filterChanged*(self: AccessInterface, addresses: seq[string]) {.base.} =
