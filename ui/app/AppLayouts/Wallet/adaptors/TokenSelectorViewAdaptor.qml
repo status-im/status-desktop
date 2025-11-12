@@ -79,8 +79,8 @@ QObject {
                     return Constants.tokenIcon(symbol)
                 }
                 name: "iconSource"
-                expression: model.image || tokenIcon(model.symbol)
-                expectedRoles: ["image", "symbol"]
+                expression: model.logoUri || tokenIcon(model.symbol)
+                expectedRoles: ["logoUri", "symbol"]
             }
         ]
 

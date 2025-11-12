@@ -5,25 +5,39 @@ proc rebuildMarketDataInternal(self: Service) =
 proc rebuildMarketData*(self: Service) =
   self.rebuildMarketDataDebouncer.call()
 
-proc refreshTokens(self: Service) =
-  self.allTokenLists = getAllTokenLists()
-
-  self.allTokensByKey.clear()
-  self.allGroupsByKey.clear()
-  let allTokens = getTokensForActiveNetworksMode()
-  for token in allTokens:
+proc createTokenGroupsFromTokens(tokens: seq[TokenItem], groupsByKey: var Table[string, TokenGroupItem]) =
+  for token in tokens:
     let groupKey = token.groupKey
-    self.allTokensByKey[token.key] = token
-    if not self.allGroupsByKey.hasKey(groupKey):
-      self.allGroupsByKey[groupKey] = TokenGroupItem(
+    if not groupsByKey.hasKey(groupKey):
+      groupsByKey[groupKey] = TokenGroupItem(
         key: groupKey,
         name: token.name,
         symbol: token.symbol,
         decimals: token.decimals,
         logoUri: token.logoUri
       )
-    self.allGroupsByKey[groupKey].addToken(token)
-  self.allGroups = toSeq(self.allGroupsByKey.values)
+    groupsByKey[groupKey].addToken(token)
+
+proc sortTokenGroupsByName(groups: var seq[TokenGroupItem]) =
+  groups.sort(
+    proc(a: TokenGroupItem, b: TokenGroupItem): int =
+      return a.name.cmp(b.name)
+  )
+
+proc refreshTokens(self: Service) =
+  self.allTokenLists = getAllTokenLists()
+
+  # build groups of interest
+  self.tokensOfInterestByKey.clear()
+  self.groupsOfInterestByKey.clear()
+
+  var tokens = getTokensOfInterestForActiveNetworksMode()
+
+  for token in tokens:
+    self.tokensOfInterestByKey[token.key] = token
+
+  createTokenGroupsFromTokens(tokens, self.groupsOfInterestByKey)
+  self.groupsOfInterest = toSeq(self.groupsOfInterestByKey.values)
 
   self.rebuildMarketData()
   self.fetchTokensDetails() # TODO: if the only place where we can see these details is account's details page, we should fetch this on demand, no need to have local cache
@@ -37,7 +51,7 @@ proc init*(self: Service) =
     # this is the delay before the first call to the callback, this is an action that doesn't need to be called immediately, but it's pretty expensive in terms of time/performances
     # for example `wallet-tick-reload` event is emitted for every single chain-account pair, and at the app start can be more such signals received from the statusgo side if the balance have changed.
     # Means it the app contains more accounts the likelihood of having more `wallet-tick-reload` signals is higher, so we need to delay the rebuildMarketData call to avoid unnecessary calls.
-    delayMs = 1500,
+    delayMs = 1000,
     checkIntervalMs = 500)
   self.rebuildMarketDataDebouncer.registerCall0(callback = proc() = self.rebuildMarketDataInternal())
 
@@ -61,8 +75,31 @@ proc init*(self: Service) =
 proc getCurrency*(self: Service): string =
   return self.settingsService.getCurrency()
 
-proc getAllTokenGroups*(self: Service): var seq[TokenGroupItem] =
-  return self.allGroups
+proc getAllTokenGroupsForActiveNetworksModeByKeys(self: Service): Table[string, TokenGroupItem] =
+  let allTokens = getTokensForActiveNetworksMode()
+  createTokenGroupsFromTokens(allTokens, result)
+
+proc getAllTokenGroupsForActiveNetworksMode*(self: Service): seq[TokenGroupItem] =
+  let groupsByKey = self.getAllTokenGroupsForActiveNetworksModeByKeys()
+  var groups = toSeq(groupsByKey.values)
+  sortTokenGroupsByName(groups)
+  return groups
+
+proc getGroupsOfInterest*(self: Service): var seq[TokenGroupItem] =
+  return self.groupsOfInterest
+
+proc buildGroupsForChain*(self: Service, chainId: int) =
+  if chainId <= 0:
+    warn "invalid chainId", chainId = chainId
+    return
+  let allTokens = getTokensByChain(chainId)
+  var groupsByKey = initTable[string, TokenGroupItem]()
+  createTokenGroupsFromTokens(allTokens, groupsByKey)
+  self.groupsForChain = toSeq(groupsByKey.values)
+  sortTokenGroupsByName(self.groupsForChain)
+
+proc getGroupsForChain*(self: Service): var seq[TokenGroupItem] =
+  return self.groupsForChain
 
 proc getAllTokenLists*(self: Service): var seq[TokenListItem] =
   return self.allTokenLists
@@ -76,12 +113,12 @@ proc getAllCommunityTokens*(self: Service): var seq[TokenItem] =
 proc getTokenByKey*(self: Service, key: string): TokenItem =
   if not common_utils.isTokenKey(key):
     return nil
-  if self.allTokensByKey.hasKey(key):
-    return self.allTokensByKey[key]
+  if self.tokensOfInterestByKey.hasKey(key):
+    return self.tokensOfInterestByKey[key]
   let tokens = getTokensByKeys(@[key])
   if tokens.len > 0:
-    self.allTokensByKey[key] = tokens[0]
-    return self.allTokensByKey[key]
+    self.tokensOfInterestByKey[key] = tokens[0]
+    return self.tokensOfInterestByKey[key]
   return nil
 
 proc getTokenByChainAddress*(self: Service, chainId: int, address: string): TokenItem =
@@ -89,9 +126,13 @@ proc getTokenByChainAddress*(self: Service, chainId: int, address: string): Toke
   return self.getTokenByKey(key)
 
 proc getTokensByGroupKey*(self: Service, groupKey: string): seq[TokenItem] =
-  if not self.allGroupsByKey.hasKey(groupKey):
+  if not self.groupsOfInterestByKey.hasKey(groupKey):
+    let groupsByKey = self.getAllTokenGroupsForActiveNetworksModeByKeys()
+    if groupsByKey.hasKey(groupKey):
+      self.groupsOfInterestByKey[groupKey] = groupsByKey[groupKey]
+      return self.groupsOfInterestByKey[groupKey].tokens
     return @[]
-  return self.allGroupsByKey[groupKey].tokens
+  return self.groupsOfInterestByKey[groupKey].tokens
 
 proc getTokenByGroupKeyAndChainId*(self: Service, groupKey: string, chainId: int): TokenItem =
   let tokens = self.getTokensByGroupKey(groupKey)
@@ -146,8 +187,8 @@ proc updateTokenPrices*(self: Service, updatedPrices: Table[string, float64]) =
     self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
 
 proc addNewCommunityToken*(self: Service, token: TokenItem) =
-  if self.allGroupsByKey.hasKey(token.groupKey):
-    let tokens = self.allGroupsByKey[token.groupKey].tokens
+  if self.groupsOfInterestByKey.hasKey(token.groupKey):
+    let tokens = self.groupsOfInterestByKey[token.groupKey].tokens
     for t in tokens:
       if t.key == token.key:
         return

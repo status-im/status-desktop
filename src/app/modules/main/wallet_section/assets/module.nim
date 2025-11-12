@@ -75,4 +75,4 @@ method getGroupedAccountAssetsDataSource*(self: Module): GroupedAccountAssetsDat
   )
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
-  self.controller.buildAllTokens(addresses)
+  discard

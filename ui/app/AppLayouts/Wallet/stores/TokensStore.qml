@@ -98,7 +98,7 @@ QtObject {
         position                    [int]       - token's position
     */
     readonly property var tokenGroupsModel: !!root._allTokensModule ? root._allTokensModule.tokenGroupsModel : null
-
+    readonly property var tokenGroupsForChainModel: !!root._allTokensModule ? root._allTokensModule.tokenGroupsForChainModel : null
 
     // Property and methods below are used to apply advanced token management settings to the SendModal
 
@@ -108,6 +108,10 @@ QtObject {
     readonly property bool autoRefreshTokensLists: root._allTokensModule.autoRefreshTokensLists
 
     signal displayAssetsBelowBalanceThresholdChanged()
+
+    function buildGroupsForChain(chainId) {
+        root._allTokensModule.buildGroupsForChain(chainId)
+    }
 
     function getHistoricalDataForToken(tokenKey, currency) {
         root._allTokensModule.getHistoricalDataForToken(tokenKey, currency)

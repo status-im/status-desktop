@@ -9,7 +9,8 @@ QtObject:
       marketHistoryIsLoading: bool
 
       tokenListsModel: TokenListsModel
-      tokenGroupsModel: TokenGroupsModel
+      tokenGroupsModel: TokenGroupsModel # refers to tokens of interest for active networks mode
+      tokenGroupsForChainModel: TokenGroupsModel # refers to all tokens for a specific chain
 
   ## Forward declaration
   proc modelsUpdated*(self: View)
@@ -23,11 +24,21 @@ QtObject:
     result.tokenListsModel = newTokenListsModel(delegate.getTokenListsModelDataSource())
     result.tokenGroupsModel = newTokenGroupsModel(
       delegate.getTokenGroupsModelDataSource(),
-      delegate.getTokenMarketValuesDataSource())
+      delegate.getTokenMarketValuesDataSource(),
+      allowEmptyMarketDetails = false)
+    result.tokenGroupsForChainModel = newTokenGroupsModel(
+      delegate.getTokenGroupsForChainModelDataSource(),
+      delegate.getTokenMarketValuesDataSource(),
+      allowEmptyMarketDetails = true) # We allow empty market details for the tokenGroupsForChainModel, because it is
+      # used for the swap input panel where market details are not needed, also updating it would be a performance bottleneck.
 
   proc load*(self: View) =
     self.modelsUpdated()
     self.delegate.viewDidLoad()
+
+  proc buildGroupsForChain*(self: View, chainId: int) {.slot.} =
+    self.delegate.buildGroupsForChain(chainId)
+    self.tokenGroupsForChainModel.modelsUpdated()
 
   proc marketHistoryIsLoadingChanged*(self: View) {.signal.}
   proc getMarketHistoryIsLoading(self: View): QVariant {.slot.} =
@@ -67,6 +78,13 @@ QtObject:
     read = getTokenListsModel
     notify = tokenListsModelChanged
 
+  proc tokenGroupsForChainModelChanged*(self: View) {.signal.}
+  proc getTokenGroupsForChainModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.tokenGroupsForChainModel)
+  QtProperty[QVariant] tokenGroupsForChainModel:
+    read = getTokenGroupsForChainModel
+    notify = tokenGroupsForChainModelChanged
+
   proc tokenGroupsModelChanged*(self: View) {.signal.}
   proc getTokenGroupsModel(self: View): QVariant {.slot.} =
     return newQVariant(self.tokenGroupsModel)
@@ -77,15 +95,13 @@ QtObject:
   proc modelsUpdated*(self: View) =
     self.tokenListsModel.modelsUpdated()
     self.tokenGroupsModel.modelsUpdated()
+    self.tokenGroupsForChainModel.modelsUpdated()
 
   proc tokensMarketValuesUpdated*(self: View) =
     self.tokenGroupsModel.tokensMarketValuesUpdated()
 
   proc tokensMarketValuesAboutToUpdate*(self: View) =
     self.tokenGroupsModel.tokensMarketValuesAboutToUpdate()
-
-  proc tokensDetailsAboutToUpdate*(self: View) =
-    self.tokenGroupsModel.tokensDetailsAboutToUpdate()
 
   proc tokensDetailsUpdated*(self: View) =
     self.tokenGroupsModel.tokensDetailsUpdated()
