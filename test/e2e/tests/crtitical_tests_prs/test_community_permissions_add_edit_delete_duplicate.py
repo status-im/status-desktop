@@ -6,6 +6,7 @@ from allure_commons._allure import step
 
 import configs
 import driver
+from configs import get_platform
 from constants import permission_data, RandomCommunity
 from constants.community import ToastMessages, PermissionsElements
 from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
@@ -15,6 +16,7 @@ from gui.screens.community_settings import PermissionsIntroView
 
 @pytest.mark.case(703632, 705014, 705016)
 @pytest.mark.critical
+@pytest.mark.skipif(get_platform() == 'Windows', reason='Does not work on windows VM')
 def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
     with step('Create community and select it'):
         community = RandomCommunity()

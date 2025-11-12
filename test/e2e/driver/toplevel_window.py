@@ -7,7 +7,8 @@ import configs
 def maximize(object_name):
     def _maximize() -> bool:
         try:
-            toplevelwindow.ToplevelWindow.byName(object_name).maximize()
+            window = toplevelwindow.ToplevelWindow.byName(object_name)
+            squish.setWindowState(window.nativeObject, squish.WindowState.Maximize)
             return True
         except RuntimeError:
             return False
@@ -18,7 +19,8 @@ def maximize(object_name):
 def minimize(object_name):
     def _minimize() -> bool:
         try:
-            toplevelwindow.ToplevelWindow.byName(object_name).minimize()
+            window = toplevelwindow.ToplevelWindow.byName(object_name)
+            squish.setWindowState(window.nativeObject, squish.WindowState.Minimize)
             return True
         except RuntimeError:
             return False

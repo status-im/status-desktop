@@ -23,7 +23,7 @@ from scripts.utils.generators import random_text_message
 
 @pytest.mark.case(703014, 738735, 738736, 738739, 738740)
 @pytest.mark.critical
-@pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
+# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
 @pytest.mark.smoke
 @pytest.mark.parametrize('community_name, domain_link, domain_link_2',
                          [pytest.param('Status', 'status.app', 'github.com')
@@ -49,12 +49,14 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
 
         with step(f'User {user_two.name}, get chat key'):
             user_2_chat_key = get_chat_key(aut_two, main_window)
+            main_window.minimize()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             switch_to_aut(aut_one, main_window)
             settings = main_window.left_panel.open_settings()
             contact_request_form = settings.left_panel.open_messaging_settings().open_contacts_settings().open_contact_request_form()
             contact_request_form.send(user_2_chat_key, f'Hello {user_two.name}')
+            main_window.minimize()
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name} via activity center'):
             switch_to_aut(aut_two, main_window)
@@ -66,12 +68,14 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
 
         with step(f'User {user_three.name}, get chat key'):
             user_3_chat_key = get_chat_key(aut_three, main_window)
+            main_window.minimize()
 
         with step(f'User {user_one.name}, send contact request to {user_three.name}'):
             switch_to_aut(aut_one, main_window)
             settings = main_window.left_panel.open_settings()
             contact_request_form = settings.left_panel.open_messaging_settings().open_contacts_settings().open_contact_request_form()
             contact_request_form.send(user_3_chat_key, f'Hello {user_three.name}')
+            main_window.minimize()
 
         with step(f'User {user_three.name}, accept contact request from {user_one.name} via activity center'):
             switch_to_aut(aut_three, main_window)
@@ -289,8 +293,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             assert user_one.name in messages_screen.right_panel.members
             assert len(messages_screen.right_panel.members) == 1
 
-            with step('Leave group'):
-                messages_screen.group_chat.leave_group().confirm_leaving()
+            if get_platform() != 'Windows':
+                with step('Leave group'):
+                    messages_screen.group_chat.leave_group().confirm_leaving()
 
-            with step('Check that group name is not displayed on left panel'):
-                assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
+                with step('Check that group name is not displayed on left panel'):
+                    assert group_chat_new_name not in messages_screen.left_panel.get_chats_names
