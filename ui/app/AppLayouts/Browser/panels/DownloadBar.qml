@@ -55,8 +55,11 @@ Rectangle {
             interactive: false
             delegate: DownloadElement {
                 id: downloadElement
-                isPaused: downloadsModel.downloads[index] && downloadsModel.downloads[index].isPaused
-                primaryText: downloadFileName
+
+                readonly property var downloadItem: downloadsModel.downloads[index]
+
+                isPaused: downloadItem?.isPaused ?? false
+                primaryText: downloadItem?.downloadFileName ?? ""
                 downloadText: {
                     if (isCanceled) {
                         return qsTr("Cancelled")
@@ -64,12 +67,12 @@ Rectangle {
                     if (isPaused) {
                         return qsTr("Paused")
                     }
-                    return `${downloadsModel.downloads[index] ? (downloadsModel.downloads[index].receivedBytes / 1000000).toFixed(2) : 0}/${downloadsModel.downloads[index] ? (downloadsModel.downloads[index].totalBytes / 1000000).toFixed(2) : 0} MB` //"14.4/109 MB, 26 sec left"
+                    return "%1/%2".arg(Qt.locale().formattedDataSize(downloadItem?.receivedBytes ?? 0, 2, Locale.DataSizeTraditionalFormat)) //e.g. 14.4/109 MB
+                                  .arg(Qt.locale().formattedDataSize(downloadItem?.totalBytes ?? 0, 2, Locale.DataSizeTraditionalFormat))
                 }
                 downloadComplete: {
                     // listView.count ensures a value is returned even when index is undefined
-                    return listView.count > 0 && !!downloadsModel.downloads && !!downloadsModel.downloads[index] &&
-                            downloadsModel.downloads[index].receivedBytes >= downloadsModel.downloads[index].totalBytes
+                    return listView.count > 0 && !!downloadsModel.downloads && !!downloadItem && downloadItem.receivedBytes >= downloadItem.totalBytes
                 }
                 onItemClicked: {
                     openDownloadClicked(downloadComplete, index)
