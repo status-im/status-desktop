@@ -2430,7 +2430,7 @@ Item {
         model: 9
         delegate: Action {
             shortcut: "Ctrl+" + (index + 1)
-            onTriggered: {
+            onTriggered: index => {
                 Global.setNthEnabledSectionActive(index)
             }
         }
