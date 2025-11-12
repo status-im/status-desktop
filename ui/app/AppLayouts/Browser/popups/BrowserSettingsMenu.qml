@@ -8,6 +8,8 @@ StatusMenu {
 
     property bool isIncognito: false
 
+    visualizeShortcuts: true
+
     signal addNewTab()
     signal addNewDownloadTab()
     signal goIncognito(bool checked)
