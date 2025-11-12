@@ -47,7 +47,7 @@ Control {
     spacing: Theme.halfPadding
 
     contentItem: ColumnLayout {
-        spacing: root.spacing
+        spacing: Theme.bigPadding
         LoginPasswordInput {
             Layout.fillWidth: true
             id: txtPassword

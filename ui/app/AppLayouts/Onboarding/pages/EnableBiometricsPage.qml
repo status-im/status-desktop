@@ -12,7 +12,7 @@ OnboardingPage {
 
     title: qsTr("Enable biometrics")
 
-    property string subtitle: qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.")
+    property string subtitle: qsTr("Use biometrics to fill in your password")
 
     signal enableBiometricsRequested(bool enable)
 
@@ -41,7 +41,6 @@ OnboardingPage {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.topMargin: -12
                 text: root.subtitle
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
@@ -52,7 +51,7 @@ OnboardingPage {
                 objectName: "btnEnableBiometrics"
                 Layout.topMargin: Theme.halfPadding
                 Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Yes, use biometrics")
+                text: qsTr("Enable")
                 onClicked: root.enableBiometricsRequested(true)
             }
 

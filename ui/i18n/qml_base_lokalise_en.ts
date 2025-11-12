@@ -3068,6 +3068,19 @@
     </message>
   </context>
   <context>
+    <name>BiometricsSectionView</name>
+    <message>
+      <source>Enable biometrics to fill in your password</source>
+      <comment>BiometricsSectionView</comment>
+      <translation>Enable biometrics to fill in your password</translation>
+    </message>
+    <message>
+      <source>Biometrics unavailable — it may not be supported, set up, or allowed by your OS settings or app permissions.</source>
+      <comment>BiometricsSectionView</comment>
+      <translation>Biometrics unavailable — it may not be supported, set up, or allowed by your OS settings or app permissions.</translation>
+    </message>
+  </context>
+  <context>
     <name>BlockContactConfirmationDialog</name>
     <message>
       <source>Block user</source>
@@ -3435,16 +3448,6 @@
       <translation>Failed to enable biometric login and transaction authentication for this device</translation>
     </message>
     <message>
-      <source>Enable biometrics</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Enable biometrics</translation>
-    </message>
-    <message>
-      <source>Biometric login and transaction authentication</source>
-      <comment>ChangePasswordView</comment>
-      <translation>Biometric login and transaction authentication</translation>
-    </message>
-    <message>
       <source>Biometric login and transaction authentication disabled for this device</source>
       <comment>ChangePasswordView</comment>
       <translation>Biometric login and transaction authentication disabled for this device</translation>
@@ -3460,14 +3463,14 @@
       <translation>Change your password</translation>
     </message>
     <message>
-      <source>Clear &amp; cancel</source>
+      <source>Cancel</source>
       <comment>ChangePasswordView</comment>
-      <translation>Clear &amp; cancel</translation>
+      <translation>Cancel</translation>
     </message>
     <message>
-      <source>Change password</source>
+      <source>Change</source>
       <comment>ChangePasswordView</comment>
-      <translation>Change password</translation>
+      <translation>Change</translation>
     </message>
   </context>
   <context>
@@ -8154,19 +8157,19 @@
       <translation>Enable biometrics</translation>
     </message>
     <message>
-      <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
-      <comment>EnableBiometricsPage</comment>
-      <translation>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</translation>
-    </message>
-    <message>
-      <source>Yes, use biometrics</source>
-      <comment>EnableBiometricsPage</comment>
-      <translation>Yes, use biometrics</translation>
-    </message>
-    <message>
       <source>Maybe later</source>
       <comment>EnableBiometricsPage</comment>
       <translation>Maybe later</translation>
+    </message>
+    <message>
+      <source>Use biometrics to fill in your password</source>
+      <comment>EnableBiometricsPage</comment>
+      <translation>Use biometrics to fill in your password</translation>
+    </message>
+    <message>
+      <source>Enable</source>
+      <comment>EnableBiometricsPage</comment>
+      <translation>Enable</translation>
     </message>
   </context>
   <context>
@@ -8177,19 +8180,19 @@
       <translation>Enable biometrics</translation>
     </message>
     <message>
-      <source>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</source>
-      <comment>EnableBiometricsPopup</comment>
-      <translation>Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.</translation>
-    </message>
-    <message>
       <source>Maybe later</source>
       <comment>EnableBiometricsPopup</comment>
       <translation>Maybe later</translation>
     </message>
     <message>
-      <source>Yes, use biometrics</source>
+      <source>Use biometrics to fill in your password</source>
       <comment>EnableBiometricsPopup</comment>
-      <translation>Yes, use biometrics</translation>
+      <translation>Use biometrics to fill in your password</translation>
+    </message>
+    <message>
+      <source>Enable</source>
+      <comment>EnableBiometricsPopup</comment>
+      <translation>Enable</translation>
     </message>
   </context>
   <context>
@@ -15576,11 +15579,6 @@
       <source>Create a password to unlock Status on this device &amp; sign transactions.</source>
       <comment>PasswordView</comment>
       <translation>Create a password to unlock Status on this device &amp; sign transactions.</translation>
-    </message>
-    <message>
-      <source>Change password used to unlock Status on this device &amp; sign transactions.</source>
-      <comment>PasswordView</comment>
-      <translation>Change password used to unlock Status on this device &amp; sign transactions.</translation>
     </message>
     <message>
       <source>You will not be able to recover this password if it is lost.</source>

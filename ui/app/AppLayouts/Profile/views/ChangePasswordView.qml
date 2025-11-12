@@ -97,52 +97,46 @@ SettingsContentBase {
 
     property var passwordStrengthScoreFunction: function () {}
 
-    titleRowComponentLoader.sourceComponent: StatusSwitch {
-        id: biometricsSwitch
-
-        LayoutMirroring.enabled: true
-        LayoutMirroring.childrenInherit: true
-
-        visible: (Qt.platform.os === SQUtils.Utils.mac || SQUtils.Utils.isMobile) && root.keychain.available
-
-        text: qsTr("Enable biometrics")
-        textColor: Theme.palette.baseColor1
-
-        checkable: false
-        checked: root.keychain.available && d.biometricsEnabled
-        onClicked: {
-            // Enable Biometrics flow
-            if (!biometricsSwitch.checked) {
-                root.privacyStore.tryStoreToKeyChain()
-                return
-            }
-
-            // Disable biometrics flow
-            const status = root.keychain.deleteCredential(root.privacyStore.keyUid)
-
-            switch (status) {
-            case Keychain.StatusSuccess:
-                Global.displayToastMessage(
-                            qsTr("Biometric login and transaction authentication disabled for this device"),
-                            "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
-                break
-            default:
-                Global.displayToastMessage(
-                            qsTr("Failed to disable biometric login and transaction authentication for this device"),
-                            errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
-            }
-            d.reevaluateHasCredential()
-        }
-        StatusToolTip {
-            x: 15
-            orientation: StatusToolTip.Bottom
-            visible: (!root.checked && biometricsSwitch.hovered)
-            text: qsTr("Biometric login and transaction authentication")
-        }
-    }
-
     ColumnLayout {
+        spacing: 12
         width: Math.min(d.maxContentWidth, root.contentWidth)
+
+        BiometricsSectionView {
+            Layout.fillWidth: true
+
+            enabled: root.keychain.available
+            biometricsAvailable: root.keychain.available
+            biometricsEnabled: d.biometricsEnabled
+            onToggleBiometrics: function(checked) {
+                // Enable Biometrics flow
+                if (!checked) {
+                    root.privacyStore.tryStoreToKeyChain()
+                    return
+                }
+
+                // Disable biometrics flow
+                const status = root.keychain.deleteCredential(root.privacyStore.keyUid)
+
+                switch (status) {
+                case Keychain.StatusSuccess:
+                    Global.displayToastMessage(
+                                qsTr("Biometric login and transaction authentication disabled for this device"),
+                                "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                    break
+                default:
+                    Global.displayToastMessage(
+                                qsTr("Failed to disable biometric login and transaction authentication for this device"),
+                                errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
+                }
+                d.reevaluateHasCredential()
+            }
+        }
+
+        StatusModalDivider {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+        }
+
         PasswordView {
             id: choosePasswordForm
 
@@ -165,7 +159,6 @@ SettingsContentBase {
         StatusModalDivider {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 20
         }
 
         RowLayout {
@@ -173,7 +166,7 @@ SettingsContentBase {
 
             StatusFlatButton {
                 id: flatButton
-                text: qsTr("Clear & cancel")
+                text: qsTr("Cancel")
                 onClicked: choosePasswordForm.reset()
             }
 
@@ -223,7 +216,7 @@ SettingsContentBase {
     StatusButton {
         id: confirmButton
         objectName: "changePasswordModalSubmitButton"
-        text: qsTr("Change password")
+        text: qsTr("Change")
         enabled: choosePasswordForm.ready
         onClicked: { confirmPasswordChangePopup.open(); }
     }

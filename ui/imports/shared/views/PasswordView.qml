@@ -28,7 +28,7 @@ ColumnLayout {
             return qsTr("Create a password to unlock Status on this device & sign transactions.")
         }
 
-        return qsTr("Change password used to unlock Status on this device & sign transactions.")
+        return ""
     }
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum %n character(s)", "", Constants.minPasswordLength)
@@ -180,6 +180,7 @@ ColumnLayout {
 
         StatusBaseText {
             Layout.fillWidth: true
+            visible: !!text
             text: root.introText
             horizontalAlignment: root.contentAlignment
             font.pixelSize: root.highSizeIntro ? Theme.primaryTextFontSize : Theme.tertiaryTextFontSize
@@ -314,7 +315,6 @@ ColumnLayout {
     ColumnLayout {
         Layout.fillWidth: true
         Layout.alignment: root.contentAlignment
-        Layout.topMargin: Theme.padding
 
         RowLayout {
             StatusBaseText {
@@ -389,7 +389,6 @@ ColumnLayout {
 
     StatusPasswordStrengthIndicator {
         Layout.fillWidth: true
-        Layout.topMargin: Theme.bigPadding
         value: newPswInput.text.length
         strength: d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
         from: 0
@@ -437,6 +436,7 @@ ColumnLayout {
         horizontalAlignment: root.contentAlignment
         font.pixelSize: Theme.tertiaryTextFontSize
         color: Theme.palette.dangerColor1
+        visible: !!text
     }
 
 
