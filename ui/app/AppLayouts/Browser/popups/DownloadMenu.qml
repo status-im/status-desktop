@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtWebEngine
 
 import StatusQ.Popups
 
@@ -11,8 +12,10 @@ StatusMenu {
     required property BrowserStores.DownloadsStore downloadsStore
 
     property int index: -1
-    property bool downloadComplete: false
     property var download: root.downloadsStore.getDownload(index)
+
+    readonly property bool downloadCancelled: download?.state === WebEngineDownloadRequest.DownloadCancelled ?? false
+    readonly property bool downloadComplete: download?.state === WebEngineDownloadRequest.DownloadCompleted ?? false
 
     signal cancelClicked()
 
@@ -28,7 +31,7 @@ StatusMenu {
         onTriggered: root.downloadsStore.openDirectory(index)
     }
     StatusAction {
-        enabled: !downloadComplete && !!download && !download.isPaused
+        enabled: !downloadComplete && !!download && !download.isPaused && !downloadCancelled
         icon.name: "pause"
         text: qsTr("Pause")
         onTriggered: {
@@ -36,7 +39,7 @@ StatusMenu {
         }
     }
     StatusAction {
-        enabled: !downloadComplete && !!download && download.isPaused
+        enabled: !downloadComplete && !!download && download.isPaused && !downloadCancelled
         icon.name: "play"
         text: qsTr("Resume")
         onTriggered: {
@@ -44,10 +47,10 @@ StatusMenu {
         }
     }
     StatusMenuSeparator {
-        visible: !downloadComplete
+        visible: !downloadComplete && !downloadCancelled
     }
     StatusAction {
-        enabled: !downloadComplete
+        enabled: !downloadComplete && !downloadCancelled
         type: StatusAction.Type.Danger
         icon.name: "block-icon"
         icon.width: 13
