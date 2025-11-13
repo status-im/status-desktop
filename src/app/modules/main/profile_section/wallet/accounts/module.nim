@@ -143,7 +143,7 @@ method load*(self: Module) =
     let arg = TokensPerAccountArgs(e)
     self.setBalance(arg.accountAddresses)
 
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
+  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e: Args):
     self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
