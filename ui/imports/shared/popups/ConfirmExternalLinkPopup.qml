@@ -35,7 +35,7 @@ StatusDialog {
         StatusBaseText {
             Layout.fillWidth: true
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            text: qsTr("For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings/Browser/Open links in")
+            text: qsTr("For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings>>Browser>>Open links in")
         }
         Rectangle {
             Layout.fillWidth: true

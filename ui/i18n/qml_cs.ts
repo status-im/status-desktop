@@ -2677,15 +2677,15 @@ Do you wish to override the security check and continue?</source>
 <context>
     <name>BrowserView</name>
     <message>
-        <source>Search engine used in the address bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Show Favorites Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search engine for address bar</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3940,7 +3940,7 @@ file format</source>
         <translation type="unfinished">Otevřít</translation>
     </message>
     <message>
-        <source>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings/Browser/Open links in</source>
+        <source>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings&gt;&gt;Browser&gt;&gt;Open links in</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5502,11 +5502,15 @@ Remember your password and don&apos;t share it with anyone.</source>
 <context>
     <name>DefaultDAppExplorerView</name>
     <message>
-        <source>Default DApp explorer</source>
+        <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>None</source>
+        <source>Blockchain explorer in the address bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose a blockchain explorer to open Ethereum addresses or transaction hashes entered in the address bar</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7673,13 +7677,6 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
-    <name>FeeRow</name>
-    <message>
-        <source>Max.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -8374,16 +8371,20 @@ L2 poplatek: %2</translation>
         <translation>Domovská stránka</translation>
     </message>
     <message>
-        <source>System default</source>
-        <translation>Výchozí pro systém</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Jiná</translation>
-    </message>
-    <message>
         <source>Example: duckduckgo.com</source>
         <translation>Příklad: duckduckgo.com</translation>
+    </message>
+    <message>
+        <source>Choose the default start page for the Status browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8969,10 +8970,6 @@ Are you sure you want to do this?</source>
     </message>
     <message>
         <source>PIN correct</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Keycard blocked</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
@@ -12561,11 +12558,15 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Status Browser (default)</source>
+        <source>Choose which browser to use for opening links in Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>System Browser</source>
+        <source>Status browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User device default browser</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

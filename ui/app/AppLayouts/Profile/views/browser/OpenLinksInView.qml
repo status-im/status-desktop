@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import StatusQ.Controls
 import StatusQ.Core
+import StatusQ.Core.Theme
 
 ColumnLayout {
     id: root
@@ -11,18 +12,23 @@ ColumnLayout {
     required property var accountSettings
 
     StatusBaseText {
+        Layout.fillWidth: true
         text: qsTr("Open links in")
+        wrapMode: Text.WordWrap
     }
 
-    ButtonGroup {
-        exclusive: true
+    StatusBaseText {
+        Layout.fillWidth: true
+        text: qsTr("Choose which browser to use for opening links in Status")
+        color: Theme.palette.baseColor1
+        wrapMode: Text.WordWrap
     }
 
     StatusRadioButton {
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
         checked: accountSettings.openLinksInStatus
-        text: qsTr("Status Browser (default)")
+        text: qsTr("Status browser")
         onToggled: {
             if (checked) {
                 accountSettings.openLinksInStatus = true
@@ -34,7 +40,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
         checked: !accountSettings.openLinksInStatus
-        text: qsTr("System Browser")
+        text: qsTr("User device default browser")
         onToggled: {
             if (checked) {
                 accountSettings.openLinksInStatus = false
