@@ -49,12 +49,11 @@
 ****************************************************************************/
 
 import QtQuick
-import QtQuick.Controls
 import QtWebEngine
 
-Item {
-    id: shortcutActions
+import StatusQ.Core.Utils  // for QObject
 
+QObject {
     property var currentWebView
     property var findBarComponent
     property var browserHeaderComponent
@@ -66,68 +65,68 @@ Item {
             browserHeaderComponent.addressBar.selectAll();
         }
     }
-    Action {
-        shortcut: StandardKey.Refresh
-        onTriggered: {
+    Shortcut {
+        sequences: [StandardKey.Refresh]
+        onActivated: {
             if (currentWebView)
-                currentWebView.reload();
+                currentWebView.triggerWebAction(WebEngineView.Reload)
         }
     }
-    Action {
-        shortcut: StandardKey.Close
-        onTriggered: {
-            currentWebView.triggerWebAction(WebEngineView.RequestClose);
-        }
+    Shortcut {
+        sequences: [StandardKey.Close]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.RequestClose)
     }
-    Action {
-        shortcut: "Escape"
-        onTriggered: {
+    Shortcut {
+        sequence: "Escape"
+        onActivated: {
             if (findBarComponent.visible)
                 findBarComponent.visible = false;
+            if (currentWebView)
+                currentWebView.triggerWebAction(WebEngineView.Stop)
         }
     }
-    Action {
-        shortcut: StandardKey.Copy
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.Copy)
+    Shortcut {
+        sequences: [StandardKey.Copy]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.Copy)
     }
-    Action {
-        shortcut: StandardKey.Cut
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.Cut)
+    Shortcut {
+        sequences: [StandardKey.Cut]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.Cut)
     }
-    Action {
-        shortcut: StandardKey.Paste
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.Paste)
+    Shortcut {
+        sequences: [StandardKey.Paste]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.Paste)
     }
-    Action {
-        shortcut: "Shift+"+StandardKey.Paste
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.PasteAndMatchStyle)
+    Shortcut {
+        sequence: "Shift+"+StandardKey.Paste
+        onActivated: currentWebView.triggerWebAction(WebEngineView.PasteAndMatchStyle)
     }
-    Action {
-        shortcut: StandardKey.SelectAll
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.SelectAll)
+    Shortcut {
+        sequences: [StandardKey.SelectAll]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.SelectAll)
     }
-    Action {
-        shortcut: StandardKey.Undo
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.Undo)
+    Shortcut {
+        sequences: [StandardKey.Undo]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.Undo)
     }
-    Action {
-        shortcut: StandardKey.Redo
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.Redo)
+    Shortcut {
+        sequences: [StandardKey.Redo]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.Redo)
     }
-    Action {
-        shortcut: StandardKey.Back
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.Back)
+    Shortcut {
+        sequences: [StandardKey.Back]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.Back)
     }
-    Action {
-        shortcut: StandardKey.Forward
-        onTriggered: currentWebView.triggerWebAction(WebEngineView.Forward)
+    Shortcut {
+        sequences: [StandardKey.Forward]
+        onActivated: currentWebView.triggerWebAction(WebEngineView.Forward)
     }
-    Action {
-        shortcut: StandardKey.FindNext
-        onTriggered: findBarComponent.findNext()
+    Shortcut {
+        sequences: [StandardKey.FindNext]
+        onActivated: findBarComponent.findNext()
     }
-    Action {
-        shortcut: StandardKey.FindPrevious
-        onTriggered: findBarComponent.findPrevious()
+    Shortcut {
+        sequences: [StandardKey.FindPrevious]
+        onActivated: findBarComponent.findPrevious()
     }
 }
