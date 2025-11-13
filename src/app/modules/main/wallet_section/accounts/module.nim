@@ -100,8 +100,6 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
     self.refreshAllWalletAccountsBalances()
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
-    self.refreshAllWalletAccountsBalances()
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.refreshAllWalletAccountsBalances()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
