@@ -12634,11 +12634,6 @@
       <translation>1. Copy backup file</translation>
     </message>
     <message>
-      <source>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.&lt;br&gt;Backup file path: %1</source>
-      <comment>LoginPasswordBox</comment>
-      <translation>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.&lt;br&gt;Backup file path: %1</translation>
-    </message>
-    <message>
       <source>3. Restore your Status profile(s)</source>
       <comment>LoginPasswordBox</comment>
       <translation>3. Restore your Status profile(s)</translation>
@@ -12647,6 +12642,11 @@
       <source>If you have multiple profiles, repeat for each one:&lt;ul&gt;&lt;li&gt;On the Welcome screen, open the profile menu → Log in.&lt;li&gt;Select Log in with Recovery Phrase.&lt;li&gt;Enter your recovery phrase.&lt;li&gt;Create a new password.&lt;li&gt;Import the backup file from Step 1, or skip and import later from &lt;i&gt;Settings &gt; On-device backup&lt;/i&gt;.</source>
       <comment>LoginPasswordBox</comment>
       <translation>If you have multiple profiles, repeat for each one:&lt;ul&gt;&lt;li&gt;On the Welcome screen, open the profile menu → Log in.&lt;li&gt;Select Log in with Recovery Phrase.&lt;li&gt;Enter your recovery phrase.&lt;li&gt;Create a new password.&lt;li&gt;Import the backup file from Step 1, or skip and import later from &lt;i&gt;Settings &gt; On-device backup&lt;/i&gt;.</translation>
+    </message>
+    <message>
+      <source>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.</source>
+      <comment>LoginPasswordBox</comment>
+      <translation>Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. If you have multiple profiles, save all their backup files.</translation>
     </message>
   </context>
   <context>

@@ -14,7 +14,6 @@ QtObject {
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
         readonly property var onboardingModuleInst: onboardingModule
-        readonly property var appSettingsInst: appSettings
 
         Component.onCompleted: {
             d.onboardingModuleInst.appLoaded.connect(root.appLoaded)
@@ -25,9 +24,6 @@ QtObject {
     }
 
     readonly property var loginAccountsModel: d.onboardingModuleInst.loginAccountsModel
-
-    // backup
-    readonly property url backupPath: d.appSettingsInst.backupPath
 
     // keycard
     readonly property int keycardState: d.onboardingModuleInst.keycardState // cf. enum Onboarding.KeycardState

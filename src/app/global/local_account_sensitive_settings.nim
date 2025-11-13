@@ -73,6 +73,7 @@ const LSS_KEY_GIF_UNFURLING_ENABLED* = "gifUnfurlingEnabled"
 const DEFAULT_GIF_UNFURLING_ENABLED* = false
 const LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN = "createCommunityPopupSeen"
 const DEFAULT_LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN = false
+const LS_KEY_LOCAL_BACKUP_CHOSEN_PATH* = "localBackupChosenPath"
 
 logScope:
   topics = "la-sensitive-settings"
@@ -440,7 +441,6 @@ QtObject:
     write = setPluginsEnabled
     notify = pluginsEnabledChanged
 
-
   proc autoLoadIconsForPageChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getAutoLoadIconsForPage*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_AUTO_LOAD_ICONS_FOR_PAGE, newQVariant(DEFAULT_AUTO_LOAD_ICONS_FOR_PAGE))
@@ -568,6 +568,34 @@ QtObject:
     read = getCreateCommunityPopupSeen
     write = setCreateCommunityPopupSeen
     notify = createCommunityPopupSeenChanged
+
+  proc localBackupChosenPathChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+
+  proc getLocalBackupChosenPathSetting*(self: LocalAccountSensitiveSettings): string =
+    if self.settings.isNil or TEST_MODE_ENABLED:
+      return ""
+
+    return self.settings.value(LS_KEY_LOCAL_BACKUP_CHOSEN_PATH).stringVal
+
+  proc getLocalBackupChosenPath*(self: LocalAccountSensitiveSettings): string {.slot.} =
+    let setting = self.getLocalBackupChosenPathSetting()
+    if setting == "":
+      return DEFAULT_BACKUP_DIR
+
+    return setting
+
+  # Not a slot
+  # We need to call this from setBackupPath in settings/service.nim
+  proc setLocalBackupChosenPath*(self: LocalAccountSensitiveSettings, value: string) =
+    if self.settings.isNil:
+      return
+
+    self.settings.setValue(LS_KEY_LOCAL_BACKUP_CHOSEN_PATH, newQVariant(value))
+    self.localBackupChosenPathChanged()
+
+  QtProperty[string] localBackupChosenPath:
+    read = getLocalBackupChosenPath
+    notify = localBackupChosenPathChanged
 
   proc removeKey*(self: LocalAccountSensitiveSettings, key: string) =
     if(self.settings.isNil):

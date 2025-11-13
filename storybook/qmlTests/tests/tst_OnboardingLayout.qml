@@ -73,7 +73,6 @@ Item {
                 property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
                 property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
                 property var loginAccountsModel: emptyModel
-                readonly property url backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
 
                 function setPin(pin: string) {
                     const valid = pin === mockDriver.existingPin

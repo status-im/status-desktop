@@ -45,8 +45,6 @@ SplitView {
         availableLanguages: ["de", "cs", "en", "en_CA", "ko", "ar", "fr", "fr_CA", "pt_BR", "pt", "uk", "ja", "el"]
         currentLanguage: "en"
 
-        backupPath: StandardPaths.writableLocation(StandardPaths.TempLocation)
-
         onChangeLanguageRequested: function(newLanguageCode) {
             logs.logEvent("onChangeLanguageRequested", ["newLanguageCode"], arguments)
             currentLanguage = newLanguageCode

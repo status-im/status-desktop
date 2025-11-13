@@ -369,6 +369,8 @@ proc load(self: AppController) =
   self.buildAndRegisterLocalAccountSensitiveSettings()
   self.buildAndRegisterUserProfile()
 
+  self.settingsService.migrateBackupPath()
+
   self.notificationsManager.init()
   self.profileService.init()
   self.nodeConfigurationService.init()

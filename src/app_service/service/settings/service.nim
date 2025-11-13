@@ -155,6 +155,13 @@ QtObject:
 
     self.initialized = true
 
+  # Backup Path migration
+  # New local setting needs to be initialized from old setting value
+  # TODO remove this migration in 2.37 (one release cycle interval)
+  proc migrateBackupPath*(self: Service) =
+    if singletonInstance.localAccountSensitiveSettings.getLocalBackupChosenPathSetting().len == 0 and self.settings.backupPath.len > 0:
+      singletonInstance.localAccountSensitiveSettings.setLocalBackupChosenPath(self.settings.backupPath)
+
   proc initNotificationSettings(self: Service) =
     # set initial values from RPC before initialization is done
     # not interested in return values here
@@ -1081,48 +1088,33 @@ QtObject:
     notify = newsRSSEnabledChanged
   
   # BACKUP
-  proc getBackupPathWithDefault(backupPath: string): string =
-    if backupPath.len > 0:
-      return backupPath
-    else:
-      return DEFAULT_BACKUP_DIR
-
-  proc backupPathChanged*(self: Service) {.signal.}
-  proc getBackupPath*(self: Service): string {.slot.} =
-    if self.initialized:
-      return getBackupPathWithDefault(self.settings.backupPath)
-
-    try:
-      let response = status_settings.backupPath()
-      if not response.error.isNil:
-        raise newException(RpcException, response.error.message)
-      return getBackupPathWithDefault(response.result.getStr)
-    except Exception as e:
-      let errDesription = e.msg
-      error "reading backupPath setting error: ", errDesription
-
   proc setBackupPath*(self: Service, value: string) {.slot.} =
     if self.settings.backupPath == value:
       return
     try:
       var formattedPath = value
+      var pathToSaveInDB = value
       when defined(android):
         # If the user selected a SAF folder, persist the URI permission immediately.
         if value.len > 0 and value.startsWith("content://"):
           safTakePersistablePermission(value)
+          pathToSaveInDB = DEFAULT_BACKUP_DIR  # On Android, we save the data dir in the DB
       else:
         formattedPath = singletonInstance.utils.fromPathUri(value)
-      if self.saveSetting(KEY_BACKUP_PATH, formattedPath):
-        self.settings.backupPath = formattedPath
-        self.backupPathChanged()
+        pathToSaveInDB = formattedPath
+
+      # We save this path in the local setting as it is the chosen path by the user
+      singletonInstance.localAccountSensitiveSettings.setLocalBackupChosenPath(formattedPath)
+
+      # In the DB, we save the path where we will actually write the backups
+      # For most OSes, it will be the exact same path, but for Android, it will be
+      # the data dir as we need to use the SAF to write the file to the chosen folder
+      if self.saveSetting(KEY_BACKUP_PATH, pathToSaveInDB):
+        self.settings.backupPath = pathToSaveInDB
       else:
         raise newException(RpcException, "Failed to save backup path setting")
     except Exception as e:
       error "error: ", procName="setBackupPath", errName = e.name, errDesription = e.msg
-
-  QtProperty[string] backupPath:
-    read = getBackupPath
-    notify = backupPathChanged
 
   proc messagesBackupEnabledChanged*(self: Service) {.signal.}
   proc getMessagesBackupEnabled*(self: Service): bool {.slot.} =
