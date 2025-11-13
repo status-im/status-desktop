@@ -47,6 +47,7 @@ Rectangle {
     QtObject {
         id: _internal
         readonly property int innerMargin: 12
+        readonly property int buttonSize: 40
     }
 
     width: parent.width
@@ -61,11 +62,9 @@ Rectangle {
 
         StatusFlatRoundButton {
             id: backButton
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
+            Layout.preferredWidth: _internal.buttonSize
+            Layout.preferredHeight: _internal.buttonSize
             Layout.leftMargin: _internal.innerMargin
-            icon.height: 20
-            icon.width: 20
             icon.name: "arrow-left"
             icon.disabledColor: Theme.palette.baseColor2
             type: StatusFlatRoundButton.Type.Tertiary
@@ -86,11 +85,9 @@ Rectangle {
 
         StatusFlatRoundButton {
             id: forwardButton
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
+            Layout.preferredWidth: _internal.buttonSize
+            Layout.preferredHeight: _internal.buttonSize
             Layout.leftMargin: -_internal.innerMargin/2
-            icon.width: 20
-            icon.height: 20
             icon.name: "arrow-right"
             icon.disabledColor: Theme.palette.baseColor2
             type: StatusFlatRoundButton.Type.Tertiary
@@ -165,8 +162,8 @@ Rectangle {
         }
 
         DappsComboBox {
-            Layout.preferredWidth: 38
-            Layout.preferredHeight: 38
+            Layout.preferredWidth: _internal.buttonSize
+            Layout.preferredHeight: _internal.buttonSize
             spacing: 8
             
             visible: true
@@ -189,8 +186,8 @@ Rectangle {
         }
 
         Loader {
-            Layout.preferredWidth: 44
-            Layout.preferredHeight: 44
+            Layout.preferredWidth: _internal.buttonSize
+            Layout.preferredHeight: _internal.buttonSize
             active: true
             sourceComponent: currentTabConnected ? connectedBtnComponent : notConnectedBtnCompoent
         }
@@ -199,10 +196,6 @@ Rectangle {
             id: notConnectedBtnCompoent
             StatusFlatRoundButton {
                 id: accountBtn
-                width: 24
-                height: 24
-                icon.width: 24
-                icon.height: 24
                 icon.name: "filled-account"
                 type: StatusFlatRoundButton.Type.Tertiary
                 onPressed: {
@@ -216,8 +209,6 @@ Rectangle {
             StatusFlatButton {
                 id: accountBtnConnected
                 icon.name: "wallet"
-                icon.width: 18
-                icon.height: 18
                 icon.color: dappBrowserAccIcon
                 text: dappBrowserAccName
                 onPressed: {
@@ -228,13 +219,12 @@ Rectangle {
 
         StatusFlatRoundButton {
             id: settingsMenuButton
-            Layout.preferredHeight: 32
-            Layout.preferredWidth: 32
-            icon.width: 24
-            icon.height: 24
+            Layout.preferredHeight: _internal.buttonSize
+            Layout.preferredWidth: _internal.buttonSize
             icon.name: "more"
             type: StatusFlatRoundButton.Type.Tertiary
             Layout.rightMargin: _internal.innerMargin
+            highlighted: settingMenu.opened
             onClicked: {
                 if (settingMenu.opened) {
                     settingMenu.close()
