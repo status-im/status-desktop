@@ -53,10 +53,6 @@ method load*(self: Module) =
     self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
     self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
 
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
-    self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
-    self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
-
   self.controller.init()
   self.view.load()
 

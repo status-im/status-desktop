@@ -1,7 +1,39 @@
+proc getTokensMarketValuesLoading*(self: Service): bool =
+  return self.tokensPricesLoading or self.tokensMarketDetailsLoading
+
+# resolveTokensMarketValuesLoadingStateAndNotify ensures that only a single signal is emitted when:
+# - either tokens prices or tokens market details are about to be updated
+# - tokens prices and tokens market details are updated (when both are loaded)
+proc resolveTokensMarketValuesLoadingStateAndNotify(self: Service, tokensPricesLoading: bool, tokensMarketDetailsLoading: bool) =
+  if not self.getTokensMarketValuesLoading():
+    self.tokensPricesLoading = tokensPricesLoading
+    self.tokensMarketDetailsLoading = tokensMarketDetailsLoading
+    if self.getTokensMarketValuesLoading():
+      self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED, Args())
+    return
+  self.tokensPricesLoading = tokensPricesLoading
+  self.tokensMarketDetailsLoading = tokensMarketDetailsLoading
+  if not self.getTokensMarketValuesLoading():
+    self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_UPDATED, Args())
+
+proc setTokensMarketDetailsLoadingStateAndNotify(self: Service, state: bool) =
+  self.resolveTokensMarketValuesLoadingStateAndNotify(self.tokensPricesLoading, state)
+
+proc setTokensPricesLoadingStateAndNotify(self: Service, state: bool) =
+  self.resolveTokensMarketValuesLoadingStateAndNotify(state, self.tokensMarketDetailsLoading)
+
+proc updateTokenPrices*(self: Service, updatedPrices: Table[string, float64]) =
+  var anyUpdated = false
+  for tokenKey, price in updatedPrices:
+    if not self.tokenPriceTable.hasKey(tokenKey) or self.tokenPriceTable[tokenKey] != price:
+      anyUpdated = true
+      self.tokenPriceTable[tokenKey] = price
+  if anyUpdated:
+    self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_UPDATED, Args())
+
 # if tokensKeys is empty, market values for all tokens will be fetched
 proc fetchTokensMarketValues(self: Service, tokensKeys: seq[string] = @[]) =
-  self.tokensMarketDetailsLoading = true
-  defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED, Args())
+  defer: self.setTokensMarketDetailsLoadingStateAndNotify(true)
   let arg = FetchTokensMarketValuesTaskArg(
     tptr: fetchTokensMarketValuesTask,
     vptr: cast[uint](self.vptr),
@@ -13,8 +45,7 @@ proc fetchTokensMarketValues(self: Service, tokensKeys: seq[string] = @[]) =
 
 proc tokensMarketValuesRetrieved(self: Service, response: string) {.slot.} =
   # this is emited so that the models can notify about market values being available
-  self.tokensMarketDetailsLoading = false
-  defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_UPDATED, Args())
+  defer: self.setTokensMarketDetailsLoadingStateAndNotify(false)
   try:
     let parsedJson = response.parseJson
     var errorString: string
@@ -82,8 +113,7 @@ proc tokensDetailsRetrieved(self: Service, response: string) {.slot.} =
 
 # if tokensKeys is empty, prices for all tokens will be fetched
 proc fetchTokensPrices(self: Service, tokensKeys: seq[string] = @[]) =
-  self.tokensPricesLoading = true
-  defer: self.events.emit(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED, Args())
+  defer: self.setTokensPricesLoadingStateAndNotify(true)
   let arg = FetchTokensPricesTaskArg(
     tptr: fetchTokensPricesTask,
     vptr: cast[uint](self.vptr),
@@ -94,9 +124,8 @@ proc fetchTokensPrices(self: Service, tokensKeys: seq[string] = @[]) =
   self.threadpool.start(arg)
 
 proc tokensPricesRetrieved(self: Service, response: string) {.slot.} =
-  self.tokensPricesLoading = false
   # this is emited so that the models can notify about prices being available
-  defer: self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
+  defer: self.setTokensPricesLoadingStateAndNotify(false)
   try:
     let parsedJson = response.parseJson
     var errorString: string
