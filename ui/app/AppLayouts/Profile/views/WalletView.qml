@@ -48,13 +48,14 @@ SettingsContentBase {
     required property CollectiblesStore collectiblesStore
     required property SharedStores.NetworksStore networksStore
 
-    readonly property int mainViewIndex: 0
-    readonly property int networksViewIndex: 1
-    readonly property int editNetworksViewIndex: 2
-    readonly property int accountOrderViewIndex: 3
-    readonly property int accountViewIndex: 4
-    readonly property int manageTokensViewIndex: 5
-    readonly property int savedAddressesViewIndex: 6
+    // There are 3 different deep levels on this view:
+    readonly property int mainViewIndex: 0              // Level 0 - Base / "parent"
+    readonly property int networksViewIndex: 1          // Level 1 - First networks level
+    readonly property int editNetworksViewIndex: 2      // Level 2 - Second networks level
+    readonly property int accountOrderViewIndex: 3      // Level 1
+    readonly property int accountViewIndex: 4           // Level 1
+    readonly property int manageTokensViewIndex: 5      // Level 1
+    readonly property int savedAddressesViewIndex: 6    // Level 1
 
     readonly property string walletSectionTitle: qsTr("Wallet")
     readonly property string networksSectionTitle: qsTr("Networks")
@@ -63,14 +64,44 @@ SettingsContentBase {
 
     signal addressWasShownRequested(string address)
 
-    function resetStack() {
+    function goBack() {
+        // This case means it was in Level 2 deep:
         if(stackContainer.currentIndex === root.editNetworksViewIndex) {
             networksView.overrideInitialTabIndex(editNetwork.network.isTest ? networksView.testnetTabIndex : networksView.mainnetTabIndex)
-            stackContainer.currentIndex = root.networksViewIndex
+            priv.navigateToDetails(root.networksViewIndex)
+            return
         }
-        else {
-            stackContainer.currentIndex = mainViewIndex;
+
+        // This case means it was in any of the Level 1 deep options, so navigate to main level 0
+        priv.navigateToDetails(root.mainViewIndex)
+    }
+
+    function initStack() {
+        // This is a forced initial navigation to main view (deep level 0) to ensure that once the stack is initiated by a navigation
+        // from outside the component, there's always the main page inside the "memory" of the stack so that there's back button
+        // although the navigation is directly pointing to the details page (deep level 1)
+        if(stackContainer.currentIndex !== root.mainViewIndex) {
+            priv.navigateToDetails(root.mainViewIndex)
         }
+
+        // These are all detail navigation flow started / requested from outside this component
+        switch(root.settingsSubSubsection) {
+            // Manage tokens details view:
+            case Constants.walletSettingsSubsection.manageAssets:
+            case Constants.walletSettingsSubsection.manageCollectibles:
+            case Constants.walletSettingsSubsection.manageHidden:
+            case Constants.walletSettingsSubsection.manageAdvanced:
+                priv.navigateToDetails(root.manageTokensViewIndex)
+                return
+
+            // Manage networks details view:
+            case Constants.walletSettingsSubsection.manageNetworks:
+                priv.navigateToDetails(root.networksViewIndex)
+                return
+        }
+
+        // Main Wallet settings view:
+        priv.navigateToDetails(root.mainViewIndex)
     }
 
     // Dirty state will be just ignored when user leaves manage tokens settings (excluding advanced settings that needs user action)
@@ -125,45 +156,44 @@ SettingsContentBase {
 
         readonly property string removeKeypairIdentifier: "profile-remove-keypair"
 
-        readonly property bool isManageTokensSubsection: root.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
-                                                         root.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
-                                                         root.settingsSubSubsection === Constants.walletSettingsSubsection.manageHidden ||
-                                                         root.settingsSubSubsection === Constants.walletSettingsSubsection.manageAdvanced
-
-        readonly property bool isManageNetworksSubsection: root.settingsSubSubsection === Constants.walletSettingsSubsection.manageNetworks
-
         readonly property var walletSettings: Settings {
             category: "walletSettings-" + root.myPublicKey
         }
 
         property string backButtonName: ""
+
+        function navigateToDetails(detailsIndex) {
+            // No need for a navigation:
+            if(detailsIndex === stackContainer.currentIndex)
+                return
+
+            switch (detailsIndex) {
+                case root.mainViewIndex:
+                case root.networksViewIndex:
+                case root.editNetworksViewIndex:
+                case root.accountOrderViewIndex:
+                case root.accountViewIndex:
+                case root.manageTokensViewIndex:
+                case root.savedAddressesViewIndex:
+                    stackContainer.currentIndex = detailsIndex
+                    return
+            }
+            // This is the default:
+            console.warn("Unexpected details index so, navigate to main view. Index: " + detailsIndex)
+            stackContainer.currentIndex = root.mainViewIndex
+        }
     }
 
     StackLayout {
         id: stackContainer
 
         width: root.contentWidth
-        height: stackContainer.currentIndex === root.mainViewIndex ? main.height:
-                stackContainer.currentIndex === root.networksViewIndex ? networksView.height:
-                stackContainer.currentIndex === root.editNetworksViewIndex ? editNetwork.height:
-                stackContainer.currentIndex === root.accountOrderViewIndex ? accountOrderView.height:
-                stackContainer.currentIndex === root.manageTokensViewIndex ? manageTokensView.implicitHeight :
-                stackContainer.currentIndex === root.savedAddressesViewIndex ? root.availableHeight:
-                                                                             accountView.height
+
         currentIndex: mainViewIndex
 
-        Binding on currentIndex {
-            value: root.manageTokensViewIndex
-            when: priv.isManageTokensSubsection
-        }
-
-        Binding on currentIndex {
-            value: root.networksViewIndex
-            when: priv.isManageNetworksSubsection
-        }
-
         onCurrentIndexChanged: {
-            priv.backButtonName = ""
+            // Defaults
+            priv.backButtonName = root.walletSectionTitle
             root.sectionTitle = root.walletSectionTitle
             root.titleRowComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.sourceComponent = undefined
@@ -171,43 +201,52 @@ SettingsContentBase {
             root.stickTitleRowComponentLoader = false
             root.titleLayout.spacing = 5
 
-            if (currentIndex === root.mainViewIndex) {
+            // Specific cases
+            switch (stackContainer.currentIndex) {
+            case root.mainViewIndex:
+                priv.backButtonName = ""
+                root.sectionTitle = root.walletSectionTitle
                 root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
+                break
 
-            } else if(currentIndex === root.networksViewIndex) {
+            case root.networksViewIndex:
                 priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = root.networksSectionTitle
-
                 root.titleRowComponentLoader.sourceComponent = toggleTestnetModeSwitchComponent
+                break
 
-            } else if(currentIndex === root.editNetworksViewIndex) {
+            case root.editNetworksViewIndex:
                 priv.backButtonName = root.networksSectionTitle
-                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.network &&
-                                                        !!editNetwork.network.chainName ? editNetwork.network.chainName: "")
-                root.titleRowLeftComponentLoader.visible = true
+                root.sectionTitle = qsTr("Edit %1").arg(
+                            (editNetwork.network && editNetwork.network.chainName) ?
+                                editNetwork.network.chainName : "")
                 root.titleRowLeftComponentLoader.sourceComponent = networkIcon
+                root.titleRowLeftComponentLoader.visible = true
                 root.titleLayout.spacing = 12
+                break
 
-            } else if(currentIndex === root.accountViewIndex) {
+            case root.accountViewIndex:
                 priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = ""
+                break
 
-            } else if(currentIndex === root.accountOrderViewIndex) {
+            case root.accountOrderViewIndex:
                 priv.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
                 root.stickTitleRowComponentLoader = true
+                break
 
-            } else if(currentIndex === root.manageTokensViewIndex) {
+            case root.manageTokensViewIndex:
                 priv.backButtonName = root.walletSectionTitle
-                root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
                 root.stickTitleRowComponentLoader = true
-            } else if(currentIndex === root.savedAddressesViewIndex) {
-                priv.backButtonName = root.walletSectionTitle
-                root.titleRowLeftComponentLoader.visible = false
-                root.sectionTitle = qsTr("Saved addresses")
+                break
 
+            case root.savedAddressesViewIndex:
+                priv.backButtonName = root.walletSectionTitle
+                root.sectionTitle = qsTr("Saved addresses")
                 root.titleRowComponentLoader.sourceComponent = addNewSavedAddressButtonComponent
+                break
             }
         }
 
@@ -221,9 +260,7 @@ SettingsContentBase {
             emojiPopup: root.emojiPopup
             isKeycardEnabled: root.isKeycardEnabled
 
-            onGoToNetworksView: {
-                stackContainer.currentIndex = networksViewIndex
-            }
+            onGoToNetworksView: priv.navigateToDetails(root.networksViewIndex)
 
             onGoToAccountView: (account) => {
                 if (!!account && !!account.address) {
@@ -233,12 +270,11 @@ SettingsContentBase {
                 root.walletStore.setSelectedAccount(account.address)
                 root.walletStore.selectedAccount = Qt.binding(function() { return root.walletStore.accountsModule.selectedAccount })
                 accountView.keyPair = Qt.binding(function() { return root.walletStore.accountsModule.selectedKeyPair })
-                stackContainer.currentIndex = accountViewIndex
+                priv.navigateToDetails(root.accountViewIndex)
             }
 
-            onGoToAccountOrderView: {
-                stackContainer.currentIndex = accountOrderViewIndex
-            }
+            onGoToAccountOrderView: priv.navigateToDetails(root.accountOrderViewIndex)
+
             onRunRenameKeypairFlow: (model) => {
                 renameKeypairPopup.keyUid = model.keyPair.keyUid
                 renameKeypairPopup.name = model.keyPair.name
@@ -257,12 +293,8 @@ SettingsContentBase {
             onRunStopUsingKeycardFlow: (model) => {
                 root.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
             }
-            onGoToManageTokensView: {
-                stackContainer.currentIndex = manageTokensViewIndex
-            }
-            onGoToSavedAddressesView: {
-                stackContainer.currentIndex = root.savedAddressesViewIndex
-            }
+            onGoToManageTokensView: priv.navigateToDetails(root.manageTokensViewIndex)
+            onGoToSavedAddressesView: priv.navigateToDetails(root.savedAddressesViewIndex)
         }
 
         NetworksView {
@@ -273,13 +305,11 @@ SettingsContentBase {
             flatNetworks: root.networksStore.allNetworks
             areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
 
-            onGoBack: {
-                stackContainer.currentIndex = mainViewIndex
-            }
+            onGoBack: priv.navigateToDetails(root.mainViewIndex)
 
             onEditNetwork: function (chainId) {
                 editNetwork.network = ModelUtils.getByKey(root.networksStore.allNetworks, "chainId", chainId)
-                stackContainer.currentIndex = editNetworksViewIndex
+                priv.navigateToDetails(root.editNetworksViewIndex)
             }
 
             onSetNetworkActive: function (chainId, active) {
@@ -305,9 +335,7 @@ SettingsContentBase {
             Layout.leftMargin: Theme.padding
             Layout.rightMargin: Theme.padding
             walletStore: root.walletStore
-            onGoBack: {
-                stackContainer.currentIndex = mainViewIndex
-            }
+            onGoBack: priv.navigateToDetails(root.mainViewIndex)
         }
 
         AccountView {
@@ -317,7 +345,7 @@ SettingsContentBase {
             emojiPopup: root.emojiPopup
             userProfilePublicKey: walletStore.userProfilePublicKey
             activeNetworks: root.networksStore.activeNetworks
-            onGoBack: stackContainer.currentIndex = mainViewIndex
+            onGoBack: priv.navigateToDetails(root.mainViewIndex)
             onVisibleChanged: {
                 if (!visible && !!root.walletStore) {
                     root.walletStore.selectedAccount = null
@@ -370,23 +398,6 @@ SettingsContentBase {
 
             getCurrentCurrencyAmount: function (balance) {
                 return RootStore.currencyStore.getCurrentCurrencyAmount(balance)
-            }
-
-            Binding on currentIndex {
-                value: {
-                    switch (root.settingsSubSubsection) {
-                    case Constants.walletSettingsSubsection.manageAssets:
-                        return 0
-                    case Constants.walletSettingsSubsection.manageCollectibles:
-                        return 1
-                    case Constants.walletSettingsSubsection.manageHidden:
-                        return 2
-                    case Constants.walletSettingsSubsection.manageAdvanced:
-                        return 3
-                    }
-                }
-                when: priv.isManageTokensSubsection
-                restoreMode: Binding.RestoreNone
             }
         }
 

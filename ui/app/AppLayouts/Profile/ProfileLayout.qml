@@ -118,7 +118,7 @@ StatusSectionLayout {
             Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.about)
             break;
         case Constants.settingsSubsection.wallet:
-            walletView.item.resetStack()
+            walletView.item.goBack()
             break;
         case Constants.settingsSubsection.privacyAndSecurity:
             privacyAndSecurityView.item.resetStack()
@@ -219,7 +219,7 @@ StatusSectionLayout {
             } else if (currentIndex === Constants.settingsSubsection.about_privacy || currentIndex === Constants.settingsSubsection.about_terms) {
                 d.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
             } else if (currentIndex === Constants.settingsSubsection.wallet) {
-                walletView.item.resetStack()
+                walletView.item.initStack()
             } else if (currentIndex === Constants.settingsSubsection.privacyAndSecurity) {
                 privacyAndSecurityView.item.resetStack()
             } else if (currentIndex === Constants.settingsSubsection.keycard) {
