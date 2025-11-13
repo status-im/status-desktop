@@ -1181,8 +1181,8 @@ Item {
             recentEmojis: appMainLocalSettings.recentEmojis
             skinColor: appMainLocalSettings.skinColor
             emojiModel: SQUtils.Emoji.emojiModel
-            onSetSkinColor: color => appMainLocalSettings.skinColor = color
-            onSetRecentEmojis: recentEmojis => appMainLocalSettings.recentEmojis = recentEmojis
+            onSetSkinColorRequested: color => appMainLocalSettings.skinColor = color
+            onSetRecentEmojisRequested: recentEmojis => appMainLocalSettings.recentEmojis = recentEmojis
         }
     }
 

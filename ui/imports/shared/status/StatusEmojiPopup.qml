@@ -25,9 +25,9 @@ StatusDropdown {
     property alias searchString: searchBox.text
     property string emojiSize: ""
 
-    signal emojiSelected(string emoji, bool atCu, string hexcode)
-    signal setSkinColor(string skinColor)
-    signal setRecentEmojis(var recentEmojis)
+    signal emojiSelected(string emoji, bool atCursor, string hexcode)
+    signal setSkinColorRequested(string skinColor)
+    signal setRecentEmojisRequested(var recentEmojis)
 
     width: 370
     padding: 0
@@ -63,7 +63,7 @@ StatusDropdown {
     onClosed: {
         const recent = root.emojiModel.recentEmojis
         if (recent.length)
-            root.setRecentEmojis(recent)
+            root.setRecentEmojisRequested(recent)
         searchBox.text = ""
         root.emojiSize = ""
         skinToneEmoji.expandSkinColorOptions = false
@@ -159,6 +159,7 @@ StatusDropdown {
                 anchors.rightMargin: d.headerMargin
                 Repeater {
                     id: skinColorEmojiRepeater
+                    // Hand emojis 🖐️ with different skin tones
                     model: ["1f590-1f3fb", "1f590-1f3fc", "1f590-1f3fd", "1f590-1f3fe", "1f590-1f3ff", "1f590"]
                     delegate: StatusEmoji {
                         width: 22
@@ -168,7 +169,7 @@ StatusDropdown {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
                             onClicked: {
-                                root.setSkinColor((index === 5) ? "" : modelData.split("-")[1]);
+                                root.setSkinColorRequested((index === 5) ? "" : modelData.split("-")[1]);
                                 skinToneEmoji.expandSkinColorOptions = false;
                             }
                         }
@@ -183,6 +184,7 @@ StatusDropdown {
                 anchors.right: parent.right
                 anchors.rightMargin: d.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
+                // Hand emoji 🖐️ to which we append the skin color selected by the user
                 emojiId: "1f590" + ((root.skinColor !== "" && visible) ? ("-" + root.skinColor) : "")
                 StatusMouseArea {
                     cursorShape: Qt.PointingHandCursor
