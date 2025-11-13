@@ -12,11 +12,18 @@ ColumnLayout {
 
     property var accountSettings
 
-    spacing: 0
-
     StatusBaseText {
+        Layout.fillWidth: true
         text: qsTr("Homepage")
         color: Theme.palette.directColor1
+        wrapMode: Text.WordWrap
+    }
+
+    StatusBaseText {
+        Layout.fillWidth: true
+        text: qsTr("Choose the default start page for the Status browser")
+        color: Theme.palette.baseColor1
+        wrapMode: Text.WordWrap
     }
 
     ButtonGroup {
@@ -30,7 +37,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
         checked: root.accountSettings.browserHomepage === ""
-        text: qsTr("System default")
+        text: qsTr("Status default")
     }
 
     StatusRadioButton {
@@ -38,7 +45,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
         checked: root.accountSettings.browserHomepage !== ""
-        text: qsTr("Other")
+        text: qsTr("Custom")
     }
 
     StatusInput {

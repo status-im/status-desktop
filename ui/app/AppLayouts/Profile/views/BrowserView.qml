@@ -1,19 +1,14 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 
-import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Components
 import StatusQ.Controls
 
 import utils
-import shared
-import shared.panels
 import shared.status
 
-import "../popups"
-import "browser"
+import AppLayouts.Profile.popups
+import AppLayouts.Profile.views.browser
 
 SettingsContentBase {
     id: root
@@ -34,20 +29,20 @@ SettingsContentBase {
             anchors.top: parent.top
             anchors.left: parent.left
             width: parent.width
-            spacing: 10
+            spacing: Theme.padding
+            padding: Theme.halfPadding
 
             HomePageView {
                 id: homePageView
+                width: parent.width
                 accountSettings: root.accountSettings
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Theme.padding
-                anchors.rightMargin: Theme.padding
             }
 
             StatusSettingsLineButton {
                 width: parent.width
-                text: qsTr("Search engine used in the address bar")
+                leftPadding: 0
+                background: null
+                text: qsTr("Search engine for address bar")
                 currentValue: {
                     switch (accountSettings.shouldShowBrowserSearchEngine) {
                     case Constants.browserSearchEngineGoogle: return "Google"
@@ -62,16 +57,20 @@ SettingsContentBase {
 
             DefaultDAppExplorerView {
                 id: dAppExplorerView
+                width: parent.width
                 accountSettings: root.accountSettings
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Theme.padding
-                anchors.rightMargin: Theme.padding
+            }
+
+            OpenLinksInView {
+                width: parent.width
+                accountSettings: root.accountSettings
             }
 
             StatusListItem {
                 id: showFavouritesItem
                 width: parent.width
+                leftPadding: 0
+                bgColor: Theme.palette.transparent
                 title: qsTr("Show Favorites Bar")
                 components: [
                     StatusSwitch {
@@ -81,10 +80,6 @@ SettingsContentBase {
                     }
                 ]
                 onClicked: accountSettings.shouldShowFavoritesBar = !accountSettings.shouldShowFavoritesBar
-            }
-
-            OpenLinksInView {
-                accountSettings: root.accountSettings
             }
         }
     }

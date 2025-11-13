@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import StatusQ.Controls
 import StatusQ.Components
 import StatusQ.Core
+import StatusQ.Core.Theme
 
 import utils
 
@@ -14,7 +15,16 @@ ColumnLayout {
     property var accountSettings
 
     StatusBaseText {
-        text: qsTr("Default DApp explorer")
+        Layout.fillWidth: true
+        text: qsTr("Blockchain explorer in the address bar")
+        wrapMode: Text.WordWrap
+    }
+
+    StatusBaseText {
+        Layout.fillWidth: true
+        text: qsTr("Choose a blockchain explorer to open Ethereum addresses or transaction hashes entered in the address bar")
+        color: Theme.palette.baseColor1
+        wrapMode: Text.WordWrap
     }
 
     ButtonGroup {

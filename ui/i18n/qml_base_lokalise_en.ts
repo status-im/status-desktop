@@ -3269,11 +3269,6 @@
   <context>
     <name>BrowserView</name>
     <message>
-      <source>Search engine used in the address bar</source>
-      <comment>BrowserView</comment>
-      <translation>Search engine used in the address bar</translation>
-    </message>
-    <message>
       <source>None</source>
       <comment>BrowserView</comment>
       <translation>None</translation>
@@ -3282,6 +3277,11 @@
       <source>Show Favorites Bar</source>
       <comment>BrowserView</comment>
       <translation>Show Favorites Bar</translation>
+    </message>
+    <message>
+      <source>Search engine for address bar</source>
+      <comment>BrowserView</comment>
+      <translation>Search engine for address bar</translation>
     </message>
   </context>
   <context>
@@ -4791,9 +4791,9 @@
       <translation>Open</translation>
     </message>
     <message>
-      <source>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings/Browser/Open links in</source>
+      <source>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings&gt;&gt;Browser&gt;&gt;Open links in</source>
       <comment>ConfirmExternalLinkPopup</comment>
-      <translation>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings/Browser/Open links in</translation>
+      <translation>For your privacy, Status asks before opening links, as websites may collect your IP or device information. Copy the link to open it elsewhere, or tap Open to use the browser set in Settings&gt;&gt;Browser&gt;&gt;Open links in</translation>
     </message>
   </context>
   <context>
@@ -6689,14 +6689,19 @@
   <context>
     <name>DefaultDAppExplorerView</name>
     <message>
-      <source>Default DApp explorer</source>
-      <comment>DefaultDAppExplorerView</comment>
-      <translation>Default DApp explorer</translation>
-    </message>
-    <message>
       <source>None</source>
       <comment>DefaultDAppExplorerView</comment>
       <translation>None</translation>
+    </message>
+    <message>
+      <source>Blockchain explorer in the address bar</source>
+      <comment>DefaultDAppExplorerView</comment>
+      <translation>Blockchain explorer in the address bar</translation>
+    </message>
+    <message>
+      <source>Choose a blockchain explorer to open Ethereum addresses or transaction hashes entered in the address bar</source>
+      <comment>DefaultDAppExplorerView</comment>
+      <translation>Choose a blockchain explorer to open Ethereum addresses or transaction hashes entered in the address bar</translation>
     </message>
   </context>
   <context>
@@ -9339,14 +9344,6 @@
     </message>
   </context>
   <context>
-    <name>FeeRow</name>
-    <message>
-      <source>Max.</source>
-      <comment>FeeRow</comment>
-      <translation>Max.</translation>
-    </message>
-  </context>
-  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -10189,19 +10186,24 @@
       <translation>Homepage</translation>
     </message>
     <message>
-      <source>System default</source>
-      <comment>HomePageView</comment>
-      <translation>System default</translation>
-    </message>
-    <message>
-      <source>Other</source>
-      <comment>HomePageView</comment>
-      <translation>Other</translation>
-    </message>
-    <message>
       <source>Example: duckduckgo.com</source>
       <comment>HomePageView</comment>
       <translation>Example: duckduckgo.com</translation>
+    </message>
+    <message>
+      <source>Choose the default start page for the Status browser</source>
+      <comment>HomePageView</comment>
+      <translation>Choose the default start page for the Status browser</translation>
+    </message>
+    <message>
+      <source>Status default</source>
+      <comment>HomePageView</comment>
+      <translation>Status default</translation>
+    </message>
+    <message>
+      <source>Custom</source>
+      <comment>HomePageView</comment>
+      <translation>Custom</translation>
     </message>
   </context>
   <context>
@@ -10895,11 +10897,6 @@
       <source>PIN correct</source>
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
-    </message>
-    <message>
-      <source>Keycard blocked</source>
-      <comment>KeycardEnterPinPage</comment>
-      <translation>Keycard blocked</translation>
     </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>
@@ -15226,14 +15223,19 @@
       <translation>Open links in</translation>
     </message>
     <message>
-      <source>Status Browser (default)</source>
+      <source>Choose which browser to use for opening links in Status</source>
       <comment>OpenLinksInView</comment>
-      <translation>Status Browser (default)</translation>
+      <translation>Choose which browser to use for opening links in Status</translation>
     </message>
     <message>
-      <source>System Browser</source>
+      <source>Status browser</source>
       <comment>OpenLinksInView</comment>
-      <translation>System Browser</translation>
+      <translation>Status browser</translation>
+    </message>
+    <message>
+      <source>User device default browser</source>
+      <comment>OpenLinksInView</comment>
+      <translation>User device default browser</translation>
     </message>
   </context>
   <context>
