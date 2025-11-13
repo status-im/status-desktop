@@ -39,10 +39,10 @@ QtObject:
   proc storeToKeychainValueChanged*(self: LocalAccountSettings) {.signal.}
 
   proc removeKey*(self: LocalAccountSettings, key: string) =
-    if(self.settings.isNil):
+    if self.settings.isNil:
       return
     self.settings.remove(key)
-    if(key == LS_KEY_STORE_TO_KEYCHAIN):
+    if key == LS_KEY_STORE_TO_KEYCHAIN:
       self.storeToKeychainValueChanged()
 
   proc getStoreToKeychainValue*(self: LocalAccountSettings): string {.slot.} =

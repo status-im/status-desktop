@@ -22,8 +22,6 @@ Control {
     required property bool biometricsSuccessful
     required property bool biometricsFailed
 
-    required property url backupPath
-
     property string validationError
     property string detailedError
     onValidationErrorChanged: if (!validationError) detailedError = ""
@@ -153,8 +151,7 @@ Control {
                             Layout.leftMargin: Theme.padding
                             wrapMode: Text.Wrap
                             text: qsTr("Save your Status profile backup file to a different folder, as it will be erased when you reinstall Status. " +
-                                       "If you have multiple profiles, save all their backup files." +
-                                       "<br>Backup file path: %1").arg("<a href='%1'>%2</a>".arg(root.backupPath).arg(UrlUtils.convertUrlToLocalPath(root.backupPath)))
+                                       "If you have multiple profiles, save all their backup files.")
                             linkColor: !!hoveredLink ? Theme.palette.primaryColor1 : color
                             onLinkActivated: (link) => Qt.openUrlExternally(link)
                             HoverHandler {

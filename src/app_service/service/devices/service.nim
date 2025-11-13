@@ -434,7 +434,7 @@ QtObject:
       # backup file from our default directory into that tree using SAF helper.
       when defined(android):
         try:
-          let backupPath = self.settingsService.getBackupPath()
+          let backupPath = singletonInstance.localAccountSensitiveSettings.getLocalBackupChosenPath()
 
           if backupPath.len > 0 and backupPath.startsWith("content://"):
             # Take persistable permission for the selected tree URI

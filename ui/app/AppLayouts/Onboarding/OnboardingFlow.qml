@@ -38,8 +38,6 @@ OnboardingStackView {
     required property bool displayKeycardPromoBanner
     required property bool networkChecksEnabled
 
-    required property url backupPath
-
     property bool isKeycardEnabled: true
     property int keycardPinInfoPageDelay: 2000
 
@@ -220,8 +218,6 @@ OnboardingStackView {
             availableLanguages: root.availableLanguages
             currentLanguage: root.currentLanguage
             onChangeLanguageRequested: (newLanguageCode) => root.changeLanguageRequested(newLanguageCode)
-
-            backupPath: root.backupPath
 
             loginAccountsModel: root.loginAccountsModel
             isKeycardEnabled: root.isKeycardEnabled
