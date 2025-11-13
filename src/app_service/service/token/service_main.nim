@@ -154,20 +154,8 @@ proc getPriceForToken*(self: Service, tokenKey: string): float64 =
 proc getTokensDetailsLoading*(self: Service): bool =
   return self.tokensDetailsLoading
 
-proc getTokensMarketValuesLoading*(self: Service): bool =
-  return self.tokensPricesLoading or self.tokensMarketDetailsLoading
-
 proc getHasMarketValuesCache*(self: Service): bool =
   return self.hasMarketDetailsCache and self.hasPriceValuesCache
-
-proc updateTokenPrices*(self: Service, updatedPrices: Table[string, float64]) =
-  var anyUpdated = false
-  for tokenKey, price in updatedPrices:
-    if not self.tokenPriceTable.hasKey(tokenKey) or self.tokenPriceTable[tokenKey] != price:
-      anyUpdated = true
-      self.tokenPriceTable[tokenKey] = price
-  if anyUpdated:
-    self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
 
 proc addNewCommunityToken*(self: Service, token: TokenItem) =
   if self.groupsOfInterestByKey.hasKey(token.groupKey):

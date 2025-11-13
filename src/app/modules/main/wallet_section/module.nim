@@ -304,9 +304,6 @@ method load*(self: Module) =
     self.notifyModulesBalanceIsLoaded()
     self.view.setLastReloadTimestamp(args.timestamp)
     self.view.setIsAccountTokensReloading(false)
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
-    self.setTotalCurrencyBalance()
-    self.notifyFilterChanged()
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
