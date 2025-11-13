@@ -118,13 +118,13 @@ QtObject {
         connectorManager.updateDAppUrl(url, name)
     }
 
-    function createScript(scriptName, runOnSubframes = true) {
+    function createScript(scriptName, runsOnSubframes = true) {
         return {
             name: scriptName,
             sourceUrl: Qt.resolvedUrl("../js/" + scriptName),
             injectionPoint: WebEngineScript.DocumentCreation,
             worldId: WebEngineScript.MainWorld,
-            runOnSubframes: runOnSubframes
+            runsOnSubframes: runsOnSubframes
         }
     }
 }
