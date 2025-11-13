@@ -23,8 +23,6 @@ StatusDropdown {
     required property string skinColor
 
     readonly property var fullModel: SortFilterProxyModel {
-        signal recentEmojisUpdated
-
         sourceModel: root.emojiModel
 
         filters: [
@@ -75,11 +73,6 @@ StatusDropdown {
     signal setSkinColorRequested(string skinColor)
     signal setRecentEmojisRequested(var recentEmojis)
 
-    function updateRecentEmoji(recentEmojis) {
-        root.setRecentEmojisRequested(recentEmojis)
-        root.fullModel.recentEmojisUpdated()
-    }
-
     width: 370
     padding: 0
 
@@ -110,7 +103,7 @@ StatusDropdown {
     onClosed: {
         const recent = root.emojiModel.recentEmojis
         if (recent.length)
-            root.updateRecentEmoji(recent)
+            root.setRecentEmojisRequested(recent)
         searchBox.text = ""
         root.emojiSize = ""
         skinToneEmoji.expandSkinColorOptions = false

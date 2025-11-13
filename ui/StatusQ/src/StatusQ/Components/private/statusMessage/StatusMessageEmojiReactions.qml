@@ -10,9 +10,8 @@ import StatusQ.Components
 Flow {
     id: root
 
-    spacing: 4
+    spacing: Theme.padding / 2
 
-    property int imageMargin: 4
     signal addEmojiClicked(var sender, var mouse)
     signal hoverChanged(bool hovered)
     signal toggleReaction(string emoji)

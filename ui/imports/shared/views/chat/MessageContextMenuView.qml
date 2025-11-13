@@ -14,7 +14,7 @@ import SortFilterProxyModel
 StatusMenu {
     id: root
 
-    property SortFilterProxyModel emojiModel
+    property var emojiModel
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false

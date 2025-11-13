@@ -11,7 +11,7 @@ import SortFilterProxyModel
 Row {
     id: root
 
-    required property SortFilterProxyModel emojiModel
+    required property var emojiModel
     property int buttonSize
 
     signal toggleReaction(string emoji)
@@ -22,46 +22,29 @@ Row {
     leftPadding: Theme.halfPadding
     rightPadding: Theme.halfPadding
 
-    Connections {
-        target: root.emojiModel
-        onRecentEmojisUpdated: {
-            // Force re-evaluation of recentEmojisRepeater
-            recentEmojisRepeater.model = 0
-            recentEmojisRepeater.model = 5
+    Loader {
+        active: root.visible
 
-        }
-    }
+        sourceComponent: Row {
+            spacing: Theme.halfPadding
 
-    QtObject {
-        id: d
+            Repeater {
+                id: recentEmojisRepeater
+                model: 5 // Only show up to 5 recent emojis
+                delegate: EmojiReaction {
+                    id: emojiReaction
 
-        readonly property var recentEmojisModel: SortFilterProxyModel {
-            sourceModel: root.emojiModel
+                    required property int index
+                    property var emoji: root.emojiModel.get(index)
 
-            filters: [
-                IndexFilter {
-                    // Only show the first 5 emojis
-                    maximumIndex: 4
+                    emojiId: emojiReaction.emoji.unicode
+                    anchors.verticalCenter: parent.verticalCenter
+                    // TODO not implemented yet. We'll need to pass this info
+                    // reactedByUser: model.didIReactWithThisEmoji
+                    onToggleReaction: {
+                        root.toggleReaction(emojiReaction.emoji.emoji)
+                    }
                 }
-            ]
-        }
-    }
-
-    Repeater {
-        id: recentEmojisRepeater
-        model: 5 // Only show up to 5 recent emojis
-        delegate: EmojiReaction {
-            id: emojiReaction
-
-            required property int index
-            property var emoji: d.recentEmojisModel.get(index)
-
-            emojiId: emojiReaction.emoji.unicode
-            anchors.verticalCenter: parent.verticalCenter
-            // TODO not implemented yet. We'll need to pass this info
-            // reactedByUser: model.didIReactWithThisEmoji
-            onToggleReaction: {
-                root.toggleReaction(emojiReaction.emoji.emoji)
             }
         }
     }
