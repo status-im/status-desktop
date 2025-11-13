@@ -59,10 +59,6 @@ method load*(self: Module) =
     self.view.tokensMarketValuesAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e: Args):
     self.view.tokensMarketValuesUpdated()
-  self.events.on(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED) do(e: Args):
-    self.view.tokensMarketValuesAboutToUpdate()
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
-    self.view.tokensMarketValuesUpdated()
   self.events.on(SIGNAL_TOKEN_PREFERENCES_UPDATED) do(e: Args):
     self.view.tokenPreferencesUpdated()
   self.events.on(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED) do(e: Args):
