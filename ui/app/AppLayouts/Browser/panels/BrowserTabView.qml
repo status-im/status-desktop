@@ -28,37 +28,66 @@ FocusScope {
     property var currentWebEngineProfile
     property var tabComponent
     property var determineRealURL: function(url) {}
-    readonly property int tabHeight: 48
+    readonly property int tabHeight: d.tabHeight
 
     signal openNewTabTriggered()
+
+    QtObject {
+        id: d
+
+        // design values
+        readonly property int tabHeight: 44
+        readonly property int iconSize: 16
+        readonly property int minTabButtonInactiveWidth: 44
+        readonly property int minTabButtonWidth: 118
+        readonly property int maxTabButtonWidth: 236
+        readonly property bool tabBarOverflowing: tabBarListView.visibleArea.widthRatio < 1
+    }
 
     TabBar {
         id: tabBar
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.right: parent.right
-        spacing: Theme.halfPadding
+        anchors.right: standaloneAddTabButton.visible ? standaloneAddTabButton.left : parent.right
         height: root.tabHeight
         background: Rectangle {
-            color: Theme.palette.baseColor2
+            color: Theme.palette.statusAppNavBar.backgroundColor
         }
         contentItem: ListView {
+            id: tabBarListView
             model: tabBar.contentModel
             currentIndex: tabBar.currentIndex
-            clip: true
             spacing: tabBar.spacing
             orientation: ListView.Horizontal
             boundsBehavior: Flickable.StopAtBounds
-            flickableDirection: Flickable.AutoFlickIfNeeded
+            flickableDirection: Flickable.HorizontalFlick
             snapMode: ListView.SnapToItem
+            clip: true
+
+            footer: Item {
+                width: d.tabHeight
+                height: d.tabHeight
+                visible: !d.tabBarOverflowing
+                AddTabButton {
+                    anchors.centerIn: parent
+                    padding: 4
+                }
+            }
 
             TapHandler {
                 exclusiveSignals: TapHandler.DoubleTap
-                onDoubleTapped: {
-                    root.openNewTabTriggered()
-                }
+                onDoubleTapped: root.openNewTabTriggered()
             }
         }
+    }
+
+    AddTabButton {
+        id: standaloneAddTabButton
+        anchors.top: parent.top
+        anchors.right: parent.right
+        width: d.tabHeight
+        height: d.tabHeight
+        visible: d.tabBarOverflowing
     }
 
     StackLayout {
@@ -127,6 +156,13 @@ FocusScope {
         }
     }
 
+    component AddTabButton: StatusFlatButton {
+        isRoundIcon: true
+        icon.name: "add-tab"
+        type: StatusBaseButton.Type.Primary
+        onClicked: root.openNewTabTriggered()
+    }
+
     Component {
         id: tabButtonComponent
 
@@ -134,54 +170,62 @@ FocusScope {
             id: tabButton
             property string tabTitle
 
-            width: implicitWidth
-            horizontalPadding: Theme.halfPadding
-            verticalPadding: Theme.padding
+            readonly property int minWidth: hovered || checked ? d.minTabButtonWidth : d.minTabButtonInactiveWidth
+
+            width: Math.min(Math.max(implicitWidth, minWidth), d.maxTabButtonWidth)
+            anchors.top: parent ? parent.top : undefined
+            anchors.bottom: parent ? parent.bottom : undefined
+            leftPadding: 12
+            rightPadding: 4
+            verticalPadding: 0
 
             background: Rectangle {
                 color: tabButton.checked ? Theme.palette.background : Theme.palette.baseColor2
             }
 
             contentItem: RowLayout {
+                spacing: 0
                 StatusIcon {
-                    Layout.preferredWidth: 13
-                    Layout.preferredHeight: 13
-                    opacity: tabButton.checked || tabButton.hovered ? 1 : Theme.disabledOpacity
-                    Behavior on opacity {OpacityAnimator {duration: Theme.AnimationDuration.Fast}}
+                    Layout.preferredWidth: d.iconSize
+                    Layout.preferredHeight: d.iconSize
+                    readonly property string favicon: root.getTab(tabButton.TabBar.index) ?
+                                                          root.getTab(tabButton.TabBar.index).icon.toString().replace("image://favicon/", "")
+                                                        : ""
                     sourceSize: Qt.size(width, height)
-                    icon: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).icon.toString().replace("image://favicon/", "")
-                                                              : "globe"
+                    icon: favicon || "globe"
                     visible: !loadingIndicator.visible
                 }
                 StatusLoadingIndicator {
                     id: loadingIndicator
-                    Layout.preferredWidth: 13
-                    Layout.preferredHeight: 13
-                    opacity: tabButton.checked || tabButton.hovered ? 1 : Theme.disabledOpacity
+                    Layout.preferredWidth: d.iconSize
+                    Layout.preferredHeight: d.iconSize
                     visible: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).loading : false
                 }
 
                 StatusBaseText {
                     Layout.fillWidth: true
+                    Layout.leftMargin: Theme.halfPadding
+                    Layout.rightMargin: 2
                     elide: Qt.ElideRight
-                    font: tabButton.font
-                    color: !enabled ? Theme.palette.baseColor1 : tabButton.checked || tabButton.hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                    Behavior on color {ColorAnimation {duration: Theme.AnimationDuration.Fast}}
+                    font.pixelSize: Theme.additionalTextSize
                     text: tabButton.tabTitle
                 }
+
                 StatusIcon {
-                    Layout.preferredWidth: 13
-                    Layout.preferredHeight: 13
-                    opacity: tabButton.checked || tabButton.hovered ? 1 : Theme.disabledOpacity
-                    Behavior on opacity {OpacityAnimator {duration: Theme.AnimationDuration.Fast}}
+                    Layout.preferredWidth: d.iconSize
+                    Layout.preferredHeight: d.iconSize
+                    Layout.rightMargin: 2
+                    Layout.alignment: Qt.AlignTrailing
                     icon: "hide"
                     visible: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).profile.offTheRecord : false
                 }
                 StatusFlatButton {
-                    Layout.alignment: Qt.AlignRight
-                    size: StatusBaseButton.Size.XSmall
+                    Layout.alignment: Qt.AlignTrailing
                     icon.name: "close"
-                    icon.color: hovered ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                    icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    size: StatusBaseButton.Size.Small
+                    radius: width/2
+                    visible: tabButton.hovered
                     onClicked: root.removeView(tabButton.TabBar.index)
                 }
             }
