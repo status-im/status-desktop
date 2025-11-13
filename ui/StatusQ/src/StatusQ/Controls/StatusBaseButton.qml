@@ -121,7 +121,7 @@ AbstractButton {
     }
     verticalPadding: {
         if (d.iconOnly) {
-            return isRoundIcon ? 8 : spacing
+            return isRoundIcon ? Theme.defaultHalfPadding : spacing
         }
         switch (size) {
         case StatusBaseButton.Size.XSmall:

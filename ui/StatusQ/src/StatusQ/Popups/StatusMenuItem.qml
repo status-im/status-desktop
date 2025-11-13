@@ -21,6 +21,8 @@ MenuItem {
 
     property bool visualizeShortcuts
 
+    font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
+
     QtObject {
         id: d
 
@@ -132,7 +134,7 @@ MenuItem {
                                  : d.isStatusDangerAction ? Theme.palette.dangerColor1
                                                           : d.isStatusSuccessAction ? Theme.palette.successColor1 : Theme.palette.directColor1
 
-            font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
+            font.pixelSize: root.font.pixelSize
             font.bold: d.fontSettings ? d.fontSettings.bold : d.defaultFontSettings.bold
             font.italic: d.fontSettings ? d.fontSettings.italic : d.defaultFontSettings.italic
             elide: Text.ElideRight
@@ -140,7 +142,8 @@ MenuItem {
         StatusBaseText {
             Layout.alignment: Qt.AlignRight
             visible: root.visualizeShortcuts && !!text
-            font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
+            font.pixelSize: root.font.pixelSize
+            color: Theme.palette.baseColor1
             text: d.hasAction && !!root.action.shortcut ? StringUtils.shortcutToText(root.action.shortcut) : StringUtils.shortcutToText(root.shortcut)
         }
         StatusIcon {

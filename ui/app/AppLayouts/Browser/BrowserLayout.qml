@@ -50,6 +50,14 @@ StatusSectionLayout {
         tab.url = _internal.determineRealURL(url)
     }
 
+    Component.onCompleted: {
+        connectorBridge.defaultProfile.downloadRequested.connect(_internal.onDownloadRequested);
+        connectorBridge.otrProfile.downloadRequested.connect(_internal.onDownloadRequested);
+        var tab = tabs.createEmptyTab(connectorBridge.defaultProfile, true);
+        // For Devs: Uncomment the next line if you want to use the simpledapp on first load
+        // tab.url = root.browserRootStore.determineRealURL("https://simpledapp.eth");
+    }
+
     ConnectorBridge {
         id: connectorBridge
 
@@ -214,7 +222,6 @@ StatusSectionLayout {
         BrowserTabView {
             id: tabs
             anchors.top: parent.top
-            anchors.topMargin: Theme.halfPadding
             anchors.bottom: devToolsView.top
             anchors.bottomMargin: browserHeader.height
             anchors.left: parent.left
@@ -227,13 +234,6 @@ StatusSectionLayout {
                 return _internal.determineRealURL(url)
             }
             onOpenNewTabTriggered: _internal.addNewTab()
-            Component.onCompleted: {
-                connectorBridge.defaultProfile.downloadRequested.connect(_internal.onDownloadRequested);
-                connectorBridge.otrProfile.downloadRequested.connect(_internal.onDownloadRequested);
-                var tab = createEmptyTab(connectorBridge.defaultProfile, true);
-                // For Devs: Uncomment the next line if you want to use the simpledapp on first load
-                // tab.url = root.browserRootStore.determineRealURL("https://simpledapp.eth");
-            }
         }
 
         ProgressBar {
@@ -335,6 +335,7 @@ StatusSectionLayout {
             x: parent.width - width
             y: browserHeader.y + browserHeader.height
             isIncognito: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
+            zoomFactor: _internal.currentWebView ? _internal.currentWebView.zoomFactor : 1
             onAddNewTab: _internal.addNewTab()
             onAddNewDownloadTab: _internal.addNewDownloadTab()
             onGoIncognito: function (checked) {
@@ -350,7 +351,7 @@ StatusSectionLayout {
                 const newZoom = _internal.currentWebView.zoomFactor - 0.1
                 _internal.currentWebView.changeZoomFactor(newZoom)
             }
-            onChangeZoomFactor: _internal.currentWebView.changeZoomFactor(1.0)
+            onResetZoomFactor: _internal.currentWebView.changeZoomFactor(1.0)
             onLaunchFindBar: {
                 if (!findBar.visible) {
                     findBar.visible = true;
@@ -471,7 +472,7 @@ StatusSectionLayout {
     Component {
         id: webEngineView
         BrowserWebEngineView {
-            anchors.top: parent.top
+            anchors.top: parent ? parent.top : undefined
             anchors.topMargin: browserHeader.height
             bookmarksStore: root.bookmarksStore
             downloadsStore: root.downloadsStore

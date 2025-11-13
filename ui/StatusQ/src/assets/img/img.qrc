@@ -82,6 +82,7 @@
         <file>icons/add-contact.svg</file>
         <file>icons/add-to-dm.svg</file>
         <file>icons/add.svg</file>
+        <file>icons/add-tab.svg</file>
         <file>icons/address.svg</file>
         <file>icons/admin.svg</file>
         <file>icons/airdrop.svg</file>
@@ -154,6 +155,7 @@
         <file>icons/flash.svg</file>
         <file>icons/food-and-drinks.svg</file>
         <file>icons/gallery.svg</file>
+        <file>icons/gavel.svg</file>
         <file>icons/gif.svg</file>
         <file>icons/github.svg</file>
         <file>icons/group-chat.svg</file>
@@ -354,6 +356,9 @@
         <file>icons/untrustworthy.svg</file>
         <file>icons/verified.svg</file>
         <file>icons/walletIcon.svg</file>
+        <file>icons/zoom-fit.svg</file>
+        <file>icons/zoom-in.svg</file>
+        <file>icons/zoom-out.svg</file>
         <file>icons/communities/airdrop.svg</file>
         <file>icons/communities/backup-community.svg</file>
         <file>icons/communities/delete.svg</file>
