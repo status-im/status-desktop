@@ -19,12 +19,15 @@ StatusDropdown {
     id: root
 
     required property StatusEmojiModel emojiModel
-    required property var settings
+    required property var recentEmojis
+    required property string skinColor
 
     property alias searchString: searchBox.text
     property string emojiSize: ""
 
-    signal emojiSelected(string emoji, bool atCu, string hexcode)
+    signal emojiSelected(string emoji, bool atCursor, string hexcode)
+    signal setSkinColorRequested(string skinColor)
+    signal setRecentEmojisRequested(var recentEmojis)
 
     width: 370
     padding: 0
@@ -36,6 +39,8 @@ StatusDropdown {
             iconCodePoint = iconCodePoint.substring(0, extensionIndex)
         }
 
+        root.emojiModel.addRecentEmoji(hexcode)
+
         const encodedIcon = StatusQUtils.Emoji.getEmojiCodepoint(iconCodePoint)
 
         root.emojiModel.addRecentEmoji(hexcode)
@@ -46,7 +51,7 @@ StatusDropdown {
     }
 
     Component.onCompleted: {
-        root.emojiModel.recentEmojis = settings.recentEmojis
+        root.emojiModel.recentEmojis = root.recentEmojis
     }
 
     onOpened: {
@@ -58,7 +63,7 @@ StatusDropdown {
     onClosed: {
         const recent = root.emojiModel.recentEmojis
         if (recent.length)
-            settings.recentEmojis = recent
+            root.setRecentEmojisRequested(recent)
         searchBox.text = ""
         root.emojiSize = ""
         skinToneEmoji.expandSkinColorOptions = false
@@ -96,7 +101,7 @@ StatusDropdown {
                         roleName: "skinColor"
                         value: root.emojiModel.baseSkinColorName
                     }
-                    enabled: settings.skinColor === ""
+                    enabled: root.skinColor === ""
                 },
                 AnyOf {
                     ValueFilter {
@@ -105,9 +110,9 @@ StatusDropdown {
                     }
                     ValueFilter {
                         roleName: "skinColor"
-                        value: settings.skinColor
+                        value: root.skinColor
                     }
-                    enabled: settings.skinColor !== ""
+                    enabled: root.skinColor !== ""
                 }
             ]
 
@@ -154,6 +159,7 @@ StatusDropdown {
                 anchors.rightMargin: d.headerMargin
                 Repeater {
                     id: skinColorEmojiRepeater
+                    // Hand emojis 🖐️ with different skin tones
                     model: ["1f590-1f3fb", "1f590-1f3fc", "1f590-1f3fd", "1f590-1f3fe", "1f590-1f3ff", "1f590"]
                     delegate: StatusEmoji {
                         width: 22
@@ -163,7 +169,7 @@ StatusDropdown {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
                             onClicked: {
-                                settings.skinColor = (index === 5) ? "" : modelData.split("-")[1];
+                                root.setSkinColorRequested((index === 5) ? "" : modelData.split("-")[1]);
                                 skinToneEmoji.expandSkinColorOptions = false;
                             }
                         }
@@ -178,7 +184,8 @@ StatusDropdown {
                 anchors.right: parent.right
                 anchors.rightMargin: d.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
-                emojiId: "1f590" + ((settings.skinColor !== "" && visible) ? ("-" + settings.skinColor) : "")
+                // Hand emoji 🖐️ to which we append the skin color selected by the user
+                emojiId: "1f590" + ((root.skinColor !== "" && visible) ? ("-" + root.skinColor) : "")
                 StatusMouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent

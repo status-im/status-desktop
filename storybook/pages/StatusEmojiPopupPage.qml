@@ -56,7 +56,8 @@ SplitView {
             height: 440
             visible: true
             modal: false
-            settings: settings
+            recentEmojis: settings.recentEmojis
+            skinColor: settings.skinColor
             emojiModel: StatusQUtils.Emoji.emojiModel
             onEmojiSelected: function(emoji, atCu, hexcode) {
                 logs.logEvent("onEmojiSelected", ["emoji", "atCu", "hexcode"], arguments)

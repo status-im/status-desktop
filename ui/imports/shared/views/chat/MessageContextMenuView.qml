@@ -12,8 +12,9 @@ import shared.controls.chat
 StatusMenu {
     id: root
 
-    // expected roles: emoji:string, filename:string, didIReactWithThisEmoji:bool
-    property var defaultEmojiReactionsModel
+    property StatusEmojiModel emojiModel
+    property var recentEmojis
+    property string skinColor
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
@@ -46,20 +47,27 @@ StatusMenu {
     signal editClicked()
     signal markMessageAsUnread()
     signal copyToClipboard(string text)
+    signal openEmojiPopup(var parent, var mouse)
 
     MessageReactionsRow {
         id: emojiRow
         visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions)
-        defaultEmojiReactionsModel: root.defaultEmojiReactionsModel
-        bottomPadding: Theme.halfPadding
-        onToggleReaction: (emoji) => {
+        emojiModel: root.emojiModel
+        recentEmojis: root.recentEmojis
+        skinColor: root.skinColor
+        onToggleReaction: emoji => {
             root.toggleReaction(emoji)
+            root.close()
+        }
+        onOpenEmojiPopup: (parent, mouse) => {
+            root.openEmojiPopup(parent, mouse)
             root.close()
         }
     }
 
     StatusMenuSeparator {
         visible: emojiRow.visible && !root.disabledForChat
+        horizontalPadding: 0
     }
 
     StatusAction {
@@ -142,6 +150,7 @@ StatusMenu {
                   editMessageAction.enabled ||
                   pinAction.enabled ||
                   markMessageAsUnreadAction.enabled)
+        horizontalPadding: 0
     }
 
     StatusAction {

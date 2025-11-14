@@ -105,7 +105,6 @@ Item {
         contactsStore: appMain.contactsStore
         currencyStore: appMain.currencyStore
         communityTokensStore: appMain.communityTokensStore
-        defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
         openCreateChat: createChatView.opened
         networkConnectionStore: appMain.networkConnectionStore
     }
@@ -1179,8 +1178,11 @@ Item {
         sourceComponent: StatusEmojiPopup {
             directParent: appMain.Window.window.contentItem
             height: 440
-            settings: appMainLocalSettings
+            recentEmojis: appMainLocalSettings.recentEmojis
+            skinColor: appMainLocalSettings.skinColor
             emojiModel: SQUtils.Emoji.emojiModel
+            onSetSkinColorRequested: color => appMainLocalSettings.skinColor = color
+            onSetRecentEmojisRequested: recentEmojis => appMainLocalSettings.recentEmojis = recentEmojis
         }
     }
 
@@ -1907,7 +1909,6 @@ Item {
                                 contactsStore: appMain.contactsStore
                                 currencyStore: appMain.currencyStore
                                 communityTokensStore: appMain.communityTokensStore
-                                defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                                 openCreateChat: createChatView.opened
                                 networkConnectionStore: appMain.networkConnectionStore
                                 isChatSectionModule: true
@@ -2230,7 +2231,6 @@ Item {
                             contactsStore: appMain.contactsStore
                             currencyStore: appMain.currencyStore
                             communityTokensStore: appMain.communityTokensStore
-                            defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                             openCreateChat: createChatView.opened
                             walletStore: WalletStores.RootStore
                             isChatSectionModule: true
@@ -2307,7 +2307,6 @@ Item {
                                 contactsStore: appMain.contactsStore
                                 currencyStore: appMain.currencyStore
                                 communityTokensStore: appMain.communityTokensStore
-                                defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                                 openCreateChat: createChatView.opened
                                 isChatSectionModule: false
                                 communityId: model.id
@@ -2378,7 +2377,6 @@ Item {
                         contactsStore: appMain.contactsStore
                         currencyStore: appMain.currencyStore
                         communityTokensStore: appMain.communityTokensStore
-                        defaultEmojiReactionsModel: appMain.rootStore.defaultEmojiReactionsModel
                         openCreateChat: createChatView.opened
                         isChatSectionModule: true
                     }

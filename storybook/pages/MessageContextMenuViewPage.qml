@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as StatusQUtils
 
 import Storybook
 
@@ -13,40 +14,6 @@ SplitView {
     id: root
 
     Logs { id: logs }
-
-    ListModel {
-        id: defaultEmojiReactionsModel
-        ListElement {
-            emoji: "❤️"
-            filename: "emojiReactions/heart"
-            didIReactWithThisEmoji: false
-        }
-        ListElement {
-            emoji: "👍"
-            filename: "emojiReactions/thumbsUp"
-            didIReactWithThisEmoji: false
-        }
-        ListElement {
-            emoji: "👎"
-            filename: "emojiReactions/thumbsDown"
-            didIReactWithThisEmoji: false
-        }
-        ListElement {
-            emoji: "😂"
-            filename: "emojiReactions/laughing"
-            didIReactWithThisEmoji: false
-        }
-        ListElement {
-            emoji: "😢"
-            filename: "emojiReactions/sad"
-            didIReactWithThisEmoji: false
-        }
-        ListElement {
-            emoji: "😡"
-            filename: "emojiReactions/angry"
-            didIReactWithThisEmoji: false
-        }
-    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -70,7 +37,10 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
 
                 messageId: "Oxdeadbeef"
-                defaultEmojiReactionsModel: defaultEmojiReactionsModel
+                emojiModel: StatusQUtils.Emoji.emojiModel
+                // Should still show only 5 emojis even if more are provided
+                recentEmojis: ["1f9de", "1f6fa", "1f44d", "1f44e", "1f602", "1f622", "1f621"]
+                skinColor: ""
                 messageContentType: Constants.messageContentType.messageType
                 chatType: Constants.chatType.oneToOne
                 isDebugEnabled: isDebugEnabledCheckBox.checked
