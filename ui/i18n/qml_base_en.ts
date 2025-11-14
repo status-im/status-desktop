@@ -2681,10 +2681,6 @@ Do you wish to override the security check and continue?</source>
 <context>
     <name>BrowserView</name>
     <message>
-        <source>None</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show Favorites Bar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14788,7 +14784,34 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>https://example.com/search?q=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom search engine URL prefix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL must start with http:// or https://</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SearchEnginesConfig</name>
+    <message>
         <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>valid URLs open directly; non-addresses won&apos;t be searched.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plug in your own search engine that follows the OpenSearch URL format</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

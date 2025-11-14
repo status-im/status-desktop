@@ -75,14 +75,12 @@ Item {
                 return tempUrl
             }
 
-            function getFormedUrl(shouldShowBrowserSearchEngine, url) {
-                var tempUrl = ""
-                switch (browserLayout.localAccountSensitiveSettings.shouldShowBrowserSearchEngine) {
-                case Constants.browserSearchEngineGoogle: tempUrl = "https://www.google.com/search?q=" + url; break;
-                case Constants.browserSearchEngineYahoo: tempUrl = "https://search.yahoo.com/search?p=" + url; break;
-                case Constants.browserSearchEngineDuckDuckGo: tempUrl = "https://duckduckgo.com/?q=" + url; break;
-                }
-                return tempUrl
+            function getFormedUrl(selectedBrowserSearchEngineId, url) {
+                return SearchEnginesConfig.formatSearchUrl(
+                    browserLayout.localAccountSensitiveSettings.selectedBrowserSearchEngineId,
+                    url,
+                    browserLayout.localAccountSensitiveSettings.customSearchEngineUrl
+                )
             }
 
             function determineRealURL(text) {
@@ -113,7 +111,8 @@ Item {
             property bool compatibilityMode: true
             property bool shouldShowFavoritesBar
             property int useBrowserEthereumExplorer: Constants.browserEthereumExplorerEtherscan
-            property int shouldShowBrowserSearchEngine: Constants.browserSearchEngineGoogle
+            property int selectedBrowserSearchEngineId: SearchEnginesConfig.browserSearchEngineDuckDuckGo
+            property string customSearchEngineUrl: "https://example.com/search?q="
 
             property bool autoLoadImages: true
             property bool javaScriptEnabled: true

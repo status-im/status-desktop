@@ -996,11 +996,6 @@ QtObject {
     readonly property string status_prod: "status.prod"
     readonly property string status_staging: "status.staging"
 
-    readonly property int browserSearchEngineNone: 0
-    readonly property int browserSearchEngineGoogle: 1
-    readonly property int browserSearchEngineYahoo: 2
-    readonly property int browserSearchEngineDuckDuckGo: 3
-
     readonly property int browserEthereumExplorerNone: 0
     readonly property int browserEthereumExplorerEtherscan: 1
     readonly property int browserEthereumExplorerEthplorer: 2

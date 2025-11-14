@@ -42,7 +42,9 @@ const DEFAULT_SHOULD_SHOW_FAVORITES_BAR = true
 const LSS_KEY_BROWSER_HOMEPAGE* = "browserHomepage"
 const DEFAULT_BROWSER_HOMEPAGE = ""
 const LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE* = "shouldShowBrowserSearchEngine"
-const DEFAULT_SHOULD_SHOW_BROWSER_SEARCH_ENGINE = 3 #browserSearchEngineDuckDuckGo from qml
+const DEFAULT_SHOULD_SHOW_BROWSER_SEARCH_ENGINE = 1 #browserSearchEngineDuckDuckGo from SearchEnginesConfig.qml
+const LSS_KEY_CUSTOM_SEARCH_ENGINE_URL* = "customSearchEngineUrl"
+const DEFAULT_CUSTOM_SEARCH_ENGINE_URL = ""
 const LSS_KEY_USE_BROWSER_ETHEREUM_EXPLORER* = "useBrowserEthereumExplorer"
 const DEFAULT_USE_BROWSER_ETHEREUM_EXPLORER = 1 #browserEthereumExplorerEtherscan from qml
 const LSS_KEY_AUTO_LOAD_IMAGES* = "autoLoadImages"
@@ -364,17 +366,30 @@ QtObject:
     notify = browserHomepageChanged
 
 
-  proc shouldShowBrowserSearchEngineChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getShouldShowBrowserSearchEngine*(self: LocalAccountSensitiveSettings): int {.slot.} =
+  proc selectedBrowserSearchEngineIdChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getSelectedBrowserSearchEngineId*(self: LocalAccountSensitiveSettings): int {.slot.} =
     getSettingsProp[int](self, LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE, newQVariant(DEFAULT_SHOULD_SHOW_BROWSER_SEARCH_ENGINE))
-  proc setShouldShowBrowserSearchEngine*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
+  proc setSelectedBrowserSearchEngineId*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
     setSettingsProp(self, LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE, newQVariant(value)):
-      self.shouldShowBrowserSearchEngineChanged()
+      self.selectedBrowserSearchEngineIdChanged()
 
-  QtProperty[int] shouldShowBrowserSearchEngine:
-    read = getShouldShowBrowserSearchEngine
-    write = setShouldShowBrowserSearchEngine
-    notify = shouldShowBrowserSearchEngineChanged
+  QtProperty[int] selectedBrowserSearchEngineId:
+    read = getSelectedBrowserSearchEngineId
+    write = setSelectedBrowserSearchEngineId
+    notify = selectedBrowserSearchEngineIdChanged
+
+
+  proc customSearchEngineUrlChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getCustomSearchEngineUrl*(self: LocalAccountSensitiveSettings): string {.slot.} =
+    getSettingsProp[string](self, LSS_KEY_CUSTOM_SEARCH_ENGINE_URL, newQVariant(DEFAULT_CUSTOM_SEARCH_ENGINE_URL))
+  proc setCustomSearchEngineUrl*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
+    setSettingsProp(self, LSS_KEY_CUSTOM_SEARCH_ENGINE_URL, newQVariant(value)):
+      self.customSearchEngineUrlChanged()
+
+  QtProperty[string] customSearchEngineUrl:
+    read = getCustomSearchEngineUrl
+    write = setCustomSearchEngineUrl
+    notify = customSearchEngineUrlChanged
 
 
   proc useBrowserEthereumExplorerChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -620,7 +635,8 @@ QtObject:
       of LSS_KEY_OPEN_LINKS_IN_STATUS: self.openLinksInStatusChanged()
       of LSS_KEY_SHOULD_SHOW_FAVORITES_BAR: self.shouldShowFavoritesBarChanged()
       of LSS_KEY_BROWSER_HOMEPAGE: self.browserHomepageChanged()
-      of LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE: self.shouldShowBrowserSearchEngineChanged()
+      of LSS_KEY_SHOULD_SHOW_BROWSER_SEARCH_ENGINE: self.selectedBrowserSearchEngineIdChanged()
+      of LSS_KEY_CUSTOM_SEARCH_ENGINE_URL: self.customSearchEngineUrlChanged()
       of LSS_KEY_USE_BROWSER_ETHEREUM_EXPLORER: self.useBrowserEthereumExplorerChanged()
       of LSS_KEY_AUTO_LOAD_IMAGES: self.autoLoadImagesChanged()
       of LSS_KEY_JAVA_SCRIPT_ENABLED: self.javaScriptEnabledChanged()

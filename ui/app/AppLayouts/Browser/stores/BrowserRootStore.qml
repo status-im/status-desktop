@@ -55,14 +55,12 @@ QtObject {
         return tempUrl
     }
 
-    function getFormedUrl(shouldShowBrowserSearchEngine, url) {
-        var tempUrl = ""
-        switch (localAccountSensitiveSettings.shouldShowBrowserSearchEngine) {
-        case Constants.browserSearchEngineGoogle: tempUrl = "https://www.google.com/search?q=" + url; break;
-        case Constants.browserSearchEngineYahoo: tempUrl = "https://search.yahoo.com/search?p=" + url; break;
-        case Constants.browserSearchEngineDuckDuckGo: tempUrl = "https://duckduckgo.com/?q=" + url; break;
-        }
-        return tempUrl
+    function getFormedUrl(selectedBrowserSearchEngineId, url) {
+        return SearchEnginesConfig.formatSearchUrl(
+            localAccountSensitiveSettings.selectedBrowserSearchEngineId,
+            url,
+            localAccountSensitiveSettings.customSearchEngineUrl
+        )
     }
 
     // ENS resolution functions (stubbed until connector integration)
