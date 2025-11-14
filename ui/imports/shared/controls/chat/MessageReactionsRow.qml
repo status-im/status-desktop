@@ -14,7 +14,7 @@ Row {
     required property var emojiModel
     property int buttonSize
 
-    signal toggleReaction(string emoji)
+    signal toggleReaction(string hexcode)
     signal openEmojiPopup(var parent, var mouse)
 
     height: buttonSize
@@ -30,19 +30,21 @@ Row {
 
             Repeater {
                 id: recentEmojisRepeater
-                model: 5 // Only show up to 5 recent emojis
+                model: SortFilterProxyModel {
+                    sourceModel: root.emojiModel
+                    filters: IndexFilter {
+                        maximumIndex: 4
+                    }
+                }
                 delegate: EmojiReaction {
-                    id: emojiReaction
+                    required property string unicode
 
-                    required property int index
-                    property var emoji: root.emojiModel.get(index)
-
-                    emojiId: emojiReaction.emoji.unicode
+                    emojiId: unicode
                     anchors.verticalCenter: parent.verticalCenter
                     // TODO not implemented yet. We'll need to pass this info
                     // reactedByUser: model.didIReactWithThisEmoji
                     onToggleReaction: {
-                        root.toggleReaction(emojiReaction.emoji.emoji)
+                        root.toggleReaction(unicode)
                     }
                 }
             }

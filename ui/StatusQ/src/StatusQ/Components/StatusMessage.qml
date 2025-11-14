@@ -91,7 +91,7 @@ Control {
     signal replyMessageClicked(var mouse)
 
     signal addReactionClicked(var sender, var mouse)
-    signal toggleReactionClicked(string emoji)
+    signal toggleReactionClicked(string hexcode)
     signal imageClicked(var image, var mouse, var imageSource)
     signal stickerClicked()
     signal resendClicked()
@@ -407,7 +407,7 @@ Control {
 
                             isCurrentUser: root.messageDetails.amISender
                             onAddEmojiClicked: (sender, mouse) => root.addReactionClicked(sender, mouse)
-                            onToggleReaction: (emoji) => root.toggleReactionClicked(emoji)
+                            onToggleReaction: (hexcode) => root.toggleReactionClicked(hexcode)
                         }
                     }
                 }

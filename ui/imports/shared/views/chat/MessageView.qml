@@ -178,7 +178,7 @@ Loader {
     // Community access related requests:
     signal spectateCommunityRequested(string communityId)
 
-    signal emojiReactionToggled(string messageId, string emoji)
+    signal emojiReactionToggled(string messageId, string hexcode)
 
     function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
@@ -483,7 +483,7 @@ Loader {
         target: emojiPopup
 
         function onEmojiSelected(text: string, atCursor: bool, hexcode: string) {
-            root.emojiReactionToggled(root.messageId, text)
+            root.emojiReactionToggled(root.messageId, hexcode)
         }
         function onClosed() {
             // Debounce so that the popup doesn't immediately reopen when clicking the button
@@ -852,7 +852,7 @@ Loader {
                 onReplyMessageClicked: (mouse) => root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
                 onSenderNameClicked: (sender) => root.openProfileContextMenu(sender)
 
-                onToggleReactionClicked: (emoji) => {
+                onToggleReactionClicked: (hexcode) => {
                     if (root.isChatBlocked)
                         return
 
@@ -861,7 +861,7 @@ Loader {
                         return
                     }
 
-                    root.emojiReactionToggled(root.messageId, emoji)
+                    root.emojiReactionToggled(root.messageId, hexcode)
                 }
 
                 onAddReactionClicked: (sender, mouse) => {
@@ -1073,7 +1073,7 @@ Loader {
                         leftPadding: 0
                         rightPadding: 0
                         emojiModel: emojiPopup.fullModel
-                        onToggleReaction: emoji => root.emojiReactionToggled(root.messageId, emoji)
+                        onToggleReaction: hexcode => root.emojiReactionToggled(root.messageId, hexcode)
                         onOpenEmojiPopup: (parent, mouse) => {
                             d.addReactionClicked(parent, mouse)
                         }
@@ -1296,7 +1296,7 @@ Loader {
                                                         root.chatId)
             }
             onMarkMessageAsUnread: root.messageStore.markMessageAsUnread(messageContextMenuView.messageId)
-            onToggleReaction: (emoji) => root.emojiReactionToggled(root.messageId, emoji)
+            onToggleReaction: (hexcode) => root.emojiReactionToggled(root.messageId, hexcode)
             onDeleteMessage: root.messageStore.warnAndDeleteMessage(messageContextMenuView.messageId)
             onEditClicked: root.messageStore.setEditModeOn(messageContextMenuView.messageId)
             onShowReplyArea: (senderId) => {

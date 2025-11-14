@@ -3,7 +3,7 @@ import QtQuick.Controls
 
 import StatusQ.Core
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils
+import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Controls
 import StatusQ.Components
 
@@ -14,7 +14,7 @@ Flow {
 
     signal addEmojiClicked(var sender, var mouse)
     signal hoverChanged(bool hovered)
-    signal toggleReaction(string emoji)
+    signal toggleReaction(string hexcode)
 
     property bool isCurrentUser
     property var reactionsModel
@@ -62,7 +62,7 @@ Flow {
             }
             return qsTr("%1 reacted with %2")
                         .arg(author)
-                        .arg(emoji);
+                        .arg(StatusQUtils.Emoji.fromCodePoint(emoji));
         }
     }
 
@@ -92,11 +92,13 @@ Flow {
             contentItem: Row {
                 spacing: Theme.padding / 2
 
-                StatusBaseText {
+                StatusEmoji {
                     objectName: "emojiReaction"
-                    font.pixelSize: Theme.fontSize17
+                    id: statusEmoji
                     anchors.verticalCenter: parent.verticalCenter
-                    text: model.emoji
+                    width: Theme.fontSize17
+                    height: Theme.fontSize17
+                    emojiId: model.emoji
                 }
 
                 StatusBaseText {
@@ -123,9 +125,7 @@ Flow {
                 onExited: {
                     root.hoverChanged(false)
                 }
-                onClicked: {
-                    root.toggleReaction(model.emoji)
-                }
+                onClicked: root.toggleReaction(model.emoji)
             }
         }
     }
@@ -133,7 +133,7 @@ Flow {
     StatusFlatButton {
         visible: root.enabled
         icon.name: "reaction-b"
-        size: StatusBaseButton.Size.Tiny
+        size: StatusBaseButton.Size.Small
         icon.color: hovered && !root.limitReached ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
         tooltip.text: root.limitReached ? qsTr("Maximum number of different reactions reached") : qsTr("Add reaction")
 
