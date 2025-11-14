@@ -23,7 +23,7 @@ from scripts.utils.generators import random_text_message
 
 @pytest.mark.case(703014, 738735, 738736, 738739, 738740)
 @pytest.mark.critical
-# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
+# TODO: https://github.com/status-im/status-desktop/issues/19285
 @pytest.mark.smoke
 @pytest.mark.parametrize('community_name, domain_link, domain_link_2',
                          [pytest.param('Status', 'status.app', 'github.com')

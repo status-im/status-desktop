@@ -170,7 +170,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
         with step(f'Hover message {second_message_text} and pin it'):
             message = messages_screen.chat.find_message_by_text(second_message_text, 0)
             message.hover_message().pin_message()
-            main_screen.minimize()
+
 
         with step(f'User {user_one.name} see the {second_message_text} as pinned'):
             switch_to_aut(aut_one, main_screen)
@@ -178,7 +178,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             assert driver.waitFor(lambda: message.message_is_pinned, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
             assert message.pinned_info_text + message.user_name_in_pinned_message == 'Pinned by' + user_two.name
             assert message.get_message_color() == ColorCodes.ORANGE.value
-            main_screen.minimize()
+
 
         with step(f'User {user_two.name} unpin message from pinned messages popup'):
             switch_to_aut(aut_two, main_screen)
