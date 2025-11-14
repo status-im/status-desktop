@@ -1,11 +1,9 @@
 import time
 
-import allure
 import pytest
 from allure_commons._allure import step
 
 import driver
-from configs import get_platform
 from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community import ToastMessages
 from gui.screens.community import MembersListPanel
@@ -17,7 +15,7 @@ from helpers.multiple_instances_helper import switch_to_aut, authorize_user_in_a
 
 @pytest.mark.case(703252, 703252, 736991)
 @pytest.mark.communities
-@pytest.mark.skipif(get_platform() != 'Windows', reason='Does not work on Linux anymore, needs investigation')
+# TODO: investigate the reason of failures on CI https://github.com/status-im/status-desktop/issues/19284
 def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -32,9 +30,11 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_two.name}, get chat key'):
             chat_key = get_chat_key(aut_two, main_screen)
+            main_screen.minimize()
 
         with step(f'User {user_one.name}, send contact request to {user_two.name}'):
             send_contact_request_from_settings(aut_one, main_screen, chat_key, f'Hello {user_two.name}')
+            main_screen.minimize()
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
             accept_contact_request_from_settings(aut_two, main_screen, user_one.name)
@@ -44,7 +44,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             community_screen = main_screen.left_panel.select_community(community.name)
             add_members = community_screen.left_panel.open_add_members_popup()
             add_members.invite([user_one.name], message=random_text_message())
-            main_screen.hide()
+            main_screen.minimize()
 
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
@@ -62,7 +62,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   10000), 'Join community button not hidden'
-            main_screen.hide()
+            main_screen.minimize()
 
         with step(f'User {user_two.name}, ban {user_one.name} from the community'):
             switch_to_aut(aut_two, main_screen)
@@ -82,7 +82,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_two.name}, see {user_one.name} in banned members list'):
             community_screen.right_panel.click_banned_button()
             assert driver.waitFor(lambda: user_one.name not in members_list, timeout)
-            main_screen.hide()
+            main_screen.minimize()
 
         with step(f'User {user_one.name} tries to join community when being banned by {user_two.name}'):
             switch_to_aut(aut_one, main_screen)
@@ -92,7 +92,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert banned_community_screen.banned_title() == f"You've been banned from {community.name}"
             main_screen.left_panel.open_community_context_menu(community.name).leave_community_option.click()
             # TODO: think of better check here assert not main_screen.left_panel.communities()
-            main_screen.hide()
+            main_screen.minimize()
 
 
         with step(f'User {user_two.name}, unban {user_one.name} in banned members list'):
@@ -101,7 +101,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             # toast_messages = main_screen.wait_for_toast_notifications()
             # assert user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name in toast_messages, \
             #     f"{user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name} is not found in {toast_messages}"
-            main_screen.hide()
+            main_screen.minimize()
 
         with step(f'User {user_one.name} joins community again'):
             switch_to_aut(aut_one, main_screen)
@@ -121,7 +121,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                               10000), 'Join community button not hidden'
-            main_screen.hide()
+            main_screen.minimize()
 
         with step(f'User {user_two.name}, kick {user_one.name} from the community'):
             switch_to_aut(aut_two, main_screen)
@@ -136,7 +136,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_two.name}, does not see {user_one.name} in members list'):
             assert driver.waitFor(lambda: user_one.name not in community_screen.right_panel.members, timeout)
-            main_screen.hide()
+            main_screen.minimize()
 
         with step(f'User {user_one.name} can rejoin community after being kicked'):
             switch_to_aut(aut_one, main_screen)

@@ -25,7 +25,7 @@ from scripts.utils.generators import random_text_message
 
 @pytest.mark.case(703087, 738732, 738734, 738742, 738744, 738745)
 @pytest.mark.critical
-# @pytest.mark.skipif(get_platform() == 'Windows', reason="https://github.com/status-im/status-desktop/issues/18994")
+# TODO: https://github.com/status-im/status-desktop/issues/19285
 @pytest.mark.smoke
 def test_1x1_chat_add_contact_in_settings(multiple_instances):
     user_one: UserAccount = RandomUser()
@@ -138,7 +138,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
                 f"Message text is not found in last message"
             assert message_object.delegate_button.object.isEdited, \
                 f"Message status was not changed to edited"
-            main_window.minimize()
+
 
         with step(f'User {user_two.name} opens 1x1 chat with {user_one.name}'):
             switch_to_aut(aut_two, main_window)
