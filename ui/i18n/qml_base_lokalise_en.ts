@@ -3260,6 +3260,11 @@
       <comment>BrowserSettingsMenu</comment>
       <translation>Settings</translation>
     </message>
+    <message>
+      <source>Zoom</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Zoom</translation>
+    </message>
   </context>
   <context>
     <name>BrowserTabView</name>
