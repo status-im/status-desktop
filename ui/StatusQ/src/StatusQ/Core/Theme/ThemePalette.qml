@@ -197,6 +197,7 @@ QtObject {
         property color camel
         property color magenta
         property color yinYang
+        property color purple2
     }
 
     readonly property var customisationColorsArray: [
@@ -227,6 +228,7 @@ QtObject {
 
     property QtObject privacyModeColors: QtObject {
         readonly property color navBarColor: customisationColors.purple
+        readonly property color navBarSecondaryColor: customisationColors.purple2
         readonly property color navButtonColor: getColor('white', 0.4)
         readonly property color navButtonHighlightedColor: getColor('white')
     }

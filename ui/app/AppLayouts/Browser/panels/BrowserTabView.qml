@@ -171,6 +171,7 @@ FocusScope {
             property string tabTitle
 
             readonly property int minWidth: hovered || checked ? d.minTabButtonWidth : d.minTabButtonInactiveWidth
+            readonly property bool incognito: root.getTab(tabButton.TabBar.index)?.profile.offTheRecord ?? false
 
             width: Math.min(Math.max(implicitWidth, minWidth), d.maxTabButtonWidth)
             anchors.top: parent ? parent.top : undefined
@@ -180,7 +181,17 @@ FocusScope {
             verticalPadding: 0
 
             background: Rectangle {
-                color: tabButton.checked ? Theme.palette.background : Theme.palette.baseColor2
+                color: {
+                    if (tabButton.checked) {
+                        if(tabButton.incognito)
+                            return Theme.palette.privacyModeColors.navBarSecondaryColor
+                        return Theme.palette.background
+                    } else  {
+                        if(tabButton.incognito)
+                            return Theme.palette.privacyModeColors.navBarColor
+                        return Theme.palette.baseColor2
+                    }
+                }
             }
 
             contentItem: RowLayout {
@@ -211,14 +222,6 @@ FocusScope {
                     text: tabButton.tabTitle
                 }
 
-                StatusIcon {
-                    Layout.preferredWidth: d.iconSize
-                    Layout.preferredHeight: d.iconSize
-                    Layout.rightMargin: 2
-                    Layout.alignment: Qt.AlignTrailing
-                    icon: "hide"
-                    visible: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).profile.offTheRecord : false
-                }
                 StatusFlatButton {
                     Layout.alignment: Qt.AlignTrailing
                     icon.name: "close"

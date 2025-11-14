@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtWebEngine
 
+import QtModelsToolkit
+
 import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Layout
@@ -185,6 +187,9 @@ StatusSectionLayout {
             anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
             z: 52
             favoriteComponent: favoritesBar
+            favoritesVisible: localAccountSensitiveSettings.shouldShowFavoritesBar &&
+                              root.bookmarksStore.bookmarksModel.ModelCount.count > 0
+            currentTabIncognito: _internal.currentWebView?.profile.offTheRecord ?? false
             currentFavorite: _internal.currentWebView ? root.bookmarksStore.getCurrentFavorite(_internal.currentWebView.url) : null
             dappBrowserAccName: root.browserWalletStore.dappBrowserAccount.name
             dappBrowserAccIcon: Utils.getColorForId(root.browserWalletStore.dappBrowserAccount.colorId)
