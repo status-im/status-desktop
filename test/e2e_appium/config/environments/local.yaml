@@ -14,8 +14,8 @@ provider:
 
 execution:
   concurrency:
-    max_sessions: 1
-    per_device_limit: 1
+    max_sessions: 2
+    per_device_limit: 2
   retry_failed_tests: 0
 
 devices:

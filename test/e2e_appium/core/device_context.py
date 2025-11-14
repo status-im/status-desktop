@@ -71,12 +71,7 @@ class DeviceContext:
                         f"Onboarding completed but no user data returned on device {self.device_id}"
                     )
 
-                test_user = TestUser(
-                    display_name=user_data.get("display_name") or user_data.get("profile", {}).get("display_name", "Unknown"),
-                    password=user_data.get("password") or config.custom_password or "StatusPassword123!",
-                    seed_phrase=user_data.get("seed_phrase") or config.seed_phrase,
-                    source="onboarded",
-                )
+                test_user = TestUser.from_onboarding_result(user_data, config)
 
                 self.user = test_user
                 self.logger.info(
@@ -123,4 +118,27 @@ class DeviceContext:
     def clear_state(self) -> None:
         self._state._custom_state.clear()
         self.logger.debug("Custom state cleared")
+
+    def capture_profile_link(self) -> Optional[str]:
+        """
+        Navigate to Settings → Profile → Share Profile and capture the profile link.
+
+        Returns the captured link if successful, otherwise None.
+        """
+        from pages.onboarding.main_app_page import MainAppPage
+        self.logger.info("Capturing profile link for device %s", self.device_id)
+
+        main_app = MainAppPage(self.driver)
+        profile_link = main_app.copy_profile_link_from_menu()
+        if not profile_link:
+            self.logger.error("Failed to capture profile link from profile menu")
+            return None
+
+        self.logger.info("Profile link captured: %s", profile_link)
+        self.set_state("profile_link", profile_link)
+
+        if self.user:
+            setattr(self.user, "profile_link", profile_link)
+
+        return profile_link
 
