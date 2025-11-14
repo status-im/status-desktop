@@ -129,6 +129,23 @@ StatusSectionLayout {
             download.accept();
             root.downloadsStore.addDownload(download)
             downloadBar.active = true
+
+            // close the tab launched only for starting download
+            var downloadView = download.view
+            if (!downloadView)
+                return
+
+            // find tab for this view
+            for (var i = 0; i < tabs.count; ++i) {
+                var tab = tabs.getTab(i)
+                // close the “download-only” tab
+                if (tab === downloadView &&
+                        !tab.htmlPageLoaded &&
+                        tab.title === "") {
+                    tabs.removeView(i)
+                    break
+                }
+            }
         }
 
         function determineRealURL(url) {
