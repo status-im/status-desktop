@@ -1008,12 +1008,12 @@ Item {
                 profileLoader.settingsSubsection = subsection || Constants.settingsSubsection.profile
                 profileLoader.settingsSubSubsection = subSubsection
                 profileLoader.item.forceSubsectionNavigation = true
-
             } else if (sectionType === Constants.appSection.wallet) {
                 appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(subsection, subSubsection, data)
             } else if (sectionType === Constants.appSection.swap) {
                 popupRequestsHandler.swapModalHandler.launchSwap()
             } else if (sectionType === Constants.appSection.chat) {
+                appMain.rootStore.setNavToMsgDetailsFlag(true)
                 appMain.rootStore.setActiveSectionChat(appMain.profileStore.pubKey, subsection)
             } else if (sectionType === Constants.appSection.community && subsection !== "") {
                 appMain.communitiesStore.setActiveCommunity(subsection)
@@ -1941,6 +1941,10 @@ Item {
                             // Contacts related data:
                             myPublicKey: appMain.contactsStore.myPublicKey
 
+                            // Navigation: Temporary solution that keeps ui navigation state when in-app links
+                            // are triggered and allow messaging details navigation in portrait
+                            navToMsgDetails: appMain.rootStore.navToMsgDetails
+
                             onProfileButtonClicked: {
                                 Global.changeAppSectionBySectionType(Constants.appSection.profile);
                             }
@@ -1965,6 +1969,10 @@ Item {
                             onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
                             onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
                             onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
+
+                            // Navigation: Temporary solution that keeps ui navigation state when in-app links
+                            // are triggered and allow messaging details navigation in portrait
+                            onNavToMsgDetailsRequested: navigate => appMain.rootStore.setNavToMsgDetailsFlag(navigate)
                         }
                     }
                 }
@@ -2241,6 +2249,8 @@ Item {
                         privacyStore: appMain.privacyStore
                         notificationsStore: appMain.notificationsStore
                         messagingRootStore: appMain.messagingRootStore
+
+                        onNavToMsgDetailsRequested: navigate => appMain.rootStore.setNavToMsgDetailsFlag(navigate)
                     }
                 }
 
@@ -2332,6 +2342,9 @@ Item {
                             // Contacts related data:
                             myPublicKey: appMain.contactsStore.myPublicKey
 
+                            // Navigation:
+                            navToMsgDetails: appMain.rootStore.navToMsgDetails
+
                             onProfileButtonClicked: {
                                 Global.changeAppSectionBySectionType(Constants.appSection.profile);
                             }
@@ -2353,6 +2366,9 @@ Item {
                             onRemoveTrustStatusRequest: appMain.contactsStore.removeTrustStatus(pubKey)
                             onDismissContactRequest: appMain.contactsStore.dismissContactRequest(chatId, contactRequestId)
                             onAcceptContactRequest: appMain.contactsStore.acceptContactRequest(chatId, contactRequestId)
+
+                            // Navigation:
+                            onNavToMsgDetailsRequested: navigate => appMain.rootStore.setNavToMsgDetailsFlag(navigate)
                         }
                     }
                 }

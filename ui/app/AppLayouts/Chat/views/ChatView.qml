@@ -123,6 +123,10 @@ StatusSectionLayout {
     property var usersModel
     property bool amIChatAdmin
 
+    // Navigation:
+    // Internal trigger for navigating to messaging details
+    property bool navToMsgDetails: false
+
     // Users related signals
     signal groupMembersUpdateRequested(string membersPubKeysList)
 
@@ -166,6 +170,7 @@ StatusSectionLayout {
 
     // Navigation
     signal showUsersListRequested(bool show)
+    signal navToMsgDetailsRequested(bool navigate)
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -247,6 +252,21 @@ StatusSectionLayout {
 
         onMarkAsTrustedRequested: Global.openMarkAsIDVerifiedPopup(pubKey, null)
         onRemoveTrustedMarkRequested: Global.openRemoveIDVerificationDialog(pubKey, null)
+    }
+
+    onChatContentModuleChanged: {
+        if (!root.chatContentModule || !root.chatContentModule.chatDetails)
+            return
+
+        // WORKAROUND: This forces navigation to community details (specific channel) or
+        // specific 1:1 chat whenever the active section is set and comes from a in-app link
+        // navigation where the ui-state is stored temporaryly in main root store
+        //
+        // NOTE: It only affects behavior in portrait mode
+        if(root.navToMsgDetails) {
+            root.goToNextPanel()
+            root.navToMsgDetailsRequested(false)
+        }
     }
 
     Component {

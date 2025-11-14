@@ -83,6 +83,10 @@ StackLayout {
     readonly property bool amIChatAdmin: root.rootStore.amIChatAdmin()
     property var usersModel
 
+    // Navigation:
+    // Internal trigger for navigating to messaging details
+    property bool navToMsgDetails: false
+
     // Users related signals
     signal groupMembersUpdateRequested(string membersPubKeysList)
 
@@ -111,6 +115,7 @@ StackLayout {
 
     // Navigation
     signal showUsersListRequested(bool show)
+    signal navToMsgDetailsRequested(bool navigate)
 
     onCurrentIndexChanged: {
         Global.closeCreateChatView()
@@ -285,6 +290,9 @@ StackLayout {
             // Contacts related data:
             myPublicKey: root.myPublicKey
 
+            // Navigation:
+            navToMsgDetails: root.navToMsgDetails
+
             onGroupMembersUpdateRequested: root.groupMembersUpdateRequested(membersPubKeysList)
 
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(communityId)
@@ -348,6 +356,8 @@ StackLayout {
             }
 
             onShowUsersListRequested: show => root.showUsersListRequested(show)
+
+            onNavToMsgDetailsRequested: navigate => root.navToMsgDetailsRequested(navigate)
         }
     }
 
