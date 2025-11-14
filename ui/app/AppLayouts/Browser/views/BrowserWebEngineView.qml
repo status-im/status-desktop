@@ -26,6 +26,7 @@ WebEngineView {
     property var determineRealURLFn: function(url){}
     property bool isDownloadView
     property bool enableJsLogs: false
+    property bool htmlPageLoaded: false
 
     signal setCurrentWebUrl(url url)
 
@@ -94,8 +95,20 @@ WebEngineView {
     }
 
     onLoadingChanged: function(loadRequest) {
-        if (loadRequest.status === WebEngineView.LoadStartedStatus)
+        if (loadRequest.status === WebEngineView.LoadStartedStatus) {
+            root.htmlPageLoaded = false
             findBarComp.reset();
+        }
+        if (loadRequest.status === WebEngineView.LoadSucceededStatus) {
+            root.htmlPageLoaded = true
+        }
+    }
+
+    onLoadProgressChanged: function(progress) {
+        if (progress >= 10) {
+            // Some real content rendered
+            htmlPageLoaded = true
+        }
     }
 
     onNavigationRequested: function (request) {
