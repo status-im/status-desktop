@@ -187,5 +187,6 @@ ThemePalette {
         property color camel: "#C78F67"
         property color magenta: "#EC266C"
         property color yinYang: "#09101C"
+        property color purple2: "#5A33CA"
     }
 }

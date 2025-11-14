@@ -2669,6 +2669,10 @@ Do you wish to override the security check and continue?</source>
         <source>Settings</source>
         <translation type="unfinished">Nastavení</translation>
     </message>
+    <message>
+        <source>Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrowserTabView</name>

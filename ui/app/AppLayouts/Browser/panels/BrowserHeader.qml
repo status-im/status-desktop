@@ -29,6 +29,8 @@ Rectangle {
     property string dappBrowserAccName: ""
     property string dappBrowserAccIcon: ""
     property var settingMenu
+    property bool favoritesVisible: false
+    property bool currentTabIncognito: false
 
     property var browserDappsModel: null
     property int browserDappsCount: 0
@@ -52,7 +54,7 @@ Rectangle {
 
     width: parent.width
     height: barRow.height + (favoritesBarLoader.active ? favoritesBarLoader.height : 0)
-    color: Theme.palette.background
+    color: root.currentTabIncognito ? Theme.palette.privacyModeColors.navBarSecondaryColor: Theme.palette.background
 
     RowLayout {
         id: barRow
@@ -237,7 +239,7 @@ Rectangle {
 
     Loader {
         id: favoritesBarLoader
-        active: localAccountSensitiveSettings.shouldShowFavoritesBar
+        active: root.favoritesVisible
         anchors.top: barRow.bottom
         anchors.left: parent.left
         anchors.leftMargin: Theme.smallPadding
