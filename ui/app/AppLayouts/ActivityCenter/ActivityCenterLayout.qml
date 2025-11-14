@@ -36,6 +36,10 @@ StatusSectionLayout {
     required property NotificationsStore notificationsStore
     required property MessagingStores.MessagingRootStore messagingRootStore
 
+    // Temporary solution triggered whenever in-app link for chat / channel is needed
+    // This will allow messaging details navigation in portrait
+    signal navToMsgDetailsRequested(bool navigate)
+
     QtObject {
         id: d
 
@@ -238,6 +242,7 @@ StatusSectionLayout {
             onSetActiveCommunityRequested: (communityId) => {
                                       root.store.setActiveCommunity(communityId) }
             onSwitchToRequested: (sectionId, chatId, messageId) => {
+                                     root.navToMsgDetailsRequested(true)
                                      root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
@@ -255,6 +260,7 @@ StatusSectionLayout {
             contactsModel: root.contactsStore.contactsModel
 
             onSwitchToRequested: (sectionId, chatId, messageId) => {
+                                     root.navToMsgDetailsRequested(true)
                                      root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
             onMarkActivityCenterNotificationReadRequested: (notificationId) => {
                                                                root.activityCenterStore.markActivityCenterNotificationRead(notificationId) }
@@ -300,6 +306,7 @@ StatusSectionLayout {
             community: notification ? root.store.getCommunityDetailsAsJson(notification.message.communityId) : null
 
             onSwitchToRequested: (sectionId, chatId, messageId) => {
+                               root.navToMsgDetailsRequested(true)
                                root.activityCenterStore.switchTo(sectionId, chatId, messageId) }
 
             onSetActiveCommunityRequested: (communityId) => { root.store.setActiveCommunity(notification.message.communityId) }

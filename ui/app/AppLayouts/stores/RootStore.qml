@@ -30,12 +30,28 @@ QtObject {
     // For now, it's set during initialization in AppMain.qml.
     property bool thirdpartyServicesEnabled
 
+    // TEMPORARY: Workaround to persist UI state whenever the user navigates to
+    // chat/channel detail sections from in-links (i.e. not directly via the nav bar).
+    // This parameter is used to store the navigation intent so that the target component
+    // can react and move to the corresponding detail view.
+    //
+    // This workaround is required due to the current Nim-based navigation architecture,
+    // where UI-driven actions are intertwined in a call chain qml → nim → qml, instead of
+    // being handled locally in the UI layer.
+    readonly property bool navToMsgDetails: internal.forceNavToMsgDetails
+    function setNavToMsgDetailsFlag(navigate) {
+        internal.forceNavToMsgDetails = navigate
+    }
+
     // Here define the needed properties that access to `Context Properties`:
     readonly property QtObject _internal: QtObject{
         id: internal // Rename to `d` when cleanup done
 
         readonly property var mainModuleInst: mainModule
         readonly property var appSearchModuleInst: internal.mainModuleInst.appSearchModule
+
+        // TEMPORARY: Internal flag used to trigger navigation into messaging details.
+        property bool forceNavToMsgDetails: false
     }
 
     // Here there should be all the ContextSpecificRootStore objects creation
