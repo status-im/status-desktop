@@ -39,7 +39,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
     picture = BASE_64_IMAGE_JPEG
 
     # First five emojis in the reactions before there are custom ones
-    EMOJI_PATHES = ["😀", "😃", "😄", "😁", "😆"]
+    EMOJI_PATHES = ["1f600", "1f603", "1f604", "1f601", "1f606"]
 
     with (multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two):
         with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
