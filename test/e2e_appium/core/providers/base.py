@@ -34,7 +34,7 @@ class Provider(ABC):
 
         provider_overrides = device.provider_overrides.get(self.name, {})
         capabilities = self._deep_merge(capabilities, provider_overrides)
-        return capabilities
+        return self._resolve_templates(capabilities)
 
     @abstractmethod
     def create_driver(
@@ -96,3 +96,12 @@ class Provider(ABC):
         except Exception:
             # Intentionally swallow errors to avoid masking test failures
             return
+
+    def _resolve_templates(self, value: Any) -> Any:
+        if isinstance(value, dict):
+            return {key: self._resolve_templates(val) for key, val in value.items()}
+        if isinstance(value, list):
+            return [self._resolve_templates(item) for item in value]
+        if isinstance(value, str):
+            return self.env_config.resolve_template(value)
+        return value

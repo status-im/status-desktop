@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List, Optional
 
 import pytest_asyncio
@@ -54,6 +55,28 @@ def _extract_marker_list(marker, key: str) -> Optional[List[Any]]:
     return [value]
 
 
+def _local_env_overrides(device_count: int) -> Optional[List[Dict[str, Any]]]:
+    """Derive local device overrides from environment variables when provided."""
+    udids_raw = os.getenv("LOCAL_DEVICE_UDIDS", "")
+    udids = [value.strip() for value in udids_raw.split(",") if value.strip()]
+    if len(udids) < device_count:
+        return None
+
+    overrides: List[Dict[str, Any]] = []
+
+    for index in range(device_count):
+        overrides.append(
+            {
+                "capabilities": {
+                    "appium:udid": udids[index],
+                    "appium:systemPort": 8200 + index,
+                }
+            }
+        )
+
+    return overrides
+
+
 @pytest_asyncio.fixture(scope="function")
 async def multi_device(request, test_environment):
     logger = get_logger("multi_device_fixture")
@@ -68,6 +91,8 @@ async def multi_device(request, test_environment):
 
     if device_overrides:
         device_overrides = list(device_overrides)[:device_count]
+    elif test_environment == "local":
+        device_overrides = _local_env_overrides(device_count)
 
     if device_tags and not device_overrides:
         cfg_mgr = ConfigurationManager()
@@ -136,6 +161,8 @@ async def onboarded_devices(request, test_environment):
 
     if device_overrides:
         device_overrides = list(device_overrides)[:device_count]
+    elif test_environment == "local":
+        device_overrides = _local_env_overrides(device_count)
 
     if device_tags and not device_overrides:
         cfg_mgr = ConfigurationManager()
