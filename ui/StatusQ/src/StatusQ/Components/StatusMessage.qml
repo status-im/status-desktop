@@ -91,7 +91,7 @@ Control {
     signal replyMessageClicked(var mouse)
 
     signal addReactionClicked(var sender, var mouse)
-    signal toggleReactionClicked(string emoji)
+    signal toggleReactionClicked(string hexcode)
     signal imageClicked(var image, var mouse, var imageSource)
     signal stickerClicked()
     signal resendClicked()
@@ -396,6 +396,7 @@ Control {
                     Loader {
                         active: !!root.reactionsModel && root.reactionsModel.ModelCount.count > 0
                         visible: active
+                        Layout.fillWidth: true
                         sourceComponent: StatusMessageEmojiReactions {
                             id: emojiReactionsPanel
                             enabled: !root.disableEmojis
@@ -406,7 +407,7 @@ Control {
 
                             isCurrentUser: root.messageDetails.amISender
                             onAddEmojiClicked: (sender, mouse) => root.addReactionClicked(sender, mouse)
-                            onToggleReaction: (emoji) => root.toggleReactionClicked(emoji)
+                            onToggleReaction: (hexcode) => root.toggleReactionClicked(hexcode)
                         }
                     }
                 }
@@ -416,9 +417,8 @@ Control {
         Loader {
             active: root.hovered && root.quickActions.length > 0
             anchors.right: parent.right
-            anchors.rightMargin: 20
-            anchors.top: parent.top
-            anchors.topMargin: -8
+            anchors.rightMargin: Theme.padding
+            anchors.top: root.top
             sourceComponent: StatusMessageQuickActions {
                 items: root.quickActions
             }

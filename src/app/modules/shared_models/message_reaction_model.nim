@@ -71,16 +71,6 @@ QtObject:
         return i
     return -1
 
-  proc findPositionForTheItemWithEmoji(self: MessageReactionModel, emoji: string): int =
-    if(self.items.len == 0):
-      return 0
-
-    for i in 0..<self.items.len:
-      if(emoji < self.items[i].emoji):
-        return i
-
-    return self.items.len
-
   proc shouldAddReaction*(self: MessageReactionModel, emoji: string, userPublicKey: string): bool =
     let ind = self.getIndexOfTheItemWithEmoji(emoji)
     if(ind == -1):
@@ -95,9 +85,9 @@ QtObject:
 
   proc addReaction*(self: MessageReactionModel, emoji: string, didIReactWithThisEmoji: bool, userPublicKey: string,
     userDisplayName: string, reactionId: string) =
-    if(self.reactionItemWithEmojiExists(emoji)):
+    if self.reactionItemWithEmojiExists(emoji):
       let ind = self.getIndexOfTheItemWithEmoji(emoji)
-      if(ind == -1):
+      if ind == -1:
         return
       self.items[ind].addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
       let index = self.createIndex(ind, 0, nil)
@@ -109,10 +99,9 @@ QtObject:
 
       var item = initMessageReactionItem(emoji)
       item.addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
-      let position = self.findPositionForTheItemWithEmoji(emoji) # Model should maintain items based on the emoji.
 
-      self.beginInsertRows(parentModelIndex, position, position)
-      self.items.insert(item, position)
+      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+      self.items.add(item)
       self.endInsertRows()
 
   proc removeReaction*(self: MessageReactionModel, emoji: string, reactionId: string, didIRemoveThisReaction: bool) =

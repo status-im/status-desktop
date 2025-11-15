@@ -9,12 +9,12 @@ import StatusQ.Components
 import utils
 import shared.controls.chat
 
+import SortFilterProxyModel
+
 StatusMenu {
     id: root
 
-    property StatusEmojiModel emojiModel
-    property var recentEmojis
-    property string skinColor
+    property var emojiModel
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
@@ -42,7 +42,7 @@ StatusMenu {
     signal unpinMessage()
     signal pinnedMessagesLimitReached()
     signal showReplyArea(string messageSenderId)
-    signal toggleReaction(string emoji)
+    signal toggleReaction(string hexcode)
     signal deleteMessage()
     signal editClicked()
     signal markMessageAsUnread()
@@ -53,10 +53,8 @@ StatusMenu {
         id: emojiRow
         visible: !root.emojiReactionLimitReached && (!root.disabledForChat || root.forceEnableEmojiReactions)
         emojiModel: root.emojiModel
-        recentEmojis: root.recentEmojis
-        skinColor: root.skinColor
-        onToggleReaction: emoji => {
-            root.toggleReaction(emoji)
+        onToggleReaction: hexcode => {
+            root.toggleReaction(hexcode)
             root.close()
         }
         onOpenEmojiPopup: (parent, mouse) => {

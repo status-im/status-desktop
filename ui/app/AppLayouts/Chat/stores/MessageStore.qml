@@ -123,11 +123,11 @@ QtObject {
         return messageModule.unpinMessage(messageId)
     }
 
-    function toggleReaction(messageId, emoji) {
+    function toggleReaction(messageId, hexcode) {
         if(!messageModule)
             return
 
-        return messageModule.toggleReaction(messageId, emoji)
+        return messageModule.toggleReaction(messageId, hexcode)
     }
 
     function deleteMessage(messageId) {

@@ -11342,14 +11342,6 @@ to load</source>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Maximum number of different reactions reached</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add reaction</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>MessagingView</name>

@@ -420,8 +420,8 @@ Item {
                     messageStore.setEditModeOff(model.id)
             }
 
-            onEmojiReactionToggled: (messageId, emoji) => {
-                root.messageStore.toggleReaction(messageId, emoji)
+            onEmojiReactionToggled: (messageId, hexcode) => {
+                root.messageStore.toggleReaction(messageId, hexcode)
             }
 
             // Unfurling related requests:

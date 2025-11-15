@@ -10,6 +10,8 @@ import Storybook
 import utils
 import shared.views.chat
 
+import SortFilterProxyModel
+
 SplitView {
     id: root
 
@@ -37,10 +39,9 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
 
                 messageId: "Oxdeadbeef"
-                emojiModel: StatusQUtils.Emoji.emojiModel
-                // Should still show only 5 emojis even if more are provided
-                recentEmojis: ["1f9de", "1f6fa", "1f44d", "1f44e", "1f602", "1f622", "1f621"]
-                skinColor: ""
+                emojiModel: SortFilterProxyModel {
+                    sourceModel: StatusQUtils.Emoji.emojiModel
+                }
                 messageContentType: Constants.messageContentType.messageType
                 chatType: Constants.chatType.oneToOne
                 isDebugEnabled: isDebugEnabledCheckBox.checked

@@ -20,34 +20,39 @@ SplitView {
 
         readonly property var exampleAlbum: [ModelsData.banners.coinbase, ModelsData.icons.status]
 
-        readonly property var messageWithReactions: [{
+        readonly property var reactionsModels: ReactionsModels {}
+
+        readonly property var messageWithThreeReactions: [{
             timestamp: 1667937830123,
             senderId: "zq123456790",
             senderDisplayName: "Alice",
             contentType: StatusMessage.ContentType.Text,
-            message: "This message has reactions",
+            message: "This message has 3 reactions",
             isContact: true,
             isAReply: false,
             trustIndicator: StatusContactVerificationIcons.TrustedType.None,
             outgoingStatus: StatusMessage.OutgoingStatus.Delivered,
-            reactionsModel: [
-                {
-                    emoji: "😄",
-                    didIReactWithThisEmoji: true,
-                    numberOfReactions: 1,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"You\"]"
-                },
-                {
-                    emoji: "🕵️‍♀",
-                    didIReactWithThisEmoji: false,
-                    numberOfReactions: 2,
-                    jsonArrayOfUsersReactedWithThisEmoji: "[\"Bob\", \"John\"]"
-                }
-            ]
+            reactionsModel: d.reactionsModels.threeReactions
+        }]
+        readonly property var messageWithTwentyReactions: [{
+            timestamp: 1667937830125,
+            senderId: "zq123456790",
+            senderDisplayName: "Alice",
+            contentType: StatusMessage.ContentType.Text,
+            message: "This message has 20 reactions",
+            isContact: true,
+            isAReply: false,
+            trustIndicator: StatusContactVerificationIcons.TrustedType.None,
+            outgoingStatus: StatusMessage.OutgoingStatus.Delivered,
+            reactionsModel: d.reactionsModels.twentyReactions
         }]
 
+
         readonly property var messagesModel: ListModel {
-            Component.onCompleted: append(d.messageWithReactions)
+            Component.onCompleted:  {
+                append(d.messageWithThreeReactions)
+                append(d.messageWithTwentyReactions)
+            }
 
             ListElement {
                 timestamp: 1656937930123

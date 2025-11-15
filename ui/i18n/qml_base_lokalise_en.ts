@@ -13808,16 +13808,6 @@
       <comment>MessageView</comment>
       <translation>Delete</translation>
     </message>
-    <message>
-      <source>Maximum number of different reactions reached</source>
-      <comment>MessageView</comment>
-      <translation>Maximum number of different reactions reached</translation>
-    </message>
-    <message>
-      <source>Add reaction</source>
-      <comment>MessageView</comment>
-      <translation>Add reaction</translation>
-    </message>
   </context>
   <context>
     <name>MessagingView</name>
