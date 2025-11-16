@@ -22,3 +22,4 @@ proc toReactionDto*(jsonObj: JsonNode): ReactionDto =
   discard jsonObj.getProp("from", result.from)
   discard jsonObj.getProp("messageId", result.messageId)
   discard jsonObj.getProp("emoji", result.emoji)
+
