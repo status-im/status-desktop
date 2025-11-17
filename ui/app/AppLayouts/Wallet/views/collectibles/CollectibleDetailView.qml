@@ -295,7 +295,7 @@ Item {
                             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
                             flatNetworks: root.networksStore.allNetworks
                             currenciesStore: root.rootStore.currencyStore
-                            walletRootStore: root.walletRootStore
+                            activityStore: root.walletRootStore
                             showAllAccounts: root.walletRootStore.showAllAccounts
                             displayValues: true
                             community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null

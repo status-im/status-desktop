@@ -871,6 +871,31 @@ QtObject {
         return nativeTokenRawToDecimal(chainID, rawGasPrice)
     }
     
+    // TODO: https://github.com/status-im/status-desktop/issues/15329
+    // Get DApp data from the backend
+    function getDappDetails(chainId, contractAddress) {
+        switch (contractAddress) {
+            case Constants.swap.paraswapV5ApproveContractAddress:
+            case Constants.swap.paraswapV5SwapContractAddress:
+                return {
+                    "icon": Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "url": Constants.swap.paraswapHostname,
+                    "name": Constants.swap.paraswapName,
+                    "approvalContractAddress": Constants.swap.paraswapV5ApproveContractAddress,
+                    "swapContractAddress": Constants.swap.paraswapV5SwapContractAddress,
+                }
+            case Constants.swap.paraswapV6_2ContractAddress:
+                return {
+                    "icon": Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "url": Constants.swap.paraswapUrl,
+                    "name": Constants.swap.paraswapName,
+                    "approvalContractAddress": Constants.swap.paraswapV6_2ContractAddress,
+                    "swapContractAddress": Constants.swap.paraswapV6_2ContractAddress,
+                }
+        }
+        return undefined
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

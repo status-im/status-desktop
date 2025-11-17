@@ -10,27 +10,34 @@ import StatusQ.Core.Theme
 
 import shared.controls
 import shared.views
+import shared.stores as SharedStores
 import utils
-
-import AppLayouts.Browser.stores as BrowserStores
 
 // TODO: replace with StatusMenu
 Dialog {
     id: root
 
     required property bool incognitoMode
-    required property BrowserStores.BrowserWalletStore browserWalletStore
+    // model of wallet accounts for the dropdown
+    required property var accounts
+    // currently selected wallet account
+    required property var currentAccount
+    required property var activityStore
+    required property SharedStores.CurrenciesStore currencyStore
+    required property SharedStores.NetworksStore networksStore
 
     signal sendTriggered(string address)
     signal reload()
     signal accountChanged(string newAddress)
+    signal accountSwitchRequested(string address)
+    signal filterAddressesChangeRequested(string addressesJson)
 
     modal: false
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
-    width: 360
-    height: contentItem.childrenRect.height + 2 * Theme.padding
+    width: 720
+    height: 480
     background: Rectangle {
         id: bgPopup
         color: root.incognitoMode ?
@@ -101,13 +108,13 @@ Dialog {
 
 
     Connections {
-        target: root.browserWalletStore.dappBrowserAccount
+        target: root.currentAccount
         function onConnectedAccountDeleted() {
             root.reload()
             // This is done because when an account is deleted and the account is updated to default one,
             // only the properties are updated and we need to listen to those events and update the selected account
             accountSelectorRow.currentAddress = ""
-            accountSelector.selectedAddress = Qt.binding(function () {return root.browserWalletStore.dappBrowserAccount.address})
+            accountSelector.selectedAddress = Qt.binding(function () {return root.currentAccount.address})
         }
     }
 
@@ -135,8 +142,8 @@ Dialog {
                                   Theme.palette.border
             }
 
-            model: root.browserWalletStore.accounts
-            selectedAddress: root.browserWalletStore.dappBrowserAccount.address
+            model: root.accounts
+            selectedAddress: root.currentAccount.address
             onCurrentAccountAddressChanged: {
                 if (!accountSelectorRow.currentAddress) {
                     // We just set the account for the first time. Nothing to do here
@@ -148,8 +155,10 @@ Dialog {
                 }
 
                 accountSelectorRow.currentAddress = currentAccountAddress
-                root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
+                root.accountSwitchRequested(currentAccountAddress)
                 root.accountChanged(currentAccountAddress)
+                root.filterAddressesChangeRequested(JSON.stringify([currentAccountAddress]))
+
                 reload()
             }
         }
@@ -177,6 +186,24 @@ Dialog {
         }
     }
 
+    HistoryView {
+        id: walletInfoContent
+        width: parent.width
+        anchors.top: accountSelectorRow.bottom
+        anchors.topMargin: Theme.bigPadding
+        anchors.bottom: parent.bottom
+
+        activityStore: root.activityStore
+        overview: root.currentAccount
+        communitiesStore: null
+        currencyStore: root.currencyStore
+        networksStore: root.networksStore
+        showAllAccounts: false
+        displayValues: true
+        filterVisible: false
+        disableShadowOnScroll: true
+        hideVerticalScrollbar: false
+    }
     onClosed: {
         root.destroy();
     }

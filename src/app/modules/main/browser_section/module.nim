@@ -14,6 +14,8 @@ import ../../../../app_service/service/dapp_permissions/service as dapp_permissi
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/currency/service as currency_service
+import ../../../../app_service/service/saved_address/service as saved_address_service
+import ../wallet_section/activity/controller as activity_controller
 
 export io_interface
 
@@ -27,6 +29,7 @@ type
     bookmarkModule: bookmark_module.AccessInterface
     dappsModule: dapps_module.AccessInterface
     currentAccountModule: current_account_module.AccessInterface
+    activityController: activity_controller.Controller
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
@@ -36,12 +39,19 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     dappPermissionsService: dapp_permissions_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
-    currencyService: currency_service.Service
+    currencyService: currency_service.Service,
+    savedAddressService: saved_address_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
-  result.view = view.newView(result)
+  result.activityController = activity_controller.newController(
+    currencyService,
+    tokenService,
+    savedAddressService,
+    networkService,
+    events)
+  result.view = view.newView(result, result.activityController)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
   result.bookmarkModule = bookmark_module.newModule(result, events, bookmarkService)
@@ -51,6 +61,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
+  self.activityController.delete
   self.bookmarkModule.delete
   self.dappsModule.delete
   self.currentAccountModule.delete

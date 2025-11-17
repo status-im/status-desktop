@@ -229,7 +229,7 @@ StatusDialog {
                            isWatchOnlyAccount: false,
                            mixedcaseAddress: d.address
                        })
-            walletRootStore: WalletStore.RootStore
+            activityStore: WalletStore.RootStore
             networksStore: root.networksStore
         }
     }

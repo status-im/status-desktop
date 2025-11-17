@@ -17,11 +17,11 @@ import utils
 
 import "../panels"
 import "../popups"
-import "../stores"
 import "../controls"
 
+import shared.stores as SharedStores
+
 import AppLayouts.Communities.stores
-import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Wallet.popups
 import AppLayouts.Wallet.controls
 import AppLayouts.Wallet.panels
@@ -31,10 +31,10 @@ ColumnLayout {
 
     property var overview
 
-    property WalletStores.RootStore walletRootStore
+    property var activityStore
     property CommunitiesStore communitiesStore
-    property CurrenciesStore currencyStore
-    required property NetworksStore networksStore
+    property SharedStores.CurrenciesStore currencyStore
+    required property SharedStores.NetworksStore networksStore
     property bool showAllAccounts: false
     property bool displayValues: true
     property bool filterVisible
@@ -54,29 +54,29 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
-        if (root.walletRootStore.transactionActivityStatus.isFilterDirty) {
-            root.walletRootStore.currentActivityFiltersStore.applyAllFilters()
+        if (root.activityStore.transactionActivityStatus.isFilterDirty) {
+            root.activityStore.currentActivityFiltersStore.applyAllFilters()
         }
 
-        root.walletRootStore.currentActivityFiltersStore.updateCollectiblesModel()
-        root.walletRootStore.currentActivityFiltersStore.updateRecipientsModel()
+        root.activityStore.currentActivityFiltersStore.updateCollectiblesModel()
+        root.activityStore.currentActivityFiltersStore.updateRecipientsModel()
     }
 
     Connections {
-        target: root.walletRootStore.transactionActivityStatus
+        target: root.activityStore.transactionActivityStatus
         enabled: root.visible
         function onIsFilterDirtyChanged() {
-            root.walletRootStore.updateTransactionFilterIfDirty()
+            root.activityStore.updateTransactionFilterIfDirty()
         }
         function onFilterChainsChanged() {
-            root.walletRootStore.currentActivityFiltersStore.updateCollectiblesModel()
-            root.walletRootStore.currentActivityFiltersStore.updateRecipientsModel()
+            root.activityStore.currentActivityFiltersStore.updateCollectiblesModel()
+            root.activityStore.currentActivityFiltersStore.updateRecipientsModel()
         }
     }
 
     QtObject {
         id: d
-        readonly property bool isInitialLoading: root.walletRootStore.loadingHistoryTransactions && transactionListRoot.count === 0
+        readonly property bool isInitialLoading: root.activityStore.loadingHistoryTransactions && transactionListRoot.count === 0
 
         readonly property int loadingSectionWidth: 56
 
@@ -96,8 +96,8 @@ ColumnLayout {
         visible: root.firstItemOffset === 0 // visible only in the main wallet view
 
         onLinkActivated: {
-            const explorerUrl = root.walletRootStore.showAllAccounts ? link
-                                                                        : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.walletRootStore.selectedAddress)
+            const explorerUrl = root.activityStore.showAllAccounts ? link
+                                                                        : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.activityStore.selectedAddress)
             Global.requestOpenLink(explorerUrl)
         }
     }
@@ -107,7 +107,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: root.firstItemOffset
-        visible: root.walletRootStore.isNonArchivalNode
+        visible: root.activityStore.isNonArchivalNode
         text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
         font.pixelSize: Theme.primaryTextFontSize
         color: Theme.palette.dangerColor1
@@ -116,12 +116,12 @@ ColumnLayout {
 
     Loader {
         id: filterPanelLoader
-        active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || root.walletRootStore.currentActivityFiltersStore.filtersSet)
+        active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || root.activityStore.currentActivityFiltersStore.filtersSet)
         visible: active && !noTxs.visible
         Layout.fillWidth: true
         sourceComponent: ActivityFilterPanel {
-            activityFilterStore: root.walletRootStore.currentActivityFiltersStore
-            store: root.walletRootStore
+            activityFilterStore: root.activityStore.currentActivityFiltersStore
+            store: root.activityStore
             hideNoResults: newTransactions.visible
             isLoading: d.isInitialLoading
         }
@@ -137,7 +137,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 42
         Layout.topMargin: !nonArchivalNodeError.visible? root.firstItemOffset : 0
-        visible: !d.isInitialLoading && !root.walletRootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
+        visible: !d.isInitialLoading && !root.activityStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
         font.pixelSize: Theme.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
     }
@@ -165,7 +165,7 @@ ColumnLayout {
             model: SortFilterProxyModel {
                 id: txModel
 
-                sourceModel: root.walletRootStore.historyTransactions
+                sourceModel: root.activityStore.historyTransactions
 
                 // LocaleUtils is not accessable from inside expression, but local function works
                 property var daysTo: (d1, d2) => LocaleUtils.daysTo(d1, d2)
@@ -220,17 +220,17 @@ ColumnLayout {
             }
 
             Connections {
-                target: root.walletRootStore
+                target: root.activityStore
 
                 function onLoadingHistoryTransactionsChanged() {
                     // Calling timer instead directly to not cause binding loop
-                    if (!root.walletRootStore.loadingHistoryTransactions)
+                    if (!root.activityStore.loadingHistoryTransactions)
                         fetchMoreTimer.start()
                 }
             }
 
             function tryFetchMoreTransactions() {
-                if (d.isInitialLoading || !footerItem || !root.walletRootStore.historyTransactions.hasMore)
+                if (d.isInitialLoading || !footerItem || !root.activityStore.historyTransactions.hasMore)
                     return
                 const footerYPosition = footerItem.height / contentHeight
                 if (footerYPosition >= 1.0) {
@@ -239,7 +239,7 @@ ColumnLayout {
 
                 // On startup, first loaded ListView will have heightRatio equal 0
                 if (footerYPosition + visibleArea.yPosition + visibleArea.heightRatio > 1.0) {
-                    root.walletRootStore.fetchMoreTransactions()
+                    root.activityStore.fetchMoreTransactions()
                 }
             }
 
@@ -258,8 +258,8 @@ ColumnLayout {
 
             text: qsTr("New transactions")
 
-            visible: root.walletRootStore.newDataAvailable && !root.walletRootStore.loadingHistoryTransactions
-            onClicked: root.walletRootStore.resetActivityData()
+            visible: root.activityStore.newDataAvailable && !root.activityStore.loadingHistoryTransactions
+            onClicked: root.activityStore.resetActivityData()
 
             icon.name: "arrow-up"
 
@@ -347,7 +347,7 @@ ColumnLayout {
                 timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
                 flatNetworks: root.networksStore.allNetworks
                 currenciesStore: root.currencyStore
-                walletRootStore: root.walletRootStore
+                activityStore: root.activityStore
                 showAllAccounts: root.showAllAccounts
                 displayValues: root.displayValues
                 community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
@@ -371,7 +371,7 @@ ColumnLayout {
         id: footerComp
         ColumnLayout {
             id: footerColumn
-            readonly property bool allActivityLoaded: !root.walletRootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
+            readonly property bool allActivityLoaded: !root.activityStore.historyTransactions.hasMore && transactionListRoot.count !== 0
             width: root.width
             spacing: d.isInitialLoading ? 6 : 12
 
@@ -399,7 +399,7 @@ ColumnLayout {
                         const delegateHeight = 64 + footerColumn.spacing
                         if (d.isInitialLoading) {
                             return Math.floor(transactionListRoot.height / delegateHeight)
-                        } else if (root.walletRootStore.historyTransactions.hasMore) {
+                        } else if (root.activityStore.historyTransactions.hasMore) {
                             return Math.max(3, Math.floor(transactionListRoot.height / delegateHeight) - 3)
                         }
                     }
@@ -410,7 +410,7 @@ ColumnLayout {
 
                     flatNetworks: root.networksStore.allNetworks
                     currenciesStore: root.currencyStore
-                    walletRootStore: root.walletRootStore
+                    activityStore: root.activityStore
                     loading: true
                 }
             }
