@@ -3,6 +3,7 @@ include ../../common/json_utils
 include ../../../app/core/tasks/common
 
 import ../../../backend/chat as status_go_chat
+import ../../../backend/linkpreview as status_go_linkpreview
 
 import ../../../app/core/custom_urls/urls_manager
 
@@ -329,7 +330,7 @@ proc asyncGetTextURLsToUnfurlTask(argEncoded: string) {.gcsafe, nimcall.} =
     "requestUuid": arg.requestUuid
   }
   try:
-    let response = status_go.getTextURLsToUnfurl(arg.text)
+    let response = status_go_linkpreview.getTextURLsToUnfurl(arg.text)
     if response.error != nil:
       output["error"] = %*response.error.message
     output["response"] = %*response.result
@@ -351,7 +352,7 @@ type
 proc asyncUnfurlUrlsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncUnfurlUrlsTaskArg](argEncoded)
   try:
-    let response = status_go.unfurlUrls(arg.urls)
+    let response = status_go_linkpreview.unfurlUrls(arg.urls)
     let output = %*{
       "error": (if response.error != nil: response.error.message else: ""),
       "response": response.result,
