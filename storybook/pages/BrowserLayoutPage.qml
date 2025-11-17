@@ -148,6 +148,19 @@ Item {
                 ]
                 onCurrentValueChanged: browserLayout.reloadCurrentTab()
             }
+            TextInput {
+                id: userAgentString
+                text: browserLayout.userAgent
+                selectByMouse: true
+                readOnly: true
+            }
+            Button {
+                icon.name: "edit-copy"
+                onClicked: {
+                    userAgentString.selectAll()
+                    userAgentString.copy()
+                }
+            }
         }
     }
 }
