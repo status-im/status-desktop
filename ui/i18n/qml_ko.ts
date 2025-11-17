@@ -2681,10 +2681,6 @@ Do you wish to override the security check and continue?</source>
         <source>Disconnect</source>
         <translation>연결 해제</translation>
     </message>
-    <message>
-        <source>Wallet info will appear here</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>BrowserWebEngineView</name>
@@ -7619,13 +7615,6 @@ Please add it and try again.</source>
     </message>
 </context>
 <context>
-    <name>FeeRow</name>
-    <message>
-        <source>Max.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -8899,10 +8888,6 @@ Are you sure you want to do this?</source>
     <message>
         <source>PIN correct</source>
         <translation>PIN이 올바릅니다</translation>
-    </message>
-    <message>
-        <source>Keycard blocked</source>
-        <translation type="unfinished">Keycard가 차단됨</translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>

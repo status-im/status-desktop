@@ -10,6 +10,7 @@ import StatusQ.Core.Theme
 
 import shared.controls
 import shared.views
+import shared.stores as SharedStores
 import utils
 
 import AppLayouts.Browser.stores as BrowserStores
@@ -125,6 +126,18 @@ Dialog {
         }
     }
 
+    Connections {
+        target: root.browserWalletStore.transactionActivityStatus
+        enabled: root.visible
+        function onIsFilterDirtyChanged() {
+            root.browserWalletStore.updateTransactionFilterIfDirty()
+        }
+        function onFilterChainsChanged() {
+            root.browserWalletStore.currentActivityFiltersStore.updateCollectiblesModel()
+            root.browserWalletStore.currentActivityFiltersStore.updateRecipientsModel()
+        }
+    }
+
     Item {
         property string currentAddress: ""
         id: accountSelectorRow
@@ -153,6 +166,14 @@ Dialog {
                 accountSelectorRow.currentAddress = currentAccountAddress
                 root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
                 root.accountChanged(currentAccountAddress)
+
+                // Update activity filter for new account
+                root.browserWalletStore.activityController.setFilterAddressesJson(
+                    JSON.stringify([currentAccountAddress])
+                )
+                // Start new session for the new account
+                root.browserWalletStore.activityController.newFilterSession()
+
                 reload()
             }
         }
@@ -182,19 +203,58 @@ Dialog {
         }
     }
 
-    Item {
-        id: walletInfoContent
+    Loader {
+        id: historyLoader
         width: parent.width
         anchors.top: accountSelectorRow.bottom
         anchors.topMargin: Theme.bigPadding
         anchors.bottom: parent.bottom
+        active: false
 
-        // TODO: Add Assets and History tabs when ready
-        StatusBaseText {
-            anchors.centerIn: parent
-            text: qsTr("Wallet info will appear here")
-            color: Theme.palette.baseColor1
+        sourceComponent: HistoryView {
+            id: walletInfoContent
+            width: parent.width
+
+            walletRootStore: root.browserWalletStore
+            overview: root.browserWalletStore.dappBrowserAccount
+            communitiesStore: null
+            currencyStore: SharedStores.CurrenciesStore {}
+            networksStore: SharedStores.NetworksStore {}
+            showAllAccounts: false
+            displayValues: true
+            filterVisible: false
+            disableShadowOnScroll: true
+            hideVerticalScrollbar: false
         }
+    }
+
+    Component.onCompleted: {
+        console.log("==== Browser: Dialog completed, initializing activity controller")
+
+        // Get networksStore from a temporary instance
+        const tempNetworksStore = Qt.createQmlObject('import shared.stores 1.0; NetworksStore {}', root)
+        const activeChainIds = ModelUtils.modelToArray(tempNetworksStore.activeNetworks, "chainId")
+        console.log("==== Browser: activeChainIds =", JSON.stringify(activeChainIds))
+
+        if (activeChainIds.length > 0) {
+            root.browserWalletStore.activityController.setFilterChainsJson(JSON.stringify(activeChainIds), true)
+        }
+
+        if (root.browserWalletStore.dappBrowserAccount.address) {
+            console.log("==== Browser: Setting address filter:", root.browserWalletStore.dappBrowserAccount.address)
+            root.browserWalletStore.activityController.setFilterAddressesJson(
+                JSON.stringify([root.browserWalletStore.dappBrowserAccount.address])
+            )
+        }
+
+        console.log("==== Browser: Starting new filter session")
+        root.browserWalletStore.activityController.newFilterSession()
+
+        // Now load the HistoryView
+        console.log("==== Browser: Loading HistoryView")
+        historyLoader.active = true
+
+        tempNetworksStore.destroy()
     }
     onClosed: {
         root.destroy();

@@ -3291,11 +3291,6 @@
       <comment>BrowserWalletMenu</comment>
       <translation>Disconnect</translation>
     </message>
-    <message>
-      <source>Wallet info will appear here</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Wallet info will appear here</translation>
-    </message>
   </context>
   <context>
     <name>BrowserWebEngineView</name>
@@ -9339,14 +9334,6 @@
     </message>
   </context>
   <context>
-    <name>FeeRow</name>
-    <message>
-      <source>Max.</source>
-      <comment>FeeRow</comment>
-      <translation>Max.</translation>
-    </message>
-  </context>
-  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -10895,11 +10882,6 @@
       <source>PIN correct</source>
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
-    </message>
-    <message>
-      <source>Keycard blocked</source>
-      <comment>KeycardEnterPinPage</comment>
-      <translation>Keycard blocked</translation>
     </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>
