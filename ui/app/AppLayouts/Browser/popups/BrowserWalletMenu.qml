@@ -7,9 +7,13 @@ import StatusQ
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
+
+import SortFilterProxyModel
 
 import shared.controls
 import shared.views
+import shared.stores as SharedStores
 import utils
 
 import AppLayouts.Browser.stores as BrowserStores
@@ -28,8 +32,8 @@ Dialog {
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
-    width: 360
-    height: contentItem.childrenRect.height + 2 * Theme.padding
+    width: 720
+    height: 480
     background: Rectangle {
         id: bgPopup
         color: Theme.palette.background
@@ -108,6 +112,18 @@ Dialog {
         }
     }
 
+    Connections {
+        target: browserActivityStore.transactionActivityStatus
+        enabled: root.visible
+        function onIsFilterDirtyChanged() {
+            browserActivityStore.updateTransactionFilterIfDirty()
+        }
+        function onFilterChainsChanged() {
+            browserActivityStore.currentActivityFiltersStore.updateCollectiblesModel()
+            browserActivityStore.currentActivityFiltersStore.updateRecipientsModel()
+        }
+    }
+
     Item {
         property string currentAddress: ""
         id: accountSelectorRow
@@ -136,6 +152,11 @@ Dialog {
                 accountSelectorRow.currentAddress = currentAccountAddress
                 root.browserWalletStore.switchAccountByAddress(currentAccountAddress)
                 root.accountChanged(currentAccountAddress)
+
+                browserActivityStore.activityController.setFilterAddressesJson(
+                    JSON.stringify([currentAccountAddress])
+                )
+
                 reload()
             }
         }
@@ -163,6 +184,39 @@ Dialog {
         }
     }
 
+    BrowserStores.BrowserActivityStore {
+        id: browserActivityStore
+        browserWalletStore: root.browserWalletStore
+    }
+
+    HistoryView {
+        id: walletInfoContent
+        width: parent.width
+        anchors.top: accountSelectorRow.bottom
+        anchors.topMargin: Theme.bigPadding
+        anchors.bottom: parent.bottom
+
+        activityStore: browserActivityStore
+        overview: root.browserWalletStore.dappBrowserAccount
+        communitiesStore: null
+        currencyStore: SharedStores.CurrenciesStore {}
+        networksStore: SharedStores.NetworksStore {}
+        showAllAccounts: false
+        displayValues: true
+        filterVisible: false
+        disableShadowOnScroll: true
+        hideVerticalScrollbar: false
+
+        Component.onCompleted: {
+            const activeChainIds = SQUtils.ModelUtils.modelToFlatArray(networksStore.activeNetworks, "chainId")
+            if (activeChainIds.length > 0) {
+                browserActivityStore.activityController.setFilterChainsJson(JSON.stringify(activeChainIds), true)
+            }
+
+            const currentAddress = root.browserWalletStore.dappBrowserAccount.address
+            browserActivityStore.activityController.setFilterAddressesJson(JSON.stringify([currentAddress]))
+        }
+    }
     onClosed: {
         root.destroy();
     }
