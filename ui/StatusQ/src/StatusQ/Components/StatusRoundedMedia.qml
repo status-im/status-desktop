@@ -206,7 +206,6 @@ StatusRoundedComponent {
         // In case manualMaxDimension is not defined then use parent width and height instead
         width: root.manualMaxDimension === 0 ? parent.width : root.manualMaxDimension
         height: root.manualMaxDimension === 0 ? parent.height : root.manualMaxDimension
-        asynchronous: true
         visible: !root.isError && !root.isLoading
     }
 
