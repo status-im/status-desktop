@@ -12,7 +12,6 @@ import AppLayouts.Wallet
 import AppLayouts.Wallet.panels
 import AppLayouts.Wallet.views
 import AppLayouts.Wallet.popups
-import AppLayouts.Wallet
 
 import utils
 
