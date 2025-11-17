@@ -48,6 +48,8 @@ StatusSectionLayout {
     property bool isDebugEnabled: false
     property string platformOS: Qt.platform.os
 
+    readonly property string userAgent: connectorBridge.httpUserAgent
+
     signal sendToRecipientRequested(string address)
 
     function openUrlInNewTab(url) {
