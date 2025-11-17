@@ -228,7 +228,8 @@ FocusScope {
                     icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
                     size: StatusBaseButton.Size.Small
                     radius: width/2
-                    visible: tabButton.hovered
+                    opacity: tabButton.hovered ? 1 : 0
+                    visible: opacity > 0
                     onClicked: root.removeView(tabButton.TabBar.index)
                 }
             }
