@@ -1,5 +1,5 @@
 import QtQuick
-import utils
+import StatusQ
 
 QtObject {
     id: root
@@ -28,7 +28,7 @@ QtObject {
 
     function openFile(index) {
         const filePath = `${downloadModel.downloads[index].downloadDirectory}/${downloadModel.downloads[index].downloadFileName}`
-        Qt.openUrlExternally(Utils.fromLocalFile(filePath))
+        Qt.openUrlExternally(UrlUtils.convertUrlToLocalPath(filePath))
         root.removeDownloadFromModel(index)
         // if all items are opened, stop diplaying the bar
         if(root.downloadModel.count === 0) {
@@ -38,6 +38,6 @@ QtObject {
 
     function openDirectory(index) {
         const dirPath = downloadModel.downloads[index].downloadDirectory
-        Qt.openUrlExternally(Utils.fromLocalFile(dirPath))
+        Qt.openUrlExternally(UrlUtils.convertUrlToLocalPath(dirPath))
     }
 }
