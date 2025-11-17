@@ -1026,24 +1026,6 @@ QtObject:
     except Exception as e:
       error "error: ", procName="onGetFirstUnseenMessageIdFor", errName = e.name, errDesription = e.msg
 
-  proc getTextUrls*(self: Service, text: string): seq[string] =
-    try:
-      let response = status_go.getTextUrls(text)
-      if response.result.kind != JArray:
-        warn "expected response is not an array", methodName = "getTextUrls"
-        return
-      return map(response.result.getElems(), proc(x: JsonNode): string = x.getStr())
-
-    except Exception as e:
-      error "getTextUrls failed", errName = e.name, errDesription = e.msg
-
-  proc getTextURLsToUnfurl*(self: Service, text: string): UrlsUnfurlingPlan =
-    try:
-      let response = status_go.getTextURLsToUnfurl(text)
-      return toUrlUnfurlingPlan(response.result)
-    except Exception as e:
-      error "getTextURLsToUnfurl failed", errName = e.name, errDesription = e.msg
-
   proc onAsyncGetTextURLsToUnfurl*(self: Service, responseString: string) {.slot.} =
     let response = responseString.parseJson()
     if response.kind != JObject:
