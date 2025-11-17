@@ -48,6 +48,9 @@ QtObject:
                     "file://" & absPath
     return uriPath
 
+  proc fromLocalFile*(self: Utils, filePath: string): string {.slot.} =
+    return url_fromLocalFile(filePath)
+
   proc isAlias*(self: Utils, value: string): bool {.slot.} =
     result = isAlias(value)
 

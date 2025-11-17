@@ -1,4 +1,5 @@
 import QtQuick
+import utils
 
 QtObject {
     id: root
@@ -26,15 +27,17 @@ QtObject {
     }
 
     function openFile(index) {
-        Qt.openUrlExternally(`file://${downloadModel.downloads[index].downloadDirectory}/${downloadModel.downloads[index].downloadFileName}`)
+        const filePath = `${downloadModel.downloads[index].downloadDirectory}/${downloadModel.downloads[index].downloadFileName}`
+        Qt.openUrlExternally(Utils.fromLocalFile(filePath))
         root.removeDownloadFromModel(index)
         // if all items are opened, stop diplaying the bar
         if(root.downloadModel.count === 0) {
             root.allItemsOpened()
         }
     }
-    // TODO check if this works in Windows and Mac
+
     function openDirectory(index) {
-        Qt.openUrlExternally("file://" + downloadModel.downloads[index].downloadDirectory)
+        const dirPath = downloadModel.downloads[index].downloadDirectory
+        Qt.openUrlExternally(Utils.fromLocalFile(dirPath))
     }
 }
