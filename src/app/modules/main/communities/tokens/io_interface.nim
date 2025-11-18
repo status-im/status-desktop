@@ -24,7 +24,7 @@ method computeDeployCollectiblesFee*(self: AccessInterface,  uuid: string, commu
     raise newException(ValueError, "No implementation available")
 
 method computeDeployAssetsFee*(self: AccessInterface, uuid: string, communityId: string, address: string, name: string,
-  symbol: string, description: string, supply: string, infiniteSupply: bool, decimals: int, chainId: int,
+  symbol: string, description: string, supply: string, infiniteSupply: bool, chainId: int,
   imageCropInfoJson: string) {.base.} =
     raise newException(ValueError, "No implementation available")
 
