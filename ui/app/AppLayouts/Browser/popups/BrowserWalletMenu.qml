@@ -31,7 +31,7 @@ Dialog {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
     width: 360
-    height: 480
+    height: contentItem.childrenRect.height + 2 * Theme.padding
     background: Rectangle {
         id: bgPopup
         color: Theme.palette.background
@@ -131,7 +131,7 @@ Dialog {
         width: parent.width
         height: accountSelector.height
         anchors.top: walletHeader.bottom
-        anchors.topMargin: Theme.bigPadding
+        anchors.topMargin: Theme.padding
 
         AccountSelector {
             id: accountSelector
@@ -163,8 +163,7 @@ Dialog {
             height: 20
             anchors.right: sendBtn.left
             anchors.rightMargin: Theme.padding
-            anchors.top: parent.top
-            anchors.topMargin: Theme.padding
+            anchors.verticalCenter: accountSelector.verticalCenter
             color: Theme.palette.transparent
             textToCopy: accountSelector.currentAccountAddress
             onCopyClicked: ClipboardUtils.setText(textToCopy)
@@ -175,27 +174,12 @@ Dialog {
             width: 40
             height: 40
             anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.topMargin: Theme.halfPadding
+            anchors.verticalCenter: accountSelector.verticalCenter
             icon.name: "send"
             onClicked: sendTriggered(accountSelector.currentAccountAddress)
         }
     }
 
-    Item {
-        id: walletInfoContent
-        width: parent.width
-        anchors.top: accountSelectorRow.bottom
-        anchors.topMargin: Theme.bigPadding
-        anchors.bottom: parent.bottom
-
-        // TODO: Add Assets and History tabs when ready
-        StatusBaseText {
-            anchors.centerIn: parent
-            text: qsTr("Wallet info will appear here")
-            color: Theme.palette.baseColor1
-        }
-    }
     onClosed: {
         root.destroy();
     }
