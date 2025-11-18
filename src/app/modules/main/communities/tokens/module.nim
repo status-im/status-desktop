@@ -20,6 +20,8 @@ import ./io_interface, ./view , ./controller
 
 export io_interface
 
+const DEFAULT_COMMUNITY_TOKENS_DECIMALS = 18 # determined by the community creation contract
+
 type
   ContractAction {.pure.} = enum
     Unknown = 0
@@ -348,6 +350,7 @@ method computeDeployCollectiblesFee*(self: Module, uuid: string, communityId: st
   self.tempDeploymentParams.symbol = symbol
   self.tempDeploymentParams.supply = supply.parse(Uint256)
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
+  self.tempDeploymentParams.decimals = 0 # collectibles have no decimals
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
@@ -391,7 +394,7 @@ method computeDeployTokenOwnerFee*(self: Module, uuid: string, communityId: stri
   self.controller.computeDeployOwnerContractsFee(uuid, chainId, fromAddress, communityId, self.tempOwnerDeploymentParams, self.tempMasterDeploymentParams)
 
 method computeDeployAssetsFee*(self: Module, uuid: string, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
-  supply: string, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) =
+  supply: string, infiniteSupply: bool, chainId: int, imageCropInfoJson: string) =
   # TODO: move this check to service and send route ready signal to update the UI and notifiy the user
   let (ownerTokenAddress, masterTokenAddress, isDeployed) = self.getOwnerAndMasterTokensAddresses(communityId, chainId)
   if not isDeployed:
@@ -405,7 +408,7 @@ method computeDeployAssetsFee*(self: Module, uuid: string, communityId: string, 
   self.tempDeploymentParams.symbol = symbol
   self.tempDeploymentParams.supply = supply.parse(Uint256)
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
-  self.tempDeploymentParams.decimals = decimals
+  self.tempDeploymentParams.decimals = DEFAULT_COMMUNITY_TOKENS_DECIMALS
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
   self.tempDeploymentParams.ownerTokenAddress = ownerTokenAddress
   self.tempDeploymentParams.masterTokenAddress = masterTokenAddress
