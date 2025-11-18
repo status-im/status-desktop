@@ -52,7 +52,7 @@ StatusListItem {
     required property var flatNetworks
 
     required property SharedStores.CurrenciesStore currenciesStore
-    required property WalletStores.RootStore walletRootStore
+    required property var walletRootStore  // Changed from WalletStores.RootStore to support browser usage
 
     readonly property bool isModelDataValid: modelData !== undefined && !!modelData
 

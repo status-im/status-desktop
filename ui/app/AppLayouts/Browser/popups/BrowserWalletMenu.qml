@@ -9,6 +9,8 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as SQUtils
 
+import SortFilterProxyModel
+
 import shared.controls
 import shared.views
 import shared.stores as SharedStores
@@ -204,6 +206,11 @@ Dialog {
         }
     }
 
+    BrowserStores.BrowserWalletRootStoreAdapter {
+        id: walletRootStoreAdapter
+        browserWalletStore: root.browserWalletStore
+    }
+
     HistoryView {
         id: walletInfoContent
         width: parent.width
@@ -211,7 +218,7 @@ Dialog {
         anchors.topMargin: Theme.bigPadding
         anchors.bottom: parent.bottom
 
-        walletRootStore: root.browserWalletStore
+        walletRootStore: walletRootStoreAdapter
         overview: root.browserWalletStore.dappBrowserAccount
         communitiesStore: null
         currencyStore: SharedStores.CurrenciesStore {}
@@ -240,16 +247,13 @@ Dialog {
                     console.warn("==== Browser: No active chains found!")
                 }
 
-                console.log("==== Browser: Step 3 - Checking account address")
-                if (root.browserWalletStore.dappBrowserAccount.address) {
-                    console.log("==== Browser: Setting address filter:", root.browserWalletStore.dappBrowserAccount.address)
-                    root.browserWalletStore.activityController.setFilterAddressesJson(
-                        JSON.stringify([root.browserWalletStore.dappBrowserAccount.address])
-                    )
-                } else {
-                    console.warn("==== Browser: No account address available!")
-                    return
-                }
+                console.log("==== Browser: Step 3 - Setting all wallet addresses for proper Sent/Received detection")
+                // We need to pass ALL wallet addresses to the controller so status-go can properly
+                // determine transaction direction (Sent vs Received). The addresses parameter tells
+                // status-go which addresses are "yours", while the filter determines what to show.
+                const allAddresses = SQUtils.ModelUtils.modelToFlatArray(root.browserWalletStore.accounts, "address")
+                console.log("==== Browser: All wallet addresses:", JSON.stringify(allAddresses))
+                root.browserWalletStore.activityController.setFilterAddressesJson(JSON.stringify(allAddresses))
 
                 console.log("==== Browser: Step 4 - Starting new filter session")
                 root.browserWalletStore.activityController.newFilterSession()
