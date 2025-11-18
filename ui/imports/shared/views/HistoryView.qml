@@ -31,7 +31,7 @@ ColumnLayout {
 
     property var overview
 
-    property WalletStores.RootStore walletRootStore
+    property var walletRootStore  // Changed from WalletStores.RootStore to support browser usage
     property CommunitiesStore communitiesStore
     property CurrenciesStore currencyStore
     required property NetworksStore networksStore

@@ -50,4 +50,12 @@ QtObject {
     function switchAccountByAddress(address) {
         browserSectionCurrentAccount.switchAccountByAddress(address)
     }
+
+    function fetchMoreTransactions() {
+        // Browser view doesn't support pagination yet, no-op
+    }
+
+    function resetActivityData() {
+        activityController.resetActivityData()
+    }
 }

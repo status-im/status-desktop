@@ -7,6 +7,7 @@ import StatusQ
 import StatusQ.Controls
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Core.Utils as SQUtils
 
 import shared.controls
 import shared.views
@@ -31,7 +32,7 @@ Dialog {
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
-    width: 360
+    width: 720
     height: 480
     background: Rectangle {
         id: bgPopup
@@ -203,58 +204,81 @@ Dialog {
         }
     }
 
-    Loader {
-        id: historyLoader
+    HistoryView {
+        id: walletInfoContent
         width: parent.width
         anchors.top: accountSelectorRow.bottom
         anchors.topMargin: Theme.bigPadding
         anchors.bottom: parent.bottom
-        active: false
 
-        sourceComponent: HistoryView {
-            id: walletInfoContent
-            width: parent.width
+        walletRootStore: root.browserWalletStore
+        overview: root.browserWalletStore.dappBrowserAccount
+        communitiesStore: null
+        currencyStore: SharedStores.CurrenciesStore {}
+        networksStore: SharedStores.NetworksStore {}
+        showAllAccounts: false
+        displayValues: true
+        filterVisible: false
+        disableShadowOnScroll: true
+        hideVerticalScrollbar: false
 
-            walletRootStore: root.browserWalletStore
-            overview: root.browserWalletStore.dappBrowserAccount
-            communitiesStore: null
-            currencyStore: SharedStores.CurrenciesStore {}
-            networksStore: SharedStores.NetworksStore {}
-            showAllAccounts: false
-            displayValues: true
-            filterVisible: false
-            disableShadowOnScroll: true
-            hideVerticalScrollbar: false
+        Component.onCompleted: {
+            console.log("==== HistoryView: walletRootStore.isNonArchivalNode =", walletRootStore.isNonArchivalNode)
+            console.log("==== HistoryView: width =", width, "height =", height)
+            console.log("==== HistoryView: visible =", visible)
+            console.log("==== Browser: HistoryView completed, initializing activity controller")
+
+            try {
+                console.log("==== Browser: Step 1 - Getting active networks from networksStore")
+                const activeChainIds = SQUtils.ModelUtils.modelToFlatArray(networksStore.activeNetworks, "chainId")
+                console.log("==== Browser: Active chain IDs:", JSON.stringify(activeChainIds))
+
+                if (activeChainIds.length > 0) {
+                    console.log("==== Browser: Step 2 - Setting chains filter")
+                    root.browserWalletStore.activityController.setFilterChainsJson(JSON.stringify(activeChainIds), true)
+                } else {
+                    console.warn("==== Browser: No active chains found!")
+                }
+
+                console.log("==== Browser: Step 3 - Checking account address")
+                if (root.browserWalletStore.dappBrowserAccount.address) {
+                    console.log("==== Browser: Setting address filter:", root.browserWalletStore.dappBrowserAccount.address)
+                    root.browserWalletStore.activityController.setFilterAddressesJson(
+                        JSON.stringify([root.browserWalletStore.dappBrowserAccount.address])
+                    )
+                } else {
+                    console.warn("==== Browser: No account address available!")
+                    return
+                }
+
+                console.log("==== Browser: Step 4 - Starting new filter session")
+                root.browserWalletStore.activityController.newFilterSession()
+
+                console.log("==== Browser: Initialization complete!")
+                console.log("==== Browser: Model count:", root.browserWalletStore.historyTransactions.count)
+                console.log("==== Browser: Loading state:", root.browserWalletStore.loadingHistoryTransactions)
+                console.log("==== Browser: Error code:", root.browserWalletStore.transactionActivityStatus.errorCode)
+            } catch (e) {
+                console.error("==== Browser: ERROR during initialization:", e.toString())
+            }
         }
-    }
 
-    Component.onCompleted: {
-        console.log("==== Browser: Dialog completed, initializing activity controller")
-
-        // Get networksStore from a temporary instance
-        const tempNetworksStore = Qt.createQmlObject('import shared.stores 1.0; NetworksStore {}', root)
-        const activeChainIds = ModelUtils.modelToArray(tempNetworksStore.activeNetworks, "chainId")
-        console.log("==== Browser: activeChainIds =", JSON.stringify(activeChainIds))
-
-        if (activeChainIds.length > 0) {
-            root.browserWalletStore.activityController.setFilterChainsJson(JSON.stringify(activeChainIds), true)
+        Connections {
+            target: root.browserWalletStore.historyTransactions
+            function onCountChanged() {
+                console.log("==== Browser: Transaction count changed to:", root.browserWalletStore.historyTransactions.count)
+            }
         }
 
-        if (root.browserWalletStore.dappBrowserAccount.address) {
-            console.log("==== Browser: Setting address filter:", root.browserWalletStore.dappBrowserAccount.address)
-            root.browserWalletStore.activityController.setFilterAddressesJson(
-                JSON.stringify([root.browserWalletStore.dappBrowserAccount.address])
-            )
+        Connections {
+            target: root.browserWalletStore.transactionActivityStatus
+            function onLoadingDataChanged() {
+                console.log("==== Browser: Loading state changed to:", root.browserWalletStore.loadingHistoryTransactions)
+            }
+            function onErrorCodeChanged() {
+                console.log("==== Browser: Error code changed to:", root.browserWalletStore.transactionActivityStatus.errorCode)
+            }
         }
-
-        console.log("==== Browser: Starting new filter session")
-        root.browserWalletStore.activityController.newFilterSession()
-
-        // Now load the HistoryView
-        console.log("==== Browser: Loading HistoryView")
-        historyLoader.active = true
-
-        tempNetworksStore.destroy()
     }
     onClosed: {
         root.destroy();
