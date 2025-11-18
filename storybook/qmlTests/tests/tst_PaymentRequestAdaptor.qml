@@ -92,7 +92,7 @@ Item {
                     {
                         chainId: 421614,
                         chainName: "Arbitrum Sepolia",
-                        blockExplorerURL: "https://sepolia-explorer.arbitrum.io/",
+                        blockExplorerURL: "https://sepolia.arbiscan.io/",
                         iconUrl: "network/Network=Arbitrum-test",
                         chainColor: "#939BA1",
                         shortName: "arb1",
