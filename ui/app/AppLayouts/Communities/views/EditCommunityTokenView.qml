@@ -33,7 +33,7 @@ StatusScrollView {
     }
 
     // Used for reference validation
-    required property var referenceAssetsBySymbolModel
+    required property var referenceTokenGroupsModel
     
     // Used for reference validation when editing a failed deployment
     property string referenceName: ""
@@ -66,7 +66,6 @@ StatusScrollView {
                                               && descriptionInput.valid
                                               && symbolInput.valid
                                               && (unlimitedSupplyChecker.checked || (!unlimitedSupplyChecker.checked && parseInt(supplyInput.text) > 0))
-                                              && (!root.isAssetView  || (root.isAssetView && assetDecimalsInput.valid))
         readonly property bool isFullyFilled: d.formFilled
                                               && deployFeeSubscriber.feeText !== ""
                                               && deployFeeSubscriber.feeErrorText === ""
@@ -75,7 +74,7 @@ StatusScrollView {
 
         readonly property bool containsAssetReferenceName: root.isAssetView ? checkNameProxy.count > 0 : false
         readonly property SortFilterProxyModel checkNameProxy : SortFilterProxyModel {
-          sourceModel: root.referenceAssetsBySymbolModel
+          sourceModel: root.referenceTokenGroupsModel
           filters: ValueFilter {
             roleName: "name"
             value: nameInput.text
@@ -84,7 +83,7 @@ StatusScrollView {
 
         readonly property bool containsAssetReferenceSymbol: root.isAssetView ? checkSymbolProxy.count > 0 : false
         readonly property SortFilterProxyModel checkSymbolProxy: SortFilterProxyModel {
-          sourceModel: root.referenceAssetsBySymbolModel
+          sourceModel: root.referenceTokenGroupsModel
           filters: ValueFilter {
             roleName: "symbol"
             value: symbolInput.text
@@ -227,7 +226,7 @@ StatusScrollView {
                 return (!SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) && !d.containsAssetReferenceSymbol)
             }
             extraValidator.errorMessage: d.containsAssetReferenceSymbol ? qsTr("Symbol already exists") : qsTr("You have used this token symbol before")
-            input.tabNavItem: supplyInput.visible ? supplyInput : assetDecimalsInput
+            input.tabNavItem: supplyInput.visible ? supplyInput : previewButton
 
             onTextChanged: {
                 const cursorPos = input.edit.cursorPosition
@@ -341,7 +340,7 @@ StatusScrollView {
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 999999999 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 999,999,999")
-            input.tabNavItem: assetDecimalsInput.visible ? assetDecimalsInput : previewButton
+            input.tabNavItem: previewButton
 
             onTextChanged: {
                 const supplyNumber = parseInt(text)
@@ -374,30 +373,6 @@ StatusScrollView {
             description: qsTr("Enable to allow you to destroy tokens remotely. Useful for revoking permissions from individuals")
             checked: !!root.token ? root.token.remotelyDestruct : true
             onCheckedChanged: root.token.remotelyDestruct = checked
-        }
-
-        CustomStatusInput {
-            id: assetDecimalsInput
-
-            Layout.fillWidth: true
-            Layout.maximumWidth: root.preferredContentWidth
-            Layout.rightMargin: root.internalRightPadding
-
-            visible: root.isAssetView
-            label: qsTr("Decimals (DP)")
-            charLimit: 2
-            charLimitLabel: qsTr("Max 10")
-            placeholderText: "2"
-            text: root.token.decimals
-            validationMode: StatusInput.ValidationMode.Always
-            minLengthValidator.errorMessage: qsTr("Please enter how many decimals your token should have")
-            regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your decimal amount is too cool (use 0-9 only)") :
-                                                            qsTr("Your decimal amount contains invalid characters (use 0-9 only)")
-            regexValidator.regularExpression: Constants.regularExpressions.numerical
-            extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 10 }
-            extraValidator.errorMessage: qsTr("Enter a number between 1 and 10")
-            input.tabNavItem: previewButton
-            onTextChanged: root.token.decimals = parseInt(text)
         }
 
         CustomSwitchRowComponent {

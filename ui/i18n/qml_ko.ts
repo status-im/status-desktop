@@ -6381,30 +6381,6 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation>원격으로 토큰을 소각할 수 있게 합니다. 개인의 권한을 취소할 때 유용합니다</translation>
     </message>
     <message>
-        <source>Decimals (DP)</source>
-        <translation>소수 자릿수 (DP)</translation>
-    </message>
-    <message>
-        <source>Max 10</source>
-        <translation>최대 10</translation>
-    </message>
-    <message>
-        <source>Please enter how many decimals your token should have</source>
-        <translation>토큰의 소수 자릿수를 입력해 주세요</translation>
-    </message>
-    <message>
-        <source>Your decimal amount is too cool (use 0-9 only)</source>
-        <translation>소수점 숫자가 너무 힙해요 (0-9만 사용하세요)</translation>
-    </message>
-    <message>
-        <source>Your decimal amount contains invalid characters (use 0-9 only)</source>
-        <translation>소수 입력에 잘못된 문자가 있습니다 (0-9만 사용하세요)</translation>
-    </message>
-    <message>
-        <source>Enter a number between 1 and 10</source>
-        <translation>1에서 10 사이의 숫자를 입력하세요</translation>
-    </message>
-    <message>
         <source>Show fees</source>
         <translation>수수료 표시</translation>
     </message>

@@ -75,7 +75,7 @@ StackView {
     property var tokensModel
     property var membersModel
     property var accounts // Expected roles: address, name, color, emoji, walletType
-    required property var referenceAssetsBySymbolModel
+    required property var referenceTokenGroupsModel
 
     signal mintCollectible(var collectibleItem)
     signal mintAsset(var assetItem)
@@ -430,7 +430,7 @@ StackView {
 
                         accounts: root.accounts
                         tokensModel: root.tokensModel
-                        referenceAssetsBySymbolModel: root.referenceAssetsBySymbolModel
+                        referenceTokenGroupsModel: root.referenceTokenGroupsModel
 
                         referenceName: newTokenPage.referenceName
                         referenceSymbol: newTokenPage.referenceSymbol

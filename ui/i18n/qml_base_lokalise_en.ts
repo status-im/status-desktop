@@ -7810,36 +7810,6 @@
       <translation>Enable to allow you to destroy tokens remotely. Useful for revoking permissions from individuals</translation>
     </message>
     <message>
-      <source>Decimals (DP)</source>
-      <comment>EditCommunityTokenView</comment>
-      <translation>Decimals (DP)</translation>
-    </message>
-    <message>
-      <source>Max 10</source>
-      <comment>EditCommunityTokenView</comment>
-      <translation>Max 10</translation>
-    </message>
-    <message>
-      <source>Please enter how many decimals your token should have</source>
-      <comment>EditCommunityTokenView</comment>
-      <translation>Please enter how many decimals your token should have</translation>
-    </message>
-    <message>
-      <source>Your decimal amount is too cool (use 0-9 only)</source>
-      <comment>EditCommunityTokenView</comment>
-      <translation>Your decimal amount is too cool (use 0-9 only)</translation>
-    </message>
-    <message>
-      <source>Your decimal amount contains invalid characters (use 0-9 only)</source>
-      <comment>EditCommunityTokenView</comment>
-      <translation>Your decimal amount contains invalid characters (use 0-9 only)</translation>
-    </message>
-    <message>
-      <source>Enter a number between 1 and 10</source>
-      <comment>EditCommunityTokenView</comment>
-      <translation>Enter a number between 1 and 10</translation>
-    </message>
-    <message>
       <source>Show fees</source>
       <comment>EditCommunityTokenView</comment>
       <translation>Show fees</translation>

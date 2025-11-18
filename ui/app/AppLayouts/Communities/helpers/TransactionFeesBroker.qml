@@ -248,7 +248,6 @@ QtObject {
                         args.token.description,
                         args.token.supply,
                         args.token.infiniteSupply,
-                        args.token.decimals,
                         args.token.artworkSource,
                         args.token.artworkCropRect)
         }
