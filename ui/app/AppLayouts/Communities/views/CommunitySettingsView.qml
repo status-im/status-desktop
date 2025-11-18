@@ -437,7 +437,7 @@ StatusSectionLayout {
                 membersModel: membersModelAdaptor.joinedMembers
                 flatNetworks: root.activeNetworks
                 accounts: root.walletAccountsModel
-                referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
+                referenceTokenGroupsModel: root.tokensStore.tokenGroupsModel
 
                 onStopUpdatingFees: {
                     communityTokensStore.stopUpdatesForSuggestedRoute()
