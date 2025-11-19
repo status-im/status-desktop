@@ -12,12 +12,26 @@ ANDROID_ABI=${ANDROID_ABI:-"arm64-v8a"}
 BUILD_TYPE=${BUILD_TYPE:-"apk"}
 SIGN_IOS=${SIGN_IOS:-"false"}
 
+QMAKE_BIN="${QMAKE:-qmake}"
+QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
+
 echo "Building wrapperApp for ${OS}, ${ANDROID_ABI}"
 
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
 
-echo "Building wrapperApp"
+STATUS_DESKTOP=${STATUS_DESKTOP:-"../vendors/status-desktop"}
+DESKTOP_VERSION=$(eval cd "$STATUS_DESKTOP" && git describe --tags --dirty="-dirty" --always | cut -d- -f1 | cut -d. -f1-3 | sed 's/^v//')
+
+TIMESTAMP=$(($(date +%s) * 1000 / 60000))
+
+if [[ -n "${CHANGE_ID:-}" ]]; then
+    BUILD_VERSION="${CHANGE_ID}.${TIMESTAMP}"
+else
+    BUILD_VERSION="${TIMESTAMP}"
+fi
+
+echo "Using version: $DESKTOP_VERSION; build version: $BUILD_VERSION"
 
 if [[ "${OS}" == "android" ]]; then
   if [[ -z "${JAVA_HOME}" ]]; then
@@ -28,9 +42,7 @@ if [[ "${OS}" == "android" ]]; then
   echo "Building for Android 35"
   ANDROID_PLATFORM=android-35
 
-  QMAKE_CONFIG="CONFIG+=device CONFIG+=release"
-  QMAKE_BIN="${QMAKE:-qmake}"
-  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" -after
+  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" "$QMAKE_CONFIG" -spec android-clang ANDROID_ABIS="$ANDROID_ABI" APP_VARIANT="${APP_VARIANT}" VERSION="$DESKTOP_VERSION" -after
 
   # Build the app
   make -j"$(nproc)" apk_install_target
@@ -110,23 +122,12 @@ if [[ "${OS}" == "android" ]]; then
     fi
   fi
 else
-  BUILD_VERSION=$(($(date +%s) * 1000 / 60000))
-
-  if [[ -n "${CHANGE_ID:-}" ]]; then
-    VERSION_STRING="${CHANGE_ID}.${BUILD_VERSION}"
-  else
-    VERSION_STRING="${BUILD_VERSION}"
-  fi
-
-  echo "Using version: $VERSION_STRING"
-
-  QMAKE_BIN="${QMAKE:-qmake}"
-  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" -spec macx-ios-clang CONFIG+=release CONFIG+="$SDK" CONFIG+=device VERSION="$VERSION_STRING" -after
+  "$QMAKE_BIN" "$CWD/../wrapperApp/Status.pro" "$QMAKE_CONFIG" -spec macx-ios-clang CONFIG+="$SDK" VERSION="$DESKTOP_VERSION" -after
 
   # Compile resources
-  xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcbeautify
+  xcodebuild -configuration Release -target "Qt Preprocess" -sdk "$SDK" -arch "$ARCH" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=$BUILD_VERSION | xcbeautify
   # Compile the app
-  xcodebuild -configuration Release -target Status install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcbeautify
+  xcodebuild -configuration Release -target Status install -sdk "$SDK" -arch "$ARCH" DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=$BUILD_VERSION | xcbeautify
 
   if [[ ! -e "$BIN_DIR/Status.app/Info.plist" ]]; then
     echo "Build failed"

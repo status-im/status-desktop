@@ -24,6 +24,8 @@ LIB_PREFIX = $$(APP_VARIANT)
 android {
     message("Configuring for android $${QT_ARCH}, $$(ANDROID_ABI)")
 
+    ANDROID_VERSION_NAME = $$VERSION
+
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/qt$$QT_MAJOR_VERSION
 
     LIBS += -L$$PWD/../lib/$$LIB_PREFIX -lnim_status_client
