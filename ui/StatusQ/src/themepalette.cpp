@@ -1,0 +1,457 @@
+#include "StatusQ/themepalette.h"
+#include "StatusQ/statuscolors.h"
+#include <QtQml/qqml.h>
+
+ThemePalette::ThemePalette(QObject* parent)
+    : QObject(parent)
+{
+    black = QColor(0,0,0);
+    white = QColor(255,255,255);
+    transparent = QColor(0,0,0,0);
+}
+
+QColor ThemePalette::hoverColor(const QColor& normalColor) const
+{
+    if (name == QLatin1String("light"))
+        return QColor(normalColor).darker(120);
+    return QColor(normalColor).lighter(120);
+}
+
+void ThemePalette::buildArrays()
+{
+    customisationColorsArray = {
+        customisationColors.blue,
+        customisationColors.purple,
+        customisationColors.orange,
+        customisationColors.army,
+        customisationColors.turquoise,
+        customisationColors.sky,
+        customisationColors.yellow,
+        customisationColors.pink,
+        customisationColors.copper,
+        customisationColors.camel,
+        customisationColors.magenta,
+        customisationColors.yinYang
+    };
+
+    communityColorsArray = {
+        customisationColors.blue,
+        customisationColors.yellow,
+        customisationColors.magenta,
+        customisationColors.purple,
+        customisationColors.army,
+        customisationColors.sky,
+        customisationColors.orange,
+        customisationColors.camel
+    };
+}
+
+std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
+{
+    auto t = std::make_unique<ThemePalette>(parent);
+    t->name = QStringLiteral("dark");
+
+    // Base colors
+    t->baseColor1 = StatusColors::getColor("graphite5");
+    t->baseColor2 = StatusColors::getColor("graphite4");
+    t->baseColor3 = StatusColors::getColor("graphite3");
+    t->baseColor4 = StatusColors::getColor("graphite2");
+    t->baseColor5 = StatusColors::getColor("graphite");
+
+    // Primary
+    t->primaryColor1 = StatusColors::getColor("blue3");
+    t->primaryColor2 = StatusColors::getColor("blue4", 0.3);
+    t->primaryColor3 = StatusColors::getColor("blue4", 0.2);
+
+    // Danger
+    t->dangerColor1 = StatusColors::getColor("red3");
+    t->dangerColor2 = StatusColors::getColor("red3", 0.3);
+    t->dangerColor3 = StatusColors::getColor("red3", 0.2);
+
+    // Warning
+    t->warningColor1 = StatusColors::getColor("warning_orange");
+    t->warningColor2 = StatusColors::getColor("warning_orange", 0.2);
+    t->warningColor3 = StatusColors::getColor("warning_orange", 0.1);
+
+    // Success
+    t->successColor1 = StatusColors::getColor("green3");
+    t->successColor2 = StatusColors::getColor("green3", 0.2);
+    t->successColor3 = StatusColors::getColor("green3", 0.3);
+
+    // Mention
+    t->mentionColor1 = StatusColors::getColor("turquoise3");
+    t->mentionColor2 = StatusColors::getColor("turquoise4", 0.3);
+    t->mentionColor3 = StatusColors::getColor("turquoise4", 0.2);
+    t->mentionColor4 = StatusColors::getColor("turquoise4", 0.1);
+
+    // Pin
+    t->pinColor1 = StatusColors::getColor("orange3");
+    t->pinColor2 = StatusColors::getColor("orange4", 0.2);
+    t->pinColor3 = StatusColors::getColor("orange4", 0.1);
+
+    // Direct (white with varying alpha)
+    t->directColor1 = StatusColors::getColor("white");
+    t->directColor2 = StatusColors::getColor("white", 0.9);
+    t->directColor3 = StatusColors::getColor("white", 0.8);
+    t->directColor4 = StatusColors::getColor("white", 0.7);
+    t->directColor5 = StatusColors::getColor("white", 0.4);
+    t->directColor6 = StatusColors::getColor("white", 0.2);
+    t->directColor7 = StatusColors::getColor("white", 0.1);
+    t->directColor8 = StatusColors::getColor("white", 0.05);
+    t->directColor9 = StatusColors::getColor("white", 0.2); // as per QML duplicate
+
+    // Indirect
+    t->indirectColor1 = StatusColors::getColor("black");
+    t->indirectColor2 = StatusColors::getColor("black", 0.7);
+    t->indirectColor3 = StatusColors::getColor("black", 0.4);
+    t->indirectColor4 = StatusColors::getColor("graphite3");
+
+    // Misc
+    t->miscColor1 = StatusColors::getColor("blue5");
+    t->miscColor2 = StatusColors::getColor("purple");
+    t->miscColor3 = StatusColors::getColor("cyan");
+    t->miscColor4 = StatusColors::getColor("violet");
+    t->miscColor5 = StatusColors::getColor("red2");
+    t->miscColor6 = StatusColors::getColor("orange");
+    t->miscColor7 = StatusColors::getColor("yellow");
+    t->miscColor8 = StatusColors::getColor("green4");
+    t->miscColor9 = StatusColors::getColor("moss2");
+    t->miscColor10 = StatusColors::getColor("brown3");
+    t->miscColor11 = StatusColors::getColor("yellow2");
+    t->miscColor12 = StatusColors::getColor("green6");
+
+    // Other
+    t->neutral95 = QColor(0x06, 0x0F, 0x1F);
+    t->dropShadow = StatusColors::getColor("black", 0.08);
+    t->dropShadow2 = StatusColors::getColor("blue8", 0.02);
+    t->dropShadow3 = StatusColors::getColor("blue8", 0.05);
+    t->backdropColor = StatusColors::getColor("black", 0.4);
+    t->statusFloatingButtonHighlight = StatusColors::getColor("blue4", 0.3);
+    t->statusLoadingHighlight = StatusColors::getColor("white", 0.03);
+    t->statusLoadingHighlight2 = StatusColors::getColor("white", 0.07);
+    t->messageHighlightColor = StatusColors::getColor("blue4", 0.2);
+    t->desktopBlue10 = StatusColors::getColor("darkDesktopBlue10");
+    t->blockProgressBarColor = t->directColor7;
+
+    t->background = t->baseColor3;
+    t->backgroundHover = t->baseColor2;
+    t->border = t->baseColor2;
+    t->textColor = t->directColor1;
+    t->secondaryText = t->baseColor1;
+    t->separator = t->directColor7;
+    t->darkGrey = t->baseColor2;
+    t->secondaryBackground = t->primaryColor2;
+    t->secondaryMenuBackground = StatusColors::getColor("graphite2");
+
+    // Status app layout
+    t->statusAppLayout.backgroundColor = t->baseColor3;
+    t->statusAppLayout.rightPanelBackgroundColor = t->baseColor3;
+
+    // Status app nav bar
+    t->statusAppNavBar.backgroundColor = t->baseColor5;
+
+    // Status toast message
+    t->statusToastMessage.backgroundColor = t->baseColor3;
+
+    // Status list item
+    t->statusListItem.backgroundColor = t->baseColor3;
+    t->statusListItem.secondaryHoverBackgroundColor = t->primaryColor3;
+    t->statusListItem.highlightColor = StatusColors::getColor("blue3", 0.05);
+
+    // Status chat list item
+    t->statusChatListItem.hoverBackgroundColor = t->directColor8;
+    t->statusChatListItem.selectedBackgroundColor = t->directColor7;
+
+    // Status chat list category item
+    t->statusChatListCategoryItem.buttonHoverBackgroundColor = t->directColor7;
+
+    // Status navigation list item
+    t->statusNavigationListItem.hoverBackgroundColor = t->directColor8;
+    t->statusNavigationListItem.selectedBackgroundColor = t->directColor7;
+
+    // Status badge
+    t->statusBadge.foregroundColor = t->baseColor3;
+    t->statusBadge.borderColor = t->baseColor5;
+    t->statusBadge.hoverBorderColor = QColor(0x35, 0x3A, 0x4D);
+
+    // Status menu
+    t->statusMenu.backgroundColor = t->baseColor3;
+    t->statusMenu.hoverBackgroundColor = t->directColor7;
+    t->statusMenu.separatorColor = t->separator;
+
+    // Status modal
+    t->statusModal.backgroundColor = t->baseColor3;
+
+    // Status rounded image
+    t->statusRoundedImage.backgroundColor = t->baseColor3;
+
+    // Status chat input
+    t->statusChatInput.secondaryBackgroundColor = QColor(0x41, 0x41, 0x41);
+
+    // Status switch tab
+    t->statusSwitchTab.buttonBackgroundColor = t->primaryColor1;
+    t->statusSwitchTab.barBackgroundColor = t->primaryColor3;
+    t->statusSwitchTab.selectedTextColor = t->indirectColor1;
+    t->statusSwitchTab.textColor = t->primaryColor1;
+
+    // Status select
+    t->statusSelect.menuItemBackgroundColor = t->baseColor3;
+    t->statusSelect.menuItemHoverBackgroundColor = t->directColor7;
+
+    // Status message
+    t->statusMessage.emojiReactionBackground = t->baseColor2;
+    t->statusMessage.emojiReactionBackgroundHovered = t->primaryColor3;
+    t->statusMessage.emojiReactionBorderHovered = t->primaryColor2;
+
+    // Privacy mode colors
+    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA);
+    t->privacyModeColors.navButtonColor = StatusColors::getColor("white", 0.4);
+    t->privacyModeColors.navButtonHighlightedColor = StatusColors::getColor("white");
+
+    // Customisation colors
+    t->customisationColors.blue      = QColor(0x22, 0x3B, 0xC4);
+    t->customisationColors.purple    = QColor(0x5A, 0x33, 0xCA);
+    t->customisationColors.orange    = QColor(0xCC, 0x64, 0x38);
+    t->customisationColors.army      = QColor(0x1A, 0x4E, 0x52);
+    t->customisationColors.turquoise = QColor(0x22, 0x61, 0x7C);
+    t->customisationColors.sky       = QColor(0x14, 0x75, 0xAC);
+    t->customisationColors.yellow    = QColor(0xC5, 0x8D, 0x30);
+    t->customisationColors.pink      = QColor(0xC5, 0x59, 0x72);
+    t->customisationColors.copper    = QColor(0xA2, 0x4E, 0x45);
+    t->customisationColors.camel     = QColor(0x9F, 0x72, 0x52);
+    t->customisationColors.magenta   = QColor(0xBD, 0x1E, 0x56);
+    t->customisationColors.yinYang   = QColor(0xFF, 0xFF, 0xFF);
+    t->customisationColors.purple2   = QColor(0x71, 0x40, 0xFD);
+
+    // User customization colors
+    t->userCustomizationColors = {
+        QColor(0xAA, 0xC6, 0xFF), QColor(0x88, 0x7A, 0xF9),
+        QColor(0x51, 0xD0, 0xF0), QColor(0xD3, 0x7E, 0xF4),
+        QColor(0xFA, 0x65, 0x65), QColor(0xFF, 0xCA, 0x0F),
+        QColor(0x93, 0xDB, 0x33), QColor(0x10, 0xA8, 0x8E),
+        QColor(0xAD, 0x43, 0x43), QColor(0xEA, 0xD2, 0x7B),
+        QColor(0xC0, 0xC0, 0xC0), QColor(0xA9, 0xA9, 0xA9)  // silver, darkgrey
+    };
+
+    t->buildArrays();
+
+    return t;
+}
+
+
+std::unique_ptr<ThemePalette> createLightThemePalette(QObject* parent)
+{
+    auto t = std::make_unique<ThemePalette>(parent);
+    t->name = QStringLiteral("light");
+
+    // Base colors
+    t->baseColor1 = StatusColors::getColor("grey5");
+    t->baseColor2 = StatusColors::getColor("grey4");
+    t->baseColor3 = StatusColors::getColor("grey3");
+    t->baseColor4 = StatusColors::getColor("grey2");
+    t->baseColor5 = StatusColors::getColor("grey");
+
+    // Primary
+    t->primaryColor1 = StatusColors::getColor("blue");
+    t->primaryColor2 = StatusColors::getColor("blue", 0.2);
+    t->primaryColor3 = StatusColors::getColor("blue", 0.1);
+
+    // Danger
+    t->dangerColor1 = StatusColors::getColor("red");
+    t->dangerColor2 = StatusColors::getColor("red", 0.2);
+    t->dangerColor3 = StatusColors::getColor("red", 0.1);
+
+    // Warning
+    t->warningColor1 = StatusColors::getColor("warning_orange");
+    t->warningColor2 = StatusColors::getColor("warning_orange", 0.2);
+    t->warningColor3 = StatusColors::getColor("warning_orange", 0.1);
+
+    // Success
+    t->successColor1 = StatusColors::getColor("green");
+    t->successColor2 = StatusColors::getColor("green", 0.1);
+    t->successColor3 = StatusColors::getColor("green", 0.2);
+
+    // Mention
+    t->mentionColor1 = StatusColors::getColor("turquoise");
+    t->mentionColor2 = StatusColors::getColor("turquoise2", 0.3);
+    t->mentionColor3 = StatusColors::getColor("turquoise2", 0.2);
+    t->mentionColor4 = StatusColors::getColor("turquoise2", 0.1);
+
+    // Pin
+    t->pinColor1 = StatusColors::getColor("orange");
+    t->pinColor2 = StatusColors::getColor("orange2", 0.2);
+    t->pinColor3 = StatusColors::getColor("orange2", 0.1);
+
+    // Direct (black with varying alpha)
+    t->directColor1 = StatusColors::getColor("black");
+    t->directColor2 = StatusColors::getColor("black", 0.9);
+    t->directColor3 = StatusColors::getColor("black", 0.8);
+    t->directColor4 = StatusColors::getColor("black", 0.7);
+    t->directColor5 = StatusColors::getColor("black", 0.4);
+    t->directColor6 = StatusColors::getColor("black", 0.3);
+    t->directColor7 = StatusColors::getColor("black", 0.1);
+    t->directColor8 = StatusColors::getColor("black", 0.05);
+    t->directColor9 = StatusColors::getColor("black", 0.2);
+
+    // Indirect
+    t->indirectColor1 = StatusColors::getColor("white");
+    t->indirectColor2 = StatusColors::getColor("white", 0.7);
+    t->indirectColor3 = StatusColors::getColor("white", 0.4);
+    t->indirectColor4 = StatusColors::getColor("white");
+
+    // Misc
+    t->miscColor1 = StatusColors::getColor("blue2");
+    t->miscColor2 = StatusColors::getColor("purple");
+    t->miscColor3 = StatusColors::getColor("cyan");
+    t->miscColor4 = StatusColors::getColor("violet");
+    t->miscColor5 = StatusColors::getColor("red2");
+    t->miscColor6 = StatusColors::getColor("orange");
+    t->miscColor7 = StatusColors::getColor("yellow");
+    t->miscColor8 = StatusColors::getColor("green2");
+    t->miscColor9 = StatusColors::getColor("moss");
+    t->miscColor10 = StatusColors::getColor("brown");
+    t->miscColor11 = StatusColors::getColor("brown2");
+    t->miscColor12 = StatusColors::getColor("green5");
+
+    // Other
+    t->neutral95 = QColor(0x0D, 0x16, 0x25);
+    t->dropShadow = QColor::fromRgbF(0.0, 34.0/255.0, 51.0/255.0, 0.03);
+    t->dropShadow2 = StatusColors::getColor("blue7", 0.02);
+    t->dropShadow3 = StatusColors::getColor("black", 0.15);
+    t->backdropColor = StatusColors::getColor("black", 0.4);
+    t->statusFloatingButtonHighlight = StatusColors::getColor("blueHijab");
+    t->statusLoadingHighlight = StatusColors::getColor("lightPattensBlue", 0.5);
+    t->statusLoadingHighlight2 = t->indirectColor3;
+    t->messageHighlightColor = StatusColors::getColor("blue", 0.2);
+    t->desktopBlue10 = StatusColors::getColor("lightDesktopBlue10");
+    t->blockProgressBarColor = t->baseColor3;
+
+    t->background = t->white;
+    t->backgroundHover = t->baseColor2;
+    t->border = t->baseColor2;
+    t->textColor = t->directColor1;
+    t->secondaryText = t->baseColor1;
+    t->separator = t->baseColor2;
+    t->darkGrey = t->baseColor1;
+    t->secondaryBackground = t->primaryColor2;
+    t->secondaryMenuBackground = t->baseColor4;
+
+    // Status app layout
+    t->statusAppLayout.backgroundColor = t->white;
+    t->statusAppLayout.rightPanelBackgroundColor = t->white;
+
+    // Status app nav bar
+    t->statusAppNavBar.backgroundColor = t->baseColor2;
+
+    // Status toast message
+    t->statusToastMessage.backgroundColor = t->white;
+
+    // Status list item
+    t->statusListItem.backgroundColor = t->white;
+    t->statusListItem.secondaryHoverBackgroundColor = StatusColors::getColor("blue6");
+    t->statusListItem.highlightColor = StatusColors::getColor("blue", 0.05);
+
+    // Status chat list item
+    t->statusChatListItem.hoverBackgroundColor = t->baseColor2;
+    t->statusChatListItem.selectedBackgroundColor = t->baseColor3;
+
+    // Status chat list category item
+    t->statusChatListCategoryItem.buttonHoverBackgroundColor = t->directColor8;
+
+    // Status navigation list item
+    t->statusNavigationListItem.hoverBackgroundColor = t->baseColor2;
+    t->statusNavigationListItem.selectedBackgroundColor = t->baseColor3;
+
+    // Status badge
+    t->statusBadge.foregroundColor = t->white;
+    t->statusBadge.borderColor = t->baseColor4;
+    t->statusBadge.hoverBorderColor = QColor(0xDD, 0xE3, 0xF3);
+
+    // Status menu
+    t->statusMenu.backgroundColor = t->white;
+    t->statusMenu.hoverBackgroundColor = t->baseColor2;
+    t->statusMenu.separatorColor = t->separator;
+
+    // Status modal
+    t->statusModal.backgroundColor = t->white;
+
+    // Status rounded image
+    t->statusRoundedImage.backgroundColor = t->white;
+
+    // Status chat input
+    t->statusChatInput.secondaryBackgroundColor = QColor(0xE2, 0xE6, 0xE8);
+
+    // Status switch tab
+    t->statusSwitchTab.buttonBackgroundColor = t->primaryColor1;
+    t->statusSwitchTab.barBackgroundColor = t->primaryColor3;
+    t->statusSwitchTab.selectedTextColor = t->indirectColor1;
+    t->statusSwitchTab.textColor = t->primaryColor1;
+
+    // Status select
+    t->statusSelect.menuItemBackgroundColor = t->white;
+    t->statusSelect.menuItemHoverBackgroundColor = t->baseColor2;
+
+    // Status message
+    t->statusMessage.emojiReactionBackground = t->baseColor2;
+    t->statusMessage.emojiReactionBackgroundHovered = t->primaryColor2;
+    t->statusMessage.emojiReactionBorderHovered = t->primaryColor3;
+
+    // Privacy mode colors
+    t->privacyModeColors.navBarColor = QColor(0x5A, 0x33, 0xCA);
+    t->privacyModeColors.navButtonColor = StatusColors::getColor("white", 0.4);
+    t->privacyModeColors.navButtonHighlightedColor = StatusColors::getColor("white");
+
+    // Customisation colors
+    t->customisationColors.blue      = QColor(0x2A, 0x4A, 0xF5);
+    t->customisationColors.purple    = QColor(0x71, 0x40, 0xFD);
+    t->customisationColors.orange    = QColor(0xFF, 0x7D, 0x46);
+    t->customisationColors.army      = QColor(0x21, 0x62, 0x66);
+    t->customisationColors.turquoise = QColor(0x2A, 0x79, 0x9B);
+    t->customisationColors.sky       = QColor(0x19, 0x92, 0xD7);
+    t->customisationColors.yellow    = QColor(0xF6, 0xAF, 0x3C);
+    t->customisationColors.pink      = QColor(0xF6, 0x6F, 0x8F);
+    t->customisationColors.copper    = QColor(0xCB, 0x62, 0x56);
+    t->customisationColors.camel     = QColor(0xC7, 0x8F, 0x67);
+    t->customisationColors.magenta   = QColor(0xEC, 0x26, 0x6C);
+    t->customisationColors.yinYang   = QColor(0x09, 0x10, 0x1C);
+    t->customisationColors.purple2   = QColor(0x5A, 0x33, 0xCA);
+
+    // User customization colors
+    t->userCustomizationColors = {
+        QColor(0x29, 0x46, 0xC4), QColor(0x88, 0x7A, 0xF9),
+        QColor(0x51, 0xD0, 0xF0), QColor(0xD3, 0x7E, 0xF4),
+        QColor(0xFA, 0x65, 0x65), QColor(0xFF, 0xCA, 0x0F),
+        QColor(0x7C, 0xDA, 0x00), QColor(0x26, 0xA6, 0x9A),
+        QColor(0x8B, 0x31, 0x31), QColor(0x9B, 0x83, 0x2F),
+        QColor(0xC0, 0xC0, 0xC0), QColor(0xA9, 0xA9, 0xA9)
+    };
+
+    t->buildArrays();
+
+    return t;
+}
+
+void registerThemePaletteType()
+{
+    // Register gadget meta types. Technically it's not needed, but helps QtCreator
+    // providing hints on the fly.
+    qmlRegisterUncreatableType<StatusAppLayout>("StatusQ.Core.Theme", 1, 0, "StatusAppLayout", "");
+    qmlRegisterUncreatableType<StatusAppNavBar>("StatusQ.Core.Theme", 1, 0, "StatusAppNavBar", "");
+    qmlRegisterUncreatableType<StatusToastMessage>("StatusQ.Core.Theme", 1, 0, "StatusToastMessage", "");
+    qmlRegisterUncreatableType<StatusListItem>("StatusQ.Core.Theme", 1, 0, "StatusListItem", "");
+    qmlRegisterUncreatableType<StatusChatListItem>("StatusQ.Core.Theme", 1, 0, "StatusChatListItem", "");
+    qmlRegisterUncreatableType<StatusChatListCategoryItem>("StatusQ.Core.Theme", 1, 0, "StatusChatListCategoryItem", "");
+    qmlRegisterUncreatableType<StatusNavigationListItem>("StatusQ.Core.Theme", 1, 0, "StatusNavigationListItem", "");
+    qmlRegisterUncreatableType<StatusBadge>("StatusQ.Core.Theme", 1, 0, "StatusBadge", "");
+    qmlRegisterUncreatableType<StatusMenu>("StatusQ.Core.Theme", 1, 0, "StatusMenu", "");
+    qmlRegisterUncreatableType<StatusModal>("StatusQ.Core.Theme", 1, 0, "StatusModal", "");
+    qmlRegisterUncreatableType<StatusRoundedImage>("StatusQ.Core.Theme", 1, 0, "StatusRoundedImage", "");
+    qmlRegisterUncreatableType<StatusChatInput>("StatusQ.Core.Theme", 1, 0, "StatusChatInput", "");
+    qmlRegisterUncreatableType<StatusSwitchTab>("StatusQ.Core.Theme", 1, 0, "StatusSwitchTab", "");
+    qmlRegisterUncreatableType<StatusSelect>("StatusQ.Core.Theme", 1, 0, "StatusSelect", "");
+    qmlRegisterUncreatableType<StatusMessage>("StatusQ.Core.Theme", 1, 0, "StatusMessage", "");
+    qmlRegisterUncreatableType<CustomisationColors>("StatusQ.Core.Theme", 1, 0, "CustomisationColors", "");
+    qmlRegisterUncreatableType<PrivacyModeColors>("StatusQ.Core.Theme", 1, 0, "PrivacyModeColors", "");
+
+    qmlRegisterUncreatableType<ThemePalette>("StatusQ.Core.Theme", 1, 0, "ThemePalette", "");
+}

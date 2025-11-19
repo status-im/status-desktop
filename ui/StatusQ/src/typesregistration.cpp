@@ -2,19 +2,21 @@
 #include "StatusQ/clipboardutils.h"
 #include "StatusQ/constantrole.h"
 #include "StatusQ/fastexpressionfilter.h"
-#include "StatusQ/oneoffilter.h"
 #include "StatusQ/fastexpressionrole.h"
 #include "StatusQ/fastexpressionsorter.h"
 #include "StatusQ/formatteddoubleproperty.h"
 #include "StatusQ/genericvalidator.h"
 #include "StatusQ/keychain.h"
 #include "StatusQ/networkchecker.h"
+#include "StatusQ/oneoffilter.h"
 #include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rxvalidator.h"
+#include "StatusQ/statuscolors.h"
 #include "StatusQ/statusemojimodel.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/stringutilsinternal.h"
 #include "StatusQ/systemutilsinternal.h"
+#include "StatusQ/theme.h"
 #include "StatusQ/undefinedfilter.h"
 #include "StatusQ/urlutils.h"
 
@@ -96,6 +98,18 @@ void registerStatusQTypes() {
                                               "Onboarding", [](QQmlEngine*, QJSEngine*) {
                                                   return new OnboardingEnums;
                                               });
+
+    qmlRegisterSingletonType<StatusColors>("StatusQ.Core.Theme", 0, 1, "StatusColors",
+                                           [](QQmlEngine*, QJSEngine*) {
+                                               return new StatusColors;
+                                           });
+
+    qmlRegisterUncreatableType<Theme>("StatusQ.Core.Theme", 0, 1,
+                                      "Theme", QStringLiteral("This is attached type, cannot be created directly."));
+
+    qmlRegisterUncreatableType<ThemePalette>("StatusQ.Core.Theme", 0, 1,
+                                             "ThemePalette", QStringLiteral("Theme palette cannot be created directly."));
+
 
 #ifdef BUNDLE_QML_RESOURCES
     Q_INIT_RESOURCE(TestConfig);
