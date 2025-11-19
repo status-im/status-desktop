@@ -22,7 +22,8 @@ status-desktop-rcc: clean-status-desktop-rcc $(STATUS_DESKTOP_RCC)
 $(STATUS_GO_LIB):
 	@echo "Building status-go mobile library"
 ifeq ($(OS),android)
-	  CC="$(CC)" $(MAKE) -C ../vendor/status-go statusgo-android-library \
+	  CC="$(CC)" GOOS=android GOARCH=arm64 CGO_ENABLED=1 \
+	  $(MAKE) -C ../vendor/status-go statusgo-android-library \
 		ARCH=$(ARCH) \
 		ANDROID_NDK_ROOT="$(ANDROID_NDK_ROOT)" \
 		ANDROID_API="$(ANDROID_API)" \
