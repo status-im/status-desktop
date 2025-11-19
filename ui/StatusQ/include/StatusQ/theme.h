@@ -58,6 +58,8 @@ public:
 
     const ThemePalette* palette() const;
 
+    Q_INVOKABLE Theme* rootTheme();
+
     static Theme *qmlAttachedProperties(QObject *object);
 
 signals:
