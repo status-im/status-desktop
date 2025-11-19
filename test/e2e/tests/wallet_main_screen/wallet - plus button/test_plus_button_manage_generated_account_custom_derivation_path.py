@@ -11,15 +11,13 @@ from gui.main_window import MainWindow
 
 
 @pytest.mark.case(703028)
-def test_plus_button_manage_generated_account_custom_derivation_path(main_screen: MainWindow, user_account):
-    # TODO: https://github.com/status-im/status-desktop/issues/18233
+@pytest.mark.parametrize('path_name', [pytest.param(DerivationPathName.select_random_path_name().value)])
+def test_plus_button_manage_generated_account_custom_derivation_path(main_screen: MainWindow, user_account, path_name):
     with step('Create generated wallet account'):
         wallet_account = RandomWalletAccount()
-
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(wallet_account.name).set_derivation_path(
-            DerivationPathName.select_random_path_name().value,
+        account_popup.set_name(wallet_account.name).set_derivation_path(path_name,
             random.randrange(2, 100),
             user_account.password).save_changes()
 
