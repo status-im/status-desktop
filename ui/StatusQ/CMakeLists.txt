@@ -169,17 +169,20 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
         include/StatusQ/fastexpressionsorter.h
-        include/StatusQ/oneoffilter.h
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/genericvalidator.h
         include/StatusQ/keychain.h
         include/StatusQ/networkchecker.h
+        include/StatusQ/oneoffilter.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rxvalidator.h
+        include/StatusQ/statuscolors.h
         include/StatusQ/statusemojimodel.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/systemutilsinternal.h
+        include/StatusQ/theme.h
+        include/StatusQ/themepalette.h
         include/StatusQ/typesregistration.h
         include/StatusQ/undefinedfilter.h
         include/StatusQ/urlutils.h
@@ -188,19 +191,22 @@ add_library(StatusQ ${LIB_TYPE}
         src/constantrole.cpp
         src/externc.cpp
         src/fastexpressionfilter.cpp
-        src/oneoffilter.cpp
         src/fastexpressionrole.cpp
         src/fastexpressionsorter.cpp
         src/formatteddoubleproperty.cpp
         src/genericvalidator.cpp
         src/keychain.cpp
         src/networkchecker.cpp
+        src/oneoffilter.cpp
         src/permissionutilsinternal.cpp
         src/rxvalidator.cpp
+        src/statuscolors.cpp
         src/statusemojimodel.cpp
         src/statussyntaxhighlighter.cpp
         src/stringutilsinternal.cpp
         src/systemutilsinternal.cpp
+        src/theme.cpp
+        src/themepalette.cpp
         src/typesregistration.cpp
         src/undefinedfilter.cpp
         src/urlutils.cpp
