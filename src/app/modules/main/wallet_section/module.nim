@@ -278,9 +278,7 @@ method setFilterAllAddresses*(self: Module) =
   self.notifyFilterChanged()
 
 method load*(self: Module) =
-  info "wallet-section load() method called"
   singletonInstance.engine.setRootContextProperty("walletSection", self.viewVariant)
-  info "wallet-section: walletSection property registered"
 
   self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
     let args = KeypairArgs(e)
@@ -359,19 +357,12 @@ method load*(self: Module) =
     let args = SettingsTextValueArgs(e)
     self.view.setCurrentCurrency(args.value)
 
-  info "wallet-section: starting controller.init()"
   self.controller.init()
-  info "wallet-section: starting view.load()"
   self.view.load()
-  info "wallet-section: loading accountsModule"
   self.accountsModule.load()
-  info "wallet-section: loading allTokensModule"
   self.allTokensModule.load()
-  info "wallet-section: loading allCollectiblesModule"
   self.allCollectiblesModule.load()
-  info "wallet-section: loading assetsModule"
   self.assetsModule.load()
-  info "wallet-section: loading savedAddressesModule"
   self.savedAddressesModule.load()
   self.followingAddressesModule.load()
   self.buySellCryptoModule.load()
