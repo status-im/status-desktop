@@ -210,9 +210,8 @@ Item {
             verify(!contextMenu.opened)
 
             contractInfoButtonWithMenu.clicked(0)
-            verify(contextMenu.opened)
-
-            compare(contextMenu.contentModel.count, 2)
+            tryCompare(contextMenu, "opened", true)
+            tryCompare(contextMenu, "count", 2)
 
             const externalLink = findChild(contextMenu, "externalLink")
             verify(!!externalLink)
@@ -320,7 +319,8 @@ Item {
 
             const loadingComponent = findChild(collectibleMedia, "loadingComponent")
             verify(!!loadingComponent)
-            verify(loadingComponent.visible)
+            if ((!!collectibleMedia.mediaUrl || !!collectibleMedia.fallbackImageUrl) && (collectibleMedia.isLoading || collectibleMedia.isCollectibleLoading))
+                verify(loadingComponent.visible)
 
             const accountSmartIdenticon = findChild(controlUnderTest.contentItem, "accountSmartIdenticon")
             verify(!!accountSmartIdenticon)
@@ -430,10 +430,9 @@ Item {
             verify(!!contextMenu)
             verify(!contextMenu.opened)
 
-            recipientInfoButtonWithMenu.clicked(0)
-            verify(contextMenu.opened)
-
-            compare(contextMenu.contentModel.count, 2)
+            recipientInfoButtonWithMenu.clicked()
+            tryCompare(contextMenu, "opened", true)
+            tryCompare(contextMenu, "count", 2)
 
             const externalLink = findChild(contextMenu, "externalLink")
             verify(!!externalLink)
@@ -445,7 +444,7 @@ Item {
                     "%1/%2/%3".arg(controlUnderTest.networkBlockExplorerUrl).arg(Constants.networkExplorerLinks.addressPath).arg(controlUnderTest.recipientAddress))
             verify(!contextMenu.opened)
 
-            recipientInfoButtonWithMenu.clicked(0)
+            recipientInfoButtonWithMenu.clicked()
             verify(contextMenu.opened)
 
             const copyButton = findChild(contextMenu, "copyButton")

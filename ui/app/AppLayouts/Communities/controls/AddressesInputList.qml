@@ -186,7 +186,7 @@ Control {
 
             placeholderText: root.count ? "" : qsTr("Example: 0x39cf...fbd2")
 
-            Keys.onPressed: {
+            Keys.onPressed: event => {
                 if ((event.key !== Qt.Key_Return && event.key !== Qt.Key_Enter)
                         || event.modifiers & Qt.ShiftModifier) {
                     event.accepted = false

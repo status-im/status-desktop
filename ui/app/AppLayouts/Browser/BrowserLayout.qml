@@ -6,6 +6,7 @@ import QtWebEngine
 import QtModelsToolkit
 
 import StatusQ.Core
+import StatusQ.Core.Utils as SQUtils
 import StatusQ.Core.Theme
 import StatusQ.Layout
 import StatusQ.Popups
@@ -43,13 +44,21 @@ StatusSectionLayout {
     required property BrowserStores.BrowserRootStore browserRootStore
     required property BrowserStores.BrowserWalletStore browserWalletStore
     required property var connectorController
+
     property bool isDebugEnabled: false
+    property string platformOS: Qt.platform.os
+
+    readonly property string userAgent: connectorBridge.httpUserAgent
 
     signal sendToRecipientRequested(string address)
 
     function openUrlInNewTab(url) {
         var tab = _internal.addNewTab()
         tab.url = _internal.determineRealURL(url)
+    }
+
+    function reloadCurrentTab() {
+        _internal.currentWebView?.reload()
     }
 
     Component.onCompleted: {
@@ -68,7 +77,22 @@ StatusSectionLayout {
         httpUserAgent: {
             if (localAccountSensitiveSettings.compatibilityMode) {
                 // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
-                return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+                const os = root.platformOS
+                let platform = "X11; Linux x86_64" // default Linux
+                let mobile = ""
+                if (os === SQUtils.Utils.windows)
+                    platform = "Windows NT 11.0; Win64; x64"
+                else if (os === SQUtils.Utils.mac)
+                    platform = "Macintosh; Intel Mac OS X 10_15_7"
+                else if (os === SQUtils.Utils.android) {
+                    platform = "Linux; Android 10; K"
+                    mobile = "Mobile"
+                } else if (os === SQUtils.Utils.ios) {
+                    platform = "iPhone; CPU iPhone OS 18_6 like Mac OS X"
+                    mobile = "Mobile/15E148"
+                }
+
+                return "Mozilla/5.0 (%1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 %2 Safari/604.1".arg(platform).arg(mobile)
             }
             return ""
         }
@@ -173,11 +197,14 @@ StatusSectionLayout {
         anchors.fill: parent
         color: Theme.palette.baseColor2
 
-        BrowserShortcutActions {
-            id: keyboardShortcutActions
-            currentWebView: _internal.currentWebView
-            findBarComponent: findBar
-            browserHeaderComponent: browserHeader
+        Loader {
+            // Only load the shortcuts when the browser is visible, to avoid interfering with other app sections
+            active: root.visible
+            sourceComponent: BrowserShortcutActions {
+                currentWebView: _internal.currentWebView
+                findBarComponent: findBar
+                browserHeaderComponent: browserHeader
+            }
         }
 
         BrowserHeader {

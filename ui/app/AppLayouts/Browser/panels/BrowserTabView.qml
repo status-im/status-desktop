@@ -145,15 +145,15 @@ FocusScope {
     }
 
     function removeView(index) {
-        if (tabBar.count > 1) {
-            tabBar.removeItem(tabBar.itemAt(index))
-            var tab = getTab(index)
-            tab.stop()
-            tab.parent = null // reparent to null first to prevent a crash
-            tab.destroy()
-        } else {
+        if (tabBar.count <= 1) {
             createEmptyTab(currentWebEngineProfile, true)
         }
+
+        tabBar.removeItem(tabBar.itemAt(index))
+        var tab = getTab(index)
+        tab.stop()
+        tab.parent = null // reparent to null first to prevent a crash
+        tab.destroy()
     }
 
     component AddTabButton: StatusFlatButton {
@@ -228,7 +228,8 @@ FocusScope {
                     icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
                     size: StatusBaseButton.Size.Small
                     radius: width/2
-                    visible: tabButton.hovered
+                    opacity: tabButton.hovered ? 1 : 0
+                    visible: opacity > 0
                     onClicked: root.removeView(tabButton.TabBar.index)
                 }
             }

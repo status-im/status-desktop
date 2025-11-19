@@ -119,6 +119,8 @@ QtObject {
     }
 
     function createScript(scriptName, runsOnSubframes = true) {
+        if (!connectorController)
+            return {}
         return {
             name: scriptName,
             sourceUrl: Qt.resolvedUrl("../js/" + scriptName),

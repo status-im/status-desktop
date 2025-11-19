@@ -40,13 +40,13 @@ StatusDropdown {
         readonly property bool allSelected:
             keys.every(key => root.selectedKeys.has(key))
 
-        onObjectAdded: {
+        onObjectAdded: (index, object) => {
             const keysCopy = [...keys]
             keysCopy.splice(index, 0, object.key)
             keys = keysCopy
         }
 
-        onObjectRemoved: {
+        onObjectRemoved: (index, object) => {
             const keysCopy = [...keys]
             keysCopy.splice(index, 1)
             keys = keysCopy
@@ -214,8 +214,7 @@ StatusDropdown {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
 
-                            onClicked: delegateRoot.clicked(
-                                           delegateRoot.itemId, mouse)
+                            onClicked: mouse => delegateRoot.clicked(delegateRoot.itemId, mouse)
                         }
                     }
                 ]

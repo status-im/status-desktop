@@ -261,7 +261,7 @@ StatusSectionLayout {
 
                 onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
 
-                onCollectCommunityMetricsMessagesCount: {
+                onCollectCommunityMetricsMessagesCount: intervals => {
                     rootStore.collectCommunityMetricsMessagesCount(intervals)
                 }
 
