@@ -50,16 +50,16 @@
     <name>AppMain</name>
     <message numerus="yes">
         <source>%n key pair(s) successfully imported</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n key pair successfully imported</numerusform>
+            <numerusform>%n key pairs successfully imported</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n issue(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n issue</numerusform>
+            <numerusform>%n issues</numerusform>
         </translation>
     </message>
 </context>
