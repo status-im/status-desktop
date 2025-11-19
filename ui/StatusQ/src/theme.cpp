@@ -1,5 +1,7 @@
 #include "StatusQ/theme.h"
 
+#include <QQmlApplicationEngine>
+
 namespace {
 
 constexpr qreal s_defaultPadding = 16;
@@ -163,6 +165,23 @@ const ThemePalette* Theme::palette() const
 {
     return m_style == Style::Light ? s_paletteLight.get()
                                    : s_paletteDark.get();
+}
+
+Theme *Theme::rootTheme()
+{
+    auto theme = qobject_cast<Theme*>(attachedParent());
+
+    if (!theme)
+        return this;
+
+    while (true) {
+        auto next = qobject_cast<Theme*>(theme->attachedParent());
+
+        if (!next || qobject_cast<QQmlApplicationEngine*>(next->parent()))
+            return theme;
+        else
+            theme = next;
+    }
 }
 
 Theme* Theme::qmlAttachedProperties(QObject *object)
