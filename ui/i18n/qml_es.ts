@@ -14736,6 +14736,10 @@ al cargar</translation>
         <source>Search for token or enter token address</source>
         <translation>Buscar token o facilitar dirección del token</translation>
     </message>
+    <message>
+        <source>Loading more tokens...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchableCollectiblesPanel</name>

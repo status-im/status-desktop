@@ -12,12 +12,18 @@ Control {
     id: root
 
     /** Expected model structure: see SearchableAssetsPanel::model **/
-    property alias model: searchableAssetsPanel.model
-    property alias nonInteractiveKey: searchableAssetsPanel.nonInteractiveKey
+    property var model
+
+    property string nonInteractiveKey
+
+    property bool hasMoreItems: false
+    property bool isLoadingMore: false
 
     readonly property bool isSelected: button.selected
 
+    signal search(string keyword)
     signal selected(string groupKey)
+    signal loadMoreRequested()
 
     function setSelection(name: string, icon: url, tokenGroupKey: string) {
         button.name = name
@@ -70,6 +76,13 @@ Control {
 
             objectName: "searchableAssetsPanel"
 
+            model: root.model
+            nonInteractiveKey: root.nonInteractiveKey
+            hasMoreItems: root.hasMoreItems
+            isLoadingMore: root.isLoadingMore
+
+            onLoadMoreRequested: root.loadMoreRequested()
+
             function setCurrentAndClose(name, icon) {
                 button.name = name
                 button.icon = icon
@@ -88,8 +101,14 @@ Control {
                 setCurrentAndClose(entry.symbol, entry.iconSource)
                 root.selected(key)
             }
+
+            onSearch: function(keyword) {
+                root.search(keyword)
+            }
         }
 
-        onClosed: searchableAssetsPanel.clearSearch()
+        onClosed: {
+            searchableAssetsPanel.clearSearch()
+        }
     }
 }

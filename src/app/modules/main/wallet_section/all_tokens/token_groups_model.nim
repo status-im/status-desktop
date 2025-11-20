@@ -2,6 +2,11 @@ import nimqml, tables, strutils
 
 import io_interface, tokens_model, market_details_item
 
+type
+  ModelMode* {.pure.} = enum
+    NoMarketDetails
+    UseLazyLoading
+    IsSearchResult
 
 type
   ModelRole {.pure.} = enum
@@ -30,24 +35,46 @@ QtObject:
     tokensModel: TokensModel
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource
     tokenMarketDetails: seq[MarketDetailsItem]
-    allowEmptyMarketDetails: bool
+    modelModes: seq[ModelMode]
+    lazyLoadingBatchSize: int
+    lazyLoadingInitialCount: int
+    isLoadingMore: bool # only used with UseLazyLoading model mode
+    searchKeyword: string
+    fullSearchResults: seq[TokenGroupItem] # only used with IsSearchResult model mode
+    loadedItems: seq[TokenGroupItem] # only used with UseLazyLoading model mode
+    loadedKeys: Table[string, bool] # only used with UseLazyLoading model mode
 
   proc setup(self: TokenGroupsModel)
   proc delete(self: TokenGroupsModel)
   proc newTokenGroupsModel*(
     delegate: io_interface.TokenGroupsModelDataSource,
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource,
-    allowEmptyMarketDetails: bool
+    modelModes: seq[ModelMode] = @[],
+    lazyLoadingBatchSize: int = 0,
+    lazyLoadingInitialCount: int = 0,
     ): TokenGroupsModel =
     new(result, delete)
     result.setup
     result.delegate = delegate
     result.marketValuesDelegate = marketValuesDelegate
     result.tokenMarketDetails = @[]
-    result.allowEmptyMarketDetails = allowEmptyMarketDetails
+    result.modelModes = modelModes
+    result.lazyLoadingBatchSize = lazyLoadingBatchSize
+    result.lazyLoadingInitialCount = lazyLoadingInitialCount
+    result.isLoadingMore = false
+
+  proc getSourceModel(self: TokenGroupsModel): var seq[TokenGroupItem] =
+    if ModelMode.IsSearchResult in self.modelModes:
+      return self.fullSearchResults
+    return self.delegate.getAllTokenGroups()
+
+  proc getDisplayModel(self: TokenGroupsModel): var seq[TokenGroupItem] =
+    if ModelMode.UseLazyLoading in self.modelModes or ModelMode.IsSearchResult in self.modelModes:
+      return self.loadedItems
+    return self.getSourceModel()
 
   method rowCount(self: TokenGroupsModel, index: QModelIndex = nil): int =
-    return self.delegate.getAllTokenGroups().len
+    return self.getDisplayModel().len
 
   proc countChanged(self: TokenGroupsModel) {.signal.}
   proc getCount(self: TokenGroupsModel): int {.slot.} =
@@ -55,6 +82,25 @@ QtObject:
   QtProperty[int] count:
     read = getCount
     notify = countChanged
+
+  proc hasMoreItemsChanged(self: TokenGroupsModel) {.signal.}
+  proc getHasMoreItems(self: TokenGroupsModel): bool {.slot.} =
+    return self.getDisplayModel().len < self.getSourceModel().len
+  QtProperty[bool] hasMoreItems:
+    read = getHasMoreItems
+    notify = hasMoreItemsChanged
+
+  proc isLoadingMoreChanged(self: TokenGroupsModel) {.signal.}
+  proc setIsLoadingMore(self: TokenGroupsModel, value: bool) =
+    if value == self.isLoadingMore:
+      return
+    self.isLoadingMore = value
+    self.isLoadingMoreChanged()
+  proc getIsLoadingMore(self: TokenGroupsModel): bool {.slot.} =
+    return self.isLoadingMore
+  QtProperty[bool] isLoadingMore:
+    read = getIsLoadingMore
+    notify = isLoadingMoreChanged
 
   method roleNames(self: TokenGroupsModel): Table[int, string] =
     {
@@ -77,17 +123,18 @@ QtObject:
 
   proc getTokensModelDataSource*(self: TokenGroupsModel, index: int): TokensModelDataSource =
     return (
-      getTokens: proc(): var seq[TokenItem] = self.delegate.getAllTokenGroups()[index].tokens,
+      getTokens: proc(): var seq[TokenItem] = self.getDisplayModel()[index].tokens,
     )
 
   method data(self: TokenGroupsModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if index.row < 0 or index.row >= self.delegate.getAllTokenGroups().len or
-      (not self.allowEmptyMarketDetails and index.row >= self.tokenMarketDetails.len):
+    let noMarketDetails = ModelMode.NoMarketDetails in self.modelModes
+    if index.row < 0 or index.row >= self.rowCount() or
+      (not noMarketDetails and index.row >= self.tokenMarketDetails.len):
       return
 
-    let item = self.delegate.getAllTokenGroups()[index.row]
+    let item = self.getDisplayModel()[index.row]
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.Key:
@@ -125,7 +172,7 @@ QtObject:
         let tokenKey = item.tokens[0].key
         return newQVariant(self.delegate.getTokenDetails(tokenKey).description)
       of ModelRole.MarketDetails:
-        if self.allowEmptyMarketDetails:
+        if noMarketDetails:
           return newQVariant("")
         return newQVariant(self.tokenMarketDetails[index.row])
       of ModelRole.DetailsLoading:
@@ -137,27 +184,108 @@ QtObject:
       of ModelRole.Position:
         return newQVariant(self.delegate.getTokenPreferences(item.key).position)
 
-  proc modelsUpdated*(self: TokenGroupsModel) =
-    self.beginResetModel()
-    defer: self.endResetModel()
+  proc addMarketDetailsItem*(self: TokenGroupsModel, index: int, tokensList: var seq[TokenGroupItem], currencyFormat: var CurrencyFormatDto) =
+    # since each token gorup item has at least one token, we're safe to use the first token's key
+    let tokenKey = tokensList[index].tokens[0].key
+    let tokenPrice = self.marketValuesDelegate.getPriceForToken(tokenKey)
+    let tokenMarketValues = self.marketValuesDelegate.getMarketValuesForToken(tokenKey)
+    let item = newMarketDetailsItem(tokenKey, tokenPrice, tokenMarketValues, currencyFormat)
+    self.tokenMarketDetails.add(item)
 
-    if self.allowEmptyMarketDetails:
+  proc modelsUpdated*(self: TokenGroupsModel, resetModelSize: bool = false, mandatoryKeys: seq[string] = @[]) =
+    self.beginResetModel()
+    defer:
+      self.endResetModel()
+      self.hasMoreItemsChanged()
+
+    # if resetModelSize is false, the model remains as it was in terms of the number of items and the items themselves
+    # if resetModelSize is true, the model is reset to the initial state/size
+    # resetting the model size makes sense only if the model mode is UseLazyLoading
+    if resetModelSize and ModelMode.UseLazyLoading in self.modelModes:
+      self.loadedItems = @[]
+      self.loadedKeys = initTable[string, bool]()
+      let sourceModel = self.getSourceModel()
+
+      # add mandatory items to loaded items
+      if mandatoryKeys.len > 0:
+        for key in mandatoryKeys:
+          for item in sourceModel:
+            if item.key == key:
+              self.loadedItems.add(item)
+              self.loadedKeys[key] = true
+              break
+
+      # reset the loaded items to the initial count
+      if self.loadedItems.len > self.lazyLoadingInitialCount:
+        for i in countup(self.lazyLoadingInitialCount, self.loadedItems.len-1):
+          let key = self.loadedItems[i].key
+          self.loadedKeys.del(key)
+        self.loadedItems = self.loadedItems[0..self.lazyLoadingInitialCount-1]
+      else:
+        for item in sourceModel:
+          if self.loadedKeys.hasKey(item.key):
+            continue
+          self.loadedItems.add(item)
+          self.loadedKeys[item.key] = true
+          if self.loadedItems.len >= self.lazyLoadingInitialCount:
+            break
+
+    if ModelMode.NoMarketDetails in self.modelModes:
       return
 
     self.tokenMarketDetails = @[]
-    let tokensList = self.delegate.getAllTokenGroups()
-    let currencyFormat = self.marketValuesDelegate.getCurrentCurrencyFormat()
-    for index in countup(0, tokensList.len-1):
-      # since each token gorup item has at least one token, we're safe to use the first token's key
-      let tokenKey = tokensList[index].tokens[0].key
-      let item = newMarketDetailsItem(tokenKey,
-        self.marketValuesDelegate.getPriceForToken(tokenKey),
-        self.marketValuesDelegate.getMarketValuesForToken(tokenKey),
-        currencyFormat)
-      self.tokenMarketDetails.add(item)
+    var
+      tokensList = self.getDisplayModel()
+      currencyFormat = self.marketValuesDelegate.getCurrentCurrencyFormat()
+    for index in countup(0, self.rowCount()-1):
+      self.addMarketDetailsItem(index, tokensList, currencyFormat)
+
+  proc fetchMore*(self: TokenGroupsModel) {.slot.} =
+    if not self.getHasMoreItems() or self.isLoadingMore:
+      return
+    self.setIsLoadingMore(true)
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    let sourceModel = self.getSourceModel()
+    let first = self.rowCount()
+    let last = min(first + self.lazyLoadingBatchSize - 1, sourceModel.len - 1)
+    self.beginInsertRows(parentModelIndex, first, last)
+    defer:
+      self.endInsertRows()
+      self.setIsLoadingMore(false)
+      self.hasMoreItemsChanged()
+
+    if ModelMode.UseLazyLoading in self.modelModes:
+      for index in countup(first, last):
+        let key = sourceModel[index].key
+        if self.loadedKeys.hasKey(key):
+          continue
+        self.loadedKeys[key] = true
+        self.loadedItems.add(sourceModel[index])
+
+    if ModelMode.NoMarketDetails in self.modelModes:
+      return
+
+    var
+      tokensList = self.getDisplayModel()
+      currencyFormat = self.marketValuesDelegate.getCurrentCurrencyFormat()
+    for index in countup(first, last):
+      self.addMarketDetailsItem(index, tokensList, currencyFormat)
+
+  proc search*(self: TokenGroupsModel, keyword: string) {.slot.} =
+    self.searchKeyword = keyword
+    self.fullSearchResults = @[]
+    if self.searchKeyword.len > 0:
+      for item in self.delegate.getAllTokenGroups():
+        if item.name.toLowerAscii().contains(self.searchKeyword.toLowerAscii()) or
+          item.symbol.toLowerAscii().contains(self.searchKeyword.toLowerAscii()):
+          self.fullSearchResults.add(item)
+    self.modelsUpdated(resetModelSize = true)
 
   proc tokensMarketValuesUpdated*(self: TokenGroupsModel) =
-    if self.allowEmptyMarketDetails:
+    if ModelMode.NoMarketDetails in self.modelModes:
       return
     if not self.delegate.getTokensMarketValuesLoading():
       for marketDetails in self.tokenMarketDetails:
@@ -165,7 +293,7 @@ QtObject:
         marketDetails.updateTokenMarketValues(self.marketValuesDelegate.getMarketValuesForToken(marketDetails.tokenKey))
 
   proc tokensMarketValuesAboutToUpdate*(self: TokenGroupsModel) =
-    let tokenGroupsListLength = self.delegate.getAllTokenGroups().len
+    let tokenGroupsListLength = self.rowCount()
     if tokenGroupsListLength > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(tokenGroupsListLength-1, 0, nil)
@@ -174,7 +302,7 @@ QtObject:
       self.dataChanged(index, lastindex, @[ModelRole.MarketDetailsLoading.int])
 
   proc tokensDetailsUpdated*(self: TokenGroupsModel) =
-    let tokenGroupsListLength = self.delegate.getAllTokenGroups().len
+    let tokenGroupsListLength = self.rowCount()
     if tokenGroupsListLength > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(tokenGroupsListLength-1, 0, nil)
@@ -183,14 +311,14 @@ QtObject:
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
   proc currencyFormatsUpdated*(self: TokenGroupsModel) =
-    if self.allowEmptyMarketDetails:
+    if ModelMode.NoMarketDetails in self.modelModes:
       return
     let currencyFormat = self.marketValuesDelegate.getCurrentCurrencyFormat()
     for marketDetails in self.tokenMarketDetails:
         marketDetails.updateCurrencyFormat(currencyFormat)
 
   proc tokenPreferencesUpdated*(self: TokenGroupsModel) =
-    let tokenGroupsListLength = self.delegate.getAllTokenGroups().len
+    let tokenGroupsListLength = self.rowCount()
     if tokenGroupsListLength > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(tokenGroupsListLength-1, 0, nil)

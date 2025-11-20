@@ -99,6 +99,7 @@ QtObject {
     */
     readonly property var tokenGroupsModel: !!root._allTokensModule ? root._allTokensModule.tokenGroupsModel : null
     readonly property var tokenGroupsForChainModel: !!root._allTokensModule ? root._allTokensModule.tokenGroupsForChainModel : null
+    readonly property var searchResultModel: !!root._allTokensModule ? root._allTokensModule.searchResultModel : null
 
     // Property and methods below are used to apply advanced token management settings to the SendModal
 
@@ -109,8 +110,8 @@ QtObject {
 
     signal displayAssetsBelowBalanceThresholdChanged()
 
-    function buildGroupsForChain(chainId) {
-        root._allTokensModule.buildGroupsForChain(chainId)
+    function buildGroupsForChain(chainId, mandatoryKeys) {
+        root._allTokensModule.buildGroupsForChain(chainId, mandatoryKeys)
     }
 
     function getHistoricalDataForToken(tokenKey, currency) {

@@ -17916,6 +17916,11 @@
       <comment>SearchableAssetsPanel</comment>
       <translation>Search for token or enter token address</translation>
     </message>
+    <message>
+      <source>Loading more tokens...</source>
+      <comment>SearchableAssetsPanel</comment>
+      <translation>Loading more tokens...</translation>
+    </message>
   </context>
   <context>
     <name>SearchableCollectiblesPanel</name>

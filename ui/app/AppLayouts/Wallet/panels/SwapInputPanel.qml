@@ -30,7 +30,9 @@ Control {
     required property CurrenciesStore currencyStore
     required property var flatNetworksModel
     required property var processedAssetsModel
-    property var tokenGroupsModel
+
+    property var allTokenGroupsForChainModel
+    property var searchResultModel
 
     property int selectedNetworkChainId: -1
     onSelectedNetworkChainIdChanged: reevaluateSelectedId()
@@ -85,6 +87,10 @@ Control {
         amountToSendInput.forceActiveFocus()
     }
 
+    function reset() {
+        d.adaptor.search("")
+    }
+
     enum SwapSide {
         Pay = 0,
         Receive = 1
@@ -103,7 +109,7 @@ Control {
 
 
         function reevaluateSelectedId() {
-            const entry = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", d.selectedHoldingId)
+            const entry = SQUtils.ModelUtils.getByKey(d.adaptor.outputAssetsModel, "key", d.selectedHoldingId)
             if (!entry) {
                 // Token doesn't exist in destination chain
                 d.selectedHoldingId = root.defaultGroupKey
@@ -112,7 +118,7 @@ Control {
 
 
         readonly property var selectedHolding: ModelEntry {
-            sourceModel: holdingSelector.model
+            sourceModel: d.adaptor.outputAssetsModel
             key: "key"
             value: d.selectedHoldingId
             onValueChanged: d.setHoldingToSelector()
@@ -120,11 +126,18 @@ Control {
         }
 
         function setHoldingToSelector() {
+            // search in currentlly selected output asset model (full(lazy-loaded) or search)
             if (selectedHolding.available && !!selectedHolding.item) {
                 holdingSelector.setSelection(selectedHolding.item.symbol, selectedHolding.item.iconSource, selectedHolding.item.key)
-            } else {
-                holdingSelector.reset()
+                return
             }
+            // search in full model (lazy-loaded items) if not found in selected model (fir example while searching, but the other token is selected)
+            const entry = SQUtils.ModelUtils.getByKey(d.adaptor.fullOutputAssetsModel, "key", d.selectedHoldingId)
+            if (!!entry) {
+                holdingSelector.setSelection(entry.symbol, entry.iconSource, entry.key)
+                return
+            }
+            holdingSelector.reset()
         }
         
         readonly property bool isSelectedHoldingValidAsset: selectedHolding.available && !!selectedHolding.item
@@ -136,7 +149,9 @@ Control {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
-            tokenGroupsModel: root.tokenGroupsModel
+            allTokenGroupsForChainModel: root.allTokenGroupsForChainModel
+            searchResultModel: root.searchResultModel
+
             flatNetworksModel: root.flatNetworksModel
             currentCurrency: root.currencyStore.currentCurrency
 
@@ -287,7 +302,15 @@ Control {
                 Layout.alignment: Qt.AlignRight
 
                 model: d.adaptor.outputAssetsModel
+                hasMoreItems: d.adaptor.outputAssetsModel.hasMoreItems
+                isLoadingMore: d.adaptor.outputAssetsModel.isLoadingMore
                 nonInteractiveKey: root.nonInteractiveGroupKey
+
+                onSearch: function(keyword) {
+                    d.adaptor.search(keyword)
+                }
+
+                onLoadMoreRequested: d.adaptor.loadMoreItems()
 
                 onSelected: function(key) {
                     // Token existance checked with plainTokensBySymbolModel
