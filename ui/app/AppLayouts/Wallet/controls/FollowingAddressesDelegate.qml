@@ -17,39 +17,31 @@ import shared.stores as SharedStores
 
 import "../popups"
 import "../controls"
-import "../stores"
-import ".."
-
-import AppLayouts.Wallet.stores as WalletStores
 
 StatusListItem {
     id: root
 
     property SharedStores.NetworkConnectionStore networkConnectionStore
-    property var activeNetworks
-    property string name
+    property var rootStore  // Injected from parent, not singleton
+    
+    // Model providing active networks
+    // Expected roles: chainId (int), chainName (string), iconUrl (string), layer (int)
+    property var activeNetworksModel
     property string address
     property string ensName
     property var tags
     property string avatar
 
-    property int usage: FollowingAddressesDelegate.Usage.Delegate
     property bool showButtons: sensor.containsMouse
 
     property alias sendButton: sendButton
     property alias starButton: starButton
 
     signal openSendModal(string recipient)
-    signal menuRequested(var menuModel)
+    signal menuRequested(string name, string address, string ensName, var tags)
 
-    enum Usage {
-        Delegate,
-        Item
-    }
-
-    title: name
-    objectName: name || "followingAddressDelegate"
-    subTitle: WalletUtils.addressToDisplay(root.address, false, sensor.containsMouse)
+    objectName: title || "followingAddressDelegate"
+    subTitle: root.address  // Always show address (title shows ENS if available)
 
     border.color: Theme.palette.baseColor5
 
@@ -75,13 +67,14 @@ StatusListItem {
         
         readonly property bool isAddressSaved: {
             savedAddressesVersion
-            var savedAddr = WalletStores.RootStore.getSavedAddress(root.address)
+            if (!root.rootStore) return false
+            const savedAddr = root.rootStore.getSavedAddress(root.address)
             return savedAddr && savedAddr.address !== ""
         }
     }
     
     Connections {
-        target: WalletStores.RootStore
+        target: root.rootStore
         
         function onSavedAddressAddedOrUpdated(added, name, address, errorMsg) {
             if (address.toLowerCase() === root.address.toLowerCase()) {
@@ -96,39 +89,25 @@ StatusListItem {
         }
     }
 
-    onClicked: {
-        if (root.usage === FollowingAddressesDelegate.Usage.Item) {
-            return
-        }
-        Global.openSavedAddressActivityPopup({
-                                                 name: root.name,
-                                                 address: root.address,
-                                                 ens: root.ensName,
-                                                 colorId: "",
-                                                 avatar: root.avatar,
-                                                 isFollowingAddress: true
-                                              })
-    }
-
     components: [
         StatusRoundButton {
             id: sendButton
-            visible: !!root.name && root.showButtons
+            visible: !!root.title && root.showButtons
             type: StatusRoundButton.Type.Quinary
-            radius: 8
+            radius: Theme.radius
             icon.name: "send"
             enabled: root.networkConnectionStore.sendBuyBridgeEnabled
-            onClicked: root.openSendModal(root.address)
+            onClicked: root.openSendModal(d.visibleAddress)
         },
         StatusRoundButton {
             id: starButton
-            visible: !!root.name && (d.isAddressSaved || root.showButtons)
+            visible: !!root.title && (d.isAddressSaved || root.showButtons)
             type: StatusRoundButton.Type.Quinary
-            radius: 8
+            radius: Theme.radius
             icon.name: d.isAddressSaved ? "star-icon" : "star-icon-outline"
             enabled: !d.isAddressSaved
             onClicked: {
-                var nameToUse = root.ensName || root.address
+                let nameToUse = root.ensName || root.address
                 if (root.ensName && root.ensName.includes(".")) {
                     nameToUse = root.ensName.split(".")[0]
                 }
@@ -142,19 +121,14 @@ StatusListItem {
             }
         },
         StatusRoundButton {
-            objectName: "followingAddressView_Delegate_menuButton_" + root.name
-            visible: !!root.name
+            objectName: "followingAddressView_Delegate_menuButton_" + root.title
+            visible: !!root.title
             enabled: root.showButtons
             type: StatusRoundButton.Type.Quinary
-            radius: 8
+            radius: Theme.radius
             icon.name: "more"
             onClicked: {
-                root.menuRequested({
-                    name: root.name,
-                    address: root.address,
-                    ensName: root.ensName,
-                    tags: root.tags,
-                })
+                root.menuRequested(root.title, root.address, root.ensName, root.tags)
             }
 
         }

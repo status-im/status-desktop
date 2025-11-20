@@ -49,6 +49,7 @@ RightTabBaseView {
             followingAddressesModel: root.rootStore.followingAddresses
             totalFollowingCount: walletSectionFollowingAddresses ? 
                                  walletSectionFollowingAddresses.totalFollowingCount : 0
+            rootStore: root.rootStore
 
             onSendToAddressRequested: root.sendToAddressRequested(address)
             
@@ -77,28 +78,20 @@ RightTabBaseView {
         }
 
         // Sticky pagination footer at bottom (extends beyond content padding)
-        Item {
+        Paginator {
             id: paginationFooter
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: -(Theme.xlPadding * 2)
-            anchors.rightMargin: -(Theme.xlPadding * 2)
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: -(Theme.halfPadding + 2)
-            height: paginatorItem.height + Theme.padding * 2
+            topPadding: Theme.padding
+            bottomPadding: Theme.padding
             visible: followingAddresses.showPagination
-
-            Paginator {
-                id: paginatorItem
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: Theme.padding
-                pageSize: followingAddresses.pageSize
-                totalCount: followingAddresses.totalCount
-                currentPage: followingAddresses.currentPage
-                enabled: !followingAddresses.isPaginationLoading
-                onRequestPage: followingAddresses.goToPage(pageNumber)
-            }
+            
+            pageSize: followingAddresses.pageSize
+            totalCount: followingAddresses.totalCount
+            currentPage: followingAddresses.currentPage
+            enabled: !followingAddresses.isPaginationLoading
+            onRequestPage: followingAddresses.goToPage(pageNumber)
         }
     }
 }

@@ -84,17 +84,20 @@ QtObject:
 
       if not errorString.isEmptyOrWhitespace:
         error "onFollowingAddressesFetched got error from backend", errorString = errorString
-        self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, Args())
-        raise newException(Exception, "Error fetching following addresses: " & errorString)
+        let args = FollowingAddressesArgs(userAddress: userAddress, addresses: @[])
+        self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, args)
+        return
       if followingAddressesJson.isNil or followingAddressesJson.kind == JNull:
         warn "onFollowingAddressesFetched: followingAddressesJson is nil or null"
-        self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, Args())
+        let args = FollowingAddressesArgs(userAddress: userAddress, addresses: @[])
+        self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, args)
         return
 
       discard followingAddressesJson.getProp("result", followingResult)
       if followingResult.isNil or followingResult.kind == JNull:
         warn "onFollowingAddressesFetched: followingResult is nil or null"
-        self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, Args())
+        let args = FollowingAddressesArgs(userAddress: userAddress, addresses: @[])
+        self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, args)
         return
 
       let addresses = followingResult.getElems().map(proc(x: JsonNode): FollowingAddressDto = x.toFollowingAddressDto())
@@ -107,8 +110,9 @@ QtObject:
       self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, args)
       
     except Exception as e:
-      error "onFollowingAddressesFetched exception", msg = e.msg, stack = e.getStackTrace()
-      self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, Args())
+      error "onFollowingAddressesFetched exception", msg = e.msg
+      let args = FollowingAddressesArgs(userAddress: "", addresses: @[])
+      self.events.emit(SIGNAL_FOLLOWING_ADDRESSES_UPDATED, args)
 
   proc getTotalFollowingCount*(self: Service): int =
     return self.totalFollowingCount

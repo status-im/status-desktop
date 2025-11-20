@@ -17,22 +17,19 @@ import shared.stores as SharedStores
 
 import "../popups"
 import "../controls"
-import "../stores"
-import ".."
-
-import AppLayouts.Wallet.stores as WalletStores
 
 StatusMenu {
     id: root
 
+    property var rootStore  // Injected from parent, not singleton
     property string name
     property string address
     property string ensName
     property var tags
-    property var activeNetworks
-
-    readonly property int maxHeight: 341
-    height: implicitHeight > maxHeight ? maxHeight : implicitHeight
+    
+    // Model providing active networks
+    // Expected roles: chainId (int), chainName (string), iconUrl (string), layer (int)
+    property var activeNetworksModel
 
     QtObject {
         id: d
@@ -97,8 +94,8 @@ StatusMenu {
 
     BlockchainExplorersMenu {
         id: blockchainExplorersMenu
-        flatNetworks: root.activeNetworks
-        onNetworkClicked: {
+        flatNetworks: root.activeNetworksModel
+        onNetworkClicked: (shortname, isTestnet) => {
             let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, d.visibleAddress ? d.visibleAddress : root.ensName);
             Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
         }
@@ -107,23 +104,15 @@ StatusMenu {
     StatusMenuSeparator { }
 
     StatusAction {
-        text: {
-            var savedAddr = WalletStores.RootStore.getSavedAddress(root.address)
-            var isSaved = savedAddr && savedAddr.address !== ""
-            return isSaved ? qsTr("Already in saved addresses") : qsTr("Add to saved addresses")
-        }
-        assetSettings.name: {
-            var savedAddr = WalletStores.RootStore.getSavedAddress(root.address)
-            var isSaved = savedAddr && savedAddr.address !== ""
-            return isSaved ? "star-icon" : "star-icon-outline"
-        }
+        readonly property var savedAddr: root.rootStore ? root.rootStore.getSavedAddress(root.address) : null
+        readonly property bool isSaved: savedAddr && savedAddr.address !== ""
+        
+        text: isSaved ? qsTr("Already in saved addresses") : qsTr("Add to saved addresses")
+        assetSettings.name: isSaved ? "star-icon" : "star-icon-outline"
         objectName: "addToSavedAddressesAction"
-        enabled: {
-            var savedAddr = WalletStores.RootStore.getSavedAddress(root.address)
-            return !(savedAddr && savedAddr.address !== "")
-        }
+        enabled: !isSaved
         onTriggered: {
-            var nameToUse = root.ensName || root.address
+            let nameToUse = root.ensName || root.address
             if (root.ensName && root.ensName.includes(".")) {
                 nameToUse = root.ensName.split(".")[0]
             }

@@ -14,7 +14,7 @@ import shared.controls
 import shared.stores as SharedStores
 import AppLayouts.stores as AppLayoutStores
 
-import AppLayouts.Wallet.stores
+import AppLayouts.Wallet.stores as WalletStores
 import AppLayouts.Wallet.controls
 
 Item {
@@ -23,8 +23,9 @@ Item {
     required property AppLayoutStores.ContactsStore contactsStore
     required property SharedStores.NetworkConnectionStore networkConnectionStore
     required property SharedStores.NetworksStore networksStore
-    property var followingAddressesModel
-    property int totalFollowingCount
+    required property var followingAddressesModel
+    required property int totalFollowingCount
+    required property WalletStores.RootStore rootStore  // Wallet-specific RootStore for delegates
 
     signal sendToAddressRequested(string address)
     signal refreshRequested(string search, int limit, int offset)
@@ -59,7 +60,7 @@ Item {
         }
 
         function performSearch() {
-            var offset = (currentPage - 1) * pageSize
+            const offset = (currentPage - 1) * pageSize
             isPaginationLoading = true
             root.refreshRequested(currentSearch, pageSize, offset)
         }
@@ -148,7 +149,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
             visible: root.followingAddressesModel && root.followingAddressesModel.count > 0 && listView.count === 0 && !d.isPaginationLoading
-            text: qsTr("No following addresses found. Check spelling or address is correct.")
+            text: qsTr("No following addresses found. Check spelling or whether the address is correct.")
         }
 
         Item {
@@ -165,28 +166,39 @@ Item {
                 id: listView
                 objectName: "FollowingAddressesView_followingAddresses"
                 anchors.fill: parent
-                spacing: 8
+                spacing: Theme.halfPadding
                 visible: !d.isPaginationLoading
 
                 model: root.followingAddressesModel
 
                 delegate: FollowingAddressesDelegate {
                     id: followingAddressDelegate
-                    objectName: "followingAddressView_Delegate_" + name
+                    objectName: "followingAddressView_Delegate_" + model.name
                     width: ListView.view.width
-                    name: model.name
+                    title: model.name
                     address: model.address
                     ensName: model.ensName
                     tags: model.tags
                     avatar: model.avatar
                     networkConnectionStore: root.networkConnectionStore
-                    activeNetworks: root.networksStore.activeNetworks
+                    activeNetworksModel: root.networksStore.activeNetworks
+                    rootStore: root.rootStore
+                    onClicked: {
+                        Global.openSavedAddressActivityPopup({
+                            name: model.name,
+                            address: model.address,
+                            ens: model.ensName,
+                            colorId: "",
+                            avatar: model.avatar,
+                            isFollowingAddress: true
+                        })
+                    }
                     onOpenSendModal: root.sendToAddressRequested(recipient)
-                    onMenuRequested: (menuModel) => {
+                    onMenuRequested: (name, address, ensName, tags) => {
                         followingAddressMenu.openMenu(followingAddressDelegate, 
                             followingAddressDelegate.width - followingAddressMenu.width,
                             followingAddressDelegate.height + Theme.halfPadding,
-                            menuModel)
+                            {name: name, address: address, ensName: ensName, tags: tags})
                     }
                 }
             }
@@ -200,7 +212,8 @@ Item {
 
         FollowingAddressMenu {
             id: followingAddressMenu
-            activeNetworks: root.networksStore.activeNetworks
+            activeNetworksModel: root.networksStore.activeNetworks
+            rootStore: root.rootStore
         }
     }
 }
