@@ -2148,10 +2148,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation>Režim</translation>
     </message>
     <message>
-        <source>Padding factor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>XXS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2166,6 +2162,14 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     <message>
         <source>System</source>
         <translation type="unfinished">Systémový</translation>
+    </message>
+    <message>
+        <source>Layout Spacing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust how compact or spacious the layout looks</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2712,10 +2716,6 @@ Do you wish to override the security check and continue?</source>
     <name>BrowserWalletMenu</name>
     <message>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wallet info will appear here</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
