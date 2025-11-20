@@ -98,7 +98,7 @@ std::unique_ptr<ThemePalette> createDarkThemePalette(QObject* parent)
     t->directColor6 = StatusColors::getColor("white", 0.2);
     t->directColor7 = StatusColors::getColor("white", 0.1);
     t->directColor8 = StatusColors::getColor("white", 0.05);
-    t->directColor9 = StatusColors::getColor("white", 0.2); // as per QML duplicate
+    t->directColor9 = StatusColors::getColor("white", 0.2);
 
     // Indirect
     t->indirectColor1 = StatusColors::getColor("black");

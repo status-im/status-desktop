@@ -144,7 +144,8 @@ class CustomisationColors {
     Q_PROPERTY(QColor yinYang MEMBER yinYang CONSTANT)
     Q_PROPERTY(QColor purple2 MEMBER purple2 CONSTANT)
 public:
-    QColor blue, purple, orange, army, turquoise, sky, yellow, pink, copper, camel, magenta, yinYang, purple2;
+    QColor blue, purple, orange, army, turquoise, sky, yellow, pink, copper,
+        camel, magenta, yinYang, purple2;
 };
 
 class PrivacyModeColors {
