@@ -1,6 +1,7 @@
 #include "StatusQ/theme.h"
 
 #include <QQmlApplicationEngine>
+#include <QQmlEngine>
 
 namespace {
 
@@ -9,6 +10,13 @@ constexpr qreal s_xlPaddingFactor = 2.0;
 constexpr qreal s_bigPaddingFactor = 1.5;
 constexpr qreal s_halfPaddingFactor = 0.5;
 constexpr qreal s_smallPaddingFactor = 0.625;
+
+constexpr int s_secondaryAdditionalTextBaseSize = 17;
+constexpr int s_primaryTextFontBaseSize = 15;
+constexpr int s_secondaryTextFontBaseSize = 14;
+constexpr int s_additionalTextBaseSize = 13;
+constexpr int s_tertiaryTextFontBaseSize = 12;
+constexpr int s_asideTextFontBaseSize = 10;
 
 const std::unique_ptr<ThemePalette> s_paletteDark = createDarkThemePalette();
 const std::unique_ptr<ThemePalette> s_paletteLight = createLightThemePalette();
@@ -78,26 +86,6 @@ void Theme::resetPadding()
     emit explicitPaddingChanged();
 }
 
-void Theme::inheritPadding(qreal padding)
-{
-    if (m_explicitPadding || m_padding == padding)
-        return;
-
-    m_padding = padding;
-    propagatePadding();
-    emit paddingChanged();
-}
-
-void Theme::propagatePadding()
-{
-    const auto themes = attachedChildren();
-    for (QQuickAttachedPropertyPropagator *child : themes) {
-        auto theme = qobject_cast<Theme*>(child);
-        if (theme)
-            theme->inheritPadding(m_padding);
-    }
-}
-
 bool Theme::explicitPadding() const {
     return m_explicitPadding;
 }
@@ -105,6 +93,12 @@ bool Theme::explicitPadding() const {
 Theme::Style Theme::style() const
 {
     return m_style;
+}
+
+const ThemePalette* Theme::palette() const
+{
+    return m_style == Style::Light ? s_paletteLight.get()
+                                   : s_paletteDark.get();
 }
 
 void Theme::setStyle(Style style)
@@ -141,34 +135,94 @@ void Theme::resetStyle()
     emit explicitStyleChanged();
 }
 
-void Theme::inheritStyle(Style style)
-{
-    if (m_explicitStyle || m_style == style)
-        return;
-
-    m_style = style;
-    propagateStyle();
-    emit styleChanged();
-}
-
-void Theme::propagateStyle()
-{
-    const auto themes = attachedChildren();
-    for (QQuickAttachedPropertyPropagator *child : themes) {
-        auto theme = qobject_cast<Theme*>(child);
-        if (theme)
-            theme->inheritStyle(m_style);
-    }
-}
-
 bool Theme::explicitStyle() const {
     return m_explicitStyle;
 }
 
-const ThemePalette* Theme::palette() const
+int Theme::fontSizeOffset() const
 {
-    return m_style == Style::Light ? s_paletteLight.get()
-                                   : s_paletteDark.get();
+    return m_fontSizeOffset;
+}
+
+int Theme::secondaryAdditionalTextSize() const
+{
+    return s_secondaryAdditionalTextBaseSize + m_fontSizeOffset;
+}
+
+int Theme::primaryTextFontSize() const
+{
+    return s_primaryTextFontBaseSize + m_fontSizeOffset;
+}
+
+int Theme::secondaryTextFontSize() const
+{
+    return s_secondaryTextFontBaseSize + m_fontSizeOffset;
+}
+
+int Theme::additionalTextSize() const
+{
+    return s_additionalTextBaseSize + m_fontSizeOffset;
+}
+
+int Theme::tertiaryTextFontSize() const
+{
+    return s_tertiaryTextFontBaseSize + m_fontSizeOffset;
+}
+
+int Theme::asideTextFontSize() const
+{
+    return s_asideTextFontBaseSize + m_fontSizeOffset;
+}
+
+QJSValue Theme::fontSize() const
+{
+    if (!m_fontSizeFn.isCallable()) {
+        QQmlEngine *engine = qmlEngine(parent());
+        if (engine) {
+            auto str = QStringLiteral("value => value + %1").arg(m_fontSizeOffset);
+            m_fontSizeFn = engine->evaluate(str);
+        }
+    }
+    return m_fontSizeFn;
+}
+
+void Theme::setFontSizeOffset(int fontSizeOffset)
+{
+    auto explicitFontSizeOffsetOld = m_explicitFontSizeOffset;
+    m_explicitFontSizeOffset = true;
+
+    if (m_fontSizeOffset == fontSizeOffset) {
+        if (!explicitFontSizeOffsetOld)
+            emit explicitFontSizeOffsetChanged();
+
+        return;
+    }
+
+    m_fontSizeOffset = fontSizeOffset;
+    propagateFontSizeOffset();
+    m_fontSizeFn = QJSValue();
+    emit fontSizeOffsetChanged();
+
+    if (!explicitFontSizeOffsetOld)
+        emit explicitFontSizeOffsetChanged();
+}
+
+void Theme::resetFontSizeOffset()
+{
+    if (!m_explicitFontSizeOffset)
+        return;
+
+    m_explicitFontSizeOffset = false;
+    auto theme = qobject_cast<Theme*>(attachedParent());
+
+    inheritFontSizeOffset(theme ? theme->fontSizeOffset() : 0);
+
+    emit explicitFontSizeOffsetChanged();
+}
+
+bool Theme::explicitFontSizeOffset() const
+{
+    return m_explicitFontSizeOffset;
 }
 
 Theme *Theme::rootTheme()
@@ -193,6 +247,67 @@ Theme* Theme::qmlAttachedProperties(QObject *object)
     return new Theme(object);
 }
 
+void Theme::inheritPadding(qreal padding)
+{
+    if (m_explicitPadding || m_padding == padding)
+        return;
+
+    m_padding = padding;
+    propagatePadding();
+    emit paddingChanged();
+}
+
+void Theme::propagatePadding()
+{
+    const auto themes = attachedChildren();
+    for (QQuickAttachedPropertyPropagator *child : themes) {
+        auto theme = qobject_cast<Theme*>(child);
+        if (theme)
+            theme->inheritPadding(m_padding);
+    }
+}
+
+void Theme::inheritStyle(Style style)
+{
+    if (m_explicitStyle || m_style == style)
+        return;
+
+    m_style = style;
+    propagateStyle();
+    emit styleChanged();
+}
+
+void Theme::propagateStyle()
+{
+    const auto themes = attachedChildren();
+    for (QQuickAttachedPropertyPropagator *child : themes) {
+        auto theme = qobject_cast<Theme*>(child);
+        if (theme)
+            theme->inheritStyle(m_style);
+    }
+}
+
+void Theme::inheritFontSizeOffset(int fontSizeOffset)
+{
+    if (m_explicitFontSizeOffset || m_fontSizeOffset == fontSizeOffset)
+        return;
+
+    m_fontSizeOffset = fontSizeOffset;
+    propagateFontSizeOffset();
+    m_fontSizeFn = QJSValue();
+    emit fontSizeOffsetChanged();
+}
+
+void Theme::propagateFontSizeOffset()
+{
+    const auto themes = attachedChildren();
+    for (QQuickAttachedPropertyPropagator *child : themes) {
+        auto theme = qobject_cast<Theme*>(child);
+        if (theme)
+            theme->inheritFontSizeOffset(m_fontSizeOffset);
+    }
+}
+
 void Theme::attachedParentChange(QQuickAttachedPropertyPropagator* newParent,
                                  QQuickAttachedPropertyPropagator* oldParent)
 {
@@ -201,5 +316,6 @@ void Theme::attachedParentChange(QQuickAttachedPropertyPropagator* newParent,
     if (attachedParentTheme) {
         inheritPadding(attachedParentTheme->padding());
         inheritStyle(attachedParentTheme->style());
+        inheritFontSizeOffset(attachedParentTheme->fontSizeOffset());
     }
 }

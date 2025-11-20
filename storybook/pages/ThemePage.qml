@@ -25,35 +25,80 @@ Item {
             id: page
 
             footer: ColumnLayout {
-                Slider {
-                    from: 0
-                    to: 50
-                    stepSize: 1
-
-                    value: panel.Theme.padding
-
-                    onValueChanged: {
-                        if (value !== panel.Theme.padding)
-                            panel.Theme.padding = value
-                    }
-                }
-
                 RowLayout {
                     Button {
                         text: "reset padding"
 
                         onClicked: {
                             panel.Theme.padding = undefined
-                            //panel.Theme.resetPadding()
                         }
 
                         enabled: panel.Theme.explicitPadding
                     }
 
-                    Label {
-                        text: `padding: ${panel.Theme.padding}`
+                    Slider {
+                        Layout.preferredWidth: 150
+
+                        from: 0
+                        to: 50
+                        stepSize: 1
+
+                        value: panel.Theme.padding
+
+                        onValueChanged: {
+                            if (value !== panel.Theme.padding)
+                                panel.Theme.padding = value
+                        }
                     }
 
+                    Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+
+                        font.pixelSize: Theme.fontSize(13)
+                        text: `padding: ${panel.Theme.padding}`
+                    }
+                }
+
+                RowLayout {
+                    Button {
+                        text: "reset font size"
+
+                        onClicked: {
+                            panel.Theme.fontSizeOffset = undefined
+                        }
+
+                        enabled: panel.Theme.explicitFontSizeOffset
+                    }
+
+                    Slider {
+                        Layout.preferredWidth: 150
+
+                        from: -5
+                        to: 10
+                        stepSize: 1
+
+                        value: panel.Theme.fontSizeOffset
+
+                        onValueChanged: {
+                            if (value !== panel.Theme.fontSizeOffset)
+                                panel.Theme.fontSizeOffset = value
+                        }
+                    }
+
+                    Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+
+                        font.pixelSize: Theme.fontSize(13)
+                        text: `font size offset: ${panel.Theme.fontSizeOffset}`
+                    }
+                }
+
+                RowLayout {
+                    Label {
+                        text: `theme:`
+                    }
                     Button {
                         text: "Dark"
                         onClicked: panel.Theme.style = Theme.Dark
