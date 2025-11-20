@@ -84,6 +84,11 @@ proc buildGroupsForChain*(self: Service, chainId: int) =
       )
     groupsByTokenKey[groupKey].addToken(token)
   self.groupsForChain = toSeq(groupsByTokenKey.values)
+  # sort groups by name
+  self.groupsForChain.sort(
+    proc(a: TokenGroupItem, b: TokenGroupItem): int =
+      return a.name.cmp(b.name)
+  )
 
 proc getGroupsForChain*(self: Service): var seq[TokenGroupItem] =
   return self.groupsForChain

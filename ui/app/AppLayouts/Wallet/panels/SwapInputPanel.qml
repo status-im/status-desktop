@@ -30,7 +30,9 @@ Control {
     required property CurrenciesStore currencyStore
     required property var flatNetworksModel
     required property var processedAssetsModel
-    property var tokenGroupsModel
+
+    property var allTokenGroupsForChainModel
+    property var searchResultModel
 
     property int selectedNetworkChainId: -1
     onSelectedNetworkChainIdChanged: reevaluateSelectedId()
@@ -85,6 +87,10 @@ Control {
         amountToSendInput.forceActiveFocus()
     }
 
+    function reset() {
+        d.adaptor.search("")
+    }
+
     enum SwapSide {
         Pay = 0,
         Receive = 1
@@ -103,7 +109,7 @@ Control {
 
 
         function reevaluateSelectedId() {
-            const entry = SQUtils.ModelUtils.getByKey(root.tokenGroupsModel, "key", d.selectedHoldingId)
+            const entry = SQUtils.ModelUtils.getByKey(d.adaptor.outputAssetsModel, "key", d.selectedHoldingId)
             if (!entry) {
                 // Token doesn't exist in destination chain
                 d.selectedHoldingId = root.defaultGroupKey
@@ -136,7 +142,9 @@ Control {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
-            tokenGroupsModel: root.tokenGroupsModel
+            allTokenGroupsForChainModel: root.allTokenGroupsForChainModel
+            searchResultModel: root.searchResultModel
+
             flatNetworksModel: root.flatNetworksModel
             currentCurrency: root.currencyStore.currentCurrency
 
@@ -287,7 +295,15 @@ Control {
                 Layout.alignment: Qt.AlignRight
 
                 model: d.adaptor.outputAssetsModel
+                hasMoreItems: d.adaptor.outputAssetsModel.hasMoreItems()
+                isLoadingMore: d.adaptor.outputAssetsModel.isLoadingMore()
                 nonInteractiveKey: root.nonInteractiveGroupKey
+
+                onSearch: function(keyword) {
+                    d.adaptor.search(keyword)
+                }
+
+                onLoadMoreRequested: d.adaptor.loadMoreItems()
 
                 onSelected: function(key) {
                     // Token existance checked with plainTokensBySymbolModel
