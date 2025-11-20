@@ -51,10 +51,6 @@ Control {
         normalColor: Theme.palette.primaryColor3
         hoverColor: Theme.palette.primaryColor2
 
-        font.weight: Font.Medium
-        textPosition: StatusBaseButton.TextPosition.Left
-        textColor: Theme.palette.primaryColor1
-
         onClicked: root.addViaEFPClicked()
     }
 

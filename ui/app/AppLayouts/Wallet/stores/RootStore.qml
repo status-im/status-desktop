@@ -68,7 +68,7 @@ QtObject {
 
     function refreshFollowingAddresses(search, limit, offset) {
         if (!walletSectionFollowingAddresses) return
-        var primaryAddress = getPrimaryAccountAddress()
+        const primaryAddress = getPrimaryAccountAddress()
         if (primaryAddress) {
             search = search || ""
             limit = limit || 10
@@ -162,7 +162,7 @@ QtObject {
             target: root.walletSectionInst
             function onWalletAccountRemoved(address) {
                 address = address.toLowerCase();
-                for (var addressKey in d.activityFiltersStoreDictionary){
+                for (const addressKey in d.activityFiltersStoreDictionary){
                     if (address === addressKey.toLowerCase()){
                         delete d.activityFiltersStoreDictionary[addressKey]
                         return
@@ -298,7 +298,7 @@ QtObject {
     }
 
     function getNameForAddress(address) {
-        var name = getNameForWalletAddress(address)
+        let name = getNameForWalletAddress(address)
         if (name.length === 0) {
             let savedAddress = getSavedAddress(address)
             name = savedAddress.name
