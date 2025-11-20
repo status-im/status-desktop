@@ -112,7 +112,6 @@ Item {
             walletTokensStore: TokensStore {
                 tokenGroupsModel: TokenGroupsModel {}
             }
-            assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
         }
 
         readonly property var currencyStore: CurrenciesStore{}

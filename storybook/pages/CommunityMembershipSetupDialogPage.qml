@@ -21,7 +21,6 @@ SplitView {
         Logs { id: logs }
 
         readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-            assetsWithFilteredBalances: groupedAccountsAssetsModel
         }
 
         function openDialog() {

@@ -34,7 +34,6 @@ SplitView {
         }
 
         readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-            assetsWithFilteredBalances: groupedAccountsAssetsModel
             walletTokensStore: TokensStore {
                 tokenGroupsModel: TokenGroupsModel{}
                 getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0

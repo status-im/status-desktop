@@ -313,7 +313,9 @@ Item {
 
     WalletStore.WalletAssetsStore {
         id: assetsStoreMock
-        assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
+        walletTokensStore: WalletStore.TokensStore {
+            tokenGroupsModel: TokenGroupsModel {}
+        }
     }
 
     Component {

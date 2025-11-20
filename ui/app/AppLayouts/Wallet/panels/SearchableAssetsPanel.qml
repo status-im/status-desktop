@@ -5,7 +5,9 @@ import QtQuick.Layouts
 import StatusQ
 import StatusQ.Core
 import StatusQ.Core.Utils
+import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
+import StatusQ.Components
 import StatusQ.Popups.Dialog
 
 import AppLayouts.Wallet.views
@@ -19,12 +21,18 @@ import SortFilterProxyModel
 Control {
     id: root
 
-    property alias model: sfpm.sourceModel
+    property var model
     property string highlightedKey
     property string nonInteractiveKey
     property bool showSectionName: true
 
+    // Lazy loading properties
+    property bool hasMoreItems: false
+    property bool isLoadingMore: false
+
+    signal search(string keyword)
     signal selected(string key)
+    signal loadMoreRequested()
 
     function clearSearch() {
         searchBox.text = ""
@@ -32,21 +40,25 @@ Control {
 
     QtObject {
         id: d
-        readonly property bool validSearchResultExists: !!searchBox.text && sfpm.count > 0
-    }
 
-    SortFilterProxyModel {
-        id: sfpm
+        readonly property int numOfItemsFromBottomToTriggerFetching: 3
 
-        filters: AnyOf {
-            SearchFilter {
-                roleName: "name"
-                searchPhrase: searchBox.text
-            }
-            SearchFilter {
-                roleName: "symbol"
-                searchPhrase: searchBox.text
-            }
+        readonly property bool validSearchResultExists: !!searchBox.text && root.model.ModelCount.count > 0
+
+        property var debounceLoadMore: Backpressure.debounce(root, 1000, function() {
+            root.loadMoreRequested()
+        })
+
+        property var debounceSearch: Backpressure.debounce(root, 1000, function(keyword) {
+            root.search(keyword)
+        })
+
+        function loadMoreRequested() {
+            Qt.callLater(debounceLoadMore)
+        }
+
+        function search(keyword) {
+            Qt.callLater(debounceSearch, keyword)
         }
     }
 
@@ -71,6 +83,10 @@ Control {
 
             visible: listView.count || !!searchBox.text
 
+            onTextChanged: {
+                d.search(text)
+            }
+
             Keys.forwardTo: [listView]
         }
 
@@ -94,7 +110,7 @@ Control {
 
             spacing: 4
 
-            model: sfpm.ModelCount.count > 0 ? sfpm : null
+            model: root.model && root.model.ModelCount.count > 0 ? root.model : null
             section.property: "sectionName"
 
             section.delegate: TokenSelectorSectionDelegate {
@@ -121,6 +137,28 @@ Control {
                 balancesModel: model.balances
 
                 onClicked: root.selected(model.key)
+
+                // Trigger load more when user is d.numOfItemsFromBottomToTriggerFetching items away from bottom
+                Component.onCompleted: {
+                    if (root.hasMoreItems && !root.isLoadingMore) {
+                        const itemsFromBottom = listView.count - index - 1
+                        if (itemsFromBottom <= d.numOfItemsFromBottomToTriggerFetching) {
+                            d.loadMoreRequested()
+                        }
+                    }
+                }
+            }
+
+            onContentYChanged: {
+                if (root.hasMoreItems && !root.isLoadingMore && listView.count > 0) {
+                    const bottom = contentY + height
+                    const total = contentHeight
+                    // Trigger when d.numOfItemsFromBottomToTriggerFetching items away from bottom (estimate ~70px per item)
+                    const itemHeight = 70
+                    if (bottom >= total - (d.numOfItemsFromBottomToTriggerFetching * itemHeight)) {
+                        d.loadMoreRequested()
+                    }
+                }
             }
 
             Keys.onReturnPressed: {
@@ -135,6 +173,34 @@ Control {
 
             HoverHandler {
                 id: listViewHoverHandler
+            }
+
+            // Loading indicator at the bottom
+            footer: Loader {
+                width: ListView.view ? ListView.view.width : 0
+                active: root.hasMoreItems
+                visible: active
+
+                sourceComponent: Item {
+                    height: 70
+                    width: parent.width
+
+                    StatusLoadingIndicator {
+                        anchors.centerIn: parent
+                        width: 24
+                        height: 24
+                        color: Theme.palette.primaryColor1
+                    }
+
+                    StatusBaseText {
+                        anchors.top: parent.verticalCenter
+                        anchors.topMargin: 20
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: qsTr("Loading more tokens...")
+                        color: Theme.palette.baseColor1
+                        font.pixelSize: 12
+                    }
+                }
             }
         }
     }

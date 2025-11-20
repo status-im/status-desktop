@@ -95,7 +95,6 @@ Item {
                 walletTokensStore: TokensStore {
                     tokenGroupsModel: TokenGroupsModel {}
                 }
-                assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
             }
             property string uuid
             property var debounceFetchProviderUrl: Backpressure.debounce(root, 500, function() {

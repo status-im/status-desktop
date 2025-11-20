@@ -116,7 +116,7 @@ StatusStackModal {
 
         readonly property var tokenSelectorViewAdaptor: TokenSelectorViewAdaptor {
             assetsModel: root.groupedAccountAssetsModel
-            tokenGroupsModel: root.tokenGroupsModel
+            allTokenGroupsForChainModel: root.tokenGroupsModel
             flatNetworksModel: root.networksModel
             currentCurrency: root.currentCurrency
 
