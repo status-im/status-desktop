@@ -88,8 +88,13 @@ SettingsContentBase {
         }
 
         StatusSectionHeadline {
-            text: qsTr("Padding factor")
+            text: qsTr("Layout Spacing")
             Layout.topMargin: 2 * Theme.padding
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: qsTr("Adjust how compact or spacious the layout looks")
         }
 
         StatusQ.StatusLabeledSlider {

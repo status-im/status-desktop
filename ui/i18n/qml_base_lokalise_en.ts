@@ -1894,8 +1894,8 @@
       <source>%n key pair(s) successfully imported</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform></numerusform>
-        <numerusform></numerusform>
+        <numerusform>%n key pair successfully imported</numerusform>
+        <numerusform>%n key pairs successfully imported</numerusform>
       </translation>
     </message>
     <message>
@@ -2357,8 +2357,8 @@
       <source>%n issue(s)</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform></numerusform>
-        <numerusform></numerusform>
+        <numerusform>%n issue</numerusform>
+        <numerusform>%n issues</numerusform>
       </translation>
     </message>
     <message>
@@ -2628,11 +2628,6 @@
       <translation>Mode</translation>
     </message>
     <message>
-      <source>Padding factor</source>
-      <comment>AppearanceView</comment>
-      <translation>Padding factor</translation>
-    </message>
-    <message>
       <source>XXS</source>
       <comment>AppearanceView</comment>
       <translation>XXS</translation>
@@ -2651,6 +2646,16 @@
       <source>System</source>
       <comment>AppearanceView</comment>
       <translation>System</translation>
+    </message>
+    <message>
+      <source>Layout Spacing</source>
+      <comment>AppearanceView</comment>
+      <translation>Layout Spacing</translation>
+    </message>
+    <message>
+      <source>Adjust how compact or spacious the layout looks</source>
+      <comment>AppearanceView</comment>
+      <translation>Adjust how compact or spacious the layout looks</translation>
     </message>
   </context>
   <context>
@@ -3313,11 +3318,6 @@
       <source>Disconnect</source>
       <comment>BrowserWalletMenu</comment>
       <translation>Disconnect</translation>
-    </message>
-    <message>
-      <source>Wallet info will appear here</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Wallet info will appear here</translation>
     </message>
   </context>
   <context>
