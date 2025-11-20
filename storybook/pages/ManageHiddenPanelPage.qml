@@ -25,7 +25,6 @@ SplitView {
     orientation: Qt.Horizontal
 
     readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-        assetsWithFilteredBalances: groupedAccountsAssetsModel
     }
 
     ManageCollectiblesModel {

@@ -25,8 +25,6 @@ SplitView {
 
     property WalletAssetsStore walletAssetStore: WalletAssetsStore {
 
-        // Workaround to satisfy stub which is not empty (but should be)
-        assetsWithFilteredBalances: ListModel {}
 
         property var groupedAccountAssetsModel: ListModel {
             Component.onCompleted: {

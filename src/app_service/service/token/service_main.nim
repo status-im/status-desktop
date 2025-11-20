@@ -88,15 +88,16 @@ proc getAllTokenGroupsForActiveNetworksMode*(self: Service): seq[TokenGroupItem]
 proc getGroupsOfInterest*(self: Service): var seq[TokenGroupItem] =
   return self.groupsOfInterest
 
-proc buildGroupsForChain*(self: Service, chainId: int) =
+proc buildGroupsForChain*(self: Service, chainId: int): bool =
   if chainId <= 0:
     warn "invalid chainId", chainId = chainId
-    return
+    return false
   let allTokens = getTokensByChain(chainId)
   var groupsByKey = initTable[string, TokenGroupItem]()
   createTokenGroupsFromTokens(allTokens, groupsByKey)
   self.groupsForChain = toSeq(groupsByKey.values)
   sortTokenGroupsByName(self.groupsForChain)
+  return true
 
 proc getGroupsForChain*(self: Service): var seq[TokenGroupItem] =
   return self.groupsForChain

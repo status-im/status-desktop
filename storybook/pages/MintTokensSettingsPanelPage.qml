@@ -115,7 +115,7 @@ SplitView {
                 filters: ValueFilter { roleName: "isTest"; value: false }
             }
             accounts: WalletAccountsModel {}
-            referenceAssetsBySymbolModel: ListModel {
+            referenceTokenGroupsModel: ListModel {
                 ListElement {
                     name: "eth"
                     symbol: "ETH"

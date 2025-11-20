@@ -76,7 +76,6 @@ SplitView {
         }
 
         readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-            assetsWithFilteredBalances: groupedAccountsAssetsModel
         }
     }
     ActivityFiltersStore {

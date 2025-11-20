@@ -128,7 +128,6 @@ SplitView {
                 id: thisWalletAssetStore
                 walletTokensStore: tokensStore
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: SharedStores.CurrenciesStore {
                 function formatBigNumber(number: string, symbol: string, noSymbolOption: bool) {

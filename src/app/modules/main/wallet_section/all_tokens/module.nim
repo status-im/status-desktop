@@ -123,8 +123,8 @@ method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSourc
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading(),
   )
 
-method buildGroupsForChain*(self: Module, chainId: int) =
-  self.controller.buildGroupsForChain(chainId)
+method buildGroupsForChain*(self: Module, chainId: int): bool =
+  return self.controller.buildGroupsForChain(chainId)
 
 method filterChanged*(self: Module, addresses: seq[string]) =
   if addresses == self.addresses:
