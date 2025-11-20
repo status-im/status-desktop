@@ -58,7 +58,7 @@ QtObject {
 
         if(chainId === root.arbitrumNet)
             return "Arbitrum"
-
+        
         if(chainId === root.baseNet)
             return "Base"
 
@@ -500,7 +500,7 @@ QtObject {
                 chainId: sepArbChainId,
                 chainName: "Arbitrum Sepolia",
                 rpcProviders: sepArbitrumRpcProviders,
-                blockExplorerURL: "https://sepolia.arbiscan.io/",
+                blockExplorerURL: "https://sepolia-explorer.arbitrum.io/",
                 iconUrl: "network/Network=Arbitrum-test",
                 chainColor: "#939BA1",
                 shortName: "arb1",
