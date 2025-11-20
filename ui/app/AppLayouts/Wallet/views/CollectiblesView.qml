@@ -176,7 +176,7 @@ ColumnLayout {
 
         function getFirstUserOwnedAddress(ownershipModel) {
             if (!ownershipModel) return ""
-            
+
             for (let i = 0; i < ownershipModel.rowCount(); i++) {
                 const accountAddress = ModelUtils.get(ownershipModel, i, "accountAddress")
                 if (ModelUtils.contains(root.ownedAccountsModel, "address", accountAddress, Qt.CaseInsensitive))
@@ -237,7 +237,7 @@ ColumnLayout {
             FastExpressionFilter {
                 expression: {
                     root.controller.revision
-                    return (customFilter.isCommunity ? !!model.communityId : !model.communityId) && root.controller.filterAcceptsSymbol(model.symbol)
+                    return (customFilter.isCommunity ? !!model.communityId : !model.communityId) && root.controller.filterAcceptsKey(model.symbol) // TODO: use token/group key
                 }
                 expectedRoles: ["symbol", "communityId"]
             },

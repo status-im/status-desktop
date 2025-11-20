@@ -53,10 +53,6 @@ method load*(self: Module) =
     self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
     self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
 
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
-    self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
-    self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
-
   self.controller.init()
   self.view.load()
 
@@ -71,8 +67,8 @@ method viewDidLoad*(self: Module) =
 
 method getGroupedAccountAssetsDataSource*(self: Module): GroupedAccountAssetsDataSource =
   return (
-    getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem] = self.controller.getGroupedAccountsAssetsList()
+    getGroupedAssetsList: proc(): var seq[AssetGroupItem] = self.controller.getGroupedAssetsList()
   )
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
-  self.controller.buildAllTokens(addresses)
+  discard

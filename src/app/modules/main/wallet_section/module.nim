@@ -142,7 +142,7 @@ proc newModule*(
   result.allCollectiblesModule = allCollectiblesModule
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,
     currencyService)
-  result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
+  result.sendModule = send_module.newModule(result, events, tokenService, walletAccountService, networkService, currencyService,
   transactionService, keycardService)
   result.newSendModule = newSendModule.newModule(result, events, walletAccountService, networkService, transactionService, keycardService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
@@ -243,8 +243,8 @@ proc notifyFilterChanged(self: Module) =
   self.updateViewWithAddressFilterChanged()
   self.notifyModulesOnFilterChanged()
 
-method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
-  return self.controller.getCurrencyAmount(amount, symbol)
+method getCurrencyAmount*(self: Module, amount: float64, key: string): CurrencyAmount =
+  return self.controller.getCurrencyAmount(amount, key)
 
 proc setKeypairOperabilityForObservedAccount(self: Module, address: string) =
   let keypair = self.controller.getKeypairByAccountAddress(address)
@@ -304,9 +304,6 @@ method load*(self: Module) =
     self.notifyModulesBalanceIsLoaded()
     self.view.setLastReloadTimestamp(args.timestamp)
     self.view.setIsAccountTokensReloading(false)
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
-    self.setTotalCurrencyBalance()
-    self.notifyFilterChanged()
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()

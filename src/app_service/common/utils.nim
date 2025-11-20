@@ -1,8 +1,8 @@
 import std/[json, os, sugar, strutils]
-import stint, regex, chronicles
+import tables, stint, regex, times, chronicles
 
 import nimcrypto
-import account_constants
+import account_constants, wallet_constants
 
 import constants as main_constants
 
@@ -90,3 +90,78 @@ proc createHash*(signature: string): string =
   let signatureHex = if signature.startsWith("0x"): signature[2..^1] else: signature
 
   return hashPassword(signatureHex, true)
+
+proc resolveUri*(uri: string): string =
+  if uri.startsWith(wallet_constants.IPFS_SCHEMA):
+    return uri.replace(wallet_constants.IPFS_SCHEMA, wallet_constants.IPFS_GATEWAY)
+  return uri
+
+proc timestampToUnix*(timestamp: string, format: string): int64 =
+  if timestamp.isEmptyOrWhitespace:
+    return 0
+  try:
+    let dateTime = parse(timestamp, format)
+    return dateTime.toTime().toUnix()
+  except Exception as e:
+    warn "failed to parse timestamp: ", data=timestamp, errName = e.name, errDesription = e.msg
+
+proc timestampToUnix*(timestamp: string): int64 =
+  if timestamp.isEmptyOrWhitespace:
+    return 0
+
+  var normalized = timestamp
+
+  if normalized.endsWith("Z"):
+    normalized = normalized[0..^2] & "+00:00"
+
+  normalized = normalized.replace(" ", "T")
+
+  let dotIdx = normalized.find('.')
+  if dotIdx != -1:
+    # Find where timezone starts (+ or -)
+    var tzIdx = -1
+    for i in dotIdx+1..<normalized.len:
+      if normalized[i] in {'+', '-'}:
+        tzIdx = i
+        break
+
+    if tzIdx != -1:
+      let fracStr = normalized[dotIdx+1..<tzIdx]
+
+      # Pad to 6 digits or truncate
+      var normalizedFrac = fracStr
+      while normalizedFrac.len < 6:
+        normalizedFrac.add('0')
+      if normalizedFrac.len > 6:
+        normalizedFrac = normalizedFrac[0..5]
+
+      normalized = normalized[0..dotIdx] & normalizedFrac & normalized[tzIdx..^1]
+  else:
+    # No fractional seconds - add .000000 before timezone
+    var tzIdx = -1
+    for i in countdown(normalized.len-1, 0):
+      if normalized[i] in {'+', '-'}:
+        tzIdx = i
+        break
+
+    if tzIdx != -1:
+      normalized = normalized[0..<tzIdx] & ".000000" & normalized[tzIdx..^1]
+
+  try:
+    let dt = parse(normalized, main_constants.DATE_TIME_FORMAT_2)
+    result = dt.toTime.toUnix
+    if result < 0:
+      result = 0
+  except Exception as e:
+    warn "failed to parse timestamp: ", data=normalized, errName = e.name, errDesription = e.msg
+    return 0
+
+proc createTokenKey*(chainId: int, address: string): string =
+  return $chainId & wallet_constants.TOKEN_KEY_DELIMITER & address.toLower()
+
+proc communityKeyToTokenKey*(communityTokenKey: string): string =
+  var parts = communityTokenKey.split(wallet_constants.COMMUNITY_TOKEN_KEY_DELIMITER)
+  if parts.len < 2:
+    raise newException(ValueError, "unsupported community token format")
+
+  return createTokenKey(parts[0].parseInt(), parts[1])

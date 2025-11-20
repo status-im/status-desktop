@@ -37,7 +37,7 @@ DropArea {
         readonly property int bgRadius: root.isCollectible ? Theme.radius : iconSize/2
     }
 
-    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrencyAmount: function (balance, key) {}
     property var getCurrentCurrencyAmount: function(balance){}
 
     SequentialAnimation {
@@ -79,10 +79,10 @@ DropArea {
         readonly property real totalBalance: aggregator.value/(10 ** model.decimals)
 
         secondaryTitle: root.isCollectible ? (root.isCommunityToken ? qsTr("Community minted") : model.collectionName || model.collectionUid) :
-                                             hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol)))
+                                             hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.key)))
                                                                               .arg(!model.communityId ? LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(totalBalance * model.marketDetails.currencyPrice.amount)):
                                                                                                         LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(0)))
-                                                                            : LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol))
+                                                                            : LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.key))
         bgRadius: priv.bgRadius
         hasImage: true
         icon.source: {

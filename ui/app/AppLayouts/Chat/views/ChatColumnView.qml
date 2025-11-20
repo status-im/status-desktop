@@ -69,7 +69,7 @@ Item {
     property string myPublicKey
 
     signal openStickerPackPopup(string stickerPackId)
-    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+    signal tokenPaymentRequested(string recipientAddress, string tokenKey, string rawAmount)
 
     // Unfurling related requests:
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
@@ -222,8 +222,8 @@ Item {
             Qt.callLater(d.restoreInputState, preservedText)
         }
 
-        function formatBalance(amount, symbol) {
-            let asset = ModelUtils.getByKey(WalletStore.RootStore.tokensStore.flatTokensModel, "symbol", symbol)
+        function formatBalance(amount, tokenKey) {
+            let asset = ModelUtils.getByKey(WalletStore.RootStore.tokensStore.tokenGroupsModel, "tokenKey", tokenKey)
             if (!asset)
                 return "0"
             const num = AmountsArithmetic.toNumber(amount, asset.decimals)
@@ -287,7 +287,7 @@ Item {
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
-                        onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
+                        onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, tokenKey, rawAmount)
                         onShowReplyArea: (messageId) => {
                                             d.showReplyArea(messageId)
                                         }

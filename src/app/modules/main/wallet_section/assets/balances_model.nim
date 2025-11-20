@@ -4,9 +4,12 @@ import ./io_interface
 
 type
   ModelRole {.pure.} = enum
-    ChainId = UserRole + 1
+    Account = UserRole + 1,
+    GroupKey,
+    TokenKey,
+    ChainId,
+    TokenAddress,
     Balance
-    Account
 
 QtObject:
   type BalancesModel* = ref object of QAbstractListModel
@@ -22,9 +25,9 @@ QtObject:
     result.index = index
 
   method rowCount(self: BalancesModel, index: QModelIndex = nil): int =
-    if self.index < 0 or self.index >= self.delegate.getGroupedAccountsAssetsList().len:
+    if self.index < 0 or self.index >= self.delegate.getGroupedAssetsList().len:
       return 0
-    return self.delegate.getGroupedAccountsAssetsList()[self.index].balancesPerAccount.len
+    return self.delegate.getGroupedAssetsList()[self.index].balancesPerAccount.len
 
   proc countChanged(self: BalancesModel) {.signal.}
   proc getCount(self: BalancesModel): int {.slot.} =
@@ -35,30 +38,38 @@ QtObject:
 
   method roleNames(self: BalancesModel): Table[int, string] =
     {
-      ModelRole.ChainId.int:"chainId",
-      ModelRole.Balance.int:"balance",
       ModelRole.Account.int:"account",
+      ModelRole.GroupKey.int:"groupKey",
+      ModelRole.TokenKey.int:"tokenKey",
+      ModelRole.ChainId.int:"chainId",
+      ModelRole.TokenAddress.int:"tokenAddress",
+      ModelRole.Balance.int:"balance"
     }.toTable
 
   method data(self: BalancesModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if self.index < 0 or self.index >= self.delegate.getGroupedAccountsAssetsList().len or
-      index.row < 0 or index.row >= self.delegate.getGroupedAccountsAssetsList()[self.index].balancesPerAccount.len:
+    if self.index < 0 or self.index >= self.delegate.getGroupedAssetsList().len or
+      index.row < 0 or index.row >= self.delegate.getGroupedAssetsList()[self.index].balancesPerAccount.len:
       return
-    let item = self.delegate.getGroupedAccountsAssetsList()[self.index].balancesPerAccount[index.row]
+    let item = self.delegate.getGroupedAssetsList()[self.index].balancesPerAccount[index.row]
     let enumRole = role.ModelRole
     case enumRole:
-      of ModelRole.ChainId:
-        result = newQVariant(item.chainId)
-      of ModelRole.Balance:
-        result = newQVariant(item.balance.toString(10))
       of ModelRole.Account:
         result = newQVariant(item.account)
+      of ModelRole.GroupKey:
+        result = newQVariant(item.groupKey)
+      of ModelRole.TokenKey:
+        result = newQVariant(item.tokenKey)
+      of ModelRole.ChainId:
+        result = newQVariant(item.chainId)
+      of ModelRole.TokenAddress:
+        result = newQVariant(item.tokenAddress)
+      of ModelRole.Balance:
+        result = newQVariant(item.balance.toString(10))
 
   proc setup(self: BalancesModel) =
     self.QAbstractListModel.setup
 
   proc delete(self: BalancesModel) =
     self.QAbstractListModel.delete
-

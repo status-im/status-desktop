@@ -19,7 +19,6 @@ QtObject:
       errCode: string
       errDescription: string
       selectedAssetKey: string
-      selectedToAssetKey: string
       showUnPreferredChains: bool
       sendType: transaction_dto.SendType
       selectedTokenIsOwnerToken: bool
@@ -92,18 +91,6 @@ QtObject:
     read = getSelectedAssetKey
     notify = selectedAssetKeyChanged
 
-  proc selectedToAssetKeyChanged*(self: View) {.signal.}
-  proc getSelectedToAssetKey*(self: View): string {.slot.} =
-    return self.selectedToAssetKey
-  proc setSelectedToAssetKey(self: View, assetKey: string) {.slot.} =
-    self.selectedToAssetKey = assetKey
-    self.updateNetworksTokenBalance()
-    self.selectedToAssetKeyChanged()
-  QtProperty[string] selectedToAssetKey:
-    write = setSelectedToAssetKey
-    read = getSelectedToAssetKey
-    notify = selectedToAssetKeyChanged
-
   proc showUnPreferredChainsChanged*(self: View) {.signal.}
   proc getShowUnPreferredChains(self: View): bool {.slot.} =
     return self.showUnPreferredChains
@@ -152,8 +139,9 @@ QtObject:
 
   proc updateNetworksTokenBalance(self: View) =
     for chainId in self.toNetworksRouteModel.getAllNetworksChainIds():
-      self.fromNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, chainId, self.selectedAssetKey))
-      self.toNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, chainId, self.selectedAssetKey))
+      let tokenBalance = self.delegate.getTokenBalanceForChainId(chainId)
+      self.fromNetworksRouteModel.updateTokenBalanceForSymbol(chainId, tokenBalance)
+      self.toNetworksRouteModel.updateTokenBalanceForSymbol(chainId, tokenBalance)
 
   proc setNetworkItems*(self: View, fromNetworks: seq[NetworkRouteItem], toNetworks: seq[NetworkRouteItem]) =
     self.fromNetworksRouteModel.setItems(fromNetworks)
@@ -191,10 +179,11 @@ QtObject:
       error "Error parsing extraParamsJson: ", msg=e.msg
 
     var slippagePercentage: float
-    try:
-      slippagePercentage = slippagePercentageString.parseFloat()
-    except:
-      error "parsing slippage failed", slippage=slippagePercentageString
+    if self.sendType == transaction_dto.SendType.Swap:
+      try:
+        slippagePercentage = slippagePercentageString.parseFloat()
+      except:
+        error "parsing slippage failed", slippage=slippagePercentageString
 
     let selectedFromChain = self.fromNetworksRouteModel.getSelectedChain()
     let selectedToChain = self.toNetworksRouteModel.getSelectedChain()
@@ -207,7 +196,7 @@ QtObject:
       self.selectedAssetKey,
       self.selectedTokenIsOwnerToken,
       amountIn,
-      self.selectedToAssetKey,
+      "",
       amountOut,
       selectedFromChain,
       selectedToChain,
@@ -259,11 +248,13 @@ QtObject:
     toChainID: int,
     sendType: int,
     slippagePercentageString: string) {.slot.} =
+
     var slippagePercentage: float
-    try:
-      slippagePercentage = slippagePercentageString.parseFloat()
-    except:
-      error "parsing slippage failed", slippage=slippagePercentageString
+    if sendType == ord(transaction_dto.SendType.Swap):
+      try:
+        slippagePercentage = slippagePercentageString.parseFloat()
+      except:
+        error "parsing slippage failed", slippage=slippagePercentageString
 
     self.delegate.suggestedRoutes(
       uuid,

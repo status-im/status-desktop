@@ -16,7 +16,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       totalCurrencyBalance: CurrencyAmount
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
-      tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
+      tmpKey: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
       tmpActivityControllers: ActivityControllerArray
       collectibleDetailsController: collectible_detailsc.Controller
@@ -96,8 +96,8 @@ QtObject:
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 
-  proc getCurrencyAmount*(self: View, amount: float, symbol: string): string {.slot.} =
-    let currencyAmount = self.delegate.getCurrencyAmount(amount, symbol)
+  proc getCurrencyAmount*(self: View, amount: float, key: string): string {.slot.} =
+    let currencyAmount = self.delegate.getCurrencyAmount(amount, key)
     return $(currencyAmount.toJsonNode())
 
   proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =

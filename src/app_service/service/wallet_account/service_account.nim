@@ -138,6 +138,15 @@ proc startWallet(self: Service) =
 
 proc init*(self: Service) =
   try:
+    self.buildTokensDebouncer = debouncer_service.newDebouncer(
+      self.threadpool,
+      # this is the delay before the first call to the callback, this is an action that doesn't need to be called immediately, but it's pretty expensive in terms of time/performances
+      # for example `wallet-tick-reload` event is emitted for every single chain-account pair, and at the app start can be more such signals received from the statusgo side if the balance have changed.
+      # Means it the app contains more accounts the likelihood of having more `wallet-tick-reload` signals is higher, so we need to delay the rebuildMarketData call to avoid unnecessary calls.
+      delayMs = 1000,
+      checkIntervalMs = 500)
+    self.buildTokensDebouncer.registerCall2(callback = proc(accounts: seq[string], forceRefresh: bool) = self.buildAllTokensInternal(accounts, forceRefresh))
+
     var addressesToGetENSName: seq[string] = @[]
     let chainId = self.networkService.getAppNetwork().chainId
     let woAccounts = getWatchOnlyAccountsFromDb()
@@ -189,10 +198,16 @@ proc init*(self: Service) =
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.buildAllTokens(self.getWalletAddresses(), forceRefresh = false)
 
+  self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e:Args):
+    self.buildAllTokens(self.getWalletAddresses(), forceRefresh = false)
+
   self.events.on(SIGNAL_PASSWORD_PROVIDED) do(e: Args):
     let args = AuthenticationArgs(e)
     self.cleanKeystoreFiles(args.password)
     self.importPartiallyOperableAccounts(args.keyUid, args.password)
+
+  let addresses = self.getWalletAddresses()
+  self.buildAllTokens(addresses, forceRefresh = true)
 
 proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = true) =
   var addressesToFetchBalanceFor: seq[string] = @[]
@@ -795,9 +810,6 @@ proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
 
 proc getEnabledChainIds*(self: Service): seq[int] =
   return self.networkService.getEnabledChainIds()
-
-proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
-  return self.currencyService.getCurrencyFormat(symbol)
 
 proc areTestNetworksEnabled*(self: Service): bool =
   return self.settingsService.areTestNetworksEnabled()
