@@ -1,5 +1,9 @@
 import QtQuick
 
+import StatusQ.Core.Utils
+
+import QtModelsToolkit
+
 import utils
 
 ListModel {
@@ -389,5 +393,42 @@ ListModel {
         },
     ]
 
-    Component.onCompleted: append(data)
+    property bool skipInitialLoad: false
+
+    Component.onCompleted: {
+        if (!skipInitialLoad) {
+            append(data)
+        }
+    }
+
+    property bool hasMoreItems: false
+    property bool isLoadingMore: false
+
+    property var tokenGroupsForChainModel // used for search only
+
+    function search(keyword) {
+        clear() // clear the existing model
+
+        if (!keyword || keyword.trim() === "") {
+            return
+        }
+
+        if (!tokenGroupsForChainModel) {
+            console.warn("search: tokenGroupsForChainModel is not set")
+            return
+        }
+
+        const lowerKeyword = keyword.toLowerCase()
+        for (let i = 0; i < tokenGroupsForChainModel.ModelCount.count; i++) {
+            const item = ModelUtils.get(tokenGroupsForChainModel, i)
+            const symbolMatch = item.symbol && item.symbol.toLowerCase().includes(lowerKeyword)
+            const nameMatch = item.name && item.name.toLowerCase().includes(lowerKeyword)
+            if (symbolMatch || nameMatch) {
+                append(item)
+            }
+        }
+    }
+
+    function fetchMore() {
+    }
 }

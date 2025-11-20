@@ -10,6 +10,9 @@ import StatusQ.Core.Utils
 import AppLayouts.Wallet.stores
 import AppLayouts.Wallet.adaptors
 
+import QtModelsToolkit
+import SortFilterProxyModel
+
 Item {
     id: root
     width: 600
@@ -22,22 +25,28 @@ Item {
         id: d
 
         readonly property var flatNetworks: NetworksModel.flatNetworks
-        readonly property var baseAssetsModel: GroupedAccountsAssetsModel {}
         readonly property var assetsStore: WalletAssetsStore {
             walletTokensStore: TokensStore {
                 tokenGroupsModel: TokenGroupsModel {}
+                tokenGroupsForChainModel: TokenGroupsModel {
+                        skipInitialLoad: true
+                }
+                searchResultModel: TokenGroupsModel {
+                    skipInitialLoad: true
+                    tokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel // the search should be performed over this model
+                }
             }
-            assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
         }
     }
 
     Component {
         id: componentUnderTest
         TokenSelectorViewAdaptor {
-            assetsModel: d.baseAssetsModel
+            assetsModel: d.assetsStore.groupedAccountAssetsModel
+            allTokenGroupsForChainModel: d.assetsStore.walletTokensStore.tokenGroupsForChainModel
+            searchResultModel: d.assetsStore.walletTokensStore.searchResultModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
-            tokenGroupsModel: TokenGroupsModel{}
             enabledChainIds: ModelUtils.modelToFlatArray(d.flatNetworks, "chainId")
         }
     }
@@ -69,15 +78,25 @@ Item {
         function test_allTokens() {
             verify(!!controlUnderTest)
 
-            const originalCount = controlUnderTest.outputAssetsModel.count
+            // showAllTokens = false
+            let initialAssetsCount = controlUnderTest.assetsModel.ModelCount.count
+            let initialOutputAssetsCount = controlUnderTest.outputAssetsModel.ModelCount.count
 
-            // turn on showing all tokens, verify we now have more items
+            tryVerify(() => initialAssetsCount === 9)
+            tryVerify(() => initialOutputAssetsCount === 5)
+
+            // showAllTokens = true, before building groups for chain
             controlUnderTest.showAllTokens = true
-            tryVerify(() => controlUnderTest.outputAssetsModel.count > originalCount)
+            tryVerify(() => controlUnderTest.outputAssetsModel.count === 0)
 
-            // turning them back off, verify we are back to the original number of items
+            // buildGroupsForChain for chainId 1
+            const chainId = 1
+            d.assetsStore.walletTokensStore.buildGroupsForChain(chainId)
+            tryVerify(() => controlUnderTest.outputAssetsModel.count === 8)
+
+            // showAllTokens = false
             controlUnderTest.showAllTokens = false
-            tryCompare(controlUnderTest.outputAssetsModel, "count", originalCount)
+            tryVerify(() => controlUnderTest.outputAssetsModel.count === 5)
         }
 
         function test_enabledChainIds() {
@@ -116,7 +135,6 @@ Item {
         function test_duplicatePlainTokens() {
             verify(!!controlUnderTest)
 
-            controlUnderTest.showAllTokens = true
             let count = 0
             ModelUtils.forEach(controlUnderTest.outputAssetsModel, (modelItem) => {
                 if (modelItem.key === daiGroupKey)

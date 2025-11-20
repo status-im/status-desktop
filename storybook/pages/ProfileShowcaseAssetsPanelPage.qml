@@ -27,7 +27,6 @@ SplitView {
     orientation: Qt.Vertical
 
     readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
-        assetsWithFilteredBalances: walletAssetStore.groupedAccountsAssetsModel
     }
 
     SortFilterProxyModel {

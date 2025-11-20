@@ -8,6 +8,8 @@ import StatusQ.Core.Theme
 import Storybook
 
 import utils
+import SortFilterProxyModel
+import StatusQ.Core.Utils as SQUtils
 
 Item {
     id: root
@@ -18,17 +20,48 @@ Item {
     Component {
         id: panelCmp
 
-        SearchableAssetsPanel {
-            id: panel
+        Item {
+            id: container
 
-            readonly property var assetsData: [
+            property string searchKeyword: ""
+            property alias panel: panelInstance
+
+            property ListModel sourceModel: ListModel {
+                Component.onCompleted: append(panelInstance.assetsData)
+            }
+
+            SearchableAssetsPanel {
+                id: panelInstance
+
+                model: SortFilterProxyModel {
+                    sourceModel: container.sourceModel
+
+                    filters: [
+                        AnyOf {
+                            SQUtils.SearchFilter {
+                                roleName: "name"
+                                searchPhrase: container.searchKeyword
+                            }
+                            SQUtils.SearchFilter {
+                                roleName: "symbol"
+                                searchPhrase: container.searchKeyword
+                            }
+                        }
+                    ]
+                }
+
+                onSearch: function(keyword) {
+                    container.searchKeyword = keyword.trim()
+                }
+
+                readonly property var assetsData: [
                 {
                     key: "stt_key",
                     communityId: "",
                     name: "Status Test Token",
                     currencyBalanceAsString: "42,23 USD",
                     symbol: "STT",
-                    iconSource: Constants.tokenIcon("STT"),
+                    logoUri: Constants.tokenIcon("STT"),
                     balances: [
                         {
                             balanceAsString: "0,56",
@@ -52,7 +85,7 @@ Item {
                     name: "Dai Stablecoin",
                     currencyBalanceAsString: "45,92 USD",
                     symbol: "DAI",
-                    iconSource: Constants.tokenIcon("DAI"),
+                    logoUri: Constants.tokenIcon("DAI"),
                     balances: [],
 
                     sectionName: "Popular assets"
@@ -63,20 +96,17 @@ Item {
                     name: "0x",
                     currencyBalanceAsString: "41,22 USD",
                     symbol: "ZRX",
-                    iconSource: Constants.tokenIcon("ZRX"),
+                    logoUri: Constants.tokenIcon("ZRX"),
                     balances: [],
 
                     sectionName: "Popular assets"
                 }
-            ]
+                ]
 
-            model: ListModel {
-                Component.onCompleted: append(panel.assetsData)
-            }
-
-            readonly property SignalSpy selectedSpy: SignalSpy {
-                target: panel
-                signalName: "selected"
+                readonly property SignalSpy selectedSpy: SignalSpy {
+                    target: panelInstance
+                    signalName: "selected"
+                }
             }
         }
     }
@@ -111,20 +141,23 @@ Item {
 
         function test_withNoSectionsModel() {
             const model = createTemporaryQmlObject("import QtQml.Models; ListModel {}", root)
-            const control = createTemporaryObject(panelCmp, root, { model })
+            const control = createTemporaryObject(panelCmp, root)
 
-            model.append(control.assetsData.map(
+            model.append(control.panel.assetsData.map(
                 e => ({
                         key: e.key,
                         communityId: e.communityId,
                         name: e.name,
                         currencyBalanceAsString: e.currencyBalanceAsString,
                         symbol: e.symbol,
-                        iconSource: e.iconSource,
-                        balances: e.balances
+                        logoUri: e.logoUri,
+                        balances: e.balances,
+                        sectionName: ""
                     })
                 )
             )
+
+            control.sourceModel = model
 
             const listView = findChild(control, "assetsListView")
             waitForRendering(listView)
@@ -152,6 +185,7 @@ Item {
             const searchBox = findChild(control, "searchBox")
 
             {
+                control.searchKeyword = "Status"
                 searchBox.text = "Status"
                 waitForRendering(listView)
 
@@ -163,6 +197,7 @@ Item {
                 compare(delegate1.background.color, Theme.palette.baseColor2)
             }
             {
+                control.searchKeyword = "zrx"
                 searchBox.text = "zrx"
                 waitForRendering(listView)
 
@@ -174,7 +209,8 @@ Item {
                 compare(delegate1.background.color, Theme.palette.baseColor2)
             }
             {
-                control.clearSearch()
+                control.searchKeyword = ""
+                searchBox.text = ""
                 waitForRendering(listView)
 
                 compare(searchBox.text, "")
@@ -184,7 +220,7 @@ Item {
 
         function test_highlightedKey() {
             const control = createTemporaryObject(panelCmp, root)
-            control.highlightedKey = "dai_key"
+            control.panel.highlightedKey = "dai_key"
 
             const listView = findChild(control, "assetsListView")
             waitForRendering(listView)
@@ -206,7 +242,7 @@ Item {
 
         function test_nonInteractiveKey() {
             const control = createTemporaryObject(panelCmp, root)
-            control.nonInteractiveKey = "dai_key"
+            control.panel.nonInteractiveKey = "dai_key"
 
             const listView = findChild(control, "assetsListView")
             waitForRendering(listView)
@@ -226,13 +262,13 @@ Item {
             compare(delegate3.enabled, true)
 
             mouseClick(delegate1)
-            compare(control.selectedSpy.count, 1)
+            compare(control.panel.selectedSpy.count, 1)
 
             mouseClick(delegate2)
-            compare(control.selectedSpy.count, 1)
+            compare(control.panel.selectedSpy.count, 1)
 
             mouseClick(delegate3)
-            compare(control.selectedSpy.count, 2)
+            compare(control.panel.selectedSpy.count, 2)
         }
     }
 }

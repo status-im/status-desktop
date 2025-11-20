@@ -45,6 +45,9 @@ StatusDialog {
 
     QtObject {
         id: d
+
+        readonly property string mandatoryKeysSeparator: "$$"
+
         property var debounceFetchSuggestedRoutes: Backpressure.debounce(root, 1000, function() {
             root.swapAdaptor.fetchSuggestedRoutes(payPanel.rawValue)
         })
@@ -102,7 +105,8 @@ StatusDialog {
         }
 
         function onSelectedNetworkChainIdChanged() {
-            root.swapAdaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(root.swapInputParamsForm.selectedNetworkChainId)
+            let keys = SQUtils.ModelUtils.joinModelEntries(root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel, "key", d.mandatoryKeysSeparator)
+            root.swapAdaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(root.swapInputParamsForm.selectedNetworkChainId, keys)
 
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
         }
@@ -124,7 +128,11 @@ StatusDialog {
     }
 
     Component.onCompleted: {
-        root.swapAdaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(root.swapInputParamsForm.selectedNetworkChainId)
+        payPanel.reset()
+        receivePanel.reset()
+
+        let keys = SQUtils.ModelUtils.joinModelEntries(root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel, "key", d.mandatoryKeysSeparator)
+        root.swapAdaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(root.swapInputParamsForm.selectedNetworkChainId, keys)
     }
 
     onOpened: {
@@ -219,7 +227,8 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
-                    tokenGroupsModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                    allTokenGroupsForChainModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                    searchResultModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.searchResultModel
 
                     groupKey: root.swapInputParamsForm.fromGroupKey
                     defaultGroupKey: root.swapInputParamsForm.defaultFromGroupKey
@@ -265,7 +274,8 @@ StatusDialog {
                     currencyStore: root.swapAdaptor.currencyStore
                     flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
-                    tokenGroupsModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                    allTokenGroupsForChainModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                    searchResultModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.searchResultModel
 
                     groupKey: root.swapInputParamsForm.toGroupKey
                     defaultGroupKey: root.swapInputParamsForm.defaultToGroupKey

@@ -79,7 +79,6 @@ SplitView {
                     tokenGroupsModel: TokenGroupsModel {}
                 }
                 readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: CurrenciesStore {}
             swapFormData: d.swapInputParamsForm
@@ -108,7 +107,8 @@ SplitView {
                 currencyStore: d.adaptor.currencyStore
                 flatNetworksModel: d.adaptor.networksStore.activeNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-                tokenGroupsModel: plainTokensModel
+                allTokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                searchResultModel: d.adaptor.walletAssetsStore.walletTokensStore.searchResultModel
 
                 selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
                 selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress
@@ -135,7 +135,8 @@ SplitView {
                 currencyStore: d.adaptor.currencyStore
                 flatNetworksModel: d.adaptor.networksStore.activeNetworks
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-                tokenGroupsModel: plainTokensModel
+                allTokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+                searchResultModel: d.adaptor.walletAssetsStore.walletTokensStore.searchResultModel
 
                 selectedNetworkChainId: d.swapInputParamsForm.selectedNetworkChainId
                 selectedAccountAddress: d.swapInputParamsForm.selectedAccountAddress

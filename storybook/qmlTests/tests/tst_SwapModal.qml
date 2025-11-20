@@ -54,10 +54,16 @@ Item {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
                 tokenGroupsModel: TokenGroupsModel {}
+                tokenGroupsForChainModel: TokenGroupsModel {
+                    skipInitialLoad: true
+                }
+                searchResultModel: TokenGroupsModel {
+                    skipInitialLoad: true
+                    tokenGroupsForChainModel: thisWalletAssetStore.walletTokensStore.tokenGroupsForChainModel
+                }
                 getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
         }
         swapStore: root.swapStore
         swapFormData: root.swapFormData
@@ -99,6 +105,8 @@ Item {
         // helper functions -------------------------------------------------------------
 
         function init() {
+            root.swapAdaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(1)
+
             swapAdaptor.swapFormData = root.swapFormData
             controlUnderTest = createTemporaryObject(componentUnderTest, root, { swapInputParamsForm: root.swapFormData})
         }
@@ -112,6 +120,11 @@ Item {
         function launchAndVerfyModal() {
             formValuesChanged.clear()
             verify(!!controlUnderTest)
+
+            if (root.swapFormData.selectedNetworkChainId === -1) {
+                root.swapFormData.selectedNetworkChainId = 1
+            }
+
             controlUnderTest.open()
             tryVerify(() => controlUnderTest.opened)
             tryVerify(() => controlUnderTest.enabled)
@@ -373,6 +386,8 @@ Item {
         }
 
         function test_network_default_and_selection() {
+            compare(root.swapFormData.selectedNetworkChainId, -1)
+
             // Launch popup
             launchAndVerfyModal()
 
@@ -387,29 +402,39 @@ Item {
             verify(!!networkComboBox)
 
             // check default value of network comboBox, should be mainnet
-            compare(root.swapFormData.selectedNetworkChainId, -1)
+            compare(root.swapFormData.selectedNetworkChainId, 1)
             compare(root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId, 11155111 /*Sepolia Mainnet*/)
 
             // lets ensure that the selected one is correctly set
-            for (let i=0; i<networkComboBox.control.popup.contentItem.count; i++) {
+            const networkSelectorView = findChild(networkComboBox.control.popup.contentItem, "networkSelectorList")
+            verify(!!networkSelectorView)
+
+            for (let i=0; i<networkSelectorView.count; i++) {
                 // launch network selection popup
                 verify(!networkComboBox.control.popup.opened)
                 mouseClick(networkComboBox)
                 verify(networkComboBox.control.popup.opened)
 
-                let delegateUnderTest = networkComboBox.control.popup.contentItem.itemAtIndex(i)
+                let delegateUnderTest = networkSelectorView.itemAtIndex(i)
                 verify(!!delegateUnderTest)
 
                 // if you try selecting an item already selected it doesnt do anything
-                if(networkComboBox.control.popup.contentItem.currentIndex === i) {
+                if(networkSelectorView.currentIndex === i) {
                     mouseClick(networkComboBox)
                 } else {
+                    const expectedChainId = delegateUnderTest.model.chainId
+
                     // select item
                     mouseClick(delegateUnderTest)
 
                     // verify values set
                     verify(!networkComboBox.control.popup.opened)
-                    compare(root.swapFormData.selectedNetworkChainId, networkComboBox.control.popup.contentItem.model.get(i).chainId)
+
+                    tryVerify(function() {
+                        return networkComboBox.selection.length > 0 &&
+                               networkComboBox.selection[0] === expectedChainId &&
+                               root.swapFormData.selectedNetworkChainId === expectedChainId
+                    }, 1000, "selectedNetworkChainId should be " + expectedChainId + " but was " + root.swapFormData.selectedNetworkChainId + " and networkComboBox.selection is " + JSON.stringify(networkComboBox.selection))
 
                     const networkComboIcon = findChild(networkComboBox.control.contentItem, "contentItemIcon")
                     verify(!!networkComboIcon)

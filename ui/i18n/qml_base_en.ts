@@ -14855,6 +14855,10 @@ to load</source>
         <source>Search for token or enter token address</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Loading more tokens...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchableCollectiblesPanel</name>

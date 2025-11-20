@@ -104,7 +104,6 @@ Item {
                 tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
         }
         readonly property var currencyStore: CurrenciesStore{}
     }

@@ -24,6 +24,7 @@ WalletSendAccountsModel 1.0 WalletSendAccountsModel.qml
 WalletAccountsModel 1.0 WalletAccountsModel.qml
 WalletKeyPairModel 1.0 WalletKeyPairModel.qml
 WalletTransactionsModel 1.0 WalletTransactionsModel.qml
+BaseGroupedAccountsAssetsModel 1.0 BaseGroupedAccountsAssetsModel.qml
 GroupedAccountsAssetsModel 1.0 GroupedAccountsAssetsModel.qml
 TokenGroupsModel 1.0 TokenGroupsModel.qml
 CommunitiesModel 1.0 CommunitiesModel.qml

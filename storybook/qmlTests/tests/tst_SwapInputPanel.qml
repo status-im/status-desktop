@@ -17,6 +17,8 @@ import shared.stores
 import Models
 import Storybook
 
+import QtModelsToolkit
+
 Item {
     id: root
     width: 1200
@@ -24,10 +26,6 @@ Item {
 
     property string ethGroupKey: "eth-native"
     property string sttGroupKey: "status-test-token"
-
-    TokenGroupsModel {
-        id: plainTokensModel
-    }
 
     QtObject {
         id: d
@@ -40,8 +38,14 @@ Item {
             walletAssetsStore: WalletAssetsStore {
                 walletTokensStore: TokensStore {
                     tokenGroupsModel: TokenGroupsModel {}
+                    tokenGroupsForChainModel: TokenGroupsModel {
+                            skipInitialLoad: true
+                    }
+                    searchResultModel: TokenGroupsModel {
+                        skipInitialLoad: true
+                        tokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel // the search should be performed over this model
+                    }
                 }
-                assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
             }
             currencyStore: CurrenciesStore {}
             networksStore: NetworksStore {}
@@ -49,16 +53,6 @@ Item {
                 selectedAccountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             }
             swapOutputData: SwapOutputData {}
-        }
-
-        readonly property var tokenSelectorAdaptor: TokenSelectorViewAdaptor {
-            assetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-            tokenGroupsModel: plainTokensModel
-            flatNetworksModel: d.adaptor.networksStore.activeNetworks
-            currentCurrency: d.adaptor.currencyStore.currentCurrency
-
-            accountAddress: d.adaptor.swapFormData.selectedAccountAddress
-            enabledChainIds: [d.goOptChainId]
         }
     }
 
@@ -70,9 +64,11 @@ Item {
             currencyStore: d.adaptor.currencyStore
             flatNetworksModel: d.adaptor.networksStore.activeNetworks
             processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
-            tokenGroupsModel: plainTokensModel
+            allTokenGroupsForChainModel: d.adaptor.walletAssetsStore.walletTokensStore.tokenGroupsForChainModel
+            searchResultModel: d.adaptor.walletAssetsStore.walletTokensStore.searchResultModel
             selectedAccountAddress: d.adaptor.swapFormData.selectedAccountAddress
             selectedNetworkChainId: d.goOptChainId
+            defaultGroupKey: ethGroupKey
         }
     }
 
@@ -111,11 +107,14 @@ Item {
 
         function test_basicSetupWithInitialProperties() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root,
-                                                     {
-                                                         swapSide: SwapInputPanel.SwapSide.Pay,
-                                                         groupKey: sttGroupKey,
-                                                         tokenAmount: "10000000.0000001"
-                                                     })
+                                                         {
+                                                                 swapSide: SwapInputPanel.SwapSide.Pay,
+                                                                 groupKey: sttGroupKey,
+                                                                 tokenAmount: "10000000.0000001"
+                                                         })
+
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
+
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
@@ -144,6 +143,7 @@ Item {
             const tokenGroupKey = sttGroupKey
 
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
             controlUnderTest.groupKey = tokenGroupKey
             controlUnderTest.tokenAmount = tokenAmount
@@ -167,6 +167,7 @@ Item {
 
         function test_enterTokenAmountLocalizedNumber() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: sttGroupKey})
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
             tryCompare(controlUnderTest, "selectedHoldingId", sttGroupKey)
@@ -201,6 +202,7 @@ Item {
 
         function test_selectSTTHoldingAndTypeAmount() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
 
             const holdingSelector = findChild(controlUnderTest, "holdingSelector")
@@ -243,6 +245,7 @@ Item {
         // verify that when "fiatInputInteractive" mode is on, the Max send button text shows fiat currency symbol (e.g. "1.2 USD")
         function test_maxButtonFiatCurrencySymbol() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: ethGroupKey})
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
             controlUnderTest.fiatInputInteractive = true
@@ -271,6 +274,7 @@ Item {
         // verify that in default mode, the Max send button text doesn't show the currency symbol for crypto (e.g. "1.2" for ETH)
         function test_maxButtonNoCryptoCurrencySymbol() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: ethGroupKey})
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
@@ -284,6 +288,7 @@ Item {
 
         function test_clickingMaxButton() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {groupKey: ethGroupKey})
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
             tryCompare(controlUnderTest, "selectedHoldingId", ethGroupKey)
@@ -459,15 +464,18 @@ Item {
         function test_if_values_are_reset_after_setting_tokenAmount_as_empty() {
             const tokenKeyToTest = ethGroupKey
             let numberTestedString = "1.0001"
-            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "key", tokenKeyToTest)
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {
                                                          swapSide: SwapInputPanel.SwapSide.Pay,
                                                          groupKey: tokenKeyToTest,
                                                          tokenAmount: numberTestedString
                                                      })
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
+            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            verify(!!holdingSelector)
+            const modelItemToTest = ModelUtils.getByKey(holdingSelector.model, "key", tokenKeyToTest)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
@@ -500,15 +508,18 @@ Item {
         function test_if_values_not_reset_on_modelReset() {
             const tokenKeyToTest = ethGroupKey
             let numberTestedString = "1.0001"
-            let modelItemToTest = ModelUtils.getByKey(d.tokenSelectorAdaptor.outputAssetsModel, "key", tokenKeyToTest)
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {
                                                          swapSide: SwapInputPanel.SwapSide.Pay,
                                                          groupKey: tokenKeyToTest,
                                                          tokenAmount: numberTestedString
                                                      })
+            d.adaptor.walletAssetsStore.walletTokensStore.buildGroupsForChain(d.goOptChainId)
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
 
+            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
+            verify(!!holdingSelector)
+            const modelItemToTest = ModelUtils.getByKey(holdingSelector.model, "key", tokenKeyToTest)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
@@ -522,7 +533,7 @@ Item {
             compare(controlUnderTest.selectedHoldingId, tokenKeyToTest)
             compare(controlUnderTest.amountEnteredGreaterThanBalance, false)
 
-            d.tokenSelectorAdaptor.assetsModel.modelReset()
+            d.adaptor.walletAssetsStore.groupedAccountAssetsModel.modelReset()
 
             compare(amountToSendInput.text, numberTestedString)
             compare(controlUnderTest.value, numberTested)
