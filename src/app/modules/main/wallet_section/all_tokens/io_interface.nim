@@ -78,7 +78,7 @@ method getTokenPreferencesJson*(self: AccessInterface): string {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method buildGroupsForChain*(self: AccessInterface, chainId: int) {.base.} =
+method buildGroupsForChain*(self: AccessInterface, chainId: int): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method filterChanged*(self: AccessInterface, addresses: seq[string]) {.base.} =

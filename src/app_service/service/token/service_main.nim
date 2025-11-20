@@ -66,10 +66,10 @@ proc getCurrency*(self: Service): string =
 proc getGroupsOfInterest*(self: Service): var seq[TokenGroupItem] =
   return self.groupsOfInterest
 
-proc buildGroupsForChain*(self: Service, chainId: int) =
+proc buildGroupsForChain*(self: Service, chainId: int): bool =
   if chainId <= 0:
     warn "invalid chainId", chainId = chainId
-    return
+    return false
   var allTokens = getTokensByChain(chainId)
   var groupsByTokenKey = initTable[string, TokenGroupItem]()
   for token in allTokens:
@@ -84,6 +84,12 @@ proc buildGroupsForChain*(self: Service, chainId: int) =
       )
     groupsByTokenKey[groupKey].addToken(token)
   self.groupsForChain = toSeq(groupsByTokenKey.values)
+  # sort groups by name
+  self.groupsForChain.sort(
+    proc(a: TokenGroupItem, b: TokenGroupItem): int =
+      return a.name.cmp(b.name)
+  )
+  return true
 
 proc getGroupsForChain*(self: Service): var seq[TokenGroupItem] =
   return self.groupsForChain

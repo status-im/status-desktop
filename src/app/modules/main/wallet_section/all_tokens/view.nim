@@ -2,6 +2,10 @@ import nimqml, sequtils, strutils, chronicles
 
 import io_interface, token_lists_model, token_groups_model
 
+const
+  LAZY_LOADING_BATCH_SIZE = 100
+  LAZY_LOADING_INITIAL_COUNT = 100
+
 QtObject:
   type
     View* = ref object of QObject
@@ -11,6 +15,7 @@ QtObject:
       tokenListsModel: TokenListsModel
       tokenGroupsModel: TokenGroupsModel # refers to tokens of interest for active networks mode
       tokenGroupsForChainModel: TokenGroupsModel # refers to all tokens for a specific chain
+      searchResultModel: TokenGroupsModel # refers to tokens that match the search keyword
 
   ## Forward declaration
   proc modelsUpdated*(self: View)
@@ -24,21 +29,24 @@ QtObject:
     result.tokenListsModel = newTokenListsModel(delegate.getTokenListsModelDataSource())
     result.tokenGroupsModel = newTokenGroupsModel(
       delegate.getTokenGroupsModelDataSource(),
-      delegate.getTokenMarketValuesDataSource(),
-      allowEmptyMarketDetails = false)
+      delegate.getTokenMarketValuesDataSource())
     result.tokenGroupsForChainModel = newTokenGroupsModel(
       delegate.getTokenGroupsForChainModelDataSource(),
       delegate.getTokenMarketValuesDataSource(),
-      allowEmptyMarketDetails = true) # We allow empty market details for the tokenGroupsForChainModel, because it is
-      # used for the swap input panel where market details are not needed, also updating it would be a performance bottleneck.
+      modelModes = @[ModelMode.NoMarketDetails, ModelMode.UseLazyLoading],  # We allow empty market details for the tokenGroupsForChainModel, because
+                                                                            # it is used for the swap input panel where market details are not needed.
+      lazyLoadingBatchSize = LAZY_LOADING_BATCH_SIZE,
+      lazyLoadingInitialCount = LAZY_LOADING_INITIAL_COUNT)
+    result.searchResultModel = newTokenGroupsModel(
+      delegate.getTokenGroupsForChainModelDataSource(),
+      delegate.getTokenMarketValuesDataSource(),
+      modelModes = @[ModelMode.NoMarketDetails, ModelMode.UseLazyLoading, ModelMode.IsSearchResult],
+      lazyLoadingBatchSize = LAZY_LOADING_BATCH_SIZE,
+      lazyLoadingInitialCount = LAZY_LOADING_INITIAL_COUNT)
 
   proc load*(self: View) =
     self.modelsUpdated()
     self.delegate.viewDidLoad()
-
-  proc buildGroupsForChain*(self: View, chainId: int) {.slot.} =
-    self.delegate.buildGroupsForChain(chainId)
-    self.tokenGroupsForChainModel.modelsUpdated()
 
   proc marketHistoryIsLoadingChanged*(self: View) {.signal.}
   proc getMarketHistoryIsLoading(self: View): QVariant {.slot.} =
@@ -85,6 +93,13 @@ QtObject:
     read = getTokenGroupsForChainModel
     notify = tokenGroupsForChainModelChanged
 
+  proc searchResultModelChanged*(self: View) {.signal.}
+  proc getSearchResultModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.searchResultModel)
+  QtProperty[QVariant] searchResultModel:
+    read = getSearchResultModel
+    notify = searchResultModelChanged
+
   proc tokenGroupsModelChanged*(self: View) {.signal.}
   proc getTokenGroupsModel(self: View): QVariant {.slot.} =
     return newQVariant(self.tokenGroupsModel)
@@ -92,10 +107,16 @@ QtObject:
     read = getTokenGroupsModel
     notify = tokenGroupsModelChanged
 
+  proc buildGroupsForChain*(self: View, chainId: int, mandatoryKeysString: string) {.slot.} =
+    let mandatoryKeys = mandatoryKeysString.split("$$")
+    if not self.delegate.buildGroupsForChain(chainId):
+      return
+    self.tokenGroupsForChainModel.modelsUpdated(resetModelSize = true, mandatoryKeys)
+    self.tokenGroupsForChainModelChanged()
+
   proc modelsUpdated*(self: View) =
     self.tokenListsModel.modelsUpdated()
     self.tokenGroupsModel.modelsUpdated()
-    self.tokenGroupsForChainModel.modelsUpdated()
 
   proc tokensMarketValuesUpdated*(self: View) =
     self.tokenGroupsModel.tokensMarketValuesUpdated()

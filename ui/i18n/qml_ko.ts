@@ -14716,6 +14716,10 @@ to load</source>
         <source>Search for token or enter token address</source>
         <translation>토큰을 검색하거나 토큰 주소를 입력하세요</translation>
     </message>
+    <message>
+        <source>Loading more tokens...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchableCollectiblesPanel</name>
