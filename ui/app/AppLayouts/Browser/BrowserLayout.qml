@@ -192,6 +192,8 @@ StatusSectionLayout {
         }
     }
 
+    showHeader: false
+
     centerPanel: Rectangle {
         id: browserWindow
         anchors.fill: parent

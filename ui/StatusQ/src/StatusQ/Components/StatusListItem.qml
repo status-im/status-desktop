@@ -23,8 +23,8 @@ Rectangle {
     property string beneathTagsIcon: ""
     property color beneathTagsIconColor: Theme.palette.primaryColor1
     property string beneathTagsTitle: ""
-    property real leftPadding: 16
-    property real rightPadding: 16
+    property real leftPadding: Theme.padding
+    property real rightPadding: Theme.padding
     property bool highlighted: false
     property bool propagateTitleClicks: true
     property int type: StatusListItem.Type.Primary
@@ -188,7 +188,7 @@ Rectangle {
 
             anchors.left: iconOrImage.active ? iconOrImage.right : loadingIndicator.active ? loadingIndicator.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
-            anchors.leftMargin: iconOrImage.active ? 16 : loadingIndicator.active ? 6 : root.leftPadding
+            anchors.leftMargin: iconOrImage.active ? Theme.padding : loadingIndicator.active ? 6 : root.leftPadding
             anchors.rightMargin: Math.max(root.rightPadding, titleIconsRow.requiredWidth)
             anchors.verticalCenter:  bottomModel.length === 0 ? parent.verticalCenter : undefined
 

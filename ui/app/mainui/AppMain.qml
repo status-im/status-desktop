@@ -215,7 +215,8 @@ Item {
         }
 
         function onMailserverNotWorking() {
-            mailserverConnectionBanner.show()
+            if (d.activeSectionType === Constants.appSection.chat || d.activeSectionType === Constants.appSection.community)
+                mailserverConnectionBanner.show()
         }
 
         function onActiveSectionChanged() {
@@ -832,6 +833,36 @@ Item {
         function openHomePage() {
             appMain.rootStore.setActiveSectionBySectionType(Constants.appSection.homePage)
             homePageLoader.item.focusSearch()
+        }
+
+        function openCurrentSettings() {
+            let settingsSubsection = Constants.settingsSubsection.profile // default
+
+            switch(activeSectionType) {
+            case Constants.appSection.chat:
+                settingsSubsection = Constants.settingsSubsection.messaging
+                break
+            case Constants.appSection.community:
+            case Constants.appSection.communitiesPortal:
+                settingsSubsection = Constants.settingsSubsection.communitiesSettings
+                break
+            case Constants.appSection.wallet:
+            case Constants.appSection.swap:
+            case Constants.appSection.market:
+                settingsSubsection = Constants.settingsSubsection.wallet
+                break
+            case Constants.appSection.browser:
+                settingsSubsection = Constants.settingsSubsection.browser
+                break
+            case Constants.appSection.node:
+                settingsSubsection = Constants.settingsSubsection.advanced
+                break
+            case Constants.appSection.activityCenter:
+                settingsSubsection = Constants.settingsSubsection.notifications
+                break
+            }
+
+            globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.profile, settingsSubsection)
         }
 
         function maybeDisplayIntroduceYourselfPopup() {
@@ -1500,8 +1531,7 @@ Item {
             id: bannersLayout
 
             enabled: !localAppSettings.testEnvironment
-                     && d.activeSectionType !== Constants.appSection.homePage
-                     && !SQUtils.Utils.isMobile // Temp disable until we have proper way to handle banners on mobile
+                     && (d.activeSectionType !== Constants.appSection.homePage && d.activeSectionType !== Constants.appSection.loadingSection)
             visible: enabled
 
             Layout.fillWidth: true
@@ -1510,8 +1540,9 @@ Item {
             Layout.leftMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.left : 0
             Layout.rightMargin: Qt.platform.os === SQUtils.Utils.mac ? appMain.SafeArea.margins.right : 0
 
-            Layout.maximumHeight: implicitHeight
-            spacing: 1
+            spacing: 0
+
+            Tracer { border.color: "red" }
 
             GlobalBanner {
                 Layout.fillWidth: true
@@ -1540,7 +1571,8 @@ Item {
                 readonly property string channelName: appMain.communitiesStore.discordImportChannelName
                 readonly property string channelOrCommunityName: channelName || communityName
                 delay: false
-                active: !cancelled && (inProgress || finished || stopped)
+                active: (d.activeSectionType === Constants.appSection.communitiesPortal || d.activeSectionType === Constants.appSection.community) &&
+                        (!cancelled && (inProgress || finished || stopped))
                 type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
                 text: {
                     if (finished || stopped) {
@@ -1589,9 +1621,11 @@ Item {
             }
 
             ConnectionWarnings {
-                id: walletBlockchainConnectionBanner
                 objectName: "walletBlockchainConnectionBanner"
                 Layout.fillWidth: true
+                relevantForCurrentSection: d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.chat
+                                           && d.activeSectionType !== Constants.appSection.node && d.activeSectionType !== Constants.appSection.activityCenter
+                                           && d.activeSectionType !== Constants.appSection.community && d.activeSectionType !== Constants.appSection.communitiesPortal
                 websiteDown: Constants.walletConnections.blockchains
                 withCache: networkConnectionStore.balanceCache
                 networkConnectionStore: appMain.networkConnectionStore
@@ -1604,19 +1638,14 @@ Item {
                         if(completelyDown) {
                             if(withCache)
                                 return qsTr("POKT & Infura down. Token balances are as of %1.").arg(lastCheckedAt)
-                            else
-                                return qsTr("POKT & Infura down. Token balances cannot be retrieved.")
+                            return qsTr("POKT & Infura down. Token balances cannot be retrieved.")
                         }
                         else if(chainIdsDown.length > 0) {
-                            if(chainIdsDown.length > 2) {
+                            if(chainIdsDown.length > 2)
                                 return qsTr("POKT & Infura down for <a href='#'>multiple chains </a>. Token balances for those chains cannot be retrieved.")
-                            }
-                            else if(chainIdsDown.length === 1 && withCache) {
+                            if(chainIdsDown.length === 1 && withCache)
                                 return qsTr("POKT & Infura down for %1. %1 token balances are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                            }
-                            else {
-                                return qsTr("POKT & Infura down for %1. %1 token balances cannot be retrieved.").arg(jointChainIdString)
-                            }
+                            return qsTr("POKT & Infura down for %1. %1 token balances cannot be retrieved.").arg(jointChainIdString)
                         }
                         else
                             return ""
@@ -1629,17 +1658,18 @@ Item {
             }
 
             ConnectionWarnings {
-                id: walletCollectiblesConnectionBanner
                 objectName: "walletCollectiblesConnectionBanner"
                 Layout.fillWidth: true
+                relevantForCurrentSection: d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.chat
+                                           && d.activeSectionType !== Constants.appSection.node && d.activeSectionType !== Constants.appSection.activityCenter
+                                           && d.activeSectionType !== Constants.appSection.communitiesPortal
                 websiteDown: Constants.walletConnections.collectibles
                 withCache: lastCheckedAtUnix > 0
                 networkConnectionStore: appMain.networkConnectionStore
                 tooltipMessage: {
                     if(withCache)
                         return qsTr("Collectibles providers are currently unavailable for %1. Collectibles for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                    else
-                        return qsTr("Collectibles providers are currently unavailable for %1.").arg(jointChainIdString)
+                    return qsTr("Collectibles providers are currently unavailable for %1.").arg(jointChainIdString)
                 }
                 toastText: {
                     switch(connectionState) {
@@ -1649,27 +1679,23 @@ Item {
                         if(completelyDown) {
                             if(withCache)
                                 return qsTr("Collectibles providers down. Collectibles are as of %1.").arg(lastCheckedAt)
-                            else
-                                return qsTr("Collectibles providers down. Collectibles cannot be retrieved.")
+                            return qsTr("Collectibles providers down. Collectibles cannot be retrieved.")
                         }
                         else if(chainIdsDown.length > 0) {
                             if(chainIdsDown.length > 2) {
                                 if(withCache)
                                     return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains are as of %1.".arg(lastCheckedAt))
-                                else
-                                    return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains cannot be retrieved.")
+                                return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains cannot be retrieved.")
                             }
                             else if(chainIdsDown.length === 1) {
                                 if(withCache)
                                     return qsTr("Collectibles providers down for %1. Collectibles for this chain are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                                else
-                                    return qsTr("Collectibles providers down for %1. Collectibles for this chain cannot be retrieved.").arg(jointChainIdString)
+                                return qsTr("Collectibles providers down for %1. Collectibles for this chain cannot be retrieved.").arg(jointChainIdString)
                             }
                             else {
                                 if(withCache)
                                     return qsTr("Collectibles providers down for %1. Collectibles for these chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                                else
-                                    return qsTr("Collectibles providers down for %1. Collectibles for these chains cannot be retrieved.").arg(jointChainIdString)
+                                return qsTr("Collectibles providers down for %1. Collectibles for these chains cannot be retrieved.").arg(jointChainIdString)
                             }
                         }
                         else
@@ -1683,9 +1709,11 @@ Item {
             }
 
             ConnectionWarnings {
-                id: walletMarketConnectionBanner
                 objectName: "walletMarketConnectionBanner"
                 Layout.fillWidth: true
+                relevantForCurrentSection: d.activeSectionType !== Constants.appSection.profile && d.activeSectionType !== Constants.appSection.chat
+                                           && d.activeSectionType !== Constants.appSection.node && d.activeSectionType !== Constants.appSection.activityCenter
+                                           && d.activeSectionType !== Constants.appSection.communitiesPortal
                 websiteDown: Constants.walletConnections.market
                 withCache: networkConnectionStore.marketValuesCache
                 networkConnectionStore: appMain.networkConnectionStore
@@ -1694,12 +1722,9 @@ Item {
                     case Constants.ConnectionStatus.Success:
                         return qsTr("CryptoCompare and CoinGecko connection successful")
                     case Constants.ConnectionStatus.Failure: {
-                        if(withCache) {
+                        if(withCache)
                             return qsTr("CryptoCompare and CoinGecko down. Market values are as of %1.").arg(lastCheckedAt)
-                        }
-                        else {
-                            return qsTr("CryptoCompare and CoinGecko down. Market values cannot be retrieved.")
-                        }
+                        return qsTr("CryptoCompare and CoinGecko down. Market values cannot be retrieved.")
                     }
                     case Constants.ConnectionStatus.Retrying:
                         return qsTr("Retrying connection to CryptoCompare and CoinGecko...")
@@ -2471,6 +2496,12 @@ Item {
         sequence: "Ctrl+J"
         onActivated: d.openHomePage()
         enabled: appMain.featureFlagsStore.homePageEnabled
+    }
+
+    Shortcut {
+        context: Qt.ApplicationShortcut
+        sequences: ["Ctrl+,", StandardKey.Preferences]
+        onActivated: d.openCurrentSettings()
     }
 
     Loader {

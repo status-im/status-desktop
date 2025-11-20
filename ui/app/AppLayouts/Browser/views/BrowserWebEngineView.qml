@@ -1,7 +1,10 @@
 import QtQuick
+import QtQuick.Layouts
 import QtWebEngine
 
+import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Popups
 
 import shared.controls
 
@@ -123,6 +126,70 @@ WebEngineView {
         const isOurScript = ScriptUtils.isOurInjectedScript(sourceID, root.profile);
         if (isOurScript || root.enableJsLogs) {
             console.log("[WebEngine]", sourceID + ":" + lineNumber, message);
+        }
+    }
+
+    onPermissionRequested: function (permission) {
+        console.warn("!!! PERMISSION REQ; type:", permission.permissionType, "; origin:", permission.origin, "; state:", permission.state)
+        if (permission.isValid) {
+            permissionPopupComp.createObject(root, {permission}).open()
+        }
+    }
+
+    Component {
+        id: permissionPopupComp
+        StatusConfirmationDialog {
+            id: permissionPopup
+
+            required property var permission
+
+            function permissionTypeToString() {
+                switch(permission.permissionType) {
+                case WebEnginePermission.PermissionType.MediaAudioCapture:
+                    return qsTr("Media audio capture (access to a microphone, or another audio source)")
+                case WebEnginePermission.PermissionType.MediaVideoCapture:
+                    return qsTr("Media video capture (access to a webcam, or another video source)")
+                case WebEnginePermission.PermissionType.MediaAudioVideoCapture:
+                    return qsTr("Media audio and video capture (access to an audio and/or video source, like microphone or webcam)")
+                case WebEnginePermission.PermissionType.DesktopVideoCapture:
+                    return qsTr("Desktop video capture (access to the contents of the user's screen)")
+                case WebEnginePermission.PermissionType.DesktopAudioVideoCapture:
+                    return qsTr("Desktop audio and video capture (access to the contents of the user's screen, and application audio)")
+                case WebEnginePermission.PermissionType.Notifications:
+                    return qsTr("Notifications (allows the website to send notifications to the user)")
+                case WebEnginePermission.PermissionType.Geolocation:
+                    return qsTr("Geolocation (access to the user's physical location)")
+                case WebEnginePermission.PermissionType.ClipboardReadWrite:
+                    return qsTr("Clipboard (access to the user's clipboard)")
+                case WebEnginePermission.PermissionType.LocalFontsAccess:
+                    return qsTr("Local fonts (access to the fonts installed on the user's machine)")
+                case WebEnginePermission.PermissionType.Unsupported:
+                    return qsTr("Unsupported or unknown")
+                default:
+                    console.warn("Unhandled permission type:", permission.type)
+                    return ""
+                }
+            }
+
+            title: qsTr("Website needs permissions...")
+            acceptButtonText: qsTr("Grant")
+            rejectButtonText: qsTr("Deny")
+            contentItem: ColumnLayout {
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("Permission type: %1").arg(permissionPopup.permissionTypeToString())
+                    wrapMode: Text.Wrap
+                }
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("Origin: %1").arg(permissionPopup.permission.origin)
+                    color: Theme.palette.baseColor1
+                    wrapMode: Text.Wrap
+                }
+            }
+            onAccepted: permission.grant()
+            onRejected: permission.deny()
+            onClosed: destroy()
         }
     }
 

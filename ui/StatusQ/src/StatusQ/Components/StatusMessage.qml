@@ -418,7 +418,7 @@ Control {
             active: root.hovered && root.quickActions.length > 0
             anchors.right: parent.right
             anchors.rightMargin: Theme.padding
-            anchors.top: root.top
+            anchors.top: parent.top
             sourceComponent: StatusMessageQuickActions {
                 items: root.quickActions
             }

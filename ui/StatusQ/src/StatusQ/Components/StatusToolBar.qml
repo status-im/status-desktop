@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core
+import StatusQ.Core.Theme
 import StatusQ.Controls
 
 ToolBar {
@@ -15,16 +16,16 @@ ToolBar {
     signal backButtonClicked()
 
     objectName: "statusToolBar"
-    leftPadding: 4
-    rightPadding: 10
-    topPadding: 8
-    bottomPadding: 4
+    leftPadding: Theme.halfPadding/2
+    rightPadding: Theme.smallPadding
+    topPadding: Theme.halfPadding
+    bottomPadding: Theme.halfPadding/2
     background: null
 
     contentItem: RowLayout {
         spacing: 0
         StatusFlatButton {
-            Layout.leftMargin: 20
+            Layout.leftMargin: Theme.smallPadding*2
             objectName: "toolBarBackButton"
             icon.name: "arrow-left"
             visible: root.backButtonVisible
@@ -36,7 +37,7 @@ ToolBar {
             id: headerContentItem
             Layout.fillWidth: !!headerContent
             Layout.fillHeight: !!headerContent
-            Layout.leftMargin: 8
+            Layout.leftMargin: Theme.halfPadding
             background: null
             contentItem: (!!headerContent) ? headerContent : null
         }
