@@ -20,7 +20,7 @@ TextField {
     selectedTextColor: color
     focus: !Utils.isMobile
     font.pixelSize: Theme.primaryTextFontSize
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
 
     inputMethodHints: Qt.ImhSensitiveData | Qt.ImhNoPredictiveText |
@@ -44,7 +44,7 @@ TextField {
             anchors.rightMargin: root.width - root.leftPadding
 
             text: "" + root.displayIndex
-            font.family: Theme.monoFont.name
+            font.family: Fonts.monoFont.family
 
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter

@@ -71,7 +71,7 @@ Item {
                 selectedTextColor: color
                 focus: !Utils.isMobile // Do not focus on mobile devices
                 font.pixelSize: Theme.primaryTextFontSize
-                font.family: Theme.baseFont.name
+                font.family: Fonts.baseFont.family
                 color: Theme.palette.directColor1
                 textFormat: Text.RichText
                 onCursorRectangleChanged: Utils.ensureVisible(flick, cursorRectangle)

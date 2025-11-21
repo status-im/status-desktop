@@ -58,7 +58,7 @@ Control {
 
     signal clicked()
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.tertiaryTextFontSize
 
     horizontalPadding: 8

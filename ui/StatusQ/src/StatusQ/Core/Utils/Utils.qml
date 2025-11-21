@@ -203,7 +203,7 @@ QtObject {
         return `<style type="text/css">` +
                     `img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
-                        `font-family: ${Theme.codeFont.name};` +
+                        `font-family: ${Fonts.codeFont.family};` +
                         `font-weight: 400;` +
                         `font-size: 14;` +
                         `padding: 2px 4px;` +
