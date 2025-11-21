@@ -36,7 +36,7 @@ Control {
             Layout.alignment: Qt.AlignHCenter
             fillMode: Image.PreserveAspectFit
             asynchronous: true
-            source: Theme.png(root.newsModel.get(pageIndicator.currentIndex).image)
+            source: Assets.png(root.newsModel.get(pageIndicator.currentIndex).image)
         }
 
         StatusBaseText {

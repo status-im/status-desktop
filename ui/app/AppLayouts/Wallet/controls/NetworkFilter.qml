@@ -71,7 +71,7 @@ StatusComboBox {
                 asset.bgColor: Theme.palette.background
                 asset.bgHeight: 15
                 asset.isImage: true
-                asset.name: Theme.png("status-gradient-dot")
+                asset.name: Assets.png("status-gradient-dot")
                 asset.color: Theme.palette.transparent
             }
         }
@@ -92,7 +92,7 @@ StatusComboBox {
             asset.height: 24
             asset.width: 24
             asset.isImage: !root.multiSelection
-            asset.name: !root.multiSelection ? Theme.svg(d.singleSelectionIconUrl) : ""
+            asset.name: !root.multiSelection ? Assets.svg(d.singleSelectionIconUrl) : ""
             active: !root.multiSelection
             visible: active
         }
@@ -116,7 +116,7 @@ StatusComboBox {
 
                     width: 24
                     height: 24
-                    image.source: Theme.svg(model.iconUrl)
+                    image.source: Assets.svg(model.iconUrl)
                     z: index + 1
 
                     image.layer.enabled: index < chainRepeater.count - 1 && row.spacing < 0

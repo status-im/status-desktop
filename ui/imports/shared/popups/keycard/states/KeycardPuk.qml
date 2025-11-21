@@ -66,7 +66,7 @@ Item {
                 root.pukUpdated(pinInput)
                 if (root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.enterPuk &&
                         root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongPuk) {
-                    image.source = Theme.png("keycard/card-inserted")
+                    image.source = Assets.png("keycard/card-inserted")
                 }
                 if(pinInput.length == 0) {
                     return
@@ -84,7 +84,7 @@ Item {
                         root.sharedKeycardModule.currentState.doSecondaryAction()
                     } else {
                         info.text = qsTr("The PUK doesn’t match")
-                        image.source = Theme.png("keycard/plain-error")
+                        image.source = Assets.png("keycard/plain-error")
                     }
                 }
             }
@@ -117,7 +117,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPuk
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -140,7 +140,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPuk
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/plain-error")
+                source: Assets.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -169,7 +169,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPuk
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -192,7 +192,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPuk
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {

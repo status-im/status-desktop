@@ -368,7 +368,7 @@ SQUtils.QObject {
             accountEmoji: account.emoji
 
             networkName: network.chainName
-            networkIconPath: Theme.svg(network.iconUrl)
+            networkIconPath: Assets.svg(network.iconUrl)
 
             fiatFees: request.fiatMaxFees ? request.fiatMaxFees.toFixed() : ""
             fiatSymbol: request.fiatSymbol
@@ -470,7 +470,7 @@ SQUtils.QObject {
                 StatusListItem {
                     objectName: "btnStatusConnector"
                     title: "Status Connector"
-                    asset.name: Theme.png("status-logo")
+                    asset.name: Assets.png("status-logo")
                     asset.isImage: true
                     enabled: root.connectorEnabled
                     components: [
@@ -487,7 +487,7 @@ SQUtils.QObject {
                 StatusListItem {
                     objectName: "btnWalletConnect"
                     title: "Wallet Connect"
-                    asset.name: Theme.svg("walletconnect")
+                    asset.name: Assets.svg("walletconnect")
                     asset.isImage: true
                     enabled: root.walletConnectEnabled
                     components: [

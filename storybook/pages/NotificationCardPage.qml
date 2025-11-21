@@ -56,7 +56,7 @@ SplitView {
                 selected: selectedCheck.checked
 
                 // Avatar related
-                avatarSource: avatarEditor.changeAvatarImage ? "https://i.pravatar.cc/128?img=5" : Theme.png("status-logo-icon")
+                avatarSource: avatarEditor.changeAvatarImage ? "https://i.pravatar.cc/128?img=5" : Assets.png("status-logo-icon")
                 badgeIconName: avatarEditor.changeBadgeIcon ? "action-mention" : "action-reply"
                 isCircularAvatar: avatarEditor.isRoundedAvatar
 

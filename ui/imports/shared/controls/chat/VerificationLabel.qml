@@ -18,9 +18,9 @@ SVGImage {
     source: {
         switch(trustStatus) {
             case Constants.trustStatus.trusted:
-                return Theme.svg("verified");
+                return Assets.svg("verified");
             case Constants.trustStatus.untrustworthy:
-                return Theme.svg("untrustworthy");
+                return Assets.svg("untrustworthy");
             default:
                 return "";
         }

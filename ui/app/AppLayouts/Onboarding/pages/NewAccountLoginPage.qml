@@ -60,7 +60,7 @@ OnboardingPage {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: Math.min(250, parent.width)
                         Layout.preferredHeight: Math.min(250, height)
-                        source: Theme.png("onboarding/status_login_seedphrase")
+                        source: Assets.png("onboarding/status_login_seedphrase")
                         mipmap: true
                     }
                     StatusBaseText {
@@ -100,7 +100,7 @@ OnboardingPage {
                         Layout.fillWidth: true
                         text: qsTr("Log in by syncing") // FIXME wording, "Log in by pairing"?
                         subTitle: qsTr("If you have Status on another device")
-                        icon.source: Theme.png("onboarding/login_syncing")
+                        icon.source: Assets.png("onboarding/login_syncing")
                         onClicked: loginWithSyncAck.createObject(root).open()
                     }
                     Rectangle {
@@ -116,7 +116,7 @@ OnboardingPage {
                         Layout.fillWidth: true
                         text: qsTr("Log in with Keycard")
                         subTitle: qsTr("If your profile keys are stored on a Keycard")
-                        icon.source: Theme.png("onboarding/create_profile_keycard")
+                        icon.source: Assets.png("onboarding/create_profile_keycard")
                         onClicked: root.loginWithKeycardRequested()
                         visible: root.isKeycardEnabled
                     }

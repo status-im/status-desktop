@@ -62,7 +62,7 @@ SettingsContentBase {
                 id: statusIcon
                 width: 80
                 height: 80
-                source: root.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
+                source: root.isProduction ? Assets.png("status-logo-circle") : Assets.png("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap: true
             }

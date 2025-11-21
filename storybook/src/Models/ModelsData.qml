@@ -39,31 +39,31 @@ QtObject {
 
 
     readonly property QtObject assets: QtObject {
-        readonly property string socks: Theme.png("tokens/SOCKS")
-        readonly property string zrx: Theme.png("tokens/ZRX")
-        readonly property string inch: Theme.png("tokens/CUSTOM-TOKEN")
-        readonly property string aave: Theme.png("tokens/CUSTOM-TOKEN")
-        readonly property string amp: Theme.png("tokens/CUSTOM-TOKEN")
-        readonly property string uni: Theme.png("tokens/UNI")
-        readonly property string eth: Theme.png("tokens/ETH")
-        readonly property string dai: Theme.png("tokens/DAI")
-        readonly property string snt: Theme.png("tokens/SNT")
-        readonly property string mana: Theme.png("tokens/aMANA")
+        readonly property string socks: Assets.png("tokens/SOCKS")
+        readonly property string zrx: Assets.png("tokens/ZRX")
+        readonly property string inch: Assets.png("tokens/CUSTOM-TOKEN")
+        readonly property string aave: Assets.png("tokens/CUSTOM-TOKEN")
+        readonly property string amp: Assets.png("tokens/CUSTOM-TOKEN")
+        readonly property string uni: Assets.png("tokens/UNI")
+        readonly property string eth: Assets.png("tokens/ETH")
+        readonly property string dai: Assets.png("tokens/DAI")
+        readonly property string snt: Assets.png("tokens/SNT")
+        readonly property string mana: Assets.png("tokens/aMANA")
     }
 
     readonly property QtObject collectibles: QtObject {
         readonly property string anniversary: "https://i2.seadn.io/ethereum/0x5150b29a431ece5eb0e62085535b8aac8df193be/ba8dedcf93676a6be4c0a5da9ba600c7.png?w=1000"
-        readonly property string cryptoKitties: Theme.png("collectibles/CryptoKitties")
-        readonly property string kitty1: Theme.png("collectibles/Furbeard")
-        readonly property string kitty1Big: Theme.png("collectibles/FurbeardBig")
-        readonly property string kitty2: Theme.png("collectibles/Magicat")
-        readonly property string kitty2Big: Theme.png("collectibles/MagicatBig")
-        readonly property string kitty3: Theme.png("collectibles/HappyMeow")
-        readonly property string kitty3Big: Theme.png("collectibles/HappyMeowBig")
-        readonly property string kitty4: Theme.png("collectibles/Furbeard")
-        readonly property string kitty4Big: Theme.png("collectibles/FurbeardBig")
-        readonly property string kitty5: Theme.png("collectibles/Magicat")
-        readonly property string kitty5Big: Theme.png("collectibles/MagicatBig")
+        readonly property string cryptoKitties: Assets.png("collectibles/CryptoKitties")
+        readonly property string kitty1: Assets.png("collectibles/Furbeard")
+        readonly property string kitty1Big: Assets.png("collectibles/FurbeardBig")
+        readonly property string kitty2: Assets.png("collectibles/Magicat")
+        readonly property string kitty2Big: Assets.png("collectibles/MagicatBig")
+        readonly property string kitty3: Assets.png("collectibles/HappyMeow")
+        readonly property string kitty3Big: Assets.png("collectibles/HappyMeowBig")
+        readonly property string kitty4: Assets.png("collectibles/Furbeard")
+        readonly property string kitty4Big: Assets.png("collectibles/FurbeardBig")
+        readonly property string kitty5: Assets.png("collectibles/Magicat")
+        readonly property string kitty5Big: Assets.png("collectibles/MagicatBig")
         readonly property string superRare: root.icons.superRare
         readonly property string custom: root.icons.status
         readonly property string doodles: root.icons.dribble
@@ -89,10 +89,10 @@ QtObject {
     }
 
     readonly property QtObject onRampProviderImages: QtObject {
-        readonly property string latamex: Theme.png("onRampProviders/latamex")
-        readonly property string moonPay: Theme.png("onRampProviders/moonPay")
-        readonly property string ramp: Theme.png("onRampProviders/ramp")
-        readonly property string mercuryo: Theme.png("onRampProviders/mercuryo")
+        readonly property string latamex: Assets.png("onRampProviders/latamex")
+        readonly property string moonPay: Assets.png("onRampProviders/moonPay")
+        readonly property string ramp: Assets.png("onRampProviders/ramp")
+        readonly property string mercuryo: Assets.png("onRampProviders/mercuryo")
     }
 
     readonly property ListModel languagePickerModel: ListModel {

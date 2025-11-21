@@ -17,7 +17,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.margins: 50
 
-        icon: Theme.png("tokens/SNT")
+        icon: Assets.png("tokens/SNT")
         title: "Item Selector Title"
 
         placeholderText: "Example: Empty items"
@@ -47,7 +47,7 @@ ColumnLayout {
                     onClicked: {
                         model.append({
                             text: input.text,
-                            imageSource: Theme.png("tokens/SNT"),
+                            imageSource: Assets.png("tokens/SNT"),
                             isIcon: false,
                             operator: model.count > 0 ? OperatorsUtils.Operators.Or
                                                       : OperatorsUtils.Operators.None

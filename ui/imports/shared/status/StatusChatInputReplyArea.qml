@@ -113,7 +113,7 @@ Rectangle {
         anchors.rightMargin: 4
         contentItem: StatusIcon {
             id: iconImg
-            source: Theme.svg("close")
+            source: Assets.svg("close")
             color: Theme.palette.textColor
             sourceSize: Qt.size(width, height)
             width: closeBtn.width

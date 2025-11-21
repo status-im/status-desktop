@@ -1338,10 +1338,10 @@ QtObject {
         const tmpSymbol = uniqueSymbolToTokenSymbol(symbol)
 
         if (!!tmpSymbol && knownTokenPNGs.indexOf(tmpSymbol) !== -1)
-            return Theme.png("tokens/" + tmpSymbol)
+            return Assets.png("tokens/" + tmpSymbol)
 
         if (useDefault)
-            return Theme.png("tokens/DEFAULT-TOKEN")
+            return Assets.png("tokens/DEFAULT-TOKEN")
         return ""
     }
 
@@ -1351,16 +1351,16 @@ QtObject {
 
     function getSupportedTokenSourceImage(name, useDefault=true) {
         if (name === supportedTokenSources.uniswap)
-            return Theme.png("tokens/UNI")
+            return Assets.png("tokens/UNI")
 
         if (name === supportedTokenSources.aave)
-            return Theme.png("tokens/AAVE")
+            return Assets.png("tokens/AAVE")
 
         if (name === supportedTokenSources.status)
-            return Theme.png("tokens/SNT")
+            return Assets.png("tokens/SNT")
 
         if (useDefault)
-            return Theme.png("tokens/DEFAULT-TOKEN")
+            return Assets.png("tokens/DEFAULT-TOKEN")
         return ""
     }
 
@@ -1524,8 +1524,8 @@ QtObject {
 
     property var dappImageByType: [
         "",
-        Theme.svg("walletconnect"),
-        Theme.png("status-logo")
+        Assets.svg("walletconnect"),
+        Assets.png("status-logo")
     ]
 
     enum LimitWarning {

@@ -17,7 +17,7 @@ Item {
 
     Image {
         id: waveImg
-        source: Theme.png("chat/wave")
+        source: Assets.png("chat/wave")
         width: 80
         height: 80
         anchors.horizontalCenter: parent.horizontalCenter

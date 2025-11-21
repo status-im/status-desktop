@@ -36,7 +36,7 @@ Item {
 
             networkShortName: Constants.networkShortChainNames.mainnet
             networkName: "Mainnet"
-            networkIconPath: Theme.svg("network/Network=Ethereum")
+            networkIconPath: Assets.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
             networkChainId: 1
 
@@ -161,7 +161,7 @@ Item {
             compare(smartContractBox.caption, qsTr("Via smart contract"))
             compare(smartContractBox.primaryText, controlUnderTest.serviceProviderName)
             compare(smartContractBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.serviceProviderContractAddress))
-            compare(smartContractBox.icon, Theme.png("swap/paraswap"))
+            compare(smartContractBox.icon, Assets.png("swap/paraswap"))
         }
 
         function test_networkInfo() {

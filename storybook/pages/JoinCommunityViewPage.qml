@@ -54,7 +54,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
         // Blur background:
         property int membersCount: 184
         property bool amISectionAdmin: false
-        property url image: Theme.png("tokens/UNI")
+        property url image: Assets.png("tokens/UNI")
         property var communityItemsModel: model1
         property string chatDateTimeText: "Dec 31, 2020"
         property string  listUsersText: "simon, Mark Cuban "

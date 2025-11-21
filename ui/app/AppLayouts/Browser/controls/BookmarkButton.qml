@@ -26,7 +26,7 @@ Item {
         width: 48
         height: 48
         anchors.horizontalCenter: parent.horizontalCenter
-        source: !!root.source && !!root.source.toString() ? root.source : Theme.svg("compassActive")
+        source: !!root.source && !!root.source.toString() ? root.source : Assets.svg("compassActive")
         visible: root.source && root.source.toString()
     }
 

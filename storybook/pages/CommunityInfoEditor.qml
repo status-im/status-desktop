@@ -16,9 +16,9 @@ ColumnLayout {
     property bool amISectionAdmin: true
     property bool isCommunityEditable: true
     property color color: "orchid"
-    property url image: Theme.png("tokens/UNI")
+    property url image: Assets.png("tokens/UNI")
     property bool colorVisible: false
-    property url banner: ctrlCommunityBanner.checked ? Theme.png("settings/communities@2x") : ""
+    property url banner: ctrlCommunityBanner.checked ? Assets.png("settings/communities@2x") : ""
     property bool adminControlsEnabled: true
 
     ColumnLayout {
@@ -94,15 +94,15 @@ ColumnLayout {
         RadioButton {
             checked: true
             text: qsTr("UNI")
-            onCheckedChanged: if(checked) root.image = Theme.png("tokens/UNI")
+            onCheckedChanged: if(checked) root.image = Assets.png("tokens/UNI")
         }
         RadioButton {
             text: qsTr("SOCKS")
-            onCheckedChanged: if(checked) root.image = Theme.png("tokens/SOCKS")
+            onCheckedChanged: if(checked) root.image = Assets.png("tokens/SOCKS")
         }
         RadioButton {
             text: qsTr("Status")
-            onCheckedChanged: if(checked) root.image = Theme.png("tokens/SNT")
+            onCheckedChanged: if(checked) root.image = Assets.png("tokens/SNT")
         }
     }
 

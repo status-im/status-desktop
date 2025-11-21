@@ -13,7 +13,7 @@ KeycardBasePage {
 
     title: qsTr("Lost Keycard")
     subtitle: qsTr("Sorry you've lost your Keycard")
-    image.source: Theme.png("onboarding/keycard/empty")
+    image.source: Assets.png("onboarding/keycard/empty")
 
     buttons: [
         StatusButton {

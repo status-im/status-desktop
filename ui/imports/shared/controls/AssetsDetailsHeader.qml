@@ -137,7 +137,7 @@ Control {
                         }
                         tagPrimaryLabel.text: root.formatBalance(aggregatedbalance)
                         tagPrimaryLabel.color: model.chainColor
-                        asset.name: Theme.svg(model.iconUrl)
+                        asset.name: Assets.svg(model.iconUrl)
                         asset.isImage: true
                         loading: root.isLoading
                         visible: balancesAggregator.value > 0

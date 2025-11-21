@@ -18,7 +18,7 @@ Item {
         NetworkSelectItemDelegate {
             anchors.centerIn: parent
             title: "Ethereum"
-            iconUrl: Theme.svg("network/Network=Ethereum")
+            iconUrl: Assets.svg("network/Network=Ethereum")
             onToggled: root.onToggledHandler()
         }
     }
@@ -68,11 +68,11 @@ Item {
 
         function test_icon() {
             verify(!!controlUnderTest)
-            compare(controlUnderTest.iconUrl, Theme.svg("network/Network=Ethereum"))
-            compare(findChild(controlUnderTest, "statusRoundImage").image.source, Theme.svg("network/Network=Ethereum"))
-            controlUnderTest.iconUrl = Theme.svg("network/Network=Polygon")
-            compare(controlUnderTest.iconUrl, Theme.svg("network/Network=Polygon"))
-            compare(findChild(controlUnderTest, "statusRoundImage").image.source, Theme.svg("network/Network=Polygon"))
+            compare(controlUnderTest.iconUrl, Assets.svg("network/Network=Ethereum"))
+            compare(findChild(controlUnderTest, "statusRoundImage").image.source, Assets.svg("network/Network=Ethereum"))
+            controlUnderTest.iconUrl = Assets.svg("network/Network=Polygon")
+            compare(controlUnderTest.iconUrl, Assets.svg("network/Network=Polygon"))
+            compare(findChild(controlUnderTest, "statusRoundImage").image.source, Assets.svg("network/Network=Polygon"))
         }
 
         function test_indicatorConfig() {

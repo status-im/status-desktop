@@ -31,7 +31,7 @@ Control {
             Layout.preferredWidth: root.buyEnabled ? layout.width / layout.children.length : 0
             title: qsTr("Ways to buy")
             subTitle: qsTr("Via card or bank")
-            image: Theme.png("wallet/wallet-green")
+            image: Assets.png("wallet/wallet-green")
             closeEnabled: root.closeEnabled
             visible: Layout.preferredWidth > 0
             opacity: root.buyEnabled ? 1 : 0
@@ -53,7 +53,7 @@ Control {
             Layout.preferredWidth: root.receiveEnabled ? layout.width / layout.children.length : 0
             title: qsTr("Receive")
             subTitle: qsTr("Deposit to your Wallet")
-            image: Theme.png("wallet/flying-coin")
+            image: Assets.png("wallet/flying-coin")
             closeEnabled: root.closeEnabled
             visible: Layout.preferredWidth > 0
             opacity: root.receiveEnabled ? 1 : 0

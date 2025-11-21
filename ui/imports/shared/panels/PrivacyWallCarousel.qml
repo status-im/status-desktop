@@ -32,7 +32,7 @@ Control {
             const imageName = root.model.get(currentIndex).image
             const platformPostfix = isSmallPortraitScreen ? "-small": ""
             const imagePath =  "%1-%2%3".arg(imageName).arg(Theme.palette.name).arg(platformPostfix)
-            return Theme.png(imagePath)
+            return Assets.png(imagePath)
         }
     }
 

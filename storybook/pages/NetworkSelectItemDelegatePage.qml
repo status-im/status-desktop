@@ -26,7 +26,7 @@ SplitView {
         NetworkSelectItemDelegate {
             id: delegate
             title: "Ethereum"
-            iconUrl: Theme.svg("network/Network=Ethereum")
+            iconUrl: Assets.svg("network/Network=Ethereum")
             showIndicator: true
             multiSelection: true
             checkState: checkStateSelector.checkState

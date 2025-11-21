@@ -43,7 +43,7 @@ SplitView {
             anchors.centerIn: parent
 
             title: titleTextEdit.text
-            icon: Theme.png("tokens/SNT")
+            icon: Assets.png("tokens/SNT")
             iconSize: iconSizeSlider.value
 
             label.enabled: labelEnabledCheckBox.checked

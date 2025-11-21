@@ -45,7 +45,7 @@ CalloutCard {
                 asset.bgHeight: 36
                 asset.bgWidth: 36
                 asset.color: Theme.palette.primaryColor1
-                asset.name: Theme.svg("send")
+                asset.name: Assets.svg("send")
 
                 StatusSmartIdenticon {
                     anchors.bottom: parent.bottom

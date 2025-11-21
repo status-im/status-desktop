@@ -13,7 +13,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.margins: 100
 
-        icon: Theme.png("tokens/SNT")
+        icon: Assets.png("tokens/SNT")
         title: "Item Selector Title"
 
         placeholderText: "Example: Empty items"

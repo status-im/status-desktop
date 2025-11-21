@@ -34,7 +34,7 @@ Badge {
         spacing: 4
 
         StatusIcon {
-            source: Theme.svg("reply-small-arrow")
+            source: Assets.svg("reply-small-arrow")
             Layout.preferredWidth: Theme.padding
             Layout.preferredHeight: Theme.padding
         }

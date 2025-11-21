@@ -455,7 +455,7 @@ SettingsContentBase {
             StatusRoundedImage {
                 width: 28
                 height: 28
-                image.source: Theme.svg(!!editNetwork.network && !!editNetwork.network.iconUrl ? editNetwork.network.iconUrl: "")
+                image.source: Assets.svg(!!editNetwork.network && !!editNetwork.network.iconUrl ? editNetwork.network.iconUrl: "")
                 image.fillMode: Image.PreserveAspectCrop
             }
         }

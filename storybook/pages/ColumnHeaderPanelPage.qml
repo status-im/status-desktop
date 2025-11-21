@@ -18,7 +18,7 @@ SplitView {
         property int membersCount: 184
         property bool amISectionAdmin: false
         property color color: "orchid"
-        property url image: Theme.png("tokens/UNI")
+        property url image: Assets.png("tokens/UNI")
         property bool openCreateChat: false
     }
 

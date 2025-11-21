@@ -49,7 +49,7 @@ StatusDialog {
                         implicitHeight: model.description ? 80 : 52
                         title: model.name
                         subTitle: model.description
-                        asset.name: Theme.svg(model.iconUrl)
+                        asset.name: Assets.svg(model.iconUrl)
                         asset.isImage: true
                         buttonGroup: searchEnginGroup
                         checked: accountSettings.selectedBrowserSearchEngineId === model.engineId

@@ -33,7 +33,7 @@ SignTransactionModalBase {
 
     required property string networkShortName // e.g. "oeth"
     required property string networkName // e.g. "Optimism"
-    required property string networkIconPath // e.g. `Theme.svg("network/Network=Optimism")`
+    required property string networkIconPath // e.g. `Assets.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
     required property int networkChainId
 
@@ -47,7 +47,7 @@ SignTransactionModalBase {
     property string serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl
     property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
     property string serviceProviderContractAddress: Constants.swap.paraswapV6_2ContractAddress
-    property string serviceProviderIcon: Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
+    property string serviceProviderIcon: Assets.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
 
     title: qsTr("Approve spending cap")
     subtitle: root.serviceProviderHostname

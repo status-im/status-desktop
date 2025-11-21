@@ -928,7 +928,7 @@ Loader {
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
                     }
-                    sender.badgeImage: Theme.svg("discord-bridge")
+                    sender.badgeImage: Assets.svg("discord-bridge")
                 }
 
                 replyDetails: StatusMessageDetails {

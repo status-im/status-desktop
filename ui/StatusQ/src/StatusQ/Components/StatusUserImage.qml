@@ -62,7 +62,7 @@ Loader {
         badge.anchors.bottomMargin: badge.border.width/2
 
         bridgeBadge.visible: root.isBridgedAccount
-        bridgeBadge.image.source: Theme.svg("discord-bridge")
+        bridgeBadge.image.source: Assets.svg("discord-bridge")
 
         Loader {
             anchors.fill: parent

@@ -68,7 +68,7 @@ SortFilterProxyModel {
 
             function getIcon(type, key) {
                 if (type === Constants.TokenType.ENS)
-                    return Theme.png("tokens/ENS")
+                    return Assets.png("tokens/ENS")
 
                 const model = type === Constants.TokenType.ERC20
                             ? assetsModel : collectiblesModel

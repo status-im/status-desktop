@@ -63,7 +63,7 @@ CalloutCard {
             StatusImage {
                 anchors.fill: parent
                 asynchronous: true
-                source: Theme.png("chat/request_payment_banner")
+                source: Assets.png("chat/request_payment_banner")
             }
 
             Row {

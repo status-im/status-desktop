@@ -108,7 +108,7 @@ Item {
                 id: gradient
                 anchors.fill: collectibleImage
                 visible: hoverHandler.hovered
-                source: Theme.png("profile/gradient")
+                source: Assets.png("profile/gradient")
             }
 
             //TODO Add drop shadow
