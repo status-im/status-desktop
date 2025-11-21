@@ -7,7 +7,7 @@ import shared.panels
 
 SVGImage {
     id: loadingImg
-    source: Theme.svg("loading")
+    source: Assets.svg("loading")
     width: 25
     height: 25
     fillMode: Image.Stretch

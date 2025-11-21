@@ -26,7 +26,7 @@ StatusMenu {
         delegate: StatusMenuItem {
             action: StatusAction {
                 text: Utils.getChainExplorerName(model.shortName)
-                assetSettings.name: Theme.svg(model.iconUrl)
+                assetSettings.name: Assets.svg(model.iconUrl)
                 assetSettings.isImage: true
                 onTriggered: {
                     root.networkClicked(model.shortName, model.isTest)

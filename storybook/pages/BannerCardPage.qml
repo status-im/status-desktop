@@ -16,7 +16,7 @@ SplitView {
             anchors.centerIn: parent
             title: titleField.text
             subTitle: subTitleField.text
-            image: Theme.png("wallet/wallet-green")
+            image: Assets.png("wallet/wallet-green")
             closeEnabled: closeEnabled.checked
             onClicked: {
                 print("BannerCard clicked")

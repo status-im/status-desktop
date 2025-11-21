@@ -92,7 +92,7 @@ SplitView {
 
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName
-                    networkIconPath: Theme.svg(priv.selectedNetwork.iconUrl)
+                    networkIconPath: Assets.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
                     networkChainId: priv.selectedNetwork.chainId
 

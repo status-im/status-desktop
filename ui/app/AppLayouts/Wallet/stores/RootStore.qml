@@ -470,7 +470,7 @@ QtObject {
             case Constants.swap.paraswapV5ApproveContractAddress:
             case Constants.swap.paraswapV5SwapContractAddress:
                 return {
-                    "icon": Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "icon": Assets.png("swap/%1".arg(Constants.swap.paraswapIcon)),
                     "url": Constants.swap.paraswapHostname,
                     "name": Constants.swap.paraswapName,
                     "approvalContractAddress": Constants.swap.paraswapV5ApproveContractAddress,
@@ -478,7 +478,7 @@ QtObject {
                 }
             case Constants.swap.paraswapV6_2ContractAddress:
                 return {
-                    "icon": Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "icon": Assets.png("swap/%1".arg(Constants.swap.paraswapIcon)),
                     "url": Constants.swap.paraswapUrl,
                     "name": Constants.swap.paraswapName,
                     "approvalContractAddress": Constants.swap.paraswapV6_2ContractAddress,

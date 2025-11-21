@@ -12,7 +12,7 @@ KeycardBasePage {
 
     title: qsTr("Keycard is not empty")
     subtitle: qsTr("You can’t use it to store new keys right now")
-    image.source: Theme.png("onboarding/keycard/error")
+    image.source: Assets.png("onboarding/keycard/error")
 
     buttons: [
         MaybeOutlineButton {

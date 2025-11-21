@@ -54,7 +54,7 @@ OnboardingPage {
                             Layout.alignment: Qt.AlignHCenter
                             Layout.preferredWidth: Math.min(252, parent.width)
                             Layout.preferredHeight: Math.min(164, height)
-                            source: Theme.png("onboarding/status_generate_keycard")
+                            source: Assets.png("onboarding/status_generate_keycard")
                             mipmap: true
                         }
                         StatusBaseText {
@@ -93,7 +93,7 @@ OnboardingPage {
                             Layout.fillWidth: true
                             text: qsTr("Use an existing recovery phrase")
                             subTitle: qsTr("To create your Keycard-stored profile ")
-                            icon.source: Theme.png("onboarding/create_profile_seed")
+                            icon.source: Assets.png("onboarding/create_profile_seed")
                             onClicked: root.createKeycardProfileWithExistingSeedphrase()
                         }
                     }

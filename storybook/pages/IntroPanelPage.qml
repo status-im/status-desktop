@@ -34,7 +34,7 @@ SplitView {
             anchors.margins: 50
             anchors.fill: parent
 
-            image: Theme.png("community/airdrops8_1")
+            image: Assets.png("community/airdrops8_1")
 
             title: radioButtonsGroup.text
             subtitle: radioButtonsGroup.text

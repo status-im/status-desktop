@@ -122,7 +122,7 @@ ItemDelegate {
                     StatusRoundedImage {
                         Layout.preferredWidth: 16
                         Layout.preferredHeight: 16
-                        image.source: Theme.svg(model.iconUrl)
+                        image.source: Assets.svg(model.iconUrl)
                     }
                     StatusBaseText {
                         font.pixelSize: Theme.tertiaryTextFontSize

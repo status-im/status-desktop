@@ -121,7 +121,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/authenticate")
+                source: Assets.png("keycard/authenticate")
                 pattern: ""
             }
             PropertyChanges {
@@ -144,7 +144,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/authenticate")
+                source: Assets.png("keycard/authenticate")
                 pattern: ""
             }
             PropertyChanges {
@@ -168,7 +168,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/biometrics-success")
+                source: Assets.png("keycard/biometrics-success")
                 pattern: ""
             }
             PropertyChanges {
@@ -193,7 +193,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/biometrics-success")
+                source: Assets.png("keycard/biometrics-success")
                 pattern: ""
             }
             PropertyChanges {

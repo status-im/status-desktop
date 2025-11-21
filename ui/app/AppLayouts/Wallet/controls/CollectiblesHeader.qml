@@ -87,7 +87,7 @@ Rectangle {
             SVGImage {
                 id: caretImg
                 anchors.verticalCenter: parent.verticalCenter
-                source: Theme.svg("caret")
+                source: Assets.svg("caret")
                 width: 11
                 anchors.left: numberCollectibleText.right
                 anchors.leftMargin: Theme.padding

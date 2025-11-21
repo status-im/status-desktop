@@ -15,7 +15,7 @@ StatusDialog {
     header: StatusDialogHeader {
         headline.title: qsTr("Disable %1 network").arg(chainName)
         leftComponent: StatusRoundedImage {
-            image.source: Theme.svg(root.iconUrl)
+            image.source: Assets.svg(root.iconUrl)
             width: 40
             height: 40
         }

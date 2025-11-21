@@ -48,7 +48,7 @@ KeycardBasePage {
                 Layout.bottomMargin: -2
                 Layout.preferredWidth: 154
                 Layout.preferredHeight: 82
-                source: Theme.png("onboarding/status_keycard_multiple")
+                source: Assets.png("onboarding/status_keycard_multiple")
             }
             ColumnLayout {
                 Layout.fillWidth: true
@@ -115,7 +115,7 @@ KeycardBasePage {
             PropertyChanges {
                 target: root
                 title: qsTr("Plug in your Keycard reader")
-                image.source: Theme.png("onboarding/keycard/empty")
+                image.source: Assets.png("onboarding/keycard/empty")
             }
             PropertyChanges {
                 target: promoBanner
@@ -132,7 +132,7 @@ KeycardBasePage {
                                                                                 infoText.hoveredLink,
                                                                                 Theme.palette.baseColor1,
                                                                                 Theme.palette.primaryColor1))
-                image.source: Theme.png("onboarding/keycard/insert")
+                image.source: Assets.png("onboarding/keycard/insert")
             }
         },
         State {
@@ -141,7 +141,7 @@ KeycardBasePage {
             PropertyChanges {
                 target: root
                 title: qsTr("Reading Keycard...")
-                image.source: Theme.png("onboarding/keycard/reading")
+                image.source: Assets.png("onboarding/keycard/reading")
             }
         },
         // error states
@@ -152,7 +152,7 @@ KeycardBasePage {
                 target: root
                 title: qsTr("Oops this isn’t a Keycard")
                 subtitle: qsTr("Remove card and insert a Keycard")
-                image.source: Theme.png("onboarding/keycard/invalid")
+                image.source: Assets.png("onboarding/keycard/invalid")
             }
         },
         State {
@@ -162,7 +162,7 @@ KeycardBasePage {
                 target: root
                 title: qsTr("Smartcard reader service unavailable")
                 subtitle: qsTr("The Smartcard reader service (PCSC service), required for using Keycard, is not currently working. Ensure PCSC is installed and running and try again.")
-                image.source: Theme.png("onboarding/keycard/error")
+                image.source: Assets.png("onboarding/keycard/error")
             }
         },
         State {
@@ -172,7 +172,7 @@ KeycardBasePage {
                 target: root
                 title: qsTr("All pairing slots occupied")
                 subtitle: qsTr("Factory reset this Keycard or insert a different one")
-                image.source: Theme.png("onboarding/keycard/error")
+                image.source: Assets.png("onboarding/keycard/error")
             }
             PropertyChanges {
                 target: btnFactoryReset
@@ -186,7 +186,7 @@ KeycardBasePage {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
                 subtitle: qsTr("The Keycard you have inserted is blocked, you will need to unblock it or insert a different one")
-                image.source: Theme.png("onboarding/keycard/error")
+                image.source: Assets.png("onboarding/keycard/error")
             }
             PropertyChanges {
                 target: btnUnblockWithPuk
@@ -208,7 +208,7 @@ KeycardBasePage {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
                 subtitle: qsTr("The Keycard you have inserted is blocked, you will need to unblock it, factory reset or insert a different one")
-                image.source: Theme.png("onboarding/keycard/error")
+                image.source: Assets.png("onboarding/keycard/error")
             }
             PropertyChanges {
                 target: btnUnblockWithSeedphrase

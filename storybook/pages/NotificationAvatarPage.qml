@@ -30,7 +30,7 @@ SplitView {
                 Tracer {
                     visible: avatarEditor.showImplicitSizeArea
                 }
-                avatarSource: avatarEditor.changeAvatarImage ? "https://i.pravatar.cc/128?img=5" : Theme.png("status-logo-icon")
+                avatarSource: avatarEditor.changeAvatarImage ? "https://i.pravatar.cc/128?img=5" : Assets.png("status-logo-icon")
                 badgeIconName: root.badgeIconName
                 density: avatarEditor.density
                 circular: avatarEditor.isRoundedAvatar

@@ -78,7 +78,7 @@ Flow {
 
                     Layout.preferredWidth: 16
                     Layout.preferredHeight: 16
-                    icon: Theme.emoji(model.emoji)
+                    icon: Assets.emoji(model.emoji)
                 }
 
                 StatusBaseText {

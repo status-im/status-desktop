@@ -34,7 +34,7 @@ SignTransactionModalBase {
 
     required property string networkShortName // e.g. "oeth"
     required property string networkName // e.g. "Optimism"
-    required property string networkIconPath // e.g. `Theme.svg("network/Network=Optimism")`
+    required property string networkIconPath // e.g. `Assets.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
     required property int networkChainId
 
@@ -76,7 +76,7 @@ SignTransactionModalBase {
         bridgeBadge.visible: true
         bridgeBadge.border.width: 2
         bridgeBadge.color: Theme.palette.darkBlue
-        bridgeBadge.image.source: Theme.svg("sign")
+        bridgeBadge.image.source: Assets.svg("sign")
     }
 
     leftFooterContents: ObjectModel {

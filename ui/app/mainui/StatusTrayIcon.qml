@@ -16,9 +16,9 @@ SystemTrayIcon {
 
     icon.source: {
         if (Qt.platform.os === SQUtils.Utils.windows) {
-            return root.showRedDot ? Theme.svg("status-logo-white-windows-with-red-dot") : Theme.svg("status-logo-white-windows")
+            return root.showRedDot ? Assets.svg("status-logo-white-windows-with-red-dot") : Assets.svg("status-logo-white-windows")
         }
-        return root.showRedDot ? Theme.svg("status-logo-white-with-red-dot") : Theme.svg("status-logo-white")
+        return root.showRedDot ? Assets.svg("status-logo-white-with-red-dot") : Assets.svg("status-logo-white")
     }
     icon.mask: Qt.platform.os !== SQUtils.Utils.windows
 

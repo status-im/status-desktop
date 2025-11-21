@@ -25,7 +25,7 @@ Loader {
 
         Image {
             id: mask
-            source: Theme.svg("mask/dummyLineGraph")
+            source: Assets.svg("mask/dummyLineGraph")
             sourceSize: Qt.size(parent.width, parent.height)
             smooth: true
             visible: false

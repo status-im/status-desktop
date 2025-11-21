@@ -35,7 +35,7 @@ StatusDialog {
         IntroPanel {
             Layout.fillWidth: true
 
-            image: Theme.png("onboarding/welcome")
+            image: Assets.png("onboarding/welcome")
             imageWidth: 200
             imageBottomMargin: Theme.padding
             bottomPadding: 0

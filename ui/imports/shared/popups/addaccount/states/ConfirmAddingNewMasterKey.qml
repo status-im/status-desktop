@@ -50,7 +50,7 @@ Item {
             Layout.preferredWidth: 120
             Layout.preferredHeight: 120
             fillMode: Image.PreserveAspectFit
-            source: Theme.png("onboarding/keys")
+            source: Assets.png("onboarding/keys")
             mipmap: true
             cache: false
         }

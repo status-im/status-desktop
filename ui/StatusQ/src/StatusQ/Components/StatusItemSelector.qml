@@ -23,7 +23,7 @@ import StatusQ.Core.Utils
    Example of how to use it:
    \qml
         StatusItemSelector {
-            icon: Theme.svg("contact_verified")
+            icon: Assets.svg("contact_verified")
             title: qsTr("Who holds")
             defaultItemText: qsTr("Example: 10 SNT")
             andOperatorText: qsTr("and")

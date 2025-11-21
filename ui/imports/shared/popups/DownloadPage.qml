@@ -34,7 +34,7 @@ Rectangle {
 
     SVGImage {
         id: logoImage
-        source: Theme.svg(Theme.palette.name == "light" ? "status-logo-light" : "status-logo-dark")
+        source: Assets.svg(Theme.palette.name == "light" ? "status-logo-light" : "status-logo-dark")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 108

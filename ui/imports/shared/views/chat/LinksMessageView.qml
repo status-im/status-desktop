@@ -158,7 +158,7 @@ Flow {
             }
             Image {
                 id: unfurlingImage
-                source: Theme.png("unfurling-image")
+                source: Assets.png("unfurling-image")
                 width: 132
                 height: 94
                 anchors.horizontalCenter: parent.horizontalCenter

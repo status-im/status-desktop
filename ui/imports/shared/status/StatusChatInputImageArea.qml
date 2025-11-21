@@ -68,7 +68,7 @@ Row {
                 hoverEnabled: false
                 opacity: mouseArea.containsMouse || buttonMouseArea.containsMouse ? 1 : 0
                 contentItem: SVGImage {
-                    source: Theme.svg( !buttonMouseArea.containsMouse ? "close-filled" : "close-filled-hovered")
+                    source: Assets.svg( !buttonMouseArea.containsMouse ? "close-filled" : "close-filled-hovered")
                     width: closeBtn.width
                     height: closeBtn.height
                 }

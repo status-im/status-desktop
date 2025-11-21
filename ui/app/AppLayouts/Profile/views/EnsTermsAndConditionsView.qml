@@ -312,7 +312,7 @@ Item {
             id: image1
             height: 50
             width: height
-            source: Theme.png("tokens/SNT")
+            source: Assets.png("tokens/SNT")
             sourceSize: Qt.size(width, height)
             cache: false
         }

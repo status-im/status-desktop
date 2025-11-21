@@ -13,5 +13,5 @@ Image {
     height: 24
     sourceSize: Qt.size(width, height)
     // TODO find a better default favicon
-    source: faviconImage.currentTab && !!faviconImage.currentTab.icon.toString() ? faviconImage.currentTab.icon : Theme.svg("compassActive")
+    source: faviconImage.currentTab && !!faviconImage.currentTab.icon.toString() ? faviconImage.currentTab.icon : Assets.svg("compassActive")
 }

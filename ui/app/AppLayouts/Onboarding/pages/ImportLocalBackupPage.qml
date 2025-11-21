@@ -30,7 +30,7 @@ OnboardingPage {
                 Layout.preferredWidth: 325
                 Layout.preferredHeight: 325
                 Layout.alignment: Qt.AlignHCenter
-                source: Theme.png("onboarding/status_chat")
+                source: Assets.png("onboarding/status_chat")
             }
 
             StatusBaseText {

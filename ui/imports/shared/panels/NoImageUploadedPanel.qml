@@ -79,7 +79,7 @@ Control {
         id: content
         Image {
             id: imageImg
-            source: Theme.svg("images_icon")
+            source: Assets.svg("images_icon")
             width: 20
             height: 18
             sourceSize.width: width || undefined

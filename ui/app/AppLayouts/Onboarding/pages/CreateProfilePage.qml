@@ -54,7 +54,7 @@ OnboardingPage {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: Math.min(164, parent.width)
                         Layout.preferredHeight: Math.min(164, height)
-                        source: Theme.png("onboarding/status_key")
+                        source: Assets.png("onboarding/status_key")
                         mipmap: true
                     }
                     StatusBaseText {
@@ -94,7 +94,7 @@ OnboardingPage {
                         Layout.fillWidth: true
                         text: qsTr("Use a recovery phrase")
                         subTitle: qsTr("If you already have an Ethereum wallet")
-                        icon.source: Theme.png("onboarding/create_profile_seed")
+                        icon.source: Assets.png("onboarding/create_profile_seed")
                         onClicked: root.createProfileWithSeedphraseRequested()
                     }
                     Rectangle {
@@ -110,7 +110,7 @@ OnboardingPage {
                         Layout.fillWidth: true
                         text: qsTr("Use an empty Keycard")
                         subTitle: qsTr("Store your new profile keys on Keycard")
-                        icon.source: Theme.png("onboarding/create_profile_keycard")
+                        icon.source: Assets.png("onboarding/create_profile_keycard")
                         onClicked: root.createProfileWithEmptyKeycardRequested()
                         visible: root.isKeycardEnabled
                     }

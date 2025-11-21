@@ -881,7 +881,7 @@ QtObject {
 
                     networkShortName: signSendAdaptor.selectedNetwork.shortName
                     networkName: signSendAdaptor.selectedNetwork.chainName
-                    networkIconPath: Theme.svg(signSendAdaptor.selectedNetwork.iconUrl)
+                    networkIconPath: Assets.svg(signSendAdaptor.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: signSendAdaptor.selectedNetwork.blockExplorerURL
                     networkChainId: signSendAdaptor.selectedNetwork.chainId
 
