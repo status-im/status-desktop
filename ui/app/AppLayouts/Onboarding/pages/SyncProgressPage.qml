@@ -36,7 +36,7 @@ OnboardingPage {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("onboarding/status_sync_progress")
+                source: Assets.png("onboarding/status_sync_progress")
             }
             PropertyChanges {
                 target: subImageText
@@ -61,7 +61,7 @@ OnboardingPage {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("onboarding/status_sync_success")
+                source: Assets.png("onboarding/status_sync_success")
             }
             PropertyChanges {
                 target: loginButton
@@ -85,7 +85,7 @@ OnboardingPage {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("onboarding/status_sync_failed")
+                source: Assets.png("onboarding/status_sync_failed")
             }
             PropertyChanges {
                 target: tryAgainButton
@@ -134,7 +134,7 @@ OnboardingPage {
                 Layout.preferredHeight: Math.min(214, height)
                 Layout.topMargin: Theme.bigPadding
                 Layout.bottomMargin: Theme.bigPadding
-                source: Theme.png("onboarding/status_generate_keys")
+                source: Assets.png("onboarding/status_generate_keys")
                 mipmap: true
             }
 

@@ -47,7 +47,7 @@ Item {
             anchors.topMargin: 6
             anchors.leftMargin: 6
             fillMode: Image.PreserveAspectFit
-            source: Theme.svg("exclamation_outline")
+            source: Assets.svg("exclamation_outline")
         }
         StyledText {
             id: txtValidationError

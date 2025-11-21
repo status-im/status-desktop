@@ -56,7 +56,7 @@ StatusListView {
         height: 48
         width: ListView.view.width
         title: model.chainName
-        iconUrl: Theme.svg(model.iconUrl)
+        iconUrl: Assets.svg(model.iconUrl)
         showIndicator: root.showIndicator
         multiSelection: root.multiSelection
         interactive: root.interactive

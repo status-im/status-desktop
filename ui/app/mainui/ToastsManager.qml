@@ -204,7 +204,7 @@ QtObject {
             Global.displayImageToastWithActionMessage(
                 newsTitle,
                 qsTr("Read more"),
-                Theme.png("status-logo"),
+                Assets.png("status-logo"),
                 Constants.ephemeralNotificationType.normal,
                 ToastsManager.ActionType.OpenNewsMessagePopup,
                 notificationId

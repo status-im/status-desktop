@@ -103,7 +103,7 @@ Item {
                     maxAdvancedValue: tokenBalance.amount
                     state: (model.tokenBalance.amount === 0 && root.amountToSend > 0) || !model.hasGas ? "unavailable" :
                            !advancedInput.valid && advancedInputCurrencyAmount > 0 ? "error" : "default"
-                    cardIcon.source: Theme.svg(model.iconUrl)
+                    cardIcon.source: Assets.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     disableText: qsTr("Disable")
                     enableText: qsTr("Enable")
@@ -165,7 +165,7 @@ Item {
                     tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
                     state: !preferred ? "unpreferred" : "default"
                     opacity: preferred || store.showUnPreferredChains ? 1 : 0
-                    cardIcon.source: Theme.svg(model.iconUrl)
+                    cardIcon.source: Assets.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     disableText:  qsTr("Disable")
                     enableText: qsTr("Enable")

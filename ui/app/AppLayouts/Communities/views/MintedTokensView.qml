@@ -122,7 +122,7 @@ StatusScrollView {
 
                 objectName: "introPanel"
 
-                image: Theme.png("community/mint2_1")
+                image: Assets.png("community/mint2_1")
                 title: qsTr("Community tokens")
                 subtitle: qsTr("You can mint custom tokens and import tokens for your community")
                 checkersModel: [

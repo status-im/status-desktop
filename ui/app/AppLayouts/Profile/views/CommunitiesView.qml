@@ -60,7 +60,7 @@ SettingsContentBase {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
             Image {
-                source: Theme.png("settings/communities")
+                source: Assets.png("settings/communities")
                 mipmap: true
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 Layout.preferredWidth: 434

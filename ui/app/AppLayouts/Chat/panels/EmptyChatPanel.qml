@@ -34,7 +34,7 @@ ColumnLayout {
                                      remainingHeight / 2)) / 2
         }
 
-        source: Theme.png("chat/chat@2x")
+        source: Assets.png("chat/chat@2x")
     }
 
     StatusBaseText {

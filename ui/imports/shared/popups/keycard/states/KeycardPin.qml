@@ -119,7 +119,7 @@ Item {
                 root.pinUpdated(pinInput)
                 if (root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongPin &&
                         root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongKeychainPin) {
-                    image.source = Theme.png("keycard/enter-pin-%1".arg(pinInput.length))
+                    image.source = Assets.png("keycard/enter-pin-%1".arg(pinInput.length))
                 }
                 if(pinInput.length === 0) {
                     return
@@ -144,7 +144,7 @@ Item {
                         root.sharedKeycardModule.currentState.doSecondaryAction()
                     } else {
                         info.text = qsTr("PINs don't match")
-                        image.source = Theme.png("keycard/plain-error")
+                        image.source = Assets.png("keycard/plain-error")
                     }
                 }
             }
@@ -224,7 +224,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-empty")
+                source: Assets.png("keycard/card-empty")
                 pattern: ""
             }
             PropertyChanges {
@@ -256,7 +256,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/plain-error")
+                source: Assets.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -289,7 +289,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/plain-error")
+                source: Assets.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -324,7 +324,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPin
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/enter-pin-0")
+                source: Assets.png("keycard/enter-pin-0")
                 pattern: ""
             }
             PropertyChanges {
@@ -363,7 +363,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPin
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/enter-pin-0")
+                source: Assets.png("keycard/enter-pin-0")
                 pattern: ""
             }
             PropertyChanges {

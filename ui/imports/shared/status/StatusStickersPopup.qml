@@ -179,7 +179,7 @@ StatusDropdown {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 134
-                    source: Theme.svg("stickers_sad_icon")
+                    source: Assets.svg("stickers_sad_icon")
                 }
 
                 Item {

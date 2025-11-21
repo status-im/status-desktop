@@ -43,7 +43,7 @@ Item {
 
             networkShortName: Constants.networkShortChainNames.mainnet
             networkName: "Mainnet"
-            networkIconPath: Theme.svg("network/Network=Ethereum")
+            networkIconPath: Assets.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
             networkChainId: 1
 

@@ -121,7 +121,7 @@ Control {
 
                 Binding on source { // fallback when we have no emoji
                     when: root.emojiId === ""
-                    value: Theme.svg("filled-account")
+                    value: Assets.svg("filled-account")
                 }
             }
         }

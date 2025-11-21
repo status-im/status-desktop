@@ -53,7 +53,7 @@ SignTransactionModalBase {
         height: 40
         badgeSize: 16
         badgeMargin: 2
-        badgeIcon: Theme.svg("sign-blue")
+        badgeIcon: Assets.svg("sign-blue")
     }
 
     gradientColor: root.accountColor
@@ -64,7 +64,7 @@ SignTransactionModalBase {
     fromImageSmartIdenticon.asset.emoji: root.accountEmoji
     fromImageSmartIdenticon.asset.color: root.accountColor
     fromImageSmartIdenticon.asset.isLetterIdenticon: !!root.accountEmoji
-    toImageSmartIdenticon.asset.name: Theme.svg("sign")
+    toImageSmartIdenticon.asset.name: Assets.svg("sign")
     toImageSmartIdenticon.asset.bgColor: Theme.palette.primaryColor3
     toImageSmartIdenticon.asset.width: 24
     toImageSmartIdenticon.asset.height: 24

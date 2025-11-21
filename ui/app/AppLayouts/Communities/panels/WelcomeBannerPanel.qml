@@ -40,7 +40,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: -6
         anchors.horizontalCenter: parent.horizontalCenter
-        source: Theme.svg("chatEmptyHeader")
+        source: Assets.svg("chatEmptyHeader")
         width: 66
         height: 50
     }

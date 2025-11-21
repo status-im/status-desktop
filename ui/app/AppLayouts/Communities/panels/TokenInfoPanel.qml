@@ -277,7 +277,7 @@ Control {
 
                         height: 24
                         width: height
-                        source: token.chainIcon ? Theme.svg(token.chainIcon) : undefined
+                        source: token.chainIcon ? Assets.svg(token.chainIcon) : undefined
                     }
 
                     StatusBaseText {

@@ -155,7 +155,7 @@ SplitView {
                             isContact: ctrlIsContact.checked
                             contactRequestState: ctrlContactRequestState.currentValue
 
-                            largeImage: userImageCheckBox.checked ? Theme.png("status-logo") : ""
+                            largeImage: userImageCheckBox.checked ? Assets.png("status-logo") : ""
 
                             onlineStatus: onlineStatusComboBox.currentValue
 

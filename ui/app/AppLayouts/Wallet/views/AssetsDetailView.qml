@@ -498,7 +498,7 @@ Item {
                                 }
                                 delegate: InformationTag {
                                     hoverEnabled: true
-                                    asset.name: Theme.svg(model.iconUrl)
+                                    asset.name: Assets.svg(model.iconUrl)
                                     asset.isImage: true
                                     tagPrimaryLabel.text: model.chainName
                                     tagSecondaryLabel.text: SQUtils.Utils.elideAndFormatWalletAddress(model.address)

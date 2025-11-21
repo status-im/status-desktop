@@ -88,7 +88,7 @@ OnboardingStackView {
         id: keycardUnblockedPage
 
         KeycardBasePage {
-            image.source: Theme.png("onboarding/keycard/success")
+            image.source: Assets.png("onboarding/keycard/success")
             title: qsTr("Your Keycard is already unblocked!")
             buttons: [
                 StatusButton {

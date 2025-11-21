@@ -674,7 +674,7 @@ SplitView {
                             icon: {
                                 const iconUrl = ModelUtils.getByKey(NetworksModel.flatNetworks, "chainId", model.chainId, "iconUrl")
                                 if(!!iconUrl)
-                                    return Theme.svg(iconUrl)
+                                    return Assets.svg(iconUrl)
                                 else return ""
                             }
                         }

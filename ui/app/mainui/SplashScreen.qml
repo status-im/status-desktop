@@ -24,7 +24,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: 320
             Layout.preferredHeight: 320
-            source: Theme.png("status-preparing")
+            source: Assets.png("status-preparing")
         }
         StatusBaseText {
             id: loadingText

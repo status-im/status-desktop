@@ -227,7 +227,7 @@ Control {
             InformationTag {
                 id: networkTag
                 readonly property bool isNetworkValid: networkShortName !== ""
-                asset.name: isNetworkValid && networkIconURL !== "" ? Theme.svg(networkIconURL) : ""
+                asset.name: isNetworkValid && networkIconURL !== "" ? Assets.svg(networkIconURL) : ""
                 asset.isImage: true
                 tagPrimaryLabel.text: isNetworkValid ? networkShortName : "---"
                 tagPrimaryLabel.color: isNetworkValid ? networkColor : "black"

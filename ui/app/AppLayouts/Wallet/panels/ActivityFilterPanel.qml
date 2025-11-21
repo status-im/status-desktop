@@ -133,13 +133,13 @@ Column {
                                       }
                 asset.name: switch(activityFilterStore.statusFilters[index]) {
                                 case Constants.TransactionStatus.Failed:
-                                    return Theme.svg("transaction/failed")
+                                    return Assets.svg("transaction/failed")
                                 case Constants.TransactionStatus.Pending:
-                                    return Theme.svg("transaction/pending")
+                                    return Assets.svg("transaction/pending")
                                 case Constants.TransactionStatus.Complete:
-                                    return Theme.svg("transaction/confirmed")
+                                    return Assets.svg("transaction/confirmed")
                                 case Constants.TransactionStatus.Finished:
-                                    return Theme.svg("transaction/finished")
+                                    return Assets.svg("transaction/finished")
                                 default:
                                     console.warn("Unhandled status :: ",activityFilterStore.statusFilters[index])
                                     return ""
