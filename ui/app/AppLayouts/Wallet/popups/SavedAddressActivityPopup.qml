@@ -46,6 +46,8 @@ StatusModal {
         d.address = params.address?? Constants.zeroAddress
         d.ens = params.ens?? ""
         d.colorId = params.colorId?? ""
+        d.avatar = params.avatar?? ""
+        d.isFollowingAddress = params.isFollowingAddress?? false
 
         walletSection.activityController.setFilterToAddresses(JSON.stringify([d.address]))
         walletSection.activityController.updateFilter()
@@ -64,6 +66,8 @@ StatusModal {
         property string address: Constants.zeroAddress
         property string ens: ""
         property string colorId: ""
+        property string avatar: ""
+        property bool isFollowingAddress: false
 
         readonly property string visibleAddress: !!d.ens? d.ens : d.address
 
@@ -156,6 +160,8 @@ StatusModal {
                     address: d.address
                     ens: d.ens
                     colorId: d.colorId
+                    avatar: d.avatar
+                    isFollowingAddress: d.isFollowingAddress
 
                     statusListItemTitle.font.pixelSize: Theme.fontSize22
                     statusListItemTitle.font.bold: Font.Bold

@@ -26,6 +26,7 @@ import app_service/service/node_configuration/service as node_configuration_serv
 import app_service/service/network/service as network_service
 import app_service/service/activity_center/service as activity_center_service
 import app_service/service/saved_address/service as saved_address_service
+import app_service/service/following_address/service as following_address_service
 import app_service/service/devices/service as devices_service
 import app_service/service/mailservers/service as mailservers_service
 import app_service/service/gif/service as gif_service
@@ -89,6 +90,7 @@ type
     privacyService: privacy_service.Service
     nodeConfigurationService: node_configuration_service.Service
     savedAddressService: saved_address_service.Service
+    followingAddressService: following_address_service.Service
     devicesService: devices_service.Service
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
@@ -211,6 +213,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.accountsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.threadpool, statusFoundation.events,
     result.networkService, result.settingsService)
+  result.followingAddressService = following_address_service.newService(statusFoundation.threadpool, statusFoundation.events, 
+    result.networkService)
   result.devicesService = devices_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.accountsService, result.walletAccountService)
   result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,
@@ -262,6 +266,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.stickersService,
     result.activityCenterService,
     result.savedAddressService,
+    result.followingAddressService,
     result.nodeConfigurationService,
     result.devicesService,
     result.mailserversService,
@@ -386,6 +391,7 @@ proc load(self: AppController) =
   self.stickersService.init()
   self.activityCenterService.init()
   self.savedAddressService.init()
+  self.followingAddressService.init()
   self.aboutService.init()
   self.ensService.init()
   self.tokensService.init()

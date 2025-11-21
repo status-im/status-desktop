@@ -9,6 +9,7 @@ import ./all_tokens/module as all_tokens_module
 import ./all_collectibles/module as all_collectibles_module
 import ./assets/module as assets_module
 import ./saved_addresses/module as saved_addresses_module
+import ./following_addresses/module as following_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
 import ./networks/module as networks_module
 import ./overview/module as overview_module
@@ -34,6 +35,7 @@ import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/settings/service as settings_service
 import app_service/service/saved_address/service as saved_address_service
+import app_service/service/following_address/service as following_address_service
 import app_service/service/network/service as network_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/node/service as node_service
@@ -74,6 +76,7 @@ type
     # TODO: replace this with sendModule when old one is removed
     newSendModule: new_send_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
+    followingAddressesModule: following_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
     overviewModule: overview_module.AccessInterface
     networksModule: networks_module.AccessInterface
@@ -84,6 +87,7 @@ type
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
     savedAddressService: saved_address_service.Service
+    followingAddressService: following_address_service.Service
     devicesService: devices_service.Service
     walletConnectService: wc_service.Service
     walletConnectController: wc_controller.Controller
@@ -115,6 +119,7 @@ proc newModule*(
   walletAccountService: wallet_account_service.Service,
   settingsService: settings_service.Service,
   savedAddressService: saved_address_service.Service,
+  followingAddressService: following_address_service.Service,
   networkService: network_service.Service,
   accountsService: accounts_service.Service,
   keycardService: keycard_service.Service,
@@ -131,6 +136,7 @@ proc newModule*(
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.savedAddressService = savedAddressService
+  result.followingAddressService = followingAddressService
   result.devicesService = devicesService
   result.moduleLoaded = false
   result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
@@ -146,6 +152,7 @@ proc newModule*(
   transactionService, keycardService)
   result.newSendModule = newSendModule.newModule(result, events, walletAccountService, networkService, transactionService, keycardService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
+  result.followingAddressesModule = following_addresses_module.newModule(result, events, followingAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, rampService)
   result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
@@ -190,6 +197,7 @@ method delete*(self: Module) =
   self.allCollectiblesModule.delete
   self.assetsModule.delete
   self.savedAddressesModule.delete
+  self.followingAddressesModule.delete
   self.buySellCryptoModule.delete
   self.sendModule.delete
   self.newSendModule.delete
@@ -356,6 +364,7 @@ method load*(self: Module) =
   self.allCollectiblesModule.load()
   self.assetsModule.load()
   self.savedAddressesModule.load()
+  self.followingAddressesModule.load()
   self.buySellCryptoModule.load()
   self.overviewModule.load()
   self.sendModule.load()
@@ -382,6 +391,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.savedAddressesModule.isLoaded()):
+    return
+
+  if(not self.followingAddressesModule.isLoaded()):
     return
 
   if(not self.buySellCryptoModule.isLoaded()):
@@ -430,6 +442,9 @@ method transactionsModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method savedAddressesModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method followingAddressesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method buySellCryptoModuleDidLoad*(self: Module) =
