@@ -143,10 +143,10 @@ SignTransactionModalBase {
     }
 
     title: qsTr("Sign Send")
-    //: e.g. (Send) 100 DAI to batista.eth
     subtitle: {
         const tokenToSend = root.isCollectible ? root.collectibleName:
                               "%1 %2".arg(root.tokenAmount).arg(root.tokenSymbol)
+        //: e.g. (Send) 100 DAI to batista.eth
         return qsTr("%1 to %2").
         arg(tokenToSend).
         arg(SQUtils.Utils.elideAndFormatWalletAddress(root.recipientAddress))
@@ -206,7 +206,7 @@ SignTransactionModalBase {
     leftFooterContents: ObjectModel {
         RowLayout {
             Layout.leftMargin: 4
-            spacing: Theme.bigPadding
+            spacing: Theme.padding
             ColumnLayout {
                 spacing: 2
                 RowLayout {

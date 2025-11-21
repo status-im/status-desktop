@@ -103,6 +103,10 @@ SplitView {
                     loginType: ctrlLoginType.currentIndex
 
                     feesLoading: ctrlLoading.checked
+
+                    onAccepted: logs.logEvent("accepted")
+                    onRejected: logs.logEvent("rejected")
+                    onClosed: logs.logEvent("closed")
                 }
             }
         }
@@ -182,5 +186,5 @@ SplitView {
 }
 
 // category: Popups
-
+// status: good
 // https://www.figma.com/design/TS0eQX9dAZXqZtELiwKIoK/Swap---Milestone-1?node-id=3517-435657&t=sRX8mAj4irR1bOuT-0

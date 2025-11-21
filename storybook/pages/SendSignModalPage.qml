@@ -122,6 +122,7 @@ SplitView {
             Component {
                 id: dlgComponent
                 SendSignModal {
+                    closePolicy: Popup.CloseOnEscape
                     anchors.centerIn: parent
                     destroyOnClose: true
                     modal: false
@@ -281,6 +282,7 @@ SplitView {
                 text: "Selected From Account"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: ctrlAccount
                 textRole: "name"
                 valueRole: "address"
@@ -292,6 +294,7 @@ SplitView {
                 text: "Selected Recipient"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: ctrlRecipient
                 textRole: "modelName"
                 valueRole: "address"
@@ -303,6 +306,7 @@ SplitView {
                 text: "Selected Network"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: ctrlNetwork
                 textRole: "chainName"
                 valueRole: "chainId"
@@ -319,11 +323,13 @@ SplitView {
                 text: "Login Type"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: ctrlLoginType
                 model: Constants.authenticationIconByType
             }
 
             TextField {
+                Layout.fillWidth: true
                 id: ctrlExpiration
                 placeholderText: "Expiration in seconds"
             }
@@ -332,5 +338,5 @@ SplitView {
 }
 
 // category: Popups
-
+// status: good
 // https://www.figma.com/design/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=25214-40565&m=dev
