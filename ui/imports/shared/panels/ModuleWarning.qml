@@ -229,7 +229,7 @@ Item {
                     text: button.text
                     font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
-                    font.family: Theme.baseFont.name
+                    font.family: Fonts.baseFont.family
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     color: Theme.palette.indirectColor1

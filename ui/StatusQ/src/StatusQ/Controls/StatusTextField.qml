@@ -11,7 +11,7 @@ TextField {
     id: root
     Accessible.name: Utils.formatAccessibleName(placeholderText, objectName)
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.primaryTextFontSize
     color: readOnly ? Theme.palette.baseColor1 : Theme.palette.directColor1
     selectByMouse: true

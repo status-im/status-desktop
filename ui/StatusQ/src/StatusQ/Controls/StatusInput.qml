@@ -76,7 +76,7 @@ Control {
         This property holds a reference to the TextEdit's font property.
     */
     font.pixelSize: Theme.primaryTextFontSize
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     /*!
         \qmlproperty alias StatusInput::multiline
         This property indicates whether the StatusBaseInput allows multiline text. Default value is false.

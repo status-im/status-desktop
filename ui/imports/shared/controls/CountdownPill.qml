@@ -39,7 +39,7 @@ IssuePill {
         return CountdownPill.Type.Primary
     }
 
-    font.family: Theme.codeFont.name
+    font.family: Fonts.codeFont.family
 
     function reset() {
         if (expirationSeconds === 0) {

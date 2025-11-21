@@ -10,7 +10,7 @@ Switch {
 
     property color textColor: Theme.palette.directColor1
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.primaryTextFontSize
 
     background: null

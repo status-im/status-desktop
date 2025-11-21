@@ -95,7 +95,7 @@ AbstractButton {
         }
     }
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.weight: Font.Medium
     font.pixelSize: size === StatusBaseButton.Size.Large ? Theme.primaryTextFontSize
                                                          : Theme.additionalTextSize

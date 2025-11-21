@@ -104,7 +104,7 @@ Item {
 
             enabled: root.enabled && root.interactive
 
-            font.family: Theme.baseFont.name
+            font.family: Fonts.baseFont.family
             font.pixelSize: root.size === StatusComboBox.Size.Large ? Theme.secondaryTextFontSize : 13
 
             padding: 16

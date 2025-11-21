@@ -142,7 +142,7 @@ OnboardingPage {
 
     TextMetrics {
         id: idxMetrics
-        font.family: Theme.monoFont.name
+        font.family: Fonts.monoFont.family
         font.pixelSize: Theme.primaryTextFontSize
         text: "99"
     }

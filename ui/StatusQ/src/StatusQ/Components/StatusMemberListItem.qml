@@ -158,7 +158,7 @@ ItemDelegate {
     icon.width: 32
     icon.height: 32
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.primaryTextFontSize
 
     background: Rectangle {

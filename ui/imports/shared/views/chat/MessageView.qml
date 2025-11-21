@@ -618,7 +618,7 @@ Loader {
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("%1 pinned a message").arg(senderDisplayName)
             color: Theme.palette.directColor3
-            font.family: Theme.baseFont.name
+            font.family: Fonts.baseFont.family
             font.pixelSize: Theme.primaryTextFontSize
             textFormat: Text.RichText
             wrapMode: Text.Wrap

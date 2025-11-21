@@ -19,7 +19,7 @@ StatusInput {
     property bool readOnly: false
 
     input.edit.readOnly: root.readOnly
-    input.font: Theme.monoFont.name
+    input.font: Fonts.monoFont.family
     input.placeholderFont: root.input.font
 
     input.rightComponent: {
