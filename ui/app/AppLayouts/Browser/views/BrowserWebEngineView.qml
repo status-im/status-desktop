@@ -156,7 +156,7 @@ WebEngineView {
 
             Image {
                 id: emptyPageImage
-                source: Theme.png("browser/compass")
+                source: Theme.png("browser/pepehand")
                 width: 294
                 height: 294
                 anchors.horizontalCenter: parent.horizontalCenter
