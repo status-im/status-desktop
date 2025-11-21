@@ -116,8 +116,8 @@ Item {
 
     Connections {
         target: Qt.application
-        onStateChanged: {
-            if (Qt.application.state == Qt.ApplicationActive) {
+        function onStateChanged() {
+            if (Qt.application.state === Qt.ApplicationActive) {
                 d.markAllMessagesReadIfMostRecentMessageIsInViewport()
             }
         }
