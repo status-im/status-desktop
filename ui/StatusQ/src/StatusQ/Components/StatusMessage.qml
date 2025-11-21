@@ -261,7 +261,6 @@ Control {
                             onClicked: (sender) => root.senderNameClicked(sender)
                             onResendClicked: root.resendClicked()
                             timestamp: root.timestamp
-                            showFullTimestamp: root.isInPinnedPopup
                             displayNameClickable: root.profileClickable
                             outgoingStatus: root.outgoingStatus
                             showOutgointStatusLabel: root.hovered && !root.isInPinnedPopup
@@ -374,7 +373,7 @@ Control {
 
                     Loader {
                         Layout.fillWidth: true
-                        Layout.rightMargin: 16
+                        Layout.rightMargin: Theme.padding
                         active: root.editMode
                         visible: active
                         sourceComponent: StatusEditMessage {
@@ -411,7 +410,7 @@ Control {
             visible: active
             anchors.right: parent.right
             anchors.rightMargin: Theme.padding
-            anchors.top: root.top
+            anchors.top: parent.top
             sourceComponent: StatusMessageQuickActions {
                 items: root.quickActions
             }

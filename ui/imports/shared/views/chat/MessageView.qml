@@ -698,7 +698,6 @@ Loader {
                 StatusTimeStampLabel {
                     Layout.alignment: Qt.AlignVCenter
                     timestamp: root.messageTimestamp
-                    showFullTimestamp: false
                 }
             }
         }
