@@ -52,7 +52,11 @@ QtObject {
     }
 
     function fetchMoreTransactions() {
-        // Browser view doesn't support pagination yet, no-op
+        if (historyTransactions.count === 0
+                || !historyTransactions.hasMore
+                || loadingHistoryTransactions)
+            return
+        activityController.loadMoreItems()
     }
 
     function resetActivityData() {

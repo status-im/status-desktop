@@ -20,6 +20,8 @@ QtObject {
 
     readonly property var historyTransactions: SortFilterProxyModel {
         sourceModel: root.browserWalletStore.historyTransactions
+        // Expose hasMore from the source model
+        readonly property bool hasMore: sourceModel ? sourceModel.hasMore : false
         filters: ExpressionFilter {
             expression: {
                 const currentAddr = root.browserWalletStore.dappBrowserAccount.address.toLowerCase()
