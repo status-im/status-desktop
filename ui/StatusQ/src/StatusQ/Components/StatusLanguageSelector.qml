@@ -35,7 +35,7 @@ Button {
     verticalPadding: Theme.halfPadding
     spacing: 4
 
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
 
     text: d.beautifyIsoCode(d.selectedLanguage)
 

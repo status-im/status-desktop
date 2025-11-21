@@ -28,7 +28,7 @@ ItemDelegate {
     spacing: Theme.padding
 
     hoverEnabled: enabled
-    opacity: enabled ? 1 : Theme.disabledOpacity
+    opacity: enabled ? 1 : ThemeUtils.disabledOpacity
 
     background: Rectangle {
         color: root.hovered || root.highlighted ? Theme.palette.statusSelect.menuItemHoverBackgroundColor

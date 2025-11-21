@@ -27,7 +27,7 @@ CheckBox {
     LayoutMirroring.childrenInherit: true
 
     padding: 4
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
 
     QtObject {
         id: d

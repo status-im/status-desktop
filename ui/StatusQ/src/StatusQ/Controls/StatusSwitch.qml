@@ -16,7 +16,7 @@ Switch {
     background: null
 
     padding: 4
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
 
     property bool leftSide: true
     LayoutMirroring.enabled: !leftSide

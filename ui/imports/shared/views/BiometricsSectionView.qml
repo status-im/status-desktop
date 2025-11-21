@@ -43,7 +43,7 @@ Control {
 
                 Layout.alignment: Qt.AlignRight
 
-                opacity: root.biometricsAvailable ? 1 : Theme.disabledOpacity
+                opacity: root.biometricsAvailable ? 1 : ThemeUtils.disabledOpacity
                 checkable: false
                 checked: root.biometricsAvailable && root.biometricsEnabled
                 onClicked: root.toggleBiometrics(biometricsSwitch.checked)
