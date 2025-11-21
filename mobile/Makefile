@@ -27,6 +27,7 @@ ifeq ($(OS),android)
 		ANDROID_NDK_ROOT="$(ANDROID_NDK_ROOT)" \
 		ANDROID_API="$(ANDROID_API)" \
 		HOST_OS="$(HOST_OS)" \
+		GO_GENERATE_CMD="go generate" \
 		SHELL=/bin/sh
 else ifeq ($(OS),ios)
 	$(MAKE) -C ../vendor/status-go statusgo-ios-library \
