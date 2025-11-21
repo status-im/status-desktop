@@ -49,7 +49,7 @@ StatusScrollView {
         readonly property real scale: Math.min(1, root.availableWidth / minWidth)
 
         Behavior on delegateWidth {
-            PropertyAnimation { duration: Theme.AnimationDuration.Fast }
+            PropertyAnimation { duration: ThemeUtils.AnimationDuration.Fast }
         }
 
         // URLs:
@@ -193,7 +193,7 @@ StatusScrollView {
                 NumberAnimation { properties: "x,y"; }
             }
             add: Transition {
-                NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
+                NumberAnimation { properties: "x,y"; from: 0; duration: ThemeUtils.AnimationDuration.Fast }
             }
         }
 
@@ -240,7 +240,7 @@ StatusScrollView {
                 NumberAnimation { properties: "x,y"; }
             }
             add: Transition {
-                NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
+                NumberAnimation { properties: "x,y"; from: 0; duration: ThemeUtils.AnimationDuration.Fast }
             }
         }
 
