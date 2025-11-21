@@ -37,7 +37,7 @@ TabButton {
 
     hoverEnabled: enabled
 
-    opacity: enabled ? 1 : Theme.disabledOpacity
+    opacity: enabled ? 1 : ThemeUtils.disabledOpacity
 
     spacing: Theme.smallPadding
 
