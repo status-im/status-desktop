@@ -27,6 +27,7 @@ StatusListItem {
     property var activeNetworks
     property string name
     property string address
+    property string mixedcaseAddress
     property string ens
     property string colorId
 
@@ -84,6 +85,7 @@ StatusListItem {
         Global.openSavedAddressActivityPopup({
                                                  name: root.name,
                                                  address: root.address,
+                                                 mixedcaseAddress: root.mixedcaseAddress,
                                                  ens: root.ens,
                                                  colorId: root.colorId
                                               })
@@ -113,6 +115,7 @@ StatusListItem {
                     {
                         name: root.name,
                         address: root.address,
+                        mixedcaseAddress: root.mixedcaseAddress,
                         ens: root.ens,
                         colorId: root.colorId,
                     }
@@ -126,6 +129,7 @@ StatusListItem {
         id: menu
         property string name
         property string address
+        property string mixedcaseAddress
         property string ens
         property string colorId
 
@@ -135,6 +139,7 @@ StatusListItem {
         function openMenu(parent, x, y, model) {
             menu.name = model.name;
             menu.address = model.address;
+            menu.mixedcaseAddress = model.mixedcaseAddress;
             menu.ens = model.ens;
             menu.colorId = model.colorId;
             popup(parent, x, y);
@@ -142,6 +147,7 @@ StatusListItem {
         onClosed: {
             menu.name = "";
             menu.address = "";
+            menu.mixedcaseAddress = ""
             menu.ens = ""
             menu.colorId = ""
         }
@@ -190,6 +196,7 @@ StatusListItem {
                                            hasFloatingButtons: false,
                                            name: menu.name,
                                            address: menu.address,
+                                           mixedcaseAddress: menu.mixedcaseAddress,
                                            colorId: menu.colorId
                                        })
             }
