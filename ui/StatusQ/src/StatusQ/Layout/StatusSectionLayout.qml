@@ -43,8 +43,8 @@ import StatusQ.Core.Theme
 
 LayoutChooser {
     id: root
-    implicitWidth: Theme.portraitBreakpoint.width
-    implicitHeight: Theme.portraitBreakpoint.height
+    implicitWidth: ThemeUtils.portraitBreakpoint.width
+    implicitHeight: ThemeUtils.portraitBreakpoint.height
 
     enum Panels {
         LeftPanel,

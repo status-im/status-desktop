@@ -65,12 +65,12 @@ QC.Popup {
         True when:
           - \c bottomSheetAllowed is true, and
           - the window is in portrait (\c d.windowHeight > d.windowWidth), and
-          - the window width is at or below \c Theme.portraitBreakpoint.width.
+          - the window width is at or below \c ThemeUtils.portraitBreakpoint.width.
         Otherwise false. Used to switch layout/parenting to a full-width, bottom-anchored sheet.
     */
     readonly property bool bottomSheet: !bottomSheetAllowed ? false:
                                             d.windowHeight > d.windowWidth
-                                            && d.windowWidth <= Theme.portraitBreakpoint.width
+                                            && d.windowWidth <= ThemeUtils.portraitBreakpoint.width
 
     /*!
        \qmlproperty bool fillHeightOnBottomSheet
