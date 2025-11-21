@@ -176,6 +176,12 @@ RightTabBaseView {
                 }
             }
 
+            readonly property var walletViewsMap: [
+                assetsView,
+                collectiblesView,
+                historyView
+            ]
+
             readonly property var detailedCollectibleActivityController: RootStore.tmpActivityController0
         }
 
@@ -260,6 +266,8 @@ RightTabBaseView {
                     }
                     onCurrentIndexChanged: {
                         RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.TokenType.ERC721 : Constants.TokenType.ERC20)
+
+                        mainViewLoader.sourceComponent = d.walletViewsMap[walletTabBar.currentIndex]
                     }
                 }
                 StatusFlatButton {
@@ -278,13 +286,6 @@ RightTabBaseView {
                 id: mainViewLoader
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                sourceComponent: {
-                    switch (walletTabBar.currentIndex) {
-                        case RightTabView.TabIndex.Assets: return assetsView
-                        case RightTabView.TabIndex.Collectibles: return collectiblesView
-                        case RightTabView.TabIndex.Activity: return historyView
-                    }
-                }
 
                 Component {
                     id: assetsView
