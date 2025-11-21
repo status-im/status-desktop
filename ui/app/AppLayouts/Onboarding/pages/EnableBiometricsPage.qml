@@ -28,7 +28,7 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 mipmap: true
                 smooth: false
-                source: Theme.png("onboarding/enable_biometrics")
+                source: Assets.png("onboarding/enable_biometrics")
             }
 
             StatusBaseText {

@@ -91,7 +91,7 @@ SplitView {
                 property string id: "1"
                 property string name: "Socks"
                 property var members: { "count": 5 }
-                property string image: Theme.png("tokens/UNI")
+                property string image: Assets.png("tokens/UNI")
                 property string color: "orchid"
             }
             devicesStore: ProfileStores.DevicesStore {

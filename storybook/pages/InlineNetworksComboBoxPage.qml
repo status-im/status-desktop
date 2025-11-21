@@ -15,28 +15,28 @@ Item {
     readonly property var modelData: [
         {
             name: "Optimism",
-            icon: Theme.svg(ModelsData.networks.optimism),
+            icon: Assets.svg(ModelsData.networks.optimism),
             amount: "300",
             multiplierIndex: 0,
             infiniteAmount: false
         },
         {
             name: "Arbitrum",
-            icon: Theme.svg(ModelsData.networks.arbitrum),
+            icon: Assets.svg(ModelsData.networks.arbitrum),
             amount: "400000",
             multiplierIndex: 3,
             infiniteAmount: false
         },
         {
             name: "Hermez",
-            icon: Theme.svg(ModelsData.networks.hermez),
+            icon: Assets.svg(ModelsData.networks.hermez),
             amount: "0",
             multiplierIndex: 0,
             infiniteAmount: true
         },
         {
             name: "Ethereum",
-            icon: Theme.svg(ModelsData.networks.ethereum),
+            icon: Assets.svg(ModelsData.networks.ethereum),
             amount: "12" + "0".repeat(18),
             multiplierIndex: 18,
             infiniteAmount: false

@@ -88,7 +88,7 @@ QtObject {
         proxyRoles: [
             FastExpressionRole {
                 function collectibleIcon(icon) {
-                    return !!icon ? icon : Theme.png("tokens/DEFAULT-TOKEN")
+                    return !!icon ? icon : Assets.png("tokens/DEFAULT-TOKEN")
                 }
                 name: "iconSource"
                 expression: collectibleIcon(model.icon)
@@ -101,7 +101,7 @@ QtObject {
             },
             FastExpressionRole {
                 function collectibleIcon(icon) {
-                    return !!icon ? icon : Theme.png("tokens/DEFAULT-TOKEN")
+                    return !!icon ? icon : Assets.png("tokens/DEFAULT-TOKEN")
                 }
                 name: "collectionImageUrl"
                 expression: collectibleIcon(model.icon)

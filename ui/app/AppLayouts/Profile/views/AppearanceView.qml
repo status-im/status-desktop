@@ -137,7 +137,7 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 Layout.fillWidth: true
-                image.source: Theme.png("appearance-light")
+                image.source: Assets.png("appearance-light")
                 control.text: qsTr("Light")
                 control.checked: root.theme === Theme.Style.Light
                 onRadioCheckedChanged: function(checked) {
@@ -149,7 +149,7 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 Layout.fillWidth: true
-                image.source: Theme.png("appearance-dark")
+                image.source: Assets.png("appearance-dark")
                 control.text: qsTr("Dark")
                 control.checked: root.theme === Theme.Style.Dark
                 onRadioCheckedChanged: function(checked) {
@@ -161,7 +161,7 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 Layout.fillWidth: true
-                image.source: Theme.png("appearance-system")
+                image.source: Assets.png("appearance-system")
                 control.text: qsTr("System")
                 control.checked: root.theme === Theme.Style.System
                 onRadioCheckedChanged: function(checked) {

@@ -59,7 +59,7 @@ Item {
         antialiasing: true
         mipmap: true
         source: d.isAnimation?
-                    Theme.png(root.pattern.arg(img.currentImgIndex)) :
+                    Assets.png(root.pattern.arg(img.currentImgIndex)) :
                     root.source
 
         property int currentImgIndex: root.startImgIndexForTheFirstLoop

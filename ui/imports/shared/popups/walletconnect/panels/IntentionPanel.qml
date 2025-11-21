@@ -50,7 +50,7 @@ ColumnLayout {
                 bgRadius: bgWidth / 2
                 bgBorderWidth: 2
                 bgBorderColor: Theme.palette.statusAppLayout.backgroundColor
-                source: Theme.svg("sign")
+                source: Assets.svg("sign")
             }
         }
     }

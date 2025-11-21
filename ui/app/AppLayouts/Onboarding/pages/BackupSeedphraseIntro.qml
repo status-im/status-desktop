@@ -23,7 +23,7 @@ OnboardingPage {
                 Layout.preferredHeight: 260
                 Layout.alignment: Qt.AlignHCenter
                 mipmap: true
-                source: Theme.png("onboarding/status_seedphrase")
+                source: Assets.png("onboarding/status_seedphrase")
             }
 
             StatusBaseText {

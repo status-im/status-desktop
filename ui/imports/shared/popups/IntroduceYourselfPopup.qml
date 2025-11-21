@@ -95,7 +95,7 @@ StatusDialog {
 
                         name: root.pubKey
                         usesDefaultName: true
-                        image: Theme.png("onboarding/avatar")
+                        image: Assets.png("onboarding/avatar")
                         userColor: Utils.colorForColorId(root.colorId)
                         imageWidth: 68
                         imageHeight: 68

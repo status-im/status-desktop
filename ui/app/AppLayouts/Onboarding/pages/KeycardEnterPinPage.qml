@@ -51,7 +51,7 @@ KeycardBasePage {
 
                 PropertyChanges {
                     target: image
-                    source: Theme.png("onboarding/keycard/reading")
+                    source: Assets.png("onboarding/keycard/reading")
                 }
             },
             State { // entering, wrong pin
@@ -75,7 +75,7 @@ KeycardBasePage {
                 }
                 PropertyChanges {
                     target: image
-                    source: Theme.png("onboarding/keycard/error")
+                    source: Assets.png("onboarding/keycard/error")
                 }
             },
             State { // in progress
@@ -97,7 +97,7 @@ KeycardBasePage {
 
                 PropertyChanges {
                     target: image
-                    source: Theme.png("onboarding/keycard/reading")
+                    source: Assets.png("onboarding/keycard/reading")
                 }
             },
             State { // success
@@ -115,7 +115,7 @@ KeycardBasePage {
 
                 PropertyChanges {
                     target: image
-                    source: Theme.png("onboarding/keycard/success")
+                    source: Assets.png("onboarding/keycard/success")
                 }
             },
             State { // blocked
@@ -133,7 +133,7 @@ KeycardBasePage {
                 }
                 PropertyChanges {
                     target: image
-                    source: Theme.png("onboarding/keycard/error")
+                    source: Assets.png("onboarding/keycard/error")
                 }
                 PropertyChanges {
                     target: btnUnblockWithSeedphrase

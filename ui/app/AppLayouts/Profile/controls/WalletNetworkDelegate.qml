@@ -33,7 +33,7 @@ StatusListItem {
     onClicked: d.toggleActive()
 
     title: chainName
-    asset.name: Theme.svg(iconUrl)
+    asset.name: Assets.svg(iconUrl)
     asset.isImage: true
     width: parent.width
     leftPadding: Theme.padding

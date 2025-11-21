@@ -50,7 +50,7 @@ SignTransactionModalBase {
     /** Input property holding selected network name **/
     required property string networkName
     /** Input property holding selected network icon path
-    e.g. `Theme.svg("network/Network=Optimism")`**/
+    e.g. `Assets.svg("network/Network=Optimism")`**/
     required property string networkIconPath
     /** Input property holding selected network blockchain
     explorer name **/
@@ -200,7 +200,7 @@ SignTransactionModalBase {
         bridgeBadge.visible: true
         bridgeBadge.border.width: 2
         bridgeBadge.color: Theme.palette.darkBlue
-        bridgeBadge.image.source: Theme.svg("sign")
+        bridgeBadge.image.source: Assets.svg("sign")
     }
 
     leftFooterContents: ObjectModel {

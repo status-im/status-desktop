@@ -34,7 +34,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: sendCheckbox
         title: qsTr("Failed")
-        assetSettings.name: Theme.svg("transaction/failed")
+        assetSettings.name: Assets.svg("transaction/failed")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
@@ -46,7 +46,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: receiveCheckbox
         title: qsTr("Pending")
-        assetSettings.name: Theme.svg("transaction/pending")
+        assetSettings.name: Assets.svg("transaction/pending")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
@@ -58,7 +58,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: buyCheckbox
         title: qsTr("Complete")
-        assetSettings.name: Theme.svg("transaction/confirmed")
+        assetSettings.name: Assets.svg("transaction/confirmed")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
@@ -70,7 +70,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: swapCheckbox
         title: qsTr("Finalised")
-        assetSettings.name: Theme.svg("transaction/finished")
+        assetSettings.name: Assets.svg("transaction/finished")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked

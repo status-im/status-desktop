@@ -47,7 +47,7 @@ OnboardingPage {
                 Layout.topMargin: Theme.bigPadding
                 Layout.bottomMargin: Theme.bigPadding
                 Layout.alignment: Qt.AlignHCenter
-                source: Theme.png("onboarding/status_totebag_artwork_1")
+                source: Assets.png("onboarding/status_totebag_artwork_1")
             }
 
             StatusButton {

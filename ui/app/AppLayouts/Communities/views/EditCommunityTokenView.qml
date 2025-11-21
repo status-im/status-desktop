@@ -272,7 +272,7 @@ StatusScrollView {
                     asset.height: 24
                     asset.width: asset.height
                     asset.isImage: true
-                    asset.name: Theme.svg(token.chainIcon)
+                    asset.name: Assets.svg(token.chainIcon)
                     active: true
                     visible: active
                 }

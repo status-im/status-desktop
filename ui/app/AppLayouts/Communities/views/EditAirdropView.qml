@@ -178,7 +178,7 @@ StatusScrollView {
                 tokenImage: modelItem.iconSource,
                 networkId: modelItem.chainId,
                 networkText: modelItem.chainName,
-                networkImage: Theme.svg(modelItem.chainIcon),
+                networkImage: Assets.svg(modelItem.chainIcon),
                 remainingSupply: modelItem.remainingSupply,
                 multiplierIndex: modelItem.multiplierIndex,
                 infiniteSupply: modelItem.infiniteSupply,
@@ -269,7 +269,7 @@ StatusScrollView {
             property int editedIndex: -1
 
             Layout.fillWidth: true
-            icon: Theme.svg("token")
+            icon: Assets.svg("token")
             title: qsTr("What")
             placeholderText: qsTr("Example: 1 SOCK")
             addButton.visible: model.count < d.maxAirdropTokens
