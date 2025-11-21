@@ -870,13 +870,13 @@ Item {
         property string skinColor // NB: must be a string for the twemoji lib to work; we don't want the `#` in the name
         property int theme: Theme.Style.System
         property int fontSize: {
-            if (appMain.width < Theme.portraitBreakpoint.width) {
+            if (appMain.width < ThemeUtils.portraitBreakpoint.width) {
                 return Theme.FontSize.FontSizeS
             }
             return Theme.FontSize.FontSizeM
         }
         property int paddingFactor: {
-            if (appMain.width < Theme.portraitBreakpoint.width) {
+            if (appMain.width < ThemeUtils.portraitBreakpoint.width) {
                 return Theme.PaddingFactor.PaddingXXS
             }
             return Theme.PaddingFactor.PaddingM
@@ -2411,7 +2411,7 @@ Item {
             Loader {
                 id: createChatView
 
-                readonly property bool isPortraitMode: appMain.width < Theme.portraitBreakpoint.width
+                readonly property bool isPortraitMode: appMain.width < ThemeUtils.portraitBreakpoint.width
                 property bool opened: false
                 readonly property real defaultWidth: parent.width - Constants.chatSectionLeftColumnWidth -
                          anchors.rightMargin - anchors.leftMargin
