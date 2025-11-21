@@ -113,6 +113,7 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce nibh. Etiam quis
                 text: "1.54"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: loginType
                 model: [{name: "Password", value: Constants.LoginType.Password}, {name: "Biometrics", value: Constants.LoginType.Biometrics}, {name: "Keycard", value: Constants.LoginType.Keycard}]
                 textRole: "name"
@@ -120,6 +121,7 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce nibh. Etiam quis
                 currentIndex: 0
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: contentToSignComboBox
                 model: ["Long content to sign", "Middle content to sign", "Short content to sign", "Empty content to sign"]
                 currentIndex: 0
@@ -137,7 +139,6 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce nibh. Etiam quis
             CheckBox {
                 id: feesLoading
                 text: "Fees loading"
-                checked: true
             }
             CheckBox {
                 id: hasFees
@@ -150,9 +151,12 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce nibh. Etiam quis
                 checked: false
             }
             TextField {
+                Layout.fillWidth: true
                 id: ctrlExpiration
                 placeholderText: "Expiration in seconds"
             }
         }
     }
 }
+
+// status: good

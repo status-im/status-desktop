@@ -3,7 +3,6 @@ import QtQuick.Controls
 
 import StatusQ
 import StatusQ.Controls
-import StatusQ.Popups
 import StatusQ.Core
 import StatusQ.Core.Theme
 

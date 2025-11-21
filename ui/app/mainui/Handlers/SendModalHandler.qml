@@ -1153,7 +1153,7 @@ QtObject {
                         close()
                     }
 
-                    onUpdateTxSettings: {
+                    onUpdateTxSettings: (selectedFeeMode, customNonce, customGasAmount, gasPrice, maxFeesPerGas, priorityFee) => {
                         let pathName = ""
                         let chainId = 0
                         if (!!txPathUnderReviewEntry.item) {

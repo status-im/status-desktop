@@ -69,6 +69,7 @@ Control {
     }
 
     contentItem: StatusItemDelegate {
+        cursorShape: Qt.ArrowCursor
         contentItem: RowLayout {
             spacing: 12
             CollectibleMedia {
@@ -86,8 +87,10 @@ Control {
             }
 
             ColumnLayout {
+                Layout.fillWidth: true
                 spacing: 0
                 StatusBaseText {
+                    Layout.fillWidth: true
                     objectName: "primaryText"
                     text: !!root.name ?
                               root.name : ""
@@ -95,6 +98,7 @@ Control {
                     elide: Text.ElideRight
                 }
                 StatusBaseText {
+                    Layout.fillWidth: true
                     objectName: "secondaryText"
                     text: !!root.tokenId ?
                               root.tokenId : ""
@@ -103,7 +107,7 @@ Control {
                 }
             }
 
-            RowLayout {
+            Item {
                 Layout.fillWidth: true
             }
 

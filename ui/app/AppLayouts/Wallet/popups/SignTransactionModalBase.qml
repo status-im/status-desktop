@@ -49,7 +49,8 @@ StatusDialog {
     property bool hasExpiryDate: false
 
     // Close hidden explicitely until we have persistent notifications in place to reopen this dialog from outside
-    property bool headerActionsCloseButtonVisible: false
+    property bool headerActionsCloseButtonVisible: bottomSheet // need the close button as we hide the Reject button
+    closeHandler: reject // close and emit rejected() signal
 
     property ObjectModel leftFooterContents
     property ObjectModel rightFooterContents: ObjectModel {
@@ -59,7 +60,7 @@ StatusDialog {
             StatusFlatButton {
                 objectName: "rejectButton"
                 Layout.preferredHeight: signButton.height
-                visible: !root.hasExpiryDate || !countdownPill.isExpired
+                visible: (!root.hasExpiryDate || !countdownPill.isExpired) && !root.bottomSheet
                 text: qsTr("Reject")
                 onClicked: root.reject() // close and emit rejected() signal
             }
@@ -78,7 +79,7 @@ StatusDialog {
                 id: closeButton
                 visible: root.hasExpiryDate && countdownPill.isExpired
                 text: root.closeButtonText
-                onClicked: root.closeHandler()
+                onClicked: root.close()  // close and emit closed() signal
             }
         }
     }
