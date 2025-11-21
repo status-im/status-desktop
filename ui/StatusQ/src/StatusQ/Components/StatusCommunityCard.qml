@@ -56,7 +56,7 @@ Rectangle {
        \qmlproperty int StatusCommunityCard::titleFontSize
        This property holds the title's font size.
     */
-    property int titleFontSize: Theme.fontSize19
+    property int titleFontSize: Theme.fontSize(19)
     /*!
        \qmlproperty int StatusCommunityCard::descriptionFontSize
        This property holds the description's font size.

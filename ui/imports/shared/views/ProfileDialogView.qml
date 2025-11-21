@@ -388,7 +388,7 @@ Pane {
                     width: Math.min(implicitWidth, contactRow.width - verificationIcons.width - verificationIcons.anchors.leftMargin)
                     objectName: "ProfileDialog_displayName"
                     font.bold: true
-                    font.pixelSize: Theme.fontSize22
+                    font.pixelSize: Theme.fontSize(22)
                     elide: Text.ElideRight
                     text: StatusQUtils.Emoji.parse(d.mainDisplayName, StatusQUtils.Emoji.size.middle)
                 }

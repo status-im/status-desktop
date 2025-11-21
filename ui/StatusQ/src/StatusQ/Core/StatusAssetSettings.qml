@@ -18,7 +18,7 @@ QtObject {
     property bool isLetterIdenticon
     property bool useAcronymForLetterIdenticon: true
     property bool letterIdenticonBgWithAlpha: false
-    property int letterSize: emoji ? (Theme.fontSize11) : (charactersLen == 1 ? _oneLetterSize : _twoLettersSize)
+    property int letterSize: emoji ? (Theme.fontSize(11)) : (charactersLen == 1 ? _oneLetterSize : _twoLettersSize)
     property int charactersLen: 1
 
     property string emoji

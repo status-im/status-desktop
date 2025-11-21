@@ -160,7 +160,7 @@ ColumnLayout {
 
                     Label {
                         text: "Backend models"
-                        font.pixelSize: Theme.fontSize22
+                        font.pixelSize: Theme.fontSize(22)
                         padding: 10
                     }
 
@@ -179,7 +179,7 @@ ColumnLayout {
 
                     Label {
                         text: "Display models"
-                        font.pixelSize: Theme.fontSize22
+                        font.pixelSize: Theme.fontSize(22)
                         padding: 10
                     }
 
@@ -251,7 +251,7 @@ ColumnLayout {
 
                     Label {
                         text: "Backend models"
-                        font.pixelSize: Theme.fontSize22
+                        font.pixelSize: Theme.fontSize(22)
                         padding: 10
                     }
                     GenericListView {
@@ -268,7 +268,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Label {
                         text: "Display models"
-                        font.pixelSize: Theme.fontSize22
+                        font.pixelSize: Theme.fontSize(22)
                         padding: 10
                     }
 
@@ -357,7 +357,7 @@ ColumnLayout {
 
                     Label {
                         text: "Backend models"
-                        font.pixelSize: Theme.fontSize22
+                        font.pixelSize: Theme.fontSize(22)
                         padding: 10
                     }
 
@@ -377,7 +377,7 @@ ColumnLayout {
 
                     Label {
                         text: "Display models"
-                        font.pixelSize: Theme.fontSize22
+                        font.pixelSize: Theme.fontSize(22)
                         padding: 10
                     }
 

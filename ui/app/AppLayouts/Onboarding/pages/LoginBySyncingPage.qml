@@ -28,7 +28,7 @@ OnboardingPage {
             StatusBaseText {
                 Layout.fillWidth: true
                 text: root.title
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter

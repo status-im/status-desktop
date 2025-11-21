@@ -56,7 +56,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 24
             font.weight: Font.Bold
-            font.pixelSize: Theme.fontSize20
+            font.pixelSize: Theme.fontSize(20)
             color: Theme.palette.directColor1
         }
 
@@ -100,7 +100,7 @@ Item {
             anchors.left: parent.left
             anchors.top: addUsername.bottom
             anchors.topMargin: 24
-            font.pixelSize: Theme.fontSize16
+            font.pixelSize: Theme.fontSize(16)
             color: Theme.palette.directColor1
         }
 
@@ -163,7 +163,7 @@ Item {
             anchors.left: parent.left
             anchors.top: ensList.bottom
             anchors.topMargin: 24
-            font.pixelSize: Theme.fontSize16
+            font.pixelSize: Theme.fontSize(16)
             color: Theme.palette.directColor1
         }
 
@@ -233,7 +233,7 @@ Item {
             anchors.left: messagesShownAs.left
             anchors.topMargin: Theme.padding
             text: qsTr("You’re displaying your ENS username in chats")
-            font.pixelSize: Theme.fontSize14
+            font.pixelSize: Theme.fontSize(14)
             color: Theme.palette.baseColor1
         }
     }

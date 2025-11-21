@@ -130,7 +130,7 @@ SplitView {
                     id: textItem
                     Layout.fillWidth: true
                     text: "This header is fixed and not scrollable"
-                    font.pixelSize: Theme.fontSize18
+                    font.pixelSize: Theme.fontSize(18)
                 }
 
                 Item {

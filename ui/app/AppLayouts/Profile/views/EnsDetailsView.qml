@@ -41,7 +41,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: Theme.fontSize20
+        font.pixelSize: Theme.fontSize(20)
         color: Theme.palette.directColor1
     }
 

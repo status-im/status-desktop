@@ -266,7 +266,7 @@ Control {
                 Layout.fillWidth: true
                 visible: root.actionText
                 text: root.actionText
-                font.pixelSize: Theme.fontSize13
+                font.pixelSize: Theme.fontSize(13)
                 color: Theme.palette.directColor5
                 elide: Text.ElideRight
             }
@@ -285,7 +285,7 @@ Control {
             StatusBaseText {
                 Layout.fillWidth: true
                 text: LocaleUtils.formatRelativeTimestamp(root.timestamp)
-                font.pixelSize: Theme.fontSize11
+                font.pixelSize: Theme.fontSize(11)
                 color: Theme.palette.directColor5
                 elide: Text.ElideRight
             }

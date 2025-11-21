@@ -21,7 +21,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: Theme.fontSize20
+        font.pixelSize: Theme.fontSize(20)
         color: Theme.palette.directColor1
     }
 
@@ -41,7 +41,7 @@ Item {
             text: "✓"
             opacity: 0.7
             font.weight: Font.Bold
-            font.pixelSize: Theme.fontSize18
+            font.pixelSize: Theme.fontSize(18)
             color: Theme.palette.indirectColor1
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -54,7 +54,7 @@ Item {
         anchors.top: circle.bottom
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: Theme.fontSize24
+        font.pixelSize: Theme.fontSize(24)
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -67,7 +67,7 @@ Item {
         text: qsTr("%1 is now connected with your chat key and can be used in Status.").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
-        font.pixelSize: Theme.fontSize14
+        font.pixelSize: Theme.fontSize(14)
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter

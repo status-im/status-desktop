@@ -136,7 +136,7 @@ StatusDialog {
             colorId: d.colorId
             mixedcaseAddress: d.mixedcaseAddress
 
-            statusListItemTitle.font.pixelSize: Theme.fontSize22
+            statusListItemTitle.font.pixelSize: Theme.fontSize(22)
             statusListItemTitle.font.bold: Font.Bold
 
             onAboutToOpenPopup: {

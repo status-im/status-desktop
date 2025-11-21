@@ -205,7 +205,7 @@ Item {
                     Label {
                         height: implicitHeight * 2
                         text: section + " inset"
-                        font.pixelSize: Theme.fontSize20
+                        font.pixelSize: Theme.fontSize(20)
                         font.bold: true
                         font.underline: true
 

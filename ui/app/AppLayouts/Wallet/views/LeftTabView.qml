@@ -371,7 +371,7 @@ Rectangle {
                                 objectName: "walletLeftListAmountValue"
                                 customColor: Theme.palette.textColor
                                 text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance, {noSymbol: true})
-                                font.pixelSize: Theme.fontSize22
+                                font.pixelSize: Theme.fontSize(22)
                                 loading: RootStore.balanceLoading
                                 lineHeightMode: Text.FixedHeight
                                 lineHeight: 36

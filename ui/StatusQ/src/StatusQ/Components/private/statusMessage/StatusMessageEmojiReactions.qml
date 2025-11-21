@@ -75,6 +75,7 @@ Flow {
 
                 StatusIcon {
                     objectName: "emojiReaction"
+
                     Layout.preferredWidth: 16
                     Layout.preferredHeight: 16
                     icon: Theme.emoji(model.emoji)
@@ -82,7 +83,7 @@ Flow {
 
                 StatusBaseText {
                     text: model.numberOfReactions
-                    font.pixelSize: Theme.fontSize13
+                    font.pixelSize: Theme.fontSize(13)
                 }
             }
 
