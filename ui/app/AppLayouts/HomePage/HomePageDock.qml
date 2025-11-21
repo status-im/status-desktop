@@ -120,7 +120,7 @@ Control {
             SequentialAnimation {
                 id: removeAnimation
                 PropertyAction { target: delegateLoader; property: "ListView.delayRemove"; value: true }
-                NumberAnimation { target: delegateLoader; property: "scale"; to: 0; duration: Theme.AnimationDuration.Default; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: delegateLoader; property: "scale"; to: 0; duration: ThemeUtils.AnimationDuration.Default; easing.type: Easing.InOutQuad }
                 PropertyAction { target: delegateLoader; property: "ListView.delayRemove"; value: false }
             }
 
@@ -129,7 +129,7 @@ Control {
 
         Behavior on implicitWidth {
             enabled: d.componentComplete
-            PropertyAnimation { duration: Theme.AnimationDuration.Fast }
+            PropertyAnimation { duration: ThemeUtils.AnimationDuration.Fast }
         }
     }
 
