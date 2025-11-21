@@ -18,7 +18,7 @@ AbstractButton {
     icon.height: 32
 
     hoverEnabled: enabled
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
 
     background: Rectangle {
         color: root.hovered ? Theme.palette.backgroundHover : "transparent"
