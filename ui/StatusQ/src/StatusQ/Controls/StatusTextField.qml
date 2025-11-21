@@ -19,7 +19,7 @@ TextField {
     selectionColor: Theme.palette.primaryColor2
     placeholderTextColor: Theme.palette.baseColor1
 
-    opacity: enabled ? 1 : Theme.disabledOpacity
+    opacity: enabled ? 1 : ThemeUtils.disabledOpacity
 
     cursorDelegate: StatusCursorDelegate {
         cursorVisible: root.cursorVisible

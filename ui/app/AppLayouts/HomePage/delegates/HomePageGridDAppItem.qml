@@ -25,7 +25,7 @@ HomePageGridItem {
         Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
         radius: Theme.padding
 
-        opacity: pressed || down ? Theme.pressedOpacity : enabled ? 1 : Theme.disabledOpacity
+        opacity: pressed || down ? ThemeUtils.pressedOpacity : enabled ? 1 : ThemeUtils.disabledOpacity
         Behavior on opacity { NumberAnimation { duration: Theme.AnimationDuration.Fast } }
     }
 

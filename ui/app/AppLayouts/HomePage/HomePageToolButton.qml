@@ -20,7 +20,7 @@ AbstractButton {
     icon.color: hovered ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
     Behavior on icon.color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
 
-    opacity: pressed || down ? Theme.pressedOpacity : enabled ? 1 : Theme.disabledOpacity
+    opacity: pressed || down ? ThemeUtils.pressedOpacity : enabled ? 1 : ThemeUtils.disabledOpacity
     Behavior on opacity { NumberAnimation { duration: Theme.AnimationDuration.Fast } }
 
     background: Rectangle {

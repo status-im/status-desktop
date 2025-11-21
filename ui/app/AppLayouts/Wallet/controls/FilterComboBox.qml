@@ -37,7 +37,7 @@ ComboBox {
     }
 
     enabled: d.searchTextLowerCase || d.combinedProxyModel.count || d.uncategorizedModel.count
-    opacity: enabled ? 1 : Theme.disabledOpacity
+    opacity: enabled ? 1 : ThemeUtils.disabledOpacity
 
     displayText: qsTr("Collection")
 
