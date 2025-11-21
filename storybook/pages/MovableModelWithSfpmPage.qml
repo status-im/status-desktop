@@ -412,7 +412,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
 
             text: "SAVE ORDER"
-            font.pixelSize: Theme.fontSize30
+            font.pixelSize: Theme.fontSize(30)
 
             onClicked: {
                 const count = simpleSourceModel.count

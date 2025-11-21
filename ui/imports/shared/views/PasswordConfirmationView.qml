@@ -35,7 +35,7 @@ ColumnLayout {
         text: qsTr("Have you written down your password?")
         font.bold: true
         color: Theme.palette.directColor1
-        font.pixelSize: Theme.fontSize22
+        font.pixelSize: Theme.fontSize(22)
     }
 
     ColumnLayout {

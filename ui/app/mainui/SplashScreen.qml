@@ -31,7 +31,7 @@ Item {
             Layout.topMargin: 12
             Layout.fillWidth: true
             horizontalAlignment: Qt.AlignHCenter
-            font.pixelSize: Theme.fontSize22
+            font.pixelSize: Theme.fontSize(22)
             font.bold: true
             text: qsTr("Preparing Status for you")
         }

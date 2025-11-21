@@ -50,7 +50,7 @@ Item {
                 anchors.top: image.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
-                font.pixelSize: Theme.fontSize24
+                font.pixelSize: Theme.fontSize(24)
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -276,7 +276,7 @@ Item {
                 anchors.topMargin: 40
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: Theme.fontSize11
+                font.pixelSize: Theme.fontSize(11)
                 color: Theme.palette.directColor1
             }
         }

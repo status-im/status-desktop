@@ -40,7 +40,7 @@ Dialog {
             Layout.fillWidth: true
             horizontalAlignment: Qt.AlignHCenter
             text: "Status Desktop"
-            font.pixelSize: Theme.fontSize20
+            font.pixelSize: Theme.fontSize(20)
         }
         Label {
             Layout.fillWidth: true

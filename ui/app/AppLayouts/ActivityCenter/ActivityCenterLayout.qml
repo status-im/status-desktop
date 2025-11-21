@@ -619,7 +619,7 @@ StatusSectionLayout {
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
-                    font.pixelSize: Theme.fontSize27
+                    font.pixelSize: Theme.fontSize(27)
                     font.weight: Font.Medium
                     font.letterSpacing: 5
                     text: truncateDeviceId(deviceId)
@@ -669,7 +669,7 @@ StatusSectionLayout {
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
-                    font.pixelSize: Theme.fontSize27
+                    font.pixelSize: Theme.fontSize(27)
                     font.weight: Font.Medium
                     font.letterSpacing: 5
                     text: truncateDeviceId(deviceId)

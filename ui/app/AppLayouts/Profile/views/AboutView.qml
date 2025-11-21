@@ -71,7 +71,7 @@ SettingsContentBase {
 
             StatusLinkText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 normalColor: Theme.palette.directColor1
                 text: root.currentVersion

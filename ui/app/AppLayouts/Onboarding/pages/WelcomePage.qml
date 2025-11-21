@@ -106,7 +106,7 @@ OnboardingPage {
                         id: headerText
                         Layout.fillWidth: true
                         text: root.title
-                        font.pixelSize: Theme.fontSize40
+                        font.pixelSize: Theme.fontSize(40)
                         font.bold: true
                         wrapMode: Text.WordWrap
                         horizontalAlignment: Text.AlignHCenter

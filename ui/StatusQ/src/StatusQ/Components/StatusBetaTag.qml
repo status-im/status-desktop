@@ -22,7 +22,7 @@ Rectangle {
     border.color: root.fgColor
 
     StatusBaseText {
-        font.pixelSize: Theme.fontSize11
+        font.pixelSize: Theme.fontSize(11)
         font.weight: Font.Medium
         color: root.fgColor
         anchors.centerIn: parent

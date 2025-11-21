@@ -100,7 +100,7 @@ RowLayout {
                 readonly property int reminingItems: d.totalAlbumItems - root.albumCount + 1
                 anchors.centerIn: parent
                 color: Theme.palette.indirectColor1
-                font.pixelSize: Theme.fontSize19
+                font.pixelSize: Theme.fontSize(19)
                 font.weight: Font.Medium
                 text: reminingItems + "+"
             }

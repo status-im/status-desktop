@@ -23,7 +23,7 @@ OnboardingPage {
             StatusBaseText {
                 Layout.fillWidth: true
                 text: qsTr("Confirm backup")
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
