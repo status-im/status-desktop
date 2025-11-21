@@ -115,7 +115,7 @@ Rectangle {
     color: bgColor
 
     property color bgColor: {
-        if (sensor.containsMouse || statusListItemTitleMouseArea.containsMouse || root.highlighted) {
+        if ((sensor.enabled && (sensor.containsMouse || statusListItemTitleMouseArea.containsMouse)) || root.highlighted) {
             switch(type) {
                 case StatusListItem.Type.Primary:
                     return Theme.palette.baseColor2

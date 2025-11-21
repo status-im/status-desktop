@@ -159,6 +159,7 @@ SplitView {
                 text: "Selected Account"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: ctrlAccount
                 textRole: "name"
                 valueRole: "address"
@@ -170,6 +171,7 @@ SplitView {
                 text: "Selected Network"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: ctrlNetwork
                 textRole: "chainName"
                 valueRole: "chainId"
@@ -186,11 +188,13 @@ SplitView {
                 text: "Login Type"
             }
             ComboBox {
+                Layout.fillWidth: true
                 id: ctrlLoginType
                 model: Constants.authenticationIconByType
             }
 
             TextField {
+                Layout.fillWidth: true
                 id: ctrlExpiration
                 placeholderText: "Expiration in seconds"
             }
@@ -199,5 +203,5 @@ SplitView {
 }
 
 // category: Popups
-
+// status: good
 // https://www.figma.com/design/TS0eQX9dAZXqZtELiwKIoK/Swap---Milestone-1?node-id=3542-497191&t=ndwmuh3ZXlycGYWa-0
