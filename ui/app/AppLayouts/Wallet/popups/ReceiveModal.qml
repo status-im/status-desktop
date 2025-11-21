@@ -43,6 +43,7 @@ StatusModal {
     contentHeight: content.implicitHeight + d.advanceFooterHeight
 
     hasFloatingButtons: true
+    fullScreenSheet: false
 
     showHeader: false
     showAdvancedHeader: hasFloatingButtons

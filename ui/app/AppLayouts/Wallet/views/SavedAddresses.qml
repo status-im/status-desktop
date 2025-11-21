@@ -150,9 +150,10 @@ ColumnLayout {
             id: savedAddressDelegate
             objectName: "savedAddressView_Delegate_" + name
             name: model.name
-            address: model.mixedcaseAddress
+            address: model.address
             ens: model.ens
             colorId: model.colorId
+            mixedcaseAddress: model.mixedcaseAddress
             networkConnectionStore: root.networkConnectionStore
             activeNetworks: root.networksStore.activeNetworks
             onOpenSendModal: root.sendToAddressRequested(recipient)

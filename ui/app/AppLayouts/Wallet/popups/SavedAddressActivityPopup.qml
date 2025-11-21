@@ -1,26 +1,23 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
-import StatusQ
 import StatusQ.Core
-import StatusQ.Core.Utils as StatusQUtils
 import StatusQ.Core.Theme
 import StatusQ.Controls
-import StatusQ.Popups
+import StatusQ.Popups.Dialog
+import StatusQ.Core.Utils as StatusQUtils
 
 import AppLayouts.stores
-import AppLayouts.Profile.stores as ProfileStores
 import AppLayouts.Wallet.stores as WalletStore
+import AppLayouts.Wallet.controls
 
-import utils
 import shared.views
-import shared.popups.send
 import shared.stores as SharedStores
 
-import "../controls"
-import ".."
+import utils
 
-StatusModal {
+StatusDialog {
     id: root
 
     property SharedStores.NetworkConnectionStore networkConnectionStore
@@ -30,10 +27,9 @@ StatusModal {
     signal sendToAddressRequested(string address)
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    hasCloseButton: false
 
-    width: d.popupWidth
-    contentHeight: content.height
+    implicitWidth: d.popupWidth
+    implicitHeight: d.popupHeight
 
     onClosed: {
         root.close()
@@ -44,6 +40,7 @@ StatusModal {
     function initWithParams(params = {}) {
         d.name = params.name?? ""
         d.address = params.address?? Constants.zeroAddress
+        d.mixedcaseAddress = params.mixedcaseAddress?? Constants.zeroAddress
         d.ens = params.ens?? ""
         d.colorId = params.colorId?? ""
 
@@ -56,12 +53,10 @@ StatusModal {
 
         readonly property int popupWidth: 477
         readonly property int popupHeight: 672
-        readonly property int contentWidth: d.popupWidth - 2 * d.margin
-        readonly property int margin: 24
-        readonly property int radius: 8
 
         property string name: ""
         property string address: Constants.zeroAddress
+        property string mixedcaseAddress: Constants.zeroAddress
         property string ens: ""
         property string colorId: ""
 
@@ -87,184 +82,143 @@ StatusModal {
         width: 1
     }
 
-    showFooter: false
-    showHeader: false
+    padding: Theme.bigPadding
+    footer: null
 
-    Rectangle {
-        id: content
-        width: d.popupWidth
-        height: d.popupHeight
-        color: Theme.palette.statusModal.backgroundColor
-        radius: d.radius
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: Theme.padding
 
-        Item {
-            id: fixedHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            implicitWidth: parent.width
-            implicitHeight: childrenRect.height
+        SavedAddressesDelegate {
+            id: savedAddress
 
-            Column {
-                anchors.top: parent.top
-                width: parent.width
+            Layout.preferredHeight: 72
+            Layout.fillWidth: true
 
-                Spacer {
-                    height: 24
-                }
+            leftPadding: 0
+            rightPadding: 0
+            border.color: Theme.palette.transparent
 
-                SavedAddressesDelegate {
-                    id: savedAddress
+            usage: SavedAddressesDelegate.Usage.Item
+            showButtons: true
+            statusListItemComponentsSlot.spacing: 4
 
-                    implicitHeight: 72
-                    implicitWidth: d.contentWidth
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    leftPadding: 0
-                    border.color: "transparent"
-
-                    usage: SavedAddressesDelegate.Usage.Item
-                    showButtons: true
-                    statusListItemComponentsSlot.spacing: 4
-
-                    statusListItemSubTitle.visible: d.extendedViewOpacity !== 1
-                    statusListItemSubTitle.opacity: 1 - d.extendedViewOpacity
-                    statusListItemSubTitle.customColor: Theme.palette.directColor1
-                    statusListItemSubTitle.text: {
-                        if (statusListItemSubTitle.visible) {
-                            if (!!d.ens) {
-                                return d.ens
-                            }
-                            else {
-                                return Utils.richColorText(StatusQUtils.Utils.elideText(d.address,6,4), Theme.palette.directColor1)
-                            }
-                        }
-                        return ""
+            statusListItemSubTitle.visible: d.extendedViewOpacity !== 1
+            statusListItemSubTitle.opacity: 1 - d.extendedViewOpacity
+            statusListItemSubTitle.customColor: Theme.palette.directColor1
+            statusListItemSubTitle.text: {
+                if (statusListItemSubTitle.visible) {
+                    if (!!d.ens) {
+                        return d.ens
                     }
-
-                    sendButton.visible: d.extendedViewOpacity !== 1
-                    sendButton.opacity: 1 - d.extendedViewOpacity
-                    sendButton.type: StatusRoundButton.Type.Primary
-
-                    asset.width: 72
-                    asset.height: 72
-                    asset.letterSize: 32
-                    bgColor: Theme.palette.statusListItem.backgroundColor
-
-                    networkConnectionStore: root.networkConnectionStore
-                    activeNetworks: root.networksStore.activeNetworks
-
-                    name: d.name
-                    address: d.address
-                    ens: d.ens
-                    colorId: d.colorId
-
-                    statusListItemTitle.font.pixelSize: Theme.fontSize22
-                    statusListItemTitle.font.bold: Font.Bold
-
-                    onAboutToOpenPopup: {
-                        root.close()
-                    }
-                    onOpenSendModal: {
-                        root.sendToAddressRequested(recipient)
-                        root.close()  
+                    else {
+                        return Utils.richColorText(StatusQUtils.Utils.elideText(d.address,6,4), Theme.palette.directColor1)
                     }
                 }
+                return ""
+            }
 
-                Spacer {
-                    height: 20
-                }
+            sendButton.visible: d.extendedViewOpacity !== 1
+            sendButton.opacity: 1 - d.extendedViewOpacity
+            sendButton.type: StatusRoundButton.Type.Primary
 
-                Rectangle {
-                    width: parent.width
-                    height: 4
-                    opacity: 0.5
-                    color: d.showSplitLine? Theme.palette.separator : "transparent"
-                }
+            asset.width: 72
+            asset.height: 72
+            asset.letterSize: 32
+            bgColor: Theme.palette.statusListItem.backgroundColor
+
+            networkConnectionStore: root.networkConnectionStore
+            activeNetworks: root.networksStore.activeNetworks
+
+            name: d.name
+            address: d.address
+            ens: d.ens
+            colorId: d.colorId
+            mixedcaseAddress: d.mixedcaseAddress
+
+            statusListItemTitle.font.pixelSize: Theme.fontSize22
+            statusListItemTitle.font.bold: Font.Bold
+
+            onAboutToOpenPopup: {
+                root.close()
+            }
+            onOpenSendModal: {
+                root.sendToAddressRequested(recipient)
+                root.close()
             }
         }
 
-        Item {
-            id: extendedView
-            anchors.top: fixedHeader.bottom
-            anchors.left: parent.left
-            implicitWidth: parent.width
-            implicitHeight: childrenRect.height
-            z: d.extendedViewOpacity === 1? 1 : 0
+        StatusDialogDivider {
+            Layout.topMargin: -Theme.padding
+            Layout.fillWidth: true
+            visible: d.showSplitLine
+        }
 
-            Column {
-                anchors.top: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: d.contentWidth
+        ColumnLayout {
+            Layout.fillWidth: true
 
-                Rectangle {
-                    opacity: d.extendedViewOpacity
-                    width: parent.width
-                    height: Math.max(addressText.height, copyButton.height) + 24
-                    color: "transparent"
-                    radius: d.radius
-                    border.color: Theme.palette.baseColor5
-                    border.width: 1
+            spacing: Theme.padding
+            opacity: d.extendedViewOpacity
+            visible: opacity > 0.01
 
-                    StatusBaseText {
-                        id: addressText
-                        anchors.left: parent.left
-                        anchors.right: copyButton.left
-                        anchors.rightMargin: Theme.padding
-                        anchors.leftMargin: Theme.padding
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: !!d.ens ? d.ens : d.address
-                        wrapMode: Text.WrapAnywhere
-                        font.pixelSize: Theme.primaryTextFontSize
-                        color: Theme.palette.directColor1
-                    }
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: Math.max(addressText.height, copyButton.height) + Theme.bigPadding
 
-                    StatusRoundButton {
-                        id: copyButton
-                        width: 24
-                        height: 24
-                        anchors.right: parent.right
-                        anchors.rightMargin: Theme.padding
-                        anchors.top: addressText.top
-                        icon.name: "copy"
-                        type: StatusRoundButton.Type.Tertiary
-                        onClicked: ClipboardUtils.setText(d.visibleAddress)
-                    }
+                color: Theme.palette.transparent
+                radius: Theme.radius
+                border.color: Theme.palette.baseColor2
+                border.width: 1
+
+                StatusBaseText {
+                    id: addressText
+                    anchors.left: parent.left
+                    anchors.right: copyButton.left
+                    anchors.rightMargin: Theme.padding
+                    anchors.leftMargin: Theme.padding
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: !!d.ens ? d.ens : d.address
+                    wrapMode: Text.WrapAnywhere
+                    font.pixelSize: Theme.primaryTextFontSize
+                    color: Theme.palette.directColor1
                 }
 
-                Spacer {
-                    height: 16
+                StatusRoundButton {
+                    id: copyButton
+                    width: 24
+                    height: 24
+                    anchors.right: parent.right
+                    anchors.rightMargin: Theme.padding
+                    anchors.top: addressText.top
+                    icon.name: "copy"
+                    type: StatusRoundButton.Type.Tertiary
+                    onClicked: ClipboardUtils.setText(d.visibleAddress)
                 }
+            }
 
-                StatusButton {
-                    opacity: d.extendedViewOpacity
-                    width: parent.width
-                    radius: d.radius
-                    text: qsTr("Send")
-                    icon.name: "send"
-                    enabled: root.networkConnectionStore.sendBuyBridgeEnabled
-                    onClicked: {
-                        root.sendToAddressRequested(d.visibleAddress)
-                        root.close()
-                    }
-                }
+            StatusButton {
+                Layout.fillWidth: true
 
-                Spacer {
-                    height: 32
+                radius: Theme.radius
+                text: qsTr("Send")
+                icon.name: "send"
+                enabled: root.networkConnectionStore.sendBuyBridgeEnabled
+                onClicked: {
+                    root.sendToAddressRequested(d.visibleAddress)
+                    root.close()
                 }
             }
         }
 
         HistoryView {
             id: historyView
-            anchors.top: fixedHeader.bottom
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: d.margin
-            width: parent.width - 2 * d.margin
+
+            Layout.fillWidth: true
 
             disableShadowOnScroll: true
             hideVerticalScrollbar: true
             displayValues: false
-            firstItemOffset: extendedView.height
+            firstItemOffset: 1
             overview: ({
                            isWatchOnlyAccount: false,
                            mixedcaseAddress: d.address

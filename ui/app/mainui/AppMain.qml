@@ -2742,6 +2742,7 @@ Item {
             if (showQR.showSingleAccount || showQR.showForSavedAddress) {
                 showQR.selectedAccount.name = params.name?? ""
                 showQR.selectedAccount.address = params.address?? ""
+                showQR.selectedAccount.mixedcaseAddress = params.mixedcaseAddress?? ""
                 showQR.selectedAccount.colorId = params.colorId?? ""
                 showQR.selectedAccount.emoji = params.emoji?? ""
             }
