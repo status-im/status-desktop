@@ -8,6 +8,7 @@ from allure_commons.types import AttachmentType
 from allure_commons._allure import step
 
 import configs
+from configs import get_platform
 import constants
 from constants.dock_buttons import DockButtons
 LOG = logging.getLogger(__name__)
@@ -18,6 +19,7 @@ LOG = logging.getLogger(__name__)
     pytest.param(configs.testpath.TEST_USER_DATA / 'wallet_load_alex', constants.user.wallet_load_alex,
                  id='wallet_load_alex_user')
 ])
+@pytest.mark.skipif(get_platform() != 'Windows', reason="Windows only test")
 def test_wallet_loading_time(main_screen, user_data, user_account, tmp_path):
     os.environ['STATUS_RUNTIME_TEST_MODE'] = 'True'  # to omit banners
 
