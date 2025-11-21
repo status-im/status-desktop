@@ -278,6 +278,7 @@ RightTabBaseView {
                 id: mainViewLoader
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                asynchronous: true
                 sourceComponent: {
                     switch (walletTabBar.currentIndex) {
                         case RightTabView.TabIndex.Assets: return assetsView
