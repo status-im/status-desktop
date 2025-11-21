@@ -12,12 +12,9 @@ import StatusQ.Core.Theme
 import utils
 import shared
 import shared.stores as SharedStores
-import shared.popups.send
 
 import AppLayouts.Wallet.stores
-import AppLayouts.stores as AppLayoutStores
-
-import "../stores"
+import AppLayouts.Profile.stores
 
 Item {
     id: ensView
@@ -25,7 +22,6 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property WalletAssetsStore walletAssetsStore
 
-    property AppLayoutStores.ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
 
     property int profileContentWidth
@@ -45,10 +41,6 @@ Item {
     signal connectUsernameRequested(string ensName, string ownerAddress)
     signal registerUsernameRequested(string ensName)
     signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
-
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    clip: true
 
     QtObject {
         id: d
@@ -252,7 +244,7 @@ Item {
 
             onBackBtnClicked: back()
 
-            onContinueClicked: {
+            onContinueClicked: (output, username) => {
                 if(output === "connected"){
                     connect(username)
                 } else {
@@ -339,7 +331,7 @@ Item {
 
             profileContentWidth: ensView.profileContentWidth
             onAddBtnClicked: next("search")
-            onSelectEns: {
+            onSelectEns: (username, chainId) => {
                 ensView.ensUsernamesStore.ensDetails(chainId, username)
                 selectedUsername = username
                 selectedChainId = chainId
@@ -357,7 +349,7 @@ Item {
 
             onBackBtnClicked: back()
 
-            onReleaseUsernameRequested: {
+            onReleaseUsernameRequested: (senderAddress) => {
                 const name = RootStore.getNameForWalletAddress(senderAddress)
                 if (name === "") {
                     Global.openPopup(noAccountPopupComponent)
@@ -385,8 +377,6 @@ Item {
 
             StatusBaseText {
                 anchors.fill: parent
-                font.pixelSize: Constants.keycard.general.fontSize2
-                color: Theme.palette.directColor1
                 text: qsTr("The account this username was bought with is no longer among active accounts.\nPlease add it and try again.")
             }
 
@@ -400,6 +390,4 @@ Item {
             addedUsername = ensUsername;
         }
     }
-
 }
-

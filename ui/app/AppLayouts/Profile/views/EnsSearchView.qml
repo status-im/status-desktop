@@ -9,12 +9,9 @@ import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
 
 import utils
-import shared
 import shared.panels
 import shared.status
 import shared.controls
-import shared.popups.send
-import shared.stores.send
 
 import AppLayouts.Profile.stores
 
@@ -53,7 +50,7 @@ Item {
         return validationMessage === "";
     }
 
-    function onKeyReleased(ensUsername){
+    function onEnsUsernameChanged(ensUsername){
         if (!validate(ensUsername)) {
             return;
         }
@@ -83,8 +80,7 @@ Item {
                 source: Theme.svg("block-icon-white")
                 width: 20
                 height: 20
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.centerIn: parent
             }
 
             StatusBaseText {
@@ -116,9 +112,9 @@ Item {
             anchors.topMargin: Theme.bigPadding
             anchors.right: btnContinue.left
             anchors.rightMargin: Theme.bigPadding
-            Keys.onReleased: {
-                onKeyReleased(ensUsername.text);
-            }
+
+            onEditingFinished: inputValue => onEnsUsernameChanged(inputValue)
+            onTextEdited: inputValue => onEnsUsernameChanged(inputValue)
 
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule

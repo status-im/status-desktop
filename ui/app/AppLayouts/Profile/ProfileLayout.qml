@@ -323,7 +323,6 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 ensUsernamesStore: root.ensUsernamesStore
                 walletAssetsStore: root.walletAssetsStore
-                contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
                 onConnectUsernameRequested: (ensName, ownerAddress) => root.connectUsernameRequested(ensName, ownerAddress)

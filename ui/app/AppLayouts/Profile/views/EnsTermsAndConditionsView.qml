@@ -3,11 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import utils
-
 import shared.popups
-import shared.status
-import shared.popups.send
-import shared.stores.send
 
 import StatusQ
 import StatusQ.Core
@@ -39,7 +35,7 @@ Item {
             model: !!d.sntToken && !!d.sntToken.balances ? d.sntToken.balances: null
             roleName: "balance"
         }
-        property real sntBalance: !!sntToken && !!sntToken.decimals ? aggregator.value/(10 ** sntToken.decimals): 0
+        readonly property real sntBalance: !!sntToken && !!sntToken.decimals ? aggregator.value/(10 ** sntToken.decimals): 0
     }
 
     StatusBaseText {
