@@ -51,7 +51,7 @@ AbstractButton {
         radius: Theme.defaultPadding
         spread: 0.1
         color: root.hovered ? Theme.palette.backdropColor : Theme.palette.dropShadow
-        Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+        Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
     }
 
     background: Item {
@@ -61,14 +61,14 @@ AbstractButton {
             width: parent.width
             height: 40 + radius*2 // draw under the rect below
             color: root.color
-            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+            Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
             radius: Theme.defaultPadding
             image.source: root.banner
             image.verticalAlignment: Image.AlignTop
             image.fillMode: Image.Tile
 
             opacity: pressed || down ? ThemeUtils.pressedOpacity : enabled ? 1 : ThemeUtils.disabledOpacity
-            Behavior on opacity { NumberAnimation { duration: Theme.AnimationDuration.Fast } }
+            Behavior on opacity { NumberAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
         }
 
         // rect overlapping the above image
@@ -80,7 +80,7 @@ AbstractButton {
             width: parent.width
 
             color: hovered ? Qt.lighter(Theme.palette.baseColor4, 1.5) : Theme.palette.baseColor4
-            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+            Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
 
             radius: mainBgImage.radius
         }
@@ -171,7 +171,7 @@ AbstractButton {
             spacing: Theme.defaultHalfPadding
             visible: opacity > 0
             opacity: root.hovered || root.pinned ? 1 : 0
-            Behavior on opacity { OpacityAnimator { duration: Theme.AnimationDuration.Fast } }
+            Behavior on opacity { OpacityAnimator { duration: ThemeUtils.AnimationDuration.Fast } }
             action: pinAction
         }
     }

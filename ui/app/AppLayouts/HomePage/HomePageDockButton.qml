@@ -30,7 +30,7 @@ ToolButton {
 
     padding: Theme.defaultSmallPadding
     opacity: pressed || down ? ThemeUtils.pressedOpacity : enabled ? 1 : ThemeUtils.disabledOpacity
-    Behavior on opacity { NumberAnimation { duration: Theme.AnimationDuration.Fast } }
+    Behavior on opacity { NumberAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
 
     icon.width: 36
     icon.height: 36
@@ -38,7 +38,7 @@ ToolButton {
     background: Rectangle {
         id: background
         color: hovered ? Theme.palette.directColor7 : Theme.palette.directColor8
-        Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+        Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
         radius: Theme.defaultSmallPadding * 2
 
         // top right corner
@@ -47,7 +47,7 @@ ToolButton {
             height: root.notificationsCount ? implicitHeight : 12 + border.width
             border.width: 2
             border.color: parent.color
-            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+            Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
             anchors.right: parent.right
             anchors.rightMargin: root.notificationsCount ? -2 : 0
             anchors.top: parent.top
@@ -63,7 +63,7 @@ ToolButton {
         asset.letterSize: Theme.secondaryAdditionalTextSize
         asset.emoji: root.pinned && (root.sectionType === Constants.appSection.wallet || root.chatType === Constants.chatType.communityChat) ? root.icon.name : ""
         asset.color: root.icon.color
-        Behavior on asset.color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+        Behavior on asset.color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
         asset.name: asset.emoji ? "" : root.icon.name
         asset.bgRadius: root.pinned && root.sectionType === Constants.appSection.wallet ? Theme.defaultPadding : asset.bgWidth/2
         name: root.text

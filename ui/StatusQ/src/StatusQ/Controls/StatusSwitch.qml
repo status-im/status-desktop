@@ -37,7 +37,7 @@ Switch {
             radius: 14
             color: root.checked ? Theme.palette.primaryColor1
                                 : Theme.palette.directColor7
-            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+            Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
         }
 
         Rectangle {

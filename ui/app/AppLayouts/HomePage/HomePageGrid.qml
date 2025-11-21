@@ -60,11 +60,11 @@ StatusScrollView {
     property int delegateWidth: 160
     property int minItemsPerRow: 3
     Behavior on delegateWidth {
-        PropertyAnimation { duration: Theme.AnimationDuration.Fast }
+        PropertyAnimation { duration: ThemeUtils.AnimationDuration.Fast }
     }
     property int delegateHeight: 160
     Behavior on delegateHeight {
-        PropertyAnimation { duration: Theme.AnimationDuration.Fast }
+        PropertyAnimation { duration: ThemeUtils.AnimationDuration.Fast }
     }
 
     signal itemActivated(string key, int sectionType, string itemId)
@@ -249,7 +249,7 @@ StatusScrollView {
             }
             add: Transition {
                 enabled: d.positioningComplete
-                NumberAnimation { properties: "x,y"; from: 0; duration: Theme.AnimationDuration.Fast }
+                NumberAnimation { properties: "x,y"; from: 0; duration: ThemeUtils.AnimationDuration.Fast }
             }
         }
     }

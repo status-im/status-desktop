@@ -136,7 +136,7 @@ Item {
 
         Behavior on color {
             ColorAnimation {
-                duration: Theme.AnimationDuration.Fast
+                duration: ThemeUtils.AnimationDuration.Fast
             }
         }
 

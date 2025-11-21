@@ -52,7 +52,7 @@ TabButton {
                 elide: Qt.ElideRight
                 font: root.font
                 color: !enabled ? Theme.palette.baseColor1 : root.checked || root.hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                Behavior on color {ColorAnimation {duration: Theme.AnimationDuration.Fast}}
+                Behavior on color {ColorAnimation {duration: ThemeUtils.AnimationDuration.Fast}}
                 text: root.text
             }
 
@@ -67,10 +67,10 @@ TabButton {
             Layout.preferredWidth: 24
             Layout.preferredHeight: 2
             opacity: root.checked || root.hovered ? 1 : 0
-            Behavior on opacity {OpacityAnimator {duration: Theme.AnimationDuration.Fast}}
+            Behavior on opacity {OpacityAnimator {duration: ThemeUtils.AnimationDuration.Fast}}
             radius: 4
             color: root.checked ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
-            Behavior on color {ColorAnimation {duration: Theme.AnimationDuration.Fast}}
+            Behavior on color {ColorAnimation {duration: ThemeUtils.AnimationDuration.Fast}}
         }
     }
 
