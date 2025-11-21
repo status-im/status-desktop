@@ -46,7 +46,7 @@ Column {
         wrapMode: Text.Wrap
         text: root.chatName
         font.weight: Font.Bold
-        font.pixelSize: Theme.fontSize22
+        font.pixelSize: Theme.fontSize(22)
         color: Theme.palette.textColor
         horizontalAlignment: Text.AlignHCenter
     }

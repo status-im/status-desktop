@@ -66,7 +66,7 @@ Item {
                         text: qsTr("NEW", "new message(s)")
                         color: Theme.palette.indirectColor1
                         font.weight: Font.DemiBold
-                        font.pixelSize: Theme.fontSize11
+                        font.pixelSize: Theme.fontSize(11)
                     }
                 }
             }

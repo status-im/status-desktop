@@ -63,7 +63,7 @@ StatusSectionLayout {
                 objectName: "heading"
                 text: qsTr("Market")
                 font.weight: Font.Bold
-                font.pixelSize: Theme.fontSize28
+                font.pixelSize: Theme.fontSize(28)
             }
             Item { Layout.fillWidth: true }
             StatusButton {

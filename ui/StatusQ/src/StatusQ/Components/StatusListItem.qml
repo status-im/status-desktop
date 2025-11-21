@@ -324,7 +324,7 @@ Rectangle {
                     Layout.topMargin: -48
 
                     text: "."
-                    font.pixelSize: Theme.fontSize40
+                    font.pixelSize: Theme.fontSize(40)
                     customColor: Theme.palette.baseColor1
                     lineHeightMode: Text.FixedHeight
                     lineHeight: 24

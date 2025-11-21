@@ -68,7 +68,7 @@ Control {
 
             elide: Text.ElideRight
 
-            font.pixelSize: Theme.fontSize19
+            font.pixelSize: Theme.fontSize(19)
             font.weight: Font.Medium
 
             text: qsTr("EFP onchain friends")

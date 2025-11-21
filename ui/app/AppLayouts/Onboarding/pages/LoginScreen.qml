@@ -202,7 +202,7 @@ OnboardingPage {
                 id: headerText
                 Layout.fillWidth: true
                 text: qsTr("Welcome back")
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter

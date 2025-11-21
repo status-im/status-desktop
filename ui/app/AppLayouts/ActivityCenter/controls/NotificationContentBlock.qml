@@ -171,7 +171,7 @@ Control {
             text: plainTextLength > root.contentMaxChars ? Utils.elideText(root.contentText, root.contentMaxChars, 0) :
                                                            root.contentText
             elide: Text.ElideRight
-            font.pixelSize: Theme.fontSize13
+            font.pixelSize: Theme.fontSize(13)
             color: Theme.palette.directColor4
 
             onLinkActivated: href => root.linkActivated(href)

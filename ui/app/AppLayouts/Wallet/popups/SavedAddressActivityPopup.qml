@@ -142,7 +142,7 @@ StatusDialog {
             avatar: d.avatar
             isFollowingAddress: d.isFollowingAddress
 
-            statusListItemTitle.font.pixelSize: Theme.fontSize22
+            statusListItemTitle.font.pixelSize: Theme.fontSize(22)
             statusListItemTitle.font.bold: Font.Bold
 
             onAboutToOpenPopup: {

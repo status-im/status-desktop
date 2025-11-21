@@ -105,7 +105,7 @@ Control {
             insetComponent: RowLayout {
                 Button {
                     height: 20
-                    font.pixelSize: Theme.fontSize11
+                    font.pixelSize: Theme.fontSize(11)
                     text: "remove"
                     highlighted: model.index === itemData.row
 
@@ -115,7 +115,7 @@ Control {
                 }
                 Button {
                     height: 20
-                    font.pixelSize: Theme.fontSize11
+                    font.pixelSize: Theme.fontSize(11)
                     text: "edit"
                     highlighted: model.index === itemData.row
 
@@ -135,7 +135,7 @@ Control {
                 width: parent.width
                 text: "Item Signals"
                 font.bold: true
-                font.pixelSize: Theme.fontSize16
+                font.pixelSize: Theme.fontSize(16)
                 bottomPadding: 20
                 Button {
                     anchors.right: parent.right

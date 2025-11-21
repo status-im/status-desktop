@@ -70,8 +70,8 @@ Control {
     // ──────────────────────────────────────────────────────────────────────────
 
     // Keep icon close to text height for optical alignment
-    property int    iconSize:       Theme.fontSize16
-    property int    separatorSize:  Theme.fontSize16
+    property int    iconSize:       Theme.fontSize(16)
+    property int    separatorSize:  Theme.fontSize(16)
 
     // ──────────────────────────────────────────────────────────────────────────
     // Layout configuration (single Flow → icon + pieces wrap together)
@@ -98,7 +98,7 @@ Control {
                             root.width - icon.width - separator.width - 2 * root.spacing)
             text: root.primaryText
             color: root.primaryColor
-            font.pixelSize: Theme.fontSize13
+            font.pixelSize: Theme.fontSize(13)
             font.weight: Font.Medium
             maximumLineCount: 1
             wrapMode: Text.NoWrap
@@ -121,7 +121,7 @@ Control {
             width: Math.min(implicitWidth, root.width)
             text: root.secondaryText
             color: root.secondaryColor
-            font.pixelSize: Theme.fontSize13
+            font.pixelSize: Theme.fontSize(13)
             maximumLineCount: 1
             wrapMode: Text.NoWrap
             elide: Text.ElideRight
