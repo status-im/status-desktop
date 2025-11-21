@@ -40,7 +40,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: Theme.fontSize20
+                font.pixelSize: Theme.fontSize(20)
             }
             StatusBaseText {
                 id: peerNumber
@@ -51,7 +51,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: Theme.fontSize20
+                font.pixelSize: Theme.fontSize(20)
             }
         }
 
@@ -65,7 +65,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: Theme.fontSize20
+                font.pixelSize: Theme.fontSize(20)
             }
             StatusTextArea {
                 id: mailserverLogTxt
@@ -89,7 +89,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: Theme.fontSize20
+                font.pixelSize: Theme.fontSize(20)
             }
             StatusTextArea {
                 id: logsTxt
@@ -136,7 +136,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: Theme.fontSize20
+                font.pixelSize: Theme.fontSize(20)
             }
             StatusBaseText {
                 id: test
@@ -147,7 +147,7 @@ StatusSectionLayout {
                 Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: Theme.fontSize20
+                font.pixelSize: Theme.fontSize(20)
             }
         }
 

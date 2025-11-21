@@ -96,7 +96,7 @@ Item {
                 }
                 opacity: 0.7
                 font.weight: Font.Bold
-                font.pixelSize: Theme.fontSize18
+                font.pixelSize: Theme.fontSize(18)
                 color: Theme.palette.indirectColor1
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter

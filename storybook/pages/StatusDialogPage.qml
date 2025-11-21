@@ -46,7 +46,7 @@ SplitView {
                 spacing: 16
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: Theme.fontSize22
+                    font.pixelSize: Theme.fontSize(22)
                     font.bold: true
                     text: "Custom header inside contentItem"
                 }

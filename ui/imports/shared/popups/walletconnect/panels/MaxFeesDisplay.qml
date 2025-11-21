@@ -22,7 +22,7 @@ ColumnLayout {
 
         visible: !!text
 
-        font.pixelSize: Theme.fontSize16
+        font.pixelSize: Theme.fontSize(16)
 
     }
     StatusBaseText {

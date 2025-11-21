@@ -409,9 +409,9 @@ QtObject {
         readonly property int biometricsImageHeight: 185
         readonly property int userImageWidth: 40
         readonly property int userImageHeight: 40
-        readonly property int titleFontSize: Theme.fontSize17
-        readonly property int fontSize1: Theme.fontSize22
-        readonly property int fontSize2: Theme.fontSize17
+        readonly property int titleFontSize: Theme.fontSize(17)
+        readonly property int fontSize1: Theme.fontSize(22)
+        readonly property int fontSize2: Theme.fontSize(17)
         readonly property int fontSize3: Theme.primaryTextFontSize
         readonly property int fontSize4: Theme.tertiaryTextFontSize
         readonly property int loginInfoHeight1: 24
@@ -555,9 +555,9 @@ QtObject {
     readonly property QtObject settingsSection: QtObject {
         readonly property int itemSpacing: 10
         readonly property int radius: 8
-        readonly property int mainHeaderFontSize: Theme.fontSize28 // Keep as is - special case for main header
+        readonly property int mainHeaderFontSize: Theme.fontSize(28) // Keep as is - special case for main header
         readonly property int subHeaderFontSize: Theme.primaryTextFontSize
-        readonly property int importantInfoFontSize: Theme.fontSize18
+        readonly property int importantInfoFontSize: Theme.fontSize(18)
         readonly property int infoFontSize: Theme.primaryTextFontSize
         readonly property int infoLineHeight: 22
         readonly property int infoSpacing: 5
@@ -618,7 +618,7 @@ QtObject {
             readonly property int keycardPairingCodeInputWidth: 512
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
-            readonly property int fontSize1: Theme.fontSize22
+            readonly property int fontSize1: Theme.fontSize(22)
             readonly property int fontSize2: Theme.primaryTextFontSize
             readonly property int fontSize3: Theme.tertiaryTextFontSize
             readonly property int seedPhraseCellWidth: 193

@@ -135,7 +135,7 @@ Control {
                 Layout.fillWidth: true
 
                 elide: Text.ElideRight
-                font.pixelSize: Theme.fontSize19
+                font.pixelSize: Theme.fontSize(19)
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 26
 
@@ -145,7 +145,7 @@ Control {
             StatusTextWithLoadingState {
 
                 visible: root.balanceAvailable
-                font.pixelSize: Theme.fontSize19
+                font.pixelSize: Theme.fontSize(19)
                 font.weight: Font.Medium
 
                 customColor: Theme.palette.directColor1

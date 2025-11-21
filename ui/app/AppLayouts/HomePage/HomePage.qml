@@ -98,7 +98,7 @@ Control {
                 objectName: "homeSearchField"
                 anchors.fill: parent
 
-                font.pixelSize: d.isNarrowView ? Theme.fontSize23 : Theme.fontSize27
+                font.pixelSize: d.isNarrowView ? Theme.fontSize(23) : Theme.fontSize(27)
 
                 StatusBaseText {
                     id: placeholderText

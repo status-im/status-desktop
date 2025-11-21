@@ -107,7 +107,7 @@ Control {
             elide: Text.ElideRight
             maximumLineCount: 1
             wrapMode: Text.NoWrap
-            font.pixelSize: Theme.fontSize13
+            font.pixelSize: Theme.fontSize(13)
             font.weight: Font.Medium
         }
 
@@ -128,7 +128,7 @@ Control {
             color: root.keyColor
             maximumLineCount: 1
             wrapMode: Text.NoWrap
-            font.pixelSize: Theme.fontSize11
+            font.pixelSize: Theme.fontSize(11)
         }
 
         // Spacer pushes content to the left

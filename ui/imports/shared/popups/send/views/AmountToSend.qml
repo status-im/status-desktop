@@ -249,7 +249,7 @@ Control {
                             + "0".repeat(root.fiatDecimalPlaces)
                 }
 
-                font.pixelSize: Theme.fontSize34
+                font.pixelSize: Theme.fontSize(34)
 
                 validator: AmountValidator {
                     id: validator

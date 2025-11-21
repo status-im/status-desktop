@@ -28,7 +28,7 @@ Pane {
             Label {
                 anchors.centerIn: parent
                 text: "image " + index
-                font.pixelSize: Theme.fontSize20
+                font.pixelSize: Theme.fontSize(20)
             }
 
             Image {

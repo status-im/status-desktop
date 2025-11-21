@@ -303,7 +303,7 @@ Component {
                                     readonly property bool last: headerRepeater.count - 1 === index
 
                                     text: model.name + (last ? "" : "  ->  ")
-                                    font.pixelSize: Theme.fontSize20
+                                    font.pixelSize: Theme.fontSize(20)
                                     font.bold: true
 
                                     selectByMouse: true

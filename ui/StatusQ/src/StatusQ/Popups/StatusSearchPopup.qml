@@ -99,7 +99,7 @@ StatusModal {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     focus: !Utils.isMobile
-                    font.pixelSize: Theme.fontSize28
+                    font.pixelSize: Theme.fontSize(28)
                     leftPadding: 5
                     topPadding: 5 //smaller padding to handle bigger font
                     bottomPadding: 5
@@ -107,7 +107,7 @@ StatusModal {
                     input.showBackground: false
                     input.placeholder {
                         text: qsTr("Search")
-                        font.pixelSize: Theme.fontSize28
+                        font.pixelSize: Theme.fontSize(28)
                         color: Theme.palette.directColor9
                     }
 
