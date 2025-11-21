@@ -29,6 +29,10 @@ Theme::Theme(QObject *parent)
     initialize();
 }
 
+qreal Theme::defaultPadding() const {
+    return s_defaultPadding;
+}
+
 qreal Theme::padding() const {
     return m_padding;
 }
