@@ -1104,6 +1104,9 @@ tokenSelectorButton = {"container": statusDesktop_mainWindow_overlay, "id": "tok
                        "type": "TokenSelectorButton", "unnamed": 1, "visible": True}
 modalHeader_HeaderTitleText = {"container": statusDesktop_mainWindow_overlay, "objectName": "modalHeader",
                                "type": "HeaderTitleText", "visible": True}
+"""Swap popup"""
+
+swapPopup = {"container": statusDesktop_mainWindow_overlay, "objectName": "SwapModal", "type": "PopupItem", "visible": True}
 
 # Token Selector popup
 tokenSelectorPanel_TokenSelectorNew = {"container": statusDesktop_mainWindow_overlay, "objectName": "tokenSelectorPanel", "type": "TokenSelectorPanel", "visible": True}

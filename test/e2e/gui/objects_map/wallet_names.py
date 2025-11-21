@@ -30,6 +30,8 @@ mainWallet_Account_Name = {"container": mainWindow_RightTabView, "objectName": "
 mainWindow_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "walletFooterSendButton", "type": "StatusFlatButton", "visible": True}
 mainWindow_Receive_Button = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "walletFooterReceiveButton", "type": "StatusFlatButton", "visible": True}
 mainWindow_Bridge_Button = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "walletFooterBridgeButton", "type": "StatusFlatButton", "visible": True}
+mainWindow_Swap_Button = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "walletFooterSwapButton", "type": "StatusFlatButton", "visible": True}
+
 mainWindow_RightTabView = {"container": statusDesktop_mainWindow, "type": "RightTabView", "unnamed": 1, "visible": True}
 filterButton_StatusFlatButton = {"checkable": True, "container": mainWindow_RightTabView, "objectName": "filterButton", "type": "StatusFlatButton", "visible": True}
 cmbTokenOrder_SortOrderComboBox = {"container": mainWindow_RightTabView, "objectName": "cmbTokenOrder", "type": "SortOrderComboBox", "visible": True}

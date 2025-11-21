@@ -240,3 +240,8 @@ class QObject:
 
         LOG.error(f'Object {self} is not enabled within {timeout_msec} ms')
         raise TimeoutError(f'Object {self} is not enabled within {timeout_msec} ms')
+
+    @allure.step('Close {0}')
+    def close(self):
+        driver.type(self.object, '<Escape>')
+        self.wait_until_hidden()

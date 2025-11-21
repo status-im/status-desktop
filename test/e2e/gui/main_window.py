@@ -48,13 +48,14 @@ class MainLeftPanel(QObject):
         self.activity_center_button = Button(names.activityCenterButton)
 
     @allure.step('Click Wallet button and record load time until WalletScreen is visible')
-    def open_wallet_and_record_load_time(self):
+    def open_wallet_and_record_load_time(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         start_time = time.time()
         self.wallet_button.click()
         wallet_screen = WalletScreen()
         check_interval = 0.1  # Check every 100ms for better precision
+        timeout_sec = timeout_msec / 1000
 
-        while True:
+        while time.time() - start_time < timeout_sec:
             try:
                 if wallet_screen.is_visible:
                     LOG.info('WalletScreen: is visible')
@@ -62,6 +63,11 @@ class MainLeftPanel(QObject):
             except Exception as e:
                 LOG.debug("Exception during visibility check: %s", e)
             time.sleep(check_interval)
+        else:
+            # Timeout reached
+            load_time = time.time() - start_time
+            LOG.error(f'WalletScreen is not visible within {timeout_msec} ms (waited {load_time:.3f} seconds)')
+            raise TimeoutError(f'WalletScreen is not visible within {timeout_msec} ms')
 
         load_time = time.time() - start_time
         LOG.info(f'Wallet loaded in {load_time:.3f} seconds')

@@ -18,6 +18,7 @@ from gui.components.wallet.confirmation_popup import ConfirmationPopup
 from gui.components.wallet.delete_account_confirmation_popup import RemoveAccountWithConfirmation
 from gui.components.wallet.receive_popup import ReceivePopup
 from gui.components.wallet.send_popup import SendPopup
+from gui.components.wallet.swap_popup import SwapPopup
 from gui.components.wallet.wallet_account_context_menu import WalletAccountContextMenu
 from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.elements.button import Button
@@ -242,6 +243,7 @@ class WalletAccountView(QObject):
         self._asset_item_delegate = QObject(wallet_names.itemDelegate)
         self._asset_item = QObject(wallet_names.assetView_TokenListItem_TokenDelegate)
         self._arrow_icon = QObject(wallet_names.arrow_icon_StatusIcon)
+        self.footer_swap_button = Button(wallet_names.mainWindow_Swap_Button)
 
     @property
     @allure.step('Get name of account')
@@ -257,6 +259,37 @@ class WalletAccountView(QObject):
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         self._account_name_text_label.wait_until_appears(timeout_msec)
         return self
+
+    @allure.step('Open swap popup')
+    def open_swap_popup(self) -> SwapPopup:
+        self.footer_swap_button.click()
+        return SwapPopup()
+
+    @allure.step('Click Swap button and record load time until SwapPopup is visible')
+    def open_swap_popup_and_record_load_time(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        start_time = time.time()
+        self.footer_swap_button.click()
+        swap_popup = SwapPopup()
+        check_interval = 0.1  # Check every 100ms for better precision
+        timeout_sec = timeout_msec / 1000
+
+        while time.time() - start_time < timeout_sec:
+            try:
+                if swap_popup.is_visible:
+                    LOG.info('SwapPopup: is visible')
+                    break
+            except Exception as e:
+                LOG.debug("Exception during visibility check: %s", e)
+            time.sleep(check_interval)
+        else:
+            # Timeout reached
+            load_time = time.time() - start_time
+            LOG.error(f'SwapPopup is not visible within {timeout_msec} ms (waited {load_time:.3f} seconds)')
+            raise TimeoutError(f'SwapPopup is not visible within {timeout_msec} ms')
+
+        load_time = time.time() - start_time
+        LOG.info(f'SwapPopup loaded in {load_time:.3f} seconds')
+        return swap_popup, load_time
 
     @allure.step('Open send popup')
     def open_send_popup(self) -> SendPopup:
