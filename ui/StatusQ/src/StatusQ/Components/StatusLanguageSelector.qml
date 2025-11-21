@@ -82,7 +82,7 @@ Button {
     background: Rectangle {
         radius: Theme.radius
         color: root.enabled && (root.hovered || dropdown.opened) ? Theme.palette.primaryColor2 : Theme.palette.primaryColor3
-        Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+        Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
     }
 
     contentItem: RowLayout {

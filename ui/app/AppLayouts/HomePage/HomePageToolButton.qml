@@ -18,10 +18,10 @@ AbstractButton {
     icon.width: 20
     icon.height: 20
     icon.color: hovered ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
-    Behavior on icon.color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+    Behavior on icon.color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
 
     opacity: pressed || down ? ThemeUtils.pressedOpacity : enabled ? 1 : ThemeUtils.disabledOpacity
-    Behavior on opacity { NumberAnimation { duration: Theme.AnimationDuration.Fast } }
+    Behavior on opacity { NumberAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
 
     background: Rectangle {
         color: Theme.palette.baseColor5

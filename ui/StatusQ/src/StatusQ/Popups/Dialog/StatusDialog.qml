@@ -81,12 +81,12 @@ Dialog {
         id: exitTransition
         NumberAnimation {
             property: "opacity"; from: 1; to: 0
-            duration: Theme.AnimationDuration.Fast
+            duration: ThemeUtils.AnimationDuration.Fast
             easing.type: Easing.OutQuint
         }
         NumberAnimation {
             property: "y"; from: root.y; to: root.parent.height
-            duration: Theme.AnimationDuration.Fast
+            duration: ThemeUtils.AnimationDuration.Fast
             easing.type: Easing.OutCubic
         }
     }
@@ -98,13 +98,13 @@ Dialog {
                 property: "opacity"
                 from: 0.0
                 to: 1.0
-                duration: Theme.AnimationDuration.Fast
+                duration: ThemeUtils.AnimationDuration.Fast
             }
             NumberAnimation {
                 property: "y"
                 from: root.parent.height
                 to: root.desiredY
-                duration: Theme.AnimationDuration.Fast
+                duration: ThemeUtils.AnimationDuration.Fast
                 easing.type: Easing.OutCubic
             }
         }
