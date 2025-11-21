@@ -192,6 +192,7 @@
         <file>StatusQ/Core/Theme/StatusDarkTheme.qml</file>
         <file>StatusQ/Core/Theme/StatusLightTheme.qml</file>
         <file>StatusQ/Core/Theme/Theme.qml</file>
+        <file>StatusQ/Core/Theme/ThemeUtils.qml</file>
         <file>StatusQ/Core/Theme/ThemePalette.qml</file>
         <file>StatusQ/Core/Theme/qmldir</file>
         <file>StatusQ/Core/Utils/AmountsArithmetic.qml</file>
