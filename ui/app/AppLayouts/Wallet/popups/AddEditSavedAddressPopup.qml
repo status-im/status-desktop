@@ -1,32 +1,18 @@
 import QtQuick
-import QtQml
-import QtQuick.Controls
-import QtQml.Models
-import QtQuick.Layouts
 
-import utils
-import shared.controls
-import shared.panels
-import shared.stores as SharedStores
-
-import StatusQ
 import StatusQ.Components
 import StatusQ.Controls
 import StatusQ.Controls.Validators
 import StatusQ.Core
 import StatusQ.Core.Backpressure
 import StatusQ.Core.Theme
-import StatusQ.Core.Utils as StatusQUtils
-import StatusQ.Popups
 import StatusQ.Popups.Dialog
 
-import SortFilterProxyModel
-
+import utils
+import shared.stores as SharedStores
 import AppLayouts.Wallet.stores as WalletStores
-import "../controls"
-import ".."
 
-StatusModal {
+StatusDialog {
     id: root
 
     required property WalletStores.RootStore store
@@ -37,8 +23,8 @@ StatusModal {
     width: 477
     fillHeightOnBottomSheet: true
 
-    headerSettings.title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
-    headerSettings.subTitle: d.editMode? d.name : ""
+    title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
+    subtitle: d.editMode? d.name : ""
 
     function initWithParams(params = {}) {
         d.storedName = params.name?? ""
@@ -78,8 +64,6 @@ StatusModal {
 
     QtObject {
         id: d
-
-        readonly property int componentWidth: 445
 
         property bool editMode: false
         property bool addAddress: false
@@ -321,6 +305,7 @@ StatusModal {
 
         anchors.fill: parent
         padding: 0
+        topPadding: Theme.bigPadding
         contentWidth: availableWidth
 
         Column {
@@ -328,9 +313,6 @@ StatusModal {
 
             width: scrollView.availableWidth
             height: childrenRect.height
-
-            topPadding: 24 // (16 + 8 for Name, until we add it to the StatusInput component)
-            bottomPadding: 28
 
             spacing: Theme.xlPadding
 
@@ -363,7 +345,7 @@ StatusModal {
 
             StatusInput {
                 id: nameInput
-                implicitWidth: d.componentWidth
+                width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
                 charLimit: 24
                 input.edit.objectName: "savedAddressNameInput"
@@ -414,7 +396,7 @@ StatusModal {
 
             StatusInput {
                 id: addressInput
-                implicitWidth: d.componentWidth
+                width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
                 label: qsTr("Address")
                 objectName: "savedAddressAddressInput"
@@ -505,7 +487,7 @@ StatusModal {
                     model: d.cardsModel
 
                     StatusListItem {
-                        width: d.componentWidth
+                        width: parent.width
                         border.width: 1
                         border.color: Theme.palette.baseColor2
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -537,7 +519,7 @@ StatusModal {
             StatusColorSelectorGrid {
                 id: colorSelection
                 objectName: "addSavedAddressColor"
-                width: d.componentWidth
+                width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
                 model: Theme.palette.customisationColorsArray
                 title.color: Theme.palette.directColor1
@@ -552,14 +534,16 @@ StatusModal {
         }
     }
 
-    rightButtons: [
-        StatusButton {
-            text: d.editMode? qsTr("Save") : qsTr("Add address")
-            enabled: d.valid && d.dirty
-            onClicked: {
-                d.submit()
-            }
-            objectName: "addSavedAddress"
-        }
-    ]
+    footer: StatusDialogFooter {
+       rightButtons: ObjectModel {
+           StatusButton {
+               text: d.editMode? qsTr("Save") : qsTr("Add address")
+               enabled: d.valid && d.dirty
+               onClicked: {
+                   d.submit()
+               }
+               objectName: "addSavedAddress"
+           }
+       }
+   }
 }
