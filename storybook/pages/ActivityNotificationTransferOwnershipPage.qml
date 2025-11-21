@@ -14,8 +14,6 @@ import utils
 ActivityNotificationBaseLayout {
     id: root
 
-    property bool showFullTimestamp
-
     showBaseEditorFields: false
     communityEditorActive: true
     contactEditorActive: false
@@ -24,7 +22,6 @@ ActivityNotificationBaseLayout {
         type: setType(notification)
         communityName: communityEditor.communityMock.name
         communityColor:  communityEditor.communityMock.color
-        showFullTimestamp: root.showFullTimestamp
 
         onFinaliseOwnershipClicked: logs.logEvent("ActivityNotificationTransferOwnership::onFinaliseOwnershipClicked")
         onNavigateToCommunityClicked: logs.logEvent("ActivityNotificationTransferOwnership::onNavigateToCommunityClicked")
@@ -57,12 +54,6 @@ ActivityNotificationBaseLayout {
             RadioButton {
                 text: "No longer control node"
                 onCheckedChanged: if(checked) baseEditor.notificationBaseMock.notificationType = ActivityCenterTypes.ActivityCenterNotificationType.OwnershipLost
-            }
-
-            Switch {
-                text: "Show full timestamp"
-                checked: root.showFullTimestamp
-                onCheckedChanged: root.showFullTimestamp = checked
             }
         }
 

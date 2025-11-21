@@ -84,7 +84,7 @@ Item {
         searchOptionsPopupMenu: searchPopupMenu
         searchResults: root.store.resultModel
         formatTimestampFn: function (ts) {
-            return LocaleUtils.formatDateTime(parseInt(ts, 10))
+            return LocaleUtils.formatDateTime(parseInt(ts, 10), Locale.ShortFormat)
         }
         onSearchTextChanged: {
             if (searchPopup.searchText !== "") {
