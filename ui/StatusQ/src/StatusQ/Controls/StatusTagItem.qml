@@ -74,7 +74,7 @@ Control {
     implicitHeight: 30
     horizontalPadding: d.tagMargins
     font.pixelSize: Theme.primaryTextFontSize
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
 
     background: Rectangle {
         color: d.getTagColor(root.isReadonly)

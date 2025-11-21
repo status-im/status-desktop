@@ -65,7 +65,7 @@ ComboBox {
     verticalPadding: Theme.halfPadding
     spacing: Theme.halfPadding
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.additionalTextSize
 
     QtObject {

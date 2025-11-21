@@ -67,7 +67,7 @@ TextArea {
     placeholderTextColor: root.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor9
 
     font {
-        family: Theme.baseFont.name
+        family: Fonts.baseFont.family
         pixelSize: Theme.primaryTextFontSize
     }
 
