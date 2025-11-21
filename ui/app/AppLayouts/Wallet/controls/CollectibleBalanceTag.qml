@@ -22,7 +22,7 @@ Control {
     contentItem: StatusBaseText {
         color: Theme.palette.directColor1
         font.pixelSize: Theme.asideTextFontSize
-        font.family: Theme.baseFont.name
+        font.family: Fonts.baseFont.family
         text: {
             if (root.balance > 99) {
                 return "99+"

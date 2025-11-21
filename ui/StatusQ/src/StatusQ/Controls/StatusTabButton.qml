@@ -31,7 +31,7 @@ TabButton {
 
     background: null
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.weight: Font.Medium
     font.pixelSize: Theme.primaryTextFontSize
 

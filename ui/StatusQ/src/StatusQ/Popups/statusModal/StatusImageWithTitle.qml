@@ -128,7 +128,7 @@ Row {
             StatusBaseText {
                 id: headerTitle
                 objectName: "headerTitle"
-                font.family: Theme.baseFont.name
+                font.family: Fonts.baseFont.family
                 font.pixelSize: Theme.secondaryAdditionalTextSize
                 font.bold: true
                 elide: statusImageWithTitle.titleElide
@@ -155,7 +155,7 @@ Row {
         StatusBaseText {
             id: headerSubTitle
             objectName: "headerSubTitle"
-            font.family: Theme.baseFont.name
+            font.family: Fonts.baseFont.family
             font.pixelSize: Theme.primaryTextFontSize
             color:Theme.palette.baseColor1
             width: parent.width

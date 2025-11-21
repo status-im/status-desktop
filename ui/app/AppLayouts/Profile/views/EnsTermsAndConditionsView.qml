@@ -135,7 +135,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Theme.monoFont.name
+                    font.family: Fonts.monoFont.family
                     color: Theme.palette.directColor1
                 }
 
@@ -159,7 +159,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Theme.monoFont.name
+                    font.family: Fonts.monoFont.family
                     color: Theme.palette.directColor1
                 }
 

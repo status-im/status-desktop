@@ -42,7 +42,7 @@ CheckBox {
         readonly property int indicatorIconHeightSmall: 5
     }
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: size === StatusCheckBox.Size.Regular ? Theme.primaryTextFontSize : Theme.additionalTextSize
 
     indicator: Rectangle {

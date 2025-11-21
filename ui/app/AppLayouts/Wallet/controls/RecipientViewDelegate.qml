@@ -50,10 +50,10 @@ StatusListItem {
     color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
 
     statusListItemSubTitle.wrapMode: Text.NoWrap
-    statusListItemSubTitle.font.family: Theme.monoFont.name
+    statusListItemSubTitle.font.family: Fonts.monoFont.family
     statusListItemSubTitle.elide: Text.ElideNone
     statusListItemSubTitle.customColor: sensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
-    statusListItemTitle.font.family: Theme.monoFont.name
+    statusListItemTitle.font.family: Fonts.monoFont.family
     statusListItemIcon.name: useAddressAsLetterIdenticon ? root.address : title
 
     asset.emoji: root.emoji

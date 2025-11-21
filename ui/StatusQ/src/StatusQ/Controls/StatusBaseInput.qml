@@ -393,7 +393,7 @@ Item {
                         selectedTextColor: color
                         focus: !Utils.isMobile
                         font.pixelSize: Theme.primaryTextFontSize
-                        font.family: Theme.baseFont.name
+                        font.family: Fonts.baseFont.family
                         color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 

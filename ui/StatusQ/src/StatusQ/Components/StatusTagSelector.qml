@@ -290,7 +290,7 @@ Item {
                 clip: true
                 font.pixelSize: Theme.primaryTextFontSize
                 wrapMode: TextEdit.NoWrap
-                font.family: Theme.baseFont.name
+                font.family: Fonts.baseFont.family
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 visible: (parent.width>22)

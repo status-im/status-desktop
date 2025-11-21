@@ -31,7 +31,7 @@ Control {
     property alias bgCornerRadius: background.radius
     property string icon: "warning"
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.tertiaryTextFontSize
 
     horizontalPadding: 8
