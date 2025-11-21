@@ -27,10 +27,10 @@ Item {
 
     QtObject {
         id: d
-        readonly property int desktopWindowWidth: Theme.portraitBreakpoint.width + 100
-        readonly property int desktopWindowHeight: Theme.portraitBreakpoint.height + 100
+        readonly property int desktopWindowWidth: ThemeUtils.portraitBreakpoint.width + 100
+        readonly property int desktopWindowHeight: ThemeUtils.portraitBreakpoint.height + 100
         readonly property int mobileWindowWidth: mobileWindowHeight / 2
-        readonly property int mobileWindowHeight: Theme.portraitBreakpoint.height - 100
+        readonly property int mobileWindowHeight: ThemeUtils.portraitBreakpoint.height - 100
     }
 
     property StatusDialog controlUnderTest: null

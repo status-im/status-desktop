@@ -40,7 +40,7 @@ Dialog {
     property string okButtonText: qsTr("OK")
 
     readonly property bool bottomSheet: d.windowHeight > d.windowWidth
-                                        && d.windowWidth <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
+                                        && d.windowWidth <= ThemeUtils.portraitBreakpoint.width // The max width of a phone in portrait mode
 
     readonly property real desiredY: root.bottomSheet ? d.windowHeight - root.height
                                                       : (root.Overlay.overlay.height - root.height) / 2

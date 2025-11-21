@@ -27,7 +27,7 @@ Control {
         readonly property int windowHeight: window ? window.height: Screen.height
         readonly property bool isSmallPortraitScreen: windowHeight > windowWidth
                                             // The max width of a phone in portrait mode
-                                            && windowWidth <= Theme.portraitBreakpoint.width
+                                            && windowWidth <= ThemeUtils.portraitBreakpoint.width
         function getImagePath(currentIndex) {
             const imageName = root.model.get(currentIndex).image
             const platformPostfix = isSmallPortraitScreen ? "-small": ""
