@@ -90,29 +90,37 @@ QtObject {
         return null
     }
 
+    function getEngineByIdOrDefault(engineId) {
+        const engine = getEngineById(engineId)
+        if (!engine) {
+            console.warn("SearchEnginesConfig: Invalid engine ID", engineId, "- using DuckDuckGo as default")
+            return getEngineById(browserSearchEngineDuckDuckGo)
+        }
+        return engine
+    }
+
     function isValidEngineId(engineId) {
         return getEngineById(engineId) !== null
     }
 
     function getEngineName(engineId) {
-        const engine = getEngineById(engineId)
+        const engine = getEngineByIdOrDefault(engineId)
         return engine ? engine.name : qsTr("None")
     }
 
     function getEngineDescription(engineId) {
-        const engine = getEngineById(engineId)
+        const engine = getEngineByIdOrDefault(engineId)
         return engine ? engine.description : ""
     }
 
     function formatSearchUrl(engineId, query, customUrl) {
-        const engine = getEngineById(engineId)
+        const engine = getEngineByIdOrDefault(engineId)
         if (!engine) {
-            console.warn("SearchEnginesConfig: Engine not found for id:", engineId)
             return ""
         }
         
         // Custom: append query to the custom URL prefix
-        if (engineId === browserSearchEngineCustom) {
+        if (engine.engineId === browserSearchEngineCustom) {
             if (!customUrl || customUrl === "") {
                 console.warn("SearchEnginesConfig: Custom search engine selected but no URL configured")
                 return ""

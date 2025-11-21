@@ -21,13 +21,6 @@ StatusDialog {
     horizontalPadding: Theme.halfPadding
     verticalPadding: Theme.halfPadding
 
-    Component.onCompleted: {
-        if (!SearchEnginesConfig.getEngineById(accountSettings.selectedBrowserSearchEngineId)) {
-            console.warn("SearchEngineModal: Invalid search engine ID detected, resetting to DuckDuckGo")
-            accountSettings.selectedBrowserSearchEngineId = SearchEnginesConfig.browserSearchEngineDuckDuckGo
-        }
-    }
-
     onClosed: {
         destroy()
     }
