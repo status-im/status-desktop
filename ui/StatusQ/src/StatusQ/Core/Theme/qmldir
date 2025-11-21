@@ -7,3 +7,4 @@ singleton Assets 0.1 Assets.qml
 singleton Fonts 0.1 Fonts.qml
 singleton StatusColors 0.1 StatusColors.qml
 singleton Theme 0.1 Theme.qml
+singleton ThemeUtils 0.1 ThemeUtils.qml
