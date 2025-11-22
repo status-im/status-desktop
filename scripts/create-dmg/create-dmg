@@ -475,6 +475,13 @@ VOLUME_NAME=$(basename $MOUNT_DIR)
 
 # Run AppleScript to do all the Finder cosmetic stuff
 APPLESCRIPT_FILE=$(mktemp -t createdmg.tmp.XXXXXXXXXX)
+
+IS_CI_ENV=0
+if [[ -n "$CI" ]] || [[ -n "$JENKINS_HOME" ]] || [[ -n "$GITHUB_ACTIONS" ]] || [[ ! -z "$(ps aux | grep -i 'jenkins' | grep -v grep)" ]]; then
+	IS_CI_ENV=1
+	echo "CI environment detected"
+fi
+
 if [[ $SANDBOX_SAFE -eq 1 ]]; then
 	echo "Skipping Finder-prettifying AppleScript because we are in Sandbox..."
 else
@@ -496,13 +503,37 @@ else
 		sleep $ERROR_1728_WORKAROUND_SLEEP_INTERVAL
 
 		echo "Running AppleScript to make Finder stuff pretty: /usr/bin/osascript \"${APPLESCRIPT_FILE}\" \"${VOLUME_NAME}\""
-		if /usr/bin/osascript "${APPLESCRIPT_FILE}" "${VOLUME_NAME}"; then
-			# Okay, we're cool
-			true
+		# Use timeout to prevent hanging in CI environments
+		if [[ $IS_CI_ENV -eq 1 ]]; then
+			echo "Running with timeout in CI environment..."
+			if command -v timeout >/dev/null 2>&1; then
+				if timeout 30 /usr/bin/osascript "${APPLESCRIPT_FILE}" "${VOLUME_NAME}" 2>/dev/null; then
+					echo "AppleScript succeeded"
+				else
+					echo >&2 "AppleScript failed or timed out in CI - continuing without Finder prettification"
+				fi
+			elif command -v gtimeout >/dev/null 2>&1; then
+				if gtimeout 30 /usr/bin/osascript "${APPLESCRIPT_FILE}" "${VOLUME_NAME}" 2>/dev/null; then
+					echo "AppleScript succeeded"
+				else
+					echo >&2 "AppleScript failed or timed out in CI - continuing without Finder prettification"
+				fi
+			else
+				echo "Warning: timeout command not available, running without timeout..."
+				if /usr/bin/osascript "${APPLESCRIPT_FILE}" "${VOLUME_NAME}" 2>&1 | head -100; then
+					echo "AppleScript succeeded"
+				else
+					echo >&2 "AppleScript failed in CI - continuing without Finder prettification"
+				fi
+			fi
 		else
-			echo >&2 "Failed running AppleScript"
-			hdiutil_detach_retry "${DEV_NAME}"
-			exit 64
+			if /usr/bin/osascript "${APPLESCRIPT_FILE}" "${VOLUME_NAME}"; then
+				# Okay, we're cool
+				true
+			else
+				echo >&2 "Failed running AppleScript - continuing without Finder prettification"
+				# Don't exit, just continue without the prettification
+			fi
 		fi
 		echo "Done running the AppleScript..."
 		sleep 4
@@ -555,6 +586,14 @@ else
 	hdiutil convert ${HDIUTIL_VERBOSITY} "${DMG_TEMP_NAME}" -format ${FORMAT} ${IMAGEKEY} -encryption AES-${AESBITS} -stdinpass -o "${DMG_DIR}/${DMG_NAME}"
 fi
 rm -f "${DMG_TEMP_NAME}"
+
+echo "Removing extended attributes from DMG..."
+# Remove all extended attributes, especially com.apple.FinderInfo which blocks code signing
+xattr -cr "${DMG_DIR}/${DMG_NAME}" 2>/dev/null || true
+if xattr "${DMG_DIR}/${DMG_NAME}" 2>/dev/null | grep -q "com.apple.FinderInfo"; then
+	echo "Warning: com.apple.FinderInfo still present, attempting force removal..."
+	xattr -d com.apple.FinderInfo "${DMG_DIR}/${DMG_NAME}" 2>/dev/null || true
+fi
 
 # Adding EULA resources
 if [[ -n "${EULA_RSRC}" && "${EULA_RSRC}" != "-null-" ]]; then
