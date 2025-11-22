@@ -104,20 +104,8 @@
           platforms = platforms.linux;
         };
       };
-
-      # Golang 1.24.7 (matching Dockerfile)
-      go_1_24 = pkgs.go_1_24 or pkgs.go_1_23;
-
-      # Protobuf 3.20.0 (matching Dockerfile)
-      protobuf3_20 = pkgs.protobuf_29.overrideAttrs (old: rec {
-        version = "3.20.0";
-        src = pkgs.fetchFromGitHub {
-          owner = "protocolbuffers";
-          repo = "protobuf";
-          rev = "v${version}";
-          sha256 = "sha256-/BIAS1fSRbZ+4ewkMJJcJwWRVwDiM5xh5u1qyy25wlQ=";
-        };
-      });
+    
+      go_1_24 = pkgs.go_1_24 or pkgs.go_1_23;	
 
       # Build dependencies matching CI/Dockerfile
       buildInputs = with pkgs; [
@@ -140,7 +128,8 @@
         go_1_24
 
         # Protobuf
-        protobuf3_20
+        protobuf
+        protoc-gen-go
 
         # PCSC Lite 2.2.3 (matching Dockerfile)
         pcsclite
@@ -208,13 +197,10 @@
         postgresql
         ncurses
         libpulseaudio
-        alsaLib
         expat
         glib
         gmp
         libpng
-        libICE
-        libSM
 
         # Build utilities
         autoconf
