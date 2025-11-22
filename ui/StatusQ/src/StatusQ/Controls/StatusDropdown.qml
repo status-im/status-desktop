@@ -4,6 +4,7 @@ import QtQuick.Controls as QC
 import QtQml
 
 import StatusQ.Core.Theme
+import StatusQ.Components.private
 
 /*!
    \qmltype StatusDropdown
@@ -71,6 +72,7 @@ QC.Popup {
     readonly property bool bottomSheet: !bottomSheetAllowed ? false:
                                             d.windowHeight > d.windowWidth
                                             && d.windowWidth <= Theme.portraitBreakpoint.width
+    onBottomSheetChanged: if (bottomSheet) Qt.callLater(() => d.dragHandle.setOriginalYPos(root.y))
 
     /*!
        \qmlproperty bool fillHeightOnBottomSheet
@@ -90,6 +92,18 @@ QC.Popup {
        // Keeping a small gap at the top lets users tap to return to the underlying dialog
        // instead of closing the entire flow.
        readonly property real bottomSheetHeightRatio: 0.85
+
+       // must not be a "visual" item, gets overwritten with contentItem or ScrollView's own contentItem
+       readonly property StatusBottomSheetDragHandle dragHandle: StatusBottomSheetDragHandle {
+           dragObjectRoot: root
+           onCloseRequested: root.close()
+
+           anchors.top: parent.top
+           anchors.horizontalCenter: parent.horizontalCenter
+           anchors.topMargin: Theme.smallPadding
+           visible: root.bottomSheet
+           parent: root.contentItem.parent
+       }
     }
 
     Binding {
@@ -122,8 +136,9 @@ QC.Popup {
             y: d.windowHeight - height
             width: d.windowWidth
             height: root.fillHeightOnBottomSheet ? d.windowHeight * d.bottomSheetHeightRatio : Math.min(implicitHeight, d.windowHeight * d.bottomSheetHeightRatio)
+            topPadding: !!d.window ? Theme.bigPadding : 0
             bottomPadding: !!d.window ? d.window.SafeArea.margins.bottom: 0
-            margins: 0
+            margins: d.dragHandle.active ? -1 : 0
         }
     }
 

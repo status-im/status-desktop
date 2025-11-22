@@ -4,6 +4,7 @@ import Qt5Compat.GraphicalEffects
 
 import StatusQ.Core
 import StatusQ.Core.Theme
+import StatusQ.Components.private
 
 Rectangle {
     id: root
@@ -11,6 +12,7 @@ Rectangle {
     readonly property alias headline: headline
     readonly property alias actions: actions
     property bool dropShadowEnabled
+    property bool showDragHandle
 
     property alias leftComponent: leftComponentLoader.sourceComponent
 
@@ -104,5 +106,13 @@ Rectangle {
         anchors.bottomMargin: internalOverlay.anchors.bottomMargin
         active: root.internalPopupActive
         sourceComponent: root.internalPopupComponent
+    }
+
+    // just a visual handle; the drag operation is done in StatusDialog
+    StatusBottomSheetDragHandle {
+        anchors.top: parent.top
+        anchors.topMargin: Theme.halfPadding
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: root.showDragHandle
     }
 }
