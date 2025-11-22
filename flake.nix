@@ -145,9 +145,9 @@
         # PCSC Lite 2.2.3 (matching Dockerfile)
         pcsclite
 
-        # GCC 11 (matching Dockerfile)
-        gcc11
-        gcc11.cc.lib
+        # GCC 13 (gcc11 removed from nixpkgs, using newer version)
+        gcc13
+        gcc13.cc.lib
 
         # System libraries for Qt
         libglvnd
@@ -283,7 +283,7 @@
           echo "Qt version: ${qtVersion}"
           echo "Go version: $(${go_1_24}/bin/go version)"
           echo "CMake version: $(${pkgs.cmake}/bin/cmake --version | head -n1)"
-          echo "GCC version: $(${pkgs.gcc11}/bin/gcc --version | head -n1)"
+          echo "GCC version: $(${pkgs.gcc13}/bin/gcc --version | head -n1)"
           echo ""
           echo "Available make targets:"
           echo "  make update         - Update dependencies"
@@ -320,9 +320,9 @@
           export LANGUAGE=en_US:en
           export LC_ALL=en_US.UTF-8
 
-          # Use GCC 11 (matching CI)
-          export CC="${pkgs.gcc11}/bin/gcc"
-          export CXX="${pkgs.gcc11}/bin/g++"
+          # Use GCC 13 (gcc11 removed from nixpkgs)
+          export CC="${pkgs.gcc13}/bin/gcc"
+          export CXX="${pkgs.gcc13}/bin/g++"
 
           echo "Environment configured:"
           echo "  QTDIR=$QTDIR"
