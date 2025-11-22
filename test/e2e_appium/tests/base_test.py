@@ -1,5 +1,6 @@
 import os
 import json
+import inspect
 from functools import wraps
 
 from core.config_manager import EnvironmentSwitcher
@@ -11,6 +12,23 @@ CLOUD_PROVIDERS = {"browserstack"}
 
 
 def cloud_reporting(func):
+    if inspect.iscoroutinefunction(func):
+
+        @wraps(func)
+        async def async_wrapper(self, *args, **kwargs):
+            try:
+                result = await func(self, *args, **kwargs)
+                if hasattr(self, "report_test_result"):
+                    self.report_test_result(passed=True)
+                return result
+            except Exception as e:
+                if hasattr(self, "report_test_result"):
+                    error_msg = str(e)
+                    self.report_test_result(passed=False, error_message=error_msg)
+                raise
+
+        return async_wrapper
+
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         try:

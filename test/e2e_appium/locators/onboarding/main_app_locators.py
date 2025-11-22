@@ -14,6 +14,12 @@ class MainAppLocators(BaseLocators):
     COMMUNITIES_BUTTON = BaseLocators.accessibility_id("Communities Portal")
     MARKET_BUTTON = BaseLocators.accessibility_id("Market")
     SETTINGS_BUTTON = BaseLocators.accessibility_id("Settings")
+    PROFILE_NAV_BUTTON = BaseLocators.xpath(
+        "//*[contains(@resource-id,'statusProfileNavBarTabButton')]"
+    )
+    COPY_PROFILE_LINK_ACTION = BaseLocators.xpath(
+        "//*[contains(@resource-id,'userStatusCopyLinkAction')]"
+    )
 
     SEARCH_FIELD = BaseLocators.accessibility_id(
         "Jump to a community, chat, account or a dApp..."

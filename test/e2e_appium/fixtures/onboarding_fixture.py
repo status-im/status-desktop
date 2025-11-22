@@ -7,6 +7,7 @@ provides flexible configuration options.
 """
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Optional, Dict, Any
 import pytest
 import time
@@ -23,7 +24,9 @@ from pages.onboarding import (
 )
 from utils.generators import generate_seed_phrase
 from models.user_model import User, UserProfile
+from config import get_config
 from config.logging_config import get_logger
+from services.app_initialization_manager import AppInitializationManager
 
 
 @dataclass
@@ -66,6 +69,16 @@ class OnboardingFlow:
         self.driver = driver
         self.config = config or OnboardingConfig()
         self.logger = logger or get_logger("onboarding_flow")
+
+        if self.config.take_screenshots and not self.config.screenshot_path:
+            try:
+                resolved_dir = get_config().screenshots_dir
+                if resolved_dir:
+                    Path(resolved_dir).mkdir(parents=True, exist_ok=True)
+                    self.config.screenshot_path = resolved_dir
+            except Exception:
+                # Leave as None if config unavailable
+                pass
 
         # Initialize page objects
         self.welcome_page = WelcomePage(self.driver)
@@ -136,22 +149,16 @@ class OnboardingFlow:
             else:
                 self._execute_analytics_skip_step()
 
-            # Step 3a: Create Profile Screen OR Step 3b: Seed Phrase Import
             if self.config.use_seed_phrase:
-                # Seed phrase import flow
                 self._execute_seed_phrase_import_step()
             else:
-                # New profile creation flow
                 if not self.config.skip_profile_creation:
                     self._execute_create_profile_step()
 
-            # Step 4: Password Creation
             self._execute_password_step()
 
-            # Step 5: Loading Screen
             self._execute_loading_step()
 
-            # Step 6: Main App Verification
             if self.config.verify_main_app:
                 self._execute_main_app_verification()
 
@@ -177,14 +184,18 @@ class OnboardingFlow:
         self.current_step = "welcome_screen"
         self.logger.info("Step 1: Welcome Screen")
 
-        # Wait for screen to be fully loaded before activating accessibility
-        # Wait for app to be visually ready (look for any UI elements)
+        # Wait for session to be ready before checking for UI
+        try:
+            init_manager = AppInitializationManager(self.driver)
+            init_manager._wait_for_session_ready(timeout=5.0)
+        except Exception as exc:
+            self.logger.debug("Session readiness check skipped: %s", exc)
+
         max_wait = 10
         for attempt in range(max_wait):
             try:
-                # Check if any UI elements are present (even without accessibility)
                 elements = self.main_app_page.driver.find_elements("xpath", "//*")
-                if len(elements) > 5:  # Basic UI structure loaded
+                if len(elements) > 5:
                     break
                 time.sleep(1)
             except Exception:
@@ -194,10 +205,21 @@ class OnboardingFlow:
             self.main_app_page.driver.tap([(500, 300)])  
             time.sleep(1)
         except Exception:
-            pass  # Non-critical if tap fails
+            self.logger.debug("Initial tap attempt skipped", exc_info=True)
 
         if self.config.validate_each_step:
-            assert self.welcome_page.is_screen_displayed(timeout=30), (
+            welcome_visible = False
+            for attempt in range(3):
+                if self.welcome_page.is_screen_displayed(timeout=10):
+                    welcome_visible = True
+                    break
+                if attempt < 2:
+                    self.logger.debug(
+                        f"Welcome screen not visible yet (attempt {attempt + 1}/3), waiting..."
+                    )
+                    time.sleep(2)
+            
+            assert welcome_visible, (
                 "Welcome screen should be displayed"
             )
 
@@ -212,7 +234,6 @@ class OnboardingFlow:
             self._take_screenshot("welcome_completed")
 
     def _execute_seed_phrase_import_step(self):
-        """Execute seed phrase import from Create Profile screen into Password."""
         self.current_step = "seed_phrase_import"
         self.logger.info("Step 3: Seed Phrase Import")
 
@@ -245,7 +266,6 @@ class OnboardingFlow:
             self._take_screenshot("seed_phrase_import_completed")
 
     def _execute_analytics_step(self):
-        """Execute analytics screen interaction"""
         self.current_step = "analytics_screen"
         self.logger.info("Step 2: Analytics Screen (interacting)")
 
@@ -254,7 +274,6 @@ class OnboardingFlow:
                 "Analytics screen should be displayed"
             )
 
-        # Interact with analytics consent (accept sharing)
         self.analytics_page.accept_analytics_sharing()
 
         self.step_results["analytics_screen"] = {
@@ -264,7 +283,6 @@ class OnboardingFlow:
         }
 
     def _execute_analytics_skip_step(self):
-        """Execute analytics screen skip action"""
         self.current_step = "analytics_screen_skip"
         self.logger.info("Step 2: Analytics Screen (skipping)")
 
@@ -285,7 +303,6 @@ class OnboardingFlow:
             self._take_screenshot("analytics_skipped")
 
     def _execute_create_profile_step(self):
-        """Execute create profile screen interaction"""
         self.current_step = "create_profile_screen"
         self.logger.info("Step 3: Create Profile Screen")
 
@@ -305,7 +322,6 @@ class OnboardingFlow:
             self._take_screenshot("profile_created")
 
     def _execute_password_step(self):
-        """Execute password creation step"""
         self.current_step = "password_screen"
         self.logger.info("Step 4: Password Screen")
 
@@ -362,12 +378,20 @@ class OnboardingFlow:
 
     def _take_screenshot(self, name: str):
         """Take screenshot during flow execution"""
-        if self.config.screenshot_path:
+        try:
+            base_dir = self.config.screenshot_path
+            if not base_dir:
+                base_dir = get_config().screenshots_dir
+        except Exception:
+            base_dir = None
+
+        if base_dir:
             try:
+                Path(base_dir).mkdir(parents=True, exist_ok=True)
                 timestamp = datetime.now().strftime("%H%M%S")
                 screenshot_name = f"{name}_{timestamp}.png"
-                screenshot_path = f"{self.config.screenshot_path}/{screenshot_name}"
-                self.driver.save_screenshot(screenshot_path)
+                screenshot_path = Path(base_dir) / screenshot_name
+                self.driver.save_screenshot(str(screenshot_path))
                 self.logger.debug(f"📷 Screenshot saved: {screenshot_path}")
             except Exception as e:
                 self.logger.warning(f"⚠️ Failed to take screenshot '{name}': {e}")

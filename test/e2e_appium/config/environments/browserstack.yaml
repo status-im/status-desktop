@@ -13,12 +13,13 @@ provider:
     auth:
       username: "${BROWSERSTACK_USERNAME:-}"
       access_key: "${BROWSERSTACK_ACCESS_KEY:-}"
-    build_name_template: "Status_E2E_Mobile"
+    build_name_template: "${BROWSERSTACK_BUILD_NAME:-${BROWSERSTACK_BUILD_IDENTIFIER:-${GIT_COMMIT:-Status Mobile}}}"
     build_identifier_template: "${BROWSERSTACK_BUILD_IDENTIFIER:-${GIT_COMMIT:-local}}"
-    session_name_template: "${TEST_NAME:-Status Test}"
-    project_name: "Status E2E Appium"
+    session_name_template: "${TEST_NAME:-${PYTEST_CURRENT_TEST:-Status Test}}"
+    project_name: "${BROWSERSTACK_PROJECT_NAME:-Status E2E Appium}"
     hub_url: "https://hub-cloud.browserstack.com/wd/hub"
     max_parallel_sessions: 5
+    plan_cache_ttl: 10
     sdk:
       enable_reporting: true
 
@@ -29,15 +30,27 @@ device_defaults:
     newCommandTimeout: 300
     bstack:options:
       deviceOrientation: "landscape"
-      "appiumVersion" : "2.19.0"
+      "appiumVersion": "2.19.0"
+      video: true
+      debug: false
+      networkLogs: false
+      appiumLogs: true
+      deviceLogs: true
+      appProfiling: false
     orientation: "LANDSCAPE"
     appium:unicodeKeyboard: true
     appium:resetKeyboard: true
 
 
 devices:
-  default: "galaxy_tab_s10p_android_15"
+  default: "dynamic_samsung_tab"
   matrix:
+    - id: "dynamic_samsung_tab"
+      display_name: "Any Galaxy Tab (Android 13-15)"
+      capabilities:
+        deviceName: "Samsung Galaxy Tab.*"
+        platformVersion: "13|14|15"
+        platformName: "android"
     - id: "galaxy_tab_s10p_android_15"
       display_name: "Galaxy Tab S10 Plus – Android 15"
       tags: ["android", "tablet", "cloud"]
@@ -71,12 +84,16 @@ execution:
     max_sessions: 5
     per_device_limit: 2
   retry_failed_tests: 1
+  queue_throttle:
+    enabled: true
+    poll_interval: 20
+    timeout: 180
+    parallel_buffer: 1
+    queue_buffer: 1
   pytest:
-    addopts: ["-n", "auto"]
+    addopts: ["-n", "2"]
 
 logging:
   level: "INFO"
-  enable_video_recording: true
-  enable_screenshots: true
   enable_xml_report: true
   enable_html_report: true
