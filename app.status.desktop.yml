@@ -1,0 +1,108 @@
+app-id: app.status.desktop
+runtime: org.kde.Platform
+runtime-version: '6.8'
+sdk: org.kde.Sdk
+command: nim_status_client_wrapped
+finish-args:
+  # X11 + XShm access
+  - --share=ipc
+  - --socket=x11
+  # Wayland access
+  - --socket=wayland
+  # Network access
+  - --share=network
+  # Sound access
+  - --socket=pulseaudio
+  # GPU acceleration
+  - --device=dri
+  # Smart card access
+  - --device=all
+  # File system access
+  - --filesystem=xdg-download
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-pictures
+  - --filesystem=xdg-videos
+  # D-Bus access
+  - --socket=session-bus
+  - --socket=system-bus
+  # Notifications
+  - --talk-name=org.freedesktop.Notifications
+  # Allow access to status-im directories
+  - --filesystem=~/.status-im:create
+  # Prevent theme issues
+  - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
+  # Qt platform
+  - --env=QT_QPA_PLATFORM=xcb
+
+modules:
+  # pcsc-lite (smartcard support - runtime dependency)
+  - name: pcsc-lite
+    config-opts:
+      - --disable-libsystemd
+      - --disable-serial
+      - --disable-polkit
+      - --enable-ipcdir=/tmp/pcscd/run
+    sources:
+      - type: archive
+        url: https://pcsclite.apdu.fr/files/pcsc-lite-2.2.3.tar.xz
+        sha256: cab1e62755713f62ce1b567954dbb0e9a7e668ffbc3bbad3ce85c53f8f4e00a4
+
+  # GStreamer plugins (additional plugins beyond what KDE runtime provides)
+  - name: gst-plugins-ugly
+    buildsystem: meson
+    sources:
+      - type: archive
+        url: https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.24.0.tar.xz
+        sha256: c5d1cbdf71ab0c675bca236f70edfa1feb3f813fd4bfff563308f466d8805ca5
+
+  # fcitx5-qt (input method support)
+  - name: fcitx5-qt
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/app
+      - -DCMAKE_INSTALL_LIBDIR=/app/lib
+      - -DBUILD_ONLY_PLUGIN=ON
+      - -DENABLE_QT4=OFF
+      - -DENABLE_QT5=OFF
+      - -DENABLE_QT6=ON
+      # Override Qt6 plugin install path to be inside /app
+      - -DCMAKE_INSTALL_QT6PLUGINDIR=/app/lib/qt6/plugins
+    sources:
+      - type: git
+        url: https://github.com/fcitx/fcitx5-qt.git
+        tag: 5.1.8
+        commit: cdd0efe6724dbc7f6cbb8a8c02812e26e80d88d4
+
+  # Main application - packages pre-built binaries from CI build
+  - name: status-desktop
+    buildsystem: simple
+    build-commands:
+      # Install pre-built binary
+      - install -Dm755 bin/nim_status_client /app/bin/nim_status_client
+      # Install StatusQ libraries
+      - install -Dm755 bin/StatusQ/*.so /app/lib/
+      # Install resources
+      - install -Dm644 resources.rcc /app/share/status-desktop/resources.rcc
+      # Install desktop file
+      - install -Dm644 nim-status.desktop /app/share/applications/app.status.desktop.desktop
+      # Update desktop file
+      - sed -i 's/^Exec=nim_status_client/Exec=nim_status_client/' /app/share/applications/app.status.desktop.desktop
+      - sed -i 's/^Icon=status/Icon=app.status.desktop/' /app/share/applications/app.status.desktop.desktop
+      # Install icon (512x512 png)
+      - install -Dm644 status-512.png /app/share/icons/hicolor/512x512/apps/app.status.desktop.png
+      # Install appdata
+      - install -Dm644 app.status.desktop.appdata.xml /app/share/metainfo/app.status.desktop.appdata.xml
+      # Copy fcitx5 plugin
+      - mkdir -p /app/lib/qt6/plugins/platforminputcontexts
+      - cp /app/lib/qt6/plugins/platforminputcontexts/libfcitx5platforminputcontextplugin.so /app/lib/qt6/plugins/platforminputcontexts/ || true
+      # Create wrapper script to set up environment
+      - install -Dm755 flatpak-wrapper.sh /app/bin/nim_status_client_wrapped
+    sources:
+      # Use local directory with pre-built binaries
+      - type: dir
+        path: .
+      # Wrapper script
+      - type: file
+        path: flatpak-wrapper.sh
+
