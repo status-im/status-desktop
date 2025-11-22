@@ -162,7 +162,7 @@
         xorg.libXrandr
         xorg.libXcursor
         xorg.libXi
-        xorg.libxtst
+        xorg.libXtst
         xorg.libXcomposite
         xorg.xcbutilrenderutil
         xorg.xcbutilimage
@@ -170,7 +170,6 @@
         xorg.xcbutilwm
         xorg.xcbutil
         xorg.xcbutilcursor
-        xorg.xcbutilicccm
 
         # GTK and dependencies (matching Dockerfile)
         gtk3
