@@ -40,19 +40,11 @@ StatusDialog {
         readonly property string inputErrorMessage: isInputValid ? "" : qsTr("Invalid key")
         readonly property string errorMessage: importErrorMessage || inputErrorMessage
         readonly property string inputKey: keyInput.text.trim()
-        property int shardCluster: -1
-        property int shardIndex: -1
         readonly property string publicKey: {
             if (Utils.isStatusDeepLink(inputKey)) {
-                d.shardCluster = -1
-                d.shardIndex = -1
                 const linkData = Utils.getCommunityDataFromSharedLink(inputKey)
                 if (!linkData) {
                     return ""
-                }
-                if (linkData.shardCluster != undefined && linkData.shardIndex != undefined) {
-                    d.shardCluster = linkData.shardCluster
-                    d.shardIndex = linkData.shardIndex
                 }
                 return linkData.communityId
             }
@@ -89,7 +81,7 @@ StatusDialog {
             }
 
             if (requestIfNotFound) {
-                root.store.requestCommunityInfo(publicKey, shardCluster, shardIndex, false)
+                root.store.requestCommunityInfo(publicKey, false)
                 d.communityInfoRequested = true
                 d.communityDetails = null
             }

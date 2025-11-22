@@ -1234,10 +1234,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable creation of sharded communities</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The account will be logged out. When you login again, the selected mode will be enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6623,25 +6619,6 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
 </context>
 <context>
-    <name>EditSettingsPanel</name>
-    <message>
-        <source>Community sharding</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Active: on shard #%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Manage</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Make %1 a sharded community</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>EditSlippagePanel</name>
     <message>
         <source>Slippage tolerance</source>
@@ -6790,45 +6767,6 @@ Remember your password and don&apos;t share it with anyone.</source>
     </message>
     <message>
         <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>EnableShardingPopup</name>
-    <message>
-        <source>Enable community sharding for %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Zrušit</translation>
-    </message>
-    <message>
-        <source>Enable community sharding</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
-    </message>
-    <message>
-        <source>Enter shard number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter a number between 0 and 1023</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid shard number. Number must be 0 — 1023.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pub/Sub topic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>I have made a copy of the Pub/Sub topic and public key string</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10775,37 +10713,6 @@ to load</source>
     </message>
     <message>
         <source>Your hidden assets will appear here</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ManageShardingPopup</name>
-    <message>
-        <source>Manage community sharding for %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Disable community sharding</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit shard number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shard number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pub/Sub topic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to disable sharding?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to disable community sharding? Your community will automatically revert to using the general shared Waku network.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

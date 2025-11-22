@@ -438,24 +438,12 @@ proc collectCommunityMetrics*(communityId: string, metricsType: int, intervals: 
       "intervals": intervals
     }])
 
-proc requestCommunityInfo*(communityId: string, tryDatabase: bool, shardCluster: int, shardIndex: int): RpcResponse[JsonNode] =
-  if shardCluster != -1 and shardIndex != -1:
-    result = callPrivateRPC("fetchCommunity".prefix,%*[{
-      "communityKey": communityId,
-      "tryDatabase": tryDatabase,
-      "shard": {
-        "shardCluster": shardCluster,
-        "shardIndex": shardIndex,
-      },
-      "waitForResponse": true
-    }])
-  else:
-    result = callPrivateRPC("fetchCommunity".prefix, %*[{
-      "communityKey": communityId,
-      "tryDatabase": tryDatabase,
-      "shard": nil,
-      "waitForResponse": true
-    }])
+proc requestCommunityInfo*(communityId: string, tryDatabase: bool): RpcResponse[JsonNode] =
+  result = callPrivateRPC("fetchCommunity".prefix, %*[{
+    "communityKey": communityId,
+    "tryDatabase": tryDatabase,
+    "waitForResponse": true
+  }])
 
 proc exportCommunity*(communityId: string): RpcResponse[JsonNode]  =
   result = callPrivateRPC("exportCommunity".prefix, %*[communityId])
@@ -523,22 +511,6 @@ proc getCommunityMembersForWalletAddresses*(communityId: string, chainId: int): 
 proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] =
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_promoteSelfToControlNode", payload)
-
-proc setCommunityShard*(communityId: string, index: int): RpcResponse[JsonNode] =
-  if index != -1:
-    result = callPrivateRPC("setCommunityShard".prefix, %*[
-      {
-        "communityId": communityId,
-        "shard": {
-          "cluster": MAIN_STATUS_SHARD_CLUSTER_ID,
-          "index": index
-        },
-      }])
-  else: # unset community shard
-    result = callPrivateRPC("setCommunityShard".prefix, %*[
-      {
-        "communityId": communityId,
-      }])
 
 proc markAllReadInCommunity*(communityId: string,): RpcResponse[JsonNode] =
   return callPrivateRPC("markAllReadInCommunity".prefix, %*[communityId])

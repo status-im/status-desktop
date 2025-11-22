@@ -171,9 +171,6 @@ type
     memberPubkey*: string
     state*: MembershipRequestState
 
-  CommunityShardSetArgs* = ref object of Args
-    communityId*: string
-
   CommunityMemberReevaluationStatusArg* = ref object of Args
     communityId*: string
     status*: CommunityMemberReevaluationStatus
@@ -254,9 +251,6 @@ const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED* = "checkPermissionsToJoinFailed"
 
 const SIGNAL_COMMUNITY_METRICS_UPDATED* = "communityMetricsUpdated"
 const SIGNAL_COMMUNITY_LOST_OWNERSHIP* = "communityLostOwnership"
-
-const SIGNAL_COMMUNITY_SHARD_SET* = "communityShardSet"
-const SIGNAL_COMMUNITY_SHARD_SET_FAILED* = "communityShardSetFailed"
 
 const SIGNAL_COMMUNITY_TOKENS_CHANGED* = "communityTokensChanged"
 
@@ -1883,7 +1877,7 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc requestCommunityInfo*(self: Service, communityId: string, shard: Shard, importing = false, tryDatabase = true,
+  proc requestCommunityInfo*(self: Service, communityId: string, importing = false, tryDatabase = true,
       requiredTimeSinceLastRequest = initDuration(0, 0)) =
 
     let now = now().toTime()
@@ -1903,8 +1897,6 @@ QtObject:
       communityId: communityId,
       importing: importing,
       tryDatabase: tryDatabase,
-      shardCluster: if shard == nil: -1 else: shard.cluster,
-      shardIndex: if shard == nil: -1 else: shard.index,
     )
     self.threadpool.start(arg)
 
@@ -2378,32 +2370,6 @@ QtObject:
 
     except Exception as e:
       error "error while reevaluating community members permissions", msg = e.msg
-
-  proc asyncSetCommunityShard*(self: Service, communityId: string, shardIndex: int) =
-    let arg = AsyncSetCommunityShardArg(
-      tptr: asyncSetCommunityShardTask,
-      vptr: cast[uint](self.vptr),
-      slot: "onAsyncSetCommunityShardDone",
-      communityId: communityId,
-      shardIndex: shardIndex,
-    )
-    self.threadpool.start(arg)
-
-  proc onAsyncSetCommunityShardDone*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
-    let rpcResponseObj = communityIdAndRpcResponse.parseJson
-    try:
-      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
-        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
-
-      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
-      let community = rpcResponse.result["communities"][0].toCommunityDto()
-
-      self.handleCommunityUpdates(@[community], @[], @[])
-      self.events.emit(SIGNAL_COMMUNITY_SHARD_SET, CommunityShardSetArgs(communityId: rpcResponseObj["communityId"].getStr))
-
-    except Exception as e:
-      error "Error setting community shard", msg = e.msg
-      self.events.emit(SIGNAL_COMMUNITY_SHARD_SET_FAILED, CommunityShardSetArgs(communityId: rpcResponseObj["communityId"].getStr))
 
   proc promoteSelfToControlNode*(self: Service, communityId: string) =
     try:

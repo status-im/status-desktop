@@ -19,8 +19,6 @@ ColumnLayout {
     property url image: Theme.png("tokens/UNI")
     property bool colorVisible: false
     property url banner: ctrlCommunityBanner.checked ? Theme.png("settings/communities@2x") : ""
-    readonly property bool shardingEnabled: ctrlShardingEnabled.checked
-    property alias shardIndex: ctrlShardIndex.value
     property bool adminControlsEnabled: true
 
     ColumnLayout {
@@ -142,23 +140,6 @@ ColumnLayout {
         RadioButton {
             id: ctrlCommunityBanner
             text: "Communities"
-        }
-    }
-    RowLayout {
-        visible: root.adminControlsEnabled
-        Layout.fillWidth: true
-        CheckBox {
-            id: ctrlShardingEnabled
-            text: "Sharding enabled"
-            checkable: true
-            checked: false
-        }
-        SpinBox {
-            id: ctrlShardIndex
-            visible: ctrlShardingEnabled.checked
-            from: -1
-            to: 1023
-            value: -1 // -1 == disabled
         }
     }
 }

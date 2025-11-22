@@ -184,9 +184,6 @@ type CommunityDto* = object
   communityTokensMetadata*: seq[CommunityTokensMetadataDto]
   channelPermissions*: CheckAllChannelsPermissionsResponseDto
   activeMembersCount*: int64
-  pubsubTopic*: string
-  pubsubTopicKey*: string
-  shard*: Shard
 
 proc isAvailable*(communityDto: CommunityDto): bool =
   return communityDto.name != "" and communityDto.description != ""
@@ -513,11 +510,6 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   if(jsonObj.getProp("communityTokensMetadata", communityTokensMetadataObj) and communityTokensMetadataObj.kind == JArray):
     for tokenObj in communityTokensMetadataObj:
       result.communityTokensMetadata.add(tokenObj.toCommunityTokensMetadataDto())
-
-  discard jsonObj.getProp("pubsubTopic", result.pubsubTopic)
-  discard jsonObj.getProp("pubsubTopicKey", result.pubsubTopicKey)
-
-  result.shard = jsonObj.getShard()
 
 proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): MembershipRequestState =
   case state:

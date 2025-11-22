@@ -460,8 +460,8 @@ QtObject {
         chatCommunitySectionModule.collectCommunityMetricsMessagesCount(intervals)
     }
 
-    function requestCommunityInfo(id, shardCluster, shardIndex, importing = false) {
-        communitiesModuleInst.requestCommunityInfo(id, shardCluster, shardIndex, importing)
+    function requestCommunityInfo(id, importing = false) {
+        communitiesModuleInst.requestCommunityInfo(id, importing)
     }
 
     function getCommunityDetailsAsJson(id) {

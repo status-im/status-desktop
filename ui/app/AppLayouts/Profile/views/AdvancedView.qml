@@ -202,15 +202,6 @@ SettingsContentBase {
                 bottomPadding: Theme.padding
             }
 
-            StatusSettingsLineButton {
-                visible: !SQUtils.Utils.isMobile
-                width: parent.width
-                text: qsTr("Enable creation of sharded communities")
-                isSwitch: true
-                checked: root.advancedStore.isWakuV2ShardedCommunitiesEnabled
-                onClicked: root.advancedStore.toggleWakuV2ShardedCommunities()
-            }
-
             Row {
                 anchors.left: parent.left
                 anchors.right: parent.right

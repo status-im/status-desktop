@@ -50,12 +50,6 @@ StackLayout {
 
     property string overviewChartData: ""
 
-    property bool shardingEnabled
-    property int shardIndex: -1
-    property bool shardingInProgress
-    property string pubsubTopic
-    property string pubsubTopicKey
-
     property bool isTokenDeployed: !!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed
 
     property bool isMobile
@@ -79,8 +73,6 @@ StackLayout {
     signal exportControlNodeClicked
     signal importControlNodeClicked
     signal mintOwnerTokenClicked
-
-    signal shardIndexEdited(int shardIndex)
 
     clip: true
 
@@ -327,12 +319,6 @@ StackLayout {
                     pinMessagesEnabled: root.pinMessagesEnabled
                 }
 
-                shardingEnabled: root.shardingEnabled
-                shardIndex: root.shardIndex
-                shardingInProgress: root.shardingInProgress
-                pubsubTopic: root.pubsubTopic
-                pubsubTopicKey: root.pubsubTopicKey
-
                 bottomReservedSpace:
                     Qt.size(settingsDirtyToastMessage.implicitWidth,
                             settingsDirtyToastMessage.implicitHeight +
@@ -345,8 +331,6 @@ StackLayout {
                     property: "bottomMargin"
                     value: 24
                 }
-
-                onShardIndexEdited: root.shardIndexEdited(shardIndex)
             }
         }
 

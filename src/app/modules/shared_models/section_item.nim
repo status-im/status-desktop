@@ -57,9 +57,6 @@ type
     pinMessageAllMembersEnabled: bool
     encrypted: bool
     communityTokensModel: community_tokens_model.TokenModel
-    pubsubTopic: string
-    pubsubTopicKey: string
-    shardIndex: int
     isPendingOwnershipRequest: bool
     activeMembersCount: int
     membersLoaded: bool
@@ -99,9 +96,6 @@ proc initSectionItem*(
     pinMessageAllMembersEnabled = false,
     encrypted: bool = false,
     communityTokens: seq[TokenItem] = @[],
-    pubsubTopic = "",
-    pubsubTopicKey = "",
-    shardIndex = -1,
     isPendingOwnershipRequest: bool = false,
     activeMembersCount: int = 0,
     ): SectionItem =
@@ -140,9 +134,6 @@ proc initSectionItem*(
   result.encrypted = encrypted
   result.communityTokensModel = newTokenModel()
   result.communityTokensModel.setItems(communityTokens)
-  result.pubsubTopic = pubsubTopic
-  result.pubsubTopicKey = pubsubTopicKey
-  result.shardIndex = shardIndex
   result.isPendingOwnershipRequest = isPendingOwnershipRequest
   result.activeMembersCount = activeMembersCount
   result.membersLoaded = false
@@ -427,24 +418,6 @@ proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loa
 
 proc updateMembershipStatus*(self: SectionItem, memberKey: string, state: MembershipRequestState) {.inline.} =
   self.membersModel.updateMembershipStatus(memberKey, state)
-
-proc pubsubTopic*(self: SectionItem): string {.inline.} =
-  self.pubsubTopic
-
-proc `pubsubTopic=`*(self: var SectionItem, value: string) {.inline.} =
-  self.pubsubTopic = value
-
-proc pubsubTopicKey*(self: SectionItem): string {.inline.} =
-  self.pubsubTopicKey
-
-proc `pubsubTopicKey=`*(self: var SectionItem, value: string) {.inline.} =
-  self.pubsubTopicKey = value
-
-proc shardIndex*(self: SectionItem): int {.inline.} =
-  self.shardIndex
-
-proc `shardIndex=`*(self: var SectionItem, value: int) {.inline.} =
-  self.shardIndex = value
 
 proc activeMembersCount*(self: SectionItem): int {.inline.} =
   self.activeMembersCount

@@ -15,7 +15,7 @@ import app_service/service/community_tokens/community_collectible_owner
 import app_service/service/shared_urls/service as urls_service
 import app_service/service/network/service as network_service
 import app_service/service/network/network_item
-from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard, RequestToJoinState
+from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, RequestToJoinState
 
 import app/global/app_signals
 import app/core/eventemitter
@@ -310,7 +310,7 @@ method isConnected*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, communityId: string, chatId: string,
-  url: string, userId: string, shard: Shard) {.base.} =
+  url: string, userId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getKeycardSharedModuleForAuthenticationOrSigning*(self: AccessInterface): QVariant {.base.} =

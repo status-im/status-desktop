@@ -676,5 +676,5 @@ proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserv
     debug "updateLinkPreviewsCommunites: requesting from mailserver", communityId
     let urlData = self.controller.parseSharedUrl(url)
     item.linkPreviewModel.onCommunityInfoRequested(communityId)
-    self.controller.requestCommunityInfo(communityId, urlData.community.shard, useDatabase = false, initDuration(minutes = 10))
+    self.controller.requestCommunityInfo(communityId, useDatabase = false, initDuration(minutes = 10))
 

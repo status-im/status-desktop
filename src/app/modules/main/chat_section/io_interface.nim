@@ -400,12 +400,6 @@ method getChannelsPermissionsCheckOngoing*(self: AccessInterface): bool {.base.}
 method onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setCommunityShard*(self: AccessInterface, shardIndex: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setShardingInProgress*(self: AccessInterface, value: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method loadCommunityMemberMessages*(self: AccessInterface, communityId: string, memberPubKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

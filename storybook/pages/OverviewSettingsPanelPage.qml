@@ -53,9 +53,6 @@ SplitView {
             editable: communityEditor.isCommunityEditable
             communitySettingsDisabled: !editable
 
-            shardingEnabled: communityEditor.shardingEnabled
-            shardIndex: communityEditor.shardIndex
-
             isPendingOwnershipRequest: pendingOwnershipSwitch.checked
 
             isControlNode: ctrlControlNode.checked

@@ -42,9 +42,6 @@ type
     Encrypted
     CommunityTokensModel
     AmIBanned
-    PubsubTopic
-    PubsubTopicKey
-    ShardIndex
     IsPendingOwnershipRequest
     ActiveMembersCount
     MembersLoaded
@@ -123,9 +120,6 @@ QtObject:
       ModelRole.Encrypted.int:"encrypted",
       ModelRole.CommunityTokensModel.int:"communityTokens",
       ModelRole.AmIBanned.int:"amIBanned",
-      ModelRole.PubsubTopic.int:"pubsubTopic",
-      ModelRole.PubsubTopicKey.int:"pubsubTopicKey",
-      ModelRole.ShardIndex.int:"shardIndex",
       ModelRole.IsPendingOwnershipRequest.int:"isPendingOwnershipRequest",
       ModelRole.ActiveMembersCount.int:"activeMembersCount",
       ModelRole.MembersLoaded.int:"membersLoaded",
@@ -209,12 +203,6 @@ QtObject:
       result = newQVariant(item.communityTokens)
     of ModelRole.AmIBanned:
       result = newQVariant(item.isBanned)
-    of ModelRole.PubsubTopic:
-      result = newQVariant(item.pubsubTopic)
-    of ModelRole.PubsubTopicKey:
-      result = newQVariant(item.pubsubTopicKey)
-    of ModelRole.ShardIndex:
-      result = newQVariant(item.shardIndex)
     of ModelRole.IsPendingOwnershipRequest:
       result = newQVariant(item.isPendingOwnershipRequest)
     of ModelRole.ActiveMembersCount:
@@ -335,9 +323,6 @@ QtObject:
     updateRoleWithValue(historyArchiveSupportEnabled, HistoryArchiveSupportEnabled, item.historyArchiveSupportEnabled)
     updateRoleWithValue(pinMessageAllMembersEnabled, PinMessageAllMembersEnabled, item.pinMessageAllMembersEnabled)
     updateRoleWithValue(encrypted, Encrypted, item.encrypted)
-    updateRoleWithValue(pubsubTopic, PubsubTopic, item.pubsubTopic)
-    updateRoleWithValue(pubsubTopicKey, PubsubTopicKey, item.pubsubTopicKey)
-    updateRoleWithValue(shardIndex, ShardIndex, item.shardIndex)
     updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
     updateRoleWithValue(activeMembersCount, ActiveMembersCount, item.activeMembersCount)
     updateRoleWithValue(joinedMembersCount, JoinedMembersCount, item.joinedMembersCount)
@@ -550,9 +535,6 @@ QtObject:
           "ensOnly": item.ensOnly,
           "nbMembers": item.members.getCount(),
           "encrypted": item.encrypted,
-          "pubsubTopic": item.pubsubTopic,
-          "pubsubTopicKey": item.pubsubTopicKey,
-          "shardIndex": item.shardIndex,
         }
         return $jsonObj
 

@@ -85,10 +85,6 @@ type
     InProgress,
     Completed
 
-type Shard* = ref object
-  cluster*: int
-  index*: int
-
 type TokenType* {.pure.} = enum
   Native = 0
   ERC20 = 1,
