@@ -78,6 +78,8 @@ pipeline {
     USE_MOCKED_KEYCARD_LIB = "${params.USE_MOCKED_KEYCARD_LIB}"
     /* FIXME: figure out why NIMFLAGS are not respected */
     XDG_CACHE_HOME = "${env.WORKSPACE_TMP}/.cache"
+    /* Use nix.conf from repo for binary cache */
+    NIX_USER_CONF_FILES = "${env.WORKSPACE}/nix/nix.conf"
   }
 
   stages {
@@ -86,21 +88,41 @@ pipeline {
         sh './scripts/clean-git.sh'
       }
     }
+
     stage('Fetch submodules') {
       steps {
         sh 'git submodule update --init --recursive'
       }
     }
+
+    stage('Update Flake') {
+      steps {
+        script {
+          /* Update flake.lock to ensure we have latest dependencies */
+          sh 'nix flake update --commit-lock-file || true'
+        }
+      }
+    }
+
+    stage('Build Nix Dev Environment') {
+      steps {
+        script {
+          /* Build the dev shell derivation first to cache it */
+          sh 'nix develop --profile nix-profile --command echo "Dev environment built"'
+        }
+      }
+    }
+
     stage('Deps') {
       steps { script {
-        nix.shell('make update', pure: true)
-        nix.shell('make deps', pure: true)
+        sh 'nix develop --command make update'
+        sh 'nix develop --command make deps'
       } }
     }
 
     stage('status-go') {
       steps { script {
-        nix.shell('make status-go', pure: true)
+        sh 'nix develop --command make status-go'
       } }
     }
 
@@ -108,6 +130,19 @@ pipeline {
       steps { script {
         linux.bundle('tgz-linux', 0, true)
       } }
+    }
+
+    stage('Push to Nix Cache') {
+      when { expression { utils.isReleaseBuild() } }
+      steps {
+        script {
+          /* Push build results to nix cache for reuse */
+          sh '''
+            nix copy --to https://nix-cache.status.im/ \
+              $(nix-store -qR result/) || true
+          '''
+        }
+      }
     }
 
     stage('Parallel Upload') {
