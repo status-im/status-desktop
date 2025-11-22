@@ -83,12 +83,18 @@ pipeline {
     USE_NWAKU = "${params.USE_NWAKU}"
     /* nwaku source directory */
     NWAKU_SOURCE_DIR = "${env.WORKSPACE_TMP}/nwaku"
-    /* sets App Version in Settings */  
+    /* sets App Version in Settings */
     VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     /* Control output the filename */
     APP_TYPE = "${utils.getAppType() + (params.USE_NWAKU ? '-experimental' : '')}"
+    /* Flatpak output files */
+    STATUS_CLIENT_FLATPAK = "pkg/${utils.pkgFilename(ext: 'flatpak', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    /* Legacy AppImage variables - kept for reference */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION, type: env.APP_TYPE)}"
+    /* Flatpak build directories */
+    FLATPAK_BUILD_DIR = "${env.WORKSPACE_TMP}/flatpak-build"
+    FLATPAK_REPO_DIR = "${env.WORKSPACE_TMP}/flatpak-repo"
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
@@ -129,7 +135,8 @@ pipeline {
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux')
+        /* Build Flatpak instead of AppImage */
+        sh 'scripts/build-flatpak.sh'
       } }
     }
 
@@ -137,13 +144,13 @@ pipeline {
       parallel {
         stage('Upload') {
           steps { script {
-            env.PKG_URL = s5cmd.upload(env.STATUS_CLIENT_TARBALL)
-            jenkins.setBuildDesc(AppImage: env.PKG_URL)
+            env.PKG_URL = s5cmd.upload(env.STATUS_CLIENT_FLATPAK)
+            jenkins.setBuildDesc(Flatpak: env.PKG_URL)
           } }
         }
         stage('Archive') {
           steps { script {
-            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
+            archiveArtifacts("${env.STATUS_CLIENT_FLATPAK}*")
           } }
         }
       }

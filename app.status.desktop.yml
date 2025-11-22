@@ -1,0 +1,171 @@
+app-id: app.status.desktop
+runtime: org.kde.Platform
+runtime-version: '6.8'
+sdk: org.kde.Sdk
+command: nim_status_client
+finish-args:
+  # X11 + XShm access
+  - --share=ipc
+  - --socket=x11
+  # Wayland access
+  - --socket=wayland
+  # Network access
+  - --share=network
+  # Sound access
+  - --socket=pulseaudio
+  # GPU acceleration
+  - --device=dri
+  # Smart card access
+  - --device=all
+  # File system access
+  - --filesystem=xdg-download
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-pictures
+  - --filesystem=xdg-videos
+  # D-Bus access
+  - --socket=session-bus
+  - --socket=system-bus
+  # Notifications
+  - --talk-name=org.freedesktop.Notifications
+  # Allow access to status-im directories
+  - --filesystem=~/.status-im:create
+  # Prevent theme issues
+  - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
+  # Qt platform
+  - --env=QT_QPA_PLATFORM=xcb
+
+modules:
+  # Go compiler (needed to build status-go)
+  - name: go
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/lib/go
+      - tar -C /app/lib/go --strip-components=1 -xf go*.tar.gz
+      - ln -s /app/lib/go/bin/go /app/bin/go
+      - ln -s /app/lib/go/bin/gofmt /app/bin/gofmt
+    sources:
+      - type: archive
+        url: https://go.dev/dl/go1.24.7.linux-amd64.tar.gz
+        sha256: 04e0b3bc1e3634f6adf0e2e71c4e58f77e79dbf04c0dc6e95e0e22c4f21a3d9f
+        only-arches:
+          - x86_64
+
+  # Nim compiler (needed to build nim_status_client)
+  - name: nim
+    buildsystem: simple
+    build-commands:
+      - sh build_all.sh
+      - ./bin/nim c -d:release koch
+      - ./koch install /app
+    sources:
+      - type: git
+        url: https://github.com/nim-lang/Nim.git
+        tag: v2.0.8
+        commit: 806f1eaca11c5cdfbfc82f7b0808fd0c4ac4c0ec
+
+  # pcsc-lite (smartcard support)
+  - name: pcsc-lite
+    config-opts:
+      - --disable-libsystemd
+      - --disable-serial
+      - --disable-polkit
+      - --enable-ipcdir=/tmp/pcscd/run
+    sources:
+      - type: archive
+        url: https://pcsclite.apdu.fr/files/pcsc-lite-2.2.3.tar.xz
+        sha256: cab1e62755713f62ce1b567954dbb0e9a7e668ffbc3bbad3ce85c53f8f4e00a4
+
+  # GStreamer plugins (additional plugins beyond what KDE runtime provides)
+  - name: gstreamer-plugins-ugly
+    buildsystem: meson
+    sources:
+      - type: archive
+        url: https://gstreamer.freedesktop.org/src/gstreamer-plugins-ugly/gstreamer-plugins-ugly-1.24.0.tar.xz
+        sha256: 8f1f7f997d8c28c2e34e63daa2ae7a0a80f50e2b32ae69c21a8d4de52a682455
+
+  # fcitx5-qt (input method support)
+  - name: fcitx5-qt
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_ONLY_PLUGIN=ON
+      - -DENABLE_QT4=OFF
+      - -DENABLE_QT5=OFF
+      - -DENABLE_QT6=ON
+    sources:
+      - type: git
+        url: https://github.com/fcitx/fcitx5-qt.git
+        tag: 5.1.8
+        commit: 89d46b2d1bbbb6b8936bfdbae1fdc8fa8ae8dc79
+
+  # status-go (Go backend library)
+  - name: status-go
+    buildsystem: simple
+    build-options:
+      env:
+        GOPATH: /run/build/status-go/go
+        GOCACHE: /run/build/status-go/go-cache
+    build-commands:
+      - make status-go BUILD_SYSTEM_LIBS=0
+      - install -Dm755 build/bin/libstatus.so /app/lib/libstatus.so
+      - ln -s libstatus.so /app/lib/libstatus.so.0
+    sources:
+      - type: git
+        url: https://github.com/status-im/status-go.git
+        branch: develop
+        # NOTE: In actual CI, you should pin to specific commit matching your vendor/status-go submodule
+
+  # StatusQ (Qt/QML component library)
+  - name: StatusQ
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: dir
+        path: ui/StatusQ
+
+  # Main application
+  - name: status-desktop
+    buildsystem: simple
+    build-options:
+      env:
+        QT_SELECT: qt6
+        PATH: /app/bin:/usr/bin
+    build-commands:
+      # Build the Nim application
+      - make nim_status_client PRODUCTION_PARAMETERS="-d:production"
+      # Install binary
+      - install -Dm755 bin/nim_status_client /app/bin/nim_status_client
+      # Install StatusQ libraries
+      - install -Dm755 bin/StatusQ/*.so /app/lib/
+      # Install resources
+      - install -Dm644 resources.rcc /app/share/status-desktop/resources.rcc
+      # Install desktop file
+      - install -Dm644 nim-status.desktop /app/share/applications/app.status.desktop.desktop
+      # Update desktop file
+      - sed -i 's/^Exec=nim_status_client/Exec=nim_status_client/' /app/share/applications/app.status.desktop.desktop
+      - sed -i 's/^Icon=status/Icon=app.status.desktop/' /app/share/applications/app.status.desktop.desktop
+      # Install icon
+      - install -Dm644 status.png /app/share/icons/hicolor/512x512/apps/app.status.desktop.png
+      # Install appdata
+      - install -Dm644 app.status.desktop.appdata.xml /app/share/metainfo/app.status.desktop.appdata.xml
+      # Copy fcitx5 plugin
+      - mkdir -p /app/lib/qt6/plugins/platforminputcontexts
+      - cp /app/lib/qt6/plugins/platforminputcontexts/libfcitx5platforminputcontextplugin.so /app/lib/qt6/plugins/platforminputcontexts/ || true
+      # Create wrapper script to set up environment
+      - install -Dm755 flatpak-wrapper.sh /app/bin/nim_status_client_wrapped
+    sources:
+      - type: dir
+        path: .
+      # Wrapper script
+      - type: file
+        path: flatpak-wrapper.sh
+
+  # pcscd launcher
+  - name: pcscd-launcher
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 pcscd-launcher.sh /app/bin/pcscd-launcher
+    sources:
+      - type: file
+        path: pcscd-launcher.sh
