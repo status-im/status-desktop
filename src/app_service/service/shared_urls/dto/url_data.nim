@@ -11,7 +11,6 @@ type CommunityUrlDataDto* = object
   color*: string
   tagIndices*: seq[int]
   communityId*: string
-  shard*: Shard
 
 type CommunityChannelUrlDataDto* = object
   emoji*: string
@@ -31,15 +30,6 @@ type UrlDataDto* = object
   contact*: ContactUrlDataDto
   notASupportedStatusLink*: bool # If this is true, it was not a supported status link, so we should open it in a browser
 
-proc getShard*(jsonObj: JsonNode): Shard =
-  var shardObj: JsonNode
-  if (jsonObj.getProp("shard", shardObj)):
-    result = Shard()
-    discard shardObj.getProp("cluster", result.cluster)
-    discard shardObj.getProp("index", result.index)
-  else:
-    result = nil
-
 proc toCommunityUrlDataDto*(jsonObj: JsonNode): CommunityUrlDataDto =
   result = CommunityUrlDataDto()
   discard jsonObj.getProp("displayName", result.displayName)
@@ -52,8 +42,6 @@ proc toCommunityUrlDataDto*(jsonObj: JsonNode): CommunityUrlDataDto =
       result.tagIndices.add(tagIndex.getInt)
 
   discard jsonObj.getProp("communityId", result.communityId)
-
-  result.shard = jsonObj.getShard()
 
 proc toCommunityChannelUrlDataDto*(jsonObj: JsonNode): CommunityChannelUrlDataDto =
   result = CommunityChannelUrlDataDto()
@@ -91,8 +79,6 @@ proc toJsonNode*(communityUrlDataDto: CommunityUrlDataDto): JsonNode =
   jsonObj["membersCount"] = %* communityUrlDataDto.membersCount
   jsonObj["color"] = %* communityUrlDataDto.color
   jsonObj["communityId"] = %* communityUrlDataDto.communityId
-  jsonObj["shardCluster"] = %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.cluster else: -1)
-  jsonObj["shardIndex"] = %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.index else: -1)
   return jsonObj
 
 proc `$`*(communityUrlDataDto: CommunityUrlDataDto): string =

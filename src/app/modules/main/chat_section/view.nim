@@ -30,7 +30,6 @@ QtObject:
       communityMetrics: string # NOTE: later this should be replaced with QAbstractListModel-based model
       permissionsCheckOngoing: bool
       isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
-      shardingInProgress: bool
       allChannelsAreHiddenBecauseNotPermitted: bool
       memberMessagesModel: member_msg_model.Model
       memberMessagesModelVariant: QVariant
@@ -445,25 +444,6 @@ QtObject:
   QtProperty[bool] isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin:
     read = getWaitingOnNewCommunityOwnerToConfirmRequestToRejoin
     notify = isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged
-
-  proc getShardingInProgress*(self: View): bool {.slot.} =
-    return self.shardingInProgress
-
-  proc shardingInProgressChanged*(self: View) {.signal.}
-
-  QtProperty[bool] shardingInProgress:
-    read = getShardingInProgress
-    notify = shardingInProgressChanged
-
-  proc setShardingInProgress*(self: View, value: bool) =
-    if (value == self.shardingInProgress):
-      return
-    self.shardingInProgress = value
-    self.shardingInProgressChanged()
-
-  proc setCommunityShard*(self: View, shardIndex: int) {.slot.} =
-    self.setShardingInProgress(true)
-    self.delegate.setCommunityShard(shardIndex)
 
   proc allChannelsAreHiddenBecauseNotPermittedChanged*(self: View) {.signal.}
 

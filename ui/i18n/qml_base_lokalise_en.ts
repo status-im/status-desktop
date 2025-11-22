@@ -1504,11 +1504,6 @@
       <translation>WakuV2 options</translation>
     </message>
     <message>
-      <source>Enable creation of sharded communities</source>
-      <comment>AdvancedView</comment>
-      <translation>Enable creation of sharded communities</translation>
-    </message>
-    <message>
       <source>The account will be logged out. When you login again, the selected mode will be enabled</source>
       <comment>AdvancedView</comment>
       <translation>The account will be logged out. When you login again, the selected mode will be enabled</translation>
@@ -8068,29 +8063,6 @@
     </message>
   </context>
   <context>
-    <name>EditSettingsPanel</name>
-    <message>
-      <source>Community sharding</source>
-      <comment>EditSettingsPanel</comment>
-      <translation>Community sharding</translation>
-    </message>
-    <message>
-      <source>Active: on shard #%1</source>
-      <comment>EditSettingsPanel</comment>
-      <translation>Active: on shard #%1</translation>
-    </message>
-    <message>
-      <source>Manage</source>
-      <comment>EditSettingsPanel</comment>
-      <translation>Manage</translation>
-    </message>
-    <message>
-      <source>Make %1 a sharded community</source>
-      <comment>EditSettingsPanel</comment>
-      <translation>Make %1 a sharded community</translation>
-    </message>
-  </context>
-  <context>
     <name>EditSlippagePanel</name>
     <message>
       <source>Slippage tolerance</source>
@@ -8272,54 +8244,6 @@
       <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
       <comment>EnableMessageBackupPopup</comment>
       <translation>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</translation>
-    </message>
-  </context>
-  <context>
-    <name>EnableShardingPopup</name>
-    <message>
-      <source>Enable community sharding for %1</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Enable community sharding for %1</translation>
-    </message>
-    <message>
-      <source>Cancel</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Cancel</translation>
-    </message>
-    <message>
-      <source>Enable community sharding</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Enable community sharding</translation>
-    </message>
-    <message>
-      <source>Close</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Close</translation>
-    </message>
-    <message>
-      <source>Enter shard number</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Enter shard number</translation>
-    </message>
-    <message>
-      <source>Enter a number between 0 and 1023</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Enter a number between 0 and 1023</translation>
-    </message>
-    <message>
-      <source>Invalid shard number. Number must be 0 — 1023.</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Invalid shard number. Number must be 0 — 1023.</translation>
-    </message>
-    <message>
-      <source>Pub/Sub topic</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>Pub/Sub topic</translation>
-    </message>
-    <message>
-      <source>I have made a copy of the Pub/Sub topic and public key string</source>
-      <comment>EnableShardingPopup</comment>
-      <translation>I have made a copy of the Pub/Sub topic and public key string</translation>
     </message>
   </context>
   <context>
@@ -13067,44 +12991,6 @@
       <source>Your hidden assets will appear here</source>
       <comment>ManageHiddenPanel</comment>
       <translation>Your hidden assets will appear here</translation>
-    </message>
-  </context>
-  <context>
-    <name>ManageShardingPopup</name>
-    <message>
-      <source>Manage community sharding for %1</source>
-      <comment>ManageShardingPopup</comment>
-      <translation>Manage community sharding for %1</translation>
-    </message>
-    <message>
-      <source>Disable community sharding</source>
-      <comment>ManageShardingPopup</comment>
-      <translation>Disable community sharding</translation>
-    </message>
-    <message>
-      <source>Edit shard number</source>
-      <comment>ManageShardingPopup</comment>
-      <translation>Edit shard number</translation>
-    </message>
-    <message>
-      <source>Shard number</source>
-      <comment>ManageShardingPopup</comment>
-      <translation>Shard number</translation>
-    </message>
-    <message>
-      <source>Pub/Sub topic</source>
-      <comment>ManageShardingPopup</comment>
-      <translation>Pub/Sub topic</translation>
-    </message>
-    <message>
-      <source>Are you sure you want to disable sharding?</source>
-      <comment>ManageShardingPopup</comment>
-      <translation>Are you sure you want to disable sharding?</translation>
-    </message>
-    <message>
-      <source>Are you sure you want to disable community sharding? Your community will automatically revert to using the general shared Waku network.</source>
-      <comment>ManageShardingPopup</comment>
-      <translation>Are you sure you want to disable community sharding? Your community will automatically revert to using the general shared Waku network.</translation>
     </message>
   </context>
   <context>

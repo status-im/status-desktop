@@ -403,9 +403,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
     communityDetails.encrypted,
     communityTokensItems,
-    communityDetails.pubsubTopic,
-    communityDetails.pubsubTopicKey,
-    communityDetails.shard.index,
     activeMembersCount = int(communityDetails.activeMembersCount),
   )
 
@@ -1880,7 +1877,7 @@ proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) 
     self.view.emitDisplayUserProfileSignal(publicKey)
 
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, channelId: string,
-    url: string, userId: string, shard: Shard) =
+    url: string, userId: string) =
 
   case action:
     of StatusUrlAction.DisplayUserProfile:
@@ -1899,7 +1896,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
         # request community info and then spectate
         self.pendingSpectateRequest.communityId = communityId
         self.pendingSpectateRequest.channelUuid = ""
-        self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
+        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
         return
 
       self.controller.switchTo(communityId, "", "")
@@ -1911,7 +1908,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
       if item.isEmpty():
         self.pendingSpectateRequest.communityId = communityId
         self.pendingSpectateRequest.channelUuid = channelId
-        self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
+        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
         return
 
       self.controller.switchTo(communityId, chatId, "")
@@ -2062,14 +2059,14 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
     return
   if urlData.channel.uuid != "":
     self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, urlData.community.communityId, urlData.channel.uuid,
-      url="", userId="", urlData.community.shard)
+      url="", userId="")
     return
   if urlData.community.communityId != "":
-    self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, channelId="", url="", userId="", urlData.community.shard)
+    self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, channelId="", url="", userId="")
     return
   if urlData.contact.publicKey != "":
     self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, communityId="", channelId="", url="",
-      urlData.contact.publicKey, urlData.community.shard)
+      urlData.contact.publicKey)
     return
 
 method onDeactivateChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =

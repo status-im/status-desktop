@@ -369,17 +369,8 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
 method cancelRequestToJoinCommunity*(self: Module, communityId: string) =
   self.controller.cancelRequestToJoinCommunity(communityId)
 
-method requestCommunityInfo*(self: Module, communityId: string, shardCluster: int, shardIndex: int, importing: bool) =
-  let shard = Shard(
-    cluster: shardCluster,
-    index: shardIndex,
-  )
-  self.controller.requestCommunityInfo(communityId, shard, importing)
-
-method requestCommunityInfo*(self: Module, communityId: string, shard: Shard, importing: bool) =
-  let cluster = if shard == nil: -1 else: shard.cluster
-  let index = if shard == nil: -1 else: shard.index
-  self.requestCommunityInfo(communityId, cluster, index, importing)
+method requestCommunityInfo*(self: Module, communityId: string, importing: bool) =
+  self.controller.requestCommunityInfo(communityId, importing)
 
 method isUserMemberOfCommunity*(self: Module, communityId: string): bool =
   self.controller.isUserMemberOfCommunity(communityId)

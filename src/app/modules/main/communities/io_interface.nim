@@ -1,7 +1,6 @@
 import tables
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/chat/service as chat_service
-import app_service/common/types
 import ../../shared_models/section_item
 
 type
@@ -71,10 +70,7 @@ method isMyCommunityRequestPending*(self: AccessInterface, communityId: string):
 method cancelRequestToJoinCommunity*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestCommunityInfo*(self: AccessInterface, communityId: string, shardCluster: int, shardIndex: int, importing: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method requestCommunityInfo*(self: AccessInterface, communityId: string, shard: Shard, importing: bool) {.base.} =
+method requestCommunityInfo*(self: AccessInterface, communityId: string, importing: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method myRequestAdded*(self: AccessInterface) {.base.} =

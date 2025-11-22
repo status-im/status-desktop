@@ -247,11 +247,6 @@ StatusSectionLayout {
                 isControlNode: root.isControlNode
                 communitySettingsDisabled: root.communitySettingsDisabled
                 overviewChartData: rootStore.overviewChartData
-                shardingEnabled: !isAdmin && !isTokenMaster && localAppSettings.wakuV2ShardedCommunitiesEnabled
-                shardIndex: root.community.shardIndex
-                shardingInProgress: root.chatCommunitySectionModule.shardingInProgress
-                pubsubTopic: root.community.pubsubTopic
-                pubsubTopicKey: root.community.pubsubTopicKey
 
                 ownerToken: tokensModelChangesTracker.ownerToken
 
@@ -311,10 +306,6 @@ StatusSectionLayout {
                 onMintOwnerTokenClicked: {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
                     mintPanelLoader.item.openNewTokenForm(false/*Collectible owner token*/)
-                }
-
-                onShardIndexEdited: if (root.community.shardIndex !== shardIndex) {
-                    root.chatCommunitySectionModule.setCommunityShard(shardIndex)
                 }
             }
         }

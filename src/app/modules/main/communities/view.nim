@@ -555,8 +555,8 @@ QtObject:
   proc cancelRequestToJoinCommunity*(self: View, communityId: string) {.slot.} =
     self.delegate.cancelRequestToJoinCommunity(communityId)
 
-  proc requestCommunityInfo*(self: View, communityId: string, shardCluster: int, shardIndex: int, importing: bool) {.slot.} =
-    self.delegate.requestCommunityInfo(communityId, shardCluster, shardIndex, importing)
+  proc requestCommunityInfo*(self: View, communityId: string, importing: bool) {.slot.} =
+    self.delegate.requestCommunityInfo(communityId, importing)
 
   proc getCommunityDetails*(self: View, communityId: string): string {.slot.} =
     let communityItem = self.model.getItemById(communityId)

@@ -30,13 +30,6 @@ SplitView {
         logoImageData: communityEditor.image
         description: communityEditor.description
         bannerImageData: communityEditor.banner
-        shardingEnabled: communityEditor.shardingEnabled
-        shardIndex: communityEditor.shardIndex
-        onShardIndexEdited: {
-            panel.shardingInProgress = true
-            communityEditor.shardIndex = shardIndex
-            panel.shardingInProgress = false
-        }
     }
 
     ScrollView {

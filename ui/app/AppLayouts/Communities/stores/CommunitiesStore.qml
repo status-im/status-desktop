@@ -89,10 +89,10 @@ QtObject {
         return root.communitiesModuleInst.getCommunityPublicKeyFromPrivateKey(privateKey);
     }
 
-    function requestCommunityInfo(communityPubKey, shardCluster, shardIndex, importing = false) {
+    function requestCommunityInfo(communityPubKey, importing = false) {
         if (importing)
             root.mainModuleInst.setCommunityIdToSpectate(communityPubKey)
-        root.communitiesModuleInst.requestCommunityInfo(communityPubKey, shardCluster, shardIndex, importing)
+        root.communitiesModuleInst.requestCommunityInfo(communityPubKey, importing)
     }
 
     property var communitiesList: communitiesModuleInst.model

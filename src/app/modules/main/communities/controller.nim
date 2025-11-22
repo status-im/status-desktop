@@ -11,7 +11,6 @@ import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/keycard/service as keycard_service
-import app_service/common/types
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 import app_service/service/network/network_item
 import ../../../../backend/general as status_general
@@ -321,8 +320,8 @@ proc reorderCommunityChat*(
 proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
   return self.chatService.getChatsByIds(chatIds)
 
-proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard, importing: bool) =
-  self.communityService.requestCommunityInfo(communityId, shard, importing)
+proc requestCommunityInfo*(self: Controller, communityId: string, importing: bool) =
+  self.communityService.requestCommunityInfo(communityId, importing)
 
 proc setCommunityMuted*(self: Controller, communityId: string, mutedType: int) =
   self.communityService.setCommunityMuted(communityId, mutedType)

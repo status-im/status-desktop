@@ -54,13 +54,11 @@ type
     communityId: string
     importing: bool
     tryDatabase: bool
-    shardCluster: int
-    shardIndex: int
 
 proc asyncRequestCommunityInfoTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestCommunityInfoTaskArg](argEncoded)
   try:
-    let response = status_go.requestCommunityInfo(arg.communityId, arg.tryDatabase, arg.shardCluster, arg.shardIndex)
+    let response = status_go.requestCommunityInfo(arg.communityId, arg.tryDatabase)
     arg.finish(%* {
       "communityId": arg.communityId,
       "importing": arg.importing,
@@ -271,26 +269,6 @@ proc asyncReevaluateCommunityMembersPermissionsTask(argEncoded: string) {.gcsafe
   let arg = decode[AsyncReevaluateCommunityMembersPermissionsArg](argEncoded)
   try:
     let response = status_go.reevaluateCommunityMembersPermissions(arg.communityId)
-    arg.finish(%* {
-      "communityId": arg.communityId,
-      "response": response,
-      "error": "",
-    })
-  except Exception as e:
-    arg.finish(%* {
-      "communityId": arg.communityId,
-      "error": e.msg,
-    })
-
-type
-  AsyncSetCommunityShardArg = ref object of QObjectTaskArg
-    communityId: string
-    shardIndex: int
-
-proc asyncSetCommunityShardTask(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncSetCommunityShardArg](argEncoded)
-  try:
-    let response = status_go.setCommunityShard(arg.communityId, arg.shardIndex)
     arg.finish(%* {
       "communityId": arg.communityId,
       "response": response,

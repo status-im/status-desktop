@@ -13,8 +13,6 @@ const DEFAULT_SCROLL_VELOCITY = 0 # unset
 const DEFAULT_SCROLL_DECELERATION = 0 # unset
 const LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED = "global/custom_mouse_scroll_enabled"
 const DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED = false
-const LAS_KEY_SHARDED_COMMUNITIES_ENABLED = "global/sharded_communities"
-const DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED = false
 const LAS_KEY_TRANSLATIONS_ENABLED = "global/translations_enabled"
 const DEFAULT_LAS_KEY_TRANSLATIONS_ENABLED = true
 const LAS_KEY_REFRESH_TOKEN_ENABLED = "global/refresh_token_enabled"
@@ -140,19 +138,6 @@ QtObject:
     write = setRefreshTokenEnabled
     notify = refreshTokenEnabledChanged
 
-  proc wakuV2ShardedCommunitiesEnabledChanged*(self: LocalAppSettings) {.signal.}
-  proc getWakuV2ShardedCommunitiesEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_SHARDED_COMMUNITIES_ENABLED, newQVariant(DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED)).boolVal
-
-  proc setWakuV2ShardedCommunitiesEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
-    self.settings.setValue(LAS_KEY_SHARDED_COMMUNITIES_ENABLED, newQVariant(enabled))
-    self.wakuV2ShardedCommunitiesEnabledChanged()
-
-  QtProperty[bool] wakuV2ShardedCommunitiesEnabled:
-    read = getWakuV2ShardedCommunitiesEnabled
-    write = setWakuV2ShardedCommunitiesEnabled
-    notify = wakuV2ShardedCommunitiesEnabledChanged
-
   proc translationsEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getTranslationsEnabled*(self: LocalAppSettings): bool {.slot.} =
     self.settings.value(LAS_KEY_TRANSLATIONS_ENABLED, newQVariant(DEFAULT_LAS_KEY_TRANSLATIONS_ENABLED)).boolVal
@@ -180,7 +165,6 @@ QtObject:
       of LAS_KEY_SCROLL_VELOCITY: self.scrollVelocityChanged()
       of LAS_KEY_SCROLL_DECELERATION: self.scrollDecelerationChanged()
       of LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED: self.isCustomMouseScrollingEnabledChanged()
-      of LAS_KEY_SHARDED_COMMUNITIES_ENABLED: self.wakuV2ShardedCommunitiesEnabledChanged()
       of LAS_KEY_TRANSLATIONS_ENABLED: self.translationsEnabledChanged()
 
   proc getWalletConnectProjectID*(self: LocalAppSettings): string {.slot.} =

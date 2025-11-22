@@ -240,9 +240,9 @@ proc getCommunityDetails*(self: Controller): CommunityDto =
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
 
-proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard, useDatabase: bool,
+proc requestCommunityInfo*(self: Controller, communityId: string, useDatabase: bool,
     requiredTimeSinceLastRequest: Duration) =
-  self.communityService.requestCommunityInfo(communityId, shard, importing = false,
+  self.communityService.requestCommunityInfo(communityId, importing = false,
     useDatabase, requiredTimeSinceLastRequest)
 
 proc getOneToOneChatNameAndImage*(self: Controller):

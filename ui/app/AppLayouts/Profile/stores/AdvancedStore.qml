@@ -14,7 +14,6 @@ QtObject {
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
     property bool isNimbusProxyEnabled: advancedModule? advancedModule.isNimbusProxyEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
-    readonly property bool isWakuV2ShardedCommunitiesEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
     property bool isRuntimeLogLevelSet: advancedModule ? advancedModule.isRuntimeLogLevelSet: false
     readonly property bool archiveProtocolEnabled: advancedModule ? advancedModule.archiveProtocolEnabled : false
@@ -150,13 +149,6 @@ QtObject {
 
     function toggleManageCommunityOnTestnet() {
         root.isManageCommunityOnTestModeEnabled = !root.isManageCommunityOnTestModeEnabled
-    }
-
-    function toggleWakuV2ShardedCommunities() {
-        if(!localAppSettings)
-            return
-
-        localAppSettings.wakuV2ShardedCommunitiesEnabled = !localAppSettings.wakuV2ShardedCommunitiesEnabled
     }
 
     function toggleRefreshTokenEnabled() {

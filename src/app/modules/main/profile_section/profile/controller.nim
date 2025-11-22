@@ -94,8 +94,8 @@ proc getProfileShowcaseSocialLinksLimit*(self: Controller): int =
 proc getProfileShowcaseEntriesLimit*(self: Controller): int =
   self.profileService.getProfileShowcaseEntriesLimit()
 
-proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard) =
-  self.communityService.requestCommunityInfo(communityId, shard)
+proc requestCommunityInfo*(self: Controller, communityId: string) =
+  self.communityService.requestCommunityInfo(communityId)
 
 proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
   self.tokenService.getTokenBySymbolList()

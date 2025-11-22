@@ -1537,12 +1537,6 @@ method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
 method onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Module) =
   self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(true)
 
-method setCommunityShard*(self: Module, shardIndex: int) =
-  self.controller.setCommunityShard(shardIndex)
-
-method setShardingInProgress*(self: Module, value: bool) =
-  self.view.setShardingInProgress(value)
-
 method loadCommunityMemberMessages*(self: Module, communityId: string, memberPubKey: string) =
   self.view.getMemberMessagesModel().clear()
   self.controller.loadCommunityMemberMessages(communityId, memberPubKey)
