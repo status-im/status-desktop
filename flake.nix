@@ -16,8 +16,8 @@
   };
 
   inputs = {
-    # Use a recent nixpkgs for most dependencies
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Use nixpkgs with Qt 6.9.2 (commit from August 27, 2025)
+    nixpkgs.url = "github:NixOS/nixpkgs/5c99d67b8618876563e7b9eacf7567cc62aeb7fd";
   };
 
   outputs = { self, nixpkgs }:
@@ -34,77 +34,7 @@
     let
       pkgs = nixpkgsFor.${system};
 
-      # Qt version from CI Dockerfile
-      qtVersion = "6.9.2";
-      qtModules = "qtwebchannel qtwebview qtwebsockets qt5compat qtmultimedia qtwebengine qtpositioning qtserialport qtshadertools qtimageformats qtscxml qthttpserver";
-
-      # Install Qt 6.9.2 using aqtinstall (same as CI Dockerfile)
-      qt6-custom = pkgs.stdenv.mkDerivation {
-        pname = "qt6-custom";
-        version = qtVersion;
-
-        src = pkgs.emptyDirectory;
-
-        nativeBuildInputs = with pkgs; [
-          python3
-          python3Packages.pip
-          python3Packages.setuptools
-        ];
-
-        buildInputs = with pkgs; [
-          # Dependencies required by Qt
-          libglvnd
-          fontconfig
-          freetype
-          libxkbcommon
-          dbus
-          glib
-          xorg.libX11
-          xorg.libxcb
-          xorg.libXext
-          xorg.libXrender
-          xorg.libXi
-          xorg.libXcursor
-          xorg.libXrandr
-          xorg.libXcomposite
-        ];
-
-        buildPhase = ''
-          export HOME=$TMPDIR
-          python3 -m pip install --prefix=$out aqtinstall
-
-          mkdir -p $out/qt
-          $out/bin/aqt install-qt linux desktop ${qtVersion} linux_gcc_64 \
-            -m ${qtModules} \
-            -O $out/qt \
-            --timeout 3000
-        '';
-
-        installPhase = ''
-          # Qt is already installed in $out/qt during buildPhase
-          # Create a wrapper script to set Qt paths
-          mkdir -p $out/bin
-
-          # Symlink qt binaries
-          if [ -d "$out/qt/${qtVersion}/gcc_64/bin" ]; then
-            for bin in $out/qt/${qtVersion}/gcc_64/bin/*; do
-              if [ -f "$bin" ]; then
-                ln -sf "$bin" "$out/bin/$(basename $bin)"
-              fi
-            done
-          fi
-        '';
-
-        # Skip phases we don't need
-        dontConfigure = true;
-        dontFixup = false;
-
-        meta = with pkgs.lib; {
-          description = "Qt ${qtVersion} installed via aqtinstall";
-          platforms = platforms.linux;
-        };
-      };
-    
+      # Golang 1.24.7 (matching Dockerfile)
       go_1_24 = pkgs.go_1_24 or pkgs.go_1_23;	
 
       # Build dependencies matching CI/Dockerfile
@@ -121,8 +51,24 @@
         curl
         jq
 
-        # Qt 6.9.2 (custom installation)
-        qt6-custom
+        # Qt 6 and required modules (from nixpkgs)
+        qt6.full
+        qt6.qtbase
+        qt6.qtdeclarative
+        qt6.qtquickcontrols2
+        qt6.qtsvg
+        qt6.qtmultimedia
+        qt6.qtwebview
+        qt6.qtwebchannel
+        qt6.qtwebengine
+        qt6.qtwebsockets
+        qt6.qt5compat
+        qt6.qtpositioning
+        qt6.qtserialport
+        qt6.qtshadertools
+        qt6.qtimageformats
+        qt6.qtscxml
+        qt6.qthttpserver
 
         # Go toolchain - version 1.24.7 from Dockerfile
         go_1_24
@@ -265,7 +211,7 @@
           echo "Status Desktop Development Environment"
           echo "======================================"
           echo ""
-          echo "Qt version: ${qtVersion}"
+          echo "Qt version: $(qmake -query QT_VERSION)"
           echo "Go version: $(${go_1_24}/bin/go version)"
           echo "CMake version: $(${pkgs.cmake}/bin/cmake --version | head -n1)"
           echo "GCC version: $(${pkgs.gcc13}/bin/gcc --version | head -n1)"
@@ -278,17 +224,12 @@
           echo "  make pkg-linux      - Build AppImage package"
           echo ""
 
-          # Set Qt environment (matching CI setup)
-          export QT_VERSION="${qtVersion}"
-          export QT_PLATFORM="gcc_64"
-          export QT_PATH="${qt6-custom}/qt"
-          export QTDIR="$QT_PATH/$QT_VERSION/$QT_PLATFORM"
+          # Set Qt environment
+          export QTDIR="${pkgs.qt6.qtbase}"
+          export QT_PLUGIN_PATH="${pkgs.qt6.qtbase}/${pkgs.qt6.qtbase.qtPluginPrefix}"
+          export QML2_IMPORT_PATH="${pkgs.qt6.qtbase}/${pkgs.qt6.qtbase.qtQmlPrefix}"
 
-          # Qt binary paths (including libexec for Qt6 rcc)
-          export PATH="$QTDIR/bin:$QTDIR/libexec:$PATH"
-          export LD_LIBRARY_PATH="$QTDIR/lib:$LD_LIBRARY_PATH"
-
-          # Set qmake spec (matching CI)
+          # Set qmake spec
           export QMAKESPEC="linux-g++"
 
           # Disable Qt disk cache to avoid stale cache issues (from CI)
