@@ -291,6 +291,37 @@ QtObject:
     self.setOwnershipVerified(item.getOwnershipVerified())
     self.setLastAccountAsObservedAccount()
 
+  proc update*(self: KeyPairItem, other: KeyPairItem) =
+    ## Update this KeyPairItem from another, calling setters for changed properties
+    ## This ensures proper signal emission for fine-grained QML updates (Pattern 5)
+    if self.isNil or other.isNil: return
+    
+    if self.keyUid != other.keyUid:
+      self.setKeyUid(other.keyUid)
+    if self.pubKey != other.pubKey:
+      self.setPubKey(other.pubKey)
+    if self.locked != other.locked:
+      self.setLocked(other.locked)
+    if self.name != other.name:
+      self.setName(other.name)
+    if self.image != other.image:
+      self.setImage(other.image)
+    if self.icon != other.icon:
+      self.setIcon(other.icon)
+    if self.pairType != other.pairType:
+      self.setPairType(other.pairType.int)
+    if self.derivedFrom != other.derivedFrom:
+      self.setDerivedFrom(other.derivedFrom)
+    if self.lastUsedDerivationIndex != other.lastUsedDerivationIndex:
+      self.setLastUsedDerivationIndex(other.lastUsedDerivationIndex)
+    if self.migratedToKeycard != other.migratedToKeycard:
+      self.setMigratedToKeycard(other.migratedToKeycard)
+    if self.syncedFrom != other.syncedFrom:
+      self.setSyncedFrom(other.syncedFrom)
+    if self.ownershipVerified != other.ownershipVerified:
+      self.setOwnershipVerified(other.ownershipVerified)
+    # Note: accounts (nested model) would be handled by model_sync's afterItemSync if needed
+  
   proc delete*(self: KeyPairItem) =
     self.QObject.delete
 

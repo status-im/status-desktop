@@ -1,6 +1,9 @@
 import nimqml, tables, strutils, sequtils, stint
 
 import ./io_interface
+import app/core/cow_seq  # For CowSeq.len and [] access
+import app/modules/shared/model_sync  # For efficient granular updates
+import app_service/service/wallet_account/dto/account_token_item  # For BalanceItem
 
 type
   ModelRole {.pure.} = enum
@@ -12,6 +15,7 @@ QtObject:
   type BalancesModel* = ref object of QAbstractListModel
     delegate: io_interface.GroupedAccountAssetsDataSource
     index: int
+    # No cache! Reads directly from delegate (parent's cached CowSeq)
 
   proc setup(self: BalancesModel)
   proc delete(self: BalancesModel)
@@ -22,9 +26,10 @@ QtObject:
     result.index = index
 
   method rowCount(self: BalancesModel, index: QModelIndex = nil): int =
-    if self.index < 0 or self.index >= self.delegate.getGroupedAccountsAssetsList().len:
+    let data = self.delegate.getGroupedAccountsAssetsList()
+    if self.index < 0 or self.index >= data.len:
       return 0
-    return self.delegate.getGroupedAccountsAssetsList()[self.index].balancesPerAccount.len
+    return data[self.index].balancesPerAccount.len
 
   proc countChanged(self: BalancesModel) {.signal.}
   proc getCount(self: BalancesModel): int {.slot.} =
@@ -43,10 +48,16 @@ QtObject:
   method data(self: BalancesModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if self.index < 0 or self.index >= self.delegate.getGroupedAccountsAssetsList().len or
-      index.row < 0 or index.row >= self.delegate.getGroupedAccountsAssetsList()[self.index].balancesPerAccount.len:
+    
+    let data = self.delegate.getGroupedAccountsAssetsList()
+    if self.index < 0 or self.index >= data.len:
       return
-    let item = self.delegate.getGroupedAccountsAssetsList()[self.index].balancesPerAccount[index.row]
+    
+    let balances = data[self.index].balancesPerAccount
+    if index.row < 0 or index.row >= balances.len:
+      return
+    
+    let item = balances[index.row]
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.ChainId:
@@ -55,6 +66,26 @@ QtObject:
         result = newQVariant(item.balance.toString(10))
       of ModelRole.Account:
         result = newQVariant(item.account)
+  
+  proc update*(self: BalancesModel, oldBalances: seq[BalanceItem], newBalances: seq[BalanceItem]) =
+    ## Update balances using granular model updates
+    ## Diffs old vs new balances (doesn't cache - reads from delegate)
+    
+    # Temporary var just for diffing (setItemsWithSync mutates it)
+    var tempOldBalances = oldBalances
+    setItemsWithSync(
+      self,
+      tempOldBalances,  # Temporary - only used for diffing
+      newBalances,
+      getId = proc(item: BalanceItem): string = item.account & "-" & $item.chainId,
+      getRoles = proc(oldItem, newItem: BalanceItem): seq[int] =
+        var roles: seq[int] = @[]
+        if oldItem.balance != newItem.balance:
+          roles.add(ModelRole.Balance.int)
+        return roles,
+      countChanged = proc() = self.countChanged(),
+      useBulkOps = true
+    )
 
   proc setup(self: BalancesModel) =
     self.QAbstractListModel.setup

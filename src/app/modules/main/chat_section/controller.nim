@@ -722,18 +722,18 @@ proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
   return self.walletAccountService.allAccountsTokenBalance(symbol)
 
 proc getTokenDecimals*(self: Controller, symbol: string): int =
-  let asset = self.tokenService.findTokenBySymbol(symbol)
-  if asset != nil:
-    return asset.decimals
+  let assetOpt = self.tokenService.findTokenBySymbol(symbol)
+  if assetOpt.isSome:
+    return assetOpt.get().decimals
   return 0
 
 # find addresses by tokenKey from UI
 # tokenKey can be: symbol for ERC20, or chain+address[+tokenId] for ERC721
 proc getContractAddressesForToken*(self: Controller, tokenKey: string): Table[int, string] =
   var contractAddresses = initTable[int, string]()
-  let token = self.tokenService.findTokenBySymbol(tokenKey)
-  if token != nil:
-    for addrPerChain in token.addressPerChainId:
+  let tokenOpt = self.tokenService.findTokenBySymbol(tokenKey)
+  if tokenOpt.isSome:
+    for addrPerChain in tokenOpt.get().addressPerChainId:
       # depending on areTestNetworksEnabled (in getNetworkByChainId), contractAddresses will
       # contain mainnets or testnets only
       let network = self.networkService.getNetworkByChainId(addrPerChain.chainId)

@@ -159,6 +159,30 @@ QtObject:
     self.setDetailsLoaded(item.getDetailsLoaded())
     self.setErrorInScanningActivity(item.getErrorInScanningActivity())
 
+  proc update*(self: DerivedAddressItem, other: DerivedAddressItem) =
+    ## Update this DerivedAddressItem from another, calling setters for changed properties
+    ## This ensures proper signal emission for fine-grained QML updates (Pattern 5)
+    if self.isNil or other.isNil: return
+    
+    if self.order != other.order:
+      self.setOrder(other.order)
+    if self.address != other.address:
+      self.setAddress(other.address)
+    if self.publicKey != other.publicKey:
+      self.setPublicKey(other.publicKey)
+    if self.path != other.path:
+      self.setPath(other.path)
+    if self.alreadyCreated != other.alreadyCreated:
+      self.setAlreadyCreated(other.alreadyCreated)
+    if self.hasActivity != other.hasActivity:
+      self.setHasActivity(other.hasActivity)
+    if self.alreadyCreatedChecked != other.alreadyCreatedChecked:
+      self.setAlreadyCreatedChecked(other.alreadyCreatedChecked)
+    if self.detailsLoaded != other.detailsLoaded:
+      self.setDetailsLoaded(other.detailsLoaded)
+    if self.errorInScanningActivity != other.errorInScanningActivity:
+      self.setErrorInScanningActivity(other.errorInScanningActivity)
+  
   proc delete*(self: DerivedAddressItem) =
     self.QObject.delete
 

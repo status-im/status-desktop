@@ -1,8 +1,8 @@
-  proc storeWatchOnlyAccount(self: Service, account: WalletAccountDto) =
-    if self.watchOnlyAccounts.hasKey(account.address):
-      error "trying to store an already existing watch only account"
-      return
-    self.watchOnlyAccounts[account.address] = account
+proc storeWatchOnlyAccount(self: Service, account: WalletAccountDto) =
+  if self.watchOnlyAccounts.hasKey(account.address):
+    error "trying to store an already existing watch only account"
+    return
+  self.watchOnlyAccounts[account.address] = account
 
 proc storeKeypair(self: Service, keypair: KeypairDto) =
   if keypair.keyUid.len == 0:

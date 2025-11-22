@@ -1,6 +1,7 @@
 import nimqml, tables, strutils
 
 import ./io_interface
+import app/core/cow_seq
 
 type
   ModelRole {.pure.} = enum

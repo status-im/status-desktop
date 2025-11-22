@@ -17,6 +17,7 @@ import dto/derived_address_dto as derived_address_dto
 import app/core/eventemitter
 import app/core/signals/types
 import app/core/tasks/[qt, threadpool]
+import app/core/cow_seq
 import backend/accounts as status_go_accounts
 import backend/backend as backend
 import backend/network as status_go_network
@@ -47,7 +48,7 @@ QtObject:
     watchOnlyAccounts: Table[string, WalletAccountDto] ## [address, WalletAccountDto]
     keypairs: Table[string, KeypairDto] ## [keyUid, KeypairDto]
     groupedAccountsTokensTable: Table[string, GroupedTokenItem]
-    groupedAccountsTokensList: seq[GroupedTokenItem]
+    groupedAccountsTokensList: CowSeq[GroupedTokenItem]  # CoW for efficient model updates
     hasBalanceCache: bool
     fetchingBalancesInProgress: bool
     addressesWaitingForBalanceToFetch: seq[string]
@@ -91,6 +92,7 @@ QtObject:
     result.tokenService = tokenService
     result.networkService = networkService
     result.currencyService = currencyService
+    result.groupedAccountsTokensList = newCowSeq[GroupedTokenItem]()
 
   proc isChecksumValidForAddress*(self: Service, address: string): bool =
     var updated = false
@@ -103,10 +105,10 @@ QtObject:
       error "error: ", procName="isChecksumValidForAddress", errName=e.name, errDesription=e.msg
 
 
+  proc delete*(self: Service) =
+    self.QObject.delete
+
   include service_account
   include service_token
   include service_keycard
-
-  proc delete*(self: Service) =
-    self.QObject.delete
 

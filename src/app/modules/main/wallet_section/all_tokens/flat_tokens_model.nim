@@ -1,6 +1,9 @@
 import nimqml, tables, strutils
 
 import ./io_interface, ./market_details_item
+import app/core/cow_seq
+import app/modules/shared/model_sync
+import app_service/service/token/service_items
 
 const SOURCES_DELIMITER = ";"
 
@@ -38,6 +41,7 @@ QtObject:
   type FlatTokensModel* = ref object of QAbstractListModel
     delegate: io_interface.FlatTokenModelDataSource
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource
+    items: CowSeq[TokenItem]  # Cached CoW - prevents delegate from changing model data
     tokenMarketDetails: seq[MarketDetailsItem]
 
   proc setup(self: FlatTokensModel)
@@ -53,11 +57,11 @@ QtObject:
     result.tokenMarketDetails = @[]
 
   method rowCount(self: FlatTokensModel, index: QModelIndex = nil): int =
-    return self.delegate.getFlatTokensList().len
+    return self.items.len
 
   proc countChanged(self: FlatTokensModel) {.signal.}
   proc getCount(self: FlatTokensModel): int {.slot.} =
-    return self.rowCount()
+    return self.items.len
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -86,10 +90,10 @@ QtObject:
   method data(self: FlatTokensModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if index.row < 0 or index.row >= self.rowCount() or index.row >= self.tokenMarketDetails.len:
+    if index.row < 0 or index.row >= self.items.len or index.row >= self.tokenMarketDetails.len:
       return
-    # the only way to read items from service is by this single method getFlatTokensList
-    let item = self.delegate.getFlatTokensList()[index.row]
+    # Read from cached CoW
+    let item = self.items[index.row]
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.Key:
@@ -134,29 +138,48 @@ QtObject:
         result = newQVariant(self.delegate.getTokenPreferences(item.symbol).position)
 
   proc modelsUpdated*(self: FlatTokensModel) =
-    self.beginResetModel()
-    self.tokenMarketDetails = @[]
-    for token in self.delegate.getFlatTokensList():
-      let symbol = if token.communityId.isEmptyOrWhitespace: token.symbol
-                   else: ""
-      self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, symbol))
-    self.endResetModel()
+    # Get new CoW from delegate (O(1) copy via refcount++)
+    let newItemsCow = self.delegate.getFlatTokensList()
+    
+    # Convert to seq for diffing (temporary)
+    var oldItems = self.items.asSeq()
+    let newItems = newItemsCow.asSeq()
+    
+    # Diff and emit granular signals
+    setItemsWithSync(
+      self,
+      oldItems,  # Will be mutated by setItemsWithSync
+      newItems,
+      getId = proc(item: TokenItem): string = item.key,
+      # No getRoles needed - nested models will handle their own updates
+      countChanged = proc() = self.countChanged(),
+      useBulkOps = true,
+      afterItemSync = proc(oldItem: TokenItem, newItem: var TokenItem, idx: int) =
+        # Ensure nested market details exist for this token
+        while self.tokenMarketDetails.len <= idx:
+          let symbol = if newItem.communityId.isEmptyOrWhitespace: newItem.symbol else: ""
+          self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, symbol))
+    )
+    
+    # Cache new CoW (O(1) - just increments refcount)
+    self.items = newItemsCow
 
   proc marketDetailsDataChanged(self: FlatTokensModel) =
-    if self.delegate.getFlatTokensList().len > 0:
+    if self.items.len > 0:
       for marketDetails in self.tokenMarketDetails:
         marketDetails.update()
 
   proc tokensMarketValuesUpdated*(self: FlatTokensModel) =
-    self.marketDetailsDataChanged()
+    if not self.delegate.getTokensMarketValuesLoading():
+      self.marketDetailsDataChanged()
 
   proc tokensMarketValuesAboutToUpdate*(self: FlatTokensModel) =
     self.marketDetailsDataChanged()
 
   proc detailsDataChanged(self: FlatTokensModel) =
-    if self.delegate.getFlatTokensList().len > 0:
+    if self.items.len > 0:
       let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
+      let lastindex = self.createIndex(self.items.len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
@@ -172,15 +195,16 @@ QtObject:
       marketDetails.updateCurrencyFormat()
 
   proc tokenPreferencesUpdated*(self: FlatTokensModel) =
-    if self.delegate.getFlatTokensList().len > 0:
+    if self.items.len > 0:
       let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
+      let lastindex = self.createIndex(self.items.len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])
 
   proc setup(self: FlatTokensModel) =
     self.QAbstractListModel.setup
+    self.items = newCowSeq[TokenItem]()  # Initialize with empty CowSeq
 
   proc delete(self: FlatTokensModel) =
     self.QAbstractListModel.delete
