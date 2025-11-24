@@ -8,7 +8,6 @@ import StatusQ.Controls
 import StatusQ.Popups
 import StatusQ.Popups.Dialog
 import StatusQ.Controls.Validators
-import StatusQ.Core.Utils as StatusQUtils
 
 import utils
 
@@ -40,8 +39,7 @@ StatusModal {
         enabled: popup.opened
         target: emojiPopup
         function onEmojiSelected(emojiText: string, atCursor: bool) {
-            let emoji = StatusQUtils.Emoji.deparse(emojiText)
-            popup.contentItem.accountNameInput.input.asset.emoji = emoji
+            popup.contentItem.accountNameInput.input.asset.emoji = emojiText
         }
     }
 

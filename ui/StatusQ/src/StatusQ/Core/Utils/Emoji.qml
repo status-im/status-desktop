@@ -15,10 +15,6 @@ QtObject {
         "small": "18x18",
         "verySmall": "16x16"
     }
-    readonly property var format: {
-        "png": "png",
-        "svg": "svg"
-    }
     readonly property string base: Qt.resolvedUrl("../../../assets/twemoji/svg/")
     property var emojiJSON: EmojiJSON
 

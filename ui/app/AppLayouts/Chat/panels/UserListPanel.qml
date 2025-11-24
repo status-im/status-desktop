@@ -152,7 +152,6 @@ Item {
                         userIcon: model.icon,
                         trustStatus: model.trustStatus,
                         onlineStatus: model.onlineStatus,
-                        ensVerified: model.isEnsVerified,
                         hasLocalNickname: !!model.localNickname,
                         usesDefaultName: model.usesDefaultName,
                         chatType: root.chatType,
@@ -196,7 +195,7 @@ Item {
         ProfileContextMenu {
             property string pubKey
 
-            margins: 8
+            margins: Theme.halfPadding
 
             onOpenProfileClicked: root.openProfileRequested(pubKey)
             onCreateOneToOneChat: root.createOneToOneChatRequested(pubKey)

@@ -26,8 +26,8 @@ Rectangle {
     StatusEmoji {
         id: statusEmoji
         anchors.centerIn: parent
-        width: Theme.fontSize20
-        height: Theme.fontSize20
+        width: Theme.fontSize24
+        height: Theme.fontSize24
         emojiId: root.emojiId
     }
 

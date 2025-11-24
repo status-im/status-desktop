@@ -23,11 +23,11 @@ SplitView {
         readonly property var reactionsModels: ReactionsModels {}
 
         readonly property var messageWithThreeReactions: [{
-            timestamp: 1667937830123,
+            timestamp: new Date().valueOf(),
             senderId: "zq123456790",
             senderDisplayName: "Alice",
             contentType: StatusMessage.ContentType.Text,
-            message: "This message has 3 reactions",
+            message: "This message has 3 reactions and should have current timestamp",
             isContact: true,
             isAReply: false,
             trustIndicator: StatusContactVerificationIcons.TrustedType.None,
@@ -39,7 +39,7 @@ SplitView {
             senderId: "zq123456790",
             senderDisplayName: "Alice",
             contentType: StatusMessage.ContentType.Text,
-            message: "This message has 20 reactions",
+            message: "This message has 20 reactions (max)",
             isContact: true,
             isAReply: false,
             trustIndicator: StatusContactVerificationIcons.TrustedType.None,
@@ -265,19 +265,20 @@ SplitView {
                         sender.isEnsVerified: isEnsVerified
                         sender.profileImage {
                             name: model.profileImage || ""
-                            colorId: index
+                            colorId: index % Theme.palette.userCustomizationColors.length
                         }
                         album: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum : []
                         albumCount: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum.length : 0
                     }
 
                     replyDetails {
-                        amISender: true
+                        amISender: index % 2
                         sender.id: "0xdeadbeef"
+                        sender.displayName: "Foobar"
                         sender.profileImage {
                             width: 20
                             height: 20
-                            name: ModelsData.icons.dribble
+                            name: index % 2 ? ModelsData.icons.dribble : ModelsData.icons.socks
                         }
                         messageText: ModelsData.descriptions.mediumLoremIpsum
                     }
@@ -289,6 +290,8 @@ SplitView {
                     onResendClicked: logs.logEvent("StatusMessage::resendClicked")
                     onLinkActivated: logs.logEvent("StatusMessage::linkActivated", ["link"], arguments)
                     onImageClicked: logs.logEvent("StatusMessage::imageClicked")
+                    onAddReactionClicked: logs.logEvent("StatusMessage::addReactionClicked")
+                    onToggleReactionClicked: logs.logEvent("StatusMessage::toggleReactionClicked", ["hexcode"], arguments)
                 }
             }
         }

@@ -102,7 +102,6 @@ Control {
     signal linkActivated(string link)
 
     signal hoverChanged(string messageId, bool hovered)
-    signal activeChanged(string messageId, bool active)
 
     function startMessageFoundAnimation() {
         messageFoundAnimation.restart();
@@ -216,16 +215,16 @@ Control {
                     objectName: "StatusMessage_replyDetails"
                     replyDetails: root.replyDetails
                     profileClickable: root.profileClickable
-                    onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
-                    onMessageClicked: root.replyMessageClicked(mouse)
+                    onReplyProfileClicked: (sender, mouse) => root.replyProfileClicked(sender, mouse)
+                    onMessageClicked: mouse => root.replyMessageClicked(mouse)
                 }
             }
 
             RowLayout {
                 Layout.fillWidth: true
-                Layout.leftMargin: 16
-                Layout.rightMargin: 16
-                spacing: 8
+                Layout.leftMargin: Theme.padding
+                Layout.rightMargin: Theme.padding
+                spacing: Theme.halfPadding
 
                 StatusUserImage {
                     id: profileImage
@@ -290,9 +289,7 @@ Control {
                             highlightedLink: root.highlightedLink
                             linkAddressAndEnsName: root.linkAddressAndEnsName
                             disabledTooltipText: root.disabledTooltipText
-                            onLinkActivated: {
-                                root.linkActivated(link);
-                            }
+                            onLinkActivated: link => root.linkActivated(link)
                             textField.onHoveredLinkChanged: {
                                 root.hoveredLink = hoveredLink;
                             }
@@ -305,7 +302,7 @@ Control {
 
                         sourceComponent: Column {
                             id: imagesColumn
-                            spacing: 8
+                            spacing: Theme.halfPadding
                             Loader {
                                 active: root.messageDetails.messageText !== ""
                                 anchors.left: parent.left
@@ -318,9 +315,7 @@ Control {
                                     allowShowMore: !root.isInPinnedPopup
                                     textField.anchors.rightMargin: root.isInPinnedPopup ? Theme.xlPadding : 0 // margin for the "Unpin" floating button
                                     highlightedLink: root.highlightedLink
-                                    onLinkActivated: {
-                                        root.linkActivated(link);
-                                    }
+                                    onLinkActivated: link => root.linkActivated(link)
                                 }
                             }
 
@@ -349,7 +344,7 @@ Control {
                                 model: attachmentsModel
                                 delegate: StatusImageMessage {
                                     source: model.source
-                                    onClicked: root.imageClicked(image, mouse, imageSource)
+                                    onClicked: (image, mouse, imageSource) => root.imageClicked(image, mouse, imageSource)
                                     shapeType: StatusImageMessage.ShapeType.LEFT_ROUNDED
                                 }
                             }
@@ -404,7 +399,6 @@ Control {
 
                             onHoverChanged: (hovered) => root.hoverChanged(messageId, hovered)
 
-                            isCurrentUser: root.messageDetails.amISender
                             onAddEmojiClicked: (sender, mouse) => root.addReactionClicked(sender, mouse)
                             onToggleReaction: (hexcode) => root.toggleReactionClicked(hexcode)
                         }
@@ -413,8 +407,11 @@ Control {
             }
         }
 
+        // TODO remove me completely? literally the same as MessageContextMenuView, and overlaps the message text
         Loader {
             active: root.hovered && root.quickActions.length > 0
+                    && !Utils.isMobile // hover menu disabled on mobile; we use the MessageContextMenuView
+            visible: active
             anchors.right: parent.right
             anchors.rightMargin: Theme.padding
             anchors.top: parent.top

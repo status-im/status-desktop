@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import StatusQ.Core
 import StatusQ.Core.Theme
@@ -10,22 +11,17 @@ import StatusQ.Components
 Flow {
     id: root
 
-    spacing: Theme.padding / 2
+    spacing: Theme.halfPadding / 2
 
     signal addEmojiClicked(var sender, var mouse)
     signal hoverChanged(bool hovered)
     signal toggleReaction(string hexcode)
 
-    property bool isCurrentUser
     property var reactionsModel
     property bool limitReached: false
 
     QtObject {
         id: d
-
-        function lastTwoItems(nodes) {
-            return nodes.join(qsTr(" and "));
-        }
 
         function showReactionAuthors(jsonArrayOfUsersReactedWithThisEmoji, emoji) {
             if (!jsonArrayOfUsersReactedWithThisEmoji) {
@@ -37,48 +33,29 @@ Flow {
                 return
             }
 
-            let author;
-            if (listOfUsers.length === 1) {
-                author = listOfUsers[0]
-            } else if (listOfUsers.length === 2) {
-                author = lastTwoItems(listOfUsers);
-            } else {
-                var leftNode = [];
-                var rightNode = [];
-                const maxReactions = 12
-                let maximum = Math.min(maxReactions, listOfUsers.length)
+            const maxReactions = 12
+            const extraCount = listOfUsers.splice(maxReactions).length
+            if (extraCount > 0)
+                listOfUsers.push(qsTr("%1 more").arg(extraCount)) // "a, b, ... and N more"
 
-                if (listOfUsers.length > maxReactions) {
-                    leftNode = listOfUsers.slice(0, maxReactions);
-                    rightNode = listOfUsers.slice(maxReactions, listOfUsers.length);
-                    return (rightNode.length === 1) ?
-                                lastTwoItems([leftNode.join(", "), rightNode[0]]) :
-                                lastTwoItems([leftNode.join(", "), qsTr("%1 more").arg(rightNode.length)]);
-                }
-
-                leftNode = listOfUsers.slice(0, maximum - 1);
-                rightNode = listOfUsers.slice(maximum - 1, listOfUsers.length);
-                author = lastTwoItems([leftNode.join(", "), rightNode[0]])
-            }
-            return qsTr("%1 reacted with %2")
-                        .arg(author)
-                        .arg(StatusQUtils.Emoji.fromCodePoint(emoji));
+            const author = Qt.locale(Qt.uiLanguage).createSeparatedList(listOfUsers) // "a, b, c and d"
+            return qsTr("%1 reacted with %2").arg(author).arg(StatusQUtils.Emoji.fromCodePoint(emoji))
         }
     }
 
     Repeater {
         model: root.reactionsModel
 
-        Control {
+        Button {
             id: reactionDelegate
 
-            topPadding: Theme.padding / 2.5
-            bottomPadding: Theme.padding / 2.5
-            leftPadding: Theme.padding / 2
-            rightPadding: Theme.padding / 2
+            verticalPadding: Theme.halfPadding
+            leftPadding: Theme.halfPadding
+            rightPadding: Theme.halfPadding / 2
+            spacing: Theme.halfPadding / 2
 
             background: Rectangle {
-                radius: 8
+                radius: Theme.radius
                 color: {
                     if (reactionDelegate.hovered) {
                         return Theme.palette.statusMessage.emojiReactionBackgroundHovered
@@ -89,22 +66,19 @@ Flow {
                 border.color: reactionDelegate.hovered ? Theme.palette.statusMessage.emojiReactionBorderHovered : Theme.palette.primaryColor1
             }
 
-            contentItem: Row {
-                spacing: Theme.padding / 2
+            contentItem: RowLayout {
+                spacing: reactionDelegate.spacing
 
-                StatusEmoji {
+                StatusIcon {
                     objectName: "emojiReaction"
-                    id: statusEmoji
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Theme.fontSize17
-                    height: Theme.fontSize17
-                    emojiId: model.emoji
+                    Layout.preferredWidth: 16
+                    Layout.preferredHeight: 16
+                    icon: Theme.emoji(model.emoji)
                 }
 
                 StatusBaseText {
-                    anchors.verticalCenter: parent.verticalCenter
                     text: model.numberOfReactions
-                    font.pixelSize: Theme.fontSize14
+                    font.pixelSize: Theme.fontSize13
                 }
             }
 
@@ -114,23 +88,20 @@ Flow {
                 text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emoji) || ""
             }
 
-            StatusMouseArea {
-                id: mouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onEntered: {
-                    root.hoverChanged(true)
-                }
-                onExited: {
-                    root.hoverChanged(false)
-                }
-                onClicked: root.toggleReaction(model.emoji)
+            HoverHandler {
+                cursorShape: hovered ? Qt.PointingHandCursor : undefined
+                onHoveredChanged: root.hoverChanged(hovered)
             }
+
+            onClicked: root.toggleReaction(model.emoji)
         }
     }
 
     StatusFlatButton {
+        width: 36
+        height: 32
+        horizontalPadding: Theme.halfPadding
+        verticalPadding: Theme.halfPadding/2
         visible: root.enabled
         icon.name: "reaction-b"
         size: StatusBaseButton.Size.Small
