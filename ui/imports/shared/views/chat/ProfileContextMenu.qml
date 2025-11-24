@@ -66,6 +66,7 @@ StatusMenu {
     StatusMenuSeparator {
         visible: root.profileType !== Constants.profileType.bridged
         topPadding: root.topPadding
+        horizontalPadding: 0
     }
 
     ViewProfileMenuItem {
@@ -129,6 +130,7 @@ StatusMenu {
         topPadding: root.topPadding
         visible: root.profileType !== Constants.profileType.bridged &&
                  (removeNicknameAction.enabled || unblockAction.enabled || markUntrustworthyMenuItem.enabled || removeUntrustworthyMarkMenuItem.enabled || removeContactAction.enabled || blockMenuItem.enabled)
+        horizontalPadding: 0
     }
 
     // Remove Nickname
