@@ -19855,11 +19855,6 @@
   <context>
     <name>StatusMessageEmojiReactions</name>
     <message>
-      <source> and </source>
-      <comment>StatusMessageEmojiReactions</comment>
-      <translation>and</translation>
-    </message>
-    <message>
       <source>%1 more</source>
       <comment>StatusMessageEmojiReactions</comment>
       <translation>%1 more</translation>

@@ -15139,6 +15139,7 @@ to load</source>
     </message>
     <message>
         <source>%1 to %2</source>
+        <extracomment>e.g. (Send) 100 DAI to batista.eth</extracomment>
         <translation>%1에서 %2로</translation>
     </message>
     <message>
@@ -16290,10 +16291,6 @@ to load</source>
 </context>
 <context>
     <name>StatusMessageEmojiReactions</name>
-    <message>
-        <source> and </source>
-        <translation> 그리고 </translation>
-    </message>
     <message>
         <source>%1 more</source>
         <translation>%1개 더</translation>
