@@ -2138,10 +2138,6 @@ de &quot;%1&quot; a &quot;%2&quot;</translation>
         <translation>XXL</translation>
     </message>
     <message>
-        <source>Padding factor</source>
-        <translation>Factor de espaciado</translation>
-    </message>
-    <message>
         <source>XXS</source>
         <translation>XXS</translation>
     </message>
@@ -2160,6 +2156,14 @@ de &quot;%1&quot; a &quot;%2&quot;</translation>
     <message>
         <source>System</source>
         <translation>Sistema</translation>
+    </message>
+    <message>
+        <source>Layout Spacing</source>
+        <translation>Factor de espaciado</translation>
+    </message>
+    <message>
+        <source>Adjust how compact or spacious the layout looks</source>
+        <translation>Ajusta qué tan compacto o espacioso se ve el diseño</translation>
     </message>
 </context>
 <context>
@@ -2710,10 +2714,6 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Disconnect</source>
         <translation>Desconectar</translation>
-    </message>
-    <message>
-        <source>Wallet info will appear here</source>
-        <translation>La información de la billetera aparecerá aquí</translation>
     </message>
 </context>
 <context>

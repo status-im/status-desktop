@@ -2656,14 +2656,17 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
 		<translation>시스템</translation>
 	</message>
 	<message>
-		<source>Padding factor</source>
-		<comment>AppearanceView</comment>
-		<translation>여백 계수</translation>
-	</message>
-	<message>
 		<source>XXS</source>
 		<comment>AppearanceView</comment>
 		<translation>XXS</translation>
+	</message>
+	<message>
+		<source>Layout Spacing</source>
+		<translation type="unfinished"></translation>
+	</message>
+	<message>
+		<source>Adjust how compact or spacious the layout looks</source>
+		<translation type="unfinished"></translation>
 	</message>
 </context>
 <context>
