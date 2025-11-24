@@ -3,6 +3,7 @@ import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import QtQuick.Layouts
 
+import StatusQ
 import StatusQ.Core
 import StatusQ.Components
 import StatusQ.Controls
@@ -208,6 +209,7 @@ OnboardingPage {
                 currentLanguage: root.currentLanguage
                 languageCodes: root.availableLanguages
                 onLanguageSelected: (languageCode) => root.changeLanguageRequested(languageCode)
+                lokalisedLanguageScores: LanguageService.lokaliseLanguages
             }
         }
     }
