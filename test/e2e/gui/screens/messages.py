@@ -214,9 +214,22 @@ class Message:
         reactions_pathes = []
         for child in walk_children(self.object):
             if getattr(child, 'id', '') == 'reactionDelegate':
+                # Search for StatusIcon inside reactionDelegate and extract emoji ID from icon path
                 for item in walk_children(child):
-                    if getattr(item, 'objectName', '') == 'emojiReaction':
-                        reactions_pathes.append(item.emojiId)
+                    icon_path = None
+                    if hasattr(item, 'icon'):
+                        icon_path = str(item.icon)
+                    elif hasattr(item, 'source'):
+                        icon_path = str(item.source)
+                    
+                    if icon_path:
+                        # Extract emoji ID from path like "qrc:/assets/twemoji/svg/1f600.svg"
+                        match = re.search(r'/([a-f0-9]+)\.svg', icon_path)
+                        if match:
+                            reactions_pathes.append(match.group(1))
+                            break
+        if not reactions_pathes:
+            raise LookupError('No emoji reactions found for this message')
         return reactions_pathes
 
 
