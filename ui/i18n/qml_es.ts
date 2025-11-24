@@ -17171,14 +17171,6 @@ acceso a tu cámara web</translation>
         <translation>Tú eres dueño de tus datos. Sincronízalos entre tus dispositivos.</translation>
     </message>
     <message>
-        <source>Enable message syncing</source>
-        <translation>Habilitar sincronización de mensajes</translation>
-    </message>
-    <message>
-        <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
-        <translation>Envía tus mensajes 1 a 1, grupales y de comunidad a tu dispositivo emparejado mediante emparejamiento local cifrado.</translation>
-    </message>
-    <message>
         <source>Setup Syncing</source>
         <translation>Configurar sincronización</translation>
     </message>
@@ -17221,6 +17213,14 @@ acceso a tu cámara web</translation>
     <message>
         <source>Error unpairing device: %1</source>
         <translation>Error al desemparejar dispositivo: %1</translation>
+    </message>
+    <message>
+        <source>Restore my past messages to this device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copies and sends your direct, group, and community messages to your new device using encrypted local pairing.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
