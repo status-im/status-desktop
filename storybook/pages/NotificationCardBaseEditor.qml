@@ -48,7 +48,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "XS"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeXS)
+                Theme.changeFontSize(ThemeUtils.FontSize.FontSizeXS)
             }
         }
 
@@ -56,7 +56,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "S"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeS)
+                Theme.changeFontSize(ThemeUtils.FontSize.FontSizeS)
             }
         }
 
@@ -65,7 +65,7 @@ Control {
             text: "M"
             checked: true
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeM)
+                Theme.changeFontSize(ThemeUtils.FontSize.FontSizeM)
             }
         }
 
@@ -73,7 +73,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "L"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeL)
+                Theme.changeFontSize(ThemeUtils.FontSize.FontSizeL)
             }
         }
 
@@ -81,7 +81,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "XL"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeXL)
+                Theme.changeFontSize(ThemeUtils.FontSize.FontSizeXL)
             }
         }
 
@@ -89,7 +89,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "XXL"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeXXL)
+                Theme.changeFontSize(ThemeUtils.FontSize.FontSizeXXL)
             }
         }
 
