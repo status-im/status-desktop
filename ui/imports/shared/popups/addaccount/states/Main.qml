@@ -150,7 +150,7 @@ Item {
                     }
                 }
 
-                onKeyPressed: {
+                onKeyPressed: event => {
                     root.store.submitPopup(event)
                 }
 

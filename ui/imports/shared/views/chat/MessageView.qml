@@ -180,7 +180,7 @@ Loader {
 
     signal emojiReactionToggled(string messageId, string hexcode)
 
-    function openProfileContextMenu(sender, isReply = false) {
+    function openProfileContextMenu(x, y, isReply = false) {
         if (isViewMemberMessagesePopup)
             return false
 
@@ -216,11 +216,14 @@ Loader {
             hasLocalNickname: !!contactDetails.localNickname
         }
 
-        Global.openMenu(profileContextMenuComponent, sender, params)
+        profileContextMenuComponent.createObject(root, params).popup(x, y)
     }
 
-    function openMessageContextMenu() {
+    function openMessageContextMenu(x, y) {
         if (isViewMemberMessagesePopup || placeholderMessage || !root.joined)
+            return
+
+        if (root.isChatBlocked && !d.addReactionAllowed)
             return
 
         const params = {
@@ -238,7 +241,7 @@ Loader {
             editRestricted: root.editRestricted,
         }
 
-        Global.openMenu(messageContextMenuComponent, this, params)
+        messageContextMenuComponent.createObject(root, params).popup(x, y)
     }
 
     function setMessageActive(messageId, active) {
@@ -631,10 +634,10 @@ Loader {
                 id: deletedMessage
                 height: 40
                 Layout.fillWidth: true
-                Layout.topMargin: 8
-                Layout.bottomMargin: 8
-                Layout.leftMargin: 16
-                spacing: 8
+                Layout.topMargin: Theme.halfPadding
+                Layout.bottomMargin: Theme.halfPadding
+                Layout.leftMargin: Theme.padding
+                spacing: Theme.halfPadding
 
                 readonly property int smartIconSize: 20
                 readonly property int colorId: Utils.colorIdForPubkey(root.deletedBy)
@@ -712,8 +715,8 @@ Loader {
             StatusDateGroupLabel {
                 id: dateGroupLabel
                 Layout.fillWidth: true
-                Layout.topMargin: 16
-                Layout.bottomMargin: 16
+                Layout.topMargin: Theme.padding
+                Layout.bottomMargin: Theme.padding
                 messageTimestamp: root.messageTimestamp
                 previousMessageTimestamp: root.prevMessageIndex === -1 ? 0 : root.prevMessageTimestamp
                 visible: text !== "" && !root.isInPinnedPopup && !root.isViewMemberMessagesePopup
@@ -820,7 +823,7 @@ Loader {
                     d.onImageClicked(image, mouse, imageSource)
                 }
 
-                onLinkActivated: {
+                onLinkActivated: link => {
                     if (link.startsWith(Constants.sendViaChatPrefix)) {
                         const addressOrEns = link.replace(Constants.sendViaChatPrefix, "");
                         root.sendViaPersonalChatRequested(addressOrEns)
@@ -846,10 +849,10 @@ Loader {
                     Global.activateDeepLink(link)
                 }
 
-                onProfilePictureClicked: (sender, mouse) => root.openProfileContextMenu(sender)
-                onReplyProfileClicked: (sender, mouse) => root.openProfileContextMenu(sender, true)
+                onProfilePictureClicked: (sender, mouse) => root.openProfileContextMenu(mouse.x, mouse.y)
+                onReplyProfileClicked: (sender, mouse) => root.openProfileContextMenu(mouse.x, mouse.y, true)
                 onReplyMessageClicked: (mouse) => root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
-                onSenderNameClicked: (sender) => root.openProfileContextMenu(sender)
+                onSenderNameClicked: (sender) => root.openProfileContextMenu(sender.x, sender.y)
 
                 onToggleReactionClicked: (hexcode) => {
                     if (root.isChatBlocked)
@@ -877,11 +880,7 @@ Loader {
 
                 mouseArea {
                     acceptedButtons: Qt.RightButton
-                    enabled: (!root.isChatBlocked || d.addReactionAllowed) &&
-                             !root.placeholderMessage
-                    onClicked: {
-                        root.openMessageContextMenu()
-                    }
+                    onClicked: mouse => root.openMessageContextMenu(mouse.x, mouse.y)
                 }
 
                 messageDetails: StatusMessageDetails {
@@ -1006,7 +1005,7 @@ Loader {
                         isEdit: true
 
                         onSendMessage: delegate.editCompletedHandler(editTextInput.getTextWithPublicKeys())
-                        onOpenGifPopupRequest: root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
+                        onOpenGifPopupRequest: (params, cbOnGifSelected, cbOnClose) => root.openGifPopupRequest(params, cbOnGifSelected, cbOnClose)
 
                         Component.onCompleted: {
                             parseMessage(root.messageText);
