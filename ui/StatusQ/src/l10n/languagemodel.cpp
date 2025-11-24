@@ -10,6 +10,8 @@ constexpr auto kLanguageNameRoleName = "name";
 constexpr auto kLanguagenativeNameRoleName = "nativeName";
 }
 
+using namespace Qt::Literals::StringLiterals;
+
 LanguageModel::LanguageModel(QObject* parent) : QAbstractListModel(parent)
 {
 }
@@ -87,10 +89,12 @@ void LanguageModel::rebuildModel()
         data.fullIsoCode = loc.name(); // including country, e.g. "fr_CA"
         data.name = QLocale::languageToString(loc.language()); // english language name, e.g. "French" for "fr"
 
-        if (data.code == "en")
+        if (data.code == "en"_L1)
             data.nativeName = data.name; // just "English"
-        else if (data.code == "pt_BR") // differentiate between "pt" and "pt_BR"
-            data.nativeName = "português brasileiro";
+        else if (data.code == "pt_BR"_L1) // differentiate between "pt" and "pt_BR"
+            data.nativeName = u"português brasileiro"_s;
+        else if (data.code == "es"_L1) // make the "español de España" country neutral
+            data.nativeName = u"español"_s;
         else
             data.nativeName = loc.nativeLanguageName(); // native language name, e.g. "français" for "fr" or "français canadien" for "fr_CA"
 
