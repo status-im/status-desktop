@@ -118,6 +118,11 @@ Control {
                 anchors.margins: 11
 
                 emojiId: root.emojiId
+
+                Binding on source { // fallback when we have no emoji
+                    when: root.emojiId === ""
+                    value: Theme.svg("filled-account")
+                }
             }
         }
 

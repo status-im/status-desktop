@@ -81,7 +81,7 @@ Item {
     Rectangle {
         width: 1
         height: chatText.height
-        radius: 8
+        radius: Theme.radius
         visible: d.isQuote
         color: Theme.palette.baseColor1
     }
@@ -96,7 +96,7 @@ Item {
 
         height: effectiveHeight + d.showMoreHeight / 2
         anchors.left: parent.left
-        anchors.leftMargin: d.isQuote ? 8 : 0
+        anchors.leftMargin: d.isQuote ? Theme.halfPadding : 0
         anchors.right: parent.right
         opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
         text: d.text
@@ -108,7 +108,8 @@ Item {
         textFormat: Text.RichText
         wrapMode: root.convertToSingleLine ? Text.NoWrap : Text.Wrap
         readOnly: true
-        selectByMouse: true
+        selectByMouse: true // applies to mouse only, not touch
+        enabled: !Utils.isMobile // eats the touch events, thus breaking the context menu since this is an edit (albeit readonly)
         onLinkActivated: function(link) {
             if(d.showDisabledTooltipForAddressEnsName(link)) {
                 return

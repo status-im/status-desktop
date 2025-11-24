@@ -86,7 +86,7 @@ RightTabBaseView {
         readonly property var overview: root.walletRootStore.overview
 
         allAccounts: overview.isAllAccounts
-        emojiId: SQUtils.Emoji.iconId(overview.emoji ?? "", SQUtils.Emoji.size.big)
+        emojiId: SQUtils.Emoji.iconId(overview.emoji ?? "")
         balance: LocaleUtils.currencyAmountToLocaleString(overview.currencyBalance)
         balanceLoading: overview.balanceLoading
         color: Utils.getColorForId(overview.colorId)
