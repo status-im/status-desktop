@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 
 import StatusQ.Components
@@ -29,6 +30,8 @@ Item {
 
     implicitWidth: chatText.implicitWidth
     implicitHeight: chatText.height + d.showMoreHeight / 2
+
+    signal pressAndHold(var mouseEvent)
 
     QtObject {
         id: d
@@ -86,7 +89,7 @@ Item {
         color: Theme.palette.baseColor1
     }
 
-    TextEdit {
+    StatusTextArea {
         id: chatText
         objectName: "StatusTextMessage_chatText"
 
@@ -99,17 +102,18 @@ Item {
         anchors.leftMargin: d.isQuote ? Theme.halfPadding : 0
         anchors.right: parent.right
         opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
+        background: null
+        leftPadding: 0
+        rightPadding: 0
+        topPadding: 0
+        bottomPadding: 0
         text: d.text
         selectedTextColor: Theme.palette.directColor1
-        selectionColor: Theme.palette.primaryColor3
         color: d.isQuote ? Theme.palette.baseColor1 : Theme.palette.directColor1
-        font.family: Theme.baseFont.name
-        font.pixelSize: Theme.primaryTextFontSize
         textFormat: Text.RichText
         wrapMode: root.convertToSingleLine ? Text.NoWrap : Text.Wrap
         readOnly: true
-        selectByMouse: true // applies to mouse only, not touch
-        enabled: !Utils.isMobile // eats the touch events, thus breaking the context menu since this is an edit (albeit readonly)
+        selectByMouse: !Utils.isMobile // applies to mouse only, not touch
         onLinkActivated: function(link) {
             if(d.showDisabledTooltipForAddressEnsName(link)) {
                 return
@@ -127,6 +131,7 @@ Item {
             x: hoverHandler.point.position.x - 60
             y: -disabledLinkTooltip.height + hoverHandler.point.position.y - 10
         }
+        onPressAndHold: mouseEvent => root.pressAndHold(mouseEvent)
     }
 
     StatusSyntaxHighlighter {
