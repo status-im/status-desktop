@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import StatusQ
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as StatusQUtils
 
@@ -21,6 +22,7 @@ SplitView {
     QtObject {
         id: d
         property string lastSelectedEmoji: "N/A"
+        property string lastSelectedEmojiHexcode: ""
     }
 
     Pane {
@@ -62,6 +64,7 @@ SplitView {
             onEmojiSelected: function(emoji, atCu, hexcode) {
                 logs.logEvent("onEmojiSelected", ["emoji", "atCu", "hexcode"], arguments)
                 d.lastSelectedEmoji = emoji
+                d.lastSelectedEmojiHexcode = hexcode
             }
         }
     }
@@ -79,14 +82,26 @@ SplitView {
                 text: "Clear settings (reload to take effect)"
                 onClicked: {
                     d.lastSelectedEmoji = ""
+                    d.lastSelectedEmojiHexcode = ""
                     settings.recentEmojis = []
                     settings.skinColor = ""
                     settings.sync()
                 }
             }
 
-            Label {
-                text: "Last selected: %1 ('%2')".arg(d.lastSelectedEmoji).arg(settings.recentEmojis[0] ?? "")
+            RowLayout {
+                Label {
+                    text: "Last selected: %1 ('%2')".arg(d.lastSelectedEmoji).arg(d.lastSelectedEmojiHexcode)
+                }
+                ToolButton {
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+                    text: "📋"
+                    enabled: !!d.lastSelectedEmojiHexcode
+                    onClicked: ClipboardUtils.setText(d.lastSelectedEmojiHexcode)
+                    ToolTip.text: "Copy to clipboard"
+                    ToolTip.visible: hovered
+                }
             }
 
             Button {

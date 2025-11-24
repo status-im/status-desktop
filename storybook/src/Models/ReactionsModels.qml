@@ -1,150 +1,147 @@
-import QtQuick
-
+import QtQml
 
 QtObject {
     readonly property var threeReactions: [
         {
-            emoji: "😄",
+            emoji: "1f600",
             didIReactWithThisEmoji: true,
             numberOfReactions: 1,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\"]"
         },
         {
-            emoji: "🕵️‍♀",
+            emoji: "1f575-fe0f-200d-2642-fe0f",
             didIReactWithThisEmoji: false,
             numberOfReactions: 2,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Bob\", \"John\"]"
         },
         {
-            emoji: "😂",
+            emoji: "1f602",
             didIReactWithThisEmoji: true,
             numberOfReactions: 5,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Sally\", \"Tom\", \"Eve\", \"Raj\"]"
         }
-
     ]
+
     readonly property var twentyReactions: [
         {
-            emoji: "😄",
+            emoji: "1f604",
             didIReactWithThisEmoji: true,
             numberOfReactions: 1,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\"]"
         },
         {
-            emoji: "🕵️‍♀",
+            emoji: "1fae3",
             didIReactWithThisEmoji: false,
-            numberOfReactions: 232,
+            numberOfReactions: 23,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Bob\", \"John\"]"
         },
         {
-            emoji: "😂",
+            emoji: "1f602",
             didIReactWithThisEmoji: true,
             numberOfReactions: 5,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Sally\", \"Tom\", \"Eve\", \"Raj\"]"
         },
         {
-            emoji: "❤️",
+            emoji: "2764",
             didIReactWithThisEmoji: false,
             numberOfReactions: 8,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Mia\", \"Noah\", \"Liam\", \"Olivia\", \"Ava\", \"Emma\", \"Lucas\", \"Zoe\"]"
         },
         {
-            emoji: "👍",
+            emoji: "1f44d",
             didIReactWithThisEmoji: true,
             numberOfReactions: 3,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Ben\", \"Claire\"]"
         },
         {
-            emoji: "🎉",
+            emoji: "1f389",
             didIReactWithThisEmoji: false,
-            numberOfReactions: 4,
-            jsonArrayOfUsersReactedWithThisEmoji: "[\"Ivy\", \"Ken\", \"Lara\", \"Omar\"]"
+            numberOfReactions: 16,
+            jsonArrayOfUsersReactedWithThisEmoji: "[\"Mia\", \"Noah\", \"Liam\", \"Olivia\", \"Ava\", \"Emma\", \"Lucas\", \"Zoe\", \"Mia\", \"Noah\", \"Liam\", \"Olivia\", \"Ava\", \"Emma\", \"Lucas\", \"Zoe\"]"
         },
         {
-            emoji: "😮",
+            emoji: "1f62e",
             didIReactWithThisEmoji: false,
             numberOfReactions: 1,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Zed\"]"
         },
         {
-            emoji: "😢",
+            emoji: "1f972",
             didIReactWithThisEmoji: false,
             numberOfReactions: 2,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Martha\", \"Gus\"]"
         },
         {
-            emoji: "🔥",
+            emoji: "1f525",
             didIReactWithThisEmoji: true,
             numberOfReactions: 6,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Alex\", \"Sam\", \"Nina\", \"Pax\", \"Rae\"]"
         },
         {
-            emoji: "🙏",
+            emoji: "1f64f",
             didIReactWithThisEmoji: false,
             numberOfReactions: 2,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Hana\", \"Ike\"]"
         },
         {
-            emoji: "😅",
+            emoji: "1f917",
             didIReactWithThisEmoji: true,
             numberOfReactions: 2,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Pete\"]"
         },
         {
-            emoji: "😎",
+            emoji: "1f636-200d-1f32b-fe0f",
             didIReactWithThisEmoji: false,
             numberOfReactions: 3,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Ruth\", \"Vik\", \"Jill\"]"
         },
         {
-            emoji: "🤔",
+            emoji: "1f914",
             didIReactWithThisEmoji: false,
             numberOfReactions: 1,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Oli\"]"
         },
         {
-            emoji: "🤯",
+            emoji: "1f92f",
             didIReactWithThisEmoji: true,
             numberOfReactions: 7,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Abe\", \"Maya\", \"Noel\", \"Cory\", \"Lina\", \"Zara\"]"
         },
         {
-            emoji: "🎶",
+            emoji: "1f3b6",
             didIReactWithThisEmoji: false,
             numberOfReactions: 2,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Tess\", \"Bea\"]"
         },
         {
-            emoji: "💯",
+            emoji: "1f4af",
             didIReactWithThisEmoji: true,
             numberOfReactions: 9,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Gabe\", \"Rin\", \"Seth\", \"Moe\", \"Luz\", \"Ira\", \"Noa\", \"Pam\"]"
         },
         {
-            emoji: "👀",
+            emoji: "1f440",
             didIReactWithThisEmoji: false,
             numberOfReactions: 1,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Kai\"]"
         },
         {
-            emoji: "😜",
+            emoji: "1f609",
             didIReactWithThisEmoji: true,
             numberOfReactions: 3,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"You\", \"Dot\", \"Max\"]"
         },
         {
-            emoji: "🥳",
+            emoji: "1f973",
             didIReactWithThisEmoji: false,
             numberOfReactions: 4,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"June\", \"Fay\", \"Roy\", \"Skye\"]"
         },
         {
-            emoji: "🤝",
+            emoji: "1f37b",
             didIReactWithThisEmoji: false,
-            numberOfReactions: 2,
+            numberOfReactions: 123456789,
             jsonArrayOfUsersReactedWithThisEmoji: "[\"Ivy\", \"Omar\"]"
         }
-
     ]
-    // Component.onCompleted: append(data)
 }

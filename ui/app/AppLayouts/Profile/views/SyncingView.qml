@@ -167,7 +167,7 @@ SettingsContentBase {
                 spacing: Theme.padding
 
                 StatusBaseText {
-                    Layout.preferredWidth: parent.width - betaTag.width - parent.spacing
+                    Layout.preferredWidth: parent.width - parent.spacing
                     objectName: "syncNewDeviceTextLabel"
                     elide: Text.ElideRight
                     color: Theme.palette.primaryColor1
