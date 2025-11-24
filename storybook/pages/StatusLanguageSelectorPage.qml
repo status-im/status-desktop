@@ -64,7 +64,7 @@ SplitView {
                 TextField {
                     Layout.fillWidth: true
                     id: ctrlLanguageCodes
-                    text: "de,cs,en,en_CA,ko,ar,fr,fr_CA,pt_BR,pt,uk,ja,el"
+                    text: "es,de,de-CH,cs,en,en_CA,ko,ar,fr,fr_CA,pt_BR,pt,uk,ja,el,xx_XX" // last one is invalid, should not appear in the list
                     placeholderText: "Comma separated list of language codes"
                 }
             }
