@@ -45,7 +45,6 @@ Control {
     property var statusChatInput
     property alias linksComponent: linksLoader.sourceComponent
     property alias invitationComponent: invitationBubbleLoader.sourceComponent
-    property alias mouseArea: mouseArea
 
     property string pinnedMsgInfoText: ""
 
@@ -89,6 +88,7 @@ Control {
     signal senderNameClicked(var sender)
     signal replyProfileClicked(var sender, var mouse)
     signal replyMessageClicked(var mouse)
+    signal pressAndHold(var mouse)
 
     signal addReactionClicked(var sender, var mouse)
     signal toggleReactionClicked(string hexcode)
@@ -192,11 +192,6 @@ Control {
         implicitWidth: messageLayout.implicitWidth
         implicitHeight: messageLayout.implicitHeight
 
-        StatusMouseArea {
-            id: mouseArea
-            anchors.fill: parent
-        }
-
         ColumnLayout {
             id: messageLayout
             anchors.fill: parent
@@ -293,6 +288,7 @@ Control {
                             textField.onHoveredLinkChanged: {
                                 root.hoveredLink = hoveredLink;
                             }
+                            onPressAndHold: mouse => root.pressAndHold(mouse)
                         }
                     }
                     Loader {

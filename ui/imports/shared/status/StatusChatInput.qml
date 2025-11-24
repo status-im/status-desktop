@@ -1036,7 +1036,10 @@ Rectangle {
                 }
             }
 
-            closeHandler: () => commandBtn.highlighted = false
+            closeHandler: () => {
+                              commandBtn.highlighted = false
+                              destroy()
+                          }
         }
     }
 

@@ -30,6 +30,7 @@ ToolTip {
     margins: Theme.halfPadding
     delay: Utils.isMobile ? Application.styleHints.mousePressAndHoldInterval
                           : 200
+    timeout: Utils.isMobile ? 2500 : -1
 
     background: Item {
         id: statusToolTipBackground
