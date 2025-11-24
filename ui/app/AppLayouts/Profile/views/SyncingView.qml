@@ -217,7 +217,7 @@ SettingsContentBase {
                             Layout.fillWidth: true
                             objectName: "enableMessageSyncingCheckBox"
 
-                            text: qsTr("Enable message syncing")
+                            text: qsTr("Restore my past messages to this device")
                             leftSide: true
                             checked: false
                             onToggled: d.messageSyncingEnabled = checked
@@ -228,7 +228,7 @@ SettingsContentBase {
                             Layout.preferredHeight: width
                             radius: width/2
                             icon.name: "help"
-                            tooltip.text: qsTr("Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.")
+                            tooltip.text: qsTr("Copies and sends your direct, group, and community messages to your new device using encrypted local pairing.")
                         }
                     }
                 }
