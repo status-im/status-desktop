@@ -15224,6 +15224,7 @@ to load</source>
     </message>
     <message>
         <source>%1 to %2</source>
+        <extracomment>e.g. (Send) 100 DAI to batista.eth</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -16388,10 +16389,6 @@ to load</source>
 </context>
 <context>
     <name>StatusMessageEmojiReactions</name>
-    <message>
-        <source> and </source>
-        <translation> a </translation>
-    </message>
     <message>
         <source>%1 more</source>
         <translation>%1 navíc</translation>

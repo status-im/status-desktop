@@ -15183,6 +15183,7 @@ al cargar</translation>
     </message>
     <message>
         <source>%1 to %2</source>
+        <extracomment>e.g. (Send) 100 DAI to batista.eth</extracomment>
         <translation>%1 a %2</translation>
     </message>
     <message>
@@ -16341,10 +16342,6 @@ al cargar</translation>
 </context>
 <context>
     <name>StatusMessageEmojiReactions</name>
-    <message>
-        <source> and </source>
-        <translation> y </translation>
-    </message>
     <message>
         <source>%1 more</source>
         <translation>%1 más</translation>

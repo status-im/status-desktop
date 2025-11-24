@@ -567,6 +567,9 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
       self.prepareKeyPairItemForAuthentication(keyUid)
       self.displayKeycardFlowStartedState(flowToRun, nil)
       self.controller.runAuthenticationFlow(keyUid, bip44Paths)
+      if singletonInstance.userProfile.getUsingBiometricLogin():
+        self.controller.connectKeychainSignals()
+        self.controller.tryToObtainDataFromKeychain()
       return
   if flowToRun == FlowType.Sign:
     if bip44Paths.len == 0 or bip44Paths[0].len == 0:
