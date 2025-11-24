@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Window
 import QtQuick.Layouts
 import QtModelsToolkit
@@ -878,10 +879,8 @@ Loader {
                     root.messageStore.resendMessage(root.messageId)
                 }
 
-                mouseArea {
-                    acceptedButtons: Qt.RightButton
-                    onClicked: mouse => root.openMessageContextMenu(mouse.x, mouse.y)
-                }
+                ContextMenu.onRequested: pos => root.openMessageContextMenu(pos.x, pos.y)
+                onPressAndHold: mouse => root.openMessageContextMenu(mouse.x, mouse.y)
 
                 messageDetails: StatusMessageDetails {
                     contentType: delegate.contentType

@@ -71,7 +71,6 @@ TextArea {
         pixelSize: Theme.primaryTextFontSize
     }
 
-    selectByMouse: true
     persistentSelection: true
     wrapMode: TextEdit.WordWrap
 

@@ -46,15 +46,19 @@ Flow {
     Repeater {
         model: root.reactionsModel
 
-        Button {
+        StatusButton {
             id: reactionDelegate
 
-            verticalPadding: Theme.halfPadding
+            size: StatusBaseButton.Size.Small
+            implicitHeight: 32
+
+            verticalPadding: Theme.halfPadding / 2
             leftPadding: Theme.halfPadding
             rightPadding: Theme.halfPadding / 2
             spacing: Theme.halfPadding / 2
 
             background: Rectangle {
+                implicitWidth: 36
                 radius: Theme.radius
                 color: {
                     if (reactionDelegate.hovered) {
@@ -111,7 +115,7 @@ Flow {
         // We use a MouseArea because we need to pass the mouse event to the signal
         StatusMouseArea {
             anchors.fill: parent
-            cursorShape: !root.limitReached ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: !root.limitReached ? Qt.PointingHandCursor : Qt.ForbiddenCursor
             onClicked: (mouse) => {
                 mouse.accepted = true
                 if (root.limitReached)
