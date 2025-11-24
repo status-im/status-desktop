@@ -15,6 +15,7 @@ class Theme : public QQuickAttachedPropertyPropagator
     Q_PROPERTY(qreal bigPadding READ bigPadding NOTIFY paddingChanged)
     Q_PROPERTY(qreal halfPadding READ halfPadding NOTIFY paddingChanged)
     Q_PROPERTY(qreal smallPadding READ smallPadding NOTIFY paddingChanged)
+    Q_PROPERTY(qreal radius READ radius CONSTANT)
 
     Q_PROPERTY(bool explicitPadding READ explicitPadding NOTIFY explicitPaddingChanged)
 
@@ -38,6 +39,7 @@ public:
     qreal bigPadding() const;
     qreal halfPadding() const;
     qreal smallPadding() const;
+    qreal radius() const;
 
     void setPadding(qreal padding);
     void resetPadding();
