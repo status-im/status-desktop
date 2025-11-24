@@ -88,8 +88,8 @@ StatusSectionLayout {
     required property bool isCentralizedMetricsEnabled
 
     required property int theme // Theme.Style.xxx
-    required property int fontSize // Theme.FontSize.xxx
-    required property int paddingFactor // Theme.PaddingFactor.xxx
+    required property int fontSize // ThemeUtils.FontSize.xxx
+    required property int paddingFactor // ThemeUtils.PaddingFactor.xxx
 
     required property var whitelistedDomainsModel
  

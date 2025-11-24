@@ -84,7 +84,7 @@ Control {
 
         // Indicates whether the `isContact` or the `trustedIndicators` are visualized as tiny icons or normal ones (size change).
         // By default it scales following a factor based on current app font size.
-        readonly property bool areTinyIndicators: Theme.currentFontSize <= Theme.FontSize.FontSizeM
+        readonly property bool areTinyIndicators: Theme.currentFontSize <= ThemeUtils.FontSize.FontSizeM
     }
 
     // ──────────────────────────────────────────────────────────────────────────
