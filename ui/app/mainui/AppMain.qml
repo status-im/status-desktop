@@ -871,15 +871,15 @@ Item {
         property int theme: Theme.Style.System
         property int fontSize: {
             if (appMain.width < ThemeUtils.portraitBreakpoint.width) {
-                return Theme.FontSize.FontSizeS
+                return ThemeUtils.FontSize.FontSizeS
             }
-            return Theme.FontSize.FontSizeM
+            return ThemeUtils.FontSize.FontSizeM
         }
         property int paddingFactor: {
             if (appMain.width < ThemeUtils.portraitBreakpoint.width) {
-                return Theme.PaddingFactor.PaddingXXS
+                return ThemeUtils.PaddingFactor.PaddingXXS
             }
-            return Theme.PaddingFactor.PaddingM
+            return ThemeUtils.PaddingFactor.PaddingM
         }
 
         Component.onCompleted: {
