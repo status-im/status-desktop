@@ -17158,11 +17158,11 @@ access to your webcam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable message syncing</source>
+        <source>Restore my past messages to this device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
+        <source>Copies and sends your direct, group, and community messages to your new device using encrypted local pairing.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

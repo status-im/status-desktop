@@ -17052,12 +17052,12 @@ access to your webcam</source>
         <translation>디바이스 페어링 해제 오류: %1</translation>
     </message>
     <message>
-        <source>Enable message syncing</source>
-        <translation>메시지 동기화 활성화</translation>
+        <source>Restore my past messages to this device</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
-        <translation>암호화된 로컬 페어링을 통해 1:1, 그룹 및 커뮤니티 메시지를 페어링된 기기로 전송합니다.</translation>
+        <source>Copies and sends your direct, group, and community messages to your new device using encrypted local pairing.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
