@@ -17,11 +17,11 @@ FocusScope {
     readonly property alias count: tabBar.count
     required property bool thirdpartyServicesEnabled
 
-    function getTab(index) {
+    function getTab(index) { // -> WebEngineView
         return tabLayout.children[index]
     }
 
-    function getCurrentTab() {
+    function getCurrentTab() { // -> WebEngineView
         return getTab(currentIndex)
     }
 
@@ -38,7 +38,6 @@ FocusScope {
         // design values
         readonly property int tabHeight: 44
         readonly property int iconSize: 16
-        readonly property int minTabButtonInactiveWidth: 44
         readonly property int minTabButtonWidth: 118
         readonly property int maxTabButtonWidth: 236
         readonly property bool tabBarOverflowing: tabBarListView.visibleArea.widthRatio < 1
@@ -170,10 +169,9 @@ FocusScope {
             id: tabButton
             property string tabTitle
 
-            readonly property int minWidth: hovered || checked ? d.minTabButtonWidth : d.minTabButtonInactiveWidth
             readonly property bool incognito: root.getTab(tabButton.TabBar.index)?.profile.offTheRecord ?? false
 
-            width: Math.min(Math.max(implicitWidth, minWidth), d.maxTabButtonWidth)
+            width: Math.min(Math.max(implicitWidth, d.minTabButtonWidth), d.maxTabButtonWidth)
             anchors.top: parent ? parent.top : undefined
             anchors.bottom: parent ? parent.bottom : undefined
             leftPadding: 12
@@ -199,9 +197,7 @@ FocusScope {
                 StatusIcon {
                     Layout.preferredWidth: d.iconSize
                     Layout.preferredHeight: d.iconSize
-                    readonly property string favicon: root.getTab(tabButton.TabBar.index) ?
-                                                          root.getTab(tabButton.TabBar.index).icon.toString().replace("image://favicon/", "")
-                                                        : ""
+                    readonly property string favicon: root.getTab(tabButton.TabBar.index)?.icon.toString().replace("image://favicon/", "") ?? ""
                     sourceSize: Qt.size(width, height)
                     icon: favicon || "globe"
                     visible: !loadingIndicator.visible
@@ -210,11 +206,12 @@ FocusScope {
                     id: loadingIndicator
                     Layout.preferredWidth: d.iconSize
                     Layout.preferredHeight: d.iconSize
-                    visible: root.getTab(tabButton.TabBar.index) ? root.getTab(tabButton.TabBar.index).loading : false
+                    visible: root.getTab(tabButton.TabBar.index)?.loading ?? false
                 }
 
                 StatusBaseText {
                     Layout.fillWidth: true
+                    Layout.maximumWidth: Math.ceil(implicitWidth - (closeButton.visible ? closeButton.width : 0))
                     Layout.leftMargin: Theme.halfPadding
                     Layout.rightMargin: 2
                     elide: Qt.ElideRight
@@ -223,6 +220,8 @@ FocusScope {
                 }
 
                 StatusFlatButton {
+                    id: closeButton
+                    Layout.preferredWidth: visible ? implicitWidth : 0
                     Layout.alignment: Qt.AlignTrailing
                     icon.name: "close"
                     icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
@@ -236,6 +235,7 @@ FocusScope {
 
             // MMB to close tab handler
             TapHandler {
+                acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                 acceptedButtons: Qt.MiddleButton
                 onTapped: root.removeView(tabButton.TabBar.index)
             }
