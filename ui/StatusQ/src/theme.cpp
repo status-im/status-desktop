@@ -41,6 +41,10 @@ qreal Theme::smallPadding() const {
     return m_padding * s_smallPaddingFactor;
 }
 
+qreal Theme::radius() const {
+    return s_defaultPadding * s_halfPaddingFactor;
+}
+
 void Theme::setPadding(qreal padding)
 {
     auto explicitPaddingOld = m_explicitPadding;
