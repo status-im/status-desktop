@@ -20778,14 +20778,14 @@
       <translation>Error unpairing device: %1</translation>
     </message>
     <message>
-      <source>Enable message syncing</source>
+      <source>Restore my past messages to this device</source>
       <comment>SyncingView</comment>
-      <translation>Enable message syncing</translation>
+      <translation>Restore my past messages to this device</translation>
     </message>
     <message>
-      <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
+      <source>Copies and sends your direct, group, and community messages to your new device using encrypted local pairing.</source>
       <comment>SyncingView</comment>
-      <translation>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</translation>
+      <translation>Copies and sends your direct, group, and community messages to your new device using encrypted local pairing.</translation>
     </message>
   </context>
   <context>
