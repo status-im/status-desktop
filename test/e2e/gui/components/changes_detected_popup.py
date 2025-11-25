@@ -29,9 +29,21 @@ class PermissionsChangesDetectedToastMessage(QObject):
         self._update_permission_button = Button(communities_names.editPermissionView_Update_permission_StatusButton)
 
     @allure.step('Update permission')
-    def update_permission(self):
-        self._update_permission_button.click()
-        self.wait_until_hidden(timeout_msec=configs.timeouts.PROCESS_TIMEOUT_SEC * 1000)
+    def update_permission(self, max_attempts: int = 4):
+        for attempt in range(1, max_attempts + 1):
+            self._update_permission_button.click()
+            try:
+                # Use a shorter timeout per attempt, but allow multiple attempts
+                self.wait_until_hidden(timeout_msec=configs.timeouts.PROCESS_TIMEOUT_SEC * 1000)
+                # If we reach here, the popup is hidden - success!
+                return
+            except TimeoutError:
+                if attempt < max_attempts:
+                    # Continue to next attempt
+                    continue
+                else:
+                    # Last attempt failed, re-raise the exception
+                    raise
 
 
 class CustomSortOrderChangesDetectedToastMessage(ChangesDetectedToastMessage):
