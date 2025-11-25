@@ -4,6 +4,7 @@ import QtQuick
 
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Window
 import QtQml.Models
 
 import AppLayouts.Browser
@@ -868,7 +869,7 @@ Item {
         property bool enableMessageBackupPopupSeen
         property var recentEmojis
         property string skinColor // NB: must be a string for the twemoji lib to work; we don't want the `#` in the name
-        property int theme: Theme.Style.System
+        property int theme: ThemeUtils.Style.System
         property int fontSize: {
             if (appMain.width < ThemeUtils.portraitBreakpoint.width) {
                 return ThemeUtils.FontSize.FontSizeS
@@ -883,16 +884,9 @@ Item {
         }
 
         Component.onCompleted: {
-            Theme.changeTheme(appMainLocalSettings.theme)
-            Theme.changeFontSize(appMainLocalSettings.fontSize)
-            Theme.changePaddingFactor(appMainLocalSettings.paddingFactor)
-        }
-    }
-
-    Connections {
-        target: Application.styleHints
-        function onColorSchemeChanged() {
-            Theme.changeTheme(appMainLocalSettings.theme) // re-apply the theme when the System theme/colorscheme changes
+            ThemeUtils.setTheme(appMain.Window.window, appMainLocalSettings.theme)
+            ThemeUtils.setFontSize(appMain.Window.window, appMainLocalSettings.fontSize)
+            ThemeUtils.setPaddingFactor(appMain.Window.window, appMainLocalSettings.paddingFactor)
         }
     }
 
@@ -2169,15 +2163,15 @@ Item {
 
                         onThemeChangeRequested: function(theme) {
                             appMainLocalSettings.theme = theme
-                            Theme.changeTheme(theme)
+                            ThemeUtils.setTheme(appMain.Window.window, theme)
                         }
                         onFontSizeChangeRequested: function(fontSize) {
                             appMainLocalSettings.fontSize = fontSize
-                            Theme.changeFontSize(fontSize)
+                            ThemeUtils.setFontSize(appMain.Window.window, fontSize)
                         }
                         onPaddingFactorChangeRequested: function(paddingFactor) {
                             appMainLocalSettings.paddingFactor = paddingFactor
-                            Theme.changePaddingFactor(paddingFactor)
+                            ThemeUtils.setPaddingFactor(appMain.Window.window, paddingFactor)
                         }
                         // Communities related settings view:
                         onLeaveCommunityRequest: appMain.communitiesStore.leaveCommunity(communityId)
