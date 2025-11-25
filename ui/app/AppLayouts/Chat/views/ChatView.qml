@@ -448,7 +448,7 @@ StatusSectionLayout {
         // is needed because SwipeView doesn't expose any API to detect completed
         // swipe action
         Backpressure.setTimeout(this, 300, () => {
-            root.showUsersList = false
+            root.showUsersListRequested(false)
         })
     }
 
