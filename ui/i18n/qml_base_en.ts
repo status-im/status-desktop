@@ -8491,7 +8491,11 @@ L2 fee: %2</source>
 <context>
     <name>InlineSelectorPanel</name>
     <message>
-        <source>Confirm</source>
+        <source>No results found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group Members</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8499,7 +8503,7 @@ L2 fee: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No results found</source>
+        <source>Save Changes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

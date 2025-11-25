@@ -8476,16 +8476,20 @@ L2 수수료: %2</translation>
 <context>
     <name>InlineSelectorPanel</name>
     <message>
-        <source>Confirm</source>
-        <translation>비밀번호 확인</translation>
+        <source>No results found</source>
+        <translation type="unfinished">결과가 없습니다</translation>
+    </message>
+    <message>
+        <source>Group Members</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>취소</translation>
+        <translation type="unfinished">취소</translation>
     </message>
     <message>
-        <source>No results found</source>
-        <translation>검색 결과가 없습니다</translation>
+        <source>Save Changes</source>
+        <translation type="unfinished">변경 사항 저장</translation>
     </message>
 </context>
 <context>
@@ -10990,11 +10994,11 @@ to load</source>
     <name>MembersSelectorBase</name>
     <message>
         <source>To:</source>
-        <translation>받는 사람:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 USER LIMIT REACHED</source>
-        <translation>%1 사용자 제한에 도달</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
