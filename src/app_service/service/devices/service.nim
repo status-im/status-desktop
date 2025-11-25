@@ -124,7 +124,6 @@ QtObject:
 
           let backupPath = singletonInstance.localAccountSensitiveSettings.getLocalBackupChosenPath()
 
-
           if backupPath.len == 0 or not backupPath.startsWith("content://"):
             raise newException(CatchableError, "invalid backup path for SAF copy")
 
