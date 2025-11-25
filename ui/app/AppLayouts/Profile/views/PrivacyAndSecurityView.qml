@@ -163,7 +163,7 @@ SettingsContentBase {
 
         // Whitelisted Domains Page
         WhitelistedDomainsView {
-            Layout.preferredWidth: root.contentWidth
+            Layout.fillWidth: true
             whitelistedDomainsModel: root.whitelistedDomainsModel
             onRemoveWhitelistedDomain: index => root.removeWhitelistedDomain(index)
         }
