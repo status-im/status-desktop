@@ -3313,14 +3313,6 @@
     </message>
   </context>
   <context>
-    <name>BrowserWalletMenu</name>
-    <message>
-      <source>Disconnect</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Disconnect</translation>
-    </message>
-  </context>
-  <context>
     <name>BrowserWebEngineView</name>
     <message>
       <source>Add Favourite</source>

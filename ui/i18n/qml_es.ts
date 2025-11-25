@@ -2710,13 +2710,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>BrowserWalletMenu</name>
-    <message>
-        <source>Disconnect</source>
-        <translation>Desconectar</translation>
-    </message>
-</context>
-<context>
     <name>BrowserWebEngineView</name>
     <message>
         <source>Add Favourite</source>

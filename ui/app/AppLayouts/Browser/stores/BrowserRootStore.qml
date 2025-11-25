@@ -7,7 +7,6 @@ import utils
 QtObject {
     id: root
 
-    property bool currentTabConnected: false
     property var urlENSDictionary: ({})
 
     function getAscii2Hex(input) {

@@ -225,7 +225,6 @@ StatusSectionLayout {
             isLoading: (!!_internal.currentWebView && _internal.currentWebView.loading)
             canGoBack: (!!_internal.currentWebView && _internal.currentWebView.canGoBack)
             canGoForward: (!!_internal.currentWebView && _internal.currentWebView.canGoForward)
-            currentTabConnected: root.browserRootStore.currentTabConnected
             browserDappsModel: browserDappsProvider.model
             browserDappsCount: browserDappsProvider.model ? browserDappsProvider.model.count : 0
             onOpenHistoryPopup: (xPos, yPos) => historyMenu.popup(xPos, yPos)
@@ -419,7 +418,6 @@ StatusSectionLayout {
         Component  {
             id: browserWalletMenu
             BrowserWalletMenu {
-                currentTabConnected: root.browserRootStore.currentTabConnected
                 browserWalletStore: root.browserWalletStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
                 x: (parent.width - width - Theme.halfPadding)
@@ -431,11 +429,6 @@ StatusSectionLayout {
                     for (let i = 0; i < tabs.count; ++i){
                         tabs.getTab(i).reload();
                     }
-                }
-                onDisconnect: {
-                    connectorBridge.disconnectCurrentTab()
-                    _internal.currentWebView.reload()
-                    close()
                 }
             }
         }
@@ -608,18 +601,6 @@ StatusSectionLayout {
         target: _internal.currentWebView
         function onUrlChanged() {
             browserHeader.addressBar.text = root.browserRootStore.obtainAddress(_internal.currentWebView.url)
-
-            if (_internal.currentWebView && _internal.currentWebView.url) {
-                const urlStr = _internal.currentWebView.url.toString()
-                const hostname = Utils.getHostname(urlStr)
-
-                root.browserRootStore.currentTabConnected = connectorBridge.hasWalletConnected(
-                    hostname,
-                    root.browserWalletStore.dappBrowserAccount.address
-                )
-            } else {
-                root.browserRootStore.currentTabConnected = false
-            }
             
             // Update ConnectorBridge with current dApp metadata
             if (_internal.currentWebView && _internal.currentWebView.url) {
