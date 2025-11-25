@@ -344,12 +344,6 @@ StatusSectionLayout {
                 }
                 onAddNewDownloadTab: _internal.addNewDownloadTab()
                 onClose: downloadBar.active = false
-                Connections {
-                    target: root.downloadsStore
-                    function onAllItemsOpened() {
-                        downloadBar.active = false
-                    }
-                }
             }
         }
 
