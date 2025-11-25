@@ -15,7 +15,7 @@ import StatusQ.Controls as StatusQ
 SettingsContentBase {
     id: root
 
-    required property int theme // Theme.Style.xxx
+    required property int theme // ThemeUtils.Style.xxx
     required property int fontSize // ThemeUtils.FontSize.xxx
     required property int paddingFactor // ThemeUtils.PaddingFactor.xxx
 
@@ -139,10 +139,10 @@ SettingsContentBase {
                 Layout.fillWidth: true
                 image.source: Assets.png("appearance-light")
                 control.text: qsTr("Light")
-                control.checked: root.theme === Theme.Style.Light
+                control.checked: root.theme === ThemeUtils.Style.Light
                 onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        root.themeChangeRequested(Theme.Style.Light)
+                        root.themeChangeRequested(ThemeUtils.Style.Light)
                     }
                 }
             }
@@ -151,10 +151,10 @@ SettingsContentBase {
                 Layout.fillWidth: true
                 image.source: Assets.png("appearance-dark")
                 control.text: qsTr("Dark")
-                control.checked: root.theme === Theme.Style.Dark
+                control.checked: root.theme === ThemeUtils.Style.Dark
                 onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        root.themeChangeRequested(Theme.Style.Dark)
+                        root.themeChangeRequested(ThemeUtils.Style.Dark)
                     }
                 }
             }
@@ -163,10 +163,10 @@ SettingsContentBase {
                 Layout.fillWidth: true
                 image.source: Assets.png("appearance-system")
                 control.text: qsTr("System")
-                control.checked: root.theme === Theme.Style.System
+                control.checked: root.theme === ThemeUtils.Style.System
                 onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        root.themeChangeRequested(Theme.Style.System)
+                        root.themeChangeRequested(ThemeUtils.Style.System)
                     }
                 }
             }

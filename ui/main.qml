@@ -26,6 +26,9 @@ import MobileUI
 Window {
     id: applicationWindow
 
+    Theme.style: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+                 ? Theme.Style.Dark : Theme.Style.Light
+
     property bool appIsReady: false
 
     readonly property AppStores.FeatureFlagsStore featureFlagsStore: AppStores.FeatureFlagsStore {
@@ -48,7 +51,7 @@ Window {
     readonly property MetricsStore metricsStore: MetricsStore {}
     readonly property UtilsStore utilsStore: UtilsStore {}
     readonly property LanguageStore languageStore: LanguageStore {}
-    readonly property bool appThemeDark: Theme.isDarkTheme
+    readonly property bool appThemeDark: Theme.style === Theme.Style.Dark
     readonly property bool portraitLayout: height > width
     property bool biometricFlowPending: false
     
