@@ -2706,13 +2706,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>BrowserWalletMenu</name>
-    <message>
-        <source>Disconnect</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>BrowserWebEngineView</name>
     <message>
         <source>Add Favourite</source>
@@ -15160,6 +15153,7 @@ to load</source>
     </message>
     <message>
         <source>%1 to %2</source>
+        <extracomment>e.g. (Send) 100 DAI to batista.eth</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>

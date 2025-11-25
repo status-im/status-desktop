@@ -36,7 +36,6 @@ StatusModal {
     function postMessage(isAllowed){
         console.log(isAllowed)
         interactedWith = true
-        root.browserRootStore.currentTabConnected = isAllowed
         if(isAllowed){
             dappPermissionsModule.addPermission(request.hostname, request.address, request.permission)
         }
@@ -45,7 +44,6 @@ StatusModal {
 
     onClosed: {
         if(!interactedWith){
-            root.browserRootStore.currentTabConnected = false
             postMessage(false);
         }
     }

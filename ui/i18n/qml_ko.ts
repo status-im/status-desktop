@@ -2702,13 +2702,6 @@ Do you wish to override the security check and continue?</source>
     </message>
 </context>
 <context>
-    <name>BrowserWalletMenu</name>
-    <message>
-        <source>Disconnect</source>
-        <translation>연결 해제</translation>
-    </message>
-</context>
-<context>
     <name>BrowserWebEngineView</name>
     <message>
         <source>Add Favourite</source>
@@ -15139,6 +15132,7 @@ to load</source>
     </message>
     <message>
         <source>%1 to %2</source>
+        <extracomment>e.g. (Send) 100 DAI to batista.eth</extracomment>
         <translation>%1에서 %2로</translation>
     </message>
     <message>
