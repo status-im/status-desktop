@@ -1894,8 +1894,8 @@
       <source>%n key pair(s) successfully imported</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform></numerusform>
-        <numerusform></numerusform>
+        <numerusform>%n key pair successfully imported</numerusform>
+        <numerusform>%n key pairs successfully imported</numerusform>
       </translation>
     </message>
     <message>
@@ -2357,8 +2357,8 @@
       <source>%n issue(s)</source>
       <comment>AppMain</comment>
       <translation>
-        <numerusform></numerusform>
-        <numerusform></numerusform>
+        <numerusform>%n issue</numerusform>
+        <numerusform>%n issues</numerusform>
       </translation>
     </message>
     <message>
@@ -2628,11 +2628,6 @@
       <translation>Mode</translation>
     </message>
     <message>
-      <source>Padding factor</source>
-      <comment>AppearanceView</comment>
-      <translation>Padding factor</translation>
-    </message>
-    <message>
       <source>XXS</source>
       <comment>AppearanceView</comment>
       <translation>XXS</translation>
@@ -2651,6 +2646,16 @@
       <source>System</source>
       <comment>AppearanceView</comment>
       <translation>System</translation>
+    </message>
+    <message>
+      <source>Layout Spacing</source>
+      <comment>AppearanceView</comment>
+      <translation>Layout Spacing</translation>
+    </message>
+    <message>
+      <source>Adjust how compact or spacious the layout looks</source>
+      <comment>AppearanceView</comment>
+      <translation>Adjust how compact or spacious the layout looks</translation>
     </message>
   </context>
   <context>
@@ -3313,11 +3318,6 @@
       <source>Disconnect</source>
       <comment>BrowserWalletMenu</comment>
       <translation>Disconnect</translation>
-    </message>
-    <message>
-      <source>Wallet info will appear here</source>
-      <comment>BrowserWalletMenu</comment>
-      <translation>Wallet info will appear here</translation>
     </message>
   </context>
   <context>
@@ -9357,6 +9357,14 @@
     </message>
   </context>
   <context>
+    <name>FeeRow</name>
+    <message>
+      <source>Max.</source>
+      <comment>FeeRow</comment>
+      <translation>Max.</translation>
+    </message>
+  </context>
+  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -10910,6 +10918,11 @@
       <source>PIN correct</source>
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
+    </message>
+    <message>
+      <source>Keycard blocked</source>
+      <comment>KeycardEnterPinPage</comment>
+      <translation>Keycard blocked</translation>
     </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>
@@ -19854,11 +19867,6 @@
   </context>
   <context>
     <name>StatusMessageEmojiReactions</name>
-    <message>
-      <source> and </source>
-      <comment>StatusMessageEmojiReactions</comment>
-      <translation>and</translation>
-    </message>
     <message>
       <source>%1 more</source>
       <comment>StatusMessageEmojiReactions</comment>
