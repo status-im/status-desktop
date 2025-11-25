@@ -70,7 +70,7 @@ ColumnLayout {
 
             StatusLoadingIndicator {
                 anchors.centerIn: parent
-                color: Theme.palette.blue
+                color: StatusColors.getColr("blue")
                 visible: showIcon && input.pending
             }
 

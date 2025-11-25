@@ -47,7 +47,7 @@ Item {
         layer.effect: DropShadow {
             samples: 16
             cached: true
-            color: Theme.palette.alphaColor(Theme.palette.directColor1, 0.16)
+            color: StatusColors.alphaColor(Theme.palette.directColor1, 0.16)
         }
     }
 

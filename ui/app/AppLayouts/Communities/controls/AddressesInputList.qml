@@ -91,7 +91,7 @@ Control {
                 PropertyChanges {
                     target: delegate
 
-                    color: Theme.palette.alphaColor(
+                    color: StatusColors.alphaColor(
                                Theme.palette.dangerColor1, 0.05)
                 }
 

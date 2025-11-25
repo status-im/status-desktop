@@ -288,7 +288,7 @@ AbstractButton {
 
     background: Rectangle {
         implicitHeight: 76 // ProfileUtils.defaultDelegateHeight
-        color: root.changeColorOnDragActive && root.drawBackgroundBorder ? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
+        color: root.changeColorOnDragActive && root.drawBackgroundBorder ? StatusColors.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
         border.width: root.drawBackgroundBorder ? 1 : 0
         border.color: Theme.palette.baseColor2
         radius: root.drawBackgroundBorder ? Theme.radius : 0

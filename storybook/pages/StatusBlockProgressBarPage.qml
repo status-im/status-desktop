@@ -61,7 +61,7 @@ SplitView {
                 id: darkMode
                 text: "Dark Mode"
                 checked: false
-                onCheckedChanged: rect.color = Theme.palette.getColor('graphite3')
+                onCheckedChanged: rect.color = StatusColors.getColor('graphite3')
             }
         }
     }

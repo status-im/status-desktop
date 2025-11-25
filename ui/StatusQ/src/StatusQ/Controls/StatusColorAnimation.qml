@@ -38,7 +38,7 @@ SequentialAnimation {
     required property var target
     property string targetProperty: "color"
     property color fromColor: Theme.palette.directColor1
-    property color toColor: Theme.palette.getColor(fromColor, 0.1)
+    property color toColor: StatusColors.getColor(fromColor, 0.1)
     property int duration: 500 // in milliseconds
 
     loops: 3
