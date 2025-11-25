@@ -2454,8 +2454,9 @@ Item {
         }
     }
     Shortcut {
-        sequence: "Ctrl+F"
+        sequence: StandardKey.Find
         context: Qt.ApplicationShortcut
+        enabled: d.activeSectionType !== Constants.appSection.browser // has its own "Search"
         onActivated: {
             if (appSearch.active) {
                 appSearch.closeSearchPopup()
