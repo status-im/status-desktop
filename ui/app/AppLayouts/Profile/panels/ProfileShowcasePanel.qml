@@ -357,7 +357,7 @@ DoubleFlickableWithFolding {
         background: Rectangle {
             id: shapeWrapper
 
-            color: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.getColor(Theme.palette.baseColor4, 0.7)
+            color: dropArea.containsDrag ? Theme.palette.primaryColor3 : StatusColors.getColor(Theme.palette.baseColor4, 0.7)
             radius: Theme.radius
             
             ShapeRectangle {

@@ -201,7 +201,7 @@ Control {
         readonly property string iconBgColor: {
             // If specified:
             if(root.iconColor != "")
-                return Theme.palette.getColor(root.iconColor, 0.1)
+                return StatusColors.getColor(root.iconColor, 0.1)
 
             // If not specified
             switch(root.type) {
