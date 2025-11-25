@@ -33,6 +33,22 @@ qreal Theme::defaultPadding() const {
     return s_defaultPadding;
 }
 
+qreal Theme::defaultXlPadding() const {
+    return s_defaultPadding * s_xlPaddingFactor;
+}
+
+qreal Theme::defaultBigPadding() const {
+    return s_defaultPadding * s_bigPaddingFactor;
+}
+
+qreal Theme::defaultHalfPadding() const {
+    return s_defaultPadding * s_halfPaddingFactor;
+}
+
+qreal Theme::defaultSmallPadding() const {
+    return s_defaultPadding * s_smallPaddingFactor;
+}
+
 qreal Theme::padding() const {
     return m_padding;
 }
