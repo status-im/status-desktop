@@ -2482,10 +2482,6 @@ Para respaldar tu frase de recuperación, escríbela y guárdala de forma segura
         <source>Supported backup formats (%1)</source>
         <translation></translation>
     </message>
-    <message>
-        <source>Choose a folder to store your backup files in.</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>BalanceExceeded</name>
@@ -6777,6 +6773,10 @@ Recuerda tu contraseña y no la compartas con nadie.</translation>
         <translation>¿Habilitar backup de mensajes en el dispositivo?</translation>
     </message>
     <message>
+        <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
+        <translation>Los backups en el dispositivo son:&lt;br&gt;Automáticos: cada 30 minutos&lt;br&gt;Seguros: cifrados con tu clave privada del perfil&lt;br&gt;Privados: almacenados solo en tu dispositivo</translation>
+    </message>
+    <message>
         <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
         <translation>Los backups te permiten restaurar tus mensajes 1 a 1, grupales y de comunidad si necesitas reinstalar la app o cambiar de dispositivo. Puedes omitir este paso ahora y habilitarlo en cualquier momento en: &lt;i&gt;Configuración &gt; Respaldo en el dispositivo &gt; Datos de backup&lt;/i&gt;</translation>
     </message>
@@ -6787,22 +6787,6 @@ Recuerda tu contraseña y no la compartas con nadie.</translation>
     <message>
         <source>Enable</source>
         <translation>Habilitar</translation>
-    </message>
-    <message>
-        <source>Enable on-device backup?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-device backups are:&lt;br&gt;&lt;b&gt;Automatic&lt;/b&gt; –  created every 30 minutes&lt;br&gt;&lt;b&gt;Secure&lt;/b&gt; – encrypted with your profile’s private key&lt;br&gt;&lt;b&gt;Private&lt;/b&gt; – stored only on your device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To enable backups, choose a folder to store your backup files under the &lt;b&gt;Backup location&lt;/b&gt; setting.&lt;br&gt;&lt;br&gt;You can also &lt;b&gt;optionally&lt;/b&gt; back up your &lt;b&gt;1-on-1, group, and community messages&lt;/b&gt; by turning on the &lt;b&gt;Backup your messages&lt;/b&gt; toggle under the &lt;b&gt;Backup data&lt;/b&gt; setting.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Go to settings</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

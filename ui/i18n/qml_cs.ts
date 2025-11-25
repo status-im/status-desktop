@@ -2486,10 +2486,6 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
         <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Choose a folder to store your backup files in.</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>BalanceExceeded</name>
@@ -6796,23 +6792,11 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable on-device backup?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-device backups are:&lt;br&gt;&lt;b&gt;Automatic&lt;/b&gt; –  created every 30 minutes&lt;br&gt;&lt;b&gt;Secure&lt;/b&gt; – encrypted with your profile’s private key&lt;br&gt;&lt;b&gt;Private&lt;/b&gt; – stored only on your device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To enable backups, choose a folder to store your backup files under the &lt;b&gt;Backup location&lt;/b&gt; setting.&lt;br&gt;&lt;br&gt;You can also &lt;b&gt;optionally&lt;/b&gt; back up your &lt;b&gt;1-on-1, group, and community messages&lt;/b&gt; by turning on the &lt;b&gt;Backup your messages&lt;/b&gt; toggle under the &lt;b&gt;Backup data&lt;/b&gt; setting.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Go to settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
