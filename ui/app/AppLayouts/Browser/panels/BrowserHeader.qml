@@ -25,7 +25,6 @@ Rectangle {
     property bool canGoBack: false
     property bool canGoForward: false
     property var currentFavorite
-    property bool currentTabConnected: false
     property string dappBrowserAccName: ""
     property string dappBrowserAccIcon: ""
     property var settingMenu
@@ -191,30 +190,16 @@ Rectangle {
             Layout.preferredWidth: _internal.buttonSize
             Layout.preferredHeight: _internal.buttonSize
             active: true
-            sourceComponent: currentTabConnected ? connectedBtnComponent : notConnectedBtnCompoent
+            sourceComponent: accountBtnCompoent
         }
 
         Component {
-            id: notConnectedBtnCompoent
+            id: accountBtnCompoent
             StatusFlatRoundButton {
-                id: accountBtn
                 icon.name: "filled-account"
                 type: StatusFlatRoundButton.Type.Tertiary
                 onPressed: {
                     root.openWalletMenu()
-                }
-            }
-        }
-
-        Component {
-            id: connectedBtnComponent
-            StatusFlatButton {
-                id: accountBtnConnected
-                icon.name: "wallet"
-                icon.color: dappBrowserAccIcon
-                text: dappBrowserAccName
-                onPressed: {
-                    root.openWalletMenu();
                 }
             }
         }
