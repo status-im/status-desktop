@@ -16,30 +16,46 @@ ColumnLayout {
     spacing: Theme.bigPadding
 
     StatusBaseText {
+        Layout.fillWidth: true
+        wrapMode: Text.Wrap
+        Layout.preferredWidth: 0
+
         text: qsTr("Trusted sites")
         font.pixelSize: 28
         font.bold: true
     }
 
     StatusBaseText {
+        Layout.fillWidth: true
+        Layout.preferredWidth: 0
+
+        wrapMode: Text.Wrap
         text: qsTr("Manage trusted sites. Their links open without confirmation.")
     }
 
     StatusBaseText {
+        Layout.fillWidth: true
+        Layout.preferredWidth: 0
         Layout.topMargin: Theme.xlPadding
-        Layout.alignment: Qt.AlignHCenter
+
+        horizontalAlignment: Text.AlignHCenter
+
+        wrapMode: Text.Wrap
         text: qsTr("No trusted sites added yet")
-        visible: root.whitelistedDomainsModel.length === 0
+        visible: listView.count === 0
         color: Theme.palette.baseColor1
     }
 
     StatusListView {
+        id: listView
+
         Layout.fillWidth: true
         Layout.fillHeight: true
 
         model: root.whitelistedDomainsModel
         delegate: StatusListItem {
-            Layout.preferredWidth: parent.width
+            width: ListView.view.width
+
             title: modelData
             components: [
                 StatusFlatButton {
