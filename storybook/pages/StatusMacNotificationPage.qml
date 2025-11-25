@@ -4,13 +4,23 @@ import QtQuick.Layouts
 
 import StatusQ.Platform
 
-Column {
-    spacing: 8
-
+Item {
     StatusMacNotification {
         anchors.centerIn: parent
         name: "Some name"
         message: "Some message here"
+
+        width: widthSlider.value || undefined
+    }
+
+    RowLayout {
+
+        Slider {
+            id: widthSlider
+
+            from: 0
+            to: 400
+        }
     }
 }
 
