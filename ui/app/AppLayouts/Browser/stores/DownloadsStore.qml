@@ -4,21 +4,12 @@ import StatusQ
 QtObject {
     id: root
 
-    signal allItemsOpened()
-
     property ListModel downloadModel : ListModel {
         property var downloads: []
     }
 
     function getDownload(index) {
         return downloadModel.downloads[index]
-    }
-
-    function removeDownloadFromModel(index) {
-        downloadModel.downloads = downloadModel.downloads.filter(function (el) {
-            return el.id !== downloadModel.downloads[index].id;
-        });
-        downloadModel.remove(index);
     }
 
     function addDownload(download) {
@@ -29,11 +20,6 @@ QtObject {
     function openFile(index) {
         const filePath = `${downloadModel.downloads[index].downloadDirectory}/${downloadModel.downloads[index].downloadFileName}`
         Qt.openUrlExternally(UrlUtils.urlFromUserInput(filePath))
-        root.removeDownloadFromModel(index)
-        // if all items are opened, stop diplaying the bar
-        if(root.downloadModel.count === 0) {
-            root.allItemsOpened()
-        }
     }
 
     function openDirectory(index) {
