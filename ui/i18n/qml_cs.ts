@@ -8590,7 +8590,11 @@ L2 poplatek: %2</translation>
 <context>
     <name>InlineSelectorPanel</name>
     <message>
-        <source>Confirm</source>
+        <source>No results found</source>
+        <translation type="unfinished">Žádné výsledky nenalezeny</translation>
+    </message>
+    <message>
+        <source>Group Members</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8598,8 +8602,8 @@ L2 poplatek: %2</translation>
         <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
-        <source>No results found</source>
-        <translation type="unfinished">Žádné výsledky nenalezeny</translation>
+        <source>Save Changes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11159,11 +11163,11 @@ to load</source>
     <name>MembersSelectorBase</name>
     <message>
         <source>To:</source>
-        <translation>Pro:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 USER LIMIT REACHED</source>
-        <translation>DOSAŽEN LIMIT UŽIVATELŮ: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
