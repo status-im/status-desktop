@@ -2130,6 +2130,14 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
         <translation>XXL</translation>
     </message>
     <message>
+        <source>Layout Spacing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust how compact or spacious the layout looks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Mode</source>
         <translation>모드</translation>
     </message>
@@ -2144,10 +2152,6 @@ from &quot;%1&quot; to &quot;%2&quot;</source>
     <message>
         <source>System</source>
         <translation>시스템</translation>
-    </message>
-    <message>
-        <source>Padding factor</source>
-        <translation>여백 계수</translation>
     </message>
     <message>
         <source>XXS</source>
@@ -15146,6 +15150,7 @@ to load</source>
     </message>
     <message>
         <source>%1 to %2</source>
+        <extracomment>e.g. (Send) 100 DAI to batista.eth</extracomment>
         <translation>%1에서 %2로</translation>
     </message>
     <message>
@@ -16297,10 +16302,6 @@ to load</source>
 </context>
 <context>
     <name>StatusMessageEmojiReactions</name>
-    <message>
-        <source> and </source>
-        <translation> 그리고 </translation>
-    </message>
     <message>
         <source>%1 more</source>
         <translation>%1개 더</translation>
