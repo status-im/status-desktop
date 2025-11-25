@@ -12,27 +12,22 @@ SplitView {
 
     Logs { id: logs }
 
-    SplitView {
-        orientation: Qt.Vertical
+    PrivacyAndSecurityView {
         SplitView.fillWidth: true
+        SplitView.fillHeight: true
+        contentWidth: width
 
-        PrivacyAndSecurityView {
-            SplitView.fillWidth: true
-            SplitView.fillHeight: true
-            contentWidth: parent.width
-
-            privacySectionTitle: "Privacy"
-            whitelistedDomainsModel: ["example1.com", "example2.com", "example3.com"]
-            isStatusNewsViaRSSEnabled: true
-            isCentralizedMetricsEnabled: true
-            thirdpartyServicesEnabled: ctrlThirdpartyServicesEnabled.checked
-            privacyModeFeatureEnabled: ctrlPrivacyMode.checked
-            onOpenThirdpartyServicesInfoPopupRequested: {
-                logs.logEvent("onLaunchThirdyPartyServicesInfoPopupRequested")
-                ctrlThirdpartyServicesEnabled.checked = !ctrlThirdpartyServicesEnabled.checked
-            }
-            onOpenDiscussPageRequested: logs.logEvent("onOpenDiscussPageRequested")
+        privacySectionTitle: "Privacy"
+        whitelistedDomainsModel: ["example1.com", "example2.com", "example3.com"]
+        isStatusNewsViaRSSEnabled: true
+        isCentralizedMetricsEnabled: true
+        thirdpartyServicesEnabled: ctrlThirdpartyServicesEnabled.checked
+        privacyModeFeatureEnabled: ctrlPrivacyMode.checked
+        onOpenThirdpartyServicesInfoPopupRequested: {
+            logs.logEvent("onLaunchThirdyPartyServicesInfoPopupRequested")
+            ctrlThirdpartyServicesEnabled.checked = !ctrlThirdpartyServicesEnabled.checked
         }
+        onOpenDiscussPageRequested: logs.logEvent("onOpenDiscussPageRequested")
     }
 
     LogsAndControlsPanel {
@@ -43,16 +38,18 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        Switch {
-            id: ctrlPrivacyMode
-            text: "Privacy Mode Feature Enabled"
-            checked: true
-        }
+        ColumnLayout {
+            Switch {
+                id: ctrlPrivacyMode
+                text: "Privacy Mode Feature Enabled"
+                checked: true
+            }
 
-        Switch {
-            id: ctrlThirdpartyServicesEnabled
-            text: "Third Party Services Enabled"
-            checked: true
+            Switch {
+                id: ctrlThirdpartyServicesEnabled
+                text: "Third Party Services Enabled"
+                checked: true
+            }
         }
     }
 }
