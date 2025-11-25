@@ -192,6 +192,7 @@ StatusSectionLayout {
         }
     }
 
+    backgroundColor: Theme.palette.statusAppNavBar.backgroundColor
     centerPanel: Rectangle {
         id: browserWindow
         anchors.fill: parent
@@ -240,11 +241,9 @@ StatusSectionLayout {
             onDisconnectDapp: function(dappUrl) {
                 connectorBridge.disconnect(dappUrl)
             }
-            onAddNewFavoriteClicked: function(xPos) {
+            onAddNewFavoriteClicked: function() {
                 Global.openPopup(addFavoriteModal,
                                  {
-                                     x: xPos - 30,
-                                     y: browserHeader.y + browserHeader.height + 4,
                                      modifiyModal: !!browserHeader.currentFavorite,
                                      toolbarMode: true,
                                      ogUrl: !!browserHeader.currentFavorite ? browserHeader.currentFavorite.url : _internal.currentWebView.url,
@@ -271,7 +270,6 @@ StatusSectionLayout {
             id: tabs
             anchors.top: parent.top
             anchors.bottom: devToolsView.top
-            anchors.bottomMargin: browserHeader.height
             anchors.left: parent.left
             anchors.right: parent.right
             z: 50
@@ -374,9 +372,12 @@ StatusSectionLayout {
 
         BrowserSettingsMenu {
             id: settingsMenu
-            x: parent.width - width
-            y: browserHeader.y + browserHeader.height
-            isIncognito: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
+
+            parent: browserHeader
+            x: parent.width - width - Theme.halfPadding
+            y: browserHeader.height + 4
+
+            incognitoMode: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
             zoomFactor: _internal.currentWebView ? _internal.currentWebView.zoomFactor : 1
             onAddNewTab: _internal.addNewTab()
             onAddNewDownloadTab: _internal.addNewDownloadTab()
@@ -418,11 +419,13 @@ StatusSectionLayout {
         Component  {
             id: browserWalletMenu
             BrowserWalletMenu {
+                parent: browserHeader
+                x: browserHeader.width - width - Theme.halfPadding
+                y: browserHeader.height + 4
+
+                incognitoMode: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
                 browserWalletStore: root.browserWalletStore
-                property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
-                x: (parent.width - width - Theme.halfPadding)
-                y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
-                    browserHeader.anchors.topMargin + Theme.halfPadding)
+
                 onSendTriggered: (address) => root.sendToRecipientRequested(address)
                 onAccountChanged: (newAddress) => connectorBridge.connectorManager.changeAccount(newAddress)
                 onReload: {
@@ -437,6 +440,10 @@ StatusSectionLayout {
     Component {
         id: addFavoriteModal
         AddFavoriteModal {
+            parent: browserHeader
+            x: browserHeader.width - width - Theme.halfPadding
+            y: browserHeader.height + 4
+            incognitoMode: _internal.currentWebView && _internal.currentWebView.profile === connectorBridge.otrProfile
             bookmarksStore: root.bookmarksStore
         }
     }
@@ -508,8 +515,6 @@ StatusSectionLayout {
     Component {
         id: webEngineView
         BrowserWebEngineView {
-            anchors.top: parent ? parent.top : undefined
-            anchors.topMargin: browserHeader.height
             bookmarksStore: root.bookmarksStore
             downloadsStore: root.downloadsStore
             currentWebView: _internal.currentWebView

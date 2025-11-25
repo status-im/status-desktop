@@ -24,6 +24,7 @@ StatusDropdown {
 
     width: 312
     padding: 0
+    bottomPadding: Theme.halfPadding
 
     modal: false
 
@@ -36,6 +37,7 @@ StatusDropdown {
             id: listPlaceholder
 
             text: qsTr("Connected dApps will appear here")
+            textColor: Theme.palette.textColor
 
             Layout.fillWidth: true
             Layout.preferredHeight: 44
@@ -63,7 +65,7 @@ StatusDropdown {
                 anchors.verticalCenter: parent.verticalCenter
 
                 font.pixelSize: Theme.tertiaryTextFontSize
-                color: Theme.palette.baseColor1
+                color: Theme.palette.textColor
             }
         }
 

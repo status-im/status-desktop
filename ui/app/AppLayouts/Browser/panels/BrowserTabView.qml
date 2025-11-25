@@ -47,7 +47,7 @@ FocusScope {
         id: tabBar
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.right: standaloneAddTabButton.visible ? standaloneAddTabButton.left : parent.right
+        anchors.right: parent.right
         height: root.tabHeight
         background: Rectangle {
             color: Theme.palette.statusAppNavBar.backgroundColor
@@ -63,14 +63,8 @@ FocusScope {
             snapMode: ListView.SnapToItem
             clip: true
 
-            footer: Item {
-                width: d.tabHeight
-                height: d.tabHeight
+            footer: AddTabButton{
                 visible: !d.tabBarOverflowing
-                AddTabButton {
-                    anchors.centerIn: parent
-                    padding: 4
-                }
             }
 
             TapHandler {
@@ -82,10 +76,10 @@ FocusScope {
 
     AddTabButton {
         id: standaloneAddTabButton
+
         anchors.top: parent.top
         anchors.right: parent.right
-        width: d.tabHeight
-        height: d.tabHeight
+        color: Theme.palette.statusAppNavBar.backgroundColor
         visible: d.tabBarOverflowing
     }
 
@@ -155,11 +149,17 @@ FocusScope {
         tab.destroy()
     }
 
-    component AddTabButton: StatusFlatButton {
-        isRoundIcon: true
-        icon.name: "add-tab"
-        type: StatusBaseButton.Type.Primary
-        onClicked: root.openNewTabTriggered()
+    component AddTabButton: Rectangle {
+        color: Theme.palette.transparent
+        width: d.tabHeight
+        height: d.tabHeight
+        StatusFlatButton {
+            anchors.fill: parent
+            anchors.margins: 4
+            icon.name: "add"
+            type: StatusBaseButton.Type.Primary
+            onClicked: root.openNewTabTriggered()
+        }
     }
 
     Component {
@@ -182,11 +182,11 @@ FocusScope {
                 color: {
                     if (tabButton.checked) {
                         if(tabButton.incognito)
-                            return Theme.palette.privacyModeColors.navBarSecondaryColor
+                            return Theme.palette.privacyColors.primary
                         return Theme.palette.background
                     } else  {
                         if(tabButton.incognito)
-                            return Theme.palette.privacyModeColors.navBarColor
+                            return Theme.palette.privacyColors.secondary
                         return Theme.palette.baseColor2
                     }
                 }

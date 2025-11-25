@@ -52,8 +52,8 @@ Item {
         function test_dappIcon() {
             const icon = findChild(controlUnderTest, "dappIcon")
             compare(icon.icon, "dapp")
-            compare(icon.width, 16)
-            compare(icon.height, 16)
+            compare(icon.width, 24)
+            compare(icon.height, 24)
             compare(icon.status, Image.Ready)
         }
 
