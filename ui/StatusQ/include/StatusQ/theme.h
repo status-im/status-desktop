@@ -11,6 +11,12 @@ class Theme : public QQuickAttachedPropertyPropagator
     Q_OBJECT
 
     Q_PROPERTY(qreal defaultPadding READ defaultPadding CONSTANT)
+
+    Q_PROPERTY(qreal defaultXlPadding READ defaultXlPadding CONSTANT)
+    Q_PROPERTY(qreal defaultBigPadding READ defaultBigPadding CONSTANT)
+    Q_PROPERTY(qreal defaultHalfPadding READ defaultHalfPadding CONSTANT)
+    Q_PROPERTY(qreal defaultSmallPadding READ defaultSmallPadding CONSTANT)
+
     Q_PROPERTY(qreal padding READ padding WRITE setPadding
                    RESET resetPadding NOTIFY paddingChanged)
     Q_PROPERTY(qreal xlPadding READ xlPadding NOTIFY paddingChanged)
@@ -64,6 +70,11 @@ public:
 
     // paddings
     qreal defaultPadding() const;
+    qreal defaultXlPadding() const;
+    qreal defaultBigPadding() const;
+    qreal defaultHalfPadding() const;
+    qreal defaultSmallPadding() const;
+
     qreal padding() const;
     qreal xlPadding() const;
     qreal bigPadding() const;
