@@ -8506,16 +8506,20 @@ Tarifa L2: %2</translation>
 <context>
     <name>InlineSelectorPanel</name>
     <message>
-        <source>Confirm</source>
-        <translation>Confirmar</translation>
+        <source>No results found</source>
+        <translation>No se encontraron resultados</translation>
+    </message>
+    <message>
+        <source>Group Members</source>
+        <translation>Miembros del Grupo</translation>
     </message>
     <message>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <source>No results found</source>
-        <translation>No se encontraron resultados</translation>
+        <source>Save Changes</source>
+        <translation>Guardar cambios</translation>
     </message>
 </context>
 <context>
@@ -11025,7 +11029,7 @@ al cargar</translation>
     </message>
     <message>
         <source>%1 USER LIMIT REACHED</source>
-        <translation>LÍMITE DE %1 USUARIOS ALCANZADO</translation>
+        <translation>SE ALCANZÓ EL LÍMITE DE %1 USUARIOS</translation>
     </message>
 </context>
 <context>

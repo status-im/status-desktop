@@ -10365,9 +10365,14 @@
   <context>
     <name>InlineSelectorPanel</name>
     <message>
-      <source>Confirm</source>
+      <source>No results found</source>
       <comment>InlineSelectorPanel</comment>
-      <translation>Confirm</translation>
+      <translation>No results found</translation>
+    </message>
+    <message>
+      <source>Group Members</source>
+      <comment>InlineSelectorPanel</comment>
+      <translation>Group Members</translation>
     </message>
     <message>
       <source>Cancel</source>
@@ -10375,9 +10380,9 @@
       <translation>Cancel</translation>
     </message>
     <message>
-      <source>No results found</source>
+      <source>Save Changes</source>
       <comment>InlineSelectorPanel</comment>
-      <translation>No results found</translation>
+      <translation>Save Changes</translation>
     </message>
   </context>
   <context>
