@@ -10,7 +10,7 @@ import StatusQ.Popups
 StatusMenu {
     id: root
 
-    required property bool isIncognito
+    required property bool incognitoMode
     required property real zoomFactor
 
     visualizeShortcuts: true
@@ -25,6 +25,13 @@ StatusMenu {
     signal toggleCompatibilityMode(bool checked)
     signal launchBrowserSettings()
 
+    background: Rectangle {
+        color: root.incognitoMode ?
+                   Theme.palette.privacyColors.primary:
+                   Theme.palette.statusMenu.backgroundColor
+        radius: Theme.radius
+    }
+
     StatusAction {
         text: qsTr("New Tab")
         icon.name: "add-tab"
@@ -37,7 +44,7 @@ StatusMenu {
         icon.name: "hide"
         text: checked ? qsTr("Exit Incognito mode") : qsTr("Go Incognito")
         checkable: true
-        checked: isIncognito
+        checked: root.incognitoMode
         onToggled: goIncognito(checked)
     }
 

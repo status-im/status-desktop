@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 import StatusQ.Popups
+import StatusQ.Core.Theme
 
 import AppLayouts.Browser.stores as BrowserStores
 
@@ -15,6 +16,11 @@ StatusMenu {
 
     signal openInNewTab(url url)
     signal editFavoriteTriggered()
+
+    background: Rectangle {
+        color: Theme.palette.statusMenu.backgroundColor
+        radius: Theme.radius
+    }
 
     StatusAction {
         text: qsTr("Open in new Tab")

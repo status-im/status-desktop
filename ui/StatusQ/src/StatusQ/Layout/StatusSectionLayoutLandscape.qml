@@ -112,6 +112,12 @@ SplitView {
     */
     property Item headerContent
 
+    /*!
+        \qmlproperty color StatusSectionLayoutLandscape::backgroundColor
+        This property holds color of the centeral component of
+        the section
+    */
+    property color backgroundColor: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
     /*!
         \qmlsignal
@@ -149,7 +155,7 @@ SplitView {
         SplitView.fillWidth: (!!centerPanel)
         SplitView.fillHeight: (!!centerPanel)
         background: Rectangle {
-            color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+            color: root.backgroundColor
         }
         contentItem: Item {
             LayoutItemProxy {
