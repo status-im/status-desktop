@@ -17,6 +17,7 @@ import AppLayouts.Browser.stores as BrowserStores
 ModalPopup {
     id: root
 
+    required property bool incognitoMode
     required property BrowserStores.BookmarksStore bookmarksStore
 
     property string ogUrl: ""
@@ -31,7 +32,9 @@ ModalPopup {
 
     background: Rectangle {
         id: bgPopup
-        color: Theme.palette.background
+        color: root.incognitoMode?
+                   Theme.palette.privacyColors.primary:
+                   Theme.palette.background
         radius: Theme.radius
         layer.enabled: true
         layer.effect: DropShadow {

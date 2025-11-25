@@ -23,6 +23,8 @@ ComboBox {
 
     property bool showConnectButton: true
     property bool dappClickable: true
+    property bool incognitoMode: false
+    property var popupDirectParent: root
 
     implicitHeight: 38
     implicitWidth: 38
@@ -30,10 +32,18 @@ ComboBox {
     background: SQP.StatusComboboxBackground {
         objectName: "dappsBackground"
         active: root.down || root.hovered
-        Binding on color {
-            when: !root.enabled
-            value: Theme.palette.baseColor2
+        color: {
+            if (!root.enabled)
+                return Theme.palette.baseColor2
+
+            if (!root.hovered)
+                return Theme.palette.transparent
+
+            return root.incognitoMode
+                    ? Theme.palette.privacyColors.secondary
+                    : Theme.palette.directColor8;
         }
+        border.width: 0
     }
 
     indicator: null
@@ -53,10 +63,13 @@ ComboBox {
         StatusIcon {
             objectName: "dappIcon"
             anchors.centerIn: parent
-            width: 16
-            height: 16
+            width: 24
+            height: 24
             icon: "dapp"
-            color: Theme.palette.baseColor1
+            color: root.incognitoMode ?
+                       Theme.palette.privacyColors.tertiary:
+                       hovered ? Theme.palette.primaryColor1:
+                                 Theme.palette.baseColor1
         }
     }
 
@@ -76,17 +89,24 @@ ComboBox {
     popup: DAppsListPopup {
         objectName: "dappsListPopup"
 
-        directParent: root
+        directParent: root.popupDirectParent
         relativeX: {
-            const globalX = root.mapToGlobal(root.width / 2, 0).x
+            const globalX = directParent.mapToGlobal(directParent.width / 2, 0).x
             if (globalX < root.Window.width / 2)
                return 0
 
-            return root.width - width
+            return directParent.width - width
         }
-        relativeY: root.height + 4
+        relativeY: directParent.height + 4
 
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        background: Rectangle {
+            color: root.incognitoMode ?
+                       Theme.palette.privacyColors.primary:
+                       Theme.palette.statusMenu.backgroundColor
+            radius: Theme.radius
+        }
 
         delegateModel: root.delegateModel
         showConnectButton: root.showConnectButton

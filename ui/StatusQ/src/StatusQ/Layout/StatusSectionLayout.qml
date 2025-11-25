@@ -117,6 +117,12 @@ LayoutChooser {
         the header component.
     */
     property Item headerContent
+    /*!
+        \qmlproperty color StatusSectionLayout::backgroundColor
+        This property holds color of the centeral component of
+        the section
+    */
+    property color backgroundColor: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
     /*!
         \qmlsignal
@@ -167,6 +173,7 @@ LayoutChooser {
         showHeader: root.showHeader
         backButtonName: root.backButtonName
         headerContent: root.headerContent
+        backgroundColor: root.backgroundColor
 
         onBackButtonClicked: root.backButtonClicked()
     }
@@ -185,6 +192,7 @@ LayoutChooser {
         showHeader: root.showHeader
         backButtonName: root.backButtonName
         headerContent: root.headerContent
+        backgroundColor: root.backgroundColor
 
         property int currentIndexCache
 

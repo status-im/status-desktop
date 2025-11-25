@@ -106,7 +106,12 @@ SwipeView {
         the header component.
     */
     property Item headerContent
-
+    /*!
+        \qmlproperty color StatusSectionLayoutPortrait::backgroundColor
+        This property holds color of the centeral component of
+        the section
+    */
+    property color backgroundColor: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
     /*!
         \qmlsignal
@@ -149,7 +154,7 @@ SwipeView {
         property bool inView: true
 
         background: Rectangle {
-            color: backgroundColor || Theme.palette.statusAppLayout.rightPanelBackgroundColor
+            color: baseProxyPanel.backgroundColor || root.backgroundColor
         }
         onInViewChanged: {
             // If the panel is not in view, we need to remove it from the swipe view
@@ -185,7 +190,7 @@ SwipeView {
 
     BaseProxyPanel {
         id: centerPanelBase
-        backgroundColor: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+        backgroundColor: root.backgroundColor
         implicitIndex: 1
         inView: !!root.centerPanel
         target: ColumnLayout {

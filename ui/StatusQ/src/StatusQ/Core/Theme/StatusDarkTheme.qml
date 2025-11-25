@@ -187,6 +187,12 @@ ThemePalette {
         property color camel: "#9F7252"
         property color magenta: "#BD1E56"
         property color yinYang: "#FFFFFF"
-        property color purple2: "#7140FD"
+    }
+
+    privacyColors: QtObject {
+        property color primary: "#341D65"
+        property color secondary: "#5B438E"
+        property color tertiary: white
+        property color tertiaryOpaque: getColor(white, 0.3)
     }
 }
