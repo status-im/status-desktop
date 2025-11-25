@@ -1,14 +1,12 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import StatusQ.Controls
-import StatusQ.Platform
 import StatusQ.Core
 import StatusQ.Core.Theme
 
-import utils
-
-Item {
+Control {
     property bool checked: false
     property string name
     property string notificationTitle
@@ -18,34 +16,35 @@ Item {
     signal radioCheckedChanged(checked: bool)
 
     id: root
-    height: container.height
-    width: container.width
 
-    Rectangle {
-        id: container
-        width: notificationPreview.width + Theme.padding * 2
-        height: childrenRect.height + Theme.padding + Theme.halfPadding
+    background: Rectangle {
         color: radioButton.checked ? Theme.palette.secondaryBackground :
-                                     (isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent)
+                                     (isHovered ? Theme.palette.backgroundHover
+                                                : Theme.palette.transparent)
         radius: Theme.radius
+    }
+
+    padding: Theme.padding
+
+    contentItem: ColumnLayout {
+        id: container
 
         StatusRadioButton {
             id: radioButton
+
+            Layout.fillWidth: true
+
             text: root.name
-            ButtonGroup.group: root.buttonGroup
+            ButtonGroup.group: root.buttonGroup || null
             checked: root.checked
             onCheckedChanged: root.radioCheckedChanged(checked)
-            anchors.top: parent.top
-            anchors.topMargin: Theme.halfPadding
-            anchors.left: parent.left
-            anchors.leftMargin: Theme.padding
         }
 
         StatusNotificationWithDropShadowPanel {
             id: notificationPreview
-            anchors.top: radioButton.bottom
-            anchors.topMargin: Theme.halfPadding
-            anchors.left: parent.left
+
+            Layout.fillWidth: true
+
             name: root.notificationTitle
             message: root.notificationMessage
         }
@@ -57,9 +56,8 @@ Item {
         onEntered: root.isHovered = true
         onExited: root.isHovered = false
         onClicked: {
-            if (!radioButton.checked) {
+            if (!radioButton.checked)
                 root.radioCheckedChanged(true)
-            }
         }
 
         cursorShape: Qt.PointingHandCursor

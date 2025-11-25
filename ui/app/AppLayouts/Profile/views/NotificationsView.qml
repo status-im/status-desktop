@@ -337,8 +337,11 @@ SettingsContentBase {
 
         NotificationAppearancePreviewPanel {
             id: notifNameAndMsg
-            Layout.preferredWidth: root.contentWidth
+
+            Layout.preferredWidth: root.contentWidth - Theme.padding * 2
             Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
+
             name: qsTr("Show Name and Message")
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("Hi there! So EIP-1559 will defini...")
@@ -352,8 +355,10 @@ SettingsContentBase {
         }
 
         NotificationAppearancePreviewPanel {
-            Layout.preferredWidth: root.contentWidth
+            Layout.preferredWidth: root.contentWidth - Theme.padding * 2
             Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
+
             name: qsTr("Name Only")
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("You have a new message")
@@ -367,8 +372,10 @@ SettingsContentBase {
         }
 
         NotificationAppearancePreviewPanel {
-            Layout.preferredWidth: root.contentWidth
+            Layout.preferredWidth: root.contentWidth - Theme.padding * 2
             Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
+
             name: qsTr("Anonymous")
             notificationTitle: "Status"
             notificationMessage: qsTr("You have a new message")
