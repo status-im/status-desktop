@@ -1,18 +1,12 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Controls
 import StatusQ.Core.Theme
 import StatusQ.Core.Utils as SQUtils
 
-import shared.controls
 import AppLayouts.Wallet.controls
-
-import utils
-
-import "../popups"
-import "../controls"
+import AppLayouts.Browser.controls
 
 Rectangle {
     id: root
@@ -34,7 +28,7 @@ Rectangle {
     property var browserDappsModel: null
     property int browserDappsCount: 0
 
-    signal addNewFavoriteClicked(int xPos)
+    signal addNewFavoriteClicked()
     signal launchInBrowser(string url)
     signal openHistoryPopup(int xPos, int yPos)
     signal goForward()
@@ -53,7 +47,9 @@ Rectangle {
 
     width: parent.width
     height: barRow.height + (favoritesBarLoader.active ? favoritesBarLoader.height : 0)
-    color: root.currentTabIncognito ? Theme.palette.privacyModeColors.navBarSecondaryColor: Theme.palette.background
+    color: root.currentTabIncognito ?
+               Theme.palette.privacyColors.primary:
+               Theme.palette.background
 
     RowLayout {
         id: barRow
@@ -61,16 +57,13 @@ Rectangle {
         height: 56
         spacing: _internal.innerMargin
 
-        StatusFlatRoundButton {
+        BrowserHeaderButton {
             id: backButton
-            Layout.preferredWidth: _internal.buttonSize
-            Layout.preferredHeight: _internal.buttonSize
+
             Layout.leftMargin: _internal.innerMargin
+            incognitoMode: root.currentTabIncognito
             icon.name: "arrow-left"
-            icon.disabledColor: Theme.palette.baseColor2
-            type: StatusFlatRoundButton.Type.Tertiary
             enabled: canGoBack
-            sensor.acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: function(mouse) {
                 if (mouse.button === Qt.RightButton) {
                     openHistoryPopup(backButton.x, backButton.y + backButton.height)
@@ -84,16 +77,13 @@ Rectangle {
             }
         }
 
-        StatusFlatRoundButton {
+        BrowserHeaderButton {
             id: forwardButton
-            Layout.preferredWidth: _internal.buttonSize
-            Layout.preferredHeight: _internal.buttonSize
+
             Layout.leftMargin: -_internal.innerMargin/2
+            incognitoMode: root.currentTabIncognito
             icon.name: "arrow-right"
-            icon.disabledColor: Theme.palette.baseColor2
-            type: StatusFlatRoundButton.Type.Tertiary
             enabled: canGoForward
-            sensor.acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: function(mouse) {
                 if (mouse.button === Qt.RightButton) {
                     openHistoryPopup(forwardButton.x, forwardButton.y + forwardButton.height)
@@ -107,21 +97,34 @@ Rectangle {
             }
         }
 
+        BrowserHeaderButton {
+            id: reloadBtn
+
+            Layout.leftMargin: -_internal.innerMargin/2
+            incognitoMode: root.currentTabIncognito
+            icon.name: isLoading ? "close-circle" : "refresh"
+            onClicked: isLoading ? stopLoading(): reload()
+        }
+
         StatusTextField {
             id: addressBar
             Layout.preferredHeight: 40
             Layout.fillWidth: true
             background: Rectangle {
-                color: Theme.palette.baseColor2
-                border.color: parent.cursorVisible ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
-                border.width: 1
+                color: root.currentTabIncognito ?
+                           Theme.palette.privacyColors.secondary:
+                           Theme.palette.baseColor2
+                border.color: addressBar.cursorVisible ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
+                border.width: root.currentTabIncognito ? 0: 1
                 radius: 20
             }
             leftPadding: Theme.padding
             rightPadding: addFavoriteBtn.width + reloadBtn.width + Theme.bigPadding
             placeholderText: qsTr("Enter URL")
             focus: !SQUtils.Utils.isMobile
-            color: Theme.palette.textColor
+            color: root.currentTabIncognito ?
+                       Theme.palette.privacyColors.tertiary:
+                       Theme.palette.textColor
             onActiveFocusChanged: {
                 if (activeFocus) {
                     addressBar.selectAll()
@@ -133,39 +136,24 @@ Rectangle {
                     launchInBrowser(text)
                 }
             }
+        }
 
-            StatusFlatRoundButton {
-                id: addFavoriteBtn
-                width: 24
-                height: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: reloadBtn.left
-                anchors.rightMargin: Theme.halfPadding
-                visible: !!currentUrl
-                icon.name: !!root.currentFavorite ? "favourite-filled" : "favourite"
-                color: "transparent"
-                type: StatusFlatRoundButton.Type.Tertiary
-                onClicked: addNewFavoriteClicked(addFavoriteBtn.x)
-            }
+        BrowserHeaderButton {
+            id: addFavoriteBtn
 
-            StatusFlatRoundButton {
-                id: reloadBtn
-                width: 24
-                height: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: Theme.halfPadding
-                icon.name: isLoading ? "close-circle" : "refresh"
-                color: "transparent"
-                type: StatusFlatRoundButton.Type.Tertiary
-                onClicked: isLoading ? stopLoading(): reload()
-            }
+            visible: !!currentUrl
+            incognitoMode: root.currentTabIncognito
+            icon.name: !!root.currentFavorite ? "favourite-filled" : "favourite"
+            onClicked: addNewFavoriteClicked()
         }
 
         DappsComboBox {
             Layout.preferredWidth: _internal.buttonSize
             Layout.preferredHeight: _internal.buttonSize
             spacing: 8
+
+            incognitoMode: root.currentTabIncognito
+            popupDirectParent: root
             
             visible: true
             enabled: true
@@ -187,29 +175,21 @@ Rectangle {
         }
 
         Loader {
-            Layout.preferredWidth: _internal.buttonSize
-            Layout.preferredHeight: _internal.buttonSize
             active: true
-            sourceComponent: accountBtnCompoent
-        }
-
-        Component {
-            id: accountBtnCompoent
-            StatusFlatRoundButton {
-                icon.name: "filled-account"
-                type: StatusFlatRoundButton.Type.Tertiary
+            sourceComponent: BrowserHeaderButton {
+                incognitoMode: root.currentTabIncognito
+                icon.name: "homepage/wallet"
                 onPressed: {
                     root.openWalletMenu()
                 }
             }
         }
 
-        StatusFlatRoundButton {
+        BrowserHeaderButton {
             id: settingsMenuButton
-            Layout.preferredHeight: _internal.buttonSize
-            Layout.preferredWidth: _internal.buttonSize
+
+            incognitoMode: root.currentTabIncognito
             icon.name: "more"
-            type: StatusFlatRoundButton.Type.Tertiary
             Layout.rightMargin: _internal.innerMargin
             highlighted: settingMenu.opened
             onClicked: {

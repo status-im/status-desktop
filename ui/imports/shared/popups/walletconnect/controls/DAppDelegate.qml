@@ -92,7 +92,7 @@ StatusMouseArea {
                         Layout.fillWidth: true
 
                         font.pixelSize: Theme.tertiaryTextFontSize
-                        color: Theme.palette.baseColor1
+                        color: Theme.palette.directColor5
 
                         elide: Text.ElideRight
 
@@ -106,9 +106,7 @@ StatusMouseArea {
             objectName: "disconnectDappButton"
             size: StatusBaseButton.Size.Large
 
-            asset.color: root.containsMouse ? Theme.palette.directColor1
-                                            : Theme.palette.baseColor1
-
+            asset.color: Theme.palette.directColor1
             icon.name: "disconnect"
             tooltip.text: qsTr("Disconnect dApp")
 
