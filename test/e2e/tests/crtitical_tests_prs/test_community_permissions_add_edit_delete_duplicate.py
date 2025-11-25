@@ -76,9 +76,9 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
         else:
             edit_permission_view.switch_hide_permission_checkbox(True)
 
-        changes_popup = PermissionsChangesDetectedToastMessage().wait_until_appears()
 
     with step('Confirm changes and verify that permission was changed'):
+        changes_popup = PermissionsChangesDetectedToastMessage().wait_until_appears()
         changes_popup.update_permission()
         if permission_set['allowed_to'] is 'becomeAdmin' and permission_set[
             'checkbox_state'] is True:
