@@ -18,11 +18,9 @@ import AppLayouts.Browser.stores as BrowserStores
 Dialog {
     id: root
 
-    required property bool currentTabConnected
     required property BrowserStores.BrowserWalletStore browserWalletStore
 
     signal sendTriggered(string address)
-    signal disconnect()
     signal reload()
     signal accountChanged(string newAddress)
 
@@ -56,7 +54,7 @@ Dialog {
     Item {
         id: walletHeader
         width: parent.width
-        height: disconnectBtn.height
+        height: childrenRect.height
 
         // TODO: Uncomment and connect to connector in next PR
         // Network indicator showing current chain
@@ -96,21 +94,6 @@ Dialog {
             font.pixelSize: 13
         }
         */
-
-        StatusBaseText {
-            id: disconnectBtn
-            text: qsTr("Disconnect")
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            color: Theme.palette.dangerColor1
-            visible: root.currentTabConnected
-
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked: disconnect()
-            }
-        }
     }
 
 

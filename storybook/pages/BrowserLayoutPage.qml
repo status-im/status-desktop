@@ -51,7 +51,6 @@ Item {
                 }
             }
             browserRootStore: BrowserStores.BrowserRootStore {
-                property bool currentTabConnected
                 property var urlENSDictionary: ({})
 
                 function get0xFormedUrl(browserExplorer, url) {
