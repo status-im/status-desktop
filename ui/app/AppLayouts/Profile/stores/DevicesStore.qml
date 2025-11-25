@@ -27,7 +27,12 @@ QtObject {
     readonly property int backupDataState: syncModule ? syncModule.backupDataState : 0
     readonly property string backupImportError: syncModule ? syncModule.backupImportError : ""
     readonly property string backupDataError: syncModule ? syncModule.backupDataError : ""
-    readonly property url backupPath: toFileUri(d.localAccountSensitiveSettingsInst.localBackupChosenPath)
+    readonly property url backupPath: {
+        if (!d.localAccountSensitiveSettingsInst.localBackupChosenPath) {
+            return ""
+        }
+        return toFileUri(d.localAccountSensitiveSettingsInst.localBackupChosenPath)
+    }
     readonly property bool messagesBackupEnabled: d.appSettingsInst.messagesBackupEnabled
 
     readonly property QtObject _d: StatusQUtils.QObject {
