@@ -16,8 +16,9 @@ QtObject {
     id: root
 
     property bool showSavedAddresses: false
+    property bool showFollowingAddresses: false
     property string selectedAddress: ""
-    readonly property bool showAllAccounts: !root.showSavedAddresses && !root.selectedAddress
+    readonly property bool showAllAccounts: !root.showSavedAddresses && !root.showFollowingAddresses && !root.selectedAddress
 
     property var lastCreatedSavedAddress
     property bool addingSavedAddress: false
@@ -61,6 +62,23 @@ QtObject {
                 value: root.networksStore.areTestNetworksEnabled
             }
         ]
+    }
+
+    readonly property var followingAddresses: walletSectionFollowingAddresses ? walletSectionFollowingAddresses.model : null
+
+    function refreshFollowingAddresses(search, limit, offset) {
+        if (!walletSectionFollowingAddresses) return
+        const primaryAddress = getPrimaryAccountAddress()
+        if (primaryAddress) {
+            search = search || ""
+            limit = limit || 10
+            offset = offset || 0
+            walletSectionFollowingAddresses.fetchFollowingAddresses(primaryAddress, search, limit, offset)
+        }
+    }
+
+    function getPrimaryAccountAddress() {
+        return SQUtils.ModelUtils.get(root.accounts, 0, "address") || ""
     }
 
     property var nonWatchAccounts: SortFilterProxyModel {
@@ -144,7 +162,7 @@ QtObject {
             target: root.walletSectionInst
             function onWalletAccountRemoved(address) {
                 address = address.toLowerCase();
-                for (var addressKey in d.activityFiltersStoreDictionary){
+                for (const addressKey in d.activityFiltersStoreDictionary){
                     if (address === addressKey.toLowerCase()){
                         delete d.activityFiltersStoreDictionary[addressKey]
                         return
@@ -280,7 +298,7 @@ QtObject {
     }
 
     function getNameForAddress(address) {
-        var name = getNameForWalletAddress(address)
+        let name = getNameForWalletAddress(address)
         if (name.length === 0) {
             let savedAddress = getSavedAddress(address)
             name = savedAddress.name

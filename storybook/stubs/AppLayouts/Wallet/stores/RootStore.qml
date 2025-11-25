@@ -11,6 +11,15 @@ QtObject {
 
     property bool showSavedAddresses
     property bool isAccountTokensReloading
+    property int lastReloadTimestamp: Date.now() / 1000
+    property var followingAddresses: ListModel {}
+
+    // Signals for saved address updates (used by FollowingAddressesDelegate)
+    signal savedAddressAddedOrUpdated(bool added, string name, string address, string errorMsg)
+    signal savedAddressDeleted(string name, string address, string errorMsg)
+    
+    // Signal for when refresh is called (Storybook can listen to this)
+    signal refreshRequested(string search, int limit, int offset)
 
     // TODO: Remove this. This stub should be empty. The color transformation should be done in adaptors or in the first model transformation steps.
 
@@ -54,5 +63,34 @@ QtObject {
 
     function getTransactionType(transaction) {
         return transaction.txType
+    }
+
+    // Mock function for refreshing following addresses
+    function refreshFollowingAddresses(search, limit, offset) {
+        console.log("refreshFollowingAddresses called:", search, limit, offset)
+        root.lastReloadTimestamp = Date.now() / 1000
+        // Emit signal so Storybook can listen and respond
+        root.refreshRequested(search, limit, offset)
+    }
+
+    // Mock function for FollowingAddressesDelegate/Menu
+    function getSavedAddress(address) {
+        // Return mock saved address data
+        // Some addresses are "saved", some are not (for testing)
+        if (address.endsWith("5c") || address.endsWith("42")) {
+            return {
+                "address": address,
+                "name": "Mock Saved Name",
+                "ens": "",
+                "colorId": "primary"
+            }
+        }
+        // Not saved
+        return {
+            "address": "",
+            "name": "",
+            "ens": "",
+            "colorId": ""
+        }
     }
 }
