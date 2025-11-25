@@ -68,7 +68,7 @@ StatusDialogFooter {
             anchors.fill: parent
             Rectangle {
                 anchors.fill: parent
-                color: !!root.blurSource ? Theme.palette.alphaColor(root.color, 0.85) : root.color
+                color: !!root.blurSource ? StatusColors.alphaColor(root.color, 0.85) : root.color
                 radius: 8
 
                 // cover for the bottom rounded corners
@@ -94,7 +94,7 @@ StatusDialogFooter {
                 horizontalOffset: 0
                 verticalOffset: -3
                 samples: 24
-                color: Theme.palette.alphaColor(Theme.palette.dropShadow, 0.06)
+                color: StatusColors.alphaColor(Theme.palette.dropShadow, 0.06)
             }
 
             StatusDialogDivider {

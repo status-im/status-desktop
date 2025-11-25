@@ -238,7 +238,7 @@ Item {
                     radius: 4
                     border.width: 1
                     border.color: Theme.palette.indirectColor3
-                    color: Theme.palette.getColor("white", button.hovered ? 0.4 : 0.1)
+                    color: StatusColors.getColor("white", button.hovered ? 0.4 : 0.1)
                 }
                 HoverHandler {
                     cursorShape: Qt.PointingHandCursor

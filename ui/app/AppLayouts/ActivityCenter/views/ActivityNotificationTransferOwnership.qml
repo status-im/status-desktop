@@ -114,7 +114,7 @@ ActivityNotificationBase {
                 info: qsTr("To finalise your ownership of the %1 Community, make your device the control node").arg(root.communityName)
                 ctaText: qsTr("Finalise ownership")
                 assetColor: root.communityColor
-                assetBgColor: Theme.palette.getColor(d.assetColor, 0.1)
+                assetBgColor: StatusColors.getColor(d.assetColor, 0.1)
                 assetName: d.crownAssetName
                 actionSourceComponent: ctaLinkBtnComponent
             }
@@ -127,7 +127,7 @@ ActivityNotificationBase {
                 info: qsTr("To finalise your ownership of the %1 Community, make your device the control node").arg(root.communityName)
                 ctaText: qsTr("Ownership Declined")
                 assetColor: root.communityColor
-                assetBgColor: Theme.palette.getColor(d.assetColor, 0.1)
+                assetBgColor: StatusColors.getColor(d.assetColor, 0.1)
                 assetName: d.crownAssetName
                 actionSourceComponent: ctaTextComponent
             }
@@ -140,7 +140,7 @@ ActivityNotificationBase {
                 info: qsTr("Congratulations, you are now the official owner of the %1 Community with full admin rights").arg(root.communityName)
                 ctaText: qsTr("Community admin")
                 assetColor: root.communityColor
-                assetBgColor: Theme.palette.getColor(d.assetColor, 0.1)
+                assetBgColor: StatusColors.getColor(d.assetColor, 0.1)
                 assetName: d.crownAssetName
                 actionSourceComponent: ctaLinkBtnComponent
             }

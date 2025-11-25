@@ -55,7 +55,7 @@ QtObject {
     }
 
     function linkTypeBgColor(linkType) {
-        return Theme.palette.getColor(linkTypeColor(linkType), 0.1)
+        return StatusColors.getColor(linkTypeColor(linkType), 0.1)
     }
 
     function linkTypeToDescription(linkType) {
