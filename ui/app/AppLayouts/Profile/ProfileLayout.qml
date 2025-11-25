@@ -87,7 +87,7 @@ StatusSectionLayout {
 
     required property bool isCentralizedMetricsEnabled
 
-    required property int theme // Theme.Style.xxx
+    required property int theme // ThemeUtils.Style.xxx
     required property int fontSize // ThemeUtils.FontSize.xxx
     required property int paddingFactor // ThemeUtils.PaddingFactor.xxx
 
