@@ -37,7 +37,7 @@ Rectangle {
     radius: width / 2
 
     StatusEmoji {
-        visible: root.emoji
+        visible: !!root.emoji
         anchors.centerIn: parent
         width: Math.round(parent.width / 2)
         height: Math.round(parent.height / 2)
