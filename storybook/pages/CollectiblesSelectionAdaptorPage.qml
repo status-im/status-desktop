@@ -43,7 +43,7 @@ Pane {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: ""
             },
             {
                 tokenId: "id_4",
@@ -64,7 +64,7 @@ Pane {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: ""
             },
             {
                 tokenId: "id_5",
@@ -85,7 +85,7 @@ Pane {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: ""
             },
             // collection 1
             {
@@ -112,7 +112,7 @@ Pane {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: ""
             },
             {
                 tokenId: "id_2",
@@ -133,7 +133,7 @@ Pane {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: ""
             },
             // collection 3, community token
             {
@@ -335,7 +335,10 @@ Pane {
             data.forEach(e => e.ownership.forEach(
                              e => { accounts.add(e.accountAddress) }))
 
-            accountsSelector.model = [...accounts.values()]
+            Qt.callLater(() => {
+                if (accountsSelector)
+                    accountsSelector.model = [...accounts.values()]
+            })
         }
     }
 

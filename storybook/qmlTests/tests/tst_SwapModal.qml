@@ -23,6 +23,9 @@ Item {
     width: 800
     height: 600
 
+    readonly property string ethGroupKey: Constants.ethGroupKey
+    readonly property string sttGroupKey: Constants.sttGroupKey
+
     readonly property var dummySwapTransactionRoutes: SwapTransactionRoutes {}
 
     readonly property var swapStore: SwapStore {
@@ -50,11 +53,11 @@ Item {
         walletAssetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
+                tokenGroupsModel: TokenGroupsModel {}
                 getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+            assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
         }
         swapStore: root.swapStore
         swapFormData: root.swapFormData
@@ -149,14 +152,14 @@ Item {
             // verfy input and output panels
             verify(!payPanel.mainInputLoading)
             verify(payPanel.bottomTextLoading)
-            compare(payPanel.selectedHoldingId, root.swapFormData.fromTokensKey)
+            compare(payPanel.selectedHoldingId, root.swapFormData.fromGroupKey)
             compare(payPanel.value, Number(root.swapFormData.fromTokenAmount))
             compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapFormData.fromTokenAmount, root.swapAdaptor.fromToken.decimals).toString())
             verify(payPanel.valueValid, "payPanel.valueValid is false with value: " + payPanel.value + " and key: " + payPanel.selectedHoldingId + " and chainID: " + root.swapFormData.selectedNetworkChainId + " and address: " + root.swapFormData.selectedAccountAddress)
             verify(receivePanel.mainInputLoading)
             verify(receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
         }
@@ -277,7 +280,7 @@ Item {
             const comboBoxList = findChild(accountsModalHeader, "accountSelectorList")
             verify(!!comboBoxList)
 
-            // before setting network chainId and fromTokensKey the header should not have balances
+            // before setting network chainId and fromGroupKey the header should not have balances
             for(let i =0; i< comboBoxList.model.count; i++) {
                 let delegateUnderTest = comboBoxList.itemAtIndex(i)
                 verify(!delegateUnderTest.model.accountBalance)
@@ -286,11 +289,11 @@ Item {
             // close account selection dropdown
             accountsModalHeader.control.popup.close()
 
-            // set network chainId and fromTokensKey and verify balances in account selection dropdown
+            // set network chainId and fromGroupKey and verify balances in account selection dropdown
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-            root.swapFormData.fromTokensKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(0).key
+            root.swapFormData.fromGroupKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel.get(0).key
             compare(controlUnderTest.swapInputParamsForm.selectedNetworkChainId, root.swapFormData.selectedNetworkChainId)
-            compare(controlUnderTest.swapInputParamsForm.fromTokensKey, root.swapFormData.fromTokensKey)
+            compare(controlUnderTest.swapInputParamsForm.fromGroupKey, root.swapFormData.fromGroupKey)
 
             // launch account selection dropdown
             launchAccountSelectionPopup(accountsModalHeader)
@@ -446,7 +449,7 @@ Item {
                     mouseClick(delegateUnderTest)
                 }
 
-                root.swapFormData.fromTokensKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(0).key
+                root.swapFormData.fromGroupKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel.get(0).key
 
                 // verify values in accouns modal header dropdown
                 const accountsModalHeader = getAndVerifyAccountsModalHeader()
@@ -465,13 +468,13 @@ Item {
                     compare(inlineTagDelegate_0.asset.name, Theme.svg(networkModelItem.iconUrl))
                     compare(inlineTagDelegate_0.asset.color.toString().toUpperCase(), networkModelItem.chainColor.toString().toUpperCase())
 
-                    let balancesModel = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel, "tokensKey", root.swapFormData.fromTokensKey).balances
+                    let balancesModel = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel, "key", root.swapFormData.fromGroupKey).balances
                     verify(!!balancesModel)
                     let filteredBalances = SQUtils.ModelUtils.modelToArray(balancesModel).filter(balances => balances.chainId === root.swapFormData.selectedNetworkChainId).filter(balances => balances.account === accountDelegateUnderTest.model.address)
                     verify(!!filteredBalances)
                     let accountBalance = filteredBalances.length > 0 ? filteredBalances[0]: { balance: "0", iconUrl: networkModelItem.iconUrl, chainColor: networkModelItem.chainColor}
                     verify(!!accountBalance)
-                    let fromToken = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
+                    let fromToken = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel, "key", root.swapFormData.fromGroupKey)
                     verify(!!fromToken)
                     let bigIntBalance = SQUtils.AmountsArithmetic.toNumber(accountBalance.balance, fromToken.decimals)
                     compare(inlineTagDelegate_0.title, bigIntBalance === 0 ? "0 %1".arg(fromToken.symbol)
@@ -575,9 +578,9 @@ Item {
             verify(!errorTag.visible)
 
             // set input values in the form correctly
-            root.swapFormData.fromTokensKey = "STT"
+            root.swapFormData.fromGroupKey = sttGroupKey
             formValuesChanged.wait()
-            root.swapFormData.toTokenKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(1).key
+            root.swapFormData.toGroupKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel.get(1).key
             root.swapFormData.fromTokenAmount = "0.001"
             waitForRendering(receivePanel)
             formValuesChanged.wait()
@@ -616,7 +619,7 @@ Item {
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
 
@@ -654,7 +657,7 @@ Item {
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
 
@@ -692,7 +695,7 @@ Item {
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
 
@@ -730,7 +733,7 @@ Item {
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
 
@@ -768,7 +771,7 @@ Item {
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
 
@@ -814,7 +817,7 @@ Item {
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, root.swapStore.getWei2Eth(txHasRouteNoApproval.amountToReceive, root.swapAdaptor.toToken.decimals))
             compare(receivePanel.rawValue,
                     SQUtils.AmountsArithmetic.times(
@@ -866,7 +869,7 @@ Item {
             verify(!receivePanel.mainInputLoading)
             verify(!receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
-            compare(receivePanel.selectedHoldingId, root.swapFormData.toTokenKey)
+            compare(receivePanel.selectedHoldingId, root.swapFormData.toGroupKey)
             compare(receivePanel.value, root.swapStore.getWei2Eth(txRoutes2.amountToReceive, root.swapAdaptor.toToken.decimals))
             compare(receivePanel.rawValue,
                     SQUtils.AmountsArithmetic.times(
@@ -891,6 +894,10 @@ Item {
             verify(!!maxTagButton)
             const tokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
             verify(!!tokenSelectorContentItemText)
+            const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
+            verify(!!payTokenModel)
+            const defaultToken = SQUtils.ModelUtils.getByKey(payTokenModel, "key", root.swapFormData.fromGroupKey)
+            verify(!!defaultToken)
 
             waitForRendering(controlUnderTest.contentItem)
 
@@ -901,9 +908,9 @@ Item {
             verify(amountToSendInput.cursorVisible)
             compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
-            compare(tokenSelectorContentItemText.text, Constants.uniqueSymbols.usdcEvm)
+            compare(tokenSelectorContentItemText.text, defaultToken.symbol)
             verify(maxTagButton.visible)
-            compare(payPanel.selectedHoldingId, Constants.uniqueSymbols.usdcEvm)
+            compare(payPanel.selectedHoldingId, root.swapFormData.fromGroupKey)
             compare(payPanel.value, 0)
             compare(payPanel.rawValue, "0")
             verify(!payPanel.valueValid)
@@ -921,7 +928,7 @@ Item {
 
             root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-            root.swapFormData.fromTokensKey = "STT"
+            root.swapFormData.fromGroupKey = sttGroupKey
             root.swapFormData.fromTokenAmount = valueToExchangeString
 
             // Launch popup
@@ -947,7 +954,7 @@ Item {
             const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
             verify(!!payTokenModel)
 
-            const expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "tokensKey", "STT")
+            const expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "key", sttGroupKey)
 
             compare(amountToSendInput.caption, qsTr("Pay"))
             verify(amountToSendInput.interactive)
@@ -956,12 +963,13 @@ Item {
             tryCompare(amountToSendInput, "cursorVisible", true)
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             tryCompare(tokenSelectorContentItemText, "text", expectedToken.symbol)
-            compare(tokenSelectorIcon.image.source, Constants.tokenIcon(expectedToken.symbol))
+            const expectedIconSource = expectedToken.iconSource || Constants.tokenIcon(expectedToken.symbol)
+            compare(tokenSelectorIcon.image.source, expectedIconSource)
             verify(tokenSelectorIcon.visible)
             verify(maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(!expectedToken.currentBalance ? "0"
                                                                                               : root.swapAdaptor.currencyStore.formatCurrencyAmount(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol), expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
-            compare(payPanel.selectedHoldingId, expectedToken.symbol)
+            compare(payPanel.selectedHoldingId, expectedToken.key)
             compare(payPanel.value, valueToExchange)
             compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
             tryCompare(payPanel, "valueValid", expectedToken.currentBalance > 0)
@@ -979,7 +987,7 @@ Item {
                 // try setting value before popup is launched and check values
                 root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
                 root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-                root.swapFormData.fromTokensKey = ""
+                root.swapFormData.fromGroupKey = ""
                 root.swapFormData.fromTokenAmount = invalidValue
 
                 // Launch popup
@@ -997,6 +1005,8 @@ Item {
                 verify(!!maxTagButton)
 
                 waitForRendering(payPanel)
+                const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
+                verify(!!payTokenModel)
 
                 compare(amountToSendInput.caption, qsTr("Pay"))
                 verify(amountToSendInput.interactive)
@@ -1005,9 +1015,10 @@ Item {
                 compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
                 const tokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
                 verify(!!tokenSelectorContentItemText)
-                compare(tokenSelectorContentItemText.text, root.swapFormData.defaultFromTokenKey)
+                const defaultTokenEntry = SQUtils.ModelUtils.getByKey(payTokenModel, "key", root.swapFormData.defaultFromGroupKey)
+                compare(tokenSelectorContentItemText.text, defaultTokenEntry ? defaultTokenEntry.symbol : "")
                 verify(maxTagButton.visible)
-                compare(payPanel.selectedHoldingId, root.swapFormData.defaultFromTokenKey)
+                compare(payPanel.selectedHoldingId, root.swapFormData.defaultFromGroupKey)
                 compare(payPanel.value, 0)
                 compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber("0", 0).toString())
                 verify(!payPanel.valueValid)
@@ -1025,7 +1036,7 @@ Item {
             let valueToExchangeString = valueToExchange.toString()
             root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-            root.swapFormData.fromTokensKey = "STT"
+            root.swapFormData.fromGroupKey = sttGroupKey
             root.swapFormData.fromTokenAmount = valueToExchangeString
 
             // Launch popup
@@ -1050,7 +1061,7 @@ Item {
             verify(!!tokenSelectorIcon)
             const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
             verify(!!payTokenModel)
-            const expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "tokensKey", "STT")
+            const expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "key", sttGroupKey)
 
             compare(amountToSendInput.caption, qsTr("Pay"))
             verify(amountToSendInput.interactive)
@@ -1059,12 +1070,13 @@ Item {
             tryCompare(amountToSendInput, "cursorVisible", true)
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToExchange * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             compare(tokenSelectorContentItemText.text, expectedToken.symbol)
-            compare(tokenSelectorIcon.image.source, Constants.tokenIcon(expectedToken.symbol))
+            const expectedIconSource = expectedToken.iconSource || Constants.tokenIcon(expectedToken.symbol)
+            compare(tokenSelectorIcon.image.source, expectedIconSource)
             verify(tokenSelectorIcon.visible)
             verify(maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(!expectedToken.currentBalance ? "0"
                                                                                               : root.swapAdaptor.currencyStore.formatCurrencyAmount(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol), expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
-            compare(payPanel.selectedHoldingId, expectedToken.symbol)
+            compare(payPanel.selectedHoldingId, expectedToken.key)
             compare(payPanel.value, valueToExchange)
             compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
             verify(!payPanel.valueValid)
@@ -1100,7 +1112,7 @@ Item {
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
             compare(tokenSelectorContentItemText.text, Constants.ethToken)
             verify(!maxTagButton.visible)
-            compare(receivePanel.selectedHoldingId, Constants.ethToken)
+            compare(receivePanel.selectedHoldingId, Constants.ethGroupKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
             verify(!receivePanel.valueValid)
@@ -1117,7 +1129,7 @@ Item {
             // try setting value before popup is launched and check values
             root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.selectedNetworkChainId = 11155420
-            root.swapFormData.toTokenKey = "STT"
+            root.swapFormData.toGroupKey = sttGroupKey
             root.swapFormData.toTokenAmount = valueToReceiveString
 
             // Launch popup
@@ -1143,7 +1155,7 @@ Item {
             const payTokenModel = findChild(receivePanel, "TokenSelectorViewAdaptor_outputAssetsModel")
             verify(!!payTokenModel)
 
-            let expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "tokensKey", "STT")
+            let expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "key", sttGroupKey)
 
             compare(amountToSendInput.caption, qsTr("Receive"))
             // TODO: this should be come interactive under https://github.com/status-im/status-desktop/issues/15095
@@ -1153,10 +1165,11 @@ Item {
             compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(valueToReceive * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             compare(tokenSelectorContentItemText.text, expectedToken.symbol)
-            compare(tokenSelectorIcon.image.source, Constants.tokenIcon(expectedToken.symbol))
+            const expectedIconSource = expectedToken.iconSource || Constants.tokenIcon(expectedToken.symbol)
+            compare(tokenSelectorIcon.image.source, expectedIconSource)
             verify(tokenSelectorIcon.visible)
             verify(!maxTagButton.visible)
-            compare(receivePanel.selectedHoldingId, expectedToken.symbol)
+            compare(receivePanel.selectedHoldingId, expectedToken.key)
             compare(receivePanel.value, valueToReceive)
             compare(receivePanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToReceiveString, expectedToken.decimals).toString())
             verify(receivePanel.valueValid)
@@ -1170,9 +1183,9 @@ Item {
             let valueToExchangeString = valueToExchange.toString()
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             // The default is the first account. Setting the second account to test switching accounts
-            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromGroupKey = ethGroupKey
             root.swapFormData.fromTokenAmount = valueToExchangeString
-            root.swapFormData.toTokenKey = "STT"
+            root.swapFormData.toGroupKey = sttGroupKey
 
             const accountsModalHeader = getAndVerifyAccountsModalHeader()
             let walletAccounts = accountsModalHeader.model
@@ -1197,7 +1210,7 @@ Item {
             const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
             verify(!!payTokenModel)
 
-            let expectedToken =  SQUtils.ModelUtils.getByKey(payTokenModel, "tokensKey", "ETH")
+            let expectedToken =  SQUtils.ModelUtils.getByKey(payTokenModel, "key", ethGroupKey)
 
             // check states for the pay input selector
             verify(maxTagButton.visible)
@@ -1264,8 +1277,8 @@ Item {
             // try setting value before popup is launched and check values
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
-            root.swapFormData.fromTokensKey = "ETH"
-            root.swapFormData.toTokenKey = "STT"
+            root.swapFormData.fromGroupKey = ethGroupKey
+            root.swapFormData.toGroupKey = sttGroupKey
 
             formValuesChanged.wait()
 
@@ -1282,7 +1295,7 @@ Item {
 
             waitForRendering(payPanel, 200)
 
-            let expectedToken =  SQUtils.ModelUtils.getByKey(payPanelAssetsModel, "tokensKey", "ETH")
+            let expectedToken =  SQUtils.ModelUtils.getByKey(payPanelAssetsModel, "key", ethGroupKey)
 
             // check states for the pay input selector
             verify(maxTagButton.visible)
@@ -1325,7 +1338,7 @@ Item {
                 root.swapFormData.fromTokenAmount = valueToExchangeString
                 root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
                 root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-                root.swapFormData.fromTokensKey = "STT"
+                root.swapFormData.fromGroupKey = sttGroupKey
 
                 // Launch popup
                 launchAndVerfyModal()
@@ -1348,14 +1361,14 @@ Item {
                     const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
                     verify(!!payTokenModel)
 
-                    let expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "tokensKey", "STT")
+                    let expectedToken = SQUtils.ModelUtils.getByKey(payTokenModel, "key", sttGroupKey)
 
                     // check states for the pay input selector
                     tryCompare(maxTagButton, "visible", true)
                     let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
                     tryCompare(maxTagButton, "text", qsTr("Max. %1").arg(maxPossibleValue === 0 ? Qt.locale().zeroDigit :
                     root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
-                    compare(payPanel.selectedHoldingId, expectedToken.symbol)
+                    compare(payPanel.selectedHoldingId, expectedToken.key)
                     tryCompare(payPanel, "valueValid", !!valueToExchangeString && valueToExchange <= maxPossibleValue)
 
                     tryCompare(payPanel, "value", valueToExchange)
@@ -1377,12 +1390,12 @@ Item {
         function test_modal_exchange_button_enabled_state_data() {
             return [
                         {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
-                        {fromToken: "", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: "50"},
-                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: "50"},
+                        {fromToken: "", fromTokenAmount: "", toToken: sttGroupKey, toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "", toToken: "", toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "", toToken: sttGroupKey, toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "100", toToken: sttGroupKey, toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "", toToken: sttGroupKey, toTokenAmount: "50"},
+                        {fromToken: ethGroupKey, fromTokenAmount: "100", toToken: sttGroupKey, toTokenAmount: "50"},
                         {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: "50"},
                         {fromToken: "", fromTokenAmount: "100", toToken: "", toTokenAmount: ""}
                     ]
@@ -1394,9 +1407,9 @@ Item {
             const swapExchangeButton = findChild(controlUnderTest, "swapExchangeButton")
             verify(!!swapExchangeButton)
 
-            root.swapFormData.fromTokensKey = data.fromToken
+            root.swapFormData.fromGroupKey = data.fromToken
             root.swapFormData.fromTokenAmount = data.fromTokenAmount
-            root.swapFormData.toTokenKey = data.toToken
+            root.swapFormData.toGroupKey = data.toToken
             root.swapFormData.toTokenAmount = data.toTokenAmount
 
             tryCompare(swapExchangeButton, "enabled", !!data.fromToken || !!data.toToken)
@@ -1405,12 +1418,12 @@ Item {
         function test_modal_exchange_button_default_state_data() {
             return [
                         {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
-                        {fromToken: "", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "", toToken: "", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: ""},
-                        {fromToken: "ETH", fromTokenAmount: "", toToken: "STT", toTokenAmount: "50"},
-                        {fromToken: "ETH", fromTokenAmount: "100", toToken: "STT", toTokenAmount: "50"},
+                        {fromToken: "", fromTokenAmount: "", toToken: sttGroupKey, toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "", toToken: "", toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "", toToken: sttGroupKey, toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "100", toToken: sttGroupKey, toTokenAmount: ""},
+                        {fromToken: ethGroupKey, fromTokenAmount: "", toToken: sttGroupKey, toTokenAmount: "50"},
+                        {fromToken: ethGroupKey, fromTokenAmount: "100", toToken: sttGroupKey, toTokenAmount: "50"},
                         {fromToken: "", fromTokenAmount: "", toToken: "", toTokenAmount: "50"},
                         {fromToken: "", fromTokenAmount: "100", toToken: "", toTokenAmount: ""}
                     ]
@@ -1444,9 +1457,9 @@ Item {
             // set network and address by default same
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
-            root.swapFormData.fromTokensKey = data.fromToken
+            root.swapFormData.fromGroupKey = data.fromToken
             root.swapFormData.fromTokenAmount = data.fromTokenAmount
-            root.swapFormData.toTokenKey = data.toToken
+            root.swapFormData.toGroupKey = data.toToken
             root.swapFormData.toTokenAmount = data.toTokenAmount
 
             // Launch popup
@@ -1455,16 +1468,16 @@ Item {
             waitForRendering(receivePanel)
             waitForRendering(payAmountToSendInput)
 
-            let expectedFromTokenKey = !!data.fromToken ? data.fromToken : root.swapFormData.defaultFromTokenKey
-            let expectedToTokenKey = !!data.toToken ? data.toToken : root.swapFormData.defaultToTokenKey
-            //let expectedFromTokenIcon = Constants.tokenIcon(expectedFromTokenKey)
-            //let expectedToTokenIcon = Constants.tokenIcon(expectedToTokenKey)
-
-            let expectedFromTokenIcon = !!root.swapAdaptor.fromToken && !!root.swapAdaptor.fromToken.symbol ?
-                    Constants.tokenIcon(root.swapAdaptor.fromToken.symbol): ""
-            let expectedToTokenIcon = !!root.swapAdaptor.toToken && !!root.swapAdaptor.toToken.symbol ?
-                    Constants.tokenIcon(root.swapAdaptor.toToken.symbol): ""
-
+            let expectedFromTokenKey = !!data.fromToken ? data.fromToken : root.swapFormData.defaultFromGroupKey
+            let expectedToTokenKey = !!data.toToken ? data.toToken : root.swapFormData.defaultToGroupKey
+            const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
+            verify(!!payTokenModel)
+            const receiveTokenModel = findChild(receivePanel, "TokenSelectorViewAdaptor_outputAssetsModel")
+            verify(!!receiveTokenModel)
+            const expectedFromToken = !!expectedFromTokenKey ? SQUtils.ModelUtils.getByKey(payTokenModel, "key", expectedFromTokenKey) : null
+            const expectedToToken = !!expectedToTokenKey ? SQUtils.ModelUtils.getByKey(receiveTokenModel, "key", expectedToTokenKey) : null
+            let expectedFromTokenIcon = !!expectedFromToken ? expectedFromToken.iconSource : ""
+            let expectedToTokenIcon = !!expectedToToken ? expectedToToken.iconSource : ""
 
             let paytokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
             verify(!!paytokenSelectorContentItemText)
@@ -1476,21 +1489,21 @@ Item {
             verify(!!receivetokenSelectorIcon)
 
             // verify pay values
-            compare(payPanel.tokenKey, expectedFromTokenKey)
+            compare(payPanel.groupKey, expectedFromTokenKey)
             compare(payPanel.tokenAmount, data.fromTokenAmount)
             verify(payAmountToSendInput.cursorVisible)
-            compare(paytokenSelectorContentItemText.text, payPanel.tokenKey)
-            compare(!!payPanel.tokenKey , !!paytokenSelectorIcon)
+            compare(paytokenSelectorContentItemText.text, expectedFromToken ? expectedFromToken.symbol : qsTr("Select asset"))
+            compare(!!payPanel.groupKey , !!paytokenSelectorIcon)
             if(!!paytokenSelectorIcon) {
                 compare(paytokenSelectorIcon.image.source, expectedFromTokenIcon)
             }
             verify(!!expectedFromTokenKey ? maxTagButton.visible: !maxTagButton.visible)
 
             // verify receive values
-            compare(receivePanel.tokenKey, expectedToTokenKey)
+            compare(receivePanel.groupKey, expectedToTokenKey)
             compare(receivePanel.tokenAmount, data.toTokenAmount)
             verify(!receiveAmountToSendInput.cursorVisible)
-            compare(receivetokenSelectorContentItemText.text, receivePanel.tokenKey)
+            compare(receivetokenSelectorContentItemText.text, expectedToToken ? expectedToToken.symbol : qsTr("Select asset"))
             if(!!receivetokenSelectorIcon) {
                 compare(receivetokenSelectorIcon.image.source, expectedToTokenIcon)
             }
@@ -1501,39 +1514,41 @@ Item {
             waitForRendering(receivePanel)
 
             // verify form values
-            compare(root.swapFormData.fromTokensKey, expectedToTokenKey)
+            compare(root.swapFormData.fromGroupKey, expectedToTokenKey)
             compare(root.swapFormData.fromTokenAmount, data.toTokenAmount)
-            compare(root.swapFormData.toTokenKey, expectedFromTokenKey)
+            compare(root.swapFormData.toGroupKey, expectedFromTokenKey)
             compare(root.swapFormData.toTokenAmount, data.fromTokenAmount)
 
             paytokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
             verify(!!paytokenSelectorContentItemText)
             paytokenSelectorIcon = findChild(payPanel, "tokenSelectorIcon")
-            compare(!!root.swapFormData.fromTokensKey , !!paytokenSelectorIcon)
+            compare(!!root.swapFormData.fromGroupKey , !!paytokenSelectorIcon)
             receivetokenSelectorContentItemText = findChild(receivePanel, "tokenSelectorContentItemText")
             verify(!!receivetokenSelectorContentItemText)
             receivetokenSelectorIcon = findChild(receivePanel, "tokenSelectorIcon")
-            compare(!!root.swapFormData.toTokenKey, !!receivetokenSelectorIcon)
+            compare(!!root.swapFormData.toGroupKey, !!receivetokenSelectorIcon)
 
             // verify pay values
-            compare(payPanel.tokenKey, expectedToTokenKey)
+            compare(payPanel.groupKey, expectedToTokenKey)
             compare(payPanel.tokenAmount, data.toTokenAmount)
             verify(payAmountToSendInput.cursorVisible)
-            compare(paytokenSelectorContentItemText.text, !!payPanel.tokenKey ? payPanel.tokenKey : qsTr("Select asset"))
+            const swappedFromToken = !!root.swapFormData.fromGroupKey ? SQUtils.ModelUtils.getByKey(payTokenModel, "key", root.swapFormData.fromGroupKey) : null
+            const swappedToToken = !!root.swapFormData.toGroupKey ? SQUtils.ModelUtils.getByKey(receiveTokenModel, "key", root.swapFormData.toGroupKey) : null
+            compare(paytokenSelectorContentItemText.text, swappedFromToken ? swappedFromToken.symbol : qsTr("Select asset"))
             if(!!paytokenSelectorIcon) {
-                compare(paytokenSelectorIcon.image.source, expectedToTokenIcon)
+                compare(paytokenSelectorIcon.image.source, swappedFromToken ? swappedFromToken.iconSource : "")
             }
-            verify(!!payPanel.tokenKey ? maxTagButton.visible: !maxTagButton.visible)
+            verify(!!payPanel.groupKey ? maxTagButton.visible: !maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(Qt.locale().zeroDigit))
             compare(maxTagButton.type, (payAmountToSendInput.valid || !payAmountToSendInput.text) && maxTagButton.value > 0 ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Danger)
 
             // verify receive values
-            compare(receivePanel.tokenKey, expectedFromTokenKey)
+            compare(receivePanel.groupKey, expectedFromTokenKey)
             compare(receivePanel.tokenAmount, data.fromTokenAmount)
             verify(!receiveAmountToSendInput.cursorVisible)
-            compare(receivetokenSelectorContentItemText.text, !!receivePanel.tokenKey ? receivePanel.tokenKey : qsTr("Select asset"))
+            compare(receivetokenSelectorContentItemText.text, swappedToToken ? swappedToToken.symbol : qsTr("Select asset"))
             if(!!receivetokenSelectorIcon) {
-                compare(receivetokenSelectorIcon.image.source, expectedFromTokenIcon)
+                compare(receivetokenSelectorIcon.image.source, swappedToToken ? swappedToToken.iconSource : "")
             }
 
             closeAndVerfyModal()
@@ -1562,9 +1577,9 @@ Item {
             verify(!errorTag.visible)
 
             // set input values in the form correctly
-            root.swapFormData.fromTokensKey = "STT"
+            root.swapFormData.fromGroupKey = sttGroupKey
             formValuesChanged.wait()
-            root.swapFormData.toTokenKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel.get(1).key
+            root.swapFormData.toGroupKey = root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel.get(1).key
             root.swapFormData.fromTokenAmount = "0.001"
             formValuesChanged.wait()
             root.swapFormData.selectedNetworkChainId = 11155420
@@ -1692,7 +1707,7 @@ Item {
 
         function test_modal_switching_networks_payPanel_data() {
             return [
-                        {key: "ETH"},
+                        {key: ethGroupKey},
                         {key: "aave"}
                     ]
         }
@@ -1702,7 +1717,7 @@ Item {
             let valueToExchange = 1
             let valueToExchangeString = valueToExchange.toString()
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
-            root.swapFormData.fromTokensKey = data.key
+            root.swapFormData.fromGroupKey = data.key
             root.swapFormData.fromTokenAmount = valueToExchangeString
 
             // Launch popup
@@ -1733,7 +1748,7 @@ Item {
                 verify(!!tokenSelectorContentItemText)
 
                 let fromTokenExistsOnNetwork = false
-                let expectedToken = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.fromTokensKey)
+                let expectedToken = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel, "key", root.swapFormData.fromGroupKey)
                 if(!!expectedToken) {
                     fromTokenExistsOnNetwork = !!SQUtils.ModelUtils.getByKey(expectedToken.addressPerChain, "chainId",networkComboBox.selection[0], "address")
                 }
@@ -1750,7 +1765,7 @@ Item {
                     verify(maxTagButton.visible)
                     const payAssetsModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
                     verify(!!payAssetsModel)
-                    let balancesModel = SQUtils.ModelUtils.getByKey(payAssetsModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
+                    let balancesModel = SQUtils.ModelUtils.getByKey(payAssetsModel, "key", root.swapFormData.fromGroupKey, "balances")
                     let balanceEntry = SQUtils.ModelUtils.getFirstModelEntryIf(balancesModel, (balance) => {
                                                                                    return balance.account.toLowerCase() === root.swapFormData.selectedAccountAddress.toLowerCase() &&
                                                                                    balance.chainId === root.swapFormData.selectedNetworkChainId
@@ -1764,7 +1779,7 @@ Item {
                     compare(maxTagButton.text, qsTr("Max. %1").arg(
                                 maxPossibleValue === 0 ? "0" :
                                                          root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
-                    compare(payPanel.selectedHoldingId.toLowerCase(), expectedToken.symbol.toLowerCase())
+                    compare(payPanel.selectedHoldingId.toLowerCase(), expectedToken.key.toLowerCase())
                     compare(payPanel.valueValid, valueToExchange <= maxPossibleValue)
                     tryCompare(payPanel, "rawValue", SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
                     compare(errorTag.visible, valueToExchange > maxPossibleValue)
@@ -1780,7 +1795,7 @@ Item {
         function test_modal_switching_networks_receivePanel_data() {
                 return [
                             {key: "aave"},
-                            {key: "STT"}
+                            {key: sttGroupKey}
                         ]
         }
 
@@ -1789,9 +1804,9 @@ Item {
             let valueToExchange = 1
             let valueToExchangeString = valueToExchange.toString()
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
-            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromGroupKey = ethGroupKey
             root.swapFormData.fromTokenAmount = valueToExchangeString
-            root.swapFormData.toTokenKey = data.key
+            root.swapFormData.toGroupKey = data.key
 
             // Launch popup
             launchAndVerfyModal()
@@ -1817,7 +1832,7 @@ Item {
                 verify(!!tokenSelectorContentItemText)
 
                 let fromTokenExistsOnNetwork = false
-                let expectedToken = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel, "key", root.swapFormData.toTokenKey)
+                let expectedToken = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.walletTokensStore.tokenGroupsModel, "key", root.swapFormData.toGroupKey)
                 if(!!expectedToken) {
                     fromTokenExistsOnNetwork = !!SQUtils.ModelUtils.getByKey(expectedToken.addressPerChain, "chainId", networkComboBox.selection[0], "address")
                 }
@@ -1826,7 +1841,7 @@ Item {
                     compare(receivePanel.selectedHoldingId, "")
                     compare(tokenSelectorContentItemText.text, qsTr("Select asset"))
                 } else {
-                    compare(receivePanel.selectedHoldingId.toLowerCase(), expectedToken.symbol.toLowerCase())
+                    compare(receivePanel.selectedHoldingId.toLowerCase(), expectedToken.key.toLowerCase())
                     compare(tokenSelectorContentItemText.text, expectedToken.symbol)
                 }
             }
@@ -1839,7 +1854,7 @@ Item {
             root.swapFormData.fromTokenAmount = "0.0001"
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             root.swapFormData.selectedNetworkChainId = 11155111
-            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromGroupKey = ethGroupKey
             // for testing making it 1.2 seconds so as to not make tests running too long
             root.swapFormData.autoRefreshTime = 1200
 
@@ -1869,7 +1884,7 @@ Item {
         function test_deleteing_input_characters(data) {
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             root.swapFormData.selectedNetworkChainId = 11155111
-            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromGroupKey = ethGroupKey
             root.swapFormData.fromTokenAmount = data.input
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
@@ -1898,7 +1913,7 @@ Item {
             root.swapFormData.fromTokenAmount = "0.0001"
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             root.swapFormData.selectedNetworkChainId = 11155111
-            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromGroupKey = ethGroupKey
             // for testing making it 1.2 seconds so as to not make tests running too long
             root.swapFormData.autoRefreshTime = 1200
 
@@ -1941,8 +1956,8 @@ Item {
             root.swapFormData.fromTokenAmount = "0.0001"
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             root.swapFormData.selectedNetworkChainId = 11155111
-            root.swapFormData.fromTokensKey = "ETH"
-            root.swapFormData.toTokenKey = "STT"
+            root.swapFormData.fromGroupKey = ethGroupKey
+            root.swapFormData.toGroupKey = sttGroupKey
 
             // Launch popup
             launchAndVerfyModal()
@@ -1998,8 +2013,8 @@ Item {
             root.swapFormData.fromTokenAmount = "1"
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             root.swapFormData.selectedNetworkChainId = 11155111
-            root.swapFormData.fromTokensKey = "ETH"
-            root.swapFormData.toTokenKey = ""
+            root.swapFormData.fromGroupKey = ethGroupKey
+            root.swapFormData.toGroupKey = ""
 
             // Launch popup
             launchAndVerfyModal()
@@ -2023,7 +2038,7 @@ Item {
             verify(!invertQuoteApproximation.visible)
 
             fetchSuggestedRoutesCalled.clear()
-            root.swapFormData.toTokenKey = "STT"
+            root.swapFormData.toGroupKey = sttGroupKey
 
             tryCompare(fetchSuggestedRoutesCalled, "count", 1)
             tryCompare(sellItem, "visible", true)

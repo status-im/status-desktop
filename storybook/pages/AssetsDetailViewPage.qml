@@ -6,6 +6,8 @@ import AppLayouts.Wallet.stores as WalletStores
 
 import shared.stores as SharedStores
 
+import utils
+
 import Models
 
 Item {
@@ -39,7 +41,8 @@ Item {
 
         allNetworksModel: NetworksModel.flatNetworks
 
-        token: ({
+        tokenGroup: ({
+            key: Constants.sntGroupKey,
             websiteUrl: "https://status.im",
             symbol: "SNT",
             name: "Status",

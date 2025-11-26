@@ -22,14 +22,14 @@ Item {
 
         readonly property int selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue
 
-        readonly property var assetsModel: TokensBySymbolModel {}
+        readonly property var assetsModel: TokenGroupsModel {}
         readonly property var flatNetworks: NetworksModel.flatNetworks
     }
 
     PaymentRequestAdaptor {
         id: adaptor
         selectedNetworkChainId: d.selectedNetworkChainId
-        plainTokensBySymbolModel: d.assetsModel
+        tokenGroupsModel: d.assetsModel
         flatNetworksModel: d.flatNetworks
     }
 
