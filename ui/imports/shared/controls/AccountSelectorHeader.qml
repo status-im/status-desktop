@@ -34,13 +34,12 @@ AccountSelector {
         StatusSmartIdenticon {
             id: assetContent
             objectName: "assetContent"
-            asset.emoji: currentAccount.emoji ?? ""
+            asset.emoji: !!currentAccount.emoji ? currentAccount.emoji : "👛" // Default to purse emoji
             asset.color: d.headerStyleBackgroundColor
             asset.width: 32
             asset.height: asset.width
-            asset.isLetterIdenticon: !!currentAccount.emoji
+            asset.isLetterIdenticon: true
             asset.bgColor: Theme.palette.primaryColor3
-            visible: !!currentAccount.emoji
         }
 
         StatusBaseText {
