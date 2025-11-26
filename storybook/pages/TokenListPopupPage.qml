@@ -66,7 +66,6 @@ SplitView {
                     required property string image
                     required property string source
                     required property string version
-                    required property int tokensCount
                     required property double updatedAt
 
                     readonly property TokenListPopup popup: TokenListPopup {
@@ -81,7 +80,6 @@ SplitView {
                         sourceUrl: delegate.source
                         sourceVersion: delegate.version
                         updatedAt: delegate.updatedAt
-                        tokensCount: delegate.tokensCount
 
                         tokensListModel: SortFilterProxyModel {
                             sourceModel: root.tokensProxyModel

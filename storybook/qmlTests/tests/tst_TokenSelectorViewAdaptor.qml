@@ -2,6 +2,7 @@ import QtQuick
 import QtTest
 
 import Models
+import utils
 
 import StatusQ
 import StatusQ.Core.Utils
@@ -14,27 +15,29 @@ Item {
     width: 600
     height: 400
 
+    readonly property string daiGroupKey: Constants.daiGroupKey
+    readonly property string sttGroupKey: Constants.sttGroupKey
+
     QtObject {
         id: d
 
         readonly property var flatNetworks: NetworksModel.flatNetworks
+        readonly property var baseAssetsModel: GroupedAccountsAssetsModel {}
         readonly property var assetsStore: WalletAssetsStore {
-            id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
+                tokenGroupsModel: TokenGroupsModel {}
             }
-            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+            assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
         }
     }
 
     Component {
         id: componentUnderTest
         TokenSelectorViewAdaptor {
-            assetsModel: d.assetsStore.groupedAccountAssetsModel
+            assetsModel: d.baseAssetsModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: "USD"
-            plainTokensBySymbolModel: TokensBySymbolModel{}
+            tokenGroupsModel: TokenGroupsModel{}
             enabledChainIds: ModelUtils.modelToFlatArray(d.flatNetworks, "chainId")
         }
     }
@@ -84,7 +87,7 @@ Item {
             controlUnderTest.enabledChainIds = [1]
 
             // grab the "DAI" entry
-            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "tokensKey", "DAI")
+            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "key", daiGroupKey)
             verify(!!delegate)
             const origBalance = delegate.currencyBalance
 
@@ -103,7 +106,7 @@ Item {
             controlUnderTest.accountAddress = "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
 
             // grab the "STT" entry
-            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "tokensKey", "STT")
+            const delegate = ModelUtils.getByKey(controlUnderTest.outputAssetsModel, "key", sttGroupKey)
             verify(!!delegate)
 
             // should have ~45.90 balance
@@ -116,7 +119,7 @@ Item {
             controlUnderTest.showAllTokens = true
             let count = 0
             ModelUtils.forEach(controlUnderTest.outputAssetsModel, (modelItem) => {
-                if (modelItem.tokensKey === "DAI")
+                if (modelItem.key === daiGroupKey)
                     count++
             })
 

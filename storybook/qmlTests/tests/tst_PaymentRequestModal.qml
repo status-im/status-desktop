@@ -47,13 +47,14 @@ Item {
 
                 readonly property var data: [
                     {
-                        tokensKey: "ETH",
+                        key: Constants.ethGroupKey,
                         name: "eth",
                         symbol: "ETH",
                         chainId: NetworksModel.ethNet,
                         address: "0xbbc200",
-                        decimals: "18",
+                        decimals: 18,
                         iconSource: ModelsData.assets.eth,
+                        logoUri: ModelsData.assets.eth,
                         marketDetails: {
                            currencyPrice: {
                                amount: 1,
@@ -62,13 +63,14 @@ Item {
                         }
                     },
                     {
-                        tokensKey: "SNT",
+                        key: Constants.sntGroupKey,
                         name: "snt",
                         symbol: "SNT",
                         chainId: NetworksModel.ethNet,
                         address: "0xbbc2000000000000000000000000000000000123",
-                        decimals: "18",
+                        decimals: 18,
                         iconSource: ModelsData.assets.snt,
+                        logoUri: ModelsData.assets.snt,
                         marketDetails: {
                            currencyPrice: {
                                amount: 1,
@@ -77,13 +79,14 @@ Item {
                         }
                     },
                     {
-                        tokensKey: "DAI",
+                        key: Constants.daiGroupKey,
                         name: "dai",
                         symbol: "DAI",
                         chainId: NetworksModel.ethNet,
                         address: "0xbbc2000000000000000000000000000000550567",
-                        decimals: "2",
+                        decimals: 2,
                         iconSource: ModelsData.assets.dai,
+                        logoUri: ModelsData.assets.dai,
                         marketDetails: {
                            currencyPrice: {
                                amount: 1,
@@ -94,13 +97,14 @@ Item {
                 ]
                 readonly property var sepArbData: [
                     {
-                        tokensKey: "STT",
+                        key: Constants.sttGroupKey,
                         name: "stt",
                         symbol: "STT",
                         chainId: NetworksModel.sepArbChainId,
                         address: "0xbbc2000000000000000000000000000000550567",
-                        decimals: "2",
+                        decimals: 2,
                         iconSource: ModelsData.assets.snt,
+                        logoUri: ModelsData.assets.snt,
                         marketDetails: {
                             currencyPrice: {
                                 amount: 1,
@@ -153,7 +157,7 @@ Item {
             verify(!!button)
             verify(!button.enabled)
 
-            compare(controlUnderTest.selectedTokenKey, Constants.ethToken)
+            compare(controlUnderTest.selectedTokenGroupKey, Constants.ethGroupKey)
             const assetSelector = findChild(controlUnderTest, "assetSelector")
             verify(!!assetSelector)
             verify(assetSelector.isSelected)
@@ -220,12 +224,12 @@ Item {
 
             const assetSelector = findChild(controlUnderTest, "assetSelector")
             verify(!!assetSelector)
-            compare(controlUnderTest.selectedTokenKey, "ETH")
+            compare(controlUnderTest.selectedTokenGroupKey, Constants.ethGroupKey)
             compare(assetSelector.contentItem.name, "ETH")
 
             const asset = SQUtils.ModelUtils.get(assetSelector.model, 2)
             verify(!!asset)
-            compare(asset.tokensKey, "DAI")
+            compare(asset.key, Constants.daiGroupKey)
             mouseClick(assetSelector)
 
             waitForRendering(assetSelector)
@@ -238,7 +242,7 @@ Item {
             compare(delegateUnderTest.symbol, "DAI")
             mouseClick(delegateUnderTest)
 
-            compare(controlUnderTest.selectedTokenKey, "DAI")
+            compare(controlUnderTest.selectedTokenGroupKey, Constants.daiGroupKey)
             compare(assetSelector.contentItem.name, "DAI")
 
             closeAndVerfyModal()
@@ -266,8 +270,8 @@ Item {
         }
 
         function test_symbol_initial_selection_when_not_available_in_chain() {
-            const asset = "STT"
-            controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root, { selectedTokenKey: asset, selectedNetworkChainId: Constants.chains.mainnetChainId })
+            const assetGroupKey = Constants.sttGroupKey
+            controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root, { selectedTokenGroupKey: assetGroupKey, selectedNetworkChainId: Constants.chains.mainnetChainId })
             verify(!!controlUnderTest)
 
             controlUnderTest.open()
@@ -276,28 +280,28 @@ Item {
             const assetSelector = findChild(controlUnderTest, "assetSelector")
             verify(!!assetSelector)
             tryCompare(assetSelector.contentItem, "name", "ETH")
-            compare(controlUnderTest.selectedTokenKey, "ETH")
+            compare(controlUnderTest.selectedTokenGroupKey, Constants.ethGroupKey)
         }
 
         function test_symbol_selection_after_network_change() {
-            const asset = "STT"
+            const assetGroupKey = Constants.sttGroupKey
             controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root, { selectedNetworkChainId: Constants.chains.arbitrumSepoliaChainId })
             verify(!!controlUnderTest)
 
             controlUnderTest.open()
             tryVerify(() => controlUnderTest.opened)
             // TODO: Fix the model population issue. We should be able to set the initial asset when building the control.
-            controlUnderTest.selectedTokenKey = asset
+            controlUnderTest.selectedTokenGroupKey = assetGroupKey
 
             compare(controlUnderTest.selectedNetworkChainId, Constants.chains.arbitrumSepoliaChainId)
-            compare(controlUnderTest.selectedTokenKey, "STT")
+            compare(controlUnderTest.selectedTokenGroupKey, assetGroupKey)
             const assetSelector = findChild(controlUnderTest, "assetSelector")
             verify(!!assetSelector)
             compare(assetSelector.contentItem.name, "STT")
 
             controlUnderTest.selectedNetworkChainId = Constants.chains.mainnetChainId
             tryCompare(assetSelector.contentItem, "name", "ETH")
-            compare(controlUnderTest.selectedTokenKey, "ETH")
+            compare(controlUnderTest.selectedTokenGroupKey, Constants.ethGroupKey)
         }
 
         function test_open_initial_account_address() {
@@ -333,21 +337,22 @@ Item {
         }
 
         function test_open_initial_asset() {
-            const asset = "DAI"
+            const assetGroupKey = Constants.daiGroupKey
+            const assetSymbol = "DAI"
             controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root)
             verify(!!controlUnderTest)
 
             controlUnderTest.open()
             tryVerify(() => !!controlUnderTest.opened)
             // TODO: Fix the model population issue. We should be able to set the initial asset when building the control.
-            controlUnderTest.selectedTokenKey = asset
+            controlUnderTest.selectedTokenGroupKey = assetGroupKey
 
-            compare(controlUnderTest.selectedTokenKey, asset)
+            compare(controlUnderTest.selectedTokenGroupKey, assetGroupKey)
             const assetSelector = findChild(controlUnderTest, "assetSelector")
             verify(!!assetSelector)
             verify(assetSelector.isSelected)
             verify(assetSelector.contentItem.selected)
-            compare(assetSelector.contentItem.name, asset)
+            compare(assetSelector.contentItem.name, assetSymbol)
 
             closeAndVerfyModal()
         }
@@ -386,9 +391,9 @@ Item {
             verify(button.enabled)
 
             // Check if button changes after symbol is changed
-            controlUnderTest.selectedTokenKey = ""
+            controlUnderTest.selectedTokenGroupKey = ""
             verify(!button.enabled)
-            controlUnderTest.selectedTokenKey = "DAI"
+            controlUnderTest.selectedTokenGroupKey = Constants.daiGroupKey
             verify(button.enabled)
 
             closeAndVerfyModal()

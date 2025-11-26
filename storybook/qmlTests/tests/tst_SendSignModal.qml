@@ -29,6 +29,7 @@ Item {
             tokenSymbol: "DAI"
             tokenAmount: "100.07"
             tokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+            tokenIcon: Constants.tokenIcon(tokenSymbol)
 
             accountName: "Hot wallet (generated)"
             accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"

@@ -72,7 +72,7 @@ SplitView {
                 readonly property SharedStores.CurrenciesStore currenciesStore: SharedStores.CurrenciesStore {}
                 readonly property var paymentRequestAdaptor: PaymentRequestAdaptor {
                     flatNetworksModel: d.flatNetworks
-                    plainTokensBySymbolModel: TokensBySymbolModel {}
+                    tokenGroupsModel: TokenGroupsModel {}
                     selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
                 }
 
