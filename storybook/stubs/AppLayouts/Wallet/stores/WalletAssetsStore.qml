@@ -3,62 +3,39 @@ import QtQuick
 import Storybook
 import Models
 
-import QtModelsToolkit
-
 QtObject {
     id: root
 
     property TokensStore walletTokensStore: TokensStore {}
 
-    readonly property var groupedAccountsAssetsModel: GroupedAccountsAssetsModel {}
-    property var assetsWithFilteredBalances
-    readonly property var tokensBySymbolModel: TokensBySymbolModel {}
+    property var assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
+    property var tokenGroupsModel: TokenGroupsModel {}
     readonly property var communityModel: ListModel {
-        Component.onCompleted: append([{
-            communityId: "ddls",
-            communityName: "Doodles",
-            communityImage: ModelsData.collectibles.doodles
-        },
-        {
-            communityId: "sox",
-            communityName: "Socks",
-            communityImage: ModelsData.icons.socks
-        },
-        {
-            communityId: "ast",
-            communityName: "Astafarians",
-            communityImage: ModelsData.icons.dribble
-        }])
-    }
-
-    // renaming tokens by symbol key so that can be used to join models
-    readonly property var renamedTokensBySymbolModel: RolesRenamingModel {
-        sourceModel: tokensBySymbolModel
-        mapping: [
-            RoleRename {
-                from: "key"
-                to: "tokensKey"
+        Component.onCompleted: append([
+            {
+                communityId: "ddls",
+                communityName: "Doodles",
+                communityImage: ModelsData.collectibles.doodles
+            },
+            {
+                communityId: "sox",
+                communityName: "Socks",
+                communityImage: ModelsData.icons.socks
+            },
+            {
+                communityId: "ast",
+                communityName: "Astafarians",
+                communityImage: ModelsData.icons.dribble
             }
-        ]
+        ])
     }
 
-    // join account assets and tokens by symbol model
-    property LeftJoinModel jointModel: LeftJoinModel {
-        leftModel: assetsWithFilteredBalances
-        rightModel: renamedTokensBySymbolModel
-        joinRole: "tokensKey"
-    }
-
-    // combining community model with assets to get community meta data
-    property LeftJoinModel groupedAccountAssetsModel: LeftJoinModel {
-        leftModel: jointModel
-        rightModel: communityModel
-        joinRole: "communityId"
-    }
+    // For storybook tests we keep the processed models identical to the raw assets
+    readonly property var baseGroupedAccountAssetModel: assetsWithFilteredBalances
+    property var groupedAccountAssetsModel: assetsWithFilteredBalances
 
     readonly property var assetsController: QtObject {
         property int revision
-
         function filterAcceptsSymbol(symbol) {
             return true
         }

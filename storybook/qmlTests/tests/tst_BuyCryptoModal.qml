@@ -37,12 +37,12 @@ Item {
             currentCurrency: currencyStore.currentCurrency
             walletAccountsModel: WalletAccountsModel{}
             networksModel: NetworksModel.flatNetworks
-            plainTokensBySymbolModel: assetsStore.walletTokensStore.plainTokensBySymbolModel
+            tokenGroupsModel: assetsStore.walletTokensStore.tokenGroupsModel
             groupedAccountAssetsModel: assetsStore.groupedAccountAssetsModel
             buyCryptoInputParamsForm: BuyCryptoParamsForm {
                 selectedWalletAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
                 selectedNetworkChainId: 11155111
-                selectedTokenKey: "ETH"
+                selectedTokenGroupKey: Constants.ethGroupKey
             }
             Component.onCompleted: {
                 fetchProviders.connect(buyCryptoStore.fetchProviders)
@@ -93,17 +93,18 @@ Item {
             readonly property var assetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
                 walletTokensStore: TokensStore {
-                    plainTokensBySymbolModel: TokensBySymbolModel {}
+                    tokenGroupsModel: TokenGroupsModel {}
                 }
-                readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+                assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
             }
             property string uuid
             property var debounceFetchProviderUrl: Backpressure.debounce(root, 500, function() {
                 buySellModal.buyCryptoStore.providerUrlReady(uuid, "xxxx")
             })
             property var debounceFetchProvidersList: Backpressure.debounce(root, 500, function() {
-                buySellModal.buyCryptoStore.areProvidersLoading = false
+                if (buySellModal && buySellModal.buyCryptoStore) {
+                    buySellModal.buyCryptoStore.areProvidersLoading = false
+                }
             })
         }
     }
@@ -129,7 +130,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.buyCryptoInputParamsForm.selectedWalletAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 11155111
-            controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey = "ETH"
+            controlUnderTest.buyCryptoInputParamsForm.selectedTokenGroupKey = Constants.ethGroupKey
             controlUnderTest.open()
             tryVerify(() => !!controlUnderTest.opened)
         }
@@ -217,29 +218,29 @@ Item {
             const tokenSelector = findChild(selectParamsPanel, "assetSelector")
             verify(!!tokenSelector)
 
-            compare(selectParamsPanel.selectedTokenKey, controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey)
+            compare(selectParamsPanel.selectedTokenGroupKey, controlUnderTest.buyCryptoInputParamsForm.selectedTokenGroupKey)
 
             const selectedAssetButton = findChild(tokenSelector, "assetSelectorButton")
             verify(!!selectedAssetButton)
 
-            const modelDataToTest = ModelUtils.getByKey(tokenSelector.model, "tokensKey",
-                                                        controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey)
+            const modelDataToTest = ModelUtils.getByKey(tokenSelector.model, "key",
+                                                        controlUnderTest.buyCryptoInputParamsForm.selectedTokenGroupKey)
             compare(selectedAssetButton.selected, true)
             compare(selectedAssetButton.icon, modelDataToTest.iconSource)
             compare(selectedAssetButton.name, modelDataToTest.name)
             compare(selectedAssetButton.subname, modelDataToTest.symbol)
 
             //switch to a network that has no tokens and ensure its reset
-             controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 421614
+            controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 421614
 
-             waitForRendering(selectParamsPanel)
+            waitForRendering(selectParamsPanel)
 
             compare(selectedAssetButton.selected, false)
             verify(!controlUnderTest.rightButtons[0].enabled)
 
             // switch back a network and token thats valid and check if clicking buy button works properly
             controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 11155111
-            controlUnderTest.buyCryptoInputParamsForm.selectedTokenKey = "ETH"
+            controlUnderTest.buyCryptoInputParamsForm.selectedTokenGroupKey = Constants.ethGroupKey
 
             waitForRendering(selectParamsPanel)
             verify(controlUnderTest.rightButtons[0].enabled)

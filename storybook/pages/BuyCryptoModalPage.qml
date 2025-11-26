@@ -54,7 +54,7 @@ SplitView {
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
+                tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
             assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
@@ -62,7 +62,7 @@ SplitView {
         readonly property BuyCryptoParamsForm buyCryptoInputParamsForm: BuyCryptoParamsForm{
             selectedWalletAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             selectedNetworkChainId: 11155111
-            selectedTokenKey: "ETH"
+            selectedTokenGroupKey: "eth-native"
         }
 
     }
@@ -98,7 +98,7 @@ SplitView {
             walletAccountsModel: WalletAccountsModel{}
             networksModel: NetworksModel.flatNetworks
             currentCurrency: d.currencyStore.currentCurrency
-            plainTokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+            tokenGroupsModel: d.assetsStore.walletTokensStore.tokenGroupsModel
             groupedAccountAssetsModel: d.assetsStore.groupedAccountAssetsModel
             buyCryptoInputParamsForm: d.buyCryptoInputParamsForm
             Component.onCompleted: {
