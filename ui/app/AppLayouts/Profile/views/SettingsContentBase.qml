@@ -101,6 +101,8 @@ FocusScope {
                 font.weight: Font.Bold
                 font.pixelSize: Constants.settingsSection.mainHeaderFontSize
                 color: Theme.palette.directColor1
+
+                elide: Text.ElideRight
             }
 
             // filler

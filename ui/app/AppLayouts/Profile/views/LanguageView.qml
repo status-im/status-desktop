@@ -47,9 +47,12 @@ SettingsContentBase {
             z: root.z + 2
 
             StatusBaseText {
+                Layout.fillWidth: true
+
                 text: qsTr("Set Display Currency")
+                wrapMode: Text.Wrap
             }
-            Item { Layout.fillWidth: true }
+
             StatusListPicker {
                 id: currencyPicker
 
@@ -90,7 +93,10 @@ SettingsContentBase {
             z: root.z + 1
 
             StatusBaseText {
+                Layout.fillWidth: true
+
                 text: qsTr("Language")
+                wrapMode: Text.Wrap
             }
             Item { Layout.fillWidth: true }
             StatusLanguageSelector {
