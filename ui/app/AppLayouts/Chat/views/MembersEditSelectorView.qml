@@ -72,8 +72,9 @@ MembersSelectorBase {
     delegate: StatusTagItem {
         readonly property string _pubKey: model.pubKey
 
-        height: ListView.view.height
+        width: Math.min(implicitWidth, root.membersFlickContentWidth)
         text: model.preferredDisplayName
+        elideMode: Text.ElideMiddle
 
         isReadonly: {
             if (model.memberRole === Constants.memberRole.owner) return true

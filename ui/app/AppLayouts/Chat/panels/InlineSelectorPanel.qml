@@ -15,8 +15,8 @@ import utils
 ColumnLayout {
     id: root
 
-    property alias model: listView.model
-    property alias delegate: listView.delegate
+    required property var model
+    required property Component delegate
 
     property alias suggestionsModel: suggestionsListView.model
     property alias suggestionsDelegate: suggestionsListView.delegate
@@ -27,6 +27,7 @@ ColumnLayout {
     readonly property alias label: label
     readonly property alias warningLabel: warningLabel
     readonly property alias edit: edit
+    readonly property int membersFlickContentWidth: membersFlick.contentWidth
 
     signal confirmed()
     signal rejected()
@@ -113,8 +114,8 @@ ColumnLayout {
 
         property bool forceHide: false
 
-        parent: scrollView
-        x: d.isCompactMode ? 0 : Math.min(parent.width, parent.contentWidth)
+        parent: membersFlick
+        x: 0
         y: parent.height + Theme.halfPadding
         visible: edit.text !== "" && !forceHide
         padding: Theme.halfPadding
@@ -150,6 +151,7 @@ ColumnLayout {
                 visible: root.suggestionsModel.count === 0
                 text: qsTr("No results found")
                 color: Theme.palette.baseColor1
+                elide: Text.ElideRight
             }
 
             StatusListView {
@@ -189,13 +191,19 @@ ColumnLayout {
 
         readonly property int toLabelWidth: label.implicitWidth + 2 * Theme.halfPadding
 
-        Layout.preferredHeight: 44
+        readonly property int maxContentHeight: 120
+        readonly property int minContentHeight: 44
+
+        Layout.preferredHeight: Math.max(membersBox.minContentHeight,
+                                         membersFlick.height + 2 * Theme.halfPadding)
         visible: false
         color: Theme.palette.baseColor2
         radius: Theme.radius
+
         RowLayout {
             anchors.fill: parent
             spacing: Theme.halfPadding
+
             StatusBaseText {
                 id: label
                 Layout.leftMargin: Theme.padding
@@ -203,134 +211,123 @@ ColumnLayout {
                 visible: text !== ""
                 color: Theme.palette.baseColor1
             }
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                StatusScrollView {
-                    id: scrollView
 
-                    function positionViewAtEnd() {
-                        if (scrollView.contentWidth > scrollView.width) {
-                            scrollView.flickable.contentX = scrollView.contentWidth - scrollView.width
-                        } else {
-                            scrollView.flickable.contentX = 0
-                        }
-                    }
+            Flickable {
+                id: membersFlick
 
-                    anchors.fill: parent
-                    contentHeight: availableHeight
-                    padding: 0
-
-                    onContentWidthChanged: positionViewAtEnd()
-                    onWidthChanged: positionViewAtEnd()
-
-                    RowLayout {
-                        height: scrollView.availableHeight
-                        StatusListView {
-                            id: listView
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 30
-                            implicitWidth: contentWidth
-                            orientation: ListView.Horizontal
-                            spacing: Theme.halfPadding
-                            interactive: false
-                        }
-
-                        TextInput {
-                            id: edit
-                            property bool pasteOperation: false
-                            Layout.minimumWidth: 4
-                            Layout.fillHeight: true
-                            verticalAlignment: Text.AlignVCenter
-                            font.pixelSize: Theme.primaryTextFontSize
-                            color: Theme.palette.directColor1
-
-                            selectByMouse: true
-                            selectionColor: Theme.palette.primaryColor2
-                            selectedTextColor: color
-                            onCursorPositionChanged: {
-                                if (scrollView.contentX > cursorRectangle.x)
-                                    scrollView.contentX = cursorRectangle.x;
-                                if (scrollView.contentX < ((cursorRectangle.x+Theme.smallPadding)-scrollView.width) && ((cursorRectangle.x+Theme.smallPadding) > scrollView.width))
-                                    scrollView.contentX = (cursorRectangle.x-scrollView.width+Theme.smallPadding);
-                            }
-
-                            cursorDelegate: StatusCursorDelegate {
-                                cursorVisible: edit.cursorVisible
-                            }
-
-                            onTextEdited: {
-                                if (suggestionsDialog.forceHide && !pasteOperation)
-                                    suggestionsDialog.forceHide = false
-                            }
-
-                            Keys.onPressed: (event) => {
-
-                                                if (event.matches(StandardKey.Paste)) {
-                                                    event.accepted = true
-                                                    d.paste()
-                                                    return
-                                                }
-
-                                                if (suggestionsDialog.visible) {
-                                                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                                        root.entryAccepted(suggestionsListView.itemAtIndex(suggestionsListView.currentIndex))
-                                                    } else if (event.key === Qt.Key_Up) {
-                                                        suggestionsListView.decrementCurrentIndex()
-                                                    } else if (event.key === Qt.Key_Down) {
-                                                        suggestionsListView.incrementCurrentIndex()
-                                                    }
-                                                } else {
-                                                    if (event.key === Qt.Key_Backspace && edit.text === "") {
-                                                        root.entryRemoved(listView.itemAtIndex(listView.count - 1))
-                                                    } else if (event.key === Qt.Key_Return || event.key === Qt.Enter)  {
-                                                        root.enterKeyPressed()
-                                                    } else if (event.key === Qt.Key_Escape)  {
-                                                        root.rejected()
-                                                    } else if (event.key === Qt.Key_Up) {
-                                                        root.upKeyPressed()
-                                                    } else if (event.key === Qt.Key_Down) {
-                                                        root.downKeyPressed()
-                                                    }
-                                                }
-                                            }
-                        }
-
-                        // ensure edit cursor is visible
-                        Item {
-                            Layout.fillHeight: true
-                            implicitWidth: 1
-                        }
-                    }
-
-                    ScrollBar.horizontal: StatusScrollBar {
-                        id: scrollBar
-                        parent: scrollView.parent
-                        anchors.top: scrollView.bottom
-                        anchors.left: scrollView.left
-                        anchors.right: scrollView.right
-                        policy: ScrollBar.AsNeeded
-                        visible: resolveVisibility(policy, scrollView.availableWidth, scrollView.contentWidth)
+                function positionViewAtEnd() {
+                    if (contentHeight > height) {
+                        contentY = contentHeight - height
+                    } else {
+                        contentY = 0
                     }
                 }
 
-                StatusBaseText {
-                    id: warningLabel
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                    Layout.rightMargin: Theme.padding
-                    visible: text !== ""
-                    font.pixelSize: Theme.asideTextFontSize
-                    color: Theme.palette.dangerColor1
+                Layout.fillWidth: true
+                Layout.preferredHeight: Math.min(membersFlow.implicitHeight,
+                                                 membersBox.maxContentHeight)
+
+                contentWidth: width
+                contentHeight: membersFlow.implicitHeight
+                clip: true
+
+                ScrollBar.vertical: StatusScrollBar {}
+
+                onContentHeightChanged: positionViewAtEnd()
+                onHeightChanged: positionViewAtEnd()
+
+                Flow {
+                    id: membersFlow
+
+                    width: membersFlick.width
+                    spacing: Theme.halfPadding
+
+                    Repeater {
+                        id: membersRepeater
+
+                        model: root.model
+                        delegate: root.delegate
+                    }
+
+                    TextInput {
+                        id: edit
+
+                        property bool pasteOperation: false
+
+                        width: Math.max(Math.min(implicitWidth, membersFlick.width + 2 * Theme.padding),
+                                        2 * Theme.smallPadding)
+                        height: 30
+
+                        verticalAlignment: Text.AlignVCenter
+                        font.pixelSize: Theme.primaryTextFontSize
+                        color: Theme.palette.directColor1
+
+                        selectByMouse: true
+                        selectionColor: Theme.palette.primaryColor2
+                        selectedTextColor: color
+
+                        cursorDelegate: StatusCursorDelegate {
+                            cursorVisible: edit.cursorVisible
+                        }
+
+                        onTextEdited: {
+                            if (suggestionsDialog.forceHide && !pasteOperation)
+                                suggestionsDialog.forceHide = false
+                        }
+
+                        Keys.onPressed: (event) => {
+
+                                            if (event.matches(StandardKey.Paste)) {
+                                                event.accepted = true
+                                                d.paste()
+                                                return
+                                            }
+
+                                            if (suggestionsDialog.visible) {
+                                                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                                    root.entryAccepted(suggestionsListView.itemAtIndex(suggestionsListView.currentIndex))
+                                                } else if (event.key === Qt.Key_Up) {
+                                                    suggestionsListView.decrementCurrentIndex()
+                                                } else if (event.key === Qt.Key_Down) {
+                                                    suggestionsListView.incrementCurrentIndex()
+                                                }
+                                            } else {
+                                                if (event.key === Qt.Key_Backspace && edit.text === "") {
+                                                    root.entryRemoved(membersRepeater.itemAt(membersRepeater.count - 1))
+                                                } else if (event.key === Qt.Key_Return || event.key === Qt.Enter)  {
+                                                    root.enterKeyPressed()
+                                                } else if (event.key === Qt.Key_Escape)  {
+                                                    root.rejected()
+                                                } else if (event.key === Qt.Key_Up) {
+                                                    root.upKeyPressed()
+                                                } else if (event.key === Qt.Key_Down) {
+                                                    root.downKeyPressed()
+                                                }
+                                            }
+                                        }
+                    }
                 }
             }
 
-            StatusMouseArea {
-                anchors.fill: parent
-                propagateComposedEvents: true
-                onPressed: {
-                    edit.forceActiveFocus()
-                    mouse.accepted = false
-                }
+            StatusBaseText {
+                id: warningLabel
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                Layout.rightMargin: Theme.padding
+                Layout.preferredWidth: Math.min(membersBox.width / 4, implicitWidth)
+
+                visible: text !== ""
+                font.pixelSize: Theme.asideTextFontSize
+                wrapMode: Text.Wrap
+                color: Theme.palette.dangerColor1
+            }
+        }
+
+        StatusMouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: true
+            onPressed: {
+                edit.forceActiveFocus()
+                mouse.accepted = false
             }
         }
     }

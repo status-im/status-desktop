@@ -48,6 +48,12 @@ Control {
     property string icon
 
     /*!
+    \qmlproperty int StatusTagItem::elideMode
+    This property sets elide mode for the text.
+    */
+    property int elideMode: Text.ElideRight
+
+    /*!
     \qmlsignal
     This signal is emitted when the close button is clicked.
 */
@@ -79,23 +85,28 @@ Control {
         spacing: 2
 
         StatusIcon {
+            Layout.preferredWidth: root.icon ? d.tagIconsSize : 0
+            Layout.preferredHeight: d.tagIconsSize
+
             visible: root.icon
             color: Theme.palette.indirectColor1
-            width: root.icon ? d.tagIconsSize : 0
-            height: d.tagIconsSize
             icon: root.icon
         }
         StatusBaseText {
+            Layout.fillWidth: true
+
             color: Theme.palette.indirectColor1
             font: root.font
             text: root.text
+            elide: root.elideMode
         }
         StatusIcon {
             Layout.leftMargin: d.tagMargins
+            Layout.preferredWidth: d.tagIconsSize
+            Layout.preferredHeight: d.tagIconsSize
+
             visible: !root.isReadonly
             color: Theme.palette.indirectColor1
-            width: d.tagIconsSize
-            height: d.tagIconsSize
             icon: "close"
             StatusMouseArea {
                 enabled: !root.isReadonly
