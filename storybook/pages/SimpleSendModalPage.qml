@@ -36,7 +36,7 @@ SplitView {
         readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
             assetsWithFilteredBalances: groupedAccountsAssetsModel
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel{}
+                tokenGroupsModel: TokenGroupsModel{}
                 getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
             }
         }
@@ -134,7 +134,7 @@ SplitView {
 
         accountsModel: accountsSelectorAdaptor.processedWalletAccounts
         assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
-        flatAssetsModel: d.walletAssetStore.walletTokensStore.plainTokensBySymbolModel
+        groupedAccountAssetsModel: d.walletAssetStore.groupedAccountAssetsModel
         flatCollectiblesModel: collectiblesSelectionAdaptor.filteredFlatModel
         collectiblesModel: collectiblesSelectionAdaptor.model
         networksModel: d.filteredNetworksModel
@@ -174,7 +174,7 @@ SplitView {
         Binding on selectedChainId {
             value: networksCombobox.currentValue ?? 0
         }
-        Binding on selectedTokenKey {
+        Binding on selectedGroupKey {
             value: tokensCombobox.currentValue ?? ""
         }
     }
@@ -195,10 +195,10 @@ SplitView {
 
         accounts: d.walletAccountsModel
         assetsModel: GroupedAccountsAssetsModel {}
-        tokensBySymbolModel: d.walletAssetStore.walletTokensStore.plainTokensBySymbolModel
+        tokenGroupsModel: d.walletAssetStore.walletTokensStore.tokenGroupsModel
         filteredFlatNetworksModel: d.filteredNetworksModel
 
-        selectedTokenKey: simpleSend.selectedTokenKey
+        selectedGroupKey: simpleSend.selectedGroupKey
         selectedNetworkChainId: simpleSend.selectedChainId
 
         fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
@@ -628,7 +628,7 @@ SplitView {
                     sources: [
                         SourceModel {
                             model: ObjectProxyModel {
-                                sourceModel: d.walletAssetStore.walletTokensStore.plainTokensBySymbolModel
+                                sourceModel: d.walletAssetStore.walletTokensStore.tokenGroupsModel
                                 delegate: SortFilterProxyModel {
                                     readonly property var addressPerChain: this
                                     sourceModel: LeftJoinModel {

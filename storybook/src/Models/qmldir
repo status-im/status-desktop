@@ -25,7 +25,7 @@ WalletAccountsModel 1.0 WalletAccountsModel.qml
 WalletKeyPairModel 1.0 WalletKeyPairModel.qml
 WalletTransactionsModel 1.0 WalletTransactionsModel.qml
 GroupedAccountsAssetsModel 1.0 GroupedAccountsAssetsModel.qml
-TokensBySymbolModel 1.0 TokensBySymbolModel.qml
+TokenGroupsModel 1.0 TokenGroupsModel.qml
 CommunitiesModel 1.0 CommunitiesModel.qml
 OnRampProvidersModel 1.0 OnRampProvidersModel.qml
 SwapTransactionRoutes 1.0 SwapTransactionRoutes.qml

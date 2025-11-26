@@ -20,6 +20,9 @@ Item {
     width: 600
     height: 400
 
+    readonly property string ethGroupKey: Constants.ethGroupKey
+    readonly property string sttGroupKey: Constants.sttGroupKey
+
     ListModel {
         id: walletAccountsModel
         readonly property var data: [
@@ -107,10 +110,9 @@ Item {
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
+                tokenGroupsModel: TokenGroupsModel {}
             }
-            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+            assetsWithFilteredBalances: GroupedAccountsAssetsModel {}
         }
 
         readonly property var currencyStore: CurrenciesStore{}
@@ -147,7 +149,7 @@ Item {
             exposedRoles: "balances"
         }
 
-        property string selectedTokenKey: "ETH"
+        property string selectedGroupKey: ethGroupKey
         property int selectedNetworkChainId: 11155111
     }
 
@@ -156,10 +158,10 @@ Item {
         WalletAccountsSelectorAdaptor {
             accounts: walletAccountsModel
             assetsModel: d.assetsStore.groupedAccountAssetsModel
-            tokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+            tokenGroupsModel: d.assetsStore.walletTokensStore.tokenGroupsModel
             filteredFlatNetworksModel: d.filteredFlatNetworksModel
 
-            selectedTokenKey: d.selectedTokenKey
+            selectedGroupKey: d.selectedGroupKey
             selectedNetworkChainId: d.selectedNetworkChainId
 
             fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
@@ -185,21 +187,21 @@ Item {
 
         function test_accountBalance_data() {
             return [
-                        {selectedTokenKey: "ETH", chainId: 11155111},
-                        {selectedTokenKey: "STT", chainId: 11155111},
-                        {selectedTokenKey: "ETH", chainId: 11155420},
-                        {selectedTokenKey: "STT", chainId: 11155420}
+                        {selectedGroupKey: ethGroupKey, chainId: 11155111},
+                        {selectedGroupKey: sttGroupKey, chainId: 11155111},
+                        {selectedGroupKey: ethGroupKey, chainId: 11155420},
+                        {selectedGroupKey: sttGroupKey, chainId: 11155420}
                     ]
         }
 
         function test_accountBalance(data) {
             verify(!!controlUnderTest)
-            d.selectedTokenKey = data.selectedTokenKey
+            d.selectedGroupKey = data.selectedGroupKey
             d.selectedNetworkChainId = data.chainId
             let processedAccounts = controlUnderTest.processedWalletAccounts
             for (let i = 0; i < processedAccounts.count; i++) {
                 let accountAddress = processedAccounts.get(i).address
-                let selectedTokenBalancesModel = ModelUtils.getByKey(d.filteredBalancesModel, "tokensKey", d.selectedTokenKey).balances
+                let selectedTokenBalancesModel = ModelUtils.getByKey(d.filteredBalancesModel, "key", d.selectedGroupKey).balances
                 let tokenBalanceForSelectedAccount = ModelUtils.getByKey(selectedTokenBalancesModel, "account", accountAddress) ?? 0
                 let tokenBalanceForAccount =  !!tokenBalanceForSelectedAccount ? tokenBalanceForSelectedAccount.balance: "0"
 

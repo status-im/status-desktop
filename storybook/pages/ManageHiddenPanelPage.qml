@@ -38,7 +38,7 @@ SplitView {
         mapping: [
             RoleRename {
                 from: "uid"
-                to: "symbol"
+                to: "key"
             }
         ]
     }

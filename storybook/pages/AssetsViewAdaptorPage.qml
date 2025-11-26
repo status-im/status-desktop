@@ -17,7 +17,7 @@ Item {
 
         readonly property var data: [
             {
-                tokensKey: "key_ETH",
+                key: Constants.ethGroupKey,
                 name: "Ether",
                 symbol: "ETH",
                 balances: [
@@ -45,7 +45,7 @@ Item {
                 decimals: 18,
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl(""),
+                communityImage: "",
                 marketDetails: {
                     changePct24hour: -2.1232,
                     currencyPrice: {
@@ -53,12 +53,12 @@ Item {
                     }
                 },
                 detailsLoading: false,
-                image: Qt.resolvedUrl(""),
+                logoUri: "",
                 position: 1,
                 visible: true
             },
             {
-                tokensKey: "key_SNT",
+                key: Constants.sntGroupKey,
                 name: "Status",
                 symbol: "SNT",
                 balances: [
@@ -86,7 +86,7 @@ Item {
                 decimals: 18,
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl(""),
+                communityImage: "",
                 marketDetails: {
                     changePct24hour: 9.232,
                     currencyPrice: {
@@ -94,12 +94,12 @@ Item {
                     }
                 },
                 detailsLoading: false,
-                image: Qt.resolvedUrl(""),
+                logoUri: "",
                 position: 2,
                 visible: true
             },
             {
-                tokensKey: "key_MYASST",
+                key: "key_MYASST",
                 name: "Community Asset",
                 symbol: "MYASST",
                 balances: [
@@ -125,7 +125,7 @@ Item {
                     }
                 },
                 detailsLoading: false,
-                image: Constants.tokenIcon("ZRX", false),
+                logoUri: Constants.tokenIcon("ZRX", false),
                 position: 5,
                 visible: true
             }
