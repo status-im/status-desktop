@@ -266,8 +266,6 @@ RightTabBaseView {
                     }
                     onCurrentIndexChanged: {
                         RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.TokenType.ERC721 : Constants.TokenType.ERC20)
-
-                        mainViewLoader.sourceComponent = d.walletViewsMap[walletTabBar.currentIndex]
                     }
                 }
                 StatusFlatButton {
@@ -286,6 +284,7 @@ RightTabBaseView {
                 id: mainViewLoader
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                sourceComponent: d.walletViewsMap[walletTabBar.currentIndex]
 
                 Component {
                     id: assetsView
