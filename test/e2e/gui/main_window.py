@@ -84,7 +84,7 @@ class MainLeftPanel(QObject):
         return self.messages_button
 
     @allure.step('Click Gear button and open Settings screen')
-    @open_with_retries(SettingsScreen)
+    @open_with_retries(SettingsScreen, attempts=3, delay=3.0)
     def open_settings(self):
         return self.settings_button
 

@@ -43,11 +43,21 @@ def open_with_retries(screen_class, attempts: int = 3, delay: float = 0.5):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             last_exception = None
+            # TODO: https://github.com/status-im/status-desktop/issues/18888
+            # Workaround for app freeze when opening settings
+            is_settings_screen = screen_class.__name__ == 'SettingsScreen'
+            
             for attempt in range(1, attempts + 1):
                 try:
                     LOG.info(f'Attempt #{attempt} to open {screen_class.__name__}')
                     button = func(self, *args, **kwargs)
+                    # if is_settings_screen:
+                        # # Additional wait before click for SettingsScreen due to app freeze issue
+                        # time.sleep(3)
                     button.click()
+                    # if is_settings_screen:
+                        # # Additional wait after click for SettingsScreen due to app freeze issue
+                        # time.sleep(3)
                     popup = screen_class().wait_until_appears()
                     return popup
                 except Exception as e:

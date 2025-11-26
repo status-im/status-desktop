@@ -141,6 +141,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
 
         with step(f'Check group members and message for {user_two.name}'):
             switch_to_aut(aut_two, main_window)
+            skip_message_backup_popup_if_visible()
 
             assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
                                   10000), f'{group_chat_new_name} is not present in chats list for {aut_two}'
@@ -207,7 +208,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             with step('Wait until link preview is ready'):
                 assert driver.waitFor(
                     lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(),
-                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                    15000)
 
             with step(f'Paste image to the same message'):
                 messages_screen.group_chat.choose_image(str(path))
@@ -261,9 +262,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             main_window.minimize()
 
         with step(f'Check group members and message for {user_three.name}'):
-            switch_to_aut(aut_three, main_window)
-
             with step(f'Check that {user_three.name} is not a member of a group'):
+                switch_to_aut(aut_three, main_window)
+                skip_message_backup_popup_if_visible()
                 assert driver.waitFor(lambda: group_chat_new_name in messages_screen.left_panel.get_chats_names,
                                       10000), f'{group_chat_new_name} is not present in chats list for {aut_three}'
                 messages_screen.left_panel.click_chat_by_name(group_chat_new_name)
