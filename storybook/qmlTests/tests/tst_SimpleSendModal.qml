@@ -108,7 +108,6 @@ Item {
                         "currencyBalanceAsString":"256,23 USD",
                         "currencyBalance":256.2264304910557,
                         "sectionId":"section_1",
-                        "iconSource":"file:///Users/khushboomehta/Documents/status-desktop/ui/StatusQ/src/assets/png/tokens/ETH.png",
                         "sectionName":"Your assets on Mainnet",
                         "balances":[
                             {
@@ -119,10 +118,12 @@ Item {
                                 "balanceAsString":"0,12"
                             }
                         ],
-                        "tokensKey":"ETH",
+                        "key": Constants.ethGroupKey,
                         "name":"Ether",
                         "sources":";native;",
-                        "symbol":"ETH"
+                        "symbol":"ETH",
+                        "logoUri": Constants.tokenIcon("ETH"),
+                        "iconSource": Constants.tokenIcon("ETH")
                     },
                     {
                         "decimals":6,
@@ -149,7 +150,6 @@ Item {
                         "currencyBalanceAsString":"",
                         "currencyBalance":0,
                         "sectionId":"section_zzz",
-                        "iconSource":"file:///Users/khushboomehta/Documents/status-desktop/ui/StatusQ/src/assets/png/tokens/DAI.png",
                         "sectionName":"Popular assets",
                         "balances":[
                             {
@@ -160,38 +160,18 @@ Item {
                                 "balanceAsString":"1000"
                             }
                         ],
-                        "tokensKey":"DAI",
+                        "key": Constants.daiGroupKey,
                         "name":"Dai Stablecoin",
                         "sources":";uniswap;status;",
-                        "symbol":"DAI"
+                        "symbol":"DAI",
+                        "logoUri": Constants.tokenIcon("DAI"),
+                        "iconSource": Constants.tokenIcon("DAI")
                     }
                 ]
                 Component.onCompleted: append(data)
             }
 
-            flatAssetsModel: ListModel {
-                readonly property var data: [
-                    {
-                        "addressPerChain":[
-                            {address:"0x0000000000000000000000000000000000000000","chainId":1},
-                            {address:"0x0000000000000000000000000000000000000000","chainId":5},
-                            {address:"0x0000000000000000000000000000000000000000","chainId":10},
-                            {address:"0x0000000000000000000000000000000000000000","chainId":11155420},
-                            {address:"0x0000000000000000000000000000000000000000","chainId":42161},
-                            {address:"0x0000000000000000000000000000000000000000","chainId":421614},
-                            {address:"0x0000000000000000000000000000000000000000","chainId":11155111}],
-                        "key":"ETH",
-                    },
-                    {
-                        "addressPerChain":[
-                            {address:"0x6b175474e89094c44da98b954eedeac495271d0f","chainId":1},
-                            {address:"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1","chainId":10},
-                        ],
-                        "key":"DAI",
-                    }
-                ]
-                Component.onCompleted: append(data)
-            }
+            groupedAccountAssetsModel: GroupedAccountsAssetsModel {}
 
             flatCollectiblesModel: ListModel {
                 readonly property var data: [
@@ -199,6 +179,7 @@ Item {
                     {
                         tokenId: "id_3",
                         symbol: "abc",
+                        groupingValue: "abc",
                         chainId: NetworksModel.mainnetChainId,
                         name: "Multi-seq NFT 1",
                         contractAddress: "contract_2",
@@ -221,6 +202,7 @@ Item {
                     {
                         tokenId: "id_4",
                         symbol: "def",
+                        groupingValue: "def",
                         chainId: NetworksModel.mainnetChainId,
                         name: "Multi-seq NFT 2",
                         contractAddress: "contract_2",
@@ -243,6 +225,7 @@ Item {
                     {
                         tokenId: "id_5",
                         symbol: "ghi",
+                        groupingValue: "ghi",
                         chainId: NetworksModel.mainnetChainId,
                         name: "Multi-seq NFT 3",
                         contractAddress: "contract_2",
@@ -419,6 +402,7 @@ Item {
             recipientsFilterModel: recipientsModel
             currentCurrency: "USD"
             selectedChainId: SQUtils.ModelUtils.get(networksModel, 0, "chainId")
+            selectedGroupKey: SQUtils.ModelUtils.get(assetsModel, 0, "key")
             fnFormatCurrencyAmount: function (amount, symbol, options = null, locale = null) {
                 if (isNaN(amount)) {
                     return "N/A"
@@ -571,12 +555,12 @@ Item {
             controlUnderTest.sendType = Constants.SendType.Transfer
             controlUnderTest.selectedAccountAddress = "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884"
             controlUnderTest.selectedChainId = 10
-            controlUnderTest.selectedTokenKey = "DAI"
+            controlUnderTest.selectedGroupKey = Constants.daiGroupKey
             controlUnderTest.selectedRawAmount = "10000000" // 10 DAI
             controlUnderTest.selectedAddress = "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
 
             const selectedAccount = SQUtils.ModelUtils.getByKey(controlUnderTest.accountsModel, "address", controlUnderTest.selectedAccountAddress)
-            const selectedToken = SQUtils.ModelUtils.getByKey(controlUnderTest.assetsModel, "tokensKey", controlUnderTest.selectedTokenKey)
+            const selectedToken = SQUtils.ModelUtils.getByKey(controlUnderTest.assetsModel, "key", controlUnderTest.selectedGroupKey)
 
             // Account Selector
             const accountSelector = findChild(controlUnderTest, "accountSelector")
@@ -822,9 +806,9 @@ Item {
 
             // set values for headers using modal api
             controlUnderTest.selectedChainId = 10
-            controlUnderTest.selectedTokenKey = "DAI"
+            controlUnderTest.selectedGroupKey = Constants.daiGroupKey
 
-            const selectedToken = SQUtils.ModelUtils.getByKey(controlUnderTest.assetsModel, "tokensKey", controlUnderTest.selectedTokenKey)
+            const selectedToken = SQUtils.ModelUtils.getByKey(controlUnderTest.assetsModel, "key", controlUnderTest.selectedGroupKey)
 
             // Check regular header
             verify(tokenSelectorButton.selected)
@@ -932,14 +916,14 @@ Item {
 
             compare(controlUnderTest.sendType, Constants.SendType.Transfer)
             compare(controlUnderTest.selectedChainId, 1)
-            compare(controlUnderTest.selectedTokenKey, "")
+            compare(controlUnderTest.selectedGroupKey, "")
             compare(controlUnderTest.selectedRawAmount, "")
 
             // Asset Selection
             sendModalHeader.assetSelected("ETH")
 
             compare(controlUnderTest.sendType, Constants.SendType.Transfer)
-            compare(controlUnderTest.selectedTokenKey, "ETH")
+            compare(controlUnderTest.selectedGroupKey, "ETH")
             compare(controlUnderTest.selectedChainId, 1)
             compare(controlUnderTest.selectedRawAmount, "")
 
@@ -947,7 +931,7 @@ Item {
             sendModalHeader.collectibleSelected("abc")
 
             compare(controlUnderTest.sendType, Constants.SendType.ERC721Transfer)
-            compare(controlUnderTest.selectedTokenKey, "abc")
+            compare(controlUnderTest.selectedGroupKey, "abc")
             compare(controlUnderTest.selectedChainId, 1)
             compare(controlUnderTest.selectedRawAmount, "1")
 

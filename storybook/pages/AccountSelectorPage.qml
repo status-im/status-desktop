@@ -26,7 +26,7 @@ SplitView {
         readonly property var assetsStore: WalletAssetsStore {
             id: thisWalletAssetStore
             walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
+                tokenGroupsModel: TokenGroupsModel {}
             }
             readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
             assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
@@ -129,10 +129,10 @@ SplitView {
 
         accounts: walletAccountsModel
         assetsModel: d.assetsStore.groupedAccountAssetsModel
-        tokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+        tokenGroupsModel: d.assetsStore.walletTokensStore.tokenGroupsModel
         filteredFlatNetworksModel: d.filteredFlatNetworksModel
 
-        selectedTokenKey: selectedTokenComboBox.currentValue ?? ""
+        selectedGroupKey: selectedTokenComboBox.currentValue ?? ""
         selectedNetworkChainId: networksComboBox.currentValue ?? -1
 
         fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
@@ -192,7 +192,7 @@ SplitView {
                 id: selectedTokenComboBox
                 textRole: "name"
                 valueRole: "key"
-                model: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+                model: d.assetsStore.walletTokensStore.tokenGroupsModel
                 currentIndex: -1
             }
 
