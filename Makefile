@@ -470,7 +470,7 @@ export STATUSGO_LIBDIR
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
-	$(STATUSGO_MAKE_PARAMS) $(MAKE) -C vendor/status-go statusgo-shared-library USE_SYSTEM_NIM=1 SHELL=/bin/sh \
+	$(STATUSGO_MAKE_PARAMS) $(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
 		SENTRY_CONTEXT_NAME="status-desktop" \
 		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
 		 $(HANDLE_OUTPUT)
