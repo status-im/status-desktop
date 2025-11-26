@@ -53,6 +53,11 @@ RowLayout {
         root.state = d.stateMembersSelectorContent
     }
 
+    onChatContentModuleChanged: {
+        // Initialization:
+        root.state = d.stateInfoButtonContent
+    }
+
     QtObject {
         id: d
 
