@@ -27,18 +27,14 @@ def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_accou
         new_user_name = random_name_string()
         profile_settings.set_name(new_user_name)
         profile_settings.set_bio(bio)
-        ChangesDetectedToastMessage().click_save_changes_button()
-        assert ChangesDetectedToastMessage().is_visible is False, \
-            f'Bottom floating buttons are not hidden'
+        ChangesDetectedToastMessage().save_changes()
         assert \
             main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().user_name \
             == new_user_name, \
             f'Display name was not applied after changing'
         main_screen.left_panel.click()
         profile_settings.set_social_links(links)
-        ChangesDetectedToastMessage().click_save_changes_button()
-        assert ChangesDetectedToastMessage().is_visible is False, \
-            f'Bottom floating buttons are not hidden'
+        ChangesDetectedToastMessage().save_changes()
         assert len(profile_settings.get_social_links) > 0, f'No social links were added'
 
     with step('Restart application'):

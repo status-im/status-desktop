@@ -6,6 +6,7 @@ import driver
 from configs import get_platform
 from constants.community import Channel
 from gui.main_window import MainWindow
+from helpers.chat_helper import skip_message_backup_popup_if_visible
 from helpers.multiple_instances_helper import (
     authorize_user_in_aut, get_chat_key, send_contact_request_from_settings, 
     accept_contact_request_from_settings, switch_to_aut
@@ -129,6 +130,7 @@ def test_create_edit_join_community_pin_unpin_message(multiple_instances):
             switch_to_aut(aut_one, main_screen)
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
+            skip_message_backup_popup_if_visible()
             chat.click_community_invite(new_name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):

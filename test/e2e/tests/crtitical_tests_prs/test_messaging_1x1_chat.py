@@ -2,12 +2,10 @@ import random
 import string
 import time
 
-import allure
 import pytest
 from allure_commons._allure import step
 
 import driver
-from configs import get_platform
 from constants.messaging import Messaging
 from constants.wallet import WalletAddress
 from ext.test_files.base64_images import BASE_64_IMAGE_JPEG
@@ -81,6 +79,8 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
             contacts_settings.accept_contact_request(user_one.name)
+            skip_message_backup_popup_if_visible()
+
 
         with step(f'Verify that contact appeared in contacts list of {user_two.name} in messaging settings'):
             # Test is on a chat screen, so we need to open settings from left panel

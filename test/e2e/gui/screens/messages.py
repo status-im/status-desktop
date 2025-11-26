@@ -55,11 +55,18 @@ class LeftPanel(QObject):
         return chats_list
 
     @allure.step('Click chat item')
-    def click_chat_by_name(self, chat_name: str):
+    def click_chat_by_name(self, chat_name: str, attempts: int = 4):
         self._chat_list_item.real_name['objectName'] = chat_name
-        self._chat_list_item.click()
-        skip_message_backup_popup_if_visible()
-        return ChatView()
+        
+        for attempt in range(1, attempts + 1):
+            self._chat_list_item.click()
+            try:
+                return ChatView().wait_until_appears()
+            except Exception as e:
+                if attempt < attempts:
+                    continue
+                else:
+                    raise Exception(f"Failed to open ChatView after {attempts} attempts: {e}")
 
     @allure.step('Click start chat button')
     def start_chat(self):
@@ -160,10 +167,18 @@ class Message:
                         self.banner_image = QObject(real_name=driver.objectMap.realName(child))
 
     @allure.step('Open community invitation')
-    def open_community_invitation(self):
+    def open_community_invitation(self, attempts: int = 4):
         driver.waitFor(lambda: self.delegate_button.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        self.delegate_button.click()
-        return CommunityScreen().wait_until_appears()
+        
+        for attempt in range(1, attempts + 1):
+            self.delegate_button.click()
+            try:
+                return CommunityScreen().wait_until_appears()
+            except Exception as e:
+                if attempt < attempts:
+                    continue
+                else:
+                    raise Exception(f"Failed to open CommunityScreen after {attempts} attempts: {e}")
 
     def open_banned_community_invitation(self):
         driver.waitFor(lambda: self.delegate_button.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)

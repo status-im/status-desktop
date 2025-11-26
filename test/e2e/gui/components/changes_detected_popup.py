@@ -11,38 +11,42 @@ class ChangesDetectedToastMessage(QObject):
     def __init__(self):
         super(ChangesDetectedToastMessage, self).__init__(
             names.mainWindow_settingsDirtyToastMessage_SettingsDirtyToastMessage)
-        self._save_button = Button(names.mainWindow_Save_changes_StatusButton)
+        self.save_button = Button(names.mainWindow_Save_changes_StatusButton)
 
     @allure.step('Save changes')
-    def click_save_changes_button(self):
-        self._save_button.click()
+    def save_changes(self,  max_attempts: int = 4):
+        for attempt in range(1, max_attempts + 1):
+            self.save_button.click()
+            try:
+                self.wait_until_hidden(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                return
+            except TimeoutError:
+                if attempt < max_attempts:
+                    continue
+                else:
+                    raise
 
-    @allure.step('Check if save changes button is visible')
-    def is_save_changes_button_visible(self) -> bool:
-        return self._save_button.is_visible
+
 
 
 class PermissionsChangesDetectedToastMessage(QObject):
 
     def __init__(self):
         super().__init__(communities_names.editPermissionView_settingsDirtyToastMessage_SettingsDirtyToastMessage)
-        self._update_permission_button = Button(communities_names.editPermissionView_Update_permission_StatusButton)
+        self.update_permission_button = Button(communities_names.editPermissionView_Update_permission_StatusButton)
 
     @allure.step('Update permission')
     def update_permission(self, max_attempts: int = 4):
         for attempt in range(1, max_attempts + 1):
-            self._update_permission_button.click()
+            self.update_permission_button.click()
             try:
-                # Use a shorter timeout per attempt, but allow multiple attempts
-                self.wait_until_hidden(timeout_msec=configs.timeouts.PROCESS_TIMEOUT_SEC * 1000)
-                # If we reach here, the popup is hidden - success!
+                self.wait_until_hidden(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
                 return
             except TimeoutError:
                 if attempt < max_attempts:
                     # Continue to next attempt
                     continue
                 else:
-                    # Last attempt failed, re-raise the exception
                     raise
 
 
