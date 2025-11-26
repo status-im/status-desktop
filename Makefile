@@ -242,6 +242,9 @@ ifeq ($(USE_NWAKU), true)
     NIM_EXTRA_PARAMS += --passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
 endif
 
+STATUSGO_MAKE_PARAMS += NIM_SDS_HEADER_PATH="$(GIT_ROOT)/vendor/nim-sds/build/"
+STATUSGO_MAKE_PARAMS += NIM_SDS_LIB_PATH="$(GIT_ROOT)/vendor/nim-sds/build/"
+
 INCLUDE_DEBUG_SYMBOLS ?= false
 ifeq ($(INCLUDE_DEBUG_SYMBOLS),true)
  # We need `-d:debug` to get Nim's default stack traces
