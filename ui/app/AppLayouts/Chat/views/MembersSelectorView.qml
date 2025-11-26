@@ -60,8 +60,9 @@ MembersSelectorBase {
     delegate: StatusTagItem {
         readonly property string _pubKey: model.pubKey
 
-        height: ListView.view.height
+        width: Math.min(implicitWidth, root.membersFlickContentWidth)
         text: model.localNickname || model.displayName
+        elideMode: Text.ElideMiddle
 
         onClosed: root.entryRemoved(this)
     }
