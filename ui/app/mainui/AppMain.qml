@@ -2394,16 +2394,19 @@ Item {
             Loader {
                 id: createChatView
 
+                readonly property bool isPortraitMode: appMain.width < Theme.portraitBreakpoint.width
                 property bool opened: false
                 readonly property real defaultWidth: parent.width - Constants.chatSectionLeftColumnWidth -
                          anchors.rightMargin - anchors.leftMargin
                 active: appMain.rootStore.sectionsLoaded && opened
 
                 anchors.top: parent.top
-                anchors.topMargin: 8
-                anchors.rightMargin: 8
+                anchors.topMargin: Theme.halfPadding
+                anchors.rightMargin: Theme.halfPadding
+                anchors.leftMargin: Theme.halfPadding
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
+                anchors.left: isPortraitMode ? parent.left : undefined
 
                 sourceComponent: CreateChatView {
                     width: Math.min(Math.max(implicitWidth, createChatView.defaultWidth), createChatView.parent.width)
