@@ -5,19 +5,23 @@ import StatusQ.Core
 import StatusQ.Core.Theme
 
 RowLayout {
+    id: root
+
     property string text
     property bool checked
+    property int wrapMode: Text.WordWrap
 
     spacing: 6
     StatusIcon {
         Layout.preferredWidth: 20
         Layout.preferredHeight: 20
-        icon: parent.checked ? "check-circle" : "close-circle"
-        color: parent.checked ? Theme.palette.successColor1 : Theme.palette.dangerColor1
+        icon: root.checked ? "check-circle" : "close-circle"
+        color: root.checked ? Theme.palette.successColor1 : Theme.palette.dangerColor1
     }
     StatusBaseText {
         Layout.fillWidth: true
-        text: parent.text
+        text: root.text
         font.pixelSize: Theme.additionalTextSize
+        wrapMode: root.wrapMode
     }
 }
