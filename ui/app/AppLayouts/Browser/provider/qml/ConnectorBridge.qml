@@ -54,8 +54,15 @@ QtObject {
         onRequestInternal: (args) => connectorManager.request(args)
     }
 
+    readonly property SiteUtilsAdapter siteUtilsAdapter: SiteUtilsAdapter {
+        id: siteUtils
+        objectName: "siteUtils"
+        WebChannel.id: "siteUtils"
+    }
+
     readonly property var _scripts: [
         createScript("qwebchannel.js", true),
+        createScript("site_utils.js", true),
         createScript("ethereum_wrapper.js", true),
         createScript("eip6963_announcer.js", false), // Only top-level window (EIP-6963 spec)
         createScript("ethereum_injector.js", true)
@@ -77,7 +84,12 @@ QtObject {
     }
 
     readonly property WebChannel channel: WebChannel {
-        registeredObjects: [eip1193ProviderAdapter]
+        registeredObjects: [eip1193ProviderAdapter, siteUtilsAdapter]
+    }
+
+    // Clear site data for the current tab (calls site_utils.js via WebChannel)
+    function clearSiteData() {
+        siteUtilsAdapter.clearSiteData()
     }
 
     function hasWalletConnected(hostname, address) {
