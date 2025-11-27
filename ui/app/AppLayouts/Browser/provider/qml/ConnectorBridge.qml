@@ -20,6 +20,9 @@ QtObject {
     required property var connectorController
     property string httpUserAgent: ""          // Custom user agent for web profiles
 
+    property bool clearingCache: false
+    signal cacheClearCompleted()
+
     readonly property alias dappUrl: connectorManager.dappUrl
     readonly property alias dappOrigin: connectorManager.dappOrigin
     readonly property alias dappName: connectorManager.dappName
@@ -64,6 +67,41 @@ QtObject {
         siteUtilsAdapter.clearSiteDataAndReload()
     }
 
+    function clearCache(profile) {
+        if (clearingCache) {
+            console.warn("[ConnectorBridge] Cache clearing already in progress")
+            return
+        }
+
+        clearingCache = true
+        profile.clearHttpCache()
+        _cacheClearFallbackTimer.start()
+    }
+
+    function clearCurrentProfileCache() {
+        clearCache(defaultProfile)
+    }
+
+    function _onCacheClearCompleted() {
+        if (!clearingCache) return  // Already completed via fallback
+        _cacheClearFallbackTimer.stop()
+        clearingCache = false
+        console.log("[ConnectorBridge] Cache clear completed (via signal)")
+        cacheClearCompleted()
+    }
+
+    // Fallback timer in case clearHttpCacheCompleted signal doesn't fire
+    readonly property Timer _cacheClearFallbackTimer: Timer {
+        interval: 1000
+        repeat: false
+        onTriggered: {
+            if (!root.clearingCache) return  // Already completed via signal
+            root.clearingCache = false
+            console.log("[ConnectorBridge] Cache clear completed (via fallback timer)")
+            root.cacheClearCompleted()
+        }
+    }
+
     readonly property var _scripts: [
         createScript("qwebchannel.js", true),
         createScript("site_utils.js", true),
@@ -77,6 +115,7 @@ QtObject {
         offTheRecord: false
         httpUserAgent: root.httpUserAgent
         userScripts.collection: root._scripts
+        onClearHttpCacheCompleted: root._onCacheClearCompleted()
     }
 
     readonly property WebEngineProfile otrProfile: WebEngineProfile {
@@ -85,6 +124,7 @@ QtObject {
         persistentCookiesPolicy: WebEngineProfile.NoPersistentCookies
         httpUserAgent: root.httpUserAgent
         userScripts.collection: root._scripts
+        onClearHttpCacheCompleted: root._onCacheClearCompleted()
     }
 
     readonly property WebChannel channel: WebChannel {

@@ -25,6 +25,9 @@ StatusMenu {
     signal toggleCompatibilityMode(bool checked)
     signal launchBrowserSettings()
     signal clearSiteData()
+    signal clearCache()
+
+    property bool clearingCache: false
 
     background: Rectangle {
         color: root.incognitoMode ?
@@ -149,11 +152,26 @@ StatusMenu {
         id: clearSiteDataItem
         text: qsTr("Clear site data")
         icon.name: "delete"
+        icon.color: Theme.palette.primaryColor1
         onTriggered: clearSiteData()
 
         StatusToolTip {
             visible: clearSiteDataItem.hovered
             text: qsTr("Use it to reset the current site if it doesn't load or work properly.")
+        }
+    }
+
+    StatusMenuItem {
+        id: clearCacheItem
+        text: root.clearingCache ? qsTr("Clearing cache...") : qsTr("Clear cache")
+        icon.name: "refresh"
+	    icon.color: Theme.palette.primaryColor1
+        enabled: !root.clearingCache
+        onTriggered: clearCache()
+
+        StatusToolTip {
+            visible: clearCacheItem.hovered
+            text: qsTr("Clears HTTP cache, cookies and visited links. Navigation is blocked until complete.")
         }
     }
 
