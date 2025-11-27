@@ -4,9 +4,9 @@ import QtWebChannel
 QtObject {
     id: root
 
-    signal clearSiteDataRequested()
+    signal clearSiteDataAndReloadRequested()
 
-    function clearSiteData() {
-        clearSiteDataRequested()
+    function clearSiteDataAndReload() {
+        clearSiteDataAndReloadRequested()
     }
 }
