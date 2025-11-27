@@ -246,7 +246,10 @@ pipeline {
         cred: 'discord-status-desktop-e2e-webhook',
       )
     } }
-    cleanup { cleanWs(disableDeferredWipeout: true) }
+    cleanup {
+      cleanWs(disableDeferredWipeout: true)
+      dir(env.WORKSPACE_TMP) { deleteDir() }
+    }
   }
 }
 

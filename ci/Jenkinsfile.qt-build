@@ -173,8 +173,11 @@ pipeline {
   }
 
   post {
-    always { cleanWs() }
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
+    cleanup {
+      cleanWs(disableDeferredWipeout: true)
+      dir(env.WORKSPACE_TMP) { deleteDir() }
+    }
   }
 }

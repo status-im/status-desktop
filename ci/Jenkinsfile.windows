@@ -175,7 +175,10 @@ pipeline {
     // Windows workspace often becomes broken if stoped during checkout.
     // Post cleanup will fail too.
     // Use 'Wipe out repository and force clone' manual UI option to prevent it.
-    cleanup { cleanWs(disableDeferredWipeout: true) }
+    cleanup {
+      cleanWs(disableDeferredWipeout: true)
+      powershell "Remove-Item -Path '${env.WORKSPACE_TMP}' -Recurse -Force"
+    }
   }
 }
 

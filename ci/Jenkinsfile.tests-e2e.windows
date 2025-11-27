@@ -240,6 +240,7 @@ pipeline {
         '''
       }
       cleanWs(disableDeferredWipeout: true)
+      powershell "Remove-Item -Path '${env.WORKSPACE_TMP}' -Recurse -Force"
     }
   }
 }

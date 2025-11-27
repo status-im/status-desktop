@@ -6,7 +6,7 @@ library 'status-jenkins-lib@v1.9.30'
 urls = [:]
 
 pipeline {
-  agent { 
+  agent {
     docker {
       label 'linuxcontainer'
       image 'harbor.status.im/infra/ci-build-containers:linux-base-1.0.1'
@@ -87,10 +87,10 @@ pipeline {
               }
             }
             stage('E2E') {
-              when { 
-                expression { 
-                  env.JOB_NAME.toLowerCase().contains('nightly') 
-                } 
+              when {
+                expression {
+                  env.JOB_NAME.toLowerCase().contains('nightly')
+                }
               }
               steps {
                 script {
@@ -139,7 +139,10 @@ pipeline {
         cred: 'discord-status-desktop-webhook',
       )
     } }
-    cleanup { cleanWs(disableDeferredWipeout: true) }
+    cleanup {
+      cleanWs(disableDeferredWipeout: true)
+      dir(env.WORKSPACE_TMP) { deleteDir() }
+    }
   }
 }
 
