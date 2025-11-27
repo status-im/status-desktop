@@ -2474,6 +2474,10 @@ To backup you recovery phrase, write it down and store it securely in a safe pla
         <source>Backups are automatic (every 30 mins), secure (encrypted with your profile private key), and private (your data is stored &lt;b&gt;only&lt;/b&gt; on your device).</source>
         <translation>백업은 자동(30분마다), 안전(프로필 개인 키로 암호화), 그리고 비공개(데이터는 &lt;b&gt;오직&lt;/b&gt; 귀하의 기기에만 저장됨)입니다.</translation>
     </message>
+    <message>
+        <source>Choose a folder to store your backup files in.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BalanceExceeded</name>
@@ -2699,13 +2703,6 @@ Do you wish to override the security check and continue?</source>
     <message>
         <source>Search engine for address bar</source>
         <translation>주소 표시줄 검색 엔진</translation>
-    </message>
-</context>
-<context>
-    <name>BrowserWalletMenu</name>
-    <message>
-        <source>Disconnect</source>
-        <translation>연결 해제</translation>
     </message>
 </context>
 <context>
@@ -6756,12 +6753,24 @@ Remember your password and don&apos;t share it with anyone.</source>
         <translation>기기 내 메시지 백업을 활성화하시겠어요?</translation>
     </message>
     <message>
-        <source>On-device backups are:&lt;br&gt;Automatic – every 30 minutes&lt;br&gt;Secure – encrypted with your profile private key&lt;br&gt;Private – stored only on your device</source>
-        <translation>기기 내 백업은:&lt;br&gt;자동 – 30분마다&lt;br&gt;안전 – 프로필 개인 키로 암호화&lt;br&gt;비공개 – 귀하의 기기에만 저장</translation>
-    </message>
-    <message>
         <source>Backups let you restore your 1-on-1, group, and community messages if you need to reinstall the app or switch devices. You can skip this step now and enable it anytime under: &lt;i&gt;Settings &gt; On-device backup &gt; Backup data&lt;/i&gt;</source>
         <translation>백업을 사용하면 앱을 다시 설치하거나 기기를 전환해야 할 때 1:1, 그룹 및 커뮤니티 메시지를 복원할 수 있어요. 지금 이 단계를 건너뛰고 나중에 언제든지 &lt;i&gt;설정 &gt; 기기 내 백업 &gt; 데이터 백업&lt;/i&gt;에서 활성화할 수 있어요.</translation>
+    </message>
+    <message>
+        <source>Enable on-device backup?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On-device backups are:&lt;br&gt;&lt;b&gt;Automatic&lt;/b&gt; –  created every 30 minutes&lt;br&gt;&lt;b&gt;Secure&lt;/b&gt; – encrypted with your profile’s private key&lt;br&gt;&lt;b&gt;Private&lt;/b&gt; – stored only on your device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To enable backups, choose a folder to store your backup files under the &lt;b&gt;Backup location&lt;/b&gt; setting.&lt;br&gt;&lt;br&gt;You can also &lt;b&gt;optionally&lt;/b&gt; back up your &lt;b&gt;1-on-1, group, and community messages&lt;/b&gt; by turning on the &lt;b&gt;Backup your messages&lt;/b&gt; toggle under the &lt;b&gt;Backup data&lt;/b&gt; setting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go to settings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7644,13 +7653,6 @@ Please add it and try again.</source>
     <message>
         <source>Remove</source>
         <translation>제거</translation>
-    </message>
-</context>
-<context>
-    <name>FeeRow</name>
-    <message>
-        <source>Max.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8938,10 +8940,6 @@ Are you sure you want to do this?</source>
     <message>
         <source>PIN correct</source>
         <translation>PIN이 올바릅니다</translation>
-    </message>
-    <message>
-        <source>Keycard blocked</source>
-        <translation type="unfinished">Keycard가 차단됨</translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
@@ -17163,12 +17161,12 @@ access to your webcam</source>
         <translation>디바이스 페어링 해제 오류: %1</translation>
     </message>
     <message>
-        <source>Enable message syncing</source>
-        <translation>메시지 동기화 활성화</translation>
+        <source>Restore my past messages to this device</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sends your 1-on-1, group, and community messages to your paired device via encrypted local pairing.</source>
-        <translation>암호화된 로컬 페어링을 통해 1:1, 그룹 및 커뮤니티 메시지를 페어링된 기기로 전송합니다.</translation>
+        <source>Copies and sends your direct, group, and community messages to your new device using encrypted local pairing.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
