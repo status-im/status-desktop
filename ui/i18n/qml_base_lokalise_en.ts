@@ -3285,6 +3285,31 @@
       <comment>BrowserSettingsMenu</comment>
       <translation>Zoom</translation>
     </message>
+    <message>
+      <source>Clear site data</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear site data</translation>
+    </message>
+    <message>
+      <source>Use it to reset the current site if it doesn&#39;t load or work properly.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Use it to reset the current site if it doesn&#39;t load or work properly.</translation>
+    </message>
+    <message>
+      <source>Clearing cache...</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clearing cache...</translation>
+    </message>
+    <message>
+      <source>Clear cache</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clear cache</translation>
+    </message>
+    <message>
+      <source>Clears HTTP cache, cookies and visited links. Navigation is blocked until complete.</source>
+      <comment>BrowserSettingsMenu</comment>
+      <translation>Clears HTTP cache, cookies and visited links. Navigation is blocked until complete.</translation>
+    </message>
   </context>
   <context>
     <name>BrowserTabView</name>
