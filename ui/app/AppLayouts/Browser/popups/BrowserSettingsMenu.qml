@@ -145,10 +145,16 @@ StatusMenu {
         }
     }
 
-    StatusAction {
-        text: qsTr("Clear Site Data")
+    StatusMenuItem {
+        id: clearSiteDataItem
+        text: qsTr("Clear site data")
         icon.name: "delete"
         onTriggered: clearSiteData()
+
+        StatusToolTip {
+            visible: clearSiteDataItem.hovered
+            text: qsTr("Use it to reset the current site if it doesn't load or work properly.")
+        }
     }
 
     StatusMenuSeparator {}
