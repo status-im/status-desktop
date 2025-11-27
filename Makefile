@@ -837,7 +837,10 @@ pkg-linux: check-pkg-target-linux $(STATUS_CLIENT_APPIMAGE)
 
 tgz-linux: $(STATUS_CLIENT_TARBALL)
 
-pkg-macos: check-pkg-target-macos $(STATUS_CLIENT_DMG)
+clean-libsds-cache:
+        @echo "Cleaning libsds_d from cache..."
+        rm -rf ~/.cache/nim/libsds_d
+pkg-macos: clean-libsds-cache check-pkg-target-macos $(STATUS_CLIENT_DMG)
 
 pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
