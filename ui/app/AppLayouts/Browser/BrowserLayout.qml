@@ -415,6 +415,10 @@ StatusSectionLayout {
             onLaunchBrowserSettings: {
                 Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.browserSettings);
             }
+            onClearSiteData: {
+                connectorBridge.clearSiteData()
+                _internal.currentWebView.reload()
+            }
         }
         Component  {
             id: browserWalletMenu

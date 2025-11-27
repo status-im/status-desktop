@@ -24,6 +24,7 @@ StatusMenu {
     signal launchFindBar()
     signal toggleCompatibilityMode(bool checked)
     signal launchBrowserSettings()
+    signal clearSiteData()
 
     background: Rectangle {
         color: root.incognitoMode ?
@@ -142,6 +143,12 @@ StatusMenu {
         onTriggered: {
             localAccountSensitiveSettings.devToolsEnabled = !localAccountSensitiveSettings.devToolsEnabled
         }
+    }
+
+    StatusAction {
+        text: qsTr("Clear Site Data")
+        icon.name: "delete"
+        onTriggered: clearSiteData()
     }
 
     StatusMenuSeparator {}
