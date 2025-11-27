@@ -147,8 +147,14 @@ QtObject {
         dappUrl = urlStr
         dappOrigin = Utils.normalizeOrigin(urlStr)
         dappName = name || Utils.extractDomainName(urlStr)
-        dappIconUrl = iconUrl ? iconUrl.toString() : ""
         dappChainId = 1
+        
+        const iconResult = Utils.validateDAppIcon(iconUrl, urlStr)
+        dappIconUrl = iconResult.iconUrl
+        
+        if (!iconResult.valid) {
+            console.warn("[ConnectorManager] Icon rejected: domain mismatch for", urlStr, ": ", iconResult.reason)
+        }
     }
 
     // HELPER FUNCTIONS

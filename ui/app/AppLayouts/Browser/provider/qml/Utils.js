@@ -57,6 +57,26 @@ function extractDomainName(urlString) {
         return urlObj.hostname || "Unknown dApp"
     } catch (e) {
         return "Unknown dApp"
+    }
 }
+
+function validateDAppIcon(iconUrl, siteUrl) {
+    const iconStr = iconUrl ? iconUrl.toString() : ""
+    if (!iconStr || iconStr === "undefined") {
+        return {valid: false, iconUrl: "", reason: "empty"}
+    }
+    
+    if (!iconStr.startsWith("image://favicon/")) {
+        return {valid: true, iconUrl: iconStr, reason: "direct"}
+    }
+    
+    const faviconDomain = extractDomainName(iconStr.replace("image://favicon/", "").split("?")[0])
+    const siteDomain = extractDomainName(siteUrl)
+    
+    if (faviconDomain.includes(siteDomain) || siteDomain.includes(faviconDomain)) {
+        return {valid: true, iconUrl: iconStr, reason: "match"}
+    }
+    
+    return { valid: false, iconUrl: "", reason: "domain_mismatch" }
 }
 
