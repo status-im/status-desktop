@@ -428,7 +428,7 @@ Rectangle {
                     id: footerBackground
                     color: root.color
                     implicitWidth: root.width
-                    implicitHeight: walletAccountsListView.firstItem.height + Theme.xlPadding
+                    implicitHeight: (walletAccountsListView.firstItem?.height ?? Theme.xlPadding*2) + Theme.xlPadding
 
                     layer.enabled: walletAccountsListView.footerOverlayed && !walletAccountsListView.atYEnd
                     layer.effect: DropShadow {
@@ -460,7 +460,7 @@ Rectangle {
                     isRoundIcon: true
                     textColor: Theme.palette.directColor1
                     textFillWidth: true
-                    spacing: walletAccountsListView.firstItem.statusListItemTitleArea.anchors.leftMargin
+                    spacing: walletAccountsListView.firstItem?.statusListItemTitleArea.anchors.leftMargin ?? Theme.padding
                     onClicked: root.selectSavedAddresses()
                 }
 

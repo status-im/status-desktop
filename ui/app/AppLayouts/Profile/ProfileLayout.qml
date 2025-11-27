@@ -179,12 +179,6 @@ StatusSectionLayout {
         messagingBadgeCount: root.pendingReceivedContactsCount
     }
 
-    headerBackground: AccountHeaderGradient {
-        width: parent.width
-        overview: root.walletStore.selectedAccount
-        visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet && !!root.walletStore.selectedAccount
-    }
-
     leftPanel: SettingsLeftTabView {
         id: leftPanel
         anchors.fill: parent
