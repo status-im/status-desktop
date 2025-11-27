@@ -188,7 +188,7 @@ Rectangle {
 
             anchors.left: iconOrImage.active ? iconOrImage.right : loadingIndicator.active ? loadingIndicator.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
-            anchors.leftMargin: iconOrImage.active ? 16 : loadingIndicator.active ? 6 : root.leftPadding
+            anchors.leftMargin: iconOrImage.active ? Theme.padding : loadingIndicator.active ? Theme.halfPadding : root.leftPadding
             anchors.rightMargin: Math.max(root.rightPadding, titleIconsRow.requiredWidth)
             anchors.verticalCenter:  bottomModel.length === 0 ? parent.verticalCenter : undefined
 
