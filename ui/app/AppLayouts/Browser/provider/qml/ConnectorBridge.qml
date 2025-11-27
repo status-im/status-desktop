@@ -60,6 +60,10 @@ QtObject {
         WebChannel.id: "siteUtils"
     }
 
+    function clearSiteDataAndReload() {
+        siteUtilsAdapter.clearSiteDataAndReload()
+    }
+
     readonly property var _scripts: [
         createScript("qwebchannel.js", true),
         createScript("site_utils.js", true),
@@ -85,11 +89,6 @@ QtObject {
 
     readonly property WebChannel channel: WebChannel {
         registeredObjects: [eip1193ProviderAdapter, siteUtilsAdapter]
-    }
-
-    // Clear site data for the current tab (calls site_utils.js via WebChannel)
-    function clearSiteData() {
-        siteUtilsAdapter.clearSiteData()
     }
 
     function hasWalletConnected(hostname, address) {
