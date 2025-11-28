@@ -9681,6 +9681,16 @@
       <comment>GetSyncCodeDesktopInstructions</comment>
       <translation>Scan QR</translation>
     </message>
+    <message>
+      <source>%1 %2</source>
+      <comment>GetSyncCodeDesktopInstructions</comment>
+      <translation>%1 %2</translation>
+    </message>
+    <message>
+      <source>%1 %2 %3</source>
+      <comment>GetSyncCodeDesktopInstructions</comment>
+      <translation>%1 %2 %3</translation>
+    </message>
   </context>
   <context>
     <name>GetSyncCodeInstructionsPopup</name>
@@ -9791,6 +9801,16 @@
       <source>Scan QR</source>
       <comment>GetSyncCodeMobileInstructions</comment>
       <translation>Scan QR</translation>
+    </message>
+    <message>
+      <source>%1 %2</source>
+      <comment>GetSyncCodeMobileInstructions</comment>
+      <translation>%1 %2</translation>
+    </message>
+    <message>
+      <source>%1 %2 %3</source>
+      <comment>GetSyncCodeMobileInstructions</comment>
+      <translation>%1 %2 %3</translation>
     </message>
   </context>
   <context>
