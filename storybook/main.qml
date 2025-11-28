@@ -11,6 +11,8 @@ import QtQuick.Dialogs
 import QtMultimedia
 
 ApplicationWindow {
+    id: root
+
     width: 1450
     height: 840
     visible: true
@@ -26,7 +28,7 @@ ApplicationWindow {
 
         anchors.fill: parent
 
-        onDarkModeChanged: Theme.changeTheme(darkMode ? Theme.Style.Dark
-                                                      : Theme.Style.Light)
+        onDarkModeChanged: ThemeUtils.changeTheme(root, darkMode ? ThemeUtils.Style.Dark
+                                                                 : ThemeUtils.Style.Light)
     }
 }

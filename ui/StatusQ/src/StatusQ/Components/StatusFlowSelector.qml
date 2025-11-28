@@ -19,7 +19,7 @@ import StatusQ.Controls
    Example of how to use it:
    \qml
         StatusFlowSelector {
-            icon: Theme.svg("contact_verified")
+            icon: Assets.svg("contact_verified")
             title: qsTr("Who holds")
             placeholderItem.visible: listModel.count === 0
 

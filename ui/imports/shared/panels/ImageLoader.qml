@@ -91,7 +91,7 @@ Rectangle {
     Component {
         id: reload
         SVGImage {
-            source: Theme.svg("reload")
+            source: Assets.svg("reload")
             mipmap: false
             width: 15.5
             height: 19.5

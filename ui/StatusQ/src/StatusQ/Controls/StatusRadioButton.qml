@@ -21,8 +21,8 @@ RadioButton {
         Large
     }
 
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
-    font.family: Theme.baseFont.name
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.primaryTextFontSize
 
     indicator: Rectangle {

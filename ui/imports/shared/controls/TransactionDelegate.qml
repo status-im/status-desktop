@@ -176,12 +176,12 @@ StatusListItem {
         name: {
             switch(root.transactionStatus) {
             case Constants.TransactionStatus.Pending:
-                return Theme.svg("transaction/pending")
+                return Assets.svg("transaction/pending")
             case Constants.TransactionStatus.Complete:
             case Constants.TransactionStatus.Finalised:
-                return Theme.svg("transaction/confirmed")
+                return Assets.svg("transaction/confirmed")
             case Constants.TransactionStatus.Failed:
-                return Theme.svg("transaction/failed")
+                return Assets.svg("transaction/failed")
             default:
                 return ""
             }

@@ -28,7 +28,7 @@ OnboardingPage {
             StatusBaseText {
                 Layout.fillWidth: true
                 text: root.title
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
@@ -47,7 +47,7 @@ OnboardingPage {
                 Layout.topMargin: Theme.bigPadding
                 Layout.bottomMargin: Theme.bigPadding
                 Layout.alignment: Qt.AlignHCenter
-                source: Theme.png("onboarding/status_totebag_artwork_1")
+                source: Assets.png("onboarding/status_totebag_artwork_1")
             }
 
             StatusButton {

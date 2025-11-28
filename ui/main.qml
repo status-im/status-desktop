@@ -26,6 +26,9 @@ import MobileUI
 Window {
     id: applicationWindow
 
+    Theme.style: Application.styleHints.colorScheme === Qt.ColorScheme.Dark
+                 ? Theme.Style.Dark : Theme.Style.Light
+
     property bool appIsReady: false
 
     readonly property AppStores.FeatureFlagsStore featureFlagsStore: AppStores.FeatureFlagsStore {
@@ -48,7 +51,7 @@ Window {
     readonly property MetricsStore metricsStore: MetricsStore {}
     readonly property UtilsStore utilsStore: UtilsStore {}
     readonly property LanguageStore languageStore: LanguageStore {}
-    readonly property bool appThemeDark: Theme.isDarkTheme
+    readonly property bool appThemeDark: Theme.style === Theme.Style.Dark
     readonly property bool portraitLayout: height > width
     property bool biometricFlowPending: false
     
@@ -142,8 +145,8 @@ Window {
         if (visibility === Window.Windowed) {
             applicationWindow.x = geometry.x;
             applicationWindow.y = geometry.y;
-            applicationWindow.width = Math.max(geometry.width, Theme.portraitBreakpoint.width)
-            applicationWindow.height = Math.max(geometry.height, Theme.portraitBreakpoint.height)
+            applicationWindow.width = Math.max(geometry.width, ThemeUtils.portraitBreakpoint.width)
+            applicationWindow.height = Math.max(geometry.height, ThemeUtils.portraitBreakpoint.height)
         }
     }
 
@@ -231,13 +234,13 @@ Window {
         target: applicationWindow
         property: "minimumWidth"
         when: !SQUtils.Utils.isMobile
-        value: Theme.portraitBreakpoint.width
+        value: ThemeUtils.portraitBreakpoint.width
     }
     Binding {
         target: applicationWindow
         property: "minimumHeight"
         when: !SQUtils.Utils.isMobile
-        value: Theme.portraitBreakpoint.height
+        value: ThemeUtils.portraitBreakpoint.height
     }
 
     Action {

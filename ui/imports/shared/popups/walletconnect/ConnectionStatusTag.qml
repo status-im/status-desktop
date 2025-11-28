@@ -14,7 +14,7 @@ InformationTag {
     tagPrimaryLabel.color: Theme.palette.directColor1
     tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
     backgroundColor: Theme.palette.successColor3
-    bgBorderColor: Theme.palette.alphaColor(Theme.palette.successColor1, 0.4)
+    bgBorderColor: StatusColors.alphaColor(Theme.palette.successColor1, 0.4)
     asset.color: tagPrimaryLabel.color
     verticalPadding: Theme.halfPadding
     horizontalPadding: 12
@@ -30,7 +30,7 @@ InformationTag {
             PropertyChanges {
                 target: root
                 backgroundColor: Theme.palette.dangerColor3
-                bgBorderColor: Theme.palette.alphaColor(Theme.palette.dangerColor1, 0.4)
+                bgBorderColor: StatusColors.alphaColor(Theme.palette.dangerColor1, 0.4)
             }
         }
     ]

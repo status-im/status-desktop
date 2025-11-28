@@ -54,7 +54,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
         // Blur background:
         property int membersCount: 184
         property bool amISectionAdmin: false
-        property url image: Theme.png("tokens/UNI")
+        property url image: Assets.png("tokens/UNI")
         property var communityItemsModel: model1
         property string chatDateTimeText: "Dec 31, 2020"
         property string  listUsersText: "simon, Mark Cuban "
@@ -176,7 +176,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     Layout.fillWidth: true
                     text: "BLUR INFO EDITOR"
                     font.bold: true
-                    font.pixelSize: Theme.fontSize18
+                    font.pixelSize: Theme.fontSize(18)
                 }
 
                 CommunityInfoEditor {
@@ -216,7 +216,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     Layout.fillWidth: true
                     text: "JOIN TYPES"
                     font.bold: true
-                    font.pixelSize: Theme.fontSize18
+                    font.pixelSize: Theme.fontSize(18)
                 }
 
                 ColumnLayout {
@@ -257,7 +257,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     Layout.fillWidth: true
                     text: "JOIN HOLDINGS EDITOR"
                     font.bold: true
-                    font.pixelSize: Theme.fontSize18
+                    font.pixelSize: Theme.fontSize(18)
                 }
 
                 JoinCommunityPermissionsEditor {

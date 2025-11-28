@@ -11,7 +11,7 @@ Item {
 
     property bool selected: false
     property bool useIconInsteadOfImage: false
-    property url source: Theme.svg("history")
+    property url source: Assets.svg("history")
     signal clicked
 
     implicitHeight: 24

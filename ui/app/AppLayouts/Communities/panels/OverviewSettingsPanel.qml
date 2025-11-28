@@ -93,7 +93,7 @@ StackLayout {
                         id: nameText
                         objectName: "communityOverviewSettingsCommunityName"
                         Layout.fillWidth: true
-                        font.pixelSize: Theme.fontSize28
+                        font.pixelSize: Theme.fontSize(28)
                         font.bold: true
                         font.letterSpacing: -0.4
                         color: Theme.palette.directColor1

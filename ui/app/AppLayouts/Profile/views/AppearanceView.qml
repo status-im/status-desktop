@@ -15,9 +15,9 @@ import StatusQ.Controls as StatusQ
 SettingsContentBase {
     id: root
 
-    required property int theme // Theme.Style.xxx
-    required property int fontSize // Theme.FontSize.xxx
-    required property int paddingFactor // Theme.PaddingFactor.xxx
+    required property int theme // ThemeUtils.Style.xxx
+    required property int fontSize // ThemeUtils.FontSize.xxx
+    required property int paddingFactor // ThemeUtils.PaddingFactor.xxx
 
     signal themeChangeRequested(int theme)
     signal fontSizeChangeRequested(int fontSize)
@@ -74,12 +74,12 @@ SettingsContentBase {
             textRole: "name"
             valueRole: "value"
             model: ListModel {
-                ListElement { name: qsTr("XS"); value: Theme.FontSize.FontSizeXS }
-                ListElement { name: qsTr("S"); value: Theme.FontSize.FontSizeS }
-                ListElement { name: qsTr("M"); value: Theme.FontSize.FontSizeM }
-                ListElement { name: qsTr("L"); value: Theme.FontSize.FontSizeL }
-                ListElement { name: qsTr("XL"); value: Theme.FontSize.FontSizeXL }
-                ListElement { name: qsTr("XXL"); value: Theme.FontSize.FontSizeXXL }
+                ListElement { name: qsTr("XS"); value: ThemeUtils.FontSize.FontSizeXS }
+                ListElement { name: qsTr("S"); value: ThemeUtils.FontSize.FontSizeS }
+                ListElement { name: qsTr("M"); value: ThemeUtils.FontSize.FontSizeM }
+                ListElement { name: qsTr("L"); value: ThemeUtils.FontSize.FontSizeL }
+                ListElement { name: qsTr("XL"); value: ThemeUtils.FontSize.FontSizeXL }
+                ListElement { name: qsTr("XXL"); value: ThemeUtils.FontSize.FontSizeXXL }
             }
 
             value: root.fontSize
@@ -105,11 +105,11 @@ SettingsContentBase {
             textRole: "name"
             valueRole: "value"
             model: ListModel {
-                ListElement { name: qsTr("XXS"); value: Theme.PaddingFactor.PaddingXXS }
-                ListElement { name: qsTr("XS"); value: Theme.PaddingFactor.PaddingXS }
-                ListElement { name: qsTr("S"); value: Theme.PaddingFactor.PaddingS }
-                ListElement { name: qsTr("M"); value: Theme.PaddingFactor.PaddingM }
-                ListElement { name: qsTr("L"); value: Theme.PaddingFactor.PaddingL }
+                ListElement { name: qsTr("XXS"); value: ThemeUtils.PaddingFactor.PaddingXXS }
+                ListElement { name: qsTr("XS"); value: ThemeUtils.PaddingFactor.PaddingXS }
+                ListElement { name: qsTr("S"); value: ThemeUtils.PaddingFactor.PaddingS }
+                ListElement { name: qsTr("M"); value: ThemeUtils.PaddingFactor.PaddingM }
+                ListElement { name: qsTr("L"); value: ThemeUtils.PaddingFactor.PaddingL }
             }
 
             value: root.paddingFactor
@@ -137,36 +137,36 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 Layout.fillWidth: true
-                image.source: Theme.png("appearance-light")
+                image.source: Assets.png("appearance-light")
                 control.text: qsTr("Light")
-                control.checked: root.theme === Theme.Style.Light
+                control.checked: root.theme === ThemeUtils.Style.Light
                 onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        root.themeChangeRequested(Theme.Style.Light)
+                        root.themeChangeRequested(ThemeUtils.Style.Light)
                     }
                 }
             }
 
             StatusImageRadioButton {
                 Layout.fillWidth: true
-                image.source: Theme.png("appearance-dark")
+                image.source: Assets.png("appearance-dark")
                 control.text: qsTr("Dark")
-                control.checked: root.theme === Theme.Style.Dark
+                control.checked: root.theme === ThemeUtils.Style.Dark
                 onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        root.themeChangeRequested(Theme.Style.Dark)
+                        root.themeChangeRequested(ThemeUtils.Style.Dark)
                     }
                 }
             }
 
             StatusImageRadioButton {
                 Layout.fillWidth: true
-                image.source: Theme.png("appearance-system")
+                image.source: Assets.png("appearance-system")
                 control.text: qsTr("System")
-                control.checked: root.theme === Theme.Style.System
+                control.checked: root.theme === ThemeUtils.Style.System
                 onRadioCheckedChanged: function(checked) {
                     if (checked) {
-                        root.themeChangeRequested(Theme.Style.System)
+                        root.themeChangeRequested(ThemeUtils.Style.System)
                     }
                 }
             }

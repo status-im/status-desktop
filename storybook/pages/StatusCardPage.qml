@@ -58,7 +58,7 @@ Item {
             StatusCheckBox {
                 Layout.alignment: Qt.AlignVCenter
                 text: "advancedMode"
-                font.family: Theme.monoFont.name
+                font.family: Fonts.monoFont.family
                 onClicked: {
                     card.advancedMode = checked
                 }
@@ -68,7 +68,7 @@ Item {
             StatusCheckBox {
                 Layout.alignment: Qt.AlignVCenter
                 text: "loading"
-                font.family: Theme.monoFont.name
+                font.family: Fonts.monoFont.family
                 onClicked: {
                     card.loading = checked
                 }

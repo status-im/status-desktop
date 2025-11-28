@@ -27,7 +27,7 @@ Button {
         dropdown.close()
     }
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.weight: Font.Medium
     font.pixelSize: Theme.additionalTextSize
 
@@ -35,7 +35,7 @@ Button {
     verticalPadding: Theme.halfPadding
     spacing: 4
 
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
 
     text: d.beautifyIsoCode(d.selectedLanguage)
 
@@ -82,7 +82,7 @@ Button {
     background: Rectangle {
         radius: Theme.radius
         color: root.enabled && (root.hovered || dropdown.opened) ? Theme.palette.primaryColor2 : Theme.palette.primaryColor3
-        Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+        Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
     }
 
     contentItem: RowLayout {

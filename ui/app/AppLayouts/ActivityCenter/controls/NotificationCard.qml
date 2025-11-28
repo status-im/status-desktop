@@ -181,12 +181,12 @@ Control {
         // Returns the avatar scaling factor for a given font size enum value.
         function avatarFactorForFontSize(fs) {
             switch (fs) {
-            case Theme.FontSize.FontSizeXS:  return d.factorXS;
-            case Theme.FontSize.FontSizeS:   return d.factorS;
-            case Theme.FontSize.FontSizeM:   return d.factorM;
-            case Theme.FontSize.FontSizeL:   return d.factorL;
-            case Theme.FontSize.FontSizeXL:  return d.factorXL;
-            case Theme.FontSize.FontSizeXXL: return d.factorXXL;
+            case ThemeUtils.FontSize.FontSizeXS:  return d.factorXS;
+            case ThemeUtils.FontSize.FontSizeS:   return d.factorS;
+            case ThemeUtils.FontSize.FontSizeM:   return d.factorM;
+            case ThemeUtils.FontSize.FontSizeL:   return d.factorL;
+            case ThemeUtils.FontSize.FontSizeXL:  return d.factorXL;
+            case ThemeUtils.FontSize.FontSizeXXL: return d.factorXXL;
             default:                         return 1.0;  // Safe fallback
             }
         }
@@ -266,7 +266,7 @@ Control {
                 Layout.fillWidth: true
                 visible: root.actionText
                 text: root.actionText
-                font.pixelSize: Theme.fontSize13
+                font.pixelSize: Theme.fontSize(13)
                 color: Theme.palette.directColor5
                 elide: Text.ElideRight
             }
@@ -285,7 +285,7 @@ Control {
             StatusBaseText {
                 Layout.fillWidth: true
                 text: LocaleUtils.formatRelativeTimestamp(root.timestamp)
-                font.pixelSize: Theme.fontSize11
+                font.pixelSize: Theme.fontSize(11)
                 color: Theme.palette.directColor5
                 elide: Text.ElideRight
             }

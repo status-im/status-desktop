@@ -45,7 +45,7 @@ StatusListItem {
         return ""
     }
     statusListItemSubTitle.wrapMode: Text.NoWrap
-    statusListItemSubTitle.font.family: Theme.monoFont.name
+    statusListItemSubTitle.font.family: Fonts.monoFont.family
     asset.emoji: root.emoji
     asset.color: root.walletColor
     asset.name: root.emoji ? "filled-account": ""
@@ -94,7 +94,7 @@ StatusListItem {
         titleText.font.pixelSize: Theme.tertiaryTextFontSize
         titleText.color: root.accountBalance.balance === "0" ? Theme.palette.baseColor1 : Theme.palette.directColor1
         asset.isImage: true
-        asset.name: Theme.svg(root.accountBalance.iconUrl)
+        asset.name: Assets.svg(root.accountBalance.iconUrl)
         asset.color: root.accountBalance.chainColor
         closeButtonVisible: false
         hoverEnabled: true

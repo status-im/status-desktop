@@ -74,7 +74,7 @@ Control {
                 id: fadeSwap
                 OpacityAnimator { target: placeholderImage; from: 1; to: 0; duration: 500;}
                 PropertyAction   { target: placeholderImage; property: "source";
-                                   value: Theme.png(root.model.get(pageIndicator.currentIndex).image) }
+                                   value: Assets.png(root.model.get(pageIndicator.currentIndex).image) }
                 OpacityAnimator { target: placeholderImage; from: 0; to: 1; duration: 500; }
             }
 
@@ -89,7 +89,7 @@ Control {
             }
 
             Component.onCompleted: {
-                placeholderImage.source = Theme.png(root.model.get(pageIndicator.currentIndex).image)
+                placeholderImage.source = Assets.png(root.model.get(pageIndicator.currentIndex).image)
                 initialized = true
             }
         }

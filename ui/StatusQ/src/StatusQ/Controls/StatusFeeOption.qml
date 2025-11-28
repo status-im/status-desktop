@@ -58,7 +58,7 @@ Control {
 
     signal clicked()
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.tertiaryTextFontSize
 
     horizontalPadding: 8
@@ -105,7 +105,7 @@ Control {
             }
 
             if (root.selected) {
-                return Theme.palette.alphaColor(Theme.palette.baseColor2, 0.1)
+                return StatusColors.alphaColor(Theme.palette.baseColor2, 0.1)
             }
 
             return Theme.palette.statusAppLayout.backgroundColor

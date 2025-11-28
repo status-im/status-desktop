@@ -228,7 +228,7 @@ Item {
                     objectName: "ProfileHeader_displayNameEditIcon"
                     height: compact ? 10 : 16
                     width: compact ? 10 : 16
-                    source: Theme.svg("edit-message")
+                    source: Assets.svg("edit-message")
                     StatusMouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor

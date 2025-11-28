@@ -31,7 +31,7 @@ Control {
     property alias bgCornerRadius: background.radius
     property string icon: "warning"
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.tertiaryTextFontSize
 
     horizontalPadding: 8
@@ -61,9 +61,9 @@ Control {
     background: Rectangle {
         id: background
         radius: 100
-        color: Theme.palette.alphaColor(root.baseColor, 0.03)
+        color: StatusColors.alphaColor(root.baseColor, 0.03)
         border.width: 1
-        border.color: Theme.palette.alphaColor(root.baseColor, 0.3)
+        border.color: StatusColors.alphaColor(root.baseColor, 0.3)
     }
 
     contentItem: RowLayout {

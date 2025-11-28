@@ -36,13 +36,13 @@ SplitView {
         readonly property bool isNFT: ctrlIsNft.checked
         readonly property bool isCommunityAssetViaAirdrop: isCommunityAssetViaAirdrop.checked
         readonly property string communityName: "Doodles"
-        readonly property string communityImageUrl: Theme.png("collectibles/HappyMeow")
+        readonly property string communityImageUrl: Assets.png("collectibles/HappyMeow")
         readonly property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         readonly property string tokenAddress: "0xdeadbeef"
         readonly property string tokenInAddress: "0xdeadbeef-in"
         readonly property string tokenOutAddress: "0xdeadbeef-out"
         readonly property string nftName: "Happy Meow NFT"
-        readonly property string nftImageUrl: Theme.png("collectibles/HappyMeow")
+        readonly property string nftImageUrl: Assets.png("collectibles/HappyMeow")
         readonly property int chainId: 1
         readonly property int chainIdIn: 1
         readonly property int chainIdOut: 2

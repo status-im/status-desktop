@@ -48,7 +48,7 @@ StatusDialog {
             width: 40
             height: 40
             StatusImage {
-                source: Theme.png("status")
+                source: Assets.png("status")
                 anchors.fill: parent
             }
         }

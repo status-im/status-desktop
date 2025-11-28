@@ -10,7 +10,7 @@ StatusGroupBox {
     id: root
 
     title: qsTr("Fees")
-    icon: Theme.svg("gas")
+    icon: Assets.svg("gas")
 
     // expected roles:
     //

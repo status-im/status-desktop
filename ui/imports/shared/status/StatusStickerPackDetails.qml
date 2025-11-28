@@ -33,14 +33,14 @@ Item {
         StyledText {
             id: txtPackName
             text: packName
-            font.family: Theme.baseFont.name
+            font.family: Fonts.baseFont.family
             font.weight: Font.Bold
             font.pixelSize: packNameFontSize
         }
         StyledText {
             color: Theme.palette.secondaryText
             text: packAuthor
-            font.family: Theme.baseFont.name
+            font.family: Fonts.baseFont.family
             font.pixelSize: Theme.primaryTextFontSize
         }
     }

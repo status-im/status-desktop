@@ -27,7 +27,7 @@ CheckBox {
     LayoutMirroring.childrenInherit: true
 
     padding: 4
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
 
     QtObject {
         id: d
@@ -42,7 +42,7 @@ CheckBox {
         readonly property int indicatorIconHeightSmall: 5
     }
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: size === StatusCheckBox.Size.Regular ? Theme.primaryTextFontSize : Theme.additionalTextSize
 
     indicator: Rectangle {
@@ -55,7 +55,7 @@ CheckBox {
         implicitHeight: implicitWidth
         radius: 2
         color: checkState !== Qt.Checked ? Theme.palette.directColor7 : Theme.palette.primaryColor1
-        Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+        Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
 
         StatusIcon {
             icon: "checkbox"
@@ -68,7 +68,7 @@ CheckBox {
             color: checkState === Qt.PartiallyChecked ? Theme.palette.directColor9 : Theme.palette.white
             opacity: checkState !== Qt.Unchecked ? 1 : 0
             visible: opacity > 0
-            Behavior on opacity { OpacityAnimator { duration: Theme.AnimationDuration.Fast } }
+            Behavior on opacity { OpacityAnimator { duration: ThemeUtils.AnimationDuration.Fast } }
         }
     }
 

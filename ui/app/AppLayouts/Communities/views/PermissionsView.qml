@@ -84,7 +84,7 @@ ColumnLayout {
 
         visible: (root.count === 0 && root.allowIntroPanel)
 
-        image: Theme.png("community/permissions2_3")
+        image: Assets.png("community/permissions2_3")
         title: qsTr("Permissions")
         subtitle: qsTr("You can manage your community by creating and issuing membership and access permissions")
         checkersModel: [

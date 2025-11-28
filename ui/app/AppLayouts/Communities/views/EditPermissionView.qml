@@ -198,7 +198,7 @@ StatusScrollView {
             Layout.maximumWidth: root.preferredContentWidth
             Layout.rightMargin: root.internalRightPadding
 
-            icon: Theme.svg("contact_verified")
+            icon: Assets.svg("contact_verified")
             title: qsTr("Who holds")
             placeholderText: qsTr("Example: 10 SNT")
             tagLeftPadding: 2
@@ -398,7 +398,7 @@ StatusScrollView {
 
             title: qsTr("Is allowed to")
             placeholderText: qsTr("Example: View and post")
-            icon: Theme.svg("profile/security")
+            icon: Assets.svg("profile/security")
 
             readonly property bool empty:
                 d.dirtyValues.permissionType === PermissionTypes.Type.None
@@ -490,7 +490,7 @@ StatusScrollView {
             addButton.visible: editable
             itemsClickable: editable
             visible: root.showChannelSelector
-            icon: d.isCommunityPermission ? Theme.svg("communities") : Theme.svg("create-category")
+            icon: d.isCommunityPermission ? Assets.svg("communities") : Assets.svg("create-category")
             title: qsTr("In")
             placeholderText: qsTr("Example: `#general` channel")
 

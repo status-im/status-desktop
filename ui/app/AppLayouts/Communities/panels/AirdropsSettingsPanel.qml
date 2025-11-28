@@ -96,7 +96,7 @@ StackView {
             preferredContentWidth: root.preferredContentWidth
             internalRightPadding: root.internalRightPadding
 
-            image: Theme.png("community/airdrops8_1")
+            image: Assets.png("community/airdrops8_1")
             title: qsTr("Airdrop community tokens")
             subtitle: qsTr("You can mint custom tokens and collectibles for your community")
             checkersModel: [

@@ -113,7 +113,7 @@ Control {
         State {
             name: "isPendingOwnershipRequest"
             when: root.isPendingOwnershipRequest
-            PropertyChanges { target: d; indicatorBgColor: Theme.palette.alphaColor(root.communityColor, 0.1) }
+            PropertyChanges { target: d; indicatorBgColor: StatusColors.alphaColor(root.communityColor, 0.1) }
             PropertyChanges { target: d; indicatorColor: root.communityColor }
             PropertyChanges { target: d; paragraphTitle: qsTr("Finalise your ownership of the %1 Community").arg(root.communityName) }
             PropertyChanges { target: d; paragraphSubtitle: qsTr("You currently hodl the Owner token for %1. Make your device the control node to finalise ownership.").arg(root.communityName) }

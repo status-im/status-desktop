@@ -84,7 +84,7 @@ Control {
 
         // Indicates whether the `isContact` or the `trustedIndicators` are visualized as tiny icons or normal ones (size change).
         // By default it scales following a factor based on current app font size.
-        readonly property bool areTinyIndicators: Theme.currentFontSize <= Theme.FontSize.FontSizeM
+        readonly property bool areTinyIndicators: Theme.currentFontSize <= ThemeUtils.FontSize.FontSizeM
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ Control {
             elide: Text.ElideRight
             maximumLineCount: 1
             wrapMode: Text.NoWrap
-            font.pixelSize: Theme.fontSize13
+            font.pixelSize: Theme.fontSize(13)
             font.weight: Font.Medium
         }
 
@@ -128,7 +128,7 @@ Control {
             color: root.keyColor
             maximumLineCount: 1
             wrapMode: Text.NoWrap
-            font.pixelSize: Theme.fontSize11
+            font.pixelSize: Theme.fontSize(11)
         }
 
         // Spacer pushes content to the left

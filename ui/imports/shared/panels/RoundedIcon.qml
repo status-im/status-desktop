@@ -36,7 +36,7 @@ Rectangle {
             width: 12
             height: 12
             fillMode: Image.PreserveAspectFit
-            source: Theme.svg("new_chat")
+            source: Assets.svg("new_chat")
         }
         ColorOverlay {
             anchors.fill: roundedIconImage

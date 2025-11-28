@@ -72,7 +72,7 @@ StatusModal {
                 }
 
                 RoundedIcon {
-                    source: Theme.svg("check")
+                    source: Assets.svg("check")
                     iconColor: Theme.palette.primaryColor1
                     color: Theme.palette.secondaryBackground
                 }
@@ -82,7 +82,7 @@ StatusModal {
                 }
 
                 RoundedIcon {
-                    source: Theme.svg("walletIcon")
+                    source: Assets.svg("walletIcon")
                     iconHeight: 18
                     iconWidth: 18
                     iconColor: accountSelector.currentAccount.iconColor || Theme.palette.primaryColor1

@@ -77,7 +77,7 @@ Item {
             SVGImage {
                 visible: ensStatus === Constants.ens_taken
                 fillMode: Image.PreserveAspectFit
-                source: Theme.svg("block-icon-white")
+                source: Assets.svg("block-icon-white")
                 width: 20
                 height: 20
                 anchors.centerIn: parent
@@ -96,7 +96,7 @@ Item {
                 }
                 opacity: 0.7
                 font.weight: Font.Bold
-                font.pixelSize: Theme.fontSize18
+                font.pixelSize: Theme.fontSize(18)
                 color: Theme.palette.indirectColor1
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter

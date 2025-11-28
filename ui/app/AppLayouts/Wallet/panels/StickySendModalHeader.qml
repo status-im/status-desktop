@@ -130,7 +130,7 @@ Control {
             Rectangle {
                 id: foregroundRect
                 anchors.fill: parent
-                color: root.implicitHeight > d.bottomMargin ? Theme.palette.alphaColor(Theme.palette.baseColor3, 0.85) : Theme.palette.transparent
+                color: root.implicitHeight > d.bottomMargin ? StatusColors.alphaColor(Theme.palette.baseColor3, 0.85) : Theme.palette.transparent
                 radius: 8
 
                 // cover for the bottom rounded corners
@@ -156,7 +156,7 @@ Control {
                 horizontalOffset: 0
                 verticalOffset: 5
                 samples: 24
-                color: Theme.palette.alphaColor(Theme.palette.dropShadow, 0.06)
+                color: StatusColors.alphaColor(Theme.palette.dropShadow, 0.06)
             }
         }
     }

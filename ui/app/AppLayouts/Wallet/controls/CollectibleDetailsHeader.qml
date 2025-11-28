@@ -77,7 +77,7 @@ Control {
                     Layout.fillWidth: true
                     Layout.horizontalStretchFactor: 0
 
-                    font.pixelSize: Theme.fontSize22
+                    font.pixelSize: Theme.fontSize(22)
                     lineHeight: 30
                     lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight
@@ -91,7 +91,7 @@ Control {
                     Layout.horizontalStretchFactor: 1
 
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                    font.pixelSize: Theme.fontSize22
+                    font.pixelSize: Theme.fontSize(22)
                     lineHeight: 30
                     lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight
@@ -227,7 +227,7 @@ Control {
             InformationTag {
                 id: networkTag
                 readonly property bool isNetworkValid: networkShortName !== ""
-                asset.name: isNetworkValid && networkIconURL !== "" ? Theme.svg(networkIconURL) : ""
+                asset.name: isNetworkValid && networkIconURL !== "" ? Assets.svg(networkIconURL) : ""
                 asset.isImage: true
                 tagPrimaryLabel.text: isNetworkValid ? networkShortName : "---"
                 tagPrimaryLabel.color: isNetworkValid ? networkColor : "black"

@@ -37,7 +37,7 @@ ComboBox {
     }
 
     enabled: d.searchTextLowerCase || d.combinedProxyModel.count || d.uncategorizedModel.count
-    opacity: enabled ? 1 : Theme.disabledOpacity
+    opacity: enabled ? 1 : ThemeUtils.disabledOpacity
 
     displayText: qsTr("Collection")
 
@@ -45,7 +45,7 @@ ComboBox {
     verticalPadding: Theme.halfPadding
     spacing: Theme.halfPadding
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.additionalTextSize
 
     QtObject {

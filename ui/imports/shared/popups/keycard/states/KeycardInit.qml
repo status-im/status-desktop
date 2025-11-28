@@ -566,7 +566,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/empty-reader")
+                source: Assets.png("keycard/empty-reader")
                 pattern: ""
             }
             PropertyChanges {
@@ -765,7 +765,7 @@ Item {
                 pattern: d.authenticationOrSigning?
                              "" : Constants.keycardAnimations.strongError.pattern
                 source: d.authenticationOrSigning?
-                            Theme.png("keycard/plain-error") : ""
+                            Assets.png("keycard/plain-error") : ""
                 startImgIndexForTheFirstLoop: d.authenticationOrSigning?
                                                   0 : Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
                 startImgIndexForOtherLoops: d.authenticationOrSigning?
@@ -829,7 +829,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/plain-error")
+                source: Assets.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -868,7 +868,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -896,7 +896,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-empty")
+                source: Assets.png("keycard/card-empty")
                 pattern: ""
             }
             PropertyChanges {
@@ -924,7 +924,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1224,7 +1224,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1249,7 +1249,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1262,7 +1262,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/biometrics-fail")
+                source: Assets.png("keycard/biometrics-fail")
                 pattern: ""
             }
             PropertyChanges {
@@ -1283,7 +1283,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/plain-error")
+                source: Assets.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -1304,7 +1304,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/plain-error")
+                source: Assets.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -1386,7 +1386,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/card-inserted")
+                source: Assets.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1538,7 +1538,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("keycard/biometrics-success")
+                source: Assets.png("keycard/biometrics-success")
                 pattern: ""
             }
             PropertyChanges {

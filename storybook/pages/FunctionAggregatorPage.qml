@@ -15,7 +15,7 @@ import Storybook
 Control {
     id: root
 
-    font.pixelSize: Theme.fontSize16
+    font.pixelSize: Theme.fontSize(16)
     padding: 10
 
     ListModel {
@@ -131,7 +131,7 @@ Control {
 
             insetComponent: Button {
                 height: 20
-                font.pixelSize: Theme.fontSize11
+                font.pixelSize: Theme.fontSize(11)
                 text: "remove"
 
                 onClicked: {

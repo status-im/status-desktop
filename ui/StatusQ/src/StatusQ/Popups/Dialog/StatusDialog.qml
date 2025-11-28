@@ -40,7 +40,7 @@ Dialog {
     property string okButtonText: qsTr("OK")
 
     readonly property bool bottomSheet: d.windowHeight > d.windowWidth
-                                        && d.windowWidth <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
+                                        && d.windowWidth <= ThemeUtils.portraitBreakpoint.width // The max width of a phone in portrait mode
 
     readonly property real desiredY: root.bottomSheet ? d.windowHeight - root.height
                                                       : (root.Overlay.overlay.height - root.height) / 2
@@ -81,12 +81,12 @@ Dialog {
         id: exitTransition
         NumberAnimation {
             property: "opacity"; from: 1; to: 0
-            duration: Theme.AnimationDuration.Fast
+            duration: ThemeUtils.AnimationDuration.Fast
             easing.type: Easing.OutQuint
         }
         NumberAnimation {
             property: "y"; from: root.y; to: root.parent.height
-            duration: Theme.AnimationDuration.Fast
+            duration: ThemeUtils.AnimationDuration.Fast
             easing.type: Easing.OutCubic
         }
     }
@@ -98,13 +98,13 @@ Dialog {
                 property: "opacity"
                 from: 0.0
                 to: 1.0
-                duration: Theme.AnimationDuration.Fast
+                duration: ThemeUtils.AnimationDuration.Fast
             }
             NumberAnimation {
                 property: "y"
                 from: root.parent.height
                 to: root.desiredY
-                duration: Theme.AnimationDuration.Fast
+                duration: ThemeUtils.AnimationDuration.Fast
                 easing.type: Easing.OutCubic
             }
         }

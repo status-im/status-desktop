@@ -514,7 +514,7 @@ QtObject {
         case Constants.walletAccountColors.magenta.toUpperCase():
             return Theme.palette.customisationColors.magenta
         case Constants.walletAccountColors.yinYang.toUpperCase():
-            return Theme.palette.name === Constants.lightThemeName ? Theme.palette.getColor('blackHovered'): Theme.palette.getColor('grey4') // FIXME introduce symbolic color names
+            return Theme.palette.name === Constants.lightThemeName ? StatusColors.getColor('blackHovered'): StatusColors.getColor('grey4') // FIXME introduce symbolic color names
         case Constants.walletAccountColors.undefinedAccount.toUpperCase():
             return Theme.palette.baseColor1
         default:

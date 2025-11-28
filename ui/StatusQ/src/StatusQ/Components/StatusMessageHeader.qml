@@ -55,7 +55,7 @@ Item {
             Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
             font.weight: Font.Medium
             font.underline: root.displayNameClickable && hhandler.hovered
-            font.family: Theme.baseFont.name
+            font.family: Fonts.baseFont.family
             font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.primaryColor1
@@ -221,7 +221,7 @@ Item {
                 horizontalPadding: 5
                 size: StatusBaseButton.Tiny
                 type: StatusBaseButton.Warning
-                font.pixelSize: Theme.fontSize9
+                font.pixelSize: Theme.fontSize(9)
                 text: qsTr("Resend")
                 onClicked: root.resendClicked()
             }

@@ -194,7 +194,7 @@ OnboardingPage {
                 Layout.preferredWidth: 90
                 Layout.preferredHeight: 90
                 Layout.alignment: Qt.AlignHCenter
-                source: Theme.png("status")
+                source: Assets.png("status")
                 mipmap: true
             }
 
@@ -202,7 +202,7 @@ OnboardingPage {
                 id: headerText
                 Layout.fillWidth: true
                 text: qsTr("Welcome back")
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter

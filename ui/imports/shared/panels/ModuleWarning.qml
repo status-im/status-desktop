@@ -136,7 +136,7 @@ Item {
 
         Behavior on color {
             ColorAnimation {
-                duration: Theme.AnimationDuration.Fast
+                duration: ThemeUtils.AnimationDuration.Fast
             }
         }
 
@@ -229,7 +229,7 @@ Item {
                     text: button.text
                     font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
-                    font.family: Theme.baseFont.name
+                    font.family: Fonts.baseFont.family
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     color: Theme.palette.indirectColor1
@@ -238,7 +238,7 @@ Item {
                     radius: 4
                     border.width: 1
                     border.color: Theme.palette.indirectColor3
-                    color: Theme.palette.getColor("white", button.hovered ? 0.4 : 0.1)
+                    color: StatusColors.getColor("white", button.hovered ? 0.4 : 0.1)
                 }
                 HoverHandler {
                     cursorShape: Qt.PointingHandCursor

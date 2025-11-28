@@ -237,7 +237,7 @@ StatusDialog {
                 asset.height: 36
                 asset.width: 36
                 asset.isImage: true
-                asset.name: Theme.svg(network.iconUrl)
+                asset.name: Assets.svg(network.iconUrl)
                 subTitle: qsTr("Only")
                 leftPadding: 0
                 rightPadding: 0
@@ -254,7 +254,7 @@ StatusDialog {
                 asset.height: 36
                 asset.width: 36
                 asset.isImage: true
-                asset.name: Theme.svg(model.iconUrl)
+                asset.name: Assets.svg(model.iconUrl)
                 subTitle: qsTr("Only")
 
                 onClicked: {

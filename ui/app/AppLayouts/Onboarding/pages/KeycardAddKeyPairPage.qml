@@ -26,7 +26,7 @@ OnboardingPage {
             }
             PropertyChanges {
                 target: image
-                source: Theme.png("onboarding/status_keycard_adding_keypair_success")
+                source: Assets.png("onboarding/status_keycard_adding_keypair_success")
             }
             PropertyChanges {
                 target: subImageText
@@ -58,7 +58,7 @@ OnboardingPage {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 text: root.title
@@ -81,7 +81,7 @@ OnboardingPage {
                 Layout.preferredHeight: Math.min(211, height)
                 Layout.topMargin: Theme.bigPadding
                 Layout.bottomMargin: Theme.bigPadding
-                source: Theme.png("onboarding/status_keycard_adding_keypair")
+                source: Assets.png("onboarding/status_keycard_adding_keypair")
                 mipmap: true
             }
 

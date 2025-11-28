@@ -31,7 +31,7 @@ Control {
                 Layout.horizontalStretchFactor: 0
 
                 color: Theme.palette.directColor1
-                font.pixelSize: Theme.fontSize26
+                font.pixelSize: Theme.fontSize(26)
                 font.bold: true
 
                 elide: Text.ElideRight

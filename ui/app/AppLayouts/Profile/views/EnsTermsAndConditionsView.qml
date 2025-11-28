@@ -46,7 +46,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: Theme.fontSize20
+        font.pixelSize: Theme.fontSize(20)
         color: Theme.palette.directColor1
     }
 
@@ -135,7 +135,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Theme.monoFont.name
+                    font.family: Fonts.monoFont.family
                     color: Theme.palette.directColor1
                 }
 
@@ -159,7 +159,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Theme.monoFont.name
+                    font.family: Fonts.monoFont.family
                     color: Theme.palette.directColor1
                 }
 
@@ -211,7 +211,7 @@ Item {
                     text: "@"
                     opacity: 0.7
                     font.weight: Font.Bold
-                    font.pixelSize: Theme.fontSize18
+                    font.pixelSize: Theme.fontSize(18)
                     color: Theme.palette.white
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -222,7 +222,7 @@ Item {
                 id: ensUsername
                 text: username + ".stateofus.eth"
                 font.weight: Font.Bold
-                font.pixelSize: Theme.fontSize18
+                font.pixelSize: Theme.fontSize(18)
                 anchors.top: circleAt.bottom
                 anchors.topMargin: 24
                 anchors.left: parent.left
@@ -312,7 +312,7 @@ Item {
             id: image1
             height: 50
             width: height
-            source: Theme.png("tokens/SNT")
+            source: Assets.png("tokens/SNT")
             sourceSize: Qt.size(width, height)
             cache: false
         }

@@ -10,13 +10,13 @@ Switch {
 
     property color textColor: Theme.palette.directColor1
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.primaryTextFontSize
 
     background: null
 
     padding: 4
-    opacity: enabled ? 1.0 : Theme.disabledOpacity
+    opacity: enabled ? 1.0 : ThemeUtils.disabledOpacity
 
     property bool leftSide: true
     LayoutMirroring.enabled: !leftSide
@@ -37,7 +37,7 @@ Switch {
             radius: 14
             color: root.checked ? Theme.palette.primaryColor1
                                 : Theme.palette.directColor7
-            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
+            Behavior on color { ColorAnimation { duration: ThemeUtils.AnimationDuration.Fast } }
         }
 
         Rectangle {

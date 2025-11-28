@@ -50,7 +50,7 @@ Item {
             Layout.preferredWidth: 120
             Layout.preferredHeight: 120
             fillMode: Image.PreserveAspectFit
-            source: Theme.png("onboarding/keys")
+            source: Assets.png("onboarding/keys")
             mipmap: true
             cache: false
         }
@@ -61,7 +61,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.bold: true
-            font.pixelSize: Theme.fontSize22
+            font.pixelSize: Theme.fontSize(22)
             text: qsTr("Secure Your Assets and Funds")
         }
 

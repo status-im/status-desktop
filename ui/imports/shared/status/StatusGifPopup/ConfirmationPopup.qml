@@ -45,7 +45,7 @@ Popup {
         id: gifImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        source: Theme.svg(`gifs-${Theme.palette.name}`)
+        source: Assets.svg(`gifs-${Theme.palette.name}`)
     }
 
     StatusBaseText {

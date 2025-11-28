@@ -15,7 +15,7 @@ SplitView {
     id: root
 
     property string ytBannerQuality: "hqdefault"
-    property string image: Theme.png("tokens/SOCKS")
+    property string image: Assets.png("tokens/SOCKS")
     property string banner: rawImageCheck.checked ? rawImageCheck.rawImageData : "https://img.youtube.com/vi/yHN1M7vcPKU/%1.jpg".arg(root.ytBannerQuality)
     property bool globalUtilsReady: false
 
@@ -275,8 +275,8 @@ SplitView {
 
             RadioButton {
                 text: qsTr("QRC asset: SOCKS")
-                checked: root.image === Theme.png("tokens/SOCKS")
-                onToggled: root.image = Theme.png("tokens/SOCKS")
+                checked: root.image === Assets.png("tokens/SOCKS")
+                onToggled: root.image = Assets.png("tokens/SOCKS")
             }
 
             ColumnLayout {

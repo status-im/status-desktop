@@ -19,7 +19,7 @@ ItemDelegate {
     icon.width: 16
     icon.height: 16
 
-    font.family: Theme.baseFont.name
+    font.family: Fonts.baseFont.family
     font.pixelSize: Theme.primaryTextFontSize
 
     contentItem: RowLayout {

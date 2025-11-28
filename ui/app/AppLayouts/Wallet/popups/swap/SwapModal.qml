@@ -579,7 +579,7 @@ StatusDialog {
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName
-            networkIconPath: Theme.svg(networkFilter.singleSelectionItemData.iconUrl)
+            networkIconPath: Assets.svg(networkFilter.singleSelectionItemData.iconUrl)
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
             networkChainId: networkFilter.singleSelectionItemData.chainId
 
@@ -595,7 +595,7 @@ StatusDialog {
             serviceProviderName: Constants.swap.paraswapName
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
-            serviceProviderIcon: Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
+            serviceProviderIcon: Assets.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
             serviceProviderHostname: Constants.swap.paraswapHostname
 
@@ -639,7 +639,7 @@ StatusDialog {
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName
-            networkIconPath: Theme.svg(networkFilter.singleSelectionItemData.iconUrl)
+            networkIconPath: Assets.svg(networkFilter.singleSelectionItemData.iconUrl)
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
             networkChainId: root.swapInputParamsForm.selectedNetworkChainId
 

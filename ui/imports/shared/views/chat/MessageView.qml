@@ -618,7 +618,7 @@ Loader {
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("%1 pinned a message").arg(senderDisplayName)
             color: Theme.palette.directColor3
-            font.family: Theme.baseFont.name
+            font.family: Fonts.baseFont.family
             font.pixelSize: Theme.primaryTextFontSize
             textFormat: Text.RichText
             wrapMode: Text.Wrap
@@ -925,7 +925,7 @@ Loader {
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
                     }
-                    sender.badgeImage: Theme.svg("discord-bridge")
+                    sender.badgeImage: Assets.svg("discord-bridge")
                 }
 
                 replyDetails: StatusMessageDetails {

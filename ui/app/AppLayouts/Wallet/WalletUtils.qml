@@ -345,14 +345,14 @@ QtObject {
     function getIconForFeeMode(feeMode) {
         switch(feeMode) {
         case Constants.FeePriorityModeType.Fast:
-            return Theme.png("wallet/car")
+            return Assets.png("wallet/car")
         case Constants.FeePriorityModeType.Urgent:
-            return Theme.png("wallet/rocket")
+            return Assets.png("wallet/rocket")
         case Constants.FeePriorityModeType.Custom:
-            return Theme.png("wallet/handwrite")
+            return Assets.png("wallet/handwrite")
         case Constants.FeePriorityModeType.Normal:
         default:
-            return Theme.png("wallet/clock")
+            return Assets.png("wallet/clock")
         }
     }
 

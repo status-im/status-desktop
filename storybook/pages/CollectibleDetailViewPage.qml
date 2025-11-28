@@ -108,7 +108,7 @@ SplitView {
                             }
                             return {
                                 name : "Mock Community",
-                                image : Theme.png("tokens/UNI"),
+                                image : Assets.png("tokens/UNI"),
                                 color : "orchid"
                             }                        
                         }

@@ -14,7 +14,7 @@ ActivityNotificationBase {
     signal readMoreClicked
 
     avatarComponent: SVGImage {
-        source: Theme.png("status-logo-icon")
+        source: Assets.png("status-logo-icon")
         Layout.preferredWidth: 40
         Layout.preferredHeight: 40
         Layout.alignment: Qt.AlignTop

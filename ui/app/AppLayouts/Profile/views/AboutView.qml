@@ -62,7 +62,7 @@ SettingsContentBase {
                 id: statusIcon
                 width: 80
                 height: 80
-                source: root.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
+                source: root.isProduction ? Assets.png("status-logo-circle") : Assets.png("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap: true
             }
@@ -71,7 +71,7 @@ SettingsContentBase {
 
             StatusLinkText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 normalColor: Theme.palette.directColor1
                 text: root.currentVersion

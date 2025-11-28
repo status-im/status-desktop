@@ -23,13 +23,13 @@ OnboardingPage {
                 Layout.preferredHeight: 260
                 Layout.alignment: Qt.AlignHCenter
                 mipmap: true
-                source: Theme.png("onboarding/status_seedphrase")
+                source: Assets.png("onboarding/status_seedphrase")
             }
 
             StatusBaseText {
                 Layout.fillWidth: true
                 text: qsTr("Your recovery phrase has been created")
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter

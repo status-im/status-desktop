@@ -89,7 +89,7 @@ OnboardingPage {
                         Layout.preferredWidth: 90
                         Layout.preferredHeight: 90
                         Layout.alignment: Qt.AlignHCenter
-                        source: Theme.png("status")
+                        source: Assets.png("status")
                         mipmap: true
                         layer.enabled: true
                         layer.effect: DropShadow {
@@ -106,7 +106,7 @@ OnboardingPage {
                         id: headerText
                         Layout.fillWidth: true
                         text: root.title
-                        font.pixelSize: Theme.fontSize40
+                        font.pixelSize: Theme.fontSize(40)
                         font.bold: true
                         wrapMode: Text.WordWrap
                         horizontalAlignment: Text.AlignHCenter

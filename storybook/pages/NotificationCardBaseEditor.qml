@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import StatusQ.Core.Theme
+import QtQuick.Window
 
 
 Control {
@@ -48,7 +49,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "XS"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeXS)
+                ThemeUtils.setFontSize(Window.window, ThemeUtils.FontSize.FontSizeXS)
             }
         }
 
@@ -56,7 +57,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "S"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeS)
+                ThemeUtils.setFontSize(Window.window, ThemeUtils.FontSize.FontSizeS)
             }
         }
 
@@ -65,7 +66,7 @@ Control {
             text: "M"
             checked: true
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeM)
+                ThemeUtils.setFontSize(Window.window, ThemeUtils.FontSize.FontSizeM)
             }
         }
 
@@ -73,7 +74,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "L"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeL)
+                ThemeUtils.setFontSize(Window.window, ThemeUtils.FontSize.FontSizeL)
             }
         }
 
@@ -81,7 +82,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "XL"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeXL)
+                ThemeUtils.setFontSize(Window.window, ThemeUtils.FontSize.FontSizeXL)
             }
         }
 
@@ -89,7 +90,7 @@ Control {
             Layout.leftMargin: Theme.padding
             text: "XXL"
             onCheckedChanged: {
-                Theme.changeFontSize(Theme.FontSize.FontSizeXXL)
+                ThemeUtils.setFontSize(Window.window, ThemeUtils.FontSize.FontSizeXXL)
             }
         }
 

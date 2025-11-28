@@ -41,7 +41,7 @@ OnboardingPage {
                 Layout.fillWidth: true
                 text: root.title
                 visible: !root.popupMode
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
@@ -142,7 +142,7 @@ OnboardingPage {
 
     TextMetrics {
         id: idxMetrics
-        font.family: Theme.monoFont.name
+        font.family: Fonts.monoFont.family
         font.pixelSize: Theme.primaryTextFontSize
         text: "99"
     }

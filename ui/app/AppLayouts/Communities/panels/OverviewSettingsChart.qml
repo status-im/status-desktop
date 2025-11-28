@@ -38,7 +38,7 @@ StatusChartPanel {
 
         //visual properties
         readonly property string baseColor1: Theme.palette.baseColor1
-        readonly property string twentyPercentBaseColor1: Theme.palette.alphaColor(baseColor1, 0.2)
+        readonly property string twentyPercentBaseColor1: StatusColors.alphaColor(baseColor1, 0.2)
         readonly property string barColor: Theme.palette.primaryColor2
         readonly property string barBorderColor: Theme.palette.primaryColor1
     

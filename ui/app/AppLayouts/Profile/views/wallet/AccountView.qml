@@ -62,7 +62,7 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignLeft
                 text: !!root.account? root.account.name : ""
                 font.weight: Font.Bold
-                font.pixelSize: Theme.fontSize28
+                font.pixelSize: Theme.fontSize(28)
                 color: !!root.account? Utils.getColorForId(root.account.colorId) : Theme.palette.directColor1
             }
             StatusEmoji {

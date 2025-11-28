@@ -101,7 +101,7 @@ ColumnLayout {
         Layout.bottomMargin: Theme.padding
         borderColor: Theme.palette.baseColor2
         textColor: Theme.palette.directColor1
-        icon: Theme.svg("token")
+        icon: Assets.svg("token")
         iconColor: Theme.palette.directColor1
         iconAlignment: Qt.AlignVCenter
         isRowLayout: false

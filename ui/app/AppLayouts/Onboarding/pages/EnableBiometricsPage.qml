@@ -28,13 +28,13 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 mipmap: true
                 smooth: false
-                source: Theme.png("onboarding/enable_biometrics")
+                source: Assets.png("onboarding/enable_biometrics")
             }
 
             StatusBaseText {
                 Layout.fillWidth: true
                 text: root.title
-                font.pixelSize: Theme.fontSize22
+                font.pixelSize: Theme.fontSize(22)
                 font.bold: true
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
