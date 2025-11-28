@@ -37,7 +37,6 @@ ColumnLayout {
 
         StatusSwitchTabBar {
             Layout.fillWidth: true
-            Layout.leftMargin: betaTag.visible ? betaTag.width : 0
             id: switchTabBar
 
             currentIndex: 0

@@ -142,7 +142,8 @@ int main(int argc, char *argv[])
     qInfo() << "Storybook started, Qt runtime version:" << qVersion()
             << "; built against version:" << QLibraryInfo::version().toString()
             << "installed in:" << QLibraryInfo::path(QLibraryInfo::PrefixPath)
-            << "; QQC style:" << QQuickStyle::name();
+            << "; QQC style:" << QQuickStyle::name()
+            << "; QPA:" << qApp->platformName();
 
     return QGuiApplication::exec();
 }

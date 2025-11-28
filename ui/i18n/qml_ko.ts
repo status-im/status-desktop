@@ -1192,8 +1192,8 @@
         <translation>시스템</translation>
     </message>
     <message>
-        <source>Minimize on close</source>
-        <translation>닫을 때 최소화</translation>
+        <source>Minimize to tray icon on close</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mainnet data verified by Nimbus</source>
