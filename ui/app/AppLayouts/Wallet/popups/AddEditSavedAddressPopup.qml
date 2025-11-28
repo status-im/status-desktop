@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls // for Popup.xxx
 
 import StatusQ.Components
 import StatusQ.Controls
@@ -389,7 +390,7 @@ StatusDialog {
                 input.rightPadding: 16
                 input.tabNavItem: addressInput
 
-                onKeyPressed: {
+                onKeyPressed: event => {
                     d.submit(event)
                 }
             }

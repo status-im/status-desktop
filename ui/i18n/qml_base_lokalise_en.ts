@@ -1459,9 +1459,9 @@
       <translation>System</translation>
     </message>
     <message>
-      <source>Minimize on close</source>
+      <source>Minimize to tray icon on close</source>
       <comment>AdvancedView</comment>
-      <translation>Minimize on close</translation>
+      <translation>Minimize to tray icon on close</translation>
     </message>
     <message>
       <source>Mainnet data verified by Nimbus</source>
@@ -9291,6 +9291,14 @@
     </message>
   </context>
   <context>
+    <name>FeeRow</name>
+    <message>
+      <source>Max.</source>
+      <comment>FeeRow</comment>
+      <translation>Max.</translation>
+    </message>
+  </context>
+  <context>
     <name>FeesBox</name>
     <message>
       <source>Fees</source>
@@ -9546,6 +9554,67 @@
       <source>Fleet</source>
       <comment>FleetsModal</comment>
       <translation>Fleet</translation>
+    </message>
+  </context>
+  <context>
+    <name>FollowingAddressMenu</name>
+    <message>
+      <source>Address copied</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Address copied</translation>
+    </message>
+    <message>
+      <source>Copy address</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Copy address</translation>
+    </message>
+    <message>
+      <source>Show address QR</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Show address QR</translation>
+    </message>
+    <message>
+      <source>View activity</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>View activity</translation>
+    </message>
+    <message>
+      <source>Already in saved addresses</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Already in saved addresses</translation>
+    </message>
+    <message>
+      <source>Add to saved addresses</source>
+      <comment>FollowingAddressMenu</comment>
+      <translation>Add to saved addresses</translation>
+    </message>
+  </context>
+  <context>
+    <name>FollowingAddresses</name>
+    <message>
+      <source>Search for name, ENS or address</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Search for name, ENS or address</translation>
+    </message>
+    <message>
+      <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</translation>
+    </message>
+    <message>
+      <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</translation>
+    </message>
+    <message>
+      <source>Your EFP onchain friends will appear here</source>
+      <comment>FollowingAddresses</comment>
+      <translation>Your EFP onchain friends will appear here</translation>
+    </message>
+    <message>
+      <source>No following addresses found. Check spelling or whether the address is correct.</source>
+      <comment>FollowingAddresses</comment>
+      <translation>No following addresses found. Check spelling or whether the address is correct.</translation>
     </message>
   </context>
   <context>
@@ -10869,6 +10938,11 @@
       <source>PIN correct</source>
       <comment>KeycardEnterPinPage</comment>
       <translation>PIN correct</translation>
+    </message>
+    <message>
+      <source>Keycard blocked</source>
+      <comment>KeycardEnterPinPage</comment>
+      <translation>Keycard blocked</translation>
     </message>
     <message numerus="yes">
       <source>%n attempt(s) remaining</source>
@@ -12280,6 +12354,11 @@
       <source>Saved addresses</source>
       <comment>LeftTabView</comment>
       <translation>Saved addresses</translation>
+    </message>
+    <message>
+      <source>EFP onchain friends</source>
+      <comment>LeftTabView</comment>
+      <translation>EFP onchain friends</translation>
     </message>
   </context>
   <context>
@@ -22545,6 +22624,24 @@
       <source>%1 community assets are now visible</source>
       <comment>WalletAssetsStore</comment>
       <translation>%1 community assets are now visible</translation>
+    </message>
+  </context>
+  <context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+      <source>Add via EFP</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>Add via EFP</translation>
+    </message>
+    <message>
+      <source>EFP onchain friends</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>EFP onchain friends</translation>
+    </message>
+    <message>
+      <source>Last refreshed %1</source>
+      <comment>WalletFollowingAddressesHeader</comment>
+      <translation>Last refreshed %1</translation>
     </message>
   </context>
   <context>

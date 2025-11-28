@@ -1195,8 +1195,8 @@
         <translation>Sistema</translation>
     </message>
     <message>
-        <source>Minimize on close</source>
-        <translation>Minimizar al cerrar</translation>
+        <source>Minimize to tray icon on close</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mainnet data verified by Nimbus</source>
@@ -7621,6 +7621,13 @@ Por favor, agrégala e intenta de nuevo.</translation>
     </message>
 </context>
 <context>
+    <name>FeeRow</name>
+    <message>
+        <source>Max.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FeesBox</name>
     <message>
         <source>Fees</source>
@@ -7831,6 +7838,56 @@ Por favor, agrégala e intenta de nuevo.</translation>
     <message>
         <source>Fleet</source>
         <translation>Fleet</translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddressMenu</name>
+    <message>
+        <source>Address copied</source>
+        <translation type="unfinished">Dirección copiada</translation>
+    </message>
+    <message>
+        <source>Copy address</source>
+        <translation type="unfinished">Copiar dirección</translation>
+    </message>
+    <message>
+        <source>Show address QR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View activity</source>
+        <translation type="unfinished">Ver actividad</translation>
+    </message>
+    <message>
+        <source>Already in saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to saved addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FollowingAddresses</name>
+    <message>
+        <source>Search for name, ENS or address</source>
+        <translation type="unfinished">Buscar por nombre, ENS o dirección</translation>
+    </message>
+    <message>
+        <source>Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">Tu búsqueda es demasiado genial (usa solo A-Z y 0-9, un solo espacio en blanco, guiones y guiones bajos)</translation>
+    </message>
+    <message>
+        <source>Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)</source>
+        <translation type="unfinished">Tu búsqueda contiene caracteres inválidos (usa solo A-Z y 0-9, un solo espacio en blanco, guiones y guiones bajos)</translation>
+    </message>
+    <message>
+        <source>Your EFP onchain friends will appear here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No following addresses found. Check spelling or whether the address is correct.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8927,6 +8984,10 @@ Are you sure you want to do this?</source>
     <message>
         <source>PIN correct</source>
         <translation>PIN correcto</translation>
+    </message>
+    <message>
+        <source>Keycard blocked</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n attempt(s) remaining</source>
@@ -10091,6 +10152,10 @@ acceso a tus fondos.</translation>
     <message>
         <source>Saved addresses</source>
         <translation>Direcciones guardadas</translation>
+    </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18576,6 +18641,21 @@ Si una transacción con un nonce más bajo está pendiente, las transacciones co
     <message>
         <source>%1 community assets are now visible</source>
         <translation>%1 activos de comunidad ahora son visibles</translation>
+    </message>
+</context>
+<context>
+    <name>WalletFollowingAddressesHeader</name>
+    <message>
+        <source>Add via EFP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EFP onchain friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last refreshed %1</source>
+        <translation type="unfinished">Última actualización %1</translation>
     </message>
 </context>
 <context>

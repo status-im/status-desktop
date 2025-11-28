@@ -64,9 +64,9 @@ Window {
     // Both Android and iOS keyboard heights are in physical pixels and need devicePixelRatio conversion
     // iOS: Native code converts (nativePoints × nativeScale) to pixels for Qt to convert to its logical points
     // Android: WindowInsets provides pixels directly
-    property real keyboardHeight: SQUtils.Utils.isAndroid ? SystemUtils.androidKeyboardHeight / Screen.devicePixelRatio :
-                                    SQUtils.Utils.isIOS ? SystemUtils.iosKeyboardHeight / Screen.devicePixelRatio :
-                                    Qt.inputMethod.visible ? Qt.inputMethod.keyboardRectangle.height : 0
+    readonly property real keyboardHeight: SQUtils.Utils.isAndroid ? SystemUtils.androidKeyboardHeight / Screen.devicePixelRatio :
+                                                                     SQUtils.Utils.isIOS ? SystemUtils.iosKeyboardHeight / Screen.devicePixelRatio :
+                                                                                           Qt.inputMethod.visible ? Qt.inputMethod.keyboardRectangle.height : 0
     
     // Calculate additional margin so that total = max(nativeSafeAreaBottom, keyboardHeight)
     // When keyboard shows, we want the keyboard height to replace the native safe area, not add to it
@@ -93,7 +93,6 @@ Window {
         Qt.application.version = aboutModule.getCurrentVersion()
         return Qt.application.displayName
     }
-    visible: false
 
     flags: Qt.platform.os === SQUtils.Utils.windows ? Qt.Window // extending the content in title is buggy on Windows
               : Qt.ExpandedClientAreaHint | Qt.NoTitleBarBackgroundHint
@@ -109,7 +108,6 @@ Window {
         if (SQUtils.Utils.isAndroid) {
             SystemUtils.setAndroidSplashScreenReady()
         }
-        applicationWindow.visible = true
     }
 
     function restoreAppState() {
@@ -135,8 +133,8 @@ Window {
 
             geometry = Qt.rect(0,
                                0,
-                               Math.min(Screen.desktopAvailableWidth - 125, 1400),
-                               Math.min(Screen.desktopAvailableHeight - 125, 840));
+                               Math.min(Screen.desktopAvailableWidth - 125, Theme.portraitBreakpoint.width),
+                               Math.min(Screen.desktopAvailableHeight - 125, Theme.portraitBreakpoint.height));
             geometry.x = (screen.width - geometry.width) / 2;
             geometry.y = (screen.height - geometry.height) / 2;
         }
@@ -170,9 +168,7 @@ Window {
         }
     }
 
-    onWidthChanged: {
-        Qt.callLater(storeAppState)
-    }
+    onWidthChanged: Qt.callLater(storeAppState)
     onHeightChanged: Qt.callLater(storeAppState)
 
     QtObject {
@@ -310,10 +306,14 @@ Window {
             }
         }
         function onClosing(close) {
-            // In case of android, we need to handle moveTaskToBackground explicitly
-            if (SQUtils.Utils.isAndroid) {
+            // on mobile, we minimize to background (no tray icon or quitOnClose setting)
+            if (SQUtils.Utils.isMobile) {
                 close.accepted = false
-                SystemUtils.androidMinimizeToBackground()
+                // In case of android, we need to handle moveTaskToBackground explicitly
+                if (SQUtils.Utils.isAndroid)
+                    SystemUtils.androidMinimizeToBackground()
+                else
+                    applicationWindow.showMinimized()
             // In case not logged in or loading, quit app
             } else if (loader.sourceComponent != app) {
                 close.accepted = true
@@ -323,23 +323,34 @@ Window {
                 close.accepted = true
             }
             else {
-                // The app is already minimized. The user really wants to quit the app
+                // The window is already hidden or minimized.
                 // The user really wants to quit the app
-                if (applicationWindow.visibility === Window.Minimized) {
+                if (applicationWindow.visibility === Window.Minimized || applicationWindow.visibility === Window.Hidden) {
                     close.accepted = true
                     return
                 }
 
-                close.accepted = false
-                /* In case of mac in fullscreen mode, hiding the window leads to black screen.
-                Hence we exit Fullscreen on system close and then the user can perform an actual
-                hide of the app */
-                if(applicationWindow.visibility === Window.FullScreen &&
-                        Qt.platform.os === SQUtils.Utils.mac) {
-                    applicationWindow.showNormal()
+                // special handling for macOS
+                if(Qt.platform.os === SQUtils.Utils.mac) {
+                    /* In case of mac in fullscreen mode, hiding the window leads to black screen.
+                    Hence we exit Fullscreen on system close and then the user can perform an actual
+                    hide of the app */
+                    close.accepted = false
+                    if (applicationWindow.visibility === Window.FullScreen)
+                        applicationWindow.showNormal()
+                    else
+                        applicationWindow.showMinimized()
                     return
                 }
-                applicationWindow.showMinimized()
+
+                // hide the window into the tray, if available; quit otherwise
+                if (systemTray.available) {
+                    close.accepted = false
+                    // WRN 2025-11-26 <snip> file=qrc:/main.qml:26 text="QML QQuickWindowQmlImpl*: Conflicting properties 'visible' and 'visibility'"
+                    applicationWindow.visibility = Window.Hidden
+                } else {
+                    close.accepted = true
+                }
             }
         }
     }
@@ -377,7 +388,7 @@ Window {
 
     Component.onCompleted: {
         
-        console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
+        console.info(">>> %1 %2 started, using Qt version %3, QPA: %4".arg(Application.name).arg(Application.version).arg(SystemUtils.qtRuntimeVersion()).arg(Qt.platform.pluginName))
 
         if (languageStore.currentLanguage === "") { // if we haven't configured the language yet...
             // ...and we have a translation for it
@@ -485,6 +496,8 @@ Window {
 
             visible: !startupOnboardingLoader.active
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
+
+            systemTrayIconAvailable: systemTray.available
 
             keychain: appKeychain
             Component.onCompleted: {
