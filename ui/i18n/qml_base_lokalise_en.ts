@@ -12065,6 +12065,34 @@
     </message>
   </context>
   <context>
+    <name>Keychain</name>
+    <message>
+      <source>Authenticate</source>
+      <comment>Keychain</comment>
+      <translation>Authenticate</translation>
+    </message>
+    <message>
+      <source>Login to Status</source>
+      <comment>Keychain</comment>
+      <translation>Login to Status</translation>
+    </message>
+    <message>
+      <source>Cancel</source>
+      <comment>Keychain</comment>
+      <translation>Cancel</translation>
+    </message>
+    <message>
+      <source>Save password</source>
+      <comment>Keychain</comment>
+      <translation>Save password</translation>
+    </message>
+    <message>
+      <source>Confirm to enable biometric login</source>
+      <comment>Keychain</comment>
+      <translation>Confirm to enable biometric login</translation>
+    </message>
+  </context>
+  <context>
     <name>KeypairImportPopup</name>
     <message>
       <source>Import missing key pairs</source>
@@ -17180,6 +17208,14 @@
     </message>
   </context>
   <context>
+    <name>QObject</name>
+    <message>
+      <source>Use Status profile password</source>
+      <comment>QObject</comment>
+      <translation>Use Status profile password</translation>
+    </message>
+  </context>
+  <context>
     <name>RPCStatsModal</name>
     <message>
       <source>Total</source>
@@ -22003,6 +22039,24 @@
       <source>Invalid recovery phrase</source>
       <comment>UnblockWithSeedphraseFlow</comment>
       <translation>Invalid recovery phrase</translation>
+    </message>
+  </context>
+  <context>
+    <name>UrlUtils</name>
+    <message>
+      <source>Internal storage</source>
+      <comment>UrlUtils</comment>
+      <translation>Internal storage</translation>
+    </message>
+    <message>
+      <source>SD card</source>
+      <comment>UrlUtils</comment>
+      <translation>SD card</translation>
+    </message>
+    <message>
+      <source>Storage</source>
+      <comment>UrlUtils</comment>
+      <translation>Storage</translation>
     </message>
   </context>
   <context>

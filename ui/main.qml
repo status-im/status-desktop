@@ -620,7 +620,7 @@ Window {
             }
 
             onSkippedBiometricFlow: () => {
-                                        d.showSkippedBiometricFlow = true
+                                        d.showSkippedBiometricFlow = appKeychain.available
                                     }
 
             Component.onCompleted: {
