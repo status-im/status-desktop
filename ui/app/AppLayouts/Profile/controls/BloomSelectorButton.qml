@@ -45,13 +45,17 @@ Rectangle {
         }
     }
 
-    StyledText {
+    StatusBaseText {
         id: txt
         text: btnText
-        font.pixelSize: Theme.primaryTextFontSize
+        anchors.rightMargin: Theme.padding
+        anchors.leftMargin: Theme.padding
+        width: parent.width
+        horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: radioBtn.bottom
         anchors.topMargin: 6
+        wrapMode: Text.WordWrap
     }
 
     StatusMouseArea {
