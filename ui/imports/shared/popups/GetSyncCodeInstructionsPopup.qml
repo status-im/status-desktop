@@ -12,6 +12,5 @@ StatusDialog {
     verticalPadding: 32
     footer: null
 
-    SyncingCodeInstructions {
-    }
+    contentItem: SyncingCodeInstructions {}
 }
