@@ -22,7 +22,6 @@ OnboardingPage {
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
-            width: Math.min(440, root.availableWidth)
             spacing: Theme.xlPadding
 
             StatusBaseText {

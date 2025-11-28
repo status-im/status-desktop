@@ -8013,6 +8013,14 @@ L2 수수료: %2</translation>
         <source>Scan QR</source>
         <translation>QR 코드 스캔</translation>
     </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished">%1 %2</translation>
+    </message>
+    <message>
+        <source>%1 %2 %3</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GetSyncCodeInstructionsPopup</name>
@@ -8102,6 +8110,14 @@ L2 수수료: %2</translation>
     <message>
         <source>Scan QR</source>
         <translation>QR 코드 스캔</translation>
+    </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished">%1 %2</translation>
+    </message>
+    <message>
+        <source>%1 %2 %3</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

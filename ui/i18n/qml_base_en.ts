@@ -8026,6 +8026,14 @@ L2 fee: %2</source>
         <source>Scan QR</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %2 %3</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GetSyncCodeInstructionsPopup</name>
@@ -8114,6 +8122,14 @@ L2 fee: %2</source>
     </message>
     <message>
         <source>Scan QR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %2 %3</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
