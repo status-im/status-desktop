@@ -2706,7 +2706,7 @@ Do you wish to override the security check and continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Clears HTTP cache, cookies and visited links. Navigation is blocked until complete.</source>
+        <source>Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

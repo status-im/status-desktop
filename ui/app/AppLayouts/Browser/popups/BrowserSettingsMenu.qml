@@ -151,7 +151,7 @@ StatusMenu {
     StatusMenuItem {
         id: clearSiteDataItem
         text: qsTr("Clear site data")
-        icon.name: "delete"
+        icon.name: "broom"
         icon.color: Theme.palette.primaryColor1
         onTriggered: clearSiteData()
 
@@ -171,7 +171,7 @@ StatusMenu {
 
         StatusToolTip {
             visible: clearCacheItem.hovered
-            text: qsTr("Clears HTTP cache, cookies and visited links. Navigation is blocked until complete.")
+            text: qsTr("Clears cached files, cookies, and history for the entire browser. Browsing is paused until it is done.")
         }
     }
 
