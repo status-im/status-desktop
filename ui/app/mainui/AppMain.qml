@@ -139,6 +139,8 @@ Item {
 
     required property bool isCentralizedMetricsEnabled
 
+    required property bool systemTrayIconAvailable
+
     function showEnableBiometricsFlow() {
         popupRequestsHandler.enableBiometricsPopupHandler.openPopup()
     }
@@ -2135,6 +2137,7 @@ Item {
                         isKeycardEnabled: featureFlagsStore.keycardEnabled
                         isBrowserEnabled: featureFlagsStore.browserEnabled
                         privacyModeFeatureEnabled: featureFlagsStore.privacyModeFeatureEnabled
+                        minimizeOnCloseOptionVisible: appMain.systemTrayIconAvailable
 
                         theme: appMainLocalSettings.theme
                         fontSize: appMainLocalSettings.fontSize
