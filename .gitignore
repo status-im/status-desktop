@@ -19,7 +19,13 @@ tmp
 nimcache
 .DS_Store
 nim-status-client*.tgz
+node_modules
+npm-debug.log*
+npm-shrinkwrap.json
 /package/
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
 TODO
 resources.rcc
 ui/resources.qrc

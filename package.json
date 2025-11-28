@@ -1,0 +1,16 @@
+{
+  "name": "nim-status-client",
+  "version": "0.0.0",
+  "private": true,
+  "files": [],
+  "devDependencies": {
+    "create-dmg": "status-im/create-dmg#678fbd4"
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=7"
+  },
+  "dependencies": {
+    "nodemon": "3.0.1"
+  }
+}
