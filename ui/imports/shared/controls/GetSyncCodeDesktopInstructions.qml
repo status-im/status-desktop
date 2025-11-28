@@ -1,34 +1,58 @@
 import QtQuick
+import QtQuick.Layouts
 
 import StatusQ.Core.Theme
+import StatusQ.Core
 
 import shared.controls
 import shared.views
 
-Column {
+ColumnLayout {
     id: root
 
     property int purpose: SyncingCodeInstructions.Purpose.AppSync
     property int type: SyncingCodeInstructions.Type.QRCode
 
-    spacing: 4
+    QtObject {
+        id: d
 
-    DecoratedListItem {
-        order: "1."
-        text1: qsTr("Ensure both devices are on the same network")
+        readonly property int itemHeight: 32
     }
 
-    DecoratedListItem {
-        order: "2."
-        text1: {
+    spacing: Theme.padding
+
+    StatusBaseText {
+        Layout.preferredHeight: d.itemHeight
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        verticalAlignment: Text.AlignVCenter
+        text: "1. " + qsTr("Ensure both devices are on the same network")
+        color: Theme.palette.baseColor1
+        wrapMode: Text.WordWrap
+    }
+
+    StatusBaseText {
+        Layout.preferredHeight: d.itemHeight
+        Layout.fillWidth: true
+
+        verticalAlignment: Text.AlignVCenter
+        text: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
-                return qsTr("Open Status on the device you want to import from")
+                return "2. " + qsTr("Open Status on the device you want to import from")
             }
-            return qsTr("Open Status App on your desktop device")
+            return "2. " + qsTr("Open Status App on your desktop device")
         }
+        color: Theme.palette.baseColor1
+        wrapMode: Text.WordWrap
     }
 
+    // TODO: To improve. It's not responsive
     DecoratedListItem {
+        Layout.preferredHeight: d.itemHeight
+        Layout.alignment: Qt.AlignVCenter
+        Layout.fillWidth: true
+
         order: "3."
         text1: qsTr("Open")
         icon: "settings"
@@ -41,7 +65,12 @@ Column {
         text2Color: Theme.palette.directColor1
     }
 
+    // TODO: To improve. It's not responsive
     DecoratedListItem {
+        Layout.preferredHeight: d.itemHeight
+        Layout.alignment: Qt.AlignVCenter
+        Layout.fillWidth: true
+
         order: "4."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
@@ -64,18 +93,17 @@ Column {
         text2Color: Theme.palette.directColor1
     }
 
-    DecoratedListItem {
-        order: "5."
-        text1: {
+    StatusBaseText {
+        readonly property string text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
-                    return qsTr("Copy the")
+                    return "5. " + qsTr("Copy the")
                 }
-                return qsTr("Scan QR")
+                return "5. " + qsTr("Scan QR")
             }
-            return qsTr("Click")
+            return "5. " + qsTr("Click")
         }
-        text1Color: {
+        readonly property color text1Color: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
                     return Theme.palette.baseColor1
@@ -84,7 +112,7 @@ Column {
             }
             return Theme.palette.baseColor1
         }
-        text2: {
+        readonly property string text2: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
                     return qsTr("encrypted key pairs code")
@@ -93,7 +121,7 @@ Column {
             }
             return qsTr("Setup Syncing")
         }
-        text2Color: {
+        readonly property color text2Color: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
                     return Theme.palette.directColor1
@@ -102,20 +130,30 @@ Column {
             }
             return Theme.palette.directColor1
         }
+
+        Layout.preferredHeight: d.itemHeight
+        Layout.fillWidth: true
+
+        verticalAlignment: Text.AlignVCenter
+        textFormat: Text.RichText
+        wrapMode: Text.WordWrap
+        color: text1Color
+        text: qsTr("%1 %2").arg(qsTr(text1))
+                           .arg("<span style='color:" + text2Color + ";'>" + qsTr(text2) + "</span>")
+
     }
 
-    DecoratedListItem {
-        order: "6."
-        text1: {
+    StatusBaseText {
+        readonly property string text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
-                    return qsTr("Paste the")
+                    return "6. " + qsTr("Paste the")
                 }
-                return qsTr("Scan or enter the encrypted QR with this device")
+                return "6. " + qsTr("Scan or enter the encrypted QR with this device")
             }
-            return ""
+            return "6. "
         }
-        text2: {
+        readonly property string text2: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
                     return qsTr("encrypted key pairs code")
@@ -124,8 +162,7 @@ Column {
             }
             return qsTr("Scan QR")
         }
-        text2Color: Theme.palette.directColor1
-        text3: {
+        readonly property string text3: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
                     return qsTr("to this device")
@@ -134,19 +171,41 @@ Column {
             }
             return qsTr("on this device")
         }
+
+        Layout.preferredHeight: d.itemHeight
+        Layout.fillWidth: true
+
+        verticalAlignment: Text.AlignVCenter
+        textFormat: Text.RichText
+        wrapMode: Text.WordWrap
+        color: Theme.palette.baseColor1
+
+
+        text: qsTr("%1 %2 %3").arg(qsTr(text1))
+                              .arg("<span style='color:" + Theme.palette.directColor1 + ";'>" + qsTr(text2) + "</span>")
+                              .arg(qsTr(text3))
+
     }
 
-    DecoratedListItem {
-        order: {
+    StatusBaseText {
+        Layout.preferredHeight: d.itemHeight
+        Layout.fillWidth: true
+
+        verticalAlignment: Text.AlignVCenter
+        textFormat: Text.RichText
+        wrapMode: Text.WordWrap
+        color: Theme.palette.baseColor1
+
+        readonly property string order: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
-                    return "7."
+                    return "7. "
                 }
                 return ""
             }
-            return "7."
+            return "7. "
         }
-        text1: {
+        readonly property string text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
                     return qsTr("For security, delete the code as soon as you are done")
@@ -155,5 +214,6 @@ Column {
             }
             return qsTr("Scan or enter the code")
         }
+        text: order + text1
     }
 }
