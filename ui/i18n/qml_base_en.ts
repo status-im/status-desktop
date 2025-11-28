@@ -9916,6 +9916,29 @@ access to your funds.</source>
     </message>
 </context>
 <context>
+    <name>Keychain</name>
+    <message>
+        <source>Authenticate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Login to Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confirm to enable biometric login</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeypairImportPopup</name>
     <message>
         <source>Import missing key pairs</source>
@@ -14121,6 +14144,13 @@ to load</source>
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <source>Use Status profile password</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>RPCStatsModal</name>
     <message>
         <source>Total</source>
@@ -18108,6 +18138,21 @@ If a transaction with a lower nonce is pending, higher nonce transactions will r
     </message>
     <message>
         <source>Invalid recovery phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UrlUtils</name>
+    <message>
+        <source>Internal storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SD card</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Storage</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
