@@ -35,11 +35,12 @@ Flow {
 
             const maxReactions = 12
             const extraCount = listOfUsers.splice(maxReactions).length
-            if (extraCount > 0)
+            if (extraCount > 0) {
                 listOfUsers.push(qsTr("%1 more").arg(extraCount)) // "a, b, ... and N more"
+            }
 
-            const author = Qt.locale(Qt.uiLanguage).createSeparatedList(listOfUsers) // "a, b, c and d"
-            return qsTr("%1 reacted with %2").arg(author).arg(StatusQUtils.Emoji.fromCodePoint(emoji))
+            // Create a simple comma-separated list without using QLocale.createSeparatedList (not available in QML)
+            return qsTr("%1 reacted with %2").arg(listOfUsers.join(", ")).arg(StatusQUtils.Emoji.fromCodePoint(emoji))
         }
     }
 
