@@ -1,12 +1,11 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Window
 import QtQuick.Layouts
 import QtQml.Models
-import QtQml
 
 import StatusQ.Core
 import StatusQ.Controls
+import StatusQ.Components.private
 import StatusQ.Core.Theme
 
 Dialog {
@@ -41,6 +40,7 @@ Dialog {
 
     readonly property bool bottomSheet: d.windowHeight > d.windowWidth
                                         && d.windowWidth <= Theme.portraitBreakpoint.width // The max width of a phone in portrait mode
+    onBottomSheetChanged: if (bottomSheet) Qt.callLater(() => d.dragHandle.setOriginalYPos(root.desiredY))
 
     readonly property real desiredY: root.bottomSheet ? d.windowHeight - root.height
                                                       : (root.Overlay.overlay.height - root.height) / 2
@@ -67,6 +67,18 @@ Dialog {
         property int windowHeight
 
         readonly property real bottomSheetHeightRatio: 0.90
+
+        // must not be a "visual" item, gets overwritten with contentItem or ScrollView's own contentItem
+        readonly property StatusBottomSheetDragHandle dragHandle: StatusBottomSheetDragHandle {
+            dragObjectRoot: root
+            onCloseRequested: root.closeHandler()
+
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: Theme.halfPadding
+            visible: root.bottomSheet
+            parent: root.contentItem.parent
+        }
     }
 
     onAboutToShow: {
@@ -154,6 +166,14 @@ Dialog {
     Binding on margins {
         when: root.bottomSheet
         value: -1
+    }
+
+    Binding {
+        target: header ?? null
+        when: !!header
+        property: "showDragHandle"
+        value: root.bottomSheet
+        delayed: true
     }
 
     parent: Overlay.overlay
