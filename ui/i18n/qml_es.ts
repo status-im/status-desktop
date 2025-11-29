@@ -7943,6 +7943,14 @@ Tarifa L2: %2</translation>
         <source>Scan or enter the code</source>
         <translation>Escanea o introduce el código</translation>
     </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished">%1 %2</translation>
+    </message>
+    <message>
+        <source>%1 %2 %3</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GetSyncCodeInstructionsPopup</name>
@@ -8032,6 +8040,14 @@ Tarifa L2: %2</translation>
     <message>
         <source>Scan or enter the code</source>
         <translation>Escanea o introduce el código</translation>
+    </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished">%1 %2</translation>
+    </message>
+    <message>
+        <source>%1 %2 %3</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

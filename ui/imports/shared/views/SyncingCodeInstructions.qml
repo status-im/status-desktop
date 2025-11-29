@@ -30,7 +30,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: Theme.padding
         Layout.rightMargin: Theme.padding
-        Layout.minimumWidth: 400
+        Layout.alignment: Qt.AlignHCenter
         currentIndex: 0
 
         StatusSwitchTabButton {
@@ -43,8 +43,12 @@ ColumnLayout {
     }
 
     StackLayout {
-        Layout.alignment: Qt.AlignHCenter
+
+        Layout.alignment: Qt.AlignLeft
         Layout.fillWidth: true
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
+        Layout.bottomMargin: Theme.padding
         Layout.preferredHeight: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
         currentIndex: switchTabBar.currentIndex
 
@@ -59,6 +63,7 @@ ColumnLayout {
         GetSyncCodeDesktopInstructions {
             id: desktopSync
             Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: Theme.padding
 
             purpose: root.purpose
             type: root.type

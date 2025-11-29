@@ -156,7 +156,7 @@ SettingsContentBase {
             Layout.topMargin: Theme.padding
 
             horizontalPadding: Theme.padding
-            verticalPadding: Theme.bigPadding
+            verticalPadding: Theme.xlPadding
 
             background: Rectangle {
                 color: Theme.palette.primaryColor3
@@ -167,7 +167,9 @@ SettingsContentBase {
                 spacing: Theme.padding
 
                 StatusBaseText {
-                    Layout.preferredWidth: parent.width - parent.spacing
+                    Layout.fillWidth: true
+
+                    horizontalAlignment: Text.AlignHCenter
                     objectName: "syncNewDeviceTextLabel"
                     elide: Text.ElideRight
                     color: Theme.palette.primaryColor1
@@ -189,7 +191,7 @@ SettingsContentBase {
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    Layout.leftMargin: Theme.padding
+                    Layout.leftMargin: Theme.xlPadding
 
                     Repeater {
                         model: d.instructionsModel
@@ -224,6 +226,7 @@ SettingsContentBase {
                         }
 
                         StatusFlatRoundButton {
+                            Layout.rightMargin: Theme.padding
                             Layout.preferredWidth: 40
                             Layout.preferredHeight: width
                             radius: width/2

@@ -197,6 +197,8 @@ Rectangle {
             id: emptyListText
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.fillWidth: true
+            Layout.rightMargin: Theme.padding
+            Layout.leftMargin: Theme.padding
             Layout.preferredHeight: walletView.delegateHeight
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -213,7 +215,7 @@ Rectangle {
                         return ""
                 }
             }
-
+            wrapMode: Text.WordWrap
             visible: !root.selectedRecipientAddress && !d.searchInProgress && root.recipientsModel.ModelCount.count === 0 && !!text
         }
 

@@ -36,10 +36,12 @@ ColumnLayout {
         Layout.rightMargin: Theme.bigPadding
 
         StatusSwitchTabBar {
-            Layout.fillWidth: true
-            Layout.leftMargin: betaTag.visible ? betaTag.width : 0
             id: switchTabBar
 
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
+            Layout.alignment: Qt.AlignHCent
             currentIndex: 0
 
             StatusSwitchTabButton {

@@ -100,20 +100,30 @@ OnboardingPage {
                     contentItem: ColumnLayout {
                         spacing: 12
                         BulletPoint {
+                            Layout.fillWidth:  true
+
                             text: qsTr("Gather basic usage data, like clicks and page views")
                             checked: true
                         }
                         BulletPoint {
+                            Layout.fillWidth:  true
+
                             text: qsTr("Gather core diagnostics, like bandwidth usage")
                             checked: true
                         }
                         BulletPoint {
+                            Layout.fillWidth:  true
+
                             text: qsTr("Never collect your profile information or wallet address")
                         }
                         BulletPoint {
+                            Layout.fillWidth:  true
+
                             text: qsTr("Never collect information you input or send")
                         }
                         BulletPoint {
+                            Layout.fillWidth:  true
+
                             text: qsTr("Never sell your usage analytics data")
                         }
                     }
