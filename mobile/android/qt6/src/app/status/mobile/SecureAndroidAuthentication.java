@@ -87,9 +87,10 @@ public final class SecureAndroidAuthentication {
     }
 
     /** Cancel current biometric request, if any. */
-    public void cancel() {
+    public int cancel() {
         if (mCancel != null && !mCancel.isCanceled()) mCancel.cancel();
         mCancel = null;
+        return BIOMETRIC_STATUS_UNKNOWN;
     }
 
     /** Capability check — returns your BIOMETRIC_* codes. */

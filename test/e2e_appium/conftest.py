@@ -1,55 +1,115 @@
+import multiprocessing
 import os
-import pytest
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import Any, List, Optional
 
-from .config import setup_logging, log_test_start, log_test_end
-from .config.logging_config import get_logger
-from .core import EnvironmentSwitcher
+import pytest
+
+from .config import get_config, setup_logging, log_test_start, log_test_end
+from .config.logging_config import get_logger, LoggingConfig
 from .utils.cloud_reporter import CloudResultReporter
 from .utils.screenshot import save_screenshot, save_page_source
+from core.stash_keys import MULTI_DEVICE_MANAGERS_KEY
+from core.capacity_reserver import set_shared_pending_counter
+from core.shared_counter import FileBasedCounter, create_shared_counter
 
 
 # Expose fixture modules without star imports
 pytest_plugins = [
     "fixtures.onboarding_fixture",
+    "fixtures.multi_device_fixtures",
 ]
 
 
 _logging_setup = None
 _saved_failure_logs: List[Path] = []
+_bs_pending_counter = None
+_counter_manager: Optional[Any] = None
+
+
+def _extract_summary_details(test_report) -> dict[str, str | int | None]:
+    result = {"path": None, "lineno": None, "message": "Unknown error"}
+
+    longrepr = getattr(test_report, "longrepr", None)
+    if not longrepr:
+        return result
+
+    reprcrash = getattr(longrepr, "reprcrash", None)
+    if reprcrash:
+        result["path"] = getattr(reprcrash, "path", None)
+        result["lineno"] = getattr(reprcrash, "lineno", None)
+        message = getattr(reprcrash, "message", None)
+        if message:
+            result["message"] = message
+            return result
+
+        if isinstance(reprcrash, tuple) and len(reprcrash) >= 3:
+            result["message"] = reprcrash[2]
+            return result
+
+    longreprtext = getattr(longrepr, "longreprtext", None)
+    if longreprtext:
+        last_line = _last_nonempty_line(longreprtext)
+        if last_line:
+            result["message"] = last_line
+            return result
+
+    last_line = _last_nonempty_line(str(longrepr))
+    if last_line:
+        result["message"] = last_line
+
+    return result
+
+
+def _last_nonempty_line(text: str) -> str | None:
+    text = (text or "").strip()
+    if not text:
+        return None
+
+    for line in reversed(text.splitlines()):
+        line = line.strip()
+        if line:
+            return line
+
+    return None
 
 
 def pytest_configure(config):
-    global _logging_setup
-    _logging_setup = setup_logging()
+    global _logging_setup, _capacity_manager, _capacity_payload, _counter_manager
+    config_obj: Optional[Any] = None
 
     # Normalize CLI --env to CURRENT_TEST_ENVIRONMENT so all components agree
     try:
         cli_env = getattr(config.option, "env", None)
         if cli_env:
             os.environ["CURRENT_TEST_ENVIRONMENT"] = cli_env
+            os.environ["TEST_ENVIRONMENT"] = cli_env
     except Exception:
         # Do not block test runs if normalization fails
         pass
 
-    # Use YAML-based configuration
-    switcher = EnvironmentSwitcher()
-    env_name = (
-        os.getenv("CURRENT_TEST_ENVIRONMENT") or switcher.auto_detect_environment()
-    )
-
     try:
-        env_config = switcher.switch_to(env_name)
+        config_obj = get_config(refresh=True)
 
-        # Use directories from YAML config
-        reports_dir = Path(env_config.directories.get("reports", "reports"))
-        enable_xml_report = env_config.logging.get("enable_xml_report", True)
-        enable_html_report = env_config.logging.get("enable_html_report", True)
+        reports_dir = Path(config_obj.reports_dir)
+        logs_dir = Path(config_obj.logs_dir)
+        enable_xml_report = config_obj.enable_xml_report
+        enable_html_report = config_obj.enable_html_report
+
+        logging_cfg = LoggingConfig(
+            logs_dir=str(logs_dir),
+            console_level=config_obj.logging_level,
+            file_level=config_obj.logging_level,
+        )
+        _logging_setup = setup_logging(logging_cfg)
 
         logger = get_logger("conftest")
-        logger.info("Using reports directory from %s config: %s", env_name, reports_dir)
+        logger.info(
+            "Using reports directory from %s config: %s",
+            config_obj.environment_name,
+            reports_dir,
+        )
 
     except Exception as e:
         # Simplified fallback using defaults
@@ -57,11 +117,13 @@ def pytest_configure(config):
         enable_xml_report = True
         enable_html_report = True
 
+        _logging_setup = setup_logging()
+
         logger = get_logger("conftest")
         logger.warning("Using default configuration: %s", e)
         logger.warning("Ensure YAML config files are properly set up")
 
-    reports_dir.mkdir(exist_ok=True)
+    reports_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -84,6 +146,31 @@ def pytest_configure(config):
         if hasattr(config.option, "htmlpath") and config.option.htmlpath:
             logger.info("  HTML report: %s", config.option.htmlpath)
 
+    global _bs_pending_counter, _counter_manager
+
+    if not hasattr(config, "workerinput"):
+        # Main process: create file-based shared counter
+        try:
+            config_obj = get_config()
+            base_dir = Path(config_obj.reports_dir).parent / ".shared"
+        except Exception:
+            base_dir = Path("reports") / ".shared"
+        
+        counter = create_shared_counter(base_dir=base_dir)
+        _bs_pending_counter = counter
+        _counter_manager = None
+        set_shared_pending_counter(counter)
+    else:
+        # Worker process: create counter pointing to same file
+        counter_path = config.workerinput.get("bs_pending_counter_path")
+        if counter_path:
+            counter = FileBasedCounter(Path(counter_path), initial_value=0)
+            _bs_pending_counter = counter
+            set_shared_pending_counter(counter)
+        else:
+            _bs_pending_counter = None
+            set_shared_pending_counter(None)
+
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -97,6 +184,20 @@ def pytest_addoption(parser):
 @pytest.fixture(scope="session")
 def test_environment(request):
     return request.config.getoption("--env")
+
+
+def pytest_configure_node(node):
+    """Share counter file path with worker nodes."""
+    if _bs_pending_counter is not None and hasattr(_bs_pending_counter, "_file_path"):
+        node.workerinput["bs_pending_counter_path"] = str(_bs_pending_counter._file_path)
+
+
+def pytest_unconfigure(config):
+    """Cleanup shared counter."""
+    set_shared_pending_counter(None)
+    globals()["_bs_pending_counter"] = None
+    global _counter_manager
+    _counter_manager = None
 
 
 @pytest.fixture(scope="function")
@@ -131,6 +232,26 @@ def pytest_runtest_setup(item):
     )
 
 
+def pytest_collection_modifyitems(config, items):
+    """Automatically add single_device marker to tests with device_count(1)."""
+    for item in items:
+        # Check if test has device_count marker with value 1
+        device_count_marker = item.get_closest_marker("device_count")
+        if device_count_marker:
+            # Extract count from marker args or kwargs
+            count = None
+            if device_count_marker.args:
+                count = device_count_marker.args[0]
+            elif "count" in device_count_marker.kwargs:
+                count = device_count_marker.kwargs["count"]
+            elif "value" in device_count_marker.kwargs:
+                count = device_count_marker.kwargs["value"]
+            
+            # If count is 1, add single_device marker
+            if count == 1:
+                item.add_marker(pytest.mark.single_device)
+
+
 def pytest_runtest_teardown(item, nextitem):
     test_name = item.name
 
@@ -163,6 +284,121 @@ def pytest_runtest_makereport(item, call):
             logger = get_logger("session")
             logger.error(f"Failed to report test result to cloud provider: {e}")
 
+    if rep.when == "call":
+        logger = get_logger("conftest")
+        if hasattr(item, "stash"):
+            stash_entries = item.stash.get(MULTI_DEVICE_MANAGERS_KEY, [])
+            if not stash_entries:
+                logger.debug(
+                    "Multi-device hook (call phase): stash not yet populated; will retry in teardown"
+                )
+        else:
+            logger.debug("Multi-device hook (call phase) skipped: item has no stash attribute")
+        return
+
+    # Perform final reporting during teardown, after fixtures have finished
+    if rep.when != "teardown":
+        return
+
+    if not hasattr(item, "stash"):
+        logger = get_logger("conftest")
+        logger.debug("Multi-device hook skipped in teardown: item has no stash attribute")
+        return
+
+    stash_entries = item.stash.get(MULTI_DEVICE_MANAGERS_KEY, [])
+    if not stash_entries:
+        logger = get_logger("conftest")
+        logger.debug("Multi-device hook skipped in teardown: no multi_device_managers in stash")
+        return
+
+    import asyncio
+    from core.session_manager import SessionManager
+    logger = get_logger("conftest")
+
+    outcome = getattr(item, "rep_call", None)
+    global_failed = bool(outcome and outcome.failed)
+    global_reason = None
+    if global_failed and outcome and outcome.longrepr:
+        try:
+            reprcrash = getattr(outcome.longrepr, "reprcrash", None)
+            global_reason = getattr(reprcrash, "message", None) if reprcrash else None
+            if not global_reason:
+                global_reason = str(outcome.longrepr)
+        except Exception:
+            global_reason = str(outcome.longrepr)
+
+    for session_managers, pool in stash_entries:
+        # First: Cleanup all drivers (close sessions)
+        try:
+            try:
+                loop = asyncio.get_running_loop()
+                loop_running = True
+            except RuntimeError:
+                loop = asyncio.get_event_loop()
+                loop_running = False
+
+            if loop_running:
+                cleanup_loop = asyncio.new_event_loop()
+                try:
+                    cleanup_loop.run_until_complete(pool.cleanup())
+                    logger.debug(
+                        "Completed cleanup for pool on dedicated event loop"
+                    )
+                finally:
+                    cleanup_loop.close()
+            else:
+                if loop.is_closed():
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                loop.run_until_complete(pool.cleanup())
+                logger.debug("Completed cleanup for pool")
+        except Exception as e:
+            logger.warning("Failed to cleanup pool in hook: %s", e)
+
+        # Then: Report status via REST API (after drivers are closed)
+        # Use simple pass/fail based on test outcome
+        test_passed = not global_failed
+        
+        for name, session_manager in session_managers.items():
+            report_status = "passed" if test_passed else "failed"
+            report_reason = global_reason if global_failed else None
+
+            # Report via REST API only (drivers are already closed)
+            session_id = session_manager.session_id
+
+            if not session_id and hasattr(session_manager, "driver") and session_manager.driver:
+                session_id = getattr(session_manager.driver, "session_id", None)
+                if session_id:
+                    session_manager._session_id = session_id
+                    logger.debug(
+                        "Captured session_id for %s from driver during reporting",
+                        name,
+                    )
+
+            if session_id:
+                try:
+                    session_manager.provider.report_session_status_via_api(
+                        session_id, report_status, report_reason
+                    )
+                    logger.debug(
+                        "Reported status '%s' for %s (session: %s)",
+                        report_status,
+                        name,
+                        session_id[:8] if len(session_id) > 8 else session_id,
+                    )
+                except Exception as e:
+                    logger.warning(
+                        "Failed to report final status for %s via REST API: %s",
+                        name,
+                        e,
+                    )
+            else:
+                logger.warning(
+                    "Cannot report status for %s: no session_id available. "
+                    "Session may remain 'running' on BrowserStack.",
+                    name,
+                )
+
     # Get screenshot and page source artifacts
     try:
         if getattr(rep, "failed", False) and not getattr(
@@ -178,16 +414,9 @@ def pytest_runtest_makereport(item, call):
             if driver:
                 # Resolve screenshots directory from environment config; fallback to 'screenshots'
                 try:
-                    env_switcher = EnvironmentSwitcher()
-                    env_name = (
-                        os.getenv("CURRENT_TEST_ENVIRONMENT")
-                        or env_switcher.auto_detect_environment()
-                    )
-                    env_config = env_switcher.switch_to(env_name)
-                    screenshots_dir = env_config.directories.get(
-                        "screenshots", "screenshots"
-                    )
-                    logs_dir = env_config.directories.get("logs", "logs")
+                    config_obj = get_config()
+                    screenshots_dir = config_obj.screenshots_dir or "screenshots"
+                    logs_dir = config_obj.logs_dir or "logs"
                 except Exception:
                     screenshots_dir = "screenshots"
                     logs_dir = "logs"
@@ -322,13 +551,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         failed_tests = terminalreporter.stats.get("failed", [])
         for test_report in failed_tests[:5]:
             test_name = test_report.nodeid.split("::")[-1]
-            if hasattr(test_report, "longrepr") and test_report.longrepr:
-                error_msg = (
-                    str(test_report.longrepr).split("\n")[-2]
-                    if test_report.longrepr
-                    else "Unknown error"
-                )
-                logger.error("  %s: %s", test_name, error_msg)
+            details = _extract_summary_details(test_report)
+            logger.error("  %s: %s", test_name, details["message"])
 
         if len(failed_tests) > 5:
             logger.error(f"  ... and {len(failed_tests) - 5} more failures")
@@ -339,13 +563,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         error_tests = terminalreporter.stats.get("error", [])
         for test_report in error_tests[:3]:
             test_name = test_report.nodeid.split("::")[-1]
-            if hasattr(test_report, "longrepr") and test_report.longrepr:
-                error_msg = (
-                    str(test_report.longrepr).split("\n")[-2]
-                    if test_report.longrepr
-                    else "Unknown error"
-                )
-                logger.error("  %s: %s", test_name, error_msg)
+            details = _extract_summary_details(test_report)
+            logger.error("  %s: %s", test_name, details["message"])
 
         if len(error_tests) > 3:
             logger.error(f"  ... and {len(error_tests) - 3} more errors")
