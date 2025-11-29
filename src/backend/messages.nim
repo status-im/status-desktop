@@ -76,18 +76,6 @@ proc firstUnseenMessageID*(chatId: string): RpcResponse[JsonNode] =
   let payload = %* [chatId]
   result = callPrivateRPC("firstUnseenMessageID".prefix, payload)
 
-proc getTextUrls*(text: string): RpcResponse[JsonNode] =
-  let payload = %*[text]
-  result = callPrivateRPC("getTextURLs".prefix, payload)
-
-proc getTextURLsToUnfurl*(text: string): RpcResponse[JsonNode] =
-  let payload = %*[text]
-  result = callPrivateRPC("getTextURLsToUnfurl".prefix, payload)
-
-proc unfurlUrls*(urls: seq[string]): RpcResponse[JsonNode] =
-  let payload = %*[urls]
-  result = callPrivateRPC("unfurlURLs".prefix, payload)
-
 proc getCommunityMemberAllMessages*(communityId: string, memberPublicKey: string): RpcResponse[JsonNode] =
   let payload = %* [{"communityId": communityId, "memberPublicKey": memberPublicKey}]
   result = callPrivateRPC("getCommunityMemberAllMessages".prefix, payload)
