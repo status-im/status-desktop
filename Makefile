@@ -242,6 +242,12 @@ ifeq ($(USE_NWAKU), true)
     NIM_EXTRA_PARAMS += --passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
 endif
 
+NIM_SDS_SOURCE_DIR ?= vendor/nim-sds/
+LIBSDS_LIBDIR := $(NIM_SDS_SOURCE_DIR)/build
+NIM_EXTRA_PARAMS += --passL:"-L$(LIBSDS_LIBDIR)" --passL:"-lsds"
+STATUSGO_MAKE_PARAMS += NIM_SDS_HEADER_PATH="$(LIBSDS_LIBDIR)"
+STATUSGO_MAKE_PARAMS += NIM_SDS_LIB_PATH="$(GIT_ROOT)/vendor/nim-sds/build/"
+
 INCLUDE_DEBUG_SYMBOLS ?= false
 ifeq ($(INCLUDE_DEBUG_SYMBOLS),true)
  # We need `-d:debug` to get Nim's default stack traces
@@ -831,7 +837,10 @@ pkg-linux: check-pkg-target-linux $(STATUS_CLIENT_APPIMAGE)
 
 tgz-linux: $(STATUS_CLIENT_TARBALL)
 
-pkg-macos: check-pkg-target-macos $(STATUS_CLIENT_DMG)
+clean-libsds-cache:
+	@echo "Cleaning libsds_d from cache..."
+	rm -rf ~/.cache/nim/libsds_d
+pkg-macos: clean-libsds-cache check-pkg-target-macos $(STATUS_CLIENT_DMG)
 
 pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
@@ -858,12 +867,12 @@ run: $(RUN_TARGET)
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(LIBSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(LIBSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
@@ -886,7 +895,7 @@ NIM_TEST_FILES := $(wildcard test/nim/*.nim)
 NIM_TESTS := $(foreach test_file,$(NIM_TEST_FILES),nim-test-run/$(test_file))
 
 nim-test-run/%: | dotherside $(STATUSGO) $(QRCODEGEN)
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(LIBSDS_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
 	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"$(QRCODEGEN)" -r $(subst nim-test-run/,,$@)
 
 tests-nim-linux: $(NIM_TESTS)
