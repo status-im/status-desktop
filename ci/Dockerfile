@@ -161,8 +161,8 @@ ENV HOME="/home/jenkins"
 
 # Setup Flatpak for jenkins user
 RUN flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo \
- && flatpak install --user -y flathub org.kde.Platform//6.8 \
- && flatpak install --user -y flathub org.kde.Sdk//6.8
+ && flatpak install --user -y flathub org.freedesktop.Platform//24.08 \
+ && flatpak install --user -y flathub org.freedesktop.Sdk//24.08
 
 # Rust is needed for nwaku builds
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
