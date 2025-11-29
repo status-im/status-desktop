@@ -104,6 +104,7 @@ QtObject:
 
   proc handlePricesUpdated(self: Service, data: WalletSignal) =
     try:
+      echo "handlePricesUpdated: ", $data.message
       let leaderboardPricesUpdate = Json.decode($data.message, LeaderboardPagePrices, allowUnknownFields = true)
       if self.currentPage == leaderboardPricesUpdate.page and
           self.settingsService.getCurrency() == leaderboardPricesUpdate.currency:
@@ -129,7 +130,7 @@ QtObject:
           self.events.emit(SIGNAL_MARKET_LEADERBOARD_TOKEN_UPDATED,
               LeaderboardTokensBatchUpdated(updates: updates))
     except:
-      error "Error parsing leaderboard prices update data"
+      error "Error parsing leaderboard prices update data", msg = getCurrentExceptionMsg()
 
   proc getMarketLeaderboardList*(self: Service): var seq[MarketItem] =
     return self.marketLeaderboardTokens

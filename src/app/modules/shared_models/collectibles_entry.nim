@@ -232,6 +232,10 @@ QtObject:
     notify = collectionImageURLChanged
 
   proc traitsChanged*(self: CollectiblesEntry) {.signal.}
+
+  proc getTraitModel*(self: CollectiblesEntry): TraitModel =
+    return self.traits
+
   proc getTraits*(self: CollectiblesEntry): QVariant {.slot.} =
     return newQVariant(self.traits)
 
@@ -386,6 +390,51 @@ QtObject:
     self.communityPrivilegesLevelChanged()
     self.communityImageChanged()
     return true
+
+  proc update*(self: CollectiblesEntry, other: CollectiblesEntry) =
+    # Store old data for comparison
+    let oldData = self.data
+    let oldExtradata = self.extradata
+    let oldTokenType = self.tokenType
+
+    # Update internal data (this updates traits and ownership models too)
+    self.data = other.data
+    self.extradata = other.extradata
+    self.tokenType = other.tokenType
+
+    # Update nested models granularly
+    # The nested models (traits, ownership) will emit their own signals for data changes
+    if isSome(other.data.collectibleData) and isSome(other.data.collectibleData.get().traits):
+      self.traits.setItems(other.data.collectibleData.get().traits.get())
+    else:
+      self.traits.setItems(@[])
+
+    if isSome(other.data.ownership):
+      self.ownership.setItems(other.data.ownership.get())
+    else:
+      self.ownership.setItems(@[])
+
+    # Emit signals for changed properties by comparing old vs new
+    # This is more efficient than the blanket approach in updateDataIfSameID
+    if oldData.collectibleData != other.data.collectibleData:
+      self.nameChanged()
+      self.imageURLChanged()
+      self.mediaURLChanged()
+      self.mediaTypeChanged()
+      self.backgroundColorChanged()
+      self.descriptionChanged()
+    
+    if oldData.collectionData != other.data.collectionData:
+      self.collectionSlugChanged()
+      self.collectionNameChanged()
+      self.collectionImageUrlChanged()
+    
+    if oldData.communityData != other.data.communityData:
+      self.communityIdChanged()
+      self.communityNameChanged()
+      self.communityColorChanged()
+      self.communityPrivilegesLevelChanged()
+      self.communityImageChanged()
 
   proc contractTypeToTokenType(contractType : ContractType): TokenType =
     case contractType:
