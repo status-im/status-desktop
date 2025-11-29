@@ -532,7 +532,7 @@ RightTabBaseView {
                     id: historyView
                     HistoryView {
                         overview: RootStore.overview
-                        walletRootStore: RootStore
+                        activityStore: RootStore
                         communitiesStore: root.communitiesStore
                         currencyStore: root.sharedRootStore.currencyStore
                         networksStore: root.networksStore
