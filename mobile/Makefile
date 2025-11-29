@@ -21,6 +21,7 @@ status-desktop-rcc: clean-status-desktop-rcc $(STATUS_DESKTOP_RCC)
 
 $(STATUS_GO_LIB):
 	@echo "Building status-go mobile library"
+	@mkdir -p $(LIB_PATH)
 ifeq ($(OS),android)
 	  CC="$(CC)" $(MAKE) -C ../vendor/status-go statusgo-android-library \
 		ARCH=$(ARCH) \
@@ -29,17 +30,17 @@ ifeq ($(OS),android)
 		HOST_OS="$(HOST_OS)" \
 		GO_GENERATE_CMD="go generate" \
 		SHELL=/bin/sh
+		@cp ../vendor/nim-sds/build/libsds$(LIB_EXT) $(LIB_PATH)/libsds$(LIB_EXT)
 else ifeq ($(OS),ios)
 	$(MAKE) -C ../vendor/status-go statusgo-ios-library \
 		ARCH=$(ARCH) \
 		IPHONE_SDK="$(IPHONE_SDK)" \
 		IOS_TARGET="$(IOS_TARGET)" \
 		SHELL=/bin/sh
+		@cp $(WORKSPACE)/nim-sds/build/libsds$(LIB_EXT) $(LIB_PATH)/libsds$(LIB_EXT)
 endif
 	@echo "Copying library to mobile lib directory"
-	@mkdir -p $(LIB_PATH)
 	@cp ../vendor/status-go/build/bin/libstatus$(LIB_EXT) $(LIB_PATH)/libstatus$(LIB_EXT)
-	@cp ../vendor/nim-sds/build/libsds$(LIB_EXT) $(LIB_PATH)/libsds$(LIB_EXT)
 
 $(STATUS_Q_LIB): $(STATUS_Q_FILES) $(STATUS_Q_SCRIPT) $(STATUS_Q_UI_FILES)
 	@echo "Building StatusQ"
